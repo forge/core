@@ -16,7 +16,6 @@
          <artifactId>container-cdi-api</artifactId>
          <scope>provided</scope>
       </dependency>
-      
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>shell-spi</artifactId>
