@@ -44,7 +44,7 @@ converters, the factory will select the most appropriate converter type for the 
 ----
 @Inject 
 private ConverterFactory factory;
-
+...
 Converter<String, Integer> converter = factory.create(String.class, Integer.class);
 ----
 +
@@ -54,7 +54,8 @@ If your addon uses a container that does not support "@Inject" annotations, serv
 accessed via the `AddonRegistry`:
 
 ----
-Imported<ConverterFactory> imported = addonRegistry.getServices(ConverterFactory.class);
+AddonRegistry registry = ...
+Imported<ConverterFactory> imported = registry.getServices(ConverterFactory.class);
 ConverterFactory factory = imported.get();
 ----
 

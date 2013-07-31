@@ -76,7 +76,7 @@ handles the installation of facets directly.
 ----
 @Inject
 private FacetFactory factory;
-
+...
 FacetedObject faceted = new FacetedObject();
 MyFacet facet = factory.install(faceted, MyFacet.class);
 ---- 
@@ -87,7 +87,8 @@ If your addon uses a container that does not support "@Inject" annotations, serv
 accessed via the `AddonRegistry`:
 
 ----
-Imported<FacetFactory> imported = addonRegistry.getServices(FacetFactory.class);
+AddonRegistry registry = ...
+Imported<FacetFactory> imported = registry.getServices(FacetFactory.class);
 FacetFactory factory = imported.get();
 ----
 ==== 

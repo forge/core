@@ -56,7 +56,7 @@ The JavaSourceFactory allows for parsing and generation of Java sources via a ty
 ----
 @Inject 
 private JavaSourceFactory factory;
-
+...
 JavaClass myClass = factory.parse(JavaClass.class, "public class MyClass{}");
 ----
 +
@@ -66,7 +66,8 @@ If your addon uses a container that does not support "@Inject" annotations, serv
 accessed via the `AddonRegistry`:
 
 ----
-Imported<JavaSourceFactory> imported = addonRegistry.getServices(JavaSourceFactory.class);
+AddonRegistry registry = ...
+Imported<JavaSourceFactory> imported = registry.getServices(JavaSourceFactory.class);
 JavaSourceFactory factory = imported.get();
 ----
 ==== 

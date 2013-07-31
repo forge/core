@@ -13,15 +13,6 @@ NOTE: Implementations of UICommand are displayed in the Forge Quick Assist menu 
 the Forge shell automatically makes UICommand instances available as functions; tab completion proposals are supported for command
 names, option names, and option arguments.  
 
-=== UI Components
-
-There are four input types: 
-
-- *UIInput* : Prompts for a single value where the set of valid values has not been pre-determined..
-- *UIInputMany* : Prompts for multiple values where the set of valid values has not been pre-determined.
-- *UISelectOne* : Prompts for selection of a single value from a collection of pre-determined valid values. 
-- *UISelectMany* : Prompts for selection of multiple values from a collection of pre-determined valid values.
-
 === Depends on
 
 [options="header"]
@@ -68,131 +59,217 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 
 == Features
 
-Implementing a simple dialog box:: When interaction does not present a complex workflow and has little arguments
+Consistent programming experience::
+ Because the UI API provides an abstract model for creating commands and wizards, it is the standard approach for creating
+ user interfaces in all addons.
 
-Create a class that extends from *_org.jboss.forge.addon.ui.AbstractUICommand_* and implement the required methods. 
-For each input, inject it in your addon using the CDI @Inject annotation and add it to the UIBuilder:
+=== UI Components
 
+There are four input types which can be used to gather input from a user: 
+
+- *UIInput* : Prompts for a single value where the set of valid values has not been pre-determined..
+- *UIInputMany* : Prompts for multiple values where the set of valid values has not been pre-determined.
+- *UISelectOne* : Prompts for selection of a single value from a collection of pre-determined valid values. 
+- *UISelectMany* : Prompts for selection of multiple values from a collection of pre-determined valid values.
+
+
+Input components may accept any Java object type. Note that for simple types such as `String`, `Integer`, and other
+built in language types, simple conversion will occur automatically; however, for complex or custom data types, a
+`Converter` from the link:../convert/README.asciidoc[convert] addon will be required.
+
+Components may be created either via dependency injection, or via programmatic instantiation through the `InputComponentFactory`.
+
+Create components via dependency injection::
++
 [source,java]
 ----
-public class ExampleAddon extends AbstractUICommand
-{
+@Inject private UIInput<String> name;
+@Inject private UIInputMany<File> name;
+@Inject private UISelectOne<Integer> name;
+@Inject private UISelectMany<CustomType> name;
+----
+
+Create components programmatically:: 
+ If the number of inputs are unknown at compile time, it is possible to create inputs using InputComponentFactory:
++
+[source,java]
+----
+@Inject
+private InputComponentFactory factory;
+...
+UIInput<String> firstName = factory.createUIInput("firstName", String.class);
+UIInput<String> lastName = factory.createUIInput("lastName", String.class);
+----
++
+[TIP] 
+====
+If your addon uses a container that does not support "@Inject" annotations, services such as the `InputComponentFactory` may also be 
+accessed via the `AddonRegistry`:
+
+----
+AddonRegistry registry = ...
+Imported<InputComponentFactory> imported = registry.getServices(InputComponentFactory.class);
+InputComponentFactory factory = imported.get();
+----
+==== 
+
+=== Create a UICommand
+
+Implement a simple dialog box::
+ When interaction does not present a complex work-flow, a single command is typically enough to perform trivial or
+independent tasks. 
++
+. Create a class that implements `UICommand` and implement the required methods. You may also extend from *_org.jboss.forge.addon.ui.AbstractUICommand_*
+to eliminate some boilerplate configuration.
++
+[source,java]
+----
+public class ExampleCommand extends AbstractUICommand implements UICommand {
 
    @Inject
    private UIInput<String> name;
 
    @Override
-   public void initializeUI(UIBuilder builder) throws Exception
-   {
+   public void initializeUI(UIBuilder builder) throws Exception {
         builder.add(name);      
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception
-   {
+   public Result execute(UIContext context) throws Exception {
       return Results.success("Hello,"+ name.getValue());
    }
 
 }
 ----
-
-Implementing a multi-step wizard:: When interaction is complex and presents a considerable number of arguments
-
+. Add inputs to your command.
++
 [source,java]
 ----
-public class WizardInitialPage extends AbstractUICommand implements UIWizard
-{
-
+public class ExampleCommand extends AbstractUICommand implements UICommand {
    @Inject
    private UIInput<String> name;
-
-   @Override
-   public void initializeUI(UIBuilder builder) throws Exception
-   {
-        name.setLabel("First Name").setRequired(true);
-        builder.add(name);      
-   }
-
-   @Override
-   public Result execute(UIContext context) throws Exception
-   {
-      return Results.success();
-   }
-   
-   @Override
-   public NavigationResult next(UIContext context) throws Exception
-   {
-      context.putAttribute("firstName",firstName.getValue());
-      return Results.navigateTo(WizardNextStep.class);
-   }
+}
+----
+. Ensure that you have initialized the `UIBuilder` with all required `UIInput` instances, and performed any `UIInput`
+configuration (if necessary).
++
+[source,java]
+----
+@Override
+public void initializeUI(UIBuilder builder) throws Exception {
+   // Configure inputs here
+   builder.add(name);      
+}
+----
+. Implement functionality to be executed.
++
+[source,java]
+----
+@Override
+public Result execute(UIContext context) throws Exception {
+   // Do the work here
+   return Results.success("Hello,"+ name.getValue());
 }
 ----
 
-And create a WizardStep implementation, like the following:
+=== Implement a multi-step wizard
 
+When interaction is complex and presents a considerable number of arguments, you may find it necessary to gather
+input via a wizard flow, rather than a single command implementation. Wizards allow for multi-page, multi-path
+commands to be created, where the path through a flow may differ based on user input provided in each step.
+
+. Follow the same basic steps as if you were implementing a simple `UICommand`; however, in this case we must also
+implement the `UIWizard` interface.
++ 
+[source,java]
+----
+public class MyInitialPage extends AbstractUICommand implements UIWizard {
+}
+----
+. Notice that the `next(UIContext context)` method must be implemented in addition to the standard `UICommand` 
+methods. Be sure to store relevant values as context attributes so that they may be accessed via subsequent
+wizard steps.
++
+The `next` method also returns a `NavigationResult`, which is where you will specify the next wizard step (if any)
+to execute.
++ 
+[source,java]
+----
+public class MyInitialPage extends AbstractUICommand implements UIWizard {
+
+   @Inject
+   private UIInput<String> firstName;
+   
+   @Override
+   public void initializeUI(UIBuilder builder) throws Exception {
+        builder.add(firstName);      
+   }
+   
+   @Override
+   public NavigationResult next(UIContext context) throws Exception {
+      context.putAttribute("firstName", firstName.getValue());
+      return Results.navigateTo(MyNextStep.class);
+   }
+
+   @Override
+   public Result execute(UIContext context) throws Exception {
+      return Results.success();
+   }
+}
+----
+. Create a `UIWizardStep` implementation, similar to `UIWizard`. `UIWizardStep` implementations cannot be used as
+standalone commands, or as entry points to a wizard flow. If your wizard step would function independently of prior
+wizard steps, then it may simply implement `UIWizard`.
++
 [source,java]
 ----
 
-public class WizardNextStep extends AbstractUICommand implements UIWizardStep
-{
+public class MyNextStep extends AbstractUICommand implements UIWizardStep {
 
    @Inject
    @WithAttributes(label="Last Name", required=true)
    private UIInput<String> lastName;
 
    @Override
-   public void initializeUI(UIBuilder builder) throws Exception
-   {
-        builder.add(name);      
+   public void initializeUI(UIBuilder builder) throws Exception {
+        builder.add(lastName);      
+   }
+   
+   @Override
+   public NavigationResult next(UIContext context) throws Exception {
+      // End of interaction, return null
+      return null;
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception
-   {
+   public Result execute(UIContext context) throws Exception {
       String firstName = (String) context.getAttribute("firstName");
       String fullName = firstName + " " + lastName.getValue(); 
       return Results.success("Hello,"+ fullName);
    }
-   
-   @Override
-   public NavigationResult next(UIContext context) throws Exception
-   {
-      //End of interaction, return null
-      return null;
-   }
 }
 ----
 
-Creating components programmatically:: If the number of inputs are unknown at compile time, it is possible to create inputs using InputComponentFactory:
+=== UICommand execution lifecycle
 
-[source,java]
-----
-public class ExampleAddon extends AbstractUICommand
-{
-   @Inject
-   private InputComponentFactory factory;
-	
-   private List<UIInput<String>> inputs;
+. Retrieve instance of selected `UICommand`
+. Call `.initializeUI(UIBuilder builder)`
+. UI provider implementation gathers user input values.
+. UI provider calls `.validate(UIValidationContext context)`
+ - if inputs are valid, proceed, if not, return to prior step
+. UI provider populates user supplied values into input components.
+. UI provider calls `.execute(UIContext context)`
+
+=== UIWizard execution lifecycle
+
+. Retrieve instance of selected `UIWizard`
+. Call `initializeUI(UIBuilder builder)`
+. UI provider implementation gathers user input values.
+. UI provider calls `.validate(UIValidationContext context)`
+ - if inputs are valid, proceed, if not, return to prior step
+. UI provider populates user supplied values into input components.
+. UI provider calls `.next(UIContext context)`
+ - if `NavigationResult` is contains a `UIWizard` or `UIWizardStep` type instance, repeat from step 1 for the next result type.
+ - if `NavigationResult` is null, UI provider calls `.execute(UIContext context)`
 
 
-   @Override
-   public void initializeUI(UIBuilder builder) throws Exception
-   {
-      UIInput<String> firstName = factory.createUIInput("firstName",String.class);
-      UIInput<String> lastName = factory.createUIInput("firstName",String.class);	
-
-      // Input will be stored in UIInput objects
-      inputs = Arrays.asList(firstName,lastName);
-
-      builder.add(firstName).add(lastName);      
-   }
-
-   @Override
-   public Result execute(UIContext context) throws Exception
-   {
-      String fullName = inputs.get(0).getValue() + " " + inputs.get(1).getValue();
-      return Results.success("Hello,"+ fullName);
-   }
-
-}
-----

@@ -51,7 +51,7 @@ capable of handling the given `DependencyQuery`.
 ----
 @Inject 
 private DependencyResolver resolver;
-
+...
 Set<Dependency> dependencies = resolver.resolveDependencies(...);
 DependencyMetadata metadata = resolver.resolveDependencyMetadata(...);
 ----
@@ -62,7 +62,8 @@ If your addon uses a container that does not support "@Inject" annotations, serv
 accessed via the `AddonRegistry`:
 
 ----
-Imported<DependencyResolver> imported = addonRegistry.getServices(DependencyResolver.class);
+AddonRegistry registry = ...
+Imported<DependencyResolver> imported = registry.getServices(DependencyResolver.class);
 for(ExportedInstance<DependencyResolver> instance : imported)
 {
    DependencyResolver resolver = instance.get();

@@ -1,9 +1,11 @@
 == environment
 :idprefix: id_ 
 
-(choose one)
-This addon provides a *service environment* support for dependent addons.
-        
+This addon *exports services* for use in other addons. The environment addon creates a non-persistent (in-memory)
+system where runtime configuration variables can be accessed in a safer, more type-safe setting. Because environment
+settings are non-persistent, they will only remain configured for as long as the application is running, or until
+they are changed or removed.
+
 === Dependencies: None
 
 == Setup
@@ -16,34 +18,52 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 
 [source,xml]
 ----
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>environment</artifactId>
-         <classifier>forge-addon</classifier>
-         <version>${version}</version>
-      </dependency>
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>environment</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
 ----
 
 == Features
 
-Access the Environment service:: Environment properties are grouped by Category specializations. Category is a marker interface for exclusive use in the Environment addon.
-
+Environment service to provide global type-safe settings::
+ Environment properties are grouped by category specializations, and can be accessed by any consumer with knowledge of
+the proper interface types. Environment lookup will return the underlying configuration map for the given `Category` type.
++
 [source,java]
 ----
-@Inject Environment environment;
-
+@Inject private Environment environment;
 ...
-// Retrieves the properties configured for this specific category
-Map<Object, Object> userInterfaceProperties = environment.get(UserInterfaceCategory.class);
+Map<Object, Object> properties = environment.get(SomeCategory.class);
 ----
++
+[TIP] 
+====
+If your addon uses a container that does not support "@Inject" annotations, services such as the `Environment` may also be 
+accessed via the `AddonRegistry`:
 
+----
+AddonRegistry registry = ...
+Imported<Environment> imported = registry.getServices(Environment.class);
+Environment factory = imported.get();
+----
+==== 
 
-Where UserInterfaceCategory is a specialized marker interface with no methods:
-
+Custom environment categories::
+ It is possible to implement custom categories simply be extending the `Category` interface, where `Category` is a 
+specialized marker interface with no methods:
++
 [source,java]
 ----
-public interface UserInterfaceCategory extends Category
-{
-
+public interface MyCustomCategory extends Category {
 }
 ----
++
+Once your category has been created, it may be accessed via the `Environment` service.
+
+
+Consistent programming experience::
+ Because the Environment API provides an abstract model for handling non-persistent configuration, it is used in a
+ number of addons and should be considered the standard approach for runtime configuration.

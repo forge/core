@@ -64,7 +64,7 @@ real or virtual resource.
 ----
 @Inject 
 private ResourceFactory factory;
-
+...
 Resource<?> resource = factory.create(...);
 ----
 +
@@ -74,7 +74,8 @@ If your addon uses a container that does not support "@Inject" annotations, serv
 accessed via the `AddonRegistry`:
 
 ----
-Imported<ResourceFactory> imported = addonRegistry.getServices(ResourceFactory.class);
+AddonRegistry registry = ...
+Imported<ResourceFactory> imported = registry.getServices(ResourceFactory.class);
 ResourceFactory factory = imported.get();
 ----
 ==== 

@@ -66,6 +66,7 @@ and removal of addons programatically.
 [source,java]
 ----
 @Inject private AddonManager manager;
+...
 InstallRequest request = manager.install(AddonId.from("org.example:example", "0.0.1-SNAPSHOT"));
 request.perform();
 ----
@@ -76,7 +77,8 @@ If your addon uses a container that does not support "@Inject" annotations, serv
 accessed via the `AddonRegistry`:
 
 ----
-Imported<AddonManager> imported = addonRegistry.getServices(AddonManager.class);
+AddonRegistry registry = ...
+Imported<AddonManager> imported = registry.getServices(AddonManager.class);
 AddonManager manager = imported.get();
 ----
 ==== 
