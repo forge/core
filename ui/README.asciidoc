@@ -270,6 +270,6 @@ public class MyNextStep extends AbstractUICommand implements UIWizardStep {
 . UI provider converts user supplied values (if necessary) and populates input components.
 . UI provider calls `.next(UIContext context)`
  - if `NavigationResult` is contains a `UIWizard` or `UIWizardStep` type instance, repeat from step #1 for the next result type.
- - if `NavigationResult` is null, UI provider calls `.execute(UIContext context)`
+ - if `NavigationResult` is null, UI provider calls `.execute(UIContext context) for each visited step, in the order in which they were visited.`
 
 
