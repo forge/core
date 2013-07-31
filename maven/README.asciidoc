@@ -66,7 +66,7 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 The maven addon provides very little functionality on its own, but integrates with and extends several other addons. 
 
 Fluent builders for Maven profile management::
-+Independent of other addons, this addon provides the Maven API model for integrating with POM files and profiles, as well as several fluent builders for maintaining profiles.
+Independent of other addons, this addon provides the Maven API model for integrating with POM files and profiles, as well as several fluent builders for maintaining profiles.
 +
 [source,java]
 ----
@@ -132,7 +132,7 @@ DependencyFacet facet = project.getFacet(DependencyFacet.class);
 
 
 (Optional) parser-java addon integration::
-When both the parser-java and projects addons are intalled, the Maven addon supplies an implementation of the following Java-specific `ProjectFacet` type:
+When both the parser-java and projects addons are installed, the Maven addon supplies an implementation of the following Java-specific `ProjectFacet` type:
 +
 * JavaSourceFacet
 
