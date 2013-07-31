@@ -1,0 +1,49 @@
+== environment
+:idprefix: id_ 
+
+(choose one)
+This addon provides a *service environment* support for dependent addons.
+        
+=== Dependencies: None
+
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml]
+----
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>environment</artifactId>
+         <classifier>forge-addon</classifier>
+         <version>${version}</version>
+      </dependency>
+----
+
+== Features
+
+Access the Environment service:: Environment properties are grouped by Category specializations. Category is a marker interface for exclusive use in the Environment addon.
+
+[source,java]
+----
+@Inject Environment environment;
+
+...
+// Retrieves the properties configured for this specific category
+Map<Object, Object> userInterfaceProperties = environment.get(UserInterfaceCategory.class);
+----
+
+
+Where UserInterfaceCategory is a specialized marker interface with no methods:
+
+[source,java]
+----
+public interface UserInterfaceCategory extends Category
+{
+
+}
+----
