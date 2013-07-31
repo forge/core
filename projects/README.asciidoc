@@ -97,7 +97,7 @@ ProjectFactory factory = imported.get();
 ==== 
 
 
-Modular functionality::
+Modular functionality with ProjectFacet API::
 The projects addon provides a singularly simple API for project interaction, while allowing for extension via `Facet` implementations which may be installed and removed as needed. `ProjectFacet` types may be provided or implemented via other installed addons.
 +
 [options="header"]
@@ -112,7 +112,7 @@ The projects addon provides a singularly simple API for project interaction, whi
 
 |===
 
-Extendable functionality::
+Create a custom ProjectFacet type::
 Additional custom `ProjectFacet` types may be implemented by your addon simply by implementing the `ProjectFacet` interface.
 +
 [source,java]
@@ -216,7 +216,7 @@ class CustomProjectListener implements ProjectListener {
 }
 ----
 +
-TIP: `ProjectListener` instances may also be registered directly via the `ProjectFactory.addProjectListener(ProjectListener listener)` method.
+TIP: `ProjectListener` instances may also be registered directly via the `ProjectFactory.addProjectListener(ProjectListener listener)` method
 
 Consistent programming experience::
  Because the Project API provides an abstract model for interacting with existing and creating new projects, it is used in a number of addons and should be considered the standard approach for project manipulation.
