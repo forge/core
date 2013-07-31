@@ -42,13 +42,13 @@ public class CommandLineUtilTest
       foo1.initializeUI(context);
       CommandLineParser parser = CommandLineUtil.generateParser(foo1, context);
 
-      assertEquals("foo1", parser.getParameter().getName());
+      assertEquals("foo1", parser.getParameters().get(0).getName());
 
       Foo2Command foo2 = new Foo2Command();
       foo2.initializeUI(context);
       parser = CommandLineUtil.generateParser(foo2, context);
 
-      ParameterInt param = parser.getParameter();
+      ParameterInt param = parser.getParameters().get(0);
       assertEquals("foo2", param.getName());
       assertEquals("str", param.findLongOption("str").getName());
       assertEquals("bool", param.findLongOption("bool").getName());
