@@ -196,7 +196,7 @@ public class CustomProjectLocator implements ProjectLocator {
 
    @Override
    public boolean containsProject(final DirectoryResource dir) {
-      return dir.getChild("custom-project-config.txt")
+      return dir.getChild("custom-project-config.txt").exists();
    }
 
 }
