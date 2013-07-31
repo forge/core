@@ -15,7 +15,6 @@ import org.jboss.aesh.cl.OptionBuilder;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.addon.shell.ShellContext;
-import org.jboss.forge.addon.shell.util.CommandLineUtil;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -51,8 +50,8 @@ public class CommandLineUtilTest
 
       ParameterInt param = parser.getParameters().get(0);
       assertEquals("foo2", param.getName());
-      assertEquals("str", param.findLongOption("str").getLongName());
-      assertEquals("bool", param.findLongOption("bool").getLongName());
+      assertEquals("str", param.findLongOption("str").getName());
+      assertEquals("bool", param.findLongOption("bool").getName());
 
    }
 

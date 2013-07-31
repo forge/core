@@ -6,18 +6,19 @@
  */
 package org.jboss.forge.addon.shell.spi;
 
+import org.jboss.aesh.console.settings.Settings;
 import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Used to configure the shell before it is initialized.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:koen.aers@gmail.com">Koen Aers/a>
  */
 @Exported
-public interface ShellConfiguration
+public interface AeshSettingsProvider
 {
-   /**
-    * Perform any necessary configuration.
-    */
-   void configure();
+   
+   Settings buildAeshSettings();
+
 }
