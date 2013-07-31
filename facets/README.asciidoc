@@ -1,4 +1,4 @@
-== Facets
+== facets
 :idprefix: id_ 
 
 

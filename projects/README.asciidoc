@@ -1,0 +1,222 @@
+== projects
+:idprefix: id_ 
+
+This addon provides *standalone* functionality and *exports services* for use in other addons. The projects addon allows for project creation, modification and comprehension. It also provides integration points for build tools, dependency management systems, and source file manipulation.
+
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|convert
+|no
+|no
+
+|dependencies
+|yes
+|no
+
+|facets
+|yes
+|no
+
+|resources
+|yes
+|no
+
+|ui
+|no
+|yes
+
+|org.jboss.forge.furnace:container-cdi
+|no
+|no
+
+|===
+
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml] 
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>projects</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----      
+== Features
+
+
+ProjectFactory service for simple project location and creation::
+ The `ProjectFactory` provides an entry-point API for all Project operations: both creation of new, and location and modification of existing projects:
++
+[source,java]
+----
+@Inject
+private ProjectFactory factory;
+----
++
+*'Project location'*
++
+The project location API enables you to find existing projects that already exist on the filesystem.
++
+[source,java]
+----
+FileResource<?> file = ...
+Project project = factory.findProject(file);
+---- 
++
+*'Project creation'*
++
+The project creation API allows for creating of projects that meet certain pre-determined critera via specification of required facets at creation time.
++
+[source,java]
+----
+DirectoryResource targetDirectory = ...
+Project project = factory.createProject(targetDirectory, DependencyFacet.class, PackagingFacet.class, ...);
+---- 
++
+[TIP] 
+====
+If your addon uses a container that does not support "@Inject" annotations, services such as the `ProjectFactory` may also be 
+accessed via the `AddonRegistry`:
+
+----
+AddonRegistry registry = ...
+Imported<ProjectFactory> imported = registry.getServices(ProjectFactory.class);
+ProjectFactory factory = imported.get();
+----
+==== 
+
+
+Modular functionality::
+The projects addon provides a singularly simple API for project interaction, while allowing for extension via `Facet` implementations which may be installed and removed as needed. `ProjectFacet` types may be provided or implemented via other installed addons.
++
+[options="header"]
+|===
+|Facet type |Description |Provided by addons
+
+|DependencyFacet |Grants access to the project dependencies and dependency-management|gradle, maven
+|MetadataFacet |Grants access to the project name and top-level package |gradle, maven
+|PackagingFacet |Grants access to the project packaging type, build methods, and build output artifact |gradle, maven
+|ResourcesFacet |Grants access to project source files|gradle, maven
+|WebResourcesFacet |Grants access to project source files|gradle, maven
+
+|===
+
+Extendable functionality::
+Additional custom `ProjectFacet` types may be implemented by your addon simply by implementing the `ProjectFacet` interface.
++
+[source,java]
+----
+public class ProjectFacetA extends AbstractFacet<Project> implements ProjectFacet {
+
+   @Override
+   public boolean install() {
+      return true;
+   }
+
+   @Override
+   public boolean isInstalled() {
+      return true;
+   }
+}
+----
+
+Simple facet prerequisite management::
+Since `Facet` implementations are designed for re-use, the projects addon API provides the `@RequiresFacet` annotation, for quickly definining dependencies between facet implementations.
++
+[source,java]
+----
+public class ProjectFacetA extends AbstractFacet<Project> implements ProjectFacet {
+   ...
+}
+
+@RequiresFacet({ProjectFacetA.class})
+public class ProjectFacetB extends AbstractFacet<Project> implements ProjectFacet {
+   ...
+}
+----
++
+This type of dependency speficication could otherwise be written using the following (more verbose) manual configuration:
++
+[source,java]
+----
+public class ProjectFacetB extends AbstractFacet<Project> implements ProjectFacet {
+
+   @Inject private FacetFactory factory;
+
+   @Override
+   public boolean install() {
+      ProjectFacetA facetA = factory.install(getFaceted(), ProjectFacetA.class);
+      return facetA.isInstalled();
+   }   
+
+   @Override
+   public boolean isInstalled() {
+      return getFaceted().hasFacet(ProjectFacetA.class);
+   }  
+}
+----
++
+In summary, the `FacetFactory` and `ProjectFactory` services will recursively check for and install missing prerequisite `ProjectFacet` types, before proceeding to install the requsted facet type. This allows for very simple dependency management, and avoids many opportunities for `NullPointerException`.
+
+ProjectLocator services for custom project types::
+If you wish to implement a custom project type in your addon, you will need to use the `ProjectLocator` service API. Each time a method in the `ProjectFactory` is called, all available `ProjectLocator` instances are queried until a valid project result is found.
++
+[source,java]
+----
+public class CustomProjectLocator implements ProjectLocator {
+
+   @Inject
+   private FacetFactory factory;
+
+   @Override
+   public Project createProject(final DirectoryResource dir) {
+      Project project = new CustomProject(dir);
+
+      try {
+         factory.install(project, CustomFacet.class);
+      }
+      catch (RuntimeException e) {
+         throw new IllegalStateException("Could not install Custom functionality into Project located at ["
+                  + dir.getFullyQualifiedName() + "]");
+      }
+
+      return project;
+   }
+
+   @Override
+   public boolean containsProject(final DirectoryResource dir) {
+      return dir.getChild("custom-project-config.txt")
+   }
+
+}
+----
+
+ProjectListener services for project events::
+If your addon would like to receive notifications when new projects are created, simply implement the `ProjectListener` service interface. When a new project is created, the `ProjectFactory` will retrieve all available `ProjectListener` instances, and invoke the `.projectCreated(Project project)` method.
++
+[source,java]
+----
+class CustomProjectListener implements ProjectListener {
+
+   @Override
+   public void projectCreated(Project project) {
+      // handle the project
+   }
+}
+----
++
+TIP: `ProjectListener` instances may also be registered directly via the `ProjectFactory.addProjectListener(ProjectListener listener)` method.
+
+Consistent programming experience::
+ Because the Project API provides an abstract model for interacting with existing and creating new projects, it is used in a number of addons and should be considered the standard approach for project manipulation.
