@@ -103,7 +103,7 @@ public class ForgeShellImpl implements ForgeShell
    @Override
    public void startShell() throws Exception
    {
-      if (console.isRunning()) return;
+      if (console != null && console.isRunning()) return;
       initShell();
       console.start();
    }
