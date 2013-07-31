@@ -257,7 +257,7 @@ public class MyNextStep extends AbstractUICommand implements UIWizardStep {
 . UI provider gathers input values from user.
 . UI provider calls `.validate(UIValidationContext context)`
  - if inputs are valid, proceed, if not, return to step #3
-. UI provider populates user supplied values into input components.
+. UI provider converts user supplied values (if necessary) and populates input components.
 . UI provider calls `.execute(UIContext context)`
 
 === UIWizard execution lifecycle
@@ -267,9 +267,9 @@ public class MyNextStep extends AbstractUICommand implements UIWizardStep {
 . UI provider gathers input values from user.
 . UI provider calls `.validate(UIValidationContext context)`
  - if inputs are valid, proceed, if not, return to step #3
-. UI provider populates user supplied values into input components.
+. UI provider converts user supplied values (if necessary) and populates input components.
 . UI provider calls `.next(UIContext context)`
- - if `NavigationResult` is contains a `UIWizard` or `UIWizardStep` type instance, repeat from step 1 for the next result type.
+ - if `NavigationResult` is contains a `UIWizard` or `UIWizardStep` type instance, repeat from step #1 for the next result type.
  - if `NavigationResult` is null, UI provider calls `.execute(UIContext context)`
 
 
