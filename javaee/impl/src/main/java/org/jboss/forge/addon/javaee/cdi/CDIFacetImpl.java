@@ -22,8 +22,8 @@ import org.jboss.forge.addon.javaee.facets.CDIFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
-import org.jboss.forge.addon.projects.facets.ResourceFacet;
-import org.jboss.forge.addon.projects.facets.WebResourceFacet;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
+import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
@@ -99,12 +99,12 @@ public class CDIFacetImpl extends AbstractJavaEEFacet implements CDIFacet
       PackagingFacet packaging = project.getFacet(PackagingFacet.class);
       if ("war".equals(packaging.getPackagingType()))
       {
-         DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
+         DirectoryResource webRoot = project.getFacet(WebResourcesFacet.class).getWebRootDirectory();
          return (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "beans.xml");
       }
       else
       {
-         DirectoryResource root = project.getFacet(ResourceFacet.class).getResourceFolder();
+         DirectoryResource root = project.getFacet(ResourcesFacet.class).getResourceFolder();
          return (FileResource<?>) root.getChild("META-INF" + File.separator + "beans.xml");
       }
    }

@@ -17,7 +17,7 @@ import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.maven.resources.MavenPomResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.projects.facets.WebResourceFacet;
+import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -66,8 +66,8 @@ public class MavenWebResourceFacetTest
    {
       DirectoryResource target = resourceFactory.create(DirectoryResource.class, new File("target"));
       Project project = projectFactory.createProject(target.getOrCreateChildDirectory("project"));
-      WebResourceFacet facet = facetFactory.install(project, WebResourceFacet.class);
-      Assert.assertTrue(project.hasFacet(WebResourceFacet.class));
+      WebResourcesFacet facet = facetFactory.install(project, WebResourcesFacet.class);
+      Assert.assertTrue(project.hasFacet(WebResourcesFacet.class));
       Assert.assertTrue(facet.getWebRootDirectory().exists());
    }
 
@@ -76,7 +76,7 @@ public class MavenWebResourceFacetTest
    {
       DirectoryResource target = resourceFactory.create(DirectoryResource.class, new File("target"));
       Project project = projectFactory.createProject(target.getOrCreateChildDirectory("project"));
-      WebResourceFacet facet = facetFactory.install(project, WebResourceFacet.class);
+      WebResourcesFacet facet = facetFactory.install(project, WebResourcesFacet.class);
       DirectoryResource expected = project.getProjectRoot().getChildDirectory(
                "src" + File.separator + "main" + File.separator + "webapp");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getWebRootDirectory().getFullyQualifiedName());
@@ -87,7 +87,7 @@ public class MavenWebResourceFacetTest
    {
       DirectoryResource target = resourceFactory.create(DirectoryResource.class, new File("target"));
       Project project = projectFactory.createProject(target.getOrCreateChildDirectory("project"));
-      WebResourceFacet facet = facetFactory.install(project, WebResourceFacet.class);
+      WebResourcesFacet facet = facetFactory.install(project, WebResourcesFacet.class);
       MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
       pom.setContents("<project><modelVersion>4.0.0.</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><plugins><plugin><artifactId>maven-war-plugin</artifactId><version>2.4</version><configuration><warSourceDirectory>WebContent</warSourceDirectory><failOnMissingWebXml>false</failOnMissingWebXml></configuration></plugin></plugins></build></project>");
       DirectoryResource expected = project.getProjectRoot().getChildDirectory(

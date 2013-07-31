@@ -16,7 +16,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.maven.resources.MavenPomResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.projects.facets.ResourceFacet;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
@@ -66,13 +66,13 @@ public class MavenResourceFacetTest
    @Test
    public void testHasFacet() throws Exception
    {
-      Assert.assertTrue("ResourceFacet not installed in project", project.hasFacet(ResourceFacet.class));
+      Assert.assertTrue("ResourcesFacet not installed in project", project.hasFacet(ResourcesFacet.class));
    }
 
    @Test
    public void testResourceFolderNotNull() throws Exception
    {
-      final ResourceFacet facet = project.getFacet(ResourceFacet.class);
+      final ResourcesFacet facet = project.getFacet(ResourcesFacet.class);
       Assert.assertNotNull("Resource folder is null", facet.getResourceFolder());
    }
 

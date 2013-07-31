@@ -24,7 +24,7 @@ import org.jboss.forge.addon.javaee.facets.PersistenceFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
-import org.jboss.forge.addon.projects.facets.ResourceFacet;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -130,7 +130,7 @@ public class PersistenceFacetImpl extends AbstractJavaEEFacet implements Persist
    @Override
    public FileResource<?> getConfigFile()
    {
-      ResourceFacet resources = getFaceted().getFacet(ResourceFacet.class);
+      ResourcesFacet resources = getFaceted().getFacet(ResourcesFacet.class);
       return (FileResource<?>) resources.getResourceFolder().getChild("META-INF" + File.separator + "persistence.xml");
    }
 

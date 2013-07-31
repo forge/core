@@ -24,12 +24,12 @@ import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
-import org.jboss.forge.addon.projects.facets.WebResourceFacet;
+import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 
 @Dependent
-public class MavenWebResourceFacet extends AbstractFacet<Project> implements WebResourceFacet
+public class MavenWebResourceFacet extends AbstractFacet<Project> implements WebResourcesFacet
 {
 
    @Override

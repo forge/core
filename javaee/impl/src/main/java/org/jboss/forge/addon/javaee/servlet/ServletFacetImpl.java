@@ -25,7 +25,7 @@ import org.jboss.forge.addon.javaee.facets.ServletFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
-import org.jboss.forge.addon.projects.facets.WebResourceFacet;
+import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -61,11 +61,11 @@ public class ServletFacetImpl extends AbstractJavaEEFacet implements ServletFace
    public boolean isInstalled()
    {
       Project project = getFaceted();
-      if (!project.hasFacet(WebResourceFacet.class))
+      if (!project.hasFacet(WebResourcesFacet.class))
       {
          return false;
       }
-      DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
+      DirectoryResource webRoot = project.getFacet(WebResourcesFacet.class).getWebRootDirectory();
       return webRoot.exists();
    }
 
@@ -76,7 +76,7 @@ public class ServletFacetImpl extends AbstractJavaEEFacet implements ServletFace
       {
          Project project = getFaceted();
          // Install required facets
-         WebResourceFacet webFacet = facetFactory.install(project, WebResourceFacet.class);
+         WebResourcesFacet webFacet = facetFactory.install(project, WebResourcesFacet.class);
          DirectoryResource webRoot = webFacet.getWebRootDirectory();
          if (!webRoot.exists())
          {
@@ -119,7 +119,7 @@ public class ServletFacetImpl extends AbstractJavaEEFacet implements ServletFace
    public FileResource<?> getConfigFile()
    {
       Project project = getFaceted();
-      DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
+      DirectoryResource webRoot = project.getFacet(WebResourcesFacet.class).getWebRootDirectory();
       final FileResource<?> child = (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "web.xml");
 
       if (!child.exists())
@@ -143,7 +143,7 @@ public class ServletFacetImpl extends AbstractJavaEEFacet implements ServletFace
    @Override
    public List<Resource<?>> getResources()
    {
-      DirectoryResource webRoot = getFaceted().getFacet(WebResourceFacet.class).getWebRootDirectory();
+      DirectoryResource webRoot = getFaceted().getFacet(WebResourcesFacet.class).getWebRootDirectory();
       return listChildrenRecursively(webRoot);
    }
 
@@ -162,7 +162,7 @@ public class ServletFacetImpl extends AbstractJavaEEFacet implements ServletFace
    @Override
    public List<Resource<?>> getResources(final ResourceFilter filter)
    {
-      DirectoryResource webRoot = getFaceted().getFacet(WebResourceFacet.class).getWebRootDirectory();
+      DirectoryResource webRoot = getFaceted().getFacet(WebResourcesFacet.class).getWebRootDirectory();
       return listChildrenRecursively(webRoot, filter);
    }
 

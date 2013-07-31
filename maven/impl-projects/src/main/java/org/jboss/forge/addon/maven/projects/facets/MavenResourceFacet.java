@@ -16,7 +16,7 @@ import org.apache.maven.model.Build;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.facets.ResourceFacet;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 
@@ -27,7 +27,7 @@ import org.jboss.forge.addon.resource.FileResource;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 @Dependent
-public class MavenResourceFacet extends AbstractFacet<Project> implements ResourceFacet
+public class MavenResourceFacet extends AbstractFacet<Project> implements ResourcesFacet
 {
    @Override
    public List<DirectoryResource> getResourceFolders()

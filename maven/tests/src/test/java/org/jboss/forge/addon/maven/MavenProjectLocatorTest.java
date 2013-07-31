@@ -20,7 +20,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
-import org.jboss.forge.addon.projects.facets.ResourceFacet;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
@@ -100,7 +100,7 @@ public class MavenProjectLocatorTest
       DirectoryResource projectDir = addonDir.createTempResource();
       Project project = locator.createProject(projectDir);
       boolean hasFacets = project.hasAllFacets(MavenFacet.class, MavenPluginFacet.class,
-               MetadataFacet.class, PackagingFacet.class, DependencyFacet.class, ResourceFacet.class);
+               MetadataFacet.class, PackagingFacet.class, DependencyFacet.class, ResourcesFacet.class);
       Assert.assertTrue(hasFacets);
 
       projectDir.delete(true);

@@ -19,7 +19,7 @@ import org.jboss.forge.addon.resource.FileResource;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface WebResourceFacet extends ProjectFacet
+public interface WebResourcesFacet extends ProjectFacet
 {
    /**
     * Get the default Web Root directory (this is the {@link DirectoryResource} containing resources to be deployed to

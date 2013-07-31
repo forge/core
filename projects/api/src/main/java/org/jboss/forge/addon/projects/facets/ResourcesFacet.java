@@ -17,7 +17,7 @@ import org.jboss.forge.addon.resource.FileResource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface ResourceFacet extends ProjectFacet
+public interface ResourcesFacet extends ProjectFacet
 {
    /**
     * Get a list of {@link DirectoryResource}s representing the directories this project uses to contain {@link Project}
