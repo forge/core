@@ -72,6 +72,7 @@ public class MavenProjectBuilder implements ProjectBuilder
 
       if (!runTests)
       {
+         selected.add("-DskipTests=true");
          selected.add("-Dmaven.test.skip=true");
       }
 
