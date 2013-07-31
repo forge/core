@@ -1,7 +1,7 @@
 == parser-java
 :idprefix: id_ 
 
-This addon provides *exports services* for use in other addons. The Java parser addon provides APIs and services for parsing Java
+This addon *exports services* for use in other addons. The Java parser addon provides APIs and services for parsing Java
 types including classes, enums, interfaces, annotations, and package-info types. 
 
 === Depends on
@@ -51,7 +51,7 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 
 JavaSourceFactory for java source parsing and generation:: 
 The JavaSourceFactory allows for parsing and generation of Java sources via a type-safe and fluent API.
-
++
 [source,java]
 ----
 @Inject 

@@ -1,0 +1,154 @@
+== maven
+:idprefix: id_ 
+
+This addon *exports services* for use in other addons. The Maven addon implements extension points in several addons, enabling them to function using maven dependency resolution, project building, and additionally provides maven POM manipulation services.
+
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|environment
+|yes
+|no
+
+|dependencies
+|yes
+|no
+
+|resources
+|yes
+|no
+
+|projects
+|no
+|yes
+
+|parser-java
+|no
+|yes
+
+|ui
+|no
+|yes
+
+|addon-manager-spi
+|no
+|yes
+
+|org.jboss.forge.furnace:container-cdi
+|no
+|no
+
+|===
+
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>maven</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----
+
+== Features
+
+The maven addon provides very little functionality on its own, but integrates with and extends several other addons. 
+
+Fluent builders for Maven profile management::
++Independent of other addons, this addon provides the Maven API model for integrating with POM files and profiles, as well as several fluent builders for maintaining profiles.
++
+[source,java]
+----
+MavenPluginBuilder builder = MavenPluginBuilder.create();
+builder.setCoordinate(CoordinateBuilder.create("org.example:example-plugin:0.0.1-SNAPSHOT"))
+       .addExecution(ExecutionBuilder.create().setId("some-execution-id").setPhase("prepare-package").setGoal("some-goal"))
+       .addPluginDependency(DependencyBuilder.create())
+       .setConfiguration(ConfigurationBuilder.create(builder)
+              .createConfigurationElement("some-property").setText("true"));
+----
+
+
+Dependencies addon integration::
+The maven addon supplies an implementation of `DependencyResolverProvider` for use in the `DependencyResolver` service. This enables dependency and dependency metadata resolution against Maven repositories:
++
+[source,java]
+----
+@Inject 
+Imported<DependencyResolver> resolvers;
+...
+for(DependencyResolver resolver : resolvers)
+{
+   resolver.resolveArtifact(DependencyQueryBuilder.create("org.example:example:[1.0.0,3.0.0]"))
+}
+----
++
+NOTE: Version ranges are supported in dependency queries, and follow the http://maven.apache.org/enforcer/enforcer-rules/versionRanges.html[maven version range syntax].
+
+
+Resources addon integration::
+The maven addon supplies several additional `Resource` types for interacting with `pom.xml` files.
++
+* MavenPomResource
+* MavenDependencyResource
+* MavenRepositoryResource
+* MavenProfileResource
++
+[source,java]
+----
+@Inject 
+private ResourceFactory factory;
+...
+MavenPomResource pom = (MavenPomResource) factory.create(".../pom.xml")
+----
++
+Remaining resource types are made available as children of the `MavenPomResource` via the `.listResources()` method. Child resources returned in this way will represent individual dependency, repository, and profile elements from the `pom.xml` file itself:
+
+
+(Optional) projects addon integration:: 
+When the projects addon is installed, the `ProjectFactory` will be able to locate maven projects in the filesystem. In addition, the Maven addon provides implementations of several `ProjectFacet` sub-types:
++
+* `MetadataFacet`
+* `DependencyFacet`
+* `PackagingFacet`
+* `ResourcesFacet`
+* `WebResourcesFacet`
++
+[source,java]
+----
+Project project = ...
+DependencyFacet facet = project.getFacet(DependencyFacet.class);
+----
+
+
+(Optional) parser-java addon integration::
+When both the parser-java and projects addons are intalled, the Maven addon supplies an implementation of the following Java-specific `ProjectFacet` type:
++
+* JavaSourceFacet
+
+
+(Optional) ui addon integration:: 
+When the ui and project addons are both installed, the maven addon provides several `ProjectType` implementations for use in the "New Project" wizards.
++
+|===
+|Project type |Description |Requires addons
+
+|Maven - Java
+|Creates a simple maven project with *'jar'* packaging.
+|parser-java
+
+|Maven - Resources
+|Creates a simple maven project with *'pom'* packaging. 
+|
+
+|===
