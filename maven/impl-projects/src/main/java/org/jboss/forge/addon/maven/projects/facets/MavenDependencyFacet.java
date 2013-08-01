@@ -8,10 +8,7 @@ package org.jboss.forge.addon.maven.projects.facets;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.enterprise.context.Dependent;
@@ -326,43 +323,6 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
          }
       }
       return null;
-   }
-
-   @Override
-   public Map<String, String> getProperties()
-   {
-      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
-
-      Properties properties = pom.getProperties();
-      Map<String, String> result = new HashMap<String, String>();
-      for (Entry<Object, Object> o : properties.entrySet())
-      {
-         result.put((String) o.getKey(), (String) o.getValue());
-      }
-      return result;
-   }
-
-   @Override
-   public void setProperty(final String name, final String value)
-   {
-      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
-
-      Properties properties = pom.getProperties();
-      properties.put(name, value);
-      maven.setPOM(pom);
-   }
-
-   @Override
-   public String getProperty(final String name)
-   {
-      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
-
-      Properties properties = pom.getProperties();
-      maven.setPOM(pom);
-      return (String) properties.get(name);
    }
 
    @Override

@@ -35,11 +35,13 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui</artifactId>
          <classifier>forge-addon</classifier>
+         <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>maven</artifactId>
          <classifier>forge-addon</classifier>
+         <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
@@ -56,6 +58,7 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>parser-java</artifactId>
          <classifier>forge-addon</classifier>
+         <scope>provided</scope>
       </dependency>
    </dependencies>
    <build>

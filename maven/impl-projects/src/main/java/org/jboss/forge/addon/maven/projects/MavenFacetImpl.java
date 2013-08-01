@@ -14,6 +14,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -306,6 +307,18 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    {
       this.buildingResult = null;
       this.fullBuildingResult = null;
+   }
+
+   @Override
+   public Map<String, String> getProperties()
+   {
+      Properties properties = getProjectBuildingResult().getProject().getProperties();
+      Map<String, String> result = new HashMap<String, String>();
+      for (Entry<Object, Object> o : properties.entrySet())
+      {
+         result.put((String) o.getKey(), (String) o.getValue());
+      }
+      return result;
    }
 
    @Override

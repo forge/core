@@ -104,6 +104,8 @@ public class DependencyInstallerImplTest
       Assert.assertTrue(deps.hasDirectManagedDependency(dependency));
       Assert.assertTrue(deps.hasEffectiveDependency(dependency));
       Assert.assertTrue(deps.hasEffectiveManagedDependency(dependency));
+      Assert.assertTrue(installer.isInstalled(project, dependency));
+      Assert.assertTrue(installer.isManaged(project, dependency));
 
       Assert.assertNotNull(deps.getDirectManagedDependency(dependency).getCoordinate().getVersion());
       Assert.assertNull(deps.getDirectDependency(dependency).getCoordinate().getVersion());

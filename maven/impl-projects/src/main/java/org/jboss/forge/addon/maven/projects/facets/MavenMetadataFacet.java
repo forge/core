@@ -7,6 +7,11 @@
 
 package org.jboss.forge.addon.maven.projects.facets;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+
 import javax.enterprise.context.Dependent;
 
 import org.apache.maven.model.Model;
@@ -117,5 +122,50 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    {
       return DependencyBuilder.create().setGroupId(getTopLevelPackage()).setArtifactId(getProjectName())
                .setVersion(getProjectVersion());
+   }
+
+   @Override
+   public Map<String, String> getEffectiveProperties()
+   {
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
+      return maven.getProperties();
+   }
+
+   @Override
+   public Map<String, String> getDirectProperties()
+   {
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
+      Model pom = maven.getPOM();
+
+      Properties properties = pom.getProperties();
+      Map<String, String> result = new HashMap<String, String>();
+      for (Entry<Object, Object> o : properties.entrySet())
+      {
+         result.put((String) o.getKey(), (String) o.getValue());
+      }
+      return result;
+   }
+
+   @Override
+   public void setProperty(final String name, final String value)
+   {
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
+      Model pom = maven.getPOM();
+
+      Properties properties = pom.getProperties();
+      properties.put(name, value);
+      maven.setPOM(pom);
+   }
+
+   @Override
+   public String getDirectProperty(final String name)
+   {
+      return getDirectProperties().get(name);
+   }
+
+   @Override
+   public String getEffectiveProperty(final String name)
+   {
+      return getEffectiveProperties().get(name);
    }
 }

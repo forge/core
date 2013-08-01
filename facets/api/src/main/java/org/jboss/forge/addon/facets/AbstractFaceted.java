@@ -84,6 +84,26 @@ public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Mut
    }
 
    @Override
+   public boolean register(FACETTYPE facet)
+   {
+      if (facet.getFaceted() != this)
+         throw new IllegalArgumentException("[" + facet + "].getOrigin() was [" + facet.getFaceted()
+                  + "] but needed to be [" + this + "]. If your facet type implements "
+                  + MutableFacet.class.getSimpleName() + ", " +
+                  "ensure that a valid origin was supplied during facet creation.");
+
+      if (supports(facet))
+      {
+         if (facet.isInstalled())
+         {
+            facets.add(facet);
+            return true;
+         }
+      }
+      return false;
+   }
+
+   @Override
    @SuppressWarnings("unchecked")
    public <F extends FACETTYPE> Iterable<F> getFacets(Class<F> type)
    {
@@ -123,7 +143,15 @@ public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Mut
    @Override
    public boolean uninstall(FACETTYPE facet)
    {
-      return (facet.isInstalled()) ? facet.uninstall() : true;
+      return facet.isInstalled() ?
+               (facet.uninstall() && facets.remove(facet))
+               : (!facets.contains(facet) || facets.remove(facet));
+   }
+
+   @Override
+   public boolean unregister(FACETTYPE facet)
+   {
+      return facet.isInstalled() ? false : facets.remove(facet);
    }
 
 }

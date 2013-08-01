@@ -134,6 +134,7 @@ DependencyFacet facet = project.getFacet(DependencyFacet.class);
 (Optional) parser-java addon integration::
 When both the parser-java and projects addons are installed, the Maven addon supplies an implementation of the following Java-specific `ProjectFacet` type:
 +
+* JavaCompilerFacet
 * JavaSourceFacet
 
 

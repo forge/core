@@ -8,23 +8,24 @@
 package org.jboss.forge.addon.addons;
 
 import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.addons.facets.ForgeAddonAPIFacet;
-import org.jboss.forge.addon.addons.facets.ForgeAddonFacet;
-import org.jboss.forge.addon.addons.facets.ForgeAddonImplFacet;
-import org.jboss.forge.addon.addons.facets.ForgeAddonSPIFacet;
-import org.jboss.forge.addon.addons.facets.ForgeAddonTestFacet;
-import org.jboss.forge.addon.addons.facets.ForgeContainerAPIFacet;
-import org.jboss.forge.addon.addons.facets.ForgeContainerAddonFacet;
+import org.jboss.forge.addon.addons.facets.AddonAPIFacet;
+import org.jboss.forge.addon.addons.facets.AddonAddonFacet;
+import org.jboss.forge.addon.addons.facets.AddonClassifierFacet;
+import org.jboss.forge.addon.addons.facets.AddonImplFacet;
+import org.jboss.forge.addon.addons.facets.AddonParentFacet;
+import org.jboss.forge.addon.addons.facets.AddonSPIFacet;
+import org.jboss.forge.addon.addons.facets.AddonTestFacet;
+import org.jboss.forge.addon.addons.facets.DefaultFurnaceContainerFacet;
+import org.jboss.forge.addon.addons.facets.FurnaceVersionFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.javaee.facets.CDIFacet;
+import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -62,17 +63,22 @@ public class AddonProjectConfigurator
    public void setupSimpleAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
    {
       // TODO Use or remove forgeVersion parameter
-      facetFactory.install(project, ForgeContainerAddonFacet.class);
-      facetFactory.install(project, CDIFacet.class);
-      facetFactory.install(project, ForgeAddonFacet.class);
+      facetFactory.install(project, FurnaceVersionFacet.class);
+      project.getFacet(FurnaceVersionFacet.class).setVersion(forgeVersion.toString());
+
+      facetFactory.install(project, AddonClassifierFacet.class);
       facetFactory.install(project, JavaSourceFacet.class);
+      facetFactory.install(project, JavaCompilerFacet.class);
+      facetFactory.install(project, DefaultFurnaceContainerFacet.class);
+      facetFactory.install(project, CDIFacet.class);
+      facetFactory.install(project, AddonTestFacet.class);
       installSelectedAddons(project, dependencyAddons, false);
    }
 
    /**
     * Create a Furnace Project with the full structure (api,impl,tests,spi and addon)
     */
-   public void setupAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
+   public void setupComplexAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
    {
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
       String projectName = metadata.getProjectName();
@@ -85,23 +91,14 @@ public class AddonProjectConfigurator
          log.warning("Could not rename project root");
       }
 
-      facetFactory.install(project, JavaSourceFacet.class);
-      dependencyInstaller.installManaged(project,
-               DependencyBuilder.create(ForgeContainerAPIFacet.FORGE_CONTAINER_API_DEPENDENCY)
-                        .setVersion(forgeVersion.toString()));
-      dependencyInstaller.installManaged(project,
-               DependencyBuilder.create(ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY)
-                        .setVersion(forgeVersion.toString()));
+      facetFactory.install(project, AddonParentFacet.class);
+      project.getFacet(FurnaceVersionFacet.class).setVersion(forgeVersion.toString());
 
-      Project addonProject = createSubmoduleProject(project, "addon", projectName, ForgeAddonFacet.class);
-      Project apiProject = createSubmoduleProject(project, "api", projectName + "-api", ForgeAddonAPIFacet.class,
-               JavaSourceFacet.class, CDIFacet.class);
-      Project implProject = createSubmoduleProject(project, "impl", projectName + "-impl", ForgeAddonImplFacet.class,
-               JavaSourceFacet.class, CDIFacet.class);
-      Project spiProject = createSubmoduleProject(project, "spi", projectName + "-spi", ForgeAddonSPIFacet.class,
-               JavaSourceFacet.class, CDIFacet.class);
-      Project testsProject = createSubmoduleProject(project, "tests", projectName + "-tests",
-               ForgeAddonTestFacet.class, JavaSourceFacet.class);
+      Project addonProject = createSubmoduleProject(project, "addon", projectName, AddonAddonFacet.class);
+      Project apiProject = createSubmoduleProject(project, "api", projectName + "-api", AddonAPIFacet.class);
+      Project implProject = createSubmoduleProject(project, "impl", projectName + "-impl", AddonImplFacet.class);
+      Project spiProject = createSubmoduleProject(project, "spi", projectName + "-spi", AddonSPIFacet.class);
+      Project testsProject = createSubmoduleProject(project, "tests", projectName + "-tests", AddonTestFacet.class);
 
       Dependency apiProjectDependency = apiProject.getFacet(MetadataFacet.class).getOutputDependency();
       Dependency implProjectDependency = implProject.getFacet(MetadataFacet.class).getOutputDependency();
@@ -138,8 +135,6 @@ public class AddonProjectConfigurator
       dependencyInstaller.install(apiProject, DependencyBuilder.create(spiProjectDependency).setScopeType("provided"));
 
       dependencyInstaller.install(testsProject, addonProjectDependency);
-
-      project.getProjectRoot().getChild("src").delete(true);
    }
 
    private void installSelectedAddons(final Project project, Iterable<AddonId> addons, boolean managed)
@@ -167,11 +162,7 @@ public class AddonProjectConfigurator
    {
       DirectoryResource location = parent.getProjectRoot().getOrCreateChildDirectory(moduleName);
 
-      Set<Class<? extends ProjectFacet>> facets = new LinkedHashSet<Class<? extends ProjectFacet>>();
-      facets.add(ForgeContainerAPIFacet.class);
-      facets.addAll(Arrays.asList(requiredProjectFacets));
-
-      Project project = projectFactory.createProject(location, facets);
+      Project project = projectFactory.createProject(location, Arrays.asList(requiredProjectFacets));
 
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
       metadata.setProjectName(artifactId);

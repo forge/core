@@ -42,10 +42,10 @@ public interface FacetFactory
     * @throws IllegalStateException if installation failed
     */
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> FACETTYPE install(
-            FACETEDTYPE origin, Class<FACETTYPE> type) throws FacetNotFoundException;
+            FACETEDTYPE origin, Class<FACETTYPE> type) throws FacetNotFoundException, IllegalStateException;
 
    /**
-    * Install a {@link Facet} instance into the given origin.
+    * Install a {@link Facet} instance into the given {@link Faceted} origin.
     * 
     * @throws IllegalArgumentException when the given {@link Facet#getFaceted()} is not equal to the specified
     *            {@link Faceted} origin instance, or if the given {@link Faceted} type does not implement
@@ -54,5 +54,34 @@ public interface FacetFactory
     * @return <code>true</code> if installation was successful; <code>false</code> if installation failed.
     */
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean install(
+            FACETEDTYPE origin, FACETTYPE facet) throws IllegalArgumentException;
+
+   /**
+    * Register a {@link Facet} type into the given {@link Faceted} origin. (Facets may be registered when their
+    * installation requirements have already been met.)
+    * 
+    * @throws IllegalArgumentException when the given {@link Facet#getFaceted()} is not equal to the specified
+    *            {@link Faceted} origin instance, or if the given {@link Faceted} type does not implement
+    *            {@link MutableFaceted}.
+    * 
+    * @return the new {@link Facet} instance. (Never null.)
+    * 
+    * @throws FacetNotFoundException if no implementation can be found.
+    * @throws IllegalStateException if installation failed
+    */
+   public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> FACETTYPE register(
+            FACETEDTYPE origin, Class<FACETTYPE> type) throws FacetNotFoundException, IllegalStateException;
+
+   /**
+    * Register a {@link Facet} instance into the given {@link Faceted} origin. (Facets may be registered when their
+    * installation requirements have already been met.)
+    * 
+    * @throws IllegalArgumentException when the given {@link Facet#getFaceted()} is not equal to the specified
+    *            {@link Faceted} origin instance, or if the given {@link Faceted} type does not implement
+    *            {@link MutableFaceted}.
+    * 
+    * @return <code>true</code> if registration was successful; <code>false</code> if installation failed.
+    */
+   public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean register(
             FACETEDTYPE origin, FACETTYPE facet) throws IllegalArgumentException;
 }

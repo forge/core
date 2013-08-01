@@ -57,17 +57,11 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 
 The addons addon provides some functionality on its own for development and extension purposes, but primarily integrates with and extends several other addons. 
 
-Handle simple or complex addon layouts::
-
- This addon supports development of two standard addon project layouts: 
-
-- *Simple* project layouts are a simple single-module project, consisting of project sources and dependencies. 
-- *Complex* project layouts are a multi-module project designed to take advantage of the modular system design, hiding implementation classes, while exposing API and SPI classes for use by consumers.
- 
-
-*Complex addon layout:*
-
-[options="header"]
+Supports development of two standard addon project layouts::
++
+* *Simple* project layouts are a simple single-module project, consisting of project sources and dependencies. 
+* *Complex* project layouts are a multi-module project designed to take advantage of the modular system design, hiding implementation classes, while exposing API and SPI classes for use by consumers.
++
 |===
 |Module |Type |Description |Visibility to consumers
 

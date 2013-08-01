@@ -7,6 +7,7 @@
 package org.jboss.forge.addon.maven.projects;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.model.Model;
 import org.jboss.forge.addon.maven.resources.MavenPomResource;
@@ -35,6 +36,11 @@ public interface MavenFacet extends ProjectFacet
     * Set the current Maven {@link Model} for this {@link Project}.
     */
    void setPOM(Model pom);
+
+   /**
+    * Get a {@link Map} of all resolvable project properties.
+    */
+   Map<String, String> getProperties();
 
    /**
     * Resolve Maven properties for the given input {@link String}, replacing occurrences of the `${property}` with their

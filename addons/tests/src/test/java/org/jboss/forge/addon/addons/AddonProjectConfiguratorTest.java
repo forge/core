@@ -13,12 +13,19 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.addons.facets.ForgeContainerAPIFacet;
-import org.jboss.forge.addon.addons.facets.ForgeContainerAddonFacet;
+import org.jboss.forge.addon.addons.facets.AddonAPIFacet;
+import org.jboss.forge.addon.addons.facets.AddonImplFacet;
+import org.jboss.forge.addon.addons.facets.AddonParentFacet;
+import org.jboss.forge.addon.addons.facets.AddonSPIFacet;
+import org.jboss.forge.addon.addons.facets.AddonTestFacet;
+import org.jboss.forge.addon.addons.facets.DefaultFurnaceContainerAPIFacet;
+import org.jboss.forge.addon.addons.facets.DefaultFurnaceContainerFacet;
+import org.jboss.forge.addon.addons.facets.FurnaceAPIFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.javaee.facets.CDIFacet;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
+import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -40,19 +47,22 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class AddonProjectConfiguratorTest
 {
+   private static final String FURNACE_VERSION = "2.0.0-SNAPSHOT";
+
    @Deployment
    @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.furnace:container-cdi", version = "2.0.0-SNAPSHOT"),
-            @AddonDependency(name = "org.jboss.forge.addon:addons", version = "2.0.0-SNAPSHOT")
+            @AddonDependency(name = "org.jboss.forge.furnace:container-cdi", version = FURNACE_VERSION),
+            @AddonDependency(name = "org.jboss.forge.addon:addons", version = FURNACE_VERSION)
    })
    public static ForgeArchive getDeployment()
    {
       return ShrinkWrap.create(ForgeArchive.class).
                addBeansXML().
                addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:addons", "2.0.0-SNAPSHOT"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee", "2.0.0-SNAPSHOT"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace:container-cdi", "2.0.0-SNAPSHOT")
+                        AddonDependencyEntry.create("org.jboss.forge.addon:addons", FURNACE_VERSION),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:maven", FURNACE_VERSION),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee", FURNACE_VERSION),
+                        AddonDependencyEntry.create("org.jboss.forge.furnace:container-cdi", FURNACE_VERSION)
                );
    }
 
@@ -73,10 +83,11 @@ public class AddonProjectConfiguratorTest
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
       metadataFacet.setTopLevelPackage("com.acme.testproject");
 
-      SingleVersion forgeVersion = new SingleVersion("2.0.0-SNAPSHOT");
-      configurator.setupAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
-
-      Assert.assertTrue(project.hasFacet(JavaSourceFacet.class));
+      SingleVersion forgeVersion = new SingleVersion(FURNACE_VERSION);
+      configurator.setupComplexAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
+      Assert.assertTrue(project.hasFacet(AddonParentFacet.class));
+      Assert.assertTrue(project.hasFacet(JavaCompilerFacet.class));
+      Assert.assertFalse(project.hasFacet(JavaSourceFacet.class));
       DirectoryResource projectRoot = project.getProjectRoot();
 
       Assert.assertTrue("ADDON module is missing", projectRoot.getChild("addon").exists());
@@ -91,16 +102,24 @@ public class AddonProjectConfiguratorTest
       Project spiProject = projectFactory.findProject(projectRoot.getChildDirectory("spi"));
       Project testsProject = projectFactory.findProject(projectRoot.getChildDirectory("tests"));
 
-      Assert.assertFalse(addonProject.hasFacet(JavaSourceFacet.class));
-      Assert.assertTrue(apiProject.hasFacet(JavaSourceFacet.class));
-      Assert.assertTrue(implProject.hasFacet(JavaSourceFacet.class));
-      Assert.assertTrue(spiProject.hasFacet(JavaSourceFacet.class));
-      Assert.assertTrue(testsProject.hasFacet(JavaSourceFacet.class));
+      Assert.assertFalse(addonProject.hasFacet(JavaCompilerFacet.class));
+      Assert.assertTrue(addonProject.hasFacet(JavaSourceFacet.class));
 
-      Assert.assertFalse(addonProject.hasFacet(JavaSourceFacet.class));
+      Assert.assertFalse(apiProject.hasFacet(JavaCompilerFacet.class));
+      Assert.assertTrue(apiProject.hasFacet(JavaSourceFacet.class));
       Assert.assertTrue(apiProject.hasFacet(CDIFacet.class));
+
+      Assert.assertFalse(implProject.hasFacet(JavaCompilerFacet.class));
+      Assert.assertTrue(implProject.hasFacet(JavaSourceFacet.class));
       Assert.assertTrue(implProject.hasFacet(CDIFacet.class));
-      Assert.assertTrue(spiProject.hasFacet(CDIFacet.class));
+
+      Assert.assertFalse(spiProject.hasFacet(JavaCompilerFacet.class));
+      Assert.assertTrue(spiProject.hasFacet(JavaSourceFacet.class));
+      Assert.assertTrue(spiProject.hasFacet(FurnaceAPIFacet.class));
+      Assert.assertFalse(spiProject.hasFacet(CDIFacet.class));
+
+      Assert.assertFalse(testsProject.hasFacet(JavaCompilerFacet.class));
+      Assert.assertTrue(testsProject.hasFacet(JavaSourceFacet.class));
       Assert.assertFalse(testsProject.hasFacet(CDIFacet.class));
 
       Dependency addonDependency = DependencyBuilder.create(
@@ -118,7 +137,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertNull(project.getFacet(MavenFacet.class).getPOM().getParent());
 
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
-               ForgeContainerAPIFacet.FORGE_CONTAINER_API_DEPENDENCY));
+               DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
                DependencyBuilder.create(addonProject.getFacet(MetadataFacet.class).getOutputDependency())
                         .setClassifier("forge-addon")));
@@ -132,7 +151,7 @@ public class AddonProjectConfiguratorTest
        * Verify impl/ sub-module
        */
       Assert.assertEquals("../pom.xml", implProject.getFacet(MavenFacet.class).getPOM().getParent().getRelativePath());
-      Assert.assertTrue(implProject.hasFacet(ForgeContainerAPIFacet.class));
+      Assert.assertTrue(implProject.hasFacet(DefaultFurnaceContainerAPIFacet.class));
 
       Assert.assertTrue(implProject.getFacet(DependencyFacet.class).hasDirectDependency(apiDependency));
       Assert.assertFalse(implProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(apiDependency));
@@ -148,17 +167,18 @@ public class AddonProjectConfiguratorTest
 
       Assert.assertTrue(implProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(implProject.getFacet(DependencyFacet.class).hasDirectDependency(
-               ForgeContainerAPIFacet.FORGE_CONTAINER_API_DEPENDENCY));
+               DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertFalse(implProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(
-               ForgeContainerAPIFacet.FORGE_CONTAINER_API_DEPENDENCY));
+               DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertTrue(implProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
-               ForgeContainerAPIFacet.FORGE_CONTAINER_API_DEPENDENCY));
+               DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
+      Assert.assertTrue(implProject.hasFacet(AddonImplFacet.class));
 
       /*
        * Verify api/ sub-module
        */
       Assert.assertEquals("../pom.xml", apiProject.getFacet(MavenFacet.class).getPOM().getParent().getRelativePath());
-      Assert.assertTrue(apiProject.hasFacet(ForgeContainerAPIFacet.class));
+      Assert.assertTrue(apiProject.hasFacet(DefaultFurnaceContainerAPIFacet.class));
 
       Assert.assertTrue(apiProject.getFacet(DependencyFacet.class).hasDirectDependency(spiDependency));
       Assert.assertFalse(apiProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(spiDependency));
@@ -168,11 +188,12 @@ public class AddonProjectConfiguratorTest
 
       Assert.assertTrue(apiProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(apiProject.getFacet(DependencyFacet.class).hasDirectDependency(
-               ForgeContainerAPIFacet.FORGE_CONTAINER_API_DEPENDENCY));
+               DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertFalse(apiProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(
-               ForgeContainerAPIFacet.FORGE_CONTAINER_API_DEPENDENCY));
+               DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertTrue(apiProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
-               ForgeContainerAPIFacet.FORGE_CONTAINER_API_DEPENDENCY));
+               DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
+      Assert.assertTrue(apiProject.hasFacet(AddonAPIFacet.class));
 
       /*
        * Verify spi/ sub-module
@@ -181,11 +202,15 @@ public class AddonProjectConfiguratorTest
 
       Assert.assertTrue(spiProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(spiProject.getFacet(DependencyFacet.class).hasDirectDependency(
-               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY));
+               FurnaceAPIFacet.FURNACE_API_DEPENDENCY));
       Assert.assertFalse(spiProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(
-               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY));
+               FurnaceAPIFacet.FURNACE_API_DEPENDENCY));
       Assert.assertTrue(spiProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
-               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY));
+               FurnaceAPIFacet.FURNACE_API_DEPENDENCY));
+      Assert.assertFalse(spiProject.hasFacet(DefaultFurnaceContainerFacet.class));
+      Assert.assertFalse(spiProject.hasFacet(DefaultFurnaceContainerAPIFacet.class));
+      Assert.assertFalse(spiProject.hasFacet(CDIFacet.class));
+      Assert.assertTrue(spiProject.hasFacet(AddonSPIFacet.class));
 
       /*
        * Verify addon/ sub-module
@@ -215,11 +240,11 @@ public class AddonProjectConfiguratorTest
 
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasDirectDependency(
-               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY));
+               DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
       Assert.assertFalse(addonProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(
-               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY));
+               DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
-               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY));
+               DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
 
       /*
        * Verify tests/ sub-module
@@ -244,11 +269,13 @@ public class AddonProjectConfiguratorTest
 
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasDirectDependency(
-               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY));
+               DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
       Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(
-               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY));
+               DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
-               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY));
+               DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
+      Assert.assertEquals(FURNACE_VERSION, testsProject.getFacet(DependencyFacet.class).getEffectiveDependency(
+               DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY).getCoordinate().getVersion());
 
       project.getProjectRoot().delete(true);
       project.getProjectRoot().deleteOnExit();
@@ -265,24 +292,50 @@ public class AddonProjectConfiguratorTest
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
       metadataFacet.setTopLevelPackage("com.acme.testproject");
 
-      SingleVersion forgeVersion = new SingleVersion("2.0.0-SNAPSHOT");
+      SingleVersion forgeVersion = new SingleVersion(FURNACE_VERSION);
       configurator.setupSimpleAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
 
-      Assert.assertTrue(project.hasFacet(ForgeContainerAddonFacet.class));
+      Assert.assertTrue(project.hasFacet(DefaultFurnaceContainerFacet.class));
+      Assert.assertTrue(project.hasFacet(AddonTestFacet.class));
       Assert.assertTrue(project.hasFacet(JavaSourceFacet.class));
+      Assert.assertTrue(project.hasFacet(JavaCompilerFacet.class));
       Assert.assertTrue(project.hasFacet(CDIFacet.class));
 
       Assert.assertFalse(project.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
+
+      /**
+       * Verify test harness dependencies
+       */
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectDependency(
-               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY));
-      Assert.assertNull(project.getFacet(DependencyFacet.class).getDirectDependency(
-               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY).getCoordinate().getVersion());
+               AddonTestFacet.FURNACE_TEST_ADAPTER_DEPENDENCY));
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectDependency(
+               AddonTestFacet.FURNACE_TEST_HARNESS_DEPENDENCY));
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
-               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY));
+               AddonTestFacet.FURNACE_TEST_ADAPTER_DEPENDENCY));
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
+               AddonTestFacet.FURNACE_TEST_HARNESS_DEPENDENCY));
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
+               DependencyBuilder.create("junit:junit").setScopeType("test")));
+
+      /**
+       * Verify container dependencies
+       */
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectDependency(
+               DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
+      Assert.assertNull(project.getFacet(DependencyFacet.class).getDirectDependency(
+               DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY).getCoordinate().getVersion());
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
+               DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
       Assert.assertNotNull(project.getFacet(DependencyFacet.class).getDirectManagedDependency(
-               ForgeContainerAddonFacet.FORGE_CONTAINER_DEPENDENCY).getCoordinate().getVersion());
-      Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
-               ForgeContainerAPIFacet.FORGE_CONTAINER_API_DEPENDENCY));
+               DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY).getCoordinate().getVersion());
+      Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
+               DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
+      Assert.assertEquals(FURNACE_VERSION, project.getFacet(DependencyFacet.class).getEffectiveDependency(
+               DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY).getCoordinate().getVersion());
+      Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
+               DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
+      Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(
+               DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
 
       project.getProjectRoot().delete(true);
       project.getProjectRoot().deleteOnExit();
@@ -301,7 +354,7 @@ public class AddonProjectConfiguratorTest
       metadataFacet.setTopLevelPackage("com.acme.testproject");
 
       SingleVersion forgeVersion = new SingleVersion("2.0.0.Alpha3");
-      configurator.setupAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
+      configurator.setupComplexAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
 
       DirectoryResource projectRoot = project.getProjectRoot();
 

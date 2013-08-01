@@ -18,9 +18,10 @@ import org.jboss.forge.furnace.util.Strings;
 public class DependencyInstallerImpl implements DependencyInstaller
 {
    @Override
-   public Dependency install(final Project project, final Dependency dependency)
+   public Dependency install(final Project project, final Dependency request)
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
+      final Dependency dependency = deps.resolveProperties(request);
 
       // Exists in deps, no version change requested
       Dependency unversioned = getUnversioned(dependency);
@@ -67,7 +68,7 @@ public class DependencyInstallerImpl implements DependencyInstaller
          else
          {
             /*
-             * Version is different or unspecified, and we had no existing version.
+             * Version is different or unspecified, and we had no existing managed dependency.
              */
             return updateAll(deps, dependency, unversioned);
          }
@@ -126,6 +127,13 @@ public class DependencyInstallerImpl implements DependencyInstaller
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       return deps.hasEffectiveDependency(dependency);
+   }
+
+   @Override
+   public boolean isManaged(final Project project, final Dependency dependency)
+   {
+      DependencyFacet deps = project.getFacet(DependencyFacet.class);
+      return deps.hasEffectiveManagedDependency(dependency);
    }
 
    private Dependency updateAll(final DependencyFacet deps, final Dependency requested,

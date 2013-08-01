@@ -8,7 +8,6 @@
 package org.jboss.forge.addon.projects.facets;
 
 import java.util.List;
-import java.util.Map;
 
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.Dependency;
@@ -58,8 +57,8 @@ public interface DependencyFacet extends ProjectFacet
    public void addRepository(String name, String url);
 
    /**
-    * Return an immutable list of all direct {@link DependencyNodeUtil} contained within this project. (i.e.: all dependencies
-    * for which {@link DependencyFacet#hasDirectDependency(Dependency)} returns true;
+    * Return an immutable list of all direct {@link DependencyNodeUtil} contained within this project. (i.e.: all
+    * dependencies for which {@link DependencyFacet#hasDirectDependency(Dependency)} returns true;
     */
    public List<Dependency> getDependencies();
 
@@ -120,8 +119,8 @@ public interface DependencyFacet extends ProjectFacet
    public Dependency getEffectiveManagedDependency(Dependency manDep);
 
    /**
-    * Return an immutable list of all direct managed {@link DependencyNodeUtil} contained within this project. (i.e.: all
-    * managed dependencies for which {@link ManagedDependencyFacet#hasManagedDependency(Dependency)} returns true;
+    * Return an immutable list of all direct managed {@link DependencyNodeUtil} contained within this project. (i.e.:
+    * all managed dependencies for which {@link ManagedDependencyFacet#hasManagedDependency(Dependency)} returns true;
     */
    public List<Dependency> getManagedDependencies();
 
@@ -133,18 +132,6 @@ public interface DependencyFacet extends ProjectFacet
     * @return
     */
    public Dependency getDirectManagedDependency(Dependency managedDependency);
-
-   /**
-    * Return a list of all build dependency properties.(Build properties such, as ${my.version}, can be used anywhere in
-    * a dependency, and will be expanded during building to their property value.)
-    */
-   public Map<String, String> getProperties();
-
-   /**
-    * Get a build property by name. (Build properties, such as ${my.version}, can be used anywhere in a dependency, and
-    * will be expanded during building to their property value.)
-    */
-   public String getProperty(String name);
 
    /**
     * Get the list of repositories for which this project is currently configured to use in dependency resolution.
@@ -272,11 +259,5 @@ public interface DependencyFacet extends ProjectFacet
     * Resolve properties in the given dependency, converting them to their actual values.
     */
    public Dependency resolveProperties(Dependency dependency);
-
-   /**
-    * Set a build dependency property. (Build properties, such as ${my.version}, can be used anywhere in a dependency,
-    * and will be expanded during building to their property value.)
-    */
-   public void setProperty(String name, String value);
 
 }

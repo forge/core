@@ -95,9 +95,9 @@ public class ProjectFactoryImpl implements ProjectFactory
          for (Class<ProjectFacet> instance : registry.getExportedTypes(ProjectFacet.class))
          {
             ProjectFacet facet = factory.create(result, instance);
-            if (facet != null && facet.isInstalled() && factory.install(result, facet))
+            if (facet != null && factory.register(result, facet))
             {
-               log.fine("Installed Facet [" + facet + "] into Project [" + result + "]");
+               log.fine("Registered Facet [" + facet + "] into Project [" + result + "]");
             }
          }
       }
@@ -163,8 +163,7 @@ public class ProjectFactoryImpl implements ProjectFactory
          for (Class<ProjectFacet> instance : registry.getExportedTypes(ProjectFacet.class))
          {
             ProjectFacet facet = factory.create(result, instance);
-            // FIXME need to check if facet's dependency hierarchy is also installed before attempting to install
-            if (facet != null && facet.isInstalled() && factory.install(result, facet))
+            if (facet != null && factory.register(result, facet))
             {
                log.fine("Installed Facet [" + facet + "] into Project [" + result + "]");
             }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet;
+import org.jboss.forge.addon.maven.projects.facets.MavenJavaCompilerFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenJavaSourceFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet;
@@ -44,6 +45,7 @@ public class MavenJavaProjectType implements ProjectType
       result.add(MavenPackagingFacet.class);
       result.add(MavenDependencyFacet.class);
       result.add(MavenResourceFacet.class);
+      result.add(MavenJavaCompilerFacet.class);
       result.add(MavenJavaSourceFacet.class);
       return result;
    }

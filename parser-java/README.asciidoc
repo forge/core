@@ -73,9 +73,11 @@ JavaSourceFactory factory = imported.get();
 ==== 
 
 (Optional) projects addon integration:: 
-When the projects addon is installed, the `JavaSourceFacet` will be retrievable from appropriately configured projects that 
-include java source code.
-
+When the projects addon is installed, several `ProjectFacet` implementations will be retrievable from appropriately configured projects that include java source code.
++
+* *JavaCompilerFacet* - used to control the project Java compiler version.
+* *JavaSourceFacet* - used to manipulate project Java source files.
++
 [source,java]
 ----
 Project project = ...
