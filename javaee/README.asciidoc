@@ -1,0 +1,82 @@
+== javaee
+:idprefix: id_ 
+
+This addon provides *standalone* functionality, and *exports services* for use in other addons. 
+The javaee addon enables creation of artifacts (classes, descriptors) with focus on the Java EE 6 specification (CDI, JSF, JMS, JPA, etc...) 
+        
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|ui
+|no
+|no
+
+|projects
+|yes
+|no
+
+|parser-java
+|yes
+|no
+
+|===
+
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>javaee</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----
+
+== Features
+
+JavaEE project facets :: 
+   Adds Java EE capabilities to a specific project.
++
+(add table with Facet and behavior)
+
+JPA Persistence Container and Provider :: 
+   The javaee addon already supports out-of-the-box the following JPA containers:
+- Wildfly
+- JBoss AS 7 and 6
+- JBoss EAP 6.x
+- WebLogic 12c
+- GlassFish 3.x
+- SAP Lean Java Server
+- TomEE
+- Non-JTA container
+- Custom JDBC container
+- Custom JTA container
++
+And the following JPA Providers::
+- Hibernate 
+- EclipseLink
+- OpenJPA
+- Infinispan
+
++
+[TIP] 
+====
+If your addon uses a container that does not support "@Inject" annotations, services such as the `FacetFactory` may also be 
+accessed via the `ABCFactory `:
+
+----
+Imported< ABCFactory > imported = addonRegistry.getServices(ABCFactory.class);
+ABCFactory factory = imported.get();
+----
+==== 
+
