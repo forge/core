@@ -50,7 +50,8 @@ JavaEE project facets ::
 (add table with Facet and behavior)
 
 JPA Persistence Container and Provider :: 
-   The javaee addon already supports out-of-the-box the following JPA containers:
+ The javaee addon already supports out-of-the-box the following JPA containers:
++
 - Wildfly
 - JBoss AS 7 and 6
 - JBoss EAP 6.x
@@ -62,7 +63,7 @@ JPA Persistence Container and Provider ::
 - Custom JDBC container
 - Custom JTA container
 +
-And the following JPA Providers::
+And the following JPA Providers:
 - Hibernate 
 - EclipseLink
 - OpenJPA
