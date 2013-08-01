@@ -65,6 +65,19 @@ public class QueryByExampleWidgetBuilderTest
                widget.toString());
    }
    
+   public void testInteger()
+   {
+      QueryByExampleWidgetBuilder widgetBuilder = new QueryByExampleWidgetBuilder();
+      Map<String, String> attributes = CollectionUtils.newHashMap();
+      attributes.put(NAME, "abc");
+      attributes.put(TYPE, Integer.class.getName());
+      StaticWidget widget = widgetBuilder.buildWidget(PROPERTY, attributes, new StaticJavaMetawidget());
+
+      assertEquals(
+               "Integer abc = this.example.getAbc();if (abc != null && abc.intValue() != 0) { predicatesList.add(builder.equal(root.get(\"abc\"), abc)); }",
+               widget.toString());
+   }
+
    public void testLong()
    {
       QueryByExampleWidgetBuilder widgetBuilder = new QueryByExampleWidgetBuilder();
