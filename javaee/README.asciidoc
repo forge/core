@@ -44,40 +44,89 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 
 == Features
 
-JavaEE project facets :: 
-   Adds Java EE capabilities to a specific project.
+Projects addon integration::
+   This addon provides several `ProjectFacet` implementations for use in developing `forge-addon` projects. By using the javaee addon, it is possible to add Java EE capabilities to a specific project by adding the required technology as a provided dependency in the build descriptor.
 +
-(add table with Facet and behavior)
+Descriptors are handled by the https://github.com/shrinkwrap/descriptors[ShrinkWrap Descriptors] project. Read the Facets addon README to learn how to handle facets in Forge. Below is a table that lists each facet and its purpose.
++
+[options="header,asciidoc"]
+|===
+|Facet|Behavior when installing in a project
 
-JPA Persistence Container and Provider :: 
- The javaee addon already supports out-of-the-box the following JPA containers:
+|`CDIFacet`
+|Adds the necessary CDI 1.x dependencies to the build descriptor. Adds a `META-INF/beans.xml` to your resources folder or to `WEB-INF/beans.xml` if in a Web project. The facet provides access to the `BeansDescriptor` object to allow manipulation of the `beans.xml` file in a fluent way.
+
+|`EJBFacet`
+|Adds the necessary EJB 3.x dependencies to the build descriptor. 
+
+|`JAXWSFacet`
+|Adds the necessary JAX-WS dependencies to the build descriptor. 
+
+|`JMSFacet`
+|Adds the necessary JMS 1.1 dependencies to the build descriptor. 
+
+|`JSTLFacet`
+|Adds the necessary JSTL dependencies to the build descriptor. 
+
+|`JTAFacet`
+|Adds the necessary JTA dependencies to the build descriptor. 
+
+|`PersistenceFacet`
+|Adds the necessary JPA 2.x dependencies to the build descriptor. Adds a `META-INF/persistence.xml` to your project. Provides access to the `PersistenceDescriptor` object to allow manipulation of the `persistence.xml` file in a fluent way. 
+
+|`PersistenceMetaModelFacet`
+|Adds the necessary configuration in the build descriptor to enable JPA 2.x meta-model generation. 
+
+|`ServletFacet`
+|Adds the necessary Servlet 3.x dependencies to the build descriptor. Adds a `WEB-INF/web.xml` to your project. Provides access to the `WebAppDescriptor` object to allow manipulation of the `web.xml` file in a fluent way. 
+
+|===
+
+JPA configuration :: 
+ The javaee addon supports out-of-the-box configuration of the following JPA containers:
 +
-- Wildfly
-- JBoss AS 7 and 6
-- JBoss EAP 6.x
-- WebLogic 12c
-- GlassFish 3.x
-- SAP Lean Java Server
-- TomEE
-- Non-JTA container
-- Custom JDBC container
-- Custom JTA container
+[options="header"]
+|===
+|Container|Tested Version(s) (Where applicable)
+
+|JBoss WildFly
+|-
+
+|JBoss AS
+|6.x / 7.x
+
+|JBoss EAP
+|6.x / 6.1.x
+
+|Oracle WebLogic
+|12c
+
+|Oracle GlassFish
+|3.x
+
+|TomEE
+|1.5.x
+
+|SAP Lean Java Server
+|-
+
+|Non-JTA Container
+|-
+
+|Custom JDBC container
+|-
+
+|Custom JTA container
+|-
+
+|===
+ 
 +
 And the following JPA Providers:
++
 - Hibernate 
 - EclipseLink
 - OpenJPA
 - Infinispan
 
 +
-[TIP] 
-====
-If your addon uses a container that does not support "@Inject" annotations, services such as the `FacetFactory` may also be 
-accessed via the `ABCFactory `:
-
-----
-Imported< ABCFactory > imported = addonRegistry.getServices(ABCFactory.class);
-ABCFactory factory = imported.get();
-----
-==== 
-
