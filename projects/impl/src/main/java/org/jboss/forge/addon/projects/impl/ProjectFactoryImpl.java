@@ -26,10 +26,7 @@ import org.jboss.forge.addon.projects.ProjectLocator;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.repositories.AddonRepository;
-import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Predicate;
@@ -47,9 +44,6 @@ public class ProjectFactoryImpl implements ProjectFactory
 
    @Inject
    private ResourceFactory resourceFactory;
-
-   @Inject
-   private Furnace forge;
 
    @Inject
    private FacetFactory factory;
@@ -194,28 +188,18 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Override
    public Project createTempProject()
    {
-      List<AddonRepository> repositories = forge.getRepositories();
       File rootDirectory = null;
-      for (AddonRepository addonRepository : repositories)
+      try
       {
-         if (addonRepository instanceof MutableAddonRepository)
-         {
-            rootDirectory = addonRepository.getRootDirectory();
-         }
+         rootDirectory = File.createTempFile("forgeproject", ".tmp");
+         rootDirectory.delete();
+         rootDirectory.mkdirs();
       }
-      if (rootDirectory == null)
+      catch (IOException e)
       {
-         try
-         {
-            rootDirectory = File.createTempFile("forgeproject", ".tmp");
-            rootDirectory.delete();
-            rootDirectory.mkdirs();
-         }
-         catch (IOException e)
-         {
-            throw new RuntimeException("Could not create temp folder", e);
-         }
+         throw new RuntimeException("Could not create temp folder", e);
       }
+
       DirectoryResource addonDir = resourceFactory.create(DirectoryResource.class, rootDirectory);
       DirectoryResource projectDir = addonDir.createTempResource();
       projectDir.deleteOnExit();
