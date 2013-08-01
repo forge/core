@@ -1,0 +1,146 @@
+== addons (addon development tools)
+:idprefix: id_ 
+
+This addon provides *standalone* functionality, and *exports services* for use in other addons. The Addons addon implements extension points in several addons, enabling them to produce and manipulate `forge-addon` project types.
+
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|javaee
+|no
+|no
+
+|maven
+|no
+|no
+
+|projects
+|yes
+|no
+
+|parser-java
+|no
+|no
+
+|ui
+|no
+|no
+
+|org.jboss.forge.furnace:container-cdi
+|no
+|no
+
+|===
+
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>addons</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----
+
+== Features
+
+The addons addon provides some functionality on its own for development and extension purposes, but primarily integrates with and extends several other addons. 
+
+Handle simple or complex addon layouts::
+ This addon supports development of two standard addon project layouts: *Simple* project layouts are a simple single-module project, consisting of project sources and dependencies. *Complex* project layouts are a multi-module project designed to take advantage of the modular system design, hiding implementation classes, while exposing API and SPI classes for use by consumers.
++
+*Complex addon layout:*
++
+[options="header"]
+|===
+|Module |Type |Description |Visibility to consumers
+
+|`/`
+|aggregate
+|Parent project - contains all other modules. Used to manage dependency versions of sub-modules and configure the build environment.
+|n/a
+
+|`addon/`
+|jar (forge-addon)
+|The primary output artifact of this project layout.
+
+This module contains dependencies on other addons, and on its own `spi/` addon, and local resource dependencies on its own `api/` and `impl/`, respectively, where sources should be placed.
+
+It should *NOT* contain sources or jar dependencies unless explicitly required for techical reasons. 
+
+|Sources and JARs included in this addon are visible to consuming addons, but not to `api/` `spi/` or `impl/`. 
+
+'Included as a dependency of the `tests/` module for testing purposes only.'
+
+|`api/`
+|jar
+|Contains local resources and services that are visible to consuming addons that reference `addon/` as an addon dependency.
+|Sources and JARs included in this addon are visible to consuming addons, and to `impl/`.
+
+|`impl/`
+|jar
+|Contains local resources and service implementations that are required only as implementation details of this addon, or implement a service `spi/` of another addon.
+|Sources and JARs included in this addon are *NOT* visible outside of this module.
+
+|`spi/`
+|jar (forge-addon)
+|Contains classes and service SPI definitions for other addons to implement. Typically this addon does not provide services of its own, and does not require lifecycle management as it is used purely for classloading purposes.
+|Sources and JARs included in this addon are visible to consuming addons, to `api/` and `impl/`.
+
+|`tests/`
+|jar
+|This module is where consumer integration tests should be placed. The test-harness is included as a dependency, and allows for real testing of the `addon/` module as it interacts with other addons in a live system.
+|n/a
+
+
+
+|===
+
+Projects addon integration::
+ This addon provides several `ProjectFacet` implementations for use in developing `forge-addon` projects. Below is a table that lists each facet and its purpose.
+
+[options="header"]
+|===
+|Facet |Description |Used in layout type
+
+|*'DefaultFurnaceContainerFacet'*
+|Ensures that a project depends on the default Furnace container ('org.jboss.forge.furnace:container-cdi').
+|simple, complex
+
+|*'DefaultFurnaceContainerAPIFacet'*
+|Ensures that a project depends on the default Furnace container API ('org.jboss.forge.furnace:container-cdii-api').
+|complex
+
+|ForgeAddonFacet
+|Ensures that a project is configured as a `forge-addon` with access to the Furnace APIs, and provides a default `AddonLifecycleProvider` ('org.jboss.forge.furnace:container-cdi').
+|simple, complex
+
+|ForgeAddonAPIFacet
+|Ensures that a project is configured as a `jar` with access to the Furnace APIs.
+|complex
+
+|ForgeAddonImplFacet
+|Ensures that a project is configured as a `jar` with access to the Furnace APIs.
+|complex
+
+|ForgeAddonSPIFacet
+|Ensures that a project is configured as a `forge-addon` with access to the Furnace APIs.
+|complex
+
+|ForgeAddonTestFacet
+|Ensures that a project is configured with the Furnace test-harness ('org.jboss.forge.furnace.test:'), and provides a default test-case stub.
+|simple, complex
+
+|===
+
