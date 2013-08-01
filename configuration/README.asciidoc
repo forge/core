@@ -1,0 +1,79 @@
+== configuration
+:idprefix: id_ 
+
+This addon provides *standalone* functionality. The configuration addon enables storing and retrieving of persistent properties per user or project.
+
+TIP: Every write operation in the Configuration object will automatically flush to the associated configuration file.  
+
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|projects
+|yes
+|yes
+
+
+|org.jboss.forge.furnace:container-cdi
+|no
+|no
+
+|===
+
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>configuration</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----
+
+== Features
+
+User-scoped Configuration ::
+The Configuration object associated to a user is the default option when injected or retrieved from the `AddonRegistry`. 
+It stores properties in a XML format in `<USER_HOME>/.forge/config.xml`.
++
+[source,java]
+----
+@Inject private Configuration configuration;
+configuration.setString("foo","value");
+String foo = configuration.getString("foo");
+// foo == "value" 
+----
++
+[TIP] 
+====
+If your addon uses a container that does not support "@Inject" annotations, services such as the `Configuration` may also be 
+accessed via the `AddonRegistry`:
+
+----
+Imported<Configuration> imported = addonRegistry.getServices(Configuration.class);
+Configuration configuration = imported.get();
+----
+==== 
+
+Project-scoped Configuration:: 
+   Project-scoped configuration is provided by accessing the `ConfigurationFacet` installed by default in any project. 
+   It stores the properties in an XML format in a file named `.forge_settings` inside the project. It is important to note, however, that this file is only created if a configuration property is explicitly set for the first time.
++
+[source,java]
+----
+Project project = ...
+ConfigurationFacet facet = project.getFacet(ConfigurationFacet.class);
+Configuration config = facet.getConfiguration();
+----
+
+TIP: Project-scoped configuration properties *OVERRIDES* the user-scoped configuration properties, meaning that it will take precedence over existing user-scoped configuration. Changes to the project-scoped configuration properties, however, will never change the user-scoped configuration. 
