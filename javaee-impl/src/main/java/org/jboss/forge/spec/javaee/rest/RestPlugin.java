@@ -35,7 +35,6 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Member;
 import org.jboss.forge.parser.java.Method;
-import org.jboss.forge.parser.java.Parameter;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.parser.java.util.Types;
 import org.jboss.forge.project.Project;
@@ -154,7 +153,6 @@ public class RestPlugin implements Plugin
                      + "] is not supported by endpoint generation.");
             continue;
          }
-         String idSetterName = resolveIdSetterName(entity);
          String idGetterName = resolveIdGetterName(entity);
 
          freemarker.template.Configuration freemarkerConfig = new freemarker.template.Configuration();
@@ -164,7 +162,6 @@ public class RestPlugin implements Plugin
          Map<Object, Object> map = new HashMap<Object, Object>();
          map.put("entity", entity);
          map.put("idType", idType);
-         map.put("setIdStatement", idSetterName);
          map.put("getIdStatement", idGetterName);
          map.put("contentType", contentType);
          String persistenceUnitName = getPersistenceUnitName();
@@ -235,79 +232,6 @@ public class RestPlugin implements Plugin
          }
       }
       return "Object";
-   }
-
-   private String resolveIdSetterName(JavaClass entity)
-   {
-      String result = null;
-
-      for (Member<JavaClass, ?> member : entity.getMembers())
-      {
-         if (member.hasAnnotation(Id.class))
-         {
-            String name = member.getName();
-            String type = null;
-            if (member instanceof Method)
-            {
-               type = ((Method<?>) member).getReturnType();
-               if (name.startsWith("get"))
-               {
-                  name = name.substring(2);
-               }
-            }
-            else if (member instanceof Field)
-            {
-               type = ((Field<?>) member).getType();
-            }
-
-            if (type != null)
-            {
-               for (Method<JavaClass> method : entity.getMethods())
-               {
-                  // It's a setter
-                  if (method.getParameters().size() == 1 && method.getReturnType() == null)
-                  {
-                     Parameter<JavaClass> param = method.getParameters().get(0);
-
-                     // The type matches ID field's type
-                     if (type.equals(param.getType()))
-                     {
-                        if (method.getName().toLowerCase().contains(name.toLowerCase()))
-                        {
-                           result = method.getName() + "(id)";
-                           break;
-                        }
-                     }
-                  }
-               }
-            }
-
-            if (result != null)
-            {
-               break;
-            }
-            else if (type != null && member.isPublic())
-            {
-               String memberName = member.getName();
-               // Cheat a little if the member is public
-               if (member instanceof Method && memberName.startsWith("get"))
-               {
-                  memberName = memberName.substring(3);
-                  memberName = Strings.uncapitalize(memberName);
-               }
-               result = memberName + " = id";
-            }
-         }
-      }
-
-      if (result == null)
-      {
-         throw new RuntimeException("Could not determine @Id field and setter method for @Entity ["
-                  + entity.getQualifiedName()
-                  + "]. Aborting.");
-      }
-
-      return result;
    }
 
    private String resolveIdGetterName(JavaClass entity)

@@ -178,7 +178,6 @@ public class RestPluginTest extends AbstractJPATest
       assertEquals("/users", endpoint.getAnnotation(Path.class).getStringValue());
       assertEquals("forge-default",
                endpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
-      assertTrue(endpoint.toString().contains("entity.setObjectId(id);"));
       getShell().execute("build");
    }
 
@@ -205,7 +204,6 @@ public class RestPluginTest extends AbstractJPATest
       assertEquals("/user2s", endpoint.getAnnotation(Path.class).getStringValue());
       assertEquals("forge-default",
                endpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
-      assertTrue(endpoint.toString().contains("entity.setObjectId(id);"));
       getShell().execute("build");
    }
 
@@ -232,7 +230,6 @@ public class RestPluginTest extends AbstractJPATest
       assertEquals("/user3s", endpoint.getAnnotation(Path.class).getStringValue());
       assertEquals("forge-default",
                endpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
-      assertTrue(endpoint.toString().contains("entity.setObjectId(id);"));
       getShell().execute("build");
    }
    
