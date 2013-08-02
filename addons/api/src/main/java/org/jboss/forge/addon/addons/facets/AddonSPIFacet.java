@@ -19,7 +19,7 @@ import org.jboss.forge.addon.projects.ProjectFacet;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-@RequiresFacet({ JavaSourceFacet.class, AddonClassifierFacet.class, FurnaceAPIFacet.class })
+@RequiresFacet({ JavaSourceFacet.class, FurnacePluginFacet.class, AddonClassifierFacet.class, FurnaceAPIFacet.class })
 public class AddonSPIFacet extends AbstractFacet<Project> implements ProjectFacet
 {
    @Override

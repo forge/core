@@ -21,6 +21,7 @@ import org.jboss.forge.addon.addons.facets.AddonTestFacet;
 import org.jboss.forge.addon.addons.facets.DefaultFurnaceContainerAPIFacet;
 import org.jboss.forge.addon.addons.facets.DefaultFurnaceContainerFacet;
 import org.jboss.forge.addon.addons.facets.FurnaceAPIFacet;
+import org.jboss.forge.addon.addons.facets.FurnacePluginFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.javaee.facets.CDIFacet;
@@ -173,6 +174,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertTrue(implProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertTrue(implProject.hasFacet(AddonImplFacet.class));
+      Assert.assertFalse(implProject.hasFacet(FurnacePluginFacet.class));
 
       /*
        * Verify api/ sub-module
@@ -194,6 +196,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertTrue(apiProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertTrue(apiProject.hasFacet(AddonAPIFacet.class));
+      Assert.assertFalse(apiProject.hasFacet(FurnacePluginFacet.class));
 
       /*
        * Verify spi/ sub-module
@@ -211,6 +214,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertFalse(spiProject.hasFacet(DefaultFurnaceContainerAPIFacet.class));
       Assert.assertFalse(spiProject.hasFacet(CDIFacet.class));
       Assert.assertTrue(spiProject.hasFacet(AddonSPIFacet.class));
+      Assert.assertTrue(spiProject.hasFacet(FurnacePluginFacet.class));
 
       /*
        * Verify addon/ sub-module
@@ -246,6 +250,9 @@ public class AddonProjectConfiguratorTest
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
 
+      Assert.assertTrue(addonProject.hasFacet(FurnacePluginFacet.class));
+
+      
       /*
        * Verify tests/ sub-module
        */
@@ -296,6 +303,7 @@ public class AddonProjectConfiguratorTest
       configurator.setupSimpleAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
 
       Assert.assertTrue(project.hasFacet(DefaultFurnaceContainerFacet.class));
+      Assert.assertTrue(project.hasFacet(FurnacePluginFacet.class));
       Assert.assertTrue(project.hasFacet(AddonTestFacet.class));
       Assert.assertTrue(project.hasFacet(JavaSourceFacet.class));
       Assert.assertTrue(project.hasFacet(JavaCompilerFacet.class));

@@ -20,6 +20,7 @@ import org.jboss.forge.addon.addons.facets.AddonParentFacet;
 import org.jboss.forge.addon.addons.facets.AddonSPIFacet;
 import org.jboss.forge.addon.addons.facets.AddonTestFacet;
 import org.jboss.forge.addon.addons.facets.DefaultFurnaceContainerFacet;
+import org.jboss.forge.addon.addons.facets.FurnacePluginFacet;
 import org.jboss.forge.addon.addons.facets.FurnaceVersionFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
@@ -66,6 +67,7 @@ public class AddonProjectConfigurator
       facetFactory.install(project, FurnaceVersionFacet.class);
       project.getFacet(FurnaceVersionFacet.class).setVersion(forgeVersion.toString());
 
+      facetFactory.install(project, FurnacePluginFacet.class);
       facetFactory.install(project, AddonClassifierFacet.class);
       facetFactory.install(project, JavaSourceFacet.class);
       facetFactory.install(project, JavaCompilerFacet.class);
