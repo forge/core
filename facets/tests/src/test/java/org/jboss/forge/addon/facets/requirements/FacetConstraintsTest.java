@@ -28,8 +28,8 @@ public class FacetConstraintsTest
 {
    @Deployment
    @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:facets", version = "2.0.0-SNAPSHOT"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi", version = "2.0.0-SNAPSHOT")
+            @AddonDependency(name = "org.jboss.forge.addon:facets"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
    })
    public static ForgeArchive getDeployment()
    {
@@ -38,8 +38,8 @@ public class FacetConstraintsTest
                .addClasses(FacetA.class, FacetB.class, FacetC.class, MockFaceted.class, MockFacet.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:facets", "2.0.0-SNAPSHOT"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi", "2.0.0-SNAPSHOT")
+                        AddonDependencyEntry.create("org.jboss.forge.addon:facets"),
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                );
       return archive;
    }
