@@ -52,18 +52,18 @@ public class AddonProjectConfiguratorTest
 
    @Deployment
    @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi", version = FURNACE_VERSION),
-            @AddonDependency(name = "org.jboss.forge.addon:addons", version = FURNACE_VERSION)
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.forge.addon:addons")
    })
    public static ForgeArchive getDeployment()
    {
       return ShrinkWrap.create(ForgeArchive.class).
                addBeansXML().
                addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:addons", FURNACE_VERSION),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven", FURNACE_VERSION),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee", FURNACE_VERSION),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi", FURNACE_VERSION)
+                        AddonDependencyEntry.create("org.jboss.forge.addon:addons"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                );
    }
 
