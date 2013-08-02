@@ -125,7 +125,7 @@ public class RestApplicationFacetImpl extends BaseFacet implements RestApplicati
                      configuration.setProperty(REST_APPLICATIONCLASS_NAME, javaResource.getFullyQualifiedName());
                      configuration.setProperty(RestFacet.ROOTPATH,
                               javaResource.getJavaSource().getAnnotation("javax.ws.rs.ApplicationPath")
-                                       .getLiteralValue());
+                                       .getStringValue());
                      found = true;
                   }
                }
