@@ -386,6 +386,11 @@
       <pluginManagement>
          <plugins>
             <plugin>
+               <groupId>org.jboss.forge.furnace</groupId>
+               <artifactId>furnace-maven-plugin</artifactId>
+               <version>${version.furnace}</version>
+            </plugin>
+            <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-dependency-plugin</artifactId>
                <version>2.5.1</version>
