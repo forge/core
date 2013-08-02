@@ -105,9 +105,9 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          // TODO this reference to the M2_REPO should probably be centralized
 
          MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
-         plexus.lookup(MavenExecutionRequestPopulator.class).populateFromSettings(executionRequest,
-                  container.getSettings());
-         plexus.lookup(MavenExecutionRequestPopulator.class).populateDefaults(executionRequest);
+         MavenExecutionRequestPopulator populator = plexus.lookup(MavenExecutionRequestPopulator.class);
+         populator.populateFromSettings(executionRequest, container.getSettings());
+         populator.populateDefaults(executionRequest);
          RepositorySystem system = plexus.lookup(RepositorySystem.class);
          request = executionRequest.getProjectBuildingRequest();
 
