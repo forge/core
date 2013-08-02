@@ -69,7 +69,7 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
       }
 
       String rootpath = prompt.prompt("What root path do you want to use for your resources?", "/rest");
-      configuration.addProperty(RestFacet.ROOTPATH, rootpath);
+      configuration.setProperty(RestFacet.ROOTPATH, rootpath);
 
       if (activatorType == null || activatorType == RestActivatorType.WEB_XML
                && !project.hasFacet(RestWebXmlFacetImpl.class))
@@ -81,8 +81,8 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
          String pkg = prompt.promptCommon("In what package do you want to store the Application class?",
                   PromptType.JAVA_PACKAGE, project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".rest");
          String restApplication = prompt.prompt("How do you want to name the Application class?", "RestApplication");
-         configuration.addProperty(RestApplicationFacet.REST_APPLICATIONCLASS_PACKAGE, pkg);
-         configuration.addProperty(RestApplicationFacet.REST_APPLICATIONCLASS_NAME, restApplication);
+         configuration.setProperty(RestApplicationFacet.REST_APPLICATIONCLASS_PACKAGE, pkg);
+         configuration.setProperty(RestApplicationFacet.REST_APPLICATIONCLASS_NAME, restApplication);
          request.fire(new InstallFacets(RestApplicationFacet.class));
       }
       return super.install();
