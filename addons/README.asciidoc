@@ -121,24 +121,40 @@ Projects addon integration::
 |Ensures that a project depends on the default Furnace container API ('org.jboss.forge.furnace:container-cdii-api').
 |complex
 
-|ForgeAddonFacet
+|AddonParentFacet
+|Ensures that a project is configured as the parent project of a complex Furnace addon type.
+|complex
+
+|AddonAddonFacet
 |Ensures that a project is configured as a `forge-addon` with access to the Furnace APIs, and provides a default `AddonLifecycleProvider` ('org.jboss.forge.furnace:container-cdi').
 |simple, complex
 
-|ForgeAddonAPIFacet
+|AddonAPIFacet
 |Ensures that a project is configured as a `jar` with access to the Furnace APIs.
 |complex
 
-|ForgeAddonImplFacet
+|AddonImplFacet
 |Ensures that a project is configured as a `jar` with access to the Furnace APIs.
 |complex
 
-|ForgeAddonSPIFacet
+|AddonSPIFacet
 |Ensures that a project is configured as a `forge-addon` with access to the Furnace APIs.
 |complex
 
-|ForgeAddonTestFacet
-|Ensures that a project is configured with the Furnace test-harness ('org.jboss.forge.furnace.test:'), and provides a default test-case stub.
+|AddonTestFacet
+|Ensures that a project is configured with the Furnace test-harness ('org.jboss.forge.furnace.test:furnace-test-harness'), and provides a default test-case stub.
+|simple, complex
+
+|AddonClassifierFacet
+|Ensures that a project is classified as a `forge-addon`
+|simple, complex
+
+|FurnaceAPIFacet
+|Ensures that a project is configured with the Furnace core APIs ('org.jboss.forge.furnace:furnace-api')
+|complex
+
+|FurnaceVersionFacet
+|Ensures that a project is configured with a Furnace version property for centralized version management.
 |simple, complex
 
 |===
