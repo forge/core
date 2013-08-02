@@ -25,7 +25,7 @@ The resources API also allows for wrapping of low-level resource constructs with
 |no
 |no
 
-|org.jboss.forge.furnace:container-cdi
+|org.jboss.forge.furnace.container:cdi
 |no
 |no
 

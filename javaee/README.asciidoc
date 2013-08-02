@@ -22,7 +22,7 @@ The javaee addon enables creation of artifacts (classes, descriptors) with focus
 |yes
 |no
 
-|org.jboss.forge.furnace:container-cdi
+|org.jboss.forge.furnace.container:cdi
 |no
 |no
 

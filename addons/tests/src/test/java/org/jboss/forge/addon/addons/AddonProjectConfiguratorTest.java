@@ -52,7 +52,7 @@ public class AddonProjectConfiguratorTest
 
    @Deployment
    @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.furnace:container-cdi", version = FURNACE_VERSION),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi", version = FURNACE_VERSION),
             @AddonDependency(name = "org.jboss.forge.addon:addons", version = FURNACE_VERSION)
    })
    public static ForgeArchive getDeployment()
@@ -63,7 +63,7 @@ public class AddonProjectConfiguratorTest
                         AddonDependencyEntry.create("org.jboss.forge.addon:addons", FURNACE_VERSION),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven", FURNACE_VERSION),
                         AddonDependencyEntry.create("org.jboss.forge.addon:javaee", FURNACE_VERSION),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace:container-cdi", FURNACE_VERSION)
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi", FURNACE_VERSION)
                );
    }
 

@@ -37,7 +37,7 @@ This addon *exports services* for use in other addons. The Maven addon implement
 |no
 |yes
 
-|org.jboss.forge.furnace:container-cdi
+|org.jboss.forge.furnace.container:cdi
 |no
 |no
 

@@ -19,7 +19,7 @@ names, option names, and option arguments.
 |===
 |Addon |Exported |Optional
 
-|org.jboss.forge.furnace:container-cdi
+|org.jboss.forge.furnace.container:cdi
 |no
 |no
 

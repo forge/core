@@ -352,7 +352,7 @@ allows you to test your code in an actual Furnace environment, and verify that t
 we suggest using a separate project to test your addon in order to keep concerns separate, which tends to lead to cleaner
 code and fewer surprises.
 
-For simplicity's sake, we'll assume that your addon uses the default Furnace container (`org.jboss.forge.furnace:container-cdi`).
+For simplicity's sake, we'll assume that your addon uses the default Furnace container (`org.jboss.forge.furnace.container:cdi`).
 
 ==== Set up the test-harness in your build descriptor (pom.xml)
 

@@ -29,7 +29,7 @@ This addon provides *standalone* functionality, and *exports services* for use i
 |no
 |no
 
-|org.jboss.forge.furnace:container-cdi
+|org.jboss.forge.furnace.container:cdi
 |no
 |no
 
@@ -114,11 +114,11 @@ Projects addon integration::
 |Facet |Description |Used in layout type
 
 |*'DefaultFurnaceContainerFacet'*
-|Ensures that a project depends on the default Furnace container ('org.jboss.forge.furnace:container-cdi').
+|Ensures that a project depends on the default Furnace container ('org.jboss.forge.furnace.container:cdi').
 |simple, complex
 
 |*'DefaultFurnaceContainerAPIFacet'*
-|Ensures that a project depends on the default Furnace container API ('org.jboss.forge.furnace:container-cdii-api').
+|Ensures that a project depends on the default Furnace container API ('org.jboss.forge.furnace.container:cdii-api').
 |complex
 
 |AddonParentFacet
@@ -126,7 +126,7 @@ Projects addon integration::
 |complex
 
 |AddonAddonFacet
-|Ensures that a project is configured as a `forge-addon` with access to the Furnace APIs, and provides a default `AddonLifecycleProvider` ('org.jboss.forge.furnace:container-cdi').
+|Ensures that a project is configured as a `forge-addon` with access to the Furnace APIs, and provides a default `AddonLifecycleProvider` ('org.jboss.forge.furnace.container:cdi').
 |simple, complex
 
 |AddonAPIFacet

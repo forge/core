@@ -16,7 +16,7 @@ TIP: Every write operation in the Configuration object will automatically flush 
 |yes
 
 
-|org.jboss.forge.furnace:container-cdi
+|org.jboss.forge.furnace.container:cdi
 |no
 |no
 
