@@ -99,15 +99,81 @@ This plugin starts the Forge 2 Container and your installed addons, so you can u
 
 == Developing an Addon
 
-Forge addons are simple Maven projects with a special classifier "forge-addon". This classifier is used while installing an addon so Forge can calculate its dependencies automatically releasing you from the http://robjsoftware.org/2007/07/13/classloader-hell/[Classloader hell]
+Forge addons are simple Maven projects with a special classifier "forge-addon". This classifier is used while installing an addon so the Furnace container can calculate its dependencies, freeing you from http://robjsoftware.org/2007/07/13/classloader-hell/[Classloader hell].
+
+One of the most important things to know about developing a Forge addon, is that the Furnace runtime container (the core of Forge),
+is actually an embeddable, modular Java container. This means that each addon has its own `ClassLoader` and that
+addons share classes from each other, in addition to supplying their own local classes. Furnace builds a graph of
+addon dependencies at runtime, and automatically calculates which addons should see classes from other addons. 
+
+For now, however, just treat your first addon as if it were any other Java project. The differences between a "modular" and
+"traditional" environment are not as great as you might think, and the Furnace development model has been created in
+a way that should make these differences seem natural, almost transparent. 
 
 === Create a Maven project
 
-Forge Addons must be packaged with a 'forge-addon' classifier. Add this plugin configuration to your pom.xml:
+Forge Addons must be JARs published with a 'forge-addon' classifier. Add this plugin configuration to your pom.xml:
 
 [source,xml]
 ----
-    <build>
+<build>
+   <plugins>
+      <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+         <artifactId>maven-jar-plugin</artifactId>
+         <executions>
+            <execution>
+               <id>create-forge-addon</id>
+               <phase>package</phase>
+               <goals>
+                  <goal>jar</goal>
+               </goals>
+               <inherited>false</inherited>
+               <configuration>
+                  <classifier>forge-addon</classifier>
+               </configuration>
+            </execution>
+         </executions>
+      </plugin>
+   </plugins>
+</build>
+----
+
+In order to use CDI and services from other addons in your addon, you'll need to reference the Furnace CDI container addon as a dependency your _pom.xml_ file:
+
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.furnace</groupId>
+   <artifactId>container-cdi</artifactId>
+   <classifier>forge-addon</classifier>
+   <scope>provided</scope>
+</dependency>
+----
+
+Your complete POM should now look something like this:
+
+[source,xml]
+----
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>com.example</groupId>
+   <artifactId>example</artifactId>
+   <version>0.0.1-SNAPSHOT</version>
+   
+   <name>My First Addon</name>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>container-cdi</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+   </dependencies>
+
+   <build>
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -127,60 +193,300 @@ Forge Addons must be packaged with a 'forge-addon' classifier. Add this plugin c
             </executions>
          </plugin>
       </plugins>
-    </build>
+   </build>
+</project>
 ----
 
-=== Use the Forge CDI Container
-
-In order to use CDI in your addon, you need to reference the Furnace CDI container addon in your _pom.xml_ file:
-
-[source,xml]
-----
-<dependency>
-   <groupId>org.jboss.forge.furnace</groupId>
-   <artifactId>container-cdi</artifactId>
-   <classifier>forge-addon</classifier>
-   <scope>provided</scope>
-</dependency>
-----
+=== Add behavior to your addon
 
 Once this is done, to expose services in your Addon for injection and service lookups in other addons, your types must be annotated with **@Exported**: 
 
 [source,java]
 ----
-    @Exported
-    public class ServiceImpl
-    {
-       public ServiceResult performTask() {
-            // Do stuff...
-       }
-    }
+@Exported
+public class ExampleServiceImpl
+{
+   public ServiceResult doSomething() {
+        // Do stuff...
+   }
+}
 ----
 
 However, best practices favor placing the **@Exported** annotation on a service interface, otherwise consumers will be required to request your specific service implementation. For example:
 
 [source,java]
 ----
-    @Exported
-    public interface ServiceType
-    {
-       public ServiceResult performTask();
-    }
+@Exported
+public interface ExampleService
+{
+   public ServiceResult doSomething();
+}
 ----
 
 Then simply implement the service interface, and the **@Exported** annotation will be inherited automatically:
 
 [source,java]
 ----
-    public class ServiceImpl implements ServiceType
-    {
-       public ServiceResult performTask() {
-            // Do stuff...
-       }
-    }
+public class ExampleServiceImpl implements ExampleService
+{
+   public ServiceResult doSomething() {
+        // Do stuff...
+   }
+}
 ----
 
-=== Install your project in the local maven repository:
+=== Re-use functionality from other addons:
+
+Forge has a modular architecture that enables you to re-use functionality from other addons, directly in your own addon code. In order to achieve this, you must add addon-dependencies in your `pom.xml` file.
+
+[source,xml]
+----
+<project>
+   ...
+   
+   <dependencies>
+      <!-- Addon Dependencies -->
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>resources</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>ui</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+      
+   
+      <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>container-cdi</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+   </dependencies>
+   
+   ...
+</project>
+----
+
+==== What scope should my addon dependencies be?
+
+There is a simple rule that will make this an easy decision:  
+
+____
+"`compile` if it shows, `provided` if nobody knows."
+____
+
+To explain, if you never publicly expose types (classes, interfaces, etc...) from another addon in the outward-facing APIs of your addon, then you should include 
+that addon as `provided` scope. If you do, however, expose classes from that addon in the public APIs of your code,
+then that addon should be labeled as `compile` scope (default,) which means that this dependency will be *'exported'*
+to consumers that depend on your addon.
+
+Addon dependencies may also be made `optional` if consumers of your addon should be able to choose whether or not
+certain functionality is enabled, or if your addon behaves differently when other addons are already deployed to the
+container. 
+
+The following chart explains this in detail. Assume that our addon depends on the `resources` addon, which provides
+the `ResourceFactory` and `FileResource` classes:
+
+[cols="1a,2,3", options="header"]
+|===
+|Example |Scope should be |Explanation
+
+|
+[source,java]
+----
+public class InternalExample {
+   @Inject private ResourceFactory factory;
+
+   public void doSomething(File file) {
+      Resource<?> r = factory.create(file);
+      System.out.println("New resource: " + r)
+   }
+}
+----
+|`provided`
+|Consumers of your addon never see classes or interfaces from the resources addon; it is only used internally as an
+implementation detail.
+
+|
+[source,java]
+----
+public class ExposedExample {
+   public Resource<?> doSomething(File file) {
+      Resource<?> r = factory.create(file);
+      return r;
+   }
+}
+----
+|`compile`
+|Consumers of your addon require classes from the `resources` addon to interact with your code, since it has been used
+in the public APIs of your classes.
+
+|
+[source,java]
+----
+public class TransitiveExample {
+   public void doSomething(Facet<?> f) {
+      System.out.println("I got a facet! " + f);
+   }
+}
+----
+|`compile`
+|Consumers of your addon require classes from the `facets` addon to interact with your code, which is an exported
+dependency of the `resources` addon.
+
+The `Facet` class comes from the `facets` addon and is used in the public APIs of your addon.
+
+|===   
+
+ 
+
+=== Test your addon
+
+One of the most important concepts of writing a Forge addon is writing tests using the Furnace test harness. This
+allows you to test your code in an actual Furnace environment, and verify that things are behaving as expected. Typically
+we suggest using a separate project to test your addon in order to keep concerns separate, which tends to lead to cleaner
+code and fewer surprises.
+
+For simplicity's sake, we'll assume that your addon uses the default Furnace container (`org.jboss.forge.furnace:container-cdi`).
+
+==== Set up the test-harness in your build descriptor (pom.xml)
+
+Add the following dependencies to your pom.xml file if they are not already there. Make sure that the Furnace versions
+are the same as the rest of your project.
+
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.furnace.test</groupId>
+   <artifactId>furnace-test-harness</artifactId>
+   <version>FURNACE_VERSION</version>
+   <scope>test</scope>
+</dependency>
+<dependency>
+   <groupId>org.jboss.forge.furnace.test</groupId>
+   <artifactId>arquillian-furnace-classpath</artifactId>
+   <version>FURNACE_VERSION</version>
+   <scope>test</scope>
+</dependency>
+----
+
+If you are writing tests in a separate project or sub-project, you should also add a dependency to your addon, or
+to the addon you wish to test (you can test anything you like.)
+
+[source,xml]
+----
+<dependency>
+   <groupId>com.example</groupId>
+   <artifactId>example</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>YOUR_VERSION</version>
+   <scope>test</scope>
+</dependency>
+----
+
+==== Write your first test
+
+Now, you'll need to create a test class with the following layout, using the standard JUnit test APIs:
+
+[source,java]
+----
+package org.example;
+
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+@RunWith(Arquillian.class)
+public class ExampleFurnaceTest {
+
+   @Deployment
+   public static ForgeArchive getDeployment() {
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class);
+      return archive;
+   }
+
+   @Test
+   public void testSomething() throws Exception {
+      Assert.fail("Not implemented");
+   }
+}
+----
+
+Then you'll need to add some configuration so that your addon will be deployed to the test environmenet. This is done
+using the `@AddonDependency` annotation. You'll also need to add an addon dependency link from your test case
+to your addon (otherwise the test case will not be able to use any of your addon's classes or services.)
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class ExampleFurnaceTest {
+
+   @Deployment
+   @Dependencies({
+       @AddonDependency(name = "org.example:example", version = "YOUR_VERSION")
+   })
+   public static ForgeArchive getDeployment() {
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+         .addBeansXML()
+         .addAsAddonDependencies(
+            AddonDependencyEntry.create("org.example:example", "YOUR_VERSION"),
+         );
+      return archive;
+   }
+
+   @Test
+   public void testSomething() throws Exception {
+      Assert.fail("Not implemented");
+   }
+}
+---- 
+
+Now that the test case deploys and depends on your addon, you may access services from it via injection:
+
+[source,java]
+----
+@RunWith(Arquillian.class)
+public class ExampleFurnaceTest {
+
+   @Deployment
+   @Dependencies({
+       @AddonDependency(name = "org.example:example", version = "YOUR_VERSION")
+   })
+   public static ForgeArchive getDeployment() {
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+         .addBeansXML()
+         .addAsAddonDependencies(
+            AddonDependencyEntry.create("org.example:example", "YOUR_VERSION"),
+         );
+      return archive;
+   }
+   
+   @Inject
+   private ExampleService service;
+
+   @Test
+   public void testSomething() throws Exception {
+      Assert.assertNotNull(service);
+      Assert.assertNotNull(service.doSomething());
+   }
+}
+---- 
+
+This is the basic premise of using the test-harness. For detailed examples, take a 
+https://github.com/forge/core/tree/2.0/resources/tests/src/test/java/org/jboss/forge/addon/resource[look at some of the existing
+Forge test cases] in our github repository.
+
+
+=== Install your addon in the local maven repository:
 
 [source,cmd]
 ----
@@ -194,7 +500,7 @@ Run
     ./forge --install yourgroupId:artifactId,version
 ----
 
-NOTE: This coordinate is NOT the same as maven's. You MUST use a comma (,) between the artifactId and the version**
+WARNING: This coordinate is *NOT* the same as maven's. You MUST use a comma (,) between the artifactId and the version**
 
 === Install your Addon
  
