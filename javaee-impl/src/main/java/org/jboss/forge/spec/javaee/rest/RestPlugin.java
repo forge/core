@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.spec.javaee.rest;
 
+import static org.jboss.forge.spec.javaee.RestApplicationFacet.REST_APPLICATIONCLASS_PACKAGE;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -57,6 +59,7 @@ import org.jboss.forge.spec.javaee.EJBFacet;
 import org.jboss.forge.spec.javaee.JTAFacet;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.RestActivatorType;
+import org.jboss.forge.spec.javaee.RestApplicationFacet;
 import org.jboss.forge.spec.javaee.RestFacet;
 import org.jboss.forge.spec.javaee.events.RestGeneratedResources;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
@@ -192,7 +195,14 @@ public class RestPlugin implements Plugin
 
          JavaClass resource = JavaParser.parse(JavaClass.class, output.toString());
          resource.addImport(entity.getQualifiedName());
-         resource.setPackage(java.getBasePackage() + ".rest");
+         if (project.hasFacet(RestApplicationFacet.class))
+         {
+            resource.setPackage(configuration.getString(REST_APPLICATIONCLASS_PACKAGE));
+         }
+         else
+         {
+            resource.setPackage(java.getBasePackage() + ".rest");
+         }
 
          /*
           * Save the sources
