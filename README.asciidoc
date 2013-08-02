@@ -10,11 +10,11 @@ What's new and noteworthy?
 
 - *Modular Container fully rewritten*:: The Forge runtime is now a fully functional Java module system based on JBoss Modules (The same engine behind JBoss AS 7+ and JBoss EAP). This means you may now pick-and-choose which addons are important for you.
 
-- *Smaller, leaner, and faster*:: Forge 2 now sports a slimmer 7 megabyte download size, and starts up in under three seconds. (Compared to upwards of 10+ seconds for Forge 1)
+- *Smaller, leaner, and faster*:: Forge 2 now sports a slimmer four megabyte download size, and starts up in under three seconds. (Compared to upwards of 10+ seconds for Forge 1)
 
-- *Better IDE Integration*:: Forge 2 addons have been de-coupled from the command line, meaning you can create addons that run as wizards in the IDE, or commands in the shell - the same code works in both environments.
+- *Better IDE Integration*:: Forge 2 addons have been de-coupled from the command line, meaning you can create addons that run as wizards in the IDE, as well as commands in the shell - the same code works in both environments.
 
-We are currently in the process of migrating Forge 1 to Forge 2, so expect to find some Forge 1 functionality missing in this first Alpha version.
+We are currently in the process of migrating Forge 1 to Forge 2, so expect to find some Forge 1 functionality missing in the early versions of Forge 2.
 
 == Download Forge 2:    
 Forge 2 is packaged inside an Eclipse plugin and also as a standalone ZIP file. They are independent of each other.
@@ -28,8 +28,8 @@ It is worth mentioning that the Eclipse plugin does not support access to shell 
 
 NOTE: The shell is not fully working at the moment, so we recommend you to use the Forge 2 Eclipse Plugin
 
-- Download [JBoss Forge 2.0.0.Alpha6](https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha6&e=zip)
-- Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha6/bin folder
+- Download [JBoss Forge 2.0.0.Alpha9](https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha9&e=zip)
+- Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha9/bin folder
 
 Forge is now ready to go. 
 
@@ -258,8 +258,8 @@ Forge has a modular architecture that enables you to re-use functionality from o
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
-      
-   
+
+      <!-- Furnace Container -->   
       <dependency>
          <groupId>org.jboss.forge.furnace</groupId>
          <artifactId>container-cdi</artifactId>
