@@ -25,8 +25,8 @@ import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 public class DefaultFurnaceContainerFacet extends AbstractFacet<Project> implements ProjectFacet
 {
    public static Dependency FURNACE_CONTAINER_DEPENDENCY = DependencyBuilder.create()
-            .setGroupId("org.jboss.forge.furnace")
-            .setArtifactId("container-cdi")
+            .setGroupId("org.jboss.forge.furnace.container")
+            .setArtifactId("cdi")
             .setClassifier("forge-addon")
             .setScopeType("provided");
 

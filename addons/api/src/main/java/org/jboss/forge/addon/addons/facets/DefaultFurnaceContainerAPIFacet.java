@@ -25,8 +25,8 @@ import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 public class DefaultFurnaceContainerAPIFacet extends AbstractFacet<Project> implements ProjectFacet
 {
    public static Dependency FURNACE_CONTAINER_API_DEPENDENCY = DependencyBuilder.create()
-            .setGroupId("org.jboss.forge.furnace")
-            .setArtifactId("container-cdi-api")
+            .setGroupId("org.jboss.forge.furnace.container")
+            .setArtifactId("cdi-api")
             .setScopeType("provided");
 
    @Inject

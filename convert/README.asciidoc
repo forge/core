@@ -10,7 +10,7 @@ static and dynamic converters for general purpose use.
 |===
 |Addon |Exported |Optional
 
-|container-cdi
+|org.jboss.forge.furnace.container:cdi
 |No
 |No
 

@@ -10,8 +10,8 @@
    <name>Forge - Configuration Tests</name>
    <dependencies>
       <dependency>
-         <groupId>org.jboss.forge.furnace</groupId>
-         <artifactId>container-cdi</artifactId>
+         <groupId>org.jboss.forge.furnace.container</groupId>
+         <artifactId>cdi</artifactId>
          <classifier>forge-addon</classifier>
          <scope>test</scope>
       </dependency>

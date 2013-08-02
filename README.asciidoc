@@ -144,8 +144,8 @@ In order to use CDI and services from other addons in your addon, you'll need to
 [source,xml]
 ----
 <dependency>
-   <groupId>org.jboss.forge.furnace</groupId>
-   <artifactId>container-cdi</artifactId>
+   <groupId>org.jboss.forge.furnace.container</groupId>
+   <artifactId>cdi</artifactId>
    <classifier>forge-addon</classifier>
    <scope>provided</scope>
 </dependency>
@@ -166,8 +166,8 @@ Your complete POM should now look something like this:
 
    <dependencies>
       <dependency>
-         <groupId>org.jboss.forge.furnace</groupId>
-         <artifactId>container-cdi</artifactId>
+         <groupId>org.jboss.forge.furnace.container</groupId>
+         <artifactId>cdi</artifactId>
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
@@ -261,8 +261,8 @@ Forge has a modular architecture that enables you to re-use functionality from o
 
       <!-- Furnace Container -->   
       <dependency>
-         <groupId>org.jboss.forge.furnace</groupId>
-         <artifactId>container-cdi</artifactId>
+         <groupId>org.jboss.forge.furnace.container</groupId>
+         <artifactId>cdi</artifactId>
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>

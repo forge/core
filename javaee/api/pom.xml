@@ -10,8 +10,8 @@
    <name>Forge - JavaEE API</name>
    <dependencies>
       <dependency>
-         <groupId>org.jboss.forge.furnace</groupId>
-         <artifactId>container-cdi-api</artifactId>
+         <groupId>org.jboss.forge.furnace.container</groupId>
+         <artifactId>cdi-api</artifactId>
          <scope>provided</scope>
       </dependency>
       

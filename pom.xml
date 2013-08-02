@@ -102,19 +102,19 @@
          <!-- Furnace Container -->
 
          <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>container-cdi</artifactId>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>cdi</artifactId>
             <classifier>forge-addon</classifier>
             <version>${version.furnace}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>container-cdi-api</artifactId>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>cdi-api</artifactId>
             <version>${version.furnace}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>container-cdi-impl</artifactId>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>cdi-impl</artifactId>
             <version>${version.furnace}</version>
          </dependency>
          <dependency>
