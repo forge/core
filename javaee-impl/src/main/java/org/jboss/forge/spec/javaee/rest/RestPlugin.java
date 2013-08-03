@@ -45,6 +45,7 @@ import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.ShellMessages;
+import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
@@ -92,7 +93,13 @@ public class RestPlugin implements Plugin
 
    @Inject
    private ShellPrompt prompt;
-
+   
+   @Inject
+   private ShellPrintWriter writer;
+   
+   @Inject
+   private RestResourceTypeVisitor resourceTypeVisitor; 
+   
    @Inject
    @ProjectScoped
    Configuration configuration;
@@ -171,11 +178,12 @@ public class RestPlugin implements Plugin
          String entityTable = getEntityTable(entity);
          String selectExpression = getSelectExpression(entity, entityTable);
          String idClause = getIdClause(entity, entityTable);
+         String resourcePath = getResourcePath(java, entityTable);
          map.put("persistenceUnitName", persistenceUnitName);
          map.put("entityTable", entityTable);
          map.put("selectExpression", selectExpression);
          map.put("idClause", idClause);
-         map.put("resourcePath", entityTable.toLowerCase() + "s");
+         map.put("resourcePath", resourcePath);
 
          Writer output = new StringWriter();
          try
@@ -195,14 +203,7 @@ public class RestPlugin implements Plugin
 
          JavaClass resource = JavaParser.parse(JavaClass.class, output.toString());
          resource.addImport(entity.getQualifiedName());
-         if (project.hasFacet(RestApplicationFacet.class))
-         {
-            resource.setPackage(configuration.getString(REST_APPLICATIONCLASS_PACKAGE));
-         }
-         else
-         {
-            resource.setPackage(java.getBasePackage() + ".rest");
-         }
+         resource.setPackage(getPackageName(java));
 
          /*
           * Save the sources
@@ -223,6 +224,50 @@ public class RestPlugin implements Plugin
       {
          generatedEvent.fire(new RestGeneratedResources(entities, endpoints));
       }
+   }
+
+   public String getPackageName(final JavaSourceFacet java)
+   {
+      if (project.hasFacet(RestApplicationFacet.class))
+      {
+         return configuration.getString(REST_APPLICATIONCLASS_PACKAGE);
+      }
+      else
+      {
+         return java.getBasePackage() + ".rest";
+      }
+   }
+
+   private String getResourcePath(JavaSourceFacet java, String entityTable)
+   {
+      String proposedQualifiedClassName = getPackageName(java) + "." + entityTable + "Endpoint";
+      String proposedResourcePath = "/" + entityTable.toLowerCase() + "s";
+      resourceTypeVisitor.setFound(false);
+      resourceTypeVisitor.setProposedPath(proposedResourcePath);
+      while (true)
+      {
+         java.visitJavaSources(resourceTypeVisitor);
+         if (resourceTypeVisitor.isFound())
+         {
+            if (proposedQualifiedClassName.equals(resourceTypeVisitor.getQualifiedClassNameForMatch()))
+            {
+               // The class might be overwritten later, so break out
+               break;
+            }
+            ShellMessages.warn(writer, "The @Path " + proposedResourcePath + " conflicts with an existing @Path.");
+            String computedPath = proposedResourcePath.startsWith("/") ? "forge" + proposedResourcePath : "forge/"
+                     + proposedResourcePath;
+            proposedResourcePath = prompt.prompt("Provide a different URI path value for the generated resource.",
+                     computedPath);
+            resourceTypeVisitor.setProposedPath(proposedResourcePath);
+            resourceTypeVisitor.setFound(false);
+         }
+         else
+         {
+            break;
+         }
+      }
+      return proposedResourcePath;
    }
 
    private String resolveIdType(JavaClass entity)

@@ -15,7 +15,7 @@ import javax.ws.rs.core.UriBuilder;
  * 
  */
 @Stateless
-@Path("/${resourcePath}")
+@Path("${resourcePath}")
 public class ${entityTable}Endpoint
 {
    @PersistenceContext(unitName="${persistenceUnitName}")
