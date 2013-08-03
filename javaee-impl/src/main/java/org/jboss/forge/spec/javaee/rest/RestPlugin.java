@@ -378,7 +378,7 @@ public class RestPlugin implements Plugin
    {
       char entityVariable = entityTable.toLowerCase().charAt(0);
       StringBuilder expressionBuilder = new StringBuilder();
-      expressionBuilder.append("SELECT ");
+      expressionBuilder.append("SELECT DISTINCT ");
       expressionBuilder.append(entityVariable);
       expressionBuilder.append(" FROM ");
       expressionBuilder.append(entityTable);
