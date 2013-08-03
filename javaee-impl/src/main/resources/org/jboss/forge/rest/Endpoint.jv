@@ -46,7 +46,7 @@ public class ${entityTable}Endpoint
    @Produces("${contentType}")
    public Response findById(@PathParam("id") ${idType} id)
    {
-      TypedQuery<${entity.getName()}> findByIdQuery = em.createQuery("${selectExpression} ${idClause}", ${entity.getName()}.class);
+      TypedQuery<${entity.getName()}> findByIdQuery = em.createQuery("${selectExpression} ${idClause} ${orderClause}", ${entity.getName()}.class);
       findByIdQuery.setParameter("entityId", id);
       ${entity.getName()} entity = findByIdQuery.getSingleResult();
       if (entity == null) {
@@ -59,7 +59,7 @@ public class ${entityTable}Endpoint
    @Produces("${contentType}")
    public List<${entity.getName()}> listAll()
    {
-      final List<${entity.getName()}> results = em.createQuery("${selectExpression}", ${entity.getName()}.class).getResultList();
+      final List<${entity.getName()}> results = em.createQuery("${selectExpression} ${orderClause}", ${entity.getName()}.class).getResultList();
       return results;
    }
 

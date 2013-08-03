@@ -178,11 +178,13 @@ public class RestPlugin implements Plugin
          String entityTable = getEntityTable(entity);
          String selectExpression = getSelectExpression(entity, entityTable);
          String idClause = getIdClause(entity, entityTable);
+         String orderClause = getOrderClause(entity, getJpqlEntityVariable(entityTable));
          String resourcePath = getResourcePath(java, entityTable);
          map.put("persistenceUnitName", persistenceUnitName);
          map.put("entityTable", entityTable);
          map.put("selectExpression", selectExpression);
          map.put("idClause", idClause);
+         map.put("orderClause", orderClause);
          map.put("resourcePath", resourcePath);
 
          Writer output = new StringWriter();
@@ -376,7 +378,7 @@ public class RestPlugin implements Plugin
 
    private String getSelectExpression(JavaClass entity, String entityTable)
    {
-      char entityVariable = entityTable.toLowerCase().charAt(0);
+      char entityVariable = getJpqlEntityVariable(entityTable);
       StringBuilder expressionBuilder = new StringBuilder();
       expressionBuilder.append("SELECT DISTINCT ");
       expressionBuilder.append(entityVariable);
@@ -418,6 +420,7 @@ public class RestPlugin implements Plugin
             }
          }
       }
+      
       return expressionBuilder.toString();
    }
 
@@ -438,11 +441,45 @@ public class RestPlugin implements Plugin
             {
                id = memberName;
             }
-            char entityVariable = entityTable.toLowerCase().charAt(0);
+            char entityVariable = getJpqlEntityVariable(entityTable);
             return "WHERE " + entityVariable + "." + id + " = " + ":entityId";
          }
       }
       return null;
+   }
+   
+   private String getOrderClause(JavaClass entity, char entityVariable)
+   {
+      StringBuilder expressionBuilder = new StringBuilder();
+      
+      // Add the ORDER BY clause 
+      for (Member<JavaClass, ?> member : entity.getMembers())
+      {
+         if (member.hasAnnotation(Id.class))
+         {
+            String memberName = member.getName();
+            String id = null;
+            if (member instanceof Method)
+            {
+               // Getters are expected to obey JavaBean conventions
+               id = Strings.uncapitalize(memberName.substring(2));
+            }
+            if (member instanceof Field)
+            {
+               id = memberName;
+            }
+            expressionBuilder.append("ORDER BY ");
+            expressionBuilder.append(entityVariable);
+            expressionBuilder.append('.');
+            expressionBuilder.append(id);
+         }
+      }
+      return expressionBuilder.toString();
+   }
+
+   private char getJpqlEntityVariable(String entityTable)
+   {
+      return entityTable.toLowerCase().charAt(0);
    }
 
    private List<JavaResource> selectTargets(final PipeOut out, Resource<?>[] targets)
