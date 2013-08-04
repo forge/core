@@ -6,38 +6,23 @@
  */
 package org.jboss.forge.spec.javaee.rest;
 
-import static org.jboss.forge.spec.javaee.RestApplicationFacet.REST_APPLICATIONCLASS_PACKAGE;
-
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.ws.rs.core.MediaType;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.forge.env.Configuration;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Member;
 import org.jboss.forge.parser.java.Method;
-import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.parser.java.util.Types;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
@@ -45,7 +30,6 @@ import org.jboss.forge.project.facets.events.InstallFacets;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.ShellMessages;
-import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.Command;
@@ -60,15 +44,8 @@ import org.jboss.forge.spec.javaee.EJBFacet;
 import org.jboss.forge.spec.javaee.JTAFacet;
 import org.jboss.forge.spec.javaee.PersistenceFacet;
 import org.jboss.forge.spec.javaee.RestActivatorType;
-import org.jboss.forge.spec.javaee.RestApplicationFacet;
 import org.jboss.forge.spec.javaee.RestFacet;
 import org.jboss.forge.spec.javaee.events.RestGeneratedResources;
-import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
-
-import freemarker.template.DefaultObjectWrapper;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -93,26 +70,27 @@ public class RestPlugin implements Plugin
 
    @Inject
    private ShellPrompt prompt;
-   
-   @Inject
-   private ShellPrintWriter writer;
-   
-   @Inject
-   private RestResourceTypeVisitor resourceTypeVisitor; 
-   
+
    @Inject
    @ProjectScoped
    Configuration configuration;
+   
+   @Inject
+   EntityBasedResourceGenerator entityResourceGenerator;
+   
+   @Inject
+   RootAndNestedDTOBasedResourceGenerator dtoResourceGenerator; 
 
    @SetupCommand
-   public void setup(@Option(name = "activatorType", defaultValue = "WEB_XML") RestActivatorType activatorType, final PipeOut out)
+   public void setup(@Option(name = "activatorType", defaultValue = "WEB_XML") RestActivatorType activatorType,
+            final PipeOut out)
    {
       if (!project.hasFacet(RestFacet.class))
       {
          configuration.setProperty(RestFacet.ACTIVATOR_CHOICE, activatorType.toString());
          request.fire(new InstallFacets(RestFacet.class));
       }
-      
+
       if (project.hasFacet(RestFacet.class))
       {
          ShellMessages.success(out, "Rest Web Services (JAX-RS) is installed.");
@@ -124,7 +102,8 @@ public class RestPlugin implements Plugin
    public void endpointFromEntity(
             final PipeOut out,
             @Option(name = "contentType", defaultValue = MediaType.APPLICATION_XML, completer = ContentTypeCompleter.class) String contentType,
-            @Option(required = false) JavaResource[] targets)
+            @Option(required = false) JavaResource[] targets,
+            @Option(name = "strategy", defaultValue = "JPA_ENTITY") final ResourceStrategy strategy)
             throws FileNotFoundException
    {
       /*
@@ -148,13 +127,10 @@ public class RestPlugin implements Plugin
       }
 
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      List<JavaResource> endpoints = new ArrayList<JavaResource>();  // for RestGeneratedResources event
-      List<JavaResource> entities  = new ArrayList<JavaResource>();  // for RestGeneratedResources event
+      RestGeneratedResources generatedResourcesEvent = new RestGeneratedResources();
       for (JavaResource jr : javaTargets)
       {
          JavaClass entity = (JavaClass) (jr).getJavaSource();
-         if (!entity.hasAnnotation(XmlRootElement.class))
-            entity.addAnnotation(XmlRootElement.class);
 
          String idType = resolveIdType(entity);
          if (!Types.isBasicType(idType))
@@ -163,113 +139,33 @@ public class RestPlugin implements Plugin
                      + "] is not supported by endpoint generation.");
             continue;
          }
-         String idGetterName = resolveIdGetterName(entity);
 
-         freemarker.template.Configuration freemarkerConfig = new freemarker.template.Configuration();
-         freemarkerConfig.setClassForTemplateLoading(getClass(), "/");
-         freemarkerConfig.setObjectWrapper(new DefaultObjectWrapper());
-
-         Map<Object, Object> map = new HashMap<Object, Object>();
-         map.put("entity", entity);
-         map.put("idType", idType);
-         map.put("getIdStatement", idGetterName);
-         map.put("contentType", contentType);
-         String persistenceUnitName = getPersistenceUnitName();
-         String entityTable = getEntityTable(entity);
-         String selectExpression = getSelectExpression(entity, entityTable);
-         String idClause = getIdClause(entity, entityTable);
-         String orderClause = getOrderClause(entity, getJpqlEntityVariable(entityTable));
-         String resourcePath = getResourcePath(java, entityTable);
-         map.put("persistenceUnitName", persistenceUnitName);
-         map.put("entityTable", entityTable);
-         map.put("selectExpression", selectExpression);
-         map.put("idClause", idClause);
-         map.put("orderClause", orderClause);
-         map.put("resourcePath", resourcePath);
-
-         Writer output = new StringWriter();
-         try
+         JavaClass resource = null;
+         if(strategy.equals(ResourceStrategy.JPA_ENTITY))
          {
-            Template templateFile = freemarkerConfig.getTemplate("org/jboss/forge/rest/Endpoint.jv");
-            templateFile.process(map, output);
-            output.flush();
+            resource = entityResourceGenerator.generateFrom(entity, idType, contentType, generatedResourcesEvent);
          }
-         catch (IOException ioEx)
+         else if (strategy.equals(ResourceStrategy.ROOT_AND_NESTED_DTO))
          {
-            throw new RuntimeException(ioEx);
-         }
-         catch (TemplateException templateEx)
-         {
-            throw new RuntimeException(templateEx);
+            resource = dtoResourceGenerator.generateFrom(entity, idType, contentType, generatedResourcesEvent);
          }
 
-         JavaClass resource = JavaParser.parse(JavaClass.class, output.toString());
-         resource.addImport(entity.getQualifiedName());
-         resource.setPackage(getPackageName(java));
-
-         /*
-          * Save the sources
-          */
-         entities.add(java.saveJavaSource(entity));
-
+         generatedResourcesEvent.addToEntities(jr);
+         
          if (!java.getJavaResource(resource).exists()
                   || prompt.promptBoolean("Endpoint [" + resource.getQualifiedName() + "] already, exists. Overwrite?"))
          {
-        	 endpoints.add(java.saveJavaSource(resource));
+            generatedResourcesEvent.addToEndpoints(java.saveJavaSource(resource));
             ShellMessages.success(out, "Generated REST endpoint for [" + entity.getQualifiedName() + "]");
 
          }
          else
             ShellMessages.info(out, "Aborted REST endpoint generation for [" + entity.getQualifiedName() + "]");
       }
-      if (! entities.isEmpty())
+      if (!generatedResourcesEvent.getEntities().isEmpty())
       {
-         generatedEvent.fire(new RestGeneratedResources(entities, endpoints));
+         generatedEvent.fire(generatedResourcesEvent);
       }
-   }
-
-   public String getPackageName(final JavaSourceFacet java)
-   {
-      if (project.hasFacet(RestApplicationFacet.class))
-      {
-         return configuration.getString(REST_APPLICATIONCLASS_PACKAGE);
-      }
-      else
-      {
-         return java.getBasePackage() + ".rest";
-      }
-   }
-
-   private String getResourcePath(JavaSourceFacet java, String entityTable)
-   {
-      String proposedQualifiedClassName = getPackageName(java) + "." + entityTable + "Endpoint";
-      String proposedResourcePath = "/" + entityTable.toLowerCase() + "s";
-      resourceTypeVisitor.setFound(false);
-      resourceTypeVisitor.setProposedPath(proposedResourcePath);
-      while (true)
-      {
-         java.visitJavaSources(resourceTypeVisitor);
-         if (resourceTypeVisitor.isFound())
-         {
-            if (proposedQualifiedClassName.equals(resourceTypeVisitor.getQualifiedClassNameForMatch()))
-            {
-               // The class might be overwritten later, so break out
-               break;
-            }
-            ShellMessages.warn(writer, "The @Path " + proposedResourcePath + " conflicts with an existing @Path.");
-            String computedPath = proposedResourcePath.startsWith("/") ? "forge" + proposedResourcePath : "forge/"
-                     + proposedResourcePath;
-            proposedResourcePath = prompt.prompt("Provide a different URI path value for the generated resource.",
-                     computedPath);
-            resourceTypeVisitor.setProposedPath(proposedResourcePath);
-            resourceTypeVisitor.setFound(false);
-         }
-         else
-         {
-            break;
-         }
-      }
-      return proposedResourcePath;
    }
 
    private String resolveIdType(JavaClass entity)
@@ -289,197 +185,6 @@ public class RestPlugin implements Plugin
          }
       }
       return "Object";
-   }
-
-   private String resolveIdGetterName(JavaClass entity)
-   {
-      String result = null;
-
-      for (Member<JavaClass, ?> member : entity.getMembers())
-      {
-         if (member.hasAnnotation(Id.class))
-         {
-            String name = member.getName();
-            String type = null;
-            if (member instanceof Method)
-            {
-               type = ((Method<?>) member).getReturnType();
-               if (name.startsWith("get"))
-               {
-                  name = name.substring(2);
-               }
-            }
-            else if (member instanceof Field)
-            {
-               type = ((Field<?>) member).getType();
-            }
-
-            if (type != null)
-            {
-               for (Method<JavaClass> method : entity.getMethods())
-               {
-                  // It's a getter
-                  if (method.getParameters().size() == 0 && type.equals(method.getReturnType()))
-                  {
-                     if (method.getName().toLowerCase().contains(name.toLowerCase()))
-                     {
-                        result = method.getName() + "()";
-                        break;
-                     }
-                  }
-               }
-            }
-
-            if (result != null)
-            {
-               break;
-            }
-            else if (type != null && member.isPublic())
-            {
-               String memberName = member.getName();
-               // Cheat a little if the member is public
-               if (member instanceof Method && memberName.startsWith("get"))
-               {
-                  memberName = memberName.substring(3);
-                  memberName = Strings.uncapitalize(memberName);
-               }
-               result = memberName;
-            }
-         }
-      }
-
-      if (result == null)
-      {
-         throw new RuntimeException("Could not determine @Id field and getter method for @Entity ["
-                  + entity.getQualifiedName()
-                  + "]. Aborting.");
-      }
-
-      return result;
-   }
-
-   private String getEntityTable(final JavaClass entity)
-   {
-      String table = entity.getName();
-      if (entity.hasAnnotation(Entity.class))
-      {
-         Annotation<JavaClass> a = entity.getAnnotation(Entity.class);
-         if (!Strings.isNullOrEmpty(a.getStringValue("name")))
-         {
-            table = a.getStringValue("name");
-         }
-         else if (!Strings.isNullOrEmpty(a.getStringValue()))
-         {
-            table = a.getStringValue();
-         }
-      }
-      return table;
-   }
-
-   private String getSelectExpression(JavaClass entity, String entityTable)
-   {
-      char entityVariable = getJpqlEntityVariable(entityTable);
-      StringBuilder expressionBuilder = new StringBuilder();
-      expressionBuilder.append("SELECT DISTINCT ");
-      expressionBuilder.append(entityVariable);
-      expressionBuilder.append(" FROM ");
-      expressionBuilder.append(entityTable);
-      expressionBuilder.append(" ");
-      expressionBuilder.append(entityVariable);
-
-      for (Member<JavaClass, ?> member : entity.getMembers())
-      {
-         if (member.hasAnnotation(OneToOne.class) || member.hasAnnotation(OneToMany.class)
-                  || member.hasAnnotation(ManyToMany.class) || member.hasAnnotation(ManyToOne.class))
-         {
-            String name = member.getName();
-            String associationField = null;
-            if (member instanceof Method)
-            {
-               if (name.startsWith("get"))
-               {
-                  associationField = Strings.uncapitalize(name.substring(2));
-               }
-            }
-            else if (member instanceof Field)
-            {
-               associationField = name;
-            }
-
-            if (associationField == null)
-            {
-               throw new RuntimeException("Could not compute the association field for member:" + member.getName()
-                        + " in entity" + entity.getName());
-            }
-            else
-            {
-               expressionBuilder.append(" LEFT JOIN FETCH ");
-               expressionBuilder.append(entityVariable);
-               expressionBuilder.append('.');
-               expressionBuilder.append(associationField);
-            }
-         }
-      }
-      
-      return expressionBuilder.toString();
-   }
-
-   private String getIdClause(JavaClass entity, String entityTable)
-   {
-      for (Member<JavaClass, ?> member : entity.getMembers())
-      {
-         if (member.hasAnnotation(Id.class))
-         {
-            String memberName = member.getName();
-            String id = null;
-            if (member instanceof Method)
-            {
-               // Getters are expected to obey JavaBean conventions
-               id = Strings.uncapitalize(memberName.substring(2));
-            }
-            if (member instanceof Field)
-            {
-               id = memberName;
-            }
-            char entityVariable = getJpqlEntityVariable(entityTable);
-            return "WHERE " + entityVariable + "." + id + " = " + ":entityId";
-         }
-      }
-      return null;
-   }
-   
-   private String getOrderClause(JavaClass entity, char entityVariable)
-   {
-      StringBuilder expressionBuilder = new StringBuilder();
-      
-      // Add the ORDER BY clause 
-      for (Member<JavaClass, ?> member : entity.getMembers())
-      {
-         if (member.hasAnnotation(Id.class))
-         {
-            String memberName = member.getName();
-            String id = null;
-            if (member instanceof Method)
-            {
-               // Getters are expected to obey JavaBean conventions
-               id = Strings.uncapitalize(memberName.substring(2));
-            }
-            if (member instanceof Field)
-            {
-               id = memberName;
-            }
-            expressionBuilder.append("ORDER BY ");
-            expressionBuilder.append(entityVariable);
-            expressionBuilder.append('.');
-            expressionBuilder.append(id);
-         }
-      }
-      return expressionBuilder.toString();
-   }
-
-   private char getJpqlEntityVariable(String entityTable)
-   {
-      return entityTable.toLowerCase().charAt(0);
    }
 
    private List<JavaResource> selectTargets(final PipeOut out, Resource<?>[] targets)
@@ -521,39 +226,6 @@ public class RestPlugin implements Plugin
       {
          ShellMessages.info(out, "Skipped non-@Entity Java resource ["
                   + entity.getQualifiedName() + "]");
-      }
-   }
-
-   private String getPersistenceUnitName()
-   {
-      // This is currently limited to accessing the persistence units of the current project only, and not of
-      // dependencies (like an EJB module with a PU that is accessible on the classpath, but not in WEB-INF/lib).
-      PersistenceFacet persistence = project.getFacet(PersistenceFacet.class);
-      PersistenceDescriptor persistenceDescriptor = persistence.getConfig();
-      List<PersistenceUnitDef> units = persistenceDescriptor.listUnits();
-      
-      // If there is only one PU, then use it irrespective of whether it excludes unlisted classes or not.
-      if (units.size() == 1)
-      {
-         return units.get(0).getName();
-      }
-      else
-      {
-         // Otherwise just prompt the user to choose a PU. It is not wise to choose a PU on behalf of the user using
-         // techniques like matching class names in the PU since a class could be present in multiple PUs, including PUs
-         // that allow unlisted classes to be managed. In such an event, we may choose the wrong PU, when the user might
-         // have wanted the PU with classpath scanning. Letting the user choose the PU to be used for the injected
-         // PersistenceContext is safest. 
-         List<String> unitNames = new ArrayList<String>(); 
-         for(PersistenceUnitDef unitDef: units)
-         {
-            unitNames.add(unitDef.getName());
-         }
-         String chosenUnit = prompt
-                  .promptChoiceTyped(
-                           "Multiple persistence units were detected. Which persistence unit do you want to inject in the REST resources?",
-                           unitNames, unitNames.get(0));
-         return chosenUnit;
       }
    }
 }

@@ -19,6 +19,7 @@ import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.spec.jpa.AbstractJPATest;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.Assert;
@@ -32,6 +33,12 @@ public class RestPluginEventsTest extends AbstractJPATest
    @Inject
    private RestGeneratedResourcesEventObserver observer;
 
+   @Before
+   public void setup()
+   {
+      observer.reset();
+   }
+   
    @Test
    public void testCreateEndpointObservesRestGeneratedResourcesEvent() throws Exception
    {
@@ -46,18 +53,50 @@ public class RestPluginEventsTest extends AbstractJPATest
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.UserEndpoint");
-      
+
       List<JavaResource> endpoints = observer.getEndpoints();
-      Assert.assertEquals(1,endpoints.size());
-      Assert.assertEquals(resource.getFullyQualifiedName(),endpoints.get(0).getFullyQualifiedName());
-      
+      Assert.assertEquals(1, endpoints.size());
+      Assert.assertEquals(resource.getFullyQualifiedName(), endpoints.get(0).getFullyQualifiedName());
+
       List<JavaResource> entities = observer.getEntities();
-      Assert.assertEquals(1,entities.size());
+      Assert.assertEquals(1, entities.size());
       JavaResource resourceEntity = java.getJavaResource(entity.getCanonicalName());
-      Assert.assertEquals(resourceEntity.getFullyQualifiedName(),entities.get(0).getFullyQualifiedName());
-      
+      Assert.assertEquals(resourceEntity.getFullyQualifiedName(), entities.get(0).getFullyQualifiedName());
+
+      List<JavaResource> dtos = observer.getothers();
+      Assert.assertEquals(0, dtos.size());
    }
 
+   @Test
+   public void testCreateDTOBasedEndpointObservesRestGeneratedResourcesEvent() throws Exception
+   {
+      Project project = getProject();
+      JavaClass entity = generateEntity(project, null, "User");
+      assertFalse(entity.hasAnnotation(XmlRootElement.class));
+
+      setupRest();
+
+      queueInputLines("");
+      getShell().execute("rest endpoint-from-entity --strategy ROOT_AND_NESTED_DTO");
+
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.UserEndpoint");
+      JavaResource dto = java.getJavaResource(java.getBasePackage() + ".rest.dto.UserDTO");
+
+      List<JavaResource> endpoints = observer.getEndpoints();
+      Assert.assertEquals(1, endpoints.size());
+      Assert.assertEquals(resource.getFullyQualifiedName(), endpoints.get(0).getFullyQualifiedName());
+
+      List<JavaResource> entities = observer.getEntities();
+      Assert.assertEquals(1, entities.size());
+      JavaResource resourceEntity = java.getJavaResource(entity.getCanonicalName());
+      Assert.assertEquals(resourceEntity.getFullyQualifiedName(), entities.get(0).getFullyQualifiedName());
+
+      List<JavaResource> dtos = observer.getothers();
+      Assert.assertEquals(1, dtos.size());
+      Assert.assertEquals(dto.getFullyQualifiedName(), dtos.get(0).getFullyQualifiedName());
+   }
+   
    private void setupRest() throws Exception
    {
       queueInputLines("", "");
