@@ -18,11 +18,13 @@ import org.jboss.forge.resources.java.JavaResource;
 public class RestGeneratedResources {
 	private final List<JavaResource> endpoints;
 	private final List<JavaResource> entities;
+	private final List<JavaResource> dtos;
 
 	public RestGeneratedResources(List<JavaResource> entities,
-			List<JavaResource> endpoints) {
+			List<JavaResource> endpoints, List<JavaResource> dtos) {
 		this.entities = entities;
 		this.endpoints = endpoints;
+		this.dtos = dtos;
 	}
 
 	public List<JavaResource> getEndpoints() {
@@ -32,5 +34,9 @@ public class RestGeneratedResources {
 	public List<JavaResource> getEntities() {
 		return entities;
 	}
+	
+	public List<JavaResource> getDtos() {
+      return dtos;
+   }
 
 }

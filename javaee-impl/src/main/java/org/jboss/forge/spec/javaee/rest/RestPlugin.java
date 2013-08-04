@@ -103,6 +103,9 @@ public class RestPlugin implements Plugin
    @Inject
    @ProjectScoped
    Configuration configuration;
+   
+   @Inject
+   private JpaDtoGenerator dtoCreator;
 
    @SetupCommand
    public void setup(@Option(name = "activatorType", defaultValue = "WEB_XML") RestActivatorType activatorType, final PipeOut out)
@@ -150,6 +153,7 @@ public class RestPlugin implements Plugin
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       List<JavaResource> endpoints = new ArrayList<JavaResource>();  // for RestGeneratedResources event
       List<JavaResource> entities  = new ArrayList<JavaResource>();  // for RestGeneratedResources event
+      List<JavaResource> dtos  = new ArrayList<JavaResource>();  // for RestGeneratedResources event
       for (JavaResource jr : javaTargets)
       {
          JavaClass entity = (JavaClass) (jr).getJavaSource();
@@ -202,6 +206,9 @@ public class RestPlugin implements Plugin
          {
             throw new RuntimeException(templateEx);
          }
+         
+         List<JavaResource> createdDtos = dtoCreator.from(entity, getPackageName(java) + ".dto");
+         dtos.addAll(createdDtos);
 
          JavaClass resource = JavaParser.parse(JavaClass.class, output.toString());
          resource.addImport(entity.getQualifiedName());
@@ -224,7 +231,7 @@ public class RestPlugin implements Plugin
       }
       if (! entities.isEmpty())
       {
-         generatedEvent.fire(new RestGeneratedResources(entities, endpoints));
+         generatedEvent.fire(new RestGeneratedResources(entities, endpoints, dtos));
       }
    }
 
