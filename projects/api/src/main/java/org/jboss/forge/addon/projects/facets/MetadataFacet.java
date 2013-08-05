@@ -96,12 +96,12 @@ public interface MetadataFacet extends ProjectFacet
     * Properties can be used anywhere in a {@link Project} configuration and its dependencies, and will be expanded
     * during building to the resolved property value.
     */
-   public void setProperty(String name, String value);
+   public void setDirectProperty(String name, String value);
    
    /**
     * Remove a build property by name. (Build properties, such as ${my.version}, can be used anywhere in a dependency,
     * and will be expanded during building to their property value.)
     */
-   public String removeProperty(String name);
+   public String removeDirectProperty(String name);
 
 }

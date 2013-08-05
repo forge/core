@@ -27,7 +27,7 @@ public class FurnaceVersionFacet extends AbstractFacet<Project> implements Proje
    @Override
    public boolean install()
    {
-      getFaceted().getFacet(MetadataFacet.class).setProperty(VERSION_PROPERTY_NAME, "[,)");
+      getFaceted().getFacet(MetadataFacet.class).setDirectProperty(VERSION_PROPERTY_NAME, "[,)");
       return isInstalled();
    }
 
@@ -44,7 +44,7 @@ public class FurnaceVersionFacet extends AbstractFacet<Project> implements Proje
 
    public void setVersion(String version)
    {
-      getFaceted().getFacet(MetadataFacet.class).setProperty(VERSION_PROPERTY_NAME, version);
+      getFaceted().getFacet(MetadataFacet.class).setDirectProperty(VERSION_PROPERTY_NAME, version);
    }
 
 }
