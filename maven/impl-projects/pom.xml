@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>maven-parent</artifactId>
-      <version>2.0.0.Alpha10</version>
+      <version>2.0.0-SNAPSHOT</version>
    </parent>
    <artifactId>maven-impl-projects</artifactId>
    <name>Forge - Maven Projects Impl</name>
@@ -48,19 +48,19 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>environment-api</artifactId>
-         <version>2.0.0.Alpha10</version>
+         <version>2.0.0-SNAPSHOT</version>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>projects-api</artifactId>
-         <version>2.0.0.Alpha10</version>
+         <version>2.0.0-SNAPSHOT</version>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui-api</artifactId>
-         <version>2.0.0.Alpha10</version>
+         <version>2.0.0-SNAPSHOT</version>
          <scope>provided</scope>
       </dependency>
       <dependency>
@@ -76,7 +76,7 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>parser-java-api</artifactId>
-         <version>2.0.0.Alpha10</version>
+         <version>2.0.0-SNAPSHOT</version>
          <scope>provided</scope>
       </dependency>
    </dependencies>
