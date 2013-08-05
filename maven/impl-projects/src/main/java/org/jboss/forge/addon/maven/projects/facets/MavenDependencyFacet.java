@@ -9,7 +9,6 @@ package org.jboss.forge.addon.maven.projects.facets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -339,18 +338,6 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       builder.setScopeType(mvn.resolveProperties(dependency.getScopeType()));
 
       return builder;
-   }
-
-   @Override
-   public String removeProperty(final String name)
-   {
-      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
-
-      Properties properties = pom.getProperties();
-      String result = (String) properties.remove(name);
-      maven.setPOM(pom);
-      return result;
    }
 
    @Override

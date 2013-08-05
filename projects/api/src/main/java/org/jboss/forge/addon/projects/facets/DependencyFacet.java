@@ -213,12 +213,6 @@ public interface DependencyFacet extends ProjectFacet
    public void removeManagedDependency(Dependency managedDependency);
 
    /**
-    * Remove a build property by name. (Build properties, such as ${my.version}, can be used anywhere in a dependency,
-    * and will be expanded during building to their property value.)
-    */
-   public String removeProperty(String name);
-
-   /**
     * Remove the given {@link DependencyRepository} from the current project. Return true if the repository was removed;
     * return false otherwise. Return the removed repository, or null if no repository was removed.
     */

@@ -168,4 +168,17 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    {
       return getEffectiveProperties().get(name);
    }
+
+   @Override
+   public String removeProperty(final String name)
+   {
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
+      Model pom = maven.getPOM();
+
+      Properties properties = pom.getProperties();
+      String result = (String) properties.remove(name);
+      maven.setPOM(pom);
+      return result;
+   }
+   
 }
