@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>projects-parent</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <version>2.0.0.Alpha10</version>
    </parent>
    <artifactId>projects-api</artifactId>
    <name>Forge - Projects API</name>
@@ -29,7 +29,7 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui-api</artifactId>
          <scope>provided</scope>
-         <version>2.0.0-SNAPSHOT</version>
+         <version>2.0.0.Alpha10</version>
       </dependency>
    </dependencies>
 
