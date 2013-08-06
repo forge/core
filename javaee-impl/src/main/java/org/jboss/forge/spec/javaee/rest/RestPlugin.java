@@ -172,9 +172,15 @@ public class RestPlugin implements Plugin
          freemarker.template.Configuration freemarkerConfig = new freemarker.template.Configuration();
          freemarkerConfig.setClassForTemplateLoading(getClass(), "/");
          freemarkerConfig.setObjectWrapper(new DefaultObjectWrapper());
+         
+         Map<JavaClass, JavaResource> createdDtos = dtoCreator.from(entity, getPackageName(java) + ".dto");
+         dtos.addAll(createdDtos.values());
+         JavaResource rootDtoResource = createdDtos.get(entity);
+         JavaClass rootDto = (JavaClass) rootDtoResource.getJavaSource();
 
          Map<Object, Object> map = new HashMap<Object, Object>();
          map.put("entity", entity);
+         map.put("dto", rootDto);
          map.put("idType", idType);
          map.put("getIdStatement", idGetterName);
          map.put("contentType", contentType);
@@ -207,11 +213,9 @@ public class RestPlugin implements Plugin
             throw new RuntimeException(templateEx);
          }
          
-         List<JavaResource> createdDtos = dtoCreator.from(entity, getPackageName(java) + ".dto");
-         dtos.addAll(createdDtos);
-
          JavaClass resource = JavaParser.parse(JavaClass.class, output.toString());
          resource.addImport(entity.getQualifiedName());
+         resource.addImport(rootDto.getQualifiedName());
          resource.setPackage(getPackageName(java));
 
          /*
