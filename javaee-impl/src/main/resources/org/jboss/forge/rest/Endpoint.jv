@@ -26,7 +26,7 @@ public class ${entityTable}Endpoint
    @Consumes("${contentType}")
    public Response create(${dto.getName()} dto)
    {
-      ${entity.getName()} entity = null; //${entity.getName()}.fromDto(dto, em);
+      ${entity.getName()} entity = dto.fromDTO(null, em);
       em.persist(entity);
       return Response.created(UriBuilder.fromResource(${entityTable}Endpoint.class).path(String.valueOf(entity.${getIdStatement})).build()).build();
    }
@@ -74,9 +74,12 @@ public class ${entityTable}Endpoint
    @PUT
    @Path("/{id:[0-9][0-9]*}")
    @Consumes("${contentType}")
-   public Response update(${dto.getName()} dto)
+   public Response update(@PathParam("id") ${idType} id, ${dto.getName()} dto)
    {
-      ${entity.getName()} entity = null;
+      TypedQuery<${entity.getName()}> findByIdQuery = em.createQuery("${selectExpression} ${idClause} ${orderClause}", ${entity.getName()}.class);
+      findByIdQuery.setParameter("entityId", id);
+      ${entity.getName()} entity = findByIdQuery.getSingleResult();
+      entity = dto.fromDTO(entity, em);
       entity = em.merge(entity);
       return Response.noContent().build();
    }

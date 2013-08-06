@@ -22,7 +22,7 @@ public class JPABean
       this.entity = entity;
    }
 
-   public boolean isReadOnly(Field<?> field)
+   public boolean isWritable(Field<?> field)
    {
       for (Method<?> method : entity.getMethods())
       {
