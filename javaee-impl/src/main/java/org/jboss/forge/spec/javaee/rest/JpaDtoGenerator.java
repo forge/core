@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
+import javax.persistence.TypedQuery;
 
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Field;
@@ -54,16 +55,17 @@ public class JpaDtoGenerator
          throw new IllegalArgumentException("The argument entity was null.");
       }
       allDTOs.clear();
-      generatedDTOGraphForEntity(entity, dtoPackage, true);
+      generatedDTOGraphForEntity(entity, dtoPackage, true, false);
       return allDTOs;
    }
 
-   public JavaClass generatedDTOGraphForEntity(JavaClass entity, String dtoPackage, boolean topLevel)
+   public JavaClass generatedDTOGraphForEntity(JavaClass entity, String dtoPackage, boolean topLevel,
+            boolean isEmbeddedType)
             throws FileNotFoundException
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
-      String dtoClassName = entity.getName() + (topLevel ? "" : "Nested") + "DTO";
+      String dtoClassName = (topLevel ? "" : "Nested") + entity.getName() + "DTO";
       JavaClass dtoClass = JavaParser.create(JavaClass.class)
                .setPackage(dtoPackage)
                .setName(dtoClassName)
@@ -84,7 +86,8 @@ public class JpaDtoGenerator
       copyCtor.setPublic();
       copyCtor.setParameters("final " + entity.getName() + " entity");
       StringBuilder copyCtorBuilder = new StringBuilder();
-      
+      copyCtorBuilder.append("if(entity != null) {");
+
       // Copy method to assemble JPA Entity from DTO
       Method<JavaClass> assembleJPA = dtoClass.addMethod()
                .setName("fromDTO")
@@ -100,7 +103,21 @@ public class JpaDtoGenerator
          {
             idField = field;
             id = field.getName();
-            assembleJPABuilder.append("if(entity == null) { entity = new " + entity.getName() + "(); }");
+
+            String entityName = entity.getName();
+            assembleJPABuilder.append("if(entity == null) { entity = new " + entityName + "(); }");
+            if (!topLevel)
+            {
+               String jpqlVar = entityName.toLowerCase().substring(0, 1);
+               dtoClass.addImport(TypedQuery.class);
+               assembleJPABuilder.append("if(this." + id + " != null) {");
+               assembleJPABuilder.append("TypedQuery findByIdQuery = em.createQuery(\"SELECT DISTINCT " + jpqlVar
+                        + " FROM " + entityName + " " + jpqlVar + " WHERE " + jpqlVar + "." + id + " = :entityId"
+                        + "\", " + entityName + ".class);");
+               assembleJPABuilder.append("findByIdQuery.setParameter(\"entityId\", this." + id + ");");
+               assembleJPABuilder.append("entity = (" + entityName + ") findByIdQuery.getSingleResult();");
+               assembleJPABuilder.append("return entity; }");
+            }
          }
       }
 
@@ -138,12 +155,12 @@ public class JpaDtoGenerator
 
          if (isCollection && parameterized)
          {
-            if(!topLevel)
+            if (!topLevel)
             {
                // Do not expand collections beyond the root
                continue;
             }
-            
+
             // Create a DTO having the PK-field of the parameterized type of multi-valued collections,
             // if it does not exist
             Type<?> type = fieldTypeInspector.getTypeArguments().get(0);
@@ -157,7 +174,7 @@ public class JpaDtoGenerator
                continue;
             }
 
-            JavaClass nestedDTOClass = generatedDTOGraphForEntity(parameterizedClass, dtoPackage, false);
+            JavaClass nestedDTOClass = generatedDTOGraphForEntity(parameterizedClass, dtoPackage, false, false);
             allDTOs.put(parameterizedClass, java.saveJavaSource(nestedDTOClass));
 
             // Then create a collection field for the DTO
@@ -173,10 +190,11 @@ public class JpaDtoGenerator
                      + Strings.capitalize(fieldName) + "().iterator();");
             copyCtorBuilder.append("for (; " + iterator + ".hasNext() ;) ");
             copyCtorBuilder.append("{");
-            copyCtorBuilder.append("this." + fieldName + ".add(" + "new " + nestedDTOType + "((" + simpleParameterizedType
+            copyCtorBuilder.append("this." + fieldName + ".add(" + "new " + nestedDTOType + "(("
+                     + simpleParameterizedType
                      + ")" + iterator + ".next()));");
             copyCtorBuilder.append("}");
-            
+
             String jpaIterator = "iter" + Strings.capitalize(fieldName);
             assembleJPABuilder.append("Iterator" + " " + jpaIterator + " = " + "entity.get"
                      + Strings.capitalize(fieldName) + "().iterator();");
@@ -199,12 +217,12 @@ public class JpaDtoGenerator
             assembleJPABuilder.append("if(found == false) { ");
             assembleJPABuilder.append("entity.get" + Strings.capitalize(fieldName) + "().remove(" + jpaVar + ");");
             assembleJPABuilder.append("} }");
-            
+
             assembleJPABuilder.append("Iterator" + " " + dtoIterator + " = " + "this.get"
                      + Strings.capitalize(fieldName) + "().iterator();");
             assembleJPABuilder.append("for (; " + dtoIterator + ".hasNext() ;) {");
             assembleJPABuilder.append(" boolean found = false;");
-            assembleJPABuilder.append(" " + nestedDTOType + " " + dtoVar + " = (" + nestedDTOType + ") " + jpaIterator
+            assembleJPABuilder.append(" " + nestedDTOType + " " + dtoVar + " = (" + nestedDTOType + ") " + dtoIterator
                      + ".next();");
             assembleJPABuilder.append(jpaIterator + " = " + "entity.get"
                      + Strings.capitalize(fieldName) + "().iterator();");
@@ -215,11 +233,15 @@ public class JpaDtoGenerator
                      + Strings.capitalize(id) + "())) { found = true; break; }");
             assembleJPABuilder.append("}");
             assembleJPABuilder.append("if(found == false) { ");
-            String jpqlVar = simpleParameterizedType.substring(0, 1);
-            assembleJPABuilder.append("Iterator resultIter = em.createQuery(\"SELECT DISTINCT " + jpqlVar  + " FROM " + simpleParameterizedType + " " + jpqlVar + "\", " + simpleParameterizedType + ".class).getResultList().iterator();");
+            String jpqlVar = simpleParameterizedType.toLowerCase().substring(0, 1);
+            assembleJPABuilder.append("Iterator resultIter = em.createQuery(\"SELECT DISTINCT " + jpqlVar + " FROM "
+                     + simpleParameterizedType + " " + jpqlVar + "\", " + simpleParameterizedType
+                     + ".class).getResultList().iterator();");
             assembleJPABuilder.append("for(; resultIter.hasNext();) { ");
-            assembleJPABuilder.append(simpleParameterizedType + " result = (" + simpleParameterizedType + ") resultIter.next();");
-            assembleJPABuilder.append("if( result.get" + Strings.capitalize(id) + "().equals("+ dtoVar + ".get" + Strings.capitalize(id) +  "())) {");
+            assembleJPABuilder.append(simpleParameterizedType + " result = (" + simpleParameterizedType
+                     + ") resultIter.next();");
+            assembleJPABuilder.append("if( result.get" + Strings.capitalize(id) + "().equals(" + dtoVar + ".get"
+                     + Strings.capitalize(id) + "())) {");
             assembleJPABuilder.append("entity.get" + Strings.capitalize(fieldName) + "().add(result);");
             assembleJPABuilder.append("break;");
             assembleJPABuilder.append("} }");
@@ -227,12 +249,12 @@ public class JpaDtoGenerator
          }
          else if (hasAssociation)
          {
-            if(!topLevel)
+            if (!topLevel)
             {
                // Do not expand associations beyond the root
                continue;
             }
-            
+
             // Create another DTO having the PK-field of the type of single-valued associations,
             // if it does not exist
             JavaClass associatedClass = tryGetJavaClass(java, qualifiedFieldType);
@@ -243,7 +265,7 @@ public class JpaDtoGenerator
                continue;
             }
 
-            JavaClass nestedDTOClass = generatedDTOGraphForEntity(associatedClass, dtoPackage, false);
+            JavaClass nestedDTOClass = generatedDTOGraphForEntity(associatedClass, dtoPackage, false, false);
             allDTOs.put(associatedClass, java.saveJavaSource(nestedDTOClass));
 
             // Then create a field referencing the DTO
@@ -254,17 +276,19 @@ public class JpaDtoGenerator
             // Add an expression in the ctor to extract the fields
             copyCtorBuilder.append("this." + fieldName + " = " + "new " + nestedType + "(entity.get"
                      + Strings.capitalize(fieldName) + "());");
-            
+
             if (isWritable)
             {
+               assembleJPABuilder.append("if(this." + fieldName + " != null) {");
                assembleJPABuilder.append("entity.set" + Strings.capitalize(fieldName) + "(this." + fieldName
                         + ".fromDTO(entity.get" + Strings.capitalize(fieldName) + "(), em));");
+               assembleJPABuilder.append("}");
             }
          }
          else if (isEmbedded)
          {
             // Create another DTO for the @Embedded type, if it does not exist
-            JavaClass dtoForEmbeddedType = generatedDTOGraphForEntity(fieldClass, dtoPackage, true);
+            JavaClass dtoForEmbeddedType = generatedDTOGraphForEntity(fieldClass, dtoPackage, true, true);
             String embeddedType = dtoForEmbeddedType.getName();
             String qualifiedNameForEmbeddedType = dtoForEmbeddedType.getQualifiedName();
             addProperty(dtoClass, field, embeddedType, qualifiedNameForEmbeddedType);
@@ -272,18 +296,20 @@ public class JpaDtoGenerator
             // Add an expression in the ctor to assign the embedded type
             copyCtorBuilder.append("this." + fieldName + " = " + "new " + embeddedType + "(entity.get"
                      + Strings.capitalize(fieldName) + "());");
-            
+
             if (isWritable)
             {
+               assembleJPABuilder.append("if(this." + fieldName + " != null) {");
                assembleJPABuilder.append("entity.set" + Strings.capitalize(fieldName) + "(this." + fieldName
                         + ".fromDTO(entity.get" + Strings.capitalize(fieldName) + "(), em));");
+               assembleJPABuilder.append("}");
             }
          }
          else
          {
             addProperty(dtoClass, field, fieldType, qualifiedFieldType);
             copyCtorBuilder.append("this." + fieldName + " = " + "entity.get" + Strings.capitalize(fieldName) + "();");
-            
+
             if (!field.equals(idField) && isWritable)
             {
                assembleJPABuilder.append("entity.set" + Strings.capitalize(field.getName()) + "(this." + fieldName
@@ -292,7 +318,12 @@ public class JpaDtoGenerator
          }
       }
 
+      copyCtorBuilder.append("}");
       copyCtor.setBody(copyCtorBuilder.toString());
+      if (!isEmbeddedType)
+      {
+         assembleJPABuilder.append("entity = em.merge(entity);");
+      }
       assembleJPABuilder.append("return entity;");
       assembleJPA.setBody(assembleJPABuilder.toString());
 
