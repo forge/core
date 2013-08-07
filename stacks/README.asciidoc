@@ -1,0 +1,46 @@
+== stacks
+:idprefix: id_ 
+
+This addon *exports services* for use in other addons. The Maven addon implements extension points in several addons, enabling them to function using maven dependency resolution, project building, and additionally provides maven POM manipulation services.
+
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|projects
+|no
+|yes
+
+|ui
+|no
+|yes
+
+|org.jboss.forge.furnace.container:cdi
+|no
+|no
+
+|===
+
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>stacks</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----
+
+== Features
+
+TODO
