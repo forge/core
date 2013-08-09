@@ -1,19 +1,13 @@
 package org.jboss.forge.env;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.ConfigurationFacet;
-import org.jboss.forge.project.services.FacetFactory;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class ConfigurationFacetTest extends AbstractShellTest
 {
-   @Inject
-   FacetFactory factory;
-
    @Test
    public void testProjectScopedConfigurationFacet() throws Exception
    {
