@@ -173,10 +173,9 @@ public class RestPlugin implements Plugin
          freemarkerConfig.setClassForTemplateLoading(getClass(), "/");
          freemarkerConfig.setObjectWrapper(new DefaultObjectWrapper());
          
-         Map<JavaClass, JavaResource> createdDtos = dtoCreator.from(entity, getPackageName(java) + ".dto");
-         dtos.addAll(createdDtos.values());
-         JavaResource rootDtoResource = createdDtos.get(entity);
-         JavaClass rootDto = (JavaClass) rootDtoResource.getJavaSource();
+         DTOCollection createdDtos = dtoCreator.from(entity, getPackageName(java) + ".dto");
+         dtos.addAll(createdDtos.allResources());
+         JavaClass rootDto = createdDtos.getDTOFor(entity, true);
 
          Map<Object, Object> map = new HashMap<Object, Object>();
          map.put("entity", entity);

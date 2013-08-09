@@ -2,9 +2,7 @@ package org.jboss.forge.spec.javaee.rest;
 
 import java.io.FileNotFoundException;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.persistence.Embeddable;
@@ -34,7 +32,8 @@ import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.project.ProjectScoped;
 import org.jboss.forge.shell.util.Packages;
-import org.jboss.forge.spec.javaee.util.JPABean;
+import org.jboss.forge.spec.javaee.util.JPABeanIntrospector;
+import org.jboss.forge.spec.javaee.util.JPAProperty;
 
 public class JpaDtoGenerator
 {
@@ -46,23 +45,28 @@ public class JpaDtoGenerator
    @Inject
    private ShellPrintWriter writer;
 
-   private Map<JavaClass, JavaResource> allDTOs = new HashMap<JavaClass, JavaResource>();
+   @Inject
+   private DTOCollection dtoCollection;
 
-   public Map<JavaClass, JavaResource> from(JavaClass entity, String dtoPackage) throws FileNotFoundException
+   public DTOCollection from(JavaClass entity, String dtoPackage) throws FileNotFoundException
    {
       if (entity == null)
       {
          throw new IllegalArgumentException("The argument entity was null.");
       }
-      allDTOs.clear();
       generatedDTOGraphForEntity(entity, dtoPackage, true, false);
-      return allDTOs;
+      return dtoCollection;
    }
 
    public JavaClass generatedDTOGraphForEntity(JavaClass entity, String dtoPackage, boolean topLevel,
             boolean isEmbeddedType)
             throws FileNotFoundException
    {
+      if (dtoCollection.containsDTOFor(entity, topLevel))
+      {
+         return dtoCollection.getDTOFor(entity, topLevel);
+      }
+
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
       String dtoClassName = (topLevel ? "" : "Nested") + entity.getName() + "DTO";
@@ -96,13 +100,14 @@ public class JpaDtoGenerator
                .setParameters(entity.getName() + " entity, EntityManager em");
       StringBuilder assembleJPABuilder = new StringBuilder();
       String id = null;
-      Field<?> idField = null;
-      for (Field<?> field : entity.getFields())
+      JPAProperty idProperty = null;
+      JPABeanIntrospector bean = new JPABeanIntrospector(entity);
+      for (JPAProperty property : bean.getProperties())
       {
-         if (field.hasAnnotation(Id.class))
+         if (property.hasAnnotation(Id.class))
          {
-            idField = field;
-            id = field.getName();
+            idProperty = property;
+            id = property.getName();
 
             String entityName = entity.getName();
             assembleJPABuilder.append("if(entity == null) { entity = new " + entityName + "(); }");
@@ -121,30 +126,30 @@ public class JpaDtoGenerator
          }
       }
 
-      for (Field<?> field : entity.getFields())
+      for (JPAProperty property : bean.getProperties())
       {
-         if (field.isTransient() || field.hasAnnotation(Transient.class) || field.isStatic())
+         if (property.isTransient() || property.hasAnnotation(Transient.class))
          {
             // No known reason for transient and static fields to be present in DTOs.
             // Revisit this if necessary for @Transient
             continue;
          }
 
-         String fieldName = field.getName();
-         String fieldType = field.getType();
-         String qualifiedFieldType = field.getQualifiedType();
+         String fieldName = property.getName();
+         String fieldType = property.getType();
+         String qualifiedFieldType = property.getQualifiedType();
          // Get the JavaClass for the field's type so that we can inspect it later for annotations and such
          // and recursively generate a DTO for it as well.
          JavaClass fieldClass = tryGetJavaClass(java, qualifiedFieldType);
 
-         JPABean bean = new JPABean(entity);
-         boolean isWritable = bean.isWritable(field);
-         boolean isReadable = bean.isReadable(field);
-         boolean isCollection = field.hasAnnotation(OneToMany.class) || field.hasAnnotation(ManyToMany.class);
-         Type<?> fieldTypeInspector = field.getTypeInspector();
+         // JPABeanTest bean = new JPABean(entity);
+         boolean isWritable = property.isWritable();
+         boolean isReadable = property.isReadable();
+         boolean isCollection = property.hasAnnotation(OneToMany.class) || property.hasAnnotation(ManyToMany.class);
+         Type<?> fieldTypeInspector = property.getTypeInspector();
          boolean parameterized = fieldTypeInspector.isParameterized();
-         boolean hasAssociation = field.hasAnnotation(OneToOne.class) || field.hasAnnotation(ManyToOne.class);
-         boolean isEmbedded = field.hasAnnotation(Embedded.class)
+         boolean hasAssociation = property.hasAnnotation(OneToOne.class) || property.hasAnnotation(ManyToOne.class);
+         boolean isEmbedded = property.hasAnnotation(Embedded.class)
                   || (fieldClass != null && fieldClass.hasAnnotation(Embeddable.class));
 
          if (!isReadable)
@@ -175,12 +180,11 @@ public class JpaDtoGenerator
             }
 
             JavaClass nestedDTOClass = generatedDTOGraphForEntity(parameterizedClass, dtoPackage, false, false);
-            allDTOs.put(parameterizedClass, java.saveJavaSource(nestedDTOClass));
 
             // Then create a collection field for the DTO
             String nestedDTOType = nestedDTOClass.getName();
             String qualifiedDTOType = nestedDTOClass.getQualifiedName();
-            addCollectionProperty(dtoClass, field, nestedDTOType, qualifiedDTOType);
+            addCollectionProperty(dtoClass, property, nestedDTOType, qualifiedDTOType);
 
             // Add expressions in the ctor to extract the PK
             dtoClass.addImport(qualifiedParameterizedType);
@@ -266,12 +270,11 @@ public class JpaDtoGenerator
             }
 
             JavaClass nestedDTOClass = generatedDTOGraphForEntity(associatedClass, dtoPackage, false, false);
-            allDTOs.put(associatedClass, java.saveJavaSource(nestedDTOClass));
 
             // Then create a field referencing the DTO
             String nestedType = nestedDTOClass.getName();
             String qualifiedDTOFieldType = nestedDTOClass.getQualifiedName();
-            addProperty(dtoClass, field, nestedType, qualifiedDTOFieldType);
+            addProperty(dtoClass, property, nestedType, qualifiedDTOFieldType);
 
             // Add an expression in the ctor to extract the fields
             copyCtorBuilder.append("this." + fieldName + " = " + "new " + nestedType + "(entity.get"
@@ -291,7 +294,7 @@ public class JpaDtoGenerator
             JavaClass dtoForEmbeddedType = generatedDTOGraphForEntity(fieldClass, dtoPackage, true, true);
             String embeddedType = dtoForEmbeddedType.getName();
             String qualifiedNameForEmbeddedType = dtoForEmbeddedType.getQualifiedName();
-            addProperty(dtoClass, field, embeddedType, qualifiedNameForEmbeddedType);
+            addProperty(dtoClass, property, embeddedType, qualifiedNameForEmbeddedType);
 
             // Add an expression in the ctor to assign the embedded type
             copyCtorBuilder.append("this." + fieldName + " = " + "new " + embeddedType + "(entity.get"
@@ -307,12 +310,12 @@ public class JpaDtoGenerator
          }
          else
          {
-            addProperty(dtoClass, field, fieldType, qualifiedFieldType);
+            addProperty(dtoClass, property, fieldType, qualifiedFieldType);
             copyCtorBuilder.append("this." + fieldName + " = " + "entity.get" + Strings.capitalize(fieldName) + "();");
 
-            if (!field.equals(idField) && isWritable)
+            if (!property.equals(idProperty) && isWritable)
             {
-               assembleJPABuilder.append("entity.set" + Strings.capitalize(field.getName()) + "(this." + fieldName
+               assembleJPABuilder.append("entity.set" + Strings.capitalize(property.getName()) + "(this." + fieldName
                         + ");");
             }
          }
@@ -327,7 +330,14 @@ public class JpaDtoGenerator
       assembleJPABuilder.append("return entity;");
       assembleJPA.setBody(assembleJPABuilder.toString());
 
-      allDTOs.put(entity, java.saveJavaSource(dtoClass));
+      if (topLevel)
+      {
+         dtoCollection.addRootDTO(entity, dtoClass);
+      }
+      else
+      {
+         dtoCollection.addNestedDTO(entity, dtoClass);
+      }
       return dtoClass;
    }
 
@@ -349,7 +359,7 @@ public class JpaDtoGenerator
       return null;
    }
 
-   private Field<JavaClass> addCollectionProperty(JavaClass dtoClass, Field<?> field, String pkDTOType,
+   private Field<JavaClass> addCollectionProperty(JavaClass dtoClass, JPAProperty field, String pkDTOType,
             String qualifiedDTOType)
    {
       String concreteCollectionType = null;
@@ -382,7 +392,7 @@ public class JpaDtoGenerator
       return dtoField;
    }
 
-   private void addProperty(JavaClass dtoClass, Field<?> field, String simpleName, String qualifiedName)
+   private void addProperty(JavaClass dtoClass, JPAProperty field, String simpleName, String qualifiedName)
    {
       Field<JavaClass> dtoField = dtoClass.addField("private " + simpleName + " " + field.getName() + ";");
       if (!(field.isPrimitive() || Types.isJavaLang(qualifiedName) || Types.isArray(qualifiedName)))
