@@ -117,7 +117,17 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    //
    // Private statics
    //
-
+   private static final String JBOSS_COMMUNITY_PNG = "/resources/jboss-community.png";
+   private static final String TRUE_PNG = "/resources/true.png";
+   private static final String SEARCH_PNG = "/resources/search.png";
+   private static final String REMOVE_PNG = "/resources/remove.png";
+   private static final String FORGE_STYLE_CSS = "/resources/forge-style.css";
+   private static final String FORGE_LOGO_PNG = "/resources/forge-logo.png";
+   private static final String FAVICON_ICO = "/resources/favicon.ico";
+   private static final String FALSE_PNG = "/resources/false.png";
+   private static final String BOOTSTRAP_CSS = "/resources/bootstrap.css";
+   private static final String ADD_PNG = "/resources/add.png";
+   private static final String ERROR_XHTML = "error.xhtml";
    private static final String XMLNS_PREFIX = "xmlns:";
    private static final String BACKING_BEAN_TEMPLATE = "scaffold/faces/BackingBean.jv";
    private static final String VIEW_UTILS_TEMPLATE = "scaffold/faces/ViewUtils.jv";
@@ -376,20 +386,34 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
    @SuppressWarnings("unchecked")
    public boolean install()
    {
-      if (!(this.project.hasFacet(WebResourceFacet.class) && this.project.hasFacet(PersistenceFacet.class)
-               && this.project.hasFacet(CDIFacet.class) && this.project.hasFacet(FacesFacet.class)))
+      if(!isInstalled())
       {
          this.install.fire(new InstallFacets(WebResourceFacet.class, PersistenceFacet.class, CDIFacet.class,
                   FacesFacet.class));
       }
-
       return true;
    }
 
    @Override
    public boolean isInstalled()
    {
-      return true;
+      if (this.project.hasFacet(WebResourceFacet.class) && this.project.hasFacet(PersistenceFacet.class)
+               && this.project.hasFacet(CDIFacet.class) && this.project.hasFacet(FacesFacet.class))
+      {
+         WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
+         boolean areResourcesInstalled = web.getWebResource(ERROR_XHTML).exists() && web.getWebResource(ADD_PNG).exists()
+                  && web.getWebResource(BOOTSTRAP_CSS).exists()
+                  && web.getWebResource(FALSE_PNG).exists()
+                  && web.getWebResource(FAVICON_ICO).exists()
+                  && web.getWebResource(FORGE_LOGO_PNG).exists()
+                  && web.getWebResource(FORGE_STYLE_CSS).exists()
+                  && web.getWebResource(REMOVE_PNG).exists()
+                  && web.getWebResource(SEARCH_PNG).exists()
+                  && web.getWebResource(TRUE_PNG).exists()
+                  && web.getWebResource(JBOSS_COMMUNITY_PNG).exists();
+         return areResourcesInstalled;
+      }
+      return false;
    }
 
    @Override
@@ -412,39 +436,39 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(targetDir + "/index.xhtml"),
                this.indexTemplate.render(context), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("error.xhtml"),
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(ERROR_XHTML),
                this.errorTemplate.render(context), overwrite));
 
       // Static resources
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/add.png"),
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(ADD_PNG),
                getClass().getResourceAsStream("/scaffold/faces/add.png"), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/bootstrap.css"),
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(BOOTSTRAP_CSS),
                getClass().getResourceAsStream("/scaffold/faces/bootstrap.css"), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/false.png"),
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(FALSE_PNG),
                getClass().getResourceAsStream("/scaffold/faces/false.png"), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/favicon.ico"),
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(FAVICON_ICO),
                getClass().getResourceAsStream("/scaffold/faces/favicon.ico"), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/forge-logo.png"),
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(FORGE_LOGO_PNG),
                getClass().getResourceAsStream("/scaffold/faces/forge-logo.png"), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/forge-style.css"),
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(FORGE_STYLE_CSS),
                getClass().getResourceAsStream("/scaffold/faces/forge-style.css"), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/remove.png"),
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(REMOVE_PNG),
                getClass().getResourceAsStream("/scaffold/faces/remove.png"), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/search.png"),
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(SEARCH_PNG),
                getClass().getResourceAsStream("/scaffold/faces/search.png"), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/true.png"),
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(TRUE_PNG),
                getClass().getResourceAsStream("/scaffold/faces/true.png"), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource("/resources/jboss-community.png"),
+      result.add(ScaffoldUtil.createOrOverwrite(this.prompt, web.getWebResource(JBOSS_COMMUNITY_PNG),
                getClass().getResourceAsStream("/scaffold/faces/jboss-community.png"), overwrite));
 
       return result;
@@ -688,7 +712,7 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
 
       // (prefer /faces/error.xhtml)
 
-      String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource("error.xhtml")).get(1);
+      String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource(ERROR_XHTML)).get(1);
       servletConfig.errorPage(404, errorLocation);
       servletConfig.errorPage(500, errorLocation);
       
