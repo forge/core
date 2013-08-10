@@ -91,7 +91,7 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
    @Override
    public boolean isInstalled()
    {
-      if (!project.hasFacet(RestWebXmlFacet.class) || !project.hasFacet(RestApplicationFacet.class))
+      if (!project.hasFacet(RestWebXmlFacet.class) && !project.hasFacet(RestApplicationFacet.class))
       {
          return false;
       }
