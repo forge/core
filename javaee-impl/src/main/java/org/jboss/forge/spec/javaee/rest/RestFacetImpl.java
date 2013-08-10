@@ -18,6 +18,7 @@ import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
 import org.jboss.forge.project.facets.MetadataFacet;
 import org.jboss.forge.project.facets.events.InstallFacets;
+import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.shell.PromptType;
 import org.jboss.forge.shell.ShellPrompt;
 import org.jboss.forge.shell.plugins.Alias;
@@ -45,6 +46,9 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
 
    @Inject
    private Event<InstallFacets> request;
+
+   @Inject
+   private ProjectFactory projectFactory;
 
    @Inject
    public RestFacetImpl(final DependencyInstaller installer)
@@ -91,9 +95,21 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
    @Override
    public boolean isInstalled()
    {
-      if (!project.hasFacet(RestWebXmlFacet.class) && !project.hasFacet(RestApplicationFacet.class))
+      if (project.hasFacet(RestWebXmlFacet.class) || project.hasFacet(RestApplicationFacet.class))
       {
-         return false;
+         return super.isInstalled();
+      }
+      else
+      {
+         // Engage in manual registration since we cannot be sure if the ProjectFactory attempted registration of the
+         // optionally dependent RestWebXmlFacet and RestApplicationFacet facets before the RestFacet facet.
+         // This ordering behavior is due to the CommandLibraryExtension using a Set to store all facets.
+         projectFactory.registerSingleFacet(project, RestWebXmlFacet.class);
+         projectFactory.registerSingleFacet(project, RestApplicationFacet.class);
+         if (!project.hasFacet(RestWebXmlFacet.class) && !project.hasFacet(RestApplicationFacet.class))
+         {
+            return false;
+         }
       }
       return super.isInstalled();
    }
