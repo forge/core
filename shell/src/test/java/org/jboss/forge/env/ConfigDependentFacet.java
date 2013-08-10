@@ -7,7 +7,6 @@
 package org.jboss.forge.env;
 
 import org.jboss.forge.project.facets.BaseFacet;
-import org.jboss.forge.project.facets.ConfigurationFacet;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.plugins.RequiresFacet;
 

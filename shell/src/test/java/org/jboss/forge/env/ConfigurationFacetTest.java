@@ -1,7 +1,6 @@
 package org.jboss.forge.env;
 
 import org.jboss.forge.project.Project;
-import org.jboss.forge.project.facets.ConfigurationFacet;
 import org.jboss.forge.test.AbstractShellTest;
 import org.junit.Assert;
 import org.junit.Test;

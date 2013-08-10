@@ -1,9 +1,8 @@
-package org.jboss.forge.project.facets;
+package org.jboss.forge.env;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.env.Configuration;
-import org.jboss.forge.env.ConfigurationScope;
+import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.shell.plugins.Alias;
 
 /**
@@ -14,10 +13,15 @@ import org.jboss.forge.shell.plugins.Alias;
 @Alias("forge.configuration.facet")
 public class ConfigurationFacet extends BaseFacet
 {
-   @Inject
-   private Configuration configuration;
+   private ConfigurationFactory factory;
 
    private Configuration projectConfiguration;
+
+   @Inject
+   public ConfigurationFacet(ConfigurationFactory configurationFactory)
+   {
+      this.factory = configurationFactory;
+   }
 
    public Configuration getConfiguration()
    {
@@ -27,7 +31,10 @@ public class ConfigurationFacet extends BaseFacet
    @Override
    public boolean install()
    {
-      projectConfiguration = configuration.getScopedConfiguration(ConfigurationScope.PROJECT);
+      if (projectConfiguration == null)
+      {
+         projectConfiguration = factory.getProjectConfig(getProject());
+      }
       return true;
    }
 
