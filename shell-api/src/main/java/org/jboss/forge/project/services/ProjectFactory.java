@@ -37,6 +37,7 @@ public class ProjectFactory
    private List<ProjectLocator> locators;
    private final BeanManager manager;
    private final Instance<ProjectLocator> locatorInstance;
+   private Project transientProject;
 
    @Inject
    public ProjectFactory(final FacetFactory facetFactory, final BeanManager manager,
@@ -114,7 +115,9 @@ public class ProjectFactory
 
       if (project != null)
       {
+         setTransientProject(project);
          registerFacets(project);
+         setTransientProject(null);
       }
 
       return project;
@@ -143,7 +146,9 @@ public class ProjectFactory
             installSingleFacet(project, type);
          }
 
+         setTransientProject(project);
          registerFacets(project);
+         setTransientProject(null);
       }
       return project;
    }
@@ -234,7 +239,9 @@ public class ProjectFactory
 
          if (project != null)
          {
+            setTransientProject(project);
             registerFacets(project);
+            setTransientProject(null);
          }
       }
       return project;
@@ -244,5 +251,15 @@ public class ProjectFactory
    {
       init();
       return locators;
+   }
+
+   public Project getTransientProject()
+   {
+      return transientProject;
+   }
+
+   private void setTransientProject(Project project)
+   {
+      this.transientProject = project;
    }
 }

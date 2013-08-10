@@ -17,6 +17,7 @@ import org.jboss.forge.env.Configuration;
 import org.jboss.forge.env.ConfigurationException;
 import org.jboss.forge.env.ConfigurationScope;
 import org.jboss.forge.project.Project;
+import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.shell.Shell;
 import org.jboss.forge.shell.squelch.ConfigAdapterQualifierLiteral;
@@ -36,17 +37,19 @@ public class ConfigurationImpl
    private ScopedConfigurationAdapter projectConfig;
    private Project currentProject;
    private BeanManager bm;
+   private ProjectFactory projectFactory;
 
    public ConfigurationImpl()
    {
    }
 
    @Inject
-   public ConfigurationImpl(final Shell shell, BeanManager bm)
+   public ConfigurationImpl(final Shell shell, BeanManager bm, ProjectFactory projectFactory)
    {
       this.bm = bm;
       this.shell = shell;
       this.environment = shell.getEnvironment();
+      this.projectFactory = projectFactory;
    }
 
    @Unwraps
@@ -54,32 +57,18 @@ public class ConfigurationImpl
    {
 
       Project project = shell.getCurrentProject();
-      if ((project != null) && !project.equals(this.currentProject))
+      Project transientProject = projectFactory.getTransientProject();
+      // Transient projects take precedence over others since the other entries may be stale!
+      if(transientProject != null)
+      {
+         currentProject = transientProject;
+         ScopedConfigurationAdapter projectConfig = createProjectConfig(transientProject);
+         return projectConfig;
+      }
+      else if ((project != null) && !project.equals(this.currentProject))
       {
          currentProject = project;
-         ScopedConfigurationAdapter projectConfig = new ScopedConfigurationAdapter();
-         XMLConfiguration projectLocalConfig;
-         try
-         {
-            projectLocalConfig = new XMLConfiguration(getProjectSettings(project).getUnderlyingResourceObject());
-            projectLocalConfig.setEncoding("UTF-8");
-         }
-         catch (org.apache.commons.configuration.ConfigurationException e)
-         {
-            throw new ConfigurationException(e);
-         }
-         projectLocalConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
-         projectLocalConfig.setAutoSave(true);
-
-         ConfigurationAdapter adapter = BeanManagerUtils.getContextualInstance(bm, ConfigurationAdapter.class,
-                  new ConfigAdapterQualifierLiteral());
-         adapter.setParent(projectConfig);
-         adapter.setDelegate(projectLocalConfig);
-         adapter.setBeanManager(bm);
-         projectConfig.setScopedConfiguration(ConfigurationScope.PROJECT, adapter);
-         projectConfig.setScopedConfiguration(ConfigurationScope.USER, getUserConfig());
-
-         this.projectConfig = projectConfig;
+         ScopedConfigurationAdapter projectConfig = createProjectConfig(project);
          return projectConfig;
       }
       else if ((project != null) && project.equals(this.currentProject))
@@ -87,6 +76,34 @@ public class ConfigurationImpl
          return projectConfig;
       }
       return getUserConfig();
+   }
+
+   public ScopedConfigurationAdapter createProjectConfig(Project project)
+   {
+      ScopedConfigurationAdapter projectConfig = new ScopedConfigurationAdapter();
+      XMLConfiguration projectLocalConfig;
+      try
+      {
+         projectLocalConfig = new XMLConfiguration(getProjectSettings(project).getUnderlyingResourceObject());
+         projectLocalConfig.setEncoding("UTF-8");
+      }
+      catch (org.apache.commons.configuration.ConfigurationException e)
+      {
+         throw new ConfigurationException(e);
+      }
+      projectLocalConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
+      projectLocalConfig.setAutoSave(true);
+
+      ConfigurationAdapter adapter = BeanManagerUtils.getContextualInstance(bm, ConfigurationAdapter.class,
+               new ConfigAdapterQualifierLiteral());
+      adapter.setParent(projectConfig);
+      adapter.setDelegate(projectLocalConfig);
+      adapter.setBeanManager(bm);
+      projectConfig.setScopedConfiguration(ConfigurationScope.PROJECT, adapter);
+      projectConfig.setScopedConfiguration(ConfigurationScope.USER, getUserConfig());
+
+      this.projectConfig = projectConfig;
+      return projectConfig;
    }
 
    public Configuration getUserConfig() throws ConfigurationException
