@@ -9,6 +9,7 @@ package org.jboss.forge.spec.javaee.rest;
 import javax.inject.Inject;
 
 import org.jboss.forge.env.Configuration;
+import org.jboss.forge.env.ConfigurationFactory;
 import org.jboss.forge.project.facets.BaseFacet;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.spec.javaee.RestFacet;
@@ -26,7 +27,10 @@ public class RestWebXmlFacetImpl extends BaseFacet implements RestWebXmlFacet
    public static final String JAXRS_SERVLET = "javax.ws.rs.core.Application";
 
    @Inject
-   private Configuration config;
+   private ConfigurationFactory configurationFactory;
+   
+   // Do not refer this field directly. Use the getProjectConfiguration() method instead.
+   private Configuration configuration;
 
    @Override
    public boolean install()
@@ -42,7 +46,7 @@ public class RestWebXmlFacetImpl extends BaseFacet implements RestWebXmlFacet
          {
             Node mapping = node.createChild("servlet-mapping");
             mapping.createChild("servlet-name").text(JAXRS_SERVLET);
-            String urlPattern = config.getString(RestFacet.ROOTPATH);
+            String urlPattern = getProjectConfiguration().getString(RestFacet.ROOTPATH);
             if (urlPattern.endsWith("/"))
             {
                urlPattern = urlPattern.substring(0, urlPattern.length() - 1);
@@ -92,7 +96,7 @@ public class RestWebXmlFacetImpl extends BaseFacet implements RestWebXmlFacet
    @Override
    public void setApplicationPath(final String path)
    {
-      config.setProperty(RestFacet.ROOTPATH, path);
+      getProjectConfiguration().setProperty(RestFacet.ROOTPATH, path);
       ServletFacet servlet = project.getFacet(ServletFacet.class);
       WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
 
@@ -105,5 +109,20 @@ public class RestWebXmlFacetImpl extends BaseFacet implements RestWebXmlFacet
       }
 
       servlet.saveConfig(web);
+   }
+   
+   /**
+    * Important: Use this method always to obtain the configuration. Do not invoke this inside a constructor since the
+    * returned {@link Configuration} instance would not be the project scoped one.
+    * 
+    * @return The project scoped {@link Configuration} instance
+    */
+   private Configuration getProjectConfiguration()
+   {
+      if (this.configuration == null)
+      {
+         this.configuration = configurationFactory.getProjectConfig(project);
+      }
+      return this.configuration;
    }
 }

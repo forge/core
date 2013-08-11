@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import javax.inject.Inject;
 
 import org.jboss.forge.env.Configuration;
+import org.jboss.forge.env.ConfigurationFactory;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.facets.BaseFacet;
@@ -34,15 +35,10 @@ public class RestApplicationFacetImpl extends BaseFacet implements RestApplicati
    private String rootPath;
 
    @Inject
+   private ConfigurationFactory configurationFactory;
+   
+   // Do not refer this field directly. Use the getProjectConfiguration() method instead.
    private Configuration configuration;
-
-   @Inject
-   public RestApplicationFacetImpl(Configuration configuration)
-   {
-      classPackage = configuration.getString(REST_APPLICATIONCLASS_PACKAGE);
-      className = configuration.getString(REST_APPLICATIONCLASS_NAME);
-      rootPath = configuration.getString(RestFacet.ROOTPATH);
-   }
 
    @Override
    public boolean install()
@@ -78,6 +74,11 @@ public class RestApplicationFacetImpl extends BaseFacet implements RestApplicati
    {
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
 
+      Configuration projectConfiguration = getProjectConfiguration();
+      classPackage = projectConfiguration.getString(REST_APPLICATIONCLASS_PACKAGE);
+      className = projectConfiguration.getString(REST_APPLICATIONCLASS_NAME);
+      rootPath = projectConfiguration.getString(RestFacet.ROOTPATH);
+      
       if ((classPackage == null || className == null) && !findApplicationClass())
       {
          return false;
@@ -104,11 +105,13 @@ public class RestApplicationFacetImpl extends BaseFacet implements RestApplicati
    {
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
 
-      configuration.clearProperty(REST_APPLICATIONCLASS_NAME);
-      configuration.clearProperty(REST_APPLICATIONCLASS_PACKAGE);
+      Configuration projectConfiguration = getProjectConfiguration();
+      projectConfiguration.clearProperty(REST_APPLICATIONCLASS_NAME);
+      projectConfiguration.clearProperty(REST_APPLICATIONCLASS_PACKAGE);
 
       javaSourceFacet.visitJavaSources(new JavaResourceVisitor()
       {
+         Configuration configuration = getProjectConfiguration();
          boolean found = false;
 
          @Override
@@ -137,13 +140,13 @@ public class RestApplicationFacetImpl extends BaseFacet implements RestApplicati
          }
       });
 
-      return configuration.getString(REST_APPLICATIONCLASS_NAME) != null;
+      return projectConfiguration.getString(REST_APPLICATIONCLASS_NAME) != null;
    }
 
    @Override
    public void setApplicationPath(String path)
    {
-      configuration.setProperty(RestFacet.ROOTPATH, path);
+      getProjectConfiguration().setProperty(RestFacet.ROOTPATH, path);
 
       if (classPackage == null || className == null)
       {
@@ -175,5 +178,20 @@ public class RestApplicationFacetImpl extends BaseFacet implements RestApplicati
    {
       throw new RuntimeException("Error setting application path. The class '" + classname
                + "' in your configuration file does not exist. Run rest setup again.");
+   }
+   
+   /**
+    * Important: Use this method always to obtain the configuration. Do not invoke this inside a constructor since the
+    * returned {@link Configuration} instance would not be the project scoped one.
+    * 
+    * @return The project scoped {@link Configuration} instance
+    */
+   private Configuration getProjectConfiguration()
+   {
+      if (this.configuration == null)
+      {
+         this.configuration = configurationFactory.getProjectConfig(project);
+      }
+      return this.configuration;
    }
 }

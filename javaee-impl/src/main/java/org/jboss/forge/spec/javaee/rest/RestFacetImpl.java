@@ -13,6 +13,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.forge.env.Configuration;
+import org.jboss.forge.env.ConfigurationFactory;
 import org.jboss.forge.project.dependencies.Dependency;
 import org.jboss.forge.project.dependencies.DependencyBuilder;
 import org.jboss.forge.project.dependencies.DependencyInstaller;
@@ -39,7 +40,7 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
 {
 
    @Inject
-   private Configuration configuration;
+   private ConfigurationFactory configurationFactory;
 
    @Inject
    private ShellPrompt prompt;
@@ -49,6 +50,9 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
 
    @Inject
    private ProjectFactory projectFactory;
+   
+   // Do not refer this field directly. Use the getProjectConfiguration() method instead.
+   private Configuration configuration;
 
    @Inject
    public RestFacetImpl(final DependencyInstaller installer)
@@ -60,7 +64,8 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
    public boolean install()
    {
       RestActivatorType activatorType = null;
-      String activatorChoice = configuration.getString(RestFacet.ACTIVATOR_CHOICE);
+      Configuration projectConfiguration = getProjectConfiguration();
+      String activatorChoice = projectConfiguration.getString(RestFacet.ACTIVATOR_CHOICE);
       if (activatorChoice == null || activatorChoice.equals(""))
       {
          activatorType = prompt.promptEnum("How do you want to activate REST resources in your application ?",
@@ -73,7 +78,7 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
       }
 
       String rootpath = prompt.prompt("What root path do you want to use for your resources?", "/rest");
-      configuration.setProperty(RestFacet.ROOTPATH, rootpath);
+      projectConfiguration.setProperty(RestFacet.ROOTPATH, rootpath);
 
       if (activatorType == null || activatorType == RestActivatorType.WEB_XML
                && !project.hasFacet(RestWebXmlFacetImpl.class))
@@ -85,8 +90,8 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
          String pkg = prompt.promptCommon("In what package do you want to store the Application class?",
                   PromptType.JAVA_PACKAGE, project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".rest");
          String restApplication = prompt.prompt("How do you want to name the Application class?", "RestApplication");
-         configuration.setProperty(RestApplicationFacet.REST_APPLICATIONCLASS_PACKAGE, pkg);
-         configuration.setProperty(RestApplicationFacet.REST_APPLICATIONCLASS_NAME, restApplication);
+         projectConfiguration.setProperty(RestApplicationFacet.REST_APPLICATIONCLASS_PACKAGE, pkg);
+         projectConfiguration.setProperty(RestApplicationFacet.REST_APPLICATIONCLASS_NAME, restApplication);
          request.fire(new InstallFacets(RestApplicationFacet.class));
       }
       return super.install();
@@ -125,6 +130,21 @@ public class RestFacetImpl extends BaseJavaEEFacet implements RestFacet
    @Override
    public String getApplicationPath()
    {
-      return configuration.getString(RestFacet.ROOTPATH);
+      return getProjectConfiguration().getString(RestFacet.ROOTPATH);
+   }
+   
+   /**
+    * Important: Use this method always to obtain the configuration. Do not invoke this inside a constructor since the
+    * returned {@link Configuration} instance would not be the project scoped one.
+    * 
+    * @return The project scoped {@link Configuration} instance
+    */
+   private Configuration getProjectConfiguration()
+   {
+      if (this.configuration == null)
+      {
+         this.configuration = configurationFactory.getProjectConfig(project);
+      }
+      return this.configuration;
    }
 }
