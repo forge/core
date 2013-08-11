@@ -219,7 +219,7 @@ public class JpaDtoGenerator
                      + Strings.capitalize(id) + "())) { found = true; break; }");
             assembleJPABuilder.append("}");
             assembleJPABuilder.append("if(found == false) { ");
-            assembleJPABuilder.append("entity.get" + Strings.capitalize(fieldName) + "().remove(" + jpaVar + ");");
+            assembleJPABuilder.append(jpaIterator + ".remove();");
             assembleJPABuilder.append("} }");
 
             assembleJPABuilder.append("Iterator" + " " + dtoIterator + " = " + "this.get"
