@@ -77,3 +77,16 @@ Configuration config = facet.getConfiguration();
 ----
 
 TIP: Project-scoped configuration properties no longer falls back to the user-scoped configuration properties as in Forge 1.x.
+
+Configuration Factory:: If a specific file is meant to be used as a configuration file, you can use the `ConfigurationFactory` to handle it as a `Configuration` object  
++
+[source,java]
+----
+@Inject 
+private ConfigurationFactory configurationFactory;
+
+FileResource<?> resource= ...// Fetch the FileResource representation of a file
+Configuration config = configurationFactory.getConfiguration(resource)
+----
+ 
+ 

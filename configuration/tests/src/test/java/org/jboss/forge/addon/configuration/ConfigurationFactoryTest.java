@@ -7,28 +7,25 @@
 
 package org.jboss.forge.addon.configuration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import java.io.File;
 
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.configuration.facets.ConfigurationFacet;
-import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class ConfigurationTest
+public class ConfigurationFactoryTest
 {
 
    @Deployment
@@ -53,27 +50,23 @@ public class ConfigurationTest
    }
 
    @Inject
-   private Configuration configuration;
+   private ConfigurationFactory configurationFactory;
 
    @Inject
-   private ProjectFactory projectFactory;
+   private ResourceFactory resourceFactory;
 
    @Test
-   public void testConfigurationInjection() throws Exception
+   public void testConfigurationFactory() throws Exception
    {
-      assertNotNull(configuration);
-   }
-
-   @Test
-   public void testProjectFacet() throws Exception
-   {
-      Project project = projectFactory.createTempProject();
-      assertTrue(project.hasFacet(ConfigurationFacet.class));
-      ConfigurationFacet facet = project.getFacet(ConfigurationFacet.class);
-      assertFalse(facet.getConfigLocation().exists());
-      Configuration config = facet.getConfiguration();
+      File file = File.createTempFile("configfactorytest", ".tmp");
+      file.delete();
+      file.deleteOnExit();
+      FileResource<?> resource = resourceFactory.create(file).reify(FileResource.class);
+      Assert.assertFalse(resource.exists());
+      Configuration config = configurationFactory.getConfiguration(resource);
       config.setProperty("key", "value");
-      assertEquals("value", config.getString("key"));
-      assertTrue(facet.getConfigLocation().exists());
+      Assert.assertEquals("value", config.getString("key"));
+      // Check if the file was written
+      Assert.assertTrue(resource.getSize() > 0L);
    }
 }

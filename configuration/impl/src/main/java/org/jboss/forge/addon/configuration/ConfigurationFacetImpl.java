@@ -7,6 +7,9 @@
 
 package org.jboss.forge.addon.configuration;
 
+import javax.inject.Inject;
+
+import org.jboss.forge.addon.configuration.facets.ConfigurationFacet;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.FileResource;
@@ -19,8 +22,14 @@ import org.jboss.forge.addon.resource.FileResource;
  */
 public class ConfigurationFacetImpl extends AbstractFacet<Project> implements ConfigurationFacet
 {
-
+   private final ConfigurationFactory configurationFactory;
    private Configuration configuration;
+
+   @Inject
+   public ConfigurationFacetImpl(ConfigurationFactory configurationFactory)
+   {
+      this.configurationFactory = configurationFactory;
+   }
 
    @Override
    public boolean install()
@@ -44,7 +53,7 @@ public class ConfigurationFacetImpl extends AbstractFacet<Project> implements Co
    @Override
    public FileResource<?> getConfigLocation()
    {
-      return getFaceted().getProjectRoot().getChild(".forge_settings").reify(FileResource.class);
+      return getFaceted().getProjectRoot().getChild(CONFIGURATION_FILE).reify(FileResource.class);
    }
 
    @Override
@@ -52,7 +61,7 @@ public class ConfigurationFacetImpl extends AbstractFacet<Project> implements Co
    {
       if (this.configuration == null)
       {
-         this.configuration = ConfigurationProducer.readConfig(getConfigLocation().getUnderlyingResourceObject());
+         this.configuration = configurationFactory.getConfiguration(getConfigLocation());
       }
       return this.configuration;
    }
