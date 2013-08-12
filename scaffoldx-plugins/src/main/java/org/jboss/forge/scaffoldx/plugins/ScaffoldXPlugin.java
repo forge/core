@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.scaffoldx.plugins;
 
+import static org.jboss.forge.scaffoldx.constants.ScaffoldConstants.INSTALLING_SCAFFOLD;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,7 +89,7 @@ public class ScaffoldXPlugin implements Plugin
             @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
             @Option(name = "installTemplates") final boolean installTemplates)
    {
-      ScaffoldProvider provider = getScaffoldType(scaffoldType);
+      ScaffoldProvider provider = getScaffoldType(scaffoldType, false);
       targetDir = selectTargetDir(provider, targetDir);
       List<Resource<?>> generatedResources = provider.setup(targetDir, overwrite, installTemplates);
 
@@ -111,7 +113,7 @@ public class ScaffoldXPlugin implements Plugin
          resources = new Resource<?>[] { currentResource };
       }
 
-      ScaffoldProvider provider = getScaffoldType(scaffoldType);
+      ScaffoldProvider provider = getScaffoldType(scaffoldType, true);
       targetDir = selectTargetDir(provider, targetDir);
 
       List<Resource<?>> resourceList = Arrays.asList(resources);
@@ -164,7 +166,7 @@ public class ScaffoldXPlugin implements Plugin
    }
 
    @SuppressWarnings("unchecked")
-   private ScaffoldProvider getScaffoldType(String scaffoldType)
+   private ScaffoldProvider getScaffoldType(String scaffoldType, boolean invokedViaGeneration)
    {
       ScaffoldProvider scaffoldImpl = null;
 
@@ -185,44 +187,44 @@ public class ScaffoldXPlugin implements Plugin
          }
       }
 
-      /*
-       * If no detected (installed) scaffold type matches the requested scaffold type,
-       * then use the detected scaffold type if there is only one.
-       * If there are more than one scaffold types, then prompt to choose one of them.
-       *
-       * FIXME: This should probably not be done.
-       * Say, 'faces' is installed, and 'angularjs' is requested, then faces will be used.
-       */
-      if (scaffoldImpl == null)
+      if(invokedViaGeneration)
       {
-         List<String> detectedScaffoldNames = new ArrayList<String>();
-         for (ScaffoldProvider sp : detectedScaffolds)
+         /*
+          * If no detected (installed) scaffold type matches the requested scaffold type,
+          * then use the detected scaffold type if there is only one.
+          * If there are more than one scaffold types, then prompt to choose one of them.
+          */
+         if (scaffoldImpl == null)
          {
-            detectedScaffoldNames.add(ConstraintInspector.getName(sp.getClass()));
-         }
-
-         if (detectedScaffolds.size() > 1)
-         {
-            String name = prompt.promptChoiceTyped("Use which previously installed scaffold provider?",
-                     detectedScaffoldNames, detectedScaffoldNames.get(detectedScaffoldNames.size() - 1));
-
+            List<String> detectedScaffoldNames = new ArrayList<String>();
             for (ScaffoldProvider sp : detectedScaffolds)
             {
-               if (name.equals(ConstraintInspector.getName(sp.getClass())))
+               detectedScaffoldNames.add(ConstraintInspector.getName(sp.getClass()));
+            }
+   
+            if (detectedScaffolds.size() > 1)
+            {
+               String name = prompt.promptChoiceTyped("Use which previously installed scaffold provider?",
+                        detectedScaffoldNames, detectedScaffoldNames.get(detectedScaffoldNames.size() - 1));
+   
+               for (ScaffoldProvider sp : detectedScaffolds)
                {
-                  scaffoldImpl = sp;
-                  break;
+                  if (name.equals(ConstraintInspector.getName(sp.getClass())))
+                  {
+                     scaffoldImpl = sp;
+                     break;
+                  }
                }
             }
-         }
-         else if (!detectedScaffolds.isEmpty())
-         {
-            scaffoldImpl = detectedScaffolds.get(0);
-            ShellMessages.info(
-                     writer,
-                     "Using currently installed scaffold ["
-                              + ConstraintInspector.getName(scaffoldImpl.getClass())
-                              + "]");
+            else if (!detectedScaffolds.isEmpty())
+            {
+               scaffoldImpl = detectedScaffolds.get(0);
+               ShellMessages.info(
+                        writer,
+                        "Using currently installed scaffold ["
+                                 + ConstraintInspector.getName(scaffoldImpl.getClass())
+                                 + "]");
+            }
          }
       }
 
@@ -271,7 +273,14 @@ public class ScaffoldXPlugin implements Plugin
       if (!project.hasFacet(scaffoldImpl.getClass())
                && prompt.promptBoolean("Scaffold provider [" + scaffoldType + "] is not installed. Install it?"))
       {
+         /*
+          * Fire the InstallFacets event. This would not setup the facet completely, i.e. ScaffoldProvider.setup would
+          * not be invoked. But this is necessary, otherwise the ScaffoldProvider would not be registered as
+          * project facet!
+          */
+         project.setAttribute(INSTALLING_SCAFFOLD, Boolean.TRUE);
          installFacets.fire(new InstallFacets(scaffoldImpl.getClass()));
+         project.removeAttribute(INSTALLING_SCAFFOLD);
       }
       else if (!project.hasFacet(scaffoldImpl.getClass()))
       {

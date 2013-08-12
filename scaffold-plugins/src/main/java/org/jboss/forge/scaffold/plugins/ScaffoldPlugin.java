@@ -7,6 +7,8 @@
 
 package org.jboss.forge.scaffold.plugins;
 
+import static org.jboss.forge.scaffold.constants.ScaffoldConstants.INSTALLING_SCAFFOLD;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -93,7 +95,7 @@ public class ScaffoldPlugin implements Plugin
             @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
             @Option(name = "usingTemplate") final Resource<?> template)
    {
-      ScaffoldProvider provider = getScaffoldType(scaffoldType);
+      ScaffoldProvider provider = getScaffoldType(scaffoldType, false);
       targetDir = selectTargetDir(provider, targetDir);
       verifyTemplate(provider, template);
       List<Resource<?>> generatedResources = provider.setup(targetDir, template, overwrite);
@@ -112,7 +114,7 @@ public class ScaffoldPlugin implements Plugin
             @Option(flagOnly = true, name = "overwrite") final boolean overwrite,
             @Option(name = "usingTemplate") final Resource<?> template)
    {
-      ScaffoldProvider provider = getScaffoldType(scaffoldType);
+      ScaffoldProvider provider = getScaffoldType(scaffoldType, true);
       targetDir = selectTargetDir(provider, targetDir);
       verifyTemplate(provider, template);
       List<Resource<?>> generatedResources = provider.generateIndex(targetDir, template, overwrite);
@@ -131,7 +133,7 @@ public class ScaffoldPlugin implements Plugin
 
             @Option(flagOnly = true, name = "overwrite") final boolean overwrite)
    {
-      ScaffoldProvider provider = getScaffoldType(scaffoldType);
+      ScaffoldProvider provider = getScaffoldType(scaffoldType, true);
       targetDir = selectTargetDir(provider, targetDir);
       List<Resource<?>> generatedResources = provider.generateTemplates(targetDir, overwrite);
 
@@ -162,7 +164,7 @@ public class ScaffoldPlugin implements Plugin
          return;
       }
 
-      ScaffoldProvider provider = getScaffoldType(scaffoldType);
+      ScaffoldProvider provider = getScaffoldType(scaffoldType, true);
       targetDir = selectTargetDir(provider, targetDir);
       verifyTemplate(provider, template);
 
@@ -221,7 +223,7 @@ public class ScaffoldPlugin implements Plugin
    }
 
    @SuppressWarnings("unchecked")
-   private ScaffoldProvider getScaffoldType(String scaffoldType)
+   private ScaffoldProvider getScaffoldType(String scaffoldType, boolean invokedViaGeneration)
    {
       ScaffoldProvider scaffoldImpl = null;
 
@@ -239,36 +241,39 @@ public class ScaffoldPlugin implements Plugin
          }
       }
 
-      if (scaffoldImpl == null)
+      if(invokedViaGeneration)
       {
-         List<String> detectedScaffoldNames = new ArrayList<String>();
-         for (ScaffoldProvider sp : detectedScaffolds)
+         if (scaffoldImpl == null)
          {
-            detectedScaffoldNames.add(ConstraintInspector.getName(sp.getClass()));
-         }
-
-         if (detectedScaffolds.size() > 1)
-         {
-            String name = prompt.promptChoiceTyped("Use which previously installed scaffold provider?",
-                     detectedScaffoldNames, detectedScaffoldNames.get(detectedScaffoldNames.size() - 1));
-
+            List<String> detectedScaffoldNames = new ArrayList<String>();
             for (ScaffoldProvider sp : detectedScaffolds)
             {
-               if (name.equals(ConstraintInspector.getName(sp.getClass())))
+               detectedScaffoldNames.add(ConstraintInspector.getName(sp.getClass()));
+            }
+   
+            if (detectedScaffolds.size() > 1)
+            {
+               String name = prompt.promptChoiceTyped("Use which previously installed scaffold provider?",
+                        detectedScaffoldNames, detectedScaffoldNames.get(detectedScaffoldNames.size() - 1));
+   
+               for (ScaffoldProvider sp : detectedScaffolds)
                {
-                  scaffoldImpl = sp;
-                  break;
+                  if (name.equals(ConstraintInspector.getName(sp.getClass())))
+                  {
+                     scaffoldImpl = sp;
+                     break;
+                  }
                }
             }
-         }
-         else if (!detectedScaffolds.isEmpty())
-         {
-            scaffoldImpl = detectedScaffolds.get(0);
-            ShellMessages.info(
-                     writer,
-                     "Using currently installed scaffold ["
-                              + ConstraintInspector.getName(scaffoldImpl.getClass())
-                              + "]");
+            else if (!detectedScaffolds.isEmpty())
+            {
+               scaffoldImpl = detectedScaffolds.get(0);
+               ShellMessages.info(
+                        writer,
+                        "Using currently installed scaffold ["
+                                 + ConstraintInspector.getName(scaffoldImpl.getClass())
+                                 + "]");
+            }
          }
       }
 
@@ -317,7 +322,14 @@ public class ScaffoldPlugin implements Plugin
       if (!project.hasFacet(scaffoldImpl.getClass())
                && prompt.promptBoolean("Scaffold provider [" + scaffoldType + "] is not installed. Install it?"))
       {
+         /*
+          * Fire the InstallFacets event. This would not setup the facet completely, i.e. ScaffoldProvider.setup would
+          * not be invoked. But this is necessary, otherwise the ScaffoldProvider would not be registered as
+          * project facet!
+          */
+         project.setAttribute(INSTALLING_SCAFFOLD, Boolean.TRUE);
          installFacets.fire(new InstallFacets(scaffoldImpl.getClass()));
+         project.removeAttribute(INSTALLING_SCAFFOLD);
       }
       else if (!project.hasFacet(scaffoldImpl.getClass()))
       {

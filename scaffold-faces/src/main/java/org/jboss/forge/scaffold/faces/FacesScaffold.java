@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.scaffold.faces;
 
+import static org.jboss.forge.scaffold.constants.ScaffoldConstants.INSTALLING_SCAFFOLD;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -400,6 +402,14 @@ public class FacesScaffold extends BaseFacet implements ScaffoldProvider
       if (this.project.hasFacet(WebResourceFacet.class) && this.project.hasFacet(PersistenceFacet.class)
                && this.project.hasFacet(CDIFacet.class) && this.project.hasFacet(FacesFacet.class))
       {
+         // If the facet installation is in progress due to an InstallFacet event being fired, then the files would not
+         // be available since ScaffoldProvider.setup would not have been executed, yet. We relax the facet installed
+         // condition in such a case, to include only depdendencies being installed.
+         Object isInstallInProgress = this.project.getAttribute(INSTALLING_SCAFFOLD);
+         if (isInstallInProgress != null && isInstallInProgress.equals(Boolean.TRUE))
+         {
+            return true;
+         }
          WebResourceFacet web = this.project.getFacet(WebResourceFacet.class);
          boolean areResourcesInstalled = web.getWebResource(ERROR_XHTML).exists() && web.getWebResource(ADD_PNG).exists()
                   && web.getWebResource(BOOTSTRAP_CSS).exists()
