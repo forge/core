@@ -38,11 +38,9 @@ public class ConfigurationProducer
       }
       if (!project.hasFacet(ConfigurationFacet.class))
       {
-         installFacets.fire(new InstallFacets(ConfigurationFacet.class));
-         // // Installing manually
-         // ConfigurationFacet facet = new ConfigurationFacet(factory);
-         // facet.setProject(project);
-         // project.installFacet(facet);
+         // Installing manually
+         ConfigurationFacet facet = new ConfigurationFacet(factory);
+         project.installFacet(facet);
       }
       return project.getFacet(ConfigurationFacet.class).getConfiguration();
    }
