@@ -93,7 +93,6 @@
             <module>convert</module>
             <module>configuration</module>
             <module>scaffold</module>
-            <module>stacks</module>
          </modules>
       </profile>
    </profiles>
