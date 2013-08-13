@@ -41,11 +41,6 @@
 			<classifier>forge-addon</classifier>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.forge.addon</groupId>
-			<artifactId>shell-test-configurator</artifactId>
-			<classifier>forge-addon</classifier>
-		</dependency>
-		<dependency>
 			<groupId>org.jboss.forge.furnace.test</groupId>
 			<artifactId>furnace-test-harness</artifactId>
 			<scope>test</scope>
