@@ -23,6 +23,16 @@ public final class ForgeInspectionResultConstants
    public static final String ONE_TO_ONE = "one-to-one";
    
    public static final String MANY_TO_ONE = "many-to-one";
+   
+   public static final String JPA_ONE_TO_ONE = "one-to-one";
+   
+   public static final String JPA_MANY_TO_ONE = "many-to-one";
+   
+   public static final String JPA_ONE_TO_MANY = "one-to-many";
+   
+   public static final String JPA_MANY_TO_MANY = "many-to-many";
+   
+   public static final String JPA_REL_TYPE = "jpa-relation-type";
 
    /**
     * Whether the field is an Id.
@@ -35,6 +45,27 @@ public final class ForgeInspectionResultConstants
     */
 
    public static final String REVERSE_PRIMARY_KEY = "reverse-primary-key";
+   
+   /**
+    * Whether the field represents a generated value
+    */
+   public static final String GENERATED_VALUE = "generated-value";
+   
+   /**
+    * The owning field of a bi-directional relationship
+    */
+   public static final String OWNING_FIELD = "owning-field";
+   
+   /**
+    * The inverse field of a bi-directional relationship
+    */
+   public static final String INVERSE_FIELD = "inverse-field";
+   
+   /**
+    * Indicates whether a field is to be displayed inline or not.
+    * Usually used for JPA Embedded/Embeddable types. 
+    */
+   public static final String EMBEDDABLE = "embeddable";
 
    //
    // Private constructor

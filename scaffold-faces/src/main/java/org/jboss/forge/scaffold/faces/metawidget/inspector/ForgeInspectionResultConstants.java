@@ -57,6 +57,11 @@ public final class ForgeInspectionResultConstants
     */
    public static final String INVERSE_FIELD = "inverse-field";
    
+   /**
+    * 
+    */
+   public static final String TOP_LEVEL_PARAMETERIZED_TYPE = "top-level-parameterized-type";
+   
    //
    // Private constructor
    //

@@ -15,12 +15,12 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.scaffoldx.ScaffoldProvider;
 import org.jboss.forge.scaffoldx.metawidget.inspector.ForgeInspector;
+import org.jboss.forge.scaffoldx.metawidget.inspector.ForgeInspectorConfig;
 import org.jboss.forge.scaffoldx.metawidget.inspector.propertystyle.ForgePropertyStyle;
 import org.jboss.forge.scaffoldx.metawidget.inspector.propertystyle.ForgePropertyStyleConfig;
 import org.metawidget.inspector.beanvalidation.BeanValidationInspector;
 import org.metawidget.inspector.composite.CompositeInspector;
 import org.metawidget.inspector.composite.CompositeInspectorConfig;
-import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
 import org.metawidget.inspector.jpa.JpaInspector;
 import org.metawidget.inspector.jpa.JpaInspectorConfig;
 import org.metawidget.inspector.propertytype.PropertyTypeInspector;
@@ -79,12 +79,13 @@ public class MetawidgetInspectorFacade
    {
       ForgePropertyStyleConfig forgePropertyStyleConfig = new ForgePropertyStyleConfig();
       forgePropertyStyleConfig.setProject(this.project);
-      BaseObjectInspectorConfig baseObjectInspectorConfig = new BaseObjectInspectorConfig();
-      baseObjectInspectorConfig.setPropertyStyle(new ForgePropertyStyle(forgePropertyStyleConfig));
+      ForgeInspectorConfig forgeInspectorConfig = new ForgeInspectorConfig();
+      forgeInspectorConfig.setProject(this.project);
+      forgeInspectorConfig.setPropertyStyle(new ForgePropertyStyle(forgePropertyStyleConfig));
 
-      PropertyTypeInspector propertyTypeInspector = new PropertyTypeInspector(baseObjectInspectorConfig);
+      PropertyTypeInspector propertyTypeInspector = new PropertyTypeInspector(forgeInspectorConfig);
 
-      ForgeInspector forgeInspector = new ForgeInspector(baseObjectInspectorConfig);
+      ForgeInspector forgeInspector = new ForgeInspector(forgeInspectorConfig);
 
       JpaInspectorConfig jpaInspectorConfig = new JpaInspectorConfig();
       jpaInspectorConfig.setHideIds(true);
@@ -93,7 +94,7 @@ public class MetawidgetInspectorFacade
       jpaInspectorConfig.setPropertyStyle(new ForgePropertyStyle(forgePropertyStyleConfig));
       JpaInspector jpaInspector = new JpaInspector(jpaInspectorConfig);
 
-      BeanValidationInspector beanValidationInspector = new BeanValidationInspector(baseObjectInspectorConfig);
+      BeanValidationInspector beanValidationInspector = new BeanValidationInspector(forgeInspectorConfig);
 
       CompositeInspectorConfig compositeInspectorConfig = new CompositeInspectorConfig();
       compositeInspectorConfig.setInspectors(propertyTypeInspector, forgeInspector, jpaInspector,
