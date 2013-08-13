@@ -1,59 +1,62 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-   <modelVersion>4.0.0</modelVersion>
-   <parent>
-      <groupId>org.jboss.forge.addon</groupId>
-      <artifactId>shell-parent</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
-      <relativePath>../pom.xml</relativePath>
-   </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jboss.forge.addon</groupId>
+		<artifactId>shell-parent</artifactId>
+		<version>2.0.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
 
-   <artifactId>shell-impl</artifactId>
-   <name>Forge - Shell Addon Impl</name>
+	<artifactId>shell-impl</artifactId>
+	<name>Forge - Shell Addon Impl</name>
 
-   <dependencies>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>shell-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>shell-spi</artifactId>
-         <classifier>forge-addon</classifier>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.aesh</groupId>
-         <artifactId>aesh-extensions</artifactId>
-         <exclusions>
-            <exclusion>
-               <groupId>org.jboss.aesh</groupId>
-               <artifactId>aesh</artifactId>
-            </exclusion>
-         </exclusions>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui-api</artifactId>
-         <version>2.0.0-SNAPSHOT</version>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>convert-api</artifactId>
-         <version>2.0.0-SNAPSHOT</version>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>resources-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
-      
-      <dependency>
-         <groupId>org.jboss.forge.furnace.container</groupId>
-         <artifactId>cdi-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
-   </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>org.jboss.forge.addon</groupId>
+			<artifactId>shell-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge.addon</groupId>
+			<artifactId>shell-spi</artifactId>
+			<classifier>forge-addon</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.aesh</groupId>
+			<artifactId>aesh-extensions</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jboss.aesh</groupId>
+					<artifactId>aesh</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.jboss.forge.addon</groupId>
+			<artifactId>ui</artifactId>
+			<classifier>forge-addon</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge.addon</groupId>
+			<artifactId>convert</artifactId>
+			<classifier>forge-addon</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge.addon</groupId>
+			<artifactId>resources</artifactId>
+			<classifier>forge-addon</classifier>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.forge.furnace.container</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 </project>
