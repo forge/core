@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.jboss.aesh.console.Console;
@@ -24,38 +23,51 @@ import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.forge.addon.shell.aesh.ForgeConsoleCallback;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.context.UISelection;
+import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
- * Implementation of the {@link Shell} interface
+ * Implementation of the {@link Shell} interface.
+ * 
+ * Use the {@link AddonRegistry#getServices(Class)} to retrieve an instance of this object
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class ShellImpl implements Shell
 {
    private static final Logger log = Logger.getLogger(ShellImpl.class.getName());
-   private List<CommandExecutionListener> listeners = new ArrayList<CommandExecutionListener>();
+
+   private final AddonRegistry addonRegistry;
+
+   private final List<CommandExecutionListener> listeners = new ArrayList<CommandExecutionListener>();
+
    private Console console;
+   private UISelection<?> initialSelection;
 
    @Inject
-   private Imported<CommandExecutionListener> furnaceListeners;
-
-   private final ForgeConsoleCallback consoleCallback;
-
-   @Inject
-   public ShellImpl(ForgeConsoleCallback consoleCallback)
+   public ShellImpl(AddonRegistry addonRegistry)
    {
-      super();
-      this.consoleCallback = consoleCallback;
+      this.addonRegistry = addonRegistry;
+
+      // this.allCommands = this.addonRegistry.getServices(UICommand.class);
+      // this.commandLineUtil = this.addonRegistry.getServices(CommandLineUtil.class).get();
+      // registerFurnaceListeners(this.addonRegistry.getServices(CommandExecutionListener.class));
    }
 
-   @PostConstruct
-   void postConstruct()
+   public AddonRegistry getAddonRegistry()
    {
-      for (CommandExecutionListener listener : furnaceListeners)
+      return addonRegistry;
+   }
+
+   void registerFurnaceListeners(Imported<CommandExecutionListener> furnaceListeners)
+   {
+      if (furnaceListeners != null)
       {
-         addCommandExecutionListener(listener);
+         for (CommandExecutionListener listener : furnaceListeners)
+         {
+            addCommandExecutionListener(listener);
+         }
       }
    }
 
@@ -76,7 +88,7 @@ public class ShellImpl implements Shell
    }
 
    @Override
-   public void init(Settings settings, UISelection<?> initialSelection)
+   public void init(Settings settings)
    {
       if (console != null)
       {
@@ -91,7 +103,7 @@ public class ShellImpl implements Shell
          console = null;
       }
       this.console = new Console(settings);
-      this.console.setConsoleCallback(consoleCallback);
+      this.console.setConsoleCallback(new ForgeConsoleCallback(this, addonRegistry));
       try
       {
          this.console.setPrompt(createInitialPrompt());
@@ -134,6 +146,12 @@ public class ShellImpl implements Shell
       chars.add(new TerminalCharacter('$', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
       chars.add(new TerminalCharacter(' ', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
       return new Prompt(chars);
+   }
+
+   @Override
+   public void setInitialSelection(UISelection<?> initialSelection)
+   {
+      this.initialSelection = initialSelection;
    }
 
 }

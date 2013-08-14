@@ -25,7 +25,14 @@ public interface Shell extends UIProvider
     * @param settings
     * @param initialSelection
     */
-   public void init(Settings settings, UISelection<?> initialSelection);
+   public void init(Settings settings);
+
+   /**
+    * Sets the initial selection for this shell
+    * 
+    * @param initialSelection
+    */
+   public void setInitialSelection(UISelection<?> initialSelection);
 
    /**
     * Get the native {@link Console} object.

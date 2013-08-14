@@ -9,12 +9,12 @@ package org.jboss.forge.addon.shell.aesh;
 
 import java.io.IOException;
 
-import javax.inject.Inject;
-
 import org.jboss.aesh.console.ConsoleCallback;
 import org.jboss.aesh.console.ConsoleOutput;
+import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.addon.ui.util.Commands;
+import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
  * Hook for Aesh operations
@@ -23,8 +23,20 @@ import org.jboss.forge.furnace.services.Imported;
  */
 public class ForgeConsoleCallback implements ConsoleCallback
 {
-   @Inject
-   private Imported<UICommand> commands;
+   private final Shell shell;
+   private final AddonRegistry addonRegistry;
+
+   private final Iterable<UICommand> allCommands;
+   private final CommandLineUtil commandLineUtil;
+
+   public ForgeConsoleCallback(Shell shell, AddonRegistry addonRegistry)
+   {
+      this.shell = shell;
+      this.addonRegistry = addonRegistry;
+
+      this.allCommands = addonRegistry.getServices(UICommand.class);
+      this.commandLineUtil = addonRegistry.getServices(CommandLineUtil.class).get();
+   }
 
    /**
     * This method will be called when a user press the "enter/return" key. The return value is to indicate if the
@@ -33,9 +45,9 @@ public class ForgeConsoleCallback implements ConsoleCallback
    @Override
    public int readConsoleOutput(ConsoleOutput output) throws IOException
    {
-      for (UICommand command : commands)
+//      Commands.getMainCommands(allCommands, null)
+      for (UICommand command : allCommands)
       {
-         
       }
       return 0;
    }

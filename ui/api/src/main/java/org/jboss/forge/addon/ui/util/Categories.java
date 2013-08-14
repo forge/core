@@ -40,6 +40,11 @@ public class Categories
       }
    }
 
+   public static String getCategoryName(UICategory category)
+   {
+      return (category == null) ? Categories.DEFAULT : category.toString();
+   }
+
    private static class UICategoryImpl implements UICategory
    {
       private String name;
