@@ -7,7 +7,6 @@
 package org.jboss.forge.addon.shell;
 
 import org.jboss.aesh.console.Console;
-import org.jboss.aesh.console.settings.Settings;
 import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.context.UISelection;
 
@@ -19,14 +18,6 @@ import org.jboss.forge.addon.ui.context.UISelection;
  */
 public interface Shell extends UIProvider
 {
-   /**
-    * Initializes the shell
-    * 
-    * @param settings
-    * @param initialSelection
-    */
-   public void init(Settings settings);
-
    /**
     * Sets the initial selection for this shell
     * 

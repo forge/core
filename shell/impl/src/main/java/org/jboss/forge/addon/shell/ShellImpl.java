@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
-
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.Prompt;
 import org.jboss.aesh.console.settings.Settings;
@@ -43,21 +41,16 @@ public class ShellImpl implements Shell
    private final List<CommandExecutionListener> listeners = new ArrayList<CommandExecutionListener>();
 
    private Console console;
+   
    private UISelection<?> initialSelection;
 
-   @Inject
-   public ShellImpl(AddonRegistry addonRegistry)
+   public ShellImpl(AddonRegistry addonRegistry, Settings settings)
    {
       this.addonRegistry = addonRegistry;
-
+      init(settings);
       // this.allCommands = this.addonRegistry.getServices(UICommand.class);
       // this.commandLineUtil = this.addonRegistry.getServices(CommandLineUtil.class).get();
       // registerFurnaceListeners(this.addonRegistry.getServices(CommandExecutionListener.class));
-   }
-
-   public AddonRegistry getAddonRegistry()
-   {
-      return addonRegistry;
    }
 
    void registerFurnaceListeners(Imported<CommandExecutionListener> furnaceListeners)
@@ -87,8 +80,7 @@ public class ShellImpl implements Shell
       };
    }
 
-   @Override
-   public void init(Settings settings)
+   void init(Settings settings)
    {
       if (console != null)
       {
