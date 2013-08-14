@@ -24,7 +24,6 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>maven</artifactId>
          <classifier>forge-addon</classifier>
-         <version>${project.version}</version>
          <scope>test</scope>
       </dependency>
       <dependency>
