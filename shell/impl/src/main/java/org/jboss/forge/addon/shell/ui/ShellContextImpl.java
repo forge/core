@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.shell.ui;
 
-import javax.enterprise.context.Dependent;
-
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.ui.context.AbstractUIContext;
@@ -18,7 +16,6 @@ import org.jboss.forge.addon.ui.context.UISelection;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@Dependent
 public class ShellContextImpl extends AbstractUIContext implements ShellContext
 {
    private Shell shell;

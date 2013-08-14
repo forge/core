@@ -22,7 +22,6 @@ import org.jboss.forge.addon.shell.aesh.ForgeConsoleCallback;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
@@ -41,27 +40,13 @@ public class ShellImpl implements Shell
    private final List<CommandExecutionListener> listeners = new ArrayList<CommandExecutionListener>();
 
    private Console console;
-   
+
    private UISelection<?> initialSelection;
 
    public ShellImpl(AddonRegistry addonRegistry, Settings settings)
    {
       this.addonRegistry = addonRegistry;
       init(settings);
-      // this.allCommands = this.addonRegistry.getServices(UICommand.class);
-      // this.commandLineUtil = this.addonRegistry.getServices(CommandLineUtil.class).get();
-      // registerFurnaceListeners(this.addonRegistry.getServices(CommandExecutionListener.class));
-   }
-
-   void registerFurnaceListeners(Imported<CommandExecutionListener> furnaceListeners)
-   {
-      if (furnaceListeners != null)
-      {
-         for (CommandExecutionListener listener : furnaceListeners)
-         {
-            addCommandExecutionListener(listener);
-         }
-      }
    }
 
    @Override
