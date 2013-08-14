@@ -15,10 +15,10 @@ import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.console.Config;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.shell.ForgeShell;
-import org.jboss.forge.addon.shell.ShellCommand;
+import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.TestWizard;
-import org.jboss.forge.addon.shell.util.CommandLineUtil;
+import org.jboss.forge.addon.shell.aesh.CommandLineUtil;
+import org.jboss.forge.addon.shell.aesh.ShellCommand;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
@@ -62,7 +62,7 @@ public class RunnningCommandParserTest
    }
 
    @Inject
-   private ForgeShell shell;
+   private Shell shell;
 
    @Inject
    private AddonRegistry registry;

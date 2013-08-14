@@ -37,10 +37,11 @@ import org.jboss.aesh.console.settings.SettingsBuilder;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
+import org.jboss.forge.addon.shell.aesh.CommandLineUtil;
+import org.jboss.forge.addon.shell.aesh.ShellCommand;
 import org.jboss.forge.addon.shell.spi.AeshSettingsProvider;
 import org.jboss.forge.addon.shell.spi.CommandExecutionListener;
-import org.jboss.forge.addon.shell.util.CommandLineUtil;
-import org.jboss.forge.addon.shell.util.UICommandDelegate;
+import org.jboss.forge.addon.shell.ui.UICommandDelegate;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
@@ -49,7 +50,6 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.forge.furnace.event.PreShutdown;
-import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
@@ -58,8 +58,7 @@ import org.jboss.forge.furnace.util.Assert;
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
 @Singleton
-@Exported
-public class ForgeShellImpl implements ForgeShell
+public class ForgeShellImpl implements Shell
 {
    private static final Logger logger = Logger.getLogger(ForgeShellImpl.class.getName());
 
@@ -67,7 +66,7 @@ public class ForgeShellImpl implements ForgeShell
    private Settings settings;
    private Prompt prompt;
    private List<ShellCommand> wizardSteps = new ArrayList<ShellCommand>();
-   
+
    private InputStream inputStream;
    private OutputStream stdOut, stdErr;
 
@@ -80,30 +79,35 @@ public class ForgeShellImpl implements ForgeShell
 
    void observe(@Observes PostStartup startup) throws Exception
    {
-      if (!Boolean.getBoolean("forge.compatibility.IDE")) {
+      if (!Boolean.getBoolean("forge.compatibility.IDE"))
+      {
          startShell();
       }
    }
-   
+
    @Override
-   public void setInputStream(InputStream is) {
+   public void setInputStream(InputStream is)
+   {
       inputStream = is;
    }
-   
+
    @Override
-   public void setStdOut(OutputStream os) {
+   public void setStdOut(OutputStream os)
+   {
       stdOut = os;
    }
-   
+
    @Override
-   public void setStdErr(OutputStream os) {
+   public void setStdErr(OutputStream os)
+   {
       stdErr = os;
    }
 
    @Override
    public void startShell() throws Exception
    {
-      if (console != null && console.isRunning()) return;
+      if (console != null && console.isRunning())
+         return;
       initShell();
       console.start();
    }
@@ -138,25 +142,29 @@ public class ForgeShellImpl implements ForgeShell
          settings = provider.buildAeshSettings();
          instances.release(provider);
       }
-      
-      if (settings == null) {
+
+      if (settings == null)
+      {
          SettingsBuilder sb = new SettingsBuilder()
-            .readInputrc(false)
-            .logging(true);
-         if (inputStream != null) {
+                  .readInputrc(false)
+                  .logging(true);
+         if (inputStream != null)
+         {
             sb.inputStream(inputStream);
          }
-         if (stdOut != null) {
+         if (stdOut != null)
+         {
             sb.outputStream(stdOut);
          }
-         if (stdErr != null) {
+         if (stdErr != null)
+         {
             sb.outputStreamError(stdErr);
-         }  
+         }
          settings = sb.create();
       }
 
       commands = new ArrayList<ShellCommand>();
-      
+
       console = new Console(settings);
       console.setPrompt(prompt);
       console.setConsoleCallback(new ForgeConsoleCallback());
@@ -259,11 +267,6 @@ public class ForgeShellImpl implements ForgeShell
       return new Prompt(chars);
    }
 
-   private ForgeShell getForgeShell()
-   {
-      return this;
-   }
-
    class ForgeConsoleCallback implements ConsoleCallback
    {
       @Override
@@ -309,7 +312,7 @@ public class ForgeShellImpl implements ForgeShell
                if (navResult != null)
                {
                   Object cmd = navResult.getNext();
-                  wizardSteps.add(new ShellCommand(registry, getForgeShell(), (UICommand) cmd));
+                  wizardSteps.add(new ShellCommand(registry, ForgeShellImpl.this, (UICommand) cmd));
                }
                // we have come to the final step, execute the wizard
                else
@@ -380,7 +383,7 @@ public class ForgeShellImpl implements ForgeShell
          }
       }
 
-      private void invokePostCommandExecutedListeners(UICommand command, ShellContext context, Result result)
+      private void invokePostCommandExecutedListeners(UICommand command, Result result)
       {
          for (CommandExecutionListener listener : commandListeners)
          {
@@ -392,7 +395,7 @@ public class ForgeShellImpl implements ForgeShell
          for (CommandExecutionListener listener : instances)
          {
             if (listener != null)
-               listener.postCommandExecuted(command, context, result);
+               listener.postCommandExecuted(command, result);
             instances.release(listener);
          }
       }

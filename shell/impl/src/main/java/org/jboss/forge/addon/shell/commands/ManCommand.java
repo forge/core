@@ -19,7 +19,7 @@ import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.extensions.manual.Man;
 import org.jboss.aesh.util.Parser;
-import org.jboss.forge.addon.shell.ShellContext;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -114,7 +114,7 @@ public class ManCommand implements UICommand, Completion
    {
       if (context instanceof ShellContext)
       {
-         Console console = ((ShellContext) context).getShell().getConsole();
+         Console console = ((ShellContext) context).getProvider().getConsole();
          try
          {
             Man man = new Man(console);

@@ -4,11 +4,16 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.shell.util;
+package org.jboss.forge.addon.shell.aesh;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineParser;
@@ -18,58 +23,65 @@ import org.jboss.aesh.cl.exception.OptionParserException;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
-import org.jboss.forge.addon.shell.ShellContext;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.util.InputComponents;
-import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
+ * Contains utility methods to parse command lines
+ * 
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
+@Singleton
 public class CommandLineUtil
 {
    private static final Logger logger = Logger.getLogger(CommandLineUtil.class.getName());
 
-   private static ConverterFactory converterFactory = null;
+   private ConverterFactory converterFactory;
 
-   public static CommandLineParser generateParser(UICommand command, ShellContext context)
+   @Inject
+   public CommandLineUtil(ConverterFactory converterFactory)
+   {
+      this.converterFactory = converterFactory;
+   }
+
+   public CommandLineParser generateParser(UICommand command,
+            Map<String, InputComponent<?, Object>> inputs)
    {
       ParserBuilder builder = new ParserBuilder();
 
-      ParameterInt parameter =
-               new ParameterInt(command.getMetadata().getName(), command.getMetadata().getDescription());
-      for (InputComponent<?, ?> input : context.getInputs())
+      UICommandMetadata metadata = command.getMetadata();
+      ParameterInt parameter = new ParameterInt(metadata.getName(), metadata.getDescription());
+      for (InputComponent<?, Object> input : inputs.values())
       {
          if (!input.getName().equals("arguments"))
          {
+            Object defaultValue = InputComponents.getValueFor(input);
+            // TODO
+            boolean isMultiple = false;
+            boolean flagOnly = false;
             try
             {
-               if (input.getValueType() == Boolean.class)
-               {
-                  parameter.addOption(
-                           new OptionBuilder()
-                                    .longName(input.getName())
-                                    .hasValue(false)
-                                    .description(input.getLabel())
-                                    .create());
-               }
-               else
-               {
-                  parameter.addOption(
-                           new OptionBuilder().longName(input.getName())
-                                    .description(input.getLabel())
-                                    .required(input.isRequired())
-                                    .create());
-               }
+               OptionBuilder optionBuilder = new OptionBuilder();
+
+               optionBuilder.longName(input.getName())
+                        .defaultValue(defaultValue == null ? null : defaultValue.toString())
+                        .description(input.getLabel())
+                        .hasMultipleValues(isMultiple)
+                        .hasValue(flagOnly)
+                        .required(input.isRequired());
+
+               parameter.addOption(optionBuilder.create());
             }
             catch (OptionParserException e)
             {
-               // ignored for now
+               logger.log(Level.SEVERE, "Error while parsing command option", e);
             }
          }
       }
@@ -78,36 +90,37 @@ public class CommandLineUtil
    }
 
    @SuppressWarnings("unchecked")
-   public static void populateUIInputs(CommandLine commandLine,
-            ShellContext context, AddonRegistry registry)
+   // TODO Review this method
+   public void populateUIInputs(CommandLine commandLine,
+            Map<String, InputComponent<?, Object>> inputs)
    {
-      for (InputComponent<?, Object> input : context.getInputs())
+      for (InputComponent<?, Object> input : inputs.values())
       {
          if (input.getName().equals("arguments") &&
                   input instanceof UIInputMany)
          {
-            setInput(input, commandLine.getArguments(), registry);
+            InputComponents.setValueFor(converterFactory, input, commandLine.getArguments());
          }
          else if (input instanceof UIInputMany)
          {
-            setInput(input, commandLine.getOptionValues(input.getName()), registry);
+            InputComponents.setValueFor(converterFactory, input, commandLine.getOptionValues(input.getName()));
          }
          else if (input instanceof UIInput)
          {
-            setInput(input, commandLine.getOptionValue(input.getName()), registry);
+            InputComponents.setValueFor(converterFactory, input, commandLine.getOptionValue(input.getName()));
          }
          else if (input instanceof UISelectMany)
          {
-            setInputChoices((UISelectMany<Object>) input, commandLine.getOptionValues(input.getName()), registry);
+            setInputChoices((UISelectMany<Object>) input, commandLine.getOptionValues(input.getName()));
          }
          else if (input instanceof UISelectOne)
          {
-            setInputChoice((UISelectOne<Object>) input, commandLine.getOptionValue(input.getName()), registry);
+            setInputChoice((UISelectOne<Object>) input, commandLine.getOptionValue(input.getName()));
          }
       }
    }
 
-   private static void setInputChoice(UISelectOne<Object> input, String optionValue, AddonRegistry registry)
+   private void setInputChoice(UISelectOne<Object> input, String optionValue)
    {
       Converter<Object, String> labelConverter = input.getItemLabelConverter();
       boolean found = false;
@@ -125,8 +138,7 @@ public class CommandLineUtil
          logger.warning("Could not find matching value choice for input value [" + optionValue + "]");
    }
 
-   private static void setInputChoices(UISelectMany<Object> input, List<String> optionValues,
-            AddonRegistry registry)
+   private void setInputChoices(UISelectMany<Object> input, List<String> optionValues)
    {
       Converter<Object, String> labelConverter = input.getItemLabelConverter();
       List<Object> selected = new ArrayList<Object>();
@@ -148,14 +160,4 @@ public class CommandLineUtil
       }
       input.setValue(selected);
    }
-
-   public static void setInput(InputComponent<?, Object> input, Object value, AddonRegistry registry)
-   {
-      if (converterFactory == null)
-      {
-         converterFactory = registry.getServices(ConverterFactory.class).get();
-      }
-      InputComponents.setValueFor(converterFactory, input, value);
-   }
-
 }

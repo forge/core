@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.extensions.more.More;
-import org.jboss.forge.addon.shell.ShellContext;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -66,7 +66,7 @@ public class MoreCommand implements UICommand
       if (arguments.getValue() != null &&
                context instanceof ShellContext)
       {
-         Console console = ((ShellContext) context).getShell().getConsole();
+         Console console = ((ShellContext) context).getProvider().getConsole();
          File file = arguments.getValue().iterator().next();
          // a simple hack that we should try to avoid
          // probably the converter that add the cwd dir if the

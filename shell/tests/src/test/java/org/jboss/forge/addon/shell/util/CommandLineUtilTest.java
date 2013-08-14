@@ -15,6 +15,7 @@ import org.jboss.aesh.cl.OptionBuilder;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.addon.shell.ShellContext;
+import org.jboss.forge.addon.shell.aesh.CommandLineUtil;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;

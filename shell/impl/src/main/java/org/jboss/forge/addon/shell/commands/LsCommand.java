@@ -8,7 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.aesh.util.Parser;
-import org.jboss.forge.addon.shell.ShellContext;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -119,8 +119,8 @@ public class LsCommand implements UICommand
          for (File f : path.listFiles())
             files.add(f.getName());
          return Parser.formatDisplayList(files,
-                  context.getShell().getConsole().getTerminalSize().getHeight(),
-                  context.getShell().getConsole().getTerminalSize().getWidth());
+                  context.getProvider().getConsole().getTerminalSize().getHeight(),
+                  context.getProvider().getConsole().getTerminalSize().getWidth());
       }
       else if (path.isFile())
          return path.getName();

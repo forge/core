@@ -46,7 +46,7 @@ public class ShellCommandListenerTest
    }
 
    @Inject
-   private ForgeShell shell;
+   private Shell shell;
 
    @Inject
    private TestAeshSettingsProvider streams;

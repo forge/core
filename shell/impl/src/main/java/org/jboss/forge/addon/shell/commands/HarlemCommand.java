@@ -8,7 +8,7 @@ package org.jboss.forge.addon.shell.commands;
 
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.extensions.harlem.Harlem;
-import org.jboss.forge.addon.shell.ShellContext;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -45,7 +45,7 @@ public class HarlemCommand implements UICommand {
     @Override
     public Result execute(UIContext context) throws Exception {
         if(context instanceof ShellContext) {
-            Console console = ((ShellContext) context).getShell().getConsole();
+            Console console = ((ShellContext) context).getProvider().getConsole();
             Harlem harlem = new Harlem(console);
             harlem.attach(((ShellContext) context).getConsoleOutput());
         }

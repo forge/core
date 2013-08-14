@@ -13,9 +13,9 @@ import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.exception.RequiredOptionException;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.forge.addon.shell.FooCommand;
-import org.jboss.forge.addon.shell.ForgeShell;
+import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ForgeShellImpl;
-import org.jboss.forge.addon.shell.ShellCommand;
+import org.jboss.forge.addon.shell.aesh.ShellCommand;
 import org.junit.Test;
 
 /**
@@ -27,7 +27,7 @@ public class CommandParserTest
    @Test
    public void testShellCommandCompletion() throws Exception
    {
-      ForgeShell forgeShell = new ForgeShellImpl();
+      Shell forgeShell = new ForgeShellImpl();
       ShellCommand command = new ShellCommand(null, forgeShell, new FooCommand());
 
       CompleteOperation completeOperation = new CompleteOperation("foo-bar -", 8);
@@ -77,7 +77,7 @@ public class CommandParserTest
    @Test
    public void testShellCommandParse() throws Exception
    {
-      ForgeShell forgeShell = new ForgeShellImpl();
+      Shell forgeShell = new ForgeShellImpl();
       ShellCommand command = new ShellCommand(null, forgeShell, new FooCommand());
 
       CommandLine cl = command.parse("foo-bar --name FOO --help halp --bar BAR");

@@ -10,7 +10,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.shell.ForgeShell;
+import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.test.TestAeshSettingsProvider;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
@@ -58,7 +58,7 @@ public class NewAddonProjectAeshTest
    }
 
    @Inject
-   private ForgeShell shell;
+   private Shell shell;
 
    @Inject
    private TestAeshSettingsProvider streams;

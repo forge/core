@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.ui.context;
 
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
@@ -15,22 +16,22 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
  * An {@link UIContext} holds information about the environment the {@link UICommand} is being run, such as the initial
  * selection and attributes that could be shared among several {@link UIWizardStep} of a single {@link UIWizard}
  * instance
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public interface UIContext
 {
    /**
     * Get an {@link Object} from the {@link UIContext} attribute map.
-    *
+    * 
     * @return <code>null</code> if no value was set.
     */
    public Object getAttribute(Object key);
 
    /**
     * Remove an {@link Object} from the {@link UIContext} attribute map.
-    *
+    * 
     * @return <code>null</code> if no value was set.
     */
    public Object removeAttribute(Object key);
@@ -47,7 +48,7 @@ public interface UIContext
 
    /**
     * Sets the current selection.
-    *
+    * 
     * @param resource the resource to be selected
     */
    <SELECTIONTYPE> void setSelection(SELECTIONTYPE resource);
@@ -55,7 +56,13 @@ public interface UIContext
    /**
     * Returns the selection passed on the {@link UIContext#setSelection(Object)} method or null if no selection is
     * needed for this interaction
-    *
+    * 
     */
    <SELECTIONTYPE> SELECTIONTYPE getSelection();
+
+   /**
+    * Returns the {@link UIProvider} that created this {@link UIContext} object
+    */
+   UIProvider getProvider();
+
 }

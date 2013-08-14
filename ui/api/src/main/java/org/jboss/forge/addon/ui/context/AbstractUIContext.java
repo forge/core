@@ -9,6 +9,8 @@ package org.jboss.forge.addon.ui.context;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.forge.addon.ui.UIProvider;
+
 /**
  * This class provides a skeletal implementation of the <tt>UIContext</tt> interface, to minimize the effort required to
  * implement this interface.
@@ -50,5 +52,11 @@ public abstract class AbstractUIContext implements UIContext
    public void setAttribute(Object key, Object value)
    {
       map.put(key, value);
+   }
+   
+   @Override
+   public UIProvider getProvider()
+   {
+      throw new UnsupportedOperationException("not implemented yet");
    }
 }

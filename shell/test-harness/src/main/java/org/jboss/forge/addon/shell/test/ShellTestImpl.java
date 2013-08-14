@@ -126,7 +126,7 @@ public class ShellTestImpl implements ShellTest
       }
 
       long start = System.currentTimeMillis();
-      while (stream.toByteArray().length == 0)
+      while (stream.size() == 0)
       {
          if (System.currentTimeMillis() > (start + TimeUnit.MILLISECONDS.convert(quantity, unit)))
          {

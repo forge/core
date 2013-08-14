@@ -25,11 +25,26 @@ public class Metadata implements UICommandMetadata
             ".asciidoc.gz",
             ".asciidoc" };
 
-   private UICommandMetadataBase metadata = new UICommandMetadataBase();
+   private String name;
+   private String description;
+   private UICategory category;
+   private URL docLocation;
+
+   public static Metadata from(UICommandMetadata origin)
+   {
+      Metadata metadata = new Metadata();
+      metadata.docLocation(origin.getDocLocation()).name(origin.getName()).description(origin.getDescription())
+               .category(origin.getCategory());
+      return metadata;
+   }
 
    public static Metadata forCommand(Class<? extends UICommand> type)
    {
       return new Metadata(type);
+   }
+
+   private Metadata()
+   {
    }
 
    public Metadata(Class<? extends UICommand> type)
@@ -39,25 +54,25 @@ public class Metadata implements UICommandMetadata
 
    public Metadata name(String name)
    {
-      metadata.name = name;
+      this.name = name;
       return this;
    }
 
    public Metadata description(String description)
    {
-      metadata.description = description;
+      this.description = description;
       return this;
    }
 
    public Metadata category(UICategory category)
    {
-      metadata.category = category;
+      this.category = category;
       return this;
    }
 
    public Metadata docLocation(URL docLocation)
    {
-      metadata.docLocation = docLocation;
+      this.docLocation = docLocation;
       return this;
    }
 
@@ -79,74 +94,34 @@ public class Metadata implements UICommandMetadata
    @Override
    public String getName()
    {
-      return metadata.getName();
+      return name;
    }
 
    @Override
    public String getDescription()
    {
-      return metadata.getDescription();
+      return description;
    }
 
    @Override
    public UICategory getCategory()
    {
-      return metadata.getCategory();
+      return category;
    }
 
    @Override
    public URL getDocLocation()
    {
-      return metadata.getDocLocation();
+      return docLocation;
    }
 
    @Override
    public String toString()
    {
-      return metadata.toString();
+      return "UICommandMetadataBase {" +
+               "name: " + name +
+               ", description: " + description +
+               ", category: " + category +
+               ", docLocation: " + docLocation + "]";
    }
-
-   static class UICommandMetadataBase implements UICommandMetadata
-   {
-      protected String name;
-      protected String description;
-      protected UICategory category;
-      protected URL docLocation;
-
-      @Override
-      public String getName()
-      {
-         return name;
-      }
-
-      @Override
-      public String getDescription()
-      {
-         return description;
-      }
-
-      @Override
-      public UICategory getCategory()
-      {
-         return category;
-      }
-
-      @Override
-      public URL getDocLocation()
-      {
-         return docLocation;
-      }
-
-      @Override
-      public String toString()
-      {
-         return "UICommandMetadataBase {" +
-                  "name: " + name +
-                  ", description: " + description +
-                  ", category: " + category +
-                  ", docLocation: " + docLocation + "]";
-      }
-
-   }
-
 }

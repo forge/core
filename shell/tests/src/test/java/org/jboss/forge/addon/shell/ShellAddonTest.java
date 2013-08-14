@@ -57,7 +57,7 @@ public class ShellAddonTest
    }
 
    @Inject
-   private ForgeShell shell;
+   private Shell shell;
 
    @Inject
    private ShellTest test;
