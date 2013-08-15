@@ -4,12 +4,15 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.shell;
+package org.jboss.forge.addon.shell.parser;
+
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.shell.FooCommand;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
@@ -24,21 +27,24 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class ShellCommandListenerTest
+public class CommandCompletionTest
 {
    @Deployment
    @Dependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:shell"),
+            @AddonDependency(name = "org.jboss.forge.addon:ui"),
             @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
    })
    public static ForgeArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
-               .addClasses(MockCommandExecutionListener.class)
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+               .addClasses(FooCommand.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:facets"),
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                );
 
@@ -46,33 +52,21 @@ public class ShellCommandListenerTest
    }
 
    @Inject
-   private Shell shell;
-
-   @Inject
    private ShellTest test;
 
    @Test
-   public void testCommandExecutionListenerTriggers() throws Exception
+   public void testCommandAutocomplete() throws Exception
    {
-      Assert.assertNotNull(shell);
-
-      MockCommandExecutionListener listener = new MockCommandExecutionListener();
-      shell.addCommandExecutionListener(listener);
-
-      test.getStdIn().write("list-services\n".getBytes());
-
-      long start = System.currentTimeMillis();
-      while (!listener.isPreExecuted() || !listener.isPostExecuted())
+      test.waitForCompletion(new Callable<String>()
       {
-         Thread.sleep(10);
-         Assert.assertTrue("Timed out.", System.currentTimeMillis() - start < 5000);
-      }
-
-      System.out.println("OUT:" + test.getStdOut().toString());
-      System.out.println("ERR:" + test.getStdErr().toString());
-
-      Assert.assertTrue(listener.isPreExecuted());
-      Assert.assertTrue(listener.isPostExecuted());
+         @Override
+         public String call() throws Exception
+         {
+            test.write("foocomm");
+            return null;
+         }
+      });
+      Assert.assertEquals("foocommand", test.getBuffer().getLine());
    }
 
 }

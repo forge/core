@@ -8,9 +8,13 @@ package org.jboss.forge.addon.shell;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.enterprise.inject.Vetoed;
 
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.Prompt;
@@ -18,10 +22,21 @@ import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
+import org.jboss.forge.addon.convert.ConverterFactory;
+import org.jboss.forge.addon.shell.aesh.CommandLineUtil;
+import org.jboss.forge.addon.shell.aesh.ForgeCommandCompletion;
+import org.jboss.forge.addon.shell.aesh.ForgeCompositeCompletion;
 import org.jboss.forge.addon.shell.aesh.ForgeConsoleCallback;
+import org.jboss.forge.addon.shell.aesh.ForgeOptionCompletion;
+import org.jboss.forge.addon.shell.aesh.ShellCommand;
+import org.jboss.forge.addon.shell.ui.ShellContext;
+import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
+import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UISelection;
+import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
@@ -30,7 +45,9 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
  * Use the {@link AddonRegistry#getServices(Class)} to retrieve an instance of this object
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@Vetoed
 public class ShellImpl implements Shell
 {
    private static final Logger log = Logger.getLogger(ShellImpl.class.getName());
@@ -41,7 +58,7 @@ public class ShellImpl implements Shell
 
    private Console console;
 
-   private UISelection<?> initialSelection;
+   private UISelection<?> selection;
 
    public ShellImpl(AddonRegistry addonRegistry, Settings settings)
    {
@@ -79,11 +96,15 @@ public class ShellImpl implements Shell
          }
          console = null;
       }
-      this.console = new Console(settings);
-      this.console.setConsoleCallback(new ForgeConsoleCallback(this, addonRegistry));
+      console = new Console(settings);
+      console.addCompletion(new ForgeCompositeCompletion(this,
+               new ForgeCommandCompletion(this, addonRegistry),
+               new ForgeOptionCompletion(this, addonRegistry)));
+      console.setConsoleCallback(new ForgeConsoleCallback(this, addonRegistry));
       try
       {
-         this.console.setPrompt(createInitialPrompt());
+         console.setPrompt(createInitialPrompt());
+         console.start();
       }
       catch (IOException io)
       {
@@ -126,9 +147,87 @@ public class ShellImpl implements Shell
    }
 
    @Override
-   public void setInitialSelection(UISelection<?> initialSelection)
+   public void setCurrentSelection(UISelection<?> selection)
    {
-      this.initialSelection = initialSelection;
+      this.selection = selection;
    }
 
+   private Imported<UICommand> allCommands;
+
+   private CommandLineUtil commandLineUtil;
+
+   private AtomicLong completionCount = new AtomicLong(0l);
+
+   public Iterable<UICommand> getAllCommands()
+   {
+      if (allCommands == null)
+         allCommands = addonRegistry.getServices(UICommand.class);
+      return allCommands;
+   }
+
+   public Iterable<UICommand> getEnabledCommands(ShellContext shellContext)
+   {
+      return Commands.getEnabledCommands(getAllCommands(), shellContext);
+   }
+
+   public Iterable<ShellCommand> getEnabledShellCommands(Shell shell, UISelection<?> selection)
+   {
+      ShellContextImpl context = new ShellContextImpl(shell, selection);
+      List<ShellCommand> commands = new ArrayList<ShellCommand>();
+      for (UICommand cmd : getEnabledCommands(context))
+      {
+         ShellCommand shellCommand = new ShellCommand(cmd, context, getCommandLineUtil());
+         commands.add(shellCommand);
+      }
+      return commands;
+   }
+
+   private CommandLineUtil getCommandLineUtil()
+   {
+      if (commandLineUtil == null)
+         commandLineUtil = new CommandLineUtil(addonRegistry.getServices(ConverterFactory.class).get());
+      return commandLineUtil;
+   }
+
+   @Override
+   public UISelection<?> getCurrentSelection()
+   {
+      return selection != null ? selection : new UISelection<Object>()
+      {
+         @Override
+         public Iterator<Object> iterator()
+         {
+            return new ArrayList<Object>().iterator();
+         }
+
+         @Override
+         public Object get()
+         {
+            return null;
+         }
+
+         @Override
+         public int size()
+         {
+            return 0;
+         }
+
+         @Override
+         public boolean isEmpty()
+         {
+            return true;
+         }
+      };
+   }
+
+   @Override
+   public long getCompletionCount()
+   {
+      return completionCount.get();
+   }
+
+   public void incrementCompletionCount()
+   {
+      completionCount.incrementAndGet();
+   }
 }

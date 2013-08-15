@@ -10,8 +10,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.shell.Shell;
-import org.jboss.forge.addon.shell.test.TestAeshSettingsProvider;
+import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -58,10 +57,7 @@ public class NewAddonProjectAeshTest
    }
 
    @Inject
-   private Shell shell;
-
-   @Inject
-   private TestAeshSettingsProvider streams;
+   private ShellTest test;
 
    @Inject
    private ProjectFactory projectFactory;
@@ -72,12 +68,12 @@ public class NewAddonProjectAeshTest
    @Test
    public void testContainerInjection() throws Exception
    {
-      Assert.assertNotNull(shell);
+      Assert.assertNotNull(test);
 
       File target = File.createTempFile("forge", "new-project-aesh");
       target.delete();
 
-      streams.getStdIn().write(("new-project " +
+      test.getStdIn().write(("new-project " +
                "--named lincoln " +
                "--topLevelPackage org.lincoln " +
                "--targetLocation " + target.getAbsolutePath() + " " +
@@ -85,18 +81,18 @@ public class NewAddonProjectAeshTest
                "--overwrite " +
                "--version 1.0.0-SNAPSHOT").getBytes());
 
-      streams.getStdIn().write("\n".getBytes());
+      test.getStdIn().write("\n".getBytes());
 
       Thread.sleep(1500);
 
-      System.out.println("OUT:" + streams.getStdOut().toString());
-      System.out.println("ERR:" + streams.getStdErr().toString());
+      System.out.println("OUT:" + test.getStdOut().toString());
+      System.out.println("ERR:" + test.getStdErr().toString());
 
       DirectoryResource projectRoot = (DirectoryResource) resourceFactory.create(target);
       Project project = projectFactory.findProject(projectRoot.getChildDirectory("lincoln"));
 
       Assert.assertNotNull(project);
- 
+
       Assert.assertTrue(project.getProjectRoot().exists());
 
       // TODO Wizard steps are not implemented by Aesh, so we can't actually invoke the entire wizard.
@@ -109,7 +105,5 @@ public class NewAddonProjectAeshTest
       // Assert.assertTrue("IMPL module is missing", projectRoot.getChild("impl").exists());
       // Assert.assertTrue("SPI module is missing", projectRoot.getChild("spi").exists());
       // Assert.assertTrue("TESTS module is missing", projectRoot.getChild("tests").exists());
-
-      shell.stopShell();
    }
 }

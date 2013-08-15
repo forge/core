@@ -19,15 +19,22 @@ import org.jboss.forge.addon.ui.context.UISelection;
 public interface Shell extends UIProvider
 {
    /**
-    * Sets the initial selection for this shell
-    * 
-    * @param initialSelection
+    * Gets the current {@link UISelection} of this {@link Shell}.
     */
-   public void setInitialSelection(UISelection<?> initialSelection);
+   UISelection<?> getCurrentSelection();
+
+   /**
+    * Sets the current {@link UISelection} for this {@link Shell}
+    */
+   public void setCurrentSelection(UISelection<?> initialSelection);
 
    /**
     * Get the native {@link Console} object.
     */
    public Console getConsole();
 
+   /**
+    * Return the number of times that completion has been requested.
+    */
+   long getCompletionCount();
 }

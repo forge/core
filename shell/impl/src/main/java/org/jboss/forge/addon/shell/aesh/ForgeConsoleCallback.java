@@ -13,7 +13,6 @@ import org.jboss.aesh.console.ConsoleCallback;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
@@ -35,7 +34,7 @@ public class ForgeConsoleCallback implements ConsoleCallback
       this.addonRegistry = addonRegistry;
 
       this.allCommands = addonRegistry.getServices(UICommand.class);
-      this.commandLineUtil = addonRegistry.getServices(CommandLineUtil.class).get();
+      this.commandLineUtil = null; //addonRegistry.getServices(CommandLineUtil.class).get();
    }
 
    /**
@@ -45,7 +44,6 @@ public class ForgeConsoleCallback implements ConsoleCallback
    @Override
    public int readConsoleOutput(ConsoleOutput output) throws IOException
    {
-//      Commands.getMainCommands(allCommands, null)
       for (UICommand command : allCommands)
       {
       }

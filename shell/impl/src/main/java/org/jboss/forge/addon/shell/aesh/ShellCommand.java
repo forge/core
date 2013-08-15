@@ -26,10 +26,10 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * 
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class ShellCommand
 {
-
    private final UICommand command;
    private final UICommandMetadata metadata;
    private final ShellContextImpl context;
@@ -39,11 +39,6 @@ public class ShellCommand
 
    /**
     * Creates a new {@link ShellCommand} based on the shell and initial selection
-    * 
-    * @param command
-    * @param shell
-    * @param selection
-    * @throws Exception
     */
    public ShellCommand(UICommand command, ShellContextImpl shellContext, CommandLineUtil commandLineUtil)
    {

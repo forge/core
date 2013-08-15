@@ -12,9 +12,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.OptionBuilder;
@@ -38,14 +35,12 @@ import org.jboss.forge.addon.ui.util.InputComponents;
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@Singleton
 public class CommandLineUtil
 {
    private static final Logger logger = Logger.getLogger(CommandLineUtil.class.getName());
 
    private ConverterFactory converterFactory;
 
-   @Inject
    public CommandLineUtil(ConverterFactory converterFactory)
    {
       this.converterFactory = converterFactory;
