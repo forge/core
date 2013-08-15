@@ -309,12 +309,6 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>resources</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
