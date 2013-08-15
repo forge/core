@@ -147,7 +147,7 @@ public class DefaultShellTest implements ShellTest
    };
 
    @Override
-   public void waitForStdOut(final String value, int quantity, TimeUnit unit) throws TimeoutException
+   public void waitForStdOutChanged(final String value, int quantity, TimeUnit unit) throws TimeoutException
    {
       waitForStream(new Callable<Void>()
       {
@@ -162,7 +162,7 @@ public class DefaultShellTest implements ShellTest
    }
 
    @Override
-   public void waitForStdErr(final String value, int quantity, TimeUnit unit) throws TimeoutException
+   public void waitForStdErrChanged(final String value, int quantity, TimeUnit unit) throws TimeoutException
    {
       waitForStream(new Callable<Void>()
       {
@@ -180,7 +180,7 @@ public class DefaultShellTest implements ShellTest
             throws TimeoutException
    {
       stream.reset();
-      int size = stream.size();
+      final int size = stream.size();
       try
       {
          task.call();
@@ -191,12 +191,12 @@ public class DefaultShellTest implements ShellTest
       }
 
       long start = System.currentTimeMillis();
-      while (System.currentTimeMillis() <= (start + TimeUnit.MILLISECONDS.convert(quantity, unit)))
+      while (System.currentTimeMillis() < (start + TimeUnit.MILLISECONDS.convert(quantity, unit)))
       {
-         if (stream.size() > size)
+         if (System.currentTimeMillis() >= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
+                  && stream.size() == size)
          {
-            size = stream.size();
-            start = System.currentTimeMillis();
+            throw new TimeoutException("Timeout occurred while waiting for stream.");
          }
 
          try
@@ -211,37 +211,75 @@ public class DefaultShellTest implements ShellTest
    }
 
    @Override
-   public String waitForStdOut(Callable<String> callable, int quantity, TimeUnit unit) throws TimeoutException
+   public String waitForStdOutChanged(Callable<?> callable, int quantity, TimeUnit unit) throws TimeoutException
    {
       waitForStream(callable, provider.getStdOut(), quantity, unit);
       return new String(provider.getStdOut().toByteArray());
    }
 
    @Override
-   public String waitForStdErr(Callable<String> callable, int quantity, TimeUnit unit) throws TimeoutException
+   public String waitForStdErrChanged(Callable<?> callable, int quantity, TimeUnit unit) throws TimeoutException
    {
       waitForStream(callable, provider.getStdErr(), quantity, unit);
       return new String(provider.getStdErr().toByteArray());
    }
 
    @Override
-   public void waitForCompletion(Callable<String> task, int quantity, TimeUnit unit)
+   public void waitForBufferChanged(Callable<?> task, int quantity, TimeUnit unit) throws TimeoutException
    {
+      final String buffer = getBuffer().getLine();
       try
       {
          task.call();
-         sendCompletionSignal();
       }
       catch (Exception e)
       {
          throw new RuntimeException(e);
       }
 
-      long completionCount = shell.getCompletionCount();
       long start = System.currentTimeMillis();
-      while (System.currentTimeMillis() <= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
-               || shell.getCompletionCount() == completionCount)
+      while (System.currentTimeMillis() < (start + TimeUnit.MILLISECONDS.convert(quantity, unit)))
       {
+         if (System.currentTimeMillis() >= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
+                  && buffer.equals(getBuffer().getLine().length()))
+         {
+            throw new TimeoutException("Timeout occurred while waiting for buffer.");
+         }
+
+         try
+         {
+            Thread.sleep(10);
+         }
+         catch (InterruptedException e)
+         {
+            throw new RuntimeException("Interrupted while waiting for Shell to respond.", e);
+         }
+      }
+   }
+
+   @Override
+   public void waitForBufferValue(Callable<?> task, int quantity, TimeUnit unit, String expected)
+            throws TimeoutException
+   {
+      try
+      {
+         task.call();
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+
+      long start = System.currentTimeMillis();
+      while (System.currentTimeMillis() < (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
+               && !getBuffer().getLine().equals(expected))
+      {
+         if (System.currentTimeMillis() >= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
+                  && !getBuffer().getLine().equals(expected))
+         {
+            throw new TimeoutException("Timeout occurred while waiting for buffer.");
+         }
+
          try
          {
             Thread.sleep(10);

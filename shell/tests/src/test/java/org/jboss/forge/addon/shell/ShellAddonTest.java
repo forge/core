@@ -83,11 +83,11 @@ public class ShellAddonTest
       test.getStdIn().flush();
       System.out.println("OUT:" + test.getStdOut());
       System.out.println("ERR:" + test.getStdErr());
-      test.waitForStdOut("\n", 5, TimeUnit.SECONDS);
+      test.waitForStdOutChanged("\n", 5, TimeUnit.SECONDS);
       System.out.println("OUT:" + test.getStdOut());
       System.out.println("ERR:" + test.getStdErr());
 
-      test.waitForStdOut("list-services\n", 5, TimeUnit.SECONDS);
+      test.waitForStdOutChanged("list-services\n", 5, TimeUnit.SECONDS);
       System.out.println("OUT:" + test.getStdOut());
       System.out.println("ERR:" + test.getStdErr());
    }

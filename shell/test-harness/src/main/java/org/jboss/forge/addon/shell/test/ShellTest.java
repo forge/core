@@ -27,75 +27,94 @@ import org.jboss.forge.furnace.services.Exported;
 public interface ShellTest
 {
    /**
+    * Get the {@link Console} buffer object.
+    */
+   Buffer getBuffer();
+
+   /**
     * Get the underlying test {@link Shell} object.
     */
-   public Shell getTestShell();
+   Shell getTestShell();
 
    /**
     * Execute the given line and return the {@link Result}. Clears STDOUT and STDERR before execution.
     */
-   public Result execute(String line);
+   Result execute(String line);
 
    /**
     * Execute the given line and return the {@link Result}. Fail if not complete within the given quantity of
     * {@link TimeUnit}. Clears STDOUT and STDERR before execution.
     */
-   public Result execute(String line, int quantity, TimeUnit unit);
+   Result execute(String line, int quantity, TimeUnit unit);
+
+   /**
+    * Wait for the console {@link Buffer} to be updated the given task is executed.
+    * 
+    * @throws TimeoutException if the timeout is reached without detecting a buffer value change.
+    */
+   void waitForBufferChanged(Callable<?> task, int quantity, TimeUnit unit) throws TimeoutException;
+
+   /**
+    * Wait for the console {@link Buffer} to be updated the given task is executed, and assert that it matches the given
+    * {@link String}.
+    * 
+    * @throws TimeoutException if the timeout is reached without detecting the appropriate value.
+    */
+   void waitForBufferValue(Callable<?> task, int quantity, TimeUnit unit, String expected) throws TimeoutException;
 
    /**
     * Clear and wait for the next write to STDOUT. Send the provided line to STDIN. Fail if no write occurs within the
     * given quantity of {@link TimeUnit}
+    * 
+    * @throws TimeoutException if the timeout is reached without detecting a write to STDOUT.
     */
-   public void waitForStdOut(String input, int quantity, TimeUnit unit) throws TimeoutException;
+   void waitForStdOutChanged(String input, int quantity, TimeUnit unit) throws TimeoutException;
 
    /**
     * Execute the given {@link Callable} task, waiting for STDOUT and returning the resultant output.
+    * 
+    * @throws TimeoutException if the timeout is reached without detecting a write to STDOUT.
     */
-   public String waitForStdOut(Callable<String> callable, int quantity, TimeUnit unit) throws TimeoutException;
+   String waitForStdOutChanged(Callable<?> callable, int quantity, TimeUnit unit) throws TimeoutException;
 
    /**
     * Clear and wait for the next write to STDOUT. Send the provided line to STDIN. Fail if no write occurs within the
     * given quantity of {@link TimeUnit}
+    * 
+    * @throws TimeoutException if the timeout is reached without detecting a write to STDERR.
     */
-   public void waitForStdErr(String input, int quantity, TimeUnit unit) throws TimeoutException;
+   void waitForStdErrChanged(String input, int quantity, TimeUnit unit) throws TimeoutException;
 
    /**
     * Execute the given {@link Callable} task, waiting for STDERR and returning the resultant output.
+    * 
+    * @throws TimeoutException if the timeout is reached without detecting a write to STDERR.
     */
-   public String waitForStdErr(Callable<String> callable, int quantity, TimeUnit unit) throws TimeoutException;
+   String waitForStdErrChanged(Callable<?> callable, int quantity, TimeUnit unit) throws TimeoutException;
 
    /**
     * Get the STDIN {@link OutputStream} for writing.
     */
-   public OutputStream getStdIn();
+   OutputStream getStdIn();
 
    /**
     * Get the current contents of STDOUT since the last time it was cleared.
     */
-   public String getStdOut();
+   String getStdOut();
 
    /**
     * Get the current contents of STDERR since the last time it was cleared.
     */
-   public String getStdErr();
+   String getStdErr();
 
    /**
     * Write to STDIN.
     */
-   public void write(String string) throws IOException;
+   void write(String string) throws IOException;
 
    /**
     * Initiate completion by sending the appropriate signal or character sequence to the {@link Shell}.
     */
-   public void sendCompletionSignal() throws IOException;
+   void sendCompletionSignal() throws IOException;
 
-   /**
-    * Get the {@link Console} buffer object.
-    */
-   public Buffer getBuffer();
-
-   /**
-    * Wait for the console {@link Buffer} to be updated the given task is executed.
-    */
-   public void waitForCompletion(Callable<String> task, int quantity, TimeUnit unit);
 }

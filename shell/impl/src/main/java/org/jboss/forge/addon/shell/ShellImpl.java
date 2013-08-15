@@ -9,7 +9,6 @@ package org.jboss.forge.addon.shell;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -156,8 +155,6 @@ public class ShellImpl implements Shell
 
    private CommandLineUtil commandLineUtil;
 
-   private AtomicLong completionCount = new AtomicLong(0l);
-
    public Iterable<UICommand> getAllCommands()
    {
       if (allCommands == null)
@@ -195,14 +192,4 @@ public class ShellImpl implements Shell
       return selection != null ? selection : Selections.emptySelection();
    }
 
-   @Override
-   public long getCompletionCount()
-   {
-      return completionCount.get();
-   }
-
-   public void incrementCompletionCount()
-   {
-      completionCount.incrementAndGet();
-   }
 }

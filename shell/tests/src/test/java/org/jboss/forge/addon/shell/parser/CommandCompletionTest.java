@@ -58,15 +58,16 @@ public class CommandCompletionTest
    @Test
    public void testCommandAutocomplete() throws Exception
    {
-      test.waitForCompletion(new Callable<String>()
+      test.waitForBufferValue(new Callable<String>()
       {
          @Override
          public String call() throws Exception
          {
             test.write("foocomm");
+            test.sendCompletionSignal();
             return null;
          }
-      }, 2000, TimeUnit.MILLISECONDS);
+      }, 10, TimeUnit.SECONDS, "foocommand ");
       Assert.assertEquals("foocommand ", test.getBuffer().getLine());
    }
 

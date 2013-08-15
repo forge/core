@@ -32,9 +32,4 @@ public interface Shell extends UIProvider
     * Get the native {@link Console} object.
     */
    public Console getConsole();
-
-   /**
-    * Return the number of times that completion has been requested.
-    */
-   long getCompletionCount();
 }

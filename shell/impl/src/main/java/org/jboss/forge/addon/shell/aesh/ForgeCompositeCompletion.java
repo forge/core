@@ -34,7 +34,6 @@ public class ForgeCompositeCompletion implements Completion
       for (Completion completion : completions)
       {
          completion.complete(completeOperation);
-         shell.incrementCompletionCount();
       }
    }
 
