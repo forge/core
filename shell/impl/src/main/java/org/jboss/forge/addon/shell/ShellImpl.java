@@ -8,7 +8,6 @@ package org.jboss.forge.addon.shell;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
@@ -35,6 +34,7 @@ import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.util.Commands;
+import org.jboss.forge.addon.ui.util.Selections;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
@@ -192,32 +192,7 @@ public class ShellImpl implements Shell
    @Override
    public UISelection<?> getCurrentSelection()
    {
-      return selection != null ? selection : new UISelection<Object>()
-      {
-         @Override
-         public Iterator<Object> iterator()
-         {
-            return new ArrayList<Object>().iterator();
-         }
-
-         @Override
-         public Object get()
-         {
-            return null;
-         }
-
-         @Override
-         public int size()
-         {
-            return 0;
-         }
-
-         @Override
-         public boolean isEmpty()
-         {
-            return true;
-         }
-      };
+      return selection != null ? selection : Selections.emptySelection();
    }
 
    @Override
