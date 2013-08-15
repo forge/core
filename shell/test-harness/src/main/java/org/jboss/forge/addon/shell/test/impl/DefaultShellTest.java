@@ -225,7 +225,7 @@ public class DefaultShellTest implements ShellTest
    }
 
    @Override
-   public void waitForCompletion(Callable<String> task)
+   public void waitForCompletion(Callable<String> task, int quantity, TimeUnit unit)
    {
       try
       {
@@ -238,7 +238,9 @@ public class DefaultShellTest implements ShellTest
       }
 
       long completionCount = shell.getCompletionCount();
-      while (shell.getCompletionCount() == completionCount)
+      long start = System.currentTimeMillis();
+      while (System.currentTimeMillis() <= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
+               || shell.getCompletionCount() == completionCount)
       {
          try
          {

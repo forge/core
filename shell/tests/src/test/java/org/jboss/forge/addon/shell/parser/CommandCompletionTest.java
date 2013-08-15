@@ -7,6 +7,7 @@
 package org.jboss.forge.addon.shell.parser;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -65,8 +66,8 @@ public class CommandCompletionTest
             test.write("foocomm");
             return null;
          }
-      });
-      Assert.assertEquals("foocommand", test.getBuffer().getLine());
+      }, 2000, TimeUnit.MILLISECONDS);
+      Assert.assertEquals("foocommand ", test.getBuffer().getLine());
    }
 
 }

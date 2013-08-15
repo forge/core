@@ -97,5 +97,5 @@ public interface ShellTest
    /**
     * Wait for the console {@link Buffer} to be updated the given task is executed.
     */
-   public void waitForCompletion(Callable<String> task);
+   public void waitForCompletion(Callable<String> task, int quantity, TimeUnit unit);
 }
