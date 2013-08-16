@@ -139,7 +139,7 @@ if [ ! -x "$JAVACMD" ] ; then
   exit 1
 fi
 
-JAVAVER=`$JAVACMD -version 2>&1`
+JAVAVER=`"$JAVACMD" -version 2>&1`
 case $JAVAVER in
 *1.[6-9]*) ;;
 *1.[1-5]*)
