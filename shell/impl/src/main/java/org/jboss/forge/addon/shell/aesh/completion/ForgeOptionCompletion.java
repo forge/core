@@ -26,7 +26,6 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.SingleValued;
 import org.jboss.forge.addon.ui.input.UIInputMany;
-import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
@@ -36,12 +35,26 @@ public class ForgeOptionCompletion implements Completion
    private static final Logger logger = Logger.getLogger(ForgeOptionCompletion.class.getName());
 
    private ShellImpl shell;
-   private AddonRegistry addonRegistry;
 
-   public ForgeOptionCompletion(ShellImpl shellImpl, AddonRegistry addonRegistry)
+   public ForgeOptionCompletion(ShellImpl shellImpl)
    {
       this.shell = shellImpl;
-      this.addonRegistry = addonRegistry;
+   }
+
+   private ShellCommand findCurrentCommand(CompleteOperation completeOperation)
+   {
+      Iterable<ShellCommand> commands = shell.getEnabledShellCommands();
+
+      String[] tokens = completeOperation.getBuffer().split(String.valueOf(completeOperation.getSeparator()));
+      if (tokens.length >= 1)
+      {
+         for (ShellCommand cmd : commands)
+         {
+            if (cmd.getName().equals(tokens[0]))
+               return cmd;
+         }
+      }
+      return null;
    }
 
    @Override
@@ -52,8 +65,9 @@ public class ForgeOptionCompletion implements Completion
       {
          try
          {
+            // We are dealing with one-level commands atm.
+            // Eg. new-project-type --named ... instead of new-project-type setup --named ...
             ParameterInt param = cmd.getCommandLineParser().getParameters().get(0);
-
             // complete command names
             String paramName = param.getName();
 
@@ -127,22 +141,6 @@ public class ForgeOptionCompletion implements Completion
             return;
          }
       }
-   }
-
-   private ShellCommand findCurrentCommand(CompleteOperation completeOperation)
-   {
-      Iterable<ShellCommand> commands = shell.getEnabledShellCommands();
-
-      String[] tokens = completeOperation.getBuffer().split(String.valueOf(completeOperation.getSeparator()));
-      if (tokens.length >= 1)
-      {
-         for (ShellCommand cmd : commands)
-         {
-            if (cmd.getMetadata().getName().equals(tokens[0]))
-               return cmd;
-         }
-      }
-      return null;
    }
 
    @SuppressWarnings({ "rawtypes" })

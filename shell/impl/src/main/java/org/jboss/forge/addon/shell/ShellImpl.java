@@ -96,13 +96,12 @@ public class ShellImpl implements Shell
          console = null;
       }
       console = new Console(settings);
-      
-      console.addCompletion(new ForgeCompositeCompletion(
-               new ForgeCommandCompletion(this, addonRegistry),
-               new ForgeOptionCompletion(this, addonRegistry)));
-      
+
+      console.addCompletion(new ForgeCompositeCompletion(new ForgeCommandCompletion(this), new ForgeOptionCompletion(
+               this)));
+
       console.setConsoleCallback(new ForgeConsoleCallback(this, addonRegistry));
-      
+
       try
       {
          console.setPrompt(createInitialPrompt());

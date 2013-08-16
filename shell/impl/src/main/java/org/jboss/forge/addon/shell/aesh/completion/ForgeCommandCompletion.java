@@ -14,7 +14,6 @@ import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.aesh.ShellCommand;
-import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
@@ -24,12 +23,10 @@ public class ForgeCommandCompletion implements Completion
    // private static final Logger logger = Logger.getLogger(ForgeCommandCompletion.class.getName());
 
    private ShellImpl shell;
-   private AddonRegistry addonRegistry;
 
-   public ForgeCommandCompletion(ShellImpl shell, AddonRegistry addonRegistry)
+   public ForgeCommandCompletion(ShellImpl shell)
    {
       this.shell = shell;
-      this.addonRegistry = addonRegistry;
    }
 
    @Override
@@ -38,7 +35,7 @@ public class ForgeCommandCompletion implements Completion
       Iterable<ShellCommand> commands = findMatchingCommands(completeOperation);
       for (ShellCommand cmd : commands)
       {
-         String name = cmd.getMetadata().getName();
+         String name = cmd.getName();
          completeOperation.addCompletionCandidate(name);
       }
    }
@@ -54,7 +51,7 @@ public class ForgeCommandCompletion implements Completion
          String token = (tokens.length == 1) ? tokens[0] : null;
          for (ShellCommand cmd : commands)
          {
-            if (token == null || cmd.getMetadata().getName().startsWith(token))
+            if (token == null || cmd.getName().startsWith(token))
                result.add(cmd);
          }
       }

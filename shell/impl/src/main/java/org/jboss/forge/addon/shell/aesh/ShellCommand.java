@@ -19,7 +19,6 @@ import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
  * Encapsulates a {@link UICommand} to be useful in a Shell context
@@ -30,8 +29,8 @@ import org.jboss.forge.addon.ui.util.Metadata;
  */
 public class ShellCommand
 {
+   private final String name;
    private final UICommand command;
-   private final UICommandMetadata metadata;
    private final ShellContextImpl context;
    private final CommandLineParser commandLineParser;
    private Map<String, InputComponent<?, Object>> inputs;
@@ -44,7 +43,7 @@ public class ShellCommand
    {
       this.command = command;
       UICommandMetadata commandMetadata = command.getMetadata();
-      this.metadata = Metadata.from(commandMetadata).name(ShellUtil.shellifyName(commandMetadata.getName()));
+      this.name = ShellUtil.shellifyName(commandMetadata.getName());
 
       // Create ShellContext
       this.context = shellContext;
@@ -63,14 +62,14 @@ public class ShellCommand
       this.commandLineParser = commandLineUtil.generateParser(this.command, inputs);
    }
 
-   public UICommandMetadata getMetadata()
-   {
-      return metadata;
-   }
-
    public UICommand getCommand()
    {
       return command;
+   }
+
+   public String getName()
+   {
+      return name;
    }
 
    public Map<String, InputComponent<?, Object>> getInputs()
@@ -104,7 +103,7 @@ public class ShellCommand
 
       ShellCommand that = (ShellCommand) o;
 
-      if (!getMetadata().getName().equals(that.getMetadata().getName()))
+      if (!getName().equals(that.getName()))
          return false;
 
       return true;
@@ -113,12 +112,12 @@ public class ShellCommand
    @Override
    public int hashCode()
    {
-      return getMetadata().getName().hashCode();
+      return getName().hashCode();
    }
 
    @Override
    public String toString()
    {
-      return getMetadata().getName();
+      return getName();
    }
 }
