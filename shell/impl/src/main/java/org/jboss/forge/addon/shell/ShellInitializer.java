@@ -22,8 +22,7 @@ public class ShellInitializer
       if (!Boolean.getBoolean("forge.compatibility.IDE"))
       {
          Settings settings = new SettingsBuilder().create();
-         Shell shell = shellFactory.createShell(settings);
-         shell.getConsole().start();
+         shellFactory.createShell(settings);
       }
    }
 }
