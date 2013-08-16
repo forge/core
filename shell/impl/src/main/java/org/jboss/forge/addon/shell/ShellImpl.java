@@ -167,13 +167,14 @@ public class ShellImpl implements Shell
       return Commands.getEnabledCommands(getAllCommands(), shellContext);
    }
 
-   public Iterable<ShellCommand> getEnabledShellCommands(Shell shell, UISelection<?> selection)
+   public Iterable<ShellCommand> getEnabledShellCommands()
    {
-      ShellContextImpl context = new ShellContextImpl(shell, selection);
+      ShellContextImpl context = new ShellContextImpl(this, getCurrentSelection());
       List<ShellCommand> commands = new ArrayList<ShellCommand>();
+      CommandLineUtil cmdLineUtil = getCommandLineUtil();
       for (UICommand cmd : getEnabledCommands(context))
       {
-         ShellCommand shellCommand = new ShellCommand(cmd, context, getCommandLineUtil());
+         ShellCommand shellCommand = new ShellCommand(cmd, context, cmdLineUtil);
          commands.add(shellCommand);
       }
       return commands;

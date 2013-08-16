@@ -45,7 +45,7 @@ public class ForgeCommandCompletion implements Completion
    private Iterable<ShellCommand> findMatchingCommands(CompleteOperation completeOperation)
    {
       List<ShellCommand> result = new ArrayList<ShellCommand>();
-      Iterable<ShellCommand> commands = shell.getEnabledShellCommands(shell, shell.getCurrentSelection());
+      Iterable<ShellCommand> commands = shell.getEnabledShellCommands();
 
       String[] tokens = completeOperation.getBuffer().split(String.valueOf(completeOperation.getSeparator()));
       if (tokens.length == 1)

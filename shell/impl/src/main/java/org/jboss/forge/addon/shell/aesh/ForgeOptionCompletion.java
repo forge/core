@@ -130,7 +130,7 @@ public class ForgeOptionCompletion implements Completion
 
    private ShellCommand findCurrentCommand(CompleteOperation completeOperation)
    {
-      Iterable<ShellCommand> commands = shell.getEnabledShellCommands(shell, shell.getCurrentSelection());
+      Iterable<ShellCommand> commands = shell.getEnabledShellCommands();
 
       String[] tokens = completeOperation.getBuffer().split(String.valueOf(completeOperation.getSeparator()));
       if (tokens.length >= 1)
