@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.shell.aesh;
+package org.jboss.forge.addon.shell.aesh.completion;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -20,6 +20,7 @@ import org.jboss.aesh.util.FileLister;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.ShellImpl;
+import org.jboss.forge.addon.shell.aesh.ShellCommand;
 import org.jboss.forge.addon.ui.input.HasCompleter;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.SelectComponent;

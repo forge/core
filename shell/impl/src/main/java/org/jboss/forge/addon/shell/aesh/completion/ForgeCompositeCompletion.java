@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.shell.aesh;
+package org.jboss.forge.addon.shell.aesh.completion;
 
 import java.util.Arrays;
 import java.util.List;

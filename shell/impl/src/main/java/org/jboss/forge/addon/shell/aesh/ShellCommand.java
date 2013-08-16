@@ -63,22 +63,22 @@ public class ShellCommand
       this.commandLineParser = commandLineUtil.generateParser(this.command, inputs);
    }
 
-   UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata()
    {
       return metadata;
    }
 
-   UICommand getCommand()
+   public UICommand getCommand()
    {
       return command;
    }
 
-   Map<String, InputComponent<?, Object>> getInputs()
+   public Map<String, InputComponent<?, Object>> getInputs()
    {
       return inputs;
    }
 
-   CommandLineParser getCommandLineParser()
+   public CommandLineParser getCommandLineParser()
    {
       return commandLineParser;
    }
