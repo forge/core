@@ -10,9 +10,8 @@ import java.util.Map;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineParser;
-import org.jboss.aesh.console.Config;
-import org.jboss.aesh.console.ConsoleOutput;
-import org.jboss.forge.addon.shell.ui.ShellContextImpl;
+import org.jboss.aesh.cl.exception.CommandLineParserException;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellUIBuilderImpl;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
@@ -31,7 +30,7 @@ public class ShellCommand
 {
    private final String name;
    private final UICommand command;
-   private final ShellContextImpl context;
+   private final ShellContext context;
    private final CommandLineParser commandLineParser;
    private Map<String, InputComponent<?, Object>> inputs;
    private CommandLineUtil commandLineUtil;
@@ -39,17 +38,15 @@ public class ShellCommand
    /**
     * Creates a new {@link ShellCommand} based on the shell and initial selection
     */
-   public ShellCommand(UICommand command, ShellContextImpl shellContext, CommandLineUtil commandLineUtil)
+   public ShellCommand(UICommand command, ShellContext shellContext, CommandLineUtil commandLineUtil)
    {
       this.command = command;
       UICommandMetadata commandMetadata = command.getMetadata();
       this.name = ShellUtil.shellifyName(commandMetadata.getName());
 
-      // Create ShellContext
       this.context = shellContext;
-
       // Initialize UICommand
-      ShellUIBuilderImpl builder = new ShellUIBuilderImpl(this.context);
+      ShellUIBuilderImpl builder = new ShellUIBuilderImpl(shellContext);
       try
       {
          this.command.initializeUI(builder);
@@ -59,6 +56,7 @@ public class ShellCommand
          throw new RuntimeException("Error while initializing command", e);
       }
       this.inputs = builder.getComponentMap();
+      this.commandLineUtil = commandLineUtil;
       this.commandLineParser = commandLineUtil.generateParser(this.command, inputs);
    }
 
@@ -82,15 +80,15 @@ public class ShellCommand
       return commandLineParser;
    }
 
-   public Result run(ConsoleOutput consoleOutput, CommandLine commandLine) throws Exception
+   public void populateInputs(String line) throws CommandLineParserException
    {
-      context.setConsoleOutput(consoleOutput);
-      commandLineUtil.populateUIInputs(commandLine, inputs);
-      Result result = command.execute(context);
-      if (result != null &&
-               result.getMessage() != null && result.getMessage().length() > 0)
-         context.getProvider().getConsole().pushToStdOut(result.getMessage() + Config.getLineSeparator());
-      return result;
+      CommandLine commandLine = this.commandLineParser.parse(line);
+      this.commandLineUtil.populateUIInputs(commandLine, inputs);
+   }
+
+   public Result execute() throws Exception
+   {
+      return command.execute(context);
    }
 
    @Override

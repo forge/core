@@ -8,7 +8,6 @@
 package org.jboss.forge.addon.shell.aesh.completion;
 
 import java.io.File;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.CommandLineCompletionParser;
@@ -42,22 +41,10 @@ public class ForgeOptionCompletion implements Completion
       this.shell = shellImpl;
    }
 
-   private ShellCommand findCurrentCommand(CompleteOperation completeOperation)
-   {
-      Map<String, ShellCommand> commandMap = shell.getEnabledShellCommands();
-   
-      String[] tokens = completeOperation.getBuffer().split(String.valueOf(completeOperation.getSeparator()));
-      if (tokens.length >= 1)
-      {
-         return commandMap.get(tokens[0]);
-      }
-      return null;
-   }
-
    @Override
    public void complete(CompleteOperation completeOperation)
    {
-      ShellCommand cmd = findCurrentCommand(completeOperation);
+      ShellCommand cmd = shell.findCommand(completeOperation.getBuffer());
       if (cmd != null)
       {
          try
@@ -91,13 +78,9 @@ public class ForgeOptionCompletion implements Completion
                // display all our params
                else
                {
-                  if (param.getOptionLongNamesWithDash().size() > 1)
+                  completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+                  if (param.getOptionLongNamesWithDash().size() == 1)
                   {
-                     completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
-                  }
-                  else
-                  {
-                     completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
                      completeOperation.setOffset(completeOperation.getCursor() -
                               completeObject.getOffset());
                   }
@@ -112,6 +95,10 @@ public class ForgeOptionCompletion implements Completion
             else if (completeObject.isArgument())
             {
                argumentCompletion(completeOperation, completeObject, cmd);
+            }
+            else
+            {
+               completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
             }
          }
          catch (CommandLineParserException e)

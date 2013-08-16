@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.shell;
 
+import java.io.Closeable;
+
 import org.jboss.aesh.console.Console;
 import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.context.UISelection;
@@ -16,7 +18,7 @@ import org.jboss.forge.addon.ui.context.UISelection;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public interface Shell extends UIProvider
+public interface Shell extends UIProvider, Closeable
 {
    /**
     * Gets the current {@link UISelection} of this {@link Shell}.

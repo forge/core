@@ -31,7 +31,7 @@ public abstract class AbstractExitCommand implements UICommand
    @Override
    public UICommandMetadata getMetadata()
    {
-      return Metadata.forCommand(getClass()).name("exiting").description("Exit the shell");
+      return Metadata.forCommand(getClass()).name("exit").description("Exit the shell");
    }
 
    @Override
@@ -56,5 +56,4 @@ public abstract class AbstractExitCommand implements UICommand
       forge.stop();
       return Results.success("");
    }
-
 }

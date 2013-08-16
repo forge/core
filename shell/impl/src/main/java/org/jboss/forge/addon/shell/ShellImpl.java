@@ -13,8 +13,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.PreDestroy;
 import javax.enterprise.inject.Vetoed;
 
+import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.Prompt;
 import org.jboss.aesh.console.settings.Settings;
@@ -24,11 +26,12 @@ import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.forge.addon.shell.aesh.ForgeConsoleCallback;
 import org.jboss.forge.addon.shell.aesh.ShellCommand;
 import org.jboss.forge.addon.shell.aesh.completion.ForgeCommandCompletion;
-import org.jboss.forge.addon.shell.aesh.completion.ForgeCompositeCompletion;
 import org.jboss.forge.addon.shell.aesh.completion.ForgeOptionCompletion;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.context.UISelection;
+import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Selections;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
@@ -49,7 +52,6 @@ public class ShellImpl implements Shell
    private final List<CommandExecutionListener> listeners = new ArrayList<CommandExecutionListener>();
 
    private Console console;
-
    private UISelection<?> selection;
    private CommandManager commandManager;
 
@@ -90,17 +92,24 @@ public class ShellImpl implements Shell
          console = null;
       }
       console = new Console(settings);
-      console.addCompletion(new ForgeCompositeCompletion(new ForgeCommandCompletion(this), new ForgeOptionCompletion(
-               this)));
+      console.addCompletion(new ForgeCommandCompletion(this));
+      console.addCompletion(new ForgeOptionCompletion(this));
       console.setConsoleCallback(new ForgeConsoleCallback(this));
       try
       {
          console.setPrompt(createInitialPrompt());
-         console.start();
       }
       catch (IOException io)
       {
          throw new RuntimeException("Prompt unavailable", io);
+      }
+      try
+      {
+         console.start();
+      }
+      catch (IOException io)
+      {
+         throw new RuntimeException("Unable to start console", io);
       }
    }
 
@@ -150,10 +159,55 @@ public class ShellImpl implements Shell
       return commandManager.getEnabledShellCommands(context);
    }
 
+   /**
+    * Used in {@link ForgeOptionCompletion} and {@link ForgeConsoleCallback}
+    */
+   public ShellCommand findCommand(String buffer)
+   {
+      String[] tokens = buffer.split("\\W");
+      if (tokens.length >= 1)
+      {
+         return getEnabledShellCommands().get(tokens[0]);
+      }
+      return null;
+   }
+
+   public Result execute(ShellCommand shellCommand)
+   {
+      // TODO: Fire pre/post listeners
+      try
+      {
+         Result result = shellCommand.execute();
+         if (result != null && result.getMessage() != null)
+         {
+            getConsole().pushToStdOut(result.getMessage() + Config.getLineSeparator());
+         }
+         return result;
+      }
+      catch (Exception e)
+      {
+         return Results.fail(e.getMessage(), e);
+      }
+   }
+
    @Override
    public UISelection<?> getCurrentSelection()
    {
       return selection != null ? selection : Selections.emptySelection();
+   }
+
+   @PreDestroy
+   @Override
+   public void close()
+   {
+      try
+      {
+         this.console.stop();
+      }
+      catch (Exception ignored)
+      {
+         // Exception is ignored
+      }
    }
 
 }

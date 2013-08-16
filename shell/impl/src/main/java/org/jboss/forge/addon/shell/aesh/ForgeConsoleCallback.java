@@ -9,9 +9,11 @@ package org.jboss.forge.addon.shell.aesh;
 
 import java.io.IOException;
 
+import org.jboss.aesh.cl.exception.CommandLineParserException;
 import org.jboss.aesh.console.ConsoleCallback;
 import org.jboss.aesh.console.ConsoleOutput;
-import org.jboss.forge.addon.shell.Shell;
+import org.jboss.forge.addon.shell.ShellImpl;
+import org.jboss.forge.addon.ui.result.Result;
 
 /**
  * Hook for Aesh operations
@@ -20,9 +22,9 @@ import org.jboss.forge.addon.shell.Shell;
  */
 public class ForgeConsoleCallback implements ConsoleCallback
 {
-   private final Shell shell;
+   private final ShellImpl shell;
 
-   public ForgeConsoleCallback(Shell shell)
+   public ForgeConsoleCallback(ShellImpl shell)
    {
       this.shell = shell;
    }
@@ -34,6 +36,21 @@ public class ForgeConsoleCallback implements ConsoleCallback
    @Override
    public int readConsoleOutput(ConsoleOutput output) throws IOException
    {
+      String line = output.getBuffer();
+      ShellCommand command = shell.findCommand(line);
+      if (command == null)
+      {
+         throw new IOException("Command not found for line: " + line);
+      }
+      try
+      {
+         command.populateInputs(line);
+      }
+      catch (CommandLineParserException e)
+      {
+         throw new IOException(e);
+      }
+      Result result = shell.execute(command);
       return 0;
    }
 }
