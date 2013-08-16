@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -162,14 +163,35 @@ public class ShellImpl implements Shell
    /**
     * Used in {@link ForgeOptionCompletion} and {@link ForgeConsoleCallback}
     */
-   public ShellCommand findCommand(String buffer)
+   public ShellCommand findCommand(String line)
    {
-      String[] tokens = buffer.split(" ");
+      String[] tokens = line.split(" ");
       if (tokens.length >= 1)
       {
          return getEnabledShellCommands().get(tokens[0]);
       }
       return null;
+   }
+
+   /**
+    * Use {@link ForgeCommandCompletion}
+    */
+   public Iterable<ShellCommand> findMatchingCommands(String line)
+   {
+      List<ShellCommand> result = new ArrayList<ShellCommand>();
+      Map<String, ShellCommand> commandMap = getEnabledShellCommands();
+
+      String[] tokens = line == null ? new String[0] : line.split(" ");
+      if (tokens.length <= 1)
+      {
+         String token = (tokens.length == 1) ? tokens[0] : null;
+         for (Entry<String, ShellCommand> entry : commandMap.entrySet())
+         {
+            if (token == null || entry.getKey().startsWith(token))
+               result.add(entry.getValue());
+         }
+      }
+      return result;
    }
 
    public Result execute(ShellCommand shellCommand)

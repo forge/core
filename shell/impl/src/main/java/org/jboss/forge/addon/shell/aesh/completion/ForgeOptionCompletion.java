@@ -8,9 +8,11 @@
 package org.jboss.forge.addon.shell.aesh.completion;
 
 import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
-import org.jboss.aesh.cl.CommandLineCompletionParser;
+import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
 import org.jboss.aesh.cl.internal.ParameterInt;
@@ -21,6 +23,8 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.aesh.ShellCommand;
+import org.jboss.forge.addon.ui.facets.HintsFacet;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.HasCompleter;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.SelectComponent;
@@ -44,67 +48,88 @@ public class ForgeOptionCompletion implements Completion
    @Override
    public void complete(CompleteOperation completeOperation)
    {
-      ShellCommand cmd = shell.findCommand(completeOperation.getBuffer());
+      String line = completeOperation.getBuffer();
+      ShellCommand cmd = shell.findCommand(line);
       if (cmd != null)
       {
          try
          {
             // We are dealing with one-level commands atm.
             // Eg. new-project-type --named ... instead of new-project-type setup --named ...
-            ParameterInt param = cmd.getCommandLineParser().getParameters().get(0);
-            ParsedCompleteObject completeObject = new CommandLineCompletionParser(cmd.getCommandLineParser())
-                     .findCompleteObject(completeOperation.getBuffer());
+            ParameterInt param = cmd.getParameter();
+            ParsedCompleteObject completeObject = cmd.parseCompleteObject(line);
+            List<String> optionNames = param.getOptionLongNamesWithDash();
+
+            try
+            {
+               CommandLine commandLine = cmd.parse(line);
+               removeExistingOptions(commandLine, optionNames);
+               cmd.populateInputs(commandLine);
+            }
+            catch (CommandLineParserException parseException)
+            {
+               // ignore for now
+            }
+
             if (completeObject.doDisplayOptions())
             {
                // we have a partial/full name
-               if (completeObject.getName() != null && completeObject.getName().length() > 0)
+               if (completeObject.getName() != null && !completeObject.getName().isEmpty())
                {
-                  if (param.findPossibleLongNamesWitdDash(completeObject.getName()).size() > 0)
+                  List<String> possibleOptions = param.findPossibleLongNamesWitdDash(completeObject.getName());
+                  if (!possibleOptions.isEmpty())
                   {
                      // only one param
-                     if (param.findPossibleLongNamesWitdDash(completeObject.getName()).size() == 1)
+                     if (possibleOptions.size() == 1)
                      {
-                        completeOperation.addCompletionCandidate(param.findPossibleLongNamesWitdDash(
-                                 completeObject.getName()).get(0));
+                        completeOperation.addCompletionCandidate(possibleOptions.get(0));
                         completeOperation.setOffset(completeOperation.getCursor() -
                                  completeObject.getOffset());
                      }
                      // multiple params
                      else
-                        completeOperation.addCompletionCandidates(param.findPossibleLongNamesWitdDash(completeObject
-                                 .getName()));
+                     {
+                        completeOperation.addCompletionCandidates(possibleOptions);
+                     }
                   }
                }
                // display all our params
                else
                {
-                  completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
-                  if (param.getOptionLongNamesWithDash().size() == 1)
+                  completeOperation.addCompletionCandidates(optionNames);
+                  if (optionNames.size() == 1)
                   {
-                     completeOperation.setOffset(completeOperation.getCursor() -
-                              completeObject.getOffset());
+                     completeOperation.setOffset(completeOperation.getCursor() - completeObject.getOffset());
                   }
                }
             }
-            // try to complete an options value
+            // try to complete an options value "--xxx"
             else if (completeObject.isOption())
             {
                optionCompletion(completeOperation, completeObject, cmd);
             }
-            // try to complete a argument value
+            // try to complete a argument value Eg: ls . (. is the argument)
             else if (completeObject.isArgument())
             {
                argumentCompletion(completeOperation, completeObject, cmd);
-            }
-            else
-            {
-               completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
             }
          }
          catch (CommandLineParserException e)
          {
             logger.warning(e.getMessage());
             return;
+         }
+      }
+   }
+
+   private void removeExistingOptions(CommandLine commandLine, List<String> availableOptions)
+   {
+      Iterator<String> it = availableOptions.iterator();
+      while (it.hasNext())
+      {
+         if (commandLine.hasOption(it.next()))
+         {
+            it.remove();
          }
       }
    }
@@ -119,13 +144,12 @@ public class ForgeOptionCompletion implements Completion
       // use the arguments completor as default if it has any
       if (inputOption != null)
       {
-         argumentCompletion(completeOperation, new CommandLineCompletionParser(shellCommand.getCommandLineParser())
-                  .findCompleteObject(completeOperation.getBuffer()), shellCommand);
+         argumentCompletion(completeOperation, shellCommand.parseCompleteObject(completeOperation.getBuffer()),
+                  shellCommand);
       }
       else
       {
-         completeOperation.addCompletionCandidates(shellCommand.getCommandLineParser().getParameters().get(0)
-                  .getOptionLongNamesWithDash());
+         completeOperation.addCompletionCandidates(shellCommand.getParameter().getOptionLongNamesWithDash());
       }
    }
 
@@ -237,7 +261,8 @@ public class ForgeOptionCompletion implements Completion
             ShellCommand shellCommand)
    {
       InputComponent inputOption = shellCommand.getInputs().get("arguments"); // default for arguments
-
+//      InputType inputType = ((HintsFacet) inputOption.getFacet(HintsFacet.class)).getInputType();
+      InputType inputType = InputType.FILE_PICKER;
       // use the arguments completor as default if it has any
       if (inputOption != null
                && (inputOption instanceof HasCompleter && ((HasCompleter) inputOption).getCompleter() != null))
@@ -251,7 +276,7 @@ public class ForgeOptionCompletion implements Completion
          }
       }
 
-      else if (inputOption != null && inputOption.getValueType() == File.class)
+      else if (inputType == InputType.FILE_PICKER)
       {
          completeOperation.setOffset(completeOperation.getCursor());
          if (completeObject.getValue() == null)
@@ -261,7 +286,7 @@ public class ForgeOptionCompletion implements Completion
             new FileLister(completeObject.getValue(), new File(System.getProperty("user.dir")))
                      .findMatchingDirectories(completeOperation);
       }
-      else if (inputOption != null && inputOption.getValueType() == Boolean.class)
+      else if (inputType == InputType.CHECKBOX)
       {
          // TODO
       }

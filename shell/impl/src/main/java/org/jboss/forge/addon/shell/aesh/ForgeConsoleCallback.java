@@ -36,21 +36,33 @@ public class ForgeConsoleCallback implements ConsoleCallback
    @Override
    public int readConsoleOutput(ConsoleOutput output) throws IOException
    {
-      String line = output.getBuffer();
-      ShellCommand command = shell.findCommand(line);
-      if (command == null)
-      {
-         throw new IOException("Command not found for line: " + line);
-      }
       try
       {
-         command.populateInputs(line);
+         String line = output.getBuffer();
+         ShellCommand command = shell.findCommand(line);
+         if (command == null)
+         {
+            throw new IOException("Command not found for line: " + line);
+         }
+         try
+         {
+            command.populateInputs(line);
+         }
+         catch (CommandLineParserException e)
+         {
+            throw new IOException(e);
+         }
+         Result result = shell.execute(command);
+         if (result != null)
+         {
+            shell.getConsole().pushToStdOut(result.getMessage());
+         }
       }
-      catch (CommandLineParserException e)
+      catch (Exception e)
       {
-         throw new IOException(e);
+         shell.getConsole().pushToStdErr("**ERROR**: " + e.getMessage());
+         return -1;
       }
-      Result result = shell.execute(command);
       return 0;
    }
 }

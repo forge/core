@@ -9,8 +9,11 @@ package org.jboss.forge.addon.shell.aesh;
 import java.util.Map;
 
 import org.jboss.aesh.cl.CommandLine;
+import org.jboss.aesh.cl.CommandLineCompletionParser;
 import org.jboss.aesh.cl.CommandLineParser;
+import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
+import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellUIBuilderImpl;
 import org.jboss.forge.addon.shell.util.ShellUtil;
@@ -75,14 +78,28 @@ public class ShellCommand
       return inputs;
    }
 
-   public CommandLineParser getCommandLineParser()
+   public CommandLine parse(String line) throws CommandLineParserException
    {
-      return commandLineParser;
+      return commandLineParser.parse(line);
+   }
+
+   public ParameterInt getParameter()
+   {
+      return commandLineParser.getParameters().get(0);
+   }
+
+   public ParsedCompleteObject parseCompleteObject(String line) throws CommandLineParserException
+   {
+      return new CommandLineCompletionParser(commandLineParser).findCompleteObject(line);
    }
 
    public void populateInputs(String line) throws CommandLineParserException
    {
-      CommandLine commandLine = this.commandLineParser.parse(line);
+      this.commandLineUtil.populateUIInputs(parse(line), inputs);
+   }
+
+   public void populateInputs(CommandLine commandLine) throws CommandLineParserException
+   {
       this.commandLineUtil.populateUIInputs(commandLine, inputs);
    }
 

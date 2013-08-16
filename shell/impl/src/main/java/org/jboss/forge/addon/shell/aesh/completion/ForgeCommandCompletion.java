@@ -7,11 +7,6 @@
 
 package org.jboss.forge.addon.shell.aesh.completion;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
 import org.jboss.forge.addon.shell.ShellImpl;
@@ -32,7 +27,7 @@ public class ForgeCommandCompletion implements Completion
    @Override
    public void complete(CompleteOperation completeOperation)
    {
-      Iterable<ShellCommand> commands = findMatchingCommands(completeOperation);
+      Iterable<ShellCommand> commands = shell.findMatchingCommands(completeOperation.getBuffer());
       for (ShellCommand cmd : commands)
       {
          String name = cmd.getName();
@@ -40,21 +35,4 @@ public class ForgeCommandCompletion implements Completion
       }
    }
 
-   private Iterable<ShellCommand> findMatchingCommands(CompleteOperation completeOperation)
-   {
-      List<ShellCommand> result = new ArrayList<ShellCommand>();
-      Map<String, ShellCommand> commandMap = shell.getEnabledShellCommands();
-
-      String[] tokens = completeOperation.getBuffer().split(String.valueOf(completeOperation.getSeparator()));
-      if (tokens.length <= 1)
-      {
-         String token = (tokens.length == 1) ? tokens[0] : null;
-         for (Entry<String, ShellCommand> entry : commandMap.entrySet())
-         {
-            if (token == null || entry.getKey().startsWith(token))
-               result.add(entry.getValue());
-         }
-      }
-      return result;
-   }
 }

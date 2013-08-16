@@ -9,12 +9,11 @@ package org.jboss.forge.addon.ui.example.wizards;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
@@ -22,7 +21,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 
-public class ExampleWizard implements UIWizard
+public class ExampleWizard extends AbstractUICommand implements UIWizard
 {
 
    @Inject
@@ -39,7 +38,7 @@ public class ExampleWizard implements UIWizard
    private UIInput<Boolean> goToLastStep;
 
    @Override
-   public UICommandMetadata getMetadata()
+   public Metadata getMetadata()
    {
       return Metadata.forCommand(getClass()).name("Wizard").description("This is the First screen of the Wizard");
    }
@@ -65,13 +64,6 @@ public class ExampleWizard implements UIWizard
    public Result execute(UIContext context) throws Exception
    {
       return Results.success();
-   }
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      UISelection<?> selection = context.getInitialSelection();
-      return !selection.isEmpty();
    }
 
    @Override
