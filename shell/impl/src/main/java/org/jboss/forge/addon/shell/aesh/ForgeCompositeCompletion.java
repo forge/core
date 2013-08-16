@@ -12,19 +12,16 @@ import java.util.List;
 
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
-import org.jboss.forge.addon.shell.ShellImpl;
 
 /**
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class ForgeCompositeCompletion implements Completion
 {
-   private ShellImpl shell;
    private List<Completion> completions;
 
-   public ForgeCompositeCompletion(ShellImpl shell, Completion... completions)
+   public ForgeCompositeCompletion(Completion... completions)
    {
-      this.shell = shell;
       this.completions = Arrays.asList(completions);
    }
 

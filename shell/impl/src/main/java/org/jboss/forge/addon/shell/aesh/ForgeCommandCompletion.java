@@ -48,13 +48,11 @@ public class ForgeCommandCompletion implements Completion
       Iterable<ShellCommand> commands = shell.getEnabledShellCommands();
 
       String[] tokens = completeOperation.getBuffer().split(String.valueOf(completeOperation.getSeparator()));
-      if (tokens.length == 1)
+      String token = (tokens.length == 1) ? tokens[0] : null;
+      for (ShellCommand cmd : commands)
       {
-         for (ShellCommand cmd : commands)
-         {
-            if (cmd.getMetadata().getName().startsWith(tokens[0]))
-               result.add(cmd);
-         }
+         if (token == null || cmd.getMetadata().getName().startsWith(token))
+            result.add(cmd);
       }
       return result;
    }
