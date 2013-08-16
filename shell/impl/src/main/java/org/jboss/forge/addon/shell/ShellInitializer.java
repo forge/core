@@ -32,13 +32,13 @@ public class ShellInitializer
       }
    }
 
-   public void shutdown(@Observes PreShutdown preShutdown) throws Exception
+   public void shutdown(@Observes PreShutdown preShutdown)
    {
       destroyShell();
    }
 
    @PreDestroy
-   public void destroyShell() throws Exception
+   public void destroyShell()
    {
       if (this.shell != null)
       {

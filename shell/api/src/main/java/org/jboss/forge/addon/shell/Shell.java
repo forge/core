@@ -34,4 +34,7 @@ public interface Shell extends UIProvider, Closeable
     * Get the native {@link Console} object.
     */
    public Console getConsole();
+
+   @Override
+   public void close();
 }
