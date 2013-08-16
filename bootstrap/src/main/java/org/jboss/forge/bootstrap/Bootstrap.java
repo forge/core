@@ -121,6 +121,10 @@ public class Bootstrap
             {
                forge.setServerMode(false);
             }
+            else if ("--debug".equals(args[i]))
+            {
+               // This is just to avoid the Unknown option: --debug message below
+            }
             else
                System.out.println("Unknown option: " + args[i]);
          }
