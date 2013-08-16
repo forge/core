@@ -9,6 +9,7 @@ package org.jboss.forge.addon.shell;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,22 +21,16 @@ import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
-import org.jboss.forge.addon.convert.ConverterFactory;
-import org.jboss.forge.addon.shell.aesh.CommandLineUtil;
 import org.jboss.forge.addon.shell.aesh.ForgeConsoleCallback;
 import org.jboss.forge.addon.shell.aesh.ShellCommand;
 import org.jboss.forge.addon.shell.aesh.completion.ForgeCommandCompletion;
 import org.jboss.forge.addon.shell.aesh.completion.ForgeCompositeCompletion;
 import org.jboss.forge.addon.shell.aesh.completion.ForgeOptionCompletion;
-import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
-import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UISelection;
-import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.addon.ui.util.Selections;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
@@ -51,17 +46,16 @@ public class ShellImpl implements Shell
 {
    private static final Logger log = Logger.getLogger(ShellImpl.class.getName());
 
-   private final AddonRegistry addonRegistry;
-
    private final List<CommandExecutionListener> listeners = new ArrayList<CommandExecutionListener>();
 
    private Console console;
 
    private UISelection<?> selection;
+   private CommandManager commandManager;
 
-   public ShellImpl(AddonRegistry addonRegistry, Settings settings)
+   public ShellImpl(CommandManager commandManager, Settings settings)
    {
-      this.addonRegistry = addonRegistry;
+      this.commandManager = commandManager;
       init(settings);
    }
 
@@ -96,12 +90,9 @@ public class ShellImpl implements Shell
          console = null;
       }
       console = new Console(settings);
-
       console.addCompletion(new ForgeCompositeCompletion(new ForgeCommandCompletion(this), new ForgeOptionCompletion(
                this)));
-
-      console.setConsoleCallback(new ForgeConsoleCallback(this, addonRegistry));
-
+      console.setConsoleCallback(new ForgeConsoleCallback(this));
       try
       {
          console.setPrompt(createInitialPrompt());
@@ -153,40 +144,10 @@ public class ShellImpl implements Shell
       this.selection = selection;
    }
 
-   private Imported<UICommand> allCommands;
-
-   private CommandLineUtil commandLineUtil;
-
-   public Iterable<UICommand> getAllCommands()
-   {
-      if (allCommands == null)
-         allCommands = addonRegistry.getServices(UICommand.class);
-      return allCommands;
-   }
-
-   public Iterable<UICommand> getEnabledCommands(ShellContext shellContext)
-   {
-      return Commands.getEnabledCommands(getAllCommands(), shellContext);
-   }
-
-   public Iterable<ShellCommand> getEnabledShellCommands()
+   public Map<String, ShellCommand> getEnabledShellCommands()
    {
       ShellContextImpl context = new ShellContextImpl(this, getCurrentSelection());
-      List<ShellCommand> commands = new ArrayList<ShellCommand>();
-      CommandLineUtil cmdLineUtil = getCommandLineUtil();
-      for (UICommand cmd : getEnabledCommands(context))
-      {
-         ShellCommand shellCommand = new ShellCommand(cmd, context, cmdLineUtil);
-         commands.add(shellCommand);
-      }
-      return commands;
-   }
-
-   private CommandLineUtil getCommandLineUtil()
-   {
-      if (commandLineUtil == null)
-         commandLineUtil = new CommandLineUtil(addonRegistry.getServices(ConverterFactory.class).get());
-      return commandLineUtil;
+      return commandManager.getEnabledShellCommands(context);
    }
 
    @Override

@@ -9,6 +9,8 @@ package org.jboss.forge.addon.shell.aesh.completion;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
@@ -20,8 +22,6 @@ import org.jboss.forge.addon.shell.aesh.ShellCommand;
  */
 public class ForgeCommandCompletion implements Completion
 {
-   // private static final Logger logger = Logger.getLogger(ForgeCommandCompletion.class.getName());
-
    private ShellImpl shell;
 
    public ForgeCommandCompletion(ShellImpl shell)
@@ -43,19 +43,18 @@ public class ForgeCommandCompletion implements Completion
    private Iterable<ShellCommand> findMatchingCommands(CompleteOperation completeOperation)
    {
       List<ShellCommand> result = new ArrayList<ShellCommand>();
-      Iterable<ShellCommand> commands = shell.getEnabledShellCommands();
+      Map<String, ShellCommand> commandMap = shell.getEnabledShellCommands();
 
       String[] tokens = completeOperation.getBuffer().split(String.valueOf(completeOperation.getSeparator()));
       if (tokens.length <= 1)
       {
          String token = (tokens.length == 1) ? tokens[0] : null;
-         for (ShellCommand cmd : commands)
+         for (Entry<String, ShellCommand> entry : commandMap.entrySet())
          {
-            if (token == null || cmd.getName().startsWith(token))
-               result.add(cmd);
+            if (token == null || entry.getKey().startsWith(token))
+               result.add(entry.getValue());
          }
       }
       return result;
    }
-
 }

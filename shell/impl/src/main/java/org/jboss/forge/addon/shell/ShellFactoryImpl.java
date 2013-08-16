@@ -28,7 +28,8 @@ public class ShellFactoryImpl implements ShellFactory
    public Shell createShell(Settings settings)
    {
       Assert.notNull(settings, "Settings cannot be null");
-      return new ShellImpl(addonRegistry, settings);
+      CommandManager commandManager = new CommandManager(addonRegistry);
+      return new ShellImpl(commandManager, settings);
    }
 
 }

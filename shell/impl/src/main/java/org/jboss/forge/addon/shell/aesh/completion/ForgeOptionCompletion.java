@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.shell.aesh.completion;
 
 import java.io.File;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.CommandLineCompletionParser;
@@ -43,16 +44,12 @@ public class ForgeOptionCompletion implements Completion
 
    private ShellCommand findCurrentCommand(CompleteOperation completeOperation)
    {
-      Iterable<ShellCommand> commands = shell.getEnabledShellCommands();
-
+      Map<String, ShellCommand> commandMap = shell.getEnabledShellCommands();
+   
       String[] tokens = completeOperation.getBuffer().split(String.valueOf(completeOperation.getSeparator()));
       if (tokens.length >= 1)
       {
-         for (ShellCommand cmd : commands)
-         {
-            if (cmd.getName().equals(tokens[0]))
-               return cmd;
-         }
+         return commandMap.get(tokens[0]);
       }
       return null;
    }
@@ -68,71 +65,53 @@ public class ForgeOptionCompletion implements Completion
             // We are dealing with one-level commands atm.
             // Eg. new-project-type --named ... instead of new-project-type setup --named ...
             ParameterInt param = cmd.getCommandLineParser().getParameters().get(0);
-            // complete command names
-            String paramName = param.getName();
-
-            if (paramName.startsWith(completeOperation.getBuffer()))
+            ParsedCompleteObject completeObject = new CommandLineCompletionParser(cmd.getCommandLineParser())
+                     .findCompleteObject(completeOperation.getBuffer());
+            if (completeObject.doDisplayOptions())
             {
-               completeOperation.addCompletionCandidate(paramName);
-            }
-            // display all the options/arguments
-            else if (paramName.equals(completeOperation.getBuffer().trim()))
-            {
-               defaultCompletion(completeOperation, cmd);
-            }
-            // complete options/arguments
-            else if (completeOperation.getBuffer().startsWith(paramName))
-            {
-               ParsedCompleteObject completeObject = null;
-               completeObject = new CommandLineCompletionParser(cmd.getCommandLineParser())
-                        .findCompleteObject(completeOperation.getBuffer());
-               // logger.info("ParsedCompleteObject: " + completeObject);
-               if (completeObject.doDisplayOptions())
+               // we have a partial/full name
+               if (completeObject.getName() != null && completeObject.getName().length() > 0)
                {
-                  // we have a partial/full name
-                  if (completeObject.getName() != null && completeObject.getName().length() > 0)
+                  if (param.findPossibleLongNamesWitdDash(completeObject.getName()).size() > 0)
                   {
-                     if (param.findPossibleLongNamesWitdDash(completeObject.getName()).size() > 0)
+                     // only one param
+                     if (param.findPossibleLongNamesWitdDash(completeObject.getName()).size() == 1)
                      {
-                        // only one param
-                        if (param.findPossibleLongNamesWitdDash(completeObject.getName()).size() == 1)
-                        {
-                           completeOperation.addCompletionCandidate(param.findPossibleLongNamesWitdDash(
-                                    completeObject.getName()).get(0));
-                           completeOperation.setOffset(completeOperation.getCursor() -
-                                    completeObject.getOffset());
-                        }
-                        // multiple params
-                        else
-                           completeOperation.addCompletionCandidates(param.findPossibleLongNamesWitdDash(completeObject
-                                    .getName()));
-                     }
-                  }
-                  // display all our params
-                  else
-                  {
-                     if (param.getOptionLongNamesWithDash().size() > 1)
-                     {
-                        completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
-                     }
-                     else
-                     {
-                        completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+                        completeOperation.addCompletionCandidate(param.findPossibleLongNamesWitdDash(
+                                 completeObject.getName()).get(0));
                         completeOperation.setOffset(completeOperation.getCursor() -
                                  completeObject.getOffset());
                      }
+                     // multiple params
+                     else
+                        completeOperation.addCompletionCandidates(param.findPossibleLongNamesWitdDash(completeObject
+                                 .getName()));
                   }
                }
-               // try to complete an options value
-               else if (completeObject.isOption())
+               // display all our params
+               else
                {
-                  optionCompletion(completeOperation, completeObject, cmd);
+                  if (param.getOptionLongNamesWithDash().size() > 1)
+                  {
+                     completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+                  }
+                  else
+                  {
+                     completeOperation.addCompletionCandidates(param.getOptionLongNamesWithDash());
+                     completeOperation.setOffset(completeOperation.getCursor() -
+                              completeObject.getOffset());
+                  }
                }
-               // try to complete a argument value
-               else if (completeObject.isArgument())
-               {
-                  argumentCompletion(completeOperation, completeObject, cmd);
-               }
+            }
+            // try to complete an options value
+            else if (completeObject.isOption())
+            {
+               optionCompletion(completeOperation, completeObject, cmd);
+            }
+            // try to complete a argument value
+            else if (completeObject.isArgument())
+            {
+               argumentCompletion(completeOperation, completeObject, cmd);
             }
          }
          catch (CommandLineParserException e)
@@ -326,5 +305,4 @@ public class ForgeOptionCompletion implements Completion
          }
       }
    }
-
 }
