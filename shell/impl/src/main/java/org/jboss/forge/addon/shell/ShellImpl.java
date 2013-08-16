@@ -164,7 +164,7 @@ public class ShellImpl implements Shell
     */
    public ShellCommand findCommand(String buffer)
    {
-      String[] tokens = buffer.split("\\W");
+      String[] tokens = buffer.split(" ");
       if (tokens.length >= 1)
       {
          return getEnabledShellCommands().get(tokens[0]);
