@@ -1,8 +1,10 @@
 package org.jboss.forge.addon.facets.requirements;
 
 import org.jboss.forge.addon.facets.MockFacet;
+import org.jboss.forge.addon.facets.constraints.RequiresFacet;
 
-public class FacetC extends MockFacet
+@RequiresFacet(FacetD.class)
+public class FacetE extends MockFacet
 {
    @Override
    public boolean install()
@@ -13,7 +15,7 @@ public class FacetC extends MockFacet
    @Override
    public boolean isInstalled()
    {
-      return getFaceted().hasFacet(getClass());
+      return true;
    }
 
 }
