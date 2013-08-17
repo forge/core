@@ -46,4 +46,19 @@ public abstract class FacetInspector
       return result;
    }
 
+   public static <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean isConstraintSatisfied(
+            Faceted<FACETTYPE> faceted, Set<Class<FACETTYPE>> requiredFacets)
+   {
+      boolean constraintsSatisfied = true;
+      for (Class<FACETTYPE> type : requiredFacets)
+      {
+         if (!faceted.hasFacet(type))
+         {
+            constraintsSatisfied = false;
+            break;
+         }
+      }
+      return constraintsSatisfied;
+   }
+
 }
