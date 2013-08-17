@@ -17,6 +17,7 @@ import org.apache.maven.model.Plugin;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.facets.constraints.RequiresFacet;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
 import org.jboss.forge.addon.projects.Project;
@@ -26,6 +27,7 @@ import org.jboss.forge.furnace.exception.ContainerException;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Dependent
+@RequiresFacet(MavenFacet.class)
 public class MavenJavaCompilerFacet extends AbstractFacet<Project> implements JavaCompilerFacet
 {
    @Override

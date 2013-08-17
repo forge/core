@@ -16,6 +16,7 @@ import javax.enterprise.context.Dependent;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.facets.constraints.RequiresFacet;
 import org.jboss.forge.addon.maven.plugins.Configuration;
 import org.jboss.forge.addon.maven.plugins.ConfigurationElementBuilder;
 import org.jboss.forge.addon.maven.plugins.MavenPlugin;
@@ -29,6 +30,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 
 @Dependent
+@RequiresFacet({ MavenFacet.class, PackagingFacet.class })
 public class MavenWebResourceFacet extends AbstractFacet<Project> implements WebResourcesFacet
 {
 
@@ -72,11 +74,9 @@ public class MavenWebResourceFacet extends AbstractFacet<Project> implements Web
    public boolean isInstalled()
    {
       Project project = getFaceted();
-      MavenFacet mavenFacet = project.getFacet(MavenFacet.class);
       String packagingType = project.getFacet(PackagingFacet.class).getPackagingType();
 
-      return mavenFacet.isInstalled()
-               && packagingType.equals("war");
+      return packagingType.equals("war");
    }
 
    @Override

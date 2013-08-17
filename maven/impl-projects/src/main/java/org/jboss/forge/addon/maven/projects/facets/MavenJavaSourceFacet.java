@@ -15,6 +15,7 @@ import javax.enterprise.context.Dependent;
 
 import org.apache.maven.model.Build;
 import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.facets.constraints.RequiresFacet;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.maven.projects.util.Packages;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -31,6 +32,7 @@ import org.jboss.forge.parser.java.JavaSource;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Dependent
+@RequiresFacet(MavenFacet.class)
 public class MavenJavaSourceFacet extends AbstractFacet<Project> implements JavaSourceFacet
 {
    @Override

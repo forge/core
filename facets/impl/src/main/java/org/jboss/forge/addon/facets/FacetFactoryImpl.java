@@ -153,7 +153,7 @@ public class FacetFactoryImpl implements FacetFactory
       boolean result = false;
       if (faceted.hasFacet((Class<? extends FACETTYPE>) facet.getClass()))
          result = true;
-      else
+      else if (FacetInspector.isConstraintSatisfied(faceted, requiredFacets))
          result = ((MutableFaceted<FACETTYPE>) faceted).install(facet);
       return result;
    }
@@ -233,7 +233,7 @@ public class FacetFactoryImpl implements FacetFactory
       boolean result = false;
       if (faceted.hasFacet((Class<? extends FACETTYPE>) facet.getClass()))
          result = true;
-      else
+      else if (FacetInspector.isConstraintSatisfied(faceted, requiredFacets))
          result = ((MutableFaceted<FACETTYPE>) faceted).register(facet);
       return result;
    }
