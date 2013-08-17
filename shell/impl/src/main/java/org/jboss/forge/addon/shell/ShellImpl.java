@@ -8,9 +8,12 @@ package org.jboss.forge.addon.shell;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -178,7 +181,14 @@ public class ShellImpl implements Shell
     */
    public Iterable<ShellCommand> findMatchingCommands(String line)
    {
-      List<ShellCommand> result = new ArrayList<ShellCommand>();
+      Set<ShellCommand> result = new TreeSet<ShellCommand>(new Comparator<ShellCommand>()
+      {
+         @Override
+         public int compare(ShellCommand o1, ShellCommand o2)
+         {
+            return o1.getName().compareTo(o2.getName());
+         }
+      });
       Map<String, ShellCommand> commandMap = getEnabledShellCommands();
 
       String[] tokens = line == null ? new String[0] : line.split(" ");
