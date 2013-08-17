@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
 import org.jboss.aesh.cl.internal.ParameterInt;
@@ -23,7 +22,6 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.aesh.ShellCommand;
-import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.HasCompleter;
 import org.jboss.forge.addon.ui.input.InputComponent;
@@ -60,16 +58,7 @@ public class ForgeOptionCompletion implements Completion
             ParsedCompleteObject completeObject = cmd.parseCompleteObject(line);
             List<String> optionNames = param.getOptionLongNamesWithDash();
 
-            try
-            {
-               CommandLine commandLine = cmd.parse(line);
-               removeExistingOptions(commandLine, optionNames);
-               cmd.populateInputs(commandLine);
-            }
-            catch (CommandLineParserException parseException)
-            {
-               // ignore for now
-            }
+            removeExistingOptions(line, optionNames);
 
             if (completeObject.doDisplayOptions())
             {
@@ -122,12 +111,12 @@ public class ForgeOptionCompletion implements Completion
       }
    }
 
-   private void removeExistingOptions(CommandLine commandLine, List<String> availableOptions)
+   private void removeExistingOptions(String commandLine, Iterable<String> availableOptions)
    {
       Iterator<String> it = availableOptions.iterator();
       while (it.hasNext())
       {
-         if (commandLine.hasOption(it.next()))
+         if (commandLine.contains(it.next()))
          {
             it.remove();
          }
@@ -261,7 +250,7 @@ public class ForgeOptionCompletion implements Completion
             ShellCommand shellCommand)
    {
       InputComponent inputOption = shellCommand.getInputs().get("arguments"); // default for arguments
-//      InputType inputType = ((HintsFacet) inputOption.getFacet(HintsFacet.class)).getInputType();
+      // InputType inputType = ((HintsFacet) inputOption.getFacet(HintsFacet.class)).getInputType();
       InputType inputType = InputType.FILE_PICKER;
       // use the arguments completor as default if it has any
       if (inputOption != null
