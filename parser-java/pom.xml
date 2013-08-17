@@ -21,7 +21,7 @@
    </modules>
 
    <properties>
-      <version.java-parser>1.1.3.Final</version.java-parser>
+      <version.java-parser>1.1.4.Final</version.java-parser>
    </properties>
 
    <dependencyManagement>

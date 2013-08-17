@@ -23,13 +23,11 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>convert</artifactId>
-         <version>${project.version}</version>
          <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>facets</artifactId>
-         <version>${project.version}</version>
          <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
