@@ -1,0 +1,32 @@
+== core
+:idprefix: id_ 
+
+
+This addon *exports dependencies* on all built-in Forge addons. Its does not provide any additional services of its own.
+
+=== Dependencies: All Built In
+
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml] 
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>core</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----      
+
+== Features
+
+Convenient programming experience::
+ Because the Core addon provides a dependency on all other core Forge addons, it may be used to gain access to all core addons via one dependency. 
++
+NOTE: It is *NOT* recommended to depend on this addon unless you legitimately need access to all core functionality. This is considered bad addon-writing ettiquite. You should probably add dependencies only to those addon which are required.
