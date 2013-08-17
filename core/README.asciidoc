@@ -29,4 +29,4 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 Convenient programming experience::
  Because the Core addon provides a dependency on all other core Forge addons, it may be used to gain access to all core addons via one dependency. 
 +
-NOTE: It is *NOT* recommended to depend on this addon unless you legitimately need access to all core functionality. This is considered bad addon-writing ettiquite. You should probably add dependencies only to those addon which are required.
+NOTE: It is *NOT* recommended to depend on this addon unless you legitimately need access to all core functionality. This is considered bad addon-writing etiquette. You should probably add dependencies only to those addon which are required.
