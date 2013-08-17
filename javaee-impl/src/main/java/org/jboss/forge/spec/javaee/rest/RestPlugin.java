@@ -27,7 +27,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.ws.rs.core.MediaType;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.parser.JavaParser;
@@ -157,8 +156,6 @@ public class RestPlugin implements Plugin
       for (JavaResource jr : javaTargets)
       {
          JavaClass entity = (JavaClass) (jr).getJavaSource();
-         if (!entity.hasAnnotation(XmlRootElement.class))
-            entity.addAnnotation(XmlRootElement.class);
 
          String idType = resolveIdType(entity);
          if (!Types.isBasicType(idType))

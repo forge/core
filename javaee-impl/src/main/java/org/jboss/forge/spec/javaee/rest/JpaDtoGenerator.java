@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Field;
@@ -75,6 +76,10 @@ public class JpaDtoGenerator
                .setName(dtoClassName)
                .setPublic()
                .addInterface(Serializable.class);
+      if (topLevel && !isEmbeddedType)
+      {
+         dtoClass.addAnnotation(XmlRootElement.class);
+      }
 
       // Default constructor
       Method<JavaClass> ctor = dtoClass.addMethod();
