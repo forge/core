@@ -8,15 +8,14 @@ package org.jboss.forge.shell.cdi;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Singleton;
 
 import org.jboss.forge.shell.events.PreStartup;
 import org.jboss.solder.beanManager.BeanManagerProvider;
 
-@Singleton
+
 public class ObserverBeanManagerProvider implements BeanManagerProvider
 {
-   private BeanManager manager;
+   static private BeanManager manager;
 
    public void grab(@Observes final PreStartup event, final BeanManager m)
    {
