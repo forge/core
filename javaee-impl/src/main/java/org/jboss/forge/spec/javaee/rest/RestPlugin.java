@@ -214,11 +214,6 @@ public class RestPlugin implements Plugin
          resource.addImport(rootDto.getQualifiedName());
          resource.setPackage(getPackageName(java));
 
-         /*
-          * Save the sources
-          */
-         entities.add(java.saveJavaSource(entity));
-
          if (!java.getJavaResource(resource).exists()
                   || prompt.promptBoolean("Endpoint [" + resource.getQualifiedName() + "] already, exists. Overwrite?"))
          {

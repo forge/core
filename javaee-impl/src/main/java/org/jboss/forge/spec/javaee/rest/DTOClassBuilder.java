@@ -309,7 +309,8 @@ public class DTOClassBuilder
                   + " FROM " + entityName + " " + jpqlVar + " WHERE " + jpqlVar + "." + id + " = :entityId"
                   + "\", " + entityName + ".class);");
          assembleJPABuilder.append("findByIdQuery.setParameter(\"entityId\", this." + id + ");");
-         assembleJPABuilder.append("entity = (" + entityName + ") findByIdQuery.getSingleResult(); }");
+         assembleJPABuilder.append("entity = (" + entityName + ") findByIdQuery.getSingleResult();");
+         assembleJPABuilder.append("return entity; }");
       }
    }
 
