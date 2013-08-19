@@ -96,7 +96,20 @@ public class JPAProperty
       return actualField != null && actualField.isTransient();
    }
 
-   public String getType()
+   public Type<?> getType()
+   {
+      if (actualField != null)
+      {
+         return actualField.getTypeInspector();
+      }
+      else if (accessor != null)
+      {
+         return accessor.getReturnTypeInspector();
+      }
+      throw new IllegalStateException("The property " + name + " is not associated with a field or an accessor");
+   }
+
+   public String getSimpleType()
    {
       if (actualField != null)
       {

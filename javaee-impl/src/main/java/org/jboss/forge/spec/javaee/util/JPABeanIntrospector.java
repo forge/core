@@ -1,6 +1,7 @@
 package org.jboss.forge.spec.javaee.util;
 
 import java.beans.Introspector;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -39,13 +40,13 @@ public class JPABeanIntrospector
 
    private void locateProperties()
    {
-      for (Member<JavaClass, ?> member : members)
+      for (Member<JavaClass, ?> member : getEligibleMembers())
       {
          String memberName = member.getName();
          if (member instanceof Field)
          {
             Field<?> field = (Field<?>) member;
-            updateProperty(memberName, field, null, null);
+            createOrUpdateProperty(memberName, field, null, null);
          }
          else if (member instanceof Method)
          {
@@ -54,15 +55,28 @@ public class JPABeanIntrospector
             if (isAccessor(method))
             {
                String propertyName = propertyNameFromMethod(method);
-               updateProperty(propertyName, null, method, null);
+               createOrUpdateProperty(propertyName, null, method, null);
             }
             else if (isMutator(method))
             {
                String propertyName = propertyNameFromMethod(method);
-               updateProperty(propertyName, null, null, method);
+               createOrUpdateProperty(propertyName, null, null, method);
             }
          }
       }
+   }
+
+   private List<Member<JavaClass, ?>> getEligibleMembers()
+   {
+      List<Member<JavaClass, ?>> result = new ArrayList<Member<JavaClass, ?>>();
+      for (Member<JavaClass, ?> member : members)
+      {
+         if (!member.isStatic())
+         {
+            result.add(member);
+         }
+      }
+      return result;
    }
 
    private String propertyNameFromMethod(Method<JavaClass> method)
@@ -86,7 +100,8 @@ public class JPABeanIntrospector
       }
    }
 
-   private JPAProperty updateProperty(String name, Field<?> field, Method<JavaClass> accessor, Method<JavaClass> mutator)
+   private JPAProperty createOrUpdateProperty(String name, Field<?> field, Method<JavaClass> accessor,
+            Method<JavaClass> mutator)
    {
       JPAProperty property = propertyCache.get(name);
       if (property == null)
@@ -114,7 +129,8 @@ public class JPABeanIntrospector
       String methodName = method.getName();
       String qualifiedReturnType = method.getQualifiedReturnType();
       List<Parameter<JavaClass>> parameters = method.getParameters();
-      if (methodName.startsWith(GET_PREFIX) && qualifiedReturnType != null && parameters.size() == 0)
+      if (!method.isStatic() && methodName.startsWith(GET_PREFIX) && qualifiedReturnType != null
+               && parameters.size() == 0)
       {
          return true;
       }
@@ -132,7 +148,8 @@ public class JPABeanIntrospector
       String methodName = method.getName();
       String qualifiedReturnType = method.getQualifiedReturnType();
       List<Parameter<JavaClass>> parameters = method.getParameters();
-      if (methodName.startsWith(SET_PREFIX) && qualifiedReturnType == null && parameters.size() == 1)
+      if (!method.isStatic() && methodName.startsWith(SET_PREFIX) && qualifiedReturnType == null
+               && parameters.size() == 1)
       {
          return true;
       }
