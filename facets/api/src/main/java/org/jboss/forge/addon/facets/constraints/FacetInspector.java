@@ -26,23 +26,49 @@ public abstract class FacetInspector
     */
    @SuppressWarnings("unchecked")
    public static <FACETEDTYPE extends Faceted<FACETTYPE>, FACETTYPE extends Facet<FACETEDTYPE>> Set<Class<FACETTYPE>> getRequiredFacets(
-            final Class<FACETTYPE> type)
+            final Class<FACETTYPE> inspectedType)
    {
       Set<Class<FACETTYPE>> result = new LinkedHashSet<Class<FACETTYPE>>();
 
-      if (Annotations.isAnnotationPresent(type, RequiresFacet.class))
+      if (Annotations.isAnnotationPresent(inspectedType, RequiresFacet.class))
       {
-         RequiresFacet requires = Annotations.getAnnotation(type, RequiresFacet.class);
+         RequiresFacet requires = Annotations.getAnnotation(inspectedType, RequiresFacet.class);
          if (requires.value() != null)
          {
             for (Class<? extends Facet<?>> facetType : requires.value())
             {
-               if (Facet.class.isAssignableFrom(facetType))
+               if (Facet.class.isAssignableFrom(facetType) && !facetType.isAssignableFrom(inspectedType))
                   result.add((Class<FACETTYPE>) facetType);
             }
          }
       }
 
+      return result;
+   }
+
+   public static <FACETEDTYPE extends Faceted<FACETTYPE>, FACETTYPE extends Facet<FACETEDTYPE>> Set<Class<FACETTYPE>> getAllRequiredFacets(
+            final Class<FACETTYPE> inspectedType)
+   {
+      Set<Class<FACETTYPE>> seen = new LinkedHashSet<Class<FACETTYPE>>();
+      return getAllRequiredFacets(seen, inspectedType);
+   }
+
+   private static <FACETEDTYPE extends Faceted<FACETTYPE>, FACETTYPE extends Facet<FACETEDTYPE>> Set<Class<FACETTYPE>> getAllRequiredFacets(
+            Set<Class<FACETTYPE>> seen, final Class<FACETTYPE> inspectedType)
+   {
+      Set<Class<FACETTYPE>> result = new LinkedHashSet<Class<FACETTYPE>>();
+      Set<Class<FACETTYPE>> requirements = getRequiredFacets(inspectedType);
+
+      for (Class<FACETTYPE> requiredType : requirements)
+      {
+         if (!seen.contains(requiredType))
+         {
+            seen.add(requiredType);
+            result.addAll(getAllRequiredFacets(seen, requiredType));
+         }
+      }
+
+      result.addAll(requirements);
       return result;
    }
 
@@ -61,4 +87,18 @@ public abstract class FacetInspector
       return constraintsSatisfied;
    }
 
+   public static <FACETEDTYPE extends Faceted<FACETTYPE>, FACETTYPE extends Facet<FACETEDTYPE>> boolean hasCircularConstraints(
+            Class<FACETTYPE> inspectedType)
+   {
+      Set<Class<FACETTYPE>> allRequiredFacets = getAllRequiredFacets(inspectedType);
+      for (Class<FACETTYPE> requirement : allRequiredFacets)
+      {
+         for (Class<FACETTYPE> subrequirement : getAllRequiredFacets(requirement))
+         {
+            if (subrequirement.isAssignableFrom(requirement))
+               return true;
+         }
+      }
+      return false;
+   }
 }

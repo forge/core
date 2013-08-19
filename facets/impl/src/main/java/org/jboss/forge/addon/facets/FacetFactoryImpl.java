@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.facets.constraints.FacetInspector;
+import org.jboss.forge.addon.facets.constraints.RequiresFacet;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
@@ -108,6 +109,10 @@ public class FacetFactoryImpl implements FacetFactory
    private <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean install(
             Set<Class<FACETTYPE>> seen, FACETEDTYPE origin, FACETTYPE facet)
    {
+      if (FacetInspector.hasCircularConstraints(facet.getClass()))
+         throw new IllegalStateException("Circular dependencies detected in @" + RequiresFacet.class.getSimpleName()
+                  + " annotation located at [" + facet.getClass().getName() + "]");
+
       seen.add((Class<FACETTYPE>) facet.getClass());
       Faceted<FACETTYPE> faceted = (Faceted<FACETTYPE>) origin;
       Assert.isTrue(faceted instanceof MutableFaceted, "The given origin [" + origin + "] is not an instance of ["
@@ -188,6 +193,10 @@ public class FacetFactoryImpl implements FacetFactory
    private <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean register(
             Set<Class<FACETTYPE>> seen, FACETEDTYPE origin, FACETTYPE facet)
    {
+      if (FacetInspector.hasCircularConstraints(facet.getClass()))
+         throw new IllegalStateException("Circular dependencies detected in @" + RequiresFacet.class.getSimpleName()
+                  + " annotation located at [" + facet.getClass().getName() + "]");
+
       seen.add((Class<FACETTYPE>) facet.getClass());
       Faceted<FACETTYPE> faceted = (Faceted<FACETTYPE>) origin;
       Assert.isTrue(faceted instanceof MutableFaceted, "The given origin [" + origin + "] is not an instance of ["

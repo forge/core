@@ -35,7 +35,8 @@ public class FacetConstraintsTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addClasses(FacetA.class, FacetB.class, FacetC.class, MockFaceted.class, MockFacet.class)
+               .addPackages(true, FacetConstraintsTest.class.getPackage())
+               .addClasses(MockFaceted.class, MockFacet.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:facets"),
@@ -59,13 +60,20 @@ public class FacetConstraintsTest
    }
 
    @Test
-   public void testProjectFacetInstallationInstallsDependencies() throws Exception
+   public void testFacetInstallationInstallsDependencies() throws Exception
    {
       MockFaceted faceted = new MockFaceted();
       facetFactory.install(faceted, FacetB.class);
 
       Assert.assertTrue(faceted.hasFacet(FacetB.class));
       Assert.assertTrue(faceted.hasFacet(FacetC.class));
+   }
+
+   @Test(expected = IllegalStateException.class)
+   public void testFacetsCannotDeclareCircularDependencies() throws Exception
+   {
+      MockFaceted faceted = new MockFaceted();
+      facetFactory.install(faceted, FacetD.class);
    }
 
 }

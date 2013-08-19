@@ -56,27 +56,10 @@ public class FacetFactoryTest
       Assert.assertNotNull(facetFactory);
    }
 
-   @Test
+   @Test(expected = FacetNotFoundException.class)
    public void testNotFoundFacetCreation() throws Exception
    {
-      try
-      {
-         facetFactory.create(new MockFaceted(), NotFoundMockFacet.class);
-         Assert.fail("Should have thrown exception.");
-      }
-      catch (Throwable e)
-      {
-         boolean causeIsFacetNotFoundException = false;
-         while (e.getCause() != null && e.getCause() != e)
-         {
-            e = e.getCause();
-            if (e instanceof FacetNotFoundException)
-            {
-               causeIsFacetNotFoundException = true;
-            }
-         }
-         Assert.assertTrue(causeIsFacetNotFoundException);
-      }
+      facetFactory.create(new MockFaceted(), NotFoundMockFacet.class);
    }
 
    @Test

@@ -10,6 +10,7 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
+@ApplicationScoped
 public class ConfigurationFactoryImpl implements ConfigurationFactory
 {
    private Configuration userConfiguration;
