@@ -10,6 +10,7 @@ package org.jboss.forge.addon.shell.aesh;
 import java.io.IOException;
 
 import org.jboss.aesh.cl.exception.CommandLineParserException;
+import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.ConsoleCallback;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.forge.addon.shell.ShellImpl;
@@ -57,12 +58,12 @@ public class ForgeConsoleCallback implements ConsoleCallback
          Result result = shell.execute(command);
          if (result != null)
          {
-            shell.getConsole().pushToStdOut(result.getMessage());
+            shell.getConsole().pushToStdOut(result.getMessage() + Config.getLineSeparator());
          }
       }
       catch (Exception e)
       {
-         shell.getConsole().pushToStdErr("**ERROR**: " + e.getMessage());
+         shell.getConsole().pushToStdOut("**ERROR**: " + e.getMessage() + Config.getLineSeparator());
          return -1;
       }
       return 0;

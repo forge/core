@@ -94,7 +94,7 @@ public class ForgeOptionCompletion implements Completion
                   }
                }
             }
-            // try to complete an options value "--xxx"
+            // try to complete an option value. Eg: "--xxx" 
             else if (completeObject.isOption())
             {
                optionCompletion(completeOperation, completeObject, cmd);
