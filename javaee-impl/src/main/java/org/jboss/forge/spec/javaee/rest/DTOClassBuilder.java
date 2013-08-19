@@ -59,204 +59,38 @@ public class DTOClassBuilder
       return this;
    }
 
-   public DTOClassBuilder addCollectionProperty(JPAProperty field, JavaClass nestedDTOClass)
+   public DTOClassBuilder updateForCollectionProperty(JPAProperty property, JavaClass nestedDTOClass,
+            Type<?> parameterizedType)
    {
-      String concreteCollectionType = null;
-      String qualifiedConcreteCollectionType = null;
-      String jpaCollectionType = field.getSimpleType();
-      String nestedDTOType = nestedDTOClass.getName();
-      String qualifiedDTOType = nestedDTOClass.getQualifiedName();
-      if (jpaCollectionType.equals("Set"))
+      addCollectionProperty(property, nestedDTOClass);
+      addInitializerFromCollection(property, nestedDTOClass, parameterizedType.getName(),
+               parameterizedType.getQualifiedName());
+      addCollectionAssembler(property, parameterizedType, nestedDTOClass);
+      return this;
+   }
+
+   public DTOClassBuilder updateForReferencedProperty(JPAProperty property, JavaClass nestedDTOClass)
+   {
+      // Then create a field referencing the DTO
+      addProperty(property, nestedDTOClass);
+
+      // Add an expression in the ctor to extract the fields
+      addInitializerFromDTO(property, nestedDTOClass);
+      if (property.isWritable())
       {
-         concreteCollectionType = "HashSet";
-         qualifiedConcreteCollectionType = "java.util.HashSet";
+         addAssemblerForReference(property);
       }
-      else if (jpaCollectionType.equals("List"))
+      return this;
+   }
+
+   public DTOClassBuilder updateForSimpleProperty(JPAProperty property, Type<?> type)
+   {
+      addProperty(property, property.getType());
+      addInitializerFromProperty(property);
+      if (!property.equals(idProperty) && property.isWritable())
       {
-         concreteCollectionType = "ArrayList";
-         qualifiedConcreteCollectionType = "java.util.ArrayList";
+         addPropertyAssembler(property);
       }
-      else if (jpaCollectionType.equals("Map"))
-      {
-         concreteCollectionType = "HashMap";
-         qualifiedConcreteCollectionType = "java.util.HashMap";
-      }
-   
-      Field<JavaClass> dtoField = dto.addField("private " + jpaCollectionType + "<" + nestedDTOType + "> "
-               + field.getName() + "= new " + concreteCollectionType + "<" + nestedDTOType + ">();");
-      dto.addImport(field.getQualifiedType());
-      dto.addImport(qualifiedConcreteCollectionType);
-      if (!Types.isJavaLang(qualifiedDTOType))
-      {
-         dto.addImport(qualifiedDTOType);
-      }
-      Refactory.createGetterAndSetter(dto, dtoField);
-      return this;
-   }
-
-   public DTOClassBuilder addProperty(JPAProperty field, Type<?> dtoFieldType)
-   {
-      String simpleName = dtoFieldType.getName();
-      String qualifiedName = dtoFieldType.getQualifiedName();
-      Field<JavaClass> dtoField = dto.addField("private " + simpleName + " " + field.getName() + ";");
-      if (!(field.isPrimitive() || Types.isJavaLang(qualifiedName) || Types.isArray(qualifiedName)))
-      {
-         dto.addImport(qualifiedName);
-      }
-      if (Types.isArray(qualifiedName))
-      {
-         String arrayType = field.getTypeInspector().getQualifiedName();
-         if (!(Types.isJavaLang(arrayType) || Types.isPrimitive(arrayType)))
-         {
-            dto.addImport(arrayType);
-         }
-      }
-      Refactory.createGetterAndSetter(dto, dtoField);
-      return this;
-   }
-
-   public DTOClassBuilder addProperty(JPAProperty property, JavaClass nestedDTOClass)
-   {
-      String simpleName = nestedDTOClass.getName();
-      String qualifiedName = nestedDTOClass.getQualifiedName();
-      Field<JavaClass> dtoField = dto.addField("private " + simpleName + " " + property.getName() + ";");
-      if (!(property.isPrimitive() || Types.isJavaLang(qualifiedName) || Types.isArray(qualifiedName)))
-      {
-         dto.addImport(qualifiedName);
-      }
-      if (Types.isArray(qualifiedName))
-      {
-         String arrayType = property.getTypeInspector().getQualifiedName();
-         if (!(Types.isJavaLang(arrayType) || Types.isPrimitive(arrayType)))
-         {
-            dto.addImport(arrayType);
-         }
-      }
-      Refactory.createGetterAndSetter(dto, dtoField);
-      return this;
-   }
-
-   public DTOClassBuilder addCollectionAssembler(JPAProperty property, Type<?> parameterizedType,
-            JavaClass nestedDTOClass)
-   {
-      String id = idProperty.getName();
-      String fieldName = property.getName();
-      String nestedDTOType = nestedDTOClass.getName();
-      String jpaIterator = "iter" + Strings.capitalize(fieldName);
-      String simpleParameterizedType = parameterizedType.getName();
-      String jpaVar = Strings.uncapitalize(simpleParameterizedType);
-      String dtoIterator = "iterDto" + Strings.capitalize(fieldName);
-      String dtoVar = "dto" + Strings.capitalize(simpleParameterizedType);
-      String jpqlVar = simpleParameterizedType.toLowerCase().substring(0, 1);
-   
-      assembleJPABuilder.append("Iterator" + " " + jpaIterator + " = " + "entity.get"
-               + Strings.capitalize(fieldName) + "().iterator();");
-      assembleJPABuilder.append("for (; " + jpaIterator + ".hasNext() ;) {");
-      assembleJPABuilder.append(" boolean found = false;");
-      assembleJPABuilder.append(" " + simpleParameterizedType + " " + jpaVar + " = (" + simpleParameterizedType
-               + ") " + jpaIterator + ".next();");
-      assembleJPABuilder.append("Iterator" + " " + dtoIterator + " = " + "this.get"
-               + Strings.capitalize(fieldName) + "().iterator();");
-      assembleJPABuilder.append("for (; " + dtoIterator + ".hasNext() ;) {");
-      assembleJPABuilder.append(" " + nestedDTOType + " " + dtoVar + " = (" + nestedDTOType + ") " + dtoIterator
-               + ".next();");
-      assembleJPABuilder.append("");
-      assembleJPABuilder.append("if(" + dtoVar + ".get" + Strings.capitalize(id) + "().equals(" + jpaVar + ".get"
-               + Strings.capitalize(id) + "())) { found = true; break; }");
-      assembleJPABuilder.append("}");
-      assembleJPABuilder.append("if(found == false) { ");
-      assembleJPABuilder.append(jpaIterator + ".remove();");
-      assembleJPABuilder.append("} }");
-   
-      assembleJPABuilder.append("Iterator" + " " + dtoIterator + " = " + "this.get"
-               + Strings.capitalize(fieldName) + "().iterator();");
-      assembleJPABuilder.append("for (; " + dtoIterator + ".hasNext() ;) {");
-      assembleJPABuilder.append(" boolean found = false;");
-      assembleJPABuilder.append(" " + nestedDTOType + " " + dtoVar + " = (" + nestedDTOType + ") " + dtoIterator
-               + ".next();");
-      assembleJPABuilder.append(jpaIterator + " = " + "entity.get"
-               + Strings.capitalize(fieldName) + "().iterator();");
-      assembleJPABuilder.append("for (; " + jpaIterator + ".hasNext() ;) {");
-      assembleJPABuilder.append(" " + simpleParameterizedType + " " + jpaVar + " = (" + simpleParameterizedType
-               + ") " + jpaIterator + ".next();");
-      assembleJPABuilder.append("if(" + dtoVar + ".get" + Strings.capitalize(id) + "().equals(" + jpaVar + ".get"
-               + Strings.capitalize(id) + "())) { found = true; break; }");
-      assembleJPABuilder.append("}");
-      assembleJPABuilder.append("if(found == false) { ");
-      assembleJPABuilder.append("Iterator resultIter = em.createQuery(\"SELECT DISTINCT " + jpqlVar + " FROM "
-               + simpleParameterizedType + " " + jpqlVar + "\", " + simpleParameterizedType
-               + ".class).getResultList().iterator();");
-      assembleJPABuilder.append("for(; resultIter.hasNext();) { ");
-      assembleJPABuilder.append(simpleParameterizedType + " result = (" + simpleParameterizedType
-               + ") resultIter.next();");
-      assembleJPABuilder.append("if( result.get" + Strings.capitalize(id) + "().equals(" + dtoVar + ".get"
-               + Strings.capitalize(id) + "())) {");
-      assembleJPABuilder.append("entity.get" + Strings.capitalize(fieldName) + "().add(result);");
-      assembleJPABuilder.append("break;");
-      assembleJPABuilder.append("} }");
-      assembleJPABuilder.append("} }");
-      return this;
-   }
-
-   public DTOClassBuilder addAssociationAssembler(JPAProperty property)
-   {
-      String fieldName = property.getName();
-      assembleJPABuilder.append("if(this." + fieldName + " != null) {");
-      assembleJPABuilder.append("entity.set" + Strings.capitalize(fieldName) + "(this." + fieldName
-               + ".fromDTO(entity.get" + Strings.capitalize(fieldName) + "(), em));");
-      assembleJPABuilder.append("}");
-      return this;
-   }
-
-   public DTOClassBuilder addPropertyAssembler(JPAProperty property)
-   {
-      String fieldName = property.getName();
-      assembleJPABuilder.append("entity.set" + Strings.capitalize(fieldName) + "(this." + fieldName
-               + ");");
-      return this;
-   }
-
-   public DTOClassBuilder addEmbeddableAssembler(JPAProperty property)
-   {
-      String fieldName = property.getName();
-      assembleJPABuilder.append("if(this." + fieldName + " != null) {");
-      assembleJPABuilder.append("entity.set" + Strings.capitalize(fieldName) + "(this." + fieldName
-               + ".fromDTO(entity.get" + Strings.capitalize(fieldName) + "(), em));");
-      assembleJPABuilder.append("}");
-      return this;
-   }
-
-   public DTOClassBuilder addInitializerFromCollection(JPAProperty property, JavaClass nestedDTOClass,
-            String simpleParameterizedType, String qualifiedParameterizedType)
-   {
-      String fieldName = property.getName();
-      String nestedDTOType = nestedDTOClass.getName();
-      dto.addImport(qualifiedParameterizedType);
-      dto.addImport(Iterator.class);
-      String iterator = "iter" + Strings.capitalize(fieldName);
-      copyCtorBuilder.append("Iterator" + " " + iterator + " = " + "entity.get" + Strings.capitalize(fieldName)
-               + "().iterator();");
-      copyCtorBuilder.append("for (; " + iterator + ".hasNext() ;) ");
-      copyCtorBuilder.append("{");
-      copyCtorBuilder.append("this." + fieldName + ".add(" + "new " + nestedDTOType + "((" + simpleParameterizedType
-               + ")" + iterator + ".next()));");
-      copyCtorBuilder.append("}");
-      return this;
-   }
-
-   public DTOClassBuilder addInitializerFromDTO(JPAProperty property, JavaClass dtoClass)
-   {
-      String fieldName = property.getName();
-      String dtoType = dtoClass.getName();
-      copyCtorBuilder.append("this." + fieldName + " = " + "new " + dtoType + "(entity.get"
-               + Strings.capitalize(fieldName) + "());");
-      return this;
-   }
-
-   public DTOClassBuilder addInitializerFromProperty(JPAProperty property)
-   {
-      String fieldName = property.getName();
-      copyCtorBuilder.append("this." + fieldName + " = " + "entity.get" + Strings.capitalize(fieldName) + "();");
       return this;
    }
 
@@ -266,12 +100,12 @@ public class DTOClassBuilder
       {
          dto.addAnnotation(XmlRootElement.class);
       }
-   
+
       // Copy constructor to assemble DTO from JPA entity
       generateCopyConstructorBody();
       // Assembler method to assemble JPA entity from DTO
       generateJPAAssemblerBody();
-   
+
       return dto;
    }
 
@@ -299,7 +133,7 @@ public class DTOClassBuilder
    {
       String id = idProperty.getName();
       String entityName = entity.getName();
-   
+
       if (!topLevel)
       {
          String jpqlVar = entityName.toLowerCase().substring(0, 1);
@@ -321,7 +155,7 @@ public class DTOClassBuilder
                .setReturnType(entity.getName())
                .setPublic()
                .setParameters(entity.getName() + " entity, EntityManager em");
-      
+
       assembleJPABuilder.append("if(entity == null) { entity = new " + entity.getName() + "(); }");
    }
 
@@ -356,6 +190,187 @@ public class DTOClassBuilder
       ctor.setConstructor(true);
       ctor.setPublic();
       ctor.setBody("");
+   }
+
+   private void addCollectionProperty(JPAProperty field, JavaClass nestedDTOClass)
+   {
+      String concreteCollectionType = null;
+      String qualifiedConcreteCollectionType = null;
+      String jpaCollectionType = field.getSimpleType();
+      String nestedDTOType = nestedDTOClass.getName();
+      String qualifiedDTOType = nestedDTOClass.getQualifiedName();
+      if (jpaCollectionType.equals("Set"))
+      {
+         concreteCollectionType = "HashSet";
+         qualifiedConcreteCollectionType = "java.util.HashSet";
+      }
+      else if (jpaCollectionType.equals("List"))
+      {
+         concreteCollectionType = "ArrayList";
+         qualifiedConcreteCollectionType = "java.util.ArrayList";
+      }
+      else if (jpaCollectionType.equals("Map"))
+      {
+         concreteCollectionType = "HashMap";
+         qualifiedConcreteCollectionType = "java.util.HashMap";
+      }
+
+      Field<JavaClass> dtoField = dto.addField("private " + jpaCollectionType + "<" + nestedDTOType + "> "
+               + field.getName() + "= new " + concreteCollectionType + "<" + nestedDTOType + ">();");
+      dto.addImport(field.getQualifiedType());
+      dto.addImport(qualifiedConcreteCollectionType);
+      if (!Types.isJavaLang(qualifiedDTOType))
+      {
+         dto.addImport(qualifiedDTOType);
+      }
+      Refactory.createGetterAndSetter(dto, dtoField);
+   }
+
+   private void addProperty(JPAProperty field, Type<?> dtoFieldType)
+   {
+      String simpleName = dtoFieldType.getName();
+      String qualifiedName = dtoFieldType.getQualifiedName();
+      Field<JavaClass> dtoField = dto.addField("private " + simpleName + " " + field.getName() + ";");
+      if (!(field.isPrimitive() || Types.isJavaLang(qualifiedName) || Types.isArray(qualifiedName)))
+      {
+         dto.addImport(qualifiedName);
+      }
+      if (Types.isArray(qualifiedName))
+      {
+         String arrayType = field.getTypeInspector().getQualifiedName();
+         if (!(Types.isJavaLang(arrayType) || Types.isPrimitive(arrayType)))
+         {
+            dto.addImport(arrayType);
+         }
+      }
+      Refactory.createGetterAndSetter(dto, dtoField);
+   }
+
+   private void addProperty(JPAProperty property, JavaClass dtoFieldType)
+   {
+      String simpleName = dtoFieldType.getName();
+      String qualifiedName = dtoFieldType.getQualifiedName();
+      Field<JavaClass> dtoField = dto.addField("private " + simpleName + " " + property.getName() + ";");
+      if (!(property.isPrimitive() || Types.isJavaLang(qualifiedName) || Types.isArray(qualifiedName)))
+      {
+         dto.addImport(qualifiedName);
+      }
+      if (Types.isArray(qualifiedName))
+      {
+         String arrayType = property.getTypeInspector().getQualifiedName();
+         if (!(Types.isJavaLang(arrayType) || Types.isPrimitive(arrayType)))
+         {
+            dto.addImport(arrayType);
+         }
+      }
+      Refactory.createGetterAndSetter(dto, dtoField);
+   }
+
+   private void addCollectionAssembler(JPAProperty property, Type<?> parameterizedType,
+            JavaClass nestedDTOClass)
+   {
+      String id = idProperty.getName();
+      String fieldName = property.getName();
+      String nestedDTOType = nestedDTOClass.getName();
+      String jpaIterator = "iter" + Strings.capitalize(fieldName);
+      String simpleParameterizedType = parameterizedType.getName();
+      String jpaVar = Strings.uncapitalize(simpleParameterizedType);
+      String dtoIterator = "iterDto" + Strings.capitalize(fieldName);
+      String dtoVar = "dto" + Strings.capitalize(simpleParameterizedType);
+      String jpqlVar = simpleParameterizedType.toLowerCase().substring(0, 1);
+
+      assembleJPABuilder.append("Iterator" + " " + jpaIterator + " = " + "entity.get"
+               + Strings.capitalize(fieldName) + "().iterator();");
+      assembleJPABuilder.append("for (; " + jpaIterator + ".hasNext() ;) {");
+      assembleJPABuilder.append(" boolean found = false;");
+      assembleJPABuilder.append(" " + simpleParameterizedType + " " + jpaVar + " = (" + simpleParameterizedType
+               + ") " + jpaIterator + ".next();");
+      assembleJPABuilder.append("Iterator" + " " + dtoIterator + " = " + "this.get"
+               + Strings.capitalize(fieldName) + "().iterator();");
+      assembleJPABuilder.append("for (; " + dtoIterator + ".hasNext() ;) {");
+      assembleJPABuilder.append(" " + nestedDTOType + " " + dtoVar + " = (" + nestedDTOType + ") " + dtoIterator
+               + ".next();");
+      assembleJPABuilder.append("");
+      assembleJPABuilder.append("if(" + dtoVar + ".get" + Strings.capitalize(id) + "().equals(" + jpaVar + ".get"
+               + Strings.capitalize(id) + "())) { found = true; break; }");
+      assembleJPABuilder.append("}");
+      assembleJPABuilder.append("if(found == false) { ");
+      assembleJPABuilder.append(jpaIterator + ".remove();");
+      assembleJPABuilder.append("} }");
+
+      assembleJPABuilder.append("Iterator" + " " + dtoIterator + " = " + "this.get"
+               + Strings.capitalize(fieldName) + "().iterator();");
+      assembleJPABuilder.append("for (; " + dtoIterator + ".hasNext() ;) {");
+      assembleJPABuilder.append(" boolean found = false;");
+      assembleJPABuilder.append(" " + nestedDTOType + " " + dtoVar + " = (" + nestedDTOType + ") " + dtoIterator
+               + ".next();");
+      assembleJPABuilder.append(jpaIterator + " = " + "entity.get"
+               + Strings.capitalize(fieldName) + "().iterator();");
+      assembleJPABuilder.append("for (; " + jpaIterator + ".hasNext() ;) {");
+      assembleJPABuilder.append(" " + simpleParameterizedType + " " + jpaVar + " = (" + simpleParameterizedType
+               + ") " + jpaIterator + ".next();");
+      assembleJPABuilder.append("if(" + dtoVar + ".get" + Strings.capitalize(id) + "().equals(" + jpaVar + ".get"
+               + Strings.capitalize(id) + "())) { found = true; break; }");
+      assembleJPABuilder.append("}");
+      assembleJPABuilder.append("if(found == false) { ");
+      assembleJPABuilder.append("Iterator resultIter = em.createQuery(\"SELECT DISTINCT " + jpqlVar + " FROM "
+               + simpleParameterizedType + " " + jpqlVar + "\", " + simpleParameterizedType
+               + ".class).getResultList().iterator();");
+      assembleJPABuilder.append("for(; resultIter.hasNext();) { ");
+      assembleJPABuilder.append(simpleParameterizedType + " result = (" + simpleParameterizedType
+               + ") resultIter.next();");
+      assembleJPABuilder.append("if( result.get" + Strings.capitalize(id) + "().equals(" + dtoVar + ".get"
+               + Strings.capitalize(id) + "())) {");
+      assembleJPABuilder.append("entity.get" + Strings.capitalize(fieldName) + "().add(result);");
+      assembleJPABuilder.append("break;");
+      assembleJPABuilder.append("} }");
+      assembleJPABuilder.append("} }");
+   }
+
+   private void addAssemblerForReference(JPAProperty property)
+   {
+      String fieldName = property.getName();
+      assembleJPABuilder.append("if(this." + fieldName + " != null) {");
+      assembleJPABuilder.append("entity.set" + Strings.capitalize(fieldName) + "(this." + fieldName
+               + ".fromDTO(entity.get" + Strings.capitalize(fieldName) + "(), em));");
+      assembleJPABuilder.append("}");
+   }
+
+   private void addPropertyAssembler(JPAProperty property)
+   {
+      String fieldName = property.getName();
+      assembleJPABuilder.append("entity.set" + Strings.capitalize(fieldName) + "(this." + fieldName + ");");
+   }
+
+   private void addInitializerFromCollection(JPAProperty property, JavaClass nestedDTOClass,
+            String simpleParameterizedType, String qualifiedParameterizedType)
+   {
+      String fieldName = property.getName();
+      String nestedDTOType = nestedDTOClass.getName();
+      dto.addImport(qualifiedParameterizedType);
+      dto.addImport(Iterator.class);
+      String iterator = "iter" + Strings.capitalize(fieldName);
+      copyCtorBuilder.append("Iterator" + " " + iterator + " = " + "entity.get" + Strings.capitalize(fieldName)
+               + "().iterator();");
+      copyCtorBuilder.append("for (; " + iterator + ".hasNext() ;) ");
+      copyCtorBuilder.append("{");
+      copyCtorBuilder.append("this." + fieldName + ".add(" + "new " + nestedDTOType + "((" + simpleParameterizedType
+               + ")" + iterator + ".next()));");
+      copyCtorBuilder.append("}");
+   }
+
+   private void addInitializerFromDTO(JPAProperty property, JavaClass dtoClass)
+   {
+      String fieldName = property.getName();
+      String dtoType = dtoClass.getName();
+      copyCtorBuilder.append("this." + fieldName + " = " + "new " + dtoType + "(entity.get"
+               + Strings.capitalize(fieldName) + "());");
+   }
+
+   private void addInitializerFromProperty(JPAProperty property)
+   {
+      String fieldName = property.getName();
+      copyCtorBuilder.append("this." + fieldName + " = " + "entity.get" + Strings.capitalize(fieldName) + "();");
    }
 
 }

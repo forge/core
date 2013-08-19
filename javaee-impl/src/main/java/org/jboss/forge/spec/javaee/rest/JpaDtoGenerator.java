@@ -84,8 +84,6 @@ public class JpaDtoGenerator
          // and recursively generate a DTO for it as well.
          JavaClass propertyClass = tryGetJavaClass(qualifiedPropertyType);
 
-         // JPABeanTest bean = new JPABean(entity);
-         boolean isWritable = property.isWritable();
          boolean isReadable = property.isReadable();
          boolean isCollection = property.hasAnnotation(OneToMany.class) || property.hasAnnotation(ManyToMany.class);
          Type<?> propertyTypeInspector = property.getType();
@@ -111,7 +109,6 @@ public class JpaDtoGenerator
             // Create a DTO having the PK-field of the parameterized type of multi-valued collections,
             // if it does not exist
             Type<?> type = propertyTypeInspector.getTypeArguments().get(0);
-            String simpleParameterizedType = type.getName();
             String qualifiedParameterizedType = type.getQualifiedName();
             JavaClass parameterizedClass = tryGetJavaClass(qualifiedParameterizedType);
             if (parameterizedClass == null)
@@ -122,14 +119,8 @@ public class JpaDtoGenerator
             }
 
             JavaClass nestedDTOClass = generatedDTOGraphForEntity(parameterizedClass, dtoPackage, false, false);
-
-            // Then create a collection field for the DTO
-            dtoClassBuilder.addCollectionProperty(property, nestedDTOClass);
-
-            // Add expressions in the ctor to extract the PK
-            dtoClassBuilder.addInitializerFromCollection(property, nestedDTOClass, simpleParameterizedType,
-                     qualifiedParameterizedType);
-            dtoClassBuilder.addCollectionAssembler(property, type, nestedDTOClass);
+            // Then update the DTO for the collection field
+            dtoClassBuilder.updateForCollectionProperty(property, nestedDTOClass, type);
          }
          else if (hasAssociation)
          {
@@ -150,38 +141,17 @@ public class JpaDtoGenerator
             }
 
             JavaClass nestedDTOClass = generatedDTOGraphForEntity(associatedClass, dtoPackage, false, false);
-
-            // Then create a field referencing the DTO
-            dtoClassBuilder.addProperty(property, nestedDTOClass);
-
-            // Add an expression in the ctor to extract the fields
-            dtoClassBuilder.addInitializerFromDTO(property, nestedDTOClass);
-            if (isWritable)
-            {
-               dtoClassBuilder.addAssociationAssembler(property);
-            }
+            dtoClassBuilder.updateForReferencedProperty(property, nestedDTOClass);
          }
          else if (isEmbedded)
          {
             // Create another DTO for the @Embedded type, if it does not exist
             JavaClass dtoForEmbeddedType = generatedDTOGraphForEntity(propertyClass, dtoPackage, true, true);
-            dtoClassBuilder.addProperty(property, dtoForEmbeddedType);
-
-            // Add an expression in the ctor to assign the embedded type
-            dtoClassBuilder.addInitializerFromDTO(property, dtoForEmbeddedType);
-            if (isWritable)
-            {
-               dtoClassBuilder.addEmbeddableAssembler(property);
-            }
+            dtoClassBuilder.updateForReferencedProperty(property, dtoForEmbeddedType);
          }
          else
          {
-            dtoClassBuilder.addProperty(property, property.getType());
-            dtoClassBuilder.addInitializerFromProperty(property);
-            if (!property.equals(idProperty) && isWritable)
-            {
-               dtoClassBuilder.addPropertyAssembler(property);
-            }
+            dtoClassBuilder.updateForSimpleProperty(property, property.getType());
          }
       }
 
