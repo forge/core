@@ -1,0 +1,7 @@
+   if(this.${id} != null)
+   {
+      TypedQuery<${entityName}> findByIdQuery = em.createQuery("SELECT DISTINCT ${jpqlVar} FROM ${entityName} ${jpqlVar} WHERE ${jpqlVar}.${id} = :entityId", ${entityName}.class);
+      findByIdQuery.setParameter("entityId", this.${id});
+      entity = findByIdQuery.getSingleResult();
+      return entity;
+   }

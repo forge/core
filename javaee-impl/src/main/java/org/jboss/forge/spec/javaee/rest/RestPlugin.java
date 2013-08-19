@@ -9,9 +9,6 @@ package org.jboss.forge.spec.javaee.rest;
 import static org.jboss.forge.spec.javaee.RestApplicationFacet.REST_APPLICATIONCLASS_PACKAGE;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -62,12 +59,9 @@ import org.jboss.forge.spec.javaee.RestActivatorType;
 import org.jboss.forge.spec.javaee.RestApplicationFacet;
 import org.jboss.forge.spec.javaee.RestFacet;
 import org.jboss.forge.spec.javaee.events.RestGeneratedResources;
+import org.jboss.forge.spec.javaee.util.FreemarkerTemplateProcessor;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
-
-import freemarker.template.DefaultObjectWrapper;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -92,29 +86,33 @@ public class RestPlugin implements Plugin
 
    @Inject
    private ShellPrompt prompt;
-   
+
    @Inject
    private ShellPrintWriter writer;
-   
+
    @Inject
-   private RestResourceTypeVisitor resourceTypeVisitor; 
-   
+   private RestResourceTypeVisitor resourceTypeVisitor;
+
    @Inject
    @ProjectScoped
    Configuration configuration;
-   
+
    @Inject
    private JpaDtoGenerator dtoCreator;
+   
+   @Inject
+   private FreemarkerTemplateProcessor processor;
 
    @SetupCommand
-   public void setup(@Option(name = "activatorType", defaultValue = "WEB_XML") RestActivatorType activatorType, final PipeOut out)
+   public void setup(@Option(name = "activatorType", defaultValue = "WEB_XML") RestActivatorType activatorType,
+            final PipeOut out)
    {
       if (!project.hasFacet(RestFacet.class))
       {
          configuration.setProperty(RestFacet.ACTIVATOR_CHOICE, activatorType.toString());
          request.fire(new InstallFacets(RestFacet.class));
       }
-      
+
       if (project.hasFacet(RestFacet.class))
       {
          ShellMessages.success(out, "Rest Web Services (JAX-RS) is installed.");
@@ -150,9 +148,9 @@ public class RestPlugin implements Plugin
       }
 
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      List<JavaResource> endpoints = new ArrayList<JavaResource>();  // for RestGeneratedResources event
-      List<JavaResource> entities  = new ArrayList<JavaResource>();  // for RestGeneratedResources event
-      List<JavaResource> dtos  = new ArrayList<JavaResource>();  // for RestGeneratedResources event
+      List<JavaResource> endpoints = new ArrayList<JavaResource>(); // for RestGeneratedResources event
+      List<JavaResource> entities = new ArrayList<JavaResource>(); // for RestGeneratedResources event
+      List<JavaResource> dtos = new ArrayList<JavaResource>(); // for RestGeneratedResources event
       for (JavaResource jr : javaTargets)
       {
          JavaClass entity = (JavaClass) (jr).getJavaSource();
@@ -164,15 +162,18 @@ public class RestPlugin implements Plugin
                      + "] is not supported by endpoint generation.");
             continue;
          }
-         String idGetterName = resolveIdGetterName(entity);
 
-         freemarker.template.Configuration freemarkerConfig = new freemarker.template.Configuration();
-         freemarkerConfig.setClassForTemplateLoading(getClass(), "/");
-         freemarkerConfig.setObjectWrapper(new DefaultObjectWrapper());
-         
          DTOCollection createdDtos = dtoCreator.from(entity, getPackageName(java) + ".dto");
          dtos.addAll(createdDtos.allResources());
          JavaClass rootDto = createdDtos.getDTOFor(entity, true);
+
+         String idGetterName = resolveIdGetterName(entity);
+         String persistenceUnitName = getPersistenceUnitName();
+         String entityTable = getEntityTable(entity);
+         String selectExpression = getSelectExpression(entity, entityTable);
+         String idClause = getIdClause(entity, entityTable);
+         String orderClause = getOrderClause(entity, getJpqlEntityVariable(entityTable));
+         String resourcePath = getResourcePath(java, entityTable);
 
          Map<Object, Object> map = new HashMap<Object, Object>();
          map.put("entity", entity);
@@ -180,12 +181,6 @@ public class RestPlugin implements Plugin
          map.put("idType", idType);
          map.put("getIdStatement", idGetterName);
          map.put("contentType", contentType);
-         String persistenceUnitName = getPersistenceUnitName();
-         String entityTable = getEntityTable(entity);
-         String selectExpression = getSelectExpression(entity, entityTable);
-         String idClause = getIdClause(entity, entityTable);
-         String orderClause = getOrderClause(entity, getJpqlEntityVariable(entityTable));
-         String resourcePath = getResourcePath(java, entityTable);
          map.put("persistenceUnitName", persistenceUnitName);
          map.put("entityTable", entityTable);
          map.put("selectExpression", selectExpression);
@@ -193,23 +188,8 @@ public class RestPlugin implements Plugin
          map.put("orderClause", orderClause);
          map.put("resourcePath", resourcePath);
 
-         Writer output = new StringWriter();
-         try
-         {
-            Template templateFile = freemarkerConfig.getTemplate("org/jboss/forge/rest/Endpoint.jv");
-            templateFile.process(map, output);
-            output.flush();
-         }
-         catch (IOException ioEx)
-         {
-            throw new RuntimeException(ioEx);
-         }
-         catch (TemplateException templateEx)
-         {
-            throw new RuntimeException(templateEx);
-         }
-         
-         JavaClass resource = JavaParser.parse(JavaClass.class, output.toString());
+         String output = processor.processTemplate(map, "org/jboss/forge/rest/Endpoint.jv");
+         JavaClass resource = JavaParser.parse(JavaClass.class, output);
          resource.addImport(entity.getQualifiedName());
          resource.addImport(rootDto.getQualifiedName());
          resource.setPackage(getPackageName(java));
@@ -217,14 +197,14 @@ public class RestPlugin implements Plugin
          if (!java.getJavaResource(resource).exists()
                   || prompt.promptBoolean("Endpoint [" + resource.getQualifiedName() + "] already, exists. Overwrite?"))
          {
-        	 endpoints.add(java.saveJavaSource(resource));
+            endpoints.add(java.saveJavaSource(resource));
             ShellMessages.success(out, "Generated REST endpoint for [" + entity.getQualifiedName() + "]");
 
          }
          else
             ShellMessages.info(out, "Aborted REST endpoint generation for [" + entity.getQualifiedName() + "]");
       }
-      if (! entities.isEmpty())
+      if (!entities.isEmpty())
       {
          generatedEvent.fire(new RestGeneratedResources(entities, endpoints, dtos));
       }
@@ -422,7 +402,7 @@ public class RestPlugin implements Plugin
             }
          }
       }
-      
+
       return expressionBuilder.toString();
    }
 
@@ -449,12 +429,12 @@ public class RestPlugin implements Plugin
       }
       return null;
    }
-   
+
    private String getOrderClause(JavaClass entity, char entityVariable)
    {
       StringBuilder expressionBuilder = new StringBuilder();
-      
-      // Add the ORDER BY clause 
+
+      // Add the ORDER BY clause
       for (Member<JavaClass, ?> member : entity.getMembers())
       {
          if (member.hasAnnotation(Id.class))
@@ -533,7 +513,7 @@ public class RestPlugin implements Plugin
       PersistenceFacet persistence = project.getFacet(PersistenceFacet.class);
       PersistenceDescriptor persistenceDescriptor = persistence.getConfig();
       List<PersistenceUnitDef> units = persistenceDescriptor.listUnits();
-      
+
       // If there is only one PU, then use it irrespective of whether it excludes unlisted classes or not.
       if (units.size() == 1)
       {
@@ -545,9 +525,9 @@ public class RestPlugin implements Plugin
          // techniques like matching class names in the PU since a class could be present in multiple PUs, including PUs
          // that allow unlisted classes to be managed. In such an event, we may choose the wrong PU, when the user might
          // have wanted the PU with classpath scanning. Letting the user choose the PU to be used for the injected
-         // PersistenceContext is safest. 
-         List<String> unitNames = new ArrayList<String>(); 
-         for(PersistenceUnitDef unitDef: units)
+         // PersistenceContext is safest.
+         List<String> unitNames = new ArrayList<String>();
+         for (PersistenceUnitDef unitDef : units)
          {
             unitNames.add(unitDef.getName());
          }
