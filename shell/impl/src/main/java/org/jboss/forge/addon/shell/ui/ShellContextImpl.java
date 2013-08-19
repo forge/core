@@ -8,9 +8,11 @@
 package org.jboss.forge.addon.shell.ui;
 
 import org.jboss.aesh.console.ConsoleOutput;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.ui.context.AbstractUIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
+import org.jboss.forge.addon.ui.util.Selections;
 
 /**
  * 
@@ -22,10 +24,11 @@ public class ShellContextImpl extends AbstractUIContext implements ShellContext
    private UISelection<?> initialSelection;
    private ConsoleOutput consoleOutput;
 
-   public ShellContextImpl(Shell shell, UISelection<?> initialSelection)
+   @SuppressWarnings("unchecked")
+   public ShellContextImpl(Shell shell, FileResource<?> initialSelection)
    {
       this.shell = shell;
-      this.initialSelection = initialSelection;
+      this.initialSelection = Selections.from(initialSelection);
    }
 
    @SuppressWarnings("unchecked")

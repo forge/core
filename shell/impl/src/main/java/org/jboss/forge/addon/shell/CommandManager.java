@@ -6,7 +6,7 @@ import java.util.Map;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.aesh.CommandLineUtil;
 import org.jboss.forge.addon.shell.aesh.ShellCommand;
-import org.jboss.forge.addon.shell.ui.ShellContextImpl;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.furnace.addons.AddonRegistry;
@@ -29,7 +29,7 @@ public class CommandManager
       this.addonRegistry = addonRegistry;
    }
 
-   public Map<String, ShellCommand> getEnabledShellCommands(ShellContextImpl shellContext)
+   public Map<String, ShellCommand> getEnabledShellCommands(ShellContext shellContext)
    {
       Map<String, ShellCommand> commands = new HashMap<String, ShellCommand>();
       CommandLineUtil cmdLineUtil = getCommandLineUtil();

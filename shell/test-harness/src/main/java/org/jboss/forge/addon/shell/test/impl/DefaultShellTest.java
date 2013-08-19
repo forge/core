@@ -7,6 +7,7 @@
 package org.jboss.forge.addon.shell.test.impl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
@@ -56,7 +57,7 @@ public class DefaultShellTest implements ShellTest
    {
       if (shell == null)
       {
-         shell = factory.createShell(provider.getSettings());
+         shell = factory.createShell(new File(""), provider.getSettings());
          shell.addCommandExecutionListener(listener);
       }
       return shell;

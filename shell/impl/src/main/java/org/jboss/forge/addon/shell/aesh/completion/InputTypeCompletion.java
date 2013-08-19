@@ -1,7 +1,8 @@
 package org.jboss.forge.addon.shell.aesh.completion;
 
 import org.jboss.aesh.complete.CompleteOperation;
-import org.jboss.forge.addon.shell.ShellImpl;
+import org.jboss.forge.addon.shell.ui.ShellContext;
+import org.jboss.forge.addon.ui.input.InputComponent;
 
 /**
  * Typed completion
@@ -10,5 +11,5 @@ import org.jboss.forge.addon.shell.ShellImpl;
  */
 public interface InputTypeCompletion
 {
-   public void complete(ShellImpl shellImpl, CompleteOperation completeOperation);
+   public void complete(ShellContext context, InputComponent<?, Object> input, CompleteOperation completeOperation);
 }

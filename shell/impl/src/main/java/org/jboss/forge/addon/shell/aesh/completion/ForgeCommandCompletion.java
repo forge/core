@@ -11,6 +11,7 @@ import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.aesh.ShellCommand;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 
 /**
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
@@ -27,7 +28,8 @@ public class ForgeCommandCompletion implements Completion
    @Override
    public void complete(CompleteOperation completeOperation)
    {
-      Iterable<ShellCommand> commands = shell.findMatchingCommands(completeOperation.getBuffer());
+      ShellContext shellContext = shell.newShellContext();
+      Iterable<ShellCommand> commands = shell.findMatchingCommands(shellContext, completeOperation.getBuffer());
       for (ShellCommand cmd : commands)
       {
          String name = cmd.getName();

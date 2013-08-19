@@ -7,9 +7,13 @@
 
 package org.jboss.forge.addon.shell;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
 import org.jboss.aesh.console.settings.Settings;
+import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.util.Assert;
 
@@ -24,12 +28,16 @@ public class ShellFactoryImpl implements ShellFactory
    @Inject
    private AddonRegistry addonRegistry;
 
+   @Inject
+   private ResourceFactory resourceFactory;
+
    @Override
-   public Shell createShell(Settings settings)
+   public Shell createShell(File initialSelection, Settings settings)
    {
       Assert.notNull(settings, "Settings cannot be null");
       CommandManager commandManager = new CommandManager(addonRegistry);
-      return new ShellImpl(commandManager, settings);
+      FileResource<?> initialResource = resourceFactory.create(initialSelection).reify(FileResource.class);
+      return new ShellImpl(initialResource, commandManager, settings);
    }
 
 }

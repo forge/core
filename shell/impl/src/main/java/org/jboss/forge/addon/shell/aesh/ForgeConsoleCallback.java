@@ -13,6 +13,7 @@ import org.jboss.aesh.cl.exception.CommandLineParserException;
 import org.jboss.aesh.console.ConsoleCallback;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.forge.addon.shell.ShellImpl;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.result.Result;
 
 /**
@@ -38,8 +39,9 @@ public class ForgeConsoleCallback implements ConsoleCallback
    {
       try
       {
+         ShellContext context = shell.newShellContext();
          String line = output.getBuffer();
-         ShellCommand command = shell.findCommand(line);
+         ShellCommand command = shell.findCommand(context, line);
          if (command == null)
          {
             throw new IOException("Command not found for line: " + line);

@@ -22,6 +22,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.aesh.ShellCommand;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.HasCompleter;
 import org.jboss.forge.addon.ui.input.InputComponent;
@@ -46,8 +47,9 @@ public class ForgeOptionCompletion implements Completion
    @Override
    public void complete(CompleteOperation completeOperation)
    {
+      ShellContext shellContext = shell.newShellContext();
       String line = completeOperation.getBuffer();
-      ShellCommand cmd = shell.findCommand(line);
+      ShellCommand cmd = shell.findCommand(shellContext, line);
       if (cmd != null)
       {
          try

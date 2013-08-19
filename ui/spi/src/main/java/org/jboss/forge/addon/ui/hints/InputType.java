@@ -24,6 +24,7 @@ public enum InputType
    TEXTAREA,
 
    FILE_PICKER,
+   DIRECTORY_PICKER,
 
    SELECT_ONE_DROPDOWN,
    SELECT_ONE_RADIO,

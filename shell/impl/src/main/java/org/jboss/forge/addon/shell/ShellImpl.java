@@ -27,16 +27,16 @@ import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.aesh.ForgeConsoleCallback;
 import org.jboss.forge.addon.shell.aesh.ShellCommand;
 import org.jboss.forge.addon.shell.aesh.completion.ForgeCommandCompletion;
 import org.jboss.forge.addon.shell.aesh.completion.ForgeOptionCompletion;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
-import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
-import org.jboss.forge.addon.ui.util.Selections;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 
@@ -56,11 +56,12 @@ public class ShellImpl implements Shell
    private final List<CommandExecutionListener> listeners = new ArrayList<CommandExecutionListener>();
 
    private Console console;
-   private UISelection<?> selection;
+   private FileResource<?> currentResource;
    private CommandManager commandManager;
 
-   public ShellImpl(CommandManager commandManager, Settings settings)
+   public ShellImpl(FileResource<?> initialResource, CommandManager commandManager, Settings settings)
    {
+      this.currentResource = initialResource;
       this.commandManager = commandManager;
       init(settings);
    }
@@ -151,27 +152,20 @@ public class ShellImpl implements Shell
       return new Prompt(chars);
    }
 
-   @Override
-   public void setCurrentSelection(UISelection<?> selection)
+   public Map<String, ShellCommand> getEnabledShellCommands(ShellContext context)
    {
-      this.selection = selection;
-   }
-
-   public Map<String, ShellCommand> getEnabledShellCommands()
-   {
-      ShellContextImpl context = new ShellContextImpl(this, getCurrentSelection());
       return commandManager.getEnabledShellCommands(context);
    }
 
    /**
     * Used in {@link ForgeOptionCompletion} and {@link ForgeConsoleCallback}
     */
-   public ShellCommand findCommand(String line)
+   public ShellCommand findCommand(ShellContext shelLContext, String line)
    {
       String[] tokens = line.split(" ");
       if (tokens.length >= 1)
       {
-         return getEnabledShellCommands().get(tokens[0]);
+         return getEnabledShellCommands(shelLContext).get(tokens[0]);
       }
       return null;
    }
@@ -179,7 +173,7 @@ public class ShellImpl implements Shell
    /**
     * Use {@link ForgeCommandCompletion}
     */
-   public Iterable<ShellCommand> findMatchingCommands(String line)
+   public Iterable<ShellCommand> findMatchingCommands(ShellContext shellContext, String line)
    {
       Set<ShellCommand> result = new TreeSet<ShellCommand>(new Comparator<ShellCommand>()
       {
@@ -189,11 +183,11 @@ public class ShellImpl implements Shell
             return o1.getName().compareTo(o2.getName());
          }
       });
-      Map<String, ShellCommand> commandMap = getEnabledShellCommands();
 
       String[] tokens = line == null ? new String[0] : line.split(" ");
       if (tokens.length <= 1)
       {
+         Map<String, ShellCommand> commandMap = getEnabledShellCommands(shellContext);
          String token = (tokens.length == 1) ? tokens[0] : null;
          for (Entry<String, ShellCommand> entry : commandMap.entrySet())
          {
@@ -222,10 +216,9 @@ public class ShellImpl implements Shell
       }
    }
 
-   @Override
-   public UISelection<?> getCurrentSelection()
+   public ShellContext newShellContext()
    {
-      return selection != null ? selection : Selections.emptySelection();
+      return new ShellContextImpl(this, currentResource);
    }
 
    @PreDestroy

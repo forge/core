@@ -10,7 +10,6 @@ import java.io.Closeable;
 
 import org.jboss.aesh.console.Console;
 import org.jboss.forge.addon.ui.UIProvider;
-import org.jboss.forge.addon.ui.context.UISelection;
 
 /**
  * The command line shell.
@@ -21,20 +20,13 @@ import org.jboss.forge.addon.ui.context.UISelection;
 public interface Shell extends UIProvider, Closeable
 {
    /**
-    * Gets the current {@link UISelection} of this {@link Shell}.
-    */
-   UISelection<?> getCurrentSelection();
-
-   /**
-    * Sets the current {@link UISelection} for this {@link Shell}
-    */
-   public void setCurrentSelection(UISelection<?> initialSelection);
-
-   /**
     * Get the native {@link Console} object.
     */
    public Console getConsole();
 
+   /**
+    * Disposes this Shell object
+    */
    @Override
    public void close();
 }

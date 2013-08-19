@@ -1,5 +1,7 @@
 package org.jboss.forge.addon.shell;
 
+import java.io.File;
+
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.forge.furnace.services.Exported;
 
@@ -14,5 +16,6 @@ public interface ShellFactory
    /**
     * Create a {@link Shell} based on the specified {@link Settings}
     */
-   public Shell createShell(Settings settings);
+   public Shell createShell(File initialSelection, Settings settings);
+
 }

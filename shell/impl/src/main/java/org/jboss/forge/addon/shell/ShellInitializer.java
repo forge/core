@@ -1,5 +1,7 @@
 package org.jboss.forge.addon.shell;
 
+import java.io.File;
+
 import javax.annotation.PreDestroy;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -28,7 +30,7 @@ public class ShellInitializer
       if (!Boolean.getBoolean("forge.compatibility.IDE"))
       {
          Settings settings = new SettingsBuilder().create();
-         this.shell = shellFactory.createShell(settings);
+         this.shell = shellFactory.createShell(new File(""), settings);
       }
    }
 

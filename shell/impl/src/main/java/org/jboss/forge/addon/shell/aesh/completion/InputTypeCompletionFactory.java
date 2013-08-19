@@ -5,9 +5,10 @@ import java.io.File;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.util.FileLister;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.shell.ShellImpl;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.hints.InputType;
+import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
@@ -23,8 +24,25 @@ public class InputTypeCompletionFactory
       {
       case FILE_PICKER:
          return FileCompletion.INSTANCE;
+      case DIRECTORY_PICKER:
+         return DirectoryCompletion.INSTANCE;
       default:
          return null;
+      }
+   }
+
+   private enum DirectoryCompletion implements InputTypeCompletion
+   {
+      INSTANCE;
+
+      @Override
+      public void complete(ShellContext context, InputComponent<?, Object> input, CompleteOperation completeOperation)
+      {
+         UISelection<FileResource<?>> selection = context.getInitialSelection();
+         File cwd = selection.isEmpty() ? OperatingSystemUtils.getUserHomeDir() : selection.get()
+                  .getUnderlyingResourceObject();
+         FileLister fileLister = new FileLister("", cwd, FileLister.Filter.DIRECTORY);
+         fileLister.findMatchingDirectories(completeOperation);
       }
    }
 
@@ -32,11 +50,10 @@ public class InputTypeCompletionFactory
    {
       INSTANCE;
 
-      @SuppressWarnings("unchecked")
       @Override
-      public void complete(ShellImpl shellImpl, CompleteOperation completeOperation)
+      public void complete(ShellContext context, InputComponent<?, Object> input, CompleteOperation completeOperation)
       {
-         UISelection<FileResource<?>> selection = (UISelection<FileResource<?>>) shellImpl.getCurrentSelection();
+         UISelection<FileResource<?>> selection = context.getInitialSelection();
          File cwd = selection.isEmpty() ? OperatingSystemUtils.getUserHomeDir() : selection.get()
                   .getUnderlyingResourceObject();
          FileLister fileLister = new FileLister("", cwd);
