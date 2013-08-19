@@ -77,6 +77,10 @@ public class ForgeCompletion implements Completion
                   // All the not-informed parameters
                   completeOperation.addCompletionCandidates(optionNames);
                }
+               if (completeOperation.getCompletionCandidates().size() == 1)
+               {
+                  completeOperation.setOffset(completeOperation.getCursor() - completeObject.getOffset());
+               }
             }
             else
             {
@@ -101,10 +105,6 @@ public class ForgeCompletion implements Completion
                   completionObj.complete(completeOperation, input, shellContext, completeObject.getValue(),
                            shell.getConverterFactory());
                }
-            }
-            if (completeOperation.getCompletionCandidates().size() == 1)
-            {
-               completeOperation.setOffset(completeOperation.getCursor() - completeObject.getOffset());
             }
          }
          catch (Exception e)
