@@ -14,9 +14,8 @@ public class CompletionStrategyFactory
 {
    public static CompletionStrategy getCompletionFor(InputComponent<?, Object> component)
    {
-      boolean isUISelect = (component instanceof SelectComponent);
       InputType inputType = component.getFacet(HintsFacet.class).getInputType();
-      final CompletionStrategy strategy;
+      CompletionStrategy strategy = null;
       if (inputType == InputType.FILE_PICKER)
       {
          strategy = new FileInputCompletionStrategy(false);
@@ -25,14 +24,12 @@ public class CompletionStrategyFactory
       {
          strategy = new FileInputCompletionStrategy(true);
       }
-      else if (isUISelect)
+      if (component instanceof SelectComponent)
       {
          strategy = new SelectComponentCompletionStrategy();
       }
-      else
-      {
-         strategy = new DefaultInputCompletionStrategy();
-      }
+      // Always try UICompleter first and then fallback to the chosen strategy
+      strategy = new UICompleterCompletionStrategy(strategy);
       return strategy;
    }
 }

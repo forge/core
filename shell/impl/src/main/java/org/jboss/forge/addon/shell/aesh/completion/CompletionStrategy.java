@@ -19,7 +19,7 @@ public interface CompletionStrategy
     * @param input
     * @param context
     * @param typedValue
-    * @param converterFactory TODO
+    * @param converterFactory used in conversion operations
     */
    public void complete(CompleteOperation completeOperation, InputComponent<?, Object> input, ShellContext context,
             String typedValue, ConverterFactory converterFactory);

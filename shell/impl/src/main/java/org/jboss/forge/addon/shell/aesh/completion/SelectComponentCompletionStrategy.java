@@ -8,10 +8,12 @@
 package org.jboss.forge.addon.shell.aesh.completion;
 
 import org.jboss.aesh.complete.CompleteOperation;
+import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.SelectComponent;
+import org.jboss.forge.addon.ui.util.InputComponents;
 
 /**
  * 
@@ -21,14 +23,18 @@ import org.jboss.forge.addon.ui.input.SelectComponent;
 public class SelectComponentCompletionStrategy implements CompletionStrategy
 {
 
+   @SuppressWarnings("unchecked")
    @Override
    public void complete(CompleteOperation completeOperation, InputComponent<?, Object> input, ShellContext context,
             String typedValue, ConverterFactory converterFactory)
    {
-      Iterable<Object> valueChoices = ((SelectComponent<?, Object>) input).getValueChoices();
-      for (Object object : valueChoices)
+      SelectComponent<?, Object> selectComponent = (SelectComponent<?, Object>) input;
+      Converter<Object, String> itemLabelConverter = (Converter<Object, String>) InputComponents
+               .getItemLabelConverter(converterFactory, selectComponent);
+      Iterable<Object> valueChoices = selectComponent.getValueChoices();
+      for (Object choice : valueChoices)
       {
-         
+         completeOperation.addCompletionCandidate(itemLabelConverter.convert(choice));
       }
    }
 }
