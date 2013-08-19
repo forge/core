@@ -20,13 +20,13 @@ import java.util.logging.Logger;
 import javax.annotation.PreDestroy;
 import javax.enterprise.inject.Vetoed;
 
-import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.Prompt;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
+import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.aesh.ForgeConsoleCallback;
 import org.jboss.forge.addon.shell.aesh.ShellCommand;
@@ -188,20 +188,44 @@ public class ShellImpl implements Shell
 
    public Result execute(ShellCommand shellCommand)
    {
-      // TODO: Fire pre/post listeners
+      Result result = null;
       try
       {
-         Result result = shellCommand.execute();
-         if (result != null && result.getMessage() != null)
-         {
-            getConsole().pushToStdOut(result.getMessage() + Config.getLineSeparator());
-         }
-         return result;
+         firePreCommandListeners(shellCommand);
+         result = shellCommand.execute();
       }
       catch (Exception e)
       {
-         return Results.fail(e.getMessage(), e);
+         result = Results.fail(e.getMessage(), e);
       }
+      finally
+      {
+         firePostCommandListeners(shellCommand, result);
+      }
+      return result;
+   }
+
+   /**
+    * @param shellCommand
+    */
+   private void firePreCommandListeners(ShellCommand shellCommand)
+   {
+      for (CommandExecutionListener listener : listeners)
+      {
+         listener.preCommandExecuted(shellCommand.getCommand(), shellCommand.getContext());
+      }
+   }
+
+   /**
+    * @param shellCommand
+    */
+   private void firePostCommandListeners(ShellCommand shellCommand, Result result)
+   {
+      for (CommandExecutionListener listener : listeners)
+      {
+         listener.postCommandExecuted(shellCommand.getCommand(), shellCommand.getContext(), result);
+      }
+
    }
 
    public ShellContext newShellContext()
@@ -221,6 +245,11 @@ public class ShellImpl implements Shell
       {
          // Exception is ignored
       }
+   }
+
+   public ConverterFactory getConverterFactory()
+   {
+      return commandManager.getConverterFactory();
    }
 
 }

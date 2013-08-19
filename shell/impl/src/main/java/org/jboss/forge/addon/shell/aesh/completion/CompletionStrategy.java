@@ -1,6 +1,7 @@
 package org.jboss.forge.addon.shell.aesh.completion;
 
 import org.jboss.aesh.complete.CompleteOperation;
+import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 
@@ -18,7 +19,8 @@ public interface CompletionStrategy
     * @param input
     * @param context
     * @param typedValue
+    * @param converterFactory TODO
     */
    public void complete(CompleteOperation completeOperation, InputComponent<?, Object> input, ShellContext context,
-            String typedValue);
+            String typedValue, ConverterFactory converterFactory);
 }

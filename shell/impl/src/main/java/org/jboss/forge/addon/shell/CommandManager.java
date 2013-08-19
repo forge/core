@@ -23,6 +23,7 @@ public class CommandManager
 
    private Imported<UICommand> allCommands;
    private CommandLineUtil commandLineUtil;
+   private ConverterFactory converterFactory;
 
    public CommandManager(AddonRegistry addonRegistry)
    {
@@ -44,15 +45,28 @@ public class CommandManager
    public Iterable<UICommand> getAllCommands()
    {
       if (allCommands == null)
+      {
          allCommands = addonRegistry.getServices(UICommand.class);
+      }
       return allCommands;
    }
 
    private CommandLineUtil getCommandLineUtil()
    {
       if (commandLineUtil == null)
-         commandLineUtil = new CommandLineUtil(addonRegistry.getServices(ConverterFactory.class).get());
+      {
+         commandLineUtil = new CommandLineUtil(getConverterFactory());
+      }
       return commandLineUtil;
+   }
+
+   ConverterFactory getConverterFactory()
+   {
+      if (converterFactory == null)
+      {
+         converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
+      }
+      return converterFactory;
    }
 
 }

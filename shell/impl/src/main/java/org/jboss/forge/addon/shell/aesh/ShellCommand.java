@@ -73,6 +73,14 @@ public class ShellCommand implements Comparable<ShellCommand>
       return name;
    }
 
+   /**
+    * @return the context
+    */
+   public ShellContext getContext()
+   {
+      return context;
+   }
+
    public Map<String, InputComponent<?, Object>> getInputs()
    {
       return inputs;

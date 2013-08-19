@@ -1,9 +1,16 @@
+/**
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.addon.shell.aesh.completion;
 
 import java.io.File;
 
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.util.FileLister;
+import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UISelection;
@@ -23,7 +30,7 @@ class FileInputCompletionStrategy implements CompletionStrategy
 
    @Override
    public void complete(CompleteOperation completeOperation, InputComponent<?, Object> input, ShellContext context,
-            String typedValue)
+            String typedValue, ConverterFactory converterFactory)
    {
       completeOperation.setOffset(completeOperation.getCursor());
 
