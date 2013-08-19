@@ -8,12 +8,12 @@
 package org.jboss.forge.addon.shell.aesh.completion;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.ParsedCompleteObject;
-import org.jboss.aesh.cl.exception.CommandLineParserException;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
@@ -28,18 +28,23 @@ import org.jboss.forge.addon.ui.input.HasCompleter;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.SingleValued;
-import org.jboss.forge.addon.ui.input.UIInputMany;
+import org.jboss.forge.addon.ui.util.InputComponents;
 
 /**
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class ForgeOptionCompletion implements Completion
+public class ForgeCompletion implements Completion
 {
-   private static final Logger logger = Logger.getLogger(ForgeOptionCompletion.class.getName());
+   private static final Logger logger = Logger.getLogger(ForgeCompletion.class.getName());
+
+   /**
+    * the name of the arguments {@link InputComponent} (if exists)
+    */
+   private static final String ARGUMENTS_INPUT_NAME = "arguments";
 
    private ShellImpl shell;
 
-   public ForgeOptionCompletion(ShellImpl shellImpl)
+   public ForgeCompletion(ShellImpl shellImpl)
    {
       this.shell = shellImpl;
    }
@@ -47,65 +52,70 @@ public class ForgeOptionCompletion implements Completion
    @Override
    public void complete(CompleteOperation completeOperation)
    {
-      ShellContext shellContext = shell.newShellContext();
       String line = completeOperation.getBuffer();
-      ShellCommand cmd = shell.findCommand(shellContext, line);
-      if (cmd != null)
+      ShellContext shellContext = shell.newShellContext();
+      final ShellCommand cmd = shell.findCommand(shellContext, line);
+      if (cmd == null)
+      {
+         Collection<ShellCommand> commands = shell.findMatchingCommands(shellContext, line);
+         for (ShellCommand command : commands)
+         {
+            completeOperation.addCompletionCandidate(command.getName());
+         }
+      }
+      else
       {
          try
          {
-            // We are dealing with one-level commands atm.
+            // We are dealing with one-level commands only.
             // Eg. new-project-type --named ... instead of new-project-type setup --named ...
             ParameterInt param = cmd.getParameter();
             ParsedCompleteObject completeObject = cmd.parseCompleteObject(line);
-            List<String> optionNames = param.getOptionLongNamesWithDash();
-
-            removeExistingOptions(line, optionNames);
-
             if (completeObject.doDisplayOptions())
             {
                // we have a partial/full name
                if (completeObject.getName() != null && !completeObject.getName().isEmpty())
                {
                   List<String> possibleOptions = param.findPossibleLongNamesWitdDash(completeObject.getName());
-                  if (!possibleOptions.isEmpty())
-                  {
-                     // only one param
-                     if (possibleOptions.size() == 1)
-                     {
-                        completeOperation.addCompletionCandidate(possibleOptions.get(0));
-                        completeOperation.setOffset(completeOperation.getCursor() -
-                                 completeObject.getOffset());
-                     }
-                     // multiple params
-                     else
-                     {
-                        completeOperation.addCompletionCandidates(possibleOptions);
-                     }
-                  }
+                  completeOperation.addCompletionCandidates(possibleOptions);
                }
-               // display all our params
                else
                {
+                  List<String> optionNames = param.getOptionLongNamesWithDash();
+                  removeExistingOptions(line, optionNames);
+                  // All the not-informed parameters
                   completeOperation.addCompletionCandidates(optionNames);
-                  if (optionNames.size() == 1)
-                  {
-                     completeOperation.setOffset(completeOperation.getCursor() - completeObject.getOffset());
-                  }
                }
             }
-            // try to complete an option value. Eg: "--xxx" 
-            else if (completeObject.isOption())
+            else
             {
-               optionCompletion(completeOperation, completeObject, cmd);
+               final InputComponent<?, Object> input;
+               if (completeObject.isOption())
+               {
+                  // try to complete an option value. Eg: "--xxx"
+                  input = cmd.getInputs().get(completeObject.getName());
+               }
+               // try to complete a argument value Eg: ls . (. is the argument)
+               else if (completeObject.isArgument())
+               {
+                  input = cmd.getInputs().get(ARGUMENTS_INPUT_NAME); // default for arguments
+               }
+               else
+               {
+                  input = null;
+               }
+               if (input != null)
+               {
+                  CompletionStrategy completionObj = CompletionStrategyFactory.getCompletionFor(input);
+                  completionObj.complete(completeOperation, input, shellContext, completeObject.getValue());
+               }
             }
-            // try to complete a argument value Eg: ls . (. is the argument)
-            else if (completeObject.isArgument())
+            if (completeOperation.getCompletionCandidates().size() == 1)
             {
-               argumentCompletion(completeOperation, completeObject, cmd);
+               completeOperation.setOffset(completeOperation.getCursor() - completeObject.getOffset());
             }
          }
-         catch (CommandLineParserException e)
+         catch (Exception e)
          {
             logger.warning(e.getMessage());
             return;
@@ -125,30 +135,15 @@ public class ForgeOptionCompletion implements Completion
       }
    }
 
-   @SuppressWarnings({ "rawtypes" })
-   private void defaultCompletion(CompleteOperation completeOperation, ShellCommand shellCommand)
-            throws CommandLineParserException
-   {
-      // first see if it has an "arguments" option
-      InputComponent inputOption = shellCommand.getInputs().get("arguments"); // default for arguments
-
-      // use the arguments completor as default if it has any
-      if (inputOption != null)
-      {
-         argumentCompletion(completeOperation, shellCommand.parseCompleteObject(completeOperation.getBuffer()),
-                  shellCommand);
-      }
-      else
-      {
-         completeOperation.addCompletionCandidates(shellCommand.getParameter().getOptionLongNamesWithDash());
-      }
-   }
-
+   // try to complete an option value. Eg: "--xxx"
    @SuppressWarnings({ "rawtypes", "unchecked" })
-   private void optionCompletion(CompleteOperation completeOperation, ParsedCompleteObject completeObject,
+   private void optionCompletion(ShellContext shellContext, CompleteOperation completeOperation,
+            ParsedCompleteObject completeObject,
             ShellCommand shellCommand)
    {
       InputComponent inputOption = shellCommand.getInputs().get(completeObject.getName());
+      Object value = InputComponents.getValueFor(inputOption);
+      InputType inputType = InputComponents.getInputType(inputOption);
       // atm the FileLister requires the CompleteOperation object so it need
       // to be handled here and not for each inputcomponents.setCompleter
       if (inputOption != null &&
@@ -245,67 +240,5 @@ public class ForgeOptionCompletion implements Completion
          }
       }
 
-   }
-
-   @SuppressWarnings({ "rawtypes", "unchecked" })
-   private void argumentCompletion(CompleteOperation completeOperation, ParsedCompleteObject completeObject,
-            ShellCommand shellCommand)
-   {
-      InputComponent inputOption = shellCommand.getInputs().get("arguments"); // default for arguments
-      // InputType inputType = ((HintsFacet) inputOption.getFacet(HintsFacet.class)).getInputType();
-      InputType inputType = InputType.FILE_PICKER;
-      // use the arguments completor as default if it has any
-      if (inputOption != null
-               && (inputOption instanceof HasCompleter && ((HasCompleter) inputOption).getCompleter() != null))
-      {
-         if (completeObject.getValue() != null)
-            completeOperation.setOffset(completeOperation.getCursor() - completeObject.getValue().length());
-         for (Object o : ((HasCompleter) inputOption).getCompleter().getCompletionProposals(null, inputOption,
-                  completeObject.getValue()))
-         {
-            completeOperation.addCompletionCandidate(o.toString());
-         }
-      }
-
-      else if (inputType == InputType.FILE_PICKER)
-      {
-         completeOperation.setOffset(completeOperation.getCursor());
-         if (completeObject.getValue() == null)
-            new FileLister("", new File(System.getProperty("user.dir")))
-                     .findMatchingDirectories(completeOperation);
-         else
-            new FileLister(completeObject.getValue(), new File(System.getProperty("user.dir")))
-                     .findMatchingDirectories(completeOperation);
-      }
-      else if (inputType == InputType.CHECKBOX)
-      {
-         // TODO
-      }
-      // check if the command actually implements Completion
-      else if (shellCommand.getCommand() instanceof Completion)
-      {
-         ((Completion) shellCommand.getCommand()).complete(completeOperation);
-      }
-      else
-      {
-         // this shouldnt be needed
-         if (inputOption != null && inputOption instanceof UIInputMany)
-         {
-            Iterable<String> iter = ((UIInputMany) inputOption).getCompleter().getCompletionProposals(null,
-                     inputOption, completeObject.getValue());
-            if (iter != null)
-            {
-               for (String s : iter)
-               {
-                  completeOperation.addCompletionCandidate(s);
-               }
-            }
-            if (completeOperation.getCompletionCandidates().size() == 1)
-            {
-               completeOperation.setOffset(completeOperation.getCursor() -
-                        completeObject.getOffset());
-            }
-         }
-      }
    }
 }

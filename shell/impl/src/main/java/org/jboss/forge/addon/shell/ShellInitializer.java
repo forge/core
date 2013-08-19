@@ -1,7 +1,5 @@
 package org.jboss.forge.addon.shell;
 
-import java.io.File;
-
 import javax.annotation.PreDestroy;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -11,6 +9,7 @@ import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
 import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.forge.furnace.event.PreShutdown;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
  * Starts up the shell if not in the IDE
@@ -30,7 +29,7 @@ public class ShellInitializer
       if (!Boolean.getBoolean("forge.compatibility.IDE"))
       {
          Settings settings = new SettingsBuilder().create();
-         this.shell = shellFactory.createShell(new File(""), settings);
+         this.shell = shellFactory.createShell(OperatingSystemUtils.getUserHomeDir(), settings);
       }
    }
 

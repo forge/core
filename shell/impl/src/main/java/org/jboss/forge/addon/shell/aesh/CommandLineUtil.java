@@ -20,8 +20,11 @@ import org.jboss.aesh.cl.exception.OptionParserException;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
+import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
@@ -52,15 +55,14 @@ public class CommandLineUtil
       ParserBuilder builder = new ParserBuilder();
 
       UICommandMetadata metadata = command.getMetadata();
-      ParameterInt parameter = new ParameterInt(metadata.getName(), metadata.getDescription());
+      ParameterInt parameter = new ParameterInt(ShellUtil.shellifyName(metadata.getName()), metadata.getDescription());
       for (InputComponent<?, Object> input : inputs.values())
       {
          if (!input.getName().equals("arguments"))
          {
             Object defaultValue = InputComponents.getValueFor(input);
-            // TODO
-            boolean isMultiple = false;
-            boolean flagOnly = false;
+            boolean isMultiple = input instanceof ManyValued;
+            boolean hasValue = (InputComponents.getInputType(input) != InputType.CHECKBOX);
             try
             {
                OptionBuilder optionBuilder = new OptionBuilder();
@@ -69,7 +71,7 @@ public class CommandLineUtil
                         .defaultValue(defaultValue == null ? null : defaultValue.toString())
                         .description(input.getLabel())
                         .hasMultipleValues(isMultiple)
-                        .hasValue(flagOnly)
+                        .hasValue(hasValue)
                         .required(input.isRequired());
 
                parameter.addOption(optionBuilder.create());

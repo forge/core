@@ -8,7 +8,7 @@ package org.jboss.forge.addon.shell;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,8 +30,7 @@ import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.aesh.ForgeConsoleCallback;
 import org.jboss.forge.addon.shell.aesh.ShellCommand;
-import org.jboss.forge.addon.shell.aesh.completion.ForgeCommandCompletion;
-import org.jboss.forge.addon.shell.aesh.completion.ForgeOptionCompletion;
+import org.jboss.forge.addon.shell.aesh.completion.ForgeCompletion;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
@@ -97,8 +96,7 @@ public class ShellImpl implements Shell
          console = null;
       }
       console = new Console(settings);
-      console.addCompletion(new ForgeCommandCompletion(this));
-      console.addCompletion(new ForgeOptionCompletion(this));
+      console.addCompletion(new ForgeCompletion(this));
       console.setConsoleCallback(new ForgeConsoleCallback(this));
       try
       {
@@ -158,31 +156,21 @@ public class ShellImpl implements Shell
    }
 
    /**
-    * Used in {@link ForgeOptionCompletion} and {@link ForgeConsoleCallback}
+    * Used in {@link ForgeCompletion} and {@link ForgeConsoleCallback}
     */
-   public ShellCommand findCommand(ShellContext shelLContext, String line)
+   public ShellCommand findCommand(ShellContext shellContext, String line)
    {
       String[] tokens = line.split(" ");
       if (tokens.length >= 1)
       {
-         return getEnabledShellCommands(shelLContext).get(tokens[0]);
+         return getEnabledShellCommands(shellContext).get(tokens[0]);
       }
       return null;
    }
 
-   /**
-    * Use {@link ForgeCommandCompletion}
-    */
-   public Iterable<ShellCommand> findMatchingCommands(ShellContext shellContext, String line)
+   public Collection<ShellCommand> findMatchingCommands(ShellContext shellContext, String line)
    {
-      Set<ShellCommand> result = new TreeSet<ShellCommand>(new Comparator<ShellCommand>()
-      {
-         @Override
-         public int compare(ShellCommand o1, ShellCommand o2)
-         {
-            return o1.getName().compareTo(o2.getName());
-         }
-      });
+      Set<ShellCommand> result = new TreeSet<ShellCommand>();
 
       String[] tokens = line == null ? new String[0] : line.split(" ");
       if (tokens.length <= 1)

@@ -29,7 +29,7 @@ import org.jboss.forge.addon.ui.result.Result;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ShellCommand
+public class ShellCommand implements Comparable<ShellCommand>
 {
    private final String name;
    private final UICommand command;
@@ -134,5 +134,11 @@ public class ShellCommand
    public String toString()
    {
       return getName();
+   }
+
+   @Override
+   public int compareTo(ShellCommand o)
+   {
+      return getName().compareTo(o.getName());
    }
 }
