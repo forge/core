@@ -33,8 +33,14 @@ public class DTOCollection
       List<JavaResource> result = new ArrayList<JavaResource>();
       for (DTOPair pair : dtos.values())
       {
-         result.add(pair.rootDTO);
-         result.add(pair.nestedDTO);
+         if (pair.rootDTO != null)
+         {
+            result.add(pair.rootDTO);
+         }
+         if (pair.nestedDTO != null)
+         {
+            result.add(pair.nestedDTO);
+         }
       }
       return result;
    }

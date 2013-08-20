@@ -46,16 +46,20 @@ public class RestPluginEventsTest extends AbstractJPATest
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.UserEndpoint");
-      
+      JavaResource dto = java.getJavaResource(java.getBasePackage() + ".rest.dto.UserDTO");
+
       List<JavaResource> endpoints = observer.getEndpoints();
-      Assert.assertEquals(1,endpoints.size());
-      Assert.assertEquals(resource.getFullyQualifiedName(),endpoints.get(0).getFullyQualifiedName());
-      
+      Assert.assertEquals(1, endpoints.size());
+      Assert.assertEquals(resource.getFullyQualifiedName(), endpoints.get(0).getFullyQualifiedName());
+
       List<JavaResource> entities = observer.getEntities();
-      Assert.assertEquals(1,entities.size());
+      Assert.assertEquals(1, entities.size());
       JavaResource resourceEntity = java.getJavaResource(entity.getCanonicalName());
-      Assert.assertEquals(resourceEntity.getFullyQualifiedName(),entities.get(0).getFullyQualifiedName());
-      
+      Assert.assertEquals(resourceEntity.getFullyQualifiedName(), entities.get(0).getFullyQualifiedName());
+
+      List<JavaResource> dtos = observer.getDtos();
+      Assert.assertEquals(1, dtos.size());
+      Assert.assertEquals(dto.getFullyQualifiedName(), dtos.get(0).getFullyQualifiedName());
    }
 
    private void setupRest() throws Exception

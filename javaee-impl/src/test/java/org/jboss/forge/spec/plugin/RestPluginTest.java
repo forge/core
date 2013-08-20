@@ -130,8 +130,7 @@ public class RestPluginTest extends AbstractJPATest
    public void testCreateEndpoint() throws Exception
    {
       Project project = getProject();
-      JavaClass entity = generateEntity(project, null, "User");
-      assertFalse(entity.hasAnnotation(XmlRootElement.class));
+      generateEntity(project, null, "User");
 
       setupRest();
 
@@ -151,7 +150,6 @@ public class RestPluginTest extends AbstractJPATest
       assertEquals("javax.ws.rs.core.Response", returnTypeInspector
                         .getQualifiedName());
 
-      assertTrue(java.getJavaResource(entity).getJavaSource().hasAnnotation(XmlRootElement.class));
       getShell().execute("build");
    }
 
@@ -266,8 +264,6 @@ public class RestPluginTest extends AbstractJPATest
       assertEquals("javax.ws.rs.core.Response", returnTypeInspector
                         .getQualifiedName());
 
-      assertTrue(java.getJavaResource(userEntity).getJavaSource().hasAnnotation(XmlRootElement.class));
-      
       JavaResource groupResource = java.getJavaResource(java.getBasePackage() + ".rest.GroupEndpoint");
       JavaClass groupEndpoint = (JavaClass) groupResource.getJavaSource();
 
@@ -280,7 +276,6 @@ public class RestPluginTest extends AbstractJPATest
       assertEquals("javax.ws.rs.core.Response", returnTypeInspector
                         .getQualifiedName());
 
-      assertTrue(java.getJavaResource(groupEntity).getJavaSource().hasAnnotation(XmlRootElement.class));
       getShell().execute("build");
    }
 
@@ -338,7 +333,6 @@ public class RestPluginTest extends AbstractJPATest
       assertEquals("javax.ws.rs.core.Response", returnTypeInspector
                         .getQualifiedName());
 
-      assertTrue(java.getJavaResource(entity).getJavaSource().hasAnnotation(XmlRootElement.class));
       getShell().execute("build");
    }
 
