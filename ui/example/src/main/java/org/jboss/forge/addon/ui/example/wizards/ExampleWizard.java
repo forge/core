@@ -25,16 +25,19 @@ public class ExampleWizard extends AbstractUICommand implements UIWizard
 {
 
    @Inject
+   @WithAttributes(label = "First Name", shortName = 'f')
    private UIInput<String> firstName;
 
    @Inject
+   @WithAttributes(label = "Show Select Components", shortName = 's')
    private UIInput<Boolean> showSelectComponents;
 
    @Inject
-   @WithAttributes(label = "Folder Location:")
+   @WithAttributes(label = "Folder Location:", shortName = 'd')
    private UIInput<DirectoryResource> directory;
 
    @Inject
+   @WithAttributes(label = "Go to Last Step", shortName = 'g')
    private UIInput<Boolean> goToLastStep;
 
    @Override
