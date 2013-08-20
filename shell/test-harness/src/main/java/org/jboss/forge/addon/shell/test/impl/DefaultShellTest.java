@@ -414,4 +414,25 @@ public class DefaultShellTest implements ShellTest
    {
       getStdIn().write(completeChar.getFirstValue());
    }
+
+   @Override
+   public void clearScreen() throws IOException
+   {
+      try
+      {
+         waitForBufferValue(new Callable<String>()
+         {
+            @Override
+            public String call() throws Exception
+            {
+               shell.getConsole().clear(true);
+               return null;
+            }
+         }, 10, TimeUnit.SECONDS, "");
+      }
+      catch (TimeoutException e)
+      {
+         throw new RuntimeException("Could not clear screen within allotted timeout.", e);
+      }
+   }
 }

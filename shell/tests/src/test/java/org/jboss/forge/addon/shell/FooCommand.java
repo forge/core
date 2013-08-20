@@ -15,7 +15,6 @@ import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
-import org.jboss.forge.addon.ui.impl.UIInputImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -37,11 +36,11 @@ public class FooCommand implements UICommand
    private UIInput<String> name;
 
    @Inject
-   @WithAttributes(label="help")
+   @WithAttributes(label = "help")
    private UIInput<String> help;
 
    @Inject
-   @WithAttributes(label="bool")
+   @WithAttributes(label = "bool")
    private UIInput<Boolean> bool;
 
    @Inject
@@ -49,11 +48,11 @@ public class FooCommand implements UICommand
    private UIInput<String> bar;
 
    @Inject
-   @WithAttributes(label="bar2")
+   @WithAttributes(label = "bar2")
    private UIInput<String> bar2;
 
    @Inject
-   @WithAttributes(label="target location")
+   @WithAttributes(label = "target location")
    private UIInput<DirectoryResource> targetLocation;
 
    @Override

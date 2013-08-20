@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.shell.parser;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -21,6 +22,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -55,6 +57,12 @@ public class CommandCompletionTest
    @Inject
    private ShellTest test;
 
+   @Before
+   public void before() throws IOException
+   {
+      test.clearScreen();
+   }
+
    @Test
    public void testCommandAutocomplete() throws Exception
    {
@@ -67,8 +75,24 @@ public class CommandCompletionTest
             test.sendCompletionSignal();
             return null;
          }
-      }, 10, TimeUnit.SECONDS, "foocommand ");
+      }, 5, TimeUnit.SECONDS, "foocommand ");
       Assert.assertEquals("foocommand ", test.getBuffer().getLine());
+   }
+
+   @Test
+   public void testCommandAutocomplete2() throws Exception
+   {
+      test.waitForBufferValue(new Callable<String>()
+      {
+         @Override
+         public String call() throws Exception
+         {
+            test.write("foocommand --h");
+            test.sendCompletionSignal();
+            return null;
+         }
+      }, 5, TimeUnit.SECONDS, "foocommand --help");
+      Assert.assertEquals("foocommand --help", test.getBuffer().getLine());
    }
 
 }

@@ -117,4 +117,9 @@ public interface ShellTest
     */
    void sendCompletionSignal() throws IOException;
 
+   /**
+    * Clear the screen and reset the buffer.
+    */
+   void clearScreen() throws IOException;
+
 }
