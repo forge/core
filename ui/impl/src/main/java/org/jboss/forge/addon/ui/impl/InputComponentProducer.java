@@ -68,8 +68,10 @@ public class InputComponentProducer implements InputComponentFactory
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
-         UISelectOne<T> input = createSelectOne(name, valueType);
+         char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
+         UISelectOne<T> input = createSelectOne(name, shortName, valueType);
          preconfigureInput(input, withAttributes);
+         setupSelectComponent(input);
          return input;
       }
       else
@@ -93,8 +95,10 @@ public class InputComponentProducer implements InputComponentFactory
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
-         UISelectMany<T> input = createSelectMany(name, valueType);
+         char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
+         UISelectMany<T> input = createSelectMany(name, shortName, valueType);
          preconfigureInput(input, withAttributes);
+         setupSelectComponent(input);
          return input;
       }
       else
@@ -118,7 +122,8 @@ public class InputComponentProducer implements InputComponentFactory
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
-         UIInput<T> input = createInput(name, valueType);
+         char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
+         UIInput<T> input = createInput(name, shortName, valueType);
          preconfigureInput(input, withAttributes);
          return input;
       }
@@ -143,7 +148,8 @@ public class InputComponentProducer implements InputComponentFactory
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) typeArguments[0];
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
-         UIInputMany<T> input = createInputMany(name, valueType);
+         char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
+         UIInputMany<T> input = createInputMany(name, shortName, valueType);
          preconfigureInput(input, withAttributes);
          return input;
       }
@@ -155,33 +161,33 @@ public class InputComponentProducer implements InputComponentFactory
    }
 
    @Override
-   public <T> UIInput<T> createInput(String name, Class<T> valueType)
+   public <T> UIInput<T> createInput(String name, char shortName, Class<T> valueType)
    {
-      UIInputImpl<T> input = new UIInputImpl<T>(name, valueType);
+      UIInputImpl<T> input = new UIInputImpl<T>(name, shortName, valueType);
       configureRequiredFacets(input);
       return input;
    }
 
    @Override
-   public <T> UIInputMany<T> createInputMany(String name, Class<T> valueType)
+   public <T> UIInputMany<T> createInputMany(String name, char shortName, Class<T> valueType)
    {
-      UIInputManyImpl<T> input = new UIInputManyImpl<T>(name, valueType);
+      UIInputManyImpl<T> input = new UIInputManyImpl<T>(name, shortName, valueType);
       configureRequiredFacets(input);
       return input;
    }
 
    @Override
-   public <T> UISelectOne<T> createSelectOne(String name, Class<T> valueType)
+   public <T> UISelectOne<T> createSelectOne(String name, char shortName, Class<T> valueType)
    {
-      UISelectOneImpl<T> input = new UISelectOneImpl<T>(name, valueType);
+      UISelectOneImpl<T> input = new UISelectOneImpl<T>(name, shortName, valueType);
       configureRequiredFacets(input);
       return input;
    }
 
    @Override
-   public <T> UISelectMany<T> createSelectMany(String name, Class<T> valueType)
+   public <T> UISelectMany<T> createSelectMany(String name, char shortName, Class<T> valueType)
    {
-      UISelectManyImpl<T> input = new UISelectManyImpl<T>(name, valueType);
+      UISelectManyImpl<T> input = new UISelectManyImpl<T>(name, shortName, valueType);
       configureRequiredFacets(input);
       return input;
    }
@@ -189,7 +195,7 @@ public class InputComponentProducer implements InputComponentFactory
    /**
     * Pre-configure input based on WithAttributes info if annotation exists
     */
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings({ "unchecked" })
    private void preconfigureInput(InputComponent<?, ?> input, WithAttributes atts)
    {
       if (atts != null)
@@ -223,37 +229,61 @@ public class InputComponentProducer implements InputComponentFactory
 
          }
       }
+   }
 
-      if (input instanceof SelectComponent)
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public void setupSelectComponent(SelectComponent selectComponent)
+   {
+      Class<?> valueType = selectComponent.getValueType();
+      Iterable<?> choices = null;
+      // Auto-populate Enums on SelectComponents
+      if (valueType.isEnum())
       {
-         SelectComponent selectComponent = (SelectComponent) input;
-         Class<?> valueType = input.getValueType();
-         Iterable<?> choices = null;
-         // Auto-populate Enums on SelectComponents
-         if (valueType.isEnum())
-         {
-            Class<? extends Enum> enumClass = valueType.asSubclass(Enum.class);
-            choices = EnumSet.allOf(enumClass);
-         }
-         // Auto-populate Exported values on SelectComponents
-         else if (Annotations.isAnnotationPresent(valueType, Exported.class))
-         {
-            List<Object> choiceList = new ArrayList<Object>();
-            Imported instances = addonRegistry.getServices(valueType);
-            for (Object instance : instances)
-            {
-               choiceList.add(instance);
-               instances.release(instance);
-            }
-            choices = choiceList;
-         }
-         selectComponent.setValueChoices(choices);
+         Class<? extends Enum> enumClass = valueType.asSubclass(Enum.class);
+         choices = EnumSet.allOf(enumClass);
       }
+      // Auto-populate Exported values on SelectComponents
+      else if (Annotations.isAnnotationPresent(valueType, Exported.class))
+      {
+         List<Object> choiceList = new ArrayList<Object>();
+         Imported instances = addonRegistry.getServices(valueType);
+         for (Object instance : instances)
+         {
+            choiceList.add(instance);
+            instances.release(instance);
+         }
+         choices = choiceList;
+      }
+      selectComponent.setValueChoices(choices);
    }
 
    private void configureRequiredFacets(InputComponent<?, ?> input)
    {
       HintsFacetImpl hintsFacet = new HintsFacetImpl(input, environment);
       input.install(hintsFacet);
+   }
+
+   @Override
+   public <T> UIInput<T> createInput(String name, Class<T> valueType)
+   {
+      return createInput(name, InputComponents.DEFAULT_SHORT_NAME, valueType);
+   }
+
+   @Override
+   public <T> UIInputMany<T> createInputMany(String name, Class<T> valueType)
+   {
+      return createInputMany(name, InputComponents.DEFAULT_SHORT_NAME, valueType);
+   }
+
+   @Override
+   public <T> UISelectOne<T> createSelectOne(String name, Class<T> valueType)
+   {
+      return createSelectOne(name, InputComponents.DEFAULT_SHORT_NAME, valueType);
+   }
+
+   @Override
+   public <T> UISelectMany<T> createSelectMany(String name, Class<T> valueType)
+   {
+      return createSelectMany(name, InputComponents.DEFAULT_SHORT_NAME, valueType);
    }
 }

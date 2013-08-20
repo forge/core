@@ -24,7 +24,8 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
    String getLabel();
 
    String getName();
-   
+
+
    String getDescription();
 
    Class<VALUETYPE> getValueType();
@@ -34,6 +35,8 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
    boolean isRequired();
 
    String getRequiredMessage();
+
+   char getShortName();
 
    IMPLTYPE setEnabled(boolean b);
 

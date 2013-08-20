@@ -29,6 +29,8 @@ public @interface WithAttributes
     * The label of this input
     */
    String label();
+   
+   char shortName() default ' ';
 
    /**
     * Is this input required?

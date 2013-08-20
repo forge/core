@@ -33,6 +33,8 @@ import org.jboss.forge.furnace.util.Strings;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public final class InputComponents
 {
+   public static final char DEFAULT_SHORT_NAME = ' ';
+
    private static final String COLON = ":";
 
    /**

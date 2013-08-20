@@ -32,9 +32,9 @@ public class UIInputImpl<VALUETYPE> extends AbstractInputComponent<UIInput<VALUE
    private UICompleter<VALUETYPE> completer;
    private Converter<String, VALUETYPE> converter;
 
-   public UIInputImpl(String name, Class<VALUETYPE> type)
+   public UIInputImpl(String name, char shortName, Class<VALUETYPE> type)
    {
-      super(name, type);
+      super(name, shortName, type);
    }
 
    @Override

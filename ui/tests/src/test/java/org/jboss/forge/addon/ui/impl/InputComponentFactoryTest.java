@@ -17,6 +17,7 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
+import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -53,6 +54,16 @@ public class InputComponentFactoryTest
       UIInput<String> input = factory.createInput("foo", String.class);
       Assert.assertNotNull(input);
       Assert.assertTrue(input.hasFacet(HintsFacet.class));
+      Assert.assertEquals(InputComponents.DEFAULT_SHORT_NAME, input.getShortName());
+   }
+
+   @Test
+   public void testCreateUIInputWithShortName() throws Exception
+   {
+      UIInput<String> input = factory.createInput("foo", 'f', String.class);
+      Assert.assertNotNull(input);
+      Assert.assertTrue(input.hasFacet(HintsFacet.class));
+      Assert.assertEquals('f', input.getShortName());
    }
 
    @Test
@@ -61,6 +72,16 @@ public class InputComponentFactoryTest
       UIInputMany<String> input = factory.createInputMany("foo", String.class);
       Assert.assertNotNull(input);
       Assert.assertTrue(input.hasFacet(HintsFacet.class));
+      Assert.assertEquals(InputComponents.DEFAULT_SHORT_NAME, input.getShortName());
+   }
+
+   @Test
+   public void testCreateUIInputManyWithShortName() throws Exception
+   {
+      UIInputMany<String> input = factory.createInputMany("foo", 'f', String.class);
+      Assert.assertNotNull(input);
+      Assert.assertTrue(input.hasFacet(HintsFacet.class));
+      Assert.assertEquals('f', input.getShortName());
    }
 
    @Test
@@ -69,6 +90,16 @@ public class InputComponentFactoryTest
       UISelectMany<String> input = factory.createSelectMany("foo", String.class);
       Assert.assertNotNull(input);
       Assert.assertTrue(input.hasFacet(HintsFacet.class));
+      Assert.assertEquals(InputComponents.DEFAULT_SHORT_NAME, input.getShortName());
+   }
+
+   @Test
+   public void testCreateUISelectManyWithShortName() throws Exception
+   {
+      UISelectMany<String> input = factory.createSelectMany("foo", 'f', String.class);
+      Assert.assertNotNull(input);
+      Assert.assertTrue(input.hasFacet(HintsFacet.class));
+      Assert.assertEquals('f', input.getShortName());
    }
 
    @Test
@@ -77,5 +108,15 @@ public class InputComponentFactoryTest
       UISelectOne<String> input = factory.createSelectOne("foo", String.class);
       Assert.assertNotNull(input);
       Assert.assertTrue(input.hasFacet(HintsFacet.class));
+      Assert.assertEquals(InputComponents.DEFAULT_SHORT_NAME, input.getShortName());
+   }
+
+   @Test
+   public void testCreateUISelectOneWithShortName() throws Exception
+   {
+      UISelectOne<String> input = factory.createSelectOne("foo", 'f', String.class);
+      Assert.assertNotNull(input);
+      Assert.assertTrue(input.hasFacet(HintsFacet.class));
+      Assert.assertEquals('f', input.getShortName());
    }
 }

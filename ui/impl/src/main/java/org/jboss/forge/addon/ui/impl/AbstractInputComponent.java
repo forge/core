@@ -31,6 +31,8 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
          implements InputComponent<IMPLTYPE, VALUETYPE>
 {
    private final String name;
+   private final char shortName;
+   private final Class<VALUETYPE> type;
 
    private String label;
    private String description;
@@ -38,12 +40,12 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    private Callable<Boolean> required = Callables.returning(Boolean.FALSE);
    private String requiredMessage;
 
-   private Class<VALUETYPE> type;
    private Converter<String, VALUETYPE> valueConverter;
 
-   public AbstractInputComponent(String name, Class<VALUETYPE> type)
+   public AbstractInputComponent(String name, char shortName, Class<VALUETYPE> type)
    {
       this.name = name;
+      this.shortName = shortName;
       this.type = type;
    }
 
@@ -57,6 +59,12 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    public String getName()
    {
       return name;
+   }
+   
+   @Override
+   public char getShortName()
+   {
+      return shortName;
    }
 
    @Override

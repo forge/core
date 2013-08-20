@@ -20,9 +20,9 @@ public class UISelectOneImpl<VALUETYPE> extends AbstractUISelectInputComponent<U
    private VALUETYPE value;
    private Callable<VALUETYPE> defaultValue;
 
-   public UISelectOneImpl(String name, Class<VALUETYPE> type)
+   public UISelectOneImpl(String name, char shortName, Class<VALUETYPE> type)
    {
-      super(name, type);
+      super(name, shortName, type);
    }
 
    @Override

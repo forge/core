@@ -20,6 +20,7 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -32,21 +33,27 @@ import org.jboss.forge.furnace.services.Exported;
 public class FooCommand implements UICommand
 {
    @Inject
+   @WithAttributes(label = "Name the foo", required = true, defaultValue = "BAR")
    private UIInput<String> name;
 
    @Inject
+   @WithAttributes(label="help")
    private UIInput<String> help;
 
    @Inject
+   @WithAttributes(label="bool")
    private UIInput<Boolean> bool;
 
    @Inject
+   @WithAttributes(label = "bar", required = true, defaultValue = "BAAAR")
    private UIInput<String> bar;
 
    @Inject
+   @WithAttributes(label="bar2")
    private UIInput<String> bar2;
 
    @Inject
+   @WithAttributes(label="target location")
    private UIInput<DirectoryResource> targetLocation;
 
    @Override
@@ -64,24 +71,6 @@ public class FooCommand implements UICommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      name = new UIInputImpl<String>("name", String.class);
-      name.setLabel("name the foo");
-      name.setRequired(true);
-      name.setDefaultValue("BAR");
-
-      bar = new UIInputImpl<String>("bar", String.class);
-      bar.setLabel("bar");
-      bar.setDefaultValue("BAAAR");
-      bar.setRequired(true);
-
-      bar2 = new UIInputImpl<String>("bar2", String.class);
-      bar2.setLabel("bar2");
-
-      bool = new UIInputImpl<Boolean>("bool", Boolean.class);
-      bool.setLabel("bool");
-
-      help = new UIInputImpl<String>("help", String.class);
-      help.setLabel("foo");
       help.setCompleter(new UICompleter<String>()
       {
          @Override
@@ -97,16 +86,6 @@ public class FooCommand implements UICommand
             return null;
          }
       });
-
-      targetLocation = new UIInputImpl<DirectoryResource>("targetLocation", DirectoryResource.class);
-      targetLocation.setLabel("project location");
-
-      /*
-       * foo.setCompleter(new UICompleter<String>() {
-       * 
-       * @Override public Iterable<String> getCompletionProposals(InputComponent<?, String> input, String value) {
-       * List<String> out = new ArrayList<String>(); out.add("foo1"); return out; } });
-       */
 
       builder.add(name).add(help).add(bool).add(bar).add(bar2).add(targetLocation);
    }

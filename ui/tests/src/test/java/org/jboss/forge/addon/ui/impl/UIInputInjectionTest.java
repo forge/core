@@ -40,7 +40,7 @@ public class UIInputInjectionTest
 {
    @Deployment
    @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:ui"),
-      @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap
@@ -67,7 +67,7 @@ public class UIInputInjectionTest
    UIInputMany<String> unknown;
 
    @Inject
-   @WithAttributes(label = "Attributed Input", enabled = false, required = false, requiredMessage = "REQUIRED_MESSAGE")
+   @WithAttributes(label = "Attributed Input", shortName = 'a', enabled = false, required = false, requiredMessage = "REQUIRED_MESSAGE")
    UIInputMany<String> attributedInput;
 
    @Inject
@@ -213,5 +213,6 @@ public class UIInputInjectionTest
       Assert.assertFalse(attributedInput.isEnabled());
       Assert.assertFalse(attributedInput.isRequired());
       Assert.assertEquals("REQUIRED_MESSAGE", attributedInput.getRequiredMessage());
+      Assert.assertEquals('a', attributedInput.getShortName());
    }
 }

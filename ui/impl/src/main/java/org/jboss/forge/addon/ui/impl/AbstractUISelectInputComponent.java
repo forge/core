@@ -27,9 +27,9 @@ public abstract class AbstractUISelectInputComponent<IMPLTYPE extends SelectComp
    private Iterable<VALUETYPE> choices;
    private Converter<VALUETYPE, String> itemLabelConverter;
 
-   public AbstractUISelectInputComponent(String name, Class<VALUETYPE> type)
+   public AbstractUISelectInputComponent(String name, char shortName, Class<VALUETYPE> type)
    {
-      super(name, type);
+      super(name, shortName, type);
    }
 
    @Override

@@ -34,9 +34,9 @@ public class UIInputManyImpl<VALUETYPE> extends AbstractInputComponent<UIInputMa
    private UICompleter<VALUETYPE> completer;
    private Converter<String, VALUETYPE> converter;
 
-   public UIInputManyImpl(String name, Class<VALUETYPE> type)
+   public UIInputManyImpl(String name, char shortName, Class<VALUETYPE> type)
    {
-      super(name, type);
+      super(name, shortName, type);
    }
 
    @Override

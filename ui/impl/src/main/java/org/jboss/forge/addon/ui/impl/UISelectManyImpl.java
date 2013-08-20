@@ -21,9 +21,9 @@ public class UISelectManyImpl<VALUETYPE> extends AbstractUISelectInputComponent<
    private Iterable<VALUETYPE> value;
    private Callable<Iterable<VALUETYPE>> defaultValue;
 
-   public UISelectManyImpl(String name, Class<VALUETYPE> type)
+   public UISelectManyImpl(String name, char shortName, Class<VALUETYPE> type)
    {
-      super(name, type);
+      super(name, shortName, type);
    }
 
    @Override
