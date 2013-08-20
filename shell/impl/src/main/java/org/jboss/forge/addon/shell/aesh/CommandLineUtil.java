@@ -74,6 +74,10 @@ public class CommandLineUtil
                         .hasValue(hasValue)
                         .required(input.isRequired());
 
+               if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
+               {
+                  optionBuilder.name(input.getShortName());
+               }
                parameter.addOption(optionBuilder.create());
             }
             catch (OptionParserException e)
