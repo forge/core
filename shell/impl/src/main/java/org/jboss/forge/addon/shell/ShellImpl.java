@@ -28,8 +28,8 @@ import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.shell.aesh.AbstractShellCommand;
 import org.jboss.forge.addon.shell.aesh.ForgeConsoleCallback;
-import org.jboss.forge.addon.shell.aesh.ShellCommand;
 import org.jboss.forge.addon.shell.aesh.completion.ForgeCompletion;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
@@ -150,7 +150,7 @@ public class ShellImpl implements Shell
       return new Prompt(chars);
    }
 
-   public Map<String, ShellCommand> getEnabledShellCommands(ShellContext context)
+   public Map<String, AbstractShellCommand> getEnabledShellCommands(ShellContext context)
    {
       return commandManager.getEnabledShellCommands(context);
    }
@@ -158,7 +158,7 @@ public class ShellImpl implements Shell
    /**
     * Used in {@link ForgeCompletion} and {@link ForgeConsoleCallback}
     */
-   public ShellCommand findCommand(ShellContext shellContext, String line)
+   public AbstractShellCommand findCommand(ShellContext shellContext, String line)
    {
       String[] tokens = line.split(" ");
       if (tokens.length >= 1)
@@ -168,16 +168,16 @@ public class ShellImpl implements Shell
       return null;
    }
 
-   public Collection<ShellCommand> findMatchingCommands(ShellContext shellContext, String line)
+   public Collection<AbstractShellCommand> findMatchingCommands(ShellContext shellContext, String line)
    {
-      Set<ShellCommand> result = new TreeSet<ShellCommand>();
+      Set<AbstractShellCommand> result = new TreeSet<AbstractShellCommand>();
 
       String[] tokens = line == null ? new String[0] : line.split(" ");
       if (tokens.length <= 1)
       {
-         Map<String, ShellCommand> commandMap = getEnabledShellCommands(shellContext);
+         Map<String, AbstractShellCommand> commandMap = getEnabledShellCommands(shellContext);
          String token = (tokens.length == 1) ? tokens[0] : null;
-         for (Entry<String, ShellCommand> entry : commandMap.entrySet())
+         for (Entry<String, AbstractShellCommand> entry : commandMap.entrySet())
          {
             if (token == null || entry.getKey().startsWith(token))
                result.add(entry.getValue());
@@ -186,7 +186,7 @@ public class ShellImpl implements Shell
       return result;
    }
 
-   public Result execute(ShellCommand shellCommand)
+   public Result execute(AbstractShellCommand shellCommand)
    {
       Result result = null;
       try
@@ -208,22 +208,22 @@ public class ShellImpl implements Shell
    /**
     * @param shellCommand
     */
-   private void firePreCommandListeners(ShellCommand shellCommand)
+   private void firePreCommandListeners(AbstractShellCommand shellCommand)
    {
       for (CommandExecutionListener listener : listeners)
       {
-         listener.preCommandExecuted(shellCommand.getCommand(), shellCommand.getContext());
+         listener.preCommandExecuted(shellCommand.getSourceCommand(), shellCommand.getContext());
       }
    }
 
    /**
     * @param shellCommand
     */
-   private void firePostCommandListeners(ShellCommand shellCommand, Result result)
+   private void firePostCommandListeners(AbstractShellCommand shellCommand, Result result)
    {
       for (CommandExecutionListener listener : listeners)
       {
-         listener.postCommandExecuted(shellCommand.getCommand(), shellCommand.getContext(), result);
+         listener.postCommandExecuted(shellCommand.getSourceCommand(), shellCommand.getContext(), result);
       }
 
    }

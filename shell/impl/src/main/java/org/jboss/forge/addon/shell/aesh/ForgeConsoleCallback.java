@@ -10,12 +10,12 @@ package org.jboss.forge.addon.shell.aesh;
 import java.io.IOException;
 
 import org.jboss.aesh.cl.exception.CommandLineParserException;
-import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.ConsoleCallback;
 import org.jboss.aesh.console.ConsoleOutput;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Hook for Aesh operations
@@ -38,33 +38,36 @@ public class ForgeConsoleCallback implements ConsoleCallback
    @Override
    public int readConsoleOutput(ConsoleOutput output) throws IOException
    {
-      try
+      String line = output.getBuffer();
+      if (!Strings.isNullOrEmpty(line))
       {
-         ShellContext context = shell.newShellContext();
-         String line = output.getBuffer();
-         ShellCommand command = shell.findCommand(context, line);
-         if (command == null)
-         {
-            throw new IOException("Command not found for line: " + line);
-         }
          try
          {
-            command.populateInputs(line);
+            ShellContext context = shell.newShellContext();
+            AbstractShellCommand command = shell.findCommand(context, line);
+            if (command == null)
+            {
+               throw new IOException("Command not found for line: " + line);
+            }
+            try
+            {
+               command.populateInputs(line, false);
+            }
+            catch (CommandLineParserException e)
+            {
+               throw new IOException(e);
+            }
+            Result result = shell.execute(command);
+            if (result != null)
+            {
+               shell.getConsole().out().println(result.getMessage());
+            }
          }
-         catch (CommandLineParserException e)
+         catch (Exception e)
          {
-            throw new IOException(e);
+            shell.getConsole().out().println("**ERROR**: " + e.getMessage());
+            return -1;
          }
-         Result result = shell.execute(command);
-         if (result != null)
-         {
-            shell.getConsole().pushToStdOut(result.getMessage() + Config.getLineSeparator());
-         }
-      }
-      catch (Exception e)
-      {
-         shell.getConsole().pushToStdOut("**ERROR**: " + e.getMessage() + Config.getLineSeparator());
-         return -1;
       }
       return 0;
    }

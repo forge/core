@@ -14,8 +14,8 @@ import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineParser;
-import org.jboss.aesh.cl.OptionBuilder;
 import org.jboss.aesh.cl.ParserBuilder;
+import org.jboss.aesh.cl.builder.OptionBuilder;
 import org.jboss.aesh.cl.exception.OptionParserException;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.addon.convert.Converter;
@@ -67,7 +67,7 @@ public class CommandLineUtil
             {
                OptionBuilder optionBuilder = new OptionBuilder();
 
-               optionBuilder.longName(input.getName())
+               optionBuilder.name(input.getName())
                         .defaultValue(defaultValue == null ? null : defaultValue.toString())
                         .description(input.getLabel())
                         .hasMultipleValues(isMultiple)
@@ -76,7 +76,7 @@ public class CommandLineUtil
 
                if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
                {
-                  optionBuilder.name(input.getShortName());
+                  optionBuilder.shortName(input.getShortName());
                }
                parameter.addOption(optionBuilder.create());
             }
@@ -86,7 +86,7 @@ public class CommandLineUtil
             }
          }
       }
-      builder.addParameter(parameter);
+      builder.parameter(parameter);
       return builder.generateParser();
    }
 
@@ -100,7 +100,7 @@ public class CommandLineUtil
          if (input.getName().equals("arguments") &&
                   input instanceof UIInputMany)
          {
-            InputComponents.setValueFor(converterFactory, input, commandLine.getArguments());
+            InputComponents.setValueFor(converterFactory, input, commandLine.getArgument());
          }
          else if (input instanceof UIInputMany)
          {
@@ -121,9 +121,11 @@ public class CommandLineUtil
       }
    }
 
+   @SuppressWarnings("unchecked")
    private void setInputChoice(UISelectOne<Object> input, String optionValue)
    {
-      Converter<Object, String> labelConverter = input.getItemLabelConverter();
+      Converter<Object, String> labelConverter = (Converter<Object, String>) InputComponents.getItemLabelConverter(
+               converterFactory, input);
       boolean found = false;
       for (Object choice : input.getValueChoices())
       {

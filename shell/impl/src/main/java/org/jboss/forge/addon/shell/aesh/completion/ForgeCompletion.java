@@ -17,7 +17,7 @@ import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
 import org.jboss.forge.addon.shell.ShellImpl;
-import org.jboss.forge.addon.shell.aesh.ShellCommand;
+import org.jboss.forge.addon.shell.aesh.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 
@@ -45,11 +45,11 @@ public class ForgeCompletion implements Completion
    {
       String line = completeOperation.getBuffer();
       ShellContext shellContext = shell.newShellContext();
-      final ShellCommand cmd = shell.findCommand(shellContext, line);
+      final AbstractShellCommand cmd = shell.findCommand(shellContext, line);
       if (cmd == null)
       {
-         Collection<ShellCommand> commands = shell.findMatchingCommands(shellContext, line);
-         for (ShellCommand command : commands)
+         Collection<AbstractShellCommand> commands = shell.findMatchingCommands(shellContext, line);
+         for (AbstractShellCommand command : commands)
          {
             completeOperation.addCompletionCandidate(command.getName());
          }
@@ -60,6 +60,7 @@ public class ForgeCompletion implements Completion
          {
             // We are dealing with one-level commands only.
             // Eg. new-project-type --named ... instead of new-project-type setup --named ...
+            cmd.populateInputs(line, true);
             ParameterInt param = cmd.getParameter();
             ParsedCompleteObject completeObject = cmd.parseCompleteObject(line);
             if (completeObject.doDisplayOptions())

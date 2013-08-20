@@ -24,7 +24,7 @@
 	</modules>
 
 	<properties>
-		<version.aesh>0.39</version.aesh>
+		<version.aesh>0.40-SNAPSHOT</version.aesh>
 		<version.aesh.extensions>0.38</version.aesh.extensions>
 	</properties>
 
