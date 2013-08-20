@@ -34,15 +34,17 @@ public class DTOClassBuilder
    private JPAProperty idProperty;
    private FreemarkerTemplateProcessor processor;
 
-   public DTOClassBuilder(JavaClass entity, boolean topLevel)
+   public DTOClassBuilder(JavaClass entity, JPAProperty idProperty, boolean topLevel)
    {
       this.entity = entity;
+      this.idProperty = idProperty;
       this.topLevel = topLevel;
       this.copyCtorBuilder = new StringBuilder();
       this.assembleJPABuilder = new StringBuilder();
       this.processor = new FreemarkerTemplateProcessor();
       initName();
       initClassStructure();
+      initializeJPAEntityInAssembler();
    }
 
    public DTOClassBuilder setPackage(String dtoPackage)
@@ -57,17 +59,13 @@ public class DTOClassBuilder
       return this;
    }
 
-   public DTOClassBuilder setIdProperty(JPAProperty idProperty)
-   {
-      this.idProperty = idProperty;
-      initializeJPAEntityInAssembler();
-      return this;
-   }
-
    public DTOClassBuilder updateForCollectionProperty(JPAProperty property, JavaClass nestedDTOClass,
             Type<?> parameterizedType)
    {
+      // Create a collection field referencing the DTO
       addCollectionProperty(property, nestedDTOClass);
+
+      // Add an expression in the ctor to extract the collection
       addInitializerFromCollection(property, nestedDTOClass, parameterizedType);
       addCollectionAssembler(property, parameterizedType, nestedDTOClass);
       return this;
@@ -75,10 +73,10 @@ public class DTOClassBuilder
 
    public DTOClassBuilder updateForReferencedProperty(JPAProperty property, JavaClass nestedDTOClass)
    {
-      // Then create a field referencing the DTO
+      // Create a field referencing the DTO
       addProperty(property, nestedDTOClass);
 
-      // Add an expression in the ctor to extract the fields
+      // Add an expression in the ctor to extract the field
       addInitializerFromDTO(property, nestedDTOClass);
       if (property.isWritable())
       {
@@ -89,7 +87,10 @@ public class DTOClassBuilder
 
    public DTOClassBuilder updateForSimpleProperty(JPAProperty property, Type<?> type)
    {
+      // Create a field referencing the type
       addProperty(property, property.getType());
+      
+      // Add an expression in the ctor to extract the field
       addInitializerFromProperty(property);
       if (!property.equals(idProperty) && property.isWritable())
       {
@@ -237,7 +238,7 @@ public class DTOClassBuilder
       }
       if (Types.isArray(qualifiedName))
       {
-         String arrayType = field.getTypeInspector().getQualifiedName();
+         String arrayType = field.getType().getQualifiedName();
          if (!(Types.isJavaLang(arrayType) || Types.isPrimitive(arrayType)))
          {
             dto.addImport(arrayType);
@@ -257,7 +258,7 @@ public class DTOClassBuilder
       }
       if (Types.isArray(qualifiedName))
       {
-         String arrayType = property.getTypeInspector().getQualifiedName();
+         String arrayType = property.getType().getQualifiedName();
          if (!(Types.isJavaLang(arrayType) || Types.isPrimitive(arrayType)))
          {
             dto.addImport(arrayType);

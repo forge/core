@@ -2,7 +2,6 @@ package org.jboss.forge.spec.javaee.util;
 
 import java.beans.Introspector;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +32,9 @@ public class JPABeanIntrospector
       locateProperties();
    }
 
-   public Collection<JPAProperty> getProperties()
+   public List<JPAProperty> getProperties()
    {
-      return propertyCache.values();
+      return new ArrayList<JPAProperty>(propertyCache.values());
    }
 
    private void locateProperties()
@@ -82,11 +81,13 @@ public class JPABeanIntrospector
    private String propertyNameFromMethod(Method<JavaClass> method)
    {
       String methodName = method.getName();
+      String qualifiedReturnType = method.getQualifiedReturnType();
       if (methodName.startsWith(GET_PREFIX))
       {
          return Introspector.decapitalize(methodName.substring(3));
       }
-      else if (methodName.startsWith(IS_PREFIX))
+      else if (methodName.startsWith(IS_PREFIX)
+               && (qualifiedReturnType.equals("boolean") || qualifiedReturnType.equals("java.lang.Boolean")))
       {
          return Introspector.decapitalize(methodName.substring(2));
       }

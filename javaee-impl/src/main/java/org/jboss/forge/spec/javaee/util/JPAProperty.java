@@ -8,6 +8,9 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.Type;
 
+/**
+ * Represents a single instance of a property corresponding to a field and/or a JavaBean style accessor and mutator.
+ */
 public class JPAProperty
 {
 
@@ -22,11 +25,24 @@ public class JPAProperty
       this.name = name;
    }
 
+   /**
+    * The name of the property as governed by the JavaBeans property naming convention. This automatically happens to be
+    * field name. If a property has a getter named <code>getX()</code> then the property name is 'X' (without quotes).
+    * Boolean property getters starting with 'is' are also considered - <code>isX()</code> corresponds to a property
+    * named 'X'.
+    * 
+    * @return The name of the property.
+    */
    public String getName()
    {
       return name;
    }
 
+   /**
+    * Returns a reference to the {@link Field} instance represented by the property.
+    * 
+    * @return The backing field for this property
+    */
    public Field<?> getActualField()
    {
       return actualField;
@@ -37,6 +53,11 @@ public class JPAProperty
       this.actualField = actualField;
    }
 
+   /**
+    * Returns a reference to the accessor {@link Method} instance for this property. 
+    * 
+    * @return The accessor method for this property
+    */
    public Method<JavaClass> getAccessor()
    {
       return accessor;
@@ -47,6 +68,11 @@ public class JPAProperty
       this.accessor = accessor;
    }
 
+   /**
+    * Returns a reference to the mutator {@link Method} instance for this property. 
+    * 
+    * @return The mutator method for this property
+    */
    public Method<JavaClass> getMutator()
    {
       return mutator;
@@ -57,27 +83,64 @@ public class JPAProperty
       this.mutator = mutator;
    }
 
+   /**
+    * Indicates whether a property can be read from via a getter, or not.
+    * 
+    * @return true if the property has a getter, false otherwise
+    */
    public boolean isReadable()
    {
       return accessor != null;
    }
 
+   /**
+    * Indicates whether a property can be writter to via a setter, or not.
+    * 
+    * @return true if the property has a setter, false otherwise
+    */
    public boolean isWritable()
    {
       return mutator != null;
    }
 
+   /**
+    * Indicates whether a property is read only or not.
+    * 
+    * Warning: This method should not be used in isolation without checking whether the property has an accessor.
+    * 
+    * @return true if the property has an accessor only, false otherwise. If no accessor is found, it will return false.
+    */
    public boolean isReadOnly()
    {
-      return isReadable() && !isWritable();
+      if (isReadable())
+      {
+         return !isWritable();
+      }
+      return false;
    }
 
+   /**
+    * Verifies whether the provided annotation is present on the property. Only fields and accessors are considered.
+    * Mutators/setter methods are ignored.
+    * 
+    * @param klass The annotation class whose presence is to be verified
+    * @return true if the annotation is present on the field or the accessor of the property
+    */
    public boolean hasAnnotation(Class<? extends Annotation> klass)
    {
       return (actualField != null && actualField.hasAnnotation(klass))
                || (accessor != null && accessor.hasAnnotation(klass));
    }
 
+   /**
+    * Verifies whether the provided annotation is present on the property at the level of the field or the accessor.
+    * Only fields and accessors are considered. Mutators/setters are not considered valid arguments.
+    * 
+    * @param klass The annotation class whose presence is to be verified
+    * @param type The {@link ElementType} at which the annotation should be specified. Should be either
+    *           {@link ElementType#FIELD} or {@link ElementType#METHOD}.
+    * @return true if the annotation was found on the specified element of the property
+    */
    public boolean hasAnnotation(Class<? extends Annotation> klass, ElementType type)
    {
       if (ElementType.FIELD.equals(type))
@@ -91,11 +154,21 @@ public class JPAProperty
       throw new IllegalArgumentException("Invalid ElementType enum value was provided.");
    }
 
+   /**
+    * Indicates whether the property is transient or not.
+    * 
+    * @return true if the underlying field of the property is transient
+    */
    public boolean isTransient()
    {
       return actualField != null && actualField.isTransient();
    }
 
+   /**
+    * Retrieves the {@link Type} of the property.
+    * 
+    * @return the {@link Type} of the property
+    */
    public Type<?> getType()
    {
       if (actualField != null)
@@ -109,6 +182,11 @@ public class JPAProperty
       throw new IllegalStateException("The property " + name + " is not associated with a field or an accessor");
    }
 
+   /**
+    * Retrieves the simple name of the {@link Type} corresponding to the property.
+    * 
+    * @return the simple name of the property's {@link Type}.
+    */
    public String getSimpleType()
    {
       if (actualField != null)
@@ -122,6 +200,11 @@ public class JPAProperty
       throw new IllegalStateException("The property " + name + " is not associated with a field or an accessor");
    }
 
+   /**
+    * Retrieves the qualified name of the {@link Type} corresponding to the property.
+    * 
+    * @return the qualified name of the property's {@link Type}.
+    */
    public String getQualifiedType()
    {
       if (actualField != null)
@@ -135,19 +218,11 @@ public class JPAProperty
       throw new IllegalStateException("The property " + name + " is not associated with a field or an accessor");
    }
 
-   public Type<?> getTypeInspector()
-   {
-      if (actualField != null)
-      {
-         return actualField.getTypeInspector();
-      }
-      else if (accessor != null)
-      {
-         return accessor.getReturnTypeInspector();
-      }
-      throw new IllegalStateException("The property " + name + " is not associated with a field or an accessor");
-   }
-
+   /**
+    * Indicates whether the underlying field or the accessor returns a Java language primitive type.
+    * 
+    * @return true if the type of the property is a Java language primitive.
+    */
    public boolean isPrimitive()
    {
       return (actualField != null && actualField.isPrimitive())

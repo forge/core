@@ -52,10 +52,6 @@ public class JpaDtoGenerator
          return dtoCollection.getDTOFor(entity, topLevel);
       }
 
-      DTOClassBuilder dtoClassBuilder = new DTOClassBuilder(entity, topLevel)
-               .setPackage(dtoPackage)
-               .setEmbeddedType(isEmbeddedType);
-
       JPAProperty idProperty = null;
       JPABeanIntrospector bean = new JPABeanIntrospector(entity);
       for (JPAProperty property : bean.getProperties())
@@ -63,11 +59,14 @@ public class JpaDtoGenerator
          if (property.hasAnnotation(Id.class))
          {
             idProperty = property;
-            dtoClassBuilder.setIdProperty(idProperty);
             break;
          }
       }
 
+      DTOClassBuilder dtoClassBuilder = new DTOClassBuilder(entity, idProperty, topLevel)
+               .setPackage(dtoPackage)
+               .setEmbeddedType(isEmbeddedType);
+      
       for (JPAProperty property : bean.getProperties())
       {
          if (property.isTransient() || property.hasAnnotation(Transient.class))
