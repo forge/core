@@ -261,8 +261,7 @@ public class RestPluginTest extends AbstractJPATest
       assertEquals("java.util.List", userEndpoint.getMethod("listAll").getQualifiedReturnType());
       Method<JavaClass> findUserByIdMethod = userEndpoint.getMethod("findById", Long.class);
       Type<JavaClass> returnTypeInspector = findUserByIdMethod.getReturnTypeInspector();
-      assertEquals("javax.ws.rs.core.Response", returnTypeInspector
-                        .getQualifiedName());
+      assertEquals("javax.ws.rs.core.Response", returnTypeInspector.getQualifiedName());
 
       JavaResource groupResource = java.getJavaResource(java.getBasePackage() + ".rest.GroupEndpoint");
       JavaClass groupEndpoint = (JavaClass) groupResource.getJavaSource();
@@ -273,8 +272,130 @@ public class RestPluginTest extends AbstractJPATest
       assertEquals("java.util.List", groupEndpoint.getMethod("listAll").getQualifiedReturnType());
       Method<JavaClass> findGroupByIdMethod = userEndpoint.getMethod("findById", Long.class);
       returnTypeInspector = findGroupByIdMethod.getReturnTypeInspector();
-      assertEquals("javax.ws.rs.core.Response", returnTypeInspector
-                        .getQualifiedName());
+      assertEquals("javax.ws.rs.core.Response", returnTypeInspector.getQualifiedName());
+
+      getShell().execute("build");
+   }
+   
+   @Test
+   public void testCreateDTOBasedEndpoint() throws Exception
+   {
+      Project project = getProject();
+      generateEntity(project, null, "User");
+
+      setupRest();
+
+      queueInputLines("");
+      getShell().execute("rest endpoint-from-entity --strategy DTO");
+
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.UserEndpoint");
+      JavaClass endpoint = (JavaClass) resource.getJavaSource();
+
+      assertEquals("/users", endpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("forge-default",
+               endpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
+      assertNotNull(endpoint.getMethod("create","com.test.rest.dto.UserDTO"));
+      assertEquals("java.util.List", endpoint.getMethod("listAll").getQualifiedReturnType());
+      Method<JavaClass> method = endpoint.getMethod("findById", Long.class);
+      Type<JavaClass> returnTypeInspector = method.getReturnTypeInspector();
+      assertEquals("javax.ws.rs.core.Response", returnTypeInspector.getQualifiedName());
+      
+      JavaResource dtoResource = java.getJavaResource(java.getBasePackage() + ".rest.dto.UserDTO");
+      JavaClass dto = (JavaClass) dtoResource.getJavaSource();
+      assertNotNull(dto.getField("id"));
+      assertEquals("Long", dto.getField("id").getType());
+      assertNotNull(dto.getMethod("getId"));
+      assertNotNull(dto.getMethod("setId","Long"));
+      assertNotNull(dto.getField("version"));
+      assertEquals("int", dto.getField("version").getType());
+      assertNotNull(dto.getMethod("getVersion"));
+      assertNotNull(dto.getMethod("setVersion","int"));
+
+      getShell().execute("build");
+   }
+   
+   @Test
+   public void testCreateDTOBasedEndpointWithAssociation() throws Exception
+   {
+      Project project = getProject();
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaClass userEntity = JavaParser.parse(JavaClass.class,
+               RestPluginTest.class.getResourceAsStream("User.java"));
+      userEntity.setPackage(java.getBasePackage() + ".model");
+      java.saveJavaSource(userEntity);
+      JavaClass groupEntity = JavaParser.parse(JavaClass.class,
+               RestPluginTest.class.getResourceAsStream("Group.java"));
+      groupEntity.setPackage(java.getBasePackage() + ".model");
+      java.saveJavaSource(groupEntity);
+
+      getShell().setCurrentResource(java.getJavaResource(groupEntity));
+
+      setupRest();
+
+      queueInputLines("");
+      getShell().execute("rest endpoint-from-entity com.test.model.* --strategy DTO");
+
+      JavaResource userResource = java.getJavaResource(java.getBasePackage() + ".rest.UserEndpoint");
+      JavaClass userEndpoint = (JavaClass) userResource.getJavaSource();
+
+      assertEquals("/users", userEndpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("forge-default",
+               userEndpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
+      assertNotNull(userEndpoint.getMethod("create","com.test.rest.dto.UserDTO"));
+      assertEquals("java.util.List", userEndpoint.getMethod("listAll").getQualifiedReturnType());
+      Method<JavaClass> findUserByIdMethod = userEndpoint.getMethod("findById", Long.class);
+      Type<JavaClass> returnTypeInspector = findUserByIdMethod.getReturnTypeInspector();
+      assertEquals("javax.ws.rs.core.Response", returnTypeInspector.getQualifiedName());
+      
+      JavaResource userDtoResource = java.getJavaResource(java.getBasePackage() + ".rest.dto.UserDTO");
+      JavaClass userDto = (JavaClass) userDtoResource.getJavaSource();
+      assertNotNull(userDto.getField("objectId"));
+      assertEquals("Long", userDto.getField("objectId").getType());
+      assertNotNull(userDto.getMethod("getObjectId"));
+      assertNotNull(userDto.getMethod("setObjectId","Long"));
+      assertNotNull(userDto.getField("version"));
+      assertEquals("int", userDto.getField("version").getType());
+      assertNotNull(userDto.getMethod("getVersion"));
+      assertNotNull(userDto.getMethod("setVersion","int"));
+
+      JavaResource groupResource = java.getJavaResource(java.getBasePackage() + ".rest.GroupEndpoint");
+      JavaClass groupEndpoint = (JavaClass) groupResource.getJavaSource();
+
+      assertEquals("/groups", groupEndpoint.getAnnotation(Path.class).getStringValue());
+      assertEquals("forge-default",
+               groupEndpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
+      assertNotNull(groupEndpoint.getMethod("create","com.test.rest.dto.GroupDTO"));
+      assertEquals("java.util.List", groupEndpoint.getMethod("listAll").getQualifiedReturnType());
+      Method<JavaClass> findGroupByIdMethod = userEndpoint.getMethod("findById", Long.class);
+      returnTypeInspector = findGroupByIdMethod.getReturnTypeInspector();
+      assertEquals("javax.ws.rs.core.Response", returnTypeInspector.getQualifiedName());
+      
+      JavaResource groupDtoResource = java.getJavaResource(java.getBasePackage() + ".rest.dto.GroupDTO");
+      JavaClass groupDto = (JavaClass) groupDtoResource.getJavaSource();
+      assertNotNull(groupDto.getField("objectId"));
+      assertEquals("Long", groupDto.getField("objectId").getType());
+      assertNotNull(groupDto.getMethod("getObjectId"));
+      assertNotNull(groupDto.getMethod("setObjectId","Long"));
+      assertNotNull(groupDto.getField("version"));
+      assertEquals("int", groupDto.getField("version").getType());
+      assertNotNull(groupDto.getMethod("getVersion"));
+      assertNotNull(groupDto.getMethod("setVersion","int"));
+      assertNotNull(groupDto.getField("users"));
+      assertEquals("Set", groupDto.getField("users").getType());
+      assertNotNull(groupDto.getMethod("getUsers"));
+      assertNotNull(groupDto.getMethod("setUsers","Set"));
+      
+      JavaResource nestedUserDtoResource = java.getJavaResource(java.getBasePackage() + ".rest.dto.NestedUserDTO");
+      JavaClass nestedUserDto = (JavaClass) nestedUserDtoResource.getJavaSource();
+      assertNotNull(nestedUserDto.getField("objectId"));
+      assertEquals("Long", nestedUserDto.getField("objectId").getType());
+      assertNotNull(nestedUserDto.getMethod("getObjectId"));
+      assertNotNull(nestedUserDto.getMethod("setObjectId","Long"));
+      assertNotNull(nestedUserDto.getField("version"));
+      assertEquals("int", nestedUserDto.getField("version").getType());
+      assertNotNull(nestedUserDto.getMethod("getVersion"));
+      assertNotNull(nestedUserDto.getMethod("setVersion","int"));
 
       getShell().execute("build");
    }
