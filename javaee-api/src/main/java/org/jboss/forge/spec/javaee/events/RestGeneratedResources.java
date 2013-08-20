@@ -7,6 +7,8 @@
 
 package org.jboss.forge.spec.javaee.events;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.jboss.forge.resources.java.JavaResource;
@@ -15,28 +17,73 @@ import org.jboss.forge.resources.java.JavaResource;
  * @author <a href="mailto:salmon.charles@gmail.com">charless</a>
  * 
  */
-public class RestGeneratedResources {
-	private final List<JavaResource> endpoints;
-	private final List<JavaResource> entities;
-	private final List<JavaResource> dtos;
+public class RestGeneratedResources
+{
+   private final List<JavaResource> endpoints;
+   private final List<JavaResource> entities;
+   private final List<JavaResource> others;
 
-	public RestGeneratedResources(List<JavaResource> entities,
-			List<JavaResource> endpoints, List<JavaResource> dtos) {
-		this.entities = entities;
-		this.endpoints = endpoints;
-		this.dtos = dtos;
-	}
+   public RestGeneratedResources()
+   {
+      this(new ArrayList<JavaResource>(), new ArrayList<JavaResource>(), new ArrayList<JavaResource>());
+   }
 
-	public List<JavaResource> getEndpoints() {
-		return endpoints;
-	}
+   public RestGeneratedResources(List<JavaResource> entities,
+            List<JavaResource> endpoints)
+   {
+      this(entities, endpoints, new ArrayList<JavaResource>());
+   }
 
-	public List<JavaResource> getEntities() {
-		return entities;
-	}
-	
-	public List<JavaResource> getDtos() {
-      return dtos;
+   public RestGeneratedResources(List<JavaResource> entities, List<JavaResource> endpoints, List<JavaResource> others)
+   {
+      this.entities = entities;
+      this.endpoints = endpoints;
+      this.others = others;
+   }
+
+   public List<JavaResource> getEndpoints()
+   {
+      return endpoints;
+   }
+
+   public List<JavaResource> getEntities()
+   {
+      return entities;
+   }
+
+   public List<JavaResource> getOthers()
+   {
+      return others;
+   }
+
+   public void addToEndpoints(JavaResource endpoint)
+   {
+      this.endpoints.add(endpoint);
+   }
+   
+   public void addToEndpoints(Collection<JavaResource> endpoints)
+   {
+      this.endpoints.addAll(endpoints);
+   }
+
+   public void addToEntities(JavaResource entity)
+   {
+      this.entities.add(entity);
+   }
+   
+   public void addToEntities(Collection<JavaResource> entities)
+   {
+      this.entities.addAll(entities);
+   }
+
+   public void addToOthers(JavaResource other)
+   {
+      this.others.add(other);
+   }
+
+   public void addToOthers(Collection<JavaResource> others)
+   {
+      this.others.addAll(others);
    }
 
 }

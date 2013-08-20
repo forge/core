@@ -24,8 +24,15 @@ import org.jboss.forge.spec.javaee.events.RestGeneratedResources;
 public class RestGeneratedResourcesEventObserver {
 	private final List<JavaResource> endpoints = new ArrayList<JavaResource>();
 	private final List<JavaResource> entities = new ArrayList<JavaResource>();
-	private final List<JavaResource> dtos = new ArrayList<JavaResource>();
+	private final List<JavaResource> others = new ArrayList<JavaResource>();
 
+	void reset()
+	{
+	   endpoints.clear();
+	   entities.clear();
+	   others.clear();
+	}
+	
 	void generated(@Observes final RestGeneratedResources event)
 	   {
 			for (JavaResource jr: event.getEndpoints()) {
@@ -34,8 +41,8 @@ public class RestGeneratedResourcesEventObserver {
 			for (JavaResource jr: event.getEntities()) {
 				this.entities.add(jr);
 			}
-			for (JavaResource jr: event.getDtos()) {
-            this.dtos.add(jr);
+			for (JavaResource jr: event.getOthers()) {
+            this.others.add(jr);
          }
 	   }
 
@@ -47,7 +54,7 @@ public class RestGeneratedResourcesEventObserver {
 		return entities;
 	}
 	
-	public List<JavaResource> getDtos() {
-      return dtos;
+	public List<JavaResource> getothers() {
+      return others;
    }
 }

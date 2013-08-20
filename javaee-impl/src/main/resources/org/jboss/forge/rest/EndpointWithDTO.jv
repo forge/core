@@ -1,5 +1,6 @@
 package org.jboss.forge.spec.javaee.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -23,8 +24,9 @@ public class ${entityTable}Endpoint
 
    @POST
    @Consumes("${contentType}")
-   public Response create(${entity.getName()} entity)
+   public Response create(${dto.getName()} dto)
    {
+      ${entity.getName()} entity = dto.fromDTO(null, em);
       em.persist(entity);
       return Response.created(UriBuilder.fromResource(${entityTable}Endpoint.class).path(String.valueOf(entity.${getIdStatement})).build()).build();
    }
@@ -52,22 +54,32 @@ public class ${entityTable}Endpoint
       if (entity == null) {
         return Response.status(Status.NOT_FOUND).build();
       }
-      return Response.ok(entity).build();
+      ${dto.getName()} dto = new ${dto.getName()}(entity);
+      return Response.ok(dto).build();
    }
 
    @GET
    @Produces("${contentType}")
-   public List<${entity.getName()}> listAll()
+   public List<${dto.getName()}> listAll()
    {
-      final List<${entity.getName()}> results = em.createQuery("${selectExpression} ${orderClause}", ${entity.getName()}.class).getResultList();
+      final List<${entity.getName()}> searchResults = em.createQuery("${selectExpression} ${orderClause}", ${entity.getName()}.class).getResultList();
+      final List<${dto.getName()}> results = new ArrayList<${dto.getName()}>();
+      for(${entity.getName()} searchResult: searchResults) {
+        ${dto.getName()} dto = new ${dto.getName()}(searchResult);
+        results.add(dto);
+      }
       return results;
    }
 
    @PUT
    @Path("/{id:[0-9][0-9]*}")
    @Consumes("${contentType}")
-   public Response update(${entity.getName()} entity)
+   public Response update(@PathParam("id") ${idType} id, ${dto.getName()} dto)
    {
+      TypedQuery<${entity.getName()}> findByIdQuery = em.createQuery("${selectExpression} ${idClause} ${orderClause}", ${entity.getName()}.class);
+      findByIdQuery.setParameter("entityId", id);
+      ${entity.getName()} entity = findByIdQuery.getSingleResult();
+      entity = dto.fromDTO(entity, em);
       entity = em.merge(entity);
       return Response.noContent().build();
    }

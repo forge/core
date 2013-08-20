@@ -35,7 +35,7 @@ public class JpaDtoGenerator
    @Inject
    private DTOCollection dtoCollection;
 
-   public DTOCollection from(JavaClass entity, String dtoPackage) throws FileNotFoundException
+   public DTOCollection from(JavaClass entity, String dtoPackage)
    {
       if (entity == null)
       {
@@ -45,9 +45,7 @@ public class JpaDtoGenerator
       return dtoCollection;
    }
 
-   public JavaClass generatedDTOGraphForEntity(JavaClass entity, String dtoPackage, boolean topLevel,
-            boolean isEmbeddedType)
-            throws FileNotFoundException
+   public JavaClass generatedDTOGraphForEntity(JavaClass entity, String dtoPackage, boolean topLevel, boolean isEmbeddedType)
    {
       if (dtoCollection.containsDTOFor(entity, topLevel))
       {
