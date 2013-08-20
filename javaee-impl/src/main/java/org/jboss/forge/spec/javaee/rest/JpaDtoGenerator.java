@@ -45,7 +45,7 @@ public class JpaDtoGenerator
       return dtoCollection;
    }
 
-   public JavaClass generatedDTOGraphForEntity(JavaClass entity, String dtoPackage, boolean topLevel, boolean isEmbeddedType)
+   private JavaClass generatedDTOGraphForEntity(JavaClass entity, String dtoPackage, boolean topLevel, boolean isEmbeddedType)
    {
       if (dtoCollection.containsDTOFor(entity, topLevel))
       {
