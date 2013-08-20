@@ -217,7 +217,7 @@ public class NewFieldPluginTest extends AbstractJPATest
    {
       assertTrue(javaClass.hasField(fieldName));
       Field<JavaClass> imageField = javaClass.getField(fieldName);
-      assertEquals("byte", imageField.getType());
+      assertEquals("byte[]", imageField.getType());
       assertTrue(javaClass.hasImport(Lob.class));
       assertTrue(imageField.hasAnnotation(Lob.class));
       assertTrue(imageField.hasAnnotation(Column.class));
