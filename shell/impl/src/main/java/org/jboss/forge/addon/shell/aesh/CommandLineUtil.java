@@ -17,6 +17,7 @@ import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.ParserBuilder;
 import org.jboss.aesh.cl.builder.OptionBuilder;
 import org.jboss.aesh.cl.exception.OptionParserException;
+import org.jboss.aesh.cl.internal.OptionInt;
 import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
@@ -56,34 +57,40 @@ public class CommandLineUtil
 
       UICommandMetadata metadata = command.getMetadata();
       ParameterInt parameter = new ParameterInt(ShellUtil.shellifyName(metadata.getName()), metadata.getDescription());
+
       for (InputComponent<?, Object> input : inputs.values())
       {
-         if (!input.getName().equals("arguments"))
+         Object defaultValue = InputComponents.getValueFor(input);
+         boolean isMultiple = input instanceof ManyValued;
+         boolean hasValue = (InputComponents.getInputType(input) != InputType.CHECKBOX);
+         try
          {
-            Object defaultValue = InputComponents.getValueFor(input);
-            boolean isMultiple = input instanceof ManyValued;
-            boolean hasValue = (InputComponents.getInputType(input) != InputType.CHECKBOX);
-            try
-            {
-               OptionBuilder optionBuilder = new OptionBuilder();
+            OptionBuilder optionBuilder = new OptionBuilder();
 
-               optionBuilder.name(input.getName())
-                        .defaultValue(defaultValue == null ? null : defaultValue.toString())
-                        .description(input.getLabel())
-                        .hasMultipleValues(isMultiple)
-                        .hasValue(hasValue)
-                        .required(input.isRequired());
+            optionBuilder.name(input.getName())
+                     .defaultValue(defaultValue == null ? null : defaultValue.toString())
+                     .description(input.getLabel())
+                     .hasMultipleValues(isMultiple)
+                     .hasValue(hasValue)
+                     .required(input.isRequired());
 
-               if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
-               {
-                  optionBuilder.shortName(input.getShortName());
-               }
-               parameter.addOption(optionBuilder.create());
-            }
-            catch (OptionParserException e)
+            if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
             {
-               logger.log(Level.SEVERE, "Error while parsing command option", e);
+               optionBuilder.shortName(input.getShortName());
             }
+            OptionInt option = optionBuilder.create();
+            if (input.getName().equals("arguments"))
+            {
+               parameter.setArgument(option);
+            }
+            else
+            {
+               parameter.addOption(option);
+            }
+         }
+         catch (OptionParserException e)
+         {
+            logger.log(Level.SEVERE, "Error while parsing command option", e);
          }
       }
       builder.parameter(parameter);
@@ -100,7 +107,7 @@ public class CommandLineUtil
          if (input.getName().equals("arguments") &&
                   input instanceof UIInputMany)
          {
-            InputComponents.setValueFor(converterFactory, input, commandLine.getArgument());
+            InputComponents.setValueFor(converterFactory, input, commandLine.getArgument().getValue());
          }
          else if (input instanceof UIInputMany)
          {
