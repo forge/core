@@ -15,7 +15,6 @@ import javax.inject.Inject;
 
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
-import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.extensions.manual.Man;
 import org.jboss.aesh.util.Parser;
@@ -127,7 +126,7 @@ public class ManCommand implements UICommand, Completion
                man.attach(((ShellContext) context).getConsoleOutput());
             }
             else
-               console.pushToStdOut("No manual page found for: " + commandName + Config.getLineSeparator());
+               console.out().println("No manual page found for: " + commandName);
 
          }
          catch (Exception ioe)
