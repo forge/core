@@ -14,6 +14,7 @@ import java.lang.annotation.Target;
 
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.util.InputComponents;
 
 /**
  * Allows configuration of {@link InputComponent} injected fields
@@ -29,8 +30,8 @@ public @interface WithAttributes
     * The label of this input
     */
    String label();
-   
-   char shortName() default ' ';
+
+   char shortName() default InputComponents.DEFAULT_SHORT_NAME;
 
    /**
     * Is this input required?
