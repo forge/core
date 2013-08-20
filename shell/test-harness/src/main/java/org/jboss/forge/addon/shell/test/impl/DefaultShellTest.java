@@ -425,7 +425,9 @@ public class DefaultShellTest implements ShellTest
             @Override
             public String call() throws Exception
             {
-               shell.getConsole().clear(true);
+               getStdIn().write(Key.CTRL_U.getFirstValue());
+               provider.getStdOut().reset();
+               provider.getStdErr().reset();
                return null;
             }
          }, 10, TimeUnit.SECONDS, "");

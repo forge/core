@@ -21,8 +21,8 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -57,8 +57,8 @@ public class CommandCompletionTest
    @Inject
    private ShellTest test;
 
-   @Before
-   public void before() throws IOException
+   @After
+   public void after() throws IOException
    {
       test.clearScreen();
    }
@@ -91,8 +91,8 @@ public class CommandCompletionTest
             test.sendCompletionSignal();
             return null;
          }
-      }, 5, TimeUnit.SECONDS, "foocommand --help");
-      Assert.assertEquals("foocommand --help", test.getBuffer().getLine());
+      }, 5, TimeUnit.SECONDS, "foocommand --help ");
+      Assert.assertEquals("foocommand --help ", test.getBuffer().getLine());
    }
 
 }
