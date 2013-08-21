@@ -1,0 +1,5 @@
+== JBoss Forge
+
+JBoss Forge is a shell-based tool for rapid development of JavaEE applications.
+
+Please check the link:http://forge.jboss.org[Official Website] for more details.
