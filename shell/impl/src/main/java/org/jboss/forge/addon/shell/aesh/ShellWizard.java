@@ -17,7 +17,7 @@ import org.jboss.aesh.cl.CommandLineCompletionParser;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
-import org.jboss.aesh.cl.internal.ParameterInt;
+import org.jboss.aesh.cl.internal.CommandInt;
 import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellValidationContext;
@@ -86,9 +86,9 @@ public class ShellWizard extends AbstractShellInteraction
    }
 
    @Override
-   public ParameterInt getParameter()
+   public CommandInt getCommandInt()
    {
-      return fullCommandLineParser.getParameter();
+      return fullCommandLineParser.getCommand();
    }
 
    @Override

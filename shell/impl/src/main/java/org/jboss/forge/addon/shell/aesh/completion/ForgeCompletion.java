@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.ParsedCompleteObject;
-import org.jboss.aesh.cl.internal.ParameterInt;
+import org.jboss.aesh.cl.internal.CommandInt;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
 import org.jboss.forge.addon.shell.ShellImpl;
@@ -61,7 +61,7 @@ public class ForgeCompletion implements Completion
             // We are dealing with one-level commands only.
             // Eg. new-project-type --named ... instead of new-project-type setup --named ...
             cmd.populateInputs(line, true);
-            ParameterInt param = cmd.getParameter();
+            CommandInt param = cmd.getCommandInt();
             ParsedCompleteObject completeObject = cmd.parseCompleteObject(line);
             if (completeObject.doDisplayOptions())
             {

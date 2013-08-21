@@ -13,7 +13,7 @@ import org.jboss.aesh.cl.CommandLineCompletionParser;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
-import org.jboss.aesh.cl.internal.ParameterInt;
+import org.jboss.aesh.cl.internal.CommandInt;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
@@ -63,9 +63,9 @@ public class ShellSingleCommand extends AbstractShellInteraction
    }
 
    @Override
-   public ParameterInt getParameter()
+   public CommandInt getCommandInt()
    {
-      return getParser().getParameter();
+      return getParser().getCommand();
    }
 
    @Override

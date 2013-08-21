@@ -11,7 +11,7 @@ import java.util.Map;
 
 import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
-import org.jboss.aesh.cl.internal.ParameterInt;
+import org.jboss.aesh.cl.internal.CommandInt;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellUIBuilderImpl;
 import org.jboss.forge.addon.shell.util.ShellUtil;
@@ -42,7 +42,7 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
 
    public abstract Map<String, InputComponent<?, Object>> getInputs();
 
-   public abstract ParameterInt getParameter();
+   public abstract CommandInt getCommandInt();
 
    public abstract ParsedCompleteObject parseCompleteObject(String line) throws CommandLineParserException;
 

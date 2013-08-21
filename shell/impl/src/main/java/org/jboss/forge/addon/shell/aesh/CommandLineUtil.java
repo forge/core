@@ -17,8 +17,8 @@ import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.ParserBuilder;
 import org.jboss.aesh.cl.builder.OptionBuilder;
 import org.jboss.aesh.cl.exception.OptionParserException;
+import org.jboss.aesh.cl.internal.CommandInt;
 import org.jboss.aesh.cl.internal.OptionInt;
-import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.util.ShellUtil;
@@ -56,7 +56,7 @@ public class CommandLineUtil
       ParserBuilder builder = new ParserBuilder();
 
       UICommandMetadata metadata = command.getMetadata();
-      ParameterInt parameter = new ParameterInt(ShellUtil.shellifyName(metadata.getName()), metadata.getDescription());
+      CommandInt parameter = new CommandInt(ShellUtil.shellifyName(metadata.getName()), metadata.getDescription());
 
       for (InputComponent<?, Object> input : inputs.values())
       {
@@ -68,7 +68,7 @@ public class CommandLineUtil
             OptionBuilder optionBuilder = new OptionBuilder();
 
             optionBuilder.name(input.getName())
-                     .defaultValue(defaultValue == null ? null : defaultValue.toString())
+                     .addDefaultValue(defaultValue == null ? null : defaultValue.toString())
                      .description(input.getLabel())
                      .hasMultipleValues(isMultiple)
                      .hasValue(hasValue)
