@@ -104,8 +104,7 @@ public class CommandLineUtil
    {
       for (InputComponent<?, Object> input : inputs.values())
       {
-         if (input.getName().equals("arguments") &&
-                  input instanceof UIInputMany)
+         if (input.getName().equals("arguments"))
          {
             InputComponents.setValueFor(converterFactory, input, commandLine.getArgument().getValue());
          }

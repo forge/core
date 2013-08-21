@@ -26,11 +26,11 @@ import org.jboss.forge.addon.ui.result.Result;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class ShellSingleCommand extends AbstractShellCommand
+public class ShellSingleCommand extends AbstractShellInteraction
 {
    private final UICommand command;
-   private final CommandLineParser commandLineParser;
    private final Map<String, InputComponent<?, Object>> inputs;
+   private CommandLineParser commandLineParser;
 
    /**
     * Creates a new {@link ShellSingleCommand} based on the shell and initial selection
@@ -40,7 +40,15 @@ public class ShellSingleCommand extends AbstractShellCommand
       super(command, shellContext, commandLineUtil);
       this.command = command;
       this.inputs = buildInputs(command);
-      this.commandLineParser = commandLineUtil.generateParser(this.command, inputs);
+   }
+
+   private CommandLineParser getParser()
+   {
+      if (this.commandLineParser == null)
+      {
+         this.commandLineParser = commandLineUtil.generateParser(this.command, inputs);
+      }
+      return this.commandLineParser;
    }
 
    public UICommand getCommand()
@@ -57,19 +65,19 @@ public class ShellSingleCommand extends AbstractShellCommand
    @Override
    public ParameterInt getParameter()
    {
-      return commandLineParser.getParameter();
+      return getParser().getParameter();
    }
 
    @Override
    public ParsedCompleteObject parseCompleteObject(String line) throws CommandLineParserException
    {
-      return new CommandLineCompletionParser(commandLineParser).findCompleteObject(line);
+      return new CommandLineCompletionParser(getParser()).findCompleteObject(line);
    }
 
    @Override
    public void populateInputs(String line, boolean lenient) throws CommandLineParserException
    {
-      CommandLine commandLine = this.commandLineParser.parse(line, false, lenient);
+      CommandLine commandLine = getParser().parse(line, false, lenient);
       this.commandLineUtil.populateUIInputs(commandLine, inputs);
    }
 

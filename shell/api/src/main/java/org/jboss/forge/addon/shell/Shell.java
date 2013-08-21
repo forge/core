@@ -9,6 +9,7 @@ package org.jboss.forge.addon.shell;
 import java.io.Closeable;
 
 import org.jboss.aesh.console.Console;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.UIProvider;
 
 /**
@@ -23,6 +24,19 @@ public interface Shell extends UIProvider, Closeable
     * Get the native {@link Console} object.
     */
    public Console getConsole();
+
+   /**
+    * Sets the current working directory
+    * 
+    * @param resource should be a {@link FileResource}
+    * @throws IllegalArgumentException if resource is null
+    */
+   public void setCurrentResource(FileResource<?> resource);
+
+   /**
+    * Returns the current working directory.
+    */
+   public FileResource<?> getCurrentResource();
 
    /**
     * Disposes this Shell object

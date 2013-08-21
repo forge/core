@@ -23,7 +23,7 @@ import org.jboss.forge.addon.ui.result.Result;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public abstract class AbstractShellCommand implements Comparable<AbstractShellCommand>
+public abstract class AbstractShellInteraction implements Comparable<AbstractShellInteraction>
 {
    private final String name;
    private final ShellContext context;
@@ -31,7 +31,7 @@ public abstract class AbstractShellCommand implements Comparable<AbstractShellCo
 
    protected final CommandLineUtil commandLineUtil;
 
-   protected AbstractShellCommand(UICommand root, ShellContext shellContext,
+   protected AbstractShellInteraction(UICommand root, ShellContext shellContext,
             CommandLineUtil commandLineUtil)
    {
       this.root = root;
@@ -82,7 +82,7 @@ public abstract class AbstractShellCommand implements Comparable<AbstractShellCo
    }
 
    @Override
-   public int compareTo(AbstractShellCommand o)
+   public int compareTo(AbstractShellInteraction o)
    {
       return getName().compareTo(o.getName());
    }
@@ -92,10 +92,10 @@ public abstract class AbstractShellCommand implements Comparable<AbstractShellCo
    {
       if (this == o)
          return true;
-      if (!(o instanceof AbstractShellCommand))
+      if (!(o instanceof AbstractShellInteraction))
          return false;
 
-      AbstractShellCommand that = (AbstractShellCommand) o;
+      AbstractShellInteraction that = (AbstractShellInteraction) o;
 
       if (!getName().equals(that.getName()))
          return false;

@@ -44,7 +44,7 @@ public class ForgeConsoleCallback implements ConsoleCallback
          try
          {
             ShellContext context = shell.newShellContext();
-            AbstractShellCommand command = shell.findCommand(context, line);
+            AbstractShellInteraction command = shell.findCommand(context, line);
             if (command == null)
             {
                throw new IOException("Command not found for line: " + line);

@@ -1,0 +1,44 @@
+/**
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
+package org.jboss.forge.addon.shell.commands;
+
+import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
+import org.jboss.forge.addon.shell.ui.ShellContext;
+import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.util.Metadata;
+
+/**
+ * 
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ */
+public class PwdCommand extends AbstractShellCommand
+{
+
+   @Override
+   public void initializeUI(UIBuilder builder) throws Exception
+   {
+      // no arguments
+   }
+
+   @Override
+   public Metadata getMetadata()
+   {
+      return super.getMetadata().name("pwd").description("Print the full filename of the current working directory.");
+   }
+
+   @Override
+   public Result execute(ShellContext shellContext) throws Exception
+   {
+      FileResource<?> currentResource = shellContext.getProvider().getCurrentResource();
+      return Results.success(currentResource.getFullyQualifiedName());
+   }
+
+}

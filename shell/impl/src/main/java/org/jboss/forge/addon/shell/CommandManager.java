@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
-import org.jboss.forge.addon.shell.aesh.AbstractShellCommand;
+import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
 import org.jboss.forge.addon.shell.aesh.CommandLineUtil;
 import org.jboss.forge.addon.shell.aesh.ShellSingleCommand;
 import org.jboss.forge.addon.shell.aesh.ShellWizard;
@@ -39,13 +39,13 @@ public class CommandManager
       return addonRegistry.getServices(type).get();
    }
 
-   public Map<String, AbstractShellCommand> getEnabledShellCommands(ShellContext shellContext)
+   public Map<String, AbstractShellInteraction> getEnabledShellCommands(ShellContext shellContext)
    {
-      Map<String, AbstractShellCommand> commands = new HashMap<String, AbstractShellCommand>();
+      Map<String, AbstractShellInteraction> commands = new HashMap<String, AbstractShellInteraction>();
       CommandLineUtil cmdLineUtil = getCommandLineUtil();
       for (UICommand cmd : Commands.getEnabledCommands(getAllCommands(), shellContext))
       {
-         AbstractShellCommand shellCommand;
+         AbstractShellInteraction shellCommand;
          if (cmd instanceof UIWizard)
          {
             shellCommand = new ShellWizard((UIWizard) cmd, shellContext, cmdLineUtil, this);

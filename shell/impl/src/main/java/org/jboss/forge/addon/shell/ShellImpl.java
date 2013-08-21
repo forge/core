@@ -28,7 +28,7 @@ import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.shell.aesh.AbstractShellCommand;
+import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
 import org.jboss.forge.addon.shell.aesh.ForgeConsoleCallback;
 import org.jboss.forge.addon.shell.aesh.completion.ForgeCompletion;
 import org.jboss.forge.addon.shell.ui.ShellContext;
@@ -38,6 +38,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * Implementation of the {@link Shell} interface.
@@ -150,7 +151,7 @@ public class ShellImpl implements Shell
       return new Prompt(chars);
    }
 
-   public Map<String, AbstractShellCommand> getEnabledShellCommands(ShellContext context)
+   public Map<String, AbstractShellInteraction> getEnabledShellCommands(ShellContext context)
    {
       return commandManager.getEnabledShellCommands(context);
    }
@@ -158,7 +159,7 @@ public class ShellImpl implements Shell
    /**
     * Used in {@link ForgeCompletion} and {@link ForgeConsoleCallback}
     */
-   public AbstractShellCommand findCommand(ShellContext shellContext, String line)
+   public AbstractShellInteraction findCommand(ShellContext shellContext, String line)
    {
       String[] tokens = line.split(" ");
       if (tokens.length >= 1)
@@ -168,16 +169,16 @@ public class ShellImpl implements Shell
       return null;
    }
 
-   public Collection<AbstractShellCommand> findMatchingCommands(ShellContext shellContext, String line)
+   public Collection<AbstractShellInteraction> findMatchingCommands(ShellContext shellContext, String line)
    {
-      Set<AbstractShellCommand> result = new TreeSet<AbstractShellCommand>();
+      Set<AbstractShellInteraction> result = new TreeSet<AbstractShellInteraction>();
 
       String[] tokens = line == null ? new String[0] : line.split(" ");
       if (tokens.length <= 1)
       {
-         Map<String, AbstractShellCommand> commandMap = getEnabledShellCommands(shellContext);
+         Map<String, AbstractShellInteraction> commandMap = getEnabledShellCommands(shellContext);
          String token = (tokens.length == 1) ? tokens[0] : null;
-         for (Entry<String, AbstractShellCommand> entry : commandMap.entrySet())
+         for (Entry<String, AbstractShellInteraction> entry : commandMap.entrySet())
          {
             if (token == null || entry.getKey().startsWith(token))
                result.add(entry.getValue());
@@ -186,7 +187,7 @@ public class ShellImpl implements Shell
       return result;
    }
 
-   public Result execute(AbstractShellCommand shellCommand)
+   public Result execute(AbstractShellInteraction shellCommand)
    {
       Result result = null;
       try
@@ -208,7 +209,7 @@ public class ShellImpl implements Shell
    /**
     * @param shellCommand
     */
-   private void firePreCommandListeners(AbstractShellCommand shellCommand)
+   private void firePreCommandListeners(AbstractShellInteraction shellCommand)
    {
       for (CommandExecutionListener listener : listeners)
       {
@@ -219,7 +220,7 @@ public class ShellImpl implements Shell
    /**
     * @param shellCommand
     */
-   private void firePostCommandListeners(AbstractShellCommand shellCommand, Result result)
+   private void firePostCommandListeners(AbstractShellInteraction shellCommand, Result result)
    {
       for (CommandExecutionListener listener : listeners)
       {
@@ -250,6 +251,19 @@ public class ShellImpl implements Shell
    public ConverterFactory getConverterFactory()
    {
       return commandManager.getConverterFactory();
+   }
+
+   @Override
+   public FileResource<?> getCurrentResource()
+   {
+      return currentResource;
+   }
+
+   @Override
+   public void setCurrentResource(FileResource<?> resource)
+   {
+      Assert.notNull(resource, "Current resource should not be null");
+      this.currentResource = resource;
    }
 
 }

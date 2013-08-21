@@ -17,7 +17,7 @@ import org.jboss.aesh.cl.internal.ParameterInt;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
 import org.jboss.forge.addon.shell.ShellImpl;
-import org.jboss.forge.addon.shell.aesh.AbstractShellCommand;
+import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 
@@ -45,11 +45,11 @@ public class ForgeCompletion implements Completion
    {
       String line = completeOperation.getBuffer();
       ShellContext shellContext = shell.newShellContext();
-      final AbstractShellCommand cmd = shell.findCommand(shellContext, line);
+      final AbstractShellInteraction cmd = shell.findCommand(shellContext, line);
       if (cmd == null)
       {
-         Collection<AbstractShellCommand> commands = shell.findMatchingCommands(shellContext, line);
-         for (AbstractShellCommand command : commands)
+         Collection<AbstractShellInteraction> commands = shell.findMatchingCommands(shellContext, line);
+         for (AbstractShellInteraction command : commands)
          {
             completeOperation.addCompletionCandidate(command.getName());
          }

@@ -35,7 +35,7 @@ import org.jboss.forge.furnace.util.Strings;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class ShellWizard extends AbstractShellCommand
+public class ShellWizard extends AbstractShellInteraction
 {
 
    private LinkedList<UICommand> steps = new LinkedList<UICommand>();
