@@ -93,6 +93,8 @@ public class UIInputImpl<VALUETYPE> extends AbstractInputComponent<UIInput<VALUE
    @Override
    public String toString()
    {
-      return "UIInputImpl [name=" + getName() + ", value=" + value + ", defaultValue=" + defaultValue + "]";
+      return "UIInputImpl [name=" + getName() + ", shortName='" + getShortName() + "', value=" + value
+               + ", defaultValue=" + defaultValue
+               + "]";
    }
 }

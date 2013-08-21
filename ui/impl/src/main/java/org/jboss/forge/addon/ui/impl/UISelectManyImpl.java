@@ -56,6 +56,7 @@ public class UISelectManyImpl<VALUETYPE> extends AbstractUISelectInputComponent<
    @Override
    public String toString()
    {
-      return "UISelectManyImpl [name=" + getName() + ", value=" + value + ", defaultValue=" + defaultValue + "]";
+      return "UISelectManyImpl [name=" + getName() + ", shortName='" + getShortName() + "', value=" + value
+               + ", defaultValue=" + defaultValue + "]";
    }
 }

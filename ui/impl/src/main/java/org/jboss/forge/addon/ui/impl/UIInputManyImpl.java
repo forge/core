@@ -95,6 +95,7 @@ public class UIInputManyImpl<VALUETYPE> extends AbstractInputComponent<UIInputMa
    @Override
    public String toString()
    {
-      return "UIInputManyImpl [name=" + getName() + ", value=" + value + ", defaultValue=" + defaultValue + "]";
+      return "UIInputManyImpl [name=" + getName() + ", shortName='" + getShortName() + "', value=" + value
+               + ", defaultValue=" + defaultValue + "]";
    }
 }
