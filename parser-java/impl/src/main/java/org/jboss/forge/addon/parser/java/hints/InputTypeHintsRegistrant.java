@@ -40,7 +40,7 @@ public class InputTypeHintsRegistrant
       catch (Exception e)
       {
          log.log(Level.FINE,
-                  "Could not register JavaResource InputType hints. Resources addon is probably not loaded yet.", e);
+                  "Could not register parser-java InputType hints. Resources addon is probably not loaded yet.", e);
       }
    }
 }
