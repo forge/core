@@ -38,7 +38,7 @@ public class InputTypeHintsRegistrant
          hints.setInputType(FileResource.class, InputType.FILE_PICKER);
          hints.setInputType(DirectoryResource.class, InputType.DIRECTORY_PICKER);
       }
-      catch (Exception e)
+      catch (Throwable e)
       {
          log.log(Level.FINE,
                   "Could not register resources InputType hints. Resources addon is probably not loaded yet.", e);

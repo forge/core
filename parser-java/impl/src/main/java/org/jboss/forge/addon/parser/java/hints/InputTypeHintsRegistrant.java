@@ -37,7 +37,7 @@ public class InputTypeHintsRegistrant
          HintsLookup hints = new HintsLookup(environment);
          hints.setInputType(JavaResource.class, InputType.JAVA_CLASS_PICKER);
       }
-      catch (Exception e)
+      catch (Throwable e)
       {
          log.log(Level.FINE,
                   "Could not register parser-java InputType hints. Resources addon is probably not loaded yet.", e);
