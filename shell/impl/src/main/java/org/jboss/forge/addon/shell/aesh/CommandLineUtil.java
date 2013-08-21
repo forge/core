@@ -133,13 +133,17 @@ public class CommandLineUtil
       Converter<Object, String> labelConverter = (Converter<Object, String>) InputComponents.getItemLabelConverter(
                converterFactory, input);
       boolean found = false;
-      for (Object choice : input.getValueChoices())
+      Iterable<Object> valueChoices = input.getValueChoices();
+      if (valueChoices != null)
       {
-         if (labelConverter.convert(choice).equals(optionValue))
+         for (Object choice : valueChoices)
          {
-            input.setValue(choice);
-            found = true;
-            break;
+            if (labelConverter.convert(choice).equals(optionValue))
+            {
+               input.setValue(choice);
+               found = true;
+               break;
+            }
          }
       }
 

@@ -1,0 +1,127 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.jboss.forge.addon.shell.parser;
+
+import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import javax.inject.Inject;
+
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.shell.mock.wizard.MockWizardBegin;
+import org.jboss.forge.addon.shell.mock.wizard.MockWizardStep;
+import org.jboss.forge.addon.shell.test.ShellTest;
+import org.jboss.forge.arquillian.AddonDependency;
+import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+/**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
+@RunWith(Arquillian.class)
+public class WizardCompletionTest
+{
+   private static final int TIMEOUT = 500;
+
+   @Deployment
+   @Dependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness")
+   })
+   public static ForgeArchive getDeployment()
+   {
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+               .addClasses(MockWizardBegin.class, MockWizardStep.class)
+               .addBeansXML()
+               .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+               );
+
+      return archive;
+   }
+
+   @Inject
+   private ShellTest test;
+
+   @After
+   public void after() throws IOException
+   {
+      test.clearScreen();
+   }
+
+   @Test
+   public void testWizardInitialStepAutocomplete() throws Exception
+   {
+      completionStep("mockw", "mockwizard ");
+      completionStep("--v", "mockwizard --values ");
+      String stdout = completionStepWithSuggestions("foo --", "mockwizard --values foo --");
+
+      Assert.assertTrue(stdout.contains("--proceed"));
+      Assert.assertTrue(stdout.contains("--key"));
+      Assert.assertFalse(stdout.contains("--selections"));
+      Assert.assertFalse(stdout.contains("--done"));
+
+      completionStep("p", "mockwizard --values foo --proceed ");
+      stdout = completionStepWithSuggestions("--", "mockwizard --values foo --proceed --");
+
+      Assert.assertTrue(stdout.contains("--key"));
+      Assert.assertTrue(stdout.contains("--done"));
+      Assert.assertTrue(stdout.contains("--selections"));
+
+      completionStep("--sel", "mockwizard --values foo --proceed --selections ");
+   }
+
+   private void completionStep(final String write, final String expected) throws TimeoutException
+   {
+      test.waitForBufferValue(new Callable<String>()
+      {
+         @Override
+         public String call() throws Exception
+         {
+            test.write(write);
+            test.sendCompletionSignal();
+            return null;
+         }
+      }, TIMEOUT, TimeUnit.SECONDS, expected);
+      Assert.assertEquals(expected, test.getBuffer().getLine());
+   }
+
+   private String completionStepWithSuggestions(final String write, final String expected) throws TimeoutException
+   {
+      test.waitForStdOutValue(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            test.waitForBufferValue(new Callable<String>()
+            {
+               @Override
+               public String call() throws Exception
+               {
+                  test.write(write);
+                  test.sendCompletionSignal();
+                  return null;
+               }
+            }, TIMEOUT, TimeUnit.SECONDS, expected);
+            Assert.assertEquals(expected, test.getBuffer().getLine());
+            return null;
+         }
+      }, TIMEOUT, TimeUnit.SECONDS, expected);
+
+      return test.getStdOut();
+   }
+
+}

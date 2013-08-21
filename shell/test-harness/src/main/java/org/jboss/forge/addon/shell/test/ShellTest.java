@@ -75,7 +75,15 @@ public interface ShellTest
     * 
     * @throws TimeoutException if the timeout is reached without detecting a write to STDOUT.
     */
-   String waitForStdOutChanged(Callable<?> callable, int quantity, TimeUnit unit) throws TimeoutException;
+   String waitForStdOutChanged(Callable<?> task, int quantity, TimeUnit unit) throws TimeoutException;
+
+   /**
+    * Execute the given {@link Callable} task, waiting for STDOUT to be updated, and assert that it matches the given
+    * value.
+    * 
+    * @throws TimeoutException if the timeout is reached without detecting the expected write to STDOUT.
+    */
+   void waitForStdOutValue(Callable<Void> task, int timeout, TimeUnit unit, String expected) throws TimeoutException;
 
    /**
     * Clear and wait for the next write to STDOUT. Send the provided line to STDIN. Fail if no write occurs within the
@@ -91,6 +99,14 @@ public interface ShellTest
     * @throws TimeoutException if the timeout is reached without detecting a write to STDERR.
     */
    String waitForStdErrChanged(Callable<?> callable, int quantity, TimeUnit unit) throws TimeoutException;
+
+   /**
+    * Execute the given {@link Callable} task, waiting for STDERR to be updated, and assert that it matches the given
+    * value.
+    * 
+    * @throws TimeoutException if the timeout is reached without detecting the expected write to STDERR.
+    */
+   void waitForStdErrValue(Callable<Void> task, int timeout, TimeUnit unit, String expected) throws TimeoutException;
 
    /**
     * Get the STDIN {@link OutputStream} for writing.

@@ -10,6 +10,7 @@ package org.jboss.forge.addon.shell.aesh.completion;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.ParsedCompleteObject;
@@ -60,11 +61,11 @@ public class ForgeCompletion implements Completion
          {
             // We are dealing with one-level commands only.
             // Eg. new-project-type --named ... instead of new-project-type setup --named ...
-            cmd.populateInputs(line, true);
-            CommandInt param = cmd.getCommandInt();
+            // cmd.populateInputs(line, true);
             ParsedCompleteObject completeObject = cmd.parseCompleteObject(line);
             if (completeObject.doDisplayOptions())
             {
+               CommandInt param = cmd.getCommandInt();
                // we have a partial/full name
                if (completeObject.getName() != null && !completeObject.getName().isEmpty())
                {
@@ -110,7 +111,7 @@ public class ForgeCompletion implements Completion
          }
          catch (Exception e)
          {
-            logger.warning(e.getMessage());
+            logger.log(Level.WARNING, "Failed to complete.", e);
             return;
          }
       }

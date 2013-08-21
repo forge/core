@@ -1,0 +1,66 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.jboss.forge.addon.shell.mock.wizard;
+
+import javax.inject.Inject;
+
+import org.jboss.forge.addon.ui.AbstractUICommand;
+import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.input.UISelectMany;
+import org.jboss.forge.addon.ui.input.UISelectOne;
+import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.result.NavigationResult;
+import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.wizard.UIWizardStep;
+
+/**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * 
+ */
+public class MockWizardStep extends AbstractUICommand implements UIWizardStep
+{
+   @Inject
+   @WithAttributes(defaultValue = "false", label = "done")
+   private UISelectOne<Boolean> done;
+
+   @Inject
+   private UISelectMany<String> selections;
+
+   @Override
+   public void initializeUI(UIBuilder builder) throws Exception
+   {
+      builder.add(selections).add(done);
+   }
+
+   @Override
+   public Result execute(UIContext context) throws Exception
+   {
+      return Results.success("Begin step executed.");
+   }
+
+   @Override
+   public void validate(UIValidationContext validator)
+   {
+      if (!done.getValue())
+      {
+         System.out.println("Cannot finish.");
+         validator.addValidationError(done, "Must be --done before continuing.");
+      }
+      else
+         System.out.println("Allowed to finish.");
+   }
+
+   @Override
+   public NavigationResult next(UIContext context) throws Exception
+   {
+      return null;
+   }
+
+}
