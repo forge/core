@@ -57,9 +57,6 @@ public class ShellAddonTest
    }
 
    @Inject
-   private Shell shell;
-
-   @Inject
    private ShellTest test;
 
    @Inject
@@ -68,6 +65,7 @@ public class ShellAddonTest
    @Test
    public void testContainerInjection() throws Exception
    {
+      Shell shell = test.getShell();
       Assert.assertNotNull(shell);
       Assert.assertNotNull(fooCommand);
 

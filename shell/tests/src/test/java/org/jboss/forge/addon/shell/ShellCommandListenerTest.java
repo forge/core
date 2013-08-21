@@ -46,16 +46,12 @@ public class ShellCommandListenerTest
    }
 
    @Inject
-   private Shell shell;
-
-   @Inject
    private ShellTest test;
 
    @Test
    public void testCommandExecutionListenerTriggers() throws Exception
    {
-      Assert.assertNotNull(shell);
-
+      Shell shell = test.getShell();
       MockCommandExecutionListener listener = new MockCommandExecutionListener();
       shell.addCommandExecutionListener(listener);
 
