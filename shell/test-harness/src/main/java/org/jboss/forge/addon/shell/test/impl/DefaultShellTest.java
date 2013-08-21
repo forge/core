@@ -53,7 +53,7 @@ public class DefaultShellTest implements ShellTest
    private Shell shell;
 
    @Override
-   public Shell getTestShell()
+   public Shell getShell()
    {
       if (shell == null)
       {
@@ -66,7 +66,7 @@ public class DefaultShellTest implements ShellTest
    @PostConstruct
    public void init()
    {
-      getTestShell();
+      getShell();
    }
 
    @Override

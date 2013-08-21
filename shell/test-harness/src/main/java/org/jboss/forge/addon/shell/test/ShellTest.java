@@ -34,7 +34,7 @@ public interface ShellTest
    /**
     * Get the underlying test {@link Shell} object.
     */
-   Shell getTestShell();
+   Shell getShell();
 
    /**
     * Execute the given line and return the {@link Result}. Clears STDOUT and STDERR before execution.
