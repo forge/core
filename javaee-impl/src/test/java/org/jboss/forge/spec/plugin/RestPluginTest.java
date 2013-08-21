@@ -286,7 +286,7 @@ public class RestPluginTest extends AbstractJPATest
       setupRest();
 
       queueInputLines("");
-      getShell().execute("rest endpoint-from-entity --strategy DTO");
+      getShell().execute("rest endpoint-from-entity --strategy ROOT_AND_NESTED_DTO");
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       JavaResource resource = java.getJavaResource(java.getBasePackage() + ".rest.UserEndpoint");
@@ -334,7 +334,7 @@ public class RestPluginTest extends AbstractJPATest
       setupRest();
 
       queueInputLines("");
-      getShell().execute("rest endpoint-from-entity com.test.model.* --strategy DTO");
+      getShell().execute("rest endpoint-from-entity com.test.model.* --strategy ROOT_AND_NESTED_DTO");
 
       JavaResource userResource = java.getJavaResource(java.getBasePackage() + ".rest.UserEndpoint");
       JavaClass userEndpoint = (JavaClass) userResource.getJavaSource();

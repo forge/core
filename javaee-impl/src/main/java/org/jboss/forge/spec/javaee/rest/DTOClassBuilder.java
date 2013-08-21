@@ -1,3 +1,9 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.spec.javaee.rest;
 
 import java.io.Serializable;
@@ -20,6 +26,9 @@ import org.jboss.forge.parser.java.util.Types;
 import org.jboss.forge.spec.javaee.util.FreemarkerTemplateProcessor;
 import org.jboss.forge.spec.javaee.util.JPAProperty;
 
+/**
+ * A helper class to aid in creation of DTOs.
+ */
 public class DTOClassBuilder
 {
    private JavaClass dto;
@@ -89,7 +98,7 @@ public class DTOClassBuilder
    {
       // Create a field referencing the type
       addProperty(property, property.getType());
-      
+
       // Add an expression in the ctor to extract the field
       addInitializerFromProperty(property);
       if (!property.equals(idProperty) && property.isWritable())

@@ -76,10 +76,10 @@ public class RestPlugin implements Plugin
    Configuration configuration;
    
    @Inject
-   EntityResourceGenerator entityResourceGenerator;
+   EntityBasedResourceGenerator entityResourceGenerator;
    
    @Inject
-   DTOResourceGenerator dtoResourceGenerator; 
+   RootAndNestedDTOBasedResourceGenerator dtoResourceGenerator; 
 
    @SetupCommand
    public void setup(@Option(name = "activatorType", defaultValue = "WEB_XML") RestActivatorType activatorType,
@@ -145,7 +145,7 @@ public class RestPlugin implements Plugin
          {
             resource = entityResourceGenerator.generateFrom(entity, idType, contentType, generatedResourcesEvent);
          }
-         else if (strategy.equals(ResourceStrategy.DTO))
+         else if (strategy.equals(ResourceStrategy.ROOT_AND_NESTED_DTO))
          {
             resource = dtoResourceGenerator.generateFrom(entity, idType, contentType, generatedResourcesEvent);
          }

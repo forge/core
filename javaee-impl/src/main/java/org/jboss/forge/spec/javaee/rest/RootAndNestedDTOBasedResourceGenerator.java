@@ -1,6 +1,17 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.spec.javaee.rest;
 
-import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.*;
+import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.getEntityTable;
+import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.getIdClause;
+import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.getJpqlEntityVariable;
+import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.getOrderClause;
+import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.getSelectExpression;
+import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.resolveIdGetterName;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,18 +23,24 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.spec.javaee.events.RestGeneratedResources;
 import org.jboss.forge.spec.javaee.util.FreemarkerTemplateProcessor;
 
-public class DTOResourceGenerator
+/**
+ * A JAX-RS resource generator that creates root and nested DTOs for JPA entities, and references these DTOs in the
+ * created REST resources.
+ * 
+ */
+public class RootAndNestedDTOBasedResourceGenerator
 {
    @Inject
    FreemarkerTemplateProcessor processor;
-   
+
    @Inject
-   private JpaDtoGenerator dtoCreator;
-   
+   private RootAndNestedDtoGenerator dtoCreator;
+
    @Inject
    ResourceGeneratorUtil utility;
 
-   public JavaClass generateFrom(JavaClass entity, String idType, String contentType, RestGeneratedResources generatedResourcesEvent)
+   public JavaClass generateFrom(JavaClass entity, String idType, String contentType,
+            RestGeneratedResources generatedResourcesEvent)
    {
       DTOCollection createdDtos = dtoCreator.from(entity, utility.getPackageName() + ".dto");
       generatedResourcesEvent.addToOthers(createdDtos.allResources());

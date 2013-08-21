@@ -1,3 +1,9 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.spec.javaee.rest;
 
 import static org.jboss.forge.spec.javaee.RestApplicationFacet.REST_APPLICATIONCLASS_PACKAGE;
@@ -30,26 +36,31 @@ import org.jboss.forge.spec.javaee.RestApplicationFacet;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.spec.jpa.persistence.PersistenceUnitDef;
 
+/**
+ * A utlity class that provides information about the project or the JPA entity.
+ * This is to be used in the JAX-RS Resource generators.
+ * 
+ */
 public class ResourceGeneratorUtil
 {
    @Inject
    private Project project;
-   
+
    @Inject
    private Configuration configuration;
-   
+
    @Inject
    private JavaSourceFacet java;
-   
+
    @Inject
    private RestResourceTypeVisitor resourceTypeVisitor;
-   
+
    @Inject
    private ShellPrompt prompt;
 
    @Inject
    private ShellPrintWriter writer;
-   
+
    public String getPackageName()
    {
       if (project.hasFacet(RestApplicationFacet.class))
@@ -61,7 +72,7 @@ public class ResourceGeneratorUtil
          return java.getBasePackage() + ".rest";
       }
    }
-   
+
    public String getResourcePath(String entityTable)
    {
       String proposedQualifiedClassName = getPackageName() + "." + entityTable + "Endpoint";
@@ -93,7 +104,7 @@ public class ResourceGeneratorUtil
       }
       return proposedResourcePath;
    }
-   
+
    public String getPersistenceUnitName()
    {
       // This is currently limited to accessing the persistence units of the current project only, and not of
@@ -126,7 +137,7 @@ public class ResourceGeneratorUtil
          return chosenUnit;
       }
    }
-   
+
    public static String resolveIdGetterName(JavaClass entity)
    {
       String result = null;

@@ -22,13 +22,13 @@ public class Child implements Serializable
    private @GeneratedValue(strategy = GenerationType.AUTO)
    @Column(name = "id", updatable = false, nullable = false)
    Long id = null;
-   
+
    @Version
    private @Column(name = "version")
    int version = 0;
-   
+
    private EmbeddableProperty embeddable;
-   
+
    @ManyToOne
    private Association association;
 
@@ -61,7 +61,7 @@ public class Child implements Serializable
    {
       this.embeddable = embeddable;
    }
-   
+
    public Association getAssociation()
    {
       return this.association;
@@ -71,7 +71,7 @@ public class Child implements Serializable
    {
       this.association = association;
    }
-   
+
    public String toString()
    {
       String result = "";

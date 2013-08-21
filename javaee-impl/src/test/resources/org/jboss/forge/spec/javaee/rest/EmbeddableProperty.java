@@ -16,60 +16,69 @@ public class EmbeddableProperty implements Serializable
 
    private String attrA;
    private String attrB;
-   
+
    @ManyToOne
    private AssociationInEmbeddable associationInEmbeddable;
-   
-   public String getAttrA() {
-       return attrA;
+
+   public String getAttrA()
+   {
+      return attrA;
    }
 
-   public void setAttrA(String attrA) {
-       this.attrA = attrA;
+   public void setAttrA(String attrA)
+   {
+      this.attrA = attrA;
    }
 
-   public String getAttrB() {
-       return attrB;
+   public String getAttrB()
+   {
+      return attrB;
    }
 
-   public void setAttrB(String attrB) {
-       this.attrB = attrB;
-   }
-   
-   public AssociationInEmbeddable getAssociationInEmbeddable() {
-       return associationInEmbeddable;
+   public void setAttrB(String attrB)
+   {
+      this.attrB = attrB;
    }
 
-   public void setAssociationInEmbeddable(AssociationInEmbeddable associationInEmbeddable) {
-       this.associationInEmbeddable = associationInEmbeddable;
+   public AssociationInEmbeddable getAssociationInEmbeddable()
+   {
+      return associationInEmbeddable;
    }
 
-   @Override
-   public boolean equals(Object o) {
-       if (this == o)
-           return true;
-       if (o == null || getClass() != o.getClass())
-           return false;
-
-       EmbeddableProperty embeddable = (EmbeddableProperty) o;
-
-       if (attrA != null ? !attrA.equals(embeddable.attrA) : embeddable.attrA != null)
-           return false;
-       if (attrB != null ? !attrB.equals(embeddable.attrB) : embeddable.attrB != null)
-          return false;
-
-       return true;
+   public void setAssociationInEmbeddable(AssociationInEmbeddable associationInEmbeddable)
+   {
+      this.associationInEmbeddable = associationInEmbeddable;
    }
 
    @Override
-   public int hashCode() {
-       int result = attrA != null ? attrA.hashCode() : 0;
-       result = 31 * result + (attrB != null ? attrB.hashCode() : 0);
-       return result;
+   public boolean equals(Object o)
+   {
+      if (this == o)
+         return true;
+      if (o == null || getClass() != o.getClass())
+         return false;
+
+      EmbeddableProperty embeddable = (EmbeddableProperty) o;
+
+      if (attrA != null ? !attrA.equals(embeddable.attrA) : embeddable.attrA != null)
+         return false;
+      if (attrB != null ? !attrB.equals(embeddable.attrB) : embeddable.attrB != null)
+         return false;
+
+      return true;
    }
 
    @Override
-   public String toString() {
-       return attrA + ", " + attrB;
+   public int hashCode()
+   {
+      int result = attrA != null ? attrA.hashCode() : 0;
+      result = 31 * result + (attrB != null ? attrB.hashCode() : 0);
+      return result;
+   }
+
+   @Override
+   public String toString()
+   {
+      return attrA + ", " + attrB;
    }
 }

@@ -1,3 +1,9 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.spec.javaee.util;
 
 import java.beans.Introspector;
@@ -12,6 +18,10 @@ import org.jboss.forge.parser.java.Member;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.Parameter;
 
+/**
+ * Provides a Bean specific 'view' of a JPA entity. Used for obtaining access to JavaBean-like properties for further
+ * inspection.
+ */
 public class JPABean
 {
 
@@ -32,6 +42,11 @@ public class JPABean
       locateProperties();
    }
 
+   /**
+    * Retrieves a list of property instances that correpond to JavaBean-like properties found in the JPA entity
+    * 
+    * @return a {@link List} of {@link JPAProperty} instances found in the JPA entity.
+    */
    public List<JPAProperty> getProperties()
    {
       return new ArrayList<JPAProperty>(propertyCache.values());

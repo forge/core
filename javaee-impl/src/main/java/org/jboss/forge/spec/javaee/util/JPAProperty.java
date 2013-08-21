@@ -1,3 +1,9 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.spec.javaee.util;
 
 import java.lang.annotation.Annotation;
@@ -54,7 +60,7 @@ public class JPAProperty
    }
 
    /**
-    * Returns a reference to the accessor {@link Method} instance for this property. 
+    * Returns a reference to the accessor {@link Method} instance for this property.
     * 
     * @return The accessor method for this property
     */
@@ -69,7 +75,7 @@ public class JPAProperty
    }
 
    /**
-    * Returns a reference to the mutator {@link Method} instance for this property. 
+    * Returns a reference to the mutator {@link Method} instance for this property.
     * 
     * @return The mutator method for this property
     */

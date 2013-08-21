@@ -1,3 +1,9 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.spec.javaee.rest;
 
 import java.io.FileNotFoundException;
@@ -23,7 +29,10 @@ import org.jboss.forge.shell.util.Packages;
 import org.jboss.forge.spec.javaee.util.JPABean;
 import org.jboss.forge.spec.javaee.util.JPAProperty;
 
-public class JpaDtoGenerator
+/**
+ * A DTO generator for JPA entities. Creates Root and Nested DTOs.
+ */
+public class RootAndNestedDtoGenerator
 {
 
    @Inject
@@ -35,6 +44,13 @@ public class JpaDtoGenerator
    @Inject
    private DTOCollection dtoCollection;
 
+   /**
+    * Creates a collection of DTOs for the provided JPA entity, and any JPA entities referenced in the JPA entity.
+    * 
+    * @param entity The JPA entity for which DTOs are to be generated
+    * @param dtoPackage The Java package in which the DTOs are to be created
+    * @return The {@link DTOCollection} containing the DTOs created for the JPA entity.
+    */
    public DTOCollection from(JavaClass entity, String dtoPackage)
    {
       if (entity == null)
@@ -45,7 +61,8 @@ public class JpaDtoGenerator
       return dtoCollection;
    }
 
-   private JavaClass generatedDTOGraphForEntity(JavaClass entity, String dtoPackage, boolean topLevel, boolean isEmbeddedType)
+   private JavaClass generatedDTOGraphForEntity(JavaClass entity, String dtoPackage, boolean topLevel,
+            boolean isEmbeddedType)
    {
       if (dtoCollection.containsDTOFor(entity, topLevel))
       {
@@ -59,7 +76,7 @@ public class JpaDtoGenerator
       DTOClassBuilder dtoClassBuilder = new DTOClassBuilder(entity, idProperty, topLevel)
                .setPackage(dtoPackage)
                .setEmbeddedType(isEmbeddedType);
-      
+
       for (JPAProperty property : bean.getProperties())
       {
          if (property.isTransient() || property.hasAnnotation(Transient.class))

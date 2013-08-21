@@ -18,7 +18,7 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.project.Project;
 import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.resources.java.JavaResource;
-import org.jboss.forge.spec.javaee.rest.JpaDtoGenerator;
+import org.jboss.forge.spec.javaee.rest.RootAndNestedDtoGenerator;
 import org.jboss.forge.spec.jpa.AbstractJPATest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +28,7 @@ public class JpaDtoGeneratorTest extends AbstractJPATest
 {
 
    @Inject
-   private JpaDtoGenerator jpaDtoGenerator;
+   private RootAndNestedDtoGenerator jpaDtoGenerator;
 
    @Test
    public void testCreateDTOBasedEndpoint() throws Exception

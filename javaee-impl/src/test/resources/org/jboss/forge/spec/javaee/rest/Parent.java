@@ -25,16 +25,16 @@ public class Parent implements Serializable
    private @GeneratedValue(strategy = GenerationType.AUTO)
    @Column(name = "id", updatable = false, nullable = false)
    Long objectId = null;
-   
+
    @Version
    private @Column(name = "version")
    int version = 0;
-   
+
    @OneToMany
    private Set<Child> children = new HashSet<Child>();
-   
+
    private EmbeddableProperty embeddable;
-   
+
    @ManyToOne
    private Association association;
 
@@ -57,7 +57,7 @@ public class Parent implements Serializable
    {
       this.version = version;
    }
-   
+
    public Set<Child> getChildren()
    {
       return this.children;
@@ -67,7 +67,7 @@ public class Parent implements Serializable
    {
       this.children = children;
    }
-   
+
    public EmbeddableProperty getEmbeddable()
    {
       return this.embeddable;
@@ -77,7 +77,7 @@ public class Parent implements Serializable
    {
       this.embeddable = embeddable;
    }
-   
+
    public Association getAssociation()
    {
       return this.association;

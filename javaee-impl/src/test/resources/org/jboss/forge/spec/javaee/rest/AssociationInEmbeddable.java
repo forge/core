@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -22,11 +22,11 @@ public class AssociationInEmbeddable implements Serializable
    private @GeneratedValue(strategy = GenerationType.AUTO)
    @Column(name = "id", updatable = false, nullable = false)
    Long id = null;
-   
+
    @Version
    private @Column(name = "version")
    int version = 0;
-   
+
    @OneToOne
    private Parent parent;
 
@@ -49,7 +49,7 @@ public class AssociationInEmbeddable implements Serializable
    {
       this.version = version;
    }
-   
+
    public Parent getParent()
    {
       return this.parent;

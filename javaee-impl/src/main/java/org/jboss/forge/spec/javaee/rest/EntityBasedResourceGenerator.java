@@ -1,6 +1,17 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.spec.javaee.rest;
 
-import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.*;
+import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.getEntityTable;
+import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.getIdClause;
+import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.getJpqlEntityVariable;
+import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.getOrderClause;
+import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.getSelectExpression;
+import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.resolveIdGetterName;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,18 +24,22 @@ import org.jboss.forge.project.facets.JavaSourceFacet;
 import org.jboss.forge.spec.javaee.events.RestGeneratedResources;
 import org.jboss.forge.spec.javaee.util.FreemarkerTemplateProcessor;
 
-public class EntityResourceGenerator
+/**
+ * A JAX-RS resource generator that uses JPA entities directly in the created REST resources.
+ */
+public class EntityBasedResourceGenerator
 {
    @Inject
    FreemarkerTemplateProcessor processor;
-   
+
    @Inject
    JavaSourceFacet java;
-   
+
    @Inject
    ResourceGeneratorUtil utility;
 
-   public JavaClass generateFrom(JavaClass entity, String idType, String contentType, RestGeneratedResources generatedResourcesEvent)
+   public JavaClass generateFrom(JavaClass entity, String idType, String contentType,
+            RestGeneratedResources generatedResourcesEvent)
    {
       String idGetterName = resolveIdGetterName(entity);
       String persistenceUnitName = utility.getPersistenceUnitName();
