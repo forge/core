@@ -58,7 +58,7 @@ public class ForgeConsoleCallback implements ConsoleCallback
                throw new IOException(e);
             }
             Result result = shell.execute(command);
-            if (result != null)
+            if (result != null && result.getMessage() != null)
             {
                shell.getConsole().out().println(result.getMessage());
             }
