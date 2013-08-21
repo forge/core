@@ -12,7 +12,7 @@ import org.jboss.forge.parser.java.Member;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.Parameter;
 
-public class JPABeanIntrospector
+public class JPABean
 {
 
    private static final String GET_PREFIX = "get";
@@ -25,7 +25,7 @@ public class JPABeanIntrospector
 
    private Map<String, JPAProperty> propertyCache = new HashMap<String, JPAProperty>();
 
-   public JPABeanIntrospector(final JavaClass entity)
+   public JPABean(final JavaClass entity)
    {
       this.entity = entity;
       this.members = this.entity.getMembers();

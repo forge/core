@@ -20,7 +20,7 @@ public class JPABeanIntrospectorTest
                         "public class Test{ " +
                         "  @Id private Long id;" +
                         "}");
-      JPABeanIntrospector bean = new JPABeanIntrospector(entity);
+      JPABean bean = new JPABean(entity);
       assertThat(bean.getProperties(), hasItem(new JPAProperty("id")));
       assertThat(bean.getProperties().get(0).isReadable(), equalTo(false));
       assertThat(bean.getProperties().get(0).isWritable(), equalTo(false));
@@ -38,7 +38,7 @@ public class JPABeanIntrospectorTest
                         "  public Long getId() {" +
                         "  } " +
                         "}");
-      JPABeanIntrospector bean = new JPABeanIntrospector(entity);
+      JPABean bean = new JPABean(entity);
       assertThat(bean.getProperties(), hasItem(new JPAProperty("id")));
       assertThat(bean.getProperties().get(0).isReadable(), equalTo(true));
       assertThat(bean.getProperties().get(0).isWritable(), equalTo(false));
@@ -55,7 +55,7 @@ public class JPABeanIntrospectorTest
                         "public class Test{ " +
                         "  private Boolean flag;" +
                         "}");
-      JPABeanIntrospector bean = new JPABeanIntrospector(entity);
+      JPABean bean = new JPABean(entity);
       assertThat(bean.getProperties(), hasItem(new JPAProperty("flag")));
       assertThat(bean.getProperties().get(0).isReadable(), equalTo(false));
       assertThat(bean.getProperties().get(0).isWritable(), equalTo(false));
@@ -71,7 +71,7 @@ public class JPABeanIntrospectorTest
                         "  public Boolean isFlag() {" +
                         "  } " +
                         "}");
-      JPABeanIntrospector bean = new JPABeanIntrospector(entity);
+      JPABean bean = new JPABean(entity);
       assertThat(bean.getProperties(), hasItem(new JPAProperty("flag")));
       assertThat(bean.getProperties().get(0).isReadable(), equalTo(true));
       assertThat(bean.getProperties().get(0).isWritable(), equalTo(false));
@@ -87,7 +87,7 @@ public class JPABeanIntrospectorTest
                         "public class Test{ " +
                         "  private boolean flag;" +
                         "}");
-      JPABeanIntrospector bean = new JPABeanIntrospector(entity);
+      JPABean bean = new JPABean(entity);
       assertThat(bean.getProperties(), hasItem(new JPAProperty("flag")));
       assertThat(bean.getProperties().get(0).isReadable(), equalTo(false));
       assertThat(bean.getProperties().get(0).isWritable(), equalTo(false));
@@ -102,7 +102,7 @@ public class JPABeanIntrospectorTest
                         "public class Test{" +
                         "  public static boolean isFlag;" +
                         "}");
-      JPABeanIntrospector bean = new JPABeanIntrospector(entity);
+      JPABean bean = new JPABean(entity);
       assertThat(bean.getProperties().size(), equalTo(0));
    }
    
@@ -115,7 +115,7 @@ public class JPABeanIntrospectorTest
                         "  public static Boolean isFlag() {" +
                         "  } " +
                         "}");
-      JPABeanIntrospector bean = new JPABeanIntrospector(entity);
+      JPABean bean = new JPABean(entity);
       assertThat(bean.getProperties().size(), equalTo(0));
    }
 }

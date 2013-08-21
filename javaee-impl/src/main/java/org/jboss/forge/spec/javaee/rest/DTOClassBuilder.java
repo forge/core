@@ -60,14 +60,14 @@ public class DTOClassBuilder
    }
 
    public DTOClassBuilder updateForCollectionProperty(JPAProperty property, JavaClass nestedDTOClass,
-            Type<?> parameterizedType)
+            Type<?> parameterizedType, JPAProperty nestedDTOId)
    {
       // Create a collection field referencing the DTO
       addCollectionProperty(property, nestedDTOClass);
 
       // Add an expression in the ctor to extract the collection
       addInitializerFromCollection(property, nestedDTOClass, parameterizedType);
-      addCollectionAssembler(property, parameterizedType, nestedDTOClass);
+      addCollectionAssembler(property, parameterizedType, nestedDTOClass, nestedDTOId);
       return this;
    }
 
@@ -268,14 +268,13 @@ public class DTOClassBuilder
    }
 
    private void addCollectionAssembler(JPAProperty property, Type<?> parameterizedType,
-            JavaClass nestedDTOClass)
+            JavaClass nestedDTOClass, JPAProperty nestedDtoId)
    {
       String fieldName = property.getName();
       String simpleParameterizedType = parameterizedType.getName();
 
       Map<Object, Object> map = new HashMap<Object, Object>();
-      map.put("id", idProperty.getName());
-      map.put("idGetter", idProperty.getAccessor().getName() + "()");
+      map.put("reverseIdGetter", nestedDtoId.getAccessor().getName() + "()");
       map.put("fieldName", fieldName);
       map.put("fieldGetter", property.getAccessor().getName() + "()");
       map.put("nestedDTOType", nestedDTOClass.getName());

@@ -20,7 +20,7 @@ import org.jboss.forge.resources.java.JavaResource;
 import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.util.Packages;
-import org.jboss.forge.spec.javaee.util.JPABeanIntrospector;
+import org.jboss.forge.spec.javaee.util.JPABean;
 import org.jboss.forge.spec.javaee.util.JPAProperty;
 
 public class JpaDtoGenerator
@@ -53,15 +53,8 @@ public class JpaDtoGenerator
       }
 
       JPAProperty idProperty = null;
-      JPABeanIntrospector bean = new JPABeanIntrospector(entity);
-      for (JPAProperty property : bean.getProperties())
-      {
-         if (property.hasAnnotation(Id.class))
-         {
-            idProperty = property;
-            break;
-         }
-      }
+      JPABean bean = new JPABean(entity);
+      idProperty = parseIdPropertyForJPAEntity(bean);
 
       DTOClassBuilder dtoClassBuilder = new DTOClassBuilder(entity, idProperty, topLevel)
                .setPackage(dtoPackage)
@@ -117,7 +110,9 @@ public class JpaDtoGenerator
 
             JavaClass nestedDTOClass = generatedDTOGraphForEntity(parameterizedClass, dtoPackage, false, false);
             // Then update the DTO for the collection field
-            dtoClassBuilder.updateForCollectionProperty(property, nestedDTOClass, type);
+            JPABean parameterizedClassBean = new JPABean(parameterizedClass);
+            JPAProperty nestedDtoId = parseIdPropertyForJPAEntity(parameterizedClassBean);
+            dtoClassBuilder.updateForCollectionProperty(property, nestedDTOClass, type, nestedDtoId);
          }
          else if (hasAssociation)
          {
@@ -162,6 +157,18 @@ public class JpaDtoGenerator
          dtoCollection.addNestedDTO(entity, dtoClass);
       }
       return dtoClass;
+   }
+
+   private JPAProperty parseIdPropertyForJPAEntity(JPABean bean)
+   {
+      for (JPAProperty property : bean.getProperties())
+      {
+         if (property.hasAnnotation(Id.class))
+         {
+            return property;
+         }
+      }
+      return null;
    }
 
    private JavaClass tryGetJavaClass(String qualifiedFieldType)
