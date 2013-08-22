@@ -96,19 +96,22 @@ public class ShellWizard extends AbstractShellInteraction
    {
       List<String> result = new ArrayList<String>();
       boolean unvalued = Strings.isNullOrEmpty(typed);
-      int idx = steps.size() - 1;
-      STEP: for (; idx > 0; idx--)
+      int size = steps.size();
+
+      int idx;
+
+      STEP_LOOP: for (idx = size - 1; idx > 0; idx--)
       {
          for (String option : steps.get(idx).inputs.keySet())
          {
             if (line.contains("--" + option))
             {
-               break STEP;
+               break STEP_LOOP;
             }
          }
       }
       Set<String> candidates = new HashSet<String>();
-      for (int i = idx; i < steps.size(); i++)
+      for (int i = idx; i < size; i++)
       {
          candidates.addAll(steps.get(i).inputs.keySet());
       }
@@ -116,8 +119,7 @@ public class ShellWizard extends AbstractShellInteraction
       {
          if (unvalued || option.startsWith(typed))
          {
-            String dashedOption = "--" + option;
-            result.add(dashedOption);
+            result.add("--" + option);
          }
       }
       removeExistingOptions(line, result);
