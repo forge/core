@@ -20,8 +20,6 @@ import org.jboss.aesh.cl.CommandLineCompletionParser;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
-import org.jboss.aesh.terminal.CharacterType;
-import org.jboss.aesh.terminal.TerminalString;
 import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellValidationContext;
@@ -121,10 +119,10 @@ public class ShellWizard extends AbstractShellInteraction
             String dashedOption = "--" + option;
             if ((unvalued || option.startsWith(typed)) && !line.contains(dashedOption))
             {
-               if (entry.getValue().isRequired())
-               {
-                  dashedOption = new TerminalString(dashedOption, CharacterType.BOLD).toString();
-               }
+//               if (entry.getValue().isRequired())
+//               {
+//                  dashedOption = new TerminalString(dashedOption, CharacterType.BOLD).toString();
+//               }
                result.add(dashedOption);
             }
          }
