@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.shell.aesh;
 
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.aesh.cl.CommandLine;
@@ -15,6 +16,7 @@ import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
 import org.jboss.aesh.cl.internal.CommandInt;
 import org.jboss.forge.addon.shell.ui.ShellContext;
+import org.jboss.forge.addon.shell.ui.ShellValidationContext;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.Result;
@@ -85,5 +87,18 @@ public class ShellSingleCommand extends AbstractShellInteraction
    public Result execute() throws Exception
    {
       return command.execute(getContext());
+   }
+
+   @Override
+   public List<String> validate()
+   {
+      ShellValidationContext validationContext = new ShellValidationContext(getContext());
+      for (InputComponent<?, Object> input : inputs.values())
+      {
+         input.validate(validationContext);
+      }
+      command.validate(validationContext);
+
+      return validationContext.getErrors();
    }
 }

@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.shell.aesh;
 
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.aesh.cl.ParsedCompleteObject;
@@ -47,6 +48,12 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
    public abstract ParsedCompleteObject parseCompleteObject(String line) throws CommandLineParserException;
 
    public abstract void populateInputs(String line, boolean lenient) throws CommandLineParserException;
+
+   /**
+    * Returns the error messages
+    * @return
+    */
+   public abstract List<String> validate();
 
    public abstract Result execute() throws Exception;
 

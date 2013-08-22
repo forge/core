@@ -104,14 +104,7 @@ public class ShellWizard extends AbstractShellInteraction
       CommandLineParser parser = commandLineUtil.generateParser(root, inputs);
       CommandLine cmdLine = parser.parse(line, lenient, lenient);
       commandLineUtil.populateUIInputs(cmdLine, inputs);
-      ShellValidationContext validationContext = new ShellValidationContext(getContext());
-      List<String> errors = validationContext.getErrors();
-      
-      for (InputComponent<?, Object> input : inputs.values())
-      {
-         input.validate(validationContext);
-      }
-      current.validate(validationContext);
+      List<String> errors = validate();
       if (errors.isEmpty())
       {
          NavigationResult next = current.next(getContext());
@@ -143,5 +136,20 @@ public class ShellWizard extends AbstractShellInteraction
          result = cmd.execute(getContext());
       }
       return result;
+   }
+
+   @Override
+   public List<String> validate()
+   {
+      ShellValidationContext validationContext = new ShellValidationContext(getContext());
+      for (InputComponent<?, Object> input : inputs.values())
+      {
+         input.validate(validationContext);
+      }
+      for (UICommand cmd : steps)
+      {
+         cmd.validate(validationContext);
+      }
+      return validationContext.getErrors();
    }
 }

@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.shell.aesh;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.jboss.aesh.cl.exception.CommandLineParserException;
 import org.jboss.aesh.console.Console;
@@ -59,10 +60,22 @@ public class ForgeConsoleCallback implements ConsoleCallback
             {
                throw new IOException(e);
             }
-            Result result = shell.execute(command);
-            if (result != null && result.getMessage() != null)
+            List<String> errors = command.validate();
+            if (errors.isEmpty())
             {
-               console.out().println(result.getMessage());
+               Result result = shell.execute(command);
+               if (result != null && result.getMessage() != null)
+               {
+                  console.out().println(result.getMessage());
+               }
+            }
+            else
+            {
+               // Display the error messages
+               for (String error : errors)
+               {
+                  console.err().println("**ERROR**: " + error);
+               }
             }
          }
          catch (Exception e)
