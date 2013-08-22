@@ -23,5 +23,5 @@ public interface UIValidator
     * 
     * @param validator the {@link UIValidationContext} object that holds validation errors
     */
-   public abstract void validate(UIValidationContext validator);
+   public abstract void validate(UIValidationContext context);
 }
