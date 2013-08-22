@@ -64,9 +64,6 @@ public class ShellCommandListenerTest
          Assert.assertTrue("Timed out.", System.currentTimeMillis() - start < 5000);
       }
 
-      System.out.println("OUT:" + test.getStdOut().toString());
-      System.out.println("ERR:" + test.getStdErr().toString());
-
       Assert.assertTrue(listener.isPreExecuted());
       Assert.assertTrue(listener.isPostExecuted());
    }
