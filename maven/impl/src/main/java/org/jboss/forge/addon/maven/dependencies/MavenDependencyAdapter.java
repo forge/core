@@ -85,7 +85,7 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
       this.setOptional(dep.isOptional());
       this.setScope(dep.getScope());
       this.setType(dep.getArtifact().getExtension());
-      this.setVersion(dep.getArtifact().getVersion());
+      this.setVersion(dep.getArtifact().getBaseVersion());
    }
 
    @Override
