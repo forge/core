@@ -9,7 +9,18 @@ package org.jboss.forge.addon.ui.context;
 
 import org.jboss.forge.addon.ui.input.InputComponent;
 
+/**
+ * Stores information about validation.
+ * 
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ */
 public interface UIValidationContext extends UIContextProvider
 {
+   /**
+    * Implementations should call this method to let the UI provider aware of possible errors
+    * 
+    * @param input
+    * @param errorMessage
+    */
    public void addValidationError(InputComponent<?, ?> input, String errorMessage);
 }
