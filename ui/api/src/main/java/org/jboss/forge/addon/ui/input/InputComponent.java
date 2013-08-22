@@ -10,6 +10,7 @@ import java.util.concurrent.Callable;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.MutableFaceted;
+import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.furnace.services.Exported;
 
@@ -19,17 +20,16 @@ import org.jboss.forge.furnace.services.Exported;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Exported
-public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<HintsFacet>
+public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<HintsFacet>, UIValidator
 {
    String getLabel();
 
    String getName();
 
-
    String getDescription();
 
    Class<VALUETYPE> getValueType();
-
+   
    boolean isEnabled();
 
    boolean isRequired();
@@ -37,6 +37,8 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
    String getRequiredMessage();
 
    char getShortName();
+   
+   UIValidator getValidator();
 
    IMPLTYPE setEnabled(boolean b);
 
@@ -55,5 +57,7 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
    Converter<String, VALUETYPE> getValueConverter();
 
    IMPLTYPE setValueConverter(Converter<String, VALUETYPE> converter);
+   
+   IMPLTYPE setValidator(UIValidator validator);
 
 }

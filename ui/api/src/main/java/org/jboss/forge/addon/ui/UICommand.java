@@ -11,7 +11,6 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
@@ -24,7 +23,7 @@ import org.jboss.forge.furnace.services.Exported;
  * 
  */
 @Exported
-public interface UICommand
+public interface UICommand extends UIValidator
 {
    /**
     * @return The Metadata of this command. Should never return null
@@ -47,13 +46,6 @@ public interface UICommand
     * @throws Exception if anything wrong happens
     */
    public void initializeUI(UIBuilder builder) throws Exception;
-
-   /**
-    * Should validate against the current {@link UIInput} values supplied in the {@link UICommand} implementation class.
-    * 
-    * @param validator the {@link UIValidationContext} object that holds validation errors
-    */
-   public void validate(UIValidationContext validator);
 
    /**
     * Called when the {@link UICommand} should be executed.

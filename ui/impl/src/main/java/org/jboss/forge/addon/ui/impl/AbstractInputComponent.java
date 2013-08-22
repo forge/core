@@ -13,10 +13,15 @@ import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.AbstractFaceted;
+import org.jboss.forge.addon.ui.UIValidator;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.util.Callables;
+
+import com.google.common.base.Strings;
 
 /**
  * Implementation of a {@link UIInput} object
@@ -41,6 +46,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    private String requiredMessage;
 
    private Converter<String, VALUETYPE> valueConverter;
+   private UIValidator validator;
 
    public AbstractInputComponent(String name, char shortName, Class<VALUETYPE> type)
    {
@@ -60,7 +66,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    {
       return name;
    }
-   
+
    @Override
    public char getShortName()
    {
@@ -163,5 +169,32 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    {
       this.valueConverter = converter;
       return (IMPLTYPE) this;
+   }
+
+   @Override
+   public IMPLTYPE setValidator(UIValidator validator)
+   {
+      this.validator = validator;
+      return (IMPLTYPE) this;
+   }
+
+   @Override
+   public UIValidator getValidator()
+   {
+      return this.validator;
+   }
+
+   @Override
+   public void validate(UIValidationContext validator)
+   {
+      String msg = InputComponents.validateRequired(this);
+      if (!Strings.isNullOrEmpty(msg))
+      {
+         validator.addValidationError(this, msg);
+      }
+      if (this.validator != null)
+      {
+         this.validator.validate(validator);
+      }
    }
 }
