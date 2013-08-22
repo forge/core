@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.shell.aesh;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
 
    public abstract Map<String, InputComponent<?, Object>> getInputs();
 
-   public abstract List<String> getCompletionOptions(String typed);
+   public abstract List<String> getCompletionOptions(String typed, String line);
 
    public abstract ParsedCompleteObject parseCompleteObject(String line) throws CommandLineParserException;
 
@@ -50,6 +51,7 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
 
    /**
     * Returns the error messages
+    * 
     * @return
     */
    public abstract List<String> validate();
@@ -120,5 +122,17 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
    {
       return getName();
    }
-   
+
+   protected void removeExistingOptions(String commandLine, Iterable<String> availableOptions)
+   {
+      Iterator<String> it = availableOptions.iterator();
+      while (it.hasNext())
+      {
+         if (commandLine.contains(it.next()))
+         {
+            it.remove();
+         }
+      }
+   }
+
 }

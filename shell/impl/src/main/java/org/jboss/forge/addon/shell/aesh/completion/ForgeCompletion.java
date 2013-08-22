@@ -8,7 +8,6 @@
 package org.jboss.forge.addon.shell.aesh.completion;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,8 +63,7 @@ public class ForgeCompletion implements Completion
             ParsedCompleteObject completeObject = cmd.parseCompleteObject(line);
             if (completeObject.doDisplayOptions())
             {
-               List<String> options = cmd.getCompletionOptions(completeObject.getName());
-               removeExistingOptions(line, options);
+               List<String> options = cmd.getCompletionOptions(completeObject.getName(), line);
                completeOperation.addCompletionCandidates(options);
                if (completeOperation.getCompletionCandidates().size() == 1)
                {
@@ -101,18 +99,6 @@ public class ForgeCompletion implements Completion
          {
             logger.log(Level.WARNING, "Failed to complete.", e);
             return;
-         }
-      }
-   }
-
-   private void removeExistingOptions(String commandLine, Iterable<String> availableOptions)
-   {
-      Iterator<String> it = availableOptions.iterator();
-      while (it.hasNext())
-      {
-         if (commandLine.contains(it.next()))
-         {
-            it.remove();
          }
       }
    }

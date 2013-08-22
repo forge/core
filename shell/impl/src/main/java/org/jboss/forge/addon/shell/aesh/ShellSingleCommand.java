@@ -65,7 +65,7 @@ public class ShellSingleCommand extends AbstractShellInteraction
    }
 
    @Override
-   public List<String> getCompletionOptions(String typed)
+   public List<String> getCompletionOptions(String typed, String line)
    {
       List<String> result;
       if (Strings.isNullOrEmpty(typed))
@@ -76,6 +76,7 @@ public class ShellSingleCommand extends AbstractShellInteraction
       {
          result = getParser().getCommand().findPossibleLongNamesWitdDash(typed);
       }
+      removeExistingOptions(line, result);
       return result;
    }
 

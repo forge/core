@@ -8,10 +8,12 @@
 package org.jboss.forge.addon.shell.aesh;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineCompletionParser;
@@ -55,11 +57,6 @@ public class ShellWizard extends AbstractShellInteraction
    @Override
    public Map<String, InputComponent<?, Object>> getInputs()
    {
-      return steps.peekLast().inputs;
-   }
-
-   private Map<String, InputComponent<?, Object>> getAllInputs()
-   {
       Map<String, InputComponent<?, Object>> inputs = new LinkedHashMap<String, InputComponent<?, Object>>();
       for (ShellWizardStep step : steps)
       {
@@ -95,17 +92,35 @@ public class ShellWizard extends AbstractShellInteraction
     * Used for auto-completion of the options only
     */
    @Override
-   public List<String> getCompletionOptions(String typed)
+   public List<String> getCompletionOptions(String typed, String line)
    {
       List<String> result = new ArrayList<String>();
-      boolean nullOrEmpty = Strings.isNullOrEmpty(typed);
-      for (String option : getInputs().keySet())
+      boolean unvalued = Strings.isNullOrEmpty(typed);
+      int idx = steps.size() - 1;
+      STEP: for (; idx > 0; idx--)
       {
-         if (nullOrEmpty || option.startsWith(typed))
+         for (String option : steps.get(idx).inputs.keySet())
          {
-            result.add("--" + option);
+            if (line.contains("--" + option))
+            {
+               break STEP;
+            }
          }
       }
+      Set<String> candidates = new HashSet<String>();
+      for (int i = idx; i < steps.size(); i++)
+      {
+         candidates.addAll(steps.get(i).inputs.keySet());
+      }
+      for (String option : candidates)
+      {
+         if (unvalued || option.startsWith(typed))
+         {
+            String dashedOption = "--" + option;
+            result.add(dashedOption);
+         }
+      }
+      removeExistingOptions(line, result);
       return result;
    }
 
@@ -121,7 +136,7 @@ public class ShellWizard extends AbstractShellInteraction
    private CommandLineParser populate(UIWizard root, UIWizard current, String line, boolean lenient) throws Exception
    {
       addWizardStep(current);
-      Map<String, InputComponent<?, Object>> inputs = getAllInputs();
+      Map<String, InputComponent<?, Object>> inputs = getInputs();
       CommandLineParser parser = commandLineUtil.generateParser(root, inputs);
       CommandLine cmdLine = parser.parse(line, lenient, lenient);
       commandLineUtil.populateUIInputs(cmdLine, inputs);
