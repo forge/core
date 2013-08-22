@@ -25,10 +25,8 @@ import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Encapsulates a group of {@link ShellSingleCommand} from a {@link UIWizard}
@@ -108,19 +106,12 @@ public class ShellWizard extends AbstractShellInteraction
       commandLineUtil.populateUIInputs(cmdLine, inputs);
       ShellValidationContext validationContext = new ShellValidationContext(getContext());
       List<String> errors = validationContext.getErrors();
-
+      
       for (InputComponent<?, Object> input : inputs.values())
       {
-         String requiredMsg = InputComponents.validateRequired(input);
-         if (!Strings.isNullOrEmpty(requiredMsg))
-         {
-            errors.add(requiredMsg);
-         }
+         input.validate(validationContext);
       }
-      if (errors.isEmpty())
-      {
-         current.validate(validationContext);
-      }
+      current.validate(validationContext);
       if (errors.isEmpty())
       {
          NavigationResult next = current.next(getContext());
