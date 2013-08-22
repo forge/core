@@ -66,24 +66,24 @@ public class WizardCompletionTest
    public void testWizardInitialStepAutocomplete() throws Exception
    {
       test.clearScreen();
-      completionStep("mockw", "mockwizard ");
-      completionStep("--v", "mockwizard --values ");
-      String stdout = completionStepWithSuggestions("foo --", "mockwizard --values foo --");
+      assertCompletionStep("mockwizard ", "mockw");
+      assertCompletionStep("mockwizard --values ", "--v");
+      String stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --", "foo --");
 
       Assert.assertTrue(stdout.contains("--proceed"));
       Assert.assertTrue(stdout.contains("--key"));
       Assert.assertFalse(stdout.contains("--selections"));
       Assert.assertFalse(stdout.contains("--done"));
 
-      completionStep("p", "mockwizard --values foo --proceed ");
-      stdout = completionStepWithSuggestions("--", "mockwizard --values foo --proceed --");
+      assertCompletionStep("mockwizard --values foo --proceed ", "p");
+      stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --proceed --", "--");
 
-      Assert.assertTrue(stdout.contains("--key"));
+      Assert.assertFalse(stdout.contains("--key"));
       Assert.assertTrue(stdout.contains("--done"));
       Assert.assertTrue(stdout.contains("--selections"));
 
-      completionStep("sel", "mockwizard --values foo --proceed --selections ");
-      stdout = completionStepWithSuggestions("blah --", "mockwizard --values foo --proceed --selections blah --");
+      assertCompletionStep("mockwizard --values foo --proceed --selections ", "sel");
+      stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --proceed --selections blah --", "blah --");
       Assert.assertFalse(stdout.contains("--key"));
       Assert.assertTrue(stdout.contains("--done"));
    }
@@ -92,26 +92,26 @@ public class WizardCompletionTest
    public void testWizardInitialStepAutocompleteBooleanFlagWithValue() throws Exception
    {
       test.clearScreen();
-      completionStep("mockw", "mockwizard ");
-      completionStep("--v", "mockwizard --values ");
-      String stdout = completionStepWithSuggestions("foo --", "mockwizard --values foo --");
+      assertCompletionStep("mockwizard ", "mockw");
+      assertCompletionStep("mockwizard --values ", "--v");
+      String stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --", "foo --");
 
       Assert.assertTrue(stdout.contains("--proceed"));
       Assert.assertTrue(stdout.contains("--key"));
       Assert.assertFalse(stdout.contains("--selections"));
       Assert.assertFalse(stdout.contains("--done"));
 
-      completionStep("p", "mockwizard --values foo --proceed ");
-      stdout = completionStepWithSuggestions("true --", "mockwizard --values foo --proceed true --");
+      assertCompletionStep("mockwizard --values foo --proceed ", "p");
+      stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --proceed true --", "true --");
 
-      Assert.assertTrue(stdout.contains("--key"));
+      Assert.assertFalse(stdout.contains("--key"));
       Assert.assertTrue(stdout.contains("--done"));
       Assert.assertTrue(stdout.contains("--selections"));
 
-      completionStep("sel", "mockwizard --values foo --proceed true --selections ");
+      assertCompletionStep("mockwizard --values foo --proceed true --selections ", "sel");
    }
 
-   private void completionStep(final String write, final String expected) throws TimeoutException
+   private void assertCompletionStep(final String expected, final String write) throws TimeoutException
    {
       test.waitForBufferValue(new Callable<String>()
       {
@@ -126,7 +126,7 @@ public class WizardCompletionTest
       Assert.assertEquals(expected, test.getBuffer().getLine());
    }
 
-   private String completionStepWithSuggestions(final String write, final String expected) throws TimeoutException
+   private String assertCompletionStepWithSuggestions(final String expected, final String write) throws TimeoutException
    {
       test.waitForStdOutValue(new Callable<Void>()
       {

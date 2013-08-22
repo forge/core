@@ -14,7 +14,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.ParsedCompleteObject;
-import org.jboss.aesh.cl.internal.CommandInt;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
 import org.jboss.forge.addon.shell.ShellImpl;
@@ -65,20 +64,9 @@ public class ForgeCompletion implements Completion
             ParsedCompleteObject completeObject = cmd.parseCompleteObject(line);
             if (completeObject.doDisplayOptions())
             {
-               CommandInt param = cmd.getCommandInt();
-               // we have a partial/full name
-               if (completeObject.getName() != null && !completeObject.getName().isEmpty())
-               {
-                  List<String> possibleOptions = param.findPossibleLongNamesWitdDash(completeObject.getName());
-                  completeOperation.addCompletionCandidates(possibleOptions);
-               }
-               else
-               {
-                  List<String> optionNames = param.getOptionLongNamesWithDash();
-                  removeExistingOptions(line, optionNames);
-                  // All the not-informed parameters
-                  completeOperation.addCompletionCandidates(optionNames);
-               }
+               List<String> options = cmd.getCompletionOptions(completeObject.getName());
+               removeExistingOptions(line, options);
+               completeOperation.addCompletionCandidates(options);
                if (completeOperation.getCompletionCandidates().size() == 1)
                {
                   completeOperation.setOffset(completeOperation.getCursor() - completeObject.getOffset());

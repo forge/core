@@ -14,12 +14,12 @@ import org.jboss.aesh.cl.CommandLineCompletionParser;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
-import org.jboss.aesh.cl.internal.CommandInt;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellValidationContext;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Encapsulates a {@link UICommand} to be useful in a Shell context
@@ -65,9 +65,18 @@ public class ShellSingleCommand extends AbstractShellInteraction
    }
 
    @Override
-   public CommandInt getCommandInt()
+   public List<String> getCompletionOptions(String typed)
    {
-      return getParser().getCommand();
+      List<String> result;
+      if (Strings.isNullOrEmpty(typed))
+      {
+         result = getParser().getCommand().getOptionLongNamesWithDash();
+      }
+      else
+      {
+         result = getParser().getCommand().findPossibleLongNamesWitdDash(typed);
+      }
+      return result;
    }
 
    @Override

@@ -7,7 +7,8 @@
 
 package org.jboss.forge.addon.shell.aesh;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -17,16 +18,15 @@ import org.jboss.aesh.cl.CommandLineCompletionParser;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
-import org.jboss.aesh.cl.internal.CommandInt;
 import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellValidationContext;
-import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Encapsulates a group of {@link ShellSingleCommand} from a {@link UIWizard}
@@ -35,9 +35,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
  */
 public class ShellWizard extends AbstractShellInteraction
 {
-
-   private LinkedList<UICommand> steps = new LinkedList<UICommand>();
-   private Map<String, InputComponent<?, Object>> inputs = new HashMap<String, InputComponent<?, Object>>();
+   private LinkedList<ShellWizardStep> steps = new LinkedList<ShellWizardStep>();
    private CommandManager commandManager;
    private CommandLineParser fullCommandLineParser;
 
@@ -57,6 +55,16 @@ public class ShellWizard extends AbstractShellInteraction
    @Override
    public Map<String, InputComponent<?, Object>> getInputs()
    {
+      return steps.peekLast().inputs;
+   }
+
+   private Map<String, InputComponent<?, Object>> getAllInputs()
+   {
+      Map<String, InputComponent<?, Object>> inputs = new LinkedHashMap<String, InputComponent<?, Object>>();
+      for (ShellWizardStep step : steps)
+      {
+         inputs.putAll(step.inputs);
+      }
       return inputs;
    }
 
@@ -83,10 +91,22 @@ public class ShellWizard extends AbstractShellInteraction
       }
    }
 
+   /**
+    * Used for auto-completion of the options only
+    */
    @Override
-   public CommandInt getCommandInt()
+   public List<String> getCompletionOptions(String typed)
    {
-      return fullCommandLineParser.getCommand();
+      List<String> result = new ArrayList<String>();
+      boolean nullOrEmpty = Strings.isNullOrEmpty(typed);
+      for (String option : getInputs().keySet())
+      {
+         if (nullOrEmpty || option.startsWith(typed))
+         {
+            result.add("--" + option);
+         }
+      }
+      return result;
    }
 
    @Override
@@ -101,6 +121,7 @@ public class ShellWizard extends AbstractShellInteraction
    private CommandLineParser populate(UIWizard root, UIWizard current, String line, boolean lenient) throws Exception
    {
       addWizardStep(current);
+      Map<String, InputComponent<?, Object>> inputs = getAllInputs();
       CommandLineParser parser = commandLineUtil.generateParser(root, inputs);
       CommandLine cmdLine = parser.parse(line, lenient, lenient);
       commandLineUtil.populateUIInputs(cmdLine, inputs);
@@ -120,20 +141,20 @@ public class ShellWizard extends AbstractShellInteraction
       return parser;
    }
 
-   private void addWizardStep(final UIWizard step)
+   private ShellWizardStep addWizardStep(final UIWizard step)
    {
-      Map<String, InputComponent<?, Object>> stepInputs = buildInputs(step);
-      inputs.putAll(stepInputs);
-      steps.add(step);
+      ShellWizardStep cmdStep = new ShellWizardStep(step, buildInputs(step));
+      steps.add(cmdStep);
+      return cmdStep;
    }
 
    @Override
    public Result execute() throws Exception
    {
       Result result = null;
-      for (UICommand cmd : steps)
+      for (ShellWizardStep step : steps)
       {
-         result = cmd.execute(getContext());
+         result = step.command.execute(getContext());
       }
       return result;
    }
@@ -142,14 +163,27 @@ public class ShellWizard extends AbstractShellInteraction
    public List<String> validate()
    {
       ShellValidationContext validationContext = new ShellValidationContext(getContext());
-      for (InputComponent<?, Object> input : inputs.values())
+      for (ShellWizardStep step : steps)
       {
-         input.validate(validationContext);
-      }
-      for (UICommand cmd : steps)
-      {
-         cmd.validate(validationContext);
+         for (InputComponent<?, Object> input : step.inputs.values())
+         {
+            input.validate(validationContext);
+         }
+         step.command.validate(validationContext);
       }
       return validationContext.getErrors();
+   }
+
+   private static class ShellWizardStep
+   {
+      public final UIWizard command;
+      public final Map<String, InputComponent<?, Object>> inputs;
+
+      public ShellWizardStep(UIWizard command, Map<String, InputComponent<?, Object>> inputs)
+      {
+         this.command = command;
+         this.inputs = inputs;
+      }
+
    }
 }
