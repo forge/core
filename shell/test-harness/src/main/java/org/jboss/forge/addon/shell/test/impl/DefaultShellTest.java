@@ -474,7 +474,7 @@ public class DefaultShellTest implements ShellTest
             @Override
             public String call() throws Exception
             {
-               getStdIn().write(Key.CTRL_U.getFirstValue());
+               getStdIn().write((Key.CTRL_U.getAsChar()+ "\n").getBytes());
                provider.getStdOut().reset();
                provider.getStdErr().reset();
                return null;
