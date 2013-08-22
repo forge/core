@@ -8,12 +8,12 @@
 package org.jboss.forge.addon.shell.aesh;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineCompletionParser;
@@ -110,7 +110,7 @@ public class ShellWizard extends AbstractShellInteraction
             }
          }
       }
-      Set<String> candidates = new HashSet<String>();
+      Set<String> candidates = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
       for (int i = idx; i < size; i++)
       {
          candidates.addAll(steps.get(i).inputs.keySet());
