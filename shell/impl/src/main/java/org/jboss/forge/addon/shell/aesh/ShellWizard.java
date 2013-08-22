@@ -8,18 +8,20 @@
 package org.jboss.forge.addon.shell.aesh;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.CommandLineCompletionParser;
 import org.jboss.aesh.cl.CommandLineParser;
 import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
+import org.jboss.aesh.terminal.CharacterType;
+import org.jboss.aesh.terminal.TerminalString;
 import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellValidationContext;
@@ -110,19 +112,24 @@ public class ShellWizard extends AbstractShellInteraction
             }
          }
       }
-      Set<String> candidates = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
       for (int i = idx; i < size; i++)
       {
-         candidates.addAll(steps.get(i).inputs.keySet());
-      }
-      for (String option : candidates)
-      {
-         if (unvalued || option.startsWith(typed))
+         Map<String, InputComponent<?, Object>> inputMap = steps.get(i).inputs;
+         for (Entry<String, InputComponent<?, Object>> entry : inputMap.entrySet())
          {
-            result.add("--" + option);
+            String option = entry.getKey();
+            String dashedOption = "--" + option;
+            if ((unvalued || option.startsWith(typed)) && !line.contains(dashedOption))
+            {
+               if (entry.getValue().isRequired())
+               {
+                  dashedOption = new TerminalString(dashedOption, CharacterType.BOLD).toString();
+               }
+               result.add(dashedOption);
+            }
          }
       }
-      removeExistingOptions(line, result);
+      Collections.sort(result, String.CASE_INSENSITIVE_ORDER);
       return result;
    }
 
