@@ -53,6 +53,10 @@ public class ForgeCompletion implements Completion
             completeOperation.addCompletionCandidate(command.getName());
          }
       }
+      else if (line.equals(cmd.getName()))
+      {
+         completeOperation.addCompletionCandidate(" ");
+      }
       else
       {
          try

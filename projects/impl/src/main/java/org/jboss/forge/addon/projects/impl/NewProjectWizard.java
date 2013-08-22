@@ -94,7 +94,8 @@ public class NewProjectWizard implements UIWizard
       }
       else
       {
-         targetLocation.setDefaultValue(resourceFactory.create(DirectoryResource.class, OperatingSystemUtils.getUserHomeDir()));
+         targetLocation.setDefaultValue(resourceFactory.create(DirectoryResource.class,
+                  OperatingSystemUtils.getUserHomeDir()));
       }
       overwrite.setDefaultValue(false).setEnabled(new Callable<Boolean>()
       {
@@ -144,7 +145,8 @@ public class NewProjectWizard implements UIWizard
    @Override
    public void validate(UIValidationContext context)
    {
-      if (!topLevelPackage.getValue().matches("(?i)(~\\.)?([a-z0-9_]+\\.?)+[a-z0-9_]"))
+      String packg = topLevelPackage.getValue();
+      if (packg != null && !packg.matches("(?i)(~\\.)?([a-z0-9_]+\\.?)+[a-z0-9_]"))
       {
          context.addValidationError(topLevelPackage, "Top level package must be a valid package name.");
       }
