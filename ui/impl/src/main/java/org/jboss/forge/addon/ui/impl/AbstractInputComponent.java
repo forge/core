@@ -21,8 +21,6 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.util.Callables;
 
-import com.google.common.base.Strings;
-
 /**
  * Implementation of a {@link UIInput} object
  * 
@@ -188,7 +186,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    public void validate(UIValidationContext validator)
    {
       String msg = InputComponents.validateRequired(this);
-      if (!Strings.isNullOrEmpty(msg))
+      if (msg != null && !msg.isEmpty())
       {
          validator.addValidationError(this, msg);
       }
