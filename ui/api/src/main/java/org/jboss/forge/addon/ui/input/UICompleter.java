@@ -25,5 +25,5 @@ public interface UICompleter<VALUETYPE>
     * @param value The user input value requiring completion, or null, if no value yet exists. These values will undergo
     *           conversion to fit the type required by the corresponding {@link UIInput}.
     */
-   Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, VALUETYPE> input, String value);
+   Iterable<VALUETYPE> getCompletionProposals(UIContext context, InputComponent<?, VALUETYPE> input, String value);
 }

@@ -30,9 +30,12 @@ class UICompleterCompletionStrategy implements CompletionStrategy
       UICompleter<Object> completer = InputComponents.getCompleterFor(input);
       if (completer != null)
       {
-         for (String proposal : completer.getCompletionProposals(context, input, typedValue))
+         for (Object proposal : completer.getCompletionProposals(context, input, typedValue))
          {
-            completeOperation.addCompletionCandidate(proposal);
+            if (proposal != null)
+            {
+               completeOperation.addCompletionCandidate(proposal.toString());
+            }
          }
       }
       else
