@@ -6,6 +6,10 @@
  */
 package org.jboss.forge.addon.shell.parser;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -70,22 +74,22 @@ public class WizardCompletionTest
       assertCompletionStep("mockwizard --values ", "--v");
       String stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --", "foo --");
 
-      Assert.assertTrue(stdout.contains("--proceed"));
-      Assert.assertTrue(stdout.contains("--key"));
-      Assert.assertFalse(stdout.contains("--selections"));
-      Assert.assertFalse(stdout.contains("--done"));
+      Assert.assertThat(stdout, containsString("--proceed"));
+      Assert.assertThat(stdout, containsString("--key"));
+      Assert.assertThat(stdout, not(containsString("--selections")));
+      Assert.assertThat(stdout, not(containsString("--done")));
 
       assertCompletionStep("mockwizard --values foo --proceed ", "p");
       stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --proceed --", "--");
 
-      Assert.assertTrue(stdout.contains("--key"));
-      Assert.assertTrue(stdout.contains("--done"));
-      Assert.assertTrue(stdout.contains("--selections"));
+      Assert.assertThat(stdout, containsString("--key"));
+      Assert.assertThat(stdout, containsString("--done"));
+      Assert.assertThat(stdout, containsString("--selections"));
 
       assertCompletionStep("mockwizard --values foo --proceed --selections ", "sel");
       stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --proceed --selections blah --", "blah --");
-      Assert.assertFalse(stdout.contains("--key"));
-      Assert.assertTrue(stdout.contains("--done"));
+      Assert.assertThat(stdout, not(containsString("--key")));
+      Assert.assertThat(stdout, containsString("--done"));
    }
 
    @Test(timeout = 10000)
@@ -96,17 +100,17 @@ public class WizardCompletionTest
       assertCompletionStep("mockwizard --values ", "--v");
       String stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --", "foo --");
 
-      Assert.assertTrue(stdout.contains("--proceed"));
-      Assert.assertTrue(stdout.contains("--key"));
-      Assert.assertFalse(stdout.contains("--selections"));
-      Assert.assertFalse(stdout.contains("--done"));
+      Assert.assertThat(stdout, containsString("--proceed"));
+      Assert.assertThat(stdout, containsString("--key"));
+      Assert.assertThat(stdout, not(containsString("--selections")));
+      Assert.assertThat(stdout, not(containsString("--done")));
 
       assertCompletionStep("mockwizard --values foo --proceed ", "p");
       stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --proceed true --", "true --");
 
-      Assert.assertTrue(stdout.contains("--key"));
-      Assert.assertTrue(stdout.contains("--done"));
-      Assert.assertTrue(stdout.contains("--selections"));
+      Assert.assertThat(stdout, containsString("--key"));
+      Assert.assertThat(stdout, containsString("--done"));
+      Assert.assertThat(stdout, containsString("--selections"));
 
       assertCompletionStep("mockwizard --values foo --proceed true --selections ", "sel");
    }
@@ -123,10 +127,11 @@ public class WizardCompletionTest
             return null;
          }
       }, TIMEOUT, TimeUnit.SECONDS, expected);
-      Assert.assertEquals(expected, test.getBuffer().getLine());
+      Assert.assertThat(test.getBuffer().getLine(), equalTo(expected));
    }
 
-   private String assertCompletionStepWithSuggestions(final String expected, final String write) throws TimeoutException
+   private String assertCompletionStepWithSuggestions(final String expected, final String write)
+            throws TimeoutException
    {
       test.waitForStdOutValue(new Callable<Void>()
       {
@@ -143,7 +148,7 @@ public class WizardCompletionTest
                   return null;
                }
             }, TIMEOUT, TimeUnit.SECONDS, expected);
-            Assert.assertEquals(expected, test.getBuffer().getLine());
+            Assert.assertThat(test.getBuffer().getLine(), equalTo(expected));
             return null;
          }
       }, TIMEOUT, TimeUnit.SECONDS, expected);
