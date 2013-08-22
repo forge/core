@@ -63,7 +63,7 @@ public class ShellResourceTest
    @Inject
    private ResourceFactory resourceFactory;
 
-   @Test
+   @Test(timeout=10000)
    public void testPwdCommand()
    {
       File tempDir = OperatingSystemUtils.createTempDir();
@@ -78,7 +78,7 @@ public class ShellResourceTest
       tempDir.delete();
    }
 
-   @Test
+   @Test(timeout=10000)
    public void testChangeDirCommand()
    {
       File tempDir = OperatingSystemUtils.createTempDir();
@@ -97,7 +97,7 @@ public class ShellResourceTest
       tempDir.delete();
    }
 
-   @Test
+   @Test(timeout=10000)
    public void testChangeDirCommandFailed()
    {
       File tempDir = OperatingSystemUtils.createTempDir();
@@ -111,7 +111,7 @@ public class ShellResourceTest
       Assert.assertEquals("child: No such file or directory", changeDirResult.getMessage());
    }
 
-   @Test
+   @Test(timeout=10000)
    public void testChangeDirAbsolute()
    {
       File userHome = OperatingSystemUtils.getUserHomeDir();
@@ -126,7 +126,7 @@ public class ShellResourceTest
       Assert.assertEquals(userHome, shell.getCurrentResource().getUnderlyingResourceObject());
    }
 
-   @Test
+   @Test(timeout=10000)
    public void testChangeDirEmpty()
    {
       File tempDir = OperatingSystemUtils.createTempDir();
