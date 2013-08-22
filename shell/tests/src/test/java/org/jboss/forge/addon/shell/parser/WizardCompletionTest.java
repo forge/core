@@ -62,7 +62,7 @@ public class WizardCompletionTest
       test.clearScreen();
    }
 
-   @Test
+   @Test(timeout = 10000)
    public void testWizardInitialStepAutocomplete() throws Exception
    {
       test.clearScreen();
@@ -85,7 +85,7 @@ public class WizardCompletionTest
       completionStep("sel", "mockwizard --values foo --proceed --selections ");
    }
 
-   @Test
+   @Test(timeout = 10000)
    public void testWizardInitialStepAutocompleteBooleanFlagWithValue() throws Exception
    {
       test.clearScreen();
