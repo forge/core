@@ -10,7 +10,6 @@ package org.jboss.forge.addon.shell.aesh;
 import java.io.IOException;
 import java.util.List;
 
-import org.jboss.aesh.cl.exception.CommandLineParserException;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.ConsoleCallback;
 import org.jboss.aesh.console.ConsoleOutput;
@@ -52,14 +51,7 @@ public class ForgeConsoleCallback implements ConsoleCallback
             {
                throw new IOException("Command not found for line: " + line);
             }
-            try
-            {
-               command.populateInputs(line, false);
-            }
-            catch (CommandLineParserException e)
-            {
-               throw new IOException(e);
-            }
+            command.populateInputs(line, false);
             List<String> errors = command.validate();
             if (errors.isEmpty())
             {
@@ -80,7 +72,7 @@ public class ForgeConsoleCallback implements ConsoleCallback
          }
          catch (Exception e)
          {
-            console.out().println("**ERROR**: " + e.getMessage());
+            console.err().println("**ERROR**: " + e.getMessage());
             // if VERBOSE = true
             // e.printStackTrace(console.err());
             return -1;
