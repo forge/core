@@ -83,6 +83,9 @@ public class WizardCompletionTest
       Assert.assertTrue(stdout.contains("--selections"));
 
       completionStep("sel", "mockwizard --values foo --proceed --selections ");
+      stdout = completionStepWithSuggestions("blah --", "mockwizard --values foo --proceed --selections blah --");
+      Assert.assertFalse(stdout.contains("--key"));
+      Assert.assertTrue(stdout.contains("--done"));
    }
 
    @Test(timeout = 10000)
