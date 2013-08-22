@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class WizardCompletionTest
 {
-   private static final int TIMEOUT = 500;
+   private static final int TIMEOUT = 5;
 
    @Deployment
    @Dependencies({
@@ -65,6 +65,7 @@ public class WizardCompletionTest
    @Test
    public void testWizardInitialStepAutocomplete() throws Exception
    {
+      test.clearScreen();
       completionStep("mockw", "mockwizard ");
       completionStep("--v", "mockwizard --values ");
       String stdout = completionStepWithSuggestions("foo --", "mockwizard --values foo --");
@@ -81,7 +82,30 @@ public class WizardCompletionTest
       Assert.assertTrue(stdout.contains("--done"));
       Assert.assertTrue(stdout.contains("--selections"));
 
-      completionStep("--sel", "mockwizard --values foo --proceed --selections ");
+      completionStep("sel", "mockwizard --values foo --proceed --selections ");
+   }
+
+   @Test
+   public void testWizardInitialStepAutocompleteBooleanFlagWithValue() throws Exception
+   {
+      test.clearScreen();
+      completionStep("mockw", "mockwizard ");
+      completionStep("--v", "mockwizard --values ");
+      String stdout = completionStepWithSuggestions("foo --", "mockwizard --values foo --");
+
+      Assert.assertTrue(stdout.contains("--proceed"));
+      Assert.assertTrue(stdout.contains("--key"));
+      Assert.assertFalse(stdout.contains("--selections"));
+      Assert.assertFalse(stdout.contains("--done"));
+
+      completionStep("p", "mockwizard --values foo --proceed ");
+      stdout = completionStepWithSuggestions("true --", "mockwizard --values foo --proceed true --");
+
+      Assert.assertTrue(stdout.contains("--key"));
+      Assert.assertTrue(stdout.contains("--done"));
+      Assert.assertTrue(stdout.contains("--selections"));
+
+      completionStep("sel", "mockwizard --values foo --proceed true --selections ");
    }
 
    private void completionStep(final String write, final String expected) throws TimeoutException
