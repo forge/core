@@ -49,12 +49,7 @@ public class MockWizardStep extends AbstractUICommand implements UIWizardStep
    public void validate(UIValidationContext validator)
    {
       if (!done.getValue())
-      {
-         System.out.println("Cannot finish.");
          validator.addValidationError(done, "Must be --done before continuing.");
-      }
-      else
-         System.out.println("Allowed to finish.");
    }
 
    @Override

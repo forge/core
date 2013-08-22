@@ -138,4 +138,19 @@ public interface ShellTest
     */
    void clearScreen() throws IOException;
 
+   /**
+    * Clear STDOUT, then write the given string to the buffer and assert that the full buffer is equal to the expected
+    * content. Return the contents of STDOUT since the given text was written.
+    * 
+    * @throws TimeoutException if the buffer did not match STDOUT within the given timeout.
+    */
+   String waitForCompletion(String expected, String write, int quantity, TimeUnit unit) throws TimeoutException;
+
+   /**
+    * Clear STDOUT, then send the completion signal. Return the contents of STDOUT once completion has finished and the
+    * buffer is re-written to STDOUT.
+    * 
+    * @throws TimeoutException if the buffer did not match STDOUT within the given timeout.
+    */
+   String waitForCompletion(int quantity, TimeUnit unit) throws TimeoutException;
 }

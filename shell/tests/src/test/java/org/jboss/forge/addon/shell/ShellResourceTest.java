@@ -8,6 +8,8 @@
 package org.jboss.forge.addon.shell;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
@@ -38,18 +40,13 @@ public class ShellResourceTest
 {
    @Deployment
    @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:shell"),
-            @AddonDependency(name = "org.jboss.forge.addon:ui"),
-            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness")
    })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:shell"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                );
@@ -63,7 +60,7 @@ public class ShellResourceTest
    @Inject
    private ResourceFactory resourceFactory;
 
-   @Test(timeout=10000)
+   @Test(timeout = 10000)
    public void testPwdCommand()
    {
       File tempDir = OperatingSystemUtils.createTempDir();
@@ -78,7 +75,13 @@ public class ShellResourceTest
       tempDir.delete();
    }
 
-   @Test(timeout=10000)
+   @Test(timeout = 10000)
+   public void testChangeDirCommandCompletion() throws TimeoutException
+   {
+      shellTest.waitForCompletion("cd ", "cd", 5, TimeUnit.SECONDS);
+   }
+
+   @Test(timeout = 10000)
    public void testChangeDirCommand()
    {
       File tempDir = OperatingSystemUtils.createTempDir();
@@ -97,7 +100,7 @@ public class ShellResourceTest
       tempDir.delete();
    }
 
-   @Test(timeout=10000)
+   @Test(timeout = 10000)
    public void testChangeDirCommandFailed()
    {
       File tempDir = OperatingSystemUtils.createTempDir();
@@ -111,7 +114,7 @@ public class ShellResourceTest
       Assert.assertEquals("child: No such file or directory", changeDirResult.getMessage());
    }
 
-   @Test(timeout=10000)
+   @Test(timeout = 10000)
    public void testChangeDirAbsolute()
    {
       File userHome = OperatingSystemUtils.getUserHomeDir();
@@ -126,7 +129,7 @@ public class ShellResourceTest
       Assert.assertEquals(userHome, shell.getCurrentResource().getUnderlyingResourceObject());
    }
 
-   @Test(timeout=10000)
+   @Test(timeout = 10000)
    public void testChangeDirEmpty()
    {
       File tempDir = OperatingSystemUtils.createTempDir();

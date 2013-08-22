@@ -59,12 +59,7 @@ public class MockWizardBegin extends AbstractUICommand implements UIWizard
    public void validate(UIValidationContext validator)
    {
       if (!proceed.getValue())
-      {
-         System.out.println("Cannot proceed.");
          validator.addValidationError(proceed, "Must --proceed before continuing.");
-      }
-      else
-         System.out.println("Allowed to proceed.");
    }
 
    @Override

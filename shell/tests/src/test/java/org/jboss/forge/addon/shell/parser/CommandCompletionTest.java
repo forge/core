@@ -7,7 +7,6 @@
 package org.jboss.forge.addon.shell.parser;
 
 import java.io.IOException;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -61,32 +60,13 @@ public class CommandCompletionTest
    @Test
    public void testCommandAutocomplete() throws Exception
    {
-      test.waitForBufferValue(new Callable<String>()
-      {
-         @Override
-         public String call() throws Exception
-         {
-            test.write("foocomm");
-            test.sendCompletionSignal();
-            return null;
-         }
-      }, 5, TimeUnit.SECONDS, "foocommand ");
-      Assert.assertEquals("foocommand ", test.getBuffer().getLine());
+      test.waitForCompletion("foocommand ", "foocomm", 5, TimeUnit.SECONDS);
    }
 
    @Test
    public void testCommandAutocomplete2() throws Exception
    {
-      test.waitForBufferValue(new Callable<String>()
-      {
-         @Override
-         public String call() throws Exception
-         {
-            test.write("foocommand --h");
-            test.sendCompletionSignal();
-            return null;
-         }
-      }, 5, TimeUnit.SECONDS, "foocommand --help ");
+      test.waitForCompletion("foocommand --help ", "foocommand --h", 5, TimeUnit.SECONDS);
       Assert.assertEquals("foocommand --help ", test.getBuffer().getLine());
    }
 

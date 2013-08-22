@@ -7,13 +7,10 @@
 package org.jboss.forge.addon.shell.parser;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 
 import java.io.IOException;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
@@ -38,8 +35,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class WizardCompletionTest
 {
-   private static final int TIMEOUT = 5;
-
    @Deployment
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness")
@@ -70,24 +65,25 @@ public class WizardCompletionTest
    public void testWizardInitialStepAutocomplete() throws Exception
    {
       test.clearScreen();
-      assertCompletionStep("mockwizard ", "mockw");
-      assertCompletionStep("mockwizard --values ", "--v");
-      String stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --", "foo --");
+      test.waitForCompletion("mockwizard ", "mockw", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("mockwizard --values ", "--v", 5, TimeUnit.SECONDS);
+      String stdout = test.waitForCompletion("mockwizard --values foo --", "foo --", 5, TimeUnit.SECONDS);
 
       Assert.assertThat(stdout, containsString("--proceed"));
       Assert.assertThat(stdout, containsString("--key"));
       Assert.assertThat(stdout, not(containsString("--selections")));
       Assert.assertThat(stdout, not(containsString("--done")));
 
-      assertCompletionStep("mockwizard --values foo --proceed ", "p");
-      stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --proceed --", "--");
+      test.waitForCompletion("mockwizard --values foo --proceed ", "p", 5, TimeUnit.SECONDS);
+      stdout = test.waitForCompletion("mockwizard --values foo --proceed --", "--", 5, TimeUnit.SECONDS);
 
       Assert.assertThat(stdout, containsString("--key"));
       Assert.assertThat(stdout, containsString("--done"));
       Assert.assertThat(stdout, containsString("--selections"));
 
-      assertCompletionStep("mockwizard --values foo --proceed --selections ", "sel");
-      stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --proceed --selections blah --", "blah --");
+      test.waitForCompletion("mockwizard --values foo --proceed --selections ", "sel", 5, TimeUnit.SECONDS);
+      stdout = test.waitForCompletion("mockwizard --values foo --proceed --selections blah --", "blah --", 5,
+               TimeUnit.SECONDS);
       Assert.assertThat(stdout, not(containsString("--key")));
       Assert.assertThat(stdout, containsString("--done"));
    }
@@ -96,64 +92,23 @@ public class WizardCompletionTest
    public void testWizardInitialStepAutocompleteBooleanFlagWithValue() throws Exception
    {
       test.clearScreen();
-      assertCompletionStep("mockwizard ", "mockw");
-      assertCompletionStep("mockwizard --values ", "--v");
-      String stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --", "foo --");
+      test.waitForCompletion("mockwizard ", "mockw", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("mockwizard --values ", "--v", 5, TimeUnit.SECONDS);
+      String stdout = test.waitForCompletion("mockwizard --values foo --", "foo --", 5, TimeUnit.SECONDS);
 
       Assert.assertThat(stdout, containsString("--proceed"));
       Assert.assertThat(stdout, containsString("--key"));
       Assert.assertThat(stdout, not(containsString("--selections")));
       Assert.assertThat(stdout, not(containsString("--done")));
 
-      assertCompletionStep("mockwizard --values foo --proceed ", "p");
-      stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --proceed true --", "true --");
+      test.waitForCompletion("mockwizard --values foo --proceed ", "p", 5, TimeUnit.SECONDS);
+      stdout = test.waitForCompletion("mockwizard --values foo --proceed true --", "true --", 5, TimeUnit.SECONDS);
 
       Assert.assertThat(stdout, containsString("--key"));
       Assert.assertThat(stdout, containsString("--done"));
       Assert.assertThat(stdout, containsString("--selections"));
 
-      assertCompletionStep("mockwizard --values foo --proceed true --selections ", "sel");
-   }
-
-   private void assertCompletionStep(final String expected, final String write) throws TimeoutException
-   {
-      test.waitForBufferValue(new Callable<String>()
-      {
-         @Override
-         public String call() throws Exception
-         {
-            test.write(write);
-            test.sendCompletionSignal();
-            return null;
-         }
-      }, TIMEOUT, TimeUnit.SECONDS, expected);
-      Assert.assertThat(test.getBuffer().getLine(), equalTo(expected));
-   }
-
-   private String assertCompletionStepWithSuggestions(final String expected, final String write)
-            throws TimeoutException
-   {
-      test.waitForStdOutValue(new Callable<Void>()
-      {
-         @Override
-         public Void call() throws Exception
-         {
-            test.waitForBufferValue(new Callable<String>()
-            {
-               @Override
-               public String call() throws Exception
-               {
-                  test.write(write);
-                  test.sendCompletionSignal();
-                  return null;
-               }
-            }, TIMEOUT, TimeUnit.SECONDS, expected);
-            Assert.assertThat(test.getBuffer().getLine(), equalTo(expected));
-            return null;
-         }
-      }, TIMEOUT, TimeUnit.SECONDS, expected);
-
-      return test.getStdOut();
+      test.waitForCompletion("mockwizard --values foo --proceed true --selections ", "sel", 5, TimeUnit.SECONDS);
    }
 
 }

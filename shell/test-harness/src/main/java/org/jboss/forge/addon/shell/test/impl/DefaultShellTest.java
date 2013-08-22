@@ -474,7 +474,7 @@ public class DefaultShellTest implements ShellTest
             @Override
             public String call() throws Exception
             {
-               getStdIn().write((Key.CTRL_U.getAsChar()+ "\n").getBytes());
+               getStdIn().write((Key.CTRL_U.getAsChar() + "\n").getBytes());
                provider.getStdOut().reset();
                provider.getStdErr().reset();
                return null;
@@ -485,5 +485,56 @@ public class DefaultShellTest implements ShellTest
       {
          throw new RuntimeException("Could not clear screen within allotted timeout.", e);
       }
+   }
+
+   @Override
+   public String waitForCompletion(final String expected, final String write, final int quantity, final TimeUnit unit)
+            throws TimeoutException
+   {
+      waitForStdOutValue(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            waitForBufferValue(new Callable<String>()
+            {
+               @Override
+               public String call() throws Exception
+               {
+                  write(write);
+                  sendCompletionSignal();
+                  return null;
+               }
+            }, quantity, unit, expected);
+            return null;
+         }
+      }, quantity, unit, expected);
+
+      return getStdOut();
+   }
+
+   @Override
+   public String waitForCompletion(final int quantity, final TimeUnit unit) throws TimeoutException
+   {
+      final String buffer = getBuffer().getLine();
+      waitForStdOutValue(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            waitForBufferValue(new Callable<String>()
+            {
+               @Override
+               public String call() throws Exception
+               {
+                  sendCompletionSignal();
+                  return null;
+               }
+            }, quantity, unit, buffer);
+            return null;
+         }
+      }, quantity, unit, buffer);
+
+      return getStdOut();
    }
 }
