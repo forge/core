@@ -37,7 +37,7 @@ public class CdCommand extends AbstractShellCommand
    ResourceFactory resourceFactory;
 
    @Inject
-   @WithAttributes(label = "Arguments", required = true)
+   @WithAttributes(label = "Arguments")
    private UIInputMany<String> arguments;
 
    @Override
