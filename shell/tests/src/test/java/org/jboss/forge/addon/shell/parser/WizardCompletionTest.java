@@ -78,7 +78,7 @@ public class WizardCompletionTest
       assertCompletionStep("mockwizard --values foo --proceed ", "p");
       stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --proceed --", "--");
 
-      Assert.assertFalse(stdout.contains("--key"));
+      Assert.assertTrue(stdout.contains("--key"));
       Assert.assertTrue(stdout.contains("--done"));
       Assert.assertTrue(stdout.contains("--selections"));
 
@@ -104,7 +104,7 @@ public class WizardCompletionTest
       assertCompletionStep("mockwizard --values foo --proceed ", "p");
       stdout = assertCompletionStepWithSuggestions("mockwizard --values foo --proceed true --", "true --");
 
-      Assert.assertFalse(stdout.contains("--key"));
+      Assert.assertTrue(stdout.contains("--key"));
       Assert.assertTrue(stdout.contains("--done"));
       Assert.assertTrue(stdout.contains("--selections"));
 
