@@ -149,7 +149,8 @@ public class CommandLineUtil
       }
 
       if (!found)
-         logger.warning("Could not find matching value choice for input value [" + optionValue + "]");
+         logger.warning("Could not find matching value choice for select one input [--" + input.getName()
+                  + "] with value [" + optionValue + "]");
    }
 
    @SuppressWarnings("unchecked")
@@ -172,7 +173,8 @@ public class CommandLineUtil
          }
 
          if (!found)
-            logger.warning("Could not find matching value choice for input value [" + optionValue + "]");
+            logger.warning("Could not find matching value choice for select many input [--" + input.getName()
+                     + "] with value [" + optionValue + "]");
       }
       input.setValue(selected);
    }
