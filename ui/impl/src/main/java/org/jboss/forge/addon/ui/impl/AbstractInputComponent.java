@@ -183,16 +183,16 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    }
 
    @Override
-   public void validate(UIValidationContext validator)
+   public void validate(UIValidationContext context)
    {
       String msg = InputComponents.validateRequired(this);
       if (msg != null && !msg.isEmpty())
       {
-         validator.addValidationError(this, msg);
+         context.addValidationError(this, msg);
       }
       if (this.validator != null)
       {
-         this.validator.validate(validator);
+         this.validator.validate(context);
       }
    }
 }
