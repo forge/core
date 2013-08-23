@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.ParsedCompleteObject;
+import org.jboss.aesh.cl.exception.ArgumentParserException;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
 import org.jboss.forge.addon.shell.ShellImpl;
@@ -97,6 +98,14 @@ public class ForgeCompletion implements Completion
                   completionObj.complete(completeOperation, input, shellContext, completeObject.getValue(),
                            shell.getConverterFactory());
                }
+            }
+         }
+         catch (ArgumentParserException e)
+         {
+            if (!cmd.getInputs().isEmpty())
+            {
+               completeOperation.doAppendSeparator(false);
+               completeOperation.addCompletionCandidate(line + "--");
             }
          }
          catch (Exception e)
