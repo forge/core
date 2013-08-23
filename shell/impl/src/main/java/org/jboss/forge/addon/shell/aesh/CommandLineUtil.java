@@ -152,9 +152,11 @@ public class CommandLineUtil
          logger.warning("Could not find matching value choice for input value [" + optionValue + "]");
    }
 
+   @SuppressWarnings("unchecked")
    private void setInputChoices(UISelectMany<Object> input, List<String> optionValues)
    {
-      Converter<Object, String> labelConverter = input.getItemLabelConverter();
+      Converter<Object, String> labelConverter = (Converter<Object, String>) InputComponents.getItemLabelConverter(
+               converterFactory, input);
       List<Object> selected = new ArrayList<Object>();
       for (String optionValue : optionValues)
       {
