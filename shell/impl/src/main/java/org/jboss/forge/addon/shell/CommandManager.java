@@ -3,6 +3,8 @@ package org.jboss.forge.addon.shell;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
 import org.jboss.forge.addon.shell.aesh.CommandLineUtil;
@@ -29,7 +31,8 @@ public class CommandManager
    private CommandLineUtil commandLineUtil;
    private ConverterFactory converterFactory;
 
-   public CommandManager(AddonRegistry addonRegistry)
+   @Inject
+   public CommandManager(final AddonRegistry addonRegistry)
    {
       this.addonRegistry = addonRegistry;
    }
