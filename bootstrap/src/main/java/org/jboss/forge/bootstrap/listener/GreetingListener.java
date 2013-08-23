@@ -32,7 +32,7 @@ public class GreetingListener implements ContainerLifecycleListener
       out.println("   |_|  \\___/|_|  \\__, |\\___| ");
       out.println("                   |___/      ");
       out.println("");
-      out.print("JBoss Furnace, version [ ");
+      out.print("JBoss Forge, version [ ");
       out.print(forge.getVersion());
       out.print(" ] - JBoss, by Red Hat, Inc. [ http://forge.jboss.org ]");
       out.println();
