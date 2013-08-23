@@ -64,25 +64,26 @@ public class WizardCompletionTest
    @Test(timeout = 10000)
    public void testWizardInitialStepAutocomplete() throws Exception
    {
+      int timeoutQuantity = 5;
       test.clearScreen();
-      test.waitForCompletion("mockwizard ", "mockw", 5, TimeUnit.SECONDS);
-      test.waitForCompletion("mockwizard --values ", "--v", 5, TimeUnit.SECONDS);
-      String stdout = test.waitForCompletion("mockwizard --values foo --", "foo --", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("mockwizard ", "mockw", timeoutQuantity, TimeUnit.SECONDS);
+      test.waitForCompletion("mockwizard --values ", "--v", timeoutQuantity, TimeUnit.SECONDS);
+      String stdout = test.waitForCompletion("mockwizard --values foo --", "foo --", timeoutQuantity, TimeUnit.SECONDS);
 
       Assert.assertThat(stdout, containsString("--proceed"));
       Assert.assertThat(stdout, containsString("--key"));
       Assert.assertThat(stdout, not(containsString("--selections")));
       Assert.assertThat(stdout, not(containsString("--done")));
 
-      test.waitForCompletion("mockwizard --values foo --proceed ", "p", 5, TimeUnit.SECONDS);
-      stdout = test.waitForCompletion("mockwizard --values foo --proceed --", "--", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("mockwizard --values foo --proceed ", "p", timeoutQuantity, TimeUnit.SECONDS);
+      stdout = test.waitForCompletion("mockwizard --values foo --proceed --", "--", timeoutQuantity, TimeUnit.SECONDS);
 
       Assert.assertThat(stdout, containsString("--key"));
       Assert.assertThat(stdout, containsString("--done"));
       Assert.assertThat(stdout, containsString("--selections"));
 
-      test.waitForCompletion("mockwizard --values foo --proceed --selections ", "sel", 5, TimeUnit.SECONDS);
-      stdout = test.waitForCompletion("mockwizard --values foo --proceed --selections blah --", "blah --", 5,
+      test.waitForCompletion("mockwizard --values foo --proceed --selections ", "sel", timeoutQuantity, TimeUnit.SECONDS);
+      stdout = test.waitForCompletion("mockwizard --values foo --proceed --selections blah --", "blah --", timeoutQuantity,
                TimeUnit.SECONDS);
       Assert.assertThat(stdout, not(containsString("--key")));
       Assert.assertThat(stdout, containsString("--done"));

@@ -6,8 +6,6 @@
  */
 package org.jboss.forge.addon.shell.aesh;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,17 +17,13 @@ import org.jboss.aesh.cl.builder.OptionBuilder;
 import org.jboss.aesh.cl.exception.OptionParserException;
 import org.jboss.aesh.cl.internal.CommandInt;
 import org.jboss.aesh.cl.internal.OptionInt;
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.ManyValued;
-import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.addon.ui.input.UIInputMany;
-import org.jboss.forge.addon.ui.input.UISelectMany;
-import org.jboss.forge.addon.ui.input.UISelectOne;
+import org.jboss.forge.addon.ui.input.SingleValued;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.util.InputComponents;
 
@@ -98,8 +92,6 @@ public class CommandLineUtil
       return builder.generateParser();
    }
 
-   @SuppressWarnings("unchecked")
-   // TODO Review this method
    public void populateUIInputs(CommandLine commandLine,
             Map<String, InputComponent<?, Object>> inputs)
    {
@@ -109,71 +101,14 @@ public class CommandLineUtil
          {
             InputComponents.setValueFor(converterFactory, input, commandLine.getArgument().getValue());
          }
-         else if (input instanceof UIInputMany)
+         else if (input instanceof ManyValued)
          {
             InputComponents.setValueFor(converterFactory, input, commandLine.getOptionValues(input.getName()));
          }
-         else if (input instanceof UIInput)
+         else if (input instanceof SingleValued)
          {
             InputComponents.setValueFor(converterFactory, input, commandLine.getOptionValue(input.getName()));
          }
-         else if (input instanceof UISelectMany)
-         {
-            setInputChoices((UISelectMany<Object>) input, commandLine.getOptionValues(input.getName()));
-         }
-         else if (input instanceof UISelectOne)
-         {
-            setInputChoice((UISelectOne<Object>) input, commandLine.getOptionValue(input.getName()));
-         }
       }
-   }
-
-   @SuppressWarnings("unchecked")
-   private void setInputChoice(UISelectOne<Object> input, String optionValue)
-   {
-      Converter<Object, String> labelConverter = (Converter<Object, String>) InputComponents.getItemLabelConverter(
-               converterFactory, input);
-      boolean found = false;
-      Iterable<Object> valueChoices = input.getValueChoices();
-      if (valueChoices != null)
-      {
-         for (Object choice : valueChoices)
-         {
-            if (labelConverter.convert(choice).equals(optionValue))
-            {
-               input.setValue(choice);
-               found = true;
-               break;
-            }
-         }
-      }
-
-      if (!found)
-         logger.warning("Could not find matching value choice for input value [" + optionValue + "]");
-   }
-
-   @SuppressWarnings("unchecked")
-   private void setInputChoices(UISelectMany<Object> input, List<String> optionValues)
-   {
-      Converter<Object, String> labelConverter = (Converter<Object, String>) InputComponents.getItemLabelConverter(
-               converterFactory, input);
-      List<Object> selected = new ArrayList<Object>();
-      for (String optionValue : optionValues)
-      {
-         boolean found = false;
-         for (Object choice : input.getValueChoices())
-         {
-            if (labelConverter.convert(choice).equals(optionValue))
-            {
-               selected.add(choice);
-               found = true;
-               break;
-            }
-         }
-
-         if (!found)
-            logger.warning("Could not find matching value choice for input value [" + optionValue + "]");
-      }
-      input.setValue(selected);
    }
 }

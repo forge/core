@@ -10,6 +10,7 @@ package org.jboss.forge.addon.ui.impl;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -70,8 +71,8 @@ public class InputComponentProducer implements InputComponentFactory
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
          char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
          UISelectOne<T> input = createSelectOne(name, shortName, valueType);
-         preconfigureInput(input, withAttributes);
          setupSelectComponent(input);
+         preconfigureInput(input, withAttributes);
          return input;
       }
       else
@@ -97,8 +98,8 @@ public class InputComponentProducer implements InputComponentFactory
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
          char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
          UISelectMany<T> input = createSelectMany(name, shortName, valueType);
-         preconfigureInput(input, withAttributes);
          setupSelectComponent(input);
+         preconfigureInput(input, withAttributes);
          return input;
       }
       else
@@ -236,15 +237,19 @@ public class InputComponentProducer implements InputComponentFactory
    {
       Class<?> valueType = selectComponent.getValueType();
       Iterable<?> choices = null;
-      // Auto-populate Enums on SelectComponents
       if (valueType.isEnum())
       {
+         // Auto-populate Enums on SelectComponents
          Class<? extends Enum> enumClass = valueType.asSubclass(Enum.class);
          choices = EnumSet.allOf(enumClass);
       }
-      // Auto-populate Exported values on SelectComponents
+      else if (Boolean.class == valueType)
+      {
+         choices = Arrays.asList(Boolean.TRUE, Boolean.FALSE);
+      }
       else if (Annotations.isAnnotationPresent(valueType, Exported.class))
       {
+         // Auto-populate Exported values on SelectComponents
          List<Object> choiceList = new ArrayList<Object>();
          Imported instances = addonRegistry.getServices(valueType);
          for (Object instance : instances)

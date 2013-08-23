@@ -184,33 +184,59 @@ public final class InputComponents
    private static Object convertToUIInputValue(final ConverterFactory converterFactory,
             final InputComponent<?, Object> input, final Object value)
    {
-      Object convertedType = value;
+      final Object result;
       Class<Object> sourceType = (Class<Object>) value.getClass();
       Class<Object> targetType = input.getValueType();
-      Converter<String, Object> valueConverter = input.getValueConverter();
       if (!targetType.isAssignableFrom(sourceType))
       {
-         if (valueConverter != null)
+         if (input instanceof SelectComponent)
          {
-            if (value instanceof String)
+            Iterable<Object> valueChoices = ((SelectComponent<?, Object>) input).getValueChoices();
+            Converter<Object, Object> selectConverter = converterFactory.getConverter(targetType, sourceType);
+            Object chosenObj = null;
+            if (valueChoices != null)
             {
-               convertedType = valueConverter.convert((String) value);
+               for (Object valueChoice : valueChoices)
+               {
+                  Object convertedObj = selectConverter.convert(valueChoice);
+                  if (convertedObj.equals(value))
+                  {
+                     chosenObj = valueChoice;
+                     break;
+                  }
+               }
             }
-            else
-            {
-               Converter<Object, String> stringConverter = converterFactory.getConverter(sourceType, String.class);
-               CompositeConverter compositeConverter = new CompositeConverter(stringConverter, valueConverter);
-               convertedType = compositeConverter.convert(value);
-            }
-
+            result = chosenObj;
          }
          else
          {
-            Converter<Object, Object> converter = converterFactory.getConverter(sourceType, targetType);
-            convertedType = converter.convert(value);
+            Converter<String, Object> valueConverter = input.getValueConverter();
+            if (valueConverter != null)
+            {
+               if (value instanceof String)
+               {
+                  result = valueConverter.convert((String) value);
+               }
+               else
+               {
+                  Converter<Object, String> stringConverter = converterFactory.getConverter(sourceType, String.class);
+                  CompositeConverter compositeConverter = new CompositeConverter(stringConverter, valueConverter);
+                  result = compositeConverter.convert(value);
+               }
+
+            }
+            else
+            {
+               Converter<Object, Object> converter = converterFactory.getConverter(sourceType, targetType);
+               result = converter.convert(value);
+            }
          }
       }
-      return convertedType;
+      else
+      {
+         result = value;
+      }
+      return result;
    }
 
    /**
