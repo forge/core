@@ -14,6 +14,7 @@ import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.util.InputComponents;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * 
@@ -34,7 +35,11 @@ public class SelectComponentCompletionStrategy implements CompletionStrategy
       Iterable<Object> valueChoices = selectComponent.getValueChoices();
       for (Object choice : valueChoices)
       {
-         completeOperation.addCompletionCandidate(itemLabelConverter.convert(choice));
+         String convert = itemLabelConverter.convert(choice);
+         if (Strings.isNullOrEmpty(convert) || convert.startsWith(typedValue))
+         {
+            completeOperation.addCompletionCandidate(convert);
+         }
       }
    }
 }
