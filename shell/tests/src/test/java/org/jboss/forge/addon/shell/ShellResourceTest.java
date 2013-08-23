@@ -13,6 +13,7 @@ import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
+import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -141,6 +142,25 @@ public class ShellResourceTest
       Result changeDirResult = shellTest.execute("cd");
       Assert.assertNotNull(changeDirResult);
       Assert.assertNull(changeDirResult.getMessage());
+   }
+
+   @Test
+   public void testListDirCommand()
+   {
+      File tempDir = OperatingSystemUtils.createTempDir();
+      DirectoryResource tempResource = resourceFactory.create(tempDir).reify(DirectoryResource.class);
+      DirectoryResource childDirectory = tempResource.getChildDirectory("child");
+      childDirectory.mkdir();
+      childDirectory.deleteOnExit();
+      tempDir.deleteOnExit();
+
+      Shell shell = shellTest.getShell();
+      shell.setCurrentResource(tempResource);
+      Result lsResult = shellTest.execute("ls");
+      Assert.assertNotNull(lsResult);
+      Assert.assertThat(lsResult.getMessage(), CoreMatchers.containsString("child"));
+      childDirectory.delete();
+      tempDir.delete();
    }
 
 }
