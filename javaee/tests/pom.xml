@@ -23,6 +23,7 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui-test-harness</artifactId>
          <version>2.0.0-SNAPSHOT</version>
+         <classifier>forge-addon</classifier>
       </dependency>
       
       <dependency>
@@ -57,23 +58,4 @@
          <scope>provided</scope>
       </dependency>
    </dependencies>
-   <build>
-      <plugins>
-         <plugin>
-            <artifactId>maven-jar-plugin</artifactId>
-            <executions>
-               <execution>
-                  <id>create-forge-addon</id>
-                  <phase>package</phase>
-                  <goals>
-                     <goal>jar</goal>
-                  </goals>
-                  <configuration>
-                     <classifier>forge-addon</classifier>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
-      </plugins>
-   </build>
 </project>
