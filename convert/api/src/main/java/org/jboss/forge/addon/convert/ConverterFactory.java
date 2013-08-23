@@ -7,17 +7,20 @@
 
 package org.jboss.forge.addon.convert;
 
+import org.jboss.forge.furnace.services.Exported;
+
 /**
  * Creates {@link Converter} objects
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
+@Exported
 public interface ConverterFactory
 {
    /**
     * Returns a converter for the supplied source and target
-    *
+    * 
     * @param source
     * @param target
     * @return

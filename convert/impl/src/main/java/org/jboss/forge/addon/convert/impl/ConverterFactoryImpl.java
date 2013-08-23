@@ -19,7 +19,6 @@ import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Annotations;
 
-@Exported
 @Singleton
 public class ConverterFactoryImpl implements ConverterFactory
 {
