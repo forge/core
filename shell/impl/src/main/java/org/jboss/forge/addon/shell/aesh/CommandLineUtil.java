@@ -101,13 +101,16 @@ public class CommandLineUtil
          {
             InputComponents.setValueFor(converterFactory, input, commandLine.getArgument().getValue());
          }
-         else if (input instanceof ManyValued)
+         if (commandLine.hasOption(input.getName()))
          {
-            InputComponents.setValueFor(converterFactory, input, commandLine.getOptionValues(input.getName()));
-         }
-         else if (input instanceof SingleValued)
-         {
-            InputComponents.setValueFor(converterFactory, input, commandLine.getOptionValue(input.getName()));
+            if (input instanceof ManyValued)
+            {
+               InputComponents.setValueFor(converterFactory, input, commandLine.getOptionValues(input.getName()));
+            }
+            else if (input instanceof SingleValued)
+            {
+               InputComponents.setValueFor(converterFactory, input, commandLine.getOptionValue(input.getName()));
+            }
          }
       }
    }
