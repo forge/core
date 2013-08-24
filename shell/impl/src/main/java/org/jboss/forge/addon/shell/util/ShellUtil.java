@@ -7,6 +7,11 @@
 
 package org.jboss.forge.addon.shell.util;
 
+import org.jboss.aesh.terminal.CharacterType;
+import org.jboss.aesh.terminal.Color;
+import org.jboss.aesh.terminal.TerminalString;
+import org.jboss.forge.addon.resource.FileResource;
+
 /**
  * Shell Utilities
  * 
@@ -25,4 +30,23 @@ public class ShellUtil
       return name.trim().toLowerCase().replaceAll("\\W+", "-").replaceAll("\\:", "");
    }
 
+   /**
+    * Applies ANSI colors in a specific resource
+    * 
+    * @param resource
+    * @return
+    */
+   public static String colorizeResource(FileResource<?> resource)
+   {
+      String name = resource.getName();
+      if (resource.isDirectory())
+      {
+         name = new TerminalString(name, Color.DEFAULT_BG, Color.BLUE_TEXT, CharacterType.PLAIN).toString();
+      }
+      else if (resource.isExecutable())
+      {
+         name = new TerminalString(name, Color.DEFAULT_BG, Color.GREEN_TEXT, CharacterType.PLAIN).toString();
+      }
+      return name;
+   }
 }

@@ -26,6 +26,7 @@ import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
+import org.jboss.aesh.terminal.TerminalString;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
@@ -99,14 +100,7 @@ public class ShellImpl implements Shell
       console = new Console(settings);
       console.addCompletion(new ForgeCompletion(this));
       console.setConsoleCallback(new ForgeConsoleCallback(this));
-      try
-      {
-         console.setPrompt(createInitialPrompt());
-      }
-      catch (IOException io)
-      {
-         throw new RuntimeException("Prompt unavailable", io);
-      }
+      updatePrompt();
       try
       {
          console.start();
@@ -114,6 +108,18 @@ public class ShellImpl implements Shell
       catch (IOException io)
       {
          throw new RuntimeException("Unable to start console", io);
+      }
+   }
+
+   private void updatePrompt()
+   {
+      try
+      {
+         console.setPrompt(createPrompt());
+      }
+      catch (IOException io)
+      {
+         throw new RuntimeException("Prompt unavailable", io);
       }
    }
 
@@ -130,25 +136,16 @@ public class ShellImpl implements Shell
    /**
     * Creates an initial prompt
     */
-   private Prompt createInitialPrompt()
+   private Prompt createPrompt()
    {
-      List<TerminalCharacter> chars = new ArrayList<TerminalCharacter>();
-      chars.add(new TerminalCharacter('[', Color.DEFAULT_BG, Color.BLUE_TEXT));
-      chars.add(new TerminalCharacter('f', Color.DEFAULT_BG, Color.RED_TEXT,
-               CharacterType.BOLD));
-      chars.add(new TerminalCharacter('o', Color.DEFAULT_BG, Color.RED_TEXT,
-               CharacterType.BOLD));
-      chars.add(new TerminalCharacter('r', Color.DEFAULT_BG, Color.RED_TEXT,
-               CharacterType.BOLD));
-      chars.add(new TerminalCharacter('g', Color.DEFAULT_BG, Color.RED_TEXT,
-               CharacterType.BOLD));
-      chars.add(new TerminalCharacter('e', Color.DEFAULT_BG, Color.RED_TEXT,
-               CharacterType.BOLD));
-      chars.add(new TerminalCharacter(']', Color.DEFAULT_BG, Color.BLUE_TEXT,
-               CharacterType.PLAIN));
-      chars.add(new TerminalCharacter('$', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
-      chars.add(new TerminalCharacter(' ', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
-      return new Prompt(chars);
+      // [ currentdir]$
+      StringBuilder sb = new StringBuilder();
+      sb.append(new TerminalCharacter('[', Color.DEFAULT_BG, Color.BLUE_TEXT, CharacterType.BOLD));
+      sb.append(new TerminalString(currentResource.getName(), Color.DEFAULT_BG, Color.RED_TEXT, CharacterType.PLAIN));
+      sb.append(new TerminalCharacter(']', Color.DEFAULT_BG, Color.BLUE_TEXT, CharacterType.BOLD));
+      sb.append(new TerminalCharacter('$', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
+      sb.append(new TerminalCharacter(' ', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
+      return new Prompt(sb.toString());
    }
 
    public Map<String, AbstractShellInteraction> getEnabledShellCommands(ShellContext context)
@@ -264,6 +261,7 @@ public class ShellImpl implements Shell
    {
       Assert.notNull(resource, "Current resource should not be null");
       this.currentResource = resource;
+      updatePrompt();
    }
 
 }

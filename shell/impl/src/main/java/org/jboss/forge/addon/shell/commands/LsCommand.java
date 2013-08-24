@@ -16,6 +16,7 @@ import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.util.PathspecParser;
+import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInputMany;
@@ -80,7 +81,16 @@ public class LsCommand extends AbstractShellCommand
       {
          for (Resource<?> file : files)
          {
-            display.add(file.getName());
+            String name;
+            if (file instanceof FileResource)
+            {
+               name = ShellUtil.colorizeResource((FileResource<?>) file);
+            }
+            else
+            {
+               name = file.getName();
+            }
+            display.add(name);
          }
       }
       return Parser.formatDisplayList(display, terminalSize.getHeight(), terminalSize.getWidth());
