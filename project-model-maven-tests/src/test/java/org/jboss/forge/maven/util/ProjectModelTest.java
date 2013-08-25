@@ -27,6 +27,8 @@ import org.jboss.forge.project.facets.ResourceFacet;
 import org.jboss.forge.project.facets.WebResourceFacet;
 import org.jboss.forge.project.services.ProjectFactory;
 import org.jboss.forge.project.services.ResourceFactory;
+import org.jboss.forge.shell.Shell;
+import org.jboss.forge.shell.integration.BufferManager;
 import org.jboss.forge.shell.util.ResourceUtil;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -56,6 +58,9 @@ public abstract class ProjectModelTest {
 
     @Inject
     private ResourceFactory resourceFactory;
+    
+    @Inject
+    private Shell dumbShell;
 
     protected static Project project;
 
@@ -66,6 +71,72 @@ public abstract class ProjectModelTest {
             project = createProject(MavenCoreFacet.class, JavaSourceFacet.class, ResourceFacet.class, WebResourceFacet.class,
                     DependencyFacet.class, PackagingFacet.class);
         }
+        
+        dumbShell.registerBufferManager(new BufferManager()
+        {
+           @Override
+           public void bufferOnlyMode()
+           {
+
+           }
+
+           @Override
+           public void directWriteMode()
+           {
+           }
+
+           @Override
+           public void flushBuffer()
+           {
+           }
+
+           @Override
+           public void write(final int b)
+           {
+           }
+
+           @Override
+           public void write(final byte b)
+           {
+           }
+
+           @Override
+           public void write(final byte[] b)
+           {
+           }
+
+           @Override
+           public void write(final byte[] b, final int offset, final int length)
+           {
+           }
+
+           @Override
+           public void write(final String s)
+           {
+           }
+
+           @Override
+           public void directWrite(final String s)
+           {
+           }
+
+           @Override
+           public void setBufferPosition(final int row, final int col)
+           {
+           }
+
+           @Override
+           public int getHeight()
+           {
+              return 0;
+           }
+
+           @Override
+           public int getWidth()
+           {
+              return 0;
+           }
+        });
     }
 
     protected Project createProject(Class<? extends Facet>... facets) throws IOException {
@@ -82,8 +153,10 @@ public abstract class ProjectModelTest {
     public void after() {
         for (File tempFolder : tempFolders) {
             tempFolder.delete();
-            System.gc();
+            // Hint the JVM that the file handle can be closed.
+            tempFolder = null;
         }
+        System.gc();
         project = null;
     }
 

@@ -22,10 +22,12 @@ import org.apache.maven.execution.MavenExecutionRequestPopulator;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.apache.maven.settings.Activation;
 import org.apache.maven.settings.Mirror;
 import org.apache.maven.settings.Profile;
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Repository;
+import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.building.DefaultSettingsBuilderFactory;
 import org.apache.maven.settings.building.DefaultSettingsBuildingRequest;
@@ -41,6 +43,8 @@ import org.jboss.forge.maven.RepositoryUtils;
 import org.jboss.forge.project.ProjectModelException;
 import org.jboss.forge.shell.util.OSUtils;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
+import org.sonatype.aether.repository.Authentication;
+import org.sonatype.aether.util.repository.DefaultAuthenticationSelector;
 import org.sonatype.aether.util.repository.DefaultMirrorSelector;
 import org.sonatype.aether.util.repository.DefaultProxySelector;
 
@@ -88,6 +92,16 @@ public class MavenContainer
          List<ArtifactRepository> settingsRepos = new ArrayList<ArtifactRepository>(request.getRemoteRepositories());
          List<String> activeProfiles = settings.getActiveProfiles();
 
+         // "Active by default" profiles must be added separately, since they are not recognized as active ones
+         for (Profile profile : settings.getProfiles())
+         {
+            Activation activation = profile.getActivation();
+            if (activation != null && activation.isActiveByDefault())
+            {
+               activeProfiles.add(profile.getId());
+            }
+         }
+
          @SuppressWarnings("unchecked")
          Map<String, Profile> profiles = settings.getProfilesAsMap();
 
@@ -103,6 +117,7 @@ public class MavenContainer
                }
             }
          }
+
          request.setRemoteRepositories(settingsRepos);
          request.setSystemProperties(System.getProperties());
          MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
@@ -115,10 +130,11 @@ public class MavenContainer
          }
          repositorySession.setLocalRepositoryManager(new SimpleLocalRepositoryManager(settings.getLocalRepository()));
          repositorySession.setOffline(offline);
-         List<Mirror> mirrors = executionRequest.getMirrors();
+
+         final DefaultMirrorSelector mirrorSelector = new DefaultMirrorSelector();
+         final List<Mirror> mirrors = executionRequest.getMirrors();
          if (mirrors != null)
          {
-            DefaultMirrorSelector mirrorSelector = new DefaultMirrorSelector();
             for (Mirror mirror : mirrors)
             {
                mirrorSelector.add(mirror.getId(), mirror.getUrl(), mirror.getLayout(), false, mirror.getMirrorOf(),
@@ -126,6 +142,16 @@ public class MavenContainer
             }
             repositorySession.setMirrorSelector(mirrorSelector);
          }
+
+         DefaultAuthenticationSelector authSelector = new LazyAuthenticationSelector(mirrorSelector);
+         for (Server server : settings.getServers())
+         {
+            authSelector.add(
+                     server.getId(),
+                     new Authentication(server.getUsername(), server.getPassword(), server.getPrivateKey(), server
+                              .getPassphrase()));
+         }
+         repositorySession.setAuthenticationSelector(authSelector);
 
          request.setRepositorySession(repositorySession);
          request.setProcessPlugins(false);
