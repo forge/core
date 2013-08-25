@@ -159,7 +159,15 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
       DependencyResolutionResult resolutionResult = buildingResult.getDependencyResolutionResult();
       for (Exception collectionError : resolutionResult.getCollectionErrors())
       {
-         ShellMessages.warn(writer, collectionError.getMessage());
+         StringBuilder message  = new StringBuilder();
+         message.append(collectionError.getMessage());
+         message.append('\n');
+         if(collectionError.getCause() != null)
+         {
+            message.append("Cause : ");
+            message.append(collectionError.getCause().getMessage());
+         }
+         ShellMessages.warn(writer, message.toString());
       }
       for (Dependency unresolvedDep : resolutionResult.getUnresolvedDependencies())
       {
