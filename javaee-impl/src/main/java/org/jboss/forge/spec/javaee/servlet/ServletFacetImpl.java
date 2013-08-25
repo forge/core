@@ -63,7 +63,7 @@ public class ServletFacetImpl extends BaseJavaEEFacet implements ServletFacet
    public boolean isInstalled()
    {
       DirectoryResource webRoot = project.getFacet(WebResourceFacet.class).getWebRootDirectory();
-      return webRoot.exists();
+      return super.isInstalled() && webRoot.exists();
    }
 
    @Override
