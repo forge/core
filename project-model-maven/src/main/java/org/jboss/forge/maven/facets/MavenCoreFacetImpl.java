@@ -22,8 +22,11 @@ import javax.inject.Inject;
 
 import org.apache.maven.cli.MavenCli;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.building.ModelProblem;
+import org.apache.maven.model.building.ModelProblemUtils;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.apache.maven.project.DependencyResolutionResult;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -39,10 +42,12 @@ import org.jboss.forge.resources.DirectoryResource;
 import org.jboss.forge.resources.FileResource;
 import org.jboss.forge.resources.Resource;
 import org.jboss.forge.resources.events.ResourceModified;
+import org.jboss.forge.shell.ShellMessages;
 import org.jboss.forge.shell.ShellPrintWriter;
 import org.jboss.forge.shell.plugins.Alias;
 import org.jboss.forge.shell.util.NativeSystemCall;
 import org.jboss.forge.shell.util.OSUtils;
+import org.sonatype.aether.graph.Dependency;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -95,6 +100,7 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
                   request.setResolveDependencies(true);
                   buildingResult = container.getBuilder().build(pomFile, request);
                   fullBuildingResult = buildingResult;
+                  warnOnProblemsAndErrors();
                }
                catch (Exception full)
                {
@@ -128,6 +134,7 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
                request.setResolveDependencies(true);
                buildingResult = container.getBuilder().build(pomFile, request);
                fullBuildingResult = buildingResult;
+               warnOnProblemsAndErrors();
             }
             catch (Exception full)
             {
@@ -140,6 +147,25 @@ public class MavenCoreFacetImpl extends BaseFacet implements MavenCoreFacet, Fac
          }
       }
       return fullBuildingResult;
+   }
+
+   private void warnOnProblemsAndErrors()
+   {
+      for (ModelProblem problem : buildingResult.getProblems())
+      {
+         ShellMessages.warn(writer, "[ " + problem.getSeverity() + " ] " + problem.getMessage() + " @ "
+                  + ModelProblemUtils.formatLocation(problem, problem.getModelId()));
+      }
+      DependencyResolutionResult resolutionResult = buildingResult.getDependencyResolutionResult();
+      for (Exception collectionError : resolutionResult.getCollectionErrors())
+      {
+         ShellMessages.warn(writer, collectionError.getMessage());
+      }
+      for (Dependency unresolvedDep : resolutionResult.getUnresolvedDependencies())
+      {
+         ShellMessages.warn(writer, "Failed to resolve dependency [ " + unresolvedDep + " ] , due to error(s) : "
+                  + resolutionResult.getResolutionErrors(unresolvedDep));
+      }
    }
 
    private void invalidateBuildingResults()
