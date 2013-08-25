@@ -41,7 +41,7 @@ public class FacesAPIFacetImpl extends FacesFacetImpl implements FacesAPIFacet
    public boolean isInstalled()
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
-      return deps.hasEffectiveDependency(JAVAEE6_FACES) || deps.hasEffectiveDependency(JAVAEE6_FACES_21);
+      return super.isInstalled() && deps.hasEffectiveDependency(JAVAEE6_FACES) || deps.hasEffectiveDependency(JAVAEE6_FACES_21);
    }
 
    @Override

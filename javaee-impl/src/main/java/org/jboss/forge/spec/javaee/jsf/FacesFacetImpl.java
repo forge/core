@@ -69,7 +69,7 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
    public boolean isInstalled()
    {
       String version = project.getFacet(ServletFacet.class).getConfig().getVersion();
-      return version == null || version.trim().startsWith("3");
+      return super.isInstalled() && (version == null || version.trim().startsWith("3"));
    }
 
    @Override
