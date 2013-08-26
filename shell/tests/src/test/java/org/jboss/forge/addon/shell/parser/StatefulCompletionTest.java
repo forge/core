@@ -79,7 +79,6 @@ public class StatefulCompletionTest
    {
       test.clearScreen();
       test.waitForCompletion("no-opts-command ", "no-opts-", 5, TimeUnit.SECONDS);
-      test.waitForCompletion(5, TimeUnit.SECONDS);
       Assert.assertEquals("no-opts-command ", test.getBuffer().getLine());
    }
 
