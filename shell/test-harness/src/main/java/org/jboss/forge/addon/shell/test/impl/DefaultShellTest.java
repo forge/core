@@ -126,7 +126,7 @@ public class DefaultShellTest implements ShellTest
          {
             if (System.currentTimeMillis() > (start + TimeUnit.MILLISECONDS.convert(quantity, unit)))
             {
-               throw new TimeoutException("Timeout expired waiting for command [" + line + "].");
+               throw throwTimeout("Timeout expired waiting for command [" + line + "].");
             }
 
             try
@@ -145,7 +145,7 @@ public class DefaultShellTest implements ShellTest
          throw new RuntimeException("Failed to execute command.", e);
       }
       return result;
-   };
+   }
 
    @Override
    public void waitForStdOutChanged(final String value, int quantity, TimeUnit unit) throws TimeoutException
@@ -220,13 +220,12 @@ public class DefaultShellTest implements ShellTest
       }
 
       long start = System.currentTimeMillis();
-      while (System.currentTimeMillis() < (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
-               && stream.size() == size)
+      while (stream.size() == size)
       {
          if (System.currentTimeMillis() >= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
                   && stream.size() == size)
          {
-            throw new TimeoutException("Timeout occurred while waiting for stream.");
+            throw throwTimeout("Timeout occurred while waiting for stream to be written.");
          }
 
          try
@@ -235,7 +234,7 @@ public class DefaultShellTest implements ShellTest
          }
          catch (InterruptedException e)
          {
-            throw new RuntimeException("Interrupted while waiting for Shell to respond.", e);
+            throw new RuntimeException("Interrupted while waiting for stream to be written.", e);
          }
       }
    }
@@ -254,13 +253,12 @@ public class DefaultShellTest implements ShellTest
       }
 
       long start = System.currentTimeMillis();
-      while (System.currentTimeMillis() < (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
-               && !new String(stream.toByteArray()).contains(expected))
+      while (!new String(stream.toByteArray()).contains(expected))
       {
          if (System.currentTimeMillis() >= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
                   && !new String(stream.toByteArray()).contains(expected))
          {
-            throw new TimeoutException("Timeout occurred while waiting for stream.");
+            throw throwTimeout("Timeout occurred while waiting for stream value [" + expected + "].");
          }
 
          try
@@ -269,7 +267,7 @@ public class DefaultShellTest implements ShellTest
          }
          catch (InterruptedException e)
          {
-            throw new RuntimeException("Interrupted while waiting for Shell to respond.", e);
+            throw new RuntimeException("Interrupted while waiting for stream value [" + expected + "].", e);
          }
       }
    }
@@ -288,12 +286,13 @@ public class DefaultShellTest implements ShellTest
       }
 
       long start = System.currentTimeMillis();
-      while (System.currentTimeMillis() < (start + TimeUnit.MILLISECONDS.convert(quantity, unit)))
+      while (buffer.equals(getBuffer().getLine().length()))
       {
          if (System.currentTimeMillis() >= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
-                  && buffer.equals(getBuffer().getLine().length()))
+                  && buffer.equals(getBuffer().getLine()))
          {
-            throw new TimeoutException("Timeout occurred while waiting for buffer.");
+            throw throwTimeout("Timeout occurred while waiting for buffer value to change from [" + buffer
+                     + "].");
          }
 
          try
@@ -302,7 +301,7 @@ public class DefaultShellTest implements ShellTest
          }
          catch (InterruptedException e)
          {
-            throw new RuntimeException("Interrupted while waiting for Shell to respond.", e);
+            throw new RuntimeException("Interrupted while waiting for buffer value to change from [" + buffer + "].", e);
          }
       }
    }
@@ -321,13 +320,12 @@ public class DefaultShellTest implements ShellTest
       }
 
       long start = System.currentTimeMillis();
-      while (System.currentTimeMillis() < (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
-               && !getBuffer().getLine().equals(expected))
+      while (!getBuffer().getLine().equals(expected))
       {
          if (System.currentTimeMillis() >= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
                   && !getBuffer().getLine().equals(expected))
          {
-            throw new TimeoutException("Timeout occurred while waiting for buffer.");
+            throw throwTimeout("Timeout occurred while waiting for buffer to equal value [" + expected + "].");
          }
 
          try
@@ -336,9 +334,11 @@ public class DefaultShellTest implements ShellTest
          }
          catch (InterruptedException e)
          {
-            throw new RuntimeException("Interrupted while waiting for Shell to respond.", e);
+            throw new RuntimeException("Interrupted while waiting for buffer to equal value  [" + expected + "].", e);
          }
       }
+
+      System.out.println("returning");
    }
 
    @Override
@@ -463,6 +463,12 @@ public class DefaultShellTest implements ShellTest
    {
       getStdIn().write(completeChar.getFirstValue());
    }
+
+   private TimeoutException throwTimeout(String message) throws TimeoutException
+   {
+      return new TimeoutException(message + "\n\nSTDOUT: " + provider.getStdOut().toString() + "\n\nSTDERR: "
+               + provider.getStdErr().toString());
+   };
 
    @Override
    public void clearScreen() throws IOException
