@@ -123,7 +123,8 @@ public class NewProjectShellTest
       Assert.assertThat(stdout, containsString("--version"));
       Assert.assertThat(stdout, not(containsString("--addons")));
 
-      stdout = test.waitForCompletion("new-project --named", "named lincoln --type \"Maven - Java\" --",
+      stdout = test.waitForCompletion("new-project --named lincoln --type \"Maven - Java\" --",
+               "named lincoln --type \"Maven - Java\" --",
                5, TimeUnit.SECONDS);
 
       Assert.assertThat(stdout, containsString("--topLevelPackage"));
