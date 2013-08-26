@@ -10,6 +10,11 @@
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>addons</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>projects</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>

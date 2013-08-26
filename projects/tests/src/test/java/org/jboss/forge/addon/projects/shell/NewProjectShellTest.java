@@ -3,6 +3,7 @@ package org.jboss.forge.addon.projects.shell;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -19,6 +20,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Streams;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +35,7 @@ public class NewProjectShellTest
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
             @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.addon:addons"),
             @AddonDependency(name = "org.jboss.forge.addon:parser-java"),
             @AddonDependency(name = "org.jboss.forge.addon:projects")
    })
@@ -52,6 +55,12 @@ public class NewProjectShellTest
 
    @Inject
    private ShellTest test;
+
+   @After
+   public void after() throws IOException
+   {
+      test.clearScreen();
+   }
 
    @Test
    public void testWizardCommandExecution() throws Exception
@@ -83,7 +92,7 @@ public class NewProjectShellTest
                "--named lincoln-three " +
                "--targetLocation " + target.getAbsolutePath() + " " +
                "--type \"Maven - Resources\" " +
-               "--version 1.0.0-SNAPSHOT"), 10000, TimeUnit.SECONDS);
+               "--version 1.0.0-SNAPSHOT"), 10, TimeUnit.SECONDS);
 
       Assert.assertFalse(result instanceof Failed);
       Assert.assertTrue(target.exists());
@@ -96,6 +105,33 @@ public class NewProjectShellTest
       String pomContents = Streams.toString(new BufferedInputStream(
                new FileInputStream(pomFile)));
       Assert.assertTrue(pomContents.contains("org.lincoln.three"));
+   }
+
+   @Test
+   public void testCompletionFlow() throws Exception
+   {
+      test.waitForCompletion("new-project ", "new-pr", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("new-project --", "", 5, TimeUnit.SECONDS);
+
+      String stdout = test.waitForCompletion(5, TimeUnit.SECONDS);
+      Assert.assertTrue(stdout.contains("--named"));
+      Assert.assertTrue(stdout.contains("--topLevelPackage"));
+      Assert.assertTrue(stdout.contains("--targetLocation"));
+      Assert.assertTrue(stdout.contains("--overwrite"));
+      Assert.assertTrue(stdout.contains("--type"));
+      Assert.assertTrue(stdout.contains("--version"));
+      Assert.assertFalse(stdout.contains("--addons"));
+
+      stdout = test.waitForCompletion("new-project --named", "named lincoln --type \"Maven - Java\" --",
+               5, TimeUnit.SECONDS);
+
+      Assert.assertTrue(stdout.contains("--topLevelPackage"));
+      Assert.assertTrue(stdout.contains("--targetLocation"));
+      Assert.assertTrue(stdout.contains("--overwrite"));
+      Assert.assertTrue(stdout.contains("--type"));
+      Assert.assertTrue(stdout.contains("--version"));
+      Assert.assertFalse(stdout.contains("--addons"));
+
    }
 
 }
