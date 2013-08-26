@@ -121,4 +121,12 @@ public class ProjectFactoryImplTest
       Assert.assertFalse(projectFactory.containsProject(projectRoot));
    }
 
+   @Test
+   public void testProjectListenerExportedService()
+   {
+      Project project = projectFactory.createTempProject();
+      Assert.assertNotNull(project);
+      Assert.assertSame(project, MockProjectListener.project);
+   }
+
 }

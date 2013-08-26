@@ -48,6 +48,9 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Inject
    private FacetFactory factory;
 
+   @Inject
+   private Imported<ProjectListener> builtInListeners;
+
    private final List<ProjectListener> projectListeners = new ArrayList<ProjectListener>();
 
    @Override
@@ -178,6 +181,10 @@ public class ProjectFactoryImpl implements ProjectFactory
 
    private void fireProjectCreated(Project project)
    {
+      for (ProjectListener listener : builtInListeners)
+      {
+         listener.projectCreated(project);
+      }
       for (ProjectListener listener : projectListeners)
       {
          listener.projectCreated(project);

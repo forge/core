@@ -7,12 +7,15 @@
 
 package org.jboss.forge.addon.projects;
 
+import org.jboss.forge.furnace.services.Exported;
+
 /**
  * Listens for project actions
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
+@Exported
 public interface ProjectListener
 {
    public void projectCreated(Project project);
