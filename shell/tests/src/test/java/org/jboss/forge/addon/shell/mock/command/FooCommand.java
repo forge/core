@@ -7,6 +7,7 @@
 package org.jboss.forge.addon.shell.mock.command;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 
@@ -18,6 +19,7 @@ import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -54,6 +56,9 @@ public class FooCommand implements UICommand
    @Inject
    @WithAttributes(label = "target location")
    private UIInput<DirectoryResource> targetLocation;
+   
+   @Inject
+   private UISelectOne<String> valueWithSpaces;
 
    @Override
    public UICommandMetadata getMetadata()
@@ -70,6 +75,7 @@ public class FooCommand implements UICommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      valueWithSpaces.setValueChoices(Arrays.asList("Value 1", "Value 2", "Value 10", "Value 100"));
       help.setCompleter(new UICompleter<String>()
       {
          @Override
@@ -86,7 +92,7 @@ public class FooCommand implements UICommand
          }
       });
 
-      builder.add(name).add(help).add(bool).add(bar).add(bar2).add(targetLocation);
+      builder.add(name).add(help).add(bool).add(bar).add(bar2).add(targetLocation).add(valueWithSpaces);
    }
 
    @Override

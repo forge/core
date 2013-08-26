@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.ui.example.wizards;
 
+import java.util.Arrays;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -14,6 +16,7 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
@@ -40,6 +43,10 @@ public class ExampleWizard extends AbstractUICommand implements UIWizard
    @WithAttributes(label = "Go to Last Step", shortName = 'g')
    private UIInput<Boolean> goToLastStep;
 
+   @Inject
+   private UISelectOne<String> valueWithSpaces;
+
+   
    @Override
    public Metadata getMetadata()
    {
@@ -50,7 +57,8 @@ public class ExampleWizard extends AbstractUICommand implements UIWizard
    public void initializeUI(UIBuilder builder) throws Exception
    {
       firstName.setRequired(true).setRequiredMessage("First Name must be informed !");
-      builder.add(firstName).add(showSelectComponents).add(goToLastStep).add(directory);
+      valueWithSpaces.setValueChoices(Arrays.asList("Value 1", "Value 2", "Value 10", "Value 100"));
+      builder.add(firstName).add(showSelectComponents).add(goToLastStep).add(directory).add(valueWithSpaces);
    }
 
    @Override
