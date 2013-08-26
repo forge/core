@@ -7,13 +7,15 @@
 
 package org.jboss.forge.addon.shell;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
-import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -158,7 +160,42 @@ public class ShellResourceTest
       shell.setCurrentResource(tempResource);
       Result lsResult = shellTest.execute("ls");
       Assert.assertNotNull(lsResult);
-      Assert.assertThat(lsResult.getMessage(), CoreMatchers.containsString("child"));
+      Assert.assertThat(lsResult.getMessage(), containsString("child"));
+      childDirectory.delete();
+      tempDir.delete();
+   }
+
+   @Test
+   public void testListAllDirCommand()
+   {
+      File tempDir = OperatingSystemUtils.createTempDir();
+      DirectoryResource tempResource = resourceFactory.create(tempDir).reify(DirectoryResource.class);
+      DirectoryResource childDirectory = tempResource.getChildDirectory("child");
+      childDirectory.mkdir();
+      FileResource<?> afile = tempResource.getChild(".afile").reify(FileResource.class);
+      afile.createNewFile();
+      afile.deleteOnExit();
+      childDirectory.deleteOnExit();
+      tempDir.deleteOnExit();
+
+      Shell shell = shellTest.getShell();
+      shell.setCurrentResource(tempResource);
+
+      Result lsResult = shellTest.execute("ls");
+      Assert.assertNotNull(lsResult);
+      Assert.assertThat(lsResult.getMessage(), not(containsString(".afile")));
+
+      lsResult = shellTest.execute("ls -a");
+      Assert.assertNotNull(lsResult);
+      Assert.assertThat(lsResult.getMessage(), containsString("child"));
+      Assert.assertThat(lsResult.getMessage(), containsString(".afile"));
+
+      lsResult = shellTest.execute("ls --all");
+      Assert.assertNotNull(lsResult);
+      Assert.assertThat(lsResult.getMessage(), containsString("child"));
+      Assert.assertThat(lsResult.getMessage(), containsString(".afile"));
+      
+      afile.delete();
       childDirectory.delete();
       tempDir.delete();
    }

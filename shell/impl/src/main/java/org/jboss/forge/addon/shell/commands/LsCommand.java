@@ -19,6 +19,7 @@ import org.jboss.forge.addon.shell.util.PathspecParser;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.hints.InputType;
+import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -38,6 +39,10 @@ public class LsCommand extends AbstractShellCommand
    @WithAttributes(label = "Arguments", type = InputType.DIRECTORY_PICKER)
    private UIInputMany<String> arguments;
 
+   @Inject
+   @WithAttributes(label = "all", shortName = 'a', description = "do not ignore entries starting with .", type = InputType.CHECKBOX, defaultValue = "false")
+   private UIInput<Boolean> all;
+
    @Override
    public Metadata getMetadata()
    {
@@ -47,7 +52,7 @@ public class LsCommand extends AbstractShellCommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(arguments);
+      builder.add(arguments).add(all);
    }
 
    @Override
@@ -77,6 +82,7 @@ public class LsCommand extends AbstractShellCommand
    {
       TerminalSize terminalSize = context.getProvider().getConsole().getTerminalSize();
       List<String> display = new ArrayList<String>();
+      boolean showAll = all.getValue();
       if (files != null)
       {
          for (Resource<?> file : files)
@@ -84,7 +90,12 @@ public class LsCommand extends AbstractShellCommand
             String name;
             if (file instanceof FileResource)
             {
-               name = ShellUtil.colorizeResource((FileResource<?>) file);
+               FileResource<?> fileResource = (FileResource<?>) file;
+               if (!showAll && fileResource.getName().startsWith("."))
+               {
+                  continue;
+               }
+               name = ShellUtil.colorizeResource(fileResource);
             }
             else
             {
