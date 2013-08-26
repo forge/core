@@ -7,8 +7,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.jboss.aesh.parser.Parser;
 import org.jboss.aesh.terminal.TerminalSize;
-import org.jboss.aesh.util.Parser;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;

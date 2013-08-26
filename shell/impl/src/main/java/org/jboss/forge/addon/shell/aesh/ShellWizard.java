@@ -75,7 +75,7 @@ public class ShellWizard extends AbstractShellInteraction
          if (!lenient)
          {
             // Validate required fields
-            fullCommandLineParser.parse(line, false, false);
+            fullCommandLineParser.parse(line, false);
          }
       }
       catch (CommandLineParserException cpe)
@@ -145,7 +145,7 @@ public class ShellWizard extends AbstractShellInteraction
       addWizardStep(current);
       Map<String, InputComponent<?, Object>> inputs = getInputs();
       CommandLineParser parser = commandLineUtil.generateParser(root, inputs);
-      CommandLine cmdLine = parser.parse(line, lenient, lenient);
+      CommandLine cmdLine = parser.parse(line, lenient);
       commandLineUtil.populateUIInputs(cmdLine, inputs);
       List<String> errors = validate();
       if (errors.isEmpty())

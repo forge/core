@@ -89,7 +89,7 @@ public class ShellSingleCommand extends AbstractShellInteraction
    @Override
    public void populateInputs(String line, boolean lenient) throws CommandLineParserException
    {
-      CommandLine commandLine = getParser().parse(line, false, lenient);
+      CommandLine commandLine = getParser().parse(line, lenient);
       this.commandLineUtil.populateUIInputs(commandLine, inputs);
    }
 
