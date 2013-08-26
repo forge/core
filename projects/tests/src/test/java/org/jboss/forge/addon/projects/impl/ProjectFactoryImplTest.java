@@ -42,6 +42,7 @@ public class ProjectFactoryImplTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
+               .addClass(MockProjectListener.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
