@@ -30,7 +30,6 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -83,7 +82,6 @@ public class CommandCompletionTest
    }
 
    @Test
-   @Ignore("just for the teamcity build to pass")
    public void testEscapes() throws Exception
    {
       File tempDir = OperatingSystemUtils.createTempDir();
@@ -96,7 +94,7 @@ public class CommandCompletionTest
       child.deleteOnExit();
       Result result = test.execute("cd Forge\\ 2\\ Escape", 10, TimeUnit.SECONDS);
       Assert.assertThat(result.getMessage(), CoreMatchers.nullValue());
-      Assert.assertSame(shell.getCurrentResource(), child);
+      Assert.assertEquals(shell.getCurrentResource(), child);
       currentResource.delete(true);
    }
 
