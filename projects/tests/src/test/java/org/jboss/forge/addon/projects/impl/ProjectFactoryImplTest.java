@@ -25,6 +25,7 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -62,6 +63,7 @@ public class ProjectFactoryImplTest
    }
 
    @Test
+   @Ignore("WELD-1487 - Weld fails to create beans for anonymous types")
    public void testCreateProject() throws Exception
    {
       final AtomicBoolean projectSet = new AtomicBoolean(false);
