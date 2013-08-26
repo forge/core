@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import static org.hamcrest.CoreMatchers.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.shell.test.ShellTest;
@@ -114,23 +115,23 @@ public class NewProjectShellTest
       test.waitForCompletion("new-project --", "", 5, TimeUnit.SECONDS);
 
       String stdout = test.waitForCompletion(5, TimeUnit.SECONDS);
-      Assert.assertTrue(stdout.contains("--named"));
-      Assert.assertTrue(stdout.contains("--topLevelPackage"));
-      Assert.assertTrue(stdout.contains("--targetLocation"));
-      Assert.assertTrue(stdout.contains("--overwrite"));
-      Assert.assertTrue(stdout.contains("--type"));
-      Assert.assertTrue(stdout.contains("--version"));
-      Assert.assertFalse(stdout.contains("--addons"));
+      Assert.assertThat(stdout, containsString("--named"));
+      Assert.assertThat(stdout, containsString("--topLevelPackage"));
+      Assert.assertThat(stdout, containsString("--targetLocation"));
+      Assert.assertThat(stdout, containsString("--overwrite"));
+      Assert.assertThat(stdout, containsString("--type"));
+      Assert.assertThat(stdout, containsString("--version"));
+      Assert.assertThat(stdout, not(containsString("--addons")));
 
       stdout = test.waitForCompletion("new-project --named", "named lincoln --type \"Maven - Java\" --",
                5, TimeUnit.SECONDS);
 
-      Assert.assertTrue(stdout.contains("--topLevelPackage"));
-      Assert.assertTrue(stdout.contains("--targetLocation"));
-      Assert.assertTrue(stdout.contains("--overwrite"));
-      Assert.assertTrue(stdout.contains("--type"));
-      Assert.assertTrue(stdout.contains("--version"));
-      Assert.assertFalse(stdout.contains("--addons"));
+      Assert.assertThat(stdout, containsString("--topLevelPackage"));
+      Assert.assertThat(stdout, containsString("--targetLocation"));
+      Assert.assertThat(stdout, containsString("--overwrite"));
+      Assert.assertThat(stdout, containsString("--type"));
+      Assert.assertThat(stdout, containsString("--version"));
+      Assert.assertThat(stdout, not(containsString("--addons")));
 
    }
 
