@@ -117,4 +117,15 @@ public class CommandCompletionTest
       currentResource.delete(true);
    }
 
+   @Test
+   public void testValuesWithSpaceCompletion() throws Exception
+   {
+      test.waitForCompletion("mock-command --valueWithSpaces \"Value 2\" ", "mock-command --valueWithSpaces Value 2",
+               5, TimeUnit.SECONDS);
+
+      test.waitForCompletion("mock-command --valueWithSpaces \"Value 1\" ", "mock-command --valueWithSpaces Value 1",
+               5, TimeUnit.SECONDS);
+
+   }
+
 }
