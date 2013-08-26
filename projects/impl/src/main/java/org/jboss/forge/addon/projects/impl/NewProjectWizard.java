@@ -46,7 +46,7 @@ public class NewProjectWizard implements UIWizard
    private UIInput<String> named;
 
    @Inject
-   @WithAttributes(label = "Top level package:", required = true)
+   @WithAttributes(label = "Top level package:")
    private UIInput<String> topLevelPackage;
 
    @Inject
@@ -138,6 +138,24 @@ public class NewProjectWizard implements UIWizard
       {
          type.setDefaultValue(projectTypes.get(0));
       }
+      topLevelPackage.setDefaultValue(new Callable<String>()
+      {
+         @Override
+         public String call() throws Exception
+         {
+            String result = named.getValue();
+            if (result != null)
+            {
+               result = ("org." + result).replaceAll("\\W+", ".");
+               result = result.trim();
+               result = result.replaceAll("^\\.", "");
+               result = result.replaceAll("\\.$", "");
+            }
+            else
+               result = "org.example";
+            return result;
+         }
+      });
       type.setValueChoices(projectTypes);
       builder.add(named).add(topLevelPackage).add(version).add(targetLocation).add(overwrite).add(type);
    }

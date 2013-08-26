@@ -15,9 +15,13 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>parser-java</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>shell-test-harness</artifactId>
          <classifier>forge-addon</classifier>
-         <version>2.0.0-SNAPSHOT</version>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
