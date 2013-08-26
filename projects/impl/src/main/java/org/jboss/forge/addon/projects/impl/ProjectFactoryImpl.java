@@ -7,7 +7,6 @@
 package org.jboss.forge.addon.projects.impl;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -29,6 +28,7 @@ import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Predicate;
 
 /**
@@ -194,18 +194,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Override
    public Project createTempProject()
    {
-      File rootDirectory = null;
-      try
-      {
-         rootDirectory = File.createTempFile("forgeproject", ".tmp");
-         rootDirectory.delete();
-         rootDirectory.mkdirs();
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException("Could not create temp folder", e);
-      }
-
+      File rootDirectory = OperatingSystemUtils.createTempDir();
       DirectoryResource addonDir = resourceFactory.create(DirectoryResource.class, rootDirectory);
       DirectoryResource projectDir = addonDir.createTempResource();
       projectDir.deleteOnExit();
