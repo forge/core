@@ -37,15 +37,12 @@ public interface ShellTest
    Shell getShell();
 
    /**
-    * Execute the given line and return the {@link Result}. Clears STDOUT and STDERR before execution.
-    */
-   Result execute(String line);
-
-   /**
     * Execute the given line and return the {@link Result}. Fail if not complete within the given quantity of
     * {@link TimeUnit}. Clears STDOUT and STDERR before execution.
+    * 
+    * @throws TimeoutException if the given command was not executed successfully within the allotted timeout.
     */
-   Result execute(String line, int quantity, TimeUnit unit);
+   Result execute(String line, int quantity, TimeUnit unit) throws TimeoutException;
 
    /**
     * Wait for the console {@link Buffer} to be updated the given task is executed.

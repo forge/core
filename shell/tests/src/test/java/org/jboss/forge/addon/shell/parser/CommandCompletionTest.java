@@ -94,7 +94,7 @@ public class CommandCompletionTest
       DirectoryResource child = currentResource.getChildDirectory("Forge 2 Escape");
       child.mkdir();
       child.deleteOnExit();
-      Result result = test.execute("cd Forge\\ 2\\ Escape");
+      Result result = test.execute("cd Forge\\ 2\\ Escape", 10, TimeUnit.SECONDS);
       Assert.assertThat(result.getMessage(), CoreMatchers.nullValue());
       Assert.assertSame(shell.getCurrentResource(), child);
       currentResource.delete(true);
@@ -111,7 +111,7 @@ public class CommandCompletionTest
       FileResource<?> child = currentResource.getChildDirectory("Forge 2 Escape");
       child.mkdir();
       child.deleteOnExit();
-      Result result = test.execute("cd \"Forge 2 Escape\"");
+      Result result = test.execute("cd \"Forge 2 Escape\"", 10, TimeUnit.SECONDS);
       Assert.assertThat(result.getMessage(), CoreMatchers.nullValue());
       Assert.assertEquals(shell.getCurrentResource(), child);
       currentResource.delete(true);

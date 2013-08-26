@@ -64,7 +64,7 @@ public class ShellResourceTest
    private ResourceFactory resourceFactory;
 
    @Test(timeout = 10000)
-   public void testPwdCommand()
+   public void testPwdCommand() throws TimeoutException
    {
       File tempDir = OperatingSystemUtils.createTempDir();
       FileResource<?> tempResource = resourceFactory.create(tempDir).reify(DirectoryResource.class);
@@ -72,7 +72,7 @@ public class ShellResourceTest
 
       Shell shell = shellTest.getShell();
       shell.setCurrentResource(tempResource);
-      Result pwdResult = shellTest.execute("pwd");
+      Result pwdResult = shellTest.execute("pwd", 10, TimeUnit.SECONDS);
       Assert.assertNotNull(pwdResult);
       Assert.assertEquals(tempResource.getFullyQualifiedName(), pwdResult.getMessage());
       tempDir.delete();
@@ -85,7 +85,7 @@ public class ShellResourceTest
    }
 
    @Test(timeout = 10000)
-   public void testChangeDirCommand()
+   public void testChangeDirCommand() throws TimeoutException
    {
       File tempDir = OperatingSystemUtils.createTempDir();
       DirectoryResource tempResource = resourceFactory.create(tempDir).reify(DirectoryResource.class);
@@ -96,7 +96,7 @@ public class ShellResourceTest
 
       Shell shell = shellTest.getShell();
       shell.setCurrentResource(tempResource);
-      Result changeDirResult = shellTest.execute("cd child");
+      Result changeDirResult = shellTest.execute("cd child", 10, TimeUnit.SECONDS);
       Assert.assertNotNull(changeDirResult);
       Assert.assertEquals(childDirectory, shell.getCurrentResource());
       childDirectory.delete();
@@ -104,7 +104,7 @@ public class ShellResourceTest
    }
 
    @Test(timeout = 10000)
-   public void testChangeDirCommandFailed()
+   public void testChangeDirCommandFailed() throws TimeoutException
    {
       File tempDir = OperatingSystemUtils.createTempDir();
       DirectoryResource tempResource = resourceFactory.create(tempDir).reify(DirectoryResource.class);
@@ -112,13 +112,13 @@ public class ShellResourceTest
 
       Shell shell = shellTest.getShell();
       shell.setCurrentResource(tempResource);
-      Result changeDirResult = shellTest.execute("cd child");
+      Result changeDirResult = shellTest.execute("cd child", 10, TimeUnit.SECONDS);
       Assert.assertTrue(changeDirResult instanceof Failed);
       Assert.assertEquals("child: No such file or directory", changeDirResult.getMessage());
    }
 
    @Test(timeout = 10000)
-   public void testChangeDirAbsolute()
+   public void testChangeDirAbsolute() throws TimeoutException
    {
       File userHome = OperatingSystemUtils.getUserHomeDir();
       File tempDir = OperatingSystemUtils.createTempDir();
@@ -127,13 +127,13 @@ public class ShellResourceTest
 
       Shell shell = shellTest.getShell();
       shell.setCurrentResource(tempResource);
-      Result changeDirResult = shellTest.execute("cd " + userHome.getAbsolutePath());
+      Result changeDirResult = shellTest.execute("cd " + userHome.getAbsolutePath(), 10, TimeUnit.SECONDS);
       Assert.assertNotNull(changeDirResult);
       Assert.assertEquals(userHome, shell.getCurrentResource().getUnderlyingResourceObject());
    }
 
    @Test(timeout = 10000)
-   public void testChangeDirEmpty()
+   public void testChangeDirEmpty() throws TimeoutException
    {
       File tempDir = OperatingSystemUtils.createTempDir();
       DirectoryResource tempResource = resourceFactory.create(tempDir).reify(DirectoryResource.class);
@@ -141,13 +141,13 @@ public class ShellResourceTest
 
       Shell shell = shellTest.getShell();
       shell.setCurrentResource(tempResource);
-      Result changeDirResult = shellTest.execute("cd");
+      Result changeDirResult = shellTest.execute("cd", 10, TimeUnit.SECONDS);
       Assert.assertNotNull(changeDirResult);
       Assert.assertNull(changeDirResult.getMessage());
    }
 
    @Test
-   public void testListDirCommand()
+   public void testListDirCommand() throws TimeoutException
    {
       File tempDir = OperatingSystemUtils.createTempDir();
       DirectoryResource tempResource = resourceFactory.create(tempDir).reify(DirectoryResource.class);
@@ -158,7 +158,7 @@ public class ShellResourceTest
 
       Shell shell = shellTest.getShell();
       shell.setCurrentResource(tempResource);
-      Result lsResult = shellTest.execute("ls");
+      Result lsResult = shellTest.execute("ls", 10, TimeUnit.SECONDS);
       Assert.assertNotNull(lsResult);
       Assert.assertThat(lsResult.getMessage(), containsString("child"));
       childDirectory.delete();
@@ -166,7 +166,7 @@ public class ShellResourceTest
    }
 
    @Test
-   public void testListAllDirCommand()
+   public void testListAllDirCommand() throws TimeoutException
    {
       File tempDir = OperatingSystemUtils.createTempDir();
       DirectoryResource tempResource = resourceFactory.create(tempDir).reify(DirectoryResource.class);
@@ -181,20 +181,20 @@ public class ShellResourceTest
       Shell shell = shellTest.getShell();
       shell.setCurrentResource(tempResource);
 
-      Result lsResult = shellTest.execute("ls");
+      Result lsResult = shellTest.execute("ls", 10, TimeUnit.SECONDS);
       Assert.assertNotNull(lsResult);
       Assert.assertThat(lsResult.getMessage(), not(containsString(".afile")));
 
-      lsResult = shellTest.execute("ls -a");
+      lsResult = shellTest.execute("ls -a", 10, TimeUnit.SECONDS);
       Assert.assertNotNull(lsResult);
       Assert.assertThat(lsResult.getMessage(), containsString("child"));
       Assert.assertThat(lsResult.getMessage(), containsString(".afile"));
 
-      lsResult = shellTest.execute("ls --all");
+      lsResult = shellTest.execute("ls --all", 10, TimeUnit.SECONDS);
       Assert.assertNotNull(lsResult);
       Assert.assertThat(lsResult.getMessage(), containsString("child"));
       Assert.assertThat(lsResult.getMessage(), containsString(".afile"));
-      
+
       afile.delete();
       childDirectory.delete();
       tempDir.delete();

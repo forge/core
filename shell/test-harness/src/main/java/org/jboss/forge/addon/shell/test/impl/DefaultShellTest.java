@@ -85,32 +85,7 @@ public class DefaultShellTest implements ShellTest
    }
 
    @Override
-   public Result execute(String line)
-   {
-      Assert.notNull(line, "Line to execute cannot be null.");
-
-      Result result;
-      try
-      {
-         if (!line.trim().endsWith("\n"))
-            line = line + "\n";
-         listener.reset();
-         provider.getStdIn().write(line.getBytes());
-         while (!listener.isExecuted())
-         {
-            Thread.sleep(10);
-         }
-         result = listener.getResult();
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException("Failed to execute command.", e);
-      }
-      return result;
-   }
-
-   @Override
-   public Result execute(String line, int quantity, TimeUnit unit)
+   public Result execute(String line, int quantity, TimeUnit unit) throws TimeoutException
    {
       Assert.notNull(line, "Line to execute cannot be null.");
 
@@ -126,7 +101,7 @@ public class DefaultShellTest implements ShellTest
          {
             if (System.currentTimeMillis() > (start + TimeUnit.MILLISECONDS.convert(quantity, unit)))
             {
-               throw throwTimeout("Timeout expired waiting for command [" + line + "].");
+               throw throwTimeout("Timeout expired waiting for command [" + line + "] to execute.");
             }
 
             try
@@ -140,7 +115,7 @@ public class DefaultShellTest implements ShellTest
          }
          result = listener.getResult();
       }
-      catch (Exception e)
+      catch (IOException e)
       {
          throw new RuntimeException("Failed to execute command.", e);
       }
@@ -337,8 +312,6 @@ public class DefaultShellTest implements ShellTest
             throw new RuntimeException("Interrupted while waiting for buffer to equal value  [" + expected + "].", e);
          }
       }
-
-      System.out.println("returning");
    }
 
    @Override
@@ -466,8 +439,9 @@ public class DefaultShellTest implements ShellTest
 
    private TimeoutException throwTimeout(String message) throws TimeoutException
    {
-      return new TimeoutException(message + "\n\nSTDOUT: " + provider.getStdOut().toString() + "\n\nSTDERR: "
-               + provider.getStdErr().toString());
+      return new TimeoutException(message + "\n\nSTDOUT: " + provider.getStdOut().toString()
+               + "\n\nSTDERR: " + provider.getStdErr().toString()
+               + "\n\nBUFFER: " + getBuffer().getLine() + "\n");
    };
 
    @Override
