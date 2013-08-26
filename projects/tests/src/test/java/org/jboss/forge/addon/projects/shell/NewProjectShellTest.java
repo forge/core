@@ -1,5 +1,8 @@
 package org.jboss.forge.addon.projects.shell;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import static org.hamcrest.CoreMatchers.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.shell.test.ShellTest;
@@ -123,9 +125,18 @@ public class NewProjectShellTest
       Assert.assertThat(stdout, containsString("--version"));
       Assert.assertThat(stdout, not(containsString("--addons")));
 
-      stdout = test.waitForCompletion("new-project --named lincoln --type \"Maven - Java\" --",
-               "named lincoln --type \"Maven - Java\" --",
+      stdout = test.waitForCompletion("new-project --named lincoln --type Maven\\ -\\ ",
+               "named lincoln --type Mave",
                5, TimeUnit.SECONDS);
+
+      Assert.assertThat(stdout, containsString("Maven - Java"));
+      Assert.assertThat(stdout, containsString("Maven - Resources"));
+
+      stdout = test.waitForCompletion("new-project --named lincoln --type Maven\\ -\\ Java ",
+               "J", 5, TimeUnit.SECONDS);
+
+      stdout = test.waitForCompletion("new-project --named lincoln --type Maven\\ -\\ Java --",
+               "--", 5, TimeUnit.SECONDS);
 
       Assert.assertThat(stdout, containsString("--topLevelPackage"));
       Assert.assertThat(stdout, containsString("--targetLocation"));
