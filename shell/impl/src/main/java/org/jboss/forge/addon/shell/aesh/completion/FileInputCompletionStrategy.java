@@ -44,12 +44,12 @@ class FileInputCompletionStrategy implements CompletionStrategy
       }
       else
       {
-         // TODO: Use ConverterFactory ?
          cwd = new File(value.toString());
       }
       FileLister fileLister = new FileLister(typedValue == null ? "" : typedValue, cwd,
                directory ? FileLister.Filter.DIRECTORY
                         : FileLister.Filter.ALL);
       fileLister.findMatchingDirectories(completeOperation);
+      completeOperation.removeEscapedSpacesFromCompletionCandidates();
    }
 }
