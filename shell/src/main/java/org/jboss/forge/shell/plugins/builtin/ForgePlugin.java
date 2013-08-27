@@ -469,6 +469,17 @@ public class ForgePlugin implements Plugin
    @Command(value = "update", help = "Update this forge installation")
    public void update() throws IOException
    {
+      if (environment.isEmbedded())
+      {
+         ShellMessages.warn(shell, "'forge update' only works when it is run outside of the IDE.");
+         shell.println("The embedded Forge versions are automatically updated when there is a new version of the JBoss Tools Forge Plugin.");
+         shell.println("If you want to use the latest version without waiting for a new plugin release, do the following:");
+         shell.println();
+         shell.println("1. Download the latest Forge version from http://forge.jboss.org and unzip in any place you may find convenient;");
+         shell.println("2. In Window->Preferences, look for Forge->Installed Forge Runtimes and add the path to your installation and make it the default runtime choice;");
+         shell.println("3. Start the Forge Console. You should see it is running the latest version.");
+         return;
+      }
       DirectoryResource forgeHome = environment.getForgeHome();
       DirectoryResource updateDir = forgeHome.getChildDirectory(".update");
       if (updateDir.exists())
