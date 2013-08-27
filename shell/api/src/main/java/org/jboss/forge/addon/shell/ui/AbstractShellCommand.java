@@ -21,21 +21,27 @@ import org.jboss.forge.addon.ui.util.Metadata;
 public abstract class AbstractShellCommand extends AbstractUICommand
 {
    @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return context instanceof ShellContext;
-   }
-
-   @Override
    public Metadata getMetadata()
    {
       return super.getMetadata().category(Categories.create("Shell"));
    }
 
    @Override
+   public final boolean isEnabled(UIContext context)
+   {
+      return (context instanceof ShellContext) && isEnabled((ShellContext) context);
+   }
+
+   @Override
    public final Result execute(UIContext context) throws Exception
    {
       return execute((ShellContext) context);
+   }
+
+   // This method is meant to be overriden
+   public boolean isEnabled(ShellContext context)
+   {
+      return true;
    }
 
    public abstract Result execute(ShellContext shellContext) throws Exception;
