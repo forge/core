@@ -100,6 +100,11 @@ public class ForgeCompletion implements Completion
                   completionObj.complete(completeOperation, input, shellContext, typedValue,
                            shell.getConverterFactory());
                }
+               // if we only have one complete candidate, leave the escaped space be
+               if (completeOperation.getCompletionCandidates().size() > 1)
+               {
+                  completeOperation.removeEscapedSpacesFromCompletionCandidates();
+               }
             }
          }
          catch (ArgumentParserException e)

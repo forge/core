@@ -7,14 +7,17 @@
 
 package org.jboss.forge.addon.shell.aesh.completion;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.aesh.complete.CompleteOperation;
+import org.jboss.aesh.parser.Parser;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.util.InputComponents;
-import org.jboss.forge.furnace.util.Strings;
 
 /**
  * 
@@ -26,25 +29,53 @@ public class SelectComponentCompletionStrategy implements CompletionStrategy
 
    @SuppressWarnings("unchecked")
    @Override
-   public void complete(CompleteOperation completeOperation, InputComponent<?, Object> input, ShellContext context,
-            String typedValue, ConverterFactory converterFactory)
+   public void complete(final CompleteOperation completeOperation, final InputComponent<?, Object> input,
+            final ShellContext context,
+            final String typedValue, final ConverterFactory converterFactory)
    {
       SelectComponent<?, Object> selectComponent = (SelectComponent<?, Object>) input;
       Converter<Object, String> itemLabelConverter = (Converter<Object, String>) InputComponents
                .getItemLabelConverter(converterFactory, selectComponent);
-      boolean noTypedValue = Strings.isNullOrEmpty(typedValue);
       Iterable<Object> valueChoices = selectComponent.getValueChoices();
+      List<String> choices = new ArrayList<String>();
       for (Object choice : valueChoices)
       {
          String convert = itemLabelConverter.convert(choice);
-         if (noTypedValue || convert.startsWith(typedValue))
+         if (convert != null)
          {
-            completeOperation.addCompletionCandidate(convert);
+            choices.add(convert);
          }
       }
-      if (!completeOperation.getCompletionCandidates().isEmpty() && !noTypedValue)
+      // Copied from FileLister
+      // TODO Review
+      if (choices.size() > 1)
       {
-         completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
+         String startsWith = Parser.findStartsWith(choices);
+         if (startsWith != null && startsWith.length() > 0 &&
+                  startsWith.length() > typedValue.length())
+         {
+            String substring = startsWith.substring(typedValue.length());
+            String candidate = Parser.switchSpacesToEscapedSpacesInWord(substring);
+            completeOperation.addCompletionCandidate(candidate);
+            completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
+         }
+         else
+         {
+            completeOperation.addCompletionCandidates(choices);
+            if (!completeOperation.getCompletionCandidates().isEmpty() && !typedValue.isEmpty())
+            {
+               completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
+            }
+         }
       }
+      else if (choices.size() == 1)
+      {
+         completeOperation.addCompletionCandidate(choices.get(0).substring(typedValue.length()));
+         if (!completeOperation.getCompletionCandidates().isEmpty() && !typedValue.isEmpty())
+         {
+            completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
+         }
+      }
+
    }
 }

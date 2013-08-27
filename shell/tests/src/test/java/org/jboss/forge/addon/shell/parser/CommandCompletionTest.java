@@ -118,10 +118,7 @@ public class CommandCompletionTest
    @Test
    public void testValuesWithSpaceCompletion() throws Exception
    {
-      test.waitForCompletion("foocommand --valueWithSpaces \"Value 2\" ", "foocommand --valueWithSpaces Value",
-               5, TimeUnit.SECONDS);
-
-      test.waitForCompletion("foocommand --valueWithSpaces \"Value 1\" ", "foocommand --valueWithSpaces Value",
+      test.waitForCompletion("foocommand --valueWithSpaces Value\\ ", "foocommand --valueWithSpaces Value",
                5, TimeUnit.SECONDS);
 
    }

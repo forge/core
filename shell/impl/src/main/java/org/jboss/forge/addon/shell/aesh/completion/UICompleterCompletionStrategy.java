@@ -1,7 +1,11 @@
 package org.jboss.forge.addon.shell.aesh.completion;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
+import org.jboss.aesh.parser.Parser;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
@@ -44,15 +48,37 @@ class UICompleterCompletionStrategy implements CompletionStrategy
          {
             converter = converterFactory.getConverter(input.getValueType(), String.class);
          }
-
+         List<String> choices = new ArrayList<String>();
          for (Object proposal : completer.getCompletionProposals(context, input, typedValue))
          {
             if (proposal != null)
             {
-               String convertedValue = converter.convert(proposal);
-               completeOperation.addCompletionCandidate(convertedValue);
+               String convertedValue = Parser.switchSpacesToEscapedSpacesInWord(converter.convert(proposal));
+               choices.add(convertedValue);
             }
          }
+         // TODO: Review
+         // Copied from FileLister
+         if (choices.size() > 1)
+         {
+            String startsWith = Parser.findStartsWith(choices);
+            if (startsWith != null && startsWith.length() > 0 &&
+                     startsWith.length() > typedValue.length())
+            {
+               completeOperation.addCompletionCandidate(Parser.switchSpacesToEscapedSpacesInWord(startsWith
+                        .substring(typedValue
+                                 .length())));
+            }
+            else
+            {
+               completeOperation.addCompletionCandidates(choices);
+            }
+         }
+         else if (choices.size() == 1)
+         {
+            completeOperation.addCompletionCandidate(choices.get(0).substring(typedValue.length()));
+         }
+
          if (!completeOperation.getCompletionCandidates().isEmpty() && !Strings.isNullOrEmpty(typedValue))
          {
             completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());

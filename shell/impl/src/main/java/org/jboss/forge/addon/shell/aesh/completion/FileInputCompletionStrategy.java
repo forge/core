@@ -52,8 +52,5 @@ class FileInputCompletionStrategy implements CompletionStrategy
                directory ? FileLister.Filter.DIRECTORY
                         : FileLister.Filter.ALL);
       fileLister.findMatchingDirectories(completeOperation);
-      //if we only have one complete candidate, leave the escaped space be
-      if(completeOperation.getCompletionCandidates().size() > 1)
-          completeOperation.removeEscapedSpacesFromCompletionCandidates();
    }
 }
