@@ -10,10 +10,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -154,30 +150,12 @@ public class ShellImpl implements Shell
     */
    public AbstractShellInteraction findCommand(ShellContext shellContext, String line)
    {
-      String[] tokens = line.split(" ");
-      if (tokens.length >= 1)
-      {
-         return commandManager.getEnabledShellCommands(shellContext).get(tokens[0]);
-      }
-      return null;
+      return commandManager.findCommand(shellContext, line);
    }
 
    public Collection<AbstractShellInteraction> findMatchingCommands(ShellContext shellContext, String line)
    {
-      Set<AbstractShellInteraction> result = new TreeSet<AbstractShellInteraction>();
-
-      String[] tokens = line == null ? new String[0] : line.split(" ");
-      if (tokens.length <= 1)
-      {
-         Map<String, AbstractShellInteraction> commandMap = commandManager.getEnabledShellCommands(shellContext);
-         String token = (tokens.length == 1) ? tokens[0] : null;
-         for (Entry<String, AbstractShellInteraction> entry : commandMap.entrySet())
-         {
-            if (token == null || entry.getKey().startsWith(token))
-               result.add(entry.getValue());
-         }
-      }
-      return result;
+      return commandManager.findMatchingCommands(shellContext, line);
    }
 
    public Result execute(AbstractShellInteraction shellCommand)

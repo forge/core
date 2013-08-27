@@ -9,18 +9,19 @@ package org.jboss.forge.addon.shell.commands;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.jboss.aesh.complete.CompleteOperation;
-import org.jboss.aesh.complete.Completion;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.extensions.manual.Man;
 import org.jboss.aesh.parser.Parser;
+import org.jboss.forge.addon.shell.CommandManager;
+import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
-import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
@@ -29,22 +30,21 @@ import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class ManCommand extends AbstractShellCommand implements Completion
+public class ManCommand extends AbstractShellCommand
 {
-   private AddonRegistry registry;
+   private CommandManager commandManager;
 
    @Inject
    private UIInputMany<String> arguments;
 
    @Inject
-   public ManCommand(AddonRegistry registry)
+   public ManCommand(CommandManager commandManager)
    {
-      this.registry = registry;
+      this.commandManager = commandManager;
    }
 
    @Override
@@ -70,21 +70,19 @@ public class ManCommand extends AbstractShellCommand implements Completion
             // list all commands
             if (value == null || value.trim().length() < 1)
             {
-               for (UICommand instance : registry.getServices(UICommand.class))
-               {
-                  manCommands.add(instance.getMetadata().getName());
-               }
+               Map<String, AbstractShellInteraction> enabledShellCommands = commandManager
+                        .getEnabledShellCommands((ShellContext) context);
+               manCommands.addAll(enabledShellCommands.keySet());
             }
             // find the last
             else
             {
                String item = Parser.findEscapedSpaceWordCloseToEnd(value.trim());
-               // completeOperation.setOffset(completeOperation.getCursor() -
-               // item.length());
-               for (UICommand instance : registry.getServices(UICommand.class))
+               Collection<AbstractShellInteraction> matchingCommands = commandManager.findMatchingCommands(
+                        (ShellContext) context, item);
+               for (AbstractShellInteraction cmd : matchingCommands)
                {
-                  if (instance.getMetadata().getName().startsWith(item))
-                     manCommands.add(instance.getMetadata().getName());
+                  manCommands.add(cmd.getName());
                }
             }
 
@@ -103,7 +101,8 @@ public class ManCommand extends AbstractShellCommand implements Completion
          Man man = new Man(console);
          // for now we only try to display the first
          String commandName = arguments.getValue().iterator().next();
-         URL docUrl = getCommand(commandName);
+         AbstractShellInteraction shellCommand = commandManager.findCommand(context, commandName);
+         URL docUrl = shellCommand.getSourceCommand().getMetadata().getDocLocation();
          if (docUrl != null)
          {
             man.setFile(docUrl.openStream(), docUrl.getPath());
@@ -117,48 +116,6 @@ public class ManCommand extends AbstractShellCommand implements Completion
       {
          return Results.fail(ioe.getMessage());
       }
-      return null;
-   }
-
-   @Override
-   public void complete(CompleteOperation completeOperation)
-   {
-      try
-      {
-         // list all commands
-         if (completeOperation.getBuffer().trim().equals("man"))
-         {
-            for (UICommand instance : registry.getServices(UICommand.class))
-            {
-               completeOperation.addCompletionCandidate(instance.getMetadata().getName());
-            }
-         }
-         // find the last
-         else
-         {
-            String item = Parser.findEscapedSpaceWordCloseToEnd(completeOperation.getBuffer().trim());
-            completeOperation.setOffset(completeOperation.getCursor() -
-                     item.length());
-            for (UICommand instance : registry.getServices(UICommand.class))
-            {
-               if (instance.getMetadata().getName().startsWith(item))
-                  completeOperation.addCompletionCandidate(instance.getMetadata().getName());
-            }
-         }
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-      }
-   }
-
-   private URL getCommand(String name)
-   {
-      for (UICommand instance : registry.getServices(UICommand.class))
-      {
-         if (instance.getMetadata().getName().equals(name))
-            return instance.getMetadata().getDocLocation();
-      }
-      return null;
+      return Results.success();
    }
 }
