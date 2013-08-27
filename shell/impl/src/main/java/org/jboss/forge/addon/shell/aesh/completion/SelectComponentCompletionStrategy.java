@@ -32,11 +32,12 @@ public class SelectComponentCompletionStrategy implements CompletionStrategy
       SelectComponent<?, Object> selectComponent = (SelectComponent<?, Object>) input;
       Converter<Object, String> itemLabelConverter = (Converter<Object, String>) InputComponents
                .getItemLabelConverter(converterFactory, selectComponent);
+      boolean noTypedValue = Strings.isNullOrEmpty(typedValue);
       Iterable<Object> valueChoices = selectComponent.getValueChoices();
       for (Object choice : valueChoices)
       {
          String convert = itemLabelConverter.convert(choice);
-         if (Strings.isNullOrEmpty(convert) || convert.startsWith(typedValue))
+         if (noTypedValue || convert.startsWith(typedValue))
          {
             completeOperation.addCompletionCandidate(convert);
          }
