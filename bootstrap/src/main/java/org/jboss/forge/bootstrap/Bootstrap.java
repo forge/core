@@ -101,27 +101,27 @@ public class Bootstrap
       {
          for (int i = 0; i < args.length; i++)
          {
-            if ("--install".equals(args[i]))
+            if ("--install".equals(args[i]) || "-i".equals(args[i]))
             {
                installAddon = args[++i];
             }
-            else if ("--remove".equals(args[i]))
+            else if ("--remove".equals(args[i]) || "-r".equals(args[i]))
             {
                removeAddon = args[++i];
             }
-            else if ("--list".equals(args[i]))
+            else if ("--list".equals(args[i]) || "-l".equals(args[i]))
             {
                listInstalled = true;
             }
-            else if ("--addonDir".equals(args[i]))
+            else if ("--addonDir".equals(args[i]) || "-a".equals(args[i]))
             {
                forge.addRepository(AddonRepositoryMode.MUTABLE, new File(args[++i]));
             }
-            else if ("--batchMode".equals(args[i]))
+            else if ("--batchMode".equals(args[i]) || "-b".equals(args[i]))
             {
                forge.setServerMode(false);
             }
-            else if ("--debug".equals(args[i]))
+            else if ("--debug".equals(args[i]) || "-d".equals(args[i]))
             {
                // This is just to avoid the Unknown option: --debug message below
             }
