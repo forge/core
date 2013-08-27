@@ -42,5 +42,9 @@ public class SelectComponentCompletionStrategy implements CompletionStrategy
             completeOperation.addCompletionCandidate(convert);
          }
       }
+      if (!completeOperation.getCompletionCandidates().isEmpty() && !noTypedValue)
+      {
+         completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
+      }
    }
 }

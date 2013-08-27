@@ -7,6 +7,7 @@ import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.util.InputComponents;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Completes the Aesh {@link Completion} object with values from the {@link UICompleter}
@@ -36,6 +37,10 @@ class UICompleterCompletionStrategy implements CompletionStrategy
             {
                completeOperation.addCompletionCandidate(proposal.toString());
             }
+         }
+         if (!completeOperation.getCompletionCandidates().isEmpty() && !Strings.isNullOrEmpty(typedValue))
+         {
+            completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
          }
       }
       else
