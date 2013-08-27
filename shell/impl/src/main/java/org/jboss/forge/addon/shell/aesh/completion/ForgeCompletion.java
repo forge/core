@@ -20,6 +20,7 @@ import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
@@ -93,12 +94,17 @@ public class ForgeCompletion implements Completion
                {
                   input = null;
                }
+               String typedValue = completeObject.getValue();
                if (input != null)
                {
                   CompletionStrategy completionObj = CompletionStrategyFactory.getCompletionFor(input);
-                  completionObj.complete(completeOperation, input, shellContext, completeObject.getValue(),
+                  completionObj.complete(completeOperation, input, shellContext, typedValue,
                            shell.getConverterFactory());
                }
+               // if (!completeOperation.getCompletionCandidates().isEmpty() && !Strings.isNullOrEmpty(typedValue))
+               // {
+               // completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
+               // }
             }
          }
          catch (ArgumentParserException e)
