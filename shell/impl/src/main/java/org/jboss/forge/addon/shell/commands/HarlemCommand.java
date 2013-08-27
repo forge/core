@@ -8,12 +8,9 @@ package org.jboss.forge.addon.shell.commands;
 
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.extensions.harlem.Harlem;
+import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
-import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
-import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
-import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -21,20 +18,14 @@ import org.jboss.forge.addon.ui.util.Metadata;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class HarlemCommand implements UICommand
+public class HarlemCommand extends AbstractShellCommand
 {
    @Override
-   public UICommandMetadata getMetadata()
+   public Metadata getMetadata()
    {
-      return Metadata.forCommand(getClass())
+      return super.getMetadata()
                .name("harlem")
                .description("do you want some harlem?");
-   }
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return (context instanceof ShellContext);
    }
 
    @Override
@@ -43,20 +34,11 @@ public class HarlemCommand implements UICommand
    }
 
    @Override
-   public void validate(UIValidationContext validator)
+   public Result execute(ShellContext context) throws Exception
    {
-   }
-
-   @Override
-   public Result execute(UIContext context) throws Exception
-   {
-      if (context instanceof ShellContext)
-      {
-         Console console = ((ShellContext) context).getProvider().getConsole();
-         Harlem harlem = new Harlem(console);
-         //XXX
-         // harlem.attach(((ShellContext) context).getConsoleOutput());
-      }
+      Console console = context.getProvider().getConsole();
+      Harlem harlem = new Harlem(console);
+      harlem.attach(context.getConsoleOperation());
       return Results.success();
    }
 }

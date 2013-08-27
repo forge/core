@@ -13,13 +13,10 @@ import javax.inject.Inject;
 import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.extensions.more.More;
+import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
-import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
-import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInputMany;
-import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -27,24 +24,18 @@ import org.jboss.forge.addon.ui.util.Metadata;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class MoreCommand implements UICommand
+public class MoreCommand extends AbstractShellCommand
 {
 
    @Inject
    private UIInputMany<File> arguments;
 
    @Override
-   public UICommandMetadata getMetadata()
+   public Metadata getMetadata()
    {
-      return Metadata.forCommand(getClass())
+      return super.getMetadata()
                .name("more")
                .description("more — file perusal filter for crt viewing");
-   }
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return (context instanceof ShellContext);
    }
 
    @Override
@@ -56,17 +47,11 @@ public class MoreCommand implements UICommand
    }
 
    @Override
-   public void validate(UIValidationContext validator)
+   public Result execute(ShellContext context) throws Exception
    {
-   }
-
-   @Override
-   public Result execute(UIContext context) throws Exception
-   {
-      if (arguments.getValue() != null &&
-               context instanceof ShellContext)
+      if (arguments.getValue() != null)
       {
-         Console console = ((ShellContext) context).getProvider().getConsole();
+         Console console = context.getProvider().getConsole();
          File file = arguments.getValue().iterator().next();
          // a simple hack that we should try to avoid
          // probably the converter that add the cwd dir if the
@@ -80,8 +65,7 @@ public class MoreCommand implements UICommand
          {
             More more = new More(console);
             more.setFile(file);
-            // XXX
-            // more.attach(((ShellContext) context).getConsoleOutput());
+            more.attach(context.getConsoleOperation());
             return Results.success();
          }
          else if (file.isDirectory())

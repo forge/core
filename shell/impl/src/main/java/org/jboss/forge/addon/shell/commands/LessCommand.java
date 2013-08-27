@@ -13,13 +13,10 @@ import javax.inject.Inject;
 import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.extensions.less.Less;
+import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
-import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
-import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInputMany;
-import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -27,24 +24,18 @@ import org.jboss.forge.addon.ui.util.Metadata;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class LessCommand implements UICommand
+public class LessCommand extends AbstractShellCommand
 {
 
    @Inject
    private UIInputMany<File> arguments;
 
    @Override
-   public UICommandMetadata getMetadata()
+   public Metadata getMetadata()
    {
-      return Metadata.forCommand(getClass())
+      return super.getMetadata()
                .name("less")
                .description("less - opposite of more");
-   }
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return (context instanceof ShellContext);
    }
 
    @Override
@@ -56,18 +47,12 @@ public class LessCommand implements UICommand
    }
 
    @Override
-   public void validate(UIValidationContext validator)
+   public Result execute(ShellContext context) throws Exception
    {
-   }
-
-   @Override
-   public Result execute(UIContext context) throws Exception
-   {
-      if (arguments.getValue() != null &&
-               context instanceof ShellContext)
+      if (arguments.getValue() != null)
       {
 
-         Console console = ((ShellContext) context).getProvider().getConsole();
+         Console console = context.getProvider().getConsole();
          File file = arguments.getValue().iterator().next();
          // a simple hack that we should try to avoid
          // probably the converter that add the cwd dir if the
@@ -81,8 +66,7 @@ public class LessCommand implements UICommand
          {
             Less less = new Less(console);
             less.setFile(file);
-            // XXX
-            // less.attach(((ShellContext) context).getConsoleOutput());
+            less.attach(context.getConsoleOperation());
             return Results.success();
          }
          else if (file.isDirectory())

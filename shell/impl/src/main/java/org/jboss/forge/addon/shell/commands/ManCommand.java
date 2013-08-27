@@ -18,15 +18,14 @@ import org.jboss.aesh.complete.Completion;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.extensions.manual.Man;
 import org.jboss.aesh.parser.Parser;
+import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInputMany;
-import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -35,9 +34,8 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class ManCommand implements UICommand, Completion
+public class ManCommand extends AbstractShellCommand implements Completion
 {
-
    private AddonRegistry registry;
 
    @Inject
@@ -50,16 +48,10 @@ public class ManCommand implements UICommand, Completion
    }
 
    @Override
-   public UICommandMetadata getMetadata()
+   public Metadata getMetadata()
    {
-      return Metadata.forCommand(getClass()).name("man")
+      return super.getMetadata().name("man")
                .description("man - an interface to the online reference manuals");
-   }
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return (context instanceof ShellContext);
    }
 
    @Override
@@ -103,37 +95,28 @@ public class ManCommand implements UICommand, Completion
    }
 
    @Override
-   public void validate(UIValidationContext validator)
+   public Result execute(ShellContext context) throws Exception
    {
-
-   }
-
-   @Override
-   public Result execute(UIContext context) throws Exception
-   {
-      if (context instanceof ShellContext)
+      Console console = context.getProvider().getConsole();
+      try
       {
-         Console console = ((ShellContext) context).getProvider().getConsole();
-         try
+         Man man = new Man(console);
+         // for now we only try to display the first
+         String commandName = arguments.getValue().iterator().next();
+         URL docUrl = getCommand(commandName);
+         if (docUrl != null)
          {
-            Man man = new Man(console);
-            // for now we only try to display the first
-            String commandName = arguments.getValue().iterator().next();
-            URL docUrl = getCommand(commandName);
-            if (docUrl != null)
-            {
-               man.setFile(docUrl.openStream(), docUrl.getPath());
-             //XXX
-               // man.attach(((ShellContext) context).getConsoleOutput());
-            }
-            else
-               console.out().println("No manual page found for: " + commandName);
+            man.setFile(docUrl.openStream(), docUrl.getPath());
+            // XXX
+            // man.attach(((ShellContext) context).getConsoleOutput());
+         }
+         else
+            console.out().println("No manual page found for: " + commandName);
 
-         }
-         catch (Exception ioe)
-         {
-            return Results.fail(ioe.getMessage());
-         }
+      }
+      catch (Exception ioe)
+      {
+         return Results.fail(ioe.getMessage());
       }
       return null;
    }
