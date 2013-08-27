@@ -227,7 +227,7 @@ public class ShellImpl implements Shell
 
    }
 
-   public ShellContextImpl newShellContext(ConsoleOperation consoleOperation)
+   public ShellContext newShellContext(ConsoleOperation consoleOperation)
    {
       ShellContextImpl shellContextImpl = new ShellContextImpl(this, currentResource);
       shellContextImpl.setConsoleOperation(consoleOperation);

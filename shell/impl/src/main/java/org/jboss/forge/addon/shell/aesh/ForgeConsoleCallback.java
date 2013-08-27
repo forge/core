@@ -14,7 +14,7 @@ import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.ConsoleCallback;
 import org.jboss.aesh.console.ConsoleOperation;
 import org.jboss.forge.addon.shell.ShellImpl;
-import org.jboss.forge.addon.shell.ui.ShellContextImpl;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.furnace.util.Strings;
 
@@ -45,7 +45,7 @@ public class ForgeConsoleCallback implements ConsoleCallback
       {
          try
          {
-            ShellContextImpl context = shell.newShellContext(output);
+            ShellContext context = shell.newShellContext(output);
             AbstractShellInteraction command = shell.findCommand(context, line);
             if (command == null)
             {
