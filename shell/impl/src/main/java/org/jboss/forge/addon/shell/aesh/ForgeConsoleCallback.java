@@ -12,9 +12,9 @@ import java.util.List;
 
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.ConsoleCallback;
-import org.jboss.aesh.console.ConsoleOutput;
+import org.jboss.aesh.console.ConsoleOperation;
 import org.jboss.forge.addon.shell.ShellImpl;
-import org.jboss.forge.addon.shell.ui.ShellContext;
+import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.furnace.util.Strings;
 
@@ -37,7 +37,7 @@ public class ForgeConsoleCallback implements ConsoleCallback
     * outcome was a success or not. Return 0 for success and something else for failure (typical 1 or -1).
     */
    @Override
-   public int readConsoleOutput(ConsoleOutput output) throws IOException
+   public int readConsoleOutput(ConsoleOperation output) throws IOException
    {
       String line = output.getBuffer();
       Console console = shell.getConsole();
@@ -45,7 +45,7 @@ public class ForgeConsoleCallback implements ConsoleCallback
       {
          try
          {
-            ShellContext context = shell.newShellContext();
+            ShellContextImpl context = shell.newShellContext(output);
             AbstractShellInteraction command = shell.findCommand(context, line);
             if (command == null)
             {

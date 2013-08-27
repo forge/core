@@ -44,7 +44,8 @@ public class ForgeCompletion implements Completion
    public void complete(CompleteOperation completeOperation)
    {
       String line = completeOperation.getBuffer();
-      ShellContext shellContext = shell.newShellContext();
+      // TODO: ConsoleOperation is not set
+      ShellContext shellContext = shell.newShellContext(null);
       final AbstractShellInteraction cmd = shell.findCommand(shellContext, line);
       if (cmd == null)
       {

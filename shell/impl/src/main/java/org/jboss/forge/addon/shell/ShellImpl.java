@@ -21,6 +21,7 @@ import javax.annotation.PreDestroy;
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.aesh.console.Console;
+import org.jboss.aesh.console.ConsoleOperation;
 import org.jboss.aesh.console.Prompt;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.terminal.CharacterType;
@@ -226,9 +227,11 @@ public class ShellImpl implements Shell
 
    }
 
-   public ShellContext newShellContext()
+   public ShellContextImpl newShellContext(ConsoleOperation consoleOperation)
    {
-      return new ShellContextImpl(this, currentResource);
+      ShellContextImpl shellContextImpl = new ShellContextImpl(this, currentResource);
+      shellContextImpl.setConsoleOperation(consoleOperation);
+      return shellContextImpl;
    }
 
    @PreDestroy

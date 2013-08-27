@@ -1,6 +1,6 @@
 package org.jboss.forge.addon.shell.ui;
 
-import org.jboss.aesh.console.ConsoleOutput;
+import org.jboss.aesh.console.ConsoleOperation;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -20,7 +20,7 @@ public interface ShellContext extends UIContext
    public Shell getProvider();
 
    /**
-    * Returns the {@link ConsoleOutput} from this operation
+    * Returns the {@link ConsoleOperation} from this operation
     */
-   public ConsoleOutput getConsoleOutput();
+   public ConsoleOperation getConsoleOperation();
 }

@@ -81,7 +81,8 @@ public class LessCommand implements UICommand
          {
             Less less = new Less(console);
             less.setFile(file);
-            less.attach(((ShellContext) context).getConsoleOutput());
+            // XXX
+            // less.attach(((ShellContext) context).getConsoleOutput());
             return Results.success();
          }
          else if (file.isDirectory())

@@ -80,7 +80,8 @@ public class MoreCommand implements UICommand
          {
             More more = new More(console);
             more.setFile(file);
-            more.attach(((ShellContext) context).getConsoleOutput());
+            // XXX
+            // more.attach(((ShellContext) context).getConsoleOutput());
             return Results.success();
          }
          else if (file.isDirectory())

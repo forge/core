@@ -123,7 +123,8 @@ public class ManCommand implements UICommand, Completion
             if (docUrl != null)
             {
                man.setFile(docUrl.openStream(), docUrl.getPath());
-               man.attach(((ShellContext) context).getConsoleOutput());
+             //XXX
+               // man.attach(((ShellContext) context).getConsoleOutput());
             }
             else
                console.out().println("No manual page found for: " + commandName);
