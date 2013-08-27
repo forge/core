@@ -107,8 +107,7 @@ public class ManCommand extends AbstractShellCommand implements Completion
          if (docUrl != null)
          {
             man.setFile(docUrl.openStream(), docUrl.getPath());
-            // XXX
-            // man.attach(((ShellContext) context).getConsoleOutput());
+            man.attach(context.getConsoleOperation());
          }
          else
             console.out().println("No manual page found for: " + commandName);
