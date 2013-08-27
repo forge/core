@@ -9,6 +9,7 @@ package org.jboss.forge.addon.shell.aesh.completion;
 import java.io.File;
 
 import org.jboss.aesh.complete.CompleteOperation;
+import org.jboss.aesh.parser.Parser;
 import org.jboss.aesh.util.FileLister;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.FileResource;
@@ -46,10 +47,13 @@ class FileInputCompletionStrategy implements CompletionStrategy
       {
          cwd = new File(value.toString());
       }
-      FileLister fileLister = new FileLister(typedValue == null ? "" : typedValue, cwd,
+      FileLister fileLister = new FileLister(typedValue == null ? ""
+               : Parser.switchEscapedSpacesToSpacesInWord(typedValue), cwd,
                directory ? FileLister.Filter.DIRECTORY
                         : FileLister.Filter.ALL);
       fileLister.findMatchingDirectories(completeOperation);
-      completeOperation.removeEscapedSpacesFromCompletionCandidates();
+      //if we only have one complete candidate, leave the escaped space be
+      if(completeOperation.getCompletionCandidates().size() > 1)
+          completeOperation.removeEscapedSpacesFromCompletionCandidates();
    }
 }
