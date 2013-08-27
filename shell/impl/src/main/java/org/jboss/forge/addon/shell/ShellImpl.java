@@ -149,11 +149,6 @@ public class ShellImpl implements Shell
       return new Prompt(sb.toString());
    }
 
-   public Map<String, AbstractShellInteraction> getEnabledShellCommands(ShellContext context)
-   {
-      return commandManager.getEnabledShellCommands(context);
-   }
-
    /**
     * Used in {@link ForgeCompletion} and {@link ForgeConsoleCallback}
     */
@@ -162,7 +157,7 @@ public class ShellImpl implements Shell
       String[] tokens = line.split(" ");
       if (tokens.length >= 1)
       {
-         return getEnabledShellCommands(shellContext).get(tokens[0]);
+         return commandManager.getEnabledShellCommands(shellContext).get(tokens[0]);
       }
       return null;
    }
@@ -174,7 +169,7 @@ public class ShellImpl implements Shell
       String[] tokens = line == null ? new String[0] : line.split(" ");
       if (tokens.length <= 1)
       {
-         Map<String, AbstractShellInteraction> commandMap = getEnabledShellCommands(shellContext);
+         Map<String, AbstractShellInteraction> commandMap = commandManager.getEnabledShellCommands(shellContext);
          String token = (tokens.length == 1) ? tokens[0] : null;
          for (Entry<String, AbstractShellInteraction> entry : commandMap.entrySet())
          {
