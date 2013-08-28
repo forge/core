@@ -18,7 +18,7 @@ public class CompletionStrategyFactory
       CompletionStrategy strategy = null;
       if (inputType == InputType.FILE_PICKER)
       {
-         strategy = FileInputCompletionStrategy.FILE;
+         strategy = FileInputCompletionStrategy.ALL;
       }
       else if (inputType == InputType.DIRECTORY_PICKER)
       {

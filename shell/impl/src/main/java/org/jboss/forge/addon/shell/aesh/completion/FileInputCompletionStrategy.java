@@ -17,7 +17,6 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 enum FileInputCompletionStrategy implements CompletionStrategy
@@ -37,18 +36,9 @@ enum FileInputCompletionStrategy implements CompletionStrategy
    {
       completeOperation.setOffset(completeOperation.getCursor());
 
-      final File cwd;
-      Object value = InputComponents.getValueFor(input);
-      if (value == null)
-      {
-         UISelection<FileResource<?>> selection = context.getInitialSelection();
-         cwd = selection.isEmpty() ? OperatingSystemUtils.getUserHomeDir() : selection.get()
-                  .getUnderlyingResourceObject();
-      }
-      else
-      {
-         cwd = new File(value.toString());
-      }
+      UISelection<FileResource<?>> selection = context.getInitialSelection();
+      final File cwd = selection.isEmpty() ? OperatingSystemUtils.getUserHomeDir() : selection.get()
+               .getUnderlyingResourceObject();
       FileLister fileLister = new FileLister(typedValue == null ? ""
                : Parser.switchEscapedSpacesToSpacesInWord(typedValue), cwd, filter);
       fileLister.findMatchingDirectories(completeOperation);
