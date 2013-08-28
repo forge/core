@@ -11,6 +11,7 @@ import java.io.File;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.parser.Parser;
 import org.jboss.aesh.util.FileLister;
+import org.jboss.aesh.util.FileLister.Filter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.ui.ShellContext;
@@ -21,13 +22,13 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 enum FileInputCompletionStrategy implements CompletionStrategy
 {
-   DIRECTORY(true), FILE(false);
+   DIRECTORY(Filter.DIRECTORY), FILE(Filter.FILE), ALL(Filter.ALL);
 
-   private final boolean directory;
+   private final Filter filter;
 
-   private FileInputCompletionStrategy(boolean directory)
+   private FileInputCompletionStrategy(Filter filter)
    {
-      this.directory = directory;
+      this.filter = filter;
    }
 
    @Override
@@ -49,9 +50,7 @@ enum FileInputCompletionStrategy implements CompletionStrategy
          cwd = new File(value.toString());
       }
       FileLister fileLister = new FileLister(typedValue == null ? ""
-               : Parser.switchEscapedSpacesToSpacesInWord(typedValue), cwd,
-               directory ? FileLister.Filter.DIRECTORY
-                        : FileLister.Filter.ALL);
+               : Parser.switchEscapedSpacesToSpacesInWord(typedValue), cwd, filter);
       fileLister.findMatchingDirectories(completeOperation);
    }
 }
