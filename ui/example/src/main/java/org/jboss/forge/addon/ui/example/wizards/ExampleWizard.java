@@ -16,6 +16,7 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
@@ -33,7 +34,15 @@ public class ExampleWizard extends AbstractUICommand implements UIWizard
 
    @Inject
    @WithAttributes(label = "Show Select Components", shortName = 's')
-   private UIInput<Boolean> showSelectComponents;
+   private UISelectOne<Boolean> showSelectComponents;
+
+   @Inject
+   @WithAttributes(label = "One Career", shortName = 'o')
+   private UISelectOne<Career> career;
+
+   @Inject
+   @WithAttributes(label = "Many Career", shortName = 'o')
+   private UISelectMany<Career> manyCareer;
 
    @Inject
    @WithAttributes(label = "Folder Location:", shortName = 'd')
@@ -46,7 +55,6 @@ public class ExampleWizard extends AbstractUICommand implements UIWizard
    @Inject
    private UISelectOne<String> valueWithSpaces;
 
-   
    @Override
    public Metadata getMetadata()
    {
@@ -58,7 +66,8 @@ public class ExampleWizard extends AbstractUICommand implements UIWizard
    {
       firstName.setRequired(true).setRequiredMessage("First Name must be informed !");
       valueWithSpaces.setValueChoices(Arrays.asList("Value 1", "Value 2", "Value 10", "Value 100"));
-      builder.add(firstName).add(showSelectComponents).add(goToLastStep).add(directory).add(valueWithSpaces);
+      builder.add(firstName).add(showSelectComponents).add(goToLastStep).add(directory).add(valueWithSpaces)
+               .add(career).add(manyCareer);
    }
 
    @Override
