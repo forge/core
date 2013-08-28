@@ -142,4 +142,14 @@ public class CommandCompletionTest
                allOf(containsString(Career.MEDICINE.toString()), containsString(Career.MECHANICS.toString())));
    }
 
+   @Test
+   public void testUISelectManyWithEnum() throws Exception
+   {
+      test.waitForCompletion("foocommand --manyCareer ME", "foocommand --manyCareer M",
+               5, TimeUnit.SECONDS);
+      String stdOut = test.waitForCompletion(5, TimeUnit.SECONDS);
+      Assert.assertThat(stdOut,
+               allOf(containsString(Career.MEDICINE.toString()), containsString(Career.MECHANICS.toString())));
+   }
+
 }
