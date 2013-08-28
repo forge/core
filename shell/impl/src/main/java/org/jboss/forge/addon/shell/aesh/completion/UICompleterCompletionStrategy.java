@@ -1,6 +1,7 @@
 package org.jboss.forge.addon.shell.aesh.completion;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jboss.aesh.complete.CompleteOperation;
@@ -56,6 +57,27 @@ class UICompleterCompletionStrategy implements CompletionStrategy
                choices.add(convertedValue);
             }
          }
+         // Remove already set values
+         Object value = InputComponents.getValueFor(input);
+         if (value != null)
+         {
+            if (value instanceof Iterable)
+            {
+               Iterator<Object> it = ((Iterable<Object>) value).iterator();
+               while (it.hasNext())
+               {
+                  Object next = it.next();
+                  String convert = converter.convert(next);
+                  choices.remove(convert);
+               }
+            }
+            else
+            {
+               String convert = converter.convert(value);
+               choices.remove(convert);
+            }
+         }
+
          if (choices.size() > 1)
          {
             String startsWith = Parser.findStartsWith(choices);

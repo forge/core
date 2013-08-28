@@ -20,7 +20,6 @@ import org.jboss.aesh.cl.internal.OptionInt;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SingleValued;
@@ -56,8 +55,8 @@ public class CommandLineUtil
       {
          Object defaultValue = InputComponents.getValueFor(input);
          boolean isMultiple = input instanceof ManyValued;
-         boolean hasValue = (InputComponents.getInputType(input) != InputType.CHECKBOX && !Boolean.class
-                  .isAssignableFrom(input.getValueType()));
+         // boolean hasValue = (InputComponents.getInputType(input) != InputType.CHECKBOX && !Boolean.class
+         // .isAssignableFrom(input.getValueType()));
          try
          {
             OptionBuilder optionBuilder = new OptionBuilder();
@@ -66,7 +65,7 @@ public class CommandLineUtil
                      .addDefaultValue(defaultValue == null ? null : defaultValue.toString())
                      .description(input.getLabel())
                      .hasMultipleValues(isMultiple)
-                     .hasValue(hasValue)
+                     // .hasValue(hasValue)
                      .required(input.isRequired());
 
             if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
