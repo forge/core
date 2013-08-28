@@ -19,6 +19,7 @@ import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -56,9 +57,17 @@ public class FooCommand implements UICommand
    @Inject
    @WithAttributes(label = "target location")
    private UIInput<DirectoryResource> targetLocation;
-   
+
    @Inject
    private UISelectOne<String> valueWithSpaces;
+
+   @Inject
+   @WithAttributes(label = "One Career", shortName = 'o')
+   private UISelectOne<Career> career;
+
+   @Inject
+   @WithAttributes(label = "Many Career", shortName = 'm')
+   private UISelectMany<Career> manyCareer;
 
    @Override
    public UICommandMetadata getMetadata()
@@ -92,7 +101,7 @@ public class FooCommand implements UICommand
          }
       });
 
-      builder.add(name).add(help).add(bool).add(bar).add(bar2).add(targetLocation).add(valueWithSpaces);
+      builder.add(name).add(help).add(bool).add(bar).add(bar2).add(targetLocation).add(valueWithSpaces).add(career).add(manyCareer);
    }
 
    @Override
