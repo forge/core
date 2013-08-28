@@ -66,7 +66,7 @@ public class LessCommand extends AbstractShellCommand
          {
             Less less = new Less(console);
             less.setFile(file);
-            less.attach(context.getConsoleOperation());
+            console.attachProcess(less);
             return Results.success();
          }
          else if (file.isDirectory())

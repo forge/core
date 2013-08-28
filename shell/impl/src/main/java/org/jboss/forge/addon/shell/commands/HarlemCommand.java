@@ -38,7 +38,7 @@ public class HarlemCommand extends AbstractShellCommand
    {
       Console console = context.getProvider().getConsole();
       Harlem harlem = new Harlem(console);
-      harlem.attach(context.getConsoleOperation());
+      console.attachProcess(harlem);
       return Results.success();
    }
 }

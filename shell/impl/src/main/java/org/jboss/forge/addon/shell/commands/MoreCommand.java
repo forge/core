@@ -65,7 +65,7 @@ public class MoreCommand extends AbstractShellCommand
          {
             More more = new More(console);
             more.setFile(file);
-            more.attach(context.getConsoleOperation());
+            console.attachProcess(more);
             return Results.success();
          }
          else if (file.isDirectory())
