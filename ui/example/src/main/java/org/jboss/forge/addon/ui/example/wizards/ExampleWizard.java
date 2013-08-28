@@ -41,7 +41,7 @@ public class ExampleWizard extends AbstractUICommand implements UIWizard
    private UISelectOne<Career> career;
 
    @Inject
-   @WithAttributes(label = "Many Career", shortName = 'o')
+   @WithAttributes(label = "Many Career", shortName = 'm')
    private UISelectMany<Career> manyCareer;
 
    @Inject
