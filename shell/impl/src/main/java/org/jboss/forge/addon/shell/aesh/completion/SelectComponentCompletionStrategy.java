@@ -48,8 +48,6 @@ class SelectComponentCompletionStrategy implements CompletionStrategy
             choices.add(convert);
          }
       }
-      // Copied from FileLister
-      // TODO Review
       if (choices.size() > 1)
       {
          String startsWith = Parser.findStartsWith(choices);
@@ -58,12 +56,20 @@ class SelectComponentCompletionStrategy implements CompletionStrategy
             String substring = startsWith.substring(typedValue.length());
             String candidate = Parser.switchSpacesToEscapedSpacesInWord(substring);
             completeOperation.addCompletionCandidate(candidate);
-            completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
+            completeOperation.setOffset(completeOperation.getCursor());
             completeOperation.doAppendSeparator(false);
          }
          else
          {
-            completeOperation.addCompletionCandidates(choices);
+            if (choices.contains(typedValue))
+            {
+               completeOperation.addCompletionCandidate(typedValue);
+            }
+            else
+            {
+               completeOperation.addCompletionCandidates(choices);
+
+            }
             if (!completeOperation.getCompletionCandidates().isEmpty() && !typedValue.isEmpty())
             {
                completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
