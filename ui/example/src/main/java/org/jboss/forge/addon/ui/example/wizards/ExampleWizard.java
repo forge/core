@@ -16,6 +16,7 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -55,6 +56,12 @@ public class ExampleWizard extends AbstractUICommand implements UIWizard
    @Inject
    private UISelectOne<String> valueWithSpaces;
 
+   @Inject
+   private UIInputMany<String> manyValues;
+
+   @Inject
+   private UISelectMany<String> selectManyValues;
+
    @Override
    public Metadata getMetadata()
    {
@@ -66,8 +73,9 @@ public class ExampleWizard extends AbstractUICommand implements UIWizard
    {
       firstName.setRequired(true).setRequiredMessage("First Name must be informed !");
       valueWithSpaces.setValueChoices(Arrays.asList("Value 1", "Value 2", "Value 10", "Value 100"));
+      selectManyValues.setValueChoices(Arrays.asList("A", "B", "C", "AA", "BB"));
       builder.add(firstName).add(showSelectComponents).add(goToLastStep).add(directory).add(valueWithSpaces)
-               .add(career).add(manyCareer);
+               .add(career).add(manyCareer).add(manyValues).add(selectManyValues);
    }
 
    @Override
