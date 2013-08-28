@@ -69,14 +69,19 @@ class UICompleterCompletionStrategy implements CompletionStrategy
             }
             else
             {
-               if (choices.contains(typedValue))
+               if (typedValue.isEmpty())
                {
-                  completeOperation.addCompletionCandidate(typedValue);
+                  completeOperation.addCompletionCandidates(choices);
                }
                else
                {
-                  completeOperation.addCompletionCandidates(choices);
-
+                  for (String choice : choices)
+                  {
+                     if (choice.startsWith(typedValue))
+                     {
+                        completeOperation.addCompletionCandidate(choice);
+                     }
+                  }
                }
                if (!completeOperation.getCompletionCandidates().isEmpty() && !typedValue.isEmpty())
                {
