@@ -441,7 +441,7 @@ public class DefaultShellTest implements ShellTest
    {
       return new TimeoutException(message + "\n\nSTDOUT: " + provider.getStdOut().toString()
                + "\n\nSTDERR: " + provider.getStdErr().toString()
-               + "\n\nBUFFER: " + getBuffer().getLine() + "\n");
+               + "\n\nBUFFER: [" + getBuffer().getLine() + "]\n");
    };
 
    @Override
