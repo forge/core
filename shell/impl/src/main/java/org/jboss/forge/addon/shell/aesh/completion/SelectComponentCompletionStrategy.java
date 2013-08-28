@@ -17,14 +17,16 @@ import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.SelectComponent;
+import org.jboss.forge.addon.ui.input.UISelectMany;
+import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.util.InputComponents;
 
 /**
- * 
+ * Called when auto-completion of a {@link UISelectOne} or {@link UISelectMany} component is needed
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class SelectComponentCompletionStrategy implements CompletionStrategy
+class SelectComponentCompletionStrategy implements CompletionStrategy
 {
 
    @SuppressWarnings("unchecked")
@@ -51,13 +53,13 @@ public class SelectComponentCompletionStrategy implements CompletionStrategy
       if (choices.size() > 1)
       {
          String startsWith = Parser.findStartsWith(choices);
-         if (startsWith != null && startsWith.length() > 0 &&
-                  startsWith.length() > typedValue.length())
+         if (startsWith.length() > typedValue.length())
          {
             String substring = startsWith.substring(typedValue.length());
             String candidate = Parser.switchSpacesToEscapedSpacesInWord(substring);
             completeOperation.addCompletionCandidate(candidate);
             completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
+            completeOperation.doAppendSeparator(false);
          }
          else
          {
@@ -71,10 +73,7 @@ public class SelectComponentCompletionStrategy implements CompletionStrategy
       else if (choices.size() == 1)
       {
          completeOperation.addCompletionCandidate(choices.get(0).substring(typedValue.length()));
-         if (!completeOperation.getCompletionCandidates().isEmpty() && !typedValue.isEmpty())
-         {
-            completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
-         }
+         completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
       }
 
    }
