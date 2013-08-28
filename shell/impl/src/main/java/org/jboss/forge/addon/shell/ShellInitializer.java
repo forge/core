@@ -29,7 +29,7 @@ public class ShellInitializer
       if (!Boolean.getBoolean("forge.compatibility.IDE"))
       {
          Settings settings = new SettingsBuilder().create();
-         this.shell = shellFactory.createShell(OperatingSystemUtils.getUserHomeDir(), settings);
+         this.shell = shellFactory.createShell(OperatingSystemUtils.getWorkingDir(), settings);
       }
    }
 

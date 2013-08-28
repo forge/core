@@ -81,7 +81,7 @@ public class NewEntityCommand extends AbstractProjectUICommand
             }
          }
       }
-      else
+      else if (project.hasFacet(JavaSourceFacet.class))
       {
          JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
          targetLocation.setDefaultValue(facet.getSourceFolder()).setEnabled(false);
