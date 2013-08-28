@@ -19,12 +19,10 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-@Ignore("FORGE-876")
 public class UIInputResourceInjectionTest
 {
    @Deployment
@@ -37,14 +35,16 @@ public class UIInputResourceInjectionTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:resources"));
+                        AddonDependencyEntry.create("org.jboss.forge.addon:resources")
+               );
 
       return archive;
    }
 
    @Inject
-   UIInput<FileResource<?>> firstName;
+   private UIInput<FileResource<?>> firstName;
 
    @Test
    public void testInjectionNotNull()

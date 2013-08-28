@@ -7,17 +7,21 @@ package org.jboss.forge.addon.projects.impl;
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.ProjectListener;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -59,23 +63,23 @@ public class ProjectFactoryImplTest
    }
 
    @Test
-   @Ignore("WELD-1487 - Weld fails to create beans for anonymous types")
+   // @Ignore("WELD-1487 - Weld fails to create beans for anonymous types")
    public void testCreateProject() throws Exception
    {
-      // final AtomicBoolean projectSet = new AtomicBoolean(false);
-      // ListenerRegistration<ProjectListener> registration = projectFactory.addProjectListener(new ProjectListener()
-      // {
-      // @Override
-      // public void projectCreated(Project project)
-      // {
-      // projectSet.set(true);
-      // }
-      // });
-      // Assert.assertNotNull("Should not have returned a null listener registration", registration);
-      // Project project = projectFactory.createTempProject();
-      // registration.removeListener();
-      // Assert.assertNotNull(project);
-      // Assert.assertTrue("Listener was not called", projectSet.get());
+      final AtomicBoolean projectSet = new AtomicBoolean(false);
+      ListenerRegistration<ProjectListener> registration = projectFactory.addProjectListener(new ProjectListener()
+      {
+         @Override
+         public void projectCreated(Project project)
+         {
+            projectSet.set(true);
+         }
+      });
+      Assert.assertNotNull("Should not have returned a null listener registration", registration);
+      Project project = projectFactory.createTempProject();
+      registration.removeListener();
+      Assert.assertNotNull(project);
+      Assert.assertTrue("Listener was not called", projectSet.get());
    }
 
    @Test

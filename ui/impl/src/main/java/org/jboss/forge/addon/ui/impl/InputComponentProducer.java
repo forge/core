@@ -67,7 +67,7 @@ public class InputComponentProducer implements InputComponentFactory
          ParameterizedType parameterizedType = (ParameterizedType) type;
 
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
-         Class<T> valueType = (Class<T>) typeArguments[0];
+         Class<T> valueType = (Class<T>) resolveRealType(typeArguments[0]);
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
          char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
          UISelectOne<T> input = createSelectOne(name, shortName, valueType);
@@ -94,7 +94,7 @@ public class InputComponentProducer implements InputComponentFactory
          ParameterizedType parameterizedType = (ParameterizedType) type;
 
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
-         Class<T> valueType = (Class<T>) typeArguments[0];
+         Class<T> valueType = (Class<T>) resolveRealType(typeArguments[0]);
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
          char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
          UISelectMany<T> input = createSelectMany(name, shortName, valueType);
@@ -110,7 +110,6 @@ public class InputComponentProducer implements InputComponentFactory
    }
 
    @Produces
-   @SuppressWarnings({ "unchecked" })
    public <T> UIInput<T> produceInput(InjectionPoint injectionPoint)
    {
       String name = injectionPoint.getMember().getName();
@@ -121,7 +120,7 @@ public class InputComponentProducer implements InputComponentFactory
          ParameterizedType parameterizedType = (ParameterizedType) type;
 
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
-         Class<T> valueType = (Class<T>) typeArguments[0];
+         Class<T> valueType = resolveRealType(typeArguments[0]);
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
          char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
          UIInput<T> input = createInput(name, shortName, valueType);
@@ -147,7 +146,7 @@ public class InputComponentProducer implements InputComponentFactory
          ParameterizedType parameterizedType = (ParameterizedType) type;
 
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
-         Class<T> valueType = (Class<T>) typeArguments[0];
+         Class<T> valueType = (Class<T>) resolveRealType(typeArguments[0]);
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
          char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
          UIInputMany<T> input = createInputMany(name, shortName, valueType);
@@ -159,6 +158,16 @@ public class InputComponentProducer implements InputComponentFactory
          throw new IllegalStateException("Cannot inject a generic instance of type " + UIInputMany.class.getName()
                   + "<?,?> without specifying concrete generic types at injection point " + injectionPoint + ".");
       }
+   }
+
+   @SuppressWarnings("unchecked")
+   private <T> Class<T> resolveRealType(Type type)
+   {
+      if (type instanceof ParameterizedType)
+      {
+         type = ((ParameterizedType) type).getRawType();
+      }
+      return (Class<T>) type;
    }
 
    @Override
