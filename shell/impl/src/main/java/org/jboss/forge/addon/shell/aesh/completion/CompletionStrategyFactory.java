@@ -18,15 +18,20 @@ public class CompletionStrategyFactory
       CompletionStrategy strategy = null;
       if (inputType == InputType.FILE_PICKER)
       {
-         strategy = new FileInputCompletionStrategy(false);
+         strategy = FileInputCompletionStrategy.FILE;
       }
       else if (inputType == InputType.DIRECTORY_PICKER)
       {
-         strategy = new FileInputCompletionStrategy(true);
+         strategy = FileInputCompletionStrategy.DIRECTORY;
       }
-      if (component instanceof SelectComponent)
+      else if (inputType == InputType.CHECKBOX || Boolean.class
+               .isAssignableFrom(component.getValueType()))
       {
-         strategy = new SelectComponentCompletionStrategy();
+         strategy = NoopCompletionStrategy.INSTANCE;
+      }
+      else if (component instanceof SelectComponent)
+      {
+         strategy = SelectComponentCompletionStrategy.INSTANCE;
       }
       // Always try UICompleter first and then fallback to the chosen strategy
       strategy = new UICompleterCompletionStrategy(strategy);

@@ -19,12 +19,13 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
-class FileInputCompletionStrategy implements CompletionStrategy
+enum FileInputCompletionStrategy implements CompletionStrategy
 {
+   DIRECTORY(true), FILE(false);
 
    private final boolean directory;
 
-   public FileInputCompletionStrategy(boolean directory)
+   private FileInputCompletionStrategy(boolean directory)
    {
       this.directory = directory;
    }

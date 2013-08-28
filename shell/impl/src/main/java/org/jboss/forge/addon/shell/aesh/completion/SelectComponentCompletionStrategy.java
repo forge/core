@@ -27,8 +27,9 @@ import org.jboss.forge.addon.ui.util.InputComponents;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-class SelectComponentCompletionStrategy implements CompletionStrategy
+enum SelectComponentCompletionStrategy implements CompletionStrategy
 {
+   INSTANCE;
 
    @SuppressWarnings("unchecked")
    @Override
