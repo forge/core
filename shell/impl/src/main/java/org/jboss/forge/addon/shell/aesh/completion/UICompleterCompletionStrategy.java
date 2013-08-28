@@ -13,7 +13,6 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.util.InputComponents;
-import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Completes the Aesh {@link Completion} object with values from the {@link UICompleter}
@@ -57,30 +56,37 @@ class UICompleterCompletionStrategy implements CompletionStrategy
                choices.add(convertedValue);
             }
          }
-         // TODO: Review
-         // Copied from FileLister
          if (choices.size() > 1)
          {
             String startsWith = Parser.findStartsWith(choices);
-            if (startsWith != null && startsWith.length() > 0 &&
-                     startsWith.length() > typedValue.length())
+            if (startsWith.length() > typedValue.length())
             {
-               completeOperation.addCompletionCandidate(Parser.switchSpacesToEscapedSpacesInWord(startsWith
-                        .substring(typedValue
-                                 .length())));
+               String substring = startsWith.substring(typedValue.length());
+               String candidate = Parser.switchSpacesToEscapedSpacesInWord(substring);
+               completeOperation.addCompletionCandidate(candidate);
+               completeOperation.setOffset(completeOperation.getCursor());
+               completeOperation.doAppendSeparator(false);
             }
             else
             {
-               completeOperation.addCompletionCandidates(choices);
+               if (choices.contains(typedValue))
+               {
+                  completeOperation.addCompletionCandidate(typedValue);
+               }
+               else
+               {
+                  completeOperation.addCompletionCandidates(choices);
+
+               }
+               if (!completeOperation.getCompletionCandidates().isEmpty() && !typedValue.isEmpty())
+               {
+                  completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
+               }
             }
          }
          else if (choices.size() == 1)
          {
             completeOperation.addCompletionCandidate(choices.get(0).substring(typedValue.length()));
-         }
-
-         if (!completeOperation.getCompletionCandidates().isEmpty() && !Strings.isNullOrEmpty(typedValue))
-         {
             completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
          }
       }

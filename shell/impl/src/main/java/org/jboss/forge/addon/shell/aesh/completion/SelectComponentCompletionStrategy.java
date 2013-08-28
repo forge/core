@@ -81,6 +81,5 @@ class SelectComponentCompletionStrategy implements CompletionStrategy
          completeOperation.addCompletionCandidate(choices.get(0).substring(typedValue.length()));
          completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
       }
-
    }
 }
