@@ -13,6 +13,7 @@ import org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenResourceFacet;
+import org.jboss.forge.addon.maven.projects.facets.MavenWebResourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectLocator;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -40,6 +41,7 @@ public class MavenProjectLocator implements ProjectLocator
          factory.install(project, MavenPackagingFacet.class);
          factory.install(project, MavenDependencyFacet.class);
          factory.install(project, MavenResourceFacet.class);
+         factory.register(project, MavenWebResourceFacet.class);
       }
       catch (RuntimeException e)
       {
