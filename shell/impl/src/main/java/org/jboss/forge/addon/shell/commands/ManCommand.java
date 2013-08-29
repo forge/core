@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.shell.commands;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,29 +17,31 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jboss.aesh.console.Console;
+import org.jboss.aesh.console.ConsoleCommand;
 import org.jboss.aesh.extensions.manual.Man;
 import org.jboss.aesh.parser.Parser;
 import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
-import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInputMany;
-import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class ManCommand extends AbstractShellCommand
+public class ManCommand extends AbstractNativeAeshCommand
 {
    private CommandManager commandManager;
 
    @Inject
+   @WithAttributes(label = "Arguments", required = true)
    private UIInputMany<String> arguments;
 
    @Inject
@@ -58,9 +61,6 @@ public class ManCommand extends AbstractShellCommand
    public void initializeUI(UIBuilder builder) throws Exception
    {
       arguments.setDefaultValue(Arrays.asList(getMetadata().getName()));
-      arguments.setLabel("");
-      arguments.setRequired(false);
-
       arguments.setCompleter(new UICompleter<String>()
       {
          @Override
@@ -68,7 +68,7 @@ public class ManCommand extends AbstractShellCommand
          {
             List<String> manCommands = new ArrayList<String>();
             // list all commands
-            if (value == null || value.trim().length() < 1)
+            if (Strings.isNullOrEmpty(value))
             {
                Map<String, AbstractShellInteraction> enabledShellCommands = commandManager
                         .getEnabledShellCommands((ShellContext) context);
@@ -93,29 +93,38 @@ public class ManCommand extends AbstractShellCommand
    }
 
    @Override
-   public Result execute(ShellContext context) throws Exception
+   public void validate(UIValidationContext validator)
+   {
+      super.validate(validator);
+      URL commandDocLocation = getCommandDocLocation((ShellContext) validator.getUIContext());
+      if (commandDocLocation == null)
+      {
+         String commandName = arguments.getValue().iterator().next();
+         validator.addValidationError(arguments, "No manual page found for: " + commandName);
+      }
+   }
+
+   @Override
+   public ConsoleCommand getConsoleCommand(ShellContext context) throws IOException
    {
       Console console = context.getProvider().getConsole();
-      try
-      {
-         Man man = new Man(console);
-         // for now we only try to display the first
-         String commandName = arguments.getValue().iterator().next();
-         AbstractShellInteraction shellCommand = commandManager.findCommand(context, commandName);
-         URL docUrl = shellCommand.getSourceCommand().getMetadata().getDocLocation();
-         if (docUrl != null)
-         {
-            man.setFile(docUrl.openStream(), docUrl.getPath());
-            console.attachProcess(man);
-         }
-         else
-            console.out().println("No manual page found for: " + commandName);
+      Man man = new Man(console);
+      return man;
+   }
 
-      }
-      catch (Exception ioe)
+   private URL getCommandDocLocation(ShellContext context)
+   {
+      final URL result;
+      String commandName = arguments.getValue().iterator().next();
+      AbstractShellInteraction shellCommand = commandManager.findCommand(context, commandName);
+      if (shellCommand != null)
       {
-         return Results.fail(ioe.getMessage());
+         result = shellCommand.getSourceCommand().getMetadata().getDocLocation();
       }
-      return Results.success();
+      else
+      {
+         result = null;
+      }
+      return result;
    }
 }

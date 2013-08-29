@@ -7,18 +7,15 @@
 package org.jboss.forge.addon.shell.commands;
 
 import org.jboss.aesh.console.Console;
+import org.jboss.aesh.console.ConsoleCommand;
 import org.jboss.aesh.extensions.harlem.Harlem;
-import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
-import org.jboss.forge.addon.ui.context.UIBuilder;
-import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class HarlemCommand extends AbstractShellCommand
+public class HarlemCommand extends AbstractNativeAeshCommand
 {
    @Override
    public Metadata getMetadata()
@@ -29,16 +26,10 @@ public class HarlemCommand extends AbstractShellCommand
    }
 
    @Override
-   public void initializeUI(UIBuilder builder) throws Exception
+   public ConsoleCommand getConsoleCommand(ShellContext shellContext)
    {
-   }
-
-   @Override
-   public Result execute(ShellContext context) throws Exception
-   {
-      Console console = context.getProvider().getConsole();
+      Console console = shellContext.getProvider().getConsole();
       Harlem harlem = new Harlem(console);
-      console.attachProcess(harlem);
-      return Results.success();
+      return harlem;
    }
 }

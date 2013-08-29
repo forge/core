@@ -6,29 +6,30 @@
  */
 package org.jboss.forge.addon.shell.commands;
 
-import java.io.File;
+import java.io.IOException;
 
 import javax.inject.Inject;
 
-import org.jboss.aesh.console.Config;
 import org.jboss.aesh.console.Console;
+import org.jboss.aesh.console.ConsoleCommand;
 import org.jboss.aesh.extensions.less.Less;
-import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInputMany;
-import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class LessCommand extends AbstractShellCommand
+public class LessCommand extends AbstractNativeAeshCommand
 {
 
    @Inject
-   private UIInputMany<File> arguments;
+   @WithAttributes(label = "Arguments", required = true, requiredMessage = "Missing filename (\"less --help\" for help)")
+   private UIInputMany<FileResource<?>> arguments;
 
    @Override
    public Metadata getMetadata()
@@ -41,47 +42,34 @@ public class LessCommand extends AbstractShellCommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      arguments.setLabel("");
-      arguments.setRequired(false);
       builder.add(arguments);
    }
 
    @Override
-   public Result execute(ShellContext context) throws Exception
+   public void validate(UIValidationContext validator)
    {
+      super.validate(validator);
       if (arguments.getValue() != null)
       {
-
-         Console console = context.getProvider().getConsole();
-         File file = arguments.getValue().iterator().next();
-         // a simple hack that we should try to avoid
-         // probably the converter that add the cwd dir if the
-         // user input start with ~/
-         if (file.getAbsolutePath().contains("~/"))
+         FileResource<?> file = arguments.getValue().iterator().next();
+         if (!file.exists())
          {
-            file = new File(Config.getHomeDir() + file.getAbsolutePath().substring(
-                     file.getAbsolutePath().indexOf("~/") + 1));
-         }
-         if (file.isFile())
-         {
-            Less less = new Less(console);
-            less.setFile(file);
-            console.attachProcess(less);
-            return Results.success();
+            validator.addValidationError(arguments, file.getFullyQualifiedName() + " No such file or directory");
          }
          else if (file.isDirectory())
          {
-            return Results.fail(file.getAbsolutePath() + " is a directory");
+            validator.addValidationError(arguments, file.getFullyQualifiedName() + " is a directory");
          }
-         else
-         {
-            return Results.fail(file.getAbsolutePath() + " No such file or directory");
-         }
-      }
-      else
-      {
-         return Results.fail("Missing filename (\"less --help\" for help)");
       }
    }
 
+   @Override
+   public ConsoleCommand getConsoleCommand(ShellContext context) throws IOException
+   {
+      Console console = context.getProvider().getConsole();
+      FileResource<?> file = arguments.getValue().iterator().next();
+      Less less = new Less(console);
+      less.setFile(file.getUnderlyingResourceObject());
+      return less;
+   }
 }
