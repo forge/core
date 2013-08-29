@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.maven.projects.util;
 
+import java.io.File;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  *
@@ -22,12 +24,12 @@ public class Packages
     */
    public static String toFileSyntax(String pkg)
    {
-      return pkg.replace(".", "/");
+      return pkg.replace(".", File.separator);
    }
 
    public static String fromFileSyntax(String pkg)
    {
-      return pkg.replace("/", ".");
+      return pkg.replace(File.separator, ".");
    }
 
    public static String toValidPackageName(String pkg)
