@@ -33,7 +33,7 @@ public class ForgeCompletion implements Completion
    /**
     * the name of the arguments {@link InputComponent} (if exists)
     */
-   private static final String ARGUMENTS_INPUT_NAME = "arguments";
+   public static final String ARGUMENTS_INPUT_NAME = "arguments";
 
    private ShellImpl shell;
 

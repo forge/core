@@ -18,6 +18,7 @@ import org.jboss.aesh.cl.internal.ProcessedOption;
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.aesh.cl.parser.ParserBuilder;
 import org.jboss.forge.addon.convert.ConverterFactory;
+import org.jboss.forge.addon.shell.aesh.completion.ForgeCompletion;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.hints.InputType;
@@ -50,7 +51,8 @@ public class CommandLineUtil
       ParserBuilder builder = new ParserBuilder();
 
       UICommandMetadata metadata = command.getMetadata();
-      ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()), metadata.getDescription());
+      ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()),
+               metadata.getDescription());
 
       for (InputComponent<?, Object> input : inputs.values())
       {
@@ -74,7 +76,7 @@ public class CommandLineUtil
                optionBuilder.shortName(input.getShortName());
             }
             ProcessedOption option = optionBuilder.create();
-            if (input.getName().equals("arguments"))
+            if (ForgeCompletion.ARGUMENTS_INPUT_NAME.equals(input.getName()))
             {
                parameter.setArgument(option);
             }
@@ -97,7 +99,7 @@ public class CommandLineUtil
    {
       for (InputComponent<?, Object> input : inputs.values())
       {
-         if (input.getName().equals("arguments"))
+         if (ForgeCompletion.ARGUMENTS_INPUT_NAME.equals(input.getName()))
          {
             InputComponents.setValueFor(converterFactory, input, commandLine.getArgument().getValue());
          }
