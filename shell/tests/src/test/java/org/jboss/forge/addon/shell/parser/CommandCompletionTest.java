@@ -87,8 +87,8 @@ public class CommandCompletionTest
    @Test
    public void testCommandAutocompleteOptionShortName() throws Exception
    {
-      test.waitForCompletion("foocommand --help ", "foocommand -h", 5, TimeUnit.SECONDS);
-      Assert.assertEquals("foocommand --help ", test.getBuffer().getLine());
+      test.waitForCompletion("foocommand -h ", "foocommand -h", 5, TimeUnit.SECONDS);
+      Assert.assertEquals("foocommand -h ", test.getBuffer().getLine());
    }
 
    @Test
