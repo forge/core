@@ -150,6 +150,8 @@ public class CommandCompletionTest
                stdOut,
                allOf(not(containsString("Value 1")), not(containsString("Value 2")), not(containsString("Value 10")),
                         not(containsString("Value 100"))));
+      String line = test.getBuffer().getLine();
+      Assert.assertEquals("foocommand --valueWithSpaces Value\\", line);
 
    }
 
