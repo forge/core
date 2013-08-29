@@ -69,6 +69,7 @@ public class CommandLineUtil
                      .description(input.getLabel())
                      .hasMultipleValues(isMultiple)
                      .hasValue(hasValue)
+                     .type(input.getValueType())
                      .required(input.isRequired());
 
             if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
