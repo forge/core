@@ -8,6 +8,7 @@ package org.jboss.forge.addon.projects.impl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -16,12 +17,14 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.facets.FacetNotFoundException;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectAssociationProvider;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ProjectListener;
 import org.jboss.forge.addon.projects.ProjectLocator;
+import org.jboss.forge.addon.projects.spi.ProjectCache;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
@@ -51,6 +54,9 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Inject
    private Imported<ProjectListener> builtInListeners;
 
+   @Inject
+   private Imported<ProjectCache> caches;
+
    private final List<ProjectListener> projectListeners = new ArrayList<ProjectListener>();
 
    @Override
@@ -78,31 +84,61 @@ public class ProjectFactoryImpl implements ProjectFactory
       Imported<ProjectLocator> instances = registry.getServices(ProjectLocator.class);
       for (ProjectLocator locator : instances)
       {
-         DirectoryResource r = (target instanceof DirectoryResource) ? (DirectoryResource) target : target.getParent();
-         while (r != null && result == null)
+         try
          {
-            if (locator.containsProject(r))
+            DirectoryResource r = (target instanceof DirectoryResource) ? (DirectoryResource) target : target
+                     .getParent();
+            while (r != null && result == null)
             {
-               result = locator.createProject(r);
-               if (!filter.accept(result))
-                  result = null;
+               Iterator<ProjectCache> cacheIterator = caches.iterator();
+               while (cacheIterator.hasNext() && result == null)
+               {
+                  ProjectCache cache = cacheIterator.next();
+                  try
+                  {
+                     result = cache.get(r);
+                     if (result != null && !filter.accept(result))
+                        result = null;
+                     if (result != null)
+                        break;
+                  }
+                  finally
+                  {
+                     caches.release(cache);
+                  }
+               }
+
+               if (result == null && locator.containsProject(r))
+               {
+                  result = locator.createProject(r);
+                  if (result != null && !filter.accept(result))
+                     result = null;
+
+                  if (result != null)
+                  {
+                     for (Class<ProjectFacet> instance : registry.getExportedTypes(ProjectFacet.class))
+                     {
+                        ProjectFacet facet = factory.create(result, instance);
+                        if (facet != null && factory.register(result, facet))
+                        {
+                           log.fine("Registered Facet [" + facet + "] into Project [" + result + "]");
+                        }
+                     }
+
+                     cacheProject(result);
+                  }
+               }
+
+               r = r.getParent();
             }
-
-            r = r.getParent();
          }
-         instances.release(locator);
-      }
-
-      if (result != null)
-      {
-         for (Class<ProjectFacet> instance : registry.getExportedTypes(ProjectFacet.class))
+         finally
          {
-            ProjectFacet facet = factory.create(result, instance);
-            if (facet != null && factory.register(result, facet))
-            {
-               log.fine("Registered Facet [" + facet + "] into Project [" + result + "]");
-            }
+            instances.release(locator);
          }
+
+         if (result != null)
+            break;
       }
 
       return result;
@@ -174,9 +210,29 @@ public class ProjectFactoryImpl implements ProjectFactory
       }
 
       if (result != null)
+      {
+         cacheProject(result);
          fireProjectCreated(result);
+      }
 
       return result;
+   }
+
+   private void cacheProject(Project result)
+   {
+      Iterator<ProjectCache> cacheIterator = caches.iterator();
+      while (cacheIterator.hasNext())
+      {
+         ProjectCache cache = cacheIterator.next();
+         try
+         {
+            cache.store(result);
+         }
+         finally
+         {
+            caches.release(cache);
+         }
+      }
    }
 
    private void fireProjectCreated(Project project)
@@ -236,5 +292,23 @@ public class ProjectFactoryImpl implements ProjectFactory
          instances.release(locator);
       }
       return result;
+   }
+
+   @Override
+   public void invalidateCaches()
+   {
+      Iterator<ProjectCache> cacheIterator = caches.iterator();
+      while (cacheIterator.hasNext())
+      {
+         ProjectCache cache = cacheIterator.next();
+         try
+         {
+            cache.invalidate();
+         }
+         finally
+         {
+            caches.release(cache);
+         }
+      }
    }
 }

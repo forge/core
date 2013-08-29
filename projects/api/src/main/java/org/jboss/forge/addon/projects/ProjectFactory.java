@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.projects;
 
+import org.jboss.forge.addon.projects.spi.ProjectCache;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.services.Exported;
@@ -31,6 +32,12 @@ public interface ProjectFactory
     * {@link Predicate}. Return <code>null</code> if no {@link Project} could be located.
     */
    public Project findProject(final FileResource<?> target, Predicate<Project> filter);
+
+   /**
+    * Invalidate all known {@link ProjectCache} instances. This causes the {@link ProjectFactory} to create new
+    * instances of requested projects.
+    */
+   public void invalidateCaches();
 
    /**
     * Create a {@link Project} in the specified {@link DirectoryResource}.
