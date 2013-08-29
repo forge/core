@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.ArgumentParserException;
+import org.jboss.aesh.cl.parser.ParsedCompleteObject;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
 import org.jboss.aesh.parser.Parser;

@@ -11,8 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
+import org.jboss.aesh.cl.parser.ParsedCompleteObject;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellUIBuilderImpl;
 import org.jboss.forge.addon.shell.util.ShellUtil;

@@ -16,10 +16,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jboss.aesh.cl.CommandLine;
-import org.jboss.aesh.cl.CommandLineCompletionParser;
-import org.jboss.aesh.cl.CommandLineParser;
-import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.CommandLineParserException;
+import org.jboss.aesh.cl.parser.CommandLineCompletionParser;
+import org.jboss.aesh.cl.parser.CommandLineParser;
+import org.jboss.aesh.cl.parser.ParsedCompleteObject;
 import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellValidationContext;

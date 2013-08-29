@@ -11,12 +11,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.CommandLine;
-import org.jboss.aesh.cl.CommandLineParser;
-import org.jboss.aesh.cl.ParserBuilder;
 import org.jboss.aesh.cl.builder.OptionBuilder;
 import org.jboss.aesh.cl.exception.OptionParserException;
-import org.jboss.aesh.cl.internal.CommandInt;
-import org.jboss.aesh.cl.internal.OptionInt;
+import org.jboss.aesh.cl.internal.ProcessedCommand;
+import org.jboss.aesh.cl.internal.ProcessedOption;
+import org.jboss.aesh.cl.parser.CommandLineParser;
+import org.jboss.aesh.cl.parser.ParserBuilder;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
@@ -50,7 +50,7 @@ public class CommandLineUtil
       ParserBuilder builder = new ParserBuilder();
 
       UICommandMetadata metadata = command.getMetadata();
-      CommandInt parameter = new CommandInt(ShellUtil.shellifyName(metadata.getName()), metadata.getDescription());
+      ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()), metadata.getDescription());
 
       for (InputComponent<?, Object> input : inputs.values())
       {
@@ -73,7 +73,7 @@ public class CommandLineUtil
             {
                optionBuilder.shortName(input.getShortName());
             }
-            OptionInt option = optionBuilder.create();
+            ProcessedOption option = optionBuilder.create();
             if (input.getName().equals("arguments"))
             {
                parameter.setArgument(option);
