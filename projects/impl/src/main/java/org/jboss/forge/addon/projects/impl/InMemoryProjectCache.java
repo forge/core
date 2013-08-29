@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.spi.ProjectCache;
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * A simple in-memory {@link ProjectCache}.
@@ -28,6 +29,7 @@ public class InMemoryProjectCache implements ProjectCache
    @Override
    public Project get(DirectoryResource dir)
    {
+      Assert.notNull(dir, "Directory Resource should not be null");
       return projects.get(dir.getFullyQualifiedName());
    }
 
@@ -40,6 +42,7 @@ public class InMemoryProjectCache implements ProjectCache
    @Override
    public void store(Project project)
    {
+      Assert.notNull(project, "Project should not be null");
       this.projects.put(project.getProjectRoot().getFullyQualifiedName(), project);
    }
 
