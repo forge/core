@@ -11,6 +11,7 @@ import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.util.InputComponents;
@@ -57,27 +58,29 @@ class UICompleterCompletionStrategy implements CompletionStrategy
                choices.add(convertedValue);
             }
          }
-         // Remove already set values
-         Object value = InputComponents.getValueFor(input);
-         if (value != null)
+         // Remove already set values in many valued components
+         if (input instanceof ManyValued)
          {
-            if (value instanceof Iterable)
+            Object value = InputComponents.getValueFor(input);
+            if (value != null)
             {
-               Iterator<Object> it = ((Iterable<Object>) value).iterator();
-               while (it.hasNext())
+               if (value instanceof Iterable)
                {
-                  Object next = it.next();
-                  String convert = converter.convert(next);
+                  Iterator<Object> it = ((Iterable<Object>) value).iterator();
+                  while (it.hasNext())
+                  {
+                     Object next = it.next();
+                     String convert = converter.convert(next);
+                     choices.remove(convert);
+                  }
+               }
+               else
+               {
+                  String convert = converter.convert(value);
                   choices.remove(convert);
                }
             }
-            else
-            {
-               String convert = converter.convert(value);
-               choices.remove(convert);
-            }
          }
-
          if (choices.size() > 1)
          {
             String startsWith = Parser.findStartsWith(choices);

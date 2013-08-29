@@ -17,6 +17,7 @@ import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -50,27 +51,29 @@ enum SelectComponentCompletionStrategy implements CompletionStrategy
             choices.add(convert);
          }
       }
-      // Remove already set values
-      Object value = InputComponents.getValueFor(selectComponent);
-      if (value != null)
+      // Remove already set values in many valued components
+      if (selectComponent instanceof ManyValued)
       {
-         if (value instanceof Iterable)
+         Object value = InputComponents.getValueFor(selectComponent);
+         if (value != null)
          {
-            Iterator<Object> it = ((Iterable<Object>) value).iterator();
-            while (it.hasNext())
+            if (value instanceof Iterable)
             {
-               Object next = it.next();
-               String convert = itemLabelConverter.convert(next);
+               Iterator<Object> it = ((Iterable<Object>) value).iterator();
+               while (it.hasNext())
+               {
+                  Object next = it.next();
+                  String convert = itemLabelConverter.convert(next);
+                  choices.remove(convert);
+               }
+            }
+            else
+            {
+               String convert = itemLabelConverter.convert(value);
                choices.remove(convert);
             }
          }
-         else
-         {
-            String convert = itemLabelConverter.convert(value);
-            choices.remove(convert);
-         }
       }
-
       if (choices.size() > 1)
       {
          String startsWith = Parser.findStartsWith(choices);
