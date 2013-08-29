@@ -24,6 +24,23 @@ public abstract class AbstractProjectUICommand extends AbstractUICommand
    protected ProjectFactory projectFactory;
 
    /**
+    * Checks if a project exists in the current selection
+    * 
+    * @param context
+    * @return
+    */
+   protected boolean containsProject(UIContext context)
+   {
+      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
+      if (!initialSelection.isEmpty())
+      {
+         return projectFactory.containsProject(initialSelection.get());
+      }
+      return false;
+
+   }
+
+   /**
     * Returns the selected project. null if no project is found
     */
    protected Project getSelectedProject(UIContext context)

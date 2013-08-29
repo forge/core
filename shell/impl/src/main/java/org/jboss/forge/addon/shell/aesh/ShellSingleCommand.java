@@ -31,7 +31,7 @@ import org.jboss.forge.furnace.util.Strings;
 public class ShellSingleCommand extends AbstractShellInteraction
 {
    private final UICommand command;
-   private final Map<String, InputComponent<?, Object>> inputs;
+   private Map<String, InputComponent<?, Object>> inputs;
    private CommandLineParser commandLineParser;
 
    /**
@@ -41,14 +41,13 @@ public class ShellSingleCommand extends AbstractShellInteraction
    {
       super(command, shellContext, commandLineUtil);
       this.command = command;
-      this.inputs = buildInputs(command);
    }
 
    private CommandLineParser getParser()
    {
       if (this.commandLineParser == null)
       {
-         this.commandLineParser = commandLineUtil.generateParser(this.command, inputs);
+         this.commandLineParser = commandLineUtil.generateParser(this.command, getInputs());
       }
       return this.commandLineParser;
    }
@@ -61,6 +60,10 @@ public class ShellSingleCommand extends AbstractShellInteraction
    @Override
    public Map<String, InputComponent<?, Object>> getInputs()
    {
+      if (inputs == null)
+      {
+         inputs = buildInputs(command);
+      }
       return inputs;
    }
 
@@ -90,7 +93,7 @@ public class ShellSingleCommand extends AbstractShellInteraction
    public void populateInputs(String line, boolean lenient) throws CommandLineParserException
    {
       CommandLine commandLine = getParser().parse(line, lenient);
-      this.commandLineUtil.populateUIInputs(commandLine, inputs);
+      this.commandLineUtil.populateUIInputs(commandLine, getInputs());
    }
 
    @Override
@@ -103,7 +106,7 @@ public class ShellSingleCommand extends AbstractShellInteraction
    public List<String> validate()
    {
       ShellValidationContext validationContext = new ShellValidationContext(getContext());
-      for (InputComponent<?, Object> input : inputs.values())
+      for (InputComponent<?, Object> input : getInputs().values())
       {
          input.validate(validationContext);
       }

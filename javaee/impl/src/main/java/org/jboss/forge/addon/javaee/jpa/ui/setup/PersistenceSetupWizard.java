@@ -64,7 +64,7 @@ public class PersistenceSetupWizard extends AbstractProjectUICommand implements 
    @Override
    public boolean isEnabled(UIContext context)
    {
-      return getSelectedProject(context) != null;
+      return containsProject(context);
    }
 
    @Override
