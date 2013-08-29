@@ -6,6 +6,9 @@
  */
 package org.jboss.forge.addon.maven.projects;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.facets.FacetFactory;
@@ -25,6 +28,8 @@ import org.jboss.forge.addon.resource.Resource;
  */
 public class MavenProjectLocator implements ProjectLocator
 {
+   private static final Logger log = Logger.getLogger(MavenProjectLocator.class.getName());
+
    @Inject
    private FacetFactory factory;
 
@@ -41,12 +46,20 @@ public class MavenProjectLocator implements ProjectLocator
          factory.install(project, MavenPackagingFacet.class);
          factory.install(project, MavenDependencyFacet.class);
          factory.install(project, MavenResourceFacet.class);
-         factory.register(project, MavenWebResourceFacet.class);
+         try
+         {
+            factory.register(project, MavenWebResourceFacet.class);
+         }
+         catch (IllegalStateException e)
+         {
+            log.log(Level.FINE, "Could not install [" + MavenWebResourceFacet.class.getName() + "] into project ["
+                     + project + "]", e);
+         }
       }
       catch (RuntimeException e)
       {
          throw new IllegalStateException("Could not install Maven into Project located at ["
-                  + dir.getFullyQualifiedName() + "]");
+                  + dir.getFullyQualifiedName() + "]", e);
       }
 
       return project;
