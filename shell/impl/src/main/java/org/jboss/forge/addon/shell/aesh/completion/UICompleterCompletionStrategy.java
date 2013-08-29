@@ -102,7 +102,8 @@ class UICompleterCompletionStrategy implements CompletionStrategy
                }
                if (!completeOperation.getCompletionCandidates().isEmpty() && !typedValue.isEmpty())
                {
-                  completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
+                  completeOperation.setOffset(completeOperation.getCursor()
+                           - Parser.switchSpacesToEscapedSpacesInWord(typedValue).length());
                }
             }
          }
@@ -110,7 +111,8 @@ class UICompleterCompletionStrategy implements CompletionStrategy
          {
             String candidate = choices.get(0).substring(typedValue.length());
             completeOperation.addCompletionCandidate(Parser.switchSpacesToEscapedSpacesInWord(candidate));
-            completeOperation.setOffset(completeOperation.getCursor() - typedValue.length());
+            completeOperation.setOffset(completeOperation.getCursor()
+                     - Parser.switchSpacesToEscapedSpacesInWord(typedValue).length());
          }
       }
       else
