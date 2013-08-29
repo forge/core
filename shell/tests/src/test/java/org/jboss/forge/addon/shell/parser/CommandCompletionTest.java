@@ -136,6 +136,20 @@ public class CommandCompletionTest
                stdOut,
                allOf(containsString("Value 1"), containsString("Value 2"), containsString("Value 10"),
                         containsString("Value 100")));
+   }
+
+   @Test
+   public void testValuesWithSpaceCompletionWithSlash() throws Exception
+   {
+      test.waitForCompletion("foocommand --valueWithSpaces Value\\",
+               "foocommand --valueWithSpaces Value\\",
+               5, TimeUnit.SECONDS);
+      test.sendCompletionSignal();
+      String stdOut = test.getStdOut();
+      Assert.assertThat(
+               stdOut,
+               allOf(not(containsString("Value 1")), not(containsString("Value 2")), not(containsString("Value 10")),
+                        not(containsString("Value 100"))));
 
    }
 
