@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.facets.FacetNotFoundException;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectAssociationProvider;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -220,10 +219,8 @@ public class ProjectFactoryImpl implements ProjectFactory
 
    private void cacheProject(Project result)
    {
-      Iterator<ProjectCache> cacheIterator = caches.iterator();
-      while (cacheIterator.hasNext())
+      for (ProjectCache cache : caches)
       {
-         ProjectCache cache = cacheIterator.next();
          try
          {
             cache.store(result);
@@ -297,10 +294,8 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Override
    public void invalidateCaches()
    {
-      Iterator<ProjectCache> cacheIterator = caches.iterator();
-      while (cacheIterator.hasNext())
+      for (ProjectCache cache : caches)
       {
-         ProjectCache cache = cacheIterator.next();
          try
          {
             cache.invalidate();
