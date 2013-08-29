@@ -16,6 +16,7 @@ import org.jboss.aesh.cl.ParsedCompleteObject;
 import org.jboss.aesh.cl.exception.ArgumentParserException;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
+import org.jboss.aesh.parser.Parser;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
 import org.jboss.forge.addon.shell.ui.ShellContext;
@@ -101,7 +102,8 @@ public class ForgeCompletion implements Completion
                            shell.getConverterFactory());
                }
                // if we only have one complete candidate, leave the escaped space be
-               if (completeOperation.getCompletionCandidates().size() > 1)
+               List<String> candidates = completeOperation.getCompletionCandidates();
+               if (candidates.size() > 1 && Parser.findStartsWith(candidates).isEmpty())
                {
                   completeOperation.removeEscapedSpacesFromCompletionCandidates();
                }
