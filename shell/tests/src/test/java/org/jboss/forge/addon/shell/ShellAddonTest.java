@@ -45,7 +45,7 @@ public class ShellAddonTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addClasses(FooCommand.class)
+               .addPackage(FooCommand.class.getPackage())
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
