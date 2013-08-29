@@ -54,7 +54,7 @@ class UICompleterCompletionStrategy implements CompletionStrategy
          {
             if (proposal != null)
             {
-               String convertedValue = Parser.switchSpacesToEscapedSpacesInWord(converter.convert(proposal));
+               String convertedValue = converter.convert(proposal);
                choices.add(convertedValue);
             }
          }
