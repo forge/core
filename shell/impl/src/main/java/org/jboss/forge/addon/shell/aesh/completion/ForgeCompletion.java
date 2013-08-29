@@ -17,6 +17,7 @@ import org.jboss.aesh.cl.parser.ParsedCompleteObject;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
 import org.jboss.aesh.parser.Parser;
+import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
 import org.jboss.forge.addon.shell.ui.ShellContext;
@@ -95,11 +96,15 @@ public class ForgeCompletion implements Completion
                   input = null;
                }
                String typedValue = completeObject.getValue();
+               if (typedValue == null)
+               {
+                  typedValue = "";
+               }
                if (input != null)
                {
+                  ConverterFactory converterFactory = shell.getConverterFactory();
                   CompletionStrategy completionObj = CompletionStrategyFactory.getCompletionFor(input);
-                  completionObj.complete(completeOperation, input, shellContext, typedValue,
-                           shell.getConverterFactory());
+                  completionObj.complete(completeOperation, input, shellContext, typedValue, converterFactory);
                }
                // if we only have one complete candidate, leave the escaped space be
                List<String> candidates = completeOperation.getCompletionCandidates();
