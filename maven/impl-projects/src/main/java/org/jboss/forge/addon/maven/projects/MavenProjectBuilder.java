@@ -74,7 +74,7 @@ public class MavenProjectBuilder implements ProjectBuilder
          selected.add("-Dmaven.test.skip=true");
       }
 
-      boolean success = project.getFacet(MavenFacet.class).executeMaven(selected);
+      boolean success = project.getFacet(MavenFacet.class).executeMavenEmbedded(selected);
 
       if (success)
       {
