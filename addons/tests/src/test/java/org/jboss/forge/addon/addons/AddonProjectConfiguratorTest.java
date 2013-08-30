@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.addons;
 
+import java.io.FileNotFoundException;
 import java.util.Collections;
 
 import javax.inject.Inject;
@@ -24,6 +25,7 @@ import org.jboss.forge.addon.addons.facets.FurnaceAPIFacet;
 import org.jboss.forge.addon.addons.facets.FurnacePluginFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.addon.facets.FacetNotFoundException;
 import org.jboss.forge.addon.javaee.facets.CDIFacet;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
@@ -74,7 +76,7 @@ public class AddonProjectConfiguratorTest
    private ProjectFactory projectFactory;
 
    @Test
-   public void testCreateAddonProject()
+   public void testCreateAddonProject() throws FileNotFoundException, FacetNotFoundException
    {
       Project project = projectFactory.createTempProject();
       project.getProjectRoot().deleteOnExit();
@@ -153,6 +155,8 @@ public class AddonProjectConfiguratorTest
        */
       Assert.assertEquals("../pom.xml", implProject.getFacet(MavenFacet.class).getPOM().getParent().getRelativePath());
       Assert.assertTrue(implProject.hasFacet(DefaultFurnaceContainerAPIFacet.class));
+      Assert.assertTrue(implProject.getFacet(JavaSourceFacet.class)
+               .getJavaResource("com.acme.testproject.package-info.java").exists());
 
       Assert.assertTrue(implProject.getFacet(DependencyFacet.class).hasDirectDependency(apiDependency));
       Assert.assertFalse(implProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(apiDependency));
@@ -181,6 +185,8 @@ public class AddonProjectConfiguratorTest
        */
       Assert.assertEquals("../pom.xml", apiProject.getFacet(MavenFacet.class).getPOM().getParent().getRelativePath());
       Assert.assertTrue(apiProject.hasFacet(DefaultFurnaceContainerAPIFacet.class));
+      Assert.assertTrue(apiProject.getFacet(JavaSourceFacet.class)
+               .getJavaResource("com.acme.testproject.package-info.java").exists());
 
       Assert.assertTrue(apiProject.getFacet(DependencyFacet.class).hasDirectDependency(spiDependency));
       Assert.assertFalse(apiProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(spiDependency));
@@ -202,6 +208,8 @@ public class AddonProjectConfiguratorTest
        * Verify spi/ sub-module
        */
       Assert.assertEquals("../pom.xml", spiProject.getFacet(MavenFacet.class).getPOM().getParent().getRelativePath());
+      Assert.assertTrue(spiProject.getFacet(JavaSourceFacet.class)
+               .getJavaResource("com.acme.testproject.package-info.java").exists());
 
       Assert.assertTrue(spiProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(spiProject.getFacet(DependencyFacet.class).hasDirectDependency(
@@ -220,6 +228,8 @@ public class AddonProjectConfiguratorTest
        * Verify addon/ sub-module
        */
       Assert.assertEquals("../pom.xml", addonProject.getFacet(MavenFacet.class).getPOM().getParent().getRelativePath());
+      Assert.assertTrue(addonProject.getFacet(JavaSourceFacet.class)
+               .getJavaResource("com.acme.testproject.package-info.java").exists());
 
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasDirectDependency(apiDependency));
       Assert.assertFalse(addonProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(apiDependency));
@@ -252,7 +262,6 @@ public class AddonProjectConfiguratorTest
 
       Assert.assertTrue(addonProject.hasFacet(FurnacePluginFacet.class));
 
-      
       /*
        * Verify tests/ sub-module
        */
@@ -289,7 +298,7 @@ public class AddonProjectConfiguratorTest
    }
 
    @Test
-   public void testSimpleAddonProject()
+   public void testSimpleAddonProject() throws FileNotFoundException, FacetNotFoundException
    {
       Project project = projectFactory.createTempProject();
       project.getProjectRoot().deleteOnExit();
@@ -310,6 +319,8 @@ public class AddonProjectConfiguratorTest
       Assert.assertTrue(project.hasFacet(CDIFacet.class));
 
       Assert.assertFalse(project.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
+      Assert.assertTrue(project.getFacet(JavaSourceFacet.class)
+               .getJavaResource("com.acme.testproject.package-info.java").exists());
 
       /**
        * Verify test harness dependencies
@@ -351,7 +362,7 @@ public class AddonProjectConfiguratorTest
 
    @Test
    @Ignore("FORGE-894")
-   public void testDependencyResolution()
+   public void testDependencyResolution() throws FileNotFoundException, FacetNotFoundException
    {
       Project project = projectFactory.createTempProject();
       project.getProjectRoot().deleteOnExit();

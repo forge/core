@@ -379,7 +379,11 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    {
       try
       {
-         return 0 == NativeSystemCall.execFromPath(getMvnCommand(), parms, out, getFaceted().getProjectRoot());
+         int returnValue = NativeSystemCall.execFromPath(getMvnCommand(), parms, out, getFaceted().getProjectRoot());
+         if (returnValue == 0)
+            return true;
+         else
+            return executeMavenEmbedded(parms);
       }
       catch (IOException e)
       {

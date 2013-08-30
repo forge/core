@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.addons;
 
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -25,6 +26,7 @@ import org.jboss.forge.addon.addons.facets.FurnaceVersionFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.facets.FacetNotFoundException;
 import org.jboss.forge.addon.javaee.facets.CDIFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -37,6 +39,8 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.versions.Version;
+import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.JavaPackageInfo;
 
 /**
  * Creates Furnace Addon projects
@@ -62,6 +66,7 @@ public class AddonProjectConfigurator
    private DependencyInstaller dependencyInstaller;
 
    public void setupSimpleAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
+            throws FileNotFoundException, FacetNotFoundException
    {
       // TODO Use or remove forgeVersion parameter
       facetFactory.install(project, FurnaceVersionFacet.class);
@@ -74,13 +79,21 @@ public class AddonProjectConfigurator
       facetFactory.install(project, DefaultFurnaceContainerFacet.class);
       facetFactory.install(project, CDIFacet.class);
       facetFactory.install(project, AddonTestFacet.class);
+
+      JavaSourceFacet javaSource = project.getFacet(JavaSourceFacet.class);
+      javaSource.saveJavaSource(JavaParser.create(JavaPackageInfo.class).setPackage(javaSource.getBasePackage()));
+
       installSelectedAddons(project, dependencyAddons, false);
    }
 
    /**
     * Create a Furnace Project with the full structure (api,impl,tests,spi and addon)
+    * 
+    * @throws FacetNotFoundException
+    * @throws FileNotFoundException
     */
    public void setupComplexAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
+            throws FileNotFoundException, FacetNotFoundException
    {
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
       String projectName = metadata.getProjectName();
@@ -121,6 +134,13 @@ public class AddonProjectConfigurator
                DependencyBuilder.create(implProjectDependency).setVersion("${project.version}"));
       dependencyInstaller.installManaged(project,
                DependencyBuilder.create(spiProjectDependency).setVersion("${project.version}"));
+
+      for (Project p : Arrays.asList(addonProject, apiProject, implProject, spiProject))
+      {
+         JavaSourceFacet javaSource = p.getFacet(JavaSourceFacet.class);
+         javaSource.saveJavaSource(JavaParser.create(JavaPackageInfo.class).setPackage(
+                  project.getFacet(MetadataFacet.class).getTopLevelPackage()));
+      }
 
       installSelectedAddons(project, dependencyAddons, true);
       installSelectedAddons(addonProject, dependencyAddons, false);
