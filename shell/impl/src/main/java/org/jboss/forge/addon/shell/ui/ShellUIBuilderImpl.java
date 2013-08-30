@@ -28,7 +28,11 @@ public class ShellUIBuilderImpl implements UIBuilder
    @Override
    public UIBuilder add(InputComponent<?, ?> input)
    {
-      components.put(input.getName(), (InputComponent<?, Object>) input);
+      //FORGE-1149: Disabled inputs should not be allowed 
+      if (input.isEnabled())
+      {
+         components.put(input.getName(), (InputComponent<?, Object>) input);
+      }
       return this;
    }
 

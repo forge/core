@@ -69,6 +69,10 @@ public class FooCommand implements UICommand
    @WithAttributes(label = "Many Career", shortName = 'm')
    private UISelectMany<Career> manyCareer;
 
+   @Inject
+   @WithAttributes(label = "Disabled", enabled = false)
+   private UIInput<String> disabledOption;
+
    @Override
    public UICommandMetadata getMetadata()
    {
@@ -101,7 +105,8 @@ public class FooCommand implements UICommand
          }
       });
 
-      builder.add(name).add(help).add(bool).add(bar).add(bar2).add(targetLocation).add(valueWithSpaces).add(career).add(manyCareer);
+      builder.add(name).add(help).add(bool).add(bar).add(bar2).add(targetLocation).add(valueWithSpaces).add(career)
+               .add(manyCareer).add(disabledOption);
    }
 
    @Override

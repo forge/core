@@ -33,6 +33,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -85,6 +86,7 @@ public class CommandCompletionTest
    }
 
    @Test
+   @Ignore("Ignoring short options at the moment")
    public void testCommandAutocompleteOptionShortName() throws Exception
    {
       test.waitForCompletion("foocommand -h ", "foocommand -h", 5, TimeUnit.SECONDS);
@@ -152,7 +154,6 @@ public class CommandCompletionTest
                         not(containsString("Value 100"))));
       String line = test.getBuffer().getLine();
       Assert.assertEquals("foocommand --valueWithSpaces Value\\", line);
-
    }
 
    @Test
@@ -175,4 +176,11 @@ public class CommandCompletionTest
                allOf(containsString(Career.MEDICINE.toString()), containsString(Career.MECHANICS.toString())));
    }
 
+   @Test
+   public void testDisabledOptionsShouldNotBeDisplayed() throws Exception
+   {
+      test.waitForCompletion("foocommand --", "foocommand --", 5, TimeUnit.SECONDS);
+      String stdOut = test.waitForCompletion(5, TimeUnit.SECONDS);
+      Assert.assertThat(stdOut, not(containsString("--disabledOption")));
+   }
 }
