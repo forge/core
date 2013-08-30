@@ -40,6 +40,7 @@ public abstract class AbstractExitCommand extends AbstractShellCommand implement
    @Override
    public Result execute(ShellContext context) throws Exception
    {
+      context.getProvider().getConsole().stop();
       forge.stop();
       return Results.success("");
    }
