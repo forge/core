@@ -11,17 +11,17 @@ import org.jboss.forge.addon.ui.UICommand;
 
 class NavigationResultImpl implements Result, NavigationResult
 {
-   private Class<? extends UICommand> next;
+   private Class<? extends UICommand>[] next;
    private String message;
 
-   public NavigationResultImpl(String message, Class<? extends UICommand> next)
+   public NavigationResultImpl(String message, Class<? extends UICommand>... next)
    {
       this.message = message;
       this.next = next;
    }
 
    @Override
-   public Class<? extends UICommand> getNext()
+   public Class<? extends UICommand>[] getNext()
    {
       return next;
    }

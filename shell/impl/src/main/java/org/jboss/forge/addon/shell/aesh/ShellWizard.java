@@ -119,10 +119,10 @@ public class ShellWizard extends AbstractShellInteraction
             String dashedOption = "--" + option;
             if ((unvalued || option.startsWith(typed)) && !line.contains(dashedOption))
             {
-//               if (entry.getValue().isRequired())
-//               {
-//                  dashedOption = new TerminalString(dashedOption, CharacterType.BOLD).toString();
-//               }
+               // if (entry.getValue().isRequired())
+               // {
+               // dashedOption = new TerminalString(dashedOption, CharacterType.BOLD).toString();
+               // }
                result.add(dashedOption);
             }
          }
@@ -155,8 +155,9 @@ public class ShellWizard extends AbstractShellInteraction
          if (next != null && next.getNext() != null)
          {
             // It should always be a UIWizardStep
-            Class<? extends UIWizardStep> nextWizardStep = (Class<? extends UIWizardStep>) next.getNext();
-            UIWizardStep step = commandManager.lookup(nextWizardStep);
+            Class<? extends UIWizardStep>[] nextWizardStep = (Class<? extends UIWizardStep>[]) next.getNext();
+            // TODO: Change this
+            UIWizardStep step = commandManager.lookup(nextWizardStep[0]);
             parser = populate(root, step, line, lenient);
          }
       }
