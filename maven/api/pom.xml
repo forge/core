@@ -8,10 +8,6 @@
    <artifactId>maven-api</artifactId>
    <name>Forge - Maven API</name>
 
-   <properties>
-      <version.maven>3.0.5</version.maven>
-   </properties>
-
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>
