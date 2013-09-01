@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Nazgul Project: nazgul-forge-factory-impl-nazgul
+  %%
+  Copyright (C) 2010 - 2013 jGuru Europe AB
+  %%
+  Licensed under the jGuru Europe AB license (the "License"), based
+  on Apache License, Version 2.0; you may not use this file except
+  in compliance with the License.
+  
+  You may obtain a copy of the License at
+  
+        http://www.jguru.se/licenses/jguruCorporateSourceLicense-2.0.txt
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>foo-reactor</artifactId>
+        <groupId>com.acme.foo</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <groupId>com.acme.foo.somecomponent</groupId>
+    <artifactId>foo-somecomponent-reactor</artifactId>
+    <packaging>pom</packaging>
+    <name>${project.artifactId}</name>
+    <description>Nazgul Framework-style project: ${project.artifactId}</description>
+    <url>${url.prefix}/${path.in.reactor}</url>
+    <!-- modules>
+        <module>foo-parent</module>
+        <module>foo-api-parent</module>
+        <module>foo-model-parent</module>
+    </modules -->
+    <scm>
+        <connection>${scm.url.prefix}/${reactor.name}</connection>
+        <developerConnection>${scm.url.prefix}/${reactor.name}</developerConnection>
+        <url>${reactor.url.remote.prefix}/${reactor.name}</url>
+    </scm>
+    <distributionManagement>
+        <site>
+            <id>fooSite</id>
+            <name>fooSite</name>
+            <url>${distro.url.prefix}/${path.in.reactor}</url>
+        </site>
+    </distributionManagement>
+    <properties>
+        <path.in.reactor>somecomponent</path.in.reactor>
+    </properties>
+</project>

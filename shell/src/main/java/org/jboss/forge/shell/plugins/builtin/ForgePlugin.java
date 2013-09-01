@@ -18,12 +18,15 @@ import java.util.UUID;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.Validate;
+import org.apache.maven.model.Model;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Ref;
 import org.jboss.forge.ForgeEnvironment;
 import org.jboss.forge.env.Configuration;
 import org.jboss.forge.git.GitUtils;
+import org.jboss.forge.maven.resources.MavenPomResource;
 import org.jboss.forge.parser.ParserException;
 import org.jboss.forge.parser.java.util.Assert;
 import org.jboss.forge.parser.java.util.Strings;
@@ -81,7 +84,7 @@ import org.jboss.forge.shell.util.PluginUtil;
 @Help("Forge control and writer environment commands. Manage plugins and other forge addons.")
 public class ForgePlugin implements Plugin
 {
-
+   private static final String NOT_GIVEN = "## not_given ##";
    private static final String MODULE_TEMPLATE_XML = "/org/jboss/forge/modules/module-template.xml";
    private final Event<ReinitializeEnvironment> reinitializeEvent;
 
@@ -230,9 +233,22 @@ public class ForgePlugin implements Plugin
 
          if (plugin.isGit())
          {
-            installFromGit(plugin.getGitRepo(), Strings.isNullOrEmpty(version) ? plugin.getGitRef() : version, null,
-                     false,
-                     out);
+            // FORGE-1030: Acquire the groupId and artifactId from repository.yaml to
+            final Dependency pluginArtifact = plugin.getArtifact();
+            final String groupId = pluginArtifact == null
+                    ? NOT_GIVEN
+                    : pluginArtifact.getGroupId();
+            final String artifactId = pluginArtifact == null
+                    ? NOT_GIVEN
+                    : pluginArtifact.getArtifactId();
+
+            installFromGit(plugin.getGitRepo(),
+                    Strings.isNullOrEmpty(version) ? plugin.getGitRef() : version,
+                    null,
+                    false,
+                    groupId,
+                    artifactId,
+                    out);
          }
          else
          {
@@ -253,7 +269,7 @@ public class ForgePlugin implements Plugin
          throw new IllegalArgumentException("Project folder must be specified.");
       }
 
-      buildFromCurrentProject(out, workspace);
+      buildFromCurrentProject(out, workspace, NOT_GIVEN, NOT_GIVEN);
 
       ShellMessages.success(out, "Installed from [" + workspace + "] successfully.");
       restart();
@@ -266,6 +282,10 @@ public class ForgePlugin implements Plugin
             @Option(name = "ref", description = "branch or tag to build") final String refName,
             @Option(name = "checkoutDir", description = "directory in which to clone the repository") final Resource<?> checkoutResource,
             @Option(name = "keepSources", description = "keep the sources after checking out", defaultValue = "false", flagOnly = true) final boolean keepSources,
+            @Option(name = "groupId", description = "the groupId of the Maven project holding the Forge Plugin",
+                    defaultValue = NOT_GIVEN) final String groupId,
+            @Option(name = "artifactId", description = "the artifactId of the Maven project holding the Forge Plugin",
+                    defaultValue = NOT_GIVEN) final String artifactId,
             final PipeOut out) throws Exception
    {
       DirectoryResource buildDir;
@@ -411,7 +431,7 @@ public class ForgePlugin implements Plugin
                               + "], building Plugin from HEAD.");
          }
 
-         buildFromCurrentProject(out, buildDir);
+         buildFromCurrentProject(out, buildDir, groupId, artifactId);
       }
       finally
       {
@@ -486,7 +506,7 @@ public class ForgePlugin implements Plugin
       {
          ShellMessages
                   .warn(shell,
-                           "There is an update pending. Restart Forge for the update to take effect. To abort this update, type 'forge update-abort'");
+                          "There is an update pending. Restart Forge for the update to take effect. To abort this update, type 'forge update-abort'");
          return;
       }
       Dependency forgeDistribution = getLatestAvailableDistribution();
@@ -508,7 +528,7 @@ public class ForgePlugin implements Plugin
 
    /**
     * Returns the latest available distribution
-    * 
+    *
     * @return
     */
    private Dependency getLatestAvailableDistribution()
@@ -537,10 +557,10 @@ public class ForgePlugin implements Plugin
 
    /**
     * Unpacks the dependency info a specific folder
-    * 
-    * @param dependency
+    *
+    * @param dependency The dependency to unpack.
     */
-   private void updateForge(Dependency dependency) throws IOException
+   private void updateForge(final Dependency dependency) throws IOException
    {
       wait.start("Update in progress. Please wait");
       List<DependencyResource> resolvedArtifacts = resolver.resolveArtifacts(dependency);
@@ -566,20 +586,56 @@ public class ForgePlugin implements Plugin
    /*
     * Helpers
     */
-   private void buildFromCurrentProject(final PipeOut out, final DirectoryResource buildDir) throws Abort
+
+    /**
+     * Builds the Maven project with the reactor root in the supplied buildDir,
+     * and installs the forge modules found in the project with the supplied
+     * groupId and artifactId.
+     *
+     * @param out        The active PipeOut.
+     * @param buildDir   The directory holding the Maven reactor.
+     * @param groupId    The groupId of the project within the reactor holding the Forge plugin implementations.
+     *                   Use the value {@code NOT_GIVEN} to indicate that the root reactor project is assumed to
+     *                   hold the Forge plugin implementations.
+     * @param artifactId The artifactId of the project within the reactor holding the Forge plugin implementations.
+     *                   Use the value {@code NOT_GIVEN} to indicate that the root reactor project is assumed to
+     *                   hold the Forge plugin implementations.
+     * @throws Abort If the user aborted the operation.
+     */
+   private void buildFromCurrentProject(final PipeOut out,
+                                        final DirectoryResource buildDir,
+                                        final String groupId,
+                                        final String artifactId)
+           throws Abort
    {
       DirectoryResource savedLocation = shell.getCurrentDirectory();
       try
       {
          shell.setCurrentResource(buildDir);
-         Project project = shell.getCurrentProject();
-         if (project == null)
+
+         //
+         // There is a difference between the root reactor project and the project
+         // containing the forge plugin implementations, unless no groupId and artifactId
+         // have been requested.
+         //
+         Project rootReactorProject = shell.getCurrentProject();
+         Project forgePluginProject = NOT_GIVEN.equals(groupId) || NOT_GIVEN.equals(artifactId)
+                 ? rootReactorProject
+                 : findProjectMatching(groupId, artifactId, buildDir);
+
+         if (rootReactorProject == null)
          {
             throw new IllegalStateException("Unable to recognise plugin project in ["
                      + buildDir.getFullyQualifiedName() + "]");
          }
+         if(forgePluginProject == null)
+         {
+             throw new IllegalStateException("Could not find plugin project in reactor with root ["
+                     + buildDir.getFullyQualifiedName() + "]. Searched for groupId [" + groupId
+                     + "] and artifactId [" + artifactId + "]");
+         }
 
-         DependencyFacet deps = project.getFacet(DependencyFacet.class);
+         DependencyFacet deps = forgePluginProject.getFacet(DependencyFacet.class);
          DependencyBuilder shellApi = DependencyBuilder.create("org.jboss.forge:forge-shell-api");
 
          String apiVersion = null;
@@ -644,21 +700,45 @@ public class ForgePlugin implements Plugin
          }
 
          ShellMessages.info(out, "Invoking build with underlying build system.");
-         Resource<?> artifact = project.getFacet(PackagingFacet.class).createBuilder().runTests(false).build();
+
+         //
+         // Forge-1030: If we have a multi-module reactor, we need to build the full
+         //             reactor, plus another build to acquire the Forge plugin artifact
+         //             within the forgePluginProject.
+         //
+         // TODO: Check if we can acquire the forge plugin artifact from the full reactor build
+         // TODO: instead of making two builds.
+         //
+         if(rootReactorProject != forgePluginProject)
+         {
+             // We need to build the full reactor once, so any dependencies of the plugin project
+             // are present within the local Maven repository.
+             rootReactorProject.getFacet(PackagingFacet.class).createBuilder().runTests(false).build();
+         }
+
+         // Build the actual plugin project, and retrieve its artifact.
+         Resource<?> artifact = forgePluginProject
+                 .getFacet(PackagingFacet.class)
+                 .createBuilder()
+                 .runTests(false)
+                 .build();
+
          if ((artifact != null) && artifact.exists())
          {
-            MetadataFacet meta = project.getFacet(MetadataFacet.class);
+            MetadataFacet meta = forgePluginProject.getFacet(MetadataFacet.class);
             Dependency dep = meta.getOutputDependency();
 
             ShellMessages.info(out, "Installing plugin artifact.");
 
-            // TODO Figure out a better plugin versioning strategy than random numbers, also see if unloading is
-            // possible to avoid this entirely.
+            // TODO: Figure out a better plugin versioning strategy than random
+            // TODO: numbers, also see if unloading is possible to avoid this entirely.
             createModule(
-                     project,
-                     DependencyBuilder.create(dep).setVersion(
-                              dep.getVersion() + "-" + UUID.randomUUID().toString()),
-                     artifact, apiVersion);
+                    forgePluginProject,
+                    DependencyBuilder
+                            .create(dep)
+                            .setVersion(dep.getVersion() + "-" + UUID.randomUUID().toString()),
+                    artifact,
+                    apiVersion);
          }
          else
          {
@@ -689,6 +769,96 @@ public class ForgePlugin implements Plugin
          }
       }
       return false;
+   }
+
+    /**
+     * Finds the DirectoryResource in or below the supplied reactorRoot directory where the pom.xml file
+     * sports the effective groupId and artifactId given.
+     *
+     * @param groupId     The desired groupId, typically given in the {@code repository.yaml} file.
+     * @param artifactId  The desired artifactId, typically given in the {@code repository.yaml} file.
+     * @param reactorRoot The topmost DirectoryResource under which this find algorithm should work.
+     *                    Typically pointed to the root directory within a Maven build reactor.
+     * @return The Project within the Maven reactor which has the effective groupId and artifactId given, or
+     *         {@code null} if no project matching the specified data was found in the reactor.
+     */
+   private Project findProjectMatching(final String groupId,
+                                       final String artifactId,
+                                       final DirectoryResource reactorRoot) {
+
+       // Check sanity
+       Validate.notEmpty(groupId, "Cannot handle null or empty groupId argument.");
+       Validate.notEmpty(artifactId, "Cannot handle null or empty artifactId argument.");
+       Validate.notNull(reactorRoot, "Cannot handle null reactorRoot argument.");
+
+       final List<DirectoryResource> result = new ArrayList<DirectoryResource>();
+       addIfMatching(result, groupId, artifactId, reactorRoot);
+
+       // Prepare the result
+       Project toReturn = null;
+       if(result.size() == 1)
+       {
+           // Found the project we were looking for.
+           final DirectoryResource originalResource = shell.getCurrentDirectory();
+           try
+           {
+               // Use the shell to acquire the corresponding project.
+               shell.setCurrentResource(result.get(0));
+               toReturn = shell.getCurrentProject();
+           }
+           finally
+           {
+               // Restore the shell.
+               shell.setCurrentResource(originalResource);
+           }
+       }
+       else if(result.size() > 1)
+       {
+           // Uhm ...
+       }
+
+       // All done.
+       return toReturn;
+   }
+
+   private static void addIfMatching(final List<DirectoryResource> toPopulate,
+                                     final String groupId,
+                                     final String artifactId,
+                                     final DirectoryResource currentDirectory)
+   {
+       // Does the supplied reactorRoot contain a pom.xml?
+       final MavenPomResource mavenPomResource = currentDirectory.getChildOfType(MavenPomResource.class, "pom.xml");
+       if(mavenPomResource.exists())
+       {
+
+            // Find the effective groupId and artifactId values.
+            final Model pom = mavenPomResource.getCurrentModel();
+            final String pomArtifactId = pom.getArtifactId();
+            final String pomGroupId = pom.getGroupId() == null || "".equals(pom.getGroupId())
+                    ? pom.getParent().getGroupId()
+                    : pom.getGroupId();
+
+           if(groupId.equals(pomGroupId) && artifactId.equals(pomArtifactId))
+           {
+                // Found a match
+                toPopulate.add(currentDirectory);
+
+                // There should only be one match in a reactor.
+                return;
+           }
+
+           // Any modules in the current pom?
+           for(String currentModule : pom.getModules())
+           {
+               final DirectoryResource childDirectory = currentDirectory.getChildDirectory(currentModule);
+
+               if(childDirectory.exists())
+               {
+                   // Descend into child directory, and repeat.
+                   addIfMatching(toPopulate, groupId, artifactId, childDirectory);
+               }
+           }
+       }
    }
 
    private DirectoryResource createModule(final Project project, final Dependency dep, final Resource<?> artifact,
