@@ -78,7 +78,7 @@ public class InputComponentProducer implements InputComponentFactory
       else
       {
          throw new IllegalStateException("Cannot inject a generic instance of type " + UISelectOne.class.getName()
-                  + "<?,?> without specifying concrete generic types at injection point " + injectionPoint + ".");
+                  + "<?> without specifying concrete generic types at injection point " + injectionPoint + ".");
       }
    }
 
@@ -105,7 +105,7 @@ public class InputComponentProducer implements InputComponentFactory
       else
       {
          throw new IllegalStateException("Cannot inject a generic instance of type " + UISelectMany.class.getName()
-                  + "<?,?> without specifying concrete generic types at injection point " + injectionPoint + ".");
+                  + "<?> without specifying concrete generic types at injection point " + injectionPoint + ".");
       }
    }
 
@@ -130,7 +130,7 @@ public class InputComponentProducer implements InputComponentFactory
       else
       {
          throw new IllegalStateException("Cannot inject a generic instance of type " + UIInput.class.getName()
-                  + "<?,?> without specifying concrete generic types at injection point " + injectionPoint + ".");
+                  + "<?> without specifying concrete generic types at injection point " + injectionPoint + ".");
       }
    }
 
@@ -156,7 +156,7 @@ public class InputComponentProducer implements InputComponentFactory
       else
       {
          throw new IllegalStateException("Cannot inject a generic instance of type " + UIInputMany.class.getName()
-                  + "<?,?> without specifying concrete generic types at injection point " + injectionPoint + ".");
+                  + "<?> without specifying concrete generic types at injection point " + injectionPoint + ".");
       }
    }
 
