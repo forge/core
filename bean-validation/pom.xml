@@ -1,0 +1,64 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.jboss.forge</groupId>
+		<artifactId>forge-parent</artifactId>
+		<version>2.6.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<groupId>org.jboss.forge.addon</groupId>
+	<artifactId>bean-validation-parent</artifactId>
+	<packaging>pom</packaging>
+	<name>Forge - Bean Validation Addon Parent</name>
+
+	<modules>
+		<module>api</module>
+		<module>impl</module>
+		<module>addon</module>
+		<module>tests</module>
+	</modules>
+
+	<properties>
+		<version.hibernate.validator>5.1.1.Final</version.hibernate.validator>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.jboss.forge.addon</groupId>
+				<artifactId>bean-validation-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.forge.addon</groupId>
+				<artifactId>bean-validation-impl</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.forge.addon</groupId>
+				<artifactId>bean-validation</artifactId>
+				<classifier>forge-addon</classifier>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.forge.addon</groupId>
+				<artifactId>ui</artifactId>
+				<classifier>forge-addon</classifier>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>1.1.0.Final</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator-parent</artifactId>
+				<version>${version.hibernate.validator}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>

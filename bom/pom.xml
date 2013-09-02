@@ -168,6 +168,17 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>bean-validation</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>bean-validation-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>addons</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
@@ -247,6 +258,12 @@
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>javaee</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>javaee-spi</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>

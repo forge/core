@@ -26,6 +26,18 @@ The javaee addon enables creation of artifacts (classes, descriptors) with focus
 |yes
 |no
 
+|parser-xml
+|yes
+|no
+
+|text
+|yes
+|no
+
+|javaee-spi
+|yes
+|no
+
 |org.jboss.forge.furnace.container:cdi
 |no
 |no

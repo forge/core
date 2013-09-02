@@ -15,6 +15,7 @@
    <name>Forge - JavaEE Parent</name>
 
    <modules>
+   	  <module>spi</module>
       <module>addon</module>
       <module>api</module>
       <module>impl</module>
@@ -29,65 +30,10 @@
    <dependencyManagement>
       <dependencies>
          <dependency>
-            <groupId>org.jboss.spec</groupId>
-            <artifactId>jboss-javaee-7.0</artifactId>
-            <version>1.0.0.Final</version>
-            <type>pom</type>
-            <scope>import</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>javaee</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>javaee-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>ui</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>projects</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>parser-java</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>parser-xml</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>templates</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>text</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-
          <dependency>
             <groupId>org.jboss.forge.descriptors</groupId>
             <artifactId>javaee-descriptors-api</artifactId>
