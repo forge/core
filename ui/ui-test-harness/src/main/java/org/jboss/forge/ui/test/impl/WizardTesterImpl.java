@@ -9,11 +9,13 @@ package org.jboss.forge.ui.test.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
@@ -35,6 +37,8 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
    private final AddonRegistry addonRegistry;
 
    private final LinkedList<UIBuilderImpl> pages = new LinkedList<UIBuilderImpl>();
+
+   private Stack<Class<? extends UICommand>> subflows = new Stack<Class<? extends UICommand>>();
 
    private final UIContextImpl context;
 
@@ -62,7 +66,21 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       }
       UIBuilderImpl currentBuilder = getCurrentBuilder();
       NavigationResult result = currentBuilder.getWizard().next(context);
-      UIBuilderImpl nextBuilder = createBuilder((Class<W>) result.getNext());
+      Class<? extends UICommand>[] successors = result.getNext();
+      final Class<? extends UICommand> successor;
+      if (successors == null)
+      {
+         successor = subflows.pop();
+      }
+      else
+      {
+         successor = successors[0];
+         for (int i = 1; i < successors.length; i++)
+         {
+            subflows.push(successors[i]);
+         }
+      }
+      UIBuilderImpl nextBuilder = createBuilder((Class<W>) successor);
       pages.add(nextBuilder);
       return result.getMessage();
    }
@@ -83,7 +101,17 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       UIBuilderImpl currentBuilder = getCurrentBuilder();
       try
       {
-         return currentBuilder.getWizard().next(context) != null;
+         boolean result;
+         NavigationResult next = currentBuilder.getWizard().next(context);
+         if (next == null)
+         {
+            result = !subflows.isEmpty();
+         }
+         else
+         {
+            result = true;
+         }
+         return result;
       }
       catch (Exception e)
       {

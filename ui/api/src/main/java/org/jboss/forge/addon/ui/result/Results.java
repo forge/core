@@ -36,17 +36,33 @@ public final class Results
       return new FailedResult(message, e);
    }
 
+   @SuppressWarnings("unchecked")
    public static final NavigationResult navigateTo(Class<? extends UICommand> next)
    {
-      return navigateTo(next, null);
+      if (next == null)
+      {
+         return null;
+      }
+      return navigateTo(null, next, new Class[0]);
    }
 
-   public static final NavigationResult navigateTo(Class<? extends UICommand> next, String message)
+   public static final NavigationResult navigateTo(Class<? extends UICommand> next,
+            Class<? extends UICommand>... additional)
+   {
+      return navigateTo(null, next, additional);
+   }
+
+   @SuppressWarnings("unchecked")
+   public static final NavigationResult navigateTo(String message, Class<? extends UICommand> next,
+            Class<? extends UICommand>... additional)
    {
       if (next == null)
          return null;
 
-      return new NavigationResultImpl(message, next);
+      Class<? extends UICommand>[] all = new Class[1 + additional.length];
+      all[0] = next;
+      System.arraycopy(additional, 0, all, 1, additional.length);
+      return new NavigationResultImpl(message, all);
    }
 
    private static class SuccessfulResult implements Result

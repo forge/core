@@ -17,5 +17,5 @@ import org.jboss.forge.addon.ui.UICommand;
  */
 public interface NavigationResult extends Result
 {
-   Class<? extends UICommand> getNext();
+   Class<? extends UICommand>[] getNext();
 }
