@@ -23,11 +23,11 @@ import org.jboss.aesh.cl.parser.ParsedCompleteObject;
 import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellValidationContext;
+import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
-import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.util.Strings;
 
 /**
@@ -38,6 +38,7 @@ import org.jboss.forge.furnace.util.Strings;
 public class ShellWizard extends AbstractShellInteraction
 {
    private LinkedList<ShellWizardStep> steps = new LinkedList<ShellWizardStep>();
+   private LinkedList<Class<? extends UICommand>> subflows = new LinkedList<Class<? extends UICommand>>();
    private CommandManager commandManager;
    private CommandLineParser fullCommandLineParser;
 
@@ -139,8 +140,7 @@ public class ShellWizard extends AbstractShellInteraction
       return new CommandLineCompletionParser(fullCommandLineParser).findCompleteObject(line);
    }
 
-   @SuppressWarnings("unchecked")
-   private CommandLineParser populate(UIWizard root, UIWizard current, String line, boolean lenient) throws Exception
+   private CommandLineParser populate(UICommand root, UICommand current, String line, boolean lenient) throws Exception
    {
       addWizardStep(current);
       Map<String, InputComponent<?, Object>> inputs = getInputs();
@@ -150,21 +150,42 @@ public class ShellWizard extends AbstractShellInteraction
       List<String> errors = validate();
       if (errors.isEmpty())
       {
-         NavigationResult next = current.next(getContext());
-         // Proceed to next input
-         if (next != null && next.getNext() != null)
+         if (current instanceof UIWizard)
          {
-            // It should always be a UIWizardStep
-            Class<? extends UIWizardStep>[] nextWizardStep = (Class<? extends UIWizardStep>[]) next.getNext();
-            // TODO: Change this
-            UIWizardStep step = commandManager.lookup(nextWizardStep[0]);
-            parser = populate(root, step, line, lenient);
+            NavigationResult next = ((UIWizard) current).next(getContext());
+            final Class<? extends UICommand> successor;
+            // Proceed to next input
+            if (next != null && next.getNext() != null)
+            {
+               Class<? extends UICommand>[] successors = next.getNext();
+               successor = successors[0];
+               for (int i = 1; i < successors.length; i++)
+               {
+                  if (successors[i] != null)
+                  {
+                     subflows.push(successors[i]);
+                  }
+               }
+            }
+            else if (!subflows.isEmpty())
+            {
+               successor = subflows.pop();
+            }
+            else
+            {
+               successor = null;
+            }
+            if (successor != null)
+            {
+               UICommand step = commandManager.lookup(successor);
+               parser = populate(root, step, line, lenient);
+            }
          }
       }
       return parser;
    }
 
-   private ShellWizardStep addWizardStep(final UIWizard step)
+   private ShellWizardStep addWizardStep(final UICommand step)
    {
       ShellWizardStep cmdStep = new ShellWizardStep(step, buildInputs(step));
       steps.add(cmdStep);
@@ -199,10 +220,10 @@ public class ShellWizard extends AbstractShellInteraction
 
    private static class ShellWizardStep
    {
-      public final UIWizard command;
+      public final UICommand command;
       public final Map<String, InputComponent<?, Object>> inputs;
 
-      public ShellWizardStep(UIWizard command, Map<String, InputComponent<?, Object>> inputs)
+      public ShellWizardStep(UICommand command, Map<String, InputComponent<?, Object>> inputs)
       {
          this.command = command;
          this.inputs = inputs;
