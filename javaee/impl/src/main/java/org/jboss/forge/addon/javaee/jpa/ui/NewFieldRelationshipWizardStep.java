@@ -14,9 +14,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 
 import org.jboss.forge.addon.javaee.jpa.FieldOperations;
+import org.jboss.forge.addon.javaee.ui.AbstractProjectUICommand;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ui.AbstractProjectUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.hints.InputType;
