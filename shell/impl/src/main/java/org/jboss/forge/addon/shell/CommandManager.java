@@ -20,7 +20,6 @@ import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
-import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 
@@ -43,7 +42,7 @@ public class CommandManager
       this.addonRegistry = addonRegistry;
    }
 
-   public UIWizardStep lookup(Class<? extends UIWizardStep> type)
+   public UICommand lookup(Class<? extends UICommand> type)
    {
       return addonRegistry.getServices(type).get();
    }
