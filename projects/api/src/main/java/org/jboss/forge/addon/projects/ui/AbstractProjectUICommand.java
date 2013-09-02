@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.javaee.ui;
+package org.jboss.forge.addon.projects.ui;
 
 import javax.inject.Inject;
 
@@ -57,6 +57,6 @@ public abstract class AbstractProjectUICommand extends AbstractUICommand
    @Override
    public Metadata getMetadata()
    {
-      return super.getMetadata().category(Categories.create("Java EE"));
+      return super.getMetadata().category(Categories.create("Projects"));
    }
 }
