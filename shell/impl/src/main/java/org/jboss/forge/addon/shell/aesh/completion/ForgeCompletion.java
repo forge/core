@@ -72,9 +72,10 @@ public class ForgeCompletion implements Completion
             {
                List<String> options = cmd.getCompletionOptions(completeObject.getName(), line);
                completeOperation.addCompletionCandidates(options);
-               if (completeOperation.getCompletionCandidates().size() == 1)
+               if (!completeOperation.getCompletionCandidates().isEmpty() && !completeObject.getName().isEmpty())
                {
-                  completeOperation.setOffset(completeOperation.getCursor() - completeObject.getOffset());
+                  completeOperation.setOffset(completeOperation.getCursor()
+                           - completeObject.getName().length() - 2);
                }
             }
             else
