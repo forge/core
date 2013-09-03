@@ -8,6 +8,7 @@ package org.jboss.forge.addon.shell.parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -143,17 +144,24 @@ public class CommandCompletionTest
    @Test
    public void testValuesWithSpaceCompletionWithSlash() throws Exception
    {
-      test.waitForCompletion("foocommand --valueWithSpaces Value\\",
-               "foocommand --valueWithSpaces Value\\",
-               5, TimeUnit.SECONDS);
+      test.write("foocommand --valueWithSpaces Value\\");
       test.sendCompletionSignal();
-      String stdOut = test.getStdOut();
-      Assert.assertThat(
-               stdOut,
-               allOf(not(containsString("Value 1")), not(containsString("Value 2")), not(containsString("Value 10")),
-                        not(containsString("Value 100"))));
-      String line = test.getBuffer().getLine();
-      Assert.assertEquals("foocommand --valueWithSpaces Value\\", line);
+      test.waitForBufferChanged(new Callable<Object>()
+      {
+         @Override
+         public Object call()
+         {
+            String stdOut = test.getStdOut();
+            Assert.assertThat(
+                     stdOut,
+                     allOf(not(containsString("Value 1")), not(containsString("Value 2")),
+                              not(containsString("Value 10")),
+                              not(containsString("Value 100"))));
+            String line = test.getBuffer().getLine();
+            Assert.assertEquals("foocommand --valueWithSpaces Value\\", line);
+            return null;
+         }
+      }, 5, TimeUnit.SECONDS);
    }
 
    @Test
