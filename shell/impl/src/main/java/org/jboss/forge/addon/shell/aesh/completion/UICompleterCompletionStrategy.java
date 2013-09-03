@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jboss.aesh.complete.CompleteOperation;
+import org.jboss.aesh.cl.completer.CompleterData;
+import org.jboss.aesh.cl.completer.OptionCompleter;
 import org.jboss.aesh.complete.Completion;
 import org.jboss.aesh.parser.Parser;
 import org.jboss.forge.addon.convert.Converter;
@@ -21,21 +22,28 @@ import org.jboss.forge.addon.ui.util.InputComponents;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-class UICompleterCompletionStrategy implements CompletionStrategy
+class UICompleterCompletionStrategy implements OptionCompleter
 {
+   private final OptionCompleter fallback;
+   private final InputComponent<?, Object> input;
+   private final ConverterFactory converterFactory;
+   private final ShellContext context;
 
-   public CompletionStrategy fallback;
-
-   public UICompleterCompletionStrategy(CompletionStrategy fallback)
+   public UICompleterCompletionStrategy(OptionCompleter fallback, ShellContext context,
+            InputComponent<?, Object> input,
+            ConverterFactory converterFactory)
    {
       this.fallback = fallback;
+      this.context = context;
+      this.input = input;
+      this.converterFactory = converterFactory;
    }
-
+   
    @SuppressWarnings("unchecked")
    @Override
-   public void complete(CompleteOperation completeOperation, InputComponent<?, Object> input, ShellContext context,
-            String typedValue, ConverterFactory converterFactory)
+   public void complete(final CompleterData completerData)
    {
+      String completeValue = completerData.getGivenCompleteValue();
       UICompleter<Object> completer = InputComponents.getCompleterFor(input);
       if (completer != null)
       {
@@ -50,7 +58,7 @@ class UICompleterCompletionStrategy implements CompletionStrategy
             converter = converterFactory.getConverter(input.getValueType(), String.class);
          }
          List<String> choices = new ArrayList<String>();
-         for (Object proposal : completer.getCompletionProposals(context, input, typedValue))
+         for (Object proposal : completer.getCompletionProposals(context, input, completeValue))
          {
             if (proposal != null)
             {
@@ -81,12 +89,30 @@ class UICompleterCompletionStrategy implements CompletionStrategy
                }
             }
          }
-         for (String choice : choices)
+         if (choices.size() > 1)
          {
-            if (typedValue.isEmpty() || choice.startsWith(typedValue))
+            String startsWith = Parser.findStartsWith(choices);
+            if (startsWith.length() > completeValue.length())
             {
-               completeOperation.addCompletionCandidate(Parser.switchSpacesToEscapedSpacesInWord(choice));
+               String substring = startsWith.substring(completeValue.length());
+               completerData.addCompleterValue(Parser.switchSpacesToEscapedSpacesInWord(substring));
+               completerData.setAppendSpace(false);
             }
+            else
+            {
+               for (String choice : choices)
+               {
+                  if (completeValue.isEmpty() || choice.startsWith(completeValue))
+                  {
+                     completerData.addCompleterValue(Parser.switchSpacesToEscapedSpacesInWord(choice));
+                  }
+               }
+            }
+         }
+         else if (choices.size() == 1)
+         {
+            String candidate = choices.get(0).substring(completeValue.length());
+            completerData.addCompleterValue(Parser.switchSpacesToEscapedSpacesInWord(candidate));
          }
       }
       else
@@ -94,7 +120,7 @@ class UICompleterCompletionStrategy implements CompletionStrategy
          // fallback to the other completion strategy
          if (fallback != null)
          {
-            fallback.complete(completeOperation, input, context, typedValue, converterFactory);
+            fallback.complete(completerData);
          }
       }
    }

@@ -1,10 +1,10 @@
 package org.jboss.forge.addon.shell;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
@@ -12,10 +12,8 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
 import org.jboss.forge.addon.shell.aesh.CommandLineUtil;
-import org.jboss.forge.addon.shell.aesh.ForgeConsoleCallback;
 import org.jboss.forge.addon.shell.aesh.ShellSingleCommand;
 import org.jboss.forge.addon.shell.aesh.ShellWizard;
-import org.jboss.forge.addon.shell.aesh.completion.ForgeCompletion;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.util.Commands;
@@ -49,7 +47,7 @@ public class CommandManager
 
    public Map<String, AbstractShellInteraction> getEnabledShellCommands(ShellContext shellContext)
    {
-      Map<String, AbstractShellInteraction> commands = new HashMap<String, AbstractShellInteraction>();
+      Map<String, AbstractShellInteraction> commands = new TreeMap<String, AbstractShellInteraction>();
       CommandLineUtil cmdLineUtil = getCommandLineUtil();
       for (UICommand cmd : Commands.getEnabledCommands(getAllCommands(), shellContext))
       {

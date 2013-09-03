@@ -11,12 +11,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jboss.aesh.complete.CompleteOperation;
+import org.jboss.aesh.cl.completer.CompleterData;
+import org.jboss.aesh.cl.completer.OptionCompleter;
 import org.jboss.aesh.parser.Parser;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
-import org.jboss.forge.addon.shell.ui.ShellContext;
-import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.UISelectMany;
@@ -28,17 +27,24 @@ import org.jboss.forge.addon.ui.util.InputComponents;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-enum SelectComponentCompletionStrategy implements CompletionStrategy
+class SelectComponentOptionCompleter implements OptionCompleter
 {
-   INSTANCE;
+   private final SelectComponent<?, Object> selectComponent;
+   private final ConverterFactory converterFactory;
+
+   public SelectComponentOptionCompleter(SelectComponent<?, Object> selectComponent,
+            ConverterFactory converterFactory)
+   {
+      super();
+      this.selectComponent = selectComponent;
+      this.converterFactory = converterFactory;
+   }
 
    @SuppressWarnings("unchecked")
    @Override
-   public void complete(final CompleteOperation completeOperation, final InputComponent<?, Object> input,
-            final ShellContext context,
-            final String typedValue, final ConverterFactory converterFactory)
+   public void complete(final CompleterData completerData)
    {
-      SelectComponent<?, Object> selectComponent = (SelectComponent<?, Object>) input;
+      final String completeValue = completerData.getGivenCompleteValue();
       Converter<Object, String> itemLabelConverter = (Converter<Object, String>) InputComponents
                .getItemLabelConverter(converterFactory, selectComponent);
       Iterable<Object> valueChoices = selectComponent.getValueChoices();
@@ -74,12 +80,30 @@ enum SelectComponentCompletionStrategy implements CompletionStrategy
             }
          }
       }
-      for (String choice : choices)
+      if (choices.size() > 1)
       {
-         if (typedValue.isEmpty() || choice.startsWith(typedValue))
+         String startsWith = Parser.findStartsWith(choices);
+         if (startsWith.length() > completeValue.length())
          {
-            completeOperation.addCompletionCandidate(Parser.switchSpacesToEscapedSpacesInWord(choice));
+            String substring = startsWith.substring(completeValue.length());
+            completerData.addCompleterValue(Parser.switchSpacesToEscapedSpacesInWord(substring));
+            completerData.setAppendSpace(false);
          }
+         else
+         {
+            for (String choice : choices)
+            {
+               if (completeValue.isEmpty() || choice.startsWith(completeValue))
+               {
+                  completerData.addCompleterValue(Parser.switchSpacesToEscapedSpacesInWord(choice));
+               }
+            }
+         }
+      }
+      else if (choices.size() == 1)
+      {
+         String candidate = choices.get(0).substring(completeValue.length());
+         completerData.addCompleterValue(Parser.switchSpacesToEscapedSpacesInWord(candidate));
       }
    }
 }

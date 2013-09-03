@@ -7,14 +7,12 @@
 
 package org.jboss.forge.addon.shell.aesh;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
-import org.jboss.aesh.cl.exception.CommandLineParserException;
-import org.jboss.aesh.cl.parser.ParsedCompleteObject;
+import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellUIBuilderImpl;
+import org.jboss.forge.addon.shell.ui.ShellValidationContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
@@ -41,20 +39,11 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
       this.commandLineUtil = commandLineUtil;
    }
 
+   public abstract CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception;
+
    public abstract Map<String, InputComponent<?, Object>> getInputs();
 
-   public abstract List<String> getCompletionOptions(String typed, String line);
-
-   public abstract ParsedCompleteObject parseCompleteObject(String line) throws CommandLineParserException;
-
-   public abstract void populateInputs(String line, boolean lenient) throws CommandLineParserException;
-
-   /**
-    * Returns the error messages
-    * 
-    * @return
-    */
-   public abstract List<String> validate();
+   public abstract ShellValidationContext validate();
 
    public abstract Result execute() throws Exception;
 
@@ -120,18 +109,6 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
    public String toString()
    {
       return getName();
-   }
-
-   protected void removeExistingOptions(String commandLine, Iterable<String> availableOptions)
-   {
-      Iterator<String> it = availableOptions.iterator();
-      while (it.hasNext())
-      {
-         if (commandLine.contains(it.next()))
-         {
-            it.remove();
-         }
-      }
    }
 
 }

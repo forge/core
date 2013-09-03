@@ -181,7 +181,7 @@ public final class InputComponents
     * @param value
     * @return
     */
-   private static Object convertToUIInputValue(final ConverterFactory converterFactory,
+   public static Object convertToUIInputValue(final ConverterFactory converterFactory,
             final InputComponent<?, Object> input, final Object value)
    {
       final Object result;

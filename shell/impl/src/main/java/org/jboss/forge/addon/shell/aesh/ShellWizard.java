@@ -7,19 +7,13 @@
 
 package org.jboss.forge.addon.shell.aesh;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.jboss.aesh.cl.CommandLine;
-import org.jboss.aesh.cl.exception.CommandLineParserException;
-import org.jboss.aesh.cl.parser.CommandLineCompletionParser;
 import org.jboss.aesh.cl.parser.CommandLineParser;
-import org.jboss.aesh.cl.parser.ParsedCompleteObject;
 import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellValidationContext;
@@ -28,7 +22,6 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
-import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Encapsulates a group of {@link ShellSingleCommand} from a {@link UIWizard}
@@ -40,7 +33,6 @@ public class ShellWizard extends AbstractShellInteraction
    private LinkedList<ShellWizardStep> steps = new LinkedList<ShellWizardStep>();
    private LinkedList<Class<? extends UICommand>> subflows = new LinkedList<Class<? extends UICommand>>();
    private CommandManager commandManager;
-   private CommandLineParser fullCommandLineParser;
 
    public ShellWizard(UIWizard root, ShellContext shellContext,
             CommandLineUtil commandLineUtil, CommandManager commandManager)
@@ -67,87 +59,22 @@ public class ShellWizard extends AbstractShellInteraction
    }
 
    @Override
-   public void populateInputs(String line, boolean lenient) throws CommandLineParserException
+   public CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception
    {
       UIWizard command = getSourceCommand();
-      try
-      {
-         fullCommandLineParser = populate(command, command, line, true);
-         if (!lenient)
-         {
-            // Validate required fields
-            fullCommandLineParser.parse(line, false);
-         }
-      }
-      catch (CommandLineParserException cpe)
-      {
-         throw cpe;
-      }
-      catch (Exception e)
-      {
-         throw new IllegalStateException(e);
-      }
+      return populate(command, command, shellContext, completeLine);
    }
 
-   /**
-    * Used for auto-completion of the options only
-    */
-   @Override
-   public List<String> getCompletionOptions(String typed, String line)
-   {
-      List<String> result = new ArrayList<String>();
-      boolean unvalued = Strings.isNullOrEmpty(typed);
-      int size = steps.size();
-
-      int idx;
-
-      STEP_LOOP: for (idx = size - 1; idx > 0; idx--)
-      {
-         for (String option : steps.get(idx).inputs.keySet())
-         {
-            if (line.contains("--" + option))
-            {
-               break STEP_LOOP;
-            }
-         }
-      }
-      for (int i = idx; i < size; i++)
-      {
-         Map<String, InputComponent<?, Object>> inputMap = steps.get(i).inputs;
-         for (Entry<String, InputComponent<?, Object>> entry : inputMap.entrySet())
-         {
-            String option = entry.getKey();
-            String dashedOption = "--" + option;
-            if ((unvalued || option.startsWith(typed)) && !line.contains(dashedOption))
-            {
-               // if (entry.getValue().isRequired())
-               // {
-               // dashedOption = new TerminalString(dashedOption, CharacterType.BOLD).toString();
-               // }
-               result.add(dashedOption);
-            }
-         }
-      }
-      Collections.sort(result, String.CASE_INSENSITIVE_ORDER);
-      return result;
-   }
-
-   @Override
-   public ParsedCompleteObject parseCompleteObject(String line) throws CommandLineParserException
-   {
-      // Should populate current inputs to determine which fields will appear
-      populateInputs(line, true);
-      return new CommandLineCompletionParser(fullCommandLineParser).findCompleteObject(line);
-   }
-
-   private CommandLineParser populate(UICommand root, UICommand current, String line, boolean lenient) throws Exception
+   private CommandLineParser populate(UICommand root, UICommand current, ShellContext shellContext, String line)
+            throws Exception
    {
       addWizardStep(current);
       Map<String, InputComponent<?, Object>> inputs = getInputs();
-      CommandLineParser parser = commandLineUtil.generateParser(root, getContext(), inputs);
-      CommandLine cmdLine = parser.parse(line, lenient);
-      commandLineUtil.populateUIInputs(cmdLine, inputs);
-      List<String> errors = validate();
+      CommandLineParser parser = commandLineUtil.generateParser(root, shellContext, inputs);
+      CommandLine cmdLine = parser.parse(line, true);
+      Map<String, InputComponent<?, Object>> populatedInputs = commandLineUtil.populateUIInputs(cmdLine, inputs);
+      ShellValidationContext validationContext = validate();
+      List<String> errors = validationContext.getErrors();
       if (errors.isEmpty())
       {
          if (current instanceof UIWizard)
@@ -178,7 +105,9 @@ public class ShellWizard extends AbstractShellInteraction
             if (successor != null)
             {
                UICommand step = commandManager.lookup(successor);
-               parser = populate(root, step, line, lenient);
+               // Retain only the populated values
+               inputs.keySet().retainAll(populatedInputs.keySet());
+               parser = populate(root, step, shellContext, line);
             }
          }
       }
@@ -187,7 +116,8 @@ public class ShellWizard extends AbstractShellInteraction
 
    private ShellWizardStep addWizardStep(final UICommand step)
    {
-      ShellWizardStep cmdStep = new ShellWizardStep(step, buildInputs(step));
+      Map<String, InputComponent<?, Object>> inputs = buildInputs(step);
+      ShellWizardStep cmdStep = new ShellWizardStep(step, inputs);
       steps.add(cmdStep);
       return cmdStep;
    }
@@ -204,7 +134,7 @@ public class ShellWizard extends AbstractShellInteraction
    }
 
    @Override
-   public List<String> validate()
+   public ShellValidationContext validate()
    {
       ShellValidationContext validationContext = new ShellValidationContext(getContext());
       for (ShellWizardStep step : steps)
@@ -215,7 +145,7 @@ public class ShellWizard extends AbstractShellInteraction
          }
          step.command.validate(validationContext);
       }
-      return validationContext.getErrors();
+      return validationContext;
    }
 
    private static class ShellWizardStep

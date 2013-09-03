@@ -82,7 +82,7 @@ public class LsCommand extends AbstractShellCommand
 
    private String listMany(Iterable<Resource<?>> files, ShellContext context)
    {
-      TerminalSize terminalSize = context.getProvider().getConsole().getTerminalSize();
+      TerminalSize terminalSize = context.getProvider().getConsole().getShell().getSize();
       List<String> display = new ArrayList<String>();
       boolean showAll = all.getValue();
       if (files != null)

@@ -9,8 +9,8 @@ package org.jboss.forge.addon.shell.commands;
 
 import java.io.IOException;
 
-import org.jboss.aesh.console.Console;
-import org.jboss.aesh.console.ConsoleCommand;
+import org.jboss.aesh.console.AeshConsole;
+import org.jboss.aesh.console.command.ConsoleCommand;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -32,9 +32,9 @@ public abstract class AbstractNativeAeshCommand extends AbstractShellCommand
    @Override
    public Result execute(ShellContext shellContext) throws Exception
    {
-      Console console = shellContext.getProvider().getConsole();
+      AeshConsole console = shellContext.getProvider().getConsole();
       ConsoleCommand consoleCommand = getConsoleCommand(shellContext);
-      console.attachProcess(consoleCommand);
+      console.attachConsoleCommand(consoleCommand);
       return Results.success();
    }
 

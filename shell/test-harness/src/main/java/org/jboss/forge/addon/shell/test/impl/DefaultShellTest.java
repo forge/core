@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
-import java.lang.reflect.Field;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -21,8 +20,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jboss.aesh.console.Buffer;
-import org.jboss.aesh.console.Console;
+import org.jboss.aesh.console.AeshConsoleImpl;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
 import org.jboss.aesh.edit.KeyOperation;
@@ -70,18 +68,10 @@ public class DefaultShellTest implements ShellTest
    }
 
    @Override
-   public Buffer getBuffer()
+   public String getBuffer()
    {
-      try
-      {
-         Field field = Console.class.getDeclaredField("buffer");
-         field.setAccessible(true);
-         return (Buffer) field.get(shell.getConsole());
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
+      AeshConsoleImpl console = (AeshConsoleImpl) shell.getConsole();
+      return console.getBuffer();
    }
 
    @Override
@@ -250,7 +240,7 @@ public class DefaultShellTest implements ShellTest
    @Override
    public void waitForBufferChanged(Callable<?> task, int quantity, TimeUnit unit) throws TimeoutException
    {
-      final String buffer = getBuffer().getLine();
+      final String buffer = getBuffer();
       try
       {
          task.call();
@@ -261,10 +251,10 @@ public class DefaultShellTest implements ShellTest
       }
 
       long start = System.currentTimeMillis();
-      while (buffer.equals(getBuffer().getLine().length()))
+      while (buffer.equals(getBuffer().length()))
       {
          if (System.currentTimeMillis() >= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
-                  && buffer.equals(getBuffer().getLine()))
+                  && buffer.equals(getBuffer()))
          {
             throw throwTimeout("Timeout occurred while waiting for buffer value to change from [" + buffer
                      + "].");
@@ -295,10 +285,10 @@ public class DefaultShellTest implements ShellTest
       }
 
       long start = System.currentTimeMillis();
-      while (!getBuffer().getLine().equals(expected))
+      while (!getBuffer().equals(expected))
       {
          if (System.currentTimeMillis() >= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
-                  && !getBuffer().getLine().equals(expected))
+                  && !getBuffer().equals(expected))
          {
             throw throwTimeout("Timeout occurred while waiting for buffer to equal value [" + expected + "].");
          }
@@ -441,7 +431,7 @@ public class DefaultShellTest implements ShellTest
    {
       return new TimeoutException(message + "\n\nSTDOUT: " + provider.getStdOut().toString()
                + "\n\nSTDERR: " + provider.getStdErr().toString()
-               + "\n\nBUFFER: [" + getBuffer().getLine() + "]\n");
+               + "\n\nBUFFER: [" + getBuffer() + "]\n");
    };
 
    @Override
@@ -496,7 +486,7 @@ public class DefaultShellTest implements ShellTest
    @Override
    public String waitForCompletion(final int quantity, final TimeUnit unit) throws TimeoutException
    {
-      final String buffer = getBuffer().getLine();
+      final String buffer = getBuffer();
       waitForStdOutValue(new Callable<Void>()
       {
          @Override

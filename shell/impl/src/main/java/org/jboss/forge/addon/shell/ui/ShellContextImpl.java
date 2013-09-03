@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.shell.ui;
 
-import org.jboss.aesh.console.ConsoleOperation;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.ui.context.AbstractUIContext;
@@ -23,11 +22,9 @@ import org.jboss.forge.addon.ui.util.Selections;
  */
 public class ShellContextImpl extends AbstractUIContext implements ShellContext
 {
-   private final Shell shell;
-   private final UISelection<?> initialSelection;
+   private Shell shell;
+   private UISelection<?> initialSelection;
    private final Iterable<UIContextListener> listeners;
-
-   private ConsoleOperation consoleOperation;
 
    @SuppressWarnings("unchecked")
    public ShellContextImpl(Shell shell, FileResource<?> initialSelection, Iterable<UIContextListener> listeners)
@@ -49,17 +46,6 @@ public class ShellContextImpl extends AbstractUIContext implements ShellContext
    public Shell getProvider()
    {
       return shell;
-   }
-
-   @Override
-   public ConsoleOperation getConsoleOperation()
-   {
-      return consoleOperation;
-   }
-
-   public void setConsoleOperation(ConsoleOperation consoleOperation)
-   {
-      this.consoleOperation = consoleOperation;
    }
 
    public void init()

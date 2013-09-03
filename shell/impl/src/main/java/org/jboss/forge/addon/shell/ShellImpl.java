@@ -8,17 +8,23 @@ package org.jboss.forge.addon.shell;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.inject.Vetoed;
 
-import org.jboss.aesh.console.Console;
-import org.jboss.aesh.console.ConsoleOperation;
+import org.jboss.aesh.cl.parser.CommandLineParser;
+import org.jboss.aesh.console.AeshConsole;
+import org.jboss.aesh.console.AeshConsoleBuilder;
 import org.jboss.aesh.console.Prompt;
+import org.jboss.aesh.console.command.AeshCommandContainer;
+import org.jboss.aesh.console.command.Command;
+import org.jboss.aesh.console.command.CommandContainer;
+import org.jboss.aesh.console.command.CommandInvocation;
+import org.jboss.aesh.console.command.CommandNotFoundException;
+import org.jboss.aesh.console.command.CommandRegistry;
+import org.jboss.aesh.console.command.CommandResult;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
@@ -26,19 +32,18 @@ import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
-import org.jboss.forge.addon.shell.aesh.ForgeConsoleCallback;
-import org.jboss.forge.addon.shell.aesh.completion.ForgeCompletion;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
+import org.jboss.forge.addon.shell.ui.ShellValidationContext;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.context.UIContextListener;
+import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
-import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Implementation of the {@link Shell} interface.
@@ -49,13 +54,11 @@ import org.jboss.forge.furnace.util.Strings;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Vetoed
-public class ShellImpl implements Shell
+public class ShellImpl implements Shell, CommandRegistry
 {
-   private static final Logger log = Logger.getLogger(ShellImpl.class.getName());
-
    private final List<CommandExecutionListener> listeners = new ArrayList<CommandExecutionListener>();
 
-   private Console console;
+   private AeshConsole console;
    private FileResource<?> currentResource;
    private final CommandManager commandManager;
    private final AddonRegistry addonRegistry;
@@ -89,50 +92,17 @@ public class ShellImpl implements Shell
    {
       if (console != null)
       {
-         try
-         {
-            console.stop();
-         }
-         catch (IOException e)
-         {
-            log.log(Level.WARNING, "Error while closing previous console", e);
-         }
+         console.stop();
          console = null;
       }
-      console = new Console(settings);
-      console.addCompletion(new ForgeCompletion(this));
-      console.setConsoleCallback(new ForgeConsoleCallback(this));
-      updatePrompt();
-      try
-      {
-         console.start();
-      }
-      catch (IOException io)
-      {
-         throw new RuntimeException("Unable to start console", io);
-      }
+      console = new AeshConsoleBuilder().prompt(createPrompt()).settings(settings).commandRegistry(this)
+               .create();
+      console.start();
    }
 
    private void updatePrompt()
    {
-      try
-      {
-         console.setPrompt(createPrompt());
-      }
-      catch (IOException io)
-      {
-         throw new RuntimeException("Prompt unavailable", io);
-      }
-   }
-
-   @Override
-   public Console getConsole()
-   {
-      if (console == null)
-      {
-         throw new IllegalStateException("Console not set. Shell.init not yet called?");
-      }
-      return console;
+      console.setPrompt(createPrompt());
    }
 
    /**
@@ -149,23 +119,6 @@ public class ShellImpl implements Shell
       prompt.add(new TerminalCharacter('$', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
       prompt.add(new TerminalCharacter(' ', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
       return new Prompt(prompt);
-   }
-
-   /**
-    * Used in {@link ForgeCompletion} and {@link ForgeConsoleCallback}
-    */
-   public AbstractShellInteraction findCommand(ShellContext shellContext, String line)
-   {
-      if (Strings.isNullOrEmpty(line))
-      {
-         return null;
-      }
-      return commandManager.findCommand(shellContext, line);
-   }
-
-   public Collection<AbstractShellInteraction> findMatchingCommands(ShellContext shellContext, String line)
-   {
-      return commandManager.findMatchingCommands(shellContext, line);
    }
 
    public Result execute(AbstractShellInteraction shellCommand)
@@ -185,6 +138,13 @@ public class ShellImpl implements Shell
          firePostCommandListeners(shellCommand, result);
       }
       return result;
+   }
+
+   public ShellContextImpl newShellContext()
+   {
+      Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
+      ShellContextImpl shellContextImpl = new ShellContextImpl(this, currentResource, listeners);
+      return shellContextImpl;
    }
 
    /**
@@ -210,25 +170,11 @@ public class ShellImpl implements Shell
 
    }
 
-   public ShellContextImpl newShellContext(ConsoleOperation consoleOperation)
-   {
-      Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
-      ShellContextImpl shellContextImpl = new ShellContextImpl(this, currentResource, listeners);
-      return shellContextImpl;
-   }
-
    @PreDestroy
    @Override
    public void close()
    {
-      try
-      {
-         this.console.stop();
-      }
-      catch (Exception ignored)
-      {
-         // Exception is ignored
-      }
+      this.console.stop();
    }
 
    public ConverterFactory getConverterFactory()
@@ -256,4 +202,106 @@ public class ShellImpl implements Shell
       return false;
    }
 
+   @Override
+   public AeshConsole getConsole()
+   {
+      return console;
+   }
+
+   @Override
+   public Set<String> getAllCommandNames()
+   {
+      ShellContextImpl newShellContext = newShellContext();
+      try
+      {
+         return commandManager.getEnabledShellCommands(newShellContext).keySet();
+      }
+      finally
+      {
+         newShellContext.destroy();
+      }
+   }
+
+   @Override
+   public CommandContainer getCommand(String name, String completeLine) throws CommandNotFoundException
+   {
+      ShellContext shellContext = newShellContext();
+      AbstractShellInteraction cmd = commandManager.findCommand(shellContext, name);
+      if (cmd == null)
+         throw new CommandNotFoundException(name);
+      try
+      {
+         CommandLineParser parser = cmd.getParser(shellContext, completeLine);
+         return new AeshCommandContainer(parser, new CommandAdapter(cmd));
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException("Error while creating parser: " + e.getMessage(), e);
+      }
+   }
+
+   /**
+    * Adapts the current {@link AbstractShellInteraction} to a {@link Command}
+    * 
+    * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+    */
+   private class CommandAdapter implements Command<CommandInvocation>
+   {
+      private final AbstractShellInteraction interaction;
+
+      public CommandAdapter(AbstractShellInteraction interaction)
+      {
+         super();
+         this.interaction = interaction;
+      }
+
+      @SuppressWarnings("unchecked")
+      @Override
+      public CommandResult execute(CommandInvocation commandInvocation) throws IOException
+      {
+         boolean failure;
+         ShellValidationContext validationContext = interaction.validate();
+         List<String> errors = validationContext.getErrors();
+         if (errors.isEmpty())
+         {
+            Result result = ShellImpl.this.execute(interaction);
+            failure = (result instanceof Failed);
+            if (result != null && result.getMessage() != null)
+            {
+               console.out().println(result.getMessage());
+            }
+            ShellContext context = interaction.getContext();
+            Object selection = context.getSelection();
+            if (selection != null)
+            {
+               if (selection instanceof Iterable<?>)
+               {
+                  for (FileResource<?> item : (Iterable<FileResource<?>>) selection)
+                  {
+                     if (item != null)
+                     {
+                        setCurrentResource(item);
+                        break;
+                     }
+                  }
+               }
+               else
+               {
+                  setCurrentResource((FileResource<?>) selection);
+               }
+            }
+
+         }
+         else
+         {
+            failure = true;
+            // Display the error messages
+            for (String error : errors)
+            {
+               console.err().println("**ERROR**: " + error);
+            }
+         }
+         return failure ? CommandResult.FAILURE : CommandResult.SUCCESS;
+      }
+   }
 }

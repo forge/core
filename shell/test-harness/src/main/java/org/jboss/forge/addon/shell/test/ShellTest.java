@@ -27,7 +27,7 @@ public interface ShellTest
    /**
     * Get the {@link Console} buffer object.
     */
-   Buffer getBuffer();
+   String getBuffer();
 
    /**
     * Get the underlying test {@link Shell} object.

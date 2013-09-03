@@ -6,22 +6,28 @@
  */
 package org.jboss.forge.addon.shell.aesh;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.builder.OptionBuilder;
+import org.jboss.aesh.cl.completer.OptionCompleter;
+import org.jboss.aesh.cl.converter.CLConverter;
 import org.jboss.aesh.cl.exception.OptionParserException;
 import org.jboss.aesh.cl.internal.ProcessedCommand;
 import org.jboss.aesh.cl.internal.ProcessedOption;
 import org.jboss.aesh.cl.parser.CommandLineParser;
-import org.jboss.aesh.cl.parser.ParserBuilder;
+import org.jboss.aesh.cl.validator.OptionValidator;
 import org.jboss.forge.addon.convert.ConverterFactory;
-import org.jboss.forge.addon.shell.aesh.completion.ForgeCompletion;
+import org.jboss.forge.addon.shell.aesh.completion.OptionCompleterFactory;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.ManyValued;
@@ -39,6 +45,8 @@ public class CommandLineUtil
 {
    private static final Logger logger = Logger.getLogger(CommandLineUtil.class.getName());
 
+   private static final String ARGUMENTS_INPUT_NAME = "arguments";
+
    private ConverterFactory converterFactory;
 
    public CommandLineUtil(ConverterFactory converterFactory)
@@ -46,20 +54,25 @@ public class CommandLineUtil
       this.converterFactory = converterFactory;
    }
 
-   public CommandLineParser generateParser(UICommand command, UIContext context,
+   public CommandLineParser generateParser(UICommand command, ShellContext shellContext,
             Map<String, InputComponent<?, Object>> inputs)
    {
-      ParserBuilder builder = new ParserBuilder();
+      ProcessedCommand processedCommand = generateCommand(command, shellContext, inputs);
+      return new ForgeCommandLineParser(processedCommand, this, inputs);
+   }
 
-      UICommandMetadata metadata = command.getMetadata(context);
+   private ProcessedCommand generateCommand(UICommand command, ShellContext shellContext,
+            Map<String, InputComponent<?, Object>> inputs)
+   {
+      UICommandMetadata metadata = command.getMetadata(shellContext);
       ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()),
                metadata.getDescription());
 
-      for (InputComponent<?, Object> input : inputs.values())
+      for (final InputComponent<?, Object> input : inputs.values())
       {
-         Object defaultValue = InputComponents.getValueFor(input);
-         boolean isMultiple = input instanceof ManyValued;
-         boolean hasValue = (InputComponents.getInputType(input) != InputType.CHECKBOX && !Boolean.class
+         final Object defaultValue = InputComponents.getValueFor(input);
+         final boolean isMultiple = input instanceof ManyValued;
+         final boolean hasValue = (InputComponents.getInputType(input) != InputType.CHECKBOX && !Boolean.class
                   .isAssignableFrom(input.getValueType()));
          try
          {
@@ -73,12 +86,57 @@ public class CommandLineUtil
                      .type(input.getValueType())
                      .required(input.isRequired());
 
+            OptionCompleter completer = OptionCompleterFactory.getCompletionFor(input, shellContext, converterFactory);
+            optionBuilder.completer(completer);
+            optionBuilder.validator(new OptionValidator<Object>()
+            {
+               @Override
+               public boolean isEnabled(ProcessedCommand command)
+               {
+                  return input.isEnabled();
+               }
+
+               @Override
+               public void validate(Object value) throws org.jboss.aesh.cl.validator.OptionValidatorException
+               {
+                  // TODO: Call input.validate?
+               }
+            });
+            optionBuilder.converter(new CLConverter<Object>()
+            {
+               @SuppressWarnings("unchecked")
+               @Override
+               public Object convert(String value)
+               {
+                  Object inputValue = InputComponents.convertToUIInputValue(converterFactory, input, value);
+                  // Many valued elements are called one at a time, so it needs to add to the existing values
+                  if (isMultiple)
+                  {
+                     Iterable<Object> iterable = (Iterable<Object>) InputComponents.getValueFor(input);
+                     List<Object> items = new ArrayList<Object>();
+                     if (iterable != null)
+                     {
+                        for (Object item : iterable)
+                        {
+                           items.add(item);
+                        }
+                     }
+                     items.add(inputValue);
+                     InputComponents.setValueFor(converterFactory, input, items);
+                  }
+                  else
+                  {
+                     InputComponents.setValueFor(converterFactory, input, inputValue);
+                  }
+                  return inputValue;
+               }
+            });
             if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
             {
                optionBuilder.shortName(input.getShortName());
             }
             ProcessedOption option = optionBuilder.create();
-            if (ForgeCompletion.ARGUMENTS_INPUT_NAME.equals(input.getName()))
+            if (ARGUMENTS_INPUT_NAME.equals(input.getName()))
             {
                parameter.setArgument(option);
             }
@@ -92,30 +150,36 @@ public class CommandLineUtil
             logger.log(Level.SEVERE, "Error while parsing command option", e);
          }
       }
-      builder.parameter(parameter);
-      return builder.generateParser();
+      return parameter;
    }
 
-   public void populateUIInputs(CommandLine commandLine,
+   public Map<String, InputComponent<?, Object>> populateUIInputs(CommandLine commandLine,
             Map<String, InputComponent<?, Object>> inputs)
    {
-      for (InputComponent<?, Object> input : inputs.values())
+      Map<String, InputComponent<?, Object>> populatedInputs = new HashMap<String, InputComponent<?, Object>>();
+      for (Entry<String, InputComponent<?, Object>> entry : inputs.entrySet())
       {
-         if (ForgeCompletion.ARGUMENTS_INPUT_NAME.equals(input.getName()))
+         String name = entry.getKey();
+         InputComponent<?, Object> input = entry.getValue();
+         if (ARGUMENTS_INPUT_NAME.equals(name))
          {
             InputComponents.setValueFor(converterFactory, input, commandLine.getArgument().getValue());
+            populatedInputs.put(name, input);
          }
-         if (commandLine.hasOption(input.getName()))
+         if (commandLine.hasOption(name))
          {
             if (input instanceof ManyValued)
             {
                InputComponents.setValueFor(converterFactory, input, commandLine.getOptionValues(input.getName()));
+               populatedInputs.put(name, input);
             }
             else if (input instanceof SingleValued)
             {
                InputComponents.setValueFor(converterFactory, input, commandLine.getOptionValue(input.getName()));
+               populatedInputs.put(name, input);
             }
          }
       }
+      return populatedInputs;
    }
 }

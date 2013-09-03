@@ -6,20 +6,14 @@
  */
 package org.jboss.forge.addon.shell.aesh;
 
-import java.util.List;
 import java.util.Map;
 
-import org.jboss.aesh.cl.CommandLine;
-import org.jboss.aesh.cl.exception.CommandLineParserException;
-import org.jboss.aesh.cl.parser.CommandLineCompletionParser;
 import org.jboss.aesh.cl.parser.CommandLineParser;
-import org.jboss.aesh.cl.parser.ParsedCompleteObject;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellValidationContext;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Encapsulates a {@link UICommand} to be useful in a Shell context
@@ -43,11 +37,12 @@ public class ShellSingleCommand extends AbstractShellInteraction
       this.command = command;
    }
 
-   private CommandLineParser getParser()
+   @Override
+   public CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception
    {
       if (this.commandLineParser == null)
       {
-         this.commandLineParser = commandLineUtil.generateParser(this.command, getContext(), getInputs());
+         this.commandLineParser = commandLineUtil.generateParser(this.command, shellContext, getInputs());
       }
       return this.commandLineParser;
    }
@@ -68,42 +63,13 @@ public class ShellSingleCommand extends AbstractShellInteraction
    }
 
    @Override
-   public List<String> getCompletionOptions(String typed, String line)
-   {
-      List<String> result;
-      if (Strings.isNullOrEmpty(typed))
-      {
-         result = getParser().getCommand().getOptionLongNamesWithDash();
-      }
-      else
-      {
-         result = getParser().getCommand().findPossibleLongNamesWitdDash(typed);
-      }
-      removeExistingOptions(line, result);
-      return result;
-   }
-
-   @Override
-   public ParsedCompleteObject parseCompleteObject(String line) throws CommandLineParserException
-   {
-      return new CommandLineCompletionParser(getParser()).findCompleteObject(line);
-   }
-
-   @Override
-   public void populateInputs(String line, boolean lenient) throws CommandLineParserException
-   {
-      CommandLine commandLine = getParser().parse(line, lenient);
-      this.commandLineUtil.populateUIInputs(commandLine, getInputs());
-   }
-
-   @Override
    public Result execute() throws Exception
    {
       return command.execute(getContext());
    }
 
    @Override
-   public List<String> validate()
+   public ShellValidationContext validate()
    {
       ShellValidationContext validationContext = new ShellValidationContext(getContext());
       for (InputComponent<?, Object> input : getInputs().values())
@@ -112,6 +78,6 @@ public class ShellSingleCommand extends AbstractShellInteraction
       }
       command.validate(validationContext);
 
-      return validationContext.getErrors();
+      return validationContext;
    }
 }

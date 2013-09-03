@@ -83,7 +83,7 @@ public class CommandCompletionTest
    public void testCommandAutocompleteOption() throws Exception
    {
       test.waitForCompletion("foocommand --help ", "foocommand --h", 5, TimeUnit.SECONDS);
-      Assert.assertEquals("foocommand --help ", test.getBuffer().getLine());
+      Assert.assertEquals("foocommand --help ", test.getBuffer());
    }
 
    @Test
@@ -91,7 +91,7 @@ public class CommandCompletionTest
    public void testCommandAutocompleteOptionShortName() throws Exception
    {
       test.waitForCompletion("foocommand -h ", "foocommand -h", 5, TimeUnit.SECONDS);
-      Assert.assertEquals("foocommand -h ", test.getBuffer().getLine());
+      Assert.assertEquals("foocommand -h ", test.getBuffer());
    }
 
    @Test
@@ -161,7 +161,7 @@ public class CommandCompletionTest
                      allOf(not(containsString("Value 1")), not(containsString("Value 2")),
                               not(containsString("Value 10")),
                               not(containsString("Value 100"))));
-            String line = test.getBuffer().getLine();
+            String line = test.getBuffer();
             Assert.assertEquals("foocommand --valueWithSpaces Value\\", line);
             return null;
          }
