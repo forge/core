@@ -37,6 +37,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Implementation of the {@link Shell} interface.
@@ -150,6 +151,10 @@ public class ShellImpl implements Shell
     */
    public AbstractShellInteraction findCommand(ShellContext shellContext, String line)
    {
+      if (Strings.isNullOrEmpty(line))
+      {
+         return null;
+      }
       return commandManager.findCommand(shellContext, line);
    }
 
