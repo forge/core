@@ -249,6 +249,7 @@ public class FacesFacetImpl extends BaseJavaEEFacet implements FacesFacet
             if (r.getFullyQualifiedName().startsWith(d.getFullyQualifiedName()))
             {
                String path = r.getFullyQualifiedName().substring(d.getFullyQualifiedName().length());
+               path = path.replace(File.separator, "/");
                return getWebPaths(path);
             }
          }
