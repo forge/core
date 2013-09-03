@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.spec.javaee.jpa;
 
+import java.io.File;
 import java.io.Serializable;
 
 import javax.inject.Inject;
@@ -140,8 +141,8 @@ public class EntityPlugin implements Plugin
          if (ResourceUtil.isChildOf(r, currentDirectory))
          {
             // Have to remember to include the last slash so it's not part of the package
-            return currentDirectory.getFullyQualifiedName().replace(r.getFullyQualifiedName() + "/", "")
-                     .replaceAll("/", ".");
+            return currentDirectory.getFullyQualifiedName().replace(r.getFullyQualifiedName() + File.separator, "")
+                     .replace(File.separator, ".");
          }
       }
       return null;
