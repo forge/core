@@ -33,6 +33,8 @@ public class FacesPluginTest extends AbstractShellTest
    public void testFacesServlet2_3() throws Exception
    {
       Project project = initializeProject(PackagingType.WAR);
+      queueInputLines("y", "");
+      getShell().execute("servlet setup");
       ServletFacet servletFacet = project.getFacet(ServletFacet.class);
       WebAppDescriptor config = servletFacet.getConfig();
       config.version("2.3");
@@ -51,6 +53,8 @@ public class FacesPluginTest extends AbstractShellTest
    public void testFacesServlet3() throws Exception
    {
       Project project = initializeProject(PackagingType.WAR);
+      queueInputLines("y", "");
+      getShell().execute("servlet setup");
       ServletFacet servletFacet = project.getFacet(ServletFacet.class);
       WebAppDescriptor config = servletFacet.getConfig();
       config.version("3.0");
