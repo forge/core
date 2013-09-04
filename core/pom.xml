@@ -10,6 +10,7 @@
   
   <groupId>org.jboss.forge.addon</groupId>
   <artifactId>core</artifactId>
+  <name>Forge - Core Addon</name>
 
   <dependencies>
     <dependency>
