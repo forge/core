@@ -22,28 +22,6 @@ public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Mut
    }
 
    @Override
-   public boolean hasAllFacets(Iterable<Class<? extends FACETTYPE>> iterable)
-   {
-      for (Class<? extends FACETTYPE> type : iterable)
-      {
-         if (!hasFacet(type))
-            return false;
-      }
-      return true;
-   }
-
-   @Override
-   public boolean hasAllFacets(Class<? extends FACETTYPE>... types)
-   {
-      for (Class<? extends FACETTYPE> type : types)
-      {
-         if (!hasFacet(type))
-            return false;
-      }
-      return true;
-   }
-
-   @Override
    public <F extends FACETTYPE> F getFacet(Class<F> type) throws FacetNotFoundException
    {
       F facet = safeGetFacet(type);

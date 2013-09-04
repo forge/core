@@ -6,14 +6,14 @@
  */
 package org.jboss.forge.addon.javaee.facets;
 
+import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFacet;
 
 /**
  * If installed, this {@link Project} supports features from the EJB specification.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface EJBFacet extends ProjectFacet
+public interface EJBFacet extends JavaEEFacet
 {
 }

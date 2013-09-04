@@ -18,7 +18,7 @@ import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
-public abstract class AbstractProjectUICommand extends AbstractUICommand
+public abstract class AbstractJavaEECommand extends AbstractUICommand
 {
    @Inject
    protected ProjectFactory projectFactory;

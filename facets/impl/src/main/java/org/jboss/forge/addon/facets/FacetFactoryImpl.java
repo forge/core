@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.facets;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -45,9 +46,22 @@ public class FacetFactoryImpl implements FacetFactory
    {
       Assert.notNull(type, "Facet type must not be null.");
       Imported<FACETTYPE> instance = registry.getServices(type);
-      if (!instance.isSatisfied() && !instance.isAmbiguous())
+
+      if (instance.isAmbiguous())
+      {
+         if (!type.isInterface() && !Modifier.isAbstract(type.getModifiers()))
+         {
+            FACETTYPE facet = instance.selectExact(type);
+            return facet;
+         }
+
+         throw new FacetIsAmbiguousException("Cannot resolve facet type [" + type.getName()
+                  + "] because multiple ambiguous types were found: " + instance);
+      }
+      else if (!instance.isSatisfied())
          throw new FacetNotFoundException("Could not find Facet of type [" + type.getName() + "]");
-      return instance.get();
+      else
+         return instance.get();
    }
 
    @Override

@@ -7,7 +7,7 @@
 package org.jboss.forge.addon.javaee.facets;
 
 import org.jboss.forge.addon.dependencies.Coordinate;
-import org.jboss.forge.addon.projects.ProjectFacet;
+import org.jboss.forge.addon.javaee.JavaEEFacet;
 
 /**
  * Returns information about metamodel generation for JPA projects
@@ -16,7 +16,7 @@ import org.jboss.forge.addon.projects.ProjectFacet;
  * 
  *         FIXME: Missing implementation
  */
-public interface PersistenceMetaModelFacet extends ProjectFacet
+public interface PersistenceMetaModelFacet extends JavaEEFacet
 {
    /**
     * The annotation processor used

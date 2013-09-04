@@ -5,20 +5,20 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.javaee.facets;
+package org.jboss.forge.addon.javaee.cdi;
 
+import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
 
 /**
  * If installed, this {@link Project} supports features from the CDI specification.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public interface CDIFacet extends ProjectFacet
+public interface CDIFacet extends JavaEEFacet
 {
    /**
     * Parse and return this {@link Project}'s beans.xml file as a {@link BeansDescriptor}

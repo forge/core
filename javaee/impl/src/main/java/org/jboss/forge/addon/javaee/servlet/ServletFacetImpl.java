@@ -31,6 +31,8 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFilter;
 import org.jboss.forge.furnace.util.Streams;
+import org.jboss.forge.furnace.versions.SingleVersion;
+import org.jboss.forge.furnace.versions.Version;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
@@ -47,6 +49,12 @@ public class ServletFacetImpl extends AbstractJavaEEFacet implements ServletFace
    public ServletFacetImpl(DependencyInstaller installer)
    {
       super(installer);
+   }
+
+   @Override
+   public Version getSpecVersion()
+   {
+      return new SingleVersion("3.0");
    }
 
    @Override

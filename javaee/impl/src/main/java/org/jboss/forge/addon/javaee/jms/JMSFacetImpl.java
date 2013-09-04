@@ -18,6 +18,8 @@ import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
 import org.jboss.forge.addon.javaee.facets.JMSFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
+import org.jboss.forge.furnace.versions.SingleVersion;
+import org.jboss.forge.furnace.versions.Version;
 
 /**
  * Implementation of {@link JMSFacet}
@@ -34,6 +36,12 @@ public class JMSFacetImpl extends AbstractJavaEEFacet implements JMSFacet
    public JMSFacetImpl(DependencyInstaller installer)
    {
       super(installer);
+   }
+
+   @Override
+   public Version getSpecVersion()
+   {
+      return new SingleVersion("1.1");
    }
 
    @Override

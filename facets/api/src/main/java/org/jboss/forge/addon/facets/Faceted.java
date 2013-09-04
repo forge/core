@@ -20,18 +20,6 @@ public interface Faceted<FACETTYPE extends Facet<?>>
    boolean hasFacet(Class<? extends FACETTYPE> type);
 
    /**
-    * Return true if all {@link Facet}s of the given types are present; otherwise, if any of the given facet types is
-    * missing, return false.
-    */
-   boolean hasAllFacets(Iterable<Class<? extends FACETTYPE>> facetDependencies);
-
-   /**
-    * Return true if all {@link Facet}s of the given types are present; otherwise, if any of the given facet types is
-    * missing, return false.
-    */
-   boolean hasAllFacets(Class<? extends FACETTYPE>... facetDependencies);
-
-   /**
     * Return the instance of the requested {@link Facet} type, or throw a {@link FacetNotFoundException} if no
     * {@link Facet} of that type is installed.
     */

@@ -27,7 +27,8 @@ import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.FacetNotFoundException;
-import org.jboss.forge.addon.javaee.facets.CDIFacet;
+import org.jboss.forge.addon.javaee.cdi.CDIFacet;
+import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
 import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
@@ -77,7 +78,7 @@ public class AddonProjectConfigurator
       facetFactory.install(project, JavaSourceFacet.class);
       facetFactory.install(project, JavaCompilerFacet.class);
       facetFactory.install(project, DefaultFurnaceContainerFacet.class);
-      facetFactory.install(project, CDIFacet.class);
+      facetFactory.install(project, CDIFacet_1_1.class);
       facetFactory.install(project, AddonTestFacet.class);
 
       JavaSourceFacet javaSource = project.getFacet(JavaSourceFacet.class);

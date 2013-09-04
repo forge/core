@@ -6,7 +6,9 @@
  */
 package org.jboss.forge.addon.ui.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.jboss.forge.addon.ui.metadata.UICategory;
 import org.jboss.forge.furnace.util.Assert;
@@ -21,7 +23,21 @@ public class Categories
    public static final String DEFAULT = "";
 
    /**
-    * Using the given category names, produce a hierarchical {@link UICategory} instance.
+    * Using the given {@link UICategory} as a parent, produce a hierarchical {@link UICategory} instance from the given
+    * sub-category names.
+    */
+   public static UICategory create(UICategory category, String... categories)
+   {
+      Assert.notNull(category, "Parent UICategory must not be null.");
+      Assert.notNull(categories, "Sub categories must not be null.");
+      List<String> args = new ArrayList<String>();
+      args.add(category.getName());
+      args.addAll(Arrays.asList(categories));
+      return create(args.toArray(new String[] {}));
+   }
+
+   /**
+    * Produce a hierarchical {@link UICategory} instance from the given sub-category names.
     */
    public static UICategory create(String... categories)
    {

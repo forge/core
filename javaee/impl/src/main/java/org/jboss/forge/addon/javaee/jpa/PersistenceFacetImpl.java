@@ -28,6 +28,8 @@ import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.furnace.versions.SingleVersion;
+import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
@@ -47,6 +49,12 @@ public class PersistenceFacetImpl extends AbstractJavaEEFacet implements Persist
    public PersistenceFacetImpl(final DependencyInstaller installer)
    {
       super(installer);
+   }
+
+   @Override
+   public Version getSpecVersion()
+   {
+      return new SingleVersion("2.0");
    }
 
    @Override

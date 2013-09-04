@@ -7,15 +7,7 @@
 
 package org.jboss.forge.addon.facets;
 
-import org.jboss.forge.addon.facets.AbstractFaceted;
-
-public class MockFaceted extends AbstractFaceted<Facet<?>>
+public class SubMockFacet2 extends MockFacet
 {
-
-   @Override
-   public <F extends Facet<?>> boolean supports(F facet)
-   {
-      return true;
-   }
 
 }

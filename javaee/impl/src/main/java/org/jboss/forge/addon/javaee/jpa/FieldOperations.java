@@ -392,7 +392,7 @@ public class FieldOperations
    {
       JavaClass result = null;
 
-      PersistenceFacet scaffold = project.getFacet(PersistenceFacet.class);
+      PersistenceFacet persistence = project.getFacet(PersistenceFacet.class);
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
       if (entity != null)
@@ -400,7 +400,7 @@ public class FieldOperations
          result = getJavaClassFrom(java.getJavaResource(entity));
          if (result == null)
          {
-            result = getJavaClassFrom(java.getJavaResource(scaffold.getEntityPackage() + "." + entity));
+            result = getJavaClassFrom(java.getJavaResource(persistence.getEntityPackage() + "." + entity));
          }
       }
 

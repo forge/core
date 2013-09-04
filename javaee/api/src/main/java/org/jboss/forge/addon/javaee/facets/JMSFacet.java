@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.addon.javaee.facets;
 
-import org.jboss.forge.addon.projects.ProjectFacet;
+import org.jboss.forge.addon.javaee.JavaEEFacet;
 
 /**
  * Installs the required JMS libraries
@@ -14,6 +14,6 @@ import org.jboss.forge.addon.projects.ProjectFacet;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public interface JMSFacet extends ProjectFacet
+public interface JMSFacet extends JavaEEFacet
 {
 }

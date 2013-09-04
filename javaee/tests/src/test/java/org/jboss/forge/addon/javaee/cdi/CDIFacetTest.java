@@ -10,12 +10,12 @@ package org.jboss.forge.addon.javaee.cdi;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import javax.enterprise.inject.AmbiguousResolutionException;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.javaee.facets.CDIFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -24,6 +24,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,13 +53,35 @@ public class CDIFacetTest
    @Inject
    private FacetFactory facetFactory;
 
-   @Test
-   public void testBeansXMLCreatedWhenInstalled() throws Exception
+   @Test(expected = AmbiguousResolutionException.class)
+   public void testCannotInstallAmbiguousFacetType() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      CDIFacet cdiFacet = facetFactory.install(project, CDIFacet.class);
+      Assert.assertNotNull(project);
+      facetFactory.install(project, CDIFacet.class);
+      Assert.fail("Should not have been able to install ambiguous Facet.");
+   }
+
+   @Test
+   public void testBeansXMLCreatedWhenInstalled_1_0() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      CDIFacet cdiFacet = facetFactory.install(project, CDIFacet_1_0.class);
       assertNotNull(cdiFacet);
       assertTrue(project.hasFacet(CDIFacet.class));
+      assertTrue(project.hasFacet(CDIFacet_1_0.class));
+      BeansDescriptor config = project.getFacet(CDIFacet.class).getConfig();
+      assertNotNull(config);
+   }
+
+   @Test
+   public void testBeansXMLCreatedWhenInstalled_1_1() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      CDIFacet cdiFacet = facetFactory.install(project, CDIFacet_1_1.class);
+      assertNotNull(cdiFacet);
+      assertTrue(project.hasFacet(CDIFacet.class));
+      assertTrue(project.hasFacet(CDIFacet_1_1.class));
       BeansDescriptor config = project.getFacet(CDIFacet.class).getConfig();
       assertNotNull(config);
    }

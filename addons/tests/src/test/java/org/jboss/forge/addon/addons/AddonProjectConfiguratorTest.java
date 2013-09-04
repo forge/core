@@ -26,7 +26,8 @@ import org.jboss.forge.addon.addons.facets.FurnacePluginFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetNotFoundException;
-import org.jboss.forge.addon.javaee.facets.CDIFacet;
+import org.jboss.forge.addon.javaee.cdi.CDIFacet;
+import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -110,20 +111,20 @@ public class AddonProjectConfiguratorTest
 
       Assert.assertFalse(apiProject.hasFacet(JavaCompilerFacet.class));
       Assert.assertTrue(apiProject.hasFacet(JavaSourceFacet.class));
-      Assert.assertTrue(apiProject.hasFacet(CDIFacet.class));
+      Assert.assertTrue(apiProject.hasFacet(CDIFacet_1_1.class));
 
       Assert.assertFalse(implProject.hasFacet(JavaCompilerFacet.class));
       Assert.assertTrue(implProject.hasFacet(JavaSourceFacet.class));
-      Assert.assertTrue(implProject.hasFacet(CDIFacet.class));
+      Assert.assertTrue(implProject.hasFacet(CDIFacet_1_1.class));
 
       Assert.assertFalse(spiProject.hasFacet(JavaCompilerFacet.class));
       Assert.assertTrue(spiProject.hasFacet(JavaSourceFacet.class));
       Assert.assertTrue(spiProject.hasFacet(FurnaceAPIFacet.class));
-      Assert.assertFalse(spiProject.hasFacet(CDIFacet.class));
+      Assert.assertFalse(spiProject.hasFacet(CDIFacet_1_1.class));
 
       Assert.assertFalse(testsProject.hasFacet(JavaCompilerFacet.class));
       Assert.assertTrue(testsProject.hasFacet(JavaSourceFacet.class));
-      Assert.assertFalse(testsProject.hasFacet(CDIFacet.class));
+      Assert.assertFalse(testsProject.hasFacet(CDIFacet_1_1.class));
 
       Dependency addonDependency = DependencyBuilder.create(
                addonProject.getFacet(MetadataFacet.class).getOutputDependency())
@@ -220,7 +221,7 @@ public class AddonProjectConfiguratorTest
                FurnaceAPIFacet.FURNACE_API_DEPENDENCY));
       Assert.assertFalse(spiProject.hasFacet(DefaultFurnaceContainerFacet.class));
       Assert.assertFalse(spiProject.hasFacet(DefaultFurnaceContainerAPIFacet.class));
-      Assert.assertFalse(spiProject.hasFacet(CDIFacet.class));
+      Assert.assertFalse(spiProject.hasFacet(CDIFacet_1_1.class));
       Assert.assertTrue(spiProject.hasFacet(AddonSPIFacet.class));
       Assert.assertTrue(spiProject.hasFacet(FurnacePluginFacet.class));
 
@@ -317,6 +318,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertTrue(project.hasFacet(JavaSourceFacet.class));
       Assert.assertTrue(project.hasFacet(JavaCompilerFacet.class));
       Assert.assertTrue(project.hasFacet(CDIFacet.class));
+      Assert.assertTrue(project.hasFacet(CDIFacet_1_1.class));
 
       Assert.assertFalse(project.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(project.getFacet(JavaSourceFacet.class)

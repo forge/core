@@ -115,9 +115,9 @@ public class ProjectFactoryImpl implements ProjectFactory
 
                   if (result != null)
                   {
-                     for (Class<ProjectFacet> instance : registry.getExportedTypes(ProjectFacet.class))
+                     for (Class<ProjectFacet> type : registry.getExportedTypes(ProjectFacet.class))
                      {
-                        ProjectFacet facet = factory.create(result, instance);
+                        ProjectFacet facet = factory.create(result, type);
                         if (facet != null && factory.register(result, facet))
                         {
                            log.fine("Registered Facet [" + facet + "] into Project [" + result + "]");
@@ -198,9 +198,9 @@ public class ProjectFactoryImpl implements ProjectFactory
 
       if (result != null)
       {
-         for (Class<ProjectFacet> instance : registry.getExportedTypes(ProjectFacet.class))
+         for (Class<ProjectFacet> type : registry.getExportedTypes(ProjectFacet.class))
          {
-            ProjectFacet facet = factory.create(result, instance);
+            ProjectFacet facet = factory.create(result, type);
             if (facet != null && factory.register(result, facet))
             {
                log.fine("Installed Facet [" + facet + "] into Project [" + result + "]");

@@ -18,7 +18,6 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
-import org.jboss.forge.addon.javaee.facets.CDIFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
@@ -26,30 +25,37 @@ import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.furnace.versions.SingleVersion;
+import org.jboss.forge.furnace.versions.Version;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
 
 /**
- * Implementation of {@link CDIFacet}
+ * Implementation of {@link CDIFacet} for spec version 1.1
  * 
- * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class CDIFacetImpl extends AbstractJavaEEFacet implements CDIFacet
+public class CDIFacetImpl_1_1 extends AbstractJavaEEFacet implements CDIFacet_1_1
 {
    private static final Dependency JBOSS_ANNOTATION_API = DependencyBuilder
             .create("org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec");
    private static final Dependency JAVAX_INTERCEPTOR_API = DependencyBuilder
             .create("org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec");
-   private static final Dependency JAVAX_INJECT = DependencyBuilder.create("javax.inject:javax.inject");
-   private static final Dependency JAVAX_ANNOTATION_API = DependencyBuilder.create("javax.annotation:jsr250-api");
-   private static final Dependency CDI_API = DependencyBuilder.create("javax.enterprise:cdi-api");
+   private static final Dependency JAVAX_INJECT = DependencyBuilder.create("javax.inject:javax.inject:1");
+   private static final Dependency JAVAX_ANNOTATION_API = DependencyBuilder.create("javax.annotation:jsr250-api:1.0");
+   private static final Dependency CDI_API = DependencyBuilder.create("javax.enterprise:cdi-api:[1.1,1.2)");
 
    @Inject
-   public CDIFacetImpl(DependencyInstaller installer)
+   public CDIFacetImpl_1_1(DependencyInstaller installer)
    {
       super(installer);
+   }
+
+   @Override
+   public Version getSpecVersion()
+   {
+      return new SingleVersion("1.1");
    }
 
    @Override

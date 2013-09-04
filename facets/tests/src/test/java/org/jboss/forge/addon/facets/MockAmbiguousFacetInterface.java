@@ -7,15 +7,9 @@
 
 package org.jboss.forge.addon.facets;
 
-import org.jboss.forge.addon.facets.AbstractFaceted;
-
-public class MockFaceted extends AbstractFaceted<Facet<?>>
+/**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ */
+public interface MockAmbiguousFacetInterface extends Facet<MockFaceted>
 {
-
-   @Override
-   public <F extends Facet<?>> boolean supports(F facet)
-   {
-      return true;
-   }
-
 }

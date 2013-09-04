@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import javax.persistence.GenerationType;
 
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
-import org.jboss.forge.addon.javaee.ui.AbstractProjectUICommand;
+import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -31,7 +31,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewEntityCommand extends AbstractProjectUICommand
+public class NewEntityCommand extends AbstractJavaEECommand
 {
    @Inject
    @WithAttributes(label = "Entity name", required = true)

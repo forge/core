@@ -23,11 +23,14 @@ public class FacetedTest
       Assert.assertTrue(faceted.hasFacet(MockFacet.class));
       List<Class<? extends MockFacet>> list = new ArrayList<Class<? extends MockFacet>>();
       list.add(MockFacet.class);
-      Assert.assertTrue(faceted.hasAllFacets(list));
+      for (Class<? extends MockFacet> type : list)
+      {
+         Assert.assertTrue(faceted.hasFacet(type));
+      }
       Assert.assertEquals(facet, faceted.getFacet(MockFacet.class));
    }
 
-   @Test(expected=IllegalArgumentException.class)
+   @Test(expected = IllegalArgumentException.class)
    public void testInstallNullOrigin()
    {
       MockFaceted faceted = new MockFaceted();
@@ -36,7 +39,7 @@ public class FacetedTest
       Assert.assertTrue(faceted.install(facet));
    }
 
-   @Test(expected=IllegalArgumentException.class)
+   @Test(expected = IllegalArgumentException.class)
    public void testInstallDifferentOrigin()
    {
       MockFaceted faceted = new MockFaceted();

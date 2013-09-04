@@ -19,6 +19,8 @@ import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
 import org.jboss.forge.addon.javaee.facets.EJBFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
+import org.jboss.forge.furnace.versions.SingleVersion;
+import org.jboss.forge.furnace.versions.Version;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -33,6 +35,12 @@ public class EJBFacetImpl extends AbstractJavaEEFacet implements EJBFacet
    public EJBFacetImpl(final DependencyInstaller installer)
    {
       super(installer);
+   }
+
+   @Override
+   public Version getSpecVersion()
+   {
+      return new SingleVersion("3.1");
    }
 
    @Override

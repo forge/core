@@ -14,7 +14,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 
 import org.jboss.forge.addon.javaee.jpa.FieldOperations;
-import org.jboss.forge.addon.javaee.ui.AbstractProjectUICommand;
+import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -31,7 +31,7 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
-public class NewFieldRelationshipWizardStep extends AbstractProjectUICommand implements UIWizardStep
+public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implements UIWizardStep
 {
    @Inject
    @WithAttributes(label = "Fetch Type", description = "Whether the association should be lazily loaded or must be eagerly fetched", required = true, type = InputType.SELECT_ONE_RADIO)

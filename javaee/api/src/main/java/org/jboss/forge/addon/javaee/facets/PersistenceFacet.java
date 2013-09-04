@@ -8,8 +8,8 @@ package org.jboss.forge.addon.javaee.facets;
 
 import java.util.List;
 
+import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.parser.java.JavaClass;
@@ -20,7 +20,7 @@ import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface PersistenceFacet extends ProjectFacet
+public interface PersistenceFacet extends JavaEEFacet
 {
    /**
     * Parse and return this {@link Project}'s persistence.xml file as a {@link PersistenceDescriptor}

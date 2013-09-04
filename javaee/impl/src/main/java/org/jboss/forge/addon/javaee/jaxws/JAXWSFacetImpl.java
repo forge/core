@@ -18,6 +18,8 @@ import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
 import org.jboss.forge.addon.javaee.facets.JAXWSFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
+import org.jboss.forge.furnace.versions.SingleVersion;
+import org.jboss.forge.furnace.versions.Version;
 
 /**
  * Implementation of {@link JAXWSFacet}
@@ -43,6 +45,12 @@ public class JAXWSFacetImpl extends AbstractJavaEEFacet implements JAXWSFacet
    public JAXWSFacetImpl(DependencyInstaller installer)
    {
       super(installer);
+   }
+
+   @Override
+   public Version getSpecVersion()
+   {
+      return new SingleVersion("2.2");
    }
 
    @Override

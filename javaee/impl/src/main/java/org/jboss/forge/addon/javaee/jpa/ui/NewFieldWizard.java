@@ -19,7 +19,7 @@ import javax.persistence.Lob;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.FieldOperations;
-import org.jboss.forge.addon.javaee.ui.AbstractProjectUICommand;
+import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
@@ -43,7 +43,7 @@ import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.util.Types;
 
-public class NewFieldWizard extends AbstractProjectUICommand implements UIWizard
+public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
 {
    @Inject
    @WithAttributes(label = "Entity", description = "The entity which the field will be created", required = true, type = InputType.SELECT_ONE_DROPDOWN)

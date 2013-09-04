@@ -8,8 +8,8 @@ package org.jboss.forge.addon.javaee.facets;
 
 import java.util.List;
 
+import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFilter;
@@ -21,7 +21,7 @@ import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public interface ServletFacet extends ProjectFacet
+public interface ServletFacet extends JavaEEFacet
 {
    /**
     * Parse and return this {@link Project}'s web.xml file as a {@link WebAppDescriptor}. If no web.xml exists

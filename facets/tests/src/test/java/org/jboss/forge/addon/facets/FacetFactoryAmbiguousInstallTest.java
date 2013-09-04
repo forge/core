@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.facets;
 
-import java.util.Iterator;
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -23,7 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class FacetFactoryTest
+public class FacetFactoryAmbiguousInstallTest
 {
 
    @Deployment
@@ -31,16 +29,17 @@ public class FacetFactoryTest
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
    public static ForgeArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addBeansXML()
-               .addClasses(FacetFactoryTest.class,
+               .addClasses(FacetFactoryAmbiguousInstallTest.class,
                         MockFacet.class,
                         MockFaceted.class,
-                        SubMockFacet.class,
-                        SubMockFacet2.class,
-                        NotFoundMockFacet.class,
-                        TestQualifier.class)
+                        MockAmbiguousFacetInterface.class,
+                        MockAmbiguousFacet_1.class,
+                        MockAmbiguousFacet_2.class,
+                        MockAmbiguousDependentFacet.class,
+                        MockSpecificDependentFacet.class
+               )
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:facets"),
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
@@ -51,49 +50,35 @@ public class FacetFactoryTest
    @Inject
    private FacetFactory facetFactory;
 
-   @Test
-   public void testFacetFactoryNotNull() throws Exception
-   {
-      Assert.assertNotNull(facetFactory);
-   }
-
-   @Test(expected = FacetNotFoundException.class)
-   public void testNotFoundFacetCreation() throws Exception
-   {
-      facetFactory.create(new MockFaceted(), NotFoundMockFacet.class);
-   }
-
-   @Test
-   public void testFacetOrigin() throws Exception
+   @Test(expected = FacetIsAmbiguousException.class)
+   public void testFacetInstallAmbiguousInterfaceShouldFail() throws Exception
    {
       MockFaceted faceted = new MockFaceted();
-      MockFacet facet = facetFactory.create(faceted, MockFacet.class);
-      Assert.assertEquals(faceted, facet.getFaceted());
+      facetFactory.install(faceted, MockAmbiguousFacetInterface.class);
+      Assert.fail("Should not have been able to install ambiguous Facet type.");
+   }
+
+   @Test(expected = FacetIsAmbiguousException.class)
+   public void testFacetInstallAmbiguousViaDependencyShouldFail() throws Exception
+   {
+      MockFaceted faceted = new MockFaceted();
+      facetFactory.install(faceted, MockAmbiguousDependentFacet.class);
+      Assert.fail("Should not have been able to install ambiguous Facet type.");
    }
 
    @Test
-   public void testMultipleFacetOrigin() throws Exception
+   public void testFacetInstallSpecificFacetShouldSucceed() throws Exception
    {
       MockFaceted faceted = new MockFaceted();
-      Iterable<MockFacet> facets = facetFactory.createFacets(faceted, MockFacet.class);
-      Iterator<MockFacet> it = facets.iterator();
-      Assert.assertTrue(it.hasNext());
-      MockFacet first = it.next();
-      Assert.assertEquals(faceted, first.getFaceted());
-      Assert.assertNotNull(first);
-      Assert.assertTrue(it.hasNext());
-      MockFacet second = it.next();
-      Assert.assertNotNull(second);
-      Assert.assertEquals(faceted, second.getFaceted());
-      Assert.assertNotSame(first, second);
-   }
-
-   @Test
-   public void testFacetInstall() throws Exception
-   {
-      MockFaceted faceted = new MockFaceted();
-      MockFacet facet = facetFactory.install(faceted, MockFacet.class);
+      MockAmbiguousFacet_1 facet = facetFactory.install(faceted, MockAmbiguousFacet_1.class);
       Assert.assertNotNull(facet);
-      Assert.assertTrue(faceted.hasFacet(MockFacet.class));
+   }
+
+   @Test
+   public void testFacetInstallSpecificFacetViaDependencyShouldSucceed() throws Exception
+   {
+      MockFaceted faceted = new MockFaceted();
+      MockSpecificDependentFacet facet = facetFactory.install(faceted, MockSpecificDependentFacet.class);
+      Assert.assertNotNull(facet);
    }
 }

@@ -14,7 +14,7 @@ import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JBossEAP6Container;
 import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
-import org.jboss.forge.addon.javaee.ui.AbstractProjectUICommand;
+import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
@@ -28,7 +28,7 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 
-public class PersistenceSetupWizard extends AbstractProjectUICommand implements UIWizard
+public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIWizard
 {
 
    @Inject

@@ -18,7 +18,7 @@ import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JavaEEDefaultContainer;
-import org.jboss.forge.addon.javaee.ui.AbstractProjectUICommand;
+import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -36,7 +36,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
 
-public class PersistenceSetupConnectionStep extends AbstractProjectUICommand implements UIWizardStep
+public class PersistenceSetupConnectionStep extends AbstractJavaEECommand implements UIWizardStep
 {
    @Inject
    @WithAttributes(label = "Database Type", required = true)

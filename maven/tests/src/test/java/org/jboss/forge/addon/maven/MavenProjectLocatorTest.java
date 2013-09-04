@@ -91,7 +91,6 @@ public class MavenProjectLocatorTest
       projectDir.delete(true);
    }
 
-   @SuppressWarnings("unchecked")
    @Test
    public void testEnabledFacets() throws Exception
    {
@@ -99,8 +98,12 @@ public class MavenProjectLocatorTest
                DirectoryResource.class);
       DirectoryResource projectDir = addonDir.createTempResource();
       Project project = locator.createProject(projectDir);
-      boolean hasFacets = project.hasAllFacets(MavenFacet.class, MavenPluginFacet.class,
-               MetadataFacet.class, PackagingFacet.class, DependencyFacet.class, ResourcesFacet.class);
+      boolean hasFacets = project.hasFacet(MavenFacet.class)
+               && project.hasFacet(MavenPluginFacet.class)
+               && project.hasFacet(MetadataFacet.class)
+               && project.hasFacet(PackagingFacet.class)
+               && project.hasFacet(DependencyFacet.class)
+               && project.hasFacet(ResourcesFacet.class);
       Assert.assertTrue(hasFacets);
 
       projectDir.delete(true);
