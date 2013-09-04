@@ -46,7 +46,7 @@ import org.jboss.forge.parser.java.util.Types;
 public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
 {
    @Inject
-   @WithAttributes(label = "Entity", description = "The entity which the field will be created", required = true, type = InputType.SELECT_ONE_DROPDOWN)
+   @WithAttributes(label = "Entity", description = "The entity which the field will be created", required = true, type = InputType.DROPDOWN)
    private UISelectOne<JavaResource> entity;
 
    @Inject
@@ -58,7 +58,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    private UIInput<String> typeName;
 
    @Inject
-   @WithAttributes(label = "Relationship", description = "The type of the relationship", type = InputType.SELECT_ONE_RADIO)
+   @WithAttributes(label = "Relationship", description = "The type of the relationship", type = InputType.RADIO)
    private UISelectOne<RelationshipType> relationshipType;
 
    @Inject

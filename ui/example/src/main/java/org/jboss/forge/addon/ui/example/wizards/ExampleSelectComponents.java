@@ -43,8 +43,8 @@ public class ExampleSelectComponents implements UIWizardStep
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      radioBean.getFacet(HintsFacet.class).setInputType(InputType.SELECT_ONE_RADIO);
-      radioBeanTwo.getFacet(HintsFacet.class).setInputType(InputType.SELECT_ONE_RADIO);
+      radioBean.getFacet(HintsFacet.class).setInputType(InputType.RADIO);
+      radioBeanTwo.getFacet(HintsFacet.class).setInputType(InputType.RADIO);
       radioBean.setValueChoices(Arrays.asList(new Bean("One"), new Bean("Two"), new Bean("Three")));
       radioBeanTwo.setValueChoices(Arrays.asList(new Bean("A"), new Bean("B"), new Bean("C")));
 
