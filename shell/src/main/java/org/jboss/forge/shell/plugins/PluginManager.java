@@ -355,6 +355,12 @@ public class PluginManager
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       List<DependencyResource> pluginDependencies = new ArrayList<DependencyResource>();
+      
+      // Hack to invalidate the cached full project build result in the MavenCoreFacet
+      // Thie ensures that resolution of any unresolved dependencies in a multi-module project will be re-attempted. 
+      MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
+      mvn.setPOM(mvn.getPOM());
+      
       List<Dependency> effectiveDependenciesInScopes = deps.getEffectiveDependenciesInScopes(ScopeType.COMPILE,
                ScopeType.RUNTIME);
       for (Dependency d : effectiveDependenciesInScopes)
