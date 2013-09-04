@@ -53,7 +53,7 @@ public class PluginRef
 
    public Dependency getArtifact()
    {
-      return DependencyBuilder.create(artifact);
+      return artifact == null ? null : DependencyBuilder.create(artifact);
    }
 
    public String getHomeRepo()
