@@ -11,6 +11,7 @@ import java.util.List;
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
@@ -18,7 +19,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface ScaffoldProvider extends ProjectFacet
+public interface ScaffoldProvider extends ProjectFacet, UIValidator
 {
    /**
     * Return the name for this {@link ScaffoldProvider}
@@ -46,6 +47,14 @@ public interface ScaffoldProvider extends ProjectFacet
     * responsibility of the ScaffoldProvider to verify whether it can act on the provided resource.
     */
    List<Resource<?>> generateFrom(Iterable<Resource<?>> resources, ScaffoldContext scaffoldContext);
+
+   /**
+    * Needs overwrite confirmation ?
+    * 
+    * @param scaffoldContext
+    * @return
+    */
+   boolean needsOverwriteConfirmation(ScaffoldContext scaffoldContext);
 
    /**
     * Return the {@link UIWizardStep} class that begins the scaffold setup of this type, if any.
