@@ -21,9 +21,11 @@ public interface FacetFactory
     * the given origin instance as the {@link Facet#getFaceted()}.
     * 
     * @throws FacetNotFoundException if no implementation can be found.
+    * @throws FacetIsAmbiguousException if the given facet type is an interface or abstract class, and multiple
+    *            implementations were found.
     */
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> FACETTYPE create(
-            FACETEDTYPE origin, Class<FACETTYPE> type) throws FacetNotFoundException;
+            FACETEDTYPE origin, Class<FACETTYPE> type) throws FacetNotFoundException, FacetIsAmbiguousException;
 
    /**
     * Get all instantiable {@link Facet} instances implementing the given {@link Facet} type. If it is also an instance
@@ -39,6 +41,8 @@ public interface FacetFactory
     * @return the new {@link Facet} instance. (Never null.)
     * 
     * @throws FacetNotFoundException if no implementation can be found.
+    * @throws FacetIsAmbiguousException if the given facet type is an interface or abstract class, and multiple
+    *            implementations were found.
     * @throws IllegalStateException if installation failed
     */
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> FACETTYPE install(
@@ -47,6 +51,7 @@ public interface FacetFactory
    /**
     * Install a {@link Facet} instance into the given {@link Faceted} origin.
     * 
+    * @throws IllegalStateException if installation failed
     * @throws IllegalArgumentException when the given {@link Facet#getFaceted()} is not equal to the specified
     *            {@link Faceted} origin instance, or if the given {@link Faceted} type does not implement
     *            {@link MutableFaceted}.
@@ -67,6 +72,8 @@ public interface FacetFactory
     * @return the new {@link Facet} instance. (Never null.)
     * 
     * @throws FacetNotFoundException if no implementation can be found.
+    * @throws FacetIsAmbiguousException if the given facet type is an interface or abstract class, and multiple
+    *            implementations were found.
     * @throws IllegalStateException if installation failed
     */
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> FACETTYPE register(

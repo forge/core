@@ -62,7 +62,6 @@ public class ProjectFactoryImplTest
    }
 
    @Test
-   // @Ignore("WELD-1487 - Weld fails to create beans for anonymous types")
    public void testCreateProject() throws Exception
    {
       final AtomicBoolean projectSet = new AtomicBoolean(false);

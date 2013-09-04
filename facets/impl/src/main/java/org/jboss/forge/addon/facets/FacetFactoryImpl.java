@@ -55,8 +55,8 @@ public class FacetFactoryImpl implements FacetFactory
             return facet;
          }
 
-         throw new FacetIsAmbiguousException("Cannot resolve facet type [" + type.getName()
-                  + "] because multiple ambiguous types were found: " + instance);
+         throw new FacetIsAmbiguousException("Cannot resolve ambiguous facet type [" + type.getName()
+                  + "] because multiple matching types were found: " + instance);
       }
       else if (!instance.isSatisfied())
          throw new FacetNotFoundException("Could not find Facet of type [" + type.getName() + "]");

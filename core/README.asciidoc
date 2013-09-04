@@ -1,10 +1,11 @@
-== core
+== facets
 :idprefix: id_ 
 
 
-This addon *exports dependencies* on all built-in Forge addons. Its does not provide any additional services of its own.
+This addon *exports services* for use in other addons. The Facets addon allows for modularization and extension of core
+functionality by creating a standard integration point and set of installation/removal APIs.  
 
-=== Dependencies: All Built In
+=== Dependencies: None
 
 == Setup
 
@@ -18,15 +19,80 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 ----
 <dependency>
    <groupId>org.jboss.forge.addon</groupId>
-   <artifactId>core</artifactId>
+   <artifactId>facets</artifactId>
    <classifier>forge-addon</classifier>
    <version>${version}</version>
 </dependency>
 ----      
-
 == Features
 
-Convenient programming experience::
- Because the Core addon provides a dependency on all other core Forge addons, it may be used to gain access to all core addons via one dependency. 
+Modular functionality::
+ Use small building-blocks to compose functionality into higher level constructs. Facets are small pieces of functionality
+ that may be accessed individually, or built upon to create decoupled extensions for a known Faceted type. While a circular
+ dependency exists in the base type implementations, this ultimately leads to a simplified development experience.
 +
-NOTE: It is *NOT* recommended to depend on this addon unless you legitimately need access to all core functionality. This is considered bad addon-writing etiquette. You should probably add dependencies only to those addon which are required.
+[source,java]
+----
+public class MyFacet extends AbstractFacet<FacetedObject> implements Facet<FacetedObject> {
+  @Override
+  public boolean install() {
+     return true;
+  }
+
+  @Override
+  public boolean isInstalled() {
+     return true;
+  }
+  
+  public void doSomething() {
+     // custom functionality for your facet
+  }
+}
+----
++
+And the corresponding Faceted type.
++
+[source,java]
+----
+public class FacetedObject extends AbstractFaceted<MyFacet> implements Faceted<MyFacet> {
+}
+----
++
+Once the facet interfaces are implemented, simply add methods and functionality to the facet implementation. This allows
+consumers of the facet to use the functionality you have created:
++
+[source,java]
+----
+Faceted<MyFacet> faceted = ...;
+MyFacet facet = faceted.getFacet(MyFacet.class);
+facet.doSomething();
+----
+
+FacetFactory service for simple installation/removal::
+ The FacetFactory provides a single API for all Facet operations: both creation of new, detached facet instances, and also
+handles the installation of facets directly.
++
+[source,java]
+----
+@Inject
+private FacetFactory factory;
+...
+FacetedObject faceted = new FacetedObject();
+MyFacet facet = factory.install(faceted, MyFacet.class);
+---- 
++
+[TIP] 
+====
+If your addon uses a container that does not support "@Inject" annotations, services such as the `FacetFactory` may also be 
+accessed via the `AddonRegistry`:
+
+----
+AddonRegistry registry = ...
+Imported<FacetFactory> imported = registry.getServices(FacetFactory.class);
+FacetFactory factory = imported.get();
+----
+==== 
+
+Consistent programming experience::
+ Because the Facet API provides an abstract model for extending functionality of an API, it is used in a number of addons
+ and should be considered the standard approach for modular API extension.

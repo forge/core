@@ -115,15 +115,7 @@ public class ProjectFactoryImpl implements ProjectFactory
 
                   if (result != null)
                   {
-                     for (Class<ProjectFacet> type : registry.getExportedTypes(ProjectFacet.class))
-                     {
-                        ProjectFacet facet = factory.create(result, type);
-                        if (facet != null && factory.register(result, facet))
-                        {
-                           log.fine("Registered Facet [" + facet + "] into Project [" + result + "]");
-                        }
-                     }
-
+                     registerAvailableFacets(result);
                      cacheProject(result);
                   }
                }
@@ -198,14 +190,7 @@ public class ProjectFactoryImpl implements ProjectFactory
 
       if (result != null)
       {
-         for (Class<ProjectFacet> type : registry.getExportedTypes(ProjectFacet.class))
-         {
-            ProjectFacet facet = factory.create(result, type);
-            if (facet != null && factory.register(result, facet))
-            {
-               log.fine("Installed Facet [" + facet + "] into Project [" + result + "]");
-            }
-         }
+         registerAvailableFacets(result);
       }
 
       if (result != null)
@@ -215,6 +200,21 @@ public class ProjectFactoryImpl implements ProjectFactory
       }
 
       return result;
+   }
+
+   private void registerAvailableFacets(Project result)
+   {
+      for (Class<ProjectFacet> type : registry.getExportedTypes(ProjectFacet.class))
+      {
+         Iterable<ProjectFacet> facets = factory.createFacets(result, type);
+         for (ProjectFacet facet : facets)
+         {
+            if (facet != null && factory.register(result, facet))
+            {
+               log.fine("Registered Facet [" + facet + "] into Project [" + result + "]");
+            }
+         }
+      }
    }
 
    private void cacheProject(Project result)
