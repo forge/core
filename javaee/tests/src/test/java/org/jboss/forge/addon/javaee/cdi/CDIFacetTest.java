@@ -10,12 +10,12 @@ package org.jboss.forge.addon.javaee.cdi;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import javax.enterprise.inject.AmbiguousResolutionException;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.facets.FacetIsAmbiguousException;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -53,7 +53,7 @@ public class CDIFacetTest
    @Inject
    private FacetFactory facetFactory;
 
-   @Test(expected = AmbiguousResolutionException.class)
+   @Test(expected = FacetIsAmbiguousException.class)
    public void testCannotInstallAmbiguousFacetType() throws Exception
    {
       Project project = projectFactory.createTempProject();

@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.javaee.cdi;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,26 +16,17 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
-import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
-import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
-import org.jboss.forge.addon.projects.facets.PackagingFacet;
-import org.jboss.forge.addon.projects.facets.ResourcesFacet;
-import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
-import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.furnace.util.Streams;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
-import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
-import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
 
 /**
  * Implementation of {@link CDIFacet} for spec version 1.1
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class CDIFacetImpl_1_1 extends AbstractJavaEEFacet implements CDIFacet_1_1
+public class CDIFacetImpl_1_1 extends AbstractCDIFacetImpl implements CDIFacet_1_1
 {
    private static final Dependency JBOSS_ANNOTATION_API = DependencyBuilder
             .create("org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec");
@@ -61,58 +51,13 @@ public class CDIFacetImpl_1_1 extends AbstractJavaEEFacet implements CDIFacet_1_
    @Override
    public boolean isInstalled()
    {
-      return getConfigFile().exists() && super.isInstalled();
+      return super.isInstalled();
    }
 
    @Override
-   public BeansDescriptor getConfig()
+   protected String getInitialBeansXMLContent()
    {
-      DescriptorImporter<BeansDescriptor> importer = Descriptors.importAs(BeansDescriptor.class);
-      BeansDescriptor descriptor = importer.fromStream(getConfigFile().getResourceInputStream());
-      return descriptor;
-   }
-
-   @Override
-   public boolean install()
-   {
-      if (!isInstalled())
-      {
-         FileResource<?> descriptor = getConfigFile();
-         if (!descriptor.exists())
-         {
-            if (!descriptor.createNewFile())
-            {
-               throw new RuntimeException("Failed to create required [" + descriptor.getFullyQualifiedName() + "]");
-            }
-            String data = Descriptors.create(BeansDescriptor.class).exportAsString();
-            descriptor.setContents(data);
-         }
-      }
-      return super.install();
-   }
-
-   @Override
-   public void saveConfig(BeansDescriptor model)
-   {
-      String output = model.exportAsString();
-      getConfigFile().setContents(output);
-   }
-
-   @Override
-   public FileResource<?> getConfigFile()
-   {
-      Project project = getFaceted();
-      PackagingFacet packaging = project.getFacet(PackagingFacet.class);
-      if ("war".equals(packaging.getPackagingType()))
-      {
-         DirectoryResource webRoot = project.getFacet(WebResourcesFacet.class).getWebRootDirectory();
-         return (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "beans.xml");
-      }
-      else
-      {
-         DirectoryResource root = project.getFacet(ResourcesFacet.class).getResourceFolder();
-         return (FileResource<?>) root.getChild("META-INF" + File.separator + "beans.xml");
-      }
+      return Streams.toString(getClass().getResourceAsStream("beans_1_1.xml"));
    }
 
    @Override
