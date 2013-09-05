@@ -1,21 +1,20 @@
-/*
+/**
  * Copyright 2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.javaee.cdi.ui;
+package org.jboss.forge.addon.javaee.ejb.ui;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.javaee.cdi.CDIFacet;
+import org.jboss.forge.addon.javaee.facets.EJBFacet;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
-import org.jboss.forge.addon.projects.facets.ResourcesFacet;
-import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -26,48 +25,48 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * Setups EJB in a {@link Project}
+ * 
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class CDISetupWizard extends AbstractJavaEECommand
+public class EJBSetupWizard extends AbstractJavaEECommand
 {
+
    @Override
    public Metadata getMetadata()
    {
       Metadata metadata = super.getMetadata();
-      return metadata.name("CDI: Setup")
-               .description("Setup CDI in your project")
-               .category(Categories.create(metadata.getCategory(), "CDI"));
+      return metadata.name("EJB: Setup")
+               .description("Setup EJB in your project")
+               .category(Categories.create(metadata.getCategory(), "EJB"));
    }
 
    @Inject
    private FacetFactory facetFactory;
 
    @Inject
-   @WithAttributes(required = true, label = "CDI Version")
-   private UISelectOne<CDIFacet> choices;
+   @WithAttributes(required = true, label = "EJB Version")
+   private UISelectOne<EJBFacet> choices;
 
    @Override
    public boolean isEnabled(UIContext context)
    {
-      return containsProject(context)
-               && getSelectedProject(context).hasFacet(DependencyFacet.class)
-               && (getSelectedProject(context).hasFacet(ResourcesFacet.class) || getSelectedProject(context).hasFacet(
-                        WebResourcesFacet.class));
+      return containsProject(context) && getSelectedProject(context).hasFacet(DependencyFacet.class);
    }
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      choices.setItemLabelConverter(new Converter<CDIFacet, String>()
+      choices.setItemLabelConverter(new Converter<EJBFacet, String>()
       {
          @Override
-         public String convert(CDIFacet source)
+         public String convert(EJBFacet source)
          {
             return source.getSpecVersion().toString();
          }
       });
 
-      for (CDIFacet cdi : choices.getValueChoices())
+      for (EJBFacet cdi : choices.getValueChoices())
       {
          if (choices.getValue() == null || cdi.getSpecVersion().compareTo(choices.getValue().getSpecVersion()) >= 1)
          {
@@ -83,9 +82,9 @@ public class CDISetupWizard extends AbstractJavaEECommand
    {
       if (facetFactory.install(getSelectedProject(context), choices.getValue()))
       {
-         return Results.success("CDI has been installed.");
+         return Results.success("EJB has been installed.");
       }
-      return Results.fail("Could not install CDI.");
+      return Results.fail("Could not install EJB.");
    }
 
 }
