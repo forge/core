@@ -294,6 +294,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertEquals(FURNACE_VERSION, testsProject.getFacet(DependencyFacet.class).getEffectiveDependency(
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY).getCoordinate().getVersion());
 
+      Assert.assertTrue(project.getProjectRoot().getChild("README.asciidoc").exists());
       project.getProjectRoot().delete(true);
       project.getProjectRoot().deleteOnExit();
    }
@@ -357,7 +358,8 @@ public class AddonProjectConfiguratorTest
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
-
+      
+      Assert.assertTrue(project.getProjectRoot().getChild("README.asciidoc").exists());
       project.getProjectRoot().delete(true);
       project.getProjectRoot().deleteOnExit();
    }

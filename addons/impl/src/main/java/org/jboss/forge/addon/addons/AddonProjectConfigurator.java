@@ -27,7 +27,6 @@ import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.FacetNotFoundException;
-import org.jboss.forge.addon.javaee.cdi.CDIFacet;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
 import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -37,8 +36,10 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.services.Exported;
+import org.jboss.forge.furnace.util.Streams;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaPackageInfo;
@@ -69,6 +70,7 @@ public class AddonProjectConfigurator
    public void setupSimpleAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
             throws FileNotFoundException, FacetNotFoundException
    {
+      generateReadme(project);
       // TODO Use or remove forgeVersion parameter
       facetFactory.install(project, FurnaceVersionFacet.class);
       project.getFacet(FurnaceVersionFacet.class).setVersion(forgeVersion.toString());
@@ -96,6 +98,7 @@ public class AddonProjectConfigurator
    public void setupComplexAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
             throws FileNotFoundException, FacetNotFoundException
    {
+      generateReadme(project);
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
       String projectName = metadata.getProjectName();
       metadata.setProjectName(projectName + "-parent");
@@ -158,6 +161,22 @@ public class AddonProjectConfigurator
       dependencyInstaller.install(apiProject, DependencyBuilder.create(spiProjectDependency).setScopeType("provided"));
 
       dependencyInstaller.install(testsProject, addonProjectDependency);
+   }
+
+   /**
+    * @param project
+    */
+   private void generateReadme(Project project)
+   {
+      String readmeTemplate = Streams.toString(getClass().getResourceAsStream("README.asciidoc"));
+      FileResource<?> child = project.getProjectRoot().getChildOfType(FileResource.class, "README.asciidoc");
+
+      // TODO: Replace with template addon
+      MetadataFacet metadata = project.getFacet(MetadataFacet.class);
+      readmeTemplate = readmeTemplate.replaceAll("\\{\\{ADDON_GROUP_ID\\}\\}", metadata.getTopLevelPackage());
+      readmeTemplate = readmeTemplate.replaceAll("\\{\\{ADDON_ARTIFACT_ID\\}\\}", metadata.getProjectName());
+      child.createNewFile();
+      child.setContents(readmeTemplate);
    }
 
    private void installSelectedAddons(final Project project, Iterable<AddonId> addons, boolean managed)
