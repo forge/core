@@ -28,9 +28,6 @@ public abstract class AbstractProjectCommand extends AbstractUICommand
 
    /**
     * Checks if a project exists in the current selection
-    * 
-    * @param context
-    * @return
     */
    protected boolean containsProject(UIContext context)
    {
@@ -40,7 +37,6 @@ public abstract class AbstractProjectCommand extends AbstractUICommand
          return getProjectFactory().containsProject(initialSelection.get());
       }
       return false;
-
    }
 
    /**

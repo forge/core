@@ -37,7 +37,7 @@ public class FacesSetupWizard extends AbstractJavaEECommand
    {
       Metadata metadata = super.getMetadata();
       return metadata.name("Faces: Setup")
-               .description("Setup JavaServerFaces in your project")
+               .description("Setup JavaServer Faces in your project")
                .category(Categories.create(metadata.getCategory(), "JSF"));
    }
 
@@ -45,7 +45,7 @@ public class FacesSetupWizard extends AbstractJavaEECommand
    private FacetFactory facetFactory;
 
    @Inject
-   @WithAttributes(required = true, label = "JavaServerFaces Version")
+   @WithAttributes(required = true, label = "JavaServer Faces Version")
    private UISelectOne<FacesFacet> choices;
 
    @Override
@@ -82,9 +82,9 @@ public class FacesSetupWizard extends AbstractJavaEECommand
    {
       if (facetFactory.install(getSelectedProject(context), choices.getValue()))
       {
-         return Results.success("JavaServerFaces has been installed.");
+         return Results.success("JavaServer Faces has been installed.");
       }
-      return Results.fail("Could not install JavaServerFaces.");
+      return Results.fail("Could not install JavaServer Faces.");
    }
 
 }
