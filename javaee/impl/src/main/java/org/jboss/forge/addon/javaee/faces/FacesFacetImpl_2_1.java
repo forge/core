@@ -12,6 +12,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.javaee.faces.FacesFacet_2_1;
@@ -25,6 +27,7 @@ import org.jboss.forge.furnace.versions.Version;
  */
 public class FacesFacetImpl_2_1 extends AbstractFacesFacetImpl implements FacesFacet_2_1
 {
+   @Inject
    public FacesFacetImpl_2_1(DependencyInstaller installer)
    {
       super(installer);

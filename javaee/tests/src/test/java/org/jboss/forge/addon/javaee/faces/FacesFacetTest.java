@@ -30,7 +30,6 @@ import org.junit.runner.RunWith;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-@Ignore("Weird error going on")
 public class FacesFacetTest
 {
    @Deployment
