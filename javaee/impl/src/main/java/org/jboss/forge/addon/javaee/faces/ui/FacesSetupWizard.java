@@ -5,13 +5,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.javaee.ejb.ui;
+package org.jboss.forge.addon.javaee.faces.ui;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.javaee.facets.EJBFacet;
+import org.jboss.forge.addon.javaee.faces.FacesFacet;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
@@ -29,24 +29,24 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class EJBSetupWizard extends AbstractJavaEECommand
+public class FacesSetupWizard extends AbstractJavaEECommand
 {
 
    @Override
    public Metadata getMetadata()
    {
       Metadata metadata = super.getMetadata();
-      return metadata.name("EJB: Setup")
-               .description("Setup EJB in your project")
-               .category(Categories.create(metadata.getCategory(), "EJB"));
+      return metadata.name("Faces: Setup")
+               .description("Setup JavaServerFaces in your project")
+               .category(Categories.create(metadata.getCategory(), "JSF"));
    }
 
    @Inject
    private FacetFactory facetFactory;
 
    @Inject
-   @WithAttributes(required = true, label = "EJB Version")
-   private UISelectOne<EJBFacet> choices;
+   @WithAttributes(required = true, label = "JavaServerFaces Version")
+   private UISelectOne<FacesFacet> choices;
 
    @Override
    public boolean isEnabled(UIContext context)
@@ -57,16 +57,16 @@ public class EJBSetupWizard extends AbstractJavaEECommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      choices.setItemLabelConverter(new Converter<EJBFacet, String>()
+      choices.setItemLabelConverter(new Converter<FacesFacet, String>()
       {
          @Override
-         public String convert(EJBFacet source)
+         public String convert(FacesFacet source)
          {
             return source.getSpecVersion().toString();
          }
       });
 
-      for (EJBFacet choice : choices.getValueChoices())
+      for (FacesFacet choice : choices.getValueChoices())
       {
          if (choices.getValue() == null || choice.getSpecVersion().compareTo(choices.getValue().getSpecVersion()) >= 1)
          {
@@ -82,9 +82,9 @@ public class EJBSetupWizard extends AbstractJavaEECommand
    {
       if (facetFactory.install(getSelectedProject(context), choices.getValue()))
       {
-         return Results.success("EJB has been installed.");
+         return Results.success("JavaServerFaces has been installed.");
       }
-      return Results.fail("Could not install EJB.");
+      return Results.fail("Could not install JavaServerFaces.");
    }
 
 }
