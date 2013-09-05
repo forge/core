@@ -52,12 +52,6 @@ public class CDIFacetImpl_1_0 extends AbstractCDIFacetImpl implements CDIFacet_1
    }
 
    @Override
-   public boolean isInstalled()
-   {
-      return getConfigFile().exists() && super.isInstalled();
-   }
-
-   @Override
    protected String getInitialBeansXMLContent()
    {
       return Descriptors.create(BeansDescriptor.class).exportAsString();

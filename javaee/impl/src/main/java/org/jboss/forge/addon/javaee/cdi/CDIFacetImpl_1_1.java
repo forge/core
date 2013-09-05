@@ -49,12 +49,6 @@ public class CDIFacetImpl_1_1 extends AbstractCDIFacetImpl implements CDIFacet_1
    }
 
    @Override
-   public boolean isInstalled()
-   {
-      return super.isInstalled();
-   }
-
-   @Override
    protected String getInitialBeansXMLContent()
    {
       return Streams.toString(getClass().getResourceAsStream("beans_1_1.xml"));

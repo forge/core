@@ -65,6 +65,12 @@ public abstract class AbstractCDIFacetImpl extends AbstractJavaEEFacet implement
       return super.install();
    }
 
+   @Override
+   public boolean isInstalled()
+   {
+      return getConfigFile().exists() && super.isInstalled();
+   }
+
    protected abstract String getInitialBeansXMLContent();
 
    @Override
