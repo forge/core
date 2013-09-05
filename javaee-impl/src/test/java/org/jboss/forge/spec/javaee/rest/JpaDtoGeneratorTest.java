@@ -6,11 +6,10 @@
  */
 package org.jboss.forge.spec.javaee.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import javax.inject.Inject;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.parser.JavaParser;
@@ -46,6 +45,7 @@ public class JpaDtoGeneratorTest extends AbstractJPATest
 
       JavaResource dtoResource = java.getJavaResource(java.getBasePackage() + ".rest.dto.UserDTO");
       JavaClass dto = (JavaClass) dtoResource.getJavaSource();
+      assertTrue(dto.hasAnnotation(XmlRootElement.class));
       assertNotNull(dto.getField("id"));
       assertEquals("Long", dto.getField("id").getType());
       assertNotNull(dto.getMethod("getId"));
@@ -92,6 +92,7 @@ public class JpaDtoGeneratorTest extends AbstractJPATest
 
       JavaResource parentDtoResource = java.getJavaResource(java.getBasePackage() + ".rest.dto.ParentDTO");
       JavaClass parentDto = (JavaClass) parentDtoResource.getJavaSource();
+      assertTrue(parentDto.hasAnnotation(XmlRootElement.class));
       // Verify that the ordinary properties of root DTOs are created
       assertNotNull(parentDto.getField("objectId"));
       assertEquals("Long", parentDto.getField("objectId").getType());
@@ -119,6 +120,7 @@ public class JpaDtoGeneratorTest extends AbstractJPATest
       
       JavaResource nestedChildDtoResource = java.getJavaResource(java.getBasePackage() + ".rest.dto.NestedChildDTO");
       JavaClass nestedChildDto = (JavaClass) nestedChildDtoResource.getJavaSource();
+      assertFalse(nestedChildDto.hasAnnotation(XmlRootElement.class));
       // Verify that the ordinary properties of nested DTOs are created
       assertNotNull(nestedChildDto.getField("id"));
       assertEquals("Long", nestedChildDto.getField("id").getType());
@@ -139,6 +141,7 @@ public class JpaDtoGeneratorTest extends AbstractJPATest
       JavaResource embeddablePropertyDtoResource = java.getJavaResource(java.getBasePackage()
                + ".rest.dto.EmbeddablePropertyDTO");
       JavaClass embeddablePropertyDto = (JavaClass) embeddablePropertyDtoResource.getJavaSource();
+      assertFalse(embeddablePropertyDto.hasAnnotation(XmlRootElement.class));
       // Verify that the ordinary properties of Embeddables are created
       assertNotNull(embeddablePropertyDto.getField("attrA"));
       assertEquals("String", embeddablePropertyDto.getField("attrA").getType());
@@ -158,6 +161,7 @@ public class JpaDtoGeneratorTest extends AbstractJPATest
       JavaResource nestedAssociationDtoResource = java.getJavaResource(java.getBasePackage()
                + ".rest.dto.NestedAssociationDTO");
       JavaClass nestedAssociationDto = (JavaClass) nestedAssociationDtoResource.getJavaSource();
+      assertFalse(nestedAssociationDto.hasAnnotation(XmlRootElement.class));
       // Verify that the ordinary properties are created in the nested DTO
       assertNotNull(nestedAssociationDto.getField("id"));
       assertEquals("Long", nestedAssociationDto.getField("id").getType());
@@ -174,6 +178,7 @@ public class JpaDtoGeneratorTest extends AbstractJPATest
       JavaResource nestedAssociationInEmbeddableDtoResource = java.getJavaResource(java.getBasePackage()
                + ".rest.dto.NestedAssociationInEmbeddableDTO");
       JavaClass nestedAssociationInEmbeddableDto = (JavaClass) nestedAssociationInEmbeddableDtoResource.getJavaSource();
+      assertFalse(nestedAssociationInEmbeddableDto.hasAnnotation(XmlRootElement.class));
       // Verify that the ordinary properties are created in the nested DTO
       assertNotNull(nestedAssociationInEmbeddableDto.getField("id"));
       assertEquals("Long", nestedAssociationInEmbeddableDto.getField("id").getType());

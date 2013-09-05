@@ -149,6 +149,11 @@ public class RestPluginTest extends AbstractJPATest
       Type<JavaClass> returnTypeInspector = method.getReturnTypeInspector();
       assertEquals("javax.ws.rs.core.Response", returnTypeInspector
                         .getQualifiedName());
+      
+      String entityPackage = project.getFacet(PersistenceFacet.class).getEntityPackage();
+      JavaResource entityClass = java.getJavaResource(entityPackage + ".User");
+      JavaClass entity = (JavaClass) entityClass.getJavaSource();
+      assertTrue(entity.hasAnnotation(XmlRootElement.class));
 
       getShell().execute("build");
    }

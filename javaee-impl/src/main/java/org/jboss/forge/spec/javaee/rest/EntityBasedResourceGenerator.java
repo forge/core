@@ -13,10 +13,12 @@ import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.getOrderCla
 import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.getSelectExpression;
 import static org.jboss.forge.spec.javaee.rest.ResourceGeneratorUtil.resolveIdGetterName;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
@@ -39,8 +41,14 @@ public class EntityBasedResourceGenerator
    ResourceGeneratorUtil utility;
 
    public JavaClass generateFrom(JavaClass entity, String idType, String contentType,
-            RestGeneratedResources generatedResourcesEvent)
+            RestGeneratedResources generatedResourcesEvent) throws FileNotFoundException
    {
+      if (!entity.hasAnnotation(XmlRootElement.class))
+      {
+         entity.addAnnotation(XmlRootElement.class);
+         java.saveJavaSource(entity);
+      }
+      
       String idGetterName = resolveIdGetterName(entity);
       String persistenceUnitName = utility.getPersistenceUnitName();
       String entityTable = getEntityTable(entity);
