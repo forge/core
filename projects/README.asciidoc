@@ -134,7 +134,7 @@ public class ProjectFacetA extends AbstractFacet<Project> implements ProjectFace
 ----
 
 Simple facet prerequisite management::
-Since `Facet` implementations are designed for re-use, the projects addon API provides the `@RequiresFacet` annotation, for quickly definining dependencies between facet implementations.
+Since `Facet` implementations are designed for re-use, the projects addon API provides the `@FacetConstraint` annotation, for quickly defining dependencies between facet implementations. The default constraint type is `REQUIRED`.
 +
 [source,java]
 ----
@@ -142,13 +142,21 @@ public class ProjectFacetA extends AbstractFacet<Project> implements ProjectFace
    ...
 }
 
-@RequiresFacet({ProjectFacetA.class})
+@FacetConstraint({ProjectFacetA.class})
+public class ProjectFacetB extends AbstractFacet<Project> implements ProjectFacet {
+   ...
+}
+
+@FacetConstraints({
+   @FacetConstraint({ProjectFacetA.class}),
+   @FacetConstraint(value={ProjectFacetX.class}, type=OPTIONAL)
+})
 public class ProjectFacetB extends AbstractFacet<Project> implements ProjectFacet {
    ...
 }
 ----
 +
-This type of dependency speficication could otherwise be written using the following (more verbose) manual configuration:
+This type of dependency specification is equivalent to the following (more verbose) manual configuration in most cases, but also ensures proper Facet registration and installation ordering, which the code below does not:
 +
 [source,java]
 ----
