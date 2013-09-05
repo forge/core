@@ -87,9 +87,11 @@ public class RestPluginTest extends AbstractJPATest
       web.saveConfig(config);
 
       org.jboss.forge.parser.xml.Node webXml = XMLParser.parse(web.getConfig().exportAsString());
+      assertEquals(1, webXml.get("servlet").size());
       assertEquals(1, webXml.get("servlet-mapping").size());
 
-      assertTrue(config.exportAsString().contains("servlet-mapping"));
+      assertTrue(config.exportAsString().contains("<servlet>"));
+      assertTrue(config.exportAsString().contains("<servlet-mapping>"));
 
       setupRest();
 
@@ -148,8 +150,8 @@ public class RestPluginTest extends AbstractJPATest
       Method<JavaClass> method = endpoint.getMethod("findById", Long.class);
       Type<JavaClass> returnTypeInspector = method.getReturnTypeInspector();
       assertEquals("javax.ws.rs.core.Response", returnTypeInspector
-                        .getQualifiedName());
-      
+               .getQualifiedName());
+
       String entityPackage = project.getFacet(PersistenceFacet.class).getEntityPackage();
       JavaResource entityClass = java.getJavaResource(entityPackage + ".User");
       JavaClass entity = (JavaClass) entityClass.getJavaSource();
@@ -235,7 +237,7 @@ public class RestPluginTest extends AbstractJPATest
                endpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
       getShell().execute("build");
    }
-   
+
    @Test
    public void testCreateEndpointWithAssociation() throws Exception
    {
@@ -281,7 +283,7 @@ public class RestPluginTest extends AbstractJPATest
 
       getShell().execute("build");
    }
-   
+
    @Test
    public void testCreateDTOBasedEndpoint() throws Exception
    {
@@ -300,26 +302,26 @@ public class RestPluginTest extends AbstractJPATest
       assertEquals("/users", endpoint.getAnnotation(Path.class).getStringValue());
       assertEquals("forge-default",
                endpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
-      assertNotNull(endpoint.getMethod("create","com.test.rest.dto.UserDTO"));
+      assertNotNull(endpoint.getMethod("create", "com.test.rest.dto.UserDTO"));
       assertEquals("java.util.List", endpoint.getMethod("listAll").getQualifiedReturnType());
       Method<JavaClass> method = endpoint.getMethod("findById", Long.class);
       Type<JavaClass> returnTypeInspector = method.getReturnTypeInspector();
       assertEquals("javax.ws.rs.core.Response", returnTypeInspector.getQualifiedName());
-      
+
       JavaResource dtoResource = java.getJavaResource(java.getBasePackage() + ".rest.dto.UserDTO");
       JavaClass dto = (JavaClass) dtoResource.getJavaSource();
       assertNotNull(dto.getField("id"));
       assertEquals("Long", dto.getField("id").getType());
       assertNotNull(dto.getMethod("getId"));
-      assertNotNull(dto.getMethod("setId","Long"));
+      assertNotNull(dto.getMethod("setId", "Long"));
       assertNotNull(dto.getField("version"));
       assertEquals("int", dto.getField("version").getType());
       assertNotNull(dto.getMethod("getVersion"));
-      assertNotNull(dto.getMethod("setVersion","int"));
+      assertNotNull(dto.getMethod("setVersion", "int"));
 
       getShell().execute("build");
    }
-   
+
    @Test
    public void testCreateDTOBasedEndpointWithAssociation() throws Exception
    {
@@ -347,22 +349,22 @@ public class RestPluginTest extends AbstractJPATest
       assertEquals("/users", userEndpoint.getAnnotation(Path.class).getStringValue());
       assertEquals("forge-default",
                userEndpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
-      assertNotNull(userEndpoint.getMethod("create","com.test.rest.dto.UserDTO"));
+      assertNotNull(userEndpoint.getMethod("create", "com.test.rest.dto.UserDTO"));
       assertEquals("java.util.List", userEndpoint.getMethod("listAll").getQualifiedReturnType());
       Method<JavaClass> findUserByIdMethod = userEndpoint.getMethod("findById", Long.class);
       Type<JavaClass> returnTypeInspector = findUserByIdMethod.getReturnTypeInspector();
       assertEquals("javax.ws.rs.core.Response", returnTypeInspector.getQualifiedName());
-      
+
       JavaResource userDtoResource = java.getJavaResource(java.getBasePackage() + ".rest.dto.UserDTO");
       JavaClass userDto = (JavaClass) userDtoResource.getJavaSource();
       assertNotNull(userDto.getField("objectId"));
       assertEquals("Long", userDto.getField("objectId").getType());
       assertNotNull(userDto.getMethod("getObjectId"));
-      assertNotNull(userDto.getMethod("setObjectId","Long"));
+      assertNotNull(userDto.getMethod("setObjectId", "Long"));
       assertNotNull(userDto.getField("version"));
       assertEquals("int", userDto.getField("version").getType());
       assertNotNull(userDto.getMethod("getVersion"));
-      assertNotNull(userDto.getMethod("setVersion","int"));
+      assertNotNull(userDto.getMethod("setVersion", "int"));
 
       JavaResource groupResource = java.getJavaResource(java.getBasePackage() + ".rest.GroupEndpoint");
       JavaClass groupEndpoint = (JavaClass) groupResource.getJavaSource();
@@ -370,37 +372,37 @@ public class RestPluginTest extends AbstractJPATest
       assertEquals("/groups", groupEndpoint.getAnnotation(Path.class).getStringValue());
       assertEquals("forge-default",
                groupEndpoint.getField("em").getAnnotation(PersistenceContext.class).getStringValue("unitName"));
-      assertNotNull(groupEndpoint.getMethod("create","com.test.rest.dto.GroupDTO"));
+      assertNotNull(groupEndpoint.getMethod("create", "com.test.rest.dto.GroupDTO"));
       assertEquals("java.util.List", groupEndpoint.getMethod("listAll").getQualifiedReturnType());
       Method<JavaClass> findGroupByIdMethod = userEndpoint.getMethod("findById", Long.class);
       returnTypeInspector = findGroupByIdMethod.getReturnTypeInspector();
       assertEquals("javax.ws.rs.core.Response", returnTypeInspector.getQualifiedName());
-      
+
       JavaResource groupDtoResource = java.getJavaResource(java.getBasePackage() + ".rest.dto.GroupDTO");
       JavaClass groupDto = (JavaClass) groupDtoResource.getJavaSource();
       assertNotNull(groupDto.getField("objectId"));
       assertEquals("Long", groupDto.getField("objectId").getType());
       assertNotNull(groupDto.getMethod("getObjectId"));
-      assertNotNull(groupDto.getMethod("setObjectId","Long"));
+      assertNotNull(groupDto.getMethod("setObjectId", "Long"));
       assertNotNull(groupDto.getField("version"));
       assertEquals("int", groupDto.getField("version").getType());
       assertNotNull(groupDto.getMethod("getVersion"));
-      assertNotNull(groupDto.getMethod("setVersion","int"));
+      assertNotNull(groupDto.getMethod("setVersion", "int"));
       assertNotNull(groupDto.getField("users"));
       assertEquals("Set", groupDto.getField("users").getType());
       assertNotNull(groupDto.getMethod("getUsers"));
-      assertNotNull(groupDto.getMethod("setUsers","Set"));
-      
+      assertNotNull(groupDto.getMethod("setUsers", "Set"));
+
       JavaResource nestedUserDtoResource = java.getJavaResource(java.getBasePackage() + ".rest.dto.NestedUserDTO");
       JavaClass nestedUserDto = (JavaClass) nestedUserDtoResource.getJavaSource();
       assertNotNull(nestedUserDto.getField("objectId"));
       assertEquals("Long", nestedUserDto.getField("objectId").getType());
       assertNotNull(nestedUserDto.getMethod("getObjectId"));
-      assertNotNull(nestedUserDto.getMethod("setObjectId","Long"));
+      assertNotNull(nestedUserDto.getMethod("setObjectId", "Long"));
       assertNotNull(nestedUserDto.getField("version"));
       assertEquals("int", nestedUserDto.getField("version").getType());
       assertNotNull(nestedUserDto.getMethod("getVersion"));
-      assertNotNull(nestedUserDto.getMethod("setVersion","int"));
+      assertNotNull(nestedUserDto.getMethod("setVersion", "int"));
 
       getShell().execute("build");
    }
@@ -419,18 +421,23 @@ public class RestPluginTest extends AbstractJPATest
 
       ServletFacet web = project.getFacet(ServletFacet.class);
       Node servletName = ((WebAppDescriptorImpl) web.getConfig()).getRootNode().getSingle(
-               "servlet-mapping/servlet-name=" + RestWebXmlFacetImpl.JAXRS_SERVLET);
+               "servlet/servlet-name=" + RestWebXmlFacetImpl.JAXRS_SERVLET);
       assertNotNull(servletName);
-      assertEquals("/rest/*", servletName.getParent().getSingle("url-pattern").getText());
+      assertEquals("1", servletName.getParent().getSingle("load-on-startup").getText());
+      
+      Node servletMapping = ((WebAppDescriptorImpl) web.getConfig()).getRootNode().getSingle(
+               "servlet-mapping/servlet-name=" + RestWebXmlFacetImpl.JAXRS_SERVLET);
+      assertNotNull(servletMapping);
+      assertEquals("/rest/*", servletMapping.getParent().getSingle("url-pattern").getText());
    }
-   
+
    @Test
    public void testCreateEndpointWithMultiplePersistenceUnits() throws Exception
    {
       Project project = getProject();
       JavaClass entity = generateEntity(project, null, "User");
       assertFalse(entity.hasAnnotation(XmlRootElement.class));
-      
+
       PersistenceFacet persistenceFacet = project.getFacet(PersistenceFacet.class);
       PersistenceDescriptor persistenceConfig = persistenceFacet.getConfig();
       PersistenceUnitDef defaultUnit = persistenceConfig.persistenceUnit(PersistencePlugin.DEFAULT_UNIT_NAME);
@@ -443,7 +450,7 @@ public class RestPluginTest extends AbstractJPATest
 
       setupRest();
 
-      queueInputLines("","2");
+      queueInputLines("", "2");
       getShell().execute("rest endpoint-from-entity");
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
@@ -457,7 +464,7 @@ public class RestPluginTest extends AbstractJPATest
       Method<JavaClass> method = endpoint.getMethod("findById", Long.class);
       Type<JavaClass> returnTypeInspector = method.getReturnTypeInspector();
       assertEquals("javax.ws.rs.core.Response", returnTypeInspector
-                        .getQualifiedName());
+               .getQualifiedName());
 
       getShell().execute("build");
    }

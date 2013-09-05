@@ -28,7 +28,7 @@ public class RestWebXmlFacetImpl extends BaseFacet implements RestWebXmlFacet
 
    @Inject
    private ConfigurationFactory configurationFactory;
-   
+
    // Do not refer this field directly. Use the getProjectConfiguration() method instead.
    private Configuration configuration;
 
@@ -41,8 +41,15 @@ public class RestWebXmlFacetImpl extends BaseFacet implements RestWebXmlFacet
          ServletFacet servlet = project.getFacet(ServletFacet.class);
          WebAppDescriptorImpl web = (WebAppDescriptorImpl) servlet.getConfig();
          Node node = web.getRootNode();
-         Node servletClass = node.getSingle("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
+         Node servletClass = node.getSingle("servlet/servlet-name=" + JAXRS_SERVLET);
+         Node servletMapping = node.getSingle("servlet-mapping/servlet-name=" + JAXRS_SERVLET);
          if (servletClass == null)
+         {
+            Node mapping = node.createChild("servlet");
+            mapping.createChild("servlet-name").text(JAXRS_SERVLET);
+            mapping.createChild("load-on-startup").text("1");
+         }
+         if (servletMapping == null)
          {
             Node mapping = node.createChild("servlet-mapping");
             mapping.createChild("servlet-name").text(JAXRS_SERVLET);
@@ -110,7 +117,7 @@ public class RestWebXmlFacetImpl extends BaseFacet implements RestWebXmlFacet
 
       servlet.saveConfig(web);
    }
-   
+
    /**
     * Important: Use this method always to obtain the configuration. Do not invoke this inside a constructor since the
     * returned {@link Configuration} instance would not be the project scoped one.
