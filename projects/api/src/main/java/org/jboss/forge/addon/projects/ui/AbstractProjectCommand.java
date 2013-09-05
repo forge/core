@@ -15,7 +15,6 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
-import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
  * Supports Project operations
@@ -25,7 +24,7 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 public abstract class AbstractProjectCommand extends AbstractUICommand
 {
    @Inject
-   protected AddonRegistry addonRegistry;
+   private ProjectFactory projectFactory;
 
    /**
     * Checks if a project exists in the current selection
@@ -60,7 +59,7 @@ public abstract class AbstractProjectCommand extends AbstractUICommand
 
    protected ProjectFactory getProjectFactory()
    {
-      return addonRegistry.getServices(ProjectFactory.class).get();
+      return projectFactory;
    }
 
 }
