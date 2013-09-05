@@ -48,7 +48,7 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
    @Override
    public Metadata getMetadata()
    {
-      return super.getMetadata().name(ADDON_BUILD_INSTALL_COMMAND_NAME)
+      return Metadata.from(super.getMetadata(), getClass()).name(ADDON_BUILD_INSTALL_COMMAND_NAME)
                .description(ADDON_BUILD_INSTALL_COMMAND_DESCRIPTION)
                .category(Categories.create(ADDON_MANAGER_CATEGORIES));
    }

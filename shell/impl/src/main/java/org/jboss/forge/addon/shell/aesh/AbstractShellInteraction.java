@@ -10,6 +10,7 @@ package org.jboss.forge.addon.shell.aesh;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jboss.aesh.cl.exception.CommandLineParserException;
 import org.jboss.aesh.cl.parser.ParsedCompleteObject;
@@ -49,6 +50,20 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
 
    public abstract void populateInputs(String line, boolean lenient) throws CommandLineParserException;
 
+   public boolean hasArguments()
+   {
+      boolean result = false;
+      for (String name : getInputs().keySet())
+      {
+         if (name.isEmpty())
+         {
+            result = true;
+            break;
+         }
+      }
+      return result;
+   }
+
    /**
     * Returns the error messages
     * 
@@ -71,7 +86,6 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
          throw new RuntimeException("Error while initializing command", e);
       }
       return builder.getComponentMap();
-
    }
 
    public UICommand getSourceCommand()

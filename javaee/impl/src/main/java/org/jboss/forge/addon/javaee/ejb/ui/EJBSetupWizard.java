@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.facets.EJBFacet;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.Project;
@@ -28,17 +29,18 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * Setups EJB in a {@link Project}
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@FacetConstraint(DependencyFacet.class)
 public class EJBSetupWizard extends AbstractJavaEECommand
 {
 
    @Override
    public Metadata getMetadata()
    {
-      Metadata metadata = super.getMetadata();
-      return metadata.name("EJB: Setup")
+      return Metadata.from(super.getMetadata(), getClass()).name("EJB: Setup")
                .description("Setup EJB in your project")
-               .category(Categories.create(metadata.getCategory(), "EJB"));
+               .category(Categories.create(super.getMetadata().getCategory(), "EJB"));
    }
 
    @Inject
@@ -47,12 +49,6 @@ public class EJBSetupWizard extends AbstractJavaEECommand
    @Inject
    @WithAttributes(required = true, label = "EJB Version")
    private UISelectOne<EJBFacet> choices;
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return containsProject(context) && getSelectedProject(context).hasFacet(DependencyFacet.class);
-   }
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
@@ -85,6 +81,12 @@ public class EJBSetupWizard extends AbstractJavaEECommand
          return Results.success("EJB has been installed.");
       }
       return Results.fail("Could not install EJB.");
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return true;
    }
 
 }

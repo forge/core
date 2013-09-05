@@ -23,7 +23,7 @@ public abstract class AbstractShellCommand extends AbstractUICommand
    @Override
    public Metadata getMetadata()
    {
-      return super.getMetadata().category(Categories.create("Shell"));
+      return Metadata.from(super.getMetadata(), getClass()).category(Categories.create("Shell"));
    }
 
    @Override

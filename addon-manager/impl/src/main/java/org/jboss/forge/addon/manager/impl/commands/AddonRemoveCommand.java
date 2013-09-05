@@ -46,7 +46,7 @@ public class AddonRemoveCommand extends AbstractUICommand implements AddonComman
    @Override
    public Metadata getMetadata()
    {
-      return super.getMetadata().name(ADDON_REMOVE_COMMAND_NAME)
+      return Metadata.from(super.getMetadata(), getClass()).name(ADDON_REMOVE_COMMAND_NAME)
                .description(ADDON_REMOVE_COMMAND_DESCRIPTION).category(Categories.create(ADDON_MANAGER_CATEGORIES));
    }
 

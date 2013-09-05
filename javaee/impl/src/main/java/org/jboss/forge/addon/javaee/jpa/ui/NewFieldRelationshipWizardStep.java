@@ -110,9 +110,9 @@ public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implem
    @Override
    public Metadata getMetadata()
    {
-      Metadata metadata = super.getMetadata();
-      return metadata.name("JPA: New Field Relationship").description("Setup the relationship for this field")
-               .category(Categories.create(metadata.getCategory().getName(), "JPA"));
+      return Metadata.from(super.getMetadata(), getClass()).name("JPA: New Field Relationship")
+               .description("Setup the relationship for this field")
+               .category(Categories.create(super.getMetadata().getCategory().getName(), "JPA"));
    }
 
    @Override
@@ -120,5 +120,11 @@ public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implem
    {
       // This is the last step
       return null;
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return false;
    }
 }

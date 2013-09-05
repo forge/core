@@ -13,6 +13,7 @@ import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
@@ -44,9 +45,9 @@ public class ExampleFlow extends AbstractUICommand implements UIWizard
    }
 
    @Override
-   public Metadata getMetadata()
+   public UICommandMetadata getMetadata()
    {
-      return super.getMetadata().name("flow").category(Categories.create("Example"));
+      return Metadata.from(super.getMetadata(), getClass()).name("flow").category(Categories.create("Example"));
    }
 
    @SuppressWarnings("unchecked")

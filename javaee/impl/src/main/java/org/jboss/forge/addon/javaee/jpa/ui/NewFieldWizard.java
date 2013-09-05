@@ -75,9 +75,8 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    @Override
    public Metadata getMetadata()
    {
-      Metadata metadata = super.getMetadata();
-      return metadata.name("JPA: New Field").description("Create a new field")
-               .category(Categories.create(metadata.getCategory().getName(), "JPA"));
+      return Metadata.from(super.getMetadata(), getClass()).name("JPA: New Field").description("Create a new field")
+               .category(Categories.create(super.getMetadata().getCategory().getName(), "JPA"));
    }
 
    @Override
@@ -259,5 +258,11 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
       {
          return Results.navigateTo(NewFieldRelationshipWizardStep.class);
       }
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return false;
    }
 }

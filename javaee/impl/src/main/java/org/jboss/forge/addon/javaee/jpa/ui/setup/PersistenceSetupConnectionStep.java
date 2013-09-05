@@ -79,7 +79,7 @@ public class PersistenceSetupConnectionStep extends AbstractJavaEECommand implem
    @Override
    public Metadata getMetadata()
    {
-      return super.getMetadata().name("JPA: Connection Settings")
+      return Metadata.from(super.getMetadata(), getClass()).name("JPA: Connection Settings")
                .description("Configure your connection settings");
    }
 
@@ -226,6 +226,12 @@ public class PersistenceSetupConnectionStep extends AbstractJavaEECommand implem
    public UIInput<String> getPassword()
    {
       return password;
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return false;
    }
 
 }

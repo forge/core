@@ -55,9 +55,9 @@ public class NewEntityCommand extends AbstractJavaEECommand
    @Override
    public Metadata getMetadata()
    {
-      Metadata metadata = super.getMetadata();
-      return metadata.name("JPA: New Entity").description("Create a new JPA Entity")
-               .category(Categories.create(metadata.getCategory().getName(), "JPA"));
+      return Metadata.from(super.getMetadata(), getClass()).name("JPA: New Entity")
+               .description("Create a new JPA Entity")
+               .category(Categories.create(super.getMetadata().getCategory(), "JPA"));
    }
 
    @Override
@@ -109,5 +109,11 @@ public class NewEntityCommand extends AbstractJavaEECommand
       }
       context.setSelection(javaResource);
       return Results.success("Entity " + javaResource + " created");
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return false;
    }
 }

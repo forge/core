@@ -43,13 +43,13 @@ public abstract class FacetInspector
     * Inspect the given {@link Class}, and return <code>true</code> if any circular dependencies are detected between
     * any {@link FacetConstraint} declarations.
     */
-   public static <FACETEDTYPE extends Faceted<FACETTYPE>, FACETTYPE extends Facet<FACETEDTYPE>> boolean hasCircularConstraints(
-            Class<FACETTYPE> inspectedType)
+   public static <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean hasCircularConstraints(
+            Class<?> inspectedType)
    {
       Set<Class<FACETTYPE>> allRelatedFacets = getAllRelatedFacets(inspectedType);
-      for (Class<FACETTYPE> requirement : allRelatedFacets)
+      for (Class<? extends Facet<?>> requirement : allRelatedFacets)
       {
-         for (Class<FACETTYPE> subrequirement : getAllRelatedFacets(requirement))
+         for (Class<? extends Facet<?>> subrequirement : getAllRelatedFacets(requirement))
          {
             if (subrequirement.isAssignableFrom(requirement))
                return true;
@@ -61,8 +61,7 @@ public abstract class FacetInspector
    /**
     * Inspect the given {@link Class} for any {@link FacetConstraintType#OPTIONAL} dependency {@link Facet} types.
     */
-   public static <FACETEDTYPE extends Faceted<FACETTYPE>, FACETTYPE extends Facet<FACETEDTYPE>> Set<Class<FACETTYPE>> getOptionalFacets(
-            final Class<FACETTYPE> inspectedType)
+   public static <FACETTYPE extends Facet<?>> Set<Class<FACETTYPE>> getOptionalFacets(final Class<?> inspectedType)
    {
       return getRelatedFacets(inspectedType, FacetConstraintType.OPTIONAL);
    }
@@ -70,15 +69,14 @@ public abstract class FacetInspector
    /**
     * Inspect the given {@link Class} for any {@link FacetConstraintType#REQUIRED} dependency {@link Facet} types.
     */
-   public static <FACETEDTYPE extends Faceted<FACETTYPE>, FACETTYPE extends Facet<FACETEDTYPE>> Set<Class<FACETTYPE>> getRequiredFacets(
-            final Class<FACETTYPE> inspectedType)
+   public static <FACETTYPE extends Facet<?>> Set<Class<FACETTYPE>> getRequiredFacets(final Class<?> inspectedType)
    {
       return getRelatedFacets(inspectedType, FacetConstraintType.REQUIRED);
    }
 
    @SuppressWarnings("unchecked")
-   private static <FACETEDTYPE extends Faceted<FACETTYPE>, FACETTYPE extends Facet<FACETEDTYPE>> Set<Class<FACETTYPE>> getRelatedFacets(
-            final Class<FACETTYPE> inspectedType, FacetConstraintType... constraintTypes)
+   private static <FACETTYPE extends Facet<?>> Set<Class<FACETTYPE>> getRelatedFacets(final Class<?> inspectedType,
+            FacetConstraintType... constraintTypes)
    {
       Set<Class<FACETTYPE>> result = new LinkedHashSet<Class<FACETTYPE>>();
 
@@ -157,15 +155,14 @@ public abstract class FacetInspector
     * Inspect the given {@link Class} for all {@link Facet} types from all {@link FacetConstraint} declarations. This
     * method inspects the entire constraint tree.
     */
-   public static <FACETEDTYPE extends Faceted<FACETTYPE>, FACETTYPE extends Facet<FACETEDTYPE>> Set<Class<FACETTYPE>> getAllRelatedFacets(
-            final Class<FACETTYPE> inspectedType)
+   public static <FACETTYPE extends Facet<?>> Set<Class<FACETTYPE>> getAllRelatedFacets(final Class<?> inspectedType)
    {
       Set<Class<FACETTYPE>> seen = new LinkedHashSet<Class<FACETTYPE>>();
       return getAllRelatedFacets(seen, inspectedType);
    }
 
-   private static <FACETEDTYPE extends Faceted<FACETTYPE>, FACETTYPE extends Facet<FACETEDTYPE>> Set<Class<FACETTYPE>> getAllRelatedFacets(
-            Set<Class<FACETTYPE>> seen, final Class<FACETTYPE> inspectedType, FacetConstraintType... constraintTypes)
+   private static <FACETTYPE extends Facet<?>> Set<Class<FACETTYPE>> getAllRelatedFacets(
+            Set<Class<FACETTYPE>> seen, final Class<?> inspectedType, FacetConstraintType... constraintTypes)
    {
       Set<Class<FACETTYPE>> result = new LinkedHashSet<Class<FACETTYPE>>();
       Set<Class<FACETTYPE>> related = getRelatedFacets(inspectedType, constraintTypes);

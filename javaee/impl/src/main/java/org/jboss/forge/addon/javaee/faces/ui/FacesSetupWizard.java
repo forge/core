@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.faces.FacesFacet;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.Project;
@@ -28,17 +29,18 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * Setups EJB in a {@link Project}
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@FacetConstraint(DependencyFacet.class)
 public class FacesSetupWizard extends AbstractJavaEECommand
 {
 
    @Override
    public Metadata getMetadata()
    {
-      Metadata metadata = super.getMetadata();
-      return metadata.name("Faces: Setup")
+      return Metadata.from(super.getMetadata(), getClass()).name("Faces: Setup")
                .description("Setup JavaServer Faces in your project")
-               .category(Categories.create(metadata.getCategory(), "JSF"));
+               .category(Categories.create(super.getMetadata().getCategory(), "JSF"));
    }
 
    @Inject
@@ -47,12 +49,6 @@ public class FacesSetupWizard extends AbstractJavaEECommand
    @Inject
    @WithAttributes(required = true, label = "JavaServer Faces Version")
    private UISelectOne<FacesFacet> choices;
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return containsProject(context) && getSelectedProject(context).hasFacet(DependencyFacet.class);
-   }
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
@@ -85,6 +81,12 @@ public class FacesSetupWizard extends AbstractJavaEECommand
          return Results.success("JavaServer Faces has been installed.");
       }
       return Results.fail("Could not install JavaServer Faces.");
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return true;
    }
 
 }

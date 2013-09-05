@@ -52,10 +52,9 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
    @Override
    public Metadata getMetadata()
    {
-      Metadata metadata = super.getMetadata();
-      return metadata.name("JPA: Setup")
+      return Metadata.from(super.getMetadata(), getClass()).name("JPA: Setup")
                .description("Setup JPA in your project")
-               .category(Categories.create(metadata.getCategory().getName(), "JPA"));
+               .category(Categories.create(super.getMetadata().getCategory().getName(), "JPA"));
    }
 
    /**
@@ -147,5 +146,11 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
    public UIInput<Boolean> getConfigureMetadata()
    {
       return configureMetadata;
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return false;
    }
 }

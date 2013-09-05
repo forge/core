@@ -11,11 +11,11 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.scaffold.ui.ScaffoldSetupWizard;
-import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
@@ -33,7 +33,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class ScaffoldSetupWizardImpl extends AbstractUICommand implements ScaffoldSetupWizard
+public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements ScaffoldSetupWizard
 {
    @Inject
    @WithAttributes(label = "Provider", required = true)
@@ -82,7 +82,7 @@ public class ScaffoldSetupWizardImpl extends AbstractUICommand implements Scaffo
    @Override
    public Metadata getMetadata()
    {
-      return super.getMetadata().name("Scaffold: Setup").description("Setups the scaffold")
+      return Metadata.from(super.getMetadata(), getClass()).name("Scaffold: Setup").description("Setups the scaffold")
                .category(Categories.create("Scaffold", "Setup"));
    }
 
@@ -96,5 +96,11 @@ public class ScaffoldSetupWizardImpl extends AbstractUICommand implements Scaffo
    public NavigationResult next(UIContext context) throws Exception
    {
       return Results.navigateTo(provider.getValue().getSetupFlow());
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return true;
    }
 }

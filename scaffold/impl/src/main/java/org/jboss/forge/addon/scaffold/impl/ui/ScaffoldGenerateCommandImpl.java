@@ -9,11 +9,11 @@ package org.jboss.forge.addon.scaffold.impl.ui;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.scaffold.ui.ScaffoldGenerateCommand;
-import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
@@ -31,7 +31,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class ScaffoldGenerateCommandImpl extends AbstractUICommand implements ScaffoldGenerateCommand
+public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implements ScaffoldGenerateCommand
 {
    @Inject
    @WithAttributes(label = "Scaffold Type", required = true, enabled = false)
@@ -67,7 +67,8 @@ public class ScaffoldGenerateCommandImpl extends AbstractUICommand implements Sc
    @Override
    public Metadata getMetadata()
    {
-      return super.getMetadata().name("Scaffold: Generate").description("Generates the scaffold")
+      return Metadata.from(super.getMetadata(), getClass()).name("Scaffold: Generate")
+               .description("Generates the scaffold")
                .category(Categories.create("Scaffold", "Generate"));
    }
 
@@ -75,5 +76,11 @@ public class ScaffoldGenerateCommandImpl extends AbstractUICommand implements Sc
    public Result execute(UIContext context) throws Exception
    {
       return Results.success();
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return false;
    }
 }

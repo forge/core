@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
@@ -28,15 +29,16 @@ import org.jboss.forge.addon.ui.util.Metadata;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@FacetConstraint({ DependencyFacet.class, ResourcesFacet.class, WebResourcesFacet.class })
 public class CDISetupWizard extends AbstractJavaEECommand
 {
    @Override
    public Metadata getMetadata()
    {
-      Metadata metadata = super.getMetadata();
-      return metadata.name("CDI: Setup")
+      return Metadata.from(super.getMetadata(), getClass())
+               .name("CDI: Setup")
                .description("Setup CDI in your project")
-               .category(Categories.create(metadata.getCategory(), "CDI"));
+               .category(Categories.create(super.getMetadata().getCategory(), "CDI"));
    }
 
    @Inject
@@ -45,15 +47,6 @@ public class CDISetupWizard extends AbstractJavaEECommand
    @Inject
    @WithAttributes(required = true, label = "CDI Version")
    private UISelectOne<CDIFacet> choices;
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return containsProject(context)
-               && getSelectedProject(context).hasFacet(DependencyFacet.class)
-               && (getSelectedProject(context).hasFacet(ResourcesFacet.class) || getSelectedProject(context).hasFacet(
-                        WebResourcesFacet.class));
-   }
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
@@ -86,6 +79,12 @@ public class CDISetupWizard extends AbstractJavaEECommand
          return Results.success("CDI has been installed.");
       }
       return Results.fail("Could not install CDI.");
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return true;
    }
 
 }
