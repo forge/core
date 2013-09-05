@@ -19,7 +19,7 @@ import org.apache.maven.model.Parent;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
-import org.jboss.forge.addon.facets.constraints.RequiresFacet;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
@@ -28,7 +28,7 @@ import org.jboss.forge.addon.projects.facets.MetadataFacet;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Dependent
-@RequiresFacet(MavenFacet.class)
+@FacetConstraint(MavenFacet.class)
 public class MavenMetadataFacet extends AbstractFacet<Project> implements MetadataFacet
 {
    @Override

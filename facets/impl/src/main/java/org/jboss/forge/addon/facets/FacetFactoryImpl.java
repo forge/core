@@ -15,8 +15,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.facets.constraints.FacetInspector;
-import org.jboss.forge.addon.facets.constraints.RequiresFacet;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
@@ -124,7 +124,7 @@ public class FacetFactoryImpl implements FacetFactory
             Set<Class<FACETTYPE>> seen, FACETEDTYPE origin, FACETTYPE facet)
    {
       if (FacetInspector.hasCircularConstraints(facet.getClass()))
-         throw new IllegalStateException("Circular dependencies detected in @" + RequiresFacet.class.getSimpleName()
+         throw new IllegalStateException("Circular dependencies detected in @" + FacetConstraint.class.getSimpleName()
                   + " annotation located at [" + facet.getClass().getName() + "]");
 
       seen.add((Class<FACETTYPE>) facet.getClass());
@@ -142,8 +142,12 @@ public class FacetFactoryImpl implements FacetFactory
                + MutableFaceted.class.getName() + "], and does not support " + Facet.class.getSimpleName()
                + " installation.");
 
-      Set<Class<FACETTYPE>> requiredFacets = FacetInspector.getRequiredFacets(facet.getClass());
+      /*
+       * Always try to register everything before installing anything.
+       */
+      register(origin, facet);
 
+      Set<Class<FACETTYPE>> requiredFacets = FacetInspector.getRequiredFacets(facet.getClass());
       List<Class<FACETTYPE>> facetsToInstall = new ArrayList<Class<FACETTYPE>>();
       for (Class<FACETTYPE> requirementType : requiredFacets)
       {
@@ -208,7 +212,7 @@ public class FacetFactoryImpl implements FacetFactory
             Set<Class<FACETTYPE>> seen, FACETEDTYPE origin, FACETTYPE facet)
    {
       if (FacetInspector.hasCircularConstraints(facet.getClass()))
-         throw new IllegalStateException("Circular dependencies detected in @" + RequiresFacet.class.getSimpleName()
+         throw new IllegalStateException("Circular dependencies detected in @" + FacetConstraint.class.getSimpleName()
                   + " annotation located at [" + facet.getClass().getName() + "]");
 
       seen.add((Class<FACETTYPE>) facet.getClass());
@@ -226,37 +230,37 @@ public class FacetFactoryImpl implements FacetFactory
                + MutableFaceted.class.getName() + "], and does not support " + Facet.class.getSimpleName()
                + " installation.");
 
-      Set<Class<FACETTYPE>> requiredFacets = FacetInspector.getRequiredFacets(facet.getClass());
+      Set<Class<FACETTYPE>> relatedFacets = FacetInspector.getAllRelatedFacets(facet.getClass());
 
-      List<Class<FACETTYPE>> facetsToInstall = new ArrayList<Class<FACETTYPE>>();
-      for (Class<FACETTYPE> requirementType : requiredFacets)
+      List<Class<FACETTYPE>> facetsToRegister = new ArrayList<Class<FACETTYPE>>();
+      for (Class<FACETTYPE> relatedType : relatedFacets)
       {
          boolean isSeen = false;
          for (Class<FACETTYPE> seenType : seen)
          {
-            if (requirementType.isAssignableFrom(seenType))
+            if (relatedType.isAssignableFrom(seenType))
             {
                isSeen = true;
                break;
             }
          }
 
-         if (!isSeen && !origin.hasFacet((Class) requirementType))
+         if (!isSeen && !origin.hasFacet((Class) relatedType))
          {
-            facetsToInstall.add(requirementType);
+            facetsToRegister.add(relatedType);
          }
       }
 
-      for (Class<FACETTYPE> requirementType : facetsToInstall)
+      for (Class<FACETTYPE> relatedType : facetsToRegister)
       {
-         FACETTYPE requirement = create(origin, requirementType);
+         FACETTYPE requirement = create(origin, relatedType);
          register(seen, origin, requirement);
       }
 
       boolean result = false;
       if (faceted.hasFacet((Class<? extends FACETTYPE>) facet.getClass()))
          result = true;
-      else if (FacetInspector.isConstraintSatisfied(faceted, requiredFacets))
+      else if (FacetInspector.isConstraintSatisfied(faceted, relatedFacets))
          result = ((MutableFaceted<FACETTYPE>) faceted).register(facet);
       return result;
    }

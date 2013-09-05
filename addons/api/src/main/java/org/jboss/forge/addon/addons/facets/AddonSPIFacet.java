@@ -8,7 +8,7 @@
 package org.jboss.forge.addon.addons.facets;
 
 import org.jboss.forge.addon.facets.AbstractFacet;
-import org.jboss.forge.addon.facets.constraints.RequiresFacet;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -19,7 +19,7 @@ import org.jboss.forge.addon.projects.ProjectFacet;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-@RequiresFacet({ JavaSourceFacet.class, FurnacePluginFacet.class, AddonClassifierFacet.class, FurnaceAPIFacet.class })
+@FacetConstraint({ JavaSourceFacet.class, FurnacePluginFacet.class, AddonClassifierFacet.class, FurnaceAPIFacet.class })
 public class AddonSPIFacet extends AbstractFacet<Project> implements ProjectFacet
 {
    @Override

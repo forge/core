@@ -16,7 +16,7 @@ import javax.enterprise.context.Dependent;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
-import org.jboss.forge.addon.facets.constraints.RequiresFacet;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.maven.plugins.Configuration;
 import org.jboss.forge.addon.maven.plugins.ConfigurationElementBuilder;
 import org.jboss.forge.addon.maven.plugins.MavenPlugin;
@@ -30,7 +30,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 
 @Dependent
-@RequiresFacet({ MavenFacet.class, PackagingFacet.class })
+@FacetConstraint({ MavenFacet.class, PackagingFacet.class })
 public class MavenWebResourceFacet extends AbstractFacet<Project> implements WebResourcesFacet
 {
 

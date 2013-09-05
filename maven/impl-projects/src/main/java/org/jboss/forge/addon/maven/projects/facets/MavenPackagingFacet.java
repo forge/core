@@ -16,7 +16,7 @@ import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.facets.AbstractFacet;
-import org.jboss.forge.addon.facets.constraints.RequiresFacet;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.maven.projects.MavenFacetImpl;
 import org.jboss.forge.addon.maven.projects.MavenProjectBuilder;
@@ -32,7 +32,7 @@ import org.jboss.forge.furnace.util.Strings;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Dependent
-@RequiresFacet(MavenFacet.class)
+@FacetConstraint(MavenFacet.class)
 public class MavenPackagingFacet extends AbstractFacet<Project> implements PackagingFacet
 {
    @Inject

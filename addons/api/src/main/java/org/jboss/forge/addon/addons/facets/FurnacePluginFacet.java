@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
-import org.jboss.forge.addon.facets.constraints.RequiresFacet;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.maven.plugins.ConfigurationBuilder;
 import org.jboss.forge.addon.maven.plugins.ConfigurationElementBuilder;
 import org.jboss.forge.addon.maven.plugins.Execution;
@@ -26,7 +26,7 @@ import org.jboss.forge.addon.projects.ProjectFacet;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-@RequiresFacet(FurnaceVersionFacet.class)
+@FacetConstraint(FurnaceVersionFacet.class)
 public class FurnacePluginFacet extends AbstractFacet<Project> implements ProjectFacet
 {
    private static final CoordinateBuilder FURNACE_PLUGIN_COORDINATE = CoordinateBuilder.create()
