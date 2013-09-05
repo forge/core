@@ -113,7 +113,7 @@ public class MyFacet extends AbstractFacet<FacetedObject> {
 }
 ----
 +
-`FacetConstraint` instances may then be inspected using the `FacetInspector` utility.
+`FacetConstraint` declarations may then be read using the `FacetInspector` utility to inspect annotated types.
 +
 [source,java]
 ----
