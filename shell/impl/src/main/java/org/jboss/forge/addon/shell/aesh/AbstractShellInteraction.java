@@ -10,7 +10,6 @@ package org.jboss.forge.addon.shell.aesh;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.jboss.aesh.cl.exception.CommandLineParserException;
 import org.jboss.aesh.cl.parser.ParsedCompleteObject;

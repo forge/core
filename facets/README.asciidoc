@@ -93,6 +93,33 @@ FacetFactory factory = imported.get();
 ----
 ==== 
 
+
+Simple facet prerequisite management::
+Since `Facet` implementations are designed for re-use, the projects addon API provides the `@FacetConstraint` annotation, for quickly defining dependencies between facet implementations. The default constraint type is `REQUIRED`.
++
+[source,java]
+----
+@FacetConstraint({OtherFacet.class})
+public class MyFacet extends AbstractFacet<FacetedObject> {
+   ...
+}
+
+@FacetConstraints({
+   @FacetConstraint({OtherFacet.class}),
+   @FacetConstraint(value={OtherFacet2.class}, type=OPTIONAL)
+})
+public class MyFacet extends AbstractFacet<FacetedObject> {
+   ...
+}
+----
++
+`FacetConstraint` instances may then be inspected using the `FacetInspector` utility.
++
+[source,java]
+----
+Set<Facet<?>> required = FacetInspector.getRequiredFacets(FacetedObject.class);
+----
+
 Consistent programming experience::
  Because the Facet API provides an abstract model for extending functionality of an API, it is used in a number of addons
  and should be considered the standard approach for modular API extension.
