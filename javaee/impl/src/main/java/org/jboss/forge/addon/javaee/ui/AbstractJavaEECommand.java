@@ -7,53 +7,12 @@
 
 package org.jboss.forge.addon.javaee.ui;
 
-import javax.inject.Inject;
-
-import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.ui.AbstractUICommand;
-import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UISelection;
+import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
-public abstract class AbstractJavaEECommand extends AbstractUICommand
+public abstract class AbstractJavaEECommand extends AbstractProjectCommand
 {
-   @Inject
-   protected ProjectFactory projectFactory;
-
-   /**
-    * Checks if a project exists in the current selection
-    * 
-    * @param context
-    * @return
-    */
-   protected boolean containsProject(UIContext context)
-   {
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (!initialSelection.isEmpty())
-      {
-         return projectFactory.containsProject(initialSelection.get());
-      }
-      return false;
-
-   }
-
-   /**
-    * Returns the selected project. null if no project is found
-    */
-   protected Project getSelectedProject(UIContext context)
-   {
-      Project project = null;
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (!initialSelection.isEmpty())
-      {
-         project = projectFactory.findProject(initialSelection.get());
-      }
-      return project;
-   }
-
    @Override
    public Metadata getMetadata()
    {
