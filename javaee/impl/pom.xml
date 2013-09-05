@@ -14,7 +14,7 @@
          <artifactId>cdi-api</artifactId>
          <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.jboss.shrinkwrap.descriptors</groupId>
          <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
@@ -42,6 +42,12 @@
          <artifactId>ui</artifactId>
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
+      </dependency>
+
+      <!-- XML Parser -->
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>xml-parser</artifactId>
       </dependency>
    </dependencies>
 </project>
