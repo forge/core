@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui.test.impl;
+package org.jboss.forge.ui.test.impl.wizard;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +24,8 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.ui.test.WizardListener;
 import org.jboss.forge.ui.test.WizardTester;
+import org.jboss.forge.ui.test.impl.UIContextImpl;
+import org.jboss.forge.ui.test.impl.UIValidationContextImpl;
 
 /**
  * This class eases the testing of Wizards
