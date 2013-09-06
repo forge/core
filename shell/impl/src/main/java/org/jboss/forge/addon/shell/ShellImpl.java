@@ -137,13 +137,14 @@ public class ShellImpl implements Shell
    private Prompt createPrompt()
    {
       // [ currentdir]$
-      StringBuilder sb = new StringBuilder();
-      sb.append(new TerminalCharacter('[', Color.DEFAULT_BG, Color.BLUE_TEXT, CharacterType.BOLD));
-      sb.append(new TerminalString(currentResource.getName(), Color.DEFAULT_BG, Color.RED_TEXT, CharacterType.PLAIN));
-      sb.append(new TerminalCharacter(']', Color.DEFAULT_BG, Color.BLUE_TEXT, CharacterType.BOLD));
-      sb.append(new TerminalCharacter('$', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
-      sb.append(new TerminalCharacter(' ', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
-      return new Prompt(sb.toString());
+      List<TerminalCharacter> prompt = new ArrayList<TerminalCharacter>();
+      prompt.add(new TerminalCharacter('[', Color.DEFAULT_BG, Color.BLUE_TEXT, CharacterType.BOLD));
+       for(char c : currentResource.getName().toCharArray())
+           prompt.add(new TerminalCharacter(c, Color.DEFAULT_BG, Color.RED_TEXT, CharacterType.PLAIN));
+      prompt.add(new TerminalCharacter(']', Color.DEFAULT_BG, Color.BLUE_TEXT, CharacterType.BOLD));
+      prompt.add(new TerminalCharacter('$', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
+      prompt.add(new TerminalCharacter(' ', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
+      return new Prompt(prompt);
    }
 
    /**
