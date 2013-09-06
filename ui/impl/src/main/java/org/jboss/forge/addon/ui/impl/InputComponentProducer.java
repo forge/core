@@ -171,10 +171,13 @@ public class InputComponentProducer implements InputComponentFactory
    }
 
    @Override
+   @SuppressWarnings("unchecked")
    public <T> UIInput<T> createInput(String name, char shortName, Class<T> valueType)
    {
       UIInputImpl<T> input = new UIInputImpl<T>(name, shortName, valueType);
       configureRequiredFacets(input);
+      if (Boolean.class.equals(valueType))
+         ((UIInput<Boolean>) input).setDefaultValue(Boolean.FALSE);
       return input;
    }
 

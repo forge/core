@@ -55,6 +55,9 @@ public class UIInputInjectionTest
    }
 
    @Inject
+   UIInput<Boolean> enabled;
+
+   @Inject
    UIInput<String> firstName;
 
    @Inject
@@ -90,6 +93,7 @@ public class UIInputInjectionTest
    @Test
    public void testInjectionNotNull()
    {
+      Assert.assertNotNull(enabled);
       Assert.assertNotNull(firstName);
       Assert.assertNotNull(careers);
       Assert.assertNotNull(partners);
@@ -100,6 +104,10 @@ public class UIInputInjectionTest
    @Test
    public void testInputValues()
    {
+      Assert.assertEquals("enabled", enabled.getName());
+      Assert.assertEquals(Boolean.class, enabled.getValueType());
+      Assert.assertEquals(false, enabled.getValue());
+
       Assert.assertEquals("firstName", firstName.getName());
       Assert.assertEquals(String.class, firstName.getValueType());
 

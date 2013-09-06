@@ -58,6 +58,14 @@ public class InputComponentFactoryTest
    }
 
    @Test
+   public void testCreateUIInputBooleanDefaultValueIsFalse() throws Exception
+   {
+      UIInput<Boolean> input = factory.createInput("foo", Boolean.class);
+      Assert.assertNotNull(input);
+      Assert.assertEquals(false, input.getValue());
+   }
+
+   @Test
    public void testCreateUIInputWithShortName() throws Exception
    {
       UIInput<String> input = factory.createInput("foo", 'f', String.class);
