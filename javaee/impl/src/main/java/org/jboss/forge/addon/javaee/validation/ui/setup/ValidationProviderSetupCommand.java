@@ -51,7 +51,7 @@ public class ValidationProviderSetupCommand extends AbstractJavaEECommand implem
    @Override
    public Metadata getMetadata()
    {
-      Metadata metadata = super.getMetadata();
+      Metadata metadata = Metadata.from(super.getMetadata(), getClass());
       return metadata.name("Bean Validation: Setup")
                .description("Setup Bean Validation in your project")
                .category(Categories.create(metadata.getCategory().getName(), "Bean Validation"));
@@ -67,13 +67,18 @@ public class ValidationProviderSetupCommand extends AbstractJavaEECommand implem
    public void initializeUI(UIBuilder builder) throws Exception
    {
       initProviders();
-      builder.add(providers).add(providers);
+      builder.add(providers)
+               .add(providedScope)
+               .add(messageInterpolator)
+               .add(traversableResolver)
+               .add(constraintValidatorFactory);
    }
 
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      validationOperations.setup(getSelectedProject(context), providers.getValue(), providedScope.getValue(),
+      validationOperations.setup(getSelectedProject(context), providers.getValue(),
+               providedScope.getValue() == null ? false : providedScope.getValue(),
                messageInterpolator.getValue(), traversableResolver.getValue(), constraintValidatorFactory.getValue());
       return Results.success("Bean Validation is installed.");
    }
@@ -89,6 +94,12 @@ public class ValidationProviderSetupCommand extends AbstractJavaEECommand implem
          }
       });
       providers.setDefaultValue(defaultProvider);
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return true;
    }
 
 }
