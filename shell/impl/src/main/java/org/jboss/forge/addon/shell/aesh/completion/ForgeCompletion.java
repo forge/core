@@ -68,15 +68,26 @@ public class ForgeCompletion implements Completion
             // Eg. new-project-type --named ... instead of new-project-type setup --named ...
             // cmd.populateInputs(line, true);
             ParsedCompleteObject completeObject = cmd.parseCompleteObject(line);
-            if (completeObject.doDisplayOptions())
+
+             if(completeObject.isArgument())
+             {
+                 //todo: complete arguments
+             }
+
+            else if (completeObject.doDisplayOptions())
             {
-               List<String> options = cmd.getCompletionOptions(completeObject.getName(), line);
-               completeOperation.addCompletionCandidates(options);
-               if (!completeOperation.getCompletionCandidates().isEmpty() && !completeObject.getName().isEmpty())
-               {
-                  completeOperation.setOffset(completeOperation.getCursor()
-                           - completeObject.getName().length() - 2);
-               }
+                //display all possible options names
+                if(completeObject.getName() == null || completeObject.getName().length() == 0)
+                {
+                    List<String> options = cmd.getCompletionOptions(completeObject.getName(), line);
+                    completeOperation.addCompletionCandidates(options);
+                    completeOperation.setOffset( completeOperation.getCursor() - completeObject.getOffset());
+                }
+                //we have a partial option name
+                else
+                {
+
+                }
             }
             else
             {
