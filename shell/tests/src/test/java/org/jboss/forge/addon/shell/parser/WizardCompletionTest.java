@@ -70,6 +70,7 @@ public class WizardCompletionTest
       test.waitForCompletion("mockwizard --values ", "--v", timeoutQuantity, TimeUnit.SECONDS);
       String stdout = test.waitForCompletion("mockwizard --values foo --", "foo --", timeoutQuantity, TimeUnit.SECONDS);
 
+       //todo: this fails because the AbstractShellInteraction.getCompletionOptions do not return all these options!
       Assert.assertThat(stdout, containsString("--proceed"));
       Assert.assertThat(stdout, containsString("--key"));
       Assert.assertThat(stdout, not(containsString("--selections")));

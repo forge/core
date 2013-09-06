@@ -128,6 +128,7 @@ public class CommandCompletionTest
       currentResource.delete(true);
    }
 
+    //todo: this fails because it throws an exception when trying to create a ParsedCompleteObject
    @Test
    public void testValuesWithSpaceCompletion() throws Exception
    {

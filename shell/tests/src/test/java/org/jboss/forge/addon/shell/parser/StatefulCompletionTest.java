@@ -72,6 +72,9 @@ public class StatefulCompletionTest
       Assert.assertThat(stdout, containsString("--proceed"));
       Assert.assertThat(stdout, containsString("--key"));
       Assert.assertThat(stdout, containsString("--values"));
+
+       test.clearScreen();
+       test.waitForCompletion("mock-command --proceed ", "mock-command --pro", 5, TimeUnit.SECONDS);
    }
 
    @Test

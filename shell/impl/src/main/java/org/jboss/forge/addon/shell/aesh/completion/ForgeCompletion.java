@@ -16,6 +16,7 @@ import org.jboss.aesh.cl.exception.ArgumentParserException;
 import org.jboss.aesh.cl.parser.ParsedCompleteObject;
 import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.complete.Completion;
+import org.jboss.aesh.parser.Parser;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
@@ -69,26 +70,15 @@ public class ForgeCompletion implements Completion
             // cmd.populateInputs(line, true);
             ParsedCompleteObject completeObject = cmd.parseCompleteObject(line);
 
-             if(completeObject.isArgument())
-             {
-                 //todo: complete arguments
-             }
-
-            else if (completeObject.doDisplayOptions())
+             //completing an option name
+            if (completeObject.doDisplayOptions())
             {
                 //display all possible options names
-                if(completeObject.getName() == null || completeObject.getName().length() == 0)
-                {
-                    List<String> options = cmd.getCompletionOptions(completeObject.getName(), line);
-                    completeOperation.addCompletionCandidates(options);
-                    completeOperation.setOffset( completeOperation.getCursor() - completeObject.getOffset());
-                }
-                //we have a partial option name
-                else
-                {
-
-                }
+                List<String> options = cmd.getCompletionOptions(completeObject.getName(), line);
+                completeOperation.addCompletionCandidates(options);
+                completeOperation.setOffset( completeOperation.getCursor() - completeObject.getOffset());
             }
+             //completing an option value or argument
             else
             {
                final InputComponent<?, Object> input;
@@ -119,9 +109,20 @@ public class ForgeCompletion implements Completion
                }
                // if we only have one complete candidate, leave the escaped space be
                List<String> candidates = completeOperation.getCompletionCandidates();
+                completeOperation.addCompletionCandidates(candidates);
+                completeOperation.setOffset( completeOperation.getCursor() - completeObject.getOffset());
                if (candidates.size() > 1)
                {
                   completeOperation.removeEscapedSpacesFromCompletionCandidates();
+               }
+                else if(candidates.size() == 1) {
+                   if(completeObject.getValue().contains(" "))
+                   {
+                       completeOperation.setOffset( completeOperation.getCursor() -
+                               (completeObject.getValue().length() + Parser.findNumberOfSpacesInWord(completeObject.getValue())));
+                   }
+                   else
+                       completeOperation.setOffset( completeOperation.getCursor() - completeObject.getValue().length());
                }
             }
          }
