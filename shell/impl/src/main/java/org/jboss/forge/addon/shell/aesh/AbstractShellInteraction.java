@@ -49,20 +49,6 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
 
    public abstract void populateInputs(String line, boolean lenient) throws CommandLineParserException;
 
-   public boolean hasArguments()
-   {
-      boolean result = false;
-      for (String name : getInputs().keySet())
-      {
-         if (name.isEmpty())
-         {
-            result = true;
-            break;
-         }
-      }
-      return result;
-   }
-
    /**
     * Returns the error messages
     * 
