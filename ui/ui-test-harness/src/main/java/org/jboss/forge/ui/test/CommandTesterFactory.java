@@ -17,15 +17,15 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.ui.test.impl.UIContextImpl;
-import org.jboss.forge.ui.test.impl.wizard.WizardTesterImpl;
+import org.jboss.forge.ui.test.impl.command.CommandTesterImpl;
 
 /**
- * A factory for {@link WizardTester} objects
+ * A factory for {@link CommandTester} objects
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public class WizardTesterFactory
+public class CommandTesterFactory
 {
 
    @Inject
@@ -33,7 +33,7 @@ public class WizardTesterFactory
 
    @Produces
    @SuppressWarnings("rawtypes")
-   public WizardTester produceWizardTester(InjectionPoint injectionPoint) throws Exception
+   public CommandTester produceCommandTester(InjectionPoint injectionPoint) throws Exception
    {
       Type type = injectionPoint.getAnnotated().getBaseType();
 
@@ -42,21 +42,21 @@ public class WizardTesterFactory
          ParameterizedType parameterizedType = (ParameterizedType) type;
 
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
-         Class<?> wizardClass = (Class<?>) typeArguments[0];
-         return WizardTesterFactory.create(wizardClass, addonRegistry);
+         Class<?> commandClass = (Class<?>) typeArguments[0];
+         return CommandTesterFactory.create(commandClass, addonRegistry);
       }
       else
       {
-         throw new IllegalStateException("Cannot inject a generic instance of type " + WizardTester.class.getName()
+         throw new IllegalStateException("Cannot inject a generic instance of type " + CommandTester.class.getName()
                   + "<?> without specifying concrete generic types at injection point " + injectionPoint + ".");
       }
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
-   public static WizardTesterImpl<?> create(Class<?> wizardClass, AddonRegistry addonRegistry,
+   public static CommandTesterImpl<?> create(Class<?> commandClass, AddonRegistry addonRegistry,
             Resource<?>... initialSelection) throws Exception
    {
       UIContextImpl context = new UIContextImpl(initialSelection);
-      return new WizardTesterImpl(wizardClass, addonRegistry, context);
+      return new CommandTesterImpl(commandClass, addonRegistry, context);
    }
 }
