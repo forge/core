@@ -7,6 +7,9 @@
 
 package org.jboss.forge.addon.ui.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.enterprise.inject.Vetoed;
@@ -44,7 +47,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    private String requiredMessage;
 
    private Converter<String, VALUETYPE> valueConverter;
-   private UIValidator validator;
+   private final List<UIValidator> validators = new ArrayList<UIValidator>();
 
    public AbstractInputComponent(String name, char shortName, Class<VALUETYPE> type)
    {
@@ -170,16 +173,16 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    }
 
    @Override
-   public IMPLTYPE setValidator(UIValidator validator)
+   public IMPLTYPE addValidator(UIValidator validator)
    {
-      this.validator = validator;
+      this.validators.add(validator);
       return (IMPLTYPE) this;
    }
 
    @Override
-   public UIValidator getValidator()
+   public List<UIValidator> getValidators()
    {
-      return this.validator;
+      return Collections.unmodifiableList(validators);
    }
 
    @Override
@@ -190,9 +193,9 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
       {
          context.addValidationError(this, msg);
       }
-      if (this.validator != null)
+      for (UIValidator validator : validators)
       {
-         this.validator.validate(context);
+         validator.validate(context);
       }
    }
 }
