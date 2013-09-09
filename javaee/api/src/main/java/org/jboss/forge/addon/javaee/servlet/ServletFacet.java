@@ -40,5 +40,8 @@ public interface ServletFacet extends JavaEEFacet
     */
    List<Resource<?>> getResources(final ResourceFilter filter);
 
+   /**
+    * Return a reference to this {@link Project}'s web.xml file.
+    */
    public FileResource<?> getConfigFile();
 }
