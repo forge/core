@@ -16,7 +16,7 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public interface DescribableFacet<DESCRIPTOR extends Descriptor>
+public interface ConfigurableFacet<DESCRIPTOR>
 {
    /**
     * Return the {@link Descriptor} of the specification for which this facet represents.
@@ -25,8 +25,6 @@ public interface DescribableFacet<DESCRIPTOR extends Descriptor>
 
    /**
     * Returns the {@link FileResource} of the descriptor
-    * 
-    * @return
     */
    FileResource<?> getConfigFile();
 

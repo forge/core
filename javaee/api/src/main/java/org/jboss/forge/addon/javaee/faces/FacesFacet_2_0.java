@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.javaee.faces;
 
-import org.jboss.forge.addon.javaee.DescribableFacet;
+import org.jboss.forge.addon.javaee.ConfigurableFacet;
 import org.jboss.shrinkwrap.descriptor.api.facesconfig20.WebFacesConfigDescriptor;
 
 /**
@@ -15,7 +15,7 @@ import org.jboss.shrinkwrap.descriptor.api.facesconfig20.WebFacesConfigDescripto
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public interface FacesFacet_2_0 extends FacesFacet, DescribableFacet<WebFacesConfigDescriptor>
+public interface FacesFacet_2_0 extends FacesFacet, ConfigurableFacet<WebFacesConfigDescriptor>
 {
 
 }
