@@ -8,9 +8,9 @@ package org.jboss.forge.addon.javaee.facets;
 
 import java.util.List;
 
+import org.jboss.forge.addon.javaee.ConfigurableFacet;
 import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFilter;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
@@ -21,27 +21,8 @@ import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public interface ServletFacet extends JavaEEFacet
+public interface ServletFacet extends JavaEEFacet, ConfigurableFacet<WebAppDescriptor>
 {
-   /**
-    * Parse and return this {@link Project}'s web.xml file as a {@link WebAppDescriptor}. If no web.xml exists
-    * (particularly in the case of Servlet 3.0 projects), return a virtual web-descriptor instance. This virtual
-    * instance may then be modified in memory, then saved using {@link #saveConfig(WebAppDescriptor)}, at which point a
-    * physical web.xml file will be created on disk.
-    */
-   WebAppDescriptor getConfig();
-
-   /**
-    * Save the given {@link WebAppDescriptor} as this {@link Project}'s web.xml file. If no web.xml file exists, a new
-    * web.xml file will be created.
-    */
-   void saveConfig(final WebAppDescriptor descriptor);
-
-   /**
-    * Return a reference to this {@link Project}'s web.xml file.
-    */
-   FileResource<?> getConfigFile();
-
    /**
     * List all files in this {@link Project}'s WebContent directory, recursively.
     */
