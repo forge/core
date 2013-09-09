@@ -34,6 +34,8 @@ import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.validators.ClassNameValidator;
+import org.jboss.forge.addon.ui.validators.JavaVariableNameValidator;
+import org.jboss.forge.addon.ui.validators.MavenDependencyIdValidator;
 import org.jboss.forge.addon.ui.validators.PackageNameValidator;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Exported;
@@ -258,6 +260,12 @@ public class InputComponentProducer implements InputComponentFactory
          break;
       case JAVA_PACKAGE_PICKER:
          validator = new PackageNameValidator(input);
+         break;
+      case JAVA_VARIABLE_NAME:
+         validator = new JavaVariableNameValidator(input);
+         break;
+      case MAVEN_DEPENDENCY_ID:
+         validator = new MavenDependencyIdValidator(input);
          break;
       default:
          break;
