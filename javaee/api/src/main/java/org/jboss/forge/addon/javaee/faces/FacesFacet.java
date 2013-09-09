@@ -8,6 +8,7 @@ package org.jboss.forge.addon.javaee.faces;
 
 import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.resource.FileResource;
 
 /**
  * If installed, this {@link Project} supports features from the JSF specification.
@@ -16,4 +17,10 @@ import org.jboss.forge.addon.projects.Project;
  */
 public interface FacesFacet extends JavaEEFacet
 {
+   /**
+    * Returns the {@link FileResource} of the descriptor
+    * 
+    * @return
+    */
+   FileResource<?> getConfigFile();
 }

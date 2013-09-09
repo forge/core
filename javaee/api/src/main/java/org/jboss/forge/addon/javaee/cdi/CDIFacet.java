@@ -7,9 +7,9 @@
 
 package org.jboss.forge.addon.javaee.cdi;
 
+import org.jboss.forge.addon.javaee.DescribableFacet;
 import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
 
 /**
@@ -18,20 +18,6 @@ import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public interface CDIFacet extends JavaEEFacet
+public interface CDIFacet extends JavaEEFacet, DescribableFacet<BeansDescriptor>
 {
-   /**
-    * Parse and return this {@link Project}'s beans.xml file as a {@link BeansDescriptor}
-    */
-   BeansDescriptor getConfig();
-
-   /**
-    * Save the given {@link BeansDescriptor} as this {@link Project}'s beans.xml file
-    */
-   void saveConfig(final BeansDescriptor model);
-
-   /**
-    * Get a reference to this {@link Project}'s beans.xml file.
-    */
-   FileResource<?> getConfigFile();
 }

@@ -7,12 +7,15 @@
 
 package org.jboss.forge.addon.javaee.faces;
 
+import org.jboss.forge.addon.javaee.DescribableFacet;
+import org.jboss.shrinkwrap.descriptor.api.facesconfig20.WebFacesConfigDescriptor;
+
 /**
  * JSF 2.0 specific version of {@link FacesFacet}
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public interface FacesFacet_2_0 extends FacesFacet
+public interface FacesFacet_2_0 extends FacesFacet, DescribableFacet<WebFacesConfigDescriptor>
 {
 
 }

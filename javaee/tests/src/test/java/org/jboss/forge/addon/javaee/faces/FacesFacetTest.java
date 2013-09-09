@@ -15,13 +15,14 @@ import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.FacetIsAmbiguousException;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.descriptor.api.facesconfig21.WebFacesConfigDescriptor;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -60,6 +61,38 @@ public class FacesFacetTest
       Project project = projectFactory.createTempProject();
       Assert.assertNotNull(project);
       facetFactory.install(project, FacesFacet.class);
+   }
+
+   @Test
+   public void testConfigDescriptorCreation_2_0() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      Assert.assertNotNull(project);
+      FacesFacet_2_0 facet = facetFactory.install(project, FacesFacet_2_0.class);
+      Assert.assertNotNull(facet);
+      FileResource<?> configFile = facet.getConfigFile();
+      Assert.assertFalse(configFile.exists());
+      org.jboss.shrinkwrap.descriptor.api.facesconfig20.WebFacesConfigDescriptor config = facet.getConfig();
+      config.createApplication().defaultRenderKitId("foo");
+      Assert.assertFalse(configFile.exists());
+      facet.saveConfig(config);
+      Assert.assertTrue(configFile.exists());
+   }
+
+   @Test
+   public void testConfigDescriptorCreation_2_1() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      Assert.assertNotNull(project);
+      FacesFacet_2_1 facet = facetFactory.install(project, FacesFacet_2_1.class);
+      Assert.assertNotNull(facet);
+      FileResource<?> configFile = facet.getConfigFile();
+      Assert.assertFalse(configFile.exists());
+      WebFacesConfigDescriptor config = facet.getConfig();
+      config.createApplication().defaultRenderKitId("foo");
+      Assert.assertFalse(configFile.exists());
+      facet.saveConfig(config);
+      Assert.assertTrue(configFile.exists());
    }
 
 }
