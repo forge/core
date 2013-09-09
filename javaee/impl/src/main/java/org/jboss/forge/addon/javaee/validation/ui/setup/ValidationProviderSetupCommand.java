@@ -10,6 +10,7 @@ import org.jboss.forge.addon.javaee.validation.providers.JavaEEValidatorProvider
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -67,6 +68,9 @@ public class ValidationProviderSetupCommand extends AbstractJavaEECommand implem
    public void initializeUI(UIBuilder builder) throws Exception
    {
       initProviders();
+      messageInterpolator.setValidator(new ClassInputValidator(messageInterpolator));
+      traversableResolver.setValidator(new ClassInputValidator(traversableResolver));
+      constraintValidatorFactory.setValidator(new ClassInputValidator(constraintValidatorFactory));
       builder.add(providers)
                .add(providedScope)
                .add(messageInterpolator)
@@ -75,11 +79,17 @@ public class ValidationProviderSetupCommand extends AbstractJavaEECommand implem
    }
 
    @Override
+   public void validate(UIValidationContext validator)
+   {
+      super.validate(validator);
+   }
+
+   @Override
    public Result execute(UIContext context) throws Exception
    {
       validationOperations.setup(getSelectedProject(context), providers.getValue(),
-               providedScope.getValue() == null ? false : providedScope.getValue(),
-               messageInterpolator.getValue(), traversableResolver.getValue(), constraintValidatorFactory.getValue());
+               providedScope.getValue(), messageInterpolator.getValue(), traversableResolver.getValue(),
+               constraintValidatorFactory.getValue());
       return Results.success("Bean Validation is installed.");
    }
 
