@@ -120,7 +120,7 @@ public class NewProjectWizard implements UIWizard
 
    private void configureProjectNamedInput()
    {
-      named.setValidator(new UIValidator()
+      named.addValidator(new UIValidator()
       {
          @Override
          public void validate(UIValidationContext context)

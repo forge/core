@@ -113,7 +113,7 @@ public class InputComponentValidatorTest
    {
       UIContext ctx = new MockUIContext();
       MockValidationContext context = new MockValidationContext(ctx);
-      withValidator.setValidator(new UIValidator()
+      withValidator.addValidator(new UIValidator()
       {
          @Override
          public void validate(UIValidationContext validator)

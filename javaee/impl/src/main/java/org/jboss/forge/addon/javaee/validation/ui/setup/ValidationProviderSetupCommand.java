@@ -77,9 +77,9 @@ public class ValidationProviderSetupCommand extends AbstractJavaEECommand implem
    {
       initProviders();
 
-      messageInterpolator.setValidator(new ClassInputValidator(messageInterpolator));
-      traversableResolver.setValidator(new ClassInputValidator(traversableResolver));
-      constraintValidatorFactory.setValidator(new ClassInputValidator(constraintValidatorFactory));
+      messageInterpolator.addValidator(new ClassInputValidator(messageInterpolator));
+      traversableResolver.addValidator(new ClassInputValidator(traversableResolver));
+      constraintValidatorFactory.addValidator(new ClassInputValidator(constraintValidatorFactory));
 
       providedScope.setDefaultValue(true);
       Callable<Boolean> dependencyNotProvided = new Callable<Boolean>()

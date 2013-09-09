@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.ui.input;
 
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.jboss.forge.addon.convert.Converter;
@@ -83,8 +84,8 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
 
    /**
     * Return the current {@link UIValidator} with which this {@link InputComponent} should be validated.
-    */
-   UIValidator getValidator();
+    */   
+   Set<UIValidator> getValidators();
 
    /**
     * Set this {@link InputComponent} to be enabled.
@@ -136,9 +137,9 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
    IMPLTYPE setValueConverter(Converter<String, VALUETYPE> converter);
 
    /**
-    * Set the current {@link UIValidator} with which this {@link InputComponent} should be validated.
+    * Add a new {@link UIValidator} with which this {@link InputComponent} should be validated.
     */
-   IMPLTYPE setValidator(UIValidator validator);
+   IMPLTYPE addValidator(UIValidator validator);
 
    /**
     * Returns the value associated with this component. If the value is not set, the default value is returned. If the

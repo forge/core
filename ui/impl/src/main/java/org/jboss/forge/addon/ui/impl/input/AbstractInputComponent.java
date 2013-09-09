@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.ui.impl.input;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -41,16 +42,15 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    private final String name;
    private final char shortName;
    private final Class<VALUETYPE> type;
+   private final Set<UIValidator> validators = new LinkedHashSet<>();
+   private final Set<ValueChangeListener> valueChangeListeners = new LinkedHashSet<>();
 
    private String label;
    private String description;
    private Callable<Boolean> enabled = Callables.returning(Boolean.TRUE);
    private Callable<Boolean> required = Callables.returning(Boolean.FALSE);
    private String requiredMessage;
-
    private Converter<String, VALUETYPE> valueConverter;
-   private UIValidator validator;
-   private Set<ValueChangeListener> valueChangeListeners = new LinkedHashSet<>();;
 
    public AbstractInputComponent(String name, char shortName, Class<VALUETYPE> type)
    {
@@ -176,16 +176,16 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    }
 
    @Override
-   public IMPLTYPE setValidator(UIValidator validator)
+   public IMPLTYPE addValidator(UIValidator validator)
    {
-      this.validator = validator;
+      this.validators.add(validator);
       return (IMPLTYPE) this;
    }
 
    @Override
-   public UIValidator getValidator()
+   public Set<UIValidator> getValidators()
    {
-      return this.validator;
+      return Collections.unmodifiableSet(validators);
    }
 
    @Override
@@ -196,9 +196,9 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
       {
          context.addValidationError(this, msg);
       }
-      if (this.validator != null)
+      for (UIValidator validator : validators)
       {
-         this.validator.validate(context);
+         validator.validate(context);
       }
    }
 
@@ -230,5 +230,4 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
          listener.valueChanged(evt);
       }
    }
-
 }
