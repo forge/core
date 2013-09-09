@@ -27,7 +27,7 @@ public class CompletionStrategyFactory
       else if (inputType == InputType.CHECKBOX || Boolean.class
                .isAssignableFrom(component.getValueType()))
       {
-         strategy = NoopCompletionStrategy.INSTANCE;
+         strategy = null;
       }
       else if (component instanceof SelectComponent)
       {
