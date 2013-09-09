@@ -74,38 +74,12 @@ enum SelectComponentCompletionStrategy implements CompletionStrategy
             }
          }
       }
-      if (choices.size() > 1)
+      for (String choice : choices)
       {
-         String startsWith = Parser.findStartsWith(choices);
-         if (startsWith.length() > typedValue.length())
+         if (typedValue.isEmpty() || choice.startsWith(typedValue))
          {
-            String substring = startsWith.substring(typedValue.length());
-            completeOperation.addCompletionCandidate(Parser.switchSpacesToEscapedSpacesInWord(substring));
-            completeOperation.setOffset(completeOperation.getCursor());
-            completeOperation.doAppendSeparator(false);
+            completeOperation.addCompletionCandidate(Parser.switchSpacesToEscapedSpacesInWord(choice));
          }
-         else
-         {
-            for (String choice : choices)
-            {
-               if (typedValue.isEmpty() || choice.startsWith(typedValue))
-               {
-                  completeOperation.addCompletionCandidate(Parser.switchSpacesToEscapedSpacesInWord(choice));
-               }
-            }
-            if (!completeOperation.getCompletionCandidates().isEmpty() && !typedValue.isEmpty())
-            {
-               completeOperation.setOffset(completeOperation.getCursor()
-                        - Parser.switchSpacesToEscapedSpacesInWord(typedValue).length());
-            }
-         }
-      }
-      else if (choices.size() == 1)
-      {
-         String candidate = choices.get(0).substring(typedValue.length());
-         completeOperation.addCompletionCandidate(Parser.switchSpacesToEscapedSpacesInWord(candidate));
-         completeOperation.setOffset(completeOperation.getCursor()
-                  - Parser.switchSpacesToEscapedSpacesInWord(typedValue).length());
       }
    }
 }
