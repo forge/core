@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.ui.InputComponentFactory;
+import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.impl.facets.HintsFacetImpl;
@@ -32,6 +33,8 @@ import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.InputComponents;
+import org.jboss.forge.addon.ui.validators.ClassNameValidator;
+import org.jboss.forge.addon.ui.validators.PackageNameValidator;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.services.Imported;
@@ -223,6 +226,7 @@ public class InputComponentProducer implements InputComponentFactory
          if (atts.type() != InputType.DEFAULT)
          {
             input.getFacet(HintsFacet.class).setInputType(atts.type());
+            input.addValidator(createComponentValidatorFromHint(atts.type(), input));
          }
 
          // Set Default Value
@@ -242,6 +246,23 @@ public class InputComponentProducer implements InputComponentFactory
 
          }
       }
+   }
+
+   private UIValidator createComponentValidatorFromHint(InputType type, InputComponent<?,?> input)
+   {
+      UIValidator validator = null;
+      switch (type)
+      {
+      case JAVA_CLASS_PICKER:
+         validator = new ClassNameValidator(input);
+         break;
+      case JAVA_PACKAGE_PICKER:
+         validator = new PackageNameValidator(input);
+         break;
+      default:
+         break;
+      }
+      return validator;
    }
 
    @SuppressWarnings({ "rawtypes", "unchecked" })
