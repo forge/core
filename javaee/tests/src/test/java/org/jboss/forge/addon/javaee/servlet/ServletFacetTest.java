@@ -15,7 +15,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.javaee.facets.ServletFacet;
+import org.jboss.forge.addon.facets.FacetIsAmbiguousException;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
@@ -55,11 +55,18 @@ public class ServletFacetTest
    @Inject
    private FacetFactory facetFactory;
 
-   @Test
-   public void testWebXMLCreatedWhenInstalled() throws Exception
+   @Test(expected = FacetIsAmbiguousException.class)
+   public void testAmbiguousFacet() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      ServletFacet facet = facetFactory.install(project, ServletFacet.class);
+      facetFactory.install(project, ServletFacet.class);
+   }
+
+   @Test
+   public void testWebXMLInitialInfo_3_0() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      ServletFacet_3_0 facet = facetFactory.install(project, ServletFacet_3_0.class);
       assertNotNull(facet);
       assertTrue(project.hasFacet(ServletFacet.class));
       WebAppDescriptor config = facet.getConfig();
@@ -68,4 +75,21 @@ public class ServletFacetTest
       Assert.assertFalse(config.getAllDisplayName().isEmpty());
       Assert.assertEquals(projectName, config.getAllDisplayName().get(0));
    }
+   
+
+   @Test
+   public void testWebXMLInitialInfo_2_5() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      ServletFacet_2_5 facet = facetFactory.install(project, ServletFacet_2_5.class);
+      assertNotNull(facet);
+      assertTrue(project.hasFacet(ServletFacet.class));
+      org.jboss.shrinkwrap.descriptor.api.webapp25.WebAppDescriptor config = facet.getConfig();
+      assertNotNull(config);
+      String projectName = project.getFacet(MetadataFacet.class).getProjectName();
+      Assert.assertFalse(config.getAllDisplayName().isEmpty());
+      Assert.assertEquals(projectName, config.getAllDisplayName().get(0));
+   }
+
+
 }
