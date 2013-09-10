@@ -64,8 +64,17 @@ Additionally, you may directly inject typed converters:
 @Inject Converter<SOURCE,TARGET> converter;
 ----
 ====
+Converter Resolution::
+By default, the Converter API will automatically attempt to find the assigned converter by doing the following checks:
 
-Custom converters:: 
+- Check if a custom converter was registered (see next section);
+* If no custom converter is found, the following checks are made:
+** Given a source type and a target type, check if the target type has a constructor with only the source type as a parameter. eg: public static MyClass valueOf(String str){...}
+** Given a source type and a target type check if the target type has a static method valueOf receiving the source type as a parameter. eg: public static MyClass valueOf(String str){...}
+- If converter resolution fails, a ConverterNotFoundException is thrown.
+
+====
+Custom converters::
 The convert API can be extended to register converters for types that are not supported by default. This is a two 
 step process involving creation of a new type that extends from `Converter`, and of a `ConverterGenerator`. 
 These custom converters will be made automatically available to other addons that depend on the convert addon.
