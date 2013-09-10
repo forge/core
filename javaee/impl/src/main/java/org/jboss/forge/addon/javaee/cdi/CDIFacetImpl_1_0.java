@@ -29,7 +29,7 @@ import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class CDIFacetImpl_1_0 extends AbstractCDIFacetImpl implements CDIFacet_1_0
+public class CDIFacetImpl_1_0 extends AbstractCDIFacetImpl<BeansDescriptor> implements CDIFacet_1_0
 {
    private static final Dependency JBOSS_ANNOTATION_API = DependencyBuilder
             .create("org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec");
@@ -46,13 +46,19 @@ public class CDIFacetImpl_1_0 extends AbstractCDIFacetImpl implements CDIFacet_1
    }
 
    @Override
+   protected Class<BeansDescriptor> getDescriptorType()
+   {
+      return BeansDescriptor.class;
+   }
+
+   @Override
    public Version getSpecVersion()
    {
       return new SingleVersion("1.0");
    }
 
    @Override
-   protected String getInitialBeansXMLContent()
+   protected String getDescriptorContent()
    {
       return Descriptors.create(BeansDescriptor.class).exportAsString();
    }

@@ -7,9 +7,10 @@
 
 package org.jboss.forge.addon.javaee;
 
+import javax.management.Descriptor;
+
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 /**
  * This interface should be implemented by {@link Facet}s that supports configuration descriptors

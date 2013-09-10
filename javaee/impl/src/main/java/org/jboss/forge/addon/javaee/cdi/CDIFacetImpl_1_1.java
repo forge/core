@@ -20,13 +20,14 @@ import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.furnace.util.Streams;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
+import org.jboss.shrinkwrap.descriptor.api.beans11.BeansDescriptor;
 
 /**
  * Implementation of {@link CDIFacet} for spec version 1.1
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class CDIFacetImpl_1_1 extends AbstractCDIFacetImpl implements CDIFacet_1_1
+public class CDIFacetImpl_1_1 extends AbstractCDIFacetImpl<BeansDescriptor> implements CDIFacet_1_1
 {
    private static final Dependency JBOSS_ANNOTATION_API = DependencyBuilder
             .create("org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec");
@@ -43,13 +44,19 @@ public class CDIFacetImpl_1_1 extends AbstractCDIFacetImpl implements CDIFacet_1
    }
 
    @Override
+   protected Class<BeansDescriptor> getDescriptorType()
+   {
+      return BeansDescriptor.class;
+   }
+
+   @Override
    public Version getSpecVersion()
    {
       return new SingleVersion("1.1");
    }
 
    @Override
-   protected String getInitialBeansXMLContent()
+   protected String getDescriptorContent()
    {
       return Streams.toString(getClass().getResourceAsStream("beans_1_1.xml"));
    }

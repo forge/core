@@ -22,8 +22,9 @@
    </modules>
 
    <properties>
-      <shrinkwrap.descriptors.version>2.0.0-alpha-5</shrinkwrap.descriptors.version>
+      <shrinkwrap.descriptors.version>3.0.0-alpha-1-SNAPSHOT</shrinkwrap.descriptors.version>
    </properties>
+   
    <dependencyManagement>
       <dependencies>
          <dependency>

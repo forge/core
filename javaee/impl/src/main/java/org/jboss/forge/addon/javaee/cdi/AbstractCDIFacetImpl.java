@@ -19,9 +19,9 @@ import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
-import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
 
 /**
  * Implementation of {@link CDIFacet} for spec version 1.0
@@ -30,7 +30,8 @@ import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public abstract class AbstractCDIFacetImpl extends AbstractJavaEEFacet implements CDIFacet
+public abstract class AbstractCDIFacetImpl<DESCRIPTOR extends Descriptor> extends AbstractJavaEEFacet implements
+         CDIFacet<DESCRIPTOR>
 {
    @Inject
    public AbstractCDIFacetImpl(DependencyInstaller installer)
@@ -38,13 +39,15 @@ public abstract class AbstractCDIFacetImpl extends AbstractJavaEEFacet implement
       super(installer);
    }
 
-   @Override
-   public BeansDescriptor getConfig()
-   {
-      DescriptorImporter<BeansDescriptor> importer = Descriptors.importAs(BeansDescriptor.class);
-      BeansDescriptor descriptor = importer.fromStream(getConfigFile().getResourceInputStream());
-      return descriptor;
-   }
+   /**
+    * Return the initial content to be used in creation of new descriptors.
+    */
+   protected abstract String getDescriptorContent();
+
+   /**
+    * Return the descriptor {@link Class} type.
+    */
+   protected abstract Class<DESCRIPTOR> getDescriptorType();
 
    @Override
    public boolean install()
@@ -58,7 +61,7 @@ public abstract class AbstractCDIFacetImpl extends AbstractJavaEEFacet implement
             {
                throw new RuntimeException("Failed to create required [" + descriptor.getFullyQualifiedName() + "]");
             }
-            String data = getInitialBeansXMLContent();
+            String data = getDescriptorContent();
             descriptor.setContents(data);
          }
       }
@@ -71,10 +74,16 @@ public abstract class AbstractCDIFacetImpl extends AbstractJavaEEFacet implement
       return getConfigFile().exists() && super.isInstalled();
    }
 
-   protected abstract String getInitialBeansXMLContent();
+   @Override
+   public DESCRIPTOR getConfig()
+   {
+      DescriptorImporter<DESCRIPTOR> importer = Descriptors.importAs(getDescriptorType());
+      DESCRIPTOR descriptor = importer.fromStream(getConfigFile().getResourceInputStream());
+      return descriptor;
+   }
 
    @Override
-   public void saveConfig(BeansDescriptor model)
+   public void saveConfig(DESCRIPTOR model)
    {
       String output = model.exportAsString();
       getConfigFile().setContents(output);

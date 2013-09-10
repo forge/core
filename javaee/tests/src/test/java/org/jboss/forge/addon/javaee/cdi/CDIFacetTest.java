@@ -66,11 +66,11 @@ public class CDIFacetTest
    public void testBeansXMLCreatedWhenInstalled_1_0() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      CDIFacet cdiFacet = facetFactory.install(project, CDIFacet_1_0.class);
+      CDIFacet<?> cdiFacet = facetFactory.install(project, CDIFacet_1_0.class);
       assertNotNull(cdiFacet);
       assertTrue(project.hasFacet(CDIFacet.class));
       assertTrue(project.hasFacet(CDIFacet_1_0.class));
-      BeansDescriptor config = project.getFacet(CDIFacet.class).getConfig();
+      BeansDescriptor config = (BeansDescriptor) project.getFacet(CDIFacet.class).getConfig();
       assertNotNull(config);
    }
 
@@ -78,11 +78,12 @@ public class CDIFacetTest
    public void testBeansXMLCreatedWhenInstalled_1_1() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      CDIFacet cdiFacet = facetFactory.install(project, CDIFacet_1_1.class);
+      CDIFacet<?> cdiFacet = facetFactory.install(project, CDIFacet_1_1.class);
       assertNotNull(cdiFacet);
       assertTrue(project.hasFacet(CDIFacet.class));
       assertTrue(project.hasFacet(CDIFacet_1_1.class));
-      BeansDescriptor config = project.getFacet(CDIFacet.class).getConfig();
+      org.jboss.shrinkwrap.descriptor.api.beans11.BeansDescriptor config = (org.jboss.shrinkwrap.descriptor.api.beans11.BeansDescriptor) project
+               .getFacet(CDIFacet.class).getConfig();
       assertNotNull(config);
    }
 
