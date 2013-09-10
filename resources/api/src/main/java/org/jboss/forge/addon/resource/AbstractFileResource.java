@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
+import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Streams;
@@ -413,5 +414,17 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    public String getFullyQualifiedName()
    {
       return this.file.getAbsolutePath();
+   }
+
+   @Override
+   public ResourceMonitor monitor()
+   {
+      return resourceFactory.monitor(this);
+   }
+
+   @Override
+   public ResourceMonitor monitor(ResourceFilter filter)
+   {
+      return resourceFactory.monitor(this, filter);
    }
 }

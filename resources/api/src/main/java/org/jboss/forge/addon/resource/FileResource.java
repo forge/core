@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
+
 /**
  * A standard, built-in resource for representing files on the filesystem.
  * 
@@ -67,7 +69,7 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>
     * Set the contents of this {@link FileResource} to the given {@link String} using the specified encoding.
     */
    public T setContents(String data, Charset charset);
-   
+
    /**
     * Set the contents of this {@link FileResource} to the given character array using UTF-8 encoding.
     */
@@ -128,4 +130,14 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>
     */
    @Override
    public DirectoryResource getParent();
+
+   /**
+    * Monitors this FileResource
+    */
+   ResourceMonitor monitor();
+
+   /**
+    * Monitors this FileResource using the given filter
+    */
+   ResourceMonitor monitor(ResourceFilter filter);
 }
