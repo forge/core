@@ -13,27 +13,26 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.resource.monitor.FileMonitor;
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
-import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
-import org.jboss.forge.addon.resource.transaction.ResourceTransactionManager;
 import org.jboss.forge.addon.resource.util.RelatedClassComparator;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 
 /**
+ * Implementation of {@link ResourceFactory}
+ * 
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  * @author Mike Brock <cbrock@redhat.com>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @Singleton
-public class ResourceFactoryImpl implements ResourceFactory, ResourceTransactionManager
+public class ResourceFactoryImpl implements ResourceFactory
 {
    @Inject
    private AddonRegistry registry;
 
    @Inject
    private FileMonitor fileMonitor;
-
-   private ResourceTransactionImpl transaction;
 
    @Override
    @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -91,41 +90,4 @@ public class ResourceFactoryImpl implements ResourceFactory, ResourceTransaction
       FileResource<?> fileResource = (FileResource<?>) resource;
       return fileMonitor.registerMonitor(this, fileResource, resourceFilter);
    }
-
-   /**
-    * The methods below are unused until FORGE-801 is resolved
-    */
-   @Override
-   public ResourceTransaction getCurrentTransaction()
-   {
-      return transaction;
-   }
-
-   @SuppressWarnings("unused")
-   private <T> Resource<?> bindTransactionHook(Resource<?> result)
-   {
-      // Transaction Hook
-      if (result != null && transaction != null)
-      {
-         result = transaction.decorateResource(result);
-      }
-      return result;
-   }
-
-   @Override
-   public ResourceTransaction startTransaction() throws ResourceException
-   {
-      if (transaction != null)
-      {
-         throw new ResourceException("Transaction already exists!");
-      }
-      transaction = new ResourceTransactionImpl(this);
-      return transaction;
-   }
-
-   void unsetTransaction()
-   {
-      transaction = null;
-   }
-
 }
