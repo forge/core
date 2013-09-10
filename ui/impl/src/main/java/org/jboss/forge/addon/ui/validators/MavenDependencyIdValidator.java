@@ -3,14 +3,15 @@ package org.jboss.forge.addon.ui.validators;
 import java.util.Arrays;
 
 import org.jboss.forge.addon.ui.UIValidator;
-import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.types.MavenDependencyId;
 
-public class MavenDependencyIdValidator extends PatternBasedValidator implements UIValidator
+public class MavenDependencyIdValidator extends PatternBasedValidator<MavenDependencyId> implements UIValidator
 {
 
    private String[] patterns = new String[] { "[^:]+:[^:]+:?([^:]+:?){0,3}" };
 
-   public MavenDependencyIdValidator(InputComponent<?, ?> input)
+   public MavenDependencyIdValidator(UIInput<MavenDependencyId> input)
    {
       super(input);
    }

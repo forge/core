@@ -3,14 +3,15 @@ package org.jboss.forge.addon.ui.validators;
 import java.util.Arrays;
 
 import org.jboss.forge.addon.ui.UIValidator;
-import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.types.JavaVariableName;
 
-public class JavaVariableNameValidator extends PatternBasedValidator implements UIValidator
+public class VariableNameValidator extends PatternBasedValidator<JavaVariableName> implements UIValidator
 {
 
    private String[] patterns = new String[] { "^(?!(" + Patterns.JAVA_KEYWORDS + ")$)[A-Za-z0-9$_]+$" };
 
-   public JavaVariableNameValidator(InputComponent<?, ?> input)
+   public VariableNameValidator(UIInput<JavaVariableName> input)
    {
       super(input);
    }

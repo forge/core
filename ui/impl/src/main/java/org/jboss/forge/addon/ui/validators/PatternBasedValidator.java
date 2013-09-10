@@ -3,14 +3,16 @@ package org.jboss.forge.addon.ui.validators;
 import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.types.PatternedInput;
 import org.jboss.forge.addon.ui.util.InputComponents;
 
-public abstract class PatternBasedValidator implements UIValidator
+public abstract class PatternBasedValidator<VALUETYPE extends PatternedInput> implements UIValidator
 {
 
-   private InputComponent<?, ?> input;
+   private UIInput<VALUETYPE> input;
 
-   public PatternBasedValidator(InputComponent<?, ?> input)
+   public PatternBasedValidator(UIInput<VALUETYPE> input)
    {
       super();
       this.input = input;
@@ -52,7 +54,7 @@ public abstract class PatternBasedValidator implements UIValidator
       return input;
    }
 
-   protected void setInput(InputComponent<?, ?> input)
+   protected void setInput(UIInput<VALUETYPE> input)
    {
       this.input = input;
    }
