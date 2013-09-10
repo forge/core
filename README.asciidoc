@@ -21,15 +21,15 @@ Forge 2 is packaged inside an Eclipse plugin and also as a standalone ZIP file. 
 It is worth mentioning that the Eclipse plugin does not support access to shell yet.
 
 - Eclipse Update Site - http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/
-- Command line tools - https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha10&e=zip
+- Command line tools - https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha12&e=zip
 
 
 === Get Started with the Command line tools:
 
 NOTE: The shell is not fully working at the moment, so we recommend you to use the Forge 2 Eclipse Plugin
 
-- Download link:https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha10&e=zip[JBoss Forge 2.0.0.Alpha10]
-- Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha10/bin folder
+- Download link:https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha12&e=zip[JBoss Forge 2.0.0.Alpha12]
+- Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha12/bin folder
 
 Forge is now ready to go. 
 
@@ -508,7 +508,7 @@ This is the basic premise of using the test-harness. For detailed examples, take
 https://github.com/forge/core/tree/2.0/resources/tests/src/test/java/org/jboss/forge/addon/resource[look at some of the existing
 Forge test cases] in our github repository.
 
-NOTE: Since 2.0.0.Alpha10, the `version` parameter in `@AddonDependency` and in the `AddonDependencyEntry.create(...)` method are optional. By not specifying them means that the test harness 
+NOTE: The `version` parameter in `@AddonDependency` and in the `AddonDependencyEntry.create(...)` method are optional. By not specifying them means that the test harness 
 will attempt to find the version based on the tests' build descriptor (pom.xml). In this case, if the dependent addon is not present in the tests' build descriptor, the test execution should fail.
 
 === Install your addon in the local maven repository:
