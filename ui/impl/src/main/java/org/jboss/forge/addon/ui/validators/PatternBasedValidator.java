@@ -4,10 +4,10 @@ import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.addon.ui.input.types.PatternedInput;
+import org.jboss.forge.addon.ui.input.types.PatternedStringInput;
 import org.jboss.forge.addon.ui.util.InputComponents;
 
-public abstract class PatternBasedValidator<VALUETYPE extends PatternedInput> implements UIValidator
+public abstract class PatternBasedValidator<VALUETYPE extends PatternedStringInput> implements UIValidator
 {
 
    private UIInput<VALUETYPE> input;
@@ -22,9 +22,9 @@ public abstract class PatternBasedValidator<VALUETYPE extends PatternedInput> im
    public void validate(UIValidationContext context)
    {
       Object rawValue = InputComponents.getValueFor(input);
-      if (rawValue instanceof String)
+      if (rawValue instanceof PatternedStringInput)
       {
-         String value = (String) rawValue;
+         String value = ((PatternedStringInput) rawValue).getValidatableValue();
          if (!matches(value))
          {
             context.addValidationError(input, getMessage(value));

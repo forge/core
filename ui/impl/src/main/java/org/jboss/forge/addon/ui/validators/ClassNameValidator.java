@@ -26,7 +26,7 @@ public class ClassNameValidator extends PatternBasedValidator<JavaClassName> imp
    @Override
    protected String getMessage(String value)
    {
-      return value + " is not a valid class name for " + getInput().getLabel();
+      return "\"" + value + "\" is not a valid class name for " + getInput().getLabel();
    }
 
 }

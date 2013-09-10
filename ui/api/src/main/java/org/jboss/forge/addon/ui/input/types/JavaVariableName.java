@@ -1,18 +1,24 @@
 package org.jboss.forge.addon.ui.input.types;
 
-public class JavaVariableName extends PatternedInput
+public class JavaVariableName extends PatternedStringInput
 {
 
    private String variableName;
 
-   protected String getVariableName()
+   public String getVariableName()
    {
       return variableName;
    }
 
-   protected void setVariableName(String variableName)
+   public void setVariableName(String variableName)
    {
       this.variableName = variableName;
+   }
+
+   @Override
+   public String getValidatableValue()
+   {
+      return variableName;
    }
 
 }

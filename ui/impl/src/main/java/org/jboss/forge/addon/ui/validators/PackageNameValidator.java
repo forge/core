@@ -26,7 +26,7 @@ public class PackageNameValidator extends PatternBasedValidator<JavaPackageName>
    @Override
    protected String getMessage(String value)
    {
-      return value + " is not a valid package name for " + getInput().getLabel();
+      return "\"" + value + "\" is not a valid package name for " + getInput().getLabel();
    }
 
 }

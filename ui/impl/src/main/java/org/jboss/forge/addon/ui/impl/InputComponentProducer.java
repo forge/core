@@ -35,7 +35,7 @@ import org.jboss.forge.addon.ui.input.types.JavaClassName;
 import org.jboss.forge.addon.ui.input.types.JavaPackageName;
 import org.jboss.forge.addon.ui.input.types.JavaVariableName;
 import org.jboss.forge.addon.ui.input.types.MavenDependencyId;
-import org.jboss.forge.addon.ui.input.types.PatternedInput;
+import org.jboss.forge.addon.ui.input.types.PatternedStringInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.validators.ClassNameValidator;
@@ -261,7 +261,7 @@ public class InputComponentProducer implements InputComponentFactory
    private void configureValidator(InputComponent<?, ?> input)
    {
       Class<?> valueType = input.getValueType();
-      if (PatternedInput.class.isAssignableFrom(valueType))
+      if (PatternedStringInput.class.isAssignableFrom(valueType))
       {
          UIValidator patternValidator = getPatternValidator(input, valueType);
          if (patternValidator != null)

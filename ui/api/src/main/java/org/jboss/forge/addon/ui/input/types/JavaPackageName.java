@@ -1,18 +1,24 @@
 package org.jboss.forge.addon.ui.input.types;
 
-public class JavaPackageName extends PatternedInput
+public class JavaPackageName extends PatternedStringInput
 {
 
    private String packageName;
 
-   protected String getPackageName()
+   public String getPackageName()
    {
       return packageName;
    }
 
-   protected void setPackageName(String packageName)
+   public void setPackageName(String packageName)
    {
       this.packageName = packageName;
+   }
+
+   @Override
+   public String getValidatableValue()
+   {
+      return packageName;
    }
 
 }
