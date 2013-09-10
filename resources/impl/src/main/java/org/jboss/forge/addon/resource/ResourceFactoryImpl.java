@@ -8,16 +8,17 @@ package org.jboss.forge.addon.resource;
 
 import java.util.TreeMap;
 
-import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jboss.forge.addon.resource.events.ResourceEvent;
+import org.jboss.forge.addon.resource.monitor.FileMonitor;
+import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 import org.jboss.forge.addon.resource.transaction.ResourceTransactionManager;
 import org.jboss.forge.addon.resource.util.RelatedClassComparator;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
@@ -27,10 +28,10 @@ import org.jboss.forge.furnace.services.Imported;
 public class ResourceFactoryImpl implements ResourceFactory, ResourceTransactionManager
 {
    @Inject
-   private BeanManager manager;
+   private AddonRegistry registry;
 
    @Inject
-   private AddonRegistry registry;
+   private FileMonitor fileMonitor;
 
    private ResourceTransactionImpl transaction;
 
@@ -72,10 +73,23 @@ public class ResourceFactoryImpl implements ResourceFactory, ResourceTransaction
    }
 
    @Override
-   public ResourceFactory fireEvent(ResourceEvent event)
+   public ResourceMonitor monitor(Resource<?> resource)
    {
-      manager.fireEvent(event);
-      return this;
+      return monitor(resource, null);
+   }
+
+   @Override
+   public ResourceMonitor monitor(Resource<?> resource, ResourceFilter resourceFilter)
+   {
+      Assert.notNull(resource, "Resource cannot be null");
+      Assert.isTrue(resource instanceof FileResource, "Resource must be a FileResource, was "
+               + resource.getClass().getName());
+      if (!resource.exists())
+      {
+         throw new IllegalStateException("Resource must exist to be monitored");
+      }
+      FileResource<?> fileResource = (FileResource<?>) resource;
+      return fileMonitor.registerMonitor(this, fileResource, resourceFilter);
    }
 
    /**

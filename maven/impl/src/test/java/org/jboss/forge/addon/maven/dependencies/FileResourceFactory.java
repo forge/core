@@ -15,7 +15,8 @@ import javax.enterprise.inject.Vetoed;
 import org.jboss.forge.addon.resource.AbstractFileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.events.ResourceEvent;
+import org.jboss.forge.addon.resource.ResourceFilter;
+import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 
 /**
  * Simple {@link ResourceFactory} for working outside of a container environment.
@@ -61,8 +62,14 @@ public class FileResourceFactory implements ResourceFactory
    }
 
    @Override
-   public ResourceFactory fireEvent(ResourceEvent event)
+   public ResourceMonitor monitor(Resource<?> resource)
    {
-      return this;
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public ResourceMonitor monitor(Resource<?> resource, ResourceFilter resourceFilter)
+   {
+      throw new UnsupportedOperationException();
    }
 }

@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.addon.resource;
 
-import org.jboss.forge.addon.resource.events.ResourceEvent;
+import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.furnace.services.Exported;
 
 /**
@@ -21,7 +21,7 @@ public interface ResourceFactory
     * 
     * @return <code>null</code> if no resource could be created for the given object.
     */
-   public abstract <E, T extends Resource<E>> T create(Class<T> type, E underlyingResource);
+   <E, T extends Resource<E>> T create(Class<T> type, E underlyingResource);
 
    /**
     * Create a {@link Resource} to represent the provided underlying resource. The resource type will be detected
@@ -29,11 +29,22 @@ public interface ResourceFactory
     * 
     * @return <code>null</code> if no resource could be created for the given object.
     */
-   public abstract <E> Resource<E> create(E underlyingResource);
+   <E> Resource<E> create(E underlyingResource);
 
    /**
-    * Broadcast a {@link ResourceEvent}
+    * Monitors a specific resource for changes and fires the registered listeners
+    * 
+    * @param resource the resource to be monitored
+    * @return a {@link ResourceMonitor} for the specific resource
     */
-   public abstract ResourceFactory fireEvent(ResourceEvent event);
+   ResourceMonitor monitor(Resource<?> resource);
 
+   /**
+    * Monitors a specific resource for changes and fires the registered listeners given the specified filter
+    * 
+    * @param resource the resource to be monitored
+    * @param resourceFilter a filter for children of the specified resource
+    * @return a {@link ResourceMonitor} for the specific resource
+    */
+   ResourceMonitor monitor(Resource<?> resource, ResourceFilter resourceFilter);
 }

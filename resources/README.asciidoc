@@ -153,3 +153,44 @@ Consistent programming experience::
  Because the resources API provides a consistent set of interfaces for interacting with real and virtual resources, 
 it is used in a number of addons and should be considered the standard approach for interacting with both the local
 file-system, as well as with other resource types.
+
+Resource monitoring::
+ The resources API provides a service to monitor FileResource events.
++
+[options="header"]
+|===
+|Event type |Description
+
+|ResourceCreated
+|Fired when a resource (eg: directory or a file) is created.
+
+|ResourceDeleted
+|Fired when a resource (eg: directory or a file) is deleted.
+
+|ResourceModified
+|Fired when a resource (eg: directory or a file) is modified.
+
+|===
++
+[source,java]
+----
+@Inject 
+private ResourceFactory factory;
+...
+Resource<?> resource = factory.create(...);
+ResourceMonitor monitor = factory.monitor(resource);
+monitor.addResourceListener(new ResourceListener() {
+	@Override
+	public void processEvent(ResourceEvent evt) {
+		...
+	}
+});
+...
+// If the monitor is no longer needed, dispose properly by calling cancel 
+monitor.cancel();
+----
++
+[TIP] 
+====
+It's always a good practice to cancel monitors when they are no longer needed
+

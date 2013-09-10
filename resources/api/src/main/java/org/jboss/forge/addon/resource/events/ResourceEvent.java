@@ -56,4 +56,9 @@ public abstract class ResourceEvent
       return true;
    }
 
+   @Override
+   public String toString()
+   {
+      return getClass().getSimpleName() + ": " + resource.getFullyQualifiedName();
+   }
 }

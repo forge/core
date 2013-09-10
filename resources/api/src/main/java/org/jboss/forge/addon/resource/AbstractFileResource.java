@@ -11,11 +11,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.jboss.forge.addon.resource.events.ResourceCreated;
-import org.jboss.forge.addon.resource.events.ResourceDeleted;
-import org.jboss.forge.addon.resource.events.ResourceModified;
-import org.jboss.forge.addon.resource.events.ResourceRenamed;
-import org.jboss.forge.addon.resource.events.TempResourceCreated;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Streams;
@@ -123,23 +118,13 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public boolean mkdir()
    {
-      if (file.mkdir())
-      {
-         resourceFactory.fireEvent(new ResourceCreated(this));
-         return true;
-      }
-      return false;
+      return file.mkdir();
    }
 
    @Override
    public boolean mkdirs()
    {
-      if (file.mkdirs())
-      {
-         resourceFactory.fireEvent(new ResourceCreated(this));
-         return true;
-      }
-      return false;
+      return file.mkdirs();
    }
 
    @Override
@@ -155,7 +140,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       {
          if (_deleteRecursive(file, true))
          {
-            resourceFactory.fireEvent(new ResourceDeleted(this));
             return true;
          }
          return false;
@@ -173,7 +157,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
 
       if (file.delete())
       {
-         resourceFactory.fireEvent(new ResourceDeleted(this));
          return true;
       }
       return false;
@@ -321,8 +304,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
                System.gc();
             }
          }
-
-         resourceFactory.fireEvent(new ResourceModified(this));
       }
       catch (IOException e)
       {
@@ -342,7 +323,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          }
          if (file.createNewFile())
          {
-            resourceFactory.fireEvent(new ResourceCreated(this));
             return true;
          }
          return false;
@@ -360,7 +340,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       try
       {
          T result = (T) createFrom(File.createTempFile("forgetemp", ""));
-         resourceFactory.fireEvent(new TempResourceCreated(result));
          return result;
       }
       catch (IOException e)
@@ -398,10 +377,8 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
 
    private boolean renameTo(final File target)
    {
-      File original = file.getAbsoluteFile();
       if (file.renameTo(target))
       {
-         resourceFactory.fireEvent(new ResourceRenamed(this, original.getAbsolutePath(), file.getAbsolutePath()));
          file = target;
          return true;
       }

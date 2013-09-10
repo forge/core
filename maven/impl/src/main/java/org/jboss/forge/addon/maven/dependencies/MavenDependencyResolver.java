@@ -60,13 +60,6 @@ public class MavenDependencyResolver implements DependencyResolver
    private final MavenContainer container;
    private final ResourceFactory factory;
 
-   public MavenDependencyResolver()
-   {
-      super();
-      this.container = new MavenContainer();
-      this.factory = new FileResourceFactory();
-   }
-
    @Inject
    public MavenDependencyResolver(ResourceFactory factory, MavenContainer container)
    {
