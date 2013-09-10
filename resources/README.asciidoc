@@ -192,5 +192,7 @@ monitor.cancel();
 +
 [TIP] 
 ====
-It's always a good practice to cancel monitors when they are no longer needed
+- It's always a good practice to cancel monitors when they are no longer needed
+- From a FileResource object, it's possible to fetch a reference to a ResourceMonitor by simply calling monitor() on it.
+
 
