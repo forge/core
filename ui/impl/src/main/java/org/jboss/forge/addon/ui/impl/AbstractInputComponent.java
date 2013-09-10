@@ -22,6 +22,7 @@ import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.util.InputComponents;
+import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Callables;
 
 /**
@@ -175,6 +176,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    @Override
    public IMPLTYPE addValidator(UIValidator validator)
    {
+      Assert.notNull(validator, "The validator provided as the parameter was null.");
       this.validators.add(validator);
       return (IMPLTYPE) this;
    }

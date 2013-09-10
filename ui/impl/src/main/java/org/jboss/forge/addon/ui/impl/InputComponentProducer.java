@@ -40,8 +40,9 @@ import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.validators.ClassNameValidator;
 import org.jboss.forge.addon.ui.validators.MavenDependencyIdValidator;
-import org.jboss.forge.addon.ui.validators.VariableNameValidator;
 import org.jboss.forge.addon.ui.validators.PackageNameValidator;
+import org.jboss.forge.addon.ui.validators.PatternBasedValidator;
+import org.jboss.forge.addon.ui.validators.VariableNameValidator;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.services.Imported;
@@ -274,26 +275,27 @@ public class InputComponentProducer implements InputComponentFactory
    @SuppressWarnings("unchecked")
    private UIValidator getPatternValidator(InputComponent<?,?> input,Class<?> valueType)
    {
+      PatternBasedValidator<? extends PatternedStringInput> validator = null;
       if(input instanceof UIInput)
       {
          if(JavaClassName.class.isAssignableFrom(valueType))
          {
-            return new ClassNameValidator((UIInput<JavaClassName>) input);
+            validator = new ClassNameValidator((UIInput<JavaClassName>) input);
          }
          if(JavaPackageName.class.isAssignableFrom(valueType))
          {
-            return new PackageNameValidator((UIInput<JavaPackageName>) input);
+            validator = new PackageNameValidator((UIInput<JavaPackageName>) input);
          }
          if(JavaVariableName.class.isAssignableFrom(valueType))
          {
-            return new VariableNameValidator((UIInput<JavaVariableName>) input);
+            validator = new VariableNameValidator((UIInput<JavaVariableName>) input);
          }
          if(MavenDependencyId.class.isAssignableFrom(valueType))
          {
-            return new MavenDependencyIdValidator((UIInput<MavenDependencyId>) input);
+            validator = new MavenDependencyIdValidator((UIInput<MavenDependencyId>) input);
          }
       }
-      return null;
+      return validator;
    }
 
    @SuppressWarnings({ "rawtypes", "unchecked" })
