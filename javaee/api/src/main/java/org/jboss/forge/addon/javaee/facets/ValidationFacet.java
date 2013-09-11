@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.javaee.facets;
 
+import org.jboss.forge.addon.javaee.ConfigurableFacet;
 import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.javaee.descriptor.ValidationDescriptor;
 import org.jboss.forge.addon.resource.FileResource;
@@ -15,7 +16,7 @@ import org.jboss.forge.addon.resource.FileResource;
  * 
  * @author Kevin Pollet
  */
-public interface ValidationFacet extends JavaEEFacet
+public interface ValidationFacet extends JavaEEFacet, ConfigurableFacet<ValidationDescriptor>
 {
    ValidationDescriptor getConfig();
 
