@@ -60,7 +60,7 @@ public class ExampleFlow extends AbstractUICommand implements UIWizard
       if (number.getValue() != null && number.getValue().intValue() == 42)
       {
          validator.addValidationError(number,
-                  "You can't proceed knowing the secret of life,the universe and everything!");
+                  "You can't proceed because you already know the secret of life,the universe and everything!");
       }
    }
 
