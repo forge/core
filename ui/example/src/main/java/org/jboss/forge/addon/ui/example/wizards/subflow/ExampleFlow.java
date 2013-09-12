@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -42,6 +43,15 @@ public class ExampleFlow extends AbstractUICommand implements UIWizard
    public Result execute(UIContext context) throws Exception
    {
       return Results.success();
+   }
+
+   @Override
+   public void validate(UIValidationContext validator)
+   {
+      if ("foo".equals(name.getValue()))
+      {
+         validator.addValidationWarning(name, "Foo? Really? Ok...");
+      }
    }
 
    @Override

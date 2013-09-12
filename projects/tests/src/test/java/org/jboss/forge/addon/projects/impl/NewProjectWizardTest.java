@@ -128,6 +128,11 @@ public class NewProjectWizardTest
             public void addValidationError(InputComponent<?, ?> input, String errorMessage)
             {
             }
+            
+            @Override
+            public void addValidationWarning(InputComponent<?, ?> input, String warningMessage)
+            {
+            }
          });
 
          DirectoryResource targetDirectory = command.getTargetLocation().getValue().getChildDirectory("test");

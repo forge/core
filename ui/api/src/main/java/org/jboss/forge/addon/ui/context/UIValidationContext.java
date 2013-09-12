@@ -23,4 +23,13 @@ public interface UIValidationContext extends UIContextProvider
     * @param errorMessage
     */
    public void addValidationError(InputComponent<?, ?> input, String errorMessage);
+
+   /**
+    * Implementations should call this method to let the UI provider aware of possible errors
+    * 
+    * @param input
+    * @param errorMessage
+    */
+   public void addValidationWarning(InputComponent<?, ?> input, String warningMessage);
+
 }
