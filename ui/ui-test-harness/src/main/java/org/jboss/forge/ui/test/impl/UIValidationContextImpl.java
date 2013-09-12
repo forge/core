@@ -19,6 +19,8 @@ public class UIValidationContextImpl implements UIValidationContext
 {
    private List<String> errors = new ArrayList<String>();
    private List<String> warnings = new ArrayList<String>();
+   private List<String> informations = new ArrayList<String>();
+
    private UIContext context;
 
    public UIValidationContextImpl(UIContext context)
@@ -48,6 +50,14 @@ public class UIValidationContextImpl implements UIValidationContext
       warnings.add(warningMessage);
    }
 
+   @Override
+   public void addValidationInformation(InputComponent<?, ?> input, String infoMessage)
+   {
+      Assert.notNull(infoMessage, "Information Message cannot be null");
+      informations.add(infoMessage);
+
+   }
+
    public List<String> getErrors()
    {
       return errors;
@@ -56,6 +66,11 @@ public class UIValidationContextImpl implements UIValidationContext
    public List<String> getWarnings()
    {
       return warnings;
+   }
+
+   public List<String> getInformations()
+   {
+      return informations;
    }
 
    @Override

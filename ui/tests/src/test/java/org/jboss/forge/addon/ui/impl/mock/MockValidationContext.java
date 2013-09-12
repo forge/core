@@ -25,6 +25,7 @@ public class MockValidationContext implements UIValidationContext
    private UIContext context;
    private Map<InputComponent<?, ?>, List<String>> errors = new HashMap<InputComponent<?, ?>, List<String>>();
    private Map<InputComponent<?, ?>, List<String>> warnings = new HashMap<InputComponent<?, ?>, List<String>>();
+   private Map<InputComponent<?, ?>, List<String>> infos = new HashMap<InputComponent<?, ?>, List<String>>();
 
    public MockValidationContext(UIContext context)
    {
@@ -48,7 +49,7 @@ public class MockValidationContext implements UIValidationContext
       }
       list.add(errorMessage);
    }
-   
+
    @Override
    public void addValidationWarning(InputComponent<?, ?> input, String warningMessage)
    {
@@ -61,19 +62,31 @@ public class MockValidationContext implements UIValidationContext
       list.add(warningMessage);
    }
 
-   /**
-    * @return the errors
-    */
+   @Override
+   public void addValidationInformation(InputComponent<?, ?> input, String infoMessage)
+   {
+      List<String> list = infos.get(input);
+      if (list == null)
+      {
+         list = new ArrayList<String>();
+         infos.put(input, list);
+      }
+      list.add(infoMessage);
+   }
+
    public List<String> getErrorsFor(InputComponent<?, ?> input)
    {
       return errors.get(input);
    }
-   
-   /**
-    * @return the errors
-    */
+
    public List<String> getWarningsFor(InputComponent<?, ?> input)
    {
       return warnings.get(input);
    }
+
+   public List<String> getInformationsFor(InputComponent<?, ?> input)
+   {
+      return infos.get(input);
+   }
+
 }

@@ -128,9 +128,14 @@ public class NewProjectWizardTest
             public void addValidationError(InputComponent<?, ?> input, String errorMessage)
             {
             }
-            
+
             @Override
             public void addValidationWarning(InputComponent<?, ?> input, String warningMessage)
+            {
+            }
+
+            @Override
+            public void addValidationInformation(InputComponent<?, ?> input, String infoMessage)
             {
             }
          });

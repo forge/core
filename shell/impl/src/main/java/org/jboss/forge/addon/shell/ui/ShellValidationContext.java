@@ -24,6 +24,7 @@ public class ShellValidationContext implements UIValidationContext
    private final ShellContext shellContext;
    private List<String> errors = new ArrayList<String>();
    private List<String> warnings = new ArrayList<String>();
+   private List<String> informations = new ArrayList<String>();
 
    public ShellValidationContext(ShellContext shellContext)
    {
@@ -50,19 +51,25 @@ public class ShellValidationContext implements UIValidationContext
       warnings.add(warningMessage);
    }
 
-   /**
-    * @return the errors
-    */
+   @Override
+   public void addValidationInformation(InputComponent<?, ?> input, String infoMessage)
+   {
+      Assert.notNull(infoMessage, "Information message should not be null");
+      informations.add(infoMessage);
+   }
+
    public List<String> getErrors()
    {
       return errors;
    }
 
-   /**
-    * @return the warnings
-    */
    public List<String> getWarnings()
    {
       return warnings;
+   }
+
+   public List<String> getInformations()
+   {
+      return informations;
    }
 }

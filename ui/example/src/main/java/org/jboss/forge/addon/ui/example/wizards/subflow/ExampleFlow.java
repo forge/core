@@ -48,6 +48,7 @@ public class ExampleFlow extends AbstractUICommand implements UIWizard
    @Override
    public void validate(UIValidationContext validator)
    {
+      validator.addValidationInformation(name, "Input the name and click that next button");
       if ("foo".equals(name.getValue()))
       {
          validator.addValidationWarning(name, "Foo? Really? Ok...");
