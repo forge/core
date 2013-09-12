@@ -26,7 +26,7 @@ public class ShellInitializer
 
    public void startupDefaultShell(@Observes PostStartup startup) throws Exception
    {
-      if (!Boolean.getBoolean("forge.compatibility.IDE"))
+      if (Boolean.getBoolean("forge.standalone"))
       {
          Settings settings = new SettingsBuilder().create();
          this.shell = shellFactory.createShell(OperatingSystemUtils.getWorkingDir(), settings);

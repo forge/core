@@ -136,7 +136,7 @@ goto runForge
 @REM Start Forge
 :runForge
 set FORGE_MAIN_CLASS=org.jboss.forge.bootstrap.Bootstrap
-%FORGE_JAVA_EXE% %FORGE_DEBUG_ARGS% %FORGE_OPTS% "-Dforge.home=%FORGE_HOME%" ^
+%FORGE_JAVA_EXE% %FORGE_DEBUG_ARGS% %FORGE_OPTS% "-Dforge.standalone=true" "-Dforge.home=%FORGE_HOME%" ^
    -cp "%FORGE_HOME%\lib\*" %FORGE_MAIN_CLASS% %FORGE_CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
