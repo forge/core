@@ -33,10 +33,14 @@ public class ExampleFlow extends AbstractUICommand implements UIWizard
    @WithAttributes(label = "Name", required = true)
    private UIInput<String> name;
 
+   @Inject
+   @WithAttributes(label = "Number", required = true)
+   private UIInput<Integer> number;
+
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(name);
+      builder.add(name).add(number);
    }
 
    @Override
@@ -52,6 +56,11 @@ public class ExampleFlow extends AbstractUICommand implements UIWizard
       if ("foo".equals(name.getValue()))
       {
          validator.addValidationWarning(name, "Foo? Really? Ok...");
+      }
+      if (number.getValue() != null && number.getValue().intValue() == 42)
+      {
+         validator.addValidationError(number,
+                  "You can't proceed knowing the secret of life,the universe and everything!");
       }
    }
 
