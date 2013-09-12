@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.ui.InputComponentFactory;
+import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.impl.facets.HintsFacetImpl;
@@ -30,8 +31,18 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
+import org.jboss.forge.addon.ui.input.types.JavaClassName;
+import org.jboss.forge.addon.ui.input.types.JavaPackageName;
+import org.jboss.forge.addon.ui.input.types.JavaVariableName;
+import org.jboss.forge.addon.ui.input.types.MavenDependencyId;
+import org.jboss.forge.addon.ui.input.types.PatternedStringInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.InputComponents;
+import org.jboss.forge.addon.ui.validators.ClassNameValidator;
+import org.jboss.forge.addon.ui.validators.MavenDependencyIdValidator;
+import org.jboss.forge.addon.ui.validators.PackageNameValidator;
+import org.jboss.forge.addon.ui.validators.PatternBasedValidator;
+import org.jboss.forge.addon.ui.validators.VariableNameValidator;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.services.Imported;
@@ -73,6 +84,7 @@ public class InputComponentProducer implements InputComponentFactory
          UISelectOne<T> input = createSelectOne(name, shortName, valueType);
          setupSelectComponent(input);
          preconfigureInput(input, withAttributes);
+         configureValidator(input);
          return input;
       }
       else
@@ -100,6 +112,7 @@ public class InputComponentProducer implements InputComponentFactory
          UISelectMany<T> input = createSelectMany(name, shortName, valueType);
          setupSelectComponent(input);
          preconfigureInput(input, withAttributes);
+         configureValidator(input);
          return input;
       }
       else
@@ -125,6 +138,7 @@ public class InputComponentProducer implements InputComponentFactory
          char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
          UIInput<T> input = createInput(name, shortName, valueType);
          preconfigureInput(input, withAttributes);
+         configureValidator(input);
          return input;
       }
       else
@@ -151,6 +165,7 @@ public class InputComponentProducer implements InputComponentFactory
          char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
          UIInputMany<T> input = createInputMany(name, shortName, valueType);
          preconfigureInput(input, withAttributes);
+         configureValidator(input);
          return input;
       }
       else
@@ -242,6 +257,45 @@ public class InputComponentProducer implements InputComponentFactory
 
          }
       }
+   }
+   
+   private void configureValidator(InputComponent<?, ?> input)
+   {
+      Class<?> valueType = input.getValueType();
+      if (PatternedStringInput.class.isAssignableFrom(valueType))
+      {
+         UIValidator patternValidator = getPatternValidator(input, valueType);
+         if (patternValidator != null)
+         {
+            input.addValidator(patternValidator);
+         }
+      }
+   }
+
+   @SuppressWarnings("unchecked")
+   private UIValidator getPatternValidator(InputComponent<?,?> input,Class<?> valueType)
+   {
+      PatternBasedValidator<? extends PatternedStringInput> validator = null;
+      if(input instanceof UIInput)
+      {
+         if(JavaClassName.class.isAssignableFrom(valueType))
+         {
+            validator = new ClassNameValidator((UIInput<JavaClassName>) input);
+         }
+         if(JavaPackageName.class.isAssignableFrom(valueType))
+         {
+            validator = new PackageNameValidator((UIInput<JavaPackageName>) input);
+         }
+         if(JavaVariableName.class.isAssignableFrom(valueType))
+         {
+            validator = new VariableNameValidator((UIInput<JavaVariableName>) input);
+         }
+         if(MavenDependencyId.class.isAssignableFrom(valueType))
+         {
+            validator = new MavenDependencyIdValidator((UIInput<MavenDependencyId>) input);
+         }
+      }
+      return validator;
    }
 
    @SuppressWarnings({ "rawtypes", "unchecked" })

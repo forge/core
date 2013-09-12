@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.ui.input;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.jboss.forge.addon.convert.Converter;
@@ -38,7 +39,7 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
 
    char getShortName();
    
-   UIValidator getValidator();
+   List<UIValidator> getValidators();
 
    IMPLTYPE setEnabled(boolean b);
 
@@ -58,6 +59,6 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
 
    IMPLTYPE setValueConverter(Converter<String, VALUETYPE> converter);
    
-   IMPLTYPE setValidator(UIValidator validator);
+   IMPLTYPE addValidator(UIValidator validator);
 
 }
