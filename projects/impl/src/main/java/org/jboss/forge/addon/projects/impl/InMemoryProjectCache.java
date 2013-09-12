@@ -46,4 +46,10 @@ public class InMemoryProjectCache implements ProjectCache
       this.projects.put(project.getProjectRoot().getFullyQualifiedName(), project);
    }
 
+   @Override
+   public void evict(Project project)
+   {
+      this.projects.remove(project.getProjectRoot().getFullyQualifiedName());
+   }
+
 }

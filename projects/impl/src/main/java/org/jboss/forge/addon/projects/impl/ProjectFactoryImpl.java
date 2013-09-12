@@ -27,6 +27,9 @@ import org.jboss.forge.addon.projects.spi.ProjectCache;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.resource.events.ResourceEvent;
+import org.jboss.forge.addon.resource.monitor.ResourceListener;
+import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
@@ -217,19 +220,40 @@ public class ProjectFactoryImpl implements ProjectFactory
       }
    }
 
-   private void cacheProject(Project result)
+   private void cacheProject(final Project project)
    {
       for (ProjectCache cache : caches)
       {
          try
          {
-            cache.store(result);
+            cache.store(project);
          }
          finally
          {
             caches.release(cache);
          }
       }
+
+      final ResourceMonitor monitor = project.getProjectRoot().monitor();
+      monitor.addResourceListener(new ResourceListener()
+      {
+         @Override
+         public void processEvent(ResourceEvent event)
+         {
+            for (ProjectCache cache : caches)
+            {
+               try
+               {
+                  cache.evict(project);
+               }
+               finally
+               {
+                  caches.release(cache);
+               }
+            }
+            monitor.cancel();
+         }
+      });
    }
 
    private void fireProjectCreated(Project project)

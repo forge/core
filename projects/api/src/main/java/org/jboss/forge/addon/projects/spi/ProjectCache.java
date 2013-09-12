@@ -25,12 +25,19 @@ public interface ProjectCache
    Project get(DirectoryResource target);
 
    /**
-    * Invalidate the cache, forcing all stored projects to be re-built.
+    * Invalidate the cache, forcing all stored {@link Project} instances to be re-discovered.
     */
    void invalidate();
+
+   /**
+    * Evict the given {@link Project} from this cache instance. If the {@link Project} was not previously cached, this
+    * method does nothing.
+    */
+   void evict(Project project);
 
    /**
     * Store the given {@link Project} into this cache.
     */
    void store(Project project);
+
 }
