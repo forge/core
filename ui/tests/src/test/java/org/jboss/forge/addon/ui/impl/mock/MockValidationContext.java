@@ -73,6 +73,12 @@ public class MockValidationContext implements UIValidationContext
       }
       list.add(infoMessage);
    }
+   
+   @Override
+   public InputComponent<?, ?> getCurrentInputComponent()
+   {
+      return null;
+   }
 
    public List<String> getErrorsFor(InputComponent<?, ?> input)
    {

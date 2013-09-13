@@ -74,6 +74,12 @@ public class UIValidationContextImpl implements UIValidationContext
    }
 
    @Override
+   public InputComponent<?, ?> getCurrentInputComponent()
+   {
+      return null;
+   }
+
+   @Override
    public UIContext getUIContext()
    {
       return context;

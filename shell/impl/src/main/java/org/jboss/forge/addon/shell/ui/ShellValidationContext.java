@@ -58,6 +58,13 @@ public class ShellValidationContext implements UIValidationContext
       informations.add(infoMessage);
    }
 
+   @Override
+   public InputComponent<?, ?> getCurrentInputComponent()
+   {
+      // TODO: Implement
+      return null;
+   }
+
    public List<String> getErrors()
    {
       return errors;

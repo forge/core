@@ -40,4 +40,8 @@ public interface UIValidationContext extends UIContextProvider
     */
    public void addValidationInformation(InputComponent<?, ?> input, String infoMessage);
 
+   /**
+    * Returns the current focused {@link InputComponent}. Return null if cannot be determined by the UI provider.
+    */
+   public InputComponent<?, ?> getCurrentInputComponent();
 }

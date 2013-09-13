@@ -138,6 +138,12 @@ public class NewProjectWizardTest
             public void addValidationInformation(InputComponent<?, ?> input, String infoMessage)
             {
             }
+
+            @Override
+            public InputComponent<?, ?> getCurrentInputComponent()
+            {
+               return null;
+            }
          });
 
          DirectoryResource targetDirectory = command.getTargetLocation().getValue().getChildDirectory("test");
