@@ -7,6 +7,9 @@
 
 package org.jboss.forge.addon.javaee.jpa.ui.setup;
 
+import java.util.Comparator;
+import java.util.TreeSet;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
@@ -85,6 +88,21 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
             return source != null ? source.getName() : null;
          }
       });
+      // Ordering items:
+      TreeSet<PersistenceContainer> treeSet = new TreeSet<PersistenceContainer>(new Comparator<PersistenceContainer>()
+      {
+         @Override
+         public int compare(PersistenceContainer o1, PersistenceContainer o2)
+         {
+            return String.valueOf(o1.getName()).compareTo(o2.getName());
+         }
+      });
+      Iterable<PersistenceContainer> valueChoices = containers.getValueChoices();
+      for (PersistenceContainer persistenceContainer : valueChoices)
+      {
+         treeSet.add(persistenceContainer);
+      }
+      containers.setValueChoices(treeSet);
       containers.setDefaultValue(defaultContainer);
    }
 
