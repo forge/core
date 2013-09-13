@@ -48,5 +48,10 @@
          <groupId>org.hibernate.javax.persistence</groupId>
          <artifactId>hibernate-jpa-2.0-api</artifactId>
       </dependency>
+      <!-- Bean Validation -->
+      <dependency>
+         <groupId>javax.validation</groupId>
+         <artifactId>validation-api</artifactId>
+      </dependency>
    </dependencies>
 </project>
