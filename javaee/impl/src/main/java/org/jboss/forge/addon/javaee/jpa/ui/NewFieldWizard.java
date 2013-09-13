@@ -70,6 +70,10 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    private UIInput<Boolean> lob;
 
    @Inject
+   @WithAttributes(label = "Length", defaultValue = "255", description = "The column length. (Applies only if a string-valued column is used.)")
+   private UIInput<Integer> length;
+
+   @Inject
    private FieldOperations fieldOperations;
 
    @Override
@@ -108,7 +112,15 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             return !lob.getValue();
          }
       });
-      builder.add(entity).add(fieldName).add(typeName).add(relationshipType).add(lob).add(primitive);
+      length.setEnabled(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return !lob.getValue();
+         }
+      });
+      builder.add(entity).add(fieldName).add(typeName).add(length).add(relationshipType).add(lob).add(primitive);
    }
 
    private void setupEntities(UIContext context)
@@ -187,7 +199,6 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          {
             String fieldType = byte[].class.getName();
             field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr, Lob.class.getName());
-            // TODO: Specify column length somewhere ?
             field.addAnnotation(Column.class).setLiteralValue("length", String.valueOf(Integer.MAX_VALUE));
          }
          else
@@ -195,6 +206,10 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             String fieldType = typeName.getValue();
             field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
                      Column.class.getCanonicalName());
+         }
+         if (length.isEnabled() && length.getValue() != null && length.getValue().intValue() != 255)
+         {
+            field.getAnnotation(Column.class).setLiteralValue("length", String.valueOf(length.getValue()));
          }
          Project selectedProject = getSelectedProject(context);
          if (selectedProject != null)
@@ -216,12 +231,33 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    public void validate(UIValidationContext validator)
    {
       super.validate(validator);
+      try
+      {
+         JavaResource javaResource = entity.getValue();
+         JavaClass javaClass = (JavaClass) javaResource.getJavaSource();
+         if (javaClass.hasField(fieldName.getValue()))
+         {
+            validator.addValidationError(entity, "Field '" + fieldName.getValue() + "' already exists");
+         }
+      }
+      catch (FileNotFoundException ffe)
+      {
+         validator.addValidationError(entity, "Entity could not be found");
+      }
       if (primitive.getValue())
       {
          String primitiveType = getPrimitiveTypeFor(typeName.getValue());
          if (primitiveType == null)
          {
             validator.addValidationError(typeName, "Type is not a wrapper of a primitive type");
+         }
+      }
+
+      if (length.isEnabled())
+      {
+         if (length.getValue() == null || length.getValue() <= 0)
+         {
+            validator.addValidationError(length, "Length should be a positive integer");
          }
       }
    }
