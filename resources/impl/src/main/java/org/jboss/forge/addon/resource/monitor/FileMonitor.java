@@ -47,7 +47,9 @@ public class FileMonitor
          @Override
          public Thread newThread(Runnable r)
          {
-            return new Thread(r, "Resource File Monitor");
+            Thread resourceMonitorThread = new Thread(r, "Resource File Monitor");
+            resourceMonitorThread.setDaemon(true);
+            return resourceMonitorThread;
          }
       });
    }
