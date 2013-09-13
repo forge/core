@@ -6,8 +6,7 @@
  */
 package org.jboss.forge.addon.javaee.validation.ui;
 
-import static org.jboss.forge.addon.javaee.validation.ui.ConstraintType.VALID;
-
+import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -30,21 +29,20 @@ import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 
 public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWizardStep
 {
    @Inject
-   @WithAttributes(label = "property", description = "The property on which the constraint applies", required = true, type = InputType.DROPDOWN)
+   @WithAttributes(label = "Property", description = "The property on which the constraint applies", required = true, type = InputType.DROPDOWN)
    private UISelectOne<Property> property;
 
    @Inject
    @WithAttributes(label = "Constraint", description = "The type of constraint to add", required = true, type = InputType.DROPDOWN)
-   private UISelectOne<ConstraintType> constraint;
+   private UISelectOne<CoreConstraints> constraint;
 
    @Inject
-   @WithAttributes(label = "onAccessor", description = "Add constraint on the property accessor")
+   @WithAttributes(label = "Add constraint on the property accessor?")
    private UIInput<Boolean> onAccessor;
 
    @Inject
@@ -76,20 +74,20 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
       property.setValueChoices(properties);
       property.setDefaultValue(properties.get(0));
    }
-   
+
    private void setupConstraint()
    {
-      constraint.setItemLabelConverter(new Converter<ConstraintType, String>()
+      constraint.setItemLabelConverter(new Converter<CoreConstraints, String>()
       {
          @Override
-         public String convert(ConstraintType source)
+         public String convert(CoreConstraints source)
          {
             return (source == null) ? null : source.getDescription();
          }
       });
-      constraint.setDefaultValue(ConstraintType.VALID);
+      constraint.setValueChoices(EnumSet.allOf(CoreConstraints.class));
    }
-   
+
    private void setupAccessor()
    {
       onAccessor.setEnabled(new Callable<Boolean>()
@@ -106,7 +104,7 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
    public Result execute(UIContext context) throws Exception
    {
       ConstraintType constraintType = constraint.getValue();
-      if (constraintType.equals(VALID))
+      if (constraintType == CoreConstraints.VALID)
       {
          Project project = getSelectedProject(context);
          Result result = constraintOperations.addValidConstraint(project, property.getValue(), onAccessor.getValue());
@@ -122,10 +120,10 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
    public NavigationResult next(UIContext context) throws Exception
    {
       ConstraintType constraintType = constraint.getValue();
-      context.setAttribute(Field.class, property.getValue());
+      context.setAttribute(Property.class, property.getValue());
       context.setAttribute(ConstraintType.class, constraintType);
       context.setAttribute("onAccessor", onAccessor.getValue());
-      if (constraintType.equals(VALID))
+      if (constraintType == CoreConstraints.VALID)
       {
          return null;
       }
