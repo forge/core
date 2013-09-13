@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -1198,6 +1199,43 @@ public class NewFieldPluginTest extends AbstractJPATest
       assertTrue(javaClass.getField("gamesWon").isPrimitive());
       assertFalse(javaClass.hasSyntaxErrors());
 
+      getShell().execute("build");
+   }
+
+   @Test
+   public void testNewStringField() throws Exception
+   {
+      Project project = getProject();
+      JavaClass javaClass = generateEntity(project);
+
+      getShell().execute(ConstraintInspector.getName(FieldPlugin.class) + " string --named firstName");
+      javaClass = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(javaClass).getJavaSource();
+      assertTrue(javaClass.hasField("firstName"));
+      Field<JavaClass> firstName = javaClass.getField("firstName");
+      assertNotNull(firstName);
+      assertEquals("String", firstName.getType());
+      assertTrue(firstName.hasAnnotation(Column.class));
+      assertFalse(javaClass.hasSyntaxErrors());
+      getShell().execute("build");
+   }
+
+   @Test
+   public void testNewStringFieldWithLength() throws Exception
+   {
+      Project project = getProject();
+      JavaClass javaClass = generateEntity(project);
+
+      getShell().execute(ConstraintInspector.getName(FieldPlugin.class) + " string --named firstName --length 1024");
+      javaClass = (JavaClass) project.getFacet(JavaSourceFacet.class).getJavaResource(javaClass).getJavaSource();
+      assertTrue(javaClass.hasField("firstName"));
+      Field<JavaClass> firstName = javaClass.getField("firstName");
+      assertNotNull(firstName);
+      assertEquals("String", firstName.getType());
+      assertTrue(firstName.hasAnnotation(Column.class));
+      Annotation<JavaClass> annotation = firstName.getAnnotation(Column.class);
+      assertNotNull(annotation);
+      assertEquals("1024", annotation.getLiteralValue("length"));
+      assertFalse(javaClass.hasSyntaxErrors());
       getShell().execute("build");
    }
 

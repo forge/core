@@ -239,18 +239,27 @@ public class FieldPlugin implements Plugin
          shell.println("Could not locate the @Entity requested. No update was made.");
       }
    }
-   
+
    @Command(value = "string", help = "Add a String field to an existing @Entity class")
    public void newStringField(
             @Option(name = "named",
                      required = true,
                      description = "The field name",
-                     type = PromptType.JAVA_VARIABLE_NAME) final String fieldName)
+                     type = PromptType.JAVA_VARIABLE_NAME) final String fieldName,
+            @Option(name = "length",
+                     required = false,
+                     description = "Column length") Integer length)
    {
       try
       {
          JavaClass entity = getJavaClass();
-         addFieldTo(entity, String.class, fieldName, Column.class);
+         Field<JavaClass> field = addFieldTo(entity, String.class, fieldName, Column.class);
+         if (length != null)
+         {
+            Annotation<JavaClass> columnAnnotation = field.getAnnotation(Column.class);
+            columnAnnotation.setLiteralValue("length", Integer.toString(length));
+            project.getFacet(JavaSourceFacet.class).saveJavaSource(entity);
+         }
       }
       catch (FileNotFoundException e)
       {
@@ -260,31 +269,31 @@ public class FieldPlugin implements Plugin
 
    @Command(value = "lob", help = "Add a byte[] field, annotated with @Lob, to an existing @Entity class")
    public void newLobField(
-           @Option(name = "named",
-           required = true,
-           description = "The field name",
-           type = PromptType.JAVA_VARIABLE_NAME) final String fieldName,
-           @Option(name = "length",
-           required = false,
-           description = "Lob column length") Integer length)
+            @Option(name = "named",
+                     required = true,
+                     description = "The field name",
+                     type = PromptType.JAVA_VARIABLE_NAME) final String fieldName,
+            @Option(name = "length",
+                     required = false,
+                     description = "Lob column length") Integer length)
    {
-       try
-       {
-           JavaClass entity = getJavaClass();
-           if (length == null)
-           {
-               length = Integer.MAX_VALUE;
-           }
-           addFieldTo(entity, byte[].class, fieldName, Lob.class).addAnnotation(Column.class).setLiteralValue("length",
-                    Integer.toString(length));
-           project.getFacet(JavaSourceFacet.class).saveJavaSource(entity);
-       }
-       catch (FileNotFoundException e)
-       {
-           shell.println("Could not locate the @Entity requested. No update was made.");
-       }
+      try
+      {
+         JavaClass entity = getJavaClass();
+         if (length == null)
+         {
+            length = Integer.MAX_VALUE;
+         }
+         addFieldTo(entity, byte[].class, fieldName, Lob.class).addAnnotation(Column.class).setLiteralValue("length",
+                  Integer.toString(length));
+         project.getFacet(JavaSourceFacet.class).saveJavaSource(entity);
+      }
+      catch (FileNotFoundException e)
+      {
+         shell.println("Could not locate the @Entity requested. No update was made.");
+      }
    }
-   
+
    @Command(value = "oneToOne", help = "Add a One-to-one relationship field to an existing @Entity class")
    public void newOneToOneRelationship(
             @Option(name = "named",
@@ -331,7 +340,7 @@ public class FieldPlugin implements Plugin
             inverseField.getAnnotation(OneToOne.class).setStringValue("mappedBy", localField.getName());
             java.saveJavaSource(fieldEntityClass);
          }
-         
+
          if (fetchType != null)
          {
             annotation.setEnumValue("fetch", fetchType);
@@ -341,7 +350,7 @@ public class FieldPlugin implements Plugin
             // Set the optional attribute of @OneToOne/@ManyToOne only when false, since the default value is true
             annotation.setLiteralValue("optional", "false");
          }
-         if(cascadeTypes !=null && cascadeTypes.length > 0)
+         if (cascadeTypes != null && cascadeTypes.length > 0)
          {
             annotation.setEnumArrayValue("cascade", cascadeTypes);
          }
@@ -429,12 +438,12 @@ public class FieldPlugin implements Plugin
 
             java.saveJavaSource(otherEntity);
          }
-         
+
          if (fetchType != null)
          {
             annotation.setEnumValue("fetch", fetchType);
          }
-         if(cascadeTypes !=null && cascadeTypes.length > 0)
+         if (cascadeTypes != null && cascadeTypes.length > 0)
          {
             annotation.setEnumArrayValue("cascade", cascadeTypes);
          }
@@ -519,12 +528,12 @@ public class FieldPlugin implements Plugin
             Refactory.createGetterAndSetter(many, manyField);
             java.saveJavaSource(many);
          }
-         
+
          if (fetchType != null)
          {
             annotation.setEnumValue("fetch", fetchType);
          }
-         if(cascadeTypes !=null && cascadeTypes.length > 0)
+         if (cascadeTypes != null && cascadeTypes.length > 0)
          {
             annotation.setEnumArrayValue("cascade", cascadeTypes);
          }
@@ -607,8 +616,8 @@ public class FieldPlugin implements Plugin
             Refactory.createGetterAndSetter(one, oneField);
             java.saveJavaSource(one);
          }
-         
-         if(fetchType != null)
+
+         if (fetchType != null)
          {
             manyAnnotation.setEnumValue("fetch", fetchType);
          }
@@ -617,7 +626,7 @@ public class FieldPlugin implements Plugin
             // Set the optional attribute of @OneToOne/@ManyToOne only when false, since the default value is true
             manyAnnotation.setLiteralValue("optional", "false");
          }
-         if(cascadeTypes !=null && cascadeTypes.length > 0)
+         if (cascadeTypes != null && cascadeTypes.length > 0)
          {
             manyAnnotation.setEnumArrayValue("cascade", cascadeTypes);
          }
@@ -723,13 +732,13 @@ public class FieldPlugin implements Plugin
 
       Field<JavaClass> field = targetEntity.addField();
       field.setName(fieldName).setPrivate().setType(fieldType).addAnnotation(annotation);
-      
+
       Class<?> fieldTypeForImport = fieldType;
       if (fieldType.getComponentType() != null)
       {
-          fieldTypeForImport = fieldType.getComponentType();
+         fieldTypeForImport = fieldType.getComponentType();
       }
-      
+
       if (!fieldTypeForImport.getCanonicalName().startsWith("java.lang.") && !fieldTypeForImport.isPrimitive()
                && !fieldTypeForImport.getCanonicalName().equals(targetEntity.getCanonicalName()))
       {
@@ -780,7 +789,7 @@ public class FieldPlugin implements Plugin
 
    /**
     * Checks if the types are the same, removing the ".java" in the end of the string in case it exists
-    *
+    * 
     * @param from
     * @param to
     * @return
