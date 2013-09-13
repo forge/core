@@ -53,6 +53,9 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.resource.events.ResourceEvent;
+import org.jboss.forge.addon.resource.monitor.ResourceListener;
+import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
@@ -65,6 +68,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    private ProjectBuildingResult buildingResult;
    private ProjectBuildingResult fullBuildingResult;
    private ProjectBuilder builder = null;
+   private ResourceMonitor monitor;
 
    @Inject
    private MavenContainer container;
@@ -197,8 +201,27 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          if (!pom.createNewFile())
             throw new IllegalStateException("Could not create POM file.");
          pom.setContents(createDefaultPOM());
+         monitor = pom.monitor();
+         monitor.addResourceListener(new ResourceListener()
+         {
+            @Override
+            public void processEvent(ResourceEvent event)
+            {
+               invalidateBuildingResults();
+            }
+         });
       }
       return isInstalled();
+   }
+
+   @Override
+   public boolean uninstall()
+   {
+      if (monitor != null)
+      {
+         monitor.cancel();
+      }
+      return super.uninstall();
    }
 
    private String createDefaultPOM()
@@ -265,7 +288,6 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
             throw new RuntimeException(e);
          }
       }
-      invalidateBuildingResults();
    }
 
    /*
