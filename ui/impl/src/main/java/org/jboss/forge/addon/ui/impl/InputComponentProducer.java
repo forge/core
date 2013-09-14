@@ -25,6 +25,7 @@ import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.impl.facets.HintsFacetImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.InputComponentInjectionEnricher;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
@@ -45,14 +46,16 @@ import org.jboss.forge.furnace.util.Annotations;
  */
 public class InputComponentProducer implements InputComponentFactory
 {
-   private Environment environment;
-   private AddonRegistry addonRegistry;
+   private final AddonRegistry addonRegistry;
+   private final Environment environment;
+   private final Imported<InputComponentInjectionEnricher> enrichers;
 
    @Inject
-   public InputComponentProducer(Environment environment, AddonRegistry addonRegistry)
+   public InputComponentProducer(AddonRegistry addonRegistry)
    {
-      this.environment = environment;
       this.addonRegistry = addonRegistry;
+      this.environment = addonRegistry.getServices(Environment.class).get();
+      this.enrichers = addonRegistry.getServices(InputComponentInjectionEnricher.class);
    }
 
    @Produces
@@ -73,6 +76,10 @@ public class InputComponentProducer implements InputComponentFactory
          UISelectOne<T> input = createSelectOne(name, shortName, valueType);
          setupSelectComponent(input);
          preconfigureInput(input, withAttributes);
+         for (InputComponentInjectionEnricher enricher : enrichers)
+         {
+            enricher.enrich(injectionPoint, input);
+         }
          return input;
       }
       else
@@ -100,6 +107,10 @@ public class InputComponentProducer implements InputComponentFactory
          UISelectMany<T> input = createSelectMany(name, shortName, valueType);
          setupSelectComponent(input);
          preconfigureInput(input, withAttributes);
+         for (InputComponentInjectionEnricher enricher : enrichers)
+         {
+            enricher.enrich(injectionPoint, input);
+         }
          return input;
       }
       else
@@ -125,6 +136,10 @@ public class InputComponentProducer implements InputComponentFactory
          char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
          UIInput<T> input = createInput(name, shortName, valueType);
          preconfigureInput(input, withAttributes);
+         for (InputComponentInjectionEnricher enricher : enrichers)
+         {
+            enricher.enrich(injectionPoint, input);
+         }
          return input;
       }
       else
@@ -151,6 +166,10 @@ public class InputComponentProducer implements InputComponentFactory
          char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
          UIInputMany<T> input = createInputMany(name, shortName, valueType);
          preconfigureInput(input, withAttributes);
+         for (InputComponentInjectionEnricher enricher : enrichers)
+         {
+            enricher.enrich(injectionPoint, input);
+         }
          return input;
       }
       else
