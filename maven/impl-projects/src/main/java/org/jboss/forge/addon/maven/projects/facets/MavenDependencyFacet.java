@@ -42,13 +42,8 @@ import org.jboss.forge.addon.projects.facets.DependencyFacet;
 @FacetConstraint(MavenFacet.class)
 public class MavenDependencyFacet extends AbstractFacet<Project> implements DependencyFacet
 {
-   private final DependencyResolver resolver;
-
    @Inject
-   public MavenDependencyFacet(final DependencyResolver resolver)
-   {
-      this.resolver = resolver;
-   }
+   private DependencyResolver resolver;
 
    @Override
    public boolean isInstalled()
@@ -167,8 +162,8 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public List<Dependency> getEffectiveDependencies()
    {
-      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      ProjectBuildingResult projectBuildingResult = ((MavenFacetImpl) maven).getProjectBuildingResult();
+      MavenFacetImpl maven = getFaceted().getFacet(MavenFacetImpl.class);
+      ProjectBuildingResult projectBuildingResult = maven.getProjectBuildingResult();
       DependencyResolutionResult dependencyResolutionResult = projectBuildingResult.getDependencyResolutionResult();
       List<Dependency> deps = MavenDependencyAdapter.fromAetherList(dependencyResolutionResult.getDependencies());
 

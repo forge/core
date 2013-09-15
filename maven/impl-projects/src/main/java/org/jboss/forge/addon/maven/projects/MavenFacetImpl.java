@@ -290,6 +290,12 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
             throw new RuntimeException(e);
          }
       }
+
+      /*
+       * Invalidate build result immediately; otherwise, the current thread may not get correct results until the
+       * monitor thread catches the change.
+       */
+      invalidateBuildingResults();
    }
 
    /*

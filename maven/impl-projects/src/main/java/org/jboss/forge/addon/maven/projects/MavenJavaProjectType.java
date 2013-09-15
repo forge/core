@@ -40,7 +40,7 @@ public class MavenJavaProjectType implements ProjectType
    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
    {
       List<Class<? extends ProjectFacet>> result = new ArrayList<Class<? extends ProjectFacet>>(6);
-      result.add(MavenFacetImpl.class);
+      result.add(MavenFacet.class);
       result.add(MavenMetadataFacet.class);
       result.add(MavenPackagingFacet.class);
       result.add(MavenDependencyFacet.class);
