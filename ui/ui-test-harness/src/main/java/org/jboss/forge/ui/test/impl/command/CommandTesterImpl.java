@@ -13,16 +13,15 @@ import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.ui.test.CommandListener;
 import org.jboss.forge.ui.test.CommandTester;
 import org.jboss.forge.ui.test.impl.UIContextImpl;
 import org.jboss.forge.ui.test.impl.UIValidationContextImpl;
-import org.jboss.forge.ui.test.impl.command.UIBuilderImpl;
 
 /**
  * This class eases the testing of Wizards
@@ -73,20 +72,35 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
    }
 
    @Override
-   public void execute(CommandListener listener) throws Exception
+   public void execute(CommandExecutionListener listener) throws Exception
    {
-   // validate before execute
+      // validate before execute
       List<String> errors = getValidationErrors();
       if (!errors.isEmpty())
       {
          throw new IllegalStateException(errors.toString());
       }
       // All good. Hit it !
-      UICommand comand = builder.getCommand();
-      Result result = comand.execute(context);
+      UICommand command = builder.getCommand();
       if (listener != null)
       {
-         listener.commandExecuted(comand, result);
+         listener.preCommandExecuted(command, context);
+      }
+      try
+      {
+         Result result = command.execute(context);
+         if (listener != null)
+         {
+            listener.postCommandExecuted(command, context, result);
+         }
+      }
+      catch (Exception e)
+      {
+         if (listener != null)
+         {
+            listener.postCommandFailure(command, context, e);
+         }
+         throw e;
       }
    }
 

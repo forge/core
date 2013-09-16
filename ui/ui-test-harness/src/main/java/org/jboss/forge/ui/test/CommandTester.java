@@ -3,6 +3,7 @@ package org.jboss.forge.ui.test;
 import java.util.List;
 
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.furnace.services.Exported;
 
@@ -34,7 +35,7 @@ public interface CommandTester<C extends UICommand>
     * @param listener if you wish to listen for the result for the command dialog.
     * @throws Exception if anything wrong happens
     */
-   public void execute(CommandListener listener) throws Exception;
+   public void execute(CommandExecutionListener listener) throws Exception;
 
    /**
     * Sets the value of a property

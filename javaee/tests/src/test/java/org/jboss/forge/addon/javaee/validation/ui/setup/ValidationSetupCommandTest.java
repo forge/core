@@ -1,23 +1,22 @@
 package org.jboss.forge.addon.javaee.validation.ui.setup;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.javaee.descriptor.ValidationDescriptor;
-import org.jboss.forge.addon.javaee.facets.ValidationFacet;
 import org.jboss.forge.addon.javaee.validation.providers.JavaEEValidatorProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.ui.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.ui.test.CommandListener;
 import org.jboss.forge.ui.test.CommandTester;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -57,9 +56,6 @@ public class ValidationSetupCommandTest
    private ProjectFactory projectFactory;
 
    @Inject
-   private FacetFactory facetFactory;
-
-   @Inject
    private CommandTester<ValidationProviderSetupCommand> tester;
 
    @Test
@@ -75,17 +71,18 @@ public class ValidationSetupCommandTest
       Assert.assertTrue(tester.canExecute());
 
       final AtomicBoolean flag = new AtomicBoolean();
-      tester.execute(new CommandListener()
+      tester.execute(new AbstractCommandExecutionListener()
       {
          @Override
-         public void commandExecuted(UICommand command, Result result)
+         public void postCommandExecuted(UICommand command, UIContext context, Result result)
          {
-            if(result.getMessage().equals("Bean Validation is installed."))
+            if (result.getMessage().equals("Bean Validation is installed."))
             {
                flag.set(true);
             }
          }
       });
       // Ensure that the two pages were invoked
-      Assert.assertEquals(true, flag.get());   }
+      Assert.assertEquals(true, flag.get());
+   }
 }
