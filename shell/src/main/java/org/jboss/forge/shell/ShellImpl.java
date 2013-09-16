@@ -74,6 +74,7 @@ import org.jboss.forge.shell.exceptions.PluginExecutionException;
 import org.jboss.forge.shell.exceptions.ShellExecutionException;
 import org.jboss.forge.shell.integration.BufferManager;
 import org.jboss.forge.shell.integration.KeyListener;
+import org.jboss.forge.shell.integration.NoopBufferManager;
 import org.jboss.forge.shell.plugins.builtin.Echo;
 import org.jboss.forge.shell.project.CurrentProject;
 import org.jboss.forge.shell.spi.CommandInterceptor;
@@ -162,7 +163,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
    private OutputStream outputStream;
    private OutputStream historyOutstream;
 
-   private BufferManager screenBuffer;
+   private BufferManager screenBuffer = NoopBufferManager.INSTANCE;
 
    // overrides
    private InputStream _redirectedStream;
