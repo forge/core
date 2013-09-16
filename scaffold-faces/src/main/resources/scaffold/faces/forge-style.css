@@ -238,7 +238,7 @@ footer p {
 
 #content .search {
 	display: block;
-	background-image: url(#{request.contextPath}/resources/search.png);
+	background-image: url('#{request.contextPath}/resources/search.png');
 	background-position: 30px 3px;
     background-repeat: no-repeat;
     padding-bottom: 20px;
@@ -278,14 +278,14 @@ footer p {
 	display: block;
 	width: 22px;
 	height: 22px;
-	background-image: url(#{request.contextPath}/resources/false.png);
+	background-image: url('#{request.contextPath}/resources/false.png');
 }
 
 #content .boolean-true {
 	display: block;
 	width: 22px;
 	height: 22px;
-	background-image: url(#{request.contextPath}/resources/true.png);
+	background-image: url('#{request.contextPath}/resources/true.png');
 }
 
 #content .data-table .boolean-true {
@@ -356,7 +356,7 @@ footer p {
 	display: block;
 	width: 22px;
 	height: 22px;
-	background-image: url(#{request.contextPath}/resources/remove.png);
+	background-image: url('#{request.contextPath}/resources/remove.png');
 }
 
 #content .data-table-footer {
@@ -381,7 +381,7 @@ footer p {
 	display: block;
 	width: 22px;
 	height: 22px;
-	background-image: url(#{request.contextPath}/resources/add.png);
+	background-image: url('#{request.contextPath}/resources/add.png');
 }
 
 #content .buttons {
