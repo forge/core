@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.inject.Inject;
 
@@ -70,7 +69,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    private ProjectBuildingResult fullBuildingResult;
    private ProjectBuilder builder = null;
    private ResourceMonitor monitor;
-   private ReentrantLock lock = new ReentrantLock(true);
+   private Object lock = new Object();
 
    @Inject
    private MavenContainer container;
@@ -303,58 +302,57 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
     */
    public ProjectBuildingResult getProjectBuildingResult()
    {
-      try
+      if (this.buildingResult == null || this.fullBuildingResult == null)
       {
-         lock.lock();
-
-         if (this.fullBuildingResult == null)
+         synchronized (lock)
          {
-            ProjectBuildingRequest request = null;
-            request = getRequest();
-            File pomFile = getPomResource().getUnderlyingResourceObject();
-            if (request != null)
+            if (this.buildingResult == null || this.fullBuildingResult == null)
             {
                try
                {
-                  request.setResolveDependencies(true);
-                  buildingResult = getBuilder().build(pomFile, request);
-                  fullBuildingResult = buildingResult;
+                  ProjectBuildingRequest request = null;
+                  request = getRequest();
+                  File pomFile = getPomResource().getUnderlyingResourceObject();
+                  if (request != null)
+                  {
+                     try
+                     {
+                        request.setResolveDependencies(true);
+                        buildingResult = getBuilder().build(pomFile, request);
+                        fullBuildingResult = buildingResult;
+                     }
+                     catch (RuntimeException full)
+                     {
+                        throw full;
+                     }
+                     catch (Exception full)
+                     {
+                        throw new RuntimeException(full);
+                     }
+                  }
+                  else
+                  {
+                     throw new RuntimeException("Project building request was null");
+                  }
                }
-               catch (RuntimeException full)
+               finally
                {
-                  throw full;
+                  lock.notifyAll();
                }
-               catch (Exception full)
-               {
-                  throw new RuntimeException(full);
-               }
-            }
-            else
-            {
-               throw new RuntimeException("Project building request was null");
             }
          }
-      }
-      finally
-      {
-         lock.unlock();
       }
       return fullBuildingResult;
    }
 
    private void invalidateBuildingResults()
    {
-      try
+      synchronized (lock)
       {
-         lock.lock();
          this.buildingResult = null;
          this.fullBuildingResult = null;
+         lock.notifyAll();
       }
-      finally
-      {
-         lock.unlock();
-      }
-
    }
 
    @Override
