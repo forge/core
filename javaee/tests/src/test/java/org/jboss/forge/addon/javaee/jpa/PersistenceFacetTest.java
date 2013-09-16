@@ -21,7 +21,6 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.ui.test.WizardTester;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,7 +38,6 @@ public class PersistenceFacetTest
    public static ForgeArchive getDeployment()
    {
       return ShrinkWrap.create(ForgeArchive.class)
-               .addPackages(true, WizardTester.class.getPackage())
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
