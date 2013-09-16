@@ -54,7 +54,10 @@ public class UIContextListenerTest
    @Test
    public void testContextListenerIsSet() throws Exception
    {
-      Assert.assertTrue("Wizard is not in a valid state", wizardTester.isValid());
+      Assert.assertTrue("Wizard is not on a valid state", wizardTester.isValid());
       Assert.assertTrue("Listener is not set", listener.isContextInitialized());
+      wizardTester.finish(null);
+      Assert.assertFalse("Listener is still set", listener.isContextInitialized());
+
    }
 }
