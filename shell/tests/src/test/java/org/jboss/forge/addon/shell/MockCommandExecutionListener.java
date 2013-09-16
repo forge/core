@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.shell;
 
+import org.jboss.forge.addon.ui.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -15,7 +16,7 @@ import org.junit.Assert;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MockCommandExecutionListener implements CommandExecutionListener
+public class MockCommandExecutionListener extends AbstractCommandExecutionListener
 {
    private boolean pre;
    private boolean post;

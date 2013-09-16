@@ -32,7 +32,7 @@ import org.jboss.aesh.terminal.TestTerminal;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ShellFactory;
 import org.jboss.forge.addon.shell.test.ShellTest;
-import org.jboss.forge.addon.ui.CommandExecutionListener;
+import org.jboss.forge.addon.ui.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.result.Result;
@@ -380,7 +380,7 @@ public class DefaultShellTest implements ShellTest
 
    }
 
-   public class TestCommandListener implements CommandExecutionListener
+   public class TestCommandListener extends AbstractCommandExecutionListener
    {
       Result result;
 

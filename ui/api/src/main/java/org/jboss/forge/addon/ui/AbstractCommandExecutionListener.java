@@ -30,4 +30,10 @@ public abstract class AbstractCommandExecutionListener implements CommandExecuti
       // do nothing
    }
 
+   @Override
+   public void postCommandFailure(UICommand command, UIContext context, Throwable failure)
+   {
+      // do nothing
+
+   }
 }

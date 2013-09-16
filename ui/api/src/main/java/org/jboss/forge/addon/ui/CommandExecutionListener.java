@@ -29,4 +29,11 @@ public interface CommandExecutionListener
     * {@link UIContext}.
     */
    public void postCommandExecuted(UICommand command, UIContext context, Result result);
+
+   /**
+    * Called after the given {@link UICommand} has been executed. Provides the command {@link Result} and current
+    * {@link UIContext}.
+    */
+   public void postCommandFailure(UICommand command, UIContext context, Throwable failure);
+
 }
