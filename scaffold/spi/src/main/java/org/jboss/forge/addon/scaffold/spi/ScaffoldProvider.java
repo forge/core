@@ -13,12 +13,14 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
+import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Provides an implementation of Scaffolding for various UI code generation operations.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@Exported
 public interface ScaffoldProvider extends ProjectFacet, UIValidator
 {
    /**

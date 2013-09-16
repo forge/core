@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -30,6 +31,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.services.Imported;
 
 /**
  * Scaffold wizard
@@ -51,8 +53,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    private UIInput<Boolean> overwrite;
 
    @Inject
-   @WithAttributes(label = "Install Templates in src/main/templates?", defaultValue = "false")
-   private UIInput<Boolean> installTemplates;
+   private Imported<ScaffoldProvider> scaffoldProviders;
 
    @Inject
    private ProjectFactory factory;
@@ -70,12 +71,23 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
             return selectedProvider != null && selectedProvider.needsOverwriteConfirmation(scaffoldContext);
          }
       });
-      builder.add(provider).add(target).add(overwrite).add(installTemplates);
+      
+      provider.setValueChoices(scaffoldProviders);
+      provider.setItemLabelConverter(new Converter<ScaffoldProvider, String>()
+      {
+         
+         @Override
+         public String convert(ScaffoldProvider source)
+         {
+            return source == null ? null: source.getName();
+         }
+      });
+      builder.add(provider).add(target).add(overwrite);
    }
 
    private ScaffoldContext newScaffoldContext()
    {
-      return new ScaffoldContext(target.getValue(), overwrite.getValue(), installTemplates.getValue());
+      return new ScaffoldContext(target.getValue(), overwrite.getValue());
    }
 
    @Override

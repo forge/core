@@ -33,6 +33,17 @@
          <classifier>forge-addon</classifier>
          <scope>test</scope>
       </dependency>
+      
+      <dependency>
+         <groupId>org.jboss.forge.furnace.test</groupId>
+         <artifactId>furnace-test-harness</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.furnace.test</groupId>
+         <artifactId>arquillian-furnace-classpath</artifactId>
+         <scope>test</scope>
+      </dependency>
    </dependencies>
 
    <build>

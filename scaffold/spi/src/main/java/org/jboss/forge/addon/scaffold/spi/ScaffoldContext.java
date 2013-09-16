@@ -18,14 +18,12 @@ public class ScaffoldContext
 {
    private final DirectoryResource targetDirectory;
    private final boolean overwrite;
-   private final boolean installTemplates;
 
-   public ScaffoldContext(DirectoryResource targetDirectory, boolean overwrite, boolean installTemplates)
+   public ScaffoldContext(DirectoryResource targetDirectory, boolean overwrite)
    {
       super();
       this.targetDirectory = targetDirectory;
       this.overwrite = overwrite;
-      this.installTemplates = installTemplates;
    }
 
    public DirectoryResource getTargetDirectory()
@@ -36,11 +34,6 @@ public class ScaffoldContext
    public boolean isOverwrite()
    {
       return overwrite;
-   }
-
-   public boolean isInstallTemplates()
-   {
-      return installTemplates;
    }
 
 }
