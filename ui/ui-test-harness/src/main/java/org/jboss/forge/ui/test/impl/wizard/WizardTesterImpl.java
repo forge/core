@@ -148,24 +148,31 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
    @Override
    public void finish(WizardListener listener) throws Exception
    {
-      for (UIBuilderImpl builder : pages)
+      try
       {
-         // validate before execute
-         List<String> errors = getValidationErrors(builder);
-         if (!errors.isEmpty())
+         for (UIBuilderImpl builder : pages)
          {
-            throw new IllegalStateException(errors.toString());
+            // validate before execute
+            List<String> errors = getValidationErrors(builder);
+            if (!errors.isEmpty())
+            {
+               throw new IllegalStateException(errors.toString());
+            }
+         }
+         // All good. Hit it !
+         for (UIBuilderImpl builder : pages)
+         {
+            UIWizard wizard = builder.getWizard();
+            Result result = wizard.execute(context);
+            if (listener != null)
+            {
+               listener.wizardExecuted(wizard, result);
+            }
          }
       }
-      // All good. Hit it !
-      for (UIBuilderImpl builder : pages)
+      finally
       {
-         UIWizard wizard = builder.getWizard();
-         Result result = wizard.execute(context);
-         if (listener != null)
-         {
-            listener.wizardExecuted(wizard, result);
-         }
+         context.destroy();
       }
    }
 

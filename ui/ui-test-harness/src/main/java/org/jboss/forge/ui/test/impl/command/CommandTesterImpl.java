@@ -74,33 +74,40 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
    @Override
    public void execute(CommandExecutionListener listener) throws Exception
    {
-      // validate before execute
-      List<String> errors = getValidationErrors();
-      if (!errors.isEmpty())
-      {
-         throw new IllegalStateException(errors.toString());
-      }
-      // All good. Hit it !
-      UICommand command = builder.getCommand();
-      if (listener != null)
-      {
-         listener.preCommandExecuted(command, context);
-      }
       try
       {
-         Result result = command.execute(context);
+         // validate before execute
+         List<String> errors = getValidationErrors();
+         if (!errors.isEmpty())
+         {
+            throw new IllegalStateException(errors.toString());
+         }
+         // All good. Hit it !
+         UICommand command = builder.getCommand();
          if (listener != null)
          {
-            listener.postCommandExecuted(command, context, result);
+            listener.preCommandExecuted(command, context);
+         }
+         try
+         {
+            Result result = command.execute(context);
+            if (listener != null)
+            {
+               listener.postCommandExecuted(command, context, result);
+            }
+         }
+         catch (Exception e)
+         {
+            if (listener != null)
+            {
+               listener.postCommandFailure(command, context, e);
+            }
+            throw e;
          }
       }
-      catch (Exception e)
+      finally
       {
-         if (listener != null)
-         {
-            listener.postCommandFailure(command, context, e);
-         }
-         throw e;
+         context.destroy();
       }
    }
 

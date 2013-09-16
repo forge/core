@@ -31,9 +31,11 @@ import org.jboss.forge.addon.shell.aesh.completion.ForgeCompletion;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
+import org.jboss.forge.addon.ui.context.UIContextListener;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Strings;
@@ -55,11 +57,14 @@ public class ShellImpl implements Shell
 
    private Console console;
    private FileResource<?> currentResource;
-   private CommandManager commandManager;
+   private final CommandManager commandManager;
+   private final AddonRegistry addonRegistry;
 
-   public ShellImpl(FileResource<?> initialResource, CommandManager commandManager, Settings settings)
+   public ShellImpl(FileResource<?> initialResource, Settings settings, CommandManager commandManager,
+            AddonRegistry addonRegistry)
    {
       this.currentResource = initialResource;
+      this.addonRegistry = addonRegistry;
       this.commandManager = commandManager;
       init(settings);
    }
@@ -138,8 +143,8 @@ public class ShellImpl implements Shell
       // [ currentdir]$
       List<TerminalCharacter> prompt = new ArrayList<TerminalCharacter>();
       prompt.add(new TerminalCharacter('[', Color.DEFAULT_BG, Color.BLUE_TEXT, CharacterType.BOLD));
-       for(char c : currentResource.getName().toCharArray())
-           prompt.add(new TerminalCharacter(c, Color.DEFAULT_BG, Color.RED_TEXT, CharacterType.PLAIN));
+      for (char c : currentResource.getName().toCharArray())
+         prompt.add(new TerminalCharacter(c, Color.DEFAULT_BG, Color.RED_TEXT, CharacterType.PLAIN));
       prompt.add(new TerminalCharacter(']', Color.DEFAULT_BG, Color.BLUE_TEXT, CharacterType.BOLD));
       prompt.add(new TerminalCharacter('$', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
       prompt.add(new TerminalCharacter(' ', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
@@ -205,10 +210,10 @@ public class ShellImpl implements Shell
 
    }
 
-   public ShellContext newShellContext(ConsoleOperation consoleOperation)
+   public ShellContextImpl newShellContext(ConsoleOperation consoleOperation)
    {
-      ShellContextImpl shellContextImpl = new ShellContextImpl(this, currentResource);
-      shellContextImpl.setConsoleOperation(consoleOperation);
+      Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
+      ShellContextImpl shellContextImpl = new ShellContextImpl(this, currentResource, listeners);
       return shellContextImpl;
    }
 

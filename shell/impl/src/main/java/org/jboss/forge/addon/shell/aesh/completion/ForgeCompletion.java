@@ -20,7 +20,7 @@ import org.jboss.aesh.parser.Parser;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
-import org.jboss.forge.addon.shell.ui.ShellContext;
+import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 
 /**
@@ -47,97 +47,111 @@ public class ForgeCompletion implements Completion
    {
       String line = completeOperation.getBuffer();
       // TODO: ConsoleOperation is not set
-      ShellContext shellContext = shell.newShellContext(null);
-      final AbstractShellInteraction cmd = shell.findCommand(shellContext, line);
-      if (cmd == null)
+      ShellContextImpl context = null;
+      try
       {
-         Collection<AbstractShellInteraction> commands = shell.findMatchingCommands(shellContext, line);
-         for (AbstractShellInteraction command : commands)
+         context = shell.newShellContext(null);
+         final AbstractShellInteraction cmd = shell.findCommand(context, line);
+         if (cmd == null)
          {
-            completeOperation.addCompletionCandidate(command.getName());
-         }
-      }
-      else if (line.equals(cmd.getName()))
-      {
-         completeOperation.addCompletionCandidate(" ");
-      }
-      else
-      {
-         try
-         {
-            // We are dealing with one-level commands only.
-            // Eg. new-project-type --named ... instead of new-project-type setup --named ...
-            // cmd.populateInputs(line, true);
-            ParsedCompleteObject completeObject = cmd.parseCompleteObject(line);
-
-             //completing an option name
-            if (completeObject.doDisplayOptions())
+            Collection<AbstractShellInteraction> commands = shell.findMatchingCommands(context, line);
+            for (AbstractShellInteraction command : commands)
             {
-                //display all possible options names
-                List<String> options = cmd.getCompletionOptions(completeObject.getName(), line);
-                completeOperation.addCompletionCandidates(options);
-                completeOperation.setOffset( completeOperation.getCursor() - completeObject.getOffset());
+               completeOperation.addCompletionCandidate(command.getName());
             }
-             //completing an option value or argument
-            else
+         }
+         else if (line.equals(cmd.getName()))
+         {
+            completeOperation.addCompletionCandidate(" ");
+         }
+         else
+         {
+            try
             {
-               final InputComponent<?, Object> input;
-               if (completeObject.isOption())
+               // We are dealing with one-level commands only.
+               // Eg. new-project-type --named ... instead of new-project-type setup --named ...
+               // cmd.populateInputs(line, true);
+               ParsedCompleteObject completeObject = cmd.parseCompleteObject(line);
+
+               // completing an option name
+               if (completeObject.doDisplayOptions())
                {
-                  // try to complete an option value. Eg: "--xxx"
-                  input = cmd.getInputs().get(completeObject.getName());
+                  // display all possible options names
+                  List<String> options = cmd.getCompletionOptions(completeObject.getName(), line);
+                  completeOperation.addCompletionCandidates(options);
+                  completeOperation.setOffset(completeOperation.getCursor() - completeObject.getOffset());
                }
-               // try to complete a argument value Eg: ls . (. is the argument)
-               else if (completeObject.isArgument())
-               {
-                  input = cmd.getInputs().get(ARGUMENTS_INPUT_NAME); // default for arguments
-               }
+               // completing an option value or argument
                else
                {
-                  input = null;
-               }
-               String typedValue = completeObject.getValue();
-               if (typedValue == null)
-               {
-                  typedValue = "";
-               }
-               if (input != null)
-               {
-                  ConverterFactory converterFactory = shell.getConverterFactory();
-                  CompletionStrategy completionObj = CompletionStrategyFactory.getCompletionFor(input);
-                  completionObj.complete(completeOperation, input, shellContext, typedValue, converterFactory);
-               }
-               // if we only have one complete candidate, leave the escaped space be
-               List<String> candidates = completeOperation.getCompletionCandidates();
-                completeOperation.addCompletionCandidates(candidates);
-                completeOperation.setOffset( completeOperation.getCursor() - completeObject.getOffset());
-               if (candidates.size() > 1)
-               {
-                  completeOperation.removeEscapedSpacesFromCompletionCandidates();
-               }
-                else if(candidates.size() == 1) {
-                   if(completeObject.getValue().contains(" "))
-                   {
-                       completeOperation.setOffset( completeOperation.getCursor() -
-                               (completeObject.getValue().length() + Parser.findNumberOfSpacesInWord(completeObject.getValue())));
-                   }
-                   else
-                       completeOperation.setOffset( completeOperation.getCursor() - completeObject.getValue().length());
+                  final InputComponent<?, Object> input;
+                  if (completeObject.isOption())
+                  {
+                     // try to complete an option value. Eg: "--xxx"
+                     input = cmd.getInputs().get(completeObject.getName());
+                  }
+                  // try to complete a argument value Eg: ls . (. is the argument)
+                  else if (completeObject.isArgument())
+                  {
+                     input = cmd.getInputs().get(ARGUMENTS_INPUT_NAME); // default for arguments
+                  }
+                  else
+                  {
+                     input = null;
+                  }
+                  String typedValue = completeObject.getValue();
+                  if (typedValue == null)
+                  {
+                     typedValue = "";
+                  }
+                  if (input != null)
+                  {
+                     ConverterFactory converterFactory = shell.getConverterFactory();
+                     CompletionStrategy completionObj = CompletionStrategyFactory.getCompletionFor(input);
+                     completionObj.complete(completeOperation, input, context, typedValue, converterFactory);
+                  }
+                  // if we only have one complete candidate, leave the escaped space be
+                  List<String> candidates = completeOperation.getCompletionCandidates();
+                  completeOperation.addCompletionCandidates(candidates);
+                  completeOperation.setOffset(completeOperation.getCursor() - completeObject.getOffset());
+                  if (candidates.size() > 1)
+                  {
+                     completeOperation.removeEscapedSpacesFromCompletionCandidates();
+                  }
+                  else if (candidates.size() == 1)
+                  {
+                     if (completeObject.getValue().contains(" "))
+                     {
+                        completeOperation.setOffset(completeOperation.getCursor()
+                                 -
+                                 (completeObject.getValue().length() + Parser.findNumberOfSpacesInWord(completeObject
+                                          .getValue())));
+                     }
+                     else
+                        completeOperation.setOffset(completeOperation.getCursor() - completeObject.getValue().length());
+                  }
                }
             }
-         }
-         catch (ArgumentParserException e)
-         {
-            if (!cmd.getInputs().isEmpty())
+            catch (ArgumentParserException e)
             {
-               completeOperation.doAppendSeparator(false);
-               completeOperation.addCompletionCandidate(line + "--");
+               if (!cmd.getInputs().isEmpty())
+               {
+                  completeOperation.doAppendSeparator(false);
+                  completeOperation.addCompletionCandidate(line + "--");
+               }
+            }
+            catch (Exception e)
+            {
+               logger.log(Level.WARNING, "Failed to complete.", e);
+               return;
             }
          }
-         catch (Exception e)
+      }
+      finally
+      {
+         if (context != null)
          {
-            logger.log(Level.WARNING, "Failed to complete.", e);
-            return;
+            context.destroy();
          }
       }
    }

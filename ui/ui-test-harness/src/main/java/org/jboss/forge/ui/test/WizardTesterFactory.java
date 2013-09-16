@@ -15,7 +15,9 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.ui.context.UIContextListener;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.ui.test.impl.UIContextImpl;
 import org.jboss.forge.ui.test.impl.wizard.WizardTesterImpl;
 
@@ -56,7 +58,8 @@ public class WizardTesterFactory
    public static WizardTesterImpl<?> create(Class<?> wizardClass, AddonRegistry addonRegistry,
             Resource<?>... initialSelection) throws Exception
    {
-      UIContextImpl context = new UIContextImpl(initialSelection);
+      Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
+      UIContextImpl context = new UIContextImpl(listeners, initialSelection);
       return new WizardTesterImpl(wizardClass, addonRegistry, context);
    }
 }

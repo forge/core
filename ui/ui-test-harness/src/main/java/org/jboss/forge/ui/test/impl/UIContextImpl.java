@@ -13,20 +13,19 @@ import java.util.List;
 
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.context.AbstractUIContext;
+import org.jboss.forge.addon.ui.context.UIContextListener;
 import org.jboss.forge.addon.ui.context.UISelection;
 
 public class UIContextImpl extends AbstractUIContext implements UISelection<Resource<?>>
 {
    private List<Resource<?>> selection;
+   private final Iterable<UIContextListener> listeners;
 
-   public UIContextImpl(Resource<?>... initialSelection)
+   public UIContextImpl(Iterable<UIContextListener> listeners, Resource<?>... initialSelection)
    {
+      this.listeners = listeners;
       setInitialSelection(initialSelection);
-   }
-
-   public UIContextImpl(List<Resource<?>> initialSelection)
-   {
-      setInitialSelection(initialSelection);
+      init();
    }
 
    public void setInitialSelection(Resource<?>... initialSelection)
@@ -68,5 +67,21 @@ public class UIContextImpl extends AbstractUIContext implements UISelection<Reso
    public boolean isEmpty()
    {
       return selection.isEmpty();
+   }
+
+   public void init()
+   {
+      for (UIContextListener listener : listeners)
+      {
+         listener.contextInitialized(this);
+      }
+   }
+
+   public void destroy()
+   {
+      for (UIContextListener listener : listeners)
+      {
+         listener.contextDestroyed(this);
+      }
    }
 }
