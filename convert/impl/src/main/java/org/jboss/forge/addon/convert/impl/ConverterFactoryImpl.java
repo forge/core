@@ -40,7 +40,7 @@ public class ConverterFactoryImpl implements ConverterFactory
 
       if (result == null)
       {
-         if (String.class.equals(source) && registry.getServices(target).isSatisfied())
+         if (String.class.equals(source) && !registry.getServices(target).isUnsatisfied())
          {
             result = (Converter<S, T>) new StringToImportedInstanceConverter<T>(target, registry);
          }
