@@ -596,6 +596,14 @@
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <inherited>true</inherited>
+            <configuration>
+               <preparationGoals>clean install</preparationGoals>
+            </configuration>
+         </plugin>      
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <configuration>
                <source>1.6</source>
