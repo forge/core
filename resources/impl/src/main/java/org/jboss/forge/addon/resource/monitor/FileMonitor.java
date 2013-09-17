@@ -23,6 +23,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceFilter;
+import org.jboss.forge.furnace.container.cdi.events.Local;
 import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.forge.furnace.event.PreShutdown;
 
@@ -54,12 +55,12 @@ public class FileMonitor
       });
    }
 
-   void init(@Observes PostStartup postStartup) throws Exception
+   void init(@Observes @Local PostStartup postStartup) throws Exception
    {
       alterationMonitor.start();
    }
 
-   void destroy(@Observes PreShutdown preShutdown) throws Exception
+   void destroy(@Observes @Local PreShutdown preShutdown) throws Exception
    {
       alterationMonitor.stop();
    }
