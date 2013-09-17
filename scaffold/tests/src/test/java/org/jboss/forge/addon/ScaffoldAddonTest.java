@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -17,7 +19,9 @@ import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ExportedInstance;
 import org.jboss.forge.furnace.spi.ServiceRegistry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -51,13 +55,18 @@ public class ScaffoldAddonTest
    }
 
    @Inject
-   private ServiceRegistry registry;
+   private AddonRegistry registry;
 
    @Test
    public void testCanLoadScaffoldProviders() throws Exception
    {
-      Set<ExportedInstance<ScaffoldProvider>> providerInstances = registry.getExportedInstances(ScaffoldProvider.class);
-      Assert.assertFalse(providerInstances.isEmpty());
-      Assert.assertNotNull(providerInstances.iterator().next().get());
+      Imported<ScaffoldProvider> providerInstances = registry.getServices(ScaffoldProvider.class);
+      List<ScaffoldProvider> providerList = new ArrayList<ScaffoldProvider>();
+      for(ScaffoldProvider provider: providerInstances)
+      {
+         providerList.add(provider);
+      }
+      Assert.assertFalse(providerList.isEmpty());
+      Assert.assertNotNull(providerList.get(0));
    }
 }
