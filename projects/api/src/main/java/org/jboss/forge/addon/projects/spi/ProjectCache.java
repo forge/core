@@ -8,7 +8,6 @@ package org.jboss.forge.addon.projects.spi;
 
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Responsible for caching {@link Project} instances so that they do not need to be re-built or re-generated for
@@ -16,7 +15,6 @@ import org.jboss.forge.furnace.services.Exported;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Exported
 public interface ProjectCache
 {
    /**

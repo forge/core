@@ -15,9 +15,7 @@ import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.forge.furnace.services.Exported;
 
-@Exported
 public class MockNewProjectCommand implements UICommand, UIWizardStep
 {
 

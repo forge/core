@@ -3,7 +3,6 @@ package org.jboss.forge.addon.projects.dependencies;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Responsible for installing a given {@link Dependency} into the specified project. Resolves available dependency
@@ -11,7 +10,6 @@ import org.jboss.forge.furnace.services.Exported;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Exported
 public interface DependencyInstaller
 {
    /**

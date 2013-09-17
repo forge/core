@@ -9,7 +9,6 @@ package org.jboss.forge.addon.projects;
 import org.jboss.forge.addon.projects.spi.ProjectCache;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Predicate;
 
@@ -18,7 +17,6 @@ import org.jboss.forge.furnace.util.Predicate;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Exported
 public interface ProjectFactory
 {
    /**

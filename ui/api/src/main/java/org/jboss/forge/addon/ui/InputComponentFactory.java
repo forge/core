@@ -11,7 +11,6 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Allows creation of input components without injection
@@ -19,7 +18,6 @@ import org.jboss.forge.furnace.services.Exported;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-@Exported
 public interface InputComponentFactory
 {
    /**

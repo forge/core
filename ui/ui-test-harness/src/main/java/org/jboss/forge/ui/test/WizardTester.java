@@ -12,7 +12,6 @@ import java.util.List;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * A {@link WizardTester} allows easy testing of Wizard flows by using the Forge UI API
@@ -21,7 +20,6 @@ import org.jboss.forge.furnace.services.Exported;
  * 
  * @param <W>
  */
-@Exported
 public interface WizardTester<W extends UIWizard>
 {
    public void setInitialSelection(Resource<?>... selection);

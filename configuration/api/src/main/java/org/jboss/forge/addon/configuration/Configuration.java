@@ -13,13 +13,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import org.jboss.forge.furnace.services.Exported;
-
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Commons Configuration team
  */
-@Exported
 public interface Configuration
 {
    /**
@@ -167,7 +164,7 @@ public interface Configuration
     * @param key The configuration key.
     * @return The associated properties if key is found.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a String/List.
+    * @throws a conversion exception is thrown if the key maps to an object that is not a String/List.
     * 
     * @throws IllegalArgumentException if one of the tokens is malformed (does not contain an equals sign).
     */
@@ -179,7 +176,7 @@ public interface Configuration
     * @param key The configuration key.
     * @return The associated boolean.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Boolean.
+    * @throws a conversion exception is thrown if the key maps to an object that is not a Boolean.
     */
    boolean getBoolean(String key);
 
@@ -191,7 +188,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated boolean.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Boolean.
+    * @throws an exception is thrown if the key maps to an object that is not a Boolean.
     */
    boolean getBoolean(String key, boolean defaultValue);
 
@@ -202,7 +199,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated boolean if key is found and has valid format, default value otherwise.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Boolean.
+    * @throws an exception is thrown if the key maps to an object that is not a Boolean.
     */
    Boolean getBoolean(String key, Boolean defaultValue);
 
@@ -212,7 +209,7 @@ public interface Configuration
     * @param key The configuration key.
     * @return The associated byte.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Byte.
+    * @throws an exception is thrown if the key maps to an object that is not a Byte.
     */
    byte getByte(String key);
 
@@ -224,7 +221,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated byte.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Byte.
+    * @throws an exception is thrown if the key maps to an object that is not a Byte.
     */
    byte getByte(String key, byte defaultValue);
 
@@ -235,7 +232,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated byte if key is found and has valid format, default value otherwise.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Byte.
+    * @throws an exception is thrown if the key maps to an object that is not a Byte.
     */
    Byte getByte(String key, Byte defaultValue);
 
@@ -245,7 +242,7 @@ public interface Configuration
     * @param key The configuration key.
     * @return The associated double.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Double.
+    * @throws an exception is thrown if the key maps to an object that is not a Double.
     */
    double getDouble(String key);
 
@@ -257,7 +254,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated double.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Double.
+    * @throws an exception is thrown if the key maps to an object that is not a Double.
     */
    double getDouble(String key, double defaultValue);
 
@@ -268,7 +265,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated double if key is found and has valid format, default value otherwise.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Double.
+    * @throws an exception is thrown if the key maps to an object that is not a Double.
     */
    Double getDouble(String key, Double defaultValue);
 
@@ -277,7 +274,7 @@ public interface Configuration
     * 
     * @param key The configuration key.
     * @return The associated float.
-    * @throws ConversionException is thrown if the key maps to an object that is not a Float.
+    * @throws an exception is thrown if the key maps to an object that is not a Float.
     */
    float getFloat(String key);
 
@@ -289,7 +286,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated float.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Float.
+    * @throws an exception is thrown if the key maps to an object that is not a Float.
     */
    float getFloat(String key, float defaultValue);
 
@@ -301,7 +298,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated float if key is found and has valid format, default value otherwise.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Float.
+    * @throws an exception is thrown if the key maps to an object that is not a Float.
     */
    Float getFloat(String key, Float defaultValue);
 
@@ -311,7 +308,7 @@ public interface Configuration
     * @param key The configuration key.
     * @return The associated int.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Integer.
+    * @throws an exception is thrown if the key maps to an object that is not a Integer.
     */
    int getInt(String key);
 
@@ -323,7 +320,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated int.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Integer.
+    * @throws an exception is thrown if the key maps to an object that is not a Integer.
     */
    int getInt(String key, int defaultValue);
 
@@ -335,7 +332,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated int if key is found and has valid format, default value otherwise.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Integer.
+    * @throws an exception is thrown if the key maps to an object that is not a Integer.
     */
    Integer getInteger(String key, Integer defaultValue);
 
@@ -345,7 +342,7 @@ public interface Configuration
     * @param key The configuration key.
     * @return The associated long.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Long.
+    * @throws an exception is thrown if the key maps to an object that is not a Long.
     */
    long getLong(String key);
 
@@ -357,7 +354,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated long.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Long.
+    * @throws an exception is thrown if the key maps to an object that is not a Long.
     */
    long getLong(String key, long defaultValue);
 
@@ -369,7 +366,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated long if key is found and has valid format, default value otherwise.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Long.
+    * @throws an exception is thrown if the key maps to an object that is not a Long.
     */
    Long getLong(String key, Long defaultValue);
 
@@ -379,7 +376,7 @@ public interface Configuration
     * @param key The configuration key.
     * @return The associated short.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Short.
+    * @throws an exception is thrown if the key maps to an object that is not a Short.
     */
    short getShort(String key);
 
@@ -390,7 +387,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated short.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Short.
+    * @throws an exception is thrown if the key maps to an object that is not a Short.
     */
    short getShort(String key, short defaultValue);
 
@@ -402,7 +399,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated short if key is found and has valid format, default value otherwise.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a Short.
+    * @throws an exception is thrown if the key maps to an object that is not a Short.
     */
    Short getShort(String key, Short defaultValue);
 
@@ -451,7 +448,7 @@ public interface Configuration
     * @param key The configuration key.
     * @return The associated string.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a String.
+    * @throws an exception is thrown if the key maps to an object that is not a String.
     */
    String getString(String key);
 
@@ -463,7 +460,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated string if key is found and has valid format, default value otherwise.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a String.
+    * @throws an exception is thrown if the key maps to an object that is not a String.
     */
    String getString(String key, String defaultValue);
 
@@ -474,7 +471,7 @@ public interface Configuration
     * @param key The configuration key.
     * @return The associated string array if key is found.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a String/List of Strings.
+    * @throws an exception is thrown if the key maps to an object that is not a String/List of Strings.
     */
    String[] getStringArray(String key);
 
@@ -485,7 +482,7 @@ public interface Configuration
     * @param key The configuration key.
     * @return The associated List.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a List.
+    * @throws an exception is thrown if the key maps to an object that is not a List.
     */
    List<?> getList(String key);
 
@@ -497,7 +494,7 @@ public interface Configuration
     * @param defaultValue The default value.
     * @return The associated List of strings.
     * 
-    * @throws ConversionException is thrown if the key maps to an object that is not a List.
+    * @throws an exception is thrown if the key maps to an object that is not a List.
     */
    List<?> getList(String key, List<?> defaultValue);
 

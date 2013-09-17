@@ -8,13 +8,10 @@ package org.jboss.forge.addon.maven.resources;
 
 import java.io.File;
 
-import org.jboss.forge.addon.maven.resources.MavenPomResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceGenerator;
-import org.jboss.forge.furnace.services.Exported;
 
-@Exported
 public class MavenResourceGenerator implements ResourceGenerator<MavenPomResource, File>
 {
    @Override

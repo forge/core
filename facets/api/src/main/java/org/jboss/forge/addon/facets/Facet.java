@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.addon.facets;
 
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * A {@link Facet} is an access point to common functionality, file manipulations, descriptors that extend a
@@ -19,7 +18,6 @@ import org.jboss.forge.furnace.services.Exported;
  * 
  * @see {@link AbstractFacet}
  */
-@Exported
 public interface Facet<FACETEDTYPE extends Faceted<?>>
 {
    /**

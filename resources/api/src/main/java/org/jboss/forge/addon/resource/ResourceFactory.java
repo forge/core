@@ -7,13 +7,11 @@
 package org.jboss.forge.addon.resource;
 
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-@Exported
 public interface ResourceFactory
 {
    /**

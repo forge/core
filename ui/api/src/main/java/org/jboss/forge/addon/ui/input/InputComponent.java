@@ -12,14 +12,12 @@ import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.MutableFaceted;
 import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * This is the parent interface of all inputs.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Exported
 public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<HintsFacet>, UIValidator
 {
    String getLabel();

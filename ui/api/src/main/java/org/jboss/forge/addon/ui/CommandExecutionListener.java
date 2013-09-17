@@ -6,17 +6,14 @@
  */
 package org.jboss.forge.addon.ui;
 
-import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * A listener for the {@link UICommand} execution lifecycle.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Exported
 public interface CommandExecutionListener
 {
    /**

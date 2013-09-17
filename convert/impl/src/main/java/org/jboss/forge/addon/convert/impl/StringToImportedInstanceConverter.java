@@ -11,15 +11,12 @@ import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.addon.convert.AbstractConverter;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.services.Imported;
 
 /**
- * Lookups in the {@link AddonRegistry} an {@link Exported} instance based on the {@link Object#toString()} method
+ * Lookups in the {@link AddonRegistry} an instance based on the {@link Object#toString()} method
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
- * @param <TARGETTYPE> a type declaring the {@link Exported} annotation
  */
 @Vetoed
 public class StringToImportedInstanceConverter<TARGETTYPE> extends AbstractConverter<String, TARGETTYPE>

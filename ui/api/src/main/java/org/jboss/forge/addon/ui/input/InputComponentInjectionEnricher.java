@@ -9,14 +9,11 @@ package org.jboss.forge.addon.ui.input;
 
 import javax.enterprise.inject.spi.InjectionPoint;
 
-import org.jboss.forge.furnace.services.Exported;
-
 /**
  * Enriches an injected {@link InputComponent}
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@Exported
 public interface InputComponentInjectionEnricher
 {
    public void enrich(InjectionPoint injectionPoint, InputComponent<?, ?> input);

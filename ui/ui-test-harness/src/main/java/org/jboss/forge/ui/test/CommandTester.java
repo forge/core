@@ -5,9 +5,7 @@ import java.util.List;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.furnace.services.Exported;
 
-@Exported
 public interface CommandTester<C extends UICommand>
 {
 

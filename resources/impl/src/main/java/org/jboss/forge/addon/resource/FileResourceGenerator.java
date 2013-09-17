@@ -2,14 +2,6 @@ package org.jboss.forge.addon.resource;
 
 import java.io.File;
 
-import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.ResourceGenerator;
-import org.jboss.forge.furnace.services.Exported;
-
-@Exported
 public class FileResourceGenerator implements ResourceGenerator<FileResource<?>, File>
 {
    @Override

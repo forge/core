@@ -8,13 +8,11 @@
 package org.jboss.forge.addon.projects;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * @author <a href="mailto:torben@jit-central.com">Torben Jaeger</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Exported
 public interface ProjectAssociationProvider
 {
    /**

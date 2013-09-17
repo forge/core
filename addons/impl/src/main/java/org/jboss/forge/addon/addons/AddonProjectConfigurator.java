@@ -38,7 +38,6 @@ import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.addons.AddonId;
-import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.util.Streams;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.parser.JavaParser;
@@ -50,7 +49,6 @@ import org.jboss.forge.parser.java.JavaPackageInfo;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-@Exported
 @SuppressWarnings("unchecked")
 public class AddonProjectConfigurator
 {

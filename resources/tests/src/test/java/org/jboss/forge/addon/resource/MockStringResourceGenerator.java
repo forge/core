@@ -1,11 +1,6 @@
 package org.jboss.forge.addon.resource;
 
-import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.ResourceGenerator;
-import org.jboss.forge.furnace.services.Exported;
 
-@Exported
 public class MockStringResourceGenerator implements ResourceGenerator<MockStringResource, String>
 {
    @Override

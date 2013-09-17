@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.convert;
 
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Creates {@link Converter} objects
@@ -15,7 +14,6 @@ import org.jboss.forge.furnace.services.Exported;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-@Exported
 public interface ConverterFactory
 {
    /**

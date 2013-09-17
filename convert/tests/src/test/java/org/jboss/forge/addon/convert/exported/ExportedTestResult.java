@@ -7,9 +7,7 @@
 
 package org.jboss.forge.addon.convert.exported;
 
-import org.jboss.forge.furnace.services.Exported;
 
-@Exported
 public interface ExportedTestResult
 {
 

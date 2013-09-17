@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.addon.javaee.jpa;
 
-import org.jboss.forge.furnace.services.Exported;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
 
@@ -17,7 +16,6 @@ import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-@Exported
 public interface PersistenceContainer
 {
    /**

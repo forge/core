@@ -34,9 +34,7 @@ import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.services.Imported;
-import org.jboss.forge.furnace.util.Annotations;
 
 /**
  * Produces UIInput objects
@@ -278,7 +276,7 @@ public class InputComponentProducer implements InputComponentFactory
       {
          choices = Arrays.asList(Boolean.TRUE, Boolean.FALSE);
       }
-      else if (Annotations.isAnnotationPresent(valueType, Exported.class))
+      else if (addonRegistry.getServices(valueType).isSatisfied())
       {
          // Auto-populate Exported values on SelectComponents
          List<Object> choiceList = new ArrayList<Object>();

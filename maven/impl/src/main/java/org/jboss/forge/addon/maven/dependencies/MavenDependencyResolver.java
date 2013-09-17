@@ -50,11 +50,9 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.manager.maven.MavenOperationException;
-import org.jboss.forge.furnace.services.Exported;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.forge.furnace.util.Strings;
 
-@Exported
 public class MavenDependencyResolver implements DependencyResolver
 {
    private final MavenContainer container;

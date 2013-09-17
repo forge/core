@@ -224,11 +224,10 @@ Your complete POM should now look something like this:
 
 === Add behavior to your addon
 
-Once this is done, to expose services in your Addon for injection and service lookups in other addons, your types must be annotated with **@Exported**: 
+A service is implemented as a POJO (Plain Old Java Object): 
 
 [source,java]
 ----
-@Exported
 public class ExampleServiceImpl
 {
    public ServiceResult doSomething() {
@@ -237,18 +236,17 @@ public class ExampleServiceImpl
 }
 ----
 
-However, best practices favor placing the **@Exported** annotation on a service interface, otherwise consumers will be required to request your specific service implementation. For example:
+However, best practices favor creating a service interface, otherwise consumers will be required to request your specific service implementation. For example:
 
 [source,java]
 ----
-@Exported
 public interface ExampleService
 {
    public ServiceResult doSomething();
 }
 ----
 
-Then simply implement the service interface, and the **@Exported** annotation will be inherited automatically:
+Then simply implement the service interface:
 
 [source,java]
 ----

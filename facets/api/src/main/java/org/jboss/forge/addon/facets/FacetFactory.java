@@ -6,14 +6,12 @@
  */
 package org.jboss.forge.addon.facets;
 
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Responsible for instantiation of new {@link Facet} instances.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Exported
 public interface FacetFactory
 {
    /**

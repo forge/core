@@ -16,9 +16,7 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.environment.Category;
 import org.jboss.forge.addon.environment.Environment;
-import org.jboss.forge.furnace.services.Exported;
 
-@Exported
 @Singleton
 public class EnvironmentImpl implements Environment
 {

@@ -16,14 +16,12 @@ import org.jboss.aesh.console.Buffer;
 import org.jboss.aesh.console.Console;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Utility for interacting with the Forge shell in a synchronous manner.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Exported
 public interface ShellTest
 {
    /**

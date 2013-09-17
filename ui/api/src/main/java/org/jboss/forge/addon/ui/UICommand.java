@@ -14,7 +14,6 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * An {@link UICommand} represents a possible interaction from the user with the installed addon.
@@ -22,7 +21,6 @@ import org.jboss.forge.furnace.services.Exported;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-@Exported
 public interface UICommand extends UIValidator
 {
    /**

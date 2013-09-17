@@ -10,16 +10,14 @@ import java.util.Set;
 
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.javaee.descriptor.ValidationDescriptor;
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * @author Kevin Pollet
  */
-@Exported
 public interface ValidationProvider
 {
    String getName();
-   
+
    ValidationDescriptor getDefaultDescriptor();
 
    Set<Dependency> getDependencies();

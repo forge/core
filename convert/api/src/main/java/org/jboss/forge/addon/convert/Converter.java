@@ -7,9 +7,7 @@
 
 package org.jboss.forge.addon.convert;
 
-import org.jboss.forge.furnace.services.Exported;
 
-@Exported
 public interface Converter<SOURCE_TYPE, TARGET_TYPE>
 {
    /**

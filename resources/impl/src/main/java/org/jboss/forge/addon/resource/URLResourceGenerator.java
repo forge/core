@@ -9,19 +9,12 @@ package org.jboss.forge.addon.resource;
 
 import java.net.URL;
 
-import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.ResourceGenerator;
-import org.jboss.forge.addon.resource.URLResource;
-import org.jboss.forge.furnace.services.Exported;
-
 /**
  * Generates {@link URLResource} objects
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-@Exported
 public class URLResourceGenerator implements ResourceGenerator<URLResource, URL>
 {
    @Override

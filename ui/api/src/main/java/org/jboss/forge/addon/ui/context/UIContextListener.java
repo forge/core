@@ -8,14 +8,12 @@
 package org.jboss.forge.addon.ui.context;
 
 import org.jboss.forge.addon.ui.CommandExecutionListener;
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Listener for lifecycle events of a {@link UIContext}.
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@Exported
 public interface UIContextListener
 {
    /**
