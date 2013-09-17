@@ -88,6 +88,7 @@
             <module>maven</module>
             <module>projects</module>
             <module>parser-java</module>
+            <module>parser-xml</module>
             <module>resources</module>
             <module>ui</module>
             <module>convert</module>
