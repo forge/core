@@ -276,7 +276,7 @@ public class InputComponentProducer implements InputComponentFactory
       {
          choices = Arrays.asList(Boolean.TRUE, Boolean.FALSE);
       }
-      else if (addonRegistry.getServices(valueType).isSatisfied())
+      else
       {
          // Auto-populate Exported values on SelectComponents
          List<Object> choiceList = new ArrayList<Object>();
