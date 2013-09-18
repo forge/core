@@ -11,29 +11,26 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.parser.xml.Node;
-import org.jboss.forge.addon.parser.xml.XMLParser;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.parser.xml.Node;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class XMLParserTest
+public class XMLSourceFactoryTest
 {
    @Deployment
    @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
             @AddonDependency(name = "org.jboss.forge.addon:parser-xml")
    })
    public static ForgeArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
+      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
@@ -43,29 +40,13 @@ public class XMLParserTest
       return archive;
    }
 
-   private final static String XML_STRING = 
-      "<parent attr1='1' attr2='2'> " +
-      "  <child num='1'/>           " +
-      "  <child num='2'/>           " +
-      "</parent>                    ";
-
-//   @Inject
-//   private XMLParser xmlParser;
-   
-   @Test
-   public void testXMLParser() throws Exception
-   {
-      System.out.println("**** testXMLParser ****");
-      Node node = helloService.parse(XML_STRING);
-      Assert.assertEquals("parent", node.getName());
-   }
-   
    @Inject
-   private HelloService helloService;
-   
+   private XMLSourceFactory factory;
+
    @Test
-   public void testHelloService() throws Exception
+   public void testJavaResourceCreation() throws Exception
    {
-      helloService.sayHello();
+      Node xmlNode = factory.parse("<test/>");
+      Assert.assertEquals("test", xmlNode.getName());
    }
 }

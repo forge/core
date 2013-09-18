@@ -20,6 +20,10 @@
       <module>tests</module>
    </modules>
 
+   <properties>
+      <version.xml-parser>1.0.0.Final</version.xml-parser>
+   </properties>
+
    <dependencyManagement>
       <dependencies>
          <dependency>
@@ -43,6 +47,11 @@
             <artifactId>ui-spi</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>xml-parser</artifactId>
+            <version>${version.xml-parser}</version>
          </dependency>
       </dependencies>
    </dependencyManagement>

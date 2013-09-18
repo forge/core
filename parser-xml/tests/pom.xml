@@ -34,6 +34,10 @@
          <artifactId>arquillian-furnace-classpath</artifactId>
          <scope>test</scope>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge</groupId>
+         <artifactId>xml-parser</artifactId>
+      </dependency>
 
       <!-- Furnace Container -->
       <dependency>
