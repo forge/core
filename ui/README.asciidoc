@@ -279,7 +279,7 @@ There are two ways to pass state between wizard steps:
 . Add state in UIContext using UIContext.setAttribute
 . Create a class with @CommandScoped and add the necessary attributes on it
 
-CommandScoped classes are available before user interaction (tab when auto-complete or displaying the popup screen) and after execution of a command.  
+CommandScoped classes are available during user interaction. The scope is destroyed when a command (or a wizard including its steps) is run or cancelled
 
  
 
