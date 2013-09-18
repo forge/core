@@ -14,9 +14,9 @@ import java.util.Set;
 
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
-import org.jboss.forge.addon.javaee.descriptor.ValidationDescriptor;
 import org.jboss.forge.addon.javaee.validation.provider.ValidationProvider;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.validationConfiguration11.ValidationConfigurationDescriptor;
 
 /**
  * @author Kevin Pollet
@@ -24,17 +24,17 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 public class HibernateValidatorProvider implements ValidationProvider
 {
    private static final String PROVIDER_NAME = "Hibernate Validator";
-   private final ValidationDescriptor defaultDescriptor;
+   private final ValidationConfigurationDescriptor defaultDescriptor;
    private final Set<Dependency> dependencies;
 
    public HibernateValidatorProvider()
    {
       // define hibernate validator default descriptor file
-      this.defaultDescriptor = Descriptors.create(ValidationDescriptor.class)
-               .setDefaultProvider("org.hibernate.validator.HibernateValidator")
-               .setMessageInterpolator("org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator")
-               .setTraversableResolver("org.hibernate.validator.engine.resolver.DefaultTraversableResolver")
-               .setConstraintValidatorFactory("org.hibernate.validator.engine.ConstraintValidatorFactoryImpl");
+      this.defaultDescriptor = Descriptors.create(ValidationConfigurationDescriptor.class)
+               .defaultProvider("org.hibernate.validator.HibernateValidator")
+               .messageInterpolator("org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator")
+               .traversableResolver("org.hibernate.validator.engine.resolver.DefaultTraversableResolver")
+               .constraintValidatorFactory("org.hibernate.validator.engine.ConstraintValidatorFactoryImpl");
 
       // add hibernate validator dependencies
       final DependencyBuilder hibernateValidator = DependencyBuilder.create()
@@ -47,7 +47,7 @@ public class HibernateValidatorProvider implements ValidationProvider
 
       this.dependencies = unmodifiableSet(dependenciesTmpSet);
    }
-   
+
    @Override
    public String getName()
    {
@@ -55,7 +55,7 @@ public class HibernateValidatorProvider implements ValidationProvider
    }
 
    @Override
-   public ValidationDescriptor getDefaultDescriptor()
+   public ValidationConfigurationDescriptor getDefaultDescriptor()
    {
       return defaultDescriptor;
    }

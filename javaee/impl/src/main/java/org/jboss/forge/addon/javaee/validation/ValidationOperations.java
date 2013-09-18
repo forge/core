@@ -13,12 +13,12 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.javaee.descriptor.ValidationDescriptor;
 import org.jboss.forge.addon.javaee.facets.ValidationFacet;
 import org.jboss.forge.addon.javaee.validation.provider.ValidationProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.validationConfiguration11.ValidationConfigurationDescriptor;
 
 public class ValidationOperations
 {
@@ -42,29 +42,29 @@ public class ValidationOperations
          
          if (provider.getDefaultDescriptor() != null)
          {
-            final ValidationDescriptor providerDescriptor = provider.getDefaultDescriptor();
-            final ValidationDescriptor descriptor = Descriptors.create(ValidationDescriptor.class);
+            final ValidationConfigurationDescriptor providerDescriptor = provider.getDefaultDescriptor();
+            final ValidationConfigurationDescriptor descriptor = Descriptors.create(ValidationConfigurationDescriptor.class);
             String defaultProvider = providerDescriptor.getDefaultProvider();
             if (defaultProvider != null && !defaultProvider.isEmpty())
             {
-               descriptor.setDefaultProvider(defaultProvider);
+               descriptor.defaultProvider(defaultProvider);
             }
             if (messageInterpolator != null)
             {
-               descriptor.setMessageInterpolator(messageInterpolator);
+               descriptor.messageInterpolator(messageInterpolator);
             }
             if (traversableResolver != null)
             {
-               descriptor.setTraversableResolver(traversableResolver);
+               descriptor.traversableResolver(traversableResolver);
             }
             if (constraintValidatorFactory != null)
             {
-               descriptor.setConstraintValidatorFactory(constraintValidatorFactory);
+               descriptor.constraintValidatorFactory(constraintValidatorFactory);
             }
 
             project.getFacet(ValidationFacet.class).saveConfig(descriptor);
          }
-         ValidationDescriptor config = facet.getConfig();
+         ValidationConfigurationDescriptor config = facet.getConfig();
 
          facet.saveConfig(config);
       }

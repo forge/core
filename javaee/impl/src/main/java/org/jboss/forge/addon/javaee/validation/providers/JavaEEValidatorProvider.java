@@ -10,9 +10,9 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.jboss.forge.addon.dependencies.Dependency;
-import org.jboss.forge.addon.javaee.descriptor.ValidationDescriptor;
 import org.jboss.forge.addon.javaee.validation.provider.ValidationProvider;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.validationConfiguration11.ValidationConfigurationDescriptor;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -20,11 +20,11 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 public class JavaEEValidatorProvider implements ValidationProvider
 {
    private static final String PROVIDER_NAME = "Generic Java EE";
-   private ValidationDescriptor descriptor;
+   private ValidationConfigurationDescriptor descriptor;
 
    public JavaEEValidatorProvider()
    {
-      this.descriptor = Descriptors.create(ValidationDescriptor.class);
+      this.descriptor = Descriptors.create(ValidationConfigurationDescriptor.class);
    }
    
    @Override
@@ -34,7 +34,7 @@ public class JavaEEValidatorProvider implements ValidationProvider
    }
 
    @Override
-   public ValidationDescriptor getDefaultDescriptor()
+   public ValidationConfigurationDescriptor getDefaultDescriptor()
    {
       return descriptor;
    }

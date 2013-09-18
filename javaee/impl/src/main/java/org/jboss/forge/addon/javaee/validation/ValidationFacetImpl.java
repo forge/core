@@ -14,18 +14,18 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
+import org.jboss.forge.addon.javaee.facets.ValidationFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.javaee.facets.ValidationFacet;
-import org.jboss.forge.addon.javaee.descriptor.ValidationDescriptor;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.validationConfiguration11.ValidationConfigurationDescriptor;
 
 /**
  * @author Kevin Pollet
@@ -34,7 +34,7 @@ public class ValidationFacetImpl extends AbstractJavaEEFacet implements Validati
 {
    private final Dependency JAVAX_VALIDATION_API = DependencyBuilder
             .create("javax.validation:validation-api");
-   
+
    @Inject
    public ValidationFacetImpl(final DependencyInstaller installer)
    {
@@ -47,9 +47,9 @@ public class ValidationFacetImpl extends AbstractJavaEEFacet implements Validati
       if (!isInstalled())
       {
          FileResource<?> descriptor = getConfigFile();
-         if(!descriptor.exists())
+         if (!descriptor.exists())
          {
-            saveConfig(Descriptors.create(ValidationDescriptor.class));
+            createDefaultConfig(descriptor);
          }
       }
       return super.install();
@@ -60,7 +60,7 @@ public class ValidationFacetImpl extends AbstractJavaEEFacet implements Validati
    {
       return getConfigFile().exists() && super.isInstalled();
    }
-   
+
    @Override
    public Version getSpecVersion()
    {
@@ -78,15 +78,16 @@ public class ValidationFacetImpl extends AbstractJavaEEFacet implements Validati
     */
 
    @Override
-   public ValidationDescriptor getConfig()
+   public ValidationConfigurationDescriptor getConfig()
    {
-      DescriptorImporter<ValidationDescriptor> importer = Descriptors.importAs(ValidationDescriptor.class);
+      DescriptorImporter<ValidationConfigurationDescriptor> importer = Descriptors
+               .importAs(ValidationConfigurationDescriptor.class);
       final FileResource<?> configFile = getConfigFile();
       if (!configFile.exists())
       {
          createDefaultConfig(configFile);
       }
-      ValidationDescriptor descriptor = importer.fromStream(configFile.getResourceInputStream());
+      ValidationConfigurationDescriptor descriptor = importer.fromStream(configFile.getResourceInputStream());
       return descriptor;
    }
 
@@ -98,17 +99,17 @@ public class ValidationFacetImpl extends AbstractJavaEEFacet implements Validati
    }
 
    @Override
-   public void saveConfig(final ValidationDescriptor descriptor)
+   public void saveConfig(final ValidationConfigurationDescriptor descriptor)
    {
       final FileResource<?> fileResource = getConfigFile();
       fileResource.createNewFile();
       fileResource.setContents(descriptor.exportAsString());
    }
-   
+
    private void createDefaultConfig(FileResource<?> descriptor)
    {
-      ValidationDescriptor descriptorContents = Descriptors.create(ValidationDescriptor.class);
+      ValidationConfigurationDescriptor descriptorContents = Descriptors
+               .create(ValidationConfigurationDescriptor.class);
       descriptor.setContents(descriptorContents.exportAsString());
    }
-
 }

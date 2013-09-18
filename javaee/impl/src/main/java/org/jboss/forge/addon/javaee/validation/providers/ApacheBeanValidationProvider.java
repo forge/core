@@ -14,9 +14,9 @@ import java.util.Set;
 
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
-import org.jboss.forge.addon.javaee.descriptor.ValidationDescriptor;
 import org.jboss.forge.addon.javaee.validation.provider.ValidationProvider;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.validationConfiguration11.ValidationConfigurationDescriptor;
 
 /**
  * @author Kevin Pollet
@@ -24,17 +24,17 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 public class ApacheBeanValidationProvider implements ValidationProvider
 {
    private static final String PROVIDER_NAME = "Apache Bean Validation";
-   private final ValidationDescriptor defaultDescriptor;
+   private final ValidationConfigurationDescriptor defaultDescriptor;
    private final Set<Dependency> dependencies;
 
    public ApacheBeanValidationProvider()
    {
       // define apache bean validation default descriptor file
-      this.defaultDescriptor = Descriptors.create(ValidationDescriptor.class)
-               .setDefaultProvider("org.apache.bval.jsr303.ApacheValidationProvider")
-               .setMessageInterpolator("org.apache.bval.jsr303.DefaultMessageInterpolator")
-               .setTraversableResolver("org.apache.bval.jsr303.resolver.DefaultTraversableResolver")
-               .setConstraintValidatorFactory("org.apache.bval.jsr303.DefaultConstraintValidatorFactory");
+      this.defaultDescriptor = Descriptors.create(ValidationConfigurationDescriptor.class)
+               .defaultProvider("org.apache.bval.jsr303.ApacheValidationProvider")
+               .messageInterpolator("org.apache.bval.jsr303.DefaultMessageInterpolator")
+               .traversableResolver("org.apache.bval.jsr303.resolver.DefaultTraversableResolver")
+               .constraintValidatorFactory("org.apache.bval.jsr303.DefaultConstraintValidatorFactory");
 
       // add apache bean validation dependencies
       final DependencyBuilder apacheBeanValidation = DependencyBuilder.create()
@@ -54,7 +54,7 @@ public class ApacheBeanValidationProvider implements ValidationProvider
    }
 
    @Override
-   public ValidationDescriptor getDefaultDescriptor()
+   public ValidationConfigurationDescriptor getDefaultDescriptor()
    {
       return defaultDescriptor;
    }

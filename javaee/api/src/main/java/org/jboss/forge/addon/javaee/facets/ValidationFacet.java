@@ -8,19 +8,13 @@ package org.jboss.forge.addon.javaee.facets;
 
 import org.jboss.forge.addon.javaee.ConfigurableFacet;
 import org.jboss.forge.addon.javaee.JavaEEFacet;
-import org.jboss.forge.addon.javaee.descriptor.ValidationDescriptor;
-import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.shrinkwrap.descriptor.api.validationConfiguration11.ValidationConfigurationDescriptor;
 
 /**
  * Facet representing JSR-303 capabilities for Bean Validation
  * 
  * @author Kevin Pollet
  */
-public interface ValidationFacet extends JavaEEFacet, ConfigurableFacet<ValidationDescriptor>
+public interface ValidationFacet extends JavaEEFacet, ConfigurableFacet<ValidationConfigurationDescriptor>
 {
-   ValidationDescriptor getConfig();
-
-   FileResource<?> getConfigFile();
-
-   void saveConfig(ValidationDescriptor descriptor);
 }

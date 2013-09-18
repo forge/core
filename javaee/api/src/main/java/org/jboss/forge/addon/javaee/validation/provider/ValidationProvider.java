@@ -9,7 +9,7 @@ package org.jboss.forge.addon.javaee.validation.provider;
 import java.util.Set;
 
 import org.jboss.forge.addon.dependencies.Dependency;
-import org.jboss.forge.addon.javaee.descriptor.ValidationDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.validationConfiguration11.ValidationConfigurationDescriptor;
 
 /**
  * @author Kevin Pollet
@@ -18,7 +18,7 @@ public interface ValidationProvider
 {
    String getName();
 
-   ValidationDescriptor getDefaultDescriptor();
+   ValidationConfigurationDescriptor getDefaultDescriptor();
 
    Set<Dependency> getDependencies();
 
