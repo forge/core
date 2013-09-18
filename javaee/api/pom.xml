@@ -14,7 +14,7 @@
          <artifactId>cdi-api</artifactId>
          <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>projects</artifactId>
@@ -27,6 +27,13 @@
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>parser-xml</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+
       <dependency>
          <groupId>org.jboss.shrinkwrap.descriptors</groupId>
          <artifactId>shrinkwrap-descriptors-api-javaee</artifactId>
@@ -52,6 +59,11 @@
       <dependency>
          <groupId>javax.validation</groupId>
          <artifactId>validation-api</artifactId>
+      </dependency>
+      <!-- JAX-RS -->
+      <dependency>
+         <groupId>org.jboss.spec.javax.ws.rs</groupId>
+         <artifactId>jboss-jaxrs-api_1.1_spec</artifactId>
       </dependency>
    </dependencies>
 </project>
