@@ -272,4 +272,14 @@ public class MyNextStep extends AbstractUICommand implements UIWizardStep {
  - if `NavigationResult` is contains a `UIWizard` or `UIWizardStep` type instance, repeat from step #1 for the next result type.
  - if `NavigationResult` is null, UI provider calls `.execute(UIContext context) for each visited step, in the order in which they were visited.`
 
+=== Use CommandScoped objects to store model state
+
+There are two ways to pass state between wizard steps:
+
+. Add state in UIContext using UIContext.setAttribute
+. Create a class with @CommandScoped and add the necessary attributes on it
+
+CommandScoped classes are available before user interaction (tab when auto-complete or displaying the popup screen) and after execution of a command.  
+
+ 
 
