@@ -58,7 +58,7 @@ public class XMLResourceImpl extends AbstractFileResource<XMLResource> implement
    @Override
    protected List<Resource<?>> doListResources()
    {
-      return Collections.EMPTY_LIST;
+      return Collections.emptyList();
    }
 
 }
