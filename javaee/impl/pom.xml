@@ -43,11 +43,11 @@
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
-
-      <!-- XML Parser -->
       <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>xml-parser</artifactId>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>parser-xml</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
       </dependency>
    </dependencies>
 </project>
