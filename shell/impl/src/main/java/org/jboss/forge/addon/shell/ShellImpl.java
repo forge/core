@@ -250,4 +250,10 @@ public class ShellImpl implements Shell
       updatePrompt();
    }
 
+   @Override
+   public boolean isGUI()
+   {
+      return false;
+   }
+
 }

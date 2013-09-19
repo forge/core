@@ -16,4 +16,9 @@ public interface UIProvider
     */
    public ListenerRegistration<CommandExecutionListener> addCommandExecutionListener(CommandExecutionListener listener);
 
+   /**
+    * Returns true if this {@link UIProvider} is running a Graphical User Interface.
+    */
+   public boolean isGUI();
+
 }
