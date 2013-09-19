@@ -30,7 +30,6 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -62,7 +61,6 @@ public class RestFacetTest
    @Inject
    private FacetFactory facetFactory;
 
-   @Ignore("Until another implementation of RestFacet is provided")
    @Test(expected = FacetIsAmbiguousException.class)
    public void testCannotInstallAmbiguousFacetType() throws Exception
    {
