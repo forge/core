@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.javaee.rest.ui;
+package org.jboss.forge.addon.javaee.rest.ui.setup;
 
 import java.util.concurrent.Callable;
 
