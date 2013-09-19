@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.scaffold.spi;
 
-import org.jboss.forge.addon.resource.DirectoryResource;
-
 /**
  * A context object for the scaffold
  * 
@@ -16,17 +14,17 @@ import org.jboss.forge.addon.resource.DirectoryResource;
  */
 public class ScaffoldContext
 {
-   private final DirectoryResource targetDirectory;
+   private final String targetDirectory;
    private final boolean overwrite;
 
-   public ScaffoldContext(DirectoryResource targetDirectory, boolean overwrite)
+   public ScaffoldContext(String targetDirectory, boolean overwrite)
    {
       super();
       this.targetDirectory = targetDirectory;
       this.overwrite = overwrite;
    }
 
-   public DirectoryResource getTargetDirectory()
+   public String getTargetDirectory()
    {
       return targetDirectory;
    }

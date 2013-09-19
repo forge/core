@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<metawidget xmlns="http://metawidget.org"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:processor="java:org.metawidget.statically.faces.component.widgetprocessor"
+            xsi:schemaLocation="http://metawidget.org http://metawidget.org/xsd/metawidget-1.0.xsd
+						java:org.metawidget.statically.faces.component.html http://metawidget.org/xsd/org.metawidget.statically.faces.component.html-1.0.xsd
+						java:org.metawidget.inspector.composite http://metawidget.org/xsd/org.metawidget.inspector.composite-1.0.xsd"
+            version="1.0">
+
+	<!-- metawidget-search.xml is used to generate the search fields -->
+	
+        <staticHtmlMetawidget xmlns="java:org.metawidget.statically.faces.component.html">
+	
+                <inspector>
+                        <compositeInspector xmlns="java:org.metawidget.inspector.composite" config="CompositeInspectorConfig">
+                                <inspectors>
+                                        <array>
+                                                <propertyTypeInspector xmlns="java:org.metawidget.inspector.propertytype" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
+                                                        <propertyStyle>
+                                                                <forgePropertyStyle id="forgePropertyStyle" xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle" config="ForgePropertyStyleConfig">
+                                                                        <project>
+                                                                                <forgeProject/>
+                                                                        </project>
+                                                                </forgePropertyStyle>
+                                                        </propertyStyle>
+                                                </propertyTypeInspector>
+                                                <forgeInspector xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
+                                                        <propertyStyle>
+                                                                <forgePropertyStyle refId="forgePropertyStyle"/>
+                                                        </propertyStyle>
+                                                </forgeInspector>
+                                                <jpaInspector xmlns="java:org.metawidget.inspector.jpa" config="JpaInspectorConfig">
+                                                        <propertyStyle>
+                                                                <forgePropertyStyle refId="forgePropertyStyle"/>
+                                                        </propertyStyle>
+                                                </jpaInspector>
+                                                <beanValidationInspector xmlns="java:org.metawidget.inspector.beanvalidation" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
+                                                        <propertyStyle>
+                                                                <forgePropertyStyle refId="forgePropertyStyle"/>
+                                                        </propertyStyle>
+                                                </beanValidationInspector>
+                                        </array>
+                                </inspectors>
+                        </compositeInspector>
+                </inspector>
+		
+				<inspectionResultProcessors>
+					<array>
+						<notRequiredInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspectionresultprocessor"/>
+						<generatedValueInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspectionresultprocessor"/>
+					</array>
+				</inspectionResultProcessors>
+				
+                <widgetBuilder>
+                        <compositeWidgetBuilder xmlns="java:org.metawidget.widgetbuilder.composite" config="CompositeWidgetBuilderConfig">
+                                <widgetBuilders>
+                                        <array>
+                                                <entityWidgetBuilder xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetbuilder" config="EntityWidgetBuilderConfig">
+                                                        <config>
+                                                                <forgeConfig/>
+                                                        </config>
+                                                </entityWidgetBuilder>
+                                                <htmlWidgetBuilder xmlns="java:org.metawidget.statically.faces.component.html.widgetbuilder"/>
+                                        </array>
+                                </widgetBuilders>
+                        </compositeWidgetBuilder>
+                </widgetBuilder>
+
+                <widgetProcessors>
+                        <array>
+                                <standardBindingProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/>
+                                <readableIdProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/>
+                                <standardConverterProcessor xmlns="java:org.metawidget.statically.faces.component.widgetprocessor"/>
+                                <cssStyleProcessor xmlns="java:org.metawidget.statically.faces.component.html.widgetprocessor"/>			
+                                <unsearchableWidgetProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetprocessor"/>
+                        </array>
+                </widgetProcessors>
+
+                <layout>
+                        <htmlPanelGridLayout xmlns="java:org.metawidget.statically.faces.component.html.layout" config="HtmlPanelGridLayoutConfig">
+                                <columnStyleClasses>
+                                        <array>
+                                                <string>label</string>
+                                                <string>component</string>
+                                                <string>required</string>
+                                        </array>
+                                </columnStyleClasses>
+                                <messageStyleClass>
+                                        <string>error</string>
+                                </messageStyleClass>
+                        </htmlPanelGridLayout>
+                </layout>
+		
+        </staticHtmlMetawidget>			
+
+</metawidget>

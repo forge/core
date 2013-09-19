@@ -1,0 +1,269 @@
+package com.test.view;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateful;
+import javax.enterprise.context.Conversation;
+import javax.enterprise.context.ConversationScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import ${entity.getQualifiedName()}${metawidgetImports};
+
+/**
+ * Backing bean for ${entity.getName()} entities.
+ * <p>
+ * This class provides CRUD functionality for all ${entity.getName()} entities. It focuses
+ * purely on Java EE 6 standards (e.g. <tt>&#64;ConversationScoped</tt> for
+ * state management, <tt>PersistenceContext</tt> for persistence,
+ * <tt>CriteriaBuilder</tt> for searches) rather than introducing a CRUD framework or
+ * custom base class.
+ */
+
+@Named
+@Stateful
+@ConversationScoped
+public class ${entity.getName()}Bean implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	/*
+	 * Support creating and retrieving ${entity.getName()} entities
+	 */
+
+	private ${nullablePrimaryKeyType} id;
+
+	public ${nullablePrimaryKeyType} getId() {
+		return this.id;
+	}
+
+	public void setId(${nullablePrimaryKeyType} id) {
+		this.id = id;
+	}
+
+	private ${entity.getName()} ${ccEntity};
+
+	public ${entity.getName()} get${entity.getName()}() {
+		return this.${ccEntity};
+	}
+
+	@Inject
+	private Conversation conversation;
+
+	@PersistenceContext(type = PersistenceContextType.EXTENDED)
+	private EntityManager entityManager;
+
+	public String create() {
+
+		this.conversation.begin();
+		return "create?faces-redirect=true";
+	}
+
+	public void retrieve() {
+
+		if (FacesContext.getCurrentInstance().isPostback()) {
+			return;
+		}
+
+		if (this.conversation.isTransient()) {
+			this.conversation.begin();
+		}
+
+		if (this.id == null) {
+			this.${ccEntity} = this.example;
+		} else {
+			this.${ccEntity} = findById(getId());
+		}
+	}
+
+	public ${entity.getName()} findById(${nullablePrimaryKeyType} id) {
+
+		return this.entityManager.find(${entity.getName()}.class, id);
+	}
+
+	/*
+	 * Support updating and deleting ${entity.getName()} entities
+	 */
+
+	public String update() {
+		this.conversation.end();
+
+		try {
+			if (this.id == null) {
+				this.entityManager.persist(this.${ccEntity});
+				return "search?faces-redirect=true";
+			} else {
+				this.entityManager.merge(this.${ccEntity});
+				return "view?faces-redirect=true&id=" + this.${ccEntity}.get${primaryKeyCC}();
+			}
+		} catch( Exception e ) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage( e.getMessage() ));
+			return null;
+		}
+	}
+
+	public String delete() {
+		this.conversation.end();
+
+		try {
+		    ${entity.getName()} deletableEntity = findById(getId());
+            ${rmEntityMetawidget}
+			this.entityManager.remove(deletableEntity);
+			this.entityManager.flush();
+			return "search?faces-redirect=true";
+		} catch( Exception e ) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage( e.getMessage() ));
+			return null;
+		}
+	}
+
+	/*
+	 * Support searching ${entity.getName()} entities with pagination
+	 */
+
+	private int page;
+	private long count;
+	private List<${entity.getName()}> pageItems;
+
+	private ${entity.getName()} example = new ${entity.getName()}();
+
+	public int getPage() {
+		return this.page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	public int getPageSize() {
+		return 10;
+	}
+
+	public ${entity.getName()} getExample() {
+		return this.example;
+	}
+
+	public void setExample(${entity.getName()} example) {
+		this.example = example;
+	}
+
+	public void search() {
+		this.page = 0;
+	}
+
+	public void paginate() {
+
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+
+		// Populate this.count
+
+		CriteriaQuery<Long> countCriteria = builder.createQuery(Long.class);
+		Root<${entity.getName()}> root = countCriteria.from(${entity.getName()}.class);
+		countCriteria = countCriteria.select(builder.count(root)).where(
+				getSearchPredicates(root));
+		this.count = this.entityManager.createQuery(countCriteria)
+				.getSingleResult();
+
+		// Populate this.pageItems
+
+		CriteriaQuery<${entity.getName()}> criteria = builder.createQuery(${entity.getName()}.class);
+		root = criteria.from(${entity.getName()}.class);
+		TypedQuery<${entity.getName()}> query = this.entityManager.createQuery(criteria
+				.select(root).where(getSearchPredicates(root)));
+		query.setFirstResult(this.page * getPageSize()).setMaxResults(
+				getPageSize());
+		this.pageItems = query.getResultList();
+	}
+
+	private Predicate[] getSearchPredicates(Root<${entity.getName()}> root) {
+
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+		List<Predicate> predicatesList = new ArrayList<Predicate>();
+
+		${qbeMetawidget}
+
+		return predicatesList.toArray(new Predicate[predicatesList.size()]);
+	}
+
+	public List<${entity.getName()}> getPageItems() {
+		return this.pageItems;
+	}
+
+	public long getCount() {
+		return this.count;
+	}
+
+	/*
+	 * Support listing and POSTing back ${entity.getName()} entities (e.g. from inside an
+	 * HtmlSelectOneMenu)
+	 */
+
+	public List<${entity.getName()}> getAll() {
+
+		CriteriaQuery<${entity.getName()}> criteria = this.entityManager
+				.getCriteriaBuilder().createQuery(${entity.getName()}.class);
+		return this.entityManager.createQuery(
+				criteria.select(criteria.from(${entity.getName()}.class))).getResultList();
+	}
+
+	@Resource
+	private SessionContext sessionContext;
+
+	public Converter getConverter() {
+
+		final ${entity.getName()}Bean ejbProxy = this.sessionContext.getBusinessObject(${entity.getName()}Bean.class);
+
+		return new Converter() {
+
+			@Override
+			public Object getAsObject(FacesContext context,
+					UIComponent component, String value) {
+
+				return ejbProxy.findById(${nullablePrimaryKeyType}.valueOf(value));
+			}
+
+			@Override
+			public String getAsString(FacesContext context,
+					UIComponent component, Object value) {
+
+				if (value == null) {
+					return "";
+				}
+
+				return String.valueOf(((${entity.getName()}) value).get${primaryKeyCC}());
+			}
+		};
+	}
+
+	/*
+	 * Support adding children to bidirectional, one-to-many tables
+	 */
+
+	private ${entity.getName()} add = new ${entity.getName()}();
+
+	public ${entity.getName()} getAdd() {
+		return this.add;
+	}
+
+	public ${entity.getName()} getAdded() {
+		${entity.getName()} added = this.add;
+		this.add = new ${entity.getName()}();
+		return added;
+	}
+}

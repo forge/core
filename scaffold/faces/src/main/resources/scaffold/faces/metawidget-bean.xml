@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<metawidget xmlns="http://metawidget.org"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:processor="java:org.metawidget.statically.faces.component.widgetprocessor"
+            xsi:schemaLocation="http://metawidget.org http://metawidget.org/xsd/metawidget-1.0.xsd
+						java:org.metawidget.statically.faces.component.html http://metawidget.org/xsd/org.metawidget.statically.faces.component.html-1.0.xsd
+						java:org.metawidget.inspector.composite http://metawidget.org/xsd/org.metawidget.inspector.composite-1.0.xsd"
+            version="1.0">
+
+	<!-- metawidget-bean.xml is used to generate the view Bean's -->
+	<!-- getPageItems() method and render a Collection			 -->
+	
+        <staticHtmlMetawidget xmlns="java:org.metawidget.statically.faces.component.html">
+	
+                <inspector>
+                        <compositeInspector xmlns="java:org.metawidget.inspector.composite" config="CompositeInspectorConfig">
+                                <inspectors>
+                                        <array>
+                                                <propertyTypeInspector xmlns="java:org.metawidget.inspector.propertytype" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
+                                                        <propertyStyle>
+                                                                <forgePropertyStyle id="forgePropertyStyle" xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle" config="ForgePropertyStyleConfig">
+                                                                        <project>
+                                                                                <forgeProject/>
+                                                                        </project>
+                                                                </forgePropertyStyle>
+                                                        </propertyStyle>
+                                                </propertyTypeInspector>
+                                                <forgeInspector xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
+                                                        <propertyStyle>
+                                                                <forgePropertyStyle refId="forgePropertyStyle"/>
+                                                        </propertyStyle>
+                                                </forgeInspector>
+                                                <jpaInspector xmlns="java:org.metawidget.inspector.jpa" config="JpaInspectorConfig">
+                                                        <propertyStyle>
+                                                                <forgePropertyStyle refId="forgePropertyStyle"/>
+                                                        </propertyStyle>
+                                                </jpaInspector>
+                                                <beanValidationInspector xmlns="java:org.metawidget.inspector.beanvalidation" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
+                                                        <propertyStyle>
+                                                                <forgePropertyStyle refId="forgePropertyStyle"/>
+                                                        </propertyStyle>
+                                                </beanValidationInspector>
+                                        </array>
+                                </inspectors>
+                        </compositeInspector>
+                </inspector>
+                
+                <inspectionResultProcessors>
+                    <array>
+                        <generatedValueInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspectionresultprocessor"/>
+                    </array>
+                </inspectionResultProcessors>
+		
+                <widgetBuilder>
+                        <compositeWidgetBuilder xmlns="java:org.metawidget.widgetbuilder.composite" config="CompositeWidgetBuilderConfig">
+                                <widgetBuilders>
+                                        <array>
+                                                <entityWidgetBuilder xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetbuilder" config="EntityWidgetBuilderConfig">
+                                                        <config>
+                                                                <forgeConfig/>
+                                                        </config>
+                                                </entityWidgetBuilder>
+                                                <readOnlyWidgetBuilder xmlns="java:org.metawidget.statically.faces.component.html.widgetbuilder"/>
+                                                <htmlWidgetBuilder xmlns="java:org.metawidget.statically.faces.component.html.widgetbuilder"/>
+                                        </array>
+                                </widgetBuilders>
+                        </compositeWidgetBuilder>
+                </widgetBuilder>
+
+                <layout>
+                        <simpleLayout xmlns="java:org.metawidget.statically.layout"/>
+                </layout>
+		
+        </staticHtmlMetawidget>			
+
+</metawidget>

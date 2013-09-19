@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
-import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.scaffold.ui.ScaffoldSetupWizard;
@@ -46,7 +45,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
 
    @Inject
    @WithAttributes(label = "Target Directory", required = true)
-   private UIInput<DirectoryResource> target;
+   private UIInput<String> target;
 
    @Inject
    @WithAttributes(label = "Overwrite existing files?", defaultValue = "false")
@@ -72,6 +71,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
          }
       });
       
+      provider.setDefaultValue(scaffoldProviders.get());
       provider.setValueChoices(scaffoldProviders);
       provider.setItemLabelConverter(new Converter<ScaffoldProvider, String>()
       {
@@ -108,6 +108,11 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
+      ScaffoldProvider selectedProvider = provider.getValue();
+      if(selectedProvider.getSetupFlow() == null)
+      {
+         selectedProvider.setup(getSelectedProject(context), newScaffoldContext());
+      }
       return Results.success();
    }
 

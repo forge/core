@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets${metawidgetNamespaces}"
+	template="${templatePath}">
+
+	<f:metadata>
+		<f:viewParam name="page" value="#\{${beanName}.page}"/>
+		<f:event type="preRenderView" listener="#\{${beanName}.paginate}"/>
+	</f:metadata>
+
+	<ui:param name="pageTitle" value="Search ${entityName} entities"/>
+
+	<ui:define name="header">
+		${entityName}
+	</ui:define>
+
+	<ui:define name="subheader">
+		Search ${entityName} entities
+	</ui:define>
+
+	<ui:define name="footer"/>
+
+	<ui:define name="main">
+		<h:form id="search">
+			<f:validateBean disabled="true">
+				<h:panelGroup styleClass="search">
+
+					${searchMetawidget}
+					<h:panelGroup styleClass="buttons">
+						<h:commandLink value="Search" action="#\{${beanName}.search}" styleClass="btn btn-primary"/>
+						<h:commandLink value="Create New" action="#\{${beanName}.create}" styleClass="btn btn-primary"/>
+					</h:panelGroup>
+				</h:panelGroup>
+			</f:validateBean>
+			
+			${beanMetawidget}
+			<ui:include src="/resources/scaffold/paginator.xhtml">
+				<ui:param name="paginatorBean" value="#\{${beanName}}"/>
+			</ui:include>
+		</h:form>
+			
+	</ui:define>
+
+</ui:composition>

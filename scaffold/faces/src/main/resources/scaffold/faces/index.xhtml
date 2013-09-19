@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="${templatePath}">
+
+	<ui:param name="pageTitle" value="Welcome to Forge" />
+
+	<ui:define name="header">
+		Welcome to Forge
+	</ui:define>
+
+	<ui:define name="main">
+		<h2 class="success">
+			Your application is running.
+		</h2>
+		<p>
+			<a target="_blank"
+				href="http://forge.jboss.org/docs/index.html">Documentation</a>
+			| <a target="_blank"
+				href="http://twitter.com/intent/tweet?text=I+just+built+and+deployed+a+webapp+using+%23Forge,+from+%23JBoss+-+Super+easy!+(+http://jboss.org/forge+)">Get
+				Excited!</a><br /> <a target="_blank" href="http://jboss.org/forge"><br />
+				Forge Project</a> | <a target="_blank"
+				href="https://community.jboss.org/en/forge">User
+				Forums</a> | <a target="_blank"
+				href="https://issues.jboss.org/browse/FORGE">Report an issue</a>
+		</p>
+	</ui:define>
+
+</ui:composition>

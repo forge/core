@@ -9,18 +9,17 @@ package org.jboss.forge.addon.scaffold.spi;
 import java.util.List;
 
 import org.jboss.forge.addon.facets.Facet;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.forge.furnace.services.Exported;
 
 /**
  * Provides an implementation of Scaffolding for various UI code generation operations.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Exported
 public interface ScaffoldProvider extends ProjectFacet, UIValidator
 {
    /**
@@ -41,7 +40,7 @@ public interface ScaffoldProvider extends ProjectFacet, UIValidator
     * Set up this scaffold provider, installing any necessary {@link Facet} or {@link Plugin} implementations as
     * necessary. Install the templates in the provider to the src/main/templates directory of the project.
     */
-   List<Resource<?>> setup(ScaffoldContext scaffoldContext);
+   List<Resource<?>> setup(Project project, ScaffoldContext scaffoldContext);
 
    /**
     * Generate a set of create, read, update, delete pages for the given collection of resources {@link Resource}. Note
@@ -62,5 +61,7 @@ public interface ScaffoldProvider extends ProjectFacet, UIValidator
     * Return the {@link UIWizardStep} class that begins the scaffold setup of this type, if any.
     */
    Class<? extends UIWizardStep> getSetupFlow();
+
+   AccessStrategy getAccessStrategy();
 
 }

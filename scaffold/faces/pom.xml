@@ -8,10 +8,26 @@
 	</parent>
 	<artifactId>scaffold-faces</artifactId>
 	<name>Forge - Faces Scaffold provider</name>
+	<properties>
+		<freemarker.version>2.3.19</freemarker.version>
+		<seam.render.version>1.0.0.Final</seam.render.version>
+		<metawidget.version>2.4</metawidget.version>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.jboss.forge.addon</groupId>
+			<artifactId>scaffold-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge.addon</groupId>
 			<artifactId>scaffold-spi</artifactId>
+			<classifier>forge-addon</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.forge.addon</groupId>
+			<artifactId>configuration</artifactId>
 			<classifier>forge-addon</classifier>
 			<scope>provided</scope>
 		</dependency>
@@ -38,6 +54,18 @@
 			<artifactId>cdi</artifactId>
 			<classifier>forge-addon</classifier>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>${freemarker.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.metawidget.modules</groupId>
+			<artifactId>metawidget-all</artifactId>
+			<version>${metawidget.version}</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	<build>

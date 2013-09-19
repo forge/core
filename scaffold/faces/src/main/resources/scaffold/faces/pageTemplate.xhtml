@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+	<title>#\{empty pageTitle ? '{#pageTitle}' : pageTitle}</title>
+	<link rel="icon" href="#\{resource\['favicon.ico']}" />
+	<h:outputStylesheet name="bootstrap.css" />
+	<h:outputStylesheet name="forge-style.css" />
+</h:head>
+
+<h:body>
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<h:link id="brandLink" outcome="${targetDir}/index.xhtml" styleClass="brand">${appName}</h:link>
+				<div class="nav-collapse collapse">
+					<ul class="nav">
+						<li><a href="http://forge.jboss.org/docs/important_plugins/ui-scaffolding.html">How to Customize</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container forgecontainer">
+		<div id="navigation">
+			<h:link id="homeLink" outcome="${targetDir}/index.xhtml">
+				<img src="#\{resource\['forge-logo.png']}" alt="Forge... get hammered" border="0" />
+			</h:link>
+			${navigation}
+		</div>
+
+		<div id="content">
+			<h1>
+				<ui:insert name="header" />
+			</h1>
+			<h2>
+				<ui:insert name="subheader" />
+			</h2>
+
+			<ui:insert name="main" />
+		</div>
+	</div>
+
+	<footer>
+		<div id="footer-wrapper">
+	    	<p>Powered by <a href="http://jboss.org/forge">Forge</a></p>
+	    </div>
+	</footer>
+
+</h:body>
+</html>
