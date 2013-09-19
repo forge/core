@@ -108,11 +108,11 @@ public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implem
    }
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).name("JPA: New Field Relationship")
+      return Metadata.from(super.getMetadata(context), getClass()).name("JPA: New Field Relationship")
                .description("Setup the relationship for this field")
-               .category(Categories.create(super.getMetadata().getCategory().getName(), "JPA"));
+               .category(Categories.create(super.getMetadata(context).getCategory().getName(), "JPA"));
    }
 
    @Override

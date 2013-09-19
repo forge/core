@@ -72,7 +72,7 @@ public class FooCommand implements UICommand
    private UIInput<String> disabledOption;
 
    @Override
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass()).name("foocommand").description("Do some foo");
    }

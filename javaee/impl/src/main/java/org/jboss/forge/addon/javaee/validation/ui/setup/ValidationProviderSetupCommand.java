@@ -58,9 +58,9 @@ public class ValidationProviderSetupCommand extends AbstractJavaEECommand implem
    private ValidationOperations validationOperations;
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
-      Metadata metadata = Metadata.from(super.getMetadata(), getClass());
+      Metadata metadata = Metadata.from(super.getMetadata(context), getClass());
       return metadata.name("Bean Validation: Setup")
                .description("Setup Bean Validation in your project")
                .category(Categories.create(metadata.getCategory().getName(), "Bean Validation"));

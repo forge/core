@@ -45,9 +45,9 @@ public class ExampleFlow extends AbstractUICommand implements UIWizard
    }
 
    @Override
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).name("flow").category(Categories.create("Example"));
+      return Metadata.from(super.getMetadata(context), getClass()).name("flow").category(Categories.create("Example"));
    }
 
    @SuppressWarnings("unchecked")

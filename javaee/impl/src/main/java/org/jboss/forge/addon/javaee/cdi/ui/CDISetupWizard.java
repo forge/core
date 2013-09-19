@@ -33,12 +33,12 @@ import org.jboss.forge.addon.ui.util.Metadata;
 public class CDISetupWizard extends AbstractJavaEECommand
 {
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass())
+      return Metadata.from(super.getMetadata(context), getClass())
                .name("CDI: Setup")
                .description("Setup CDI in your project")
-               .category(Categories.create(super.getMetadata().getCategory(), "CDI"));
+               .category(Categories.create(super.getMetadata(context).getCategory(), "CDI"));
    }
 
    @Inject

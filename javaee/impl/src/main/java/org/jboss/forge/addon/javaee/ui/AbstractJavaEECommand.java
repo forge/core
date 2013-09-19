@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.javaee.ui;
 
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -15,8 +16,8 @@ import org.jboss.forge.addon.ui.util.Metadata;
 public abstract class AbstractJavaEECommand extends AbstractProjectCommand
 {
    @Override
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).category(Categories.create("Java EE"));
+      return Metadata.from(super.getMetadata(context), getClass()).category(Categories.create("Java EE"));
    }
 }

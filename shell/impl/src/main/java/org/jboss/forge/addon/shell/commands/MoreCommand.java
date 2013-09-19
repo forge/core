@@ -16,7 +16,9 @@ import org.jboss.aesh.extensions.more.More;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.UIInputMany;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -31,9 +33,9 @@ public class MoreCommand extends AbstractShellCommand
    private UIInputMany<File> arguments;
 
    @Override
-   public Metadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
-      return super.getMetadata()
+      return Metadata.from(super.getMetadata(context), getClass())
                .name("more")
                .description("more — file perusal filter for crt viewing");
    }

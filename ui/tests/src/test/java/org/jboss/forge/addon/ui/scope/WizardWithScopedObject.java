@@ -47,7 +47,7 @@ public class WizardWithScopedObject implements UIWizard
    }
 
    @Override
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(WizardWithScopedObject.class).description("generic test wizard")
                .category(Categories.create("Example"));

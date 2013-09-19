@@ -16,8 +16,10 @@ import org.jboss.aesh.extensions.less.Less;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInputMany;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.Metadata;
 
@@ -32,9 +34,9 @@ public class LessCommand extends AbstractNativeAeshCommand
    private UIInputMany<FileResource<?>> arguments;
 
    @Override
-   public Metadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
-      return super.getMetadata()
+      return Metadata.from(super.getMetadata(context), getClass())
                .name("less")
                .description("less - opposite of more");
    }

@@ -20,8 +20,10 @@ import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.util.PathspecParser;
 import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInputMany;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
@@ -48,9 +50,10 @@ public class CdCommand extends AbstractShellCommand
    }
 
    @Override
-   public Metadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
-      return super.getMetadata().name("cd").description("Change the current directory");
+      return Metadata.from(super.getMetadata(context), getClass()).name("cd")
+               .description("Change the current directory");
    }
 
    @Override

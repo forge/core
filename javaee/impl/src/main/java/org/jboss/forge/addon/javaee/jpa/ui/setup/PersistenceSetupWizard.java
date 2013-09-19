@@ -53,11 +53,11 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
    private HibernateProvider defaultProvider;
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).name("JPA: Setup")
+      return Metadata.from(super.getMetadata(context), getClass()).name("JPA: Setup")
                .description("Setup JPA in your project")
-               .category(Categories.create(super.getMetadata().getCategory().getName(), "JPA"));
+               .category(Categories.create(super.getMetadata(context).getCategory().getName(), "JPA"));
    }
 
    /**

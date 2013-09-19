@@ -26,7 +26,7 @@ public abstract class AbstractUICommand implements UICommand
    }
 
    @Override
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass());
    }

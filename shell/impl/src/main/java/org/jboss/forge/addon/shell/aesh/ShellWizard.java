@@ -144,7 +144,7 @@ public class ShellWizard extends AbstractShellInteraction
    {
       addWizardStep(current);
       Map<String, InputComponent<?, Object>> inputs = getInputs();
-      CommandLineParser parser = commandLineUtil.generateParser(root, inputs);
+      CommandLineParser parser = commandLineUtil.generateParser(root, getContext(), inputs);
       CommandLine cmdLine = parser.parse(line, lenient);
       commandLineUtil.populateUIInputs(cmdLine, inputs);
       List<String> errors = validate();

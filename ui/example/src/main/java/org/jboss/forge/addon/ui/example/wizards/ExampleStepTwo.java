@@ -28,7 +28,7 @@ public class ExampleStepTwo implements UIWizardStep
    private UIInput<DirectoryResource> location;
 
    @Override
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass()).name("Step 2").description("Select a folder");
    }

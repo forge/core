@@ -46,9 +46,9 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
    private Project project;
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).name(ADDON_BUILD_INSTALL_COMMAND_NAME)
+      return Metadata.from(super.getMetadata(context), getClass()).name(ADDON_BUILD_INSTALL_COMMAND_NAME)
                .description(ADDON_BUILD_INSTALL_COMMAND_DESCRIPTION)
                .category(Categories.create(ADDON_MANAGER_CATEGORIES));
    }

@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.shell.commands;
 
+import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
@@ -14,8 +16,8 @@ import org.jboss.forge.addon.ui.util.Metadata;
 public class QuitCommand extends AbstractExitCommand
 {
    @Override
-   public Metadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
-      return super.getMetadata().name("quit").description("Exit the shell");
+      return Metadata.from(super.getMetadata(context), getClass()).name("quit").description("Exit the shell");
    }
 }

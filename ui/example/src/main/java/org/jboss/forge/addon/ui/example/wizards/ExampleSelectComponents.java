@@ -35,7 +35,7 @@ public class ExampleSelectComponents implements UIWizardStep
    private UISelectOne<Bean> radioBeanTwo;
 
    @Override
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass()).name("Step 2").description("Select a folder");
    }

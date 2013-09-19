@@ -44,7 +44,7 @@ public class ListServicesCommand implements UICommand
    }
 
    @Override
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass()).name("list-services").description("List all available services");
    }

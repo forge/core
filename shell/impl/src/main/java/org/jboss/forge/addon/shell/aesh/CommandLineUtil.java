@@ -21,6 +21,7 @@ import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.aesh.completion.ForgeCompletion;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.ManyValued;
@@ -45,12 +46,12 @@ public class CommandLineUtil
       this.converterFactory = converterFactory;
    }
 
-   public CommandLineParser generateParser(UICommand command,
+   public CommandLineParser generateParser(UICommand command, UIContext context,
             Map<String, InputComponent<?, Object>> inputs)
    {
       ParserBuilder builder = new ParserBuilder();
 
-      UICommandMetadata metadata = command.getMetadata();
+      UICommandMetadata metadata = command.getMetadata(context);
       ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()),
                metadata.getDescription());
 

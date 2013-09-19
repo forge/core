@@ -23,7 +23,7 @@ public class MockCommand2 implements UICommand
 {
 
    @Override
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(MockCommand2.class)
                .description("A Description")

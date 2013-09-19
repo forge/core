@@ -22,7 +22,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 public class MockNoOptionsCommand extends AbstractUICommand implements UICommand
 {
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass()).name("no-opts-command").description("Mock it up - Command style");
    }

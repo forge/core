@@ -36,11 +36,11 @@ public class FacesSetupWizard extends AbstractJavaEECommand
 {
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).name("Faces: Setup")
+      return Metadata.from(super.getMetadata(context), getClass()).name("Faces: Setup")
                .description("Setup JavaServer Faces in your project")
-               .category(Categories.create(super.getMetadata().getCategory(), "JSF"));
+               .category(Categories.create(super.getMetadata(context).getCategory(), "JSF"));
    }
 
    @Inject

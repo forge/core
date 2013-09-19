@@ -24,9 +24,10 @@ import org.jboss.forge.addon.ui.result.Results;
 public interface UICommand extends UIValidator
 {
    /**
+    * @param context the {@link UIContext} provided by the UI implementation, never null
     * @return The Metadata of this command. Should never return null
     */
-   public UICommandMetadata getMetadata();
+   public UICommandMetadata getMetadata(UIContext context);
 
    /**
     * Called before initializing the UI to check if it's available for execution

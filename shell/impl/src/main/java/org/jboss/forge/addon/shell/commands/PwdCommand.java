@@ -11,6 +11,8 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -29,9 +31,10 @@ public class PwdCommand extends AbstractShellCommand
    }
 
    @Override
-   public Metadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
-      return super.getMetadata().name("pwd").description("Print the full filename of the current working directory.");
+      return Metadata.from(super.getMetadata(context), getClass()).name("pwd")
+               .description("Print the full filename of the current working directory.");
    }
 
    @Override

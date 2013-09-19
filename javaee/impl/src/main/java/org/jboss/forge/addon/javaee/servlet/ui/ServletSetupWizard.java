@@ -36,11 +36,11 @@ public class ServletSetupWizard extends AbstractJavaEECommand
 {
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).name("Servlet: Setup")
+      return Metadata.from(super.getMetadata(context), getClass()).name("Servlet: Setup")
                .description("Setup Servlet API in your project")
-               .category(Categories.create(super.getMetadata().getCategory(), "Servlet"));
+               .category(Categories.create(super.getMetadata(context).getCategory(), "Servlet"));
    }
 
    @Inject

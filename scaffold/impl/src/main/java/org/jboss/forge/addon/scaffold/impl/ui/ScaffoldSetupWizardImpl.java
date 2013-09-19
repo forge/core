@@ -80,9 +80,9 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    }
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).name("Scaffold: Setup").description("Setups the scaffold")
+      return Metadata.from(super.getMetadata(context), getClass()).name("Scaffold: Setup").description("Setups the scaffold")
                .category(Categories.create("Scaffold", "Setup"));
    }
 

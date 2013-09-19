@@ -63,7 +63,7 @@ public class ExampleWizard extends AbstractUICommand implements UIWizard
    private UISelectMany<String> selectManyValues;
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass()).name("Wizard").description("This is the First screen of the Wizard");
    }

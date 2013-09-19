@@ -43,7 +43,7 @@ public abstract class AbstractProjectCommand extends AbstractUICommand
 
    private boolean constraintsSatisfied(UIContext context)
    {
-      Set<Class<ProjectFacet>> facets = FacetInspector.getRequiredFacets(getMetadata().getType());
+      Set<Class<ProjectFacet>> facets = FacetInspector.getRequiredFacets(getMetadata(null).getType());
       return FacetInspector.isConstraintSatisfied(getSelectedProject(context), facets);
    }
 

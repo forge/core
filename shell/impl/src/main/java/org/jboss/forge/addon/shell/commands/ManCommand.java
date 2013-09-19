@@ -29,6 +29,7 @@ import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInputMany;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.util.Strings;
@@ -51,16 +52,16 @@ public class ManCommand extends AbstractNativeAeshCommand
    }
 
    @Override
-   public Metadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
-      return super.getMetadata().name("man")
+      return Metadata.from(super.getMetadata(context), getClass()).name("man")
                .description("man - an interface to the online reference manuals");
    }
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      arguments.setDefaultValue(Arrays.asList(getMetadata().getName()));
+      arguments.setDefaultValue(Arrays.asList(getMetadata(builder.getUIContext()).getName()));
       arguments.setCompleter(new UICompleter<String>()
       {
          @Override
@@ -119,7 +120,7 @@ public class ManCommand extends AbstractNativeAeshCommand
       AbstractShellInteraction shellCommand = commandManager.findCommand(context, commandName);
       if (shellCommand != null)
       {
-         result = shellCommand.getSourceCommand().getMetadata().getDocLocation();
+         result = shellCommand.getSourceCommand().getMetadata(null).getDocLocation();
       }
       else
       {

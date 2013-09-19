@@ -32,7 +32,7 @@ public class ExampleStepOne implements UIWizardStep
    private UIInput<String> password;
 
    @Override
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass()).name("Step 1").description("Enter your Address");
    }

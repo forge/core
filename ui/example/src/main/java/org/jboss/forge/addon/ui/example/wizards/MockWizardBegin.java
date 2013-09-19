@@ -38,7 +38,7 @@ public class MockWizardBegin extends AbstractUICommand implements UIWizard
    private UIInputMany<String> values;
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass()).name("mockwizard").description("Mock it up");
    }

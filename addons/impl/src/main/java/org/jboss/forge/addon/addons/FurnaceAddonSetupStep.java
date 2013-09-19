@@ -69,7 +69,7 @@ public class FurnaceAddonSetupStep implements UIWizardStep
    private AddonProjectConfigurator addonProjectFactory;
 
    @Override
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass()).name("Furnace Addon Setup")
                .description("Enable Furnace Addon development in your project.")

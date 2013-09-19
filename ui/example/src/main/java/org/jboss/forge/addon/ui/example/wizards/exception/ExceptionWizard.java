@@ -29,7 +29,7 @@ public class ExceptionWizard extends AbstractUICommand implements UIWizard
       throw new Exception("Exception on Initialize UI!");
    }
 
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(ExceptionWizard.class).name("exception-test")
                .description("Tests Exceptions");

@@ -53,11 +53,11 @@ public class NewEntityCommand extends AbstractJavaEECommand
    private PersistenceOperations persistenceOperations;
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).name("JPA: New Entity")
+      return Metadata.from(super.getMetadata(context), getClass()).name("JPA: New Entity")
                .description("Create a new JPA Entity")
-               .category(Categories.create(super.getMetadata().getCategory(), "JPA"));
+               .category(Categories.create(super.getMetadata(context).getCategory(), "JPA"));
    }
 
    @Override

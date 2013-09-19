@@ -66,7 +66,7 @@ public class NewProjectWizard implements UIWizard
    private UISelectOne<ProjectType> type;
 
    @Override
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass()).name("New Project").description("Create a new project")
                .category(Categories.create("Project", "Generation"));

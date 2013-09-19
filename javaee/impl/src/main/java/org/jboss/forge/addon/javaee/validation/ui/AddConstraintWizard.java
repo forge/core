@@ -39,11 +39,11 @@ public class AddConstraintWizard extends AbstractJavaEECommand implements UIWiza
    private UISelectOne<JavaResource> javaClass;
 
    @Override
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).name("Bean Validation: Add constraint")
+      return Metadata.from(super.getMetadata(context), getClass()).name("Bean Validation: Add constraint")
                .description("Add a Bean Validation constraint")
-               .category(Categories.create(super.getMetadata().getCategory().getName(), "Bean Validation"));
+               .category(Categories.create(super.getMetadata(context).getCategory().getName(), "Bean Validation"));
    }
 
    @Override

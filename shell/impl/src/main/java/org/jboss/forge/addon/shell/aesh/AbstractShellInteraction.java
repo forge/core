@@ -36,7 +36,7 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
             CommandLineUtil commandLineUtil)
    {
       this.root = root;
-      this.name = ShellUtil.shellifyName(root.getMetadata().getName());
+      this.name = ShellUtil.shellifyName(root.getMetadata(shellContext).getName());
       this.context = shellContext;
       this.commandLineUtil = commandLineUtil;
    }

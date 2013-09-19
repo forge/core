@@ -77,9 +77,9 @@ public class PersistenceSetupConnectionStep extends AbstractJavaEECommand implem
    }
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).name("JPA: Connection Settings")
+      return Metadata.from(super.getMetadata(context), getClass()).name("JPA: Connection Settings")
                .description("Configure your connection settings");
    }
 

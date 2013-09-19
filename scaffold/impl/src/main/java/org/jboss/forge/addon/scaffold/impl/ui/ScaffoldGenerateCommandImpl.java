@@ -65,9 +65,9 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    }
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).name("Scaffold: Generate")
+      return Metadata.from(super.getMetadata(context), getClass()).name("Scaffold: Generate")
                .description("Generates the scaffold")
                .category(Categories.create("Scaffold", "Generate"));
    }

@@ -41,11 +41,11 @@ import org.jboss.forge.parser.java.JavaClass;
 public class RestSetupWizard extends AbstractJavaEECommand
 {
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).name("Rest: Setup")
+      return Metadata.from(super.getMetadata(context), getClass()).name("Rest: Setup")
                .description("Setup REST in your project")
-               .category(Categories.create(super.getMetadata().getCategory(), "JAX-RS"));
+               .category(Categories.create(super.getMetadata(context).getCategory(), "JAX-RS"));
    }
 
    @Inject

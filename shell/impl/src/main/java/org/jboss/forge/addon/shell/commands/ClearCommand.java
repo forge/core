@@ -9,6 +9,8 @@ package org.jboss.forge.addon.shell.commands;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -20,9 +22,9 @@ public class ClearCommand extends AbstractShellCommand
 {
 
    @Override
-   public Metadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
-      return super.getMetadata().name("clear").description("Clear the console");
+      return Metadata.from(super.getMetadata(context), getClass()).name("clear").description("Clear the console");
    }
 
    @Override

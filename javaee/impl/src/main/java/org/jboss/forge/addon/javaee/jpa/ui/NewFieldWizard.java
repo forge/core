@@ -77,10 +77,10 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    private FieldOperations fieldOperations;
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).name("JPA: New Field").description("Create a new field")
-               .category(Categories.create(super.getMetadata().getCategory().getName(), "JPA"));
+      return Metadata.from(super.getMetadata(context), getClass()).name("JPA: New Field").description("Create a new field")
+               .category(Categories.create(super.getMetadata(context).getCategory().getName(), "JPA"));
    }
 
    @Override

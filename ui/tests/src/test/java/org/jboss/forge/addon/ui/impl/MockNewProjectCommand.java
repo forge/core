@@ -104,7 +104,7 @@ public class MockNewProjectCommand implements UICommand, UIWizardStep
    }
 
    @Override
-   public UICommandMetadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
       // TODO Auto-generated method stub
       return null;

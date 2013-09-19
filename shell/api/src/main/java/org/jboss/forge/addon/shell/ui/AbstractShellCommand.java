@@ -9,6 +9,7 @@ package org.jboss.forge.addon.shell.ui;
 
 import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -21,9 +22,9 @@ import org.jboss.forge.addon.ui.util.Metadata;
 public abstract class AbstractShellCommand extends AbstractUICommand
 {
    @Override
-   public Metadata getMetadata()
+   public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).category(Categories.create("Shell"));
+      return Metadata.from(super.getMetadata(context), getClass()).category(Categories.create("Shell"));
    }
 
    @Override

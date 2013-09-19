@@ -36,11 +36,11 @@ public class EJBSetupWizard extends AbstractJavaEECommand
 {
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(), getClass()).name("EJB: Setup")
+      return Metadata.from(super.getMetadata(context), getClass()).name("EJB: Setup")
                .description("Setup EJB in your project")
-               .category(Categories.create(super.getMetadata().getCategory(), "EJB"));
+               .category(Categories.create(super.getMetadata(context).getCategory(), "EJB"));
    }
 
    @Inject

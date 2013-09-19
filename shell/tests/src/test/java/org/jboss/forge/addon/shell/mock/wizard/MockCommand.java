@@ -39,7 +39,7 @@ public class MockCommand extends AbstractUICommand implements UICommand
    private UIInputMany<Resource> values;
 
    @Override
-   public Metadata getMetadata()
+   public Metadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass()).name("mock-command").description("Mock it up - Command style");
    }

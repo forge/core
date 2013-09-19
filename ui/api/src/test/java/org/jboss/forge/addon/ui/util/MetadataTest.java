@@ -21,7 +21,7 @@ public class MetadataTest
    @Test
    public void testMetadataBuilder()
    {
-      UICommandMetadata metadata = new MockCommand().getMetadata();
+      UICommandMetadata metadata = new MockCommand().getMetadata(null);
       Assert.assertEquals(MockCommand.class.getName(), metadata.getName());
       Assert.assertEquals(Categories.create("Uncategorized"), metadata.getCategory());
       Assert.assertNull(metadata.getDescription());
@@ -31,7 +31,7 @@ public class MetadataTest
    @Test
    public void testMetadataBuilderNameOverride()
    {
-      UICommandMetadata metadata = new MockCommand3().getMetadata();
+      UICommandMetadata metadata = new MockCommand3().getMetadata(null);
       Assert.assertEquals("A Name", metadata.getName());
       Assert.assertEquals(Categories.create("Uncategorized"), metadata.getCategory());
       Assert.assertNull(metadata.getDescription());
@@ -41,7 +41,7 @@ public class MetadataTest
    @Test
    public void testMetadataBuilderWithDescriptionAndCategory()
    {
-      UICommandMetadata metadata = new MockCommand2().getMetadata();
+      UICommandMetadata metadata = new MockCommand2().getMetadata(null);
       Assert.assertEquals(MockCommand2.class.getName(), metadata.getName());
       Assert.assertNotNull(metadata.getCategory());
       Assert.assertEquals("A Category", metadata.getCategory().getName());
