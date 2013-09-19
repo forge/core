@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.context.AbstractUIContext;
 import org.jboss.forge.addon.ui.context.UIContextListener;
 import org.jboss.forge.addon.ui.context.UISelection;
@@ -20,12 +21,19 @@ public class UIContextImpl extends AbstractUIContext implements UISelection<Reso
 {
    private List<Resource<?>> selection;
    private final Iterable<UIContextListener> listeners;
+   private final UIProvider provider;
 
-   public UIContextImpl(Iterable<UIContextListener> listeners, Resource<?>... initialSelection)
+   public UIContextImpl(UIProvider provider, Iterable<UIContextListener> listeners, Resource<?>... initialSelection)
    {
+      this.provider = provider;
       this.listeners = listeners;
       setInitialSelection(initialSelection);
       init();
+   }
+
+   public UIContextImpl(Iterable<UIContextListener> listeners, Resource<?>... initialSelection)
+   {
+      this(new UIProviderImpl(true), listeners, initialSelection);
    }
 
    public void setInitialSelection(Resource<?>... initialSelection)
@@ -83,5 +91,11 @@ public class UIContextImpl extends AbstractUIContext implements UISelection<Reso
       {
          listener.contextDestroyed(this);
       }
+   }
+
+   @Override
+   public UIProvider getProvider()
+   {
+      return provider;
    }
 }
