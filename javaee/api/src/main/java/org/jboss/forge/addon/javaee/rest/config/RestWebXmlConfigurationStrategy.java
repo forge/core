@@ -33,12 +33,6 @@ public class RestWebXmlConfigurationStrategy implements RestConfigurationStrateg
    }
 
    @Override
-   public String getDescription()
-   {
-      return "Configure in web.xml";
-   }
-
-   @Override
    public String getApplicationPath()
    {
       return path;

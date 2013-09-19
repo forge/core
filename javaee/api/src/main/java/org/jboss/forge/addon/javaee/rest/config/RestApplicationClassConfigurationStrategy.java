@@ -45,12 +45,6 @@ public class RestApplicationClassConfigurationStrategy implements RestConfigurat
    }
 
    @Override
-   public String getDescription()
-   {
-      return "Configure an Application class";
-   }
-
-   @Override
    public String getApplicationPath()
    {
       return path;

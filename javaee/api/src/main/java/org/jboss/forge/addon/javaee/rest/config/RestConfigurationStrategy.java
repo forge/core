@@ -18,11 +18,6 @@ import org.jboss.forge.addon.projects.Project;
 public interface RestConfigurationStrategy
 {
    /**
-    * Returns the description of this strategy
-    */
-   public String getDescription();
-
-   /**
     * Returns the application path
     */
    public String getApplicationPath();
