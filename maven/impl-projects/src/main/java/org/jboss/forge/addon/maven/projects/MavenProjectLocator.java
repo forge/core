@@ -16,7 +16,7 @@ import org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenResourceFacet;
-import org.jboss.forge.addon.maven.projects.facets.MavenWebResourceFacet;
+import org.jboss.forge.addon.maven.projects.facets.MavenWebResourcesFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectLocator;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -48,11 +48,11 @@ public class MavenProjectLocator implements ProjectLocator
          factory.install(project, MavenResourceFacet.class);
          try
          {
-            factory.register(project, MavenWebResourceFacet.class);
+            factory.register(project, MavenWebResourcesFacet.class);
          }
          catch (IllegalStateException e)
          {
-            log.log(Level.FINE, "Could not install [" + MavenWebResourceFacet.class.getName() + "] into project ["
+            log.log(Level.FINE, "Could not install [" + MavenWebResourcesFacet.class.getName() + "] into project ["
                      + project + "]", e);
          }
       }

@@ -94,7 +94,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
       String srcFolderName;
       if (build != null && build.getSourceDirectory() != null)
       {
-         srcFolderName = build.getSourceDirectory();
+         srcFolderName = mavenFacet.resolveProperties(build.getSourceDirectory());
       }
       else
       {
@@ -112,7 +112,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
       String srcFolderName;
       if (build != null && build.getTestSourceDirectory() != null)
       {
-         srcFolderName = build.getTestSourceDirectory();
+         srcFolderName = mavenFacet.resolveProperties(build.getTestSourceDirectory());
       }
       else
       {

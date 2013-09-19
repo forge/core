@@ -7,6 +7,7 @@ package org.jboss.forge.addon.projects.impl;
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
@@ -14,8 +15,10 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ProjectListener;
+import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
@@ -106,6 +109,17 @@ public class ProjectFactoryImplTest
    {
       Project project = projectFactory.createTempProject();
       Assert.assertNotNull(project);
+      Assert.assertFalse(project.hasFacet(WebResourcesFacet.class));
+   }
+
+   @Test
+   @SuppressWarnings("unchecked")
+   public void testCreateTempProjectWithFacets()
+   {
+      Project project = projectFactory.createTempProject(Arrays
+               .<Class<? extends ProjectFacet>> asList(WebResourcesFacet.class));
+      Assert.assertNotNull(project);
+      Assert.assertTrue(project.hasFacet(WebResourcesFacet.class));
    }
 
    @Test

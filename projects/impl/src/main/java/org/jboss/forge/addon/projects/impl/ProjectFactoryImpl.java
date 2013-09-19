@@ -8,6 +8,7 @@ package org.jboss.forge.addon.projects.impl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -271,11 +272,17 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Override
    public Project createTempProject()
    {
+      return createTempProject(new HashSet<Class<? extends ProjectFacet>>());
+   }
+
+   @Override
+   public Project createTempProject(Iterable<Class<? extends ProjectFacet>> facetTypes)
+   {
       File rootDirectory = OperatingSystemUtils.createTempDir();
       DirectoryResource addonDir = resourceFactory.create(DirectoryResource.class, rootDirectory);
       DirectoryResource projectDir = addonDir.createTempResource();
       projectDir.deleteOnExit();
-      Project project = createProject(projectDir);
+      Project project = createProject(projectDir, facetTypes);
       return project;
    }
 

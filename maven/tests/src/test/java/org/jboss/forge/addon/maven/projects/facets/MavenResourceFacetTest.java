@@ -25,6 +25,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -99,7 +100,22 @@ public class MavenResourceFacetTest
    {
       MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
 
-      pom.setContents("<project><modelVersion>4.0.0.</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><resources><resource><directory>foo</directory></resource></resources></build></project>");
+      pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><resources><resource><directory>foo</directory></resource></resources></build></project>");
+
+      MavenResourceFacet facet = project.getFacet(MavenResourceFacet.class);
+      DirectoryResource expected = project.getProjectRoot().getChildDirectory(
+               "foo");
+      Assert.assertEquals(expected.getFullyQualifiedName(), facet.getResourceFolder().getFullyQualifiedName());
+   }
+
+   @Test
+   @Ignore("https://issues.jboss.org/browse/FORGE-1218")
+   public void testCustomResourceFolderWithProperty() throws Exception
+   {
+      MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
+
+      pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><resources><resource><directory>${project.basedir}"
+               + File.separator + "foo</directory></resource></resources></build></project>");
 
       MavenResourceFacet facet = project.getFacet(MavenResourceFacet.class);
       DirectoryResource expected = project.getProjectRoot().getChildDirectory(
@@ -112,7 +128,22 @@ public class MavenResourceFacetTest
    {
       MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
 
-      pom.setContents("<project><modelVersion>4.0.0.</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><testResources><testResource><directory>foo</directory></testResource></testResources></build></project>");
+      pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><testResources><testResource><directory>foo</directory></testResource></testResources></build></project>");
+
+      MavenResourceFacet facet = project.getFacet(MavenResourceFacet.class);
+      DirectoryResource expected = project.getProjectRoot().getChildDirectory(
+               "foo");
+      Assert.assertEquals(expected.getFullyQualifiedName(), facet.getTestResourceFolder().getFullyQualifiedName());
+   }
+
+   @Test
+   @Ignore("https://issues.jboss.org/browse/FORGE-1218")
+   public void testCustomTestSourceFolderWithProperty() throws Exception
+   {
+      MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
+
+      pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><testResources><testResource><directory>${project.basedir}"
+               + File.separator + "foo</directory></testResource></testResources></build></project>");
 
       MavenResourceFacet facet = project.getFacet(MavenResourceFacet.class);
       DirectoryResource expected = project.getProjectRoot().getChildDirectory(

@@ -31,7 +31,7 @@ import org.jboss.forge.addon.resource.FileResource;
 
 @Dependent
 @FacetConstraint({ MavenFacet.class, PackagingFacet.class })
-public class MavenWebResourceFacet extends AbstractFacet<Project> implements WebResourcesFacet
+public class MavenWebResourcesFacet extends AbstractFacet<Project> implements WebResourcesFacet
 {
 
    @Override
@@ -84,6 +84,7 @@ public class MavenWebResourceFacet extends AbstractFacet<Project> implements Web
    {
       if (!this.isInstalled())
       {
+         getFaceted().getFacet(PackagingFacet.class).setPackagingType("war");
          for (DirectoryResource folder : this.getWebRootDirectories())
          {
             folder.mkdirs();

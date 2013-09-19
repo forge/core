@@ -4,11 +4,12 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.maven.projects;
+package org.jboss.forge.addon.maven.projects.types;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.forge.addon.maven.projects.MavenFacetImpl;
 import org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet;
@@ -50,7 +51,7 @@ public class MavenResourcesProjectType implements ProjectType
    @Override
    public String toString()
    {
-      return "resources";
+      return "jar-resources";
    }
 
 }

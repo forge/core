@@ -59,6 +59,12 @@ public interface ProjectFactory
    public Project createTempProject();
 
    /**
+    * Create a {@link Project}, with the given {@link ProjectFacet} types, in a temporary location. This method is
+    * useful for testing purposes.
+    */
+   public Project createTempProject(Iterable<Class<? extends ProjectFacet>> facetTypes);
+
+   /**
     * Register a listener for project events
     */
    public ListenerRegistration<ProjectListener> addProjectListener(ProjectListener listener);
