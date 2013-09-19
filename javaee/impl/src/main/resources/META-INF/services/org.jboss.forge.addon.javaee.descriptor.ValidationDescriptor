@@ -1,3 +1,0 @@
-implClass=org.jboss.forge.addon.javaee.validation.ValidationDescriptorImpl
-importerClass=org.jboss.shrinkwrap.descriptor.spi.node.dom.XmlDomNodeDescriptorImporterImpl
-defaultName=validation.xml
