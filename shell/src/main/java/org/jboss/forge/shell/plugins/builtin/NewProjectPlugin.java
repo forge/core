@@ -248,22 +248,22 @@ public class NewProjectPlugin implements Plugin
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       deps.addRepository(KnownRepository.JBOSS_NEXUS);
 
-      if (packaging.getPackagingType().equals(PackagingType.JAR) && createMain)
-      {
-         project.getFacet(JavaSourceFacet.class).saveJavaSource(JavaParser
-                  .create(JavaClass.class)
-                  .setPackage(javaPackage)
-                  .setName("Main")
-                  .addMethod("public static void main(String[] args) {}")
-                  .setBody("System.out.println(\"Hi there! I was forged as part of the project you call " + name
-                           + ".\");")
-                  .getOrigin());
-      }
-
       if (project.hasFacet(JavaSourceFacet.class))
       {
-         DirectoryResource sourceFolder = project.getFacet(JavaSourceFacet.class).getSourceFolder();
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         DirectoryResource sourceFolder = facet.getSourceFolder();
          createTopLevelPackage(sourceFolder, javaPackage);
+         if (createMain)
+         {
+            facet.saveJavaSource(JavaParser
+                     .create(JavaClass.class)
+                     .setPackage(javaPackage)
+                     .setName("Main")
+                     .addMethod("public static void main(String[] args) {}")
+                     .setBody("System.out.println(\"Hi there! I was forged as part of the project you call " + name
+                              + ".\");")
+                     .getOrigin());
+         }
       }
 
       if (finalName != null)
