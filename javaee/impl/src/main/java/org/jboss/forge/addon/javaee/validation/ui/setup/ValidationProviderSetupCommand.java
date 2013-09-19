@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.javaee.validation.ui.setup;
 
+import java.util.concurrent.Callable;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
@@ -38,15 +40,15 @@ public class ValidationProviderSetupCommand extends AbstractJavaEECommand implem
    private UIInput<Boolean> providedScope;
 
    @Inject
-   @WithAttributes(label = "Message interpolator class", type = InputType.JAVA_CLASS_PICKER)
+   @WithAttributes(label = "Message Interpolator Class", type = InputType.JAVA_CLASS_PICKER)
    private UIInput<String> messageInterpolator;
 
    @Inject
-   @WithAttributes(label = "Traversable Resolver class", type = InputType.JAVA_CLASS_PICKER)
+   @WithAttributes(label = "Traversable Resolver Class", type = InputType.JAVA_CLASS_PICKER)
    private UIInput<String> traversableResolver;
 
    @Inject
-   @WithAttributes(label = "Constraint Validator Factory", type = InputType.JAVA_CLASS_PICKER)
+   @WithAttributes(label = "Constraint Validator Factory Class", type = InputType.JAVA_CLASS_PICKER)
    private UIInput<String> constraintValidatorFactory;
 
    @Inject
@@ -74,9 +76,25 @@ public class ValidationProviderSetupCommand extends AbstractJavaEECommand implem
    public void initializeUI(UIBuilder builder) throws Exception
    {
       initProviders();
+
       messageInterpolator.setValidator(new ClassInputValidator(messageInterpolator));
       traversableResolver.setValidator(new ClassInputValidator(traversableResolver));
       constraintValidatorFactory.setValidator(new ClassInputValidator(constraintValidatorFactory));
+
+      providedScope.setDefaultValue(true);
+      Callable<Boolean> dependencyNotProvided = new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return !providedScope.getValue();
+         }
+      };
+
+      messageInterpolator.setEnabled(dependencyNotProvided);
+      traversableResolver.setEnabled(dependencyNotProvided);
+      constraintValidatorFactory.setEnabled(dependencyNotProvided);
+
       builder.add(providers)
                .add(providedScope)
                .add(messageInterpolator)

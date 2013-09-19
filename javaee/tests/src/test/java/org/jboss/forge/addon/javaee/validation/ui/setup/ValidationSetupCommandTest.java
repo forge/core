@@ -6,7 +6,6 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.javaee.validation.providers.JavaEEValidatorProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.AbstractCommandExecutionListener;
@@ -50,9 +49,6 @@ public class ValidationSetupCommandTest
    }
 
    @Inject
-   private JavaEEValidatorProvider defaultProvider;
-
-   @Inject
    private ProjectFactory projectFactory;
 
    @Inject
@@ -66,8 +62,7 @@ public class ValidationSetupCommandTest
       tester.setInitialSelection(project.getProjectRoot());
 
       Assert.assertTrue(tester.canExecute());
-      // Setting UI values
-      tester.setValueFor("providers", defaultProvider);
+      tester.setValueFor("providedScope", false);
       Assert.assertTrue(tester.canExecute());
 
       final AtomicBoolean flag = new AtomicBoolean();
