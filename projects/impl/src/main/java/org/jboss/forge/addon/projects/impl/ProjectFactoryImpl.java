@@ -8,6 +8,7 @@ package org.jboss.forge.addon.projects.impl;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -272,7 +273,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Override
    public Project createTempProject()
    {
-      return createTempProject(new HashSet<Class<? extends ProjectFacet>>());
+      return createTempProject(Collections.<Class<? extends ProjectFacet>> emptySet());
    }
 
    @Override
