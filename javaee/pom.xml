@@ -22,7 +22,7 @@
    </modules>
 
    <properties>
-      <javaee.descriptors.version>0.0.1-SNAPSHOT</javaee.descriptors.version>
+      <javaee.descriptors.version>0.0.1.Final</javaee.descriptors.version>
    </properties>
 
    <dependencyManagement>
