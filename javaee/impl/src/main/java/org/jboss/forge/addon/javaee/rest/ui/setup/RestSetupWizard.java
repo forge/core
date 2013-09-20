@@ -53,7 +53,7 @@ public class RestSetupWizard extends AbstractJavaEECommand
 
    @Inject
    @WithAttributes(required = true, label = "JAX-RS Version")
-   private UISelectOne<RestFacet> versions;
+   private UISelectOne<RestFacet> version;
 
    @Inject
    @WithAttributes(required = true, label = "Configuration Strategy", type = InputType.RADIO)
@@ -76,7 +76,7 @@ public class RestSetupWizard extends AbstractJavaEECommand
    {
       configureVersions();
       configureActivationStrategy(builder.getUIContext());
-      builder.add(versions).add(applicationPath).add(config).add(packageName).add(className);
+      builder.add(version).add(applicationPath).add(config).add(packageName).add(className);
    }
 
    private void configureActivationStrategy(UIContext context)
@@ -90,14 +90,17 @@ public class RestSetupWizard extends AbstractJavaEECommand
             return RestActivatorType.APP_CLASS == config.getValue();
          }
       };
-      config.setItemLabelConverter(new Converter<RestActivatorType, String>()
+      if (context.getProvider().isGUI())
       {
-         @Override
-         public String convert(RestActivatorType source)
+         config.setItemLabelConverter(new Converter<RestActivatorType, String>()
          {
-            return source != null ? source.getDescription() : null;
-         }
-      });
+            @Override
+            public String convert(RestActivatorType source)
+            {
+               return source != null ? source.getDescription() : null;
+            }
+         });
+      }
       packageName.setRequired(appClassChosen).setEnabled(appClassChosen);
       className.setRequired(appClassChosen).setEnabled(appClassChosen);
       Project project = getSelectedProject(context);
@@ -106,7 +109,7 @@ public class RestSetupWizard extends AbstractJavaEECommand
 
    private void configureVersions()
    {
-      versions.setItemLabelConverter(new Converter<RestFacet, String>()
+      version.setItemLabelConverter(new Converter<RestFacet, String>()
       {
          @Override
          public String convert(RestFacet source)
@@ -115,12 +118,12 @@ public class RestSetupWizard extends AbstractJavaEECommand
          }
       });
 
-      for (RestFacet choice : versions.getValueChoices())
+      for (RestFacet choice : version.getValueChoices())
       {
-         if (versions.getValue() == null
-                  || choice.getSpecVersion().compareTo(versions.getValue().getSpecVersion()) >= 1)
+         if (version.getValue() == null
+                  || choice.getSpecVersion().compareTo(version.getValue().getSpecVersion()) >= 1)
          {
-            versions.setDefaultValue(choice);
+            version.setDefaultValue(choice);
          }
       }
    }
@@ -134,7 +137,7 @@ public class RestSetupWizard extends AbstractJavaEECommand
    @Override
    public Result execute(final UIContext context) throws Exception
    {
-      RestFacet facet = versions.getValue();
+      RestFacet facet = version.getValue();
       if (facetFactory.install(getSelectedProject(context), facet))
       {
          String path = applicationPath.getValue();
