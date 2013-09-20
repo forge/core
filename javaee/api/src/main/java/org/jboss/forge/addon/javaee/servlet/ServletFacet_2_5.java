@@ -10,7 +10,6 @@ package org.jboss.forge.addon.javaee.servlet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.facets.constraints.FacetConstraintType;
 import org.jboss.forge.addon.facets.constraints.FacetConstraints;
-import org.jboss.forge.addon.javaee.ConfigurableFacet;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.shrinkwrap.descriptor.api.webapp25.WebAppDescriptor;
 
@@ -21,7 +20,7 @@ import org.jboss.shrinkwrap.descriptor.api.webapp25.WebAppDescriptor;
 @FacetConstraints({
          @FacetConstraint(value = WebResourcesFacet.class, type = FacetConstraintType.REQUIRED)
 })
-public interface ServletFacet_2_5 extends ServletFacet, ConfigurableFacet<WebAppDescriptor>
+public interface ServletFacet_2_5 extends ServletFacet<WebAppDescriptor>
 {
 
 }

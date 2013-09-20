@@ -22,14 +22,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import test.org.jboss.forge.addon.facets.factory.MockAmbiguousDependentFacet;
-import test.org.jboss.forge.addon.facets.factory.MockAmbiguousFacetInterface;
-import test.org.jboss.forge.addon.facets.factory.MockAmbiguousFacet_1;
-import test.org.jboss.forge.addon.facets.factory.MockAmbiguousFacet_2;
-import test.org.jboss.forge.addon.facets.factory.MockFacet;
-import test.org.jboss.forge.addon.facets.factory.MockFaceted;
-import test.org.jboss.forge.addon.facets.factory.MockSpecificDependentFacet;
-
 @RunWith(Arquillian.class)
 public class FacetFactoryAmbiguousInstallTest
 {
@@ -68,12 +60,12 @@ public class FacetFactoryAmbiguousInstallTest
       Assert.fail("Should not have been able to install ambiguous Facet type.");
    }
 
-   @Test(expected = FacetIsAmbiguousException.class)
-   public void testFacetInstallAmbiguousViaDependencyShouldFail() throws Exception
+   public void testFacetInstallAmbiguousPreRegistersDependencies() throws Exception
    {
       MockFaceted faceted = new MockFaceted();
       facetFactory.install(faceted, MockAmbiguousDependentFacet.class);
-      Assert.fail("Should not have been able to install ambiguous Facet type.");
+      Assert.assertNotNull(faceted.getFacet(MockAmbiguousFacet_1.class));
+      Assert.assertNotNull(faceted.getFacet(MockAmbiguousFacet_2.class));
    }
 
    @Test

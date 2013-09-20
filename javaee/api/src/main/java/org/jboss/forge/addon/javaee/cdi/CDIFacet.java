@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.javaee.cdi;
 
-import org.jboss.forge.addon.javaee.ConfigurableFacet;
+import org.jboss.forge.addon.javaee.Configurable;
 import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
@@ -18,6 +18,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public interface CDIFacet<T extends Descriptor> extends JavaEEFacet, ConfigurableFacet<T>
+public interface CDIFacet<T extends Descriptor> extends JavaEEFacet, Configurable<T>
 {
 }

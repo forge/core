@@ -29,7 +29,8 @@ public @interface FacetConstraint
    /**
     * The facets required by the annotated {@link Faceted}
     */
-   Class<? extends Facet<?>>[] value();
+   @SuppressWarnings("rawtypes")
+   Class<? extends Facet>[] value();
 
    /**
     * The type of this constraint.

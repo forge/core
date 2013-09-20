@@ -26,6 +26,7 @@ import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_2_5;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
+import org.jboss.forge.addon.javaee.util.ServletUtil;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
@@ -41,8 +42,9 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.javaee5.ParamValueType;
-import org.jboss.shrinkwrap.descriptor.api.webapp25.ServletMappingType;
-import org.jboss.shrinkwrap.descriptor.api.webapp25.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp.WebAppCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webcommon.ServletMappingCommonType;
 
 /**
  * Common Implementation for all JSF versions
@@ -52,6 +54,11 @@ import org.jboss.shrinkwrap.descriptor.api.webapp25.WebAppDescriptor;
 public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> extends AbstractJavaEEFacet implements
          FacesFacet<DESCRIPTOR>
 {
+   private static final String FACELETS_VIEW_MAPPINGS = "javax.faces.FACELETS_VIEW_MAPPINGS";
+   private static final String FACES_SERVLET_NAME = "Faces Facet";
+   private static final String JAVAX_FACES_DEFAULT_SUFFIX = "javax.faces.DEFAULT_SUFFIX";
+   private static final String JAVAX_FACES_PROJECT_STAGE = "javax.faces.PROJECT_STAGE";
+
    public AbstractFacesFacetImpl(DependencyInstaller installer)
    {
       super(installer);
@@ -73,15 +80,20 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
       return super.isInstalled() && active;
    }
 
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    private boolean hasServletMapping()
    {
-      if (getFaceted().hasFacet(ServletFacet_2_5.class))
+      if (getFaceted().hasFacet(ServletFacet.class))
       {
-         ServletFacet_2_5 servlet = getFaceted().getFacet(ServletFacet_2_5.class);
-         List<ServletMappingType<WebAppDescriptor>> mappings = servlet.getConfig().getAllServletMapping();
-         for (ServletMappingType<WebAppDescriptor> mapping : mappings)
+         ServletFacet servlet = getFaceted().getFacet(ServletFacet.class);
+         List<ServletMappingCommonType> mappings = ((WebAppCommonDescriptor) servlet.getConfig())
+                  .getAllServletMapping();
+         for (ServletMappingCommonType mapping : mappings)
          {
-
+            if (FACES_SERVLET_NAME.equals(mapping.getServletName()))
+            {
+               return true;
+            }
          }
       }
       return false;
@@ -135,30 +147,17 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
    }
 
    @Override
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    public ProjectStage getProjectStage()
    {
-      if (getFaceted().hasFacet(ServletFacet_2_5.class))
+      if (getFaceted().hasFacet(ServletFacet.class))
       {
-         ServletFacet_2_5 facet = getFaceted().getFacet(ServletFacet_2_5.class);
-         WebAppDescriptor config = facet.getConfig();
-         List<ParamValueType<WebAppDescriptor>> params = config.getAllContextParam();
-         for (ParamValueType<WebAppDescriptor> param : params)
+         ServletFacet<?> servlet = getFaceted().getFacet(ServletFacet.class);
+         WebAppCommonDescriptor config = servlet.getConfig();
+         List<ParamValueType<WebAppCommonDescriptor>> params = config.getAllContextParam();
+         for (ParamValueType<WebAppCommonDescriptor> param : params)
          {
-            if ("javax.faces.PROJECT_STAGE".equals(param.getParamName()))
-            {
-               return ProjectStage.valueOf(ProjectStage.class, param.getParamValue());
-            }
-         }
-      }
-      else if (getFaceted().hasFacet(ServletFacet_3_0.class))
-      {
-         ServletFacet_3_0 facet = getFaceted().getFacet(ServletFacet_3_0.class);
-         org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor config = facet.getConfig();
-         List<org.jboss.shrinkwrap.descriptor.api.javaee6.ParamValueType<org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor>> params = config
-                  .getAllContextParam();
-         for (org.jboss.shrinkwrap.descriptor.api.javaee6.ParamValueType<org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor> param : params)
-         {
-            if ("javax.faces.PROJECT_STAGE".equals(param.getParamName()))
+            if (JAVAX_FACES_PROJECT_STAGE.equals(param.getParamName()))
             {
                return ProjectStage.valueOf(ProjectStage.class, param.getParamValue());
             }
@@ -175,58 +174,48 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
    }
 
    @Override
+   @SuppressWarnings("rawtypes")
    public List<String> getEffectiveFacesServletMappings()
    {
       List<String> results = new ArrayList<String>();
-      ServletFacet facet = getFaceted().getFacet(ServletFacet.class);
-      WebAppDescriptor webXml = facet.getConfig();
+      ServletFacet<?> servlet = getFaceted().getFacet(ServletFacet.class);
+      WebAppCommonDescriptor webXml = servlet.getConfig();
 
       // TODO should probably take into account facelets view mappings
       // facelets.VIEW_MAPPINGS
 
-      if (webXml.hasFacesServlet())
+      results.addAll(getExplicitFacesServletMappings());
+      if (results.isEmpty() && (webXml instanceof WebAppDescriptor
+               || webXml instanceof org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor))
       {
-         results.addAll(getExplicitFacesServletMappings(webXml));
-      }
-      else
-      {
-         if (webXml.getVersion().startsWith("3"))
-         {
-            results.add("*.jsf");
-            results.add("/faces/*");
-         }
-         else
-            ShellMessages.info(out, "FacesServlet not found in web.xml and Servlet " +
-                     "Version not >= 3.0, could not discover FacesServlet mappings");
+         results.add("*.jsf");
+         results.add("/faces/*");
       }
       return results;
    }
 
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    private List<String> getExplicitFacesServletMappings()
    {
-      List<ServletDef> servlets = webXml.getServlets();
+      ServletFacet<?> servletFacet = getFaceted().getFacet(ServletFacet.class);
       List<String> results = new ArrayList<String>();
-      for (ServletDef servlet : servlets)
+      for (ServletMappingCommonType mapping : (List<ServletMappingCommonType>) servletFacet.getConfig()
+               .getAllServletMapping())
       {
-         if ("javax.faces.webapp.FacesServlet".equals(servlet.getServletClass()))
+         if (mapping.getServletName().equals(FACES_SERVLET_NAME))
          {
-            List<ServletMappingDef> mappings = servlet.getMappings();
-            for (ServletMappingDef mapping : mappings)
-            {
-               results.addAll(mapping.getUrlPatterns());
-            }
+            results.addAll(mapping.getAllUrlPattern());
          }
       }
       return results;
    }
 
-   @SuppressWarnings("resource")
    @Override
    public void setFacesMapping(final String mapping)
    {
-      ServletFacet facet = getFaceted().getFacet(ServletFacet.class);
+      ServletFacet<?> facet = getFaceted().getFacet(ServletFacet.class);
       InputStream webXml = facet.getConfigFile().getResourceInputStream();
-      InputStream newWebXml = servletMappingHelper.addFacesServletMapping(webXml, mapping);
+      InputStream newWebXml = helper.addFacesServletMapping(webXml, mapping);
       if (webXml != newWebXml)
       {
          facet.getConfigFile().setContents(newWebXml);
@@ -240,7 +229,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
    {
       if (r != null)
       {
-         WebResourceFacet web = getFaceted().getFacet(WebResourceFacet.class);
+         WebResourcesFacet web = getFaceted().getFacet(WebResourcesFacet.class);
          List<DirectoryResource> webRootDirectories = web.getWebRootDirectories();
          for (DirectoryResource d : webRootDirectories)
          {
@@ -277,7 +266,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
    {
       if (path != null)
       {
-         WebResourceFacet web = getFaceted().getFacet(WebResourceFacet.class);
+         WebResourcesFacet web = getFaceted().getFacet(WebResourcesFacet.class);
          List<DirectoryResource> webRootDirectories = web.getWebRootDirectories();
 
          boolean matches = false;
@@ -399,39 +388,59 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
    }
 
    @Override
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    public List<String> getFacesSuffixes()
    {
-      List<String> suffixes = getFacesDefaultSuffixes();
-      for (String s : getFaceletsDefaultSuffixes())
+      List<String> suffixes = new ArrayList<String>();
+      if (getFaceted().hasFacet(ServletFacet.class))
       {
-         if (!suffixes.contains(s))
-            suffixes.add(s);
+         ServletFacet<?> servlet = getFaceted().getFacet(ServletFacet.class);
+         WebAppCommonDescriptor config = servlet.getConfig();
+         List<ParamValueType<WebAppCommonDescriptor>> params = config.getAllContextParam();
+         for (ParamValueType<WebAppCommonDescriptor> param : params)
+         {
+            if (JAVAX_FACES_DEFAULT_SUFFIX.equals(param.getParamName()))
+            {
+               suffixes.add(param.getParamValue());
+            }
+         }
       }
-      return suffixes;
-   }
 
-   @Override
-   public List<String> getFacesDefaultSuffixes()
-   {
-      ServletFacet facet = getFaceted().getFacet(ServletFacet.class);
-      WebAppDescriptor webXml = facet.getConfig();
-      return webXml.getFacesDefaultSuffixes();
+      if (suffixes.isEmpty())
+         suffixes.add(".xhtml");
+
+      return suffixes;
    }
 
    @Override
    public List<String> getFaceletsDefaultSuffixes()
    {
-      ServletFacet facet = getFaceted().getFacet(ServletFacet.class);
-      WebAppDescriptor webXml = facet.getConfig();
-      return webXml.getFaceletsDefaultSuffixes();
+      return Arrays.asList(".xhtml");
    }
 
    @Override
-   public List<String> getFaceletsViewMapping()
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public List<String> getFaceletsViewMappings()
    {
-      ServletFacet facet = getFaceted().getFacet(ServletFacet.class);
-      WebAppDescriptor webXml = facet.getConfig();
-      return webXml.getFaceletsViewMappings();
+      List<String> suffixes = new ArrayList<String>();
+      if (getFaceted().hasFacet(ServletFacet.class))
+      {
+         ServletFacet<?> servlet = getFaceted().getFacet(ServletFacet.class);
+         WebAppCommonDescriptor config = servlet.getConfig();
+         List<ParamValueType<WebAppCommonDescriptor>> params = config.getAllContextParam();
+         for (ParamValueType<WebAppCommonDescriptor> param : params)
+         {
+            if (FACELETS_VIEW_MAPPINGS.equals(param.getParamName()))
+            {
+               suffixes.add(param.getParamValue());
+            }
+         }
+      }
+
+      if (suffixes.isEmpty())
+         suffixes.add(".xhtml");
+
+      return suffixes;
    }
 
    private ServletMappingHelper helper = new ServletMappingHelper();

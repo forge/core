@@ -8,7 +8,7 @@ package org.jboss.forge.addon.javaee.facets;
 
 import java.util.List;
 
-import org.jboss.forge.addon.javaee.ConfigurableFacet;
+import org.jboss.forge.addon.javaee.Configurable;
 import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -20,7 +20,7 @@ import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface PersistenceFacet extends JavaEEFacet, ConfigurableFacet<PersistenceDescriptor>
+public interface PersistenceFacet extends JavaEEFacet, Configurable<PersistenceDescriptor>
 {
    /**
     * Get this {@link Project}'s default package for @Entity objects

@@ -17,7 +17,7 @@ import org.jboss.forge.addon.resource.FileResource;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public interface ConfigurableFacet<DESCRIPTOR>
+public interface Configurable<DESCRIPTOR>
 {
    /**
     * Return the {@link Descriptor} of the specification for which this facet represents.

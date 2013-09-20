@@ -29,7 +29,6 @@ import org.jboss.forge.parser.java.Method;
 
 public class ConstraintOperations
 {
-
    public Result addValidConstraint(Project project, Property property, boolean onAccessor)
             throws FileNotFoundException
    {

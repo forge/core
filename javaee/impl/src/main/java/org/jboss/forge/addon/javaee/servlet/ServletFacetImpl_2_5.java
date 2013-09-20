@@ -27,7 +27,7 @@ import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.webapp25.WebAppDescriptor;
 
-public class ServletFacetImpl_2_5 extends AbstractServletFacet implements ServletFacet_2_5
+public class ServletFacetImpl_2_5 extends AbstractServletFacet<WebAppDescriptor> implements ServletFacet_2_5
 {
    private static final Dependency JAVAX_SERVLET_API = DependencyBuilder
             .create("org.jboss.spec.javax.servlet:jboss-servlet-api_2.5_spec:1.0.1.Final");

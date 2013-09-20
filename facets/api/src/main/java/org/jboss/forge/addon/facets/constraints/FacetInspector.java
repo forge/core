@@ -74,7 +74,7 @@ public abstract class FacetInspector
       return getRelatedFacets(inspectedType, FacetConstraintType.REQUIRED);
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    private static <FACETTYPE extends Facet<?>> Set<Class<FACETTYPE>> getRelatedFacets(final Class<?> inspectedType,
             FacetConstraintType... constraintTypes)
    {
@@ -89,7 +89,7 @@ public abstract class FacetInspector
                      && (constraintTypes == null || constraintTypes.length == 0 || equalsAny(constraint.type(),
                               constraintTypes)))
             {
-               for (Class<? extends Facet<?>> facetType : constraint.value())
+               for (Class<? extends Facet> facetType : constraint.value())
                {
                   if (Facet.class.isAssignableFrom(facetType) && !facetType.isAssignableFrom(inspectedType))
                      result.add((Class<FACETTYPE>) facetType);
@@ -105,7 +105,7 @@ public abstract class FacetInspector
                   && (constraintTypes == null || constraintTypes.length == 0 || equalsAny(constraint.type(),
                            constraintTypes)))
          {
-            for (Class<? extends Facet<?>> facetType : constraint.value())
+            for (Class<? extends Facet> facetType : constraint.value())
             {
                if (Facet.class.isAssignableFrom(facetType) && !facetType.isAssignableFrom(inspectedType))
                   result.add((Class<FACETTYPE>) facetType);

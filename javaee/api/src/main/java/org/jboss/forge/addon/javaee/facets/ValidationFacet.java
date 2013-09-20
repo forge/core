@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.addon.javaee.facets;
 
-import org.jboss.forge.addon.javaee.ConfigurableFacet;
+import org.jboss.forge.addon.javaee.Configurable;
 import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.shrinkwrap.descriptor.api.validationConfiguration11.ValidationConfigurationDescriptor;
 
@@ -15,6 +15,6 @@ import org.jboss.shrinkwrap.descriptor.api.validationConfiguration11.ValidationC
  * 
  * @author Kevin Pollet
  */
-public interface ValidationFacet extends JavaEEFacet, ConfigurableFacet<ValidationConfigurationDescriptor>
+public interface ValidationFacet extends JavaEEFacet, Configurable<ValidationConfigurationDescriptor>
 {
 }
