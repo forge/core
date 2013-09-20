@@ -12,6 +12,7 @@ import java.io.File;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
+import org.jboss.forge.addon.javaee.Descriptors;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
@@ -21,7 +22,6 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
-import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 
 /**
  * Implementation of {@link CDIFacet} for spec version 1.0
