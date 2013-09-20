@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.javaee.facets.ValidationFacet;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -109,11 +110,17 @@ public class AddConstraintWizard extends AbstractJavaEECommand implements UIWiza
       context.setAttribute(JavaResource.class, selectedClass);
       return Results.navigateTo(SelectFieldWizardStep.class);
    }
+   
+   @Override
+   public boolean isEnabled(UIContext context)
+   {
+      return super.isEnabled(context) && getSelectedProject(context).hasFacet(ValidationFacet.class);
+   }
 
    @Override
    protected boolean isProjectRequired()
    {
-      return false;
+      return true;
    }
 
 }
