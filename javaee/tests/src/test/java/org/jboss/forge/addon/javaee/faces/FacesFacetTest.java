@@ -77,6 +77,7 @@ public class FacesFacetTest
       Assert.assertFalse(configFile.exists());
       facet.saveConfig(config);
       Assert.assertTrue(configFile.exists());
+      Assert.assertEquals("2.0", facet.getSpecVersion().toString());
       Assert.assertTrue(project.hasFacet(FacesFacet.class));
    }
 
@@ -94,6 +95,7 @@ public class FacesFacetTest
       Assert.assertFalse(configFile.exists());
       facet.saveConfig(config);
       Assert.assertTrue(configFile.exists());
+      Assert.assertEquals("2.1", facet.getSpecVersion().toString());
       Assert.assertTrue(project.hasFacet(FacesFacet.class));
    }
 
@@ -111,6 +113,7 @@ public class FacesFacetTest
       Assert.assertFalse(configFile.exists());
       facet.saveConfig(config);
       Assert.assertTrue(configFile.exists());
+      Assert.assertEquals("2.2", facet.getSpecVersion().toString());
       Assert.assertTrue(project.hasFacet(FacesFacet.class));
    }
 
