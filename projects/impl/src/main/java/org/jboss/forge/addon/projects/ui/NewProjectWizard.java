@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.projects.impl;
+package org.jboss.forge.addon.projects.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -108,16 +108,17 @@ public class NewProjectWizard implements UIWizard
                      && !targetLocation.getValue().getChild(projectName).listResources().isEmpty();
          }
       });
-
-      type.setItemLabelConverter(new Converter<ProjectType, String>()
+      if (builder.getUIContext().getProvider().isGUI())
       {
-         @Override
-         public String convert(ProjectType source)
+         type.setItemLabelConverter(new Converter<ProjectType, String>()
          {
-            return source == null ? null : source.getType();
-         }
-      });
-
+            @Override
+            public String convert(ProjectType source)
+            {
+               return source == null ? null : source.getType();
+            }
+         });
+      }
       // Add Project types
       List<ProjectType> projectTypes = new ArrayList<ProjectType>();
       for (ProjectType projectType : type.getValueChoices())

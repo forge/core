@@ -16,9 +16,12 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.context.UIContextListener;
+import org.jboss.forge.addon.ui.context.UISelection;
+import org.jboss.forge.addon.ui.util.Selections;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.ui.test.impl.UIContextImpl;
+import org.jboss.forge.ui.test.impl.UIProviderImpl;
 import org.jboss.forge.ui.test.impl.command.CommandTesterImpl;
 
 /**
@@ -59,7 +62,8 @@ public class CommandTesterFactory
             Resource<?>... initialSelection) throws Exception
    {
       Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
-      UIContextImpl context = new UIContextImpl(listeners, initialSelection);
+      UISelection<Resource<?>> selection = Selections.from(initialSelection);
+      UIContextImpl context = new UIContextImpl(new UIProviderImpl(true), listeners, selection);
       return new CommandTesterImpl(commandClass, addonRegistry, context);
    }
 }

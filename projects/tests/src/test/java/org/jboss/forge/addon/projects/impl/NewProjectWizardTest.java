@@ -8,26 +8,19 @@ package org.jboss.forge.addon.projects.impl;
  */
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.ui.context.AbstractUIContext;
-import org.jboss.forge.addon.ui.context.UIBuilder;
-import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UISelection;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
-import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.util.Selections;
+import org.jboss.forge.addon.projects.mock.MockProjectType;
+import org.jboss.forge.addon.projects.ui.NewProjectWizard;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.ui.test.WizardTester;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,120 +32,50 @@ public class NewProjectWizardTest
    @Deployment
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.addon:projects"),
-            @AddonDependency(name = "org.jboss.forge.addon:ui")
+            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness")
    })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
+               .addClass(MockProjectType.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:resources"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui")
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
                );
 
       return archive;
    }
 
    @Inject
-   private NewProjectWizard command;
-
-   @Inject
-   private NewProjectWizard command2;
-
-   @Inject
-   private ResourceFactory factory;
+   private WizardTester<NewProjectWizard> wizard;
 
    @Test
    public void testInjectionNotNull()
    {
-      Assert.assertNotNull(command);
+      Assert.assertNotNull(wizard);
    }
 
    @Test
    public void testInvokeCommand() throws Exception
    {
-      final List<InputComponent<?, ?>> inputs = new ArrayList<InputComponent<?, ?>>();
-
-      final UIContext context = new AbstractUIContext()
-      {
-         @Override
-         public <SELECTIONTYPE> UISelection<SELECTIONTYPE> getInitialSelection()
-         {
-            return Selections.emptySelection();
-         }
-      };
-      final UIBuilder builder = new UIBuilder()
-      {
-         @Override
-         public UIBuilder add(InputComponent<?, ?> input)
-         {
-            inputs.add(input);
-            return this;
-         }
-
-         @Override
-         public UIContext getUIContext()
-         {
-            return context;
-         }
-      };
-
-      File tempDir = File.createTempFile("forge", "projectTests");
-      tempDir.delete();
-
+      File tempDir = OperatingSystemUtils.createTempDir();
       try
       {
-         command.initializeUI(builder);
-
-         Assert.assertFalse(command.getOverwrite().isEnabled());
-
-         command.getTargetLocation().setValue(factory.create(DirectoryResource.class, tempDir));
-         command.getNamed().setValue("test");
-
-         Assert.assertFalse(command.getOverwrite().isEnabled());
-
-         command.getTopLevelPackage().setValue("org.example");
-
-         command.validate(new UIValidationContext()
-         {
-            @Override
-            public UIContext getUIContext()
-            {
-               return context;
-            }
-
-            @Override
-            public void addValidationError(InputComponent<?, ?> input, String errorMessage)
-            {
-            }
-
-            @Override
-            public void addValidationWarning(InputComponent<?, ?> input, String warningMessage)
-            {
-            }
-
-            @Override
-            public void addValidationInformation(InputComponent<?, ?> input, String infoMessage)
-            {
-            }
-
-            @Override
-            public InputComponent<?, ?> getCurrentInputComponent()
-            {
-               return null;
-            }
-         });
-
-         DirectoryResource targetDirectory = command.getTargetLocation().getValue().getChildDirectory("test");
-
+         Assert.assertFalse(wizard.canFlipToNextPage());
+         wizard.setValueFor("named", "test");
+         wizard.setValueFor("targetLocation", tempDir);
+         wizard.setValueFor("topLevelPackage", "org.example");
+         wizard.setValueFor("type", "mock");
+         Assert.assertTrue(wizard.isValid());
+         Assert.assertTrue(wizard.canFinish());
+         File targetDirectory = new File(tempDir, "test");
          Assert.assertFalse(targetDirectory.exists());
-         command.execute(context);
-         Assert.assertTrue(targetDirectory.exists());
+         wizard.finish(null);
 
-         targetDirectory.delete(true);
+         Assert.assertTrue(targetDirectory.exists());
       }
       finally
       {
@@ -163,49 +86,26 @@ public class NewProjectWizardTest
    @Test
    public void testOverwriteEnabledWhenTargetDirectoryExistsNotEmpty() throws Exception
    {
-      final List<InputComponent<?, ?>> inputs = new ArrayList<InputComponent<?, ?>>();
 
-      final UIContext context = new AbstractUIContext()
-      {
-         @Override
-         public <SELECTIONTYPE> UISelection<SELECTIONTYPE> getInitialSelection()
-         {
-            return Selections.emptySelection();
-         }
-      };
-      final UIBuilder builder = new UIBuilder()
-      {
-         @Override
-         public UIBuilder add(InputComponent<?, ?> input)
-         {
-            inputs.add(input);
-            return this;
-         }
-
-         @Override
-         public UIContext getUIContext()
-         {
-            return context;
-         }
-      };
-
-      File tempDir = File.createTempFile("forge", "projectTests");
-      tempDir.delete();
-      new File(tempDir, "test/something").mkdirs();
-
+      File tempDir = OperatingSystemUtils.createTempDir();
+      File something = new File(tempDir, "test/something");
+      something.mkdirs();
       try
       {
-         command2.initializeUI(builder);
-
-         Assert.assertFalse(command2.getOverwrite().isEnabled());
-
-         command2.getTargetLocation().setValue(factory.create(DirectoryResource.class, tempDir));
-         command2.getNamed().setValue("test");
-
-         Assert.assertTrue(command2.getOverwrite().isEnabled());
+         Assert.assertFalse(wizard.canFlipToNextPage());
+         Assert.assertFalse(wizard.getInputComponent("overwrite").isEnabled());
+         wizard.setValueFor("named", "test");
+         wizard.setValueFor("targetLocation", tempDir);
+         wizard.setValueFor("topLevelPackage", "org.example");
+         wizard.setValueFor("type", "mock");
+         Assert.assertFalse(wizard.isValid());
+         Assert.assertTrue(wizard.getInputComponent("overwrite").isEnabled());
+         Assert.assertFalse(wizard.canFlipToNextPage());
+         Assert.assertFalse(wizard.canFinish());
       }
       finally
       {
+         something.delete();
          tempDir.delete();
       }
    }

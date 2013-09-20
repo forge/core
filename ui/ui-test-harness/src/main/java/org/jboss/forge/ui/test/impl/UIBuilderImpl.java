@@ -5,26 +5,26 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui.test.impl.wizard;
+package org.jboss.forge.ui.test.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.ui.test.impl.UIContextImpl;
 
 public class UIBuilderImpl implements UIBuilder
 {
    private final Map<String, InputComponent<?, ?>> components = new HashMap<String, InputComponent<?, ?>>();
    private final UIContextImpl contextImpl;
-   private final UIWizard wizard;
+   private final UICommand command;
 
-   public UIBuilderImpl(UIContextImpl contextImpl, UIWizard wizard)
+   public UIBuilderImpl(UIContextImpl contextImpl, UICommand command)
    {
       this.contextImpl = contextImpl;
-      this.wizard = wizard;
+      this.command = command;
    }
 
    @Override
@@ -45,9 +45,9 @@ public class UIBuilderImpl implements UIBuilder
       return components.get(name);
    }
 
-   public UIWizard getWizard()
+   public UICommand getCommand()
    {
-      return wizard;
+      return command;
    }
 
 }

@@ -38,6 +38,12 @@
             <artifactId>projects-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>ui-test-harness</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>         
       </dependencies>
    </dependencyManagement>
 </project>

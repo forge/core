@@ -24,6 +24,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.ui.test.WizardListener;
 import org.jboss.forge.ui.test.WizardTester;
+import org.jboss.forge.ui.test.impl.UIBuilderImpl;
 import org.jboss.forge.ui.test.impl.UIContextImpl;
 import org.jboss.forge.ui.test.impl.UIValidationContextImpl;
 
@@ -67,7 +68,7 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
          throw new IllegalStateException("Wizard is already on the last page");
       }
       UIBuilderImpl currentBuilder = getCurrentBuilder();
-      NavigationResult result = currentBuilder.getWizard().next(context);
+      NavigationResult result = ((UIWizard) currentBuilder.getCommand()).next(context);
       Class<? extends UICommand>[] successors = result.getNext();
       final Class<? extends UICommand> successor;
       if (successors == null)
@@ -104,7 +105,7 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       try
       {
          boolean result;
-         NavigationResult next = currentBuilder.getWizard().next(context);
+         NavigationResult next = ((UIWizard) currentBuilder.getCommand()).next(context);
          if (next == null)
          {
             result = !subflows.isEmpty();
@@ -162,11 +163,11 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
          // All good. Hit it !
          for (UIBuilderImpl builder : pages)
          {
-            UIWizard wizard = builder.getWizard();
+            UICommand wizard = builder.getCommand();
             Result result = wizard.execute(context);
             if (listener != null)
             {
-               listener.wizardExecuted(wizard, result);
+               listener.wizardExecuted((UIWizard) wizard, result);
             }
          }
       }
@@ -202,9 +203,15 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       InputComponents.setValueFor(getConverterFactory(), (InputComponent<?, Object>) input, value);
    }
 
+   public InputComponent<?, ?> getInputComponent(String property)
+   {
+      UIBuilderImpl currentBuilder = getCurrentBuilder();
+      return currentBuilder.getComponentNamed(property);
+   }
+
    private List<String> getValidationErrors(UIBuilderImpl builder)
    {
-      UIWizard currentWizard = builder.getWizard();
+      UICommand currentWizard = builder.getCommand();
       UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
       currentWizard.validate(validationContext);
       return validationContext.getErrors();

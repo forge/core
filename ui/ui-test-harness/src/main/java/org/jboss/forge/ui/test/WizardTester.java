@@ -10,6 +10,7 @@ package org.jboss.forge.ui.test;
 import java.util.List;
 
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 
@@ -84,4 +85,9 @@ public interface WizardTester<W extends UIWizard>
     * TODO: Property should be typesafe.
     */
    public void setValueFor(String property, Object value);
+
+   /**
+    * Returns the {@link InputComponent} by the name
+    */
+   public InputComponent<?, ?> getInputComponent(String property);
 }

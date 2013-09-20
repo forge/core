@@ -5,11 +5,13 @@ import java.util.List;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.input.InputComponent;
 
 public interface CommandTester<C extends UICommand>
 {
 
    public void setInitialSelection(Resource<?>... selection);
+
    /**
     * Is the current command dialog valid ?
     * 
@@ -41,4 +43,9 @@ public interface CommandTester<C extends UICommand>
     * TODO: Property should be typesafe.
     */
    public void setValueFor(String property, Object value);
+
+   /**
+    * Returns the {@link InputComponent} by the name
+    */
+   public InputComponent<?, ?> getInputComponent(String property);
 }

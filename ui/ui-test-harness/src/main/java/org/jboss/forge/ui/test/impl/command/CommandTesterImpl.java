@@ -20,6 +20,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.ui.test.CommandTester;
+import org.jboss.forge.ui.test.impl.UIBuilderImpl;
 import org.jboss.forge.ui.test.impl.UIContextImpl;
 import org.jboss.forge.ui.test.impl.UIValidationContextImpl;
 
@@ -129,6 +130,12 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
          throw new IllegalArgumentException("Property " + property + " not found for current command dialog.");
       }
       InputComponents.setValueFor(getConverterFactory(), (InputComponent<?, Object>) input, value);
+   }
+
+   @Override
+   public InputComponent<?, ?> getInputComponent(String property)
+   {
+      return builder.getComponentNamed(property);
    }
 
    private ConverterFactory getConverterFactory()

@@ -7,74 +7,50 @@
 
 package org.jboss.forge.ui.test.impl;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.Collections;
 
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.context.AbstractUIContext;
 import org.jboss.forge.addon.ui.context.UIContextListener;
 import org.jboss.forge.addon.ui.context.UISelection;
+import org.jboss.forge.addon.ui.util.Selections;
+import org.jboss.forge.furnace.util.Assert;
 
-public class UIContextImpl extends AbstractUIContext implements UISelection<Resource<?>>
+public class UIContextImpl extends AbstractUIContext
 {
-   private List<Resource<?>> selection;
+   private UISelection<?> initialSelection;
    private final Iterable<UIContextListener> listeners;
    private final UIProvider provider;
 
-   public UIContextImpl(UIProvider provider, Iterable<UIContextListener> listeners, Resource<?>... initialSelection)
+   public UIContextImpl(boolean gui, UISelection<?> selection)
    {
-      this.provider = provider;
-      this.listeners = listeners;
-      setInitialSelection(initialSelection);
+      this.provider = new UIProviderImpl(gui);
+      this.listeners = Collections.emptyList();
+      this.initialSelection = selection;
       init();
    }
 
-   public UIContextImpl(Iterable<UIContextListener> listeners, Resource<?>... initialSelection)
+   public UIContextImpl(UIProvider provider, Iterable<UIContextListener> listeners,
+            UISelection<Resource<?>> initialSelection)
    {
-      this(new UIProviderImpl(true), listeners, initialSelection);
+      Assert.notNull(provider, "Provider must not be null");
+      this.provider = provider;
+      this.listeners = listeners;
+      this.initialSelection = initialSelection;
+      init();
    }
 
-   public void setInitialSelection(Resource<?>... initialSelection)
+   public <T> void setInitialSelection(T... selection)
    {
-      this.selection = Arrays.asList(initialSelection);
-   }
-
-   public void setInitialSelection(List<Resource<?>> initialSelection)
-   {
-      this.selection = initialSelection;
+      this.initialSelection = Selections.from(selection);
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   public UISelection<Resource<?>> getInitialSelection()
+   public <T> UISelection<T> getInitialSelection()
    {
-      return this;
-   }
-
-   @Override
-   public Resource<?> get()
-   {
-      return selection.isEmpty() ? null : selection.get(0);
-   }
-
-   @Override
-   public Iterator<Resource<?>> iterator()
-   {
-      return selection.iterator();
-   }
-
-   @Override
-   public int size()
-   {
-      return selection.size();
-   }
-
-   @Override
-   public boolean isEmpty()
-   {
-      return selection.isEmpty();
+      return (UISelection<T>) initialSelection;
    }
 
    public void init()
