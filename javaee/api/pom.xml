@@ -35,8 +35,8 @@
       </dependency>
 
       <dependency>
-         <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-         <artifactId>shrinkwrap-descriptors-api-javaee</artifactId>
+         <groupId>org.jboss.forge.descriptors</groupId>
+         <artifactId>javaee-descriptors-api</artifactId>
       </dependency>
 
       <!-- Spec JARs -->

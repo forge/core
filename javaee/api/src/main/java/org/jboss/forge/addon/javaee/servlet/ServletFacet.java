@@ -8,6 +8,8 @@ package org.jboss.forge.addon.javaee.servlet;
 
 import java.util.List;
 
+import javax.management.Descriptor;
+
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.facets.constraints.FacetConstraintType;
 import org.jboss.forge.addon.facets.constraints.FacetConstraints;
@@ -17,6 +19,7 @@ import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFilter;
+import org.jboss.shrinkwrap.descriptor.api.webapp.WebAppCommonDescriptor;
 
 /**
  * If installed, this {@link Project} supports features from the Servlet specification.
@@ -24,6 +27,7 @@ import org.jboss.forge.addon.resource.ResourceFilter;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
+@SuppressWarnings("rawtypes")
 @FacetConstraints({
          @FacetConstraint(value = WebResourcesFacet.class, type = FacetConstraintType.REQUIRED)
 })
@@ -44,4 +48,10 @@ public interface ServletFacet extends JavaEEFacet
     * Return a reference to this {@link Project}'s web.xml file.
     */
    public FileResource<?> getConfigFile();
+
+   /**
+    * Return the {@link Descriptor} of the specification for which this facet represents.
+    */
+   WebAppCommonDescriptor getConfig();
+
 }

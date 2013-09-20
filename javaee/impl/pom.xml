@@ -16,8 +16,8 @@
       </dependency>
 
       <dependency>
-         <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-         <artifactId>shrinkwrap-descriptors-impl-javaee</artifactId>
+         <groupId>org.jboss.forge.descriptors</groupId>
+         <artifactId>javaee-descriptors</artifactId>
       </dependency>
 
       <dependency>

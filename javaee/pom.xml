@@ -22,7 +22,7 @@
    </modules>
 
    <properties>
-      <shrinkwrap.descriptors.version>3.0.0-alpha-1-SNAPSHOT</shrinkwrap.descriptors.version>
+      <javaee.descriptors.version>0.0.1-SNAPSHOT</javaee.descriptors.version>
    </properties>
 
    <dependencyManagement>
@@ -75,11 +75,14 @@
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
-            <groupId>org.jboss.shrinkwrap.descriptors</groupId>
-            <artifactId>shrinkwrap-descriptors-bom</artifactId>
-            <version>${shrinkwrap.descriptors.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
+            <groupId>org.jboss.forge.descriptors</groupId>
+            <artifactId>javaee-descriptors-api</artifactId>
+            <version>${javaee.descriptors.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.descriptors</groupId>
+            <artifactId>javaee-descriptors</artifactId>
+            <version>${javaee.descriptors.version}</version>
          </dependency>
       </dependencies>
    </dependencyManagement>
