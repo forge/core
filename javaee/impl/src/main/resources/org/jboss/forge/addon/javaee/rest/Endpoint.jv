@@ -1,0 +1,80 @@
+package org.jboss.forge.spec.javaee.rest;
+
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriBuilder;
+
+/**
+ * 
+ */
+@Stateless
+@Path("${resourcePath}")
+public class ${entityTable}Endpoint
+{
+   @PersistenceContext(unitName="${persistenceUnitName}")
+   private EntityManager em;
+
+   @POST
+   @Consumes("${contentType}")
+   public Response create(${entity.getName()} entity)
+   {
+      em.persist(entity);
+      return Response.created(UriBuilder.fromResource(${entityTable}Endpoint.class).path(String.valueOf(entity.${getIdStatement})).build()).build();
+   }
+
+   @DELETE
+   @Path("/{id:[0-9][0-9]*}")
+   public Response deleteById(@PathParam("id") ${idType} id)
+   {
+      ${entity.getName()} entity = em.find(${entity.getName()}.class, id);
+      if (entity == null) {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+      em.remove(entity);
+      return Response.noContent().build();
+   }
+
+   @GET
+   @Path("/{id:[0-9][0-9]*}")
+   @Produces("${contentType}")
+   public Response findById(@PathParam("id") ${idType} id)
+   {
+      TypedQuery<${entity.getName()}> findByIdQuery = em.createQuery("${selectExpression} ${idClause} ${orderClause}", ${entity.getName()}.class);
+      findByIdQuery.setParameter("entityId", id);
+      ${entity.getName()} entity;
+      try {
+         entity = findByIdQuery.getSingleResult();
+      } catch (NoResultException nre) {
+         entity = null;
+      }
+      if (entity == null) {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+      return Response.ok(entity).build();
+   }
+
+   @GET
+   @Produces("${contentType}")
+   public List<${entity.getName()}> listAll()
+   {
+      final List<${entity.getName()}> results = em.createQuery("${selectExpression} ${orderClause}", ${entity.getName()}.class).getResultList();
+      return results;
+   }
+
+   @PUT
+   @Path("/{id:[0-9][0-9]*}")
+   @Consumes("${contentType}")
+   public Response update(${entity.getName()} entity)
+   {
+      entity = em.merge(entity);
+      return Response.noContent().build();
+   }
+}

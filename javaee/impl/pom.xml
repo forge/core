@@ -49,5 +49,13 @@
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
+
+      <!-- Freemarker -->
+      <dependency>
+         <groupId>org.freemarker</groupId>
+         <artifactId>freemarker</artifactId>
+         <version>2.3.20</version>
+      </dependency>
+
    </dependencies>
 </project>

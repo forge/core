@@ -43,7 +43,7 @@ public class RestSetupWizard extends AbstractJavaEECommand
    @Override
    public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("Rest: Setup")
+      return Metadata.from(super.getMetadata(context), getClass()).name("REST: Setup")
                .description("Setup REST in your project")
                .category(Categories.create(super.getMetadata(context).getCategory(), "JAX-RS"));
    }
