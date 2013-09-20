@@ -17,18 +17,15 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
-import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
-import org.jboss.shrinkwrap.descriptor.api.Descriptors;
 import org.jboss.shrinkwrap.descriptor.api.facesconfig20.WebFacesConfigDescriptor;
 
 /**
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class FacesFacetImpl_2_0 extends AbstractFacesFacetImpl implements FacesFacet_2_0
+public class FacesFacetImpl_2_0 extends AbstractFacesFacetImpl<WebFacesConfigDescriptor> implements FacesFacet_2_0
 {
    @Inject
    public FacesFacetImpl_2_0(DependencyInstaller installer)
@@ -54,26 +51,15 @@ public class FacesFacetImpl_2_0 extends AbstractFacesFacetImpl implements FacesF
    }
 
    @Override
-   public WebFacesConfigDescriptor getConfig()
-   {
-      WebFacesConfigDescriptor descriptor;
-      FileResource<?> configFile = getConfigFile();
-      if (configFile.exists())
-      {
-         DescriptorImporter<WebFacesConfigDescriptor> importer = Descriptors.importAs(WebFacesConfigDescriptor.class);
-         descriptor = importer.fromStream(configFile.getResourceInputStream());
-      }
-      else
-      {
-         descriptor = Descriptors.create(WebFacesConfigDescriptor.class);
-      }
-      return descriptor;
-   }
-
-   @Override
    public void saveConfig(WebFacesConfigDescriptor descriptor)
    {
       String output = descriptor.exportAsString();
       getConfigFile().setContents(output);
+   }
+
+   @Override
+   protected Class<WebFacesConfigDescriptor> getDescriptorClass()
+   {
+      return WebFacesConfigDescriptor.class;
    }
 }

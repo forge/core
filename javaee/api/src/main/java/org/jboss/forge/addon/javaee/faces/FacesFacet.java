@@ -6,21 +6,22 @@
  */
 package org.jboss.forge.addon.javaee.faces;
 
+import javax.faces.application.ProjectStage;
+
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
+import org.jboss.forge.addon.facets.constraints.FacetConstraintType;
+import org.jboss.forge.addon.javaee.ConfigurableFacet;
 import org.jboss.forge.addon.javaee.JavaEEFacet;
+import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.resource.FileResource;
 
 /**
  * If installed, this {@link Project} supports features from the JSF specification.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface FacesFacet extends JavaEEFacet
+@FacetConstraint(value = { ServletFacet.class }, type = FacetConstraintType.OPTIONAL)
+public interface FacesFacet<DESCRIPTOR> extends JavaEEFacet, ConfigurableFacet<DESCRIPTOR>
 {
-   /**
-    * Returns the {@link FileResource} of the descriptor
-    * 
-    * @return
-    */
-   FileResource<?> getConfigFile();
+   ProjectStage getProjectStage();
 }

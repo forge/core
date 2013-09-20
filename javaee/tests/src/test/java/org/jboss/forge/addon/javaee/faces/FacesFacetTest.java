@@ -77,6 +77,7 @@ public class FacesFacetTest
       Assert.assertFalse(configFile.exists());
       facet.saveConfig(config);
       Assert.assertTrue(configFile.exists());
+      Assert.assertTrue(project.hasFacet(FacesFacet.class));
    }
 
    @Test
@@ -93,6 +94,24 @@ public class FacesFacetTest
       Assert.assertFalse(configFile.exists());
       facet.saveConfig(config);
       Assert.assertTrue(configFile.exists());
+      Assert.assertTrue(project.hasFacet(FacesFacet.class));
+   }
+
+   @Test
+   public void testConfigDescriptorCreation_2_2() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      Assert.assertNotNull(project);
+      FacesFacet_2_2 facet = facetFactory.install(project, FacesFacet_2_2.class);
+      Assert.assertNotNull(facet);
+      FileResource<?> configFile = facet.getConfigFile();
+      Assert.assertFalse(configFile.exists());
+      org.jboss.shrinkwrap.descriptor.api.facesconfig22.WebFacesConfigDescriptor config = facet.getConfig();
+      config.createApplication().defaultRenderKitId("foo");
+      Assert.assertFalse(configFile.exists());
+      facet.saveConfig(config);
+      Assert.assertTrue(configFile.exists());
+      Assert.assertTrue(project.hasFacet(FacesFacet.class));
    }
 
 }

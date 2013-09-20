@@ -19,16 +19,16 @@ import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
-import org.jboss.shrinkwrap.descriptor.api.facesconfig21.WebFacesConfigDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.facesconfig22.WebFacesConfigDescriptor;
 
 /**
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class FacesFacetImpl_2_1 extends AbstractFacesFacetImpl<WebFacesConfigDescriptor> implements FacesFacet_2_1
+public class FacesFacetImpl_2_2 extends AbstractFacesFacetImpl<WebFacesConfigDescriptor> implements FacesFacet_2_2
 {
    @Inject
-   public FacesFacetImpl_2_1(DependencyInstaller installer)
+   public FacesFacetImpl_2_2(DependencyInstaller installer)
    {
       super(installer);
    }

@@ -253,8 +253,11 @@ public class FacetFactoryImpl implements FacetFactory
 
       for (Class<FACETTYPE> relatedType : facetsToRegister)
       {
-         FACETTYPE requirement = create(origin, relatedType);
-         register(seen, origin, requirement);
+         Iterable<FACETTYPE> requirements = createFacets(origin, relatedType);
+         for (FACETTYPE requirement : requirements)
+         {
+            register(seen, origin, requirement);
+         }
       }
 
       boolean result = false;

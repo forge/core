@@ -71,7 +71,12 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    {
       MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
       Model pom = mavenFacet.getPOM();
-      return pom.getPackaging();
+      String packaging = pom.getPackaging();
+      if (packaging != null)
+      {
+         packaging = packaging.trim();
+      }
+      return packaging;
    }
 
    @Override

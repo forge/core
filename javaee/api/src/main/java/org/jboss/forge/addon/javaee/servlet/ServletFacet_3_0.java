@@ -21,7 +21,7 @@ import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 @FacetConstraints({
          @FacetConstraint(value = WebResourcesFacet.class, type = FacetConstraintType.REQUIRED)
 })
-public interface ServletFacet_3_0 extends ServletFacet, ConfigurableFacet<WebAppDescriptor>
+public interface ServletFacet_3_0 extends ServletFacet, ConfigurableFacet<WebAppDescriptor>, WebFragmentSupport
 {
 
 }
