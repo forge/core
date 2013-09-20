@@ -98,6 +98,7 @@ public class ServletFacetImpl_2_5 extends AbstractServletFacet<WebAppDescriptor>
          descriptor = Descriptors.create(WebAppDescriptor.class);
          String projectName = getFaceted().getFacet(MetadataFacet.class).getProjectName();
          WebAppDescriptor unit = descriptor
+                  .version("2.5")
                   .displayName(projectName)
                   .createSessionConfig()
                   .sessionTimeout(30).up();

@@ -79,6 +79,7 @@ public class ServletFacetImpl_3_0 extends AbstractServletFacet<WebAppDescriptor>
          descriptor = Descriptors.create(WebAppDescriptor.class);
          String projectName = getFaceted().getFacet(MetadataFacet.class).getProjectName();
          WebAppDescriptor unit = descriptor
+                  .version("3.0")
                   .displayName(projectName)
                   .createSessionConfig()
                   .sessionTimeout(30).up();
