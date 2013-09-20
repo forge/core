@@ -19,6 +19,7 @@ import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.util.Streams;
 import org.jboss.forge.furnace.versions.SingleVersion;
@@ -42,6 +43,18 @@ public class ServletFacetImpl_2_5 extends AbstractServletFacet<WebAppDescriptor>
    public boolean isInstalled()
    {
       return super.isInstalled() && getConfigFile().exists() && "2.5".equals(getConfig().getVersionAsString());
+   }
+
+   @Override
+   public boolean install()
+   {
+      if (!getConfigFile().exists()
+               && getFaceted().getFacet(PackagingFacet.class)
+                        .getPackagingType().equalsIgnoreCase("war"))
+      {
+         saveConfig(getConfig());
+      }
+      return super.install();
    }
 
    @Override

@@ -7,9 +7,6 @@
 
 package org.jboss.forge.addon.javaee.servlet;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -67,29 +64,30 @@ public class ServletFacetTest
    {
       Project project = projectFactory.createTempProject();
       ServletFacet_3_0 facet = facetFactory.install(project, ServletFacet_3_0.class);
-      assertNotNull(facet);
-      assertTrue(project.hasFacet(ServletFacet.class));
+      Assert.assertFalse(facet.getConfigFile().exists());
+      Assert.assertNotNull(facet);
+      Assert.assertTrue(project.hasFacet(ServletFacet.class));
       WebAppDescriptor config = facet.getConfig();
-      assertNotNull(config);
+      Assert.assertNotNull(config);
       String projectName = project.getFacet(MetadataFacet.class).getProjectName();
       Assert.assertFalse(config.getAllDisplayName().isEmpty());
       Assert.assertEquals(projectName, config.getAllDisplayName().get(0));
+      Assert.assertFalse(facet.getConfigFile().exists());
    }
-   
 
    @Test
    public void testWebXMLInitialInfo_2_5() throws Exception
    {
       Project project = projectFactory.createTempProject();
       ServletFacet_2_5 facet = facetFactory.install(project, ServletFacet_2_5.class);
-      assertNotNull(facet);
-      assertTrue(project.hasFacet(ServletFacet.class));
+      Assert.assertTrue(facet.getConfigFile().exists());
+      Assert.assertNotNull(facet);
+      Assert.assertTrue(project.hasFacet(ServletFacet.class));
       org.jboss.shrinkwrap.descriptor.api.webapp25.WebAppDescriptor config = facet.getConfig();
-      assertNotNull(config);
+      Assert.assertNotNull(config);
       String projectName = project.getFacet(MetadataFacet.class).getProjectName();
       Assert.assertFalse(config.getAllDisplayName().isEmpty());
       Assert.assertEquals(projectName, config.getAllDisplayName().get(0));
    }
-
 
 }
