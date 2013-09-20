@@ -12,6 +12,8 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.inject.Vetoed;
+
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
@@ -26,14 +28,10 @@ import org.jboss.forge.addon.resource.ResourceFactory;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@Vetoed
 public class MavenPomResourceImpl extends AbstractFileResource<MavenPomResource> implements MavenPomResource
 {
    private Model currentModel;
-
-   public MavenPomResourceImpl(final ResourceFactory factory)
-   {
-      super(factory, null);
-   }
 
    public MavenPomResourceImpl(final ResourceFactory factory, final File file)
    {

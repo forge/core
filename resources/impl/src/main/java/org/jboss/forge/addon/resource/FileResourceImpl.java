@@ -11,11 +11,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.forge.addon.resource.AbstractFileResource;
-import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFacet;
-import org.jboss.forge.addon.resource.ResourceFactory;
-
 /**
  * Represents any regular file which Furnace does not hav any special handler for.
  * 
@@ -24,11 +19,6 @@ import org.jboss.forge.addon.resource.ResourceFactory;
  */
 public class FileResourceImpl extends AbstractFileResource<FileResourceImpl>
 {
-   public FileResourceImpl(final ResourceFactory factory)
-   {
-      super(factory, null);
-   }
-
    public FileResourceImpl(final ResourceFactory factory, final File file)
    {
       super(factory, file);

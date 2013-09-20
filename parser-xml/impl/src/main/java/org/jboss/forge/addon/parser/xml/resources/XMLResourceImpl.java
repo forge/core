@@ -12,8 +12,6 @@ import java.io.FileNotFoundException;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.resource.AbstractFileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
@@ -25,12 +23,6 @@ import org.jboss.forge.parser.xml.XMLParser;
  */
 public class XMLResourceImpl extends AbstractFileResource<XMLResource> implements XMLResource
 {
-   @Inject
-   public XMLResourceImpl(final ResourceFactory factory)
-   {
-      super(factory, null);
-   }
-
    public XMLResourceImpl(final ResourceFactory factory, final File file)
    {
       super(factory, file);

@@ -13,11 +13,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFacet;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.URLResource;
-import org.jboss.forge.addon.resource.VirtualResource;
 import org.jboss.forge.furnace.util.Assert;
 
 /**

@@ -14,9 +14,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.resource.AbstractFileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceException;
@@ -37,12 +34,6 @@ import org.jboss.forge.parser.java.Method;
  */
 public class JavaResourceImpl extends AbstractFileResource<JavaResource> implements JavaResource
 {
-   @Inject
-   public JavaResourceImpl(final ResourceFactory factory)
-   {
-      super(factory, null);
-   }
-
    public JavaResourceImpl(final ResourceFactory factory, final File file)
    {
       super(factory, file);
