@@ -22,6 +22,7 @@ import org.jboss.forge.furnace.versions.Version;
 import org.jboss.shrinkwrap.descriptor.api.facesconfig22.WebFacesConfigDescriptor;
 
 /**
+ * Facets for the JSF 2.2 Implementation
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
@@ -33,8 +34,8 @@ public class FacesFacetImpl_2_2 extends AbstractFacesFacetImpl<WebFacesConfigDes
       super(installer);
    }
 
-   public static final Dependency JAVAEE6_FACES_21 = DependencyBuilder
-            .create("org.jboss.spec.javax.faces:jboss-jsf-api_2.1_spec").setScopeType("provided");
+   public static final Dependency FACES_2_2 = DependencyBuilder
+            .create("javax.faces:javax.faces-api:2.2").setScopeType("provided");
 
    @Override
    public Version getSpecVersion()
@@ -46,7 +47,7 @@ public class FacesFacetImpl_2_2 extends AbstractFacesFacetImpl<WebFacesConfigDes
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
       Map<Dependency, List<Dependency>> result = new LinkedHashMap<Dependency, List<Dependency>>();
-      result.put(JAVAEE6_FACES_21, Arrays.asList(JAVAEE6_FACES_21));
+      result.put(FACES_2_2, Arrays.asList(FACES_2_2));
       return result;
    }
 
