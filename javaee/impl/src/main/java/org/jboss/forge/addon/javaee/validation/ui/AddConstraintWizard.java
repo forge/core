@@ -12,8 +12,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.javaee.facets.ValidationFacet;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
+import org.jboss.forge.addon.javaee.validation.ValidationFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;

@@ -11,10 +11,10 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.javaee.facets.PersistenceFacet;
 import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
+import org.jboss.forge.addon.javaee.jpa.PersistenceFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JavaEEDefaultContainer;

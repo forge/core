@@ -19,8 +19,6 @@ import javax.persistence.Id;
 import javax.persistence.Version;
 
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.javaee.facets.PersistenceFacet;
-import org.jboss.forge.addon.javaee.facets.PersistenceMetaModelFacet;
 import org.jboss.forge.addon.parser.java.JavaSourceFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
