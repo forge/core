@@ -15,8 +15,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
-import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
-import org.jboss.forge.addon.javaee.facets.JTAFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
@@ -27,13 +25,13 @@ import org.jboss.forge.furnace.versions.Version;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public class JTAFacetImpl extends AbstractJavaEEFacet implements JTAFacet
+public class JTAFacetImpl_1_1 extends AbstractJTAFacetImpl implements JTAFacet_1_1
 {
    private static final Dependency JBOSS_JTA_API = DependencyBuilder
             .create("org.jboss.spec.javax.transaction:jboss-transaction-api_1.1_spec");
 
    @Inject
-   public JTAFacetImpl(DependencyInstaller installer)
+   public JTAFacetImpl_1_1(DependencyInstaller installer)
    {
       super(installer);
    }

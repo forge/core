@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.javaee.facets;
+package org.jboss.forge.addon.javaee.jta;
 
 import org.jboss.forge.addon.javaee.JavaEEFacet;
 
@@ -14,6 +14,6 @@ import org.jboss.forge.addon.javaee.JavaEEFacet;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public interface JTAFacet extends JavaEEFacet
+public interface JTAFacet_1_1 extends JavaEEFacet
 {
 }

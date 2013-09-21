@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.javaee.jstl;
+package org.jboss.forge.addon.javaee.jta;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,9 +15,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
-import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
-import org.jboss.forge.addon.javaee.facets.JSTLFacet;
-import org.jboss.forge.addon.javaee.jta.JTAFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
@@ -28,13 +25,13 @@ import org.jboss.forge.furnace.versions.Version;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public class JSTLFacetImpl extends AbstractJavaEEFacet implements JSTLFacet
+public class JTAFacetImpl_1_2 extends AbstractJTAFacetImpl implements JTAFacet_1_2
 {
-   private static final Dependency JBOSS_JSTL_API = DependencyBuilder
-            .create("org.jboss.spec.javax.servlet.jstl:jboss-jstl-api_1.2_spec");
+   private static final Dependency JTA_API = DependencyBuilder
+            .create("javax.transaction:javax.transaction-api:1.2");
 
    @Inject
-   public JSTLFacetImpl(DependencyInstaller installer)
+   public JTAFacetImpl_1_2(DependencyInstaller installer)
    {
       super(installer);
    }
@@ -49,7 +46,7 @@ public class JSTLFacetImpl extends AbstractJavaEEFacet implements JSTLFacet
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
       Map<Dependency, List<Dependency>> result = new HashMap<Dependency, List<Dependency>>();
-      result.put(JBOSS_JSTL_API, Arrays.asList(JBOSS_JSTL_API));
+      result.put(JTA_API, Arrays.asList(JTA_API));
       return result;
    }
 }
