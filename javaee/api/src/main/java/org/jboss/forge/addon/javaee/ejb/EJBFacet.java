@@ -4,14 +4,14 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.javaee.facets;
+package org.jboss.forge.addon.javaee.ejb;
 
 import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.projects.Project;
 
 /**
  * If installed, this {@link Project} supports features from the EJB specification.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface EJBFacet extends JavaEEFacet

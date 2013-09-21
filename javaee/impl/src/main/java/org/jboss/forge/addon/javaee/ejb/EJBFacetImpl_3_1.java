@@ -16,8 +16,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
-import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
-import org.jboss.forge.addon.javaee.facets.EJBFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
@@ -25,14 +23,14 @@ import org.jboss.forge.furnace.versions.Version;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class EJBFacetImpl extends AbstractJavaEEFacet implements EJBFacet
+public class EJBFacetImpl_3_1 extends AbstractEJBFacetImpl implements EJBFacet_3_1
 {
    private static final Dependency JBOSS_EJB_API = DependencyBuilder
             .create("org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec");
    private static final Dependency JAVAX_EJB_API = DependencyBuilder.create("javax.ejb:ejb-api");
 
    @Inject
-   public EJBFacetImpl(final DependencyInstaller installer)
+   public EJBFacetImpl_3_1(final DependencyInstaller installer)
    {
       super(installer);
    }
