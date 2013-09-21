@@ -31,6 +31,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@SuppressWarnings("rawtypes")
 @FacetConstraint(DependencyFacet.class)
 public class FacesSetupWizard extends AbstractJavaEECommand
 {
@@ -48,12 +49,12 @@ public class FacesSetupWizard extends AbstractJavaEECommand
 
    @Inject
    @WithAttributes(required = true, label = "JavaServer Faces Version")
-   private UISelectOne<FacesFacet> choices;
+   private UISelectOne<FacesFacet> version;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      choices.setItemLabelConverter(new Converter<FacesFacet, String>()
+      version.setItemLabelConverter(new Converter<FacesFacet, String>()
       {
          @Override
          public String convert(FacesFacet source)
@@ -62,21 +63,21 @@ public class FacesSetupWizard extends AbstractJavaEECommand
          }
       });
 
-      for (FacesFacet choice : choices.getValueChoices())
+      for (FacesFacet choice : version.getValueChoices())
       {
-         if (choices.getValue() == null || choice.getSpecVersion().compareTo(choices.getValue().getSpecVersion()) >= 1)
+         if (version.getValue() == null || choice.getSpecVersion().compareTo(version.getValue().getSpecVersion()) >= 1)
          {
-            choices.setDefaultValue(choice);
+            version.setDefaultValue(choice);
          }
       }
 
-      builder.add(choices);
+      builder.add(version);
    }
 
    @Override
    public Result execute(final UIContext context) throws Exception
    {
-      if (facetFactory.install(getSelectedProject(context), choices.getValue()))
+      if (facetFactory.install(getSelectedProject(context), version.getValue()))
       {
          return Results.success("JavaServer Faces has been installed.");
       }
