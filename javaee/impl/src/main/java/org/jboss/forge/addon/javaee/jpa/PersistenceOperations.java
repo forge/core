@@ -97,7 +97,7 @@ public class PersistenceOperations
    public JavaResource newEntity(Project project, String entityName, String entityPackage, GenerationType idStrategy)
             throws FileNotFoundException
    {
-      final JavaSourceFacet java = facetFactory.install(project, JavaSourceFacet.class);
+      final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       JavaClass javaClass = createJavaClass(entityName, entityPackage, idStrategy);
       return java.saveJavaSource(javaClass);
    }
