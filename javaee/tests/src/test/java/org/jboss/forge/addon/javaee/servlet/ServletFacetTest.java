@@ -60,6 +60,22 @@ public class ServletFacetTest
    }
 
    @Test
+   public void testWebXMLInitialInfo_3_1() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      ServletFacet_3_1 facet = facetFactory.install(project, ServletFacet_3_1.class);
+      Assert.assertFalse(facet.getConfigFile().exists());
+      Assert.assertNotNull(facet);
+      Assert.assertTrue(project.hasFacet(ServletFacet.class));
+      org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor config = facet.getConfig();
+      Assert.assertNotNull(config);
+      String projectName = project.getFacet(MetadataFacet.class).getProjectName();
+      Assert.assertFalse(config.getAllDisplayName().isEmpty());
+      Assert.assertEquals(projectName, config.getAllDisplayName().get(0));
+      Assert.assertFalse(facet.getConfigFile().exists());
+   }
+
+   @Test
    public void testWebXMLInitialInfo_3_0() throws Exception
    {
       Project project = projectFactory.createTempProject();
