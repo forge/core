@@ -263,6 +263,10 @@ public final class InputComponents
       {
          ret = false;
       }
+      else if (value instanceof Iterable && !((Iterable) value).iterator().hasNext())
+      {
+         ret = false;
+      }
       else
       {
          ret = true;
@@ -305,13 +309,13 @@ public final class InputComponents
     * @return the item label converter of a {@link SelectComponent} or a {@link Converter} instance from the
     *         {@link ConverterFactory} parameter if not null
     */
-   public static Converter<?, String> getItemLabelConverter(final ConverterFactory converterFactory,
+   public static Converter<Object, String> getItemLabelConverter(final ConverterFactory converterFactory,
             final SelectComponent<?, ?> input)
    {
-      Converter<?, String> converter = input.getItemLabelConverter();
+      Converter<Object, String> converter = (Converter<Object, String>) input.getItemLabelConverter();
       if (converter == null && converterFactory != null)
       {
-         converter = converterFactory.getConverter(input.getValueType(), String.class);
+         converter = (Converter<Object, String>) converterFactory.getConverter(input.getValueType(), String.class);
       }
       return converter;
    }
