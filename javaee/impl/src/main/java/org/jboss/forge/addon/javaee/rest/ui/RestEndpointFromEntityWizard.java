@@ -19,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.PersistenceFacet;
 import org.jboss.forge.addon.javaee.rest.generation.RestResourceGenerator;
+import org.jboss.forge.addon.javaee.rest.generator.EntityBasedResourceGenerator;
 import org.jboss.forge.addon.javaee.rest.generator.RestGenerationContextImpl;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -72,6 +73,9 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand
    @WithAttributes(label = "Overwrite existing classes?", enabled = false, defaultValue = "false")
    private UIInput<Boolean> overwrite;
 
+   @Inject
+   private EntityBasedResourceGenerator defaultResourceGenerator;
+
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
@@ -111,6 +115,7 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand
       packageName.setDefaultValue(javaSourceFacet.getBasePackage() + ".rest");
 
       contentType.setValueChoices(Arrays.asList(MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON));
+      generator.setDefaultValue(defaultResourceGenerator);
       if (context.getProvider().isGUI())
       {
          generator.setItemLabelConverter(new Converter<RestResourceGenerator, String>()

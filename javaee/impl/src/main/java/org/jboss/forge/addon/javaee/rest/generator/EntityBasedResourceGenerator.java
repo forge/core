@@ -62,7 +62,7 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
       map.put("orderClause", orderClause);
       map.put("resourcePath", resourcePath);
 
-      String output = processor.processTemplate(map, "org/jboss/forge/rest/Endpoint.jv");
+      String output = processor.processTemplate(map, "org/jboss/forge/addon/javaee/rest/Endpoint.jv");
       JavaClass resource = JavaParser.parse(JavaClass.class, output);
       resource.addImport(entity.getQualifiedName());
       resource.setPackage(context.getTargetPackageName());
