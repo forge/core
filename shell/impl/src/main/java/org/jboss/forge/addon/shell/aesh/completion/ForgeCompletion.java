@@ -112,7 +112,6 @@ public class ForgeCompletion implements Completion
                   }
                   // if we only have one complete candidate, leave the escaped space be
                   List<String> candidates = completeOperation.getCompletionCandidates();
-                  completeOperation.addCompletionCandidates(candidates);
                   completeOperation.setOffset(completeOperation.getCursor() - completeObject.getOffset());
                   if (candidates.size() > 1)
                   {
