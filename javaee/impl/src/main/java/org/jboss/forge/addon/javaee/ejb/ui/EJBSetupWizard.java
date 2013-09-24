@@ -48,12 +48,12 @@ public class EJBSetupWizard extends AbstractJavaEECommand
 
    @Inject
    @WithAttributes(required = true, label = "EJB Version")
-   private UISelectOne<EJBFacet> version;
+   private UISelectOne<EJBFacet> ejbVersion;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      version.setItemLabelConverter(new Converter<EJBFacet, String>()
+      ejbVersion.setItemLabelConverter(new Converter<EJBFacet, String>()
       {
          @Override
          public String convert(EJBFacet source)
@@ -62,21 +62,21 @@ public class EJBSetupWizard extends AbstractJavaEECommand
          }
       });
 
-      for (EJBFacet choice : version.getValueChoices())
+      for (EJBFacet choice : ejbVersion.getValueChoices())
       {
-         if (version.getValue() == null || choice.getSpecVersion().compareTo(version.getValue().getSpecVersion()) >= 1)
+         if (ejbVersion.getValue() == null || choice.getSpecVersion().compareTo(ejbVersion.getValue().getSpecVersion()) >= 1)
          {
-            version.setDefaultValue(choice);
+            ejbVersion.setDefaultValue(choice);
          }
       }
 
-      builder.add(version);
+      builder.add(ejbVersion);
    }
 
    @Override
    public Result execute(final UIContext context) throws Exception
    {
-      if (facetFactory.install(getSelectedProject(context), version.getValue()))
+      if (facetFactory.install(getSelectedProject(context), ejbVersion.getValue()))
       {
          return Results.success("EJB has been installed.");
       }

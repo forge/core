@@ -53,7 +53,7 @@ public class RestSetupWizard extends AbstractJavaEECommand
 
    @Inject
    @WithAttributes(required = true, label = "JAX-RS Version")
-   private UISelectOne<RestFacet> version;
+   private UISelectOne<RestFacet> jaxrsVersion;
 
    @Inject
    @WithAttributes(required = true, label = "Configuration Strategy", type = InputType.RADIO)
@@ -76,7 +76,7 @@ public class RestSetupWizard extends AbstractJavaEECommand
    {
       configureVersions();
       configureActivationStrategy(builder.getUIContext());
-      builder.add(version).add(applicationPath).add(config).add(packageName).add(className);
+      builder.add(jaxrsVersion).add(applicationPath).add(config).add(packageName).add(className);
    }
 
    private void configureActivationStrategy(UIContext context)
@@ -109,7 +109,7 @@ public class RestSetupWizard extends AbstractJavaEECommand
 
    private void configureVersions()
    {
-      version.setItemLabelConverter(new Converter<RestFacet, String>()
+      jaxrsVersion.setItemLabelConverter(new Converter<RestFacet, String>()
       {
          @Override
          public String convert(RestFacet source)
@@ -118,12 +118,12 @@ public class RestSetupWizard extends AbstractJavaEECommand
          }
       });
 
-      for (RestFacet choice : version.getValueChoices())
+      for (RestFacet choice : jaxrsVersion.getValueChoices())
       {
-         if (version.getValue() == null
-                  || choice.getSpecVersion().compareTo(version.getValue().getSpecVersion()) >= 1)
+         if (jaxrsVersion.getValue() == null
+                  || choice.getSpecVersion().compareTo(jaxrsVersion.getValue().getSpecVersion()) >= 1)
          {
-            version.setDefaultValue(choice);
+            jaxrsVersion.setDefaultValue(choice);
          }
       }
    }
@@ -137,7 +137,7 @@ public class RestSetupWizard extends AbstractJavaEECommand
    @Override
    public Result execute(final UIContext context) throws Exception
    {
-      RestFacet facet = version.getValue();
+      RestFacet facet = jaxrsVersion.getValue();
       if (facetFactory.install(getSelectedProject(context), facet))
       {
          String path = applicationPath.getValue();

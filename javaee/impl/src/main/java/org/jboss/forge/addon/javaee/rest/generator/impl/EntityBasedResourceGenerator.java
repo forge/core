@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.javaee.rest.generator;
+package org.jboss.forge.addon.javaee.rest.generator.impl;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.forge.addon.javaee.rest.generation.RestGenerationContext;
 import org.jboss.forge.addon.javaee.rest.generation.RestResourceGenerator;
+import org.jboss.forge.addon.javaee.rest.generator.FreemarkerTemplateProcessor;
+import org.jboss.forge.addon.javaee.rest.generator.ResourceGeneratorUtil;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.parser.JavaParser;

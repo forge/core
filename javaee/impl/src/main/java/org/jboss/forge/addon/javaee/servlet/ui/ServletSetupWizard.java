@@ -48,35 +48,35 @@ public class ServletSetupWizard extends AbstractJavaEECommand
 
    @Inject
    @WithAttributes(required = true, label = "Servlet Version")
-   private UISelectOne<ServletFacet> choices;
+   private UISelectOne<ServletFacet<?>> servletVersion;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      choices.setItemLabelConverter(new Converter<ServletFacet, String>()
+      servletVersion.setItemLabelConverter(new Converter<ServletFacet<?>, String>()
       {
          @Override
-         public String convert(ServletFacet source)
+         public String convert(ServletFacet<?> source)
          {
             return source.getSpecVersion().toString();
          }
       });
 
-      for (ServletFacet choice : choices.getValueChoices())
+      for (ServletFacet<?> choice : servletVersion.getValueChoices())
       {
-         if (choices.getValue() == null || choice.getSpecVersion().compareTo(choices.getValue().getSpecVersion()) >= 1)
+         if (servletVersion.getValue() == null || choice.getSpecVersion().compareTo(servletVersion.getValue().getSpecVersion()) >= 1)
          {
-            choices.setDefaultValue(choice);
+            servletVersion.setDefaultValue(choice);
          }
       }
 
-      builder.add(choices);
+      builder.add(servletVersion);
    }
 
    @Override
    public Result execute(final UIContext context) throws Exception
    {
-      if (facetFactory.install(getSelectedProject(context), choices.getValue()))
+      if (facetFactory.install(getSelectedProject(context), servletVersion.getValue()))
       {
          return Results.success("Servlet API has been installed.");
       }

@@ -49,12 +49,12 @@ public class FacesSetupWizard extends AbstractJavaEECommand
 
    @Inject
    @WithAttributes(required = true, label = "JavaServer Faces Version")
-   private UISelectOne<FacesFacet> version;
+   private UISelectOne<FacesFacet> facesVersion;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      version.setItemLabelConverter(new Converter<FacesFacet, String>()
+      facesVersion.setItemLabelConverter(new Converter<FacesFacet, String>()
       {
          @Override
          public String convert(FacesFacet source)
@@ -63,21 +63,21 @@ public class FacesSetupWizard extends AbstractJavaEECommand
          }
       });
 
-      for (FacesFacet choice : version.getValueChoices())
+      for (FacesFacet choice : facesVersion.getValueChoices())
       {
-         if (version.getValue() == null || choice.getSpecVersion().compareTo(version.getValue().getSpecVersion()) >= 1)
+         if (facesVersion.getValue() == null || choice.getSpecVersion().compareTo(facesVersion.getValue().getSpecVersion()) >= 1)
          {
-            version.setDefaultValue(choice);
+            facesVersion.setDefaultValue(choice);
          }
       }
 
-      builder.add(version);
+      builder.add(facesVersion);
    }
 
    @Override
    public Result execute(final UIContext context) throws Exception
    {
-      if (facetFactory.install(getSelectedProject(context), version.getValue()))
+      if (facetFactory.install(getSelectedProject(context), facesVersion.getValue()))
       {
          return Results.success("JavaServer Faces has been installed.");
       }
