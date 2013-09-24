@@ -17,6 +17,8 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.javaee.ejb.EJBFacet;
+import org.jboss.forge.addon.javaee.ejb.ui.EJBSetupWizard;
 import org.jboss.forge.addon.javaee.jpa.PersistenceFacet;
 import org.jboss.forge.addon.javaee.rest.generation.RestResourceGenerator;
 import org.jboss.forge.addon.javaee.rest.generator.EntityBasedResourceGenerator;
@@ -34,10 +36,12 @@ import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
@@ -47,7 +51,7 @@ import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class RestEndpointFromEntityWizard extends AbstractJavaEECommand
+public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implements UIWizard
 {
    @Inject
    @WithAttributes(label = "Content Type", defaultValue = MediaType.APPLICATION_XML, required = true)
@@ -213,6 +217,20 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand
       generationContext.setPersistenceUnitName(persistenceUnit.getValue());
       generationContext.setTargetPackageName(packageName.getValue());
       return generationContext;
+   }
+
+   @Override
+   public NavigationResult next(UIContext context) throws Exception
+   {
+      Project project = getSelectedProject(context);
+      if (project.hasFacet(EJBFacet.class))
+      {
+         return null;
+      }
+      else
+      {
+         return Results.navigateTo(EJBSetupWizard.class);
+      }
    }
 
 }
