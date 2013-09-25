@@ -309,13 +309,14 @@ public final class InputComponents
     * @return the item label converter of a {@link SelectComponent} or a {@link Converter} instance from the
     *         {@link ConverterFactory} parameter if not null
     */
-   public static Converter<Object, String> getItemLabelConverter(final ConverterFactory converterFactory,
-            final SelectComponent<?, ?> input)
+   public static <IMPLTYPE, VALUETYPE> Converter<VALUETYPE, String> getItemLabelConverter(
+            final ConverterFactory converterFactory,
+            final SelectComponent<IMPLTYPE, VALUETYPE> input)
    {
-      Converter<Object, String> converter = (Converter<Object, String>) input.getItemLabelConverter();
+      Converter<VALUETYPE, String> converter = input.getItemLabelConverter();
       if (converter == null && converterFactory != null)
       {
-         converter = (Converter<Object, String>) converterFactory.getConverter(input.getValueType(), String.class);
+         converter = converterFactory.getConverter(input.getValueType(), String.class);
       }
       return converter;
    }
