@@ -9,10 +9,8 @@ package org.jboss.forge.addon.ui.impl;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.List;
 
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
@@ -279,14 +277,7 @@ public class InputComponentProducer implements InputComponentFactory
       else
       {
          // Auto-populate Exported values on SelectComponents
-         List<Object> choiceList = new ArrayList<Object>();
-         Imported instances = addonRegistry.getServices(valueType);
-         for (Object instance : instances)
-         {
-            choiceList.add(instance);
-            instances.release(instance);
-         }
-         choices = choiceList;
+         choices = addonRegistry.getServices(valueType);
       }
       selectComponent.setValueChoices(choices);
    }
