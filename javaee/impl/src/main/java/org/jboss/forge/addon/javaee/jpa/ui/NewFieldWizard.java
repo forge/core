@@ -9,6 +9,8 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -16,6 +18,8 @@ import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.FieldOperations;
@@ -74,12 +78,17 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    private UIInput<Integer> length;
 
    @Inject
+   @WithAttributes(label = "Temporal Type", defaultValue = "DATE", description = "Adds @Temporal only if field is java.util.Date or java.util.Calendar", type = InputType.RADIO, enabled = false)
+   private UISelectOne<TemporalType> temporalType;
+
+   @Inject
    private FieldOperations fieldOperations;
 
    @Override
    public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("JPA: New Field").description("Create a new field")
+      return Metadata.from(super.getMetadata(context), getClass()).name("JPA: New Field")
+               .description("Create a new field")
                .category(Categories.create(super.getMetadata(context).getCategory().getName(), "JPA"));
    }
 
@@ -120,7 +129,17 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             return !lob.getValue();
          }
       });
-      builder.add(entity).add(fieldName).add(typeName).add(length).add(relationshipType).add(lob).add(primitive);
+      temporalType.setEnabled(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            String typeValue = typeName.getValue();
+            return Date.class.getName().equals(typeValue) || Calendar.class.getName().equals(typeValue);
+         }
+      });
+      builder.add(entity).add(fieldName).add(typeName).add(temporalType).add(length).add(relationshipType).add(lob)
+               .add(primitive);
    }
 
    private void setupEntities(UIContext context)
@@ -210,6 +229,10 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          if (length.isEnabled() && length.getValue() != null && length.getValue().intValue() != 255)
          {
             field.getAnnotation(Column.class).setLiteralValue("length", String.valueOf(length.getValue()));
+         }
+         if (temporalType.isEnabled())
+         {
+            field.addAnnotation(Temporal.class).setEnumValue(temporalType.getValue());
          }
          Project selectedProject = getSelectedProject(context);
          if (selectedProject != null)
