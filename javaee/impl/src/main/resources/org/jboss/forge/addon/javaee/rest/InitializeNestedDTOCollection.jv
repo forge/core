@@ -1,5 +1,5 @@
    Iterator<${elementType}> ${collectionIterator} = entity.${fieldGetter}.iterator();
-   for (;${collectionIterator}.hasNext();)
+   while (${collectionIterator}.hasNext())
    {
       ${elementType} element = ${collectionIterator}.next();
       this.${fieldName}.add(new ${nestedDTOType}(element));

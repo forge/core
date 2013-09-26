@@ -1,10 +1,10 @@
    Iterator<${simpleParameterizedType}> ${jpaIterator} = entity.${fieldGetter}.iterator();
-   for (;${jpaIterator}.hasNext();)
+   while (${jpaIterator}.hasNext())
    {
       boolean found = false;
       ${simpleParameterizedType} ${jpaVar} = ${jpaIterator}.next();
       Iterator<${nestedDTOType}> ${dtoIterator} = this.${fieldGetter}.iterator();
-      for (;${dtoIterator}.hasNext();)
+      while (${dtoIterator}.hasNext())
       {
          ${nestedDTOType} ${dtoVar} = ${dtoIterator}.next();
          if(${dtoVar}.${reverseIdGetter}.equals(${jpaVar}.${reverseIdGetter}))
@@ -19,12 +19,12 @@
       }
    }
    Iterator<${nestedDTOType}> ${dtoIterator} = this.${fieldGetter}.iterator();
-   for (;${dtoIterator}.hasNext();)
+   while (${dtoIterator}.hasNext())
    {
       boolean found = false;
       ${nestedDTOType}  ${dtoVar} = ${dtoIterator}.next();
       ${jpaIterator} = entity.${fieldGetter}.iterator();
-      for (;${jpaIterator}.hasNext();)
+      while (${jpaIterator}.hasNext())
       {
          ${simpleParameterizedType} ${jpaVar} = ${jpaIterator}.next();
          if(${dtoVar}.${reverseIdGetter}.equals(${jpaVar}.${reverseIdGetter}))
@@ -36,7 +36,7 @@
       if(found == false)
       {
          Iterator<${simpleParameterizedType}> resultIter = em.createQuery("SELECT DISTINCT ${jpqlVar} FROM ${simpleParameterizedType} ${jpqlVar}", ${simpleParameterizedType}.class).getResultList().iterator();
-         for(;resultIter.hasNext();)
+         while (resultIter.hasNext())
          {
             ${simpleParameterizedType} result = resultIter.next();
             if(result.${reverseIdGetter}.equals(${dtoVar}.${reverseIdGetter}))
