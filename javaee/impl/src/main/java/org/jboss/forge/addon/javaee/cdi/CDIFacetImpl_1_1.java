@@ -16,8 +16,8 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.addon.javaee.Descriptors;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
-import org.jboss.forge.furnace.util.Streams;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.shrinkwrap.descriptor.api.beans11.BeansDescriptor;
@@ -58,7 +58,7 @@ public class CDIFacetImpl_1_1 extends AbstractCDIFacetImpl<BeansDescriptor> impl
    @Override
    protected String getDescriptorContent()
    {
-      return Streams.toString(getClass().getResourceAsStream("beans_1_1.xml"));
+      return Descriptors.create(BeansDescriptor.class).beanDiscoveryMode("all").exportAsString();
    }
 
    @Override
