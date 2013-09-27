@@ -94,7 +94,7 @@
             <module>convert</module>
             <module>configuration</module>
             <module>scaffold</module>
-
+            <module>templates</module>
             <module>core</module>
          </modules>
       </profile>
