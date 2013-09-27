@@ -142,4 +142,10 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
    {
       return addonRegistry.getServices(ConverterFactory.class).get();
    }
+   
+   @Override
+   public boolean isEnabled()
+   {
+      return builder.getCommand().isEnabled(context);
+   }
 }

@@ -90,4 +90,9 @@ public interface WizardTester<W extends UIWizard>
     * Returns the {@link InputComponent} by the name
     */
    public InputComponent<?, ?> getInputComponent(String property);
+
+   /**
+    * Is this current wizard enabled ?
+    */
+   public boolean isEnabled();
 }

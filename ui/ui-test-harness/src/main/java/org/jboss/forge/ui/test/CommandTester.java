@@ -48,4 +48,10 @@ public interface CommandTester<C extends UICommand>
     * Returns the {@link InputComponent} by the name
     */
    public InputComponent<?, ?> getInputComponent(String property);
+   
+   /**
+    * Is this current command enabled ?
+    */
+   public boolean isEnabled();
+
 }

@@ -221,4 +221,10 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
    {
       return addonRegistry.getServices(ConverterFactory.class).get();
    }
+
+   @Override
+   public boolean isEnabled()
+   {
+      return getCurrentBuilder().getCommand().isEnabled(context);
+   }
 }
