@@ -9,6 +9,7 @@
    </parent>
    <groupId>org.jboss.forge.addon</groupId>
    <artifactId>templates-parent</artifactId>
+   <name>Forge - Templates Addon Parent</name>
    <packaging>pom</packaging>
    <modules>
       <module>addon</module>

@@ -8,6 +8,7 @@
       <relativePath>../pom.xml</relativePath>
    </parent>
    <artifactId>templates-api</artifactId>
+   <name>Forge - Templates Addon API</name>
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>
