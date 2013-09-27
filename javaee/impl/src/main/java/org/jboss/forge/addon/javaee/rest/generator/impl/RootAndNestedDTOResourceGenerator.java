@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.javaee.rest.generator.impl;
 
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,6 @@ import javax.persistence.Transient;
 
 import org.jboss.forge.addon.javaee.rest.generation.RestGenerationContext;
 import org.jboss.forge.addon.javaee.rest.generation.RestResourceGenerator;
-import org.jboss.forge.addon.javaee.rest.generator.FreemarkerTemplateProcessor;
 import org.jboss.forge.addon.javaee.rest.generator.ResourceGeneratorUtil;
 import org.jboss.forge.addon.javaee.rest.generator.dto.DTOClassBuilder;
 import org.jboss.forge.addon.javaee.rest.generator.dto.DTOCollection;
@@ -34,6 +34,10 @@ import org.jboss.forge.addon.parser.java.beans.Property;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.templates.TemplateProcessor;
+import org.jboss.forge.addon.templates.TemplateProcessorFactory;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
@@ -48,7 +52,10 @@ import org.jboss.forge.parser.java.Type;
 public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
 {
    @Inject
-   FreemarkerTemplateProcessor processor;
+   TemplateProcessorFactory processorFactory;
+
+   @Inject
+   ResourceFactory resourceFactory;
 
    @Override
    public List<JavaClass> generateFrom(RestGenerationContext context) throws Exception
@@ -84,7 +91,9 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
       map.put("orderClause", orderClause);
       map.put("resourcePath", resourcePath);
 
-      String output = processor.processTemplate(map, "org/jboss/forge/addon/javaee/rest/EndpointWithDTO.jv");
+      Resource<URL> templateResource = resourceFactory.create(getClass().getResource("EndpointWithDTO.jv"));
+      TemplateProcessor processor = processorFactory.createProcessorFor(templateResource);
+      String output = processor.process(map);
       JavaClass resource = JavaParser.parse(JavaClass.class, output);
       resource.addImport(rootDto.getQualifiedName());
       resource.addImport(entity.getQualifiedName());
@@ -125,7 +134,8 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
       JavaClassIntrospector bean = new JavaClassIntrospector(entity);
       idProperty = parseIdPropertyForJPAEntity(bean);
 
-      DTOClassBuilder dtoClassBuilder = new DTOClassBuilder(entity, idProperty, topLevel, processor)
+      DTOClassBuilder dtoClassBuilder = new DTOClassBuilder(entity, idProperty, topLevel, processorFactory,
+               resourceFactory)
                .setPackage(dtoPackage)
                .setEmbeddedType(isEmbeddedType);
 

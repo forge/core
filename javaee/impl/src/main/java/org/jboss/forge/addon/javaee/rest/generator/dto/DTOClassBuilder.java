@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.javaee.rest.generator.dto;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,8 +16,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jboss.forge.addon.javaee.rest.generator.FreemarkerTemplateProcessor;
 import org.jboss.forge.addon.parser.java.beans.Property;
+import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.templates.TemplateProcessor;
+import org.jboss.forge.addon.templates.TemplateProcessorFactory;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
@@ -32,7 +35,7 @@ import org.jboss.forge.parser.java.util.Types;
 public class DTOClassBuilder
 {
    private JavaClass dto;
-   private boolean topLevel = false;
+   private boolean topLevel;
    private String dtoClassName;
    private boolean isEmbeddedType;
    private JavaClass entity;
@@ -41,16 +44,28 @@ public class DTOClassBuilder
    private Method<JavaClass> assembleJPA;
    private Method<JavaClass> copyCtor;
    private Property idProperty;
-   private FreemarkerTemplateProcessor processor;
+   private final TemplateProcessor initializeJPAEntityFromId;
+   private final TemplateProcessor assembleCollection;
+   private final TemplateProcessor initializeNestedDTOCollection;
 
-   public DTOClassBuilder(JavaClass entity, Property idProperty, boolean topLevel, FreemarkerTemplateProcessor processor)
+   public DTOClassBuilder(JavaClass entity, Property idProperty, boolean topLevel,
+            TemplateProcessorFactory processorFactory, ResourceFactory resourceFactory)
    {
       this.entity = entity;
       this.idProperty = idProperty;
       this.topLevel = topLevel;
       this.copyCtorBuilder = new StringBuilder();
       this.assembleJPABuilder = new StringBuilder();
-      this.processor = processor;
+      this.initializeJPAEntityFromId = processorFactory.createProcessorFor(resourceFactory.create(getClass()
+               .getResource(
+                        "InitializeJPAEntityFromId.jv")));
+      this.assembleCollection = processorFactory.createProcessorFor(resourceFactory.create(getClass().getResource(
+               "AssembleCollection.jv")));
+
+      this.initializeNestedDTOCollection = processorFactory.createProcessorFor(resourceFactory.create(getClass()
+               .getResource(
+                        "InitializeNestedDTOCollection.jv")));
+
       initName();
       initClassStructure();
       initializeJPAEntityInAssembler();
@@ -153,7 +168,15 @@ public class DTOClassBuilder
          map.put("id", idProperty.getName());
          map.put("entityName", entity.getName());
          map.put("jpqlVar", entity.getName().toLowerCase().substring(0, 1));
-         String output = processor.processTemplate(map, "org/jboss/forge/addon/javaee/rest/InitializeJPAEntityFromId.jv");
+         String output;
+         try
+         {
+            output = initializeJPAEntityFromId.process(map);
+         }
+         catch (IOException e)
+         {
+            throw new RuntimeException(e);
+         }
          assembleJPABuilder.append(output);
       }
    }
@@ -294,7 +317,15 @@ public class DTOClassBuilder
       map.put("dtoVar", "dto" + Strings.capitalize(simpleParameterizedType));
       map.put("jpqlVar", simpleParameterizedType.toLowerCase().substring(0, 1));
 
-      String output = processor.processTemplate(map, "org/jboss/forge/addon/javaee/rest/AssembleCollection.jv");
+      String output;
+      try
+      {
+         output = assembleCollection.process(map);
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
       assembleJPABuilder.append(output);
    }
 
@@ -327,7 +358,15 @@ public class DTOClassBuilder
       map.put("collectionIterator", "iter" + Strings.capitalize(property.getName()));
       map.put("elementType", parameterizedType.getName());
       map.put("fieldGetter", property.getAccessor().getName() + "()");
-      String output = processor.processTemplate(map, "org/jboss/forge/addon/javaee/rest/InitializeNestedDTOCollection.jv");
+      String output;
+      try
+      {
+         output = initializeNestedDTOCollection.process(map);
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
       copyCtorBuilder.append(output);
    }
 

@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.javaee.rest.generator.impl;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -16,10 +17,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.forge.addon.javaee.rest.generation.RestGenerationContext;
 import org.jboss.forge.addon.javaee.rest.generation.RestResourceGenerator;
-import org.jboss.forge.addon.javaee.rest.generator.FreemarkerTemplateProcessor;
 import org.jboss.forge.addon.javaee.rest.generator.ResourceGeneratorUtil;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.templates.TemplateProcessor;
+import org.jboss.forge.addon.templates.TemplateProcessorFactory;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 
@@ -29,7 +33,10 @@ import org.jboss.forge.parser.java.JavaClass;
 public class EntityBasedResourceGenerator implements RestResourceGenerator
 {
    @Inject
-   FreemarkerTemplateProcessor processor;
+   TemplateProcessorFactory processorFactory;
+
+   @Inject
+   ResourceFactory resourceFactory;
 
    @Override
    public List<JavaClass> generateFrom(RestGenerationContext context) throws Exception
@@ -64,7 +71,9 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
       map.put("orderClause", orderClause);
       map.put("resourcePath", resourcePath);
 
-      String output = processor.processTemplate(map, "org/jboss/forge/addon/javaee/rest/Endpoint.jv");
+      Resource<URL> templateResource = resourceFactory.create(getClass().getResource("Endpoint.jv"));
+      TemplateProcessor processor = processorFactory.createProcessorFor(templateResource);
+      String output = processor.process(map);
       JavaClass resource = JavaParser.parse(JavaClass.class, output);
       resource.addImport(entity.getQualifiedName());
       resource.setPackage(context.getTargetPackageName());

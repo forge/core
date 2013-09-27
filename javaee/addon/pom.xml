@@ -26,6 +26,12 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>templates</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>projects</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
@@ -39,7 +45,6 @@
          <artifactId>parser-xml</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
-      
 
       <!-- Furnace Container -->
       <dependency>
