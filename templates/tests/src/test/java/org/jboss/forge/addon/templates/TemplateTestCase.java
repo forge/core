@@ -1,6 +1,7 @@
 package org.jboss.forge.addon.templates;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Collections;
 
 import javax.inject.Inject;
@@ -8,9 +9,8 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.templates.TemplateProcessor;
-import org.jboss.forge.addon.templates.TemplateProcessorFactory;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -29,8 +29,10 @@ public class TemplateTestCase
             @AddonDependency(name = "org.jboss.forge.addon:resources") })
    public static ForgeArchive getDeployment()
    {
+      String packagePath = TemplateTestCase.class.getPackage().getName().replace('.', '/');
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addBeansXML()
+               .addAsResource(TemplateTestCase.class.getResource("template.ftl"), packagePath + "/template.ftl")
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:templates"),
@@ -66,4 +68,17 @@ public class TemplateTestCase
       String actual = processor.process(Collections.singletonMap("name", "JBoss Forge"));
       Assert.assertEquals(expected, actual);
    }
+
+   @Test
+   public void testClasspathTemplateProcessor() throws Exception
+   {
+      URL template = getClass().getResource("template.ftl");
+      Assert.assertNotNull(template);
+      String expected = "Hello JBoss Forge!";
+      Resource<?> resource = resourceFactory.create(template);
+      TemplateProcessor processor = templateProcessorFactory.createProcessorFor(resource);
+      String actual = processor.process(Collections.singletonMap("name", "JBoss Forge"));
+      Assert.assertEquals(expected, actual);
+   }
+
 }

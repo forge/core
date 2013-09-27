@@ -79,20 +79,23 @@ public class URLResourceImpl extends VirtualResource<URL> implements URLResource
    @Override
    public boolean exists()
    {
-      HttpURLConnection connection;
-      try
+      if (resource.getProtocol() != null && resource.getProtocol().startsWith("http"))
       {
-         connection = (HttpURLConnection) resource.openConnection();
-         connection.setRequestMethod("HEAD");
-         int responseCode = connection.getResponseCode();
-         if (responseCode != 200)
+         HttpURLConnection connection;
+         try
+         {
+            connection = (HttpURLConnection) resource.openConnection();
+            connection.setRequestMethod("HEAD");
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200)
+            {
+               return false;
+            }
+         }
+         catch (IOException e)
          {
             return false;
          }
-      }
-      catch (IOException e)
-      {
-         return false;
       }
       return true;
    }
