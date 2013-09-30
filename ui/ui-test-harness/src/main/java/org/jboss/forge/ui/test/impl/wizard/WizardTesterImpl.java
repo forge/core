@@ -44,19 +44,25 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
    private Stack<Class<? extends UICommand>> subflows = new Stack<Class<? extends UICommand>>();
 
    private final UIContextImpl context;
+   
+   private final Class<W> wizardClass;
 
    public WizardTesterImpl(Class<W> wizardClass, AddonRegistry addonRegistry, UIContextImpl contextImpl)
-            throws Exception
    {
       this.addonRegistry = addonRegistry;
       this.context = contextImpl;
-      pages.add(createBuilder(wizardClass));
+      this.wizardClass = wizardClass;
    }
 
    @Override
    public void setInitialSelection(Resource<?>... selection)
    {
       context.setInitialSelection(selection);
+   }
+   
+   @Override
+   public void launch() throws Exception {
+      pages.add(createBuilder(wizardClass));
    }
 
    @SuppressWarnings("unchecked")

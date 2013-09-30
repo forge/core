@@ -33,22 +33,28 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
 {
    private final AddonRegistry addonRegistry;
 
-   private final UIBuilderImpl builder;
-
    private final UIContextImpl context;
+   
+   private final Class<C> commandClass;
+
+   private UIBuilderImpl builder;
 
    public CommandTesterImpl(Class<C> commandClass, AddonRegistry addonRegistry, UIContextImpl contextImpl)
-            throws Exception
    {
       this.addonRegistry = addonRegistry;
       this.context = contextImpl;
-      builder = createBuilder(commandClass);
+      this.commandClass = commandClass;
    }
 
    @Override
    public void setInitialSelection(Resource<?>... selection)
    {
       context.setInitialSelection(selection);
+   }
+   
+   @Override 
+   public void launch() throws Exception {
+      builder = createBuilder(commandClass);
    }
 
    @Override

@@ -81,6 +81,9 @@ public class PersistenceSetupWizardTest
       // Execute SUT
       final Project project = projectFactory.createTempProject();
       tester.setInitialSelection(project.getProjectRoot());
+      
+      // Launch
+      tester.launch();
 
       Assert.assertFalse(tester.canFlipToPreviousPage());
       // Setting UI values
