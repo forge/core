@@ -2,7 +2,6 @@ package org.jboss.forge.addon.templates;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Map;
 
 import org.jboss.forge.addon.resource.Resource;
 
@@ -22,5 +21,5 @@ public interface TemplateGenerator
     * Processes the template specified by the {@link Resource} parameter and writes the output to the {@link Writer}
     * parameter
     */
-   public void process(Map<Object, Object> params, Resource<?> template, Writer writer) throws IOException;
+   public void process(Object dataModel, Resource<?> template, Writer writer) throws IOException;
 }

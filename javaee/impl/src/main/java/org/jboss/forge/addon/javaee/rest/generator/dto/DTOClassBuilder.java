@@ -56,13 +56,13 @@ public class DTOClassBuilder
       this.topLevel = topLevel;
       this.copyCtorBuilder = new StringBuilder();
       this.assembleJPABuilder = new StringBuilder();
-      this.initializeJPAEntityFromId = processorFactory.createProcessorFor(resourceFactory.create(getClass()
+      this.initializeJPAEntityFromId = processorFactory.fromTemplate(resourceFactory.create(getClass()
                .getResource(
                         "InitializeJPAEntityFromId.jv")));
-      this.assembleCollection = processorFactory.createProcessorFor(resourceFactory.create(getClass().getResource(
+      this.assembleCollection = processorFactory.fromTemplate(resourceFactory.create(getClass().getResource(
                "AssembleCollection.jv")));
 
-      this.initializeNestedDTOCollection = processorFactory.createProcessorFor(resourceFactory.create(getClass()
+      this.initializeNestedDTOCollection = processorFactory.fromTemplate(resourceFactory.create(getClass()
                .getResource(
                         "InitializeNestedDTOCollection.jv")));
 

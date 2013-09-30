@@ -9,5 +9,5 @@ import org.jboss.forge.addon.resource.Resource;
  */
 public interface TemplateProcessorFactory
 {
-   TemplateProcessor createProcessorFor(Resource<?> resource);
+   TemplateProcessor fromTemplate(Resource<?> template);
 }

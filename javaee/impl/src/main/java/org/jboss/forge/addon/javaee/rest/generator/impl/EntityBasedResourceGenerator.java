@@ -72,7 +72,7 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
       map.put("resourcePath", resourcePath);
 
       Resource<URL> templateResource = resourceFactory.create(getClass().getResource("Endpoint.jv"));
-      TemplateProcessor processor = processorFactory.createProcessorFor(templateResource);
+      TemplateProcessor processor = processorFactory.fromTemplate(templateResource);
       String output = processor.process(map);
       JavaClass resource = JavaParser.parse(JavaClass.class, output);
       resource.addImport(entity.getQualifiedName());

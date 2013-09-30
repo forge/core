@@ -32,6 +32,7 @@ public class TemplateTestCase
       String packagePath = TemplateTestCase.class.getPackage().getName().replace('.', '/');
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addBeansXML()
+               .addClass(JavaBean.class)
                .addAsResource(TemplateTestCase.class.getResource("template.ftl"), packagePath + "/template.ftl")
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
@@ -64,7 +65,7 @@ public class TemplateTestCase
       tempFile.deleteOnExit();
       FileResource resource = resourceFactory.create(tempFile).reify(FileResource.class);
       resource.setContents(template);
-      TemplateProcessor processor = templateProcessorFactory.createProcessorFor(resource);
+      TemplateProcessor processor = templateProcessorFactory.fromTemplate(resource);
       String actual = processor.process(Collections.singletonMap("name", "JBoss Forge"));
       Assert.assertEquals(expected, actual);
    }
@@ -76,9 +77,25 @@ public class TemplateTestCase
       Assert.assertNotNull(template);
       String expected = "Hello JBoss Forge!";
       Resource<?> resource = resourceFactory.create(template);
-      TemplateProcessor processor = templateProcessorFactory.createProcessorFor(resource);
+      TemplateProcessor processor = templateProcessorFactory.fromTemplate(resource);
       String actual = processor.process(Collections.singletonMap("name", "JBoss Forge"));
       Assert.assertEquals(expected, actual);
    }
 
+   @Test
+   @SuppressWarnings("rawtypes")
+   public void testTemplateProcessorJavaBean() throws Exception
+   {
+      String template = "Hello ${name}!";
+      String expected = "Hello JBoss Forge!";
+      File tempFile = File.createTempFile("template", ".tmp");
+      tempFile.deleteOnExit();
+      FileResource resource = resourceFactory.create(tempFile).reify(FileResource.class);
+      resource.setContents(template);
+      TemplateProcessor processor = templateProcessorFactory.fromTemplate(resource);
+      JavaBean dataModel = new JavaBean();
+      dataModel.setName("JBoss Forge");
+      String actual = processor.process(dataModel);
+      Assert.assertEquals(expected, actual);
+   }
 }

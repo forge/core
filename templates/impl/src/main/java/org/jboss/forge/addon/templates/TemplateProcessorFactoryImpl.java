@@ -25,17 +25,17 @@ public class TemplateProcessorFactoryImpl implements TemplateProcessorFactory
    private Imported<TemplateGenerator> generators;
 
    @Override
-   public TemplateProcessor createProcessorFor(Resource<?> resource)
+   public TemplateProcessor fromTemplate(Resource<?> template)
    {
-      Assert.notNull(resource, "Template resource cannot be null");
-      Assert.isTrue(resource.exists(), "Template does not exist: " + resource);
+      Assert.notNull(template, "Template resource cannot be null");
+      Assert.isTrue(template.exists(), "Template does not exist: " + template);
       for (TemplateGenerator generator : generators)
       {
-         if (generator.handles(resource))
+         if (generator.handles(template))
          {
-            return new TemplateProcessorImpl(generator, resource);
+            return new TemplateProcessorImpl(generator, template);
          }
       }
-      throw new IllegalStateException("No generator found for [" + resource + "]");
+      throw new IllegalStateException("No generator found for [" + template + "]");
    }
 }

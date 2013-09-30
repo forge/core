@@ -9,7 +9,6 @@ package org.jboss.forge.addon.templates.freemarker;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -34,13 +33,13 @@ public class FreemarkerTemplateGenerator implements TemplateGenerator
    private ResourceTemplateLoader loader;
 
    @Override
-   public void process(Map<Object, Object> params, Resource<?> resource, Writer writer) throws IOException
+   public void process(Object dataModel, Resource<?> resource, Writer writer) throws IOException
    {
       String id = loader.register(resource);
       try
       {
          Template templateFile = getFreemarkerConfig().getTemplate(id);
-         templateFile.process(params, writer);
+         templateFile.process(dataModel, writer);
          writer.flush();
       }
       catch (TemplateException e)

@@ -10,7 +10,6 @@ package org.jboss.forge.addon.templates;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Map;
 
 import org.jboss.forge.addon.resource.Resource;
 
@@ -32,17 +31,16 @@ public class TemplateProcessorImpl implements TemplateProcessor
    }
 
    @Override
-   public String process(Map<?, ?> map) throws IOException
+   public String process(Object dataModel) throws IOException
    {
       StringWriter writer = new StringWriter();
-      process(map, writer);
+      process(dataModel, writer);
       return writer.toString();
    }
 
    @Override
-   @SuppressWarnings("unchecked")
-   public void process(Map<?, ?> map, Writer output) throws IOException
+   public void process(Object dataModel, Writer output) throws IOException
    {
-      generator.process((Map<Object, Object>) map, resource, output);
+      generator.process(dataModel, resource, output);
    }
 }

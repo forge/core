@@ -34,10 +34,10 @@ Allows a template to be processed by replacing the variables with the provided p
 @Inject private TemplateProcessorFactory factory;
 ...
 FileResource<?> resource = ...; // A file resource containing "Hello ${name}"
-TemplateProcessor processor = factory.create(resource);
-Map<String,Object> params = new HashMap<String,Object>();
+TemplateProcessor processor = factory.fromTemplate(resource);
+Map<String,Object> params = new HashMap<String,Object>(); //Could be a POJO also.
 params.put("name", "JBoss Forge");
-String output = processor.process(params); // should return "Hello JBoss Forge"
+String output = processor.process(params); // should return "Hello JBoss Forge". 
 ----
 +
 [TIP] 
