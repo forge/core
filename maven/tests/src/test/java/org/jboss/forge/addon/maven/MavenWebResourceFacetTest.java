@@ -19,13 +19,14 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -56,16 +57,26 @@ public class MavenWebResourceFacetTest
    private ProjectFactory projectFactory;
 
    @Inject
-   private ResourceFactory resourceFactory;
-
-   @Inject
    private FacetFactory facetFactory;
+
+   private Project project;
+
+   @Before
+   public void setUp()
+   {
+      project = projectFactory.createTempProject();
+   }
+
+   @After
+   public void tearDown()
+   {
+      if (project != null)
+         project.getProjectRoot().delete(true);
+   }
 
    @Test
    public void testWebResourceFacet()
    {
-      DirectoryResource target = resourceFactory.create(DirectoryResource.class, new File("target"));
-      Project project = projectFactory.createProject(target.getOrCreateChildDirectory("project"));
       WebResourcesFacet facet = facetFactory.install(project, WebResourcesFacet.class);
       Assert.assertTrue(project.hasFacet(WebResourcesFacet.class));
       Assert.assertTrue(facet.getWebRootDirectory().exists());
@@ -74,8 +85,6 @@ public class MavenWebResourceFacetTest
    @Test
    public void testDefaultWebappFolder() throws Exception
    {
-      DirectoryResource target = resourceFactory.create(DirectoryResource.class, new File("target"));
-      Project project = projectFactory.createProject(target.getOrCreateChildDirectory("project"));
       WebResourcesFacet facet = facetFactory.install(project, WebResourcesFacet.class);
       DirectoryResource expected = project.getProjectRoot().getChildDirectory(
                "src" + File.separator + "main" + File.separator + "webapp");
@@ -85,8 +94,6 @@ public class MavenWebResourceFacetTest
    @Test
    public void testCustomWebappFolder() throws Exception
    {
-      DirectoryResource target = resourceFactory.create(DirectoryResource.class, new File("target"));
-      Project project = projectFactory.createProject(target.getOrCreateChildDirectory("project"));
       WebResourcesFacet facet = facetFactory.install(project, WebResourcesFacet.class);
       MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
       pom.setContents("<project><modelVersion>4.0.0.</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><plugins><plugin><artifactId>maven-war-plugin</artifactId><version>2.4</version><configuration><warSourceDirectory>WebContent</warSourceDirectory><failOnMissingWebXml>false</failOnMissingWebXml></configuration></plugin></plugins></build></project>");
