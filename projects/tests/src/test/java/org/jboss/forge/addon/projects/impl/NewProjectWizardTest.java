@@ -64,6 +64,7 @@ public class NewProjectWizardTest
       File tempDir = OperatingSystemUtils.createTempDir();
       try
       {
+         wizard.launch();
          Assert.assertFalse(wizard.canFlipToNextPage());
          wizard.setValueFor("named", "test");
          wizard.setValueFor("targetLocation", tempDir);
@@ -92,6 +93,7 @@ public class NewProjectWizardTest
       something.mkdirs();
       try
       {
+         wizard.launch();
          Assert.assertFalse(wizard.canFlipToNextPage());
          Assert.assertFalse(wizard.getInputComponent("overwrite").isEnabled());
          wizard.setValueFor("named", "test");

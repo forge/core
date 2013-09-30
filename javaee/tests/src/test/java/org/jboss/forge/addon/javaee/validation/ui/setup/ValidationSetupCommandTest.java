@@ -60,6 +60,9 @@ public class ValidationSetupCommandTest
       // Execute SUT
       final Project project = projectFactory.createTempProject();
       tester.setInitialSelection(project.getProjectRoot());
+      
+      // Launch
+      tester.launch();
 
       Assert.assertTrue(tester.canExecute());
       tester.setValueFor("providedScope", false);

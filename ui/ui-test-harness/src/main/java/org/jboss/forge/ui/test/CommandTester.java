@@ -10,7 +10,17 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 public interface CommandTester<C extends UICommand>
 {
 
+   /**
+    * Sets the initial selection for the wizard
+    * 
+    * @param the selected Resource
+    */
    public void setInitialSelection(Resource<?>... selection);
+   
+   /**
+    * Launch the Command
+    */
+   public void launch() throws Exception;
 
    /**
     * Is the current command dialog valid ?
@@ -48,7 +58,7 @@ public interface CommandTester<C extends UICommand>
     * Returns the {@link InputComponent} by the name
     */
    public InputComponent<?, ?> getInputComponent(String property);
-   
+
    /**
     * Is this current command enabled ?
     */
