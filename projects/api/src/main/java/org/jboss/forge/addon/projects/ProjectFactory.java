@@ -54,6 +54,12 @@ public interface ProjectFactory
    public boolean containsProject(final FileResource<?> target);
 
    /**
+    * Returns true if a {@link Project} exists in the ancestry of the given {@link FileResource}. false if no
+    * {@link Project} could be located. Throws {@link IllegalArgumentException} if target is not a child of bound
+    */
+   public boolean containsProject(final DirectoryResource bound, final FileResource<?> target);
+
+   /**
     * Create a {@link Project} in a temporary location. This method is useful for testing purposes.
     */
    public Project createTempProject();

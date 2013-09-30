@@ -128,12 +128,12 @@ public class ProjectFactoryImplTest
       Project project = projectFactory.createTempProject();
       Assert.assertNotNull(project);
       DirectoryResource projectRoot = project.getProjectRoot();
-      Assert.assertTrue(projectFactory.containsProject(projectRoot));
-      Assert.assertTrue(projectFactory.containsProject(projectRoot.getChildDirectory("src")));
+      Assert.assertTrue(projectFactory.containsProject(projectRoot, projectRoot));
+      Assert.assertTrue(projectFactory.containsProject(projectRoot, projectRoot.getChildDirectory("src")));
 
       projectRoot.delete(true);
 
-      Assert.assertFalse(projectFactory.containsProject(projectRoot));
+      Assert.assertFalse(projectFactory.containsProject(projectRoot, projectRoot));
    }
 
    @Test

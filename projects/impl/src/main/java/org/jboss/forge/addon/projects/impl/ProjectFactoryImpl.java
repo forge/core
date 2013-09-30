@@ -34,6 +34,7 @@ import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
+import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Predicate;
 
@@ -299,6 +300,48 @@ public class ProjectFactoryImpl implements ProjectFactory
             return listener;
          }
       };
+   }
+
+   @Override
+   public boolean containsProject(DirectoryResource bound, FileResource<?> target)
+   {
+      Assert.notNull(bound, "Boundary should not be null");
+      Assert.isTrue(isParent(bound, target), "Target should be a child of bound");
+      boolean result = false;
+      DirectoryResource dir = (target instanceof DirectoryResource) ? (DirectoryResource) target : target.getParent();
+      Imported<ProjectLocator> instances = registry.getServices(ProjectLocator.class);
+      for (ProjectLocator locator : instances)
+      {
+         DirectoryResource r = dir;
+         while (r != null && !result)
+         {
+            result = locator.containsProject(r);
+            if (bound.equals(r))
+            {
+               break;
+            }
+            r = r.getParent();
+         }
+         if (result)
+            break;
+         instances.release(locator);
+      }
+      return result;
+   }
+
+   private boolean isParent(DirectoryResource dir, FileResource<?> child)
+   {
+      DirectoryResource childDir = (child instanceof DirectoryResource) ? child.reify(DirectoryResource.class) : child
+               .getParent();
+      while (childDir != null)
+      {
+         if (dir.equals(childDir))
+         {
+            return true;
+         }
+         childDir = childDir.getParent();
+      }
+      return false;
    }
 
    @Override
