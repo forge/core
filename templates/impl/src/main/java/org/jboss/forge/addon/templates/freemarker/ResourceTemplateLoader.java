@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.forge.addon.resource.FileResource;
@@ -30,7 +29,7 @@ public class ResourceTemplateLoader implements TemplateLoader
 
    String register(Resource<?> resource)
    {
-      String id = UUID.randomUUID().toString();
+      String id = resource.getName();
       resourceMap.put(id, new ResourceId(id, resource));
       return id;
    }
