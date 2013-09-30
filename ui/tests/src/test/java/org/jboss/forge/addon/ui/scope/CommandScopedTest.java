@@ -54,6 +54,7 @@ public class CommandScopedTest
    @Test
    public void testCommandScope() throws Exception
    {
+      wizardTester.launch();
       Assert.assertTrue(wizardTester.isValid());
       CommandScopedModel model = modelInstance.get();
       Assert.assertNull(model.getName());
@@ -68,6 +69,7 @@ public class CommandScopedTest
    @org.junit.Ignore("FORGE-1209")
    public void testImportedWithCustomScope() throws Exception
    {
+      wizardTester.launch();
       Assert.assertTrue("Should not be satisfied since there is no Context in scope", modelInstance.isUnsatisfied());
       Assert.assertTrue(wizardTester.isValid());
       Assert.assertFalse("Should be satisfied since there command context was initialized",

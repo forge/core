@@ -23,7 +23,18 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
  */
 public interface WizardTester<W extends UIWizard>
 {
+   
+   /**
+    * Sets the initial selection for the wizard
+    * 
+    * @param the selected Resource
+    */
    public void setInitialSelection(Resource<?>... selection);
+
+   /**
+    * Launch the Wizard
+    */
+   public void launch() throws Exception;
 
    /**
     * Next Wizard Page
