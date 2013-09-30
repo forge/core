@@ -13,6 +13,8 @@ import java.io.Reader;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.inject.Singleton;
+
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 
@@ -23,6 +25,7 @@ import freemarker.cache.TemplateLoader;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
+@Singleton
 public class ResourceTemplateLoader implements TemplateLoader
 {
    private Map<String, ResourceId> resourceMap = new ConcurrentHashMap<String, ResourceTemplateLoader.ResourceId>();
