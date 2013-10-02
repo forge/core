@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.ui.input;
 
+import java.util.concurrent.Callable;
+
 import org.jboss.forge.addon.convert.Converter;
 
 /**
@@ -22,6 +24,8 @@ public interface SelectComponent<IMPLTYPE, VALUETYPE> extends InputComponent<IMP
    Iterable<VALUETYPE> getValueChoices();
 
    IMPLTYPE setValueChoices(Iterable<VALUETYPE> values);
+
+   IMPLTYPE setValueChoices(Callable<Iterable<VALUETYPE>> values);
 
    Converter<VALUETYPE, String> getItemLabelConverter();
 
