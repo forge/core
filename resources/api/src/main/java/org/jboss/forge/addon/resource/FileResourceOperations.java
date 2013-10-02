@@ -27,7 +27,7 @@ public interface FileResourceOperations
 
    public long getFileLength(File file);
 
-   public void moveFile(File src, File dest) throws IOException;
+   public boolean renameFile(File src, File dest);
 
    public void copyFile(File src, File dest) throws IOException;
 

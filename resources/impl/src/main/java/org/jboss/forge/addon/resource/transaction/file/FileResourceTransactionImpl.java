@@ -209,12 +209,17 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
    }
 
    @Override
-   public void moveFile(File src, File dest) throws IOException
+   public boolean renameFile(File src, File dest)
    {
       assertSessionCreated();
       try
       {
          session.moveFile(src, dest);
+         return true;
+      }
+      catch (FileAlreadyExistsException fae)
+      {
+         return false;
       }
       catch (Exception e)
       {

@@ -379,16 +379,12 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
 
    private boolean renameTo(final File target)
    {
-      try
+      if (getFileOperations().renameFile(file, target))
       {
-         getFileOperations().moveFile(file, target);
          file = target;
          return true;
       }
-      catch (IOException e)
-      {
-         throw new ResourceException(e);
-      }
+      return false;
    }
 
    @Override
@@ -525,20 +521,8 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          return new BufferedInputStream(new FileInputStream(file));
       }
 
-      /**
-       * Moves a file.
-       * <p>
-       * When the destination file is on another file system, do a "copy and delete".
-       * 
-       * @param srcFile the file to be moved
-       * @param destFile the destination file
-       * @throws NullPointerException if source or destination is <code>null</code>
-       * @throws IOException if s /** The number of bytes in a kilobyte.
-       * @throws IOException if an IO error occurs moving the file
-       * @since Commons IO 1.4
-       */
       @Override
-      public void moveFile(File srcFile, File destFile) throws IOException
+      public boolean renameFile(File srcFile, File destFile)
       {
          if (srcFile == null)
          {
@@ -548,33 +532,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          {
             throw new NullPointerException("Destination must not be null");
          }
-         if (!srcFile.exists())
-         {
-            throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
-         }
-         if (srcFile.isDirectory())
-         {
-            throw new IOException("Source '" + srcFile + "' is a directory");
-         }
-         if (destFile.exists())
-         {
-            throw new IOException("Destination '" + destFile + "' already exists");
-         }
-         if (destFile.isDirectory())
-         {
-            throw new IOException("Destination '" + destFile + "' is a directory");
-         }
-         boolean rename = srcFile.renameTo(destFile);
-         if (!rename)
-         {
-            copyFile(srcFile, destFile);
-            if (!srcFile.delete())
-            {
-               deleteFile(destFile);
-               throw new IOException("Failed to delete original file '" + srcFile +
-                        "' after copy to '" + destFile + "'");
-            }
-         }
+         return srcFile.renameTo(destFile);
       }
 
       /**
