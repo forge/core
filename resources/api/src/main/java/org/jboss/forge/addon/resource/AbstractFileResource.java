@@ -435,7 +435,15 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
 
    protected FileResourceOperations getFileOperations()
    {
-      ResourceTransaction transaction = resourceFactory.getTransaction();
+      ResourceTransaction transaction;
+      try
+      {
+         transaction = resourceFactory.getTransaction();
+      }
+      catch (UnsupportedOperationException uoe)
+      {
+         return DefaultFileOperations.INSTANCE;
+      }
       if (transaction.isStarted())
       {
          // TODO: how will other resource types participate in a transaction? XA?
