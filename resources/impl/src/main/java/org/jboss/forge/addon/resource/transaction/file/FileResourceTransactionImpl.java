@@ -11,8 +11,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.jboss.forge.addon.resource.FileResourceOperations;
+import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.resource.events.ResourceCreated;
+import org.jboss.forge.addon.resource.events.ResourceDeleted;
+import org.jboss.forge.addon.resource.events.ResourceEvent;
+import org.jboss.forge.addon.resource.events.ResourceModified;
 import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 import org.jboss.forge.addon.resource.transaction.ResourceTransactionException;
 import org.jboss.forge.furnace.util.Assert;
@@ -22,6 +32,8 @@ import org.xadisk.bridge.proxies.interfaces.Session;
 import org.xadisk.bridge.proxies.interfaces.XAFileInputStream;
 import org.xadisk.bridge.proxies.interfaces.XAFileOutputStream;
 import org.xadisk.bridge.proxies.interfaces.XAFileSystem;
+import org.xadisk.filesystem.FileSystemStateChangeEvent;
+import org.xadisk.filesystem.NativeSession;
 import org.xadisk.filesystem.exceptions.DirectoryNotEmptyException;
 import org.xadisk.filesystem.exceptions.FileAlreadyExistsException;
 import org.xadisk.filesystem.exceptions.FileNotExistsException;
@@ -35,12 +47,14 @@ import org.xadisk.filesystem.exceptions.NoTransactionAssociatedException;
 public class FileResourceTransactionImpl implements ResourceTransaction, FileResourceOperations
 {
    private final XAFileSystem fileSystem;
+   private final ResourceFactory resourceFactory;
 
    private volatile Session session;
 
-   public FileResourceTransactionImpl(XAFileSystem fileSystem)
+   public FileResourceTransactionImpl(XAFileSystem fileSystem, ResourceFactory resourceFactory)
    {
       this.fileSystem = fileSystem;
+      this.resourceFactory = resourceFactory;
    }
 
    @Override
@@ -89,6 +103,43 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
    public boolean isStarted()
    {
       return session != null;
+   }
+
+   @SuppressWarnings("unchecked")
+   @Override
+   public List<ResourceEvent> getChangeSet()
+   {
+      assertSessionCreated();
+      List<ResourceEvent> changes = new ArrayList<ResourceEvent>();
+      try
+      {
+         // Using reflection, since the field is unavailable
+         Field declaredField = NativeSession.class.getDeclaredField("fileStateChangeEventsToRaise");
+         declaredField.setAccessible(true);
+         List<FileSystemStateChangeEvent> events = (List<FileSystemStateChangeEvent>) declaredField.get(session);
+         for (FileSystemStateChangeEvent changeEvent : events)
+         {
+            File file = changeEvent.getFile();
+            Resource<File> resource = resourceFactory.create(file);
+            switch (changeEvent.getEventType())
+            {
+            case CREATED:
+               changes.add(new ResourceCreated(resource));
+               break;
+            case DELETED:
+               changes.add(new ResourceDeleted(resource));
+               break;
+            case MODIFIED:
+               changes.add(new ResourceModified(resource));
+               break;
+            }
+         }
+      }
+      catch (Exception e)
+      {
+         // Do nothing
+      }
+      return Collections.unmodifiableList(changes);
    }
 
    @Override
@@ -297,5 +348,4 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
    {
       Assert.notNull(session, "Transaction is not started");
    }
-
 }

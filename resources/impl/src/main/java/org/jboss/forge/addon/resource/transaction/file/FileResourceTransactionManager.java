@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import javax.enterprise.event.Observes;
 import javax.inject.Singleton;
 
+import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.container.cdi.events.Local;
 import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.forge.furnace.event.PreShutdown;
@@ -61,12 +62,12 @@ public class FileResourceTransactionManager
          }
    }
 
-   public FileResourceTransactionImpl getCurrentTransaction()
+   public FileResourceTransactionImpl getCurrentTransaction(ResourceFactory resourceFactory)
    {
       Assert.notNull(fileSystem, "FileSystem was not yet initialized. Is the Furnace container running?");
       if (transaction == null)
       {
-         transaction = new FileResourceTransactionImpl(fileSystem);
+         transaction = new FileResourceTransactionImpl(fileSystem, resourceFactory);
       }
       return transaction;
    }

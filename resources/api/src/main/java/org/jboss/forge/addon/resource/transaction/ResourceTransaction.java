@@ -7,9 +7,11 @@
 
 package org.jboss.forge.addon.resource.transaction;
 
+import java.util.List;
 import java.util.Set;
 
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.events.ResourceEvent;
 
 /**
  * A {@link ResourceTransaction} manages changes to a group of {@link Resource}
@@ -37,4 +39,11 @@ public interface ResourceTransaction
     * Returns true if this transaction is started and was not already committed/rolled back
     */
    public boolean isStarted();
+
+   /**
+    * The changes associated with this transaction.
+    * 
+    * @return an immutable {@link List} with the changes that were introduced so far
+    */
+   public List<ResourceEvent> getChangeSet();
 }

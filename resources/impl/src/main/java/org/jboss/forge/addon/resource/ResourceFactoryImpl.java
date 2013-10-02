@@ -99,6 +99,6 @@ public class ResourceFactoryImpl implements ResourceFactory
    @Override
    public FileResourceTransactionImpl getTransaction()
    {
-      return transactionManager.getCurrentTransaction();
+      return transactionManager.getCurrentTransaction(this);
    }
 }
