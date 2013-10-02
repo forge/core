@@ -9,9 +9,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
+import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Streams;
@@ -61,9 +63,9 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    {
       try
       {
-         return new BufferedInputStream(new FileInputStream(file));
+         return getFileOperations().createInputStream(file);
       }
-      catch (FileNotFoundException e)
+      catch (IOException e)
       {
          throw new ResourceException("cannot obtain stream to file: file does not exist: " + file.getAbsolutePath());
       }
@@ -95,13 +97,13 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public boolean exists()
    {
-      return getUnderlyingResourceObject().exists();
+      return getFileOperations().fileExists(file);
    }
 
    @Override
    public boolean isDirectory()
    {
-      return file.isDirectory();
+      return getFileOperations().fileExistsAndIsDirectory(file);
    }
 
    @Override
@@ -119,13 +121,13 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public boolean mkdir()
    {
-      return file.mkdir();
+      return getFileOperations().mkdir(file);
    }
 
    @Override
    public boolean mkdirs()
    {
-      return file.mkdirs();
+      return getFileOperations().mkdirs(file);
    }
 
    @Override
@@ -146,7 +148,8 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          return false;
       }
 
-      if ((file.listFiles() != null) && (file.listFiles().length != 0))
+      File[] listFiles = getFileOperations().listFiles(file);
+      if ((listFiles != null) && (listFiles.length != 0))
       {
          throw new RuntimeException("directory not empty");
       }
@@ -156,7 +159,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          System.gc(); // ensure no lingering handles that would prevent deletion
       }
 
-      if (file.delete())
+      if (getFileOperations().deleteFile(file))
       {
          return true;
       }
@@ -166,10 +169,10 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public void deleteOnExit()
    {
-      file.deleteOnExit();
+      getFileOperations().deleteFileOnExit(file);
    }
 
-   private static boolean _deleteRecursive(final File file, final boolean collect)
+   private boolean _deleteRecursive(final File file, final boolean collect)
    {
       if (collect && OperatingSystemUtils.isWindows())
       {
@@ -181,18 +184,18 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          return false;
       }
 
-      File[] children = file.listFiles();
+      File[] children = getFileOperations().listFiles(file);
       if (children != null)
       {
          for (File sf : children)
          {
-            if (sf.isDirectory())
+            if (getFileOperations().fileExistsAndIsDirectory(sf))
             {
                _deleteRecursive(sf, false);
             }
             else
             {
-               if (!sf.delete())
+               if (!getFileOperations().deleteFile(sf))
                {
                   throw new RuntimeException("failed to delete: " + sf.getAbsolutePath());
                }
@@ -200,7 +203,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          }
       }
 
-      return file.delete();
+      return getFileOperations().deleteFile(file);
    }
 
    @Override
@@ -281,9 +284,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
             }
          }
 
-         file.delete();
-
-         OutputStream out = new FileOutputStream(file);
+         OutputStream out = getFileOperations().createOutputStream(file);
          try
          {
             byte buf[] = new byte[1024];
@@ -318,11 +319,11 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    {
       try
       {
-         if (file.mkdirs())
+         if (mkdirs())
          {
-            file.delete();
+            delete();
          }
-         if (file.createNewFile())
+         if (getFileOperations().createNewFile(file))
          {
             return true;
          }
@@ -378,7 +379,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
 
    private boolean renameTo(final File target)
    {
-      if (file.renameTo(target))
+      if (getFileOperations().renameFile(file, target))
       {
          file = target;
          return true;
@@ -389,25 +390,25 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public long getSize()
    {
-      return file.length();
+      return getFileOperations().getFileLength(file);
    }
 
    @Override
    public boolean isExecutable()
    {
-      return (this.file.canExecute() && !this.file.isDirectory());
+      return (this.file.canExecute() && !getFileOperations().fileExistsAndIsDirectory(file));
    }
 
    @Override
    public boolean isReadable()
    {
-      return (this.file.canRead() && !this.file.isDirectory());
+      return (this.file.canRead() && !getFileOperations().fileExistsAndIsDirectory(file));
    }
 
    @Override
    public boolean isWritable()
    {
-      return (this.file.canWrite() && !this.file.isDirectory());
+      return (this.file.canWrite() && !getFileOperations().fileExistsAndIsDirectory(file));
    }
 
    @Override
@@ -426,5 +427,218 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    public ResourceMonitor monitor(ResourceFilter filter)
    {
       return resourceFactory.monitor(this, filter);
+   }
+
+   protected FileResourceOperations getFileOperations()
+   {
+      ResourceTransaction transaction;
+      try
+      {
+         transaction = resourceFactory.getTransaction();
+      }
+      catch (UnsupportedOperationException uoe)
+      {
+         return DefaultFileOperations.INSTANCE;
+      }
+      if (transaction.isStarted())
+      {
+         // TODO: how will other resource types participate in a transaction? XA?
+         return (FileResourceOperations) transaction;
+      }
+      else
+      {
+         return DefaultFileOperations.INSTANCE;
+      }
+   }
+
+   private static enum DefaultFileOperations implements FileResourceOperations
+   {
+      INSTANCE;
+
+      @Override
+      public boolean fileExists(File f)
+      {
+         return f.exists();
+      }
+
+      @Override
+      public boolean fileExistsAndIsDirectory(File f)
+      {
+         return f.isDirectory();
+      }
+
+      @Override
+      public File[] listFiles(File f)
+      {
+         return f.listFiles();
+      }
+
+      @Override
+      public long getFileLength(File f)
+      {
+         return f.length();
+      }
+
+      @Override
+      public boolean deleteFile(File file)
+      {
+         return file.delete();
+      }
+
+      @Override
+      public void deleteFileOnExit(File file)
+      {
+         file.deleteOnExit();
+      }
+
+      @Override
+      public boolean createNewFile(File file) throws IOException
+      {
+         return file.createNewFile();
+      }
+
+      @Override
+      public boolean mkdir(File file)
+      {
+         return file.mkdir();
+      }
+
+      @Override
+      public boolean mkdirs(File file)
+      {
+         return file.mkdirs();
+      }
+
+      @Override
+      public OutputStream createOutputStream(File file) throws IOException
+      {
+         return new FileOutputStream(file);
+      }
+
+      @Override
+      public InputStream createInputStream(File file) throws IOException
+      {
+         return new BufferedInputStream(new FileInputStream(file));
+      }
+
+      @Override
+      public boolean renameFile(File srcFile, File destFile)
+      {
+         if (srcFile == null)
+         {
+            throw new NullPointerException("Source must not be null");
+         }
+         if (destFile == null)
+         {
+            throw new NullPointerException("Destination must not be null");
+         }
+         return srcFile.renameTo(destFile);
+      }
+
+      /**
+       * Copies a file to a new location.
+       * <p>
+       * This method copies the contents of the specified source file to the specified destination file. The directory
+       * holding the destination file is created if it does not exist. If the destination file exists, then this method
+       * will overwrite it.
+       * <p>
+       * <strong>Note:</strong> Setting <code>preserveFileDate</code> to <code>true</code> tries to preserve the file's
+       * last modified date/times using {@link File#setLastModified(long)}, however it is not guaranteed that the
+       * operation will succeed. If the modification operation fails, no indication is provided.
+       * 
+       * @param srcFile an existing file to copy, must not be <code>null</code>
+       * @param destFile the new file, must not be <code>null</code>
+       * @param preserveFileDate true if the file date of the copy should be the same as the original
+       * 
+       * @throws NullPointerException if source or destination is <code>null</code>
+       * @throws IOException if source or destination is invalid
+       * @throws IOException if an IO error occurs during copying
+       * @see #copyFileToDirectory(File, File, boolean)
+       */
+      @Override
+      public void copyFile(File srcFile, File destFile) throws IOException
+      {
+         if (srcFile == null)
+         {
+            throw new NullPointerException("Source must not be null");
+         }
+         if (destFile == null)
+         {
+            throw new NullPointerException("Destination must not be null");
+         }
+         if (srcFile.exists() == false)
+         {
+            throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
+         }
+         if (srcFile.isDirectory())
+         {
+            throw new IOException("Source '" + srcFile + "' exists but is a directory");
+         }
+         if (srcFile.getCanonicalPath().equals(destFile.getCanonicalPath()))
+         {
+            throw new IOException("Source '" + srcFile + "' and destination '" + destFile + "' are the same");
+         }
+         if (destFile.getParentFile() != null && destFile.getParentFile().exists() == false)
+         {
+            if (destFile.getParentFile().mkdirs() == false)
+            {
+               throw new IOException("Destination '" + destFile + "' directory cannot be created");
+            }
+         }
+         if (destFile.exists() && destFile.canWrite() == false)
+         {
+            throw new IOException("Destination '" + destFile + "' exists but is read-only");
+         }
+         doCopyFile(srcFile, destFile);
+      }
+
+      /**
+       * Internal copy file method.
+       * 
+       * @param srcFile the validated source file, must not be <code>null</code>
+       * @param destFile the validated destination file, must not be <code>null</code>
+       * @throws IOException if an error occurs
+       */
+      private void doCopyFile(File srcFile, File destFile) throws IOException
+      {
+         if (destFile.exists() && destFile.isDirectory())
+         {
+            throw new IOException("Destination '" + destFile + "' exists but is a directory");
+         }
+
+         FileInputStream fis = null;
+         FileOutputStream fos = null;
+         FileChannel input = null;
+         FileChannel output = null;
+         try
+         {
+            fis = new FileInputStream(srcFile);
+            fos = new FileOutputStream(destFile);
+            input = fis.getChannel();
+            output = fos.getChannel();
+            long size = input.size();
+            long pos = 0;
+            long count = 0;
+            long FIFTY_MB = (1024L * 1024L) * 50L;
+            while (pos < size)
+            {
+               count = (size - pos) > FIFTY_MB ? FIFTY_MB : (size - pos);
+               pos += output.transferFrom(input, pos, count);
+            }
+         }
+         finally
+         {
+            Streams.closeQuietly(output);
+            Streams.closeQuietly(fos);
+            Streams.closeQuietly(input);
+            Streams.closeQuietly(fis);
+         }
+
+         if (srcFile.length() != destFile.length())
+         {
+            throw new IOException("Failed to copy full contents from '" +
+                     srcFile + "' to '" + destFile + "'");
+         }
+      }
    }
 }

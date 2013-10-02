@@ -7,6 +7,7 @@
 package org.jboss.forge.addon.resource;
 
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
+import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -45,4 +46,12 @@ public interface ResourceFactory
     * @return a {@link ResourceMonitor} for the specific resource
     */
    ResourceMonitor monitor(Resource<?> resource, ResourceFilter resourceFilter);
+
+   /**
+    * Get the transaction associated with this {@link ResourceFactory} in the calling thread
+    * 
+    * @return the {@link ResourceTransaction} associated with this factory. Throws {@link UnsupportedOperationException}
+    *         if the implementation does not support it.
+    */
+   ResourceTransaction getTransaction();
 }
