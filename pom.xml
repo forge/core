@@ -572,7 +572,7 @@
                <artifactId>maven-surefire-plugin</artifactId>
                <version>2.16</version>
                <configuration>
-                  <argLine>-Xms512m -Xmx1024m -XX:MaxPermSize=256m</argLine>
+                  <argLine>-Xms512m -Xmx1024m -XX:MaxPermSize=160m</argLine>
                   <systemProperties>
                      <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
                   </systemProperties>
