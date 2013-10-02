@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Represents any regular file which Furnace does not hav any special handler for.
+ * Represents any regular file which Furnace does not have any special handler for.
  * 
  * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
