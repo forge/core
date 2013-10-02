@@ -7,16 +7,19 @@
 
 package org.jboss.forge.addon.ui.impl;
 
+import java.util.concurrent.Callable;
+
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.ui.input.SelectComponent;
+import org.jboss.forge.furnace.util.Callables;
 
 /**
  * Implementation of a {@link SelectComponent} object
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  * @param <VALUETYPE>
  */
 @Vetoed
@@ -24,7 +27,7 @@ import org.jboss.forge.addon.ui.input.SelectComponent;
 public abstract class AbstractUISelectInputComponent<IMPLTYPE extends SelectComponent<IMPLTYPE, VALUETYPE>, VALUETYPE> extends AbstractInputComponent<IMPLTYPE, VALUETYPE>
          implements SelectComponent<IMPLTYPE, VALUETYPE>
 {
-   private Iterable<VALUETYPE> choices;
+   private Callable<Iterable<VALUETYPE>> choices;
    private Converter<VALUETYPE, String> itemLabelConverter;
 
    public AbstractUISelectInputComponent(String name, char shortName, Class<VALUETYPE> type)
@@ -48,11 +51,18 @@ public abstract class AbstractUISelectInputComponent<IMPLTYPE extends SelectComp
    @Override
    public Iterable<VALUETYPE> getValueChoices()
    {
-      return choices;
+      return Callables.call(choices);
    }
 
    @Override
    public IMPLTYPE setValueChoices(Iterable<VALUETYPE> choices)
+   {
+      this.choices = Callables.returning(choices);
+      return (IMPLTYPE) this;
+   }
+
+   @Override
+   public IMPLTYPE setValueChoices(Callable<Iterable<VALUETYPE>> choices)
    {
       this.choices = choices;
       return (IMPLTYPE) this;
