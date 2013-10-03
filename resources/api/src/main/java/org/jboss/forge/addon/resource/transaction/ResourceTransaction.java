@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.resource.transaction;
 
-import java.util.List;
 import java.util.Set;
 
 import org.jboss.forge.addon.resource.Resource;
@@ -43,7 +42,7 @@ public interface ResourceTransaction
    /**
     * The changes associated with this transaction.
     * 
-    * @return an immutable {@link List} with the changes that were introduced so far
+    * @return an immutable {@link Set} with the changes that were introduced so far
     */
-   public List<ResourceEvent> getChangeSet();
+   public Set<ResourceEvent> getChangeSet();
 }

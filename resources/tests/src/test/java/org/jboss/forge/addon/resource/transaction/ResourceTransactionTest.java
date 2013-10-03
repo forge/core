@@ -12,7 +12,8 @@ import static org.hamcrest.CoreMatchers.is;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.inject.Inject;
 
@@ -22,6 +23,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.events.ResourceCreated;
+import org.jboss.forge.addon.resource.events.ResourceDeleted;
 import org.jboss.forge.addon.resource.events.ResourceEvent;
 import org.jboss.forge.addon.resource.events.ResourceModified;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -68,7 +70,7 @@ public class ResourceTransactionTest
    public void testResourceTransactionCommit() throws IOException
    {
       File tempDir = OperatingSystemUtils.createTempDir();
-      File file = File.createTempFile("fileresourcetest", ".tmp", tempDir);
+      File file = createTempFile(tempDir, false);
       ResourceTransaction transaction = resourceFactory.getTransaction();
       Assert.assertNotNull(transaction);
       Assert.assertFalse(transaction.isStarted());
@@ -87,8 +89,7 @@ public class ResourceTransactionTest
    public void testResourceTransactionRollback() throws IOException
    {
       File tempDir = OperatingSystemUtils.createTempDir();
-      File file = File.createTempFile("fileresourcetest", ".tmp", tempDir);
-      file.delete();
+      File file = createTempFile(tempDir, true);
       ResourceTransaction transaction = resourceFactory.getTransaction();
       Assert.assertNotNull(transaction);
       Assert.assertFalse(transaction.isStarted());
@@ -108,8 +109,7 @@ public class ResourceTransactionTest
    public void testResourceChangeSet() throws IOException
    {
       File tempDir = OperatingSystemUtils.createTempDir();
-      File file = File.createTempFile("fileresourcetest", ".tmp", tempDir);
-      file.delete();
+      File file = createTempFile(tempDir, true);
       ResourceTransaction transaction = resourceFactory.getTransaction();
       Assert.assertNotNull(transaction);
       Assert.assertFalse(transaction.isStarted());
@@ -118,23 +118,114 @@ public class ResourceTransactionTest
       FileResource<?> fileResource = resourceFactory.create(FileResource.class, file);
       Assert.assertNotNull(fileResource);
       fileResource.setContents("Hello World");
-      List<ResourceEvent> changeSet = transaction.getChangeSet();
+      Assert.assertEquals("Hello World", fileResource.getContents());
+      Collection<ResourceEvent> changeSet = transaction.getChangeSet();
       Assert.assertEquals(3, changeSet.size());
+      Iterator<ResourceEvent> iterator = changeSet.iterator();
       // Created the file
-      Assert.assertThat(changeSet.get(0), is(instanceOf(ResourceCreated.class)));
-      Assert.assertEquals(fileResource, changeSet.get(0).getResource());
-      // Modified the Directory
-      Assert.assertThat(changeSet.get(1), is(instanceOf(ResourceModified.class)));
-      Assert.assertThat(changeSet.get(1).getResource(), is(instanceOf(DirectoryResource.class)));
-      // Modified the File resource
-      Assert.assertThat(changeSet.get(2), is(instanceOf(ResourceModified.class)));
-      Assert.assertEquals(fileResource, changeSet.get(2).getResource());
+      {
+         ResourceEvent event = iterator.next();
+         Assert.assertThat(event, is(instanceOf(ResourceCreated.class)));
+         Assert.assertEquals(fileResource, event.getResource());
+      }
+      {
+         ResourceEvent event = iterator.next();
+         // Modified the Directory
+         Assert.assertThat(event, is(instanceOf(ResourceModified.class)));
+         Assert.assertThat(event.getResource(), is(instanceOf(DirectoryResource.class)));
+      }
+      {
+         ResourceEvent event = iterator.next();
+         // Modified the File resource
+         Assert.assertThat(event, is(instanceOf(ResourceModified.class)));
+         Assert.assertEquals(fileResource, event.getResource());
+      }
       Assert.assertFalse(file.exists());
       Assert.assertTrue(fileResource.exists());
       transaction.commit();
       Assert.assertTrue(fileResource.exists());
       Assert.assertTrue(file.exists());
       Assert.assertEquals("Hello World", fileResource.getContents());
+   }
+
+   @Test
+   @SuppressWarnings("unchecked")
+   public void testResourceChangeSetFromBlog() throws IOException
+   {
+      File tempDir = OperatingSystemUtils.createTempDir();
+      File file = createTempFile(tempDir, true);
+      ResourceTransaction transaction = resourceFactory.getTransaction();
+      Assert.assertNotNull(transaction);
+      Assert.assertFalse(transaction.isStarted());
+      transaction.begin();
+      Assert.assertTrue(transaction.isStarted());
+      FileResource<?> fileResource = resourceFactory.create(FileResource.class, file);
+      Assert.assertNotNull(fileResource);
+
+      fileResource.setContents("Hello World");
+      Assert.assertEquals("Hello World", fileResource.getContents());
+
+      FileResource<?> anotherResource = resourceFactory.create(FileResource.class, createTempFile(tempDir, false));
+      // The file won't be deleted until commit is performed
+      anotherResource.delete();
+
+      FileResource<?> newResource = resourceFactory.create(FileResource.class, createTempFile(tempDir, true));
+      // The file won't be created until commit is performed
+      newResource.createNewFile();
+      Collection<ResourceEvent> changeSet = transaction.getChangeSet();
+      Assert.assertEquals(5, changeSet.size());
+      Iterator<ResourceEvent> iterator = changeSet.iterator();
+      {
+         ResourceEvent event = iterator.next();
+         // Created the file
+         Assert.assertThat(event, is(instanceOf(ResourceCreated.class)));
+         Assert.assertEquals(fileResource, event.getResource());
+      }
+      {
+         ResourceEvent event = iterator.next();
+         // Modified the Directory
+         Assert.assertThat(event, is(instanceOf(ResourceModified.class)));
+         Assert.assertThat(event.getResource(), is(instanceOf(DirectoryResource.class)));
+      }
+      {
+         ResourceEvent event = iterator.next();
+         // Modified the Directory
+         Assert.assertThat(event, is(instanceOf(ResourceModified.class)));
+         Assert.assertEquals(fileResource, event.getResource());
+      }
+      {
+         ResourceEvent event = iterator.next();
+         // Modified the File resource
+         Assert.assertThat(event, is(instanceOf(ResourceDeleted.class)));
+         Assert.assertEquals(anotherResource, event.getResource());
+      }
+      {
+         ResourceEvent event = iterator.next();
+         // Modified the File resource
+         Assert.assertThat(event, is(instanceOf(ResourceCreated.class)));
+         Assert.assertEquals(newResource, event.getResource());
+      }
+      Assert.assertFalse(file.exists());
+      Assert.assertTrue(fileResource.exists());
+      transaction.commit();
+      Assert.assertTrue(fileResource.exists());
+      Assert.assertTrue(file.exists());
+      Assert.assertEquals("Hello World", fileResource.getContents());
+   }
+
+   /**
+    * @param tempDir
+    * @return
+    * @throws IOException
+    */
+   private File createTempFile(File tempDir, boolean delete) throws IOException
+   {
+      File file = File.createTempFile("fileresourcetest", ".tmp", tempDir);
+      if (delete)
+      {
+         file.delete();
+      }
+      return file;
    }
 
    @After

@@ -12,9 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.forge.addon.resource.FileResourceOperations;
 import org.jboss.forge.addon.resource.Resource;
@@ -107,10 +108,10 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
 
    @SuppressWarnings("unchecked")
    @Override
-   public List<ResourceEvent> getChangeSet()
+   public Set<ResourceEvent> getChangeSet()
    {
       assertSessionCreated();
-      List<ResourceEvent> changes = new ArrayList<ResourceEvent>();
+      Set<ResourceEvent> changes = new LinkedHashSet<ResourceEvent>();
       try
       {
          // Using reflection, since the field is unavailable
@@ -139,7 +140,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
       {
          // Do nothing
       }
-      return Collections.unmodifiableList(changes);
+      return Collections.unmodifiableSet(changes);
    }
 
    @Override
