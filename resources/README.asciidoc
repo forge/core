@@ -195,4 +195,56 @@ monitor.cancel();
 - It's always a good practice to cancel monitors when they are no longer needed
 - From a FileResource object, it's possible to fetch a reference to a ResourceMonitor by simply calling monitor() on it.
 
-
+Resource transactions::
+ The resources API provides a transaction service on FileResources. If you are familiar with UserTransaction in Java EE applications, this should feel pretty comfortable.
++
+[source,java]
+----
+ResourceTransaction transaction = factory.getTransaction();
+try {
+   // Starts the transaction
+   transaction.begin();
+   
+   FileResource<?> resource = factory.create(...);
+   // The file won't be updated until commit is performed
+   resource.setContents("Hello World");      
+   
+   String contents = resource.getContents(); // Returns "Hello World"
+   
+   FileResource<?> anotherResource = factory.create(...);
+   // The file won't be deleted until commit is performed
+   anotherResource.delete();
+   
+   FileResource<?> newResource = factory.create(...);
+   // The file won't be created until commit is performed
+   newResource.createNewFile();
+   
+   transaction.commit();
+} catch (Exception e){
+    // Discard all changes since the beginning of this transaction 
+    transaction.rollback();
+}
+----
++
+Additionally, transactions support change-set inspection, so you can compare file contents before deciding whether or not a given transaction should be committed or rolled back:
++
+[source:java]
+----
+   ...
+   Collection<ResourceEvent> changeSet = transaction.getChangeSet();
+   ...   
+   transaction.commit();
+----
++
+According to the above example, this change set contains the following entries:
++
+[source:java]
+----
+Collection [
+    ResourceModified: <DirectoryResource>, 
+    ResourceCreated: <FileResource<?>>, 
+    ResourceModified: <FileResource<?>>, 
+    ResourceDeleted: <FileResource<?>>, 
+    ResourceCreated: <FileResource<?>>
+]
+----
