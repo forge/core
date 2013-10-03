@@ -194,6 +194,7 @@ monitor.cancel();
 ====
 - It's always a good practice to cancel monitors when they are no longer needed
 - From a FileResource object, it's possible to fetch a reference to a ResourceMonitor by simply calling monitor() on it.
+====
 
 Resource transactions::
  The resources API provides a transaction service on FileResources. If you are familiar with UserTransaction in Java EE applications, this should feel pretty comfortable.
