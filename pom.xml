@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-parent</artifactId>
-      <version>10</version>
+      <version>11</version>
    </parent>
 
    <groupId>org.jboss.forge</groupId>
@@ -65,6 +65,7 @@
       <version.mvel>2.1.0.Final</version.mvel>
       <version.org.jboss.logmanager.jboss-logmanager>1.4.1.Final</version.org.jboss.logmanager.jboss-logmanager>
       <version.slf4j>1.6.1</version.slf4j>
+      <version.surefire.plugin>2.16</version.surefire.plugin>
       <version.xmlparser>1.0.0.Final</version.xmlparser>
    </properties>
 
@@ -492,11 +493,6 @@
             </plugin>
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-dependency-plugin</artifactId>
-               <version>2.5.1</version>
-            </plugin>
-            <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-source-plugin</artifactId>
                <executions>
                   <execution>
@@ -510,7 +506,6 @@
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-jar-plugin</artifactId>
-               <version>${version.jar.plugin}</version>
                <configuration>
                   <archive>
                      <manifest>
@@ -545,7 +540,6 @@
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-javadoc-plugin</artifactId>
-               <version>2.8.1</version>
                <configuration>
                   <!-- Default configuration for all reports -->
                   <outputDirectory>${project.build.directory}/javadoc/${project.version}</outputDirectory>
@@ -570,9 +564,8 @@
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-surefire-plugin</artifactId>
-               <version>2.16</version>
                <configuration>
-                  <argLine>-Xms512m -Xmx1024m -XX:MaxPermSize=160m</argLine>
+                  <argLine>-Xms256m -Xmx512m -XX:MaxPermSize=160m</argLine>
                   <systemProperties>
                      <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
                   </systemProperties>
@@ -663,15 +656,6 @@
             </plugin>
          </plugins>
       </pluginManagement>
-
-      <extensions>
-         <extension>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-webdav-jackrabbit</artifactId>
-            <version>1.0-beta-7</version>
-         </extension>
-      </extensions>
-
    </build>
 
    <reporting>
