@@ -59,7 +59,7 @@
       <forge.release.codename>Two</forge.release.codename>
       <forge.release.version>${project.version}</forge.release.version>
       <version.cdi>1.1</version.cdi>
-      <version.furnace>2.0.0-SNAPSHOT</version.furnace>
+      <version.furnace>2.0.0.Alpha13</version.furnace>
       <version.jboss.spec>3.0.2.Final</version.jboss.spec>
       <version.junit>4.11</version.junit>
       <version.mvel>2.1.0.Final</version.mvel>
