@@ -69,7 +69,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    private ProjectBuildingResult fullBuildingResult;
    private ProjectBuilder builder = null;
    private ResourceMonitor monitor;
-   private Object lock = new Object();
+   private volatile boolean invalidateBuildingResult;
 
    @Inject
    private MavenContainer container;
@@ -300,46 +300,34 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    /*
     * POM manipulation methods
     */
-   public ProjectBuildingResult getProjectBuildingResult()
+   public synchronized ProjectBuildingResult getProjectBuildingResult()
    {
-      if (this.buildingResult == null || this.fullBuildingResult == null)
+      if (this.buildingResult == null || this.fullBuildingResult == null || invalidateBuildingResult)
       {
-         synchronized (lock)
+         ProjectBuildingRequest request = null;
+         request = getRequest();
+         File pomFile = getPomResource().getUnderlyingResourceObject();
+         if (request != null)
          {
-            if (this.buildingResult == null || this.fullBuildingResult == null)
+            try
             {
-               try
-               {
-                  ProjectBuildingRequest request = null;
-                  request = getRequest();
-                  File pomFile = getPomResource().getUnderlyingResourceObject();
-                  if (request != null)
-                  {
-                     try
-                     {
-                        request.setResolveDependencies(true);
-                        buildingResult = getBuilder().build(pomFile, request);
-                        fullBuildingResult = buildingResult;
-                     }
-                     catch (RuntimeException full)
-                     {
-                        throw full;
-                     }
-                     catch (Exception full)
-                     {
-                        throw new RuntimeException(full);
-                     }
-                  }
-                  else
-                  {
-                     throw new RuntimeException("Project building request was null");
-                  }
-               }
-               finally
-               {
-                  lock.notifyAll();
-               }
+               request.setResolveDependencies(true);
+               buildingResult = getBuilder().build(pomFile, request);
+               fullBuildingResult = buildingResult;
+               invalidateBuildingResult = false;
             }
+            catch (RuntimeException full)
+            {
+               throw full;
+            }
+            catch (Exception full)
+            {
+               throw new RuntimeException(full);
+            }
+         }
+         else
+         {
+            throw new RuntimeException("Project building request was null");
          }
       }
       return fullBuildingResult;
@@ -347,12 +335,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
 
    private void invalidateBuildingResults()
    {
-      synchronized (lock)
-      {
-         this.buildingResult = null;
-         this.fullBuildingResult = null;
-         lock.notifyAll();
-      }
+      this.invalidateBuildingResult = true;
    }
 
    @Override
