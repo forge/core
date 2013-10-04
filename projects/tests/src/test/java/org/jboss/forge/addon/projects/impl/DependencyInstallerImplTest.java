@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.addon.maven.projects.MavenBuildSystem;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
@@ -67,7 +68,9 @@ public class DependencyInstallerImplTest
    @Inject
    private DependencyInstaller installer;
 
-   // TODO refactor this into an AbstractProjectTest
+   @Inject
+   private MavenBuildSystem buildSystem;
+
    private DirectoryResource projectDir;
    private Project project;
 
@@ -77,7 +80,7 @@ public class DependencyInstallerImplTest
       DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
                DirectoryResource.class);
       projectDir = addonDir.createTempResource();
-      project = projectFactory.createProject(projectDir);
+      project = projectFactory.createProject(projectDir, buildSystem);
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("test");
       metadataFacet.setProjectVersion("1.0");

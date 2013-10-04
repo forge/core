@@ -71,13 +71,13 @@ public class MavenWebResourceFacetTest
    @Test
    public void testHasFacet() throws Exception
    {
-      Assert.assertTrue("WebResourcesFacet not installed in project", project.hasFacet(WebResourcesFacet.class));
+      Assert.assertTrue("WebResourcesFacet not installed in project.", project.hasFacet(WebResourcesFacet.class));
    }
 
    @Test
    public void testPackagingTypeIsWar() throws Exception
    {
-      Assert.assertEquals("WebResourcesFacet not installed in project", "war", project.getFacet(PackagingFacet.class)
+      Assert.assertEquals("WebResourcesFacet not installed in project.", "war", project.getFacet(PackagingFacet.class)
                .getPackagingType());
    }
 

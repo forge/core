@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.projects.BuildSystem;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -24,6 +25,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -58,6 +60,9 @@ public class ProjectFactoryImplTest
    @Inject
    private ProjectFactory projectFactory;
 
+   @Inject
+   private Imported<BuildSystem> buildSystems;
+
    @Test
    public void testInjectionNotNull()
    {
@@ -65,7 +70,7 @@ public class ProjectFactoryImplTest
    }
 
    @Test
-   public void testCreateProject() throws Exception
+   public void testProjectListener() throws Exception
    {
       final AtomicBoolean projectSet = new AtomicBoolean(false);
       ListenerRegistration<ProjectListener> registration = projectFactory.addProjectListener(new ProjectListener()
@@ -113,6 +118,21 @@ public class ProjectFactoryImplTest
    }
 
    @Test
+   public void testCreateTempProjectWithBuildSystem() throws Exception
+   {
+      BuildSystem buildSystem = buildSystems.get();
+      try
+      {
+         Project project = projectFactory.createTempProject(buildSystem);
+         Assert.assertNotNull(project);
+      }
+      finally
+      {
+         buildSystems.release(buildSystem);
+      }
+   }
+
+   @Test
    @SuppressWarnings("unchecked")
    public void testCreateTempProjectWithFacets()
    {
@@ -120,6 +140,24 @@ public class ProjectFactoryImplTest
                .<Class<? extends ProjectFacet>> asList(WebResourcesFacet.class));
       Assert.assertNotNull(project);
       Assert.assertTrue(project.hasFacet(WebResourcesFacet.class));
+   }
+
+   @Test
+   @SuppressWarnings("unchecked")
+   public void testCreateTempProjectWithBuildSystemAndFacets()
+   {
+      BuildSystem buildSystem = buildSystems.get();
+      try
+      {
+         Project project = projectFactory.createTempProject(buildSystem,
+                  Arrays.<Class<? extends ProjectFacet>> asList(WebResourcesFacet.class));
+         Assert.assertNotNull(project);
+         Assert.assertTrue(project.hasFacet(WebResourcesFacet.class));
+      }
+      finally
+      {
+         buildSystems.release(buildSystem);
+      }
    }
 
    @Test
@@ -134,6 +172,28 @@ public class ProjectFactoryImplTest
       projectRoot.delete(true);
 
       Assert.assertFalse(projectFactory.containsProject(projectRoot, projectRoot));
+   }
+
+   @Test
+   public void testContainsProjectWithBuildSystem()
+   {
+      BuildSystem buildSystem = buildSystems.get();
+      try
+      {
+         Project project = projectFactory.createTempProject(buildSystem);
+         Assert.assertNotNull(project);
+         DirectoryResource projectRoot = project.getProjectRoot();
+         Assert.assertTrue(projectFactory.containsProject(projectRoot, projectRoot, buildSystem));
+         Assert.assertTrue(projectFactory.containsProject(projectRoot, projectRoot.getChildDirectory("src"),
+                  buildSystem));
+
+         projectRoot.delete(true);
+         Assert.assertFalse(projectFactory.containsProject(projectRoot, projectRoot, buildSystem));
+      }
+      finally
+      {
+         buildSystems.release(buildSystem);
+      }
    }
 
    @Test

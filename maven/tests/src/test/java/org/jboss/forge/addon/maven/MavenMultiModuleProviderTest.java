@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
+import org.jboss.forge.addon.maven.projects.MavenBuildSystemImpl;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
@@ -63,6 +64,9 @@ public class MavenMultiModuleProviderTest
    @Inject
    private ProjectFactory projectFactory;
 
+   @Inject
+   private MavenBuildSystemImpl locator;
+
    @Test
    public void testInjectionNotNull()
    {
@@ -75,7 +79,7 @@ public class MavenMultiModuleProviderTest
       DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
                DirectoryResource.class);
       DirectoryResource projectDir = addonDir.createTempResource();
-      Project parentProject = projectFactory.createProject(projectDir);
+      Project parentProject = projectFactory.createProject(projectDir, locator);
       Assert.assertNotNull(parentProject);
 
       MetadataFacet metadata = parentProject.getFacet(MetadataFacet.class);
@@ -83,7 +87,7 @@ public class MavenMultiModuleProviderTest
       metadata.setTopLevelPackage("com.project.parent");
 
       DirectoryResource subProjectDir = parentProject.getProjectRoot().getChildDirectory("sub");
-      projectFactory.createProject(subProjectDir);
+      projectFactory.createProject(subProjectDir, locator);
 
       MavenFacet mavenFacet = parentProject.getFacet(MavenFacet.class);
       List<String> modules = mavenFacet.getPOM().getModules();

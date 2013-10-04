@@ -1,14 +1,28 @@
 package org.jboss.forge.addon.projects;
 
+import java.util.Set;
+
+import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 
 /**
- * Locates project root directories, and creates instances of projects for that type.
+ * Creates and locates {@link Project} instances for a specific build system. E.g: Maven, Gradle, and so on...
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface ProjectLocator
+public interface BuildSystem
 {
+   /**
+    * Return the human-readable name for this {@link BuildSystem}. This should be relatively unique.
+    */
+   public String getType();
+
+   /**
+    * Return the {@link Set} of default {@link Facet} types provided by {@link Project} instances of this
+    * {@link BuildSystem} type.
+    */
+   public Set<Class<? extends Facet<?>>> getProvidedFacetTypes();
+
    /**
     * Create a new or existing {@link Project} with the given {@link DirectoryResource} as
     * {@link Project#getProjectRoot()}.

@@ -11,21 +11,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Repository;
-import org.eclipse.aether.repository.AuthenticationContext;
 import org.jboss.forge.addon.maven.projects.util.RepositoryUtils;
 import org.junit.Test;
 
 /**
  * Test case for {@link RepositoryUtils} class
- *
+ * 
  * @author George Gastaldi <gegastaldi@gmail.com>
- *
+ * 
  */
 public class RepositoryUtilsTest
 {
-
    @Test
    public void testConvertFromMavenProxyExpectNull()
    {

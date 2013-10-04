@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.projects.mock.MockBuildSystem;
 import org.jboss.forge.addon.projects.mock.MockProjectType;
 import org.jboss.forge.addon.projects.ui.NewProjectWizard;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -39,6 +40,7 @@ public class NewProjectWizardTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addClass(MockProjectType.class)
+               .addClass(MockBuildSystem.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
