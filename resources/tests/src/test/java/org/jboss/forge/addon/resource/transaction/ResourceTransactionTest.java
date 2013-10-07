@@ -249,7 +249,7 @@ public class ResourceTransactionTest
    public void testResourceTransactionInjection() throws Exception
    {
       Assert.assertNotNull(injectedTransaction);
-      Assert.assertEquals(injectedTransaction, resourceFactory.getTransaction());
+      Assert.assertFalse(injectedTransaction.isStarted());
    }
 
    /**

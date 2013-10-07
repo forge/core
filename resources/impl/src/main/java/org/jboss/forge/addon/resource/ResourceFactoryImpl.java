@@ -13,8 +13,7 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.resource.monitor.FileMonitor;
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
-import org.jboss.forge.addon.resource.transaction.file.FileResourceTransactionImpl;
-import org.jboss.forge.addon.resource.transaction.file.FileResourceTransactionManager;
+import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 import org.jboss.forge.addon.resource.util.RelatedClassComparator;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
@@ -37,7 +36,7 @@ public class ResourceFactoryImpl implements ResourceFactory
    private FileMonitor fileMonitor;
 
    @Inject
-   private FileResourceTransactionManager transactionManager;
+   private Imported<ResourceTransaction> transaction;
 
    @Override
    @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -97,8 +96,8 @@ public class ResourceFactoryImpl implements ResourceFactory
    }
 
    @Override
-   public FileResourceTransactionImpl getTransaction()
+   public ResourceTransaction getTransaction()
    {
-      return transactionManager.getCurrentTransaction(this);
+      return transaction.get();
    }
 }
