@@ -1,6 +1,5 @@
 package org.jboss.forge.addon.projects;
 
-import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
@@ -22,7 +21,12 @@ public interface ProjectType
    public Class<? extends UIWizardStep> getSetupFlow();
 
    /**
-    * Return all {@link Facet} {@link Class} types required by a {@link Project} of this {@link ProjectType}.
+    * Return all {@link ProjectFacet} {@link Class} types required by a {@link Project} of this {@link ProjectType}.
     */
    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets();
+
+   /**
+    * Return all {@link BuildSystemFacet} {@link Class} types required by a {@link Project} of this {@link ProjectType}.
+    */
+   Iterable<Class<? extends BuildSystemFacet>> getRequiredBuildSystemFacets();
 }

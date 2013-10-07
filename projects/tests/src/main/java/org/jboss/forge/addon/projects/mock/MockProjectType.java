@@ -9,6 +9,7 @@ package org.jboss.forge.addon.projects.mock;
 
 import java.util.Collections;
 
+import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
@@ -29,6 +30,12 @@ public class MockProjectType implements ProjectType
    public Class<? extends UIWizardStep> getSetupFlow()
    {
       return null;
+   }
+
+   @Override
+   public Iterable<Class<? extends BuildSystemFacet>> getRequiredBuildSystemFacets()
+   {
+      return Collections.emptySet();
    }
 
    @Override

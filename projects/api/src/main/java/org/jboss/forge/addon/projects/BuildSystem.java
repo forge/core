@@ -21,7 +21,7 @@ public interface BuildSystem
     * Return the {@link Set} of default {@link Facet} types provided by {@link Project} instances of this
     * {@link BuildSystem} type.
     */
-   public Set<Class<? extends Facet<?>>> getProvidedFacetTypes();
+   public Set<Class<? extends BuildSystemFacet>> getProvidedFacetTypes();
 
    /**
     * Create a new or existing {@link Project} with the given {@link DirectoryResource} as

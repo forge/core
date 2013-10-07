@@ -13,7 +13,6 @@ import java.util.Map;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.ui.test.impl.UIContextImpl;
 
 public class UIBuilderImpl implements UIBuilder
 {
@@ -48,6 +47,11 @@ public class UIBuilderImpl implements UIBuilder
    public UICommand getCommand()
    {
       return command;
+   }
+
+   public Iterable<InputComponent<?, ?>> getInputs()
+   {
+      return components.values();
    }
 
 }

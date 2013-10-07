@@ -9,8 +9,8 @@ package org.jboss.forge.addon.projects.mock;
 import java.util.Collections;
 import java.util.Set;
 
-import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.projects.BuildSystem;
+import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 
@@ -28,7 +28,7 @@ public class MockBuildSystem implements BuildSystem
    }
 
    @Override
-   public Set<Class<? extends Facet<?>>> getProvidedFacetTypes()
+   public Set<Class<? extends BuildSystemFacet>> getProvidedFacetTypes()
    {
       return Collections.emptySet();
    }

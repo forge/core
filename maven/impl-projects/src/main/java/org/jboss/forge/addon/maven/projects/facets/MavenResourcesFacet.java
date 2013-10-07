@@ -29,7 +29,7 @@ import org.jboss.forge.addon.resource.FileResource;
  */
 @Dependent
 @FacetConstraint(MavenFacet.class)
-public class MavenResourceFacet extends AbstractFacet<Project> implements ResourcesFacet
+public class MavenResourcesFacet extends AbstractFacet<Project> implements ResourcesFacet
 {
    @Override
    public List<DirectoryResource> getResourceFolders()

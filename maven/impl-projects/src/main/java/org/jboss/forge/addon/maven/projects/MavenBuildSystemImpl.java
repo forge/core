@@ -14,15 +14,15 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet;
-import org.jboss.forge.addon.maven.projects.facets.MavenResourceFacet;
+import org.jboss.forge.addon.maven.projects.facets.MavenResourcesFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenWebResourcesFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
@@ -61,7 +61,7 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
          factory.install(project, MavenMetadataFacet.class);
          factory.install(project, MavenPackagingFacet.class);
          factory.install(project, MavenDependencyFacet.class);
-         factory.install(project, MavenResourceFacet.class);
+         factory.install(project, MavenResourcesFacet.class);
          try
          {
             factory.register(project, MavenWebResourcesFacet.class);
@@ -89,9 +89,9 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
    }
 
    @Override
-   public Set<Class<? extends Facet<?>>> getProvidedFacetTypes()
+   public Set<Class<? extends BuildSystemFacet>> getProvidedFacetTypes()
    {
-      Set<Class<? extends Facet<?>>> result = new HashSet<Class<? extends Facet<?>>>();
+      Set<Class<? extends BuildSystemFacet>> result = new HashSet<Class<? extends BuildSystemFacet>>();
       result.add(MavenFacet.class);
       result.add(MavenPluginFacet.class);
       result.add(DependencyFacet.class);
@@ -99,26 +99,26 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
       result.add(PackagingFacet.class);
       result.add(ResourcesFacet.class);
 
-      addSafe(result, new Callable<Class<? extends Facet<?>>>()
+      addSafe(result, new Callable<Class<? extends BuildSystemFacet>>()
       {
          @Override
-         public Class<? extends Facet<?>> call() throws Exception
+         public Class<? extends BuildSystemFacet> call() throws Exception
          {
             return WebResourcesFacet.class;
          }
       });
-      addSafe(result, new Callable<Class<? extends Facet<?>>>()
+      addSafe(result, new Callable<Class<? extends BuildSystemFacet>>()
       {
          @Override
-         public Class<? extends Facet<?>> call() throws Exception
+         public Class<? extends BuildSystemFacet> call() throws Exception
          {
             return JavaCompilerFacet.class;
          }
       });
-      addSafe(result, new Callable<Class<? extends Facet<?>>>()
+      addSafe(result, new Callable<Class<? extends BuildSystemFacet>>()
       {
          @Override
-         public Class<? extends Facet<?>> call() throws Exception
+         public Class<? extends BuildSystemFacet> call() throws Exception
          {
             return JavaSourceFacet.class;
          }
@@ -126,11 +126,12 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
       return result;
    }
 
-   private void addSafe(Set<Class<? extends Facet<?>>> result, Callable<Class<? extends Facet<?>>> callable)
+   private void addSafe(Set<Class<? extends BuildSystemFacet>> result,
+            Callable<Class<? extends BuildSystemFacet>> callable)
    {
       try
       {
-         Class<? extends Facet<?>> facetType = callable.call();
+         Class<? extends BuildSystemFacet> facetType = callable.call();
          if (facetType != null)
             result.add(facetType);
       }

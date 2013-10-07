@@ -6,6 +6,9 @@
  */
 package org.jboss.forge.addon.addons;
 
+import java.util.Collections;
+
+import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
@@ -29,9 +32,15 @@ public class FurnaceAddonProjectType implements ProjectType
    }
 
    @Override
+   public Iterable<Class<? extends BuildSystemFacet>> getRequiredBuildSystemFacets()
+   {
+      return Collections.emptySet();
+   }
+
+   @Override
    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
    {
-      return null;
+      return Collections.emptySet();
    }
 
    @Override

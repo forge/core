@@ -87,6 +87,39 @@ public class NewProjectWizardTest
    }
 
    @Test
+   public void testValidateProjectName() throws Exception
+   {
+      File tempDir = OperatingSystemUtils.createTempDir();
+      try
+      {
+         wizard.launch();
+         Assert.assertFalse(wizard.canFlipToNextPage());
+         wizard.setValueFor("named", "Test Project Name Invalid");
+         wizard.setValueFor("targetLocation", tempDir);
+         wizard.setValueFor("topLevelPackage", "org.example");
+         wizard.setValueFor("type", "mock");
+
+         Assert.assertFalse(wizard.isValid());
+         Assert.assertFalse(wizard.canFinish());
+
+         wizard.setValueFor("named", "Test-Project-Name-Valid");
+
+         Assert.assertTrue(wizard.isValid());
+         Assert.assertTrue(wizard.canFinish());
+
+         File targetDirectory = new File(tempDir, "Test-Project-Name-Valid");
+         Assert.assertFalse(targetDirectory.exists());
+         wizard.finish(null);
+
+         Assert.assertTrue(targetDirectory.exists());
+      }
+      finally
+      {
+         tempDir.delete();
+      }
+   }
+
+   @Test
    public void testOverwriteEnabledWhenTargetDirectoryExistsNotEmpty() throws Exception
    {
 

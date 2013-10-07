@@ -17,6 +17,7 @@ import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
@@ -86,6 +87,7 @@ public class NewProjectWizard implements UIWizard
    @Override
    public void initializeUI(final UIBuilder builder) throws Exception
    {
+      configureProjectNamedInput();
       configureVersionInput();
       configuteTargetLocationInput(builder);
       configureOverwriteInput();
@@ -95,6 +97,19 @@ public class NewProjectWizard implements UIWizard
 
       builder.add(named).add(topLevelPackage).add(version).add(targetLocation).add(overwrite).add(type)
                .add(buildSystem);
+   }
+
+   private void configureProjectNamedInput()
+   {
+      named.setValidator(new UIValidator()
+      {
+         @Override
+         public void validate(UIValidationContext context)
+         {
+            if (named.getValue() != null && named.getValue().matches(".*[^-_.a-zA-Z0-9].*"))
+               context.addValidationError(named, "Project name must not contain spaces or special characters.");
+         }
+      });
    }
 
    private void configureVersionInput()
@@ -216,6 +231,14 @@ public class NewProjectWizard implements UIWizard
       {
          buildSystem.setDefaultValue(buildSystemTypes.get(0));
       }
+      buildSystem.setItemLabelConverter(new Converter<BuildSystem, String>()
+      {
+         @Override
+         public String convert(BuildSystem source)
+         {
+            return source == null ? null : source.getType();
+         }
+      });
       buildSystem.setValueChoices(buildSystemTypes);
    }
 

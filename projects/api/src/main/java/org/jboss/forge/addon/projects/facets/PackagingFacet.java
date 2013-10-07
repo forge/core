@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.projects.facets;
 
-import org.jboss.forge.addon.projects.ProjectFacet;
+import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.building.ProjectBuilder;
 import org.jboss.forge.addon.resource.Resource;
 
@@ -17,7 +17,7 @@ import org.jboss.forge.addon.resource.Resource;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface PackagingFacet extends ProjectFacet
+public interface PackagingFacet extends BuildSystemFacet
 {
    /**
     * Set the packaging type currently in use by this project. For example, JAR, WAR,... etc.
