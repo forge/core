@@ -51,6 +51,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
    private final ResourceFactory resourceFactory;
 
    private volatile Session session;
+   private int timeout;
 
    public FileResourceTransactionImpl(XAFileSystem fileSystem, ResourceFactory resourceFactory)
    {
@@ -62,6 +63,10 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
    public void begin() throws ResourceTransactionException
    {
       this.session = fileSystem.createSessionForLocalTransaction();
+      if (timeout != 0)
+      {
+         this.session.setTransactionTimeout(timeout);
+      }
    }
 
    @Override
@@ -342,6 +347,16 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
       {
          throw new ResourceTransactionException(e);
       }
+   }
+
+   @Override
+   public void setTransactionTimeout(int seconds)
+   {
+      if (seconds < 0)
+      {
+         throw new ResourceTransactionException("Timeout cannot be a negative value");
+      }
+      this.timeout = seconds;
    }
 
    @Override

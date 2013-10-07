@@ -213,6 +213,35 @@ public class ResourceTransactionTest
       Assert.assertEquals("Hello World", fileResource.getContents());
    }
 
+   @Test(expected = ResourceTransactionException.class)
+   public void testResourceTimeout()
+   {
+      ResourceTransaction transaction = resourceFactory.getTransaction();
+      transaction.setTransactionTimeout(-100);
+   }
+
+   @Test(expected = ResourceTransactionException.class)
+   public void testResourceTimeoutInvalidatesTransaction() throws Exception
+   {
+      ResourceTransaction transaction = resourceFactory.getTransaction();
+      transaction.setTransactionTimeout(2);
+      transaction.begin();
+      Thread.sleep(3000);
+      transaction.commit();
+   }
+
+   @Test
+   public void testResourceTransactionSucceeds() throws Exception
+   {
+      ResourceTransaction transaction = resourceFactory.getTransaction();
+      Assert.assertFalse(transaction.isStarted());
+      transaction.begin();
+      Assert.assertTrue(transaction.isStarted());
+      Thread.sleep(1000);
+      transaction.commit();
+      Assert.assertFalse(transaction.isStarted());
+   }
+
    /**
     * @param tempDir
     * @return

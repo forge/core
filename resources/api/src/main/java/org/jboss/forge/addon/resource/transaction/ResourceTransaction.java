@@ -40,6 +40,18 @@ public interface ResourceTransaction
    public boolean isStarted();
 
    /**
+    * Modify the timeout value that is associated with transactions started by subsequent invocations of the begin
+    * method.
+    * 
+    * If an application has not called this method, the transaction service uses some default value for the transaction
+    * timeout.
+    * 
+    * @param seconds The value of the timeout in seconds. If the value is zero, the transaction service restores the
+    *           default value. If the value is negative a {@link ResourceTransactionException} is thrown.
+    */
+   public void setTransactionTimeout(int seconds);
+
+   /**
     * The changes associated with this transaction.
     * 
     * @return an immutable {@link Set} with the changes that were introduced so far
