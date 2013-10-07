@@ -230,6 +230,10 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
          {
             validator.validate(validationContext);
          }
+         if (input.isRequired() && InputComponents.getValueFor(input) == null)
+         {
+            validationContext.addValidationError(input, input.getRequiredMessage());
+         }
       }
 
       currentWizard.validate(validationContext);

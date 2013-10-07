@@ -7,10 +7,8 @@
 package org.jboss.forge.addon.projects.types;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
@@ -40,24 +38,18 @@ public class ResourcesProjectType implements ProjectType
    @Override
    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
    {
-      return Collections.emptySet();
+      List<Class<? extends ProjectFacet>> result = new ArrayList<Class<? extends ProjectFacet>>();
+      result.add(MetadataFacet.class);
+      result.add(PackagingFacet.class);
+      result.add(DependencyFacet.class);
+      result.add(ResourcesFacet.class);
+      return result;
    }
 
    @Override
    public String toString()
    {
       return "jar-resources";
-   }
-
-   @Override
-   public Iterable<Class<? extends BuildSystemFacet>> getRequiredBuildSystemFacets()
-   {
-      List<Class<? extends BuildSystemFacet>> result = new ArrayList<Class<? extends BuildSystemFacet>>();
-      result.add(MetadataFacet.class);
-      result.add(PackagingFacet.class);
-      result.add(DependencyFacet.class);
-      result.add(ResourcesFacet.class);
-      return result;
    }
 
 }

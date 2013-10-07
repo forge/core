@@ -15,7 +15,9 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.mock.MockBuildSystem;
 import org.jboss.forge.addon.projects.mock.MockProjectType;
+import org.jboss.forge.addon.projects.mock.MockProjectTypeUnsatisfied;
 import org.jboss.forge.addon.projects.ui.NewProjectWizard;
+import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -40,6 +42,7 @@ public class NewProjectWizardTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addClass(MockProjectType.class)
+               .addClass(MockProjectTypeUnsatisfied.class)
                .addClass(MockBuildSystem.class)
                .addBeansXML()
                .addAsAddonDependencies(
@@ -79,6 +82,26 @@ public class NewProjectWizardTest
          wizard.finish(null);
 
          Assert.assertTrue(targetDirectory.exists());
+      }
+      finally
+      {
+         tempDir.delete();
+      }
+   }
+
+   @Test
+   public void testProjectTypeRestrictedByBuildSystem() throws Exception
+   {
+      File tempDir = OperatingSystemUtils.createTempDir();
+      try
+      {
+         wizard.launch();
+         Assert.assertFalse(wizard.canFlipToNextPage());
+         wizard.setValueFor("named", "test");
+         wizard.setValueFor("targetLocation", tempDir);
+         wizard.setValueFor("topLevelPackage", "org.example");
+         wizard.setValueFor("type", "unsatisfied");
+         Assert.assertEquals("mock", InputComponents.getValueFor(wizard.getInputComponent("type")).toString());
       }
       finally
       {

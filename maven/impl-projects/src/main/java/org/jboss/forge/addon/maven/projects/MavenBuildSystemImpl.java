@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.maven.projects;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -123,7 +124,7 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
             return JavaSourceFacet.class;
          }
       });
-      return result;
+      return Collections.unmodifiableSet(result);
    }
 
    private void addSafe(Set<Class<? extends BuildSystemFacet>> result,

@@ -7,12 +7,10 @@
 package org.jboss.forge.addon.parser.java.projects;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
@@ -41,9 +39,9 @@ public class JavaProjectType implements ProjectType
    }
 
    @Override
-   public Iterable<Class<? extends BuildSystemFacet>> getRequiredBuildSystemFacets()
+   public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
    {
-      List<Class<? extends BuildSystemFacet>> result = new ArrayList<Class<? extends BuildSystemFacet>>(6);
+      List<Class<? extends ProjectFacet>> result = new ArrayList<Class<? extends ProjectFacet>>(6);
       result.add(MetadataFacet.class);
       result.add(PackagingFacet.class);
       result.add(DependencyFacet.class);
@@ -51,12 +49,6 @@ public class JavaProjectType implements ProjectType
       result.add(JavaCompilerFacet.class);
       result.add(JavaSourceFacet.class);
       return result;
-   }
-
-   @Override
-   public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
-   {
-      return Collections.emptySet();
    }
 
    @Override

@@ -24,9 +24,4 @@ public interface ProjectType
     * Return all {@link ProjectFacet} {@link Class} types required by a {@link Project} of this {@link ProjectType}.
     */
    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets();
-
-   /**
-    * Return all {@link BuildSystemFacet} {@link Class} types required by a {@link Project} of this {@link ProjectType}.
-    */
-   Iterable<Class<? extends BuildSystemFacet>> getRequiredBuildSystemFacets();
 }

@@ -6,12 +6,13 @@
  */
 package org.jboss.forge.addon.projects.mock;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.jboss.forge.addon.projects.BuildSystem;
 import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 
 /**
@@ -28,9 +29,10 @@ public class MockBuildSystem implements BuildSystem
    }
 
    @Override
-   public Set<Class<? extends BuildSystemFacet>> getProvidedFacetTypes()
+   @SuppressWarnings("unchecked")
+   public Iterable<Class<? extends BuildSystemFacet>> getProvidedFacetTypes()
    {
-      return Collections.emptySet();
+      return new HashSet<Class<? extends BuildSystemFacet>>(Arrays.asList(MetadataFacet.class));
    }
 
    @Override

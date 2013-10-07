@@ -7,23 +7,20 @@
 
 package org.jboss.forge.addon.projects.mock;
 
-import java.util.Arrays;
-
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class MockProjectType implements ProjectType
+public class MockProjectTypeNullRequiredFacets implements ProjectType
 {
    @Override
    public String getType()
    {
-      return "mock";
+      return "nullrequirements";
    }
 
    @Override
@@ -33,10 +30,9 @@ public class MockProjectType implements ProjectType
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
    {
-      return Arrays.<Class<? extends ProjectFacet>> asList(MetadataFacet.class);
+      return null;
    }
 
    @Override
