@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Produces;
 import javax.inject.Singleton;
 
 import org.jboss.forge.addon.resource.ResourceFactory;
@@ -62,6 +63,7 @@ public class FileResourceTransactionManager
          }
    }
 
+   @Produces
    public FileResourceTransactionImpl getCurrentTransaction(ResourceFactory resourceFactory)
    {
       Assert.notNull(fileSystem, "FileSystem was not yet initialized. Is the Furnace container running?");

@@ -65,6 +65,9 @@ public class ResourceTransactionTest
    @Inject
    private ResourceFactory resourceFactory;
 
+   @Inject
+   private ResourceTransaction injectedTransaction;
+
    @Test
    @SuppressWarnings("unchecked")
    public void testResourceTransactionCommit() throws IOException
@@ -240,6 +243,13 @@ public class ResourceTransactionTest
       Thread.sleep(1000);
       transaction.commit();
       Assert.assertFalse(transaction.isStarted());
+   }
+
+   @Test
+   public void testResourceTransactionInjection() throws Exception
+   {
+      Assert.assertNotNull(injectedTransaction);
+      Assert.assertEquals(injectedTransaction, resourceFactory.getTransaction());
    }
 
    /**
