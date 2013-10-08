@@ -9,8 +9,10 @@ package org.jboss.forge.addon.projects.impl;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -19,6 +21,7 @@ import javax.inject.Singleton;
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.projects.BuildSystem;
+import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectAssociationProvider;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -191,6 +194,12 @@ public class ProjectFactoryImpl implements ProjectFactory
       Assert.notNull(target, "Target project directory must not be null.");
       Assert.notNull(buildSystem, "Build system type must not be null.");
 
+      if (facetTypes != null)
+         Assert.isTrue(isBuildable(buildSystem, facetTypes),
+                  "The provided build system [" + buildSystem.getType()
+                           + "] cannot create a project that requires facets of the following types: "
+                           + getMissingBuildSystemFacets(buildSystem, getRequiredBuildSystemFacets(facetTypes)));
+
       Project result = buildSystem.createProject(target);
       if (result != null)
       {
@@ -237,6 +246,58 @@ public class ProjectFactoryImpl implements ProjectFactory
          fireProjectCreated(result);
       }
 
+      return result;
+   }
+
+   private Iterable<Class<? extends BuildSystemFacet>> getMissingBuildSystemFacets(BuildSystem buildSystem,
+            Iterable<Class<? extends BuildSystemFacet>> requiredFacets)
+   {
+      Set<Class<? extends BuildSystemFacet>> result = new HashSet<Class<? extends BuildSystemFacet>>();
+      Iterable<Class<? extends BuildSystemFacet>> providedFacetTypes = buildSystem.getProvidedFacetTypes();
+      if (requiredFacets != null && providedFacetTypes != null)
+      {
+         for (Class<? extends BuildSystemFacet> required : requiredFacets)
+         {
+            boolean found = false;
+            for (Class<? extends BuildSystemFacet> provided : providedFacetTypes)
+            {
+               if (provided.isAssignableFrom(required))
+                  found = true;
+            }
+            if (!found)
+               result.add(required);
+         }
+      }
+      return result;
+   }
+
+   private boolean isBuildable(BuildSystem buildSystem, Iterable<Class<? extends ProjectFacet>> facets)
+   {
+      boolean result = false;
+      Iterable<Class<? extends BuildSystemFacet>> requiredFacets = getRequiredBuildSystemFacets(facets);
+      if (requiredFacets == null)
+      {
+         result = true;
+      }
+      else
+      {
+         result = !getMissingBuildSystemFacets(buildSystem, requiredFacets).iterator().hasNext();
+      }
+      return result;
+   }
+
+   @SuppressWarnings("unchecked")
+   private Iterable<Class<? extends BuildSystemFacet>> getRequiredBuildSystemFacets(
+            Iterable<Class<? extends ProjectFacet>> facets)
+   {
+      Set<Class<? extends BuildSystemFacet>> result = new HashSet<Class<? extends BuildSystemFacet>>();
+      for (Class<? extends ProjectFacet> facetType : facets)
+      {
+         if (BuildSystemFacet.class.isAssignableFrom(facetType))
+         {
+            result.add((Class<? extends BuildSystemFacet>) facetType);
+         }
+      }
       return result;
    }
 

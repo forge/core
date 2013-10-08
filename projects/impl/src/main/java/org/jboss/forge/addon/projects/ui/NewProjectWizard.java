@@ -180,18 +180,21 @@ public class NewProjectWizard implements UIWizard
       List<ProjectType> projectTypes = new ArrayList<ProjectType>();
       for (ProjectType projectType : type.getValueChoices())
       {
+         boolean buildable = false;
          for (BuildSystem buildSystem : buildSystems)
          {
             if (isProjectTypeBuildable(projectType, buildSystem))
             {
                projectTypes.add(projectType);
+               buildable = true;
                break;
             }
-            else
-               log.log(Level.FINE, "ProjectType [" + projectType.getType() + "] "
-                        + "deactivated because it cannot be built with any registered BuildSystem instances ["
-                        + buildSystems + "].");
          }
+
+         if (!buildable)
+            log.log(Level.FINE, "ProjectType [" + projectType.getType() + "] "
+                     + "deactivated because it cannot be built with any registered BuildSystem instances ["
+                     + buildSystems + "].");
       }
 
       Collections.sort(projectTypes, new Comparator<ProjectType>()
@@ -278,7 +281,7 @@ public class NewProjectWizard implements UIWizard
    {
       boolean result = false;
       Iterable<Class<? extends BuildSystemFacet>> requiredFacets = getRequiredBuildSystemFacets(type);
-      if (requiredFacets == null)
+      if (requiredFacets == null || !requiredFacets.iterator().hasNext())
       {
          result = true;
       }
@@ -303,11 +306,15 @@ public class NewProjectWizard implements UIWizard
    private Iterable<Class<? extends BuildSystemFacet>> getRequiredBuildSystemFacets(ProjectType type)
    {
       Set<Class<? extends BuildSystemFacet>> result = new HashSet<Class<? extends BuildSystemFacet>>();
-      for (Class<? extends ProjectFacet> facetType : type.getRequiredFacets())
+      Iterable<Class<? extends ProjectFacet>> requiredFacets = type.getRequiredFacets();
+      if (requiredFacets != null)
       {
-         if (BuildSystemFacet.class.isAssignableFrom(facetType))
+         for (Class<? extends ProjectFacet> facetType : requiredFacets)
          {
-            result.add((Class<? extends BuildSystemFacet>) facetType);
+            if (BuildSystemFacet.class.isAssignableFrom(facetType))
+            {
+               result.add((Class<? extends BuildSystemFacet>) facetType);
+            }
          }
       }
       return result;

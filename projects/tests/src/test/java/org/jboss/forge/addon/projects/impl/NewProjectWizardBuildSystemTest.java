@@ -15,6 +15,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.mock.MockBuildSystem;
 import org.jboss.forge.addon.projects.mock.MockProjectTypeNoRequiredFacets;
+import org.jboss.forge.addon.projects.mock.MockProjectTypeNullRequiredFacets;
 import org.jboss.forge.addon.projects.ui.NewProjectWizard;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -41,6 +42,7 @@ public class NewProjectWizardBuildSystemTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addClass(MockProjectTypeNoRequiredFacets.class)
+               .addClass(MockProjectTypeNullRequiredFacets.class)
                .addClass(MockBuildSystem.class)
                .addBeansXML()
                .addAsAddonDependencies(
