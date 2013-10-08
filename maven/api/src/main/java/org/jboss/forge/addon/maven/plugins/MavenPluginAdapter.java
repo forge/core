@@ -23,7 +23,7 @@ import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 
 /**
  * A plugin adapter for {@link Plugin} and {@link MavenPlugin}
- *
+ * 
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
 
@@ -57,7 +57,10 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
          pluginDependency.setGroupId(dependency.getCoordinate().getGroupId());
          pluginDependency.setVersion(dependency.getCoordinate().getVersion());
          pluginDependency.setScope(dependency.getScopeType());
-         pluginDependency.setExclusions(transformExclusions(dependency.getExcludedCoordinates()));
+         if (dependency.getExcludedCoordinates() != null)
+         {
+            pluginDependency.setExclusions(transformExclusions(dependency.getExcludedCoordinates()));
+         }
          dependencies.add(pluginDependency);
       }
       return dependencies;

@@ -75,10 +75,19 @@ public class PersistenceOperations
          provider.configure(unit, dataSource);
          facet.saveConfig(config);
          result = facet.getConfigFile();
-      }
-      if (configureMetadata)
-      {
-         facetFactory.install(project, PersistenceMetaModelFacet.class);
+         if (configureMetadata)
+         {
+            Iterable<PersistenceMetaModelFacet> facets = facetFactory.createFacets(project,
+                     PersistenceMetaModelFacet.class);
+            for (PersistenceMetaModelFacet metaModelFacet : facets)
+            {
+               metaModelFacet.setMetaModelProvider(provider.getMetaModelProvider());
+               if (facetFactory.install(project, metaModelFacet))
+               {
+                  break;
+               }
+            }
+         }
       }
       return result;
    }

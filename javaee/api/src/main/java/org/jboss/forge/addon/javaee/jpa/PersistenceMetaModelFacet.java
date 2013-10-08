@@ -7,16 +7,14 @@
 package org.jboss.forge.addon.javaee.jpa;
 
 import org.jboss.forge.addon.dependencies.Coordinate;
-import org.jboss.forge.addon.javaee.JavaEEFacet;
+import org.jboss.forge.addon.projects.ProjectFacet;
 
 /**
  * Returns information about metamodel generation for JPA projects
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
- *         FIXME: Missing implementation
  */
-public interface PersistenceMetaModelFacet extends JavaEEFacet
+public interface PersistenceMetaModelFacet extends ProjectFacet
 {
    /**
     * The annotation processor used
@@ -32,4 +30,9 @@ public interface PersistenceMetaModelFacet extends JavaEEFacet
     * The Coordinate of the annotation processor
     */
    Coordinate getProcessorCoordinate();
+
+   /**
+    * Sets the metamodel provider. This should be called before {@link PersistenceMetaModelFacet#install()}
+    */
+   void setMetaModelProvider(MetaModelProvider provider);
 }

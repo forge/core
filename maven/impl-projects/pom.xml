@@ -47,36 +47,44 @@
 
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>environment-api</artifactId>
-         <version>2.0.0-SNAPSHOT</version>
+         <artifactId>environment</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>projects-api</artifactId>
-         <version>2.0.0-SNAPSHOT</version>
+         <artifactId>projects</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui-api</artifactId>
-         <version>2.0.0-SNAPSHOT</version>
+         <artifactId>ui</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>resources-api</artifactId>
+         <artifactId>resources</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>dependencies-api</artifactId>
+         <artifactId>dependencies</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>parser-java-api</artifactId>
-         <version>2.0.0-SNAPSHOT</version>
+         <artifactId>parser-java</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>javaee</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
    </dependencies>

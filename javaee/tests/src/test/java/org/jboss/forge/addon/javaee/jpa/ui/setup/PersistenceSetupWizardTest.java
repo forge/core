@@ -14,9 +14,10 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.javaee.jpa.PersistenceFacet;
+import org.jboss.forge.addon.javaee.jpa.PersistenceMetaModelFacet;
 import org.jboss.forge.addon.javaee.jpa.containers.CustomJTAContainer;
+import org.jboss.forge.addon.javaee.jpa.providers.HibernateMetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -70,18 +71,15 @@ public class PersistenceSetupWizardTest
    private ProjectFactory projectFactory;
 
    @Inject
-   private FacetFactory facetFactory;
-
-   @Inject
    private WizardTester<PersistenceSetupWizard> tester;
 
    @Test
-   public void testNewEntity() throws Exception
+   public void testSetup() throws Exception
    {
       // Execute SUT
       final Project project = projectFactory.createTempProject();
       tester.setInitialSelection(project.getProjectRoot());
-      
+
       // Launch
       tester.launch();
 
@@ -108,11 +106,55 @@ public class PersistenceSetupWizardTest
       Assert.assertEquals(2, counter.get());
 
       // Check SUT values
-      PersistenceDescriptor config = facetFactory.install(project, PersistenceFacet.class).getConfig();
+      PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
       List<PersistenceUnit<PersistenceDescriptor>> allUnits = config.getAllPersistenceUnit();
       PersistenceUnit<PersistenceDescriptor> unit = allUnits.get(0);
 
       Assert.assertEquals("java:jboss:jta-ds", unit.getJtaDataSource());
    }
 
+   @Test
+   public void testSetupMetadata() throws Exception
+   {
+      // Execute SUT
+      final Project project = projectFactory.createTempProject();
+      tester.setInitialSelection(project.getProjectRoot());
+
+      // Launch
+      tester.launch();
+
+      Assert.assertFalse(tester.canFlipToPreviousPage());
+      // Setting UI values
+      tester.setValueFor("providers", defaultProvider);
+      tester.setValueFor("containers", customJTAProvider);
+      tester.setValueFor("configureMetadata", Boolean.TRUE);
+      Assert.assertTrue(tester.canFlipToNextPage());
+
+      String result = tester.next();
+      Assert.assertNull(result);
+
+      tester.setValueFor("dataSourceName", "java:jboss:jta-ds");
+      final AtomicInteger counter = new AtomicInteger();
+      tester.finish(new WizardListener()
+      {
+         @Override
+         public void wizardExecuted(UIWizard wizard, Result result)
+         {
+            counter.incrementAndGet();
+         }
+      });
+      // Ensure that the two pages were invoked
+      Assert.assertEquals(2, counter.get());
+
+      // Check SUT values
+      PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
+      List<PersistenceUnit<PersistenceDescriptor>> allUnits = config.getAllPersistenceUnit();
+      PersistenceUnit<PersistenceDescriptor> unit = allUnits.get(0);
+
+      Assert.assertEquals("java:jboss:jta-ds", unit.getJtaDataSource());
+
+      Assert.assertTrue(project.hasFacet(PersistenceMetaModelFacet.class));
+      PersistenceMetaModelFacet facet = project.getFacet(PersistenceMetaModelFacet.class);
+      Assert.assertEquals(new HibernateMetaModelProvider().getProcessor(), facet.getProcessor());
+   }
 }

@@ -6,18 +6,18 @@
  */
 package org.jboss.forge.addon.javaee.jpa.providers;
 
-import org.jboss.forge.addon.dependencies.Dependency;
+import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.DependencyRepository;
-import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.javaee.jpa.MetaModelProvider;
 
 public class EclipseLinkMetaModelProvider implements MetaModelProvider
 {
 
    @Override
-   public Dependency getAptDependency()
+   public Coordinate getAptCoordinate()
    {
-      return DependencyBuilder.create()
+      return CoordinateBuilder.create()
                .setGroupId("org.eclipse.persistence")
                .setArtifactId("eclipselink")
                .setVersion("2.4.0");

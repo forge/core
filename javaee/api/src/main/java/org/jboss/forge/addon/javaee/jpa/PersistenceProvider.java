@@ -49,7 +49,7 @@ public interface PersistenceProvider
    /**
     * Validate against the supplied datastore
     * 
-    * @throws any exception if the supplied datasource state is invali
+    * @throws any exception if the supplied datasource state is invalid
     */
    void validate(JPADataSource dataSource) throws Exception;
 

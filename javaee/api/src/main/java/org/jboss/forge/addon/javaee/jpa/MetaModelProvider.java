@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.addon.javaee.jpa;
 
-import org.jboss.forge.addon.dependencies.Dependency;
+import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.DependencyRepository;
 
 /**
@@ -18,9 +18,9 @@ import org.jboss.forge.addon.dependencies.DependencyRepository;
 public interface MetaModelProvider
 {
    /**
-    * The dependency containing the APT processor class.
+    * The coordinate containing the APT processor class.
     */
-   Dependency getAptDependency();
+   Coordinate getAptCoordinate();
 
    /**
     * The processor class name.
