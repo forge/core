@@ -9,7 +9,6 @@ package org.jboss.forge.addon.parser.java.projects;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
@@ -46,7 +45,6 @@ public class JavaProjectType implements ProjectType
       result.add(PackagingFacet.class);
       result.add(DependencyFacet.class);
       result.add(ResourcesFacet.class);
-      result.add(JavaCompilerFacet.class);
       result.add(JavaSourceFacet.class);
       return result;
    }

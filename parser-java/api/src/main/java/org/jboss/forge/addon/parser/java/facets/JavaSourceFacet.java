@@ -13,8 +13,8 @@ import java.util.List;
 
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
-import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
@@ -22,7 +22,7 @@ import org.jboss.forge.parser.java.JavaSource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface JavaSourceFacet extends BuildSystemFacet
+public interface JavaSourceFacet extends ProjectFacet
 {
 
    /**

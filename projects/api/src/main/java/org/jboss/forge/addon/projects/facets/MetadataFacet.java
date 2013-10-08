@@ -10,6 +10,7 @@ package org.jboss.forge.addon.projects.facets;
 import java.util.Map;
 
 import org.jboss.forge.addon.dependencies.Dependency;
+import org.jboss.forge.addon.projects.BuildSystem;
 import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
 
@@ -103,5 +104,10 @@ public interface MetadataFacet extends BuildSystemFacet
     * and will be expanded during building to their property value.)
     */
    public String removeDirectProperty(String name);
+
+   /**
+    * Return the {@link BuildSystem} being used in the current {@link Project}.
+    */
+   BuildSystem getBuildSystem();
 
 }

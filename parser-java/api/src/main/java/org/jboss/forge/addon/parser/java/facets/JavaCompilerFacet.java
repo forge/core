@@ -7,14 +7,14 @@
 
 package org.jboss.forge.addon.parser.java.facets;
 
-import org.jboss.forge.addon.projects.BuildSystemFacet;
+import org.jboss.forge.addon.projects.ProjectFacet;
 
 /**
  * Allows manipulation of the current configured Java compiler version.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface JavaCompilerFacet extends BuildSystemFacet
+public interface JavaCompilerFacet extends ProjectFacet
 {
 
 }

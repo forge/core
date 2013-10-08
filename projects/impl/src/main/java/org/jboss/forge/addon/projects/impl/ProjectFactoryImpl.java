@@ -64,6 +64,15 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Inject
    private Imported<ProjectCache> caches;
 
+   private Predicate<ProjectFacet> notBuildSystemFilter = new Predicate<ProjectFacet>()
+   {
+      @Override
+      public boolean accept(ProjectFacet type)
+      {
+         return !(type instanceof BuildSystemFacet);
+      }
+   };
+
    private final List<ProjectListener> projectListeners = new ArrayList<ProjectListener>();
 
    private final Predicate<Project> acceptsAllProjects = new Predicate<Project>()
@@ -225,12 +234,22 @@ public class ProjectFactoryImpl implements ProjectFactory
          {
             try
             {
-               factory.install(result, facetType);
+               if (!BuildSystemFacet.class.isAssignableFrom(facetType))
+               {
+                  Iterable<? extends ProjectFacet> facets = factory.createFacets(result, facetType);
+                  for (ProjectFacet projectFacet : facets)
+                  {
+                     if (factory.install(result, projectFacet, notBuildSystemFilter))
+                     {
+                        break;
+                     }
+                  }
+               }
             }
             catch (RuntimeException e)
             {
                throw new IllegalStateException("Could not install " + Facet.class.getSimpleName() + " of type ["
-                        + facetType + "] into Project [" + result + "]");
+                        + facetType + "] into Project [" + result + "]", e);
             }
          }
       }

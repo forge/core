@@ -11,27 +11,27 @@ import java.util.Arrays;
 import org.jboss.forge.addon.projects.BuildSystem;
 import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class MockBuildSystem implements BuildSystem
+public class MockBuildSystem2 implements BuildSystem
 {
 
    @Override
    public String getType()
    {
-      return "buildsystem";
+      return "buildsystem2";
    }
 
    @Override
    @SuppressWarnings("unchecked")
    public Iterable<Class<? extends BuildSystemFacet>> getProvidedFacetTypes()
    {
-      return Arrays.<Class<? extends BuildSystemFacet>> asList(MetadataFacet.class);
+      return Arrays.<Class<? extends BuildSystemFacet>> asList(PackagingFacet.class);
    }
 
    @Override
@@ -45,10 +45,11 @@ public class MockBuildSystem implements BuildSystem
    {
       return false;
    }
-
+   
    @Override
    public String toString()
    {
       return getType();
    }
+
 }

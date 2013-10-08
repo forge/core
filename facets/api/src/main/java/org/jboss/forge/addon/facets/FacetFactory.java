@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.facets;
 
+import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * Responsible for instantiation of new {@link Facet} instances.
@@ -48,6 +49,21 @@ public interface FacetFactory
             FacetIsAmbiguousException;
 
    /**
+    * Create and installs a new instance of the given {@link Facet} type.
+    * 
+    * @return the new {@link Facet} instance. (Never null.)
+    * 
+    * @throws FacetNotFoundException if no implementation can be found.
+    * @throws FacetIsAmbiguousException if the given facet type is an interface or abstract class, and multiple
+    *            implementations were found.
+    * @throws IllegalStateException if installation failed
+    */
+   public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> FACETTYPE install(
+            FACETEDTYPE origin, Class<FACETTYPE> type, Predicate<FACETTYPE> filter)
+            throws FacetNotFoundException, IllegalStateException,
+            FacetIsAmbiguousException;
+
+   /**
     * Install a {@link Facet} instance into the given {@link Faceted} origin.
     * 
     * @throws IllegalStateException if installation failed
@@ -59,6 +75,20 @@ public interface FacetFactory
     */
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean install(
             FACETEDTYPE origin, FACETTYPE facet) throws IllegalArgumentException, IllegalStateException;
+
+   /**
+    * Install a {@link Facet} instance into the given {@link Faceted} origin.
+    * 
+    * @throws IllegalStateException if installation failed
+    * @throws IllegalArgumentException when the given {@link Facet#getFaceted()} is not equal to the specified
+    *            {@link Faceted} origin instance, or if the given {@link Faceted} type does not implement
+    *            {@link MutableFaceted}.
+    * 
+    * @return <code>true</code> if installation was successful; <code>false</code> if installation failed.
+    */
+   public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean install(
+            FACETEDTYPE origin, FACETTYPE facet, Predicate<FACETTYPE> filter) throws IllegalArgumentException,
+            IllegalStateException;
 
    /**
     * Register a {@link Facet} type into the given {@link Faceted} origin. (Facets may be registered when their

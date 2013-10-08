@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -20,7 +21,9 @@ import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
+import org.jboss.forge.addon.maven.projects.MavenBuildSystem;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
+import org.jboss.forge.addon.projects.BuildSystem;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 
@@ -31,6 +34,15 @@ import org.jboss.forge.addon.projects.facets.MetadataFacet;
 @FacetConstraint(MavenFacet.class)
 public class MavenMetadataFacet extends AbstractFacet<Project> implements MetadataFacet
 {
+   @Inject
+   private MavenBuildSystem buildSystem;
+
+   @Override
+   public BuildSystem getBuildSystem()
+   {
+      return buildSystem;
+   }
+
    @Override
    public String getProjectName()
    {
@@ -182,5 +194,5 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
       maven.setPOM(pom);
       return result;
    }
-   
+
 }

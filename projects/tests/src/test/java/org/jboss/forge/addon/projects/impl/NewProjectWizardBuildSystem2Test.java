@@ -14,8 +14,12 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.mock.MockBuildSystem;
+import org.jboss.forge.addon.projects.mock.MockBuildSystem2;
 import org.jboss.forge.addon.projects.mock.MockProjectType;
+import org.jboss.forge.addon.projects.mock.MockProjectType2;
+import org.jboss.forge.addon.projects.mock.MockProjectTypeUnsatisfied;
 import org.jboss.forge.addon.projects.ui.NewProjectWizard;
+import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -28,7 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class NewProjectWizardTest
+public class NewProjectWizardBuildSystem2Test
 {
    @Deployment
    @Dependencies({
@@ -39,8 +43,11 @@ public class NewProjectWizardTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
+               .addClass(MockProjectTypeUnsatisfied.class)
                .addClass(MockProjectType.class)
+               .addClass(MockProjectType2.class)
                .addClass(MockBuildSystem.class)
+               .addClass(MockBuildSystem2.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
@@ -55,13 +62,7 @@ public class NewProjectWizardTest
    private WizardTester<NewProjectWizard> wizard;
 
    @Test
-   public void testInjectionNotNull()
-   {
-      Assert.assertNotNull(wizard);
-   }
-
-   @Test
-   public void testInvokeCommand() throws Exception
+   public void testProjectTypeSwitching() throws Exception
    {
       File tempDir = OperatingSystemUtils.createTempDir();
       try
@@ -72,13 +73,11 @@ public class NewProjectWizardTest
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
          wizard.setValueFor("type", "mock");
-         Assert.assertTrue(wizard.isValid());
-         Assert.assertTrue(wizard.canFinish());
-         File targetDirectory = new File(tempDir, "test");
-         Assert.assertFalse(targetDirectory.exists());
-         wizard.finish(null);
-
-         Assert.assertTrue(targetDirectory.exists());
+         Assert.assertEquals("buildsystem", InputComponents.getValueFor(wizard.getInputComponent("buildSystem"))
+                  .toString());
+         wizard.setValueFor("type", "mock2");
+         Assert.assertEquals("buildsystem2", InputComponents.getValueFor(wizard.getInputComponent("buildSystem"))
+                  .toString());
       }
       finally
       {
@@ -87,62 +86,21 @@ public class NewProjectWizardTest
    }
 
    @Test
-   public void testValidateProjectName() throws Exception
+   public void testProjectTypeRestrictedByBuildSystem() throws Exception
    {
       File tempDir = OperatingSystemUtils.createTempDir();
       try
       {
          wizard.launch();
          Assert.assertFalse(wizard.canFlipToNextPage());
-         wizard.setValueFor("named", "Test Project Name Invalid");
-         wizard.setValueFor("targetLocation", tempDir);
-         wizard.setValueFor("topLevelPackage", "org.example");
-         wizard.setValueFor("type", "mock");
-
-         Assert.assertFalse(wizard.isValid());
-         Assert.assertFalse(wizard.canFinish());
-
-         wizard.setValueFor("named", "Test-Project-Name-Valid");
-
-         Assert.assertTrue(wizard.isValid());
-         Assert.assertTrue(wizard.canFinish());
-
-         File targetDirectory = new File(tempDir, "Test-Project-Name-Valid");
-         Assert.assertFalse(targetDirectory.exists());
-         wizard.finish(null);
-
-         Assert.assertTrue(targetDirectory.exists());
-      }
-      finally
-      {
-         tempDir.delete();
-      }
-   }
-
-   @Test
-   public void testOverwriteEnabledWhenTargetDirectoryExistsNotEmpty() throws Exception
-   {
-
-      File tempDir = OperatingSystemUtils.createTempDir();
-      File something = new File(tempDir, "test/something");
-      something.mkdirs();
-      try
-      {
-         wizard.launch();
-         Assert.assertFalse(wizard.canFlipToNextPage());
-         Assert.assertFalse(wizard.getInputComponent("overwrite").isEnabled());
          wizard.setValueFor("named", "test");
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
-         wizard.setValueFor("type", "mock");
-         Assert.assertFalse(wizard.isValid());
-         Assert.assertTrue(wizard.getInputComponent("overwrite").isEnabled());
-         Assert.assertFalse(wizard.canFlipToNextPage());
-         Assert.assertFalse(wizard.canFinish());
+         wizard.setValueFor("type", "unsatisfied");
+         Assert.assertEquals("mock", InputComponents.getValueFor(wizard.getInputComponent("type")).toString());
       }
       finally
       {
-         something.delete();
          tempDir.delete();
       }
    }

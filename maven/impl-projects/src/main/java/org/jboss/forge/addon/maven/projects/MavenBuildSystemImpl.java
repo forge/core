@@ -21,8 +21,6 @@ import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenResourcesFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenWebResourcesFacet;
-import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
@@ -106,22 +104,6 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
          public Class<? extends BuildSystemFacet> call() throws Exception
          {
             return WebResourcesFacet.class;
-         }
-      });
-      addSafe(result, new Callable<Class<? extends BuildSystemFacet>>()
-      {
-         @Override
-         public Class<? extends BuildSystemFacet> call() throws Exception
-         {
-            return JavaCompilerFacet.class;
-         }
-      });
-      addSafe(result, new Callable<Class<? extends BuildSystemFacet>>()
-      {
-         @Override
-         public Class<? extends BuildSystemFacet> call() throws Exception
-         {
-            return JavaSourceFacet.class;
          }
       });
       return Collections.unmodifiableSet(result);

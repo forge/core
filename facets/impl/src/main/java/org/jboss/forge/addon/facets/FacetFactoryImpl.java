@@ -20,6 +20,7 @@ import org.jboss.forge.addon.facets.constraints.FacetInspector;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -56,7 +57,7 @@ public class FacetFactoryImpl implements FacetFactory
          }
 
          throw new FacetIsAmbiguousException("Cannot resolve ambiguous facet type [" + type.getName()
-                  + "] because multiple matching types were found: " + instance);
+                  + "] because multiple matching types were found: \n" + instance);
       }
       else if (instance.isUnsatisfied())
          throw new FacetNotFoundException("Could not find Facet of type [" + type.getName() + "]");
@@ -98,8 +99,16 @@ public class FacetFactoryImpl implements FacetFactory
             FACETEDTYPE origin, Class<FACETTYPE> type)
             throws FacetNotFoundException
    {
+      return install(origin, type, null);
+   }
+
+   @Override
+   public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> FACETTYPE install(FACETEDTYPE origin,
+            Class<FACETTYPE> type, Predicate<FACETTYPE> filter) throws FacetNotFoundException,
+            IllegalStateException, FacetIsAmbiguousException
+   {
       FACETTYPE facet = create(origin, type);
-      if (!install(origin, facet))
+      if (!install(origin, facet, filter))
       {
          throw new IllegalStateException("Facet type [" + type.getName()
                   + "] could not be installed into [" + origin + "] of type [" + origin.getClass().getName()
@@ -112,17 +121,34 @@ public class FacetFactoryImpl implements FacetFactory
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean install(
             FACETEDTYPE origin, FACETTYPE facet)
    {
+      return install(origin, facet, null);
+   }
+
+   @Override
+   public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean install(FACETEDTYPE origin,
+            FACETTYPE facet, Predicate<FACETTYPE> filter) throws IllegalArgumentException, IllegalStateException
+   {
       Assert.notNull(origin, "Origin instance must not be null.");
       Assert.notNull(facet, "Facet instance must not be null.");
 
       Set<Class<FACETTYPE>> seen = new LinkedHashSet<Class<FACETTYPE>>();
-      return install(seen, origin, facet);
+      return install(seen, origin, facet, filter);
    }
 
    @SuppressWarnings({ "rawtypes", "unchecked" })
    private <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean install(
-            Set<Class<FACETTYPE>> seen, FACETEDTYPE origin, FACETTYPE facet)
+            Set<Class<FACETTYPE>> seen, FACETEDTYPE origin, FACETTYPE facet, Predicate<FACETTYPE> filter)
    {
+      if (filter == null)
+         filter = new Predicate<FACETTYPE>()
+         {
+            @Override
+            public boolean accept(FACETTYPE type)
+            {
+               return true;
+            }
+         };
+
       if (FacetInspector.hasCircularConstraints(facet.getClass()))
          throw new IllegalStateException("Circular dependencies detected in @" + FacetConstraint.class.getSimpleName()
                   + " annotation located at [" + facet.getClass().getName() + "]");
@@ -170,13 +196,13 @@ public class FacetFactoryImpl implements FacetFactory
       for (Class<FACETTYPE> requirementType : facetsToInstall)
       {
          FACETTYPE requirement = create(origin, requirementType);
-         install(seen, origin, requirement);
+         install(seen, origin, requirement, filter);
       }
 
       boolean result = false;
       if (faceted.hasFacet((Class<? extends FACETTYPE>) facet.getClass()))
          result = true;
-      else if (FacetInspector.isConstraintSatisfied(faceted, requiredFacets))
+      else if (FacetInspector.isConstraintSatisfied(faceted, requiredFacets) && filter.accept(facet))
          result = ((MutableFaceted<FACETTYPE>) faceted).install(facet);
       return result;
    }

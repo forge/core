@@ -240,32 +240,6 @@ public class NewProjectWizard implements UIWizard
    private void configureBuildSystemInput()
    {
       buildSystem.setRequired(true);
-      List<BuildSystem> buildSystemTypes = new ArrayList<BuildSystem>();
-      for (BuildSystem buildSystemType : buildSystems)
-      {
-         if (type.getValue() != null)
-         {
-            if (isProjectTypeBuildable(type.getValue(), buildSystemType))
-               buildSystemTypes.add(buildSystemType);
-         }
-         else
-            buildSystemTypes.add(buildSystemType);
-      }
-
-      Collections.sort(buildSystemTypes, new Comparator<BuildSystem>()
-      {
-         @Override
-         public int compare(BuildSystem left, BuildSystem right)
-         {
-            if (left == null || left.getType() == null || right == null || right.getType() == null)
-               return 0;
-            return left.getType().compareTo(right.getType());
-         }
-      });
-      if (!buildSystemTypes.isEmpty())
-      {
-         buildSystem.setDefaultValue(buildSystemTypes.get(0));
-      }
       buildSystem.setItemLabelConverter(new Converter<BuildSystem, String>()
       {
          @Override
@@ -274,7 +248,52 @@ public class NewProjectWizard implements UIWizard
             return source == null ? null : source.getType();
          }
       });
-      buildSystem.setValueChoices(buildSystemTypes);
+
+      buildSystem.setValueChoices(new Callable<Iterable<BuildSystem>>()
+      {
+         @Override
+         public Iterable<BuildSystem> call() throws Exception
+         {
+            List<BuildSystem> result = new ArrayList<BuildSystem>();
+            for (BuildSystem buildSystemType : buildSystems)
+            {
+               ProjectType projectType = type.getValue();
+               if (projectType != null)
+               {
+                  if (isProjectTypeBuildable(projectType, buildSystemType))
+                     result.add(buildSystemType);
+               }
+               else
+                  result.add(buildSystemType);
+            }
+
+            Collections.sort(result, new Comparator<BuildSystem>()
+            {
+               @Override
+               public int compare(BuildSystem left, BuildSystem right)
+               {
+                  if (left == null || left.getType() == null || right == null || right.getType() == null)
+                     return 0;
+                  return left.getType().compareTo(right.getType());
+               }
+            });
+
+            return result;
+         }
+      });
+
+      buildSystem.setDefaultValue(new Callable<BuildSystem>()
+      {
+         @Override
+         public BuildSystem call() throws Exception
+         {
+            if (buildSystem.getValueChoices().iterator().hasNext())
+            {
+               return buildSystem.getValueChoices().iterator().next();
+            }
+            return null;
+         }
+      });
    }
 
    private boolean isProjectTypeBuildable(ProjectType type, BuildSystem buildSystem)
