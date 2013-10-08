@@ -23,6 +23,12 @@
       <!-- Addon Dependencies -->
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>environment</artifactId>
+         <classifier>forge-addon</classifier>
+         <optional>true</optional>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>resources</artifactId>
          <classifier>forge-addon</classifier>
          <optional>true</optional>
@@ -36,6 +42,12 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui</artifactId>
+         <classifier>forge-addon</classifier>
+         <optional>true</optional>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>ui-spi</artifactId>
          <classifier>forge-addon</classifier>
          <optional>true</optional>
       </dependency>
