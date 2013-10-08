@@ -13,14 +13,15 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.maven.projects.MavenBuildSystemImpl;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
-import org.jboss.forge.addon.maven.projects.MavenProjectLocator;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
+import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
@@ -36,7 +37,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class MavenProjectLocatorTest
+public class MavenBuildSystemImplTest
 {
    @Deployment
    @Dependencies({
@@ -67,12 +68,30 @@ public class MavenProjectLocatorTest
    private Furnace forge;
 
    @Inject
-   private MavenProjectLocator locator;
+   private MavenBuildSystemImpl buildSystem;
 
    @Test
    public void testInjectionNotNull()
    {
-      Assert.assertNotNull(locator);
+      Assert.assertNotNull(buildSystem);
+   }
+
+   @Test
+   public void testGetType()
+   {
+      Assert.assertEquals("Maven", buildSystem.getType());
+   }
+
+   @Test
+   public void testProvidedFacets()
+   {
+      Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(MavenFacet.class));
+      Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(MavenPluginFacet.class));
+      Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(MetadataFacet.class));
+      Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(PackagingFacet.class));
+      Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(DependencyFacet.class));
+      Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(ResourcesFacet.class));
+      Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(WebResourcesFacet.class));
    }
 
    @Test
@@ -82,11 +101,11 @@ public class MavenProjectLocatorTest
                DirectoryResource.class);
       DirectoryResource projectDir = addonDir.createTempResource();
       FileResource<?> pomFile = projectDir.getChild("pom.xml").reify(FileResource.class);
-      Assert.assertFalse(locator.containsProject(projectDir));
+      Assert.assertFalse(buildSystem.containsProject(projectDir));
       pomFile.createNewFile();
       pomFile.setContents(getClass().getResourceAsStream("pom-template.xml"));
 
-      Assert.assertTrue(locator.containsProject(projectDir));
+      Assert.assertTrue(buildSystem.containsProject(projectDir));
 
       projectDir.delete(true);
    }
@@ -97,7 +116,7 @@ public class MavenProjectLocatorTest
       DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
                DirectoryResource.class);
       DirectoryResource projectDir = addonDir.createTempResource();
-      Project project = locator.createProject(projectDir);
+      Project project = buildSystem.createProject(projectDir);
       boolean hasFacets = project.hasFacet(MavenFacet.class)
                && project.hasFacet(MavenPluginFacet.class)
                && project.hasFacet(MetadataFacet.class)

@@ -4,17 +4,13 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-
-package org.jboss.forge.addon.parser.java.facets;
-
-import org.jboss.forge.addon.projects.BuildSystemFacet;
+package org.jboss.forge.addon.projects;
 
 /**
- * Allows manipulation of the current configured Java compiler version.
+ * A {@link ProjectFacet} specifically provided by {@link BuildSystem} instances.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface JavaCompilerFacet extends BuildSystemFacet
+public interface BuildSystemFacet extends ProjectFacet
 {
-
 }

@@ -15,6 +15,7 @@ import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.InputComponents;
@@ -34,7 +35,7 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
    private final AddonRegistry addonRegistry;
 
    private final UIContextImpl context;
-   
+
    private final Class<C> commandClass;
 
    private UIBuilderImpl builder;
@@ -51,9 +52,10 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
    {
       context.setInitialSelection(selection);
    }
-   
-   @Override 
-   public void launch() throws Exception {
+
+   @Override
+   public void launch() throws Exception
+   {
       builder = createBuilder(commandClass);
    }
 
@@ -74,6 +76,16 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
    {
       UICommand currentCommand = builder.getCommand();
       UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
+
+      for (InputComponent<?, ?> input : builder.getInputs())
+      {
+         UIValidator validator = input.getValidator();
+         if (validator != null)
+         {
+            validator.validate(validationContext);
+         }
+      }
+
       currentCommand.validate(validationContext);
       return validationContext.getErrors();
    }
@@ -148,7 +160,7 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
    {
       return addonRegistry.getServices(ConverterFactory.class).get();
    }
-   
+
    @Override
    public boolean isEnabled()
    {

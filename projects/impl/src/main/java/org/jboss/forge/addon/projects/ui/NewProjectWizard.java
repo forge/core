@@ -3,19 +3,27 @@ package org.jboss.forge.addon.projects.ui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.projects.BuildSystem;
+import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
@@ -31,15 +39,21 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 public class NewProjectWizard implements UIWizard
 {
+   private static final Logger log = Logger.getLogger(NewProjectWizard.class.getName());
+
    @Inject
    private ProjectFactory projectFactory;
 
    @Inject
    private ResourceFactory resourceFactory;
+
+   @Inject
+   private Imported<BuildSystem> buildSystems;
 
    @Inject
    @WithAttributes(label = "Project name:", required = true)
@@ -65,6 +79,10 @@ public class NewProjectWizard implements UIWizard
    @WithAttributes(label = "Project Type:", required = true)
    private UISelectOne<ProjectType> type;
 
+   @Inject
+   @WithAttributes(label = "Build System:", required = true)
+   private UISelectOne<BuildSystem> buildSystem;
+
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
@@ -75,14 +93,44 @@ public class NewProjectWizard implements UIWizard
    @Override
    public boolean isEnabled(UIContext context)
    {
-      return true;
+      return buildSystem.getValueChoices().iterator().hasNext();
    }
 
    @Override
    public void initializeUI(final UIBuilder builder) throws Exception
    {
-      version.setDefaultValue("1.0.0-SNAPSHOT");
+      configureProjectNamedInput();
+      configureVersionInput();
+      configuteTargetLocationInput(builder);
+      configureOverwriteInput();
+      configureProjectTypeInput(builder);
+      configureTopLevelPackageInput();
+      configureBuildSystemInput();
 
+      builder.add(named).add(topLevelPackage).add(version).add(targetLocation).add(overwrite).add(type)
+               .add(buildSystem);
+   }
+
+   private void configureProjectNamedInput()
+   {
+      named.setValidator(new UIValidator()
+      {
+         @Override
+         public void validate(UIValidationContext context)
+         {
+            if (named.getValue() != null && named.getValue().matches(".*[^-_.a-zA-Z0-9].*"))
+               context.addValidationError(named, "Project name must not contain spaces or special characters.");
+         }
+      });
+   }
+
+   private void configureVersionInput()
+   {
+      version.setDefaultValue("1.0.0-SNAPSHOT");
+   }
+
+   private void configuteTargetLocationInput(final UIBuilder builder)
+   {
       UISelection<Resource<?>> currentSelection = builder.getUIContext().getInitialSelection();
       if (!currentSelection.isEmpty())
       {
@@ -97,6 +145,10 @@ public class NewProjectWizard implements UIWizard
          targetLocation.setDefaultValue(resourceFactory.create(DirectoryResource.class,
                   OperatingSystemUtils.getUserHomeDir()));
       }
+   }
+
+   private void configureOverwriteInput()
+   {
       overwrite.setDefaultValue(false).setEnabled(new Callable<Boolean>()
       {
          @Override
@@ -108,6 +160,10 @@ public class NewProjectWizard implements UIWizard
                      && !targetLocation.getValue().getChild(projectName).listResources().isEmpty();
          }
       });
+   }
+
+   private void configureProjectTypeInput(final UIBuilder builder)
+   {
       if (builder.getUIContext().getProvider().isGUI())
       {
          type.setItemLabelConverter(new Converter<ProjectType, String>()
@@ -119,12 +175,28 @@ public class NewProjectWizard implements UIWizard
             }
          });
       }
+
       // Add Project types
       List<ProjectType> projectTypes = new ArrayList<ProjectType>();
       for (ProjectType projectType : type.getValueChoices())
       {
-         projectTypes.add(projectType);
+         boolean buildable = false;
+         for (BuildSystem buildSystem : buildSystems)
+         {
+            if (isProjectTypeBuildable(projectType, buildSystem))
+            {
+               projectTypes.add(projectType);
+               buildable = true;
+               break;
+            }
+         }
+
+         if (!buildable)
+            log.log(Level.FINE, "ProjectType [" + projectType.getType() + "] "
+                     + "deactivated because it cannot be built with any registered BuildSystem instances ["
+                     + buildSystems + "].");
       }
+
       Collections.sort(projectTypes, new Comparator<ProjectType>()
       {
          @Override
@@ -135,10 +207,16 @@ public class NewProjectWizard implements UIWizard
             return left.getType().compareTo(right.getType());
          }
       });
+
       if (!projectTypes.isEmpty())
       {
          type.setDefaultValue(projectTypes.get(0));
       }
+      type.setValueChoices(projectTypes);
+   }
+
+   private void configureTopLevelPackageInput()
+   {
       topLevelPackage.setDefaultValue(new Callable<String>()
       {
          @Override
@@ -157,8 +235,89 @@ public class NewProjectWizard implements UIWizard
             return result;
          }
       });
-      type.setValueChoices(projectTypes);
-      builder.add(named).add(topLevelPackage).add(version).add(targetLocation).add(overwrite).add(type);
+   }
+
+   private void configureBuildSystemInput()
+   {
+      buildSystem.setRequired(true);
+      List<BuildSystem> buildSystemTypes = new ArrayList<BuildSystem>();
+      for (BuildSystem buildSystemType : buildSystems)
+      {
+         if (type.getValue() != null)
+         {
+            if (isProjectTypeBuildable(type.getValue(), buildSystemType))
+               buildSystemTypes.add(buildSystemType);
+         }
+         else
+            buildSystemTypes.add(buildSystemType);
+      }
+
+      Collections.sort(buildSystemTypes, new Comparator<BuildSystem>()
+      {
+         @Override
+         public int compare(BuildSystem left, BuildSystem right)
+         {
+            if (left == null || left.getType() == null || right == null || right.getType() == null)
+               return 0;
+            return left.getType().compareTo(right.getType());
+         }
+      });
+      if (!buildSystemTypes.isEmpty())
+      {
+         buildSystem.setDefaultValue(buildSystemTypes.get(0));
+      }
+      buildSystem.setItemLabelConverter(new Converter<BuildSystem, String>()
+      {
+         @Override
+         public String convert(BuildSystem source)
+         {
+            return source == null ? null : source.getType();
+         }
+      });
+      buildSystem.setValueChoices(buildSystemTypes);
+   }
+
+   private boolean isProjectTypeBuildable(ProjectType type, BuildSystem buildSystem)
+   {
+      boolean result = false;
+      Iterable<Class<? extends BuildSystemFacet>> requiredFacets = getRequiredBuildSystemFacets(type);
+      if (requiredFacets == null || !requiredFacets.iterator().hasNext())
+      {
+         result = true;
+      }
+      else
+      {
+         for (Class<? extends BuildSystemFacet> required : requiredFacets)
+         {
+            result = false;
+            for (Class<? extends BuildSystemFacet> provided : buildSystem.getProvidedFacetTypes())
+            {
+               if (provided.isAssignableFrom(required))
+                  result = true;
+            }
+            if (!result)
+               break;
+         }
+      }
+      return result;
+   }
+
+   @SuppressWarnings("unchecked")
+   private Iterable<Class<? extends BuildSystemFacet>> getRequiredBuildSystemFacets(ProjectType type)
+   {
+      Set<Class<? extends BuildSystemFacet>> result = new HashSet<Class<? extends BuildSystemFacet>>();
+      Iterable<Class<? extends ProjectFacet>> requiredFacets = type.getRequiredFacets();
+      if (requiredFacets != null)
+      {
+         for (Class<? extends ProjectFacet> facetType : requiredFacets)
+         {
+            if (BuildSystemFacet.class.isAssignableFrom(facetType))
+            {
+               result.add((Class<? extends BuildSystemFacet>) facetType);
+            }
+         }
+      }
+      return result;
    }
 
    @Override
@@ -191,11 +350,11 @@ public class NewProjectWizard implements UIWizard
          Project project = null;
          if (value != null)
          {
-            project = projectFactory.createProject(targetDir, value.getRequiredFacets());
+            project = projectFactory.createProject(targetDir, buildSystem.getValue(), value.getRequiredFacets());
          }
          else
          {
-            project = projectFactory.createProject(targetDir);
+            project = projectFactory.createProject(targetDir, buildSystem.getValue());
          }
 
          if (project != null)

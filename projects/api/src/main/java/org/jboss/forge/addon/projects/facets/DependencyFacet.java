@@ -16,13 +16,13 @@ import org.jboss.forge.addon.dependencies.DependencyRepository;
 import org.jboss.forge.addon.dependencies.DependencyResolver;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.dependencies.collection.DependencyNodeUtil;
+import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface DependencyFacet extends ProjectFacet
+public interface DependencyFacet extends BuildSystemFacet
 {
    /**
     * Add the given {@link Dependency} to this {@link Project}'s immediate list of dependencies. This method does not

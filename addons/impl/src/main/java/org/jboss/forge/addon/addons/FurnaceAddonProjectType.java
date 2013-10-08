@@ -6,8 +6,14 @@
  */
 package org.jboss.forge.addon.addons;
 
+import java.util.Arrays;
+
+import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
+import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
@@ -29,9 +35,11 @@ public class FurnaceAddonProjectType implements ProjectType
    }
 
    @Override
+   @SuppressWarnings("unchecked")
    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
    {
-      return null;
+      return Arrays.<Class<? extends ProjectFacet>> asList(MavenPluginFacet.class, JavaCompilerFacet.class,
+               JavaSourceFacet.class, ResourcesFacet.class);
    }
 
    @Override

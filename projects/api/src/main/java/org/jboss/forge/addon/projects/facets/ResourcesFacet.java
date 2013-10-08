@@ -9,15 +9,15 @@ package org.jboss.forge.addon.projects.facets;
 
 import java.util.List;
 
+import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface ResourcesFacet extends ProjectFacet
+public interface ResourcesFacet extends BuildSystemFacet
 {
    /**
     * Get a list of {@link DirectoryResource}s representing the directories this project uses to contain {@link Project}

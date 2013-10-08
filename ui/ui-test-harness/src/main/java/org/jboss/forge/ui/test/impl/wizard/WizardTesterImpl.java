@@ -16,6 +16,7 @@ import javax.enterprise.inject.Vetoed;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
@@ -44,7 +45,7 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
    private Stack<Class<? extends UICommand>> subflows = new Stack<Class<? extends UICommand>>();
 
    private final UIContextImpl context;
-   
+
    private final Class<W> wizardClass;
 
    public WizardTesterImpl(Class<W> wizardClass, AddonRegistry addonRegistry, UIContextImpl contextImpl)
@@ -59,9 +60,10 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
    {
       context.setInitialSelection(selection);
    }
-   
+
    @Override
-   public void launch() throws Exception {
+   public void launch() throws Exception
+   {
       pages.add(createBuilder(wizardClass));
    }
 
@@ -209,6 +211,7 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       InputComponents.setValueFor(getConverterFactory(), (InputComponent<?, Object>) input, value);
    }
 
+   @Override
    public InputComponent<?, ?> getInputComponent(String property)
    {
       UIBuilderImpl currentBuilder = getCurrentBuilder();
@@ -219,6 +222,20 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
    {
       UICommand currentWizard = builder.getCommand();
       UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
+
+      for (InputComponent<?, ?> input : builder.getInputs())
+      {
+         UIValidator validator = input.getValidator();
+         if (validator != null)
+         {
+            validator.validate(validationContext);
+         }
+         if (input.isRequired() && InputComponents.getValueFor(input) == null)
+         {
+            validationContext.addValidationError(input, input.getRequiredMessage());
+         }
+      }
+
       currentWizard.validate(validationContext);
       return validationContext.getErrors();
    }

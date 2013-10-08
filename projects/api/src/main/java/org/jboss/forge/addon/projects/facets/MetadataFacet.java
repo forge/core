@@ -10,14 +10,14 @@ package org.jboss.forge.addon.projects.facets;
 import java.util.Map;
 
 import org.jboss.forge.addon.dependencies.Dependency;
+import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface MetadataFacet extends ProjectFacet
+public interface MetadataFacet extends BuildSystemFacet
 {
    /**
     * Get the name of this {@link Project}.
@@ -97,7 +97,7 @@ public interface MetadataFacet extends ProjectFacet
     * during building to the resolved property value.
     */
    public void setDirectProperty(String name, String value);
-   
+
    /**
     * Remove a build property by name. (Build properties, such as ${my.version}, can be used anywhere in a dependency,
     * and will be expanded during building to their property value.)

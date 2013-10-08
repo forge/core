@@ -20,6 +20,7 @@ import org.jboss.forge.addon.ui.util.InputComponents;
  * Allows configuration of {@link InputComponent} injected fields
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -27,39 +28,43 @@ import org.jboss.forge.addon.ui.util.InputComponents;
 public @interface WithAttributes
 {
    /**
-    * The label of this input
+    * The label of this {@link InputComponent}.
     */
    String label();
 
+   /**
+    * The programmatic name of this {@link InputComponent}. This is typically a shorthand or alternate name used for
+    * keyboard shortcuts or command line flags.
+    */
    char shortName() default InputComponents.DEFAULT_SHORT_NAME;
 
    /**
-    * Is this input required?
+    * If <code>true</code>, the value of this object must not be <code>null</code>.
     */
    boolean required() default false;
 
    /**
-    * The required message for this input
+    * The message to display during validation when this {@link InputComponent} value is set to <code>null</code>.
     */
    String requiredMessage() default "";
 
    /**
-    * The description for this input
+    * The description for this {@link InputComponent}.
     */
    String description() default "";
 
    /**
-    * Is this input enabled?
+    * Return <code>true</code> if this {@link InputComponent} is enabled.
     */
    boolean enabled() default true;
 
    /**
-    * The InputType for this {@link InputComponent}
+    * The {@link InputType} for this {@link InputComponent}.
     */
    InputType type() default InputType.DEFAULT;
 
    /**
-    * The default value for this {@link InputComponent}
+    * The default value for this {@link InputComponent}.
     */
    String defaultValue() default "";
 }

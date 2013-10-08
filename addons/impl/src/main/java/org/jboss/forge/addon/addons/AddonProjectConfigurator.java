@@ -28,6 +28,7 @@ import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.FacetNotFoundException;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
+import org.jboss.forge.addon.maven.projects.MavenBuildSystem;
 import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
@@ -64,6 +65,9 @@ public class AddonProjectConfigurator
 
    @Inject
    private DependencyInstaller dependencyInstaller;
+
+   @Inject
+   private MavenBuildSystem buildSystem;
 
    public void setupSimpleAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
             throws FileNotFoundException, FacetNotFoundException
@@ -202,7 +206,7 @@ public class AddonProjectConfigurator
    {
       DirectoryResource location = parent.getProjectRoot().getOrCreateChildDirectory(moduleName);
 
-      Project project = projectFactory.createProject(location, Arrays.asList(requiredProjectFacets));
+      Project project = projectFactory.createProject(location, buildSystem, Arrays.asList(requiredProjectFacets));
 
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
       metadata.setProjectName(artifactId);

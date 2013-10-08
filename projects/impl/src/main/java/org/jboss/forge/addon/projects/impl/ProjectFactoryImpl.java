@@ -9,8 +9,10 @@ package org.jboss.forge.addon.projects.impl;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -18,12 +20,13 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.projects.BuildSystem;
+import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectAssociationProvider;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ProjectListener;
-import org.jboss.forge.addon.projects.ProjectLocator;
 import org.jboss.forge.addon.projects.spi.ProjectCache;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
@@ -63,10 +66,41 @@ public class ProjectFactoryImpl implements ProjectFactory
 
    private final List<ProjectListener> projectListeners = new ArrayList<ProjectListener>();
 
+   private final Predicate<Project> acceptsAllProjects = new Predicate<Project>()
+   {
+      @Override
+      public boolean accept(Project type)
+      {
+         return true;
+      }
+   };
+
    @Override
    public Project findProject(FileResource<?> target)
    {
-      return findProject(target, null);
+      Project result = null;
+      Imported<BuildSystem> instances = registry.getServices(BuildSystem.class);
+      for (BuildSystem buildSystem : instances)
+      {
+         try
+         {
+            result = findProject(target, buildSystem);
+         }
+         finally
+         {
+            instances.release(buildSystem);
+         }
+
+         if (result != null)
+            break;
+      }
+      return result;
+   }
+
+   @Override
+   public Project findProject(FileResource<?> target, BuildSystem buildSystem)
+   {
+      return findProject(target, buildSystem, acceptsAllProjects);
    }
 
    @Override
@@ -74,63 +108,20 @@ public class ProjectFactoryImpl implements ProjectFactory
    {
       if (filter == null)
       {
-         filter = new Predicate<Project>()
-         {
-            @Override
-            public boolean accept(Project type)
-            {
-               return true;
-            }
-         };
+         filter = acceptsAllProjects;
       }
 
       Project result = null;
-      Imported<ProjectLocator> instances = registry.getServices(ProjectLocator.class);
-      for (ProjectLocator locator : instances)
+      Imported<BuildSystem> instances = registry.getServices(BuildSystem.class);
+      for (BuildSystem buildSystem : instances)
       {
          try
          {
-            DirectoryResource r = (target instanceof DirectoryResource) ? (DirectoryResource) target : target
-                     .getParent();
-            while (r != null && result == null)
-            {
-               Iterator<ProjectCache> cacheIterator = caches.iterator();
-               while (cacheIterator.hasNext() && result == null)
-               {
-                  ProjectCache cache = cacheIterator.next();
-                  try
-                  {
-                     result = cache.get(r);
-                     if (result != null && !filter.accept(result))
-                        result = null;
-                     if (result != null)
-                        break;
-                  }
-                  finally
-                  {
-                     caches.release(cache);
-                  }
-               }
-
-               if (result == null && locator.containsProject(r))
-               {
-                  result = locator.createProject(r);
-                  if (result != null && !filter.accept(result))
-                     result = null;
-
-                  if (result != null)
-                  {
-                     registerAvailableFacets(result);
-                     cacheProject(result);
-                  }
-               }
-
-               r = r.getParent();
-            }
+            result = findProject(target, buildSystem, filter);
          }
          finally
          {
-            instances.release(locator);
+            instances.release(buildSystem);
          }
 
          if (result != null)
@@ -141,38 +132,89 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public Project createProject(DirectoryResource projectDir)
+   public Project findProject(FileResource<?> target, BuildSystem buildSystem, Predicate<Project> filter)
    {
-      return createProject(projectDir, null);
+      if (filter == null)
+      {
+         filter = acceptsAllProjects;
+      }
+
+      Project result = null;
+      DirectoryResource r = (target instanceof DirectoryResource) ? (DirectoryResource) target : target
+               .getParent();
+      while (r != null && result == null)
+      {
+         Iterator<ProjectCache> cacheIterator = caches.iterator();
+         while (cacheIterator.hasNext() && result == null)
+         {
+            ProjectCache cache = cacheIterator.next();
+            try
+            {
+               result = cache.get(r);
+               if (result != null && !filter.accept(result))
+                  result = null;
+               if (result != null)
+                  break;
+            }
+            finally
+            {
+               caches.release(cache);
+            }
+         }
+
+         if (result == null && buildSystem.containsProject(r))
+         {
+            result = buildSystem.createProject(r);
+            if (result != null && !filter.accept(result))
+               result = null;
+
+            if (result != null)
+            {
+               registerAvailableFacets(result);
+               cacheProject(result);
+            }
+         }
+
+         r = r.getParent();
+      }
+
+      return result;
    }
 
    @Override
-   public Project createProject(DirectoryResource target, Iterable<Class<? extends ProjectFacet>> facetTypes)
+   public Project createProject(DirectoryResource projectDir, BuildSystem buildSystem)
    {
-      Project result = null;
-      Imported<ProjectLocator> instances = registry.getServices(ProjectLocator.class);
-      for (ProjectLocator locator : instances)
-      {
-         result = locator.createProject(target);
-         if (result != null)
-            break;
-         instances.release(locator);
-      }
+      return createProject(projectDir, buildSystem, null);
+   }
 
+   @Override
+   public Project createProject(DirectoryResource target, BuildSystem buildSystem,
+            Iterable<Class<? extends ProjectFacet>> facetTypes)
+   {
+      Assert.notNull(target, "Target project directory must not be null.");
+      Assert.notNull(buildSystem, "Build system type must not be null.");
+
+      if (facetTypes != null)
+         Assert.isTrue(isBuildable(buildSystem, facetTypes),
+                  "The provided build system [" + buildSystem.getType()
+                           + "] cannot create a project that requires facets of the following types: "
+                           + getMissingBuildSystemFacets(buildSystem, getRequiredBuildSystemFacets(facetTypes)));
+
+      Project result = buildSystem.createProject(target);
       if (result != null)
       {
          DirectoryResource parentDir = result.getProjectRoot().getParent().reify(DirectoryResource.class);
          if (parentDir != null)
          {
-            Imported<ProjectAssociationProvider> locatorInstances = registry
+            Imported<ProjectAssociationProvider> buildSystemInstances = registry
                      .getServices(ProjectAssociationProvider.class);
-            for (ProjectAssociationProvider provider : locatorInstances)
+            for (ProjectAssociationProvider provider : buildSystemInstances)
             {
                if (provider.canAssociate(result, parentDir))
                {
                   provider.associate(result, parentDir);
                }
-               locatorInstances.release(provider);
+               buildSystemInstances.release(provider);
             }
          }
       }
@@ -204,6 +246,58 @@ public class ProjectFactoryImpl implements ProjectFactory
          fireProjectCreated(result);
       }
 
+      return result;
+   }
+
+   private Iterable<Class<? extends BuildSystemFacet>> getMissingBuildSystemFacets(BuildSystem buildSystem,
+            Iterable<Class<? extends BuildSystemFacet>> requiredFacets)
+   {
+      Set<Class<? extends BuildSystemFacet>> result = new HashSet<Class<? extends BuildSystemFacet>>();
+      Iterable<Class<? extends BuildSystemFacet>> providedFacetTypes = buildSystem.getProvidedFacetTypes();
+      if (requiredFacets != null && providedFacetTypes != null)
+      {
+         for (Class<? extends BuildSystemFacet> required : requiredFacets)
+         {
+            boolean found = false;
+            for (Class<? extends BuildSystemFacet> provided : providedFacetTypes)
+            {
+               if (provided.isAssignableFrom(required))
+                  found = true;
+            }
+            if (!found)
+               result.add(required);
+         }
+      }
+      return result;
+   }
+
+   private boolean isBuildable(BuildSystem buildSystem, Iterable<Class<? extends ProjectFacet>> facets)
+   {
+      boolean result = false;
+      Iterable<Class<? extends BuildSystemFacet>> requiredFacets = getRequiredBuildSystemFacets(facets);
+      if (requiredFacets == null)
+      {
+         result = true;
+      }
+      else
+      {
+         result = !getMissingBuildSystemFacets(buildSystem, requiredFacets).iterator().hasNext();
+      }
+      return result;
+   }
+
+   @SuppressWarnings("unchecked")
+   private Iterable<Class<? extends BuildSystemFacet>> getRequiredBuildSystemFacets(
+            Iterable<Class<? extends ProjectFacet>> facets)
+   {
+      Set<Class<? extends BuildSystemFacet>> result = new HashSet<Class<? extends BuildSystemFacet>>();
+      for (Class<? extends ProjectFacet> facetType : facets)
+      {
+         if (BuildSystemFacet.class.isAssignableFrom(facetType))
+         {
+            result.add((Class<? extends BuildSystemFacet>) facetType);
+         }
+      }
       return result;
    }
 
@@ -271,25 +365,52 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public Project createTempProject()
+   public Project createTempProject() throws IllegalStateException
    {
       return createTempProject(Collections.<Class<? extends ProjectFacet>> emptySet());
    }
 
    @Override
-   public Project createTempProject(Iterable<Class<? extends ProjectFacet>> facetTypes)
+   public Project createTempProject(Iterable<Class<? extends ProjectFacet>> facetTypes) throws IllegalStateException
+   {
+      Imported<BuildSystem> buildSystems = registry.getServices(BuildSystem.class);
+      if (buildSystems.isAmbiguous())
+         throw new IllegalStateException(
+                  "Cannot create generic temporary project in environment where multiple build systems are available. "
+                           + "A single build system must be selected.");
+
+      BuildSystem buildSystem = buildSystems.get();
+      try
+      {
+         return createTempProject(buildSystem, facetTypes);
+      }
+      finally
+      {
+         buildSystems.release(buildSystem);
+      }
+   }
+
+   @Override
+   public Project createTempProject(BuildSystem buildSystem)
+   {
+      return createTempProject(buildSystem, Collections.<Class<? extends ProjectFacet>> emptySet());
+   }
+
+   @Override
+   public Project createTempProject(BuildSystem buildSystem, Iterable<Class<? extends ProjectFacet>> facetTypes)
    {
       File rootDirectory = OperatingSystemUtils.createTempDir();
       DirectoryResource addonDir = resourceFactory.create(DirectoryResource.class, rootDirectory);
       DirectoryResource projectDir = addonDir.createTempResource();
       projectDir.deleteOnExit();
-      Project project = createProject(projectDir, facetTypes);
+      Project project = createProject(projectDir, buildSystem, facetTypes);
       return project;
    }
 
    @Override
    public ListenerRegistration<ProjectListener> addProjectListener(final ProjectListener listener)
    {
+      Assert.notNull(listener, "Project listener must not be null.");
       projectListeners.add(listener);
       return new ListenerRegistration<ProjectListener>()
       {
@@ -305,28 +426,42 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Override
    public boolean containsProject(DirectoryResource bound, FileResource<?> target)
    {
+      boolean found = false;
+      Imported<BuildSystem> instances = registry.getServices(BuildSystem.class);
+      for (BuildSystem buildSystem : instances)
+      {
+         try
+         {
+            found = containsProject(bound, target, buildSystem);
+            if (found)
+               break;
+         }
+         finally
+         {
+            instances.release(buildSystem);
+         }
+      }
+      return found;
+   }
+
+   @Override
+   public boolean containsProject(DirectoryResource bound, FileResource<?> target, BuildSystem buildSystem)
+   {
       Assert.notNull(bound, "Boundary should not be null");
       Assert.isTrue(isParent(bound, target), "Target should be a child of bound");
-      boolean result = false;
       DirectoryResource dir = (target instanceof DirectoryResource) ? (DirectoryResource) target : target.getParent();
-      Imported<ProjectLocator> instances = registry.getServices(ProjectLocator.class);
-      for (ProjectLocator locator : instances)
+      boolean found = false;
+      DirectoryResource r = bound;
+      while (r != null && !found)
       {
-         DirectoryResource r = dir;
-         while (r != null && !result)
+         found = buildSystem.containsProject(r);
+         if (dir.equals(r))
          {
-            result = locator.containsProject(r);
-            if (bound.equals(r))
-            {
-               break;
-            }
-            r = r.getParent();
-         }
-         if (result)
             break;
-         instances.release(locator);
+         }
+         r = r.getParent();
       }
-      return result;
+      return found;
    }
 
    private boolean isParent(DirectoryResource dir, FileResource<?> child)
@@ -347,22 +482,38 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Override
    public boolean containsProject(FileResource<?> target)
    {
-      boolean result = false;
-      DirectoryResource dir = (target instanceof DirectoryResource) ? (DirectoryResource) target : target.getParent();
-      Imported<ProjectLocator> instances = registry.getServices(ProjectLocator.class);
-      for (ProjectLocator locator : instances)
+      boolean found = false;
+      Imported<BuildSystem> instances = registry.getServices(BuildSystem.class);
+      for (BuildSystem buildSystem : instances)
       {
-         DirectoryResource r = dir;
-         while (r != null && !result)
+         try
          {
-            result = locator.containsProject(r);
-            r = r.getParent();
+            found = containsProject(target, buildSystem);
+            if (found)
+               break;
          }
-         if (result)
-            break;
-         instances.release(locator);
+         finally
+         {
+            instances.release(buildSystem);
+         }
       }
-      return result;
+      return found;
+   }
+
+   @Override
+   public boolean containsProject(FileResource<?> target, BuildSystem buildSystem)
+   {
+      Assert.notNull(target, "Target resource must not be null.");
+      Assert.notNull(buildSystem, "Project build system must not be null.");
+      boolean found = false;
+      DirectoryResource dir = (target instanceof DirectoryResource) ? (DirectoryResource) target : target.getParent();
+      DirectoryResource r = dir;
+      while (r != null && !found)
+      {
+         found = buildSystem.containsProject(r);
+         r = r.getParent();
+      }
+      return found;
    }
 
    @Override

@@ -4,30 +4,29 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.maven.projects.types;
+package org.jboss.forge.addon.projects.types;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.forge.addon.maven.projects.MavenFacetImpl;
-import org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet;
-import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
-import org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet;
-import org.jboss.forge.addon.maven.projects.facets.MavenResourceFacet;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
+import org.jboss.forge.addon.projects.facets.DependencyFacet;
+import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.projects.facets.PackagingFacet;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class MavenResourcesProjectType implements ProjectType
+public class ResourcesProjectType implements ProjectType
 {
    @Override
    public String getType()
    {
-      return "Maven - Resources";
+      return "Basic Resources";
    }
 
    @Override
@@ -40,11 +39,10 @@ public class MavenResourcesProjectType implements ProjectType
    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
    {
       List<Class<? extends ProjectFacet>> result = new ArrayList<Class<? extends ProjectFacet>>();
-      result.add(MavenFacetImpl.class);
-      result.add(MavenMetadataFacet.class);
-      result.add(MavenPackagingFacet.class);
-      result.add(MavenDependencyFacet.class);
-      result.add(MavenResourceFacet.class);
+      result.add(MetadataFacet.class);
+      result.add(PackagingFacet.class);
+      result.add(DependencyFacet.class);
+      result.add(ResourcesFacet.class);
       return result;
    }
 

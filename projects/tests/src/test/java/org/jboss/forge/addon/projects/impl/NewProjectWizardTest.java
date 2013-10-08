@@ -13,8 +13,11 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.projects.mock.MockBuildSystem;
 import org.jboss.forge.addon.projects.mock.MockProjectType;
+import org.jboss.forge.addon.projects.mock.MockProjectTypeUnsatisfied;
 import org.jboss.forge.addon.projects.ui.NewProjectWizard;
+import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -39,6 +42,8 @@ public class NewProjectWizardTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addClass(MockProjectType.class)
+               .addClass(MockProjectTypeUnsatisfied.class)
+               .addClass(MockBuildSystem.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
@@ -73,6 +78,59 @@ public class NewProjectWizardTest
          Assert.assertTrue(wizard.isValid());
          Assert.assertTrue(wizard.canFinish());
          File targetDirectory = new File(tempDir, "test");
+         Assert.assertFalse(targetDirectory.exists());
+         wizard.finish(null);
+
+         Assert.assertTrue(targetDirectory.exists());
+      }
+      finally
+      {
+         tempDir.delete();
+      }
+   }
+
+   @Test
+   public void testProjectTypeRestrictedByBuildSystem() throws Exception
+   {
+      File tempDir = OperatingSystemUtils.createTempDir();
+      try
+      {
+         wizard.launch();
+         Assert.assertFalse(wizard.canFlipToNextPage());
+         wizard.setValueFor("named", "test");
+         wizard.setValueFor("targetLocation", tempDir);
+         wizard.setValueFor("topLevelPackage", "org.example");
+         wizard.setValueFor("type", "unsatisfied");
+         Assert.assertEquals("mock", InputComponents.getValueFor(wizard.getInputComponent("type")).toString());
+      }
+      finally
+      {
+         tempDir.delete();
+      }
+   }
+
+   @Test
+   public void testValidateProjectName() throws Exception
+   {
+      File tempDir = OperatingSystemUtils.createTempDir();
+      try
+      {
+         wizard.launch();
+         Assert.assertFalse(wizard.canFlipToNextPage());
+         wizard.setValueFor("named", "Test Project Name Invalid");
+         wizard.setValueFor("targetLocation", tempDir);
+         wizard.setValueFor("topLevelPackage", "org.example");
+         wizard.setValueFor("type", "mock");
+
+         Assert.assertFalse(wizard.isValid());
+         Assert.assertFalse(wizard.canFinish());
+
+         wizard.setValueFor("named", "Test-Project-Name-Valid");
+
+         Assert.assertTrue(wizard.isValid());
+         Assert.assertTrue(wizard.canFinish());
+
+         File targetDirectory = new File(tempDir, "Test-Project-Name-Valid");
          Assert.assertFalse(targetDirectory.exists());
          wizard.finish(null);
 

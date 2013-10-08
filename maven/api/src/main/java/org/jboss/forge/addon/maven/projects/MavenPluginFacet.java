@@ -14,13 +14,13 @@ import org.jboss.forge.addon.dependencies.DependencyRepository;
 import org.jboss.forge.addon.dependencies.util.Dependencies;
 import org.jboss.forge.addon.maven.plugins.MavenPlugin;
 import org.jboss.forge.addon.maven.plugins.MavenPluginBuilder;
+import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFacet;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
-public interface MavenPluginFacet extends ProjectFacet
+public interface MavenPluginFacet extends BuildSystemFacet
 {
 
    /**
@@ -48,7 +48,7 @@ public interface MavenPluginFacet extends ProjectFacet
     * <br>
     * <b>Notice:</b> This method checks only the immediate project plugins, meaning that if a dependency is declared
     * somewhere else in the hierarchy, it will not be detected by this method.
-    *
+    * 
     */
    public MavenPlugin getPlugin(Coordinate coordinate);
 
@@ -57,7 +57,7 @@ public interface MavenPluginFacet extends ProjectFacet
     * hierarchy, and return it.
     * <p/>
     * See also: {@link MavenPluginBuilder}. See also: {@link #hasEffectivePlugin(Coordinate)}.
-    *
+    * 
     * @return
     */
    public MavenPlugin getEffectivePlugin(Coordinate coordinate);
@@ -67,7 +67,7 @@ public interface MavenPluginFacet extends ProjectFacet
     * return it.
     * <p/>
     * See also: {@link MavenPluginBuilder}. See also: {@link #hasManagedPlugin(Coordinate)}.
-    *
+    * 
     * @return
     */
    public MavenPlugin getManagedPlugin(Coordinate coordinate);
