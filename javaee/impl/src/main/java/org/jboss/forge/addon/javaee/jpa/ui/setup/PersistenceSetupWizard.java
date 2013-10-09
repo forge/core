@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
+import org.jboss.forge.addon.javaee.jpa.PersistenceMetaModelFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JBossEAP6Container;
 import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
@@ -30,6 +31,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.forge.furnace.services.Imported;
 
 public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIWizard
 {
@@ -51,6 +53,9 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
 
    @Inject
    private HibernateProvider defaultProvider;
+
+   @Inject
+   private Imported<PersistenceMetaModelFacet> metaModelFacets;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -122,6 +127,10 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
    private void initConfigureMetadata()
    {
       configureMetadata.setDefaultValue(Boolean.FALSE);
+      if (metaModelFacets.isUnsatisfied())
+      {
+         configureMetadata.setEnabled(false);
+      }
    }
 
    @Override
