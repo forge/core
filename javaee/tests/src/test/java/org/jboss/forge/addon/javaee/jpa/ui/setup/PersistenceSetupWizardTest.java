@@ -93,8 +93,8 @@ public class PersistenceSetupWizardTest
 
       Assert.assertFalse(tester.canFlipToPreviousPage());
       // Setting UI values
-      tester.setValueFor("providers", defaultProvider);
-      tester.setValueFor("containers", customJTAProvider);
+      tester.setValueFor("provider", defaultProvider);
+      tester.setValueFor("container", customJTAProvider);
       Assert.assertTrue(tester.canFlipToNextPage());
 
       String result = tester.next();
@@ -133,8 +133,8 @@ public class PersistenceSetupWizardTest
 
       Assert.assertFalse(tester.canFlipToPreviousPage());
       // Setting UI values
-      tester.setValueFor("providers", defaultProvider);
-      tester.setValueFor("containers", eap6Container);
+      tester.setValueFor("provider", defaultProvider);
+      tester.setValueFor("container", eap6Container);
       Assert.assertTrue(tester.canFlipToNextPage());
 
       String result = tester.next();
@@ -162,8 +162,8 @@ public class PersistenceSetupWizardTest
 
       Assert.assertFalse(tester2.canFlipToPreviousPage());
       // Setting UI values
-      tester2.setValueFor("providers", defaultProvider);
-      tester2.setValueFor("containers", eap6Container);
+      tester2.setValueFor("provider", defaultProvider);
+      tester2.setValueFor("container", eap6Container);
       Assert.assertTrue(tester2.canFlipToNextPage());
 
       result = tester2.next();
@@ -199,8 +199,8 @@ public class PersistenceSetupWizardTest
 
       Assert.assertFalse(tester.canFlipToPreviousPage());
       // Setting UI values
-      tester.setValueFor("providers", defaultProvider);
-      tester.setValueFor("containers", customJTAProvider);
+      tester.setValueFor("provider", defaultProvider);
+      tester.setValueFor("container", customJTAProvider);
       tester.setValueFor("configureMetadata", Boolean.TRUE);
       Assert.assertTrue(tester.canFlipToNextPage());
 

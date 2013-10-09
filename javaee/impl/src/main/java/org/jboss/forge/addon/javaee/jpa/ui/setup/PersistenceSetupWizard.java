@@ -38,11 +38,11 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
 
    @Inject
    @WithAttributes(label = "Container", required = true)
-   private UISelectOne<PersistenceContainer> containers;
+   private UISelectOne<PersistenceContainer> container;
 
    @Inject
    @WithAttributes(label = "Provider", required = true)
-   private UISelectOne<PersistenceProvider> providers;
+   private UISelectOne<PersistenceProvider> provider;
 
    @Inject
    @WithAttributes(label = "Install a JPA 2 metamodel generator?")
@@ -80,12 +80,12 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
       initContainers();
       initProviders();
       initConfigureMetadata();
-      builder.add(containers).add(providers).add(configureMetadata);
+      builder.add(container).add(provider).add(configureMetadata);
    }
 
    private void initContainers()
    {
-      containers.setItemLabelConverter(new Converter<PersistenceContainer, String>()
+      container.setItemLabelConverter(new Converter<PersistenceContainer, String>()
       {
          @Override
          public String convert(PersistenceContainer source)
@@ -102,18 +102,18 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
             return String.valueOf(o1.getName()).compareTo(o2.getName());
          }
       });
-      Iterable<PersistenceContainer> valueChoices = containers.getValueChoices();
+      Iterable<PersistenceContainer> valueChoices = container.getValueChoices();
       for (PersistenceContainer persistenceContainer : valueChoices)
       {
          treeSet.add(persistenceContainer);
       }
-      containers.setValueChoices(treeSet);
-      containers.setDefaultValue(defaultContainer);
+      container.setValueChoices(treeSet);
+      container.setDefaultValue(defaultContainer);
    }
 
    private void initProviders()
    {
-      providers.setItemLabelConverter(new Converter<PersistenceProvider, String>()
+      provider.setItemLabelConverter(new Converter<PersistenceProvider, String>()
       {
          @Override
          public String convert(PersistenceProvider source)
@@ -121,7 +121,7 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
             return source != null ? source.getName() : null;
          }
       });
-      providers.setDefaultValue(defaultProvider);
+      provider.setDefaultValue(defaultProvider);
    }
 
    private void initConfigureMetadata()
@@ -155,19 +155,19 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
 
    private void applyUIValues(final UIContext context)
    {
-      context.setAttribute(PersistenceProvider.class, providers.getValue());
-      context.setAttribute(PersistenceContainer.class, containers.getValue());
+      context.setAttribute(PersistenceProvider.class, provider.getValue());
+      context.setAttribute(PersistenceContainer.class, container.getValue());
       context.setAttribute("ConfigureMetadata", configureMetadata.getValue());
    }
 
    public UISelectOne<PersistenceContainer> getContainers()
    {
-      return containers;
+      return container;
    }
 
    public UISelectOne<PersistenceProvider> getProviders()
    {
-      return providers;
+      return provider;
    }
 
    public UIInput<Boolean> getConfigureMetadata()
