@@ -16,11 +16,14 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.jpa.PersistenceFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceMetaModelFacet;
+import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.jpa.containers.CustomJTAContainer;
+import org.jboss.forge.addon.javaee.jpa.containers.JBossEAP6Container;
 import org.jboss.forge.addon.javaee.jpa.providers.HibernateMetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -68,10 +71,15 @@ public class PersistenceSetupWizardTest
    private CustomJTAContainer customJTAProvider;
 
    @Inject
+   private JBossEAP6Container eap6Container;
+
+   @Inject
    private ProjectFactory projectFactory;
 
    @Inject
    private WizardTester<PersistenceSetupWizard> tester;
+   @Inject
+   private WizardTester<PersistenceSetupWizard> tester2;
 
    @Test
    public void testSetup() throws Exception
@@ -111,6 +119,72 @@ public class PersistenceSetupWizardTest
       PersistenceUnit<PersistenceDescriptor> unit = allUnits.get(0);
 
       Assert.assertEquals("java:jboss:jta-ds", unit.getJtaDataSource());
+   }
+
+   @Test
+   public void testSetupDuplicateUnitName() throws Exception
+   {
+      // Execute SUT
+      final Project project = projectFactory.createTempProject();
+      tester.setInitialSelection(project.getProjectRoot());
+
+      // Launch
+      tester.launch();
+
+      Assert.assertFalse(tester.canFlipToPreviousPage());
+      // Setting UI values
+      tester.setValueFor("providers", defaultProvider);
+      tester.setValueFor("containers", eap6Container);
+      Assert.assertTrue(tester.canFlipToNextPage());
+
+      String result = tester.next();
+      Assert.assertNull(result);
+
+      tester.finish(new WizardListener()
+      {
+         @Override
+         public void wizardExecuted(UIWizard wizard, Result result)
+         {
+            Assert.assertFalse(result instanceof Failed);
+         }
+      });
+
+      // Check SUT values
+      PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
+      List<PersistenceUnit<PersistenceDescriptor>> allUnits = config.getAllPersistenceUnit();
+      PersistenceUnit<PersistenceDescriptor> unit = allUnits.get(0);
+      Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME, unit.getName());
+
+      tester2.setInitialSelection(project.getProjectRoot());
+
+      // Launch
+      tester2.launch();
+
+      Assert.assertFalse(tester2.canFlipToPreviousPage());
+      // Setting UI values
+      tester2.setValueFor("providers", defaultProvider);
+      tester2.setValueFor("containers", eap6Container);
+      Assert.assertTrue(tester2.canFlipToNextPage());
+
+      result = tester2.next();
+      Assert.assertNull(result);
+
+      tester2.finish(new WizardListener()
+      {
+         @Override
+         public void wizardExecuted(UIWizard wizard, Result result)
+         {
+            Assert.assertFalse(result instanceof Failed);
+         }
+      });
+
+      // Check SUT values
+      config = project.getFacet(PersistenceFacet.class).getConfig();
+      allUnits = config.getAllPersistenceUnit();
+      unit = allUnits.get(0);
+      Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME, unit.getName());
+      unit = allUnits.get(1);
+      Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME + "-1", unit.getName());
    }
 
    @Test

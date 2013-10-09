@@ -96,7 +96,7 @@ public class PersistenceSetupConnectionStep extends AbstractJavaEECommand implem
       PersistenceContainer pc = (PersistenceContainer) uiContext.getAttribute(PersistenceContainer.class);
       initDBType(uiContext);
       initDatasourceName(uiContext);
-      builder.add(persistenceUnitName.setDefaultValue(PersistenceOperations.DEFAULT_UNIT_NAME));
+      initPersistenceUnitName(builder);
       builder.add(dbType);
       if (pc.isJTASupported())
       {
@@ -106,6 +106,17 @@ public class PersistenceSetupConnectionStep extends AbstractJavaEECommand implem
       {
          builder.add(jdbcDriver).add(databaseURL).add(username).add(password);
       }
+   }
+
+   private void initPersistenceUnitName(UIBuilder builder)
+   {
+      int i = 1;
+      String unitName = PersistenceOperations.DEFAULT_UNIT_NAME;
+      while (isExistingPersistenceUnitName(getSelectedProject(builder.getUIContext()), unitName))
+      {
+         unitName = PersistenceOperations.DEFAULT_UNIT_NAME + "-" +  i++;
+      }
+      builder.add(persistenceUnitName.setDefaultValue(unitName));
    }
 
    private void initDatasourceName(final UIContext uiContext)
@@ -171,19 +182,27 @@ public class PersistenceSetupConnectionStep extends AbstractJavaEECommand implem
       }
       // Validate Persistence Unit Name
       Project project = getSelectedProject(uiContext);
-      if (project.hasFacet(PersistenceFacet.class))
+      if (isExistingPersistenceUnitName(project, persistenceUnitName.getValue()))
+      {
+         validator.addValidationError(persistenceUnitName,
+                  "Persistence unit name already exists in persistence descriptor.");
+      }
+   }
+
+   private boolean isExistingPersistenceUnitName(Project project, String unitName)
+   {
+      if (project != null && project.hasFacet(PersistenceFacet.class))
       {
          PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
          for (PersistenceUnit<PersistenceDescriptor> persistenceUnit : config.getAllPersistenceUnit())
          {
-            if (persistenceUnitName.getValue().equals(persistenceUnit.getName()))
+            if (unitName.equals(persistenceUnit.getName()))
             {
-               validator.addValidationError(persistenceUnitName,
-                        "Persistence unit name already exists in persistence descriptor.");
-               break;
+               return true;
             }
          }
       }
+      return false;
    }
 
    @Override
