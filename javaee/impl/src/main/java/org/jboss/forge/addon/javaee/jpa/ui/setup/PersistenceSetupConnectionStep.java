@@ -114,7 +114,7 @@ public class PersistenceSetupConnectionStep extends AbstractJavaEECommand implem
       String unitName = PersistenceOperations.DEFAULT_UNIT_NAME;
       while (isExistingPersistenceUnitName(getSelectedProject(builder.getUIContext()), unitName))
       {
-         unitName = PersistenceOperations.DEFAULT_UNIT_NAME + "-" +  i++;
+         unitName = PersistenceOperations.DEFAULT_UNIT_NAME + "-" + i++;
       }
       builder.add(persistenceUnitName.setDefaultValue(unitName));
    }
@@ -185,7 +185,8 @@ public class PersistenceSetupConnectionStep extends AbstractJavaEECommand implem
       if (isExistingPersistenceUnitName(project, persistenceUnitName.getValue()))
       {
          validator.addValidationError(persistenceUnitName,
-                  "Persistence unit name already exists in persistence descriptor.");
+                  "A persistence-unit with the name [" + persistenceUnitName.getValue()
+                           + "] already exists.");
       }
    }
 
