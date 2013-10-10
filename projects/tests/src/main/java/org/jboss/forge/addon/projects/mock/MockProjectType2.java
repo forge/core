@@ -15,8 +15,7 @@ import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
- * 
- * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class MockProjectType2 implements ProjectType
 {

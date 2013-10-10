@@ -8,21 +8,26 @@ package org.jboss.forge.addon.projects.impl;
  */
 
 import java.io.File;
+import java.util.List;
 
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.projects.BuildSystem;
 import org.jboss.forge.addon.projects.mock.MockBuildSystem;
 import org.jboss.forge.addon.projects.mock.MockBuildSystem2;
 import org.jboss.forge.addon.projects.mock.MockProjectType;
 import org.jboss.forge.addon.projects.mock.MockProjectType2;
+import org.jboss.forge.addon.projects.mock.MockProjectType3;
 import org.jboss.forge.addon.projects.mock.MockProjectTypeUnsatisfied;
 import org.jboss.forge.addon.projects.ui.NewProjectWizard;
+import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.furnace.impl.util.Iterators;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.ui.test.WizardTester;
@@ -46,8 +51,10 @@ public class NewProjectWizardBuildSystem2Test
                .addClass(MockProjectTypeUnsatisfied.class)
                .addClass(MockProjectType.class)
                .addClass(MockProjectType2.class)
+               .addClass(MockProjectType3.class)
                .addClass(MockBuildSystem.class)
                .addClass(MockBuildSystem2.class)
+               .addClass(Iterators.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
@@ -61,6 +68,7 @@ public class NewProjectWizardBuildSystem2Test
    @Inject
    private WizardTester<NewProjectWizard> wizard;
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testProjectTypeSwitching() throws Exception
    {
@@ -75,9 +83,21 @@ public class NewProjectWizardBuildSystem2Test
          wizard.setValueFor("type", "mock");
          Assert.assertEquals("buildsystem", InputComponents.getValueFor(wizard.getInputComponent("buildSystem"))
                   .toString());
+
          wizard.setValueFor("type", "mock2");
          Assert.assertEquals("buildsystem2", InputComponents.getValueFor(wizard.getInputComponent("buildSystem"))
                   .toString());
+         UISelectOne<BuildSystem> buildSystems = (UISelectOne<BuildSystem>) wizard.getInputComponent("buildSystem");
+         List<BuildSystem> choices = Iterators.asList(buildSystems.getValueChoices());
+         Assert.assertEquals(1, choices.size());
+
+         wizard.setValueFor("type", "mock3");
+         choices = Iterators.asList(buildSystems.getValueChoices());
+         Assert.assertEquals(2, choices.size());
+
+         wizard.setValueFor("type", "mock2");
+         choices = Iterators.asList(buildSystems.getValueChoices());
+         Assert.assertEquals(1, choices.size());
       }
       finally
       {

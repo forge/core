@@ -15,7 +15,6 @@ import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
- * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class MockProjectType implements ProjectType

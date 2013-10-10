@@ -16,7 +16,6 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
 public class MockBuildSystem2 implements BuildSystem
 {

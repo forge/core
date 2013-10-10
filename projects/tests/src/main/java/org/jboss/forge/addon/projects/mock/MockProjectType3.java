@@ -7,23 +7,19 @@
 
 package org.jboss.forge.addon.projects.mock;
 
-import java.util.Arrays;
-
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
-import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MockProjectTypeUnsatisfied implements ProjectType
+public class MockProjectType3 implements ProjectType
 {
    @Override
    public String getType()
    {
-      return "unsatisfied";
+      return "mock3";
    }
 
    @Override
@@ -33,10 +29,9 @@ public class MockProjectTypeUnsatisfied implements ProjectType
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
    {
-      return Arrays.<Class<? extends ProjectFacet>> asList(MetadataFacet.class, PackagingFacet.class);
+      return null;
    }
 
    @Override
