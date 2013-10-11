@@ -257,10 +257,13 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
       try
       {
          JavaResource javaResource = entity.getValue();
-         JavaClass javaClass = (JavaClass) javaResource.getJavaSource();
-         if (javaClass.hasField(fieldName.getValue()))
+         if (javaResource != null)
          {
-            validator.addValidationError(entity, "Field '" + fieldName.getValue() + "' already exists");
+            JavaClass javaClass = (JavaClass) javaResource.getJavaSource();
+            if (javaClass.hasField(fieldName.getValue()))
+            {
+               validator.addValidationError(entity, "Field '" + fieldName.getValue() + "' already exists");
+            }
          }
       }
       catch (FileNotFoundException ffe)
