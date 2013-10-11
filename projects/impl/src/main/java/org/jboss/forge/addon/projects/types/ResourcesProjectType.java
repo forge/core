@@ -26,7 +26,7 @@ public class ResourcesProjectType implements ProjectType
    @Override
    public String getType()
    {
-      return "Basic Resources";
+      return "Java Resources";
    }
 
    @Override
@@ -50,6 +50,12 @@ public class ResourcesProjectType implements ProjectType
    public String toString()
    {
       return "jar-resources";
+   }
+
+   @Override
+   public int priority()
+   {
+      return 1000;
    }
 
 }

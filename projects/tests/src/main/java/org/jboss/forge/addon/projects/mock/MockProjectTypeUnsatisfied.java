@@ -44,4 +44,10 @@ public class MockProjectTypeUnsatisfied implements ProjectType
    {
       return getType();
    }
+
+   @Override
+   public int priority()
+   {
+      return 0;
+   }
 }

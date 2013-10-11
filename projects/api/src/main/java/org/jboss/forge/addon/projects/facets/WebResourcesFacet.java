@@ -10,7 +10,7 @@ package org.jboss.forge.addon.projects.facets;
 import java.util.List;
 
 import org.jboss.forge.addon.facets.Facet;
-import org.jboss.forge.addon.projects.BuildSystemFacet;
+import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 
@@ -19,7 +19,7 @@ import org.jboss.forge.addon.resource.FileResource;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface WebResourcesFacet extends BuildSystemFacet
+public interface WebResourcesFacet extends ProjectFacet
 {
    /**
     * Get the default Web Root directory (this is the {@link DirectoryResource} containing resources to be deployed to

@@ -202,9 +202,7 @@ public class NewProjectWizard implements UIWizard
          @Override
          public int compare(ProjectType left, ProjectType right)
          {
-            if (left == null || left.getType() == null || right == null || right.getType() == null)
-               return 0;
-            return left.getType().compareTo(right.getType());
+            return new Integer(left.priority()).compareTo(right.priority());
          }
       });
 
@@ -272,9 +270,7 @@ public class NewProjectWizard implements UIWizard
                @Override
                public int compare(BuildSystem left, BuildSystem right)
                {
-                  if (left == null || left.getType() == null || right == null || right.getType() == null)
-                     return 0;
-                  return left.getType().compareTo(right.getType());
+                  return new Integer(left.priority()).compareTo(right.priority());
                }
             });
 

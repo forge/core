@@ -56,4 +56,10 @@ public class JavaProjectType implements ProjectType
    {
       return "jar";
    }
+   
+   @Override
+   public int priority()
+   {
+      return 0;
+   }
 }

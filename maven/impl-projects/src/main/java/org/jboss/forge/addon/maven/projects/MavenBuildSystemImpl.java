@@ -9,7 +9,6 @@ package org.jboss.forge.addon.maven.projects;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +26,6 @@ import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
-import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -98,39 +96,12 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
       result.add(PackagingFacet.class);
       result.add(ResourcesFacet.class);
 
-      addSafe(result, new Callable<Class<? extends BuildSystemFacet>>()
-      {
-         @Override
-         public Class<? extends BuildSystemFacet> call() throws Exception
-         {
-            return WebResourcesFacet.class;
-         }
-      });
       return Collections.unmodifiableSet(result);
    }
 
-   private void addSafe(Set<Class<? extends BuildSystemFacet>> result,
-            Callable<Class<? extends BuildSystemFacet>> callable)
+   @Override
+   public int priority()
    {
-      try
-      {
-         Class<? extends BuildSystemFacet> facetType = callable.call();
-         if (facetType != null)
-            result.add(facetType);
-      }
-      catch (NoClassDefFoundError e)
-      {
-      }
-      catch (ClassNotFoundException e)
-      {
-      }
-      catch (RuntimeException e)
-      {
-         throw e;
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
+      return 0;
    }
 }

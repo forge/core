@@ -41,4 +41,10 @@ public class MockProjectTypeNoRequiredFacets implements ProjectType
    {
       return getType();
    }
+
+   @Override
+   public int priority()
+   {
+      return 0;
+   }
 }

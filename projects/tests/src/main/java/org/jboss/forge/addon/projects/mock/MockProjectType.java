@@ -43,4 +43,10 @@ public class MockProjectType implements ProjectType
    {
       return getType();
    }
+
+   @Override
+   public int priority()
+   {
+      return 0;
+   }
 }

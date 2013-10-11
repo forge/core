@@ -50,5 +50,11 @@ public class MockBuildSystem2 implements BuildSystem
    {
       return getType();
    }
+   
+   @Override
+   public int priority()
+   {
+      return 0;
+   }
 
 }

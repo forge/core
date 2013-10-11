@@ -91,7 +91,6 @@ public class MavenBuildSystemImplTest
       Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(PackagingFacet.class));
       Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(DependencyFacet.class));
       Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(ResourcesFacet.class));
-      Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(WebResourcesFacet.class));
    }
 
    @Test

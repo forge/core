@@ -47,4 +47,10 @@ public class FurnaceAddonProjectType implements ProjectType
    {
       return "addon";
    }
+
+   @Override
+   public int priority()
+   {
+      return 500;
+   }
 }

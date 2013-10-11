@@ -33,4 +33,9 @@ public interface BuildSystem
     * Returns true if the given {@link DirectoryResource} contains an existing {@link Project}.
     */
    public boolean containsProject(DirectoryResource resource);
+
+   /**
+    * Returns the priority of this {@link BuildSystem}. Lower values receive a higher priority.
+    */
+   public int priority();
 }

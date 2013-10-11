@@ -56,4 +56,10 @@ public class JavaWebProjectType implements ProjectType
    {
       return "war";
    }
+
+   @Override
+   public int priority()
+   {
+      return 100;
+   }
 }

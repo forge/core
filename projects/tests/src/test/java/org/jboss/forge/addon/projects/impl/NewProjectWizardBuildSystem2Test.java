@@ -117,7 +117,7 @@ public class NewProjectWizardBuildSystem2Test
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
          wizard.setValueFor("type", "unsatisfied");
-         Assert.assertEquals("mock", InputComponents.getValueFor(wizard.getInputComponent("type")).toString());
+         Assert.assertNotEquals("unsatisfied", InputComponents.getValueFor(wizard.getInputComponent("type")).toString());
       }
       finally
       {

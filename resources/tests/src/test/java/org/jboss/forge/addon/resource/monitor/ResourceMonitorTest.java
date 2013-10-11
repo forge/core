@@ -14,6 +14,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
@@ -33,6 +36,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.util.Callables;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -112,27 +116,70 @@ public class ResourceMonitorTest
             eventCollector.add(event);
          }
       });
-      DirectoryResource childDir = tempDirResource.getChildDirectory("child_dir");
 
-      // NEW EVENT: ResourceCreated
-      childDir.mkdir();
+      final DirectoryResource childDir = tempDirResource.getChildDirectory("child_dir");
 
-      FileResource<?> childFile = childDir.getChild("child_file.txt").reify(FileResource.class);
-      // NEW EVENT: ResourceCreated + ResourceModified of parent dir
-      childFile.createNewFile();
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // NEW EVENT: ResourceCreated
+            childDir.mkdir();
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 1;
+         }
+      }, 5, TimeUnit.SECONDS);
+      final FileResource<?> childFile = childDir.getChild("child_file.txt").reify(FileResource.class);
 
-      waitForMonitor();
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // 2 NEW EVENTS: ResourceCreated & ResourceModified of parent dir
+            childFile.createNewFile();
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 3;
+         }
+      }, 5, TimeUnit.SECONDS);
 
-      // NEW EVENT: ResourceDeleted
-      childFile.delete();
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // NEW EVENT: ResourceDeleted
+            childFile.delete();
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 5;
+         }
+      }, 5, TimeUnit.SECONDS);
 
-      waitForMonitor();
-
-      Assert.assertEquals(4, eventCollector.size());
+      Assert.assertEquals(5, eventCollector.size());
       Assert.assertThat(eventCollector.get(0), is(instanceOf(ResourceCreated.class)));
-      Assert.assertThat(eventCollector.get(1), is(instanceOf(ResourceCreated.class)));
-      Assert.assertThat(eventCollector.get(2), is(instanceOf(ResourceModified.class)));
-      Assert.assertThat(eventCollector.get(3), is(instanceOf(ResourceDeleted.class)));
+      Assert.assertThat(eventCollector.get(1), is(instanceOf(ResourceModified.class)));
+      Assert.assertThat(eventCollector.get(2), is(instanceOf(ResourceCreated.class)));
+      Assert.assertThat(eventCollector.get(3), is(instanceOf(ResourceModified.class)));
+      Assert.assertThat(eventCollector.get(4), is(instanceOf(ResourceDeleted.class)));
       monitor.cancel();
    }
 
@@ -141,7 +188,7 @@ public class ResourceMonitorTest
    public void testResourceMonitorFile() throws Exception
    {
       File tempFile = File.createTempFile("resource_monitor", ".tmp");
-      FileResource<?> resource = resourceFactory.create(FileResource.class, tempFile);
+      final FileResource<?> resource = resourceFactory.create(FileResource.class, tempFile);
       ResourceMonitor monitor = resourceFactory.monitor(resource);
       final List<ResourceEvent> eventCollector = new ArrayList<ResourceEvent>();
       monitor.addResourceListener(new ResourceListener()
@@ -153,15 +200,41 @@ public class ResourceMonitorTest
          }
       });
 
-      // NEW EVENT: ResourceModified
-      resource.setContents("TEST");
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // NEW EVENT: ResourceModified
+            resource.setContents("TEST");
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 1;
+         }
+      }, 5, TimeUnit.SECONDS);
 
-      waitForMonitor();
-
-      // NEW EVENT: ResourceDeleted
-      resource.delete();
-
-      waitForMonitor();
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // NEW EVENT: ResourceDeleted
+            resource.delete();
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 2;
+         }
+      }, 5, TimeUnit.SECONDS);
 
       Assert.assertEquals(2, eventCollector.size());
       Assert.assertThat(eventCollector.get(0), is(instanceOf(ResourceModified.class)));
@@ -191,20 +264,47 @@ public class ResourceMonitorTest
             eventCollector.add(event);
          }
       });
-      FileResource<?> childFile = tempDirResource.getChild("child_file.txt").reify(FileResource.class);
+      final FileResource<?> childFile1 = tempDirResource.getChild("child_file.txt").reify(FileResource.class);
       // NEW EVENT: ResourceCreated + ResourceModified of parent dir
-      childFile.createNewFile();
+      childFile1.createNewFile();
 
-      childFile = tempDirResource.getChild("foo.txt").reify(FileResource.class);
-      // NEW EVENT: ResourceCreated of parent dir
-      childFile.createNewFile();
+      final FileResource<?> childFile2 = tempDirResource.getChild("foo.txt").reify(FileResource.class);
 
-      waitForMonitor();
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // NEW EVENT: ResourceCreated of parent dir
+            childFile2.createNewFile();
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 1;
+         }
+      }, 5, TimeUnit.SECONDS);
 
-      // NEW EVENT: ResourceDeleted
-      childFile.delete();
-
-      waitForMonitor();
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // NEW EVENT: ResourceDeleted
+            childFile2.delete();
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 2;
+         }
+      }, 5, TimeUnit.SECONDS);
 
       Assert.assertEquals(2, eventCollector.size());
       Assert.assertThat(eventCollector.get(0), is(instanceOf(ResourceCreated.class)));
@@ -217,7 +317,7 @@ public class ResourceMonitorTest
    public void testResourceMonitorFileWithFilter() throws Exception
    {
       File tempFile = File.createTempFile("resource_monitor", ".tmp");
-      FileResource<?> resource = resourceFactory.create(FileResource.class, tempFile);
+      final FileResource<?> resource = resourceFactory.create(FileResource.class, tempFile);
       ResourceMonitor monitor = resourceFactory.monitor(resource, new ResourceFilter()
       {
          @Override
@@ -237,15 +337,41 @@ public class ResourceMonitorTest
          }
       });
 
-      // NEW EVENT: ResourceModified
-      resource.setContents("TEST");
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // NEW EVENT: ResourceModified
+            resource.setContents("TEST");
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 1;
+         }
+      }, 5, TimeUnit.SECONDS);
 
-      waitForMonitor();
-
-      // NEW EVENT: ResourceDeleted
-      resource.delete();
-
-      waitForMonitor();
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // NEW EVENT: ResourceDeleted
+            resource.delete();
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 2;
+         }
+      }, 5, TimeUnit.SECONDS);
 
       Assert.assertEquals(2, eventCollector.size());
       Assert.assertThat(eventCollector.get(0), is(instanceOf(ResourceModified.class)));
@@ -253,10 +379,36 @@ public class ResourceMonitorTest
       monitor.cancel();
    }
 
-   private void waitForMonitor() throws InterruptedException
+   private void waitForMonitor(Callable<Void> task, Callable<Boolean> status, int quantity, TimeUnit unit)
+            throws TimeoutException
    {
-      // Wait until the monitor detects changes
-      Thread.sleep(INTERVAL);
+      try
+      {
+         task.call();
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
+
+      long start = System.currentTimeMillis();
+      while (!Callables.call(status))
+      {
+         if (System.currentTimeMillis() >= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
+                  && !Callables.call(status))
+         {
+            throw new TimeoutException("Timeout occurred while waiting for status.");
+         }
+
+         try
+         {
+            Thread.sleep(10);
+         }
+         catch (InterruptedException e)
+         {
+            throw new RuntimeException("Interrupted while waiting for status.", e);
+         }
+      }
    }
 
 }

@@ -24,4 +24,9 @@ public interface ProjectType
     * Return all {@link ProjectFacet} {@link Class} types required by a {@link Project} of this {@link ProjectType}.
     */
    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets();
+
+   /**
+    * Defines the priority of this {@link ProjectType}. Lower values receive a higher priority.
+    */
+   public int priority();
 }
