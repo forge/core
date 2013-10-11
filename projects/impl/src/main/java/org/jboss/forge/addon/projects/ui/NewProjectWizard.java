@@ -382,7 +382,7 @@ public class NewProjectWizard implements UIWizard
             metadataFacet.setProjectName(named.getValue());
             metadataFacet.setProjectVersion(version.getValue());
             metadataFacet.setTopLevelPackage(topLevelPackage.getValue());
-
+            context.setSelection(project.getProjectRoot());
             context.setAttribute(Project.class, project);
          }
          else
