@@ -122,6 +122,7 @@ public class CommandLineUtil
             {
                optionBuilder.shortName(input.getShortName());
             }
+            optionBuilder.valueSeparator(' ');
             ProcessedOption option = optionBuilder.create();
             if (ARGUMENTS_INPUT_NAME.equals(input.getName()))
             {
