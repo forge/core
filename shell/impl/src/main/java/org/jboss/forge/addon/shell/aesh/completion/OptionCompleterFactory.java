@@ -48,7 +48,7 @@ public class OptionCompleterFactory
          strategy = new SelectComponentOptionCompleter((SelectComponent<?, Object>) component, converterFactory);
       }
       // Always try UICompleter first and then fallback to the chosen strategy
-      strategy = new UICompleterCompletionStrategy(strategy, context, component, converterFactory);
+      strategy = new UICompleterOptionCompleter(strategy, context, component, converterFactory);
       return strategy;
    }
 }

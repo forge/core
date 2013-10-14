@@ -22,14 +22,14 @@ import org.jboss.forge.addon.ui.util.InputComponents;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-class UICompleterCompletionStrategy implements OptionCompleter
+class UICompleterOptionCompleter implements OptionCompleter
 {
    private final OptionCompleter fallback;
    private final InputComponent<?, Object> input;
    private final ConverterFactory converterFactory;
    private final ShellContext context;
 
-   public UICompleterCompletionStrategy(OptionCompleter fallback, ShellContext context,
+   public UICompleterOptionCompleter(OptionCompleter fallback, ShellContext context,
             InputComponent<?, Object> input,
             ConverterFactory converterFactory)
    {
