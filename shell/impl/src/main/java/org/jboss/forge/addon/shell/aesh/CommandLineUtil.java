@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.addon.shell.aesh;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -113,31 +112,10 @@ public class CommandLineUtil
             });
             optionBuilder.converter(new CLConverter<Object>()
             {
-               @SuppressWarnings("unchecked")
                @Override
                public Object convert(String value)
                {
-                  Object inputValue = InputComponents.convertToUIInputValue(converterFactory, input, value);
-                  // Many valued elements are called one at a time, so it needs to add to the existing values
-                  if (isMultiple)
-                  {
-                     Iterable<Object> iterable = (Iterable<Object>) InputComponents.getValueFor(input);
-                     List<Object> items = new ArrayList<Object>();
-                     if (iterable != null)
-                     {
-                        for (Object item : iterable)
-                        {
-                           items.add(item);
-                        }
-                     }
-                     items.add(inputValue);
-                     InputComponents.setValueFor(converterFactory, input, items);
-                  }
-                  else
-                  {
-                     InputComponents.setValueFor(converterFactory, input, inputValue);
-                  }
-                  return inputValue;
+                  return InputComponents.convertToUIInputValue(converterFactory, input, value);
                }
             });
             if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
