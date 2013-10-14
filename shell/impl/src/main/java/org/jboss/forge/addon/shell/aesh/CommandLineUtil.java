@@ -23,9 +23,11 @@ import org.jboss.aesh.cl.internal.ProcessedCommand;
 import org.jboss.aesh.cl.internal.ProcessedOption;
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.aesh.cl.validator.OptionValidator;
+import org.jboss.aesh.cl.validator.OptionValidatorException;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.aesh.completion.OptionCompleterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
+import org.jboss.forge.addon.shell.ui.ShellValidationContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.hints.InputType;
@@ -61,8 +63,8 @@ public class CommandLineUtil
       return new ForgeCommandLineParser(processedCommand, this, inputs);
    }
 
-   private ProcessedCommand generateCommand(UICommand command, ShellContext shellContext,
-            Map<String, InputComponent<?, Object>> inputs)
+   private ProcessedCommand generateCommand(final UICommand command, final ShellContext shellContext,
+            final Map<String, InputComponent<?, Object>> inputs)
    {
       UICommandMetadata metadata = command.getMetadata(shellContext);
       ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()),
@@ -99,7 +101,14 @@ public class CommandLineUtil
                @Override
                public void validate(Object value) throws org.jboss.aesh.cl.validator.OptionValidatorException
                {
-                  // TODO: Call input.validate?
+                  InputComponents.setValueFor(converterFactory, input, value);
+                  ShellValidationContext validationContext = new ShellValidationContext(shellContext);
+                  input.validate(validationContext);
+                  List<String> errors = validationContext.getErrors();
+                  if (!errors.isEmpty())
+                  {
+                     throw new OptionValidatorException(errors.get(0));
+                  }
                }
             });
             optionBuilder.converter(new CLConverter<Object>()
