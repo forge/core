@@ -208,7 +208,7 @@ public class ShellImpl implements Shell, CommandRegistry
       ShellContextImpl newShellContext = newShellContext();
       try
       {
-         return commandManager.getEnabledShellCommands(newShellContext).keySet();
+         return commandManager.getAllCommandNames(newShellContext);
       }
       finally
       {

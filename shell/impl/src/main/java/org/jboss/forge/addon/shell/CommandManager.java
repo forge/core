@@ -1,9 +1,9 @@
 package org.jboss.forge.addon.shell;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -15,6 +15,7 @@ import org.jboss.forge.addon.shell.aesh.CommandLineUtil;
 import org.jboss.forge.addon.shell.aesh.ShellSingleCommand;
 import org.jboss.forge.addon.shell.aesh.ShellWizard;
 import org.jboss.forge.addon.shell.ui.ShellContext;
+import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
@@ -60,24 +61,41 @@ public class CommandManager
       return addonRegistry.getServices(type).get();
    }
 
-   public Map<String, AbstractShellInteraction> getEnabledShellCommands(ShellContext shellContext)
+   public Set<String> getAllCommandNames(ShellContext shellContext)
    {
-      Map<String, AbstractShellInteraction> commands = new TreeMap<String, AbstractShellInteraction>();
+      Set<String> commands = new HashSet<String>();
+      for (UICommand cmd : Commands.getEnabledCommands(getAllCommands(), shellContext))
+      {
+         commands.add(getCommandName(shellContext, cmd));
+      }
+      return commands;
+   }
+
+   public AbstractShellInteraction findCommand(ShellContext shellContext, String commandName)
+   {
+      AbstractShellInteraction result = null;
       CommandLineUtil cmdLineUtil = getCommandLineUtil();
       for (UICommand cmd : Commands.getEnabledCommands(getAllCommands(), shellContext))
       {
-         AbstractShellInteraction shellCommand;
-         if (cmd instanceof UIWizard)
+         if (commandName.equals(getCommandName(shellContext, cmd)))
          {
-            shellCommand = new ShellWizard((UIWizard) cmd, shellContext, cmdLineUtil, this);
+            if (cmd instanceof UIWizard)
+            {
+               result = new ShellWizard((UIWizard) cmd, shellContext, cmdLineUtil, this);
+            }
+            else
+            {
+               result = new ShellSingleCommand(cmd, shellContext, cmdLineUtil);
+            }
+            break;
          }
-         else
-         {
-            shellCommand = new ShellSingleCommand(cmd, shellContext, cmdLineUtil);
-         }
-         commands.put(shellCommand.getName(), shellCommand);
       }
-      return commands;
+      return result;
+   }
+
+   private String getCommandName(ShellContext shellContext, UICommand cmd)
+   {
+      return ShellUtil.shellifyName(cmd.getMetadata(shellContext).getName());
    }
 
    public Iterable<UICommand> getAllCommands()
@@ -113,18 +131,5 @@ public class CommandManager
          converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
       }
       return converterFactory;
-   }
-
-   /**
-    * Used in ShellImpl
-    */
-   public AbstractShellInteraction findCommand(ShellContext shellContext, String line)
-   {
-      String[] tokens = line.split(" ");
-      if (tokens.length >= 1)
-      {
-         return getEnabledShellCommands(shellContext).get(tokens[0]);
-      }
-      return null;
    }
 }
