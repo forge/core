@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.maven.projects;
 
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 
@@ -51,15 +52,26 @@ public interface MavenFacet extends BuildSystemFacet
 
    /**
     * Execute Maven with the given arguments. Attempt to use any native installation of Maven before falling back to
-    * Maven embedded. Return <code>true</code> on success or <code>false</code> on failure.
+    * Maven embedded.
+    * 
+    * @return <code>true</code> on success or <code>false</code> on failure.
     */
    boolean executeMaven(List<String> parameters);
 
    /**
-    * Execute Maven with the given arguments. Attempt to use any native installation of Maven before falling back to
-    * Maven embedded. Return <code>true</code> on success or <code>false</code> on failure.
+    * Execute Maven with the given arguments.
+    * 
+    * @return <code>true</code> on success or <code>false</code> on failure.
     */
    boolean executeMavenEmbedded(List<String> parameters);
+
+   /**
+    * Execute embedded Maven with the given arguments. Redirects the output and error output to the provided
+    * {@link PrintStream}s
+    * 
+    * @return <code>true</code> on success or <code>false</code> on failure.
+    */
+   boolean executeMavenEmbedded(List<String> parameters, final PrintStream out, final PrintStream err);
 
    /**
     * Returns a {@link DirectoryResource} representing the location of the current local Maven repository.

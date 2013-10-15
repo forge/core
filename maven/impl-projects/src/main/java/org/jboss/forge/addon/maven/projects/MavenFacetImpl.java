@@ -380,6 +380,12 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       return executeMavenEmbedded(System.out, System.err, parms);
    }
 
+   @Override
+   public boolean executeMavenEmbedded(List<String> parameters, PrintStream out, PrintStream err)
+   {
+      return executeMavenEmbedded(out, err, parameters.toArray(new String[parameters.size()]));
+   }
+
    public boolean executeMavenEmbedded(final PrintStream out, final PrintStream err, String[] parms)
    {
       if ((parms == null) || (parms.length == 0))

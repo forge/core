@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.projects.building;
 
+import java.io.PrintStream;
+
 import org.jboss.forge.addon.resource.Resource;
 
 /**
@@ -30,5 +32,11 @@ public interface ProjectBuilder
     * Execute the build, returning the final product as a {@link Resource}.
     */
    Resource<?> build() throws BuildException;
+
+   /**
+    * Execute the build, returning the final product as a {@link Resource} and redirect the output to the provided
+    * streams
+    */
+   Resource<?> build(PrintStream out, PrintStream err) throws BuildException;
 
 }

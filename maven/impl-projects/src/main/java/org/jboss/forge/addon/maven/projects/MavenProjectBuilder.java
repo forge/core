@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.maven.projects;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,6 +55,12 @@ public class MavenProjectBuilder implements ProjectBuilder
    @Override
    public Resource<?> build()
    {
+      return build(System.out, System.err);
+   }
+
+   @Override
+   public Resource<?> build(PrintStream out, PrintStream err) throws BuildException
+   {
       List<String> selected = new ArrayList<String>();
       selected.addAll(Arrays.asList("clean", "package"));
 
@@ -74,7 +81,7 @@ public class MavenProjectBuilder implements ProjectBuilder
          selected.add("-Dmaven.test.skip=true");
       }
 
-      boolean success = project.getFacet(MavenFacet.class).executeMavenEmbedded(selected);
+      boolean success = project.getFacet(MavenFacet.class).executeMavenEmbedded(selected, out, err);
 
       if (success)
       {
