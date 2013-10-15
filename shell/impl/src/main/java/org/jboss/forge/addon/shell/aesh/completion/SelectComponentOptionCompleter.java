@@ -52,7 +52,7 @@ class SelectComponentOptionCompleter implements OptionCompleter
       for (Object choice : valueChoices)
       {
          String convert = itemLabelConverter.convert(choice);
-         if (convert != null)
+         if (convert != null && (completeValue == null || convert.startsWith(completeValue)))
          {
             choices.add(convert);
          }
@@ -82,28 +82,11 @@ class SelectComponentOptionCompleter implements OptionCompleter
       }
       if (choices.size() > 1)
       {
-         String startsWith = Parser.findStartsWith(choices);
-         if (startsWith.length() > completeValue.length())
-         {
-            String substring = startsWith.substring(completeValue.length());
-            completerData.addCompleterValue(Parser.switchSpacesToEscapedSpacesInWord(substring));
-            completerData.setAppendSpace(false);
-         }
-         else
-         {
-            for (String choice : choices)
-            {
-               if (completeValue.isEmpty() || choice.startsWith(completeValue))
-               {
-                  completerData.addCompleterValue(Parser.switchSpacesToEscapedSpacesInWord(choice));
-               }
-            }
-         }
+          completerData.addAllCompleterValues(choices);
       }
       else if (choices.size() == 1)
       {
-         String candidate = choices.get(0).substring(completeValue.length());
-         completerData.addCompleterValue(Parser.switchSpacesToEscapedSpacesInWord(candidate));
+         completerData.addCompleterValue(Parser.switchSpacesToEscapedSpacesInWord(choices.get(0)));
       }
    }
 }
