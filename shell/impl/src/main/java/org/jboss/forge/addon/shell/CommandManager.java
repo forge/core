@@ -1,6 +1,6 @@
 package org.jboss.forge.addon.shell;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -106,7 +106,7 @@ public class CommandManager
       }
       if (commandCache == null)
       {
-         commandCache = new ArrayList<UICommand>();
+         commandCache = new LinkedList<UICommand>();
          for (UICommand command : allCommands)
          {
             commandCache.add(command);
