@@ -34,9 +34,11 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
+import org.jboss.forge.addon.shell.ui.ShellUIOutputImpl;
 import org.jboss.forge.addon.shell.ui.ShellValidationContext;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.context.UIContextListener;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
@@ -58,10 +60,11 @@ public class ShellImpl implements Shell, CommandRegistry
 {
    private final List<CommandExecutionListener> listeners = new ArrayList<CommandExecutionListener>();
 
-   private AeshConsole console;
    private FileResource<?> currentResource;
    private final CommandManager commandManager;
    private final AddonRegistry addonRegistry;
+   private final AeshConsole console;
+   private final UIOutput output;
 
    public ShellImpl(FileResource<?> initialResource, Settings settings, CommandManager commandManager,
             AddonRegistry addonRegistry)
@@ -69,7 +72,10 @@ public class ShellImpl implements Shell, CommandRegistry
       this.currentResource = initialResource;
       this.addonRegistry = addonRegistry;
       this.commandManager = commandManager;
-      init(settings);
+      console = new AeshConsoleBuilder().prompt(createPrompt()).settings(settings).commandRegistry(this)
+               .create();
+      output = new ShellUIOutputImpl(console);
+      console.start();
    }
 
    @Override
@@ -86,18 +92,6 @@ public class ShellImpl implements Shell, CommandRegistry
             return listener;
          }
       };
-   }
-
-   void init(Settings settings)
-   {
-      if (console != null)
-      {
-         console.stop();
-         console = null;
-      }
-      console = new AeshConsoleBuilder().prompt(createPrompt()).settings(settings).commandRegistry(this)
-               .create();
-      console.start();
    }
 
    private void updatePrompt()
@@ -238,6 +232,12 @@ public class ShellImpl implements Shell, CommandRegistry
       {
          throw new RuntimeException("Error while creating parser: " + e.getMessage(), e);
       }
+   }
+
+   @Override
+   public UIOutput getOutput()
+   {
+      return output;
    }
 
    /**

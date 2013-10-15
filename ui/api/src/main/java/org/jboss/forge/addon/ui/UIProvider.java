@@ -1,5 +1,6 @@
 package org.jboss.forge.addon.ui;
 
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
@@ -20,5 +21,10 @@ public interface UIProvider
     * Returns true if this {@link UIProvider} is running a Graphical User Interface.
     */
    public boolean isGUI();
+
+   /**
+    * Returns the output object used to display messages during a UI interation
+    */
+   public UIOutput getOutput();
 
 }

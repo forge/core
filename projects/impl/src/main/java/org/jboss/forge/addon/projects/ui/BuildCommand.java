@@ -22,6 +22,7 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
@@ -79,6 +80,7 @@ public class BuildCommand extends AbstractProjectCommand
    @Override
    public Result execute(UIContext context) throws Exception
    {
+      UIOutput output = context.getProvider().getOutput();
       Project project = getSelectedProject(context);
       PackagingFacet packaging = project.getFacet(PackagingFacet.class);
       ProjectBuilder builder = packaging.createBuilder();
@@ -109,11 +111,16 @@ public class BuildCommand extends AbstractProjectCommand
 
       try
       {
-         builder.build();
+         builder.build(output.out(), output.err());
       }
       catch (BuildException e)
       {
          return Results.fail("Build failed.", e);
+      }
+      finally
+      {
+         output.out().flush();
+         output.err().flush();
       }
 
       return Results.success("Build Success");
