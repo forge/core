@@ -354,7 +354,7 @@ public class NewProjectWizard implements UIWizard
    @Override
    public Result execute(UIContext context) throws Exception
    {
-      Result result = Results.success("New project has been created.");
+      Result result = Results.success("Project named '" + named.getValue() + "' has been created.");
       DirectoryResource directory = targetLocation.getValue();
       DirectoryResource targetDir = directory.getChildDirectory(named.getValue());
 
