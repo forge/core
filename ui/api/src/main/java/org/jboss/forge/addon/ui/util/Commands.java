@@ -1,6 +1,6 @@
 package org.jboss.forge.addon.ui.util;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.jboss.forge.addon.ui.UICommand;
@@ -21,7 +21,7 @@ public class Commands
     */
    public static Iterable<UICommand> getEnabledCommands(Iterable<UICommand> commands, UIContext context)
    {
-      List<UICommand> result = new ArrayList<UICommand>();
+      List<UICommand> result = new LinkedList<UICommand>();
       for (UICommand uiCommand : commands)
       {
          if (uiCommand.isEnabled(context) && !(uiCommand instanceof UIWizardStep))
