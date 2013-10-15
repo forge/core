@@ -1,13 +1,17 @@
 package org.jboss.forge.addon.shell;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
@@ -19,6 +23,8 @@ import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.event.PostStartup;
+import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.services.Imported;
 
 /**
@@ -26,6 +32,7 @@ import org.jboss.forge.furnace.services.Imported;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
+@Singleton
 public class CommandManager
 {
    private final AddonRegistry addonRegistry;
@@ -34,10 +41,22 @@ public class CommandManager
    private CommandLineUtil commandLineUtil;
    private ConverterFactory converterFactory;
 
+   private List<UICommand> commandCache;
+
    @Inject
    public CommandManager(final AddonRegistry addonRegistry)
    {
       this.addonRegistry = addonRegistry;
+   }
+
+   public void addonStarted(@Observes PostStartup event)
+   {
+      commandCache = null;
+   }
+
+   public void addonStopped(@Observes PreShutdown event)
+   {
+      commandCache = null;
    }
 
    public UICommand lookup(Class<? extends UICommand> type)
@@ -70,6 +89,14 @@ public class CommandManager
       if (allCommands == null)
       {
          allCommands = addonRegistry.getServices(UICommand.class);
+      }
+      if (commandCache == null)
+      {
+         commandCache = new ArrayList<UICommand>();
+         for (UICommand command : allCommands)
+         {
+            commandCache.add(command);
+         }
       }
       return allCommands;
    }

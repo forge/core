@@ -219,7 +219,7 @@ public class ShellImpl implements Shell, CommandRegistry
    @Override
    public CommandContainer getCommand(String name, String completeLine) throws CommandNotFoundException
    {
-      ShellContext shellContext = newShellContext();
+      ShellContextImpl shellContext = newShellContext();
       AbstractShellInteraction cmd = commandManager.findCommand(shellContext, name);
       if (cmd == null)
          throw new CommandNotFoundException(name);
@@ -231,6 +231,10 @@ public class ShellImpl implements Shell, CommandRegistry
       catch (Exception e)
       {
          throw new RuntimeException("Error while creating parser: " + e.getMessage(), e);
+      }
+      finally
+      {
+         shellContext.destroy();
       }
    }
 
