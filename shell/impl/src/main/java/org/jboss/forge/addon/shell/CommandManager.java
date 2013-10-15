@@ -1,13 +1,9 @@
 package org.jboss.forge.addon.shell;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -120,7 +116,7 @@ public class CommandManager
    }
 
    /**
-    * Used in {@link ForgeCompletion} and {@link ForgeConsoleCallback}
+    * Used in ShellImpl
     */
    public AbstractShellInteraction findCommand(ShellContext shellContext, String line)
    {
@@ -131,23 +127,4 @@ public class CommandManager
       }
       return null;
    }
-
-   public Collection<AbstractShellInteraction> findMatchingCommands(ShellContext shellContext, String line)
-   {
-      Set<AbstractShellInteraction> result = new TreeSet<AbstractShellInteraction>();
-
-      String[] tokens = line == null ? new String[0] : line.split(" ");
-      if (tokens.length <= 1)
-      {
-         Map<String, AbstractShellInteraction> commandMap = getEnabledShellCommands(shellContext);
-         String token = (tokens.length == 1) ? tokens[0] : null;
-         for (Entry<String, AbstractShellInteraction> entry : commandMap.entrySet())
-         {
-            if (token == null || entry.getKey().startsWith(token))
-               result.add(entry.getValue());
-         }
-      }
-      return result;
-   }
-
 }
