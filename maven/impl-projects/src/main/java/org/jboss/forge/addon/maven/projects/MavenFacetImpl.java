@@ -372,7 +372,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    @Override
    public boolean executeMavenEmbedded(final List<String> parameters)
    {
-      return executeMavenEmbedded(parameters.toArray(new String[] {}));
+      return executeMavenEmbedded(parameters.toArray(new String[parameters.size()]));
    }
 
    public boolean executeMavenEmbedded(final String[] parms)
@@ -395,7 +395,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    @Override
    public boolean executeMaven(final List<String> parameters)
    {
-      return executeMaven(parameters.toArray(new String[] {}));
+      return executeMaven(parameters.toArray(new String[parameters.size()]));
    }
 
    public boolean executeMaven(final String[] selected)
