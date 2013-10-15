@@ -1,9 +1,9 @@
 package org.jboss.forge.addon.shell;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -63,7 +63,7 @@ public class CommandManager
 
    public Set<String> getAllCommandNames(ShellContext shellContext)
    {
-      Set<String> commands = new HashSet<String>();
+      Set<String> commands = new TreeSet<String>();
       for (UICommand cmd : Commands.getEnabledCommands(getAllCommands(), shellContext))
       {
          commands.add(getCommandName(shellContext, cmd));
