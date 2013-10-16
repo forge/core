@@ -272,7 +272,14 @@ public class ShellImpl implements Shell, CommandRegistry
             failure = (result instanceof Failed);
             if (result != null && result.getMessage() != null)
             {
-               console.out().println(result.getMessage());
+               if (failure)
+               {
+                  ShellMessages.error(console.err(), result.getMessage());
+               }
+               else
+               {
+                  ShellMessages.success(console.out(), result.getMessage());
+               }
             }
             ShellContext context = interaction.getContext();
             Object selection = context.getSelection();
@@ -302,7 +309,7 @@ public class ShellImpl implements Shell, CommandRegistry
             // Display the error messages
             for (String error : errors)
             {
-               console.err().println("**ERROR**: " + error);
+               ShellMessages.error(console.err(), error);
             }
          }
          return failure ? CommandResult.FAILURE : CommandResult.SUCCESS;

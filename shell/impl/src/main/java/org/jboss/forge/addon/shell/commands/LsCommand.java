@@ -24,6 +24,7 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -75,7 +76,10 @@ public class LsCommand extends AbstractShellCommand
       }
       else
       {
-         result = Results.success(listMany(newResource.listResources(), context));
+         Shell provider = context.getProvider();
+         UIOutput output = provider.getOutput();
+         output.out().println(listMany(newResource.listResources(), context));
+         result = Results.success();
       }
       return result;
    }

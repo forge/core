@@ -8,11 +8,13 @@
 package org.jboss.forge.addon.shell.commands;
 
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -40,8 +42,11 @@ public class PwdCommand extends AbstractShellCommand
    @Override
    public Result execute(ShellContext shellContext) throws Exception
    {
-      FileResource<?> currentResource = shellContext.getProvider().getCurrentResource();
-      return Results.success(currentResource.getFullyQualifiedName());
+      Shell provider = shellContext.getProvider();
+      UIOutput output = provider.getOutput();
+      FileResource<?> currentResource = provider.getCurrentResource();
+      output.out().println(currentResource.getFullyQualifiedName());
+      return Results.success();
    }
 
 }
