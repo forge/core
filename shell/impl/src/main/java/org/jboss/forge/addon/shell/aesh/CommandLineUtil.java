@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.CommandLine;
+import org.jboss.aesh.cl.activation.OptionActivator;
 import org.jboss.aesh.cl.builder.OptionBuilder;
 import org.jboss.aesh.cl.completer.OptionCompleter;
 import org.jboss.aesh.cl.converter.CLConverter;
@@ -89,14 +90,15 @@ public class CommandLineUtil
 
             OptionCompleter completer = OptionCompleterFactory.getCompletionFor(input, shellContext, converterFactory);
             optionBuilder.completer(completer);
-            optionBuilder.validator(new OptionValidator<Object>()
+            optionBuilder.activator(new OptionActivator()
             {
                @Override
-               public boolean isEnabled(ProcessedCommand command)
+               public boolean isActivated(ProcessedCommand processedCommand)
                {
                   return input.isEnabled();
                }
-
+            }).validator(new OptionValidator<Object>()
+            {
                @Override
                public void validate(Object value) throws org.jboss.aesh.cl.validator.OptionValidatorException
                {
@@ -109,20 +111,19 @@ public class CommandLineUtil
                      throw new OptionValidatorException(errors.get(0));
                   }
                }
-            });
-            optionBuilder.converter(new CLConverter<Object>()
+            }).converter(new CLConverter<Object>()
             {
                @Override
                public Object convert(String value)
                {
                   return InputComponents.convertToUIInputValue(converterFactory, input, value);
                }
-            });
+            }).valueSeparator(' ');
+            
             if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
             {
                optionBuilder.shortName(input.getShortName());
             }
-            optionBuilder.valueSeparator(' ');
             ProcessedOption option = optionBuilder.create();
             if (ARGUMENTS_INPUT_NAME.equals(input.getName()))
             {
