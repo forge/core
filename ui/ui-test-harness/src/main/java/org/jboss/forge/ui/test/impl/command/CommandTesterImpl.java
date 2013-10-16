@@ -84,6 +84,10 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
          {
             validator.validate(validationContext);
          }
+         if (input.isRequired() && InputComponents.getValueFor(input) == null)
+         {
+            validationContext.addValidationError(input, input.getRequiredMessage());
+         }
       }
 
       currentCommand.validate(validationContext);
