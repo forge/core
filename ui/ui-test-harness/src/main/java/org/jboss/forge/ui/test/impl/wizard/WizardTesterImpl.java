@@ -16,7 +16,6 @@ import javax.enterprise.inject.Vetoed;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
@@ -225,15 +224,7 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
 
       for (InputComponent<?, ?> input : builder.getInputs())
       {
-         UIValidator validator = input.getValidator();
-         if (validator != null)
-         {
-            validator.validate(validationContext);
-         }
-         if (input.isRequired() && InputComponents.getValueFor(input) == null)
-         {
-            validationContext.addValidationError(input, input.getRequiredMessage());
-         }
+         input.validate(validationContext);
       }
 
       currentWizard.validate(validationContext);

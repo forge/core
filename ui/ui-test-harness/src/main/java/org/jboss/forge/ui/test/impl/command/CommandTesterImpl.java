@@ -15,7 +15,6 @@ import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.InputComponents;
@@ -79,15 +78,7 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
 
       for (InputComponent<?, ?> input : builder.getInputs())
       {
-         UIValidator validator = input.getValidator();
-         if (validator != null)
-         {
-            validator.validate(validationContext);
-         }
-         if (input.isRequired() && InputComponents.getValueFor(input) == null)
-         {
-            validationContext.addValidationError(input, input.getRequiredMessage());
-         }
+         input.validate(validationContext);
       }
 
       currentCommand.validate(validationContext);
