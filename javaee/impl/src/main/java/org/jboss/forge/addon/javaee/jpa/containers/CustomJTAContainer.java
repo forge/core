@@ -46,8 +46,8 @@ public class CustomJTAContainer implements PersistenceContainer
    }
 
    @Override
-   public String getName()
+   public String getName(boolean isGUI)
    {
-      return "Custom JTA";
+      return isGUI ? "Custom JTA" : "CUSTOM_JTA";
    }
 }

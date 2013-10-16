@@ -29,8 +29,8 @@ public class WildflyContainer extends JavaEEDefaultContainer
    }
 
    @Override
-   public String getName()
+   public String getName(boolean isGUI)
    {
-      return "Wildfly Application Server";
+      return isGUI ? "Wildfly Application Server" : "WILDFLY";
    }
 }

@@ -25,8 +25,8 @@ public class TomEEContainer extends JavaEEDefaultContainer
    }
 
    @Override
-   public String getName()
+   public String getName(boolean isGUI)
    {
-      return "TomEE";
+      return isGUI ? "TomEE" : "TOMEE";
    }
 }

@@ -21,7 +21,7 @@ public interface PersistenceContainer
    /**
     * Return the name of this container
     */
-   String getName();
+   String getName(boolean isGUI);
 
    /**
     * Validate against the supplied datastore

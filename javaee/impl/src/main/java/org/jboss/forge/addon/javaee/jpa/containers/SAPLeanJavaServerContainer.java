@@ -20,8 +20,8 @@ public class SAPLeanJavaServerContainer extends JavaEEDefaultContainer
    }
 
    @Override
-   public String getName()
+   public String getName(boolean isGUI)
    {
-      return "SAP Lean Java Server";
+      return isGUI ? "SAP Lean Java Server" : "SAP_LJS";
    }
 }

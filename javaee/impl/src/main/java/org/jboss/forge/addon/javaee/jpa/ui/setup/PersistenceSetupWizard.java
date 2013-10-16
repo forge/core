@@ -77,20 +77,21 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      initContainers();
+      initContainers(builder.getUIContext());
       initProviders();
       initConfigureMetadata();
       builder.add(container).add(provider).add(configureMetadata);
    }
 
-   private void initContainers()
+   private void initContainers(UIContext context)
    {
+      final boolean isGUI = context.getProvider().isGUI();
       container.setItemLabelConverter(new Converter<PersistenceContainer, String>()
       {
          @Override
          public String convert(PersistenceContainer source)
          {
-            return source != null ? source.getName() : null;
+            return source != null ? source.getName(isGUI) : null;
          }
       });
       // Ordering items:
@@ -99,7 +100,7 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
          @Override
          public int compare(PersistenceContainer o1, PersistenceContainer o2)
          {
-            return String.valueOf(o1.getName()).compareTo(o2.getName());
+            return String.valueOf(o1.getName(isGUI)).compareTo(o2.getName(isGUI));
          }
       });
       Iterable<PersistenceContainer> valueChoices = container.getValueChoices();

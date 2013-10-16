@@ -66,8 +66,8 @@ public class CustomJDBCContainer implements PersistenceContainer
    }
 
    @Override
-   public String getName()
+   public String getName(boolean isGUI)
    {
-      return "Custom JDBC";
+      return isGUI ? "Custom JDBC" : "CUSTOM_JDBC";
    }
 }

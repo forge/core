@@ -29,8 +29,8 @@ public class JBossAS7Container extends JavaEEDefaultContainer
    }
 
    @Override
-   public String getName()
+   public String getName(boolean isGUI)
    {
-      return "JBoss Application Server 7.x";
+      return isGUI ? "JBoss Application Server 7.x" : "JBOSS_AS7";
    }
 }

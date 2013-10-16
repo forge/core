@@ -29,8 +29,8 @@ public class GlassFish3Container extends JavaEEDefaultContainer
    }
 
    @Override
-   public String getName()
+   public String getName(boolean isGUI)
    {
-      return "Oracle Glassfish 3.x";
+      return isGUI ? "Oracle Glassfish 3.x" : "GLASSFISH_3";
    }
 }

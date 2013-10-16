@@ -52,8 +52,8 @@ public class NonJTAContainer implements PersistenceContainer
    }
 
    @Override
-   public String getName()
+   public String getName(boolean isGUI)
    {
-      return "Non-JTA Container";
+      return isGUI ? "Non-JTA Container" : "NON_JTA";
    }
 }

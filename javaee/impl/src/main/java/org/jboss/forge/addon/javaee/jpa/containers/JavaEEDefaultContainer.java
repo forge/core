@@ -68,10 +68,4 @@ public abstract class JavaEEDefaultContainer implements PersistenceContainer
    {
       return true;
    }
-
-   @Override
-   public String toString()
-   {
-      return getName();
-   }
 }

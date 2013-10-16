@@ -29,8 +29,8 @@ public class JBossEAP6Container extends JavaEEDefaultContainer
    }
 
    @Override
-   public String getName()
+   public String getName(boolean isGUI)
    {
-      return "JBoss Enterprise Application Platform 6.x";
+      return isGUI ? "JBoss Enterprise Application Platform 6.x" : "JBOSS_EAP6";
    }
 }

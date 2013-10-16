@@ -55,8 +55,8 @@ public class WebLogic12cContainer implements PersistenceContainer
    }
 
    @Override
-   public String getName()
+   public String getName(boolean isGUI)
    {
-      return "Oracle Weblogic 12c";
+      return isGUI ? "Oracle Weblogic 12c" : "WEBLOGIC_12C";
    }
 }
