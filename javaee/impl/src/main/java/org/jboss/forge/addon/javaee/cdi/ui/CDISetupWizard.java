@@ -46,21 +46,21 @@ public class CDISetupWizard extends AbstractJavaEECommand
 
    @Inject
    @WithAttributes(required = true, label = "CDI Version")
-   private UISelectOne<CDIFacet> choices;
+   private UISelectOne<CDIFacet<?>> choices;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      choices.setItemLabelConverter(new Converter<CDIFacet, String>()
+      choices.setItemLabelConverter(new Converter<CDIFacet<?>, String>()
       {
          @Override
-         public String convert(CDIFacet source)
+         public String convert(CDIFacet<?> source)
          {
             return source.getSpecVersion().toString();
          }
       });
 
-      for (CDIFacet cdi : choices.getValueChoices())
+      for (CDIFacet<?> cdi : choices.getValueChoices())
       {
          if (choices.getValue() == null || cdi.getSpecVersion().compareTo(choices.getValue().getSpecVersion()) >= 1)
          {
