@@ -31,6 +31,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -63,6 +64,12 @@ public class ShellResourceTest
    @Inject
    private ResourceFactory resourceFactory;
 
+   @Before
+   public void setUp() throws Exception
+   {
+      shellTest.clearScreen();
+   }
+
    @Test(timeout = 10000)
    public void testPwdCommand() throws TimeoutException
    {
@@ -74,7 +81,7 @@ public class ShellResourceTest
       shell.setCurrentResource(tempResource);
       Result pwdResult = shellTest.execute("pwd", 10, TimeUnit.SECONDS);
       Assert.assertNotNull(pwdResult);
-      Assert.assertEquals(tempResource.getFullyQualifiedName(), pwdResult.getMessage());
+      Assert.assertThat(shellTest.getStdOut(), containsString(tempResource.getFullyQualifiedName()));
       tempDir.delete();
    }
 
@@ -158,9 +165,8 @@ public class ShellResourceTest
 
       Shell shell = shellTest.getShell();
       shell.setCurrentResource(tempResource);
-      Result lsResult = shellTest.execute("ls", 10, TimeUnit.SECONDS);
-      Assert.assertNotNull(lsResult);
-      Assert.assertThat(lsResult.getMessage(), containsString("child"));
+      shellTest.execute("ls", 10, TimeUnit.SECONDS);
+      Assert.assertThat(shellTest.getStdOut(), containsString("child"));
       childDirectory.delete();
       tempDir.delete();
    }
@@ -181,19 +187,18 @@ public class ShellResourceTest
       Shell shell = shellTest.getShell();
       shell.setCurrentResource(tempResource);
 
-      Result lsResult = shellTest.execute("ls", 10, TimeUnit.SECONDS);
-      Assert.assertNotNull(lsResult);
-      Assert.assertThat(lsResult.getMessage(), not(containsString(".afile")));
+      shellTest.execute("ls", 10, TimeUnit.SECONDS);
+      Assert.assertNotNull(shellTest.getStdOut());
+      Assert.assertThat(shellTest.getStdOut(), not(containsString(".afile")));
 
-      lsResult = shellTest.execute("ls -a", 10, TimeUnit.SECONDS);
-      Assert.assertNotNull(lsResult);
-      Assert.assertThat(lsResult.getMessage(), containsString("child"));
-      Assert.assertThat(lsResult.getMessage(), containsString(".afile"));
+      shellTest.execute("ls -a", 10, TimeUnit.SECONDS);
+      Assert.assertThat(shellTest.getStdOut(), containsString("child"));
+      Assert.assertThat(shellTest.getStdOut(), containsString(".afile"));
 
-      lsResult = shellTest.execute("ls --all", 10, TimeUnit.SECONDS);
-      Assert.assertNotNull(lsResult);
-      Assert.assertThat(lsResult.getMessage(), containsString("child"));
-      Assert.assertThat(lsResult.getMessage(), containsString(".afile"));
+      shellTest.execute("ls --all", 10, TimeUnit.SECONDS);
+      Assert.assertNotNull(shellTest.getStdOut());
+      Assert.assertThat(shellTest.getStdOut(), containsString("child"));
+      Assert.assertThat(shellTest.getStdOut(), containsString(".afile"));
 
       afile.delete();
       childDirectory.delete();
