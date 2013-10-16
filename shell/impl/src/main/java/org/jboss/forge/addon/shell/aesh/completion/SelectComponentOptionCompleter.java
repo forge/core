@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.jboss.aesh.cl.completer.CompleterData;
 import org.jboss.aesh.cl.completer.OptionCompleter;
-import org.jboss.aesh.parser.Parser;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.ui.input.ManyValued;
@@ -80,13 +79,6 @@ class SelectComponentOptionCompleter implements OptionCompleter
             }
          }
       }
-      if (choices.size() > 1)
-      {
-          completerData.addAllCompleterValues(choices);
-      }
-      else if (choices.size() == 1)
-      {
-         completerData.addCompleterValue(Parser.switchSpacesToEscapedSpacesInWord(choices.get(0)));
-      }
+      completerData.addAllCompleterValues(choices);
    }
 }
