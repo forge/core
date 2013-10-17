@@ -8,6 +8,7 @@ package org.jboss.forge.addon.resource;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.jboss.forge.addon.facets.Faceted;
@@ -98,6 +99,16 @@ public interface Resource<T> extends Faceted<ResourceFacet>
     * Get the {@link InputStream} represented by this {@link Resource}.
     */
    InputStream getResourceInputStream();
+
+   /**
+    * Get the entire contents of this {@link Resource}, returned as a {@link String} using UTF-8 encoding.
+    */
+   public String getContents();
+
+   /**
+    * Get the entire contents of this {@link Resource}, returned as a {@link String} using the specified encoding.
+    */
+   public String getContents(Charset charset);
 
    /**
     * Get a child of this resource. Returns <code>null</code> if no child by the given name can be found.

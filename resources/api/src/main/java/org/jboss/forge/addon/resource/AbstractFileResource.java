@@ -207,34 +207,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    }
 
    @Override
-   public String getContents()
-   {
-      InputStream stream = getResourceInputStream();
-      try
-      {
-         return Streams.toString(stream);
-      }
-      finally
-      {
-         Streams.closeQuietly(stream);
-      }
-   }
-
-   @Override
-   public String getContents(Charset charset)
-   {
-      InputStream stream = getResourceInputStream();
-      try
-      {
-         return Streams.toString(stream, charset);
-      }
-      finally
-      {
-         Streams.closeQuietly(stream);
-      }
-   }
-
-   @Override
    public T setContents(String data)
    {
       if (data == null)

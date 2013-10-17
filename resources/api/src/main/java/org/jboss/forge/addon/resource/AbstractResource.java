@@ -6,12 +6,15 @@
  */
 package org.jboss.forge.addon.resource;
 
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import org.jboss.forge.addon.facets.AbstractFaceted;
+import org.jboss.forge.furnace.util.Streams;
 
 /**
  * @author Mike Brock <cbrock@redhat.com>
@@ -94,6 +97,34 @@ public abstract class AbstractResource<T> extends AbstractFaceted<ResourceFacet>
       Collections.sort(result, new FQNResourceComparator());
 
       return result;
+   }
+   
+   @Override
+   public String getContents()
+   {
+      InputStream stream = getResourceInputStream();
+      try
+      {
+         return Streams.toString(stream);
+      }
+      finally
+      {
+         Streams.closeQuietly(stream);
+      }
+   }
+
+   @Override
+   public String getContents(Charset charset)
+   {
+      InputStream stream = getResourceInputStream();
+      try
+      {
+         return Streams.toString(stream, charset);
+      }
+      finally
+      {
+         Streams.closeQuietly(stream);
+      }
    }
 
    @Override
