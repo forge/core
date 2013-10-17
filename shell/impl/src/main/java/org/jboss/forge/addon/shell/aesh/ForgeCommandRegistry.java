@@ -8,18 +8,26 @@
 package org.jboss.forge.addon.shell.aesh;
 
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.aesh.console.command.AeshCommandContainer;
+import org.jboss.aesh.console.command.AeshCommandRegistryBuilder;
 import org.jboss.aesh.console.command.CommandContainer;
 import org.jboss.aesh.console.command.CommandNotFoundException;
 import org.jboss.aesh.console.command.CommandRegistry;
+import org.jboss.aesh.extensions.grep.Grep;
+import org.jboss.aesh.extensions.less.aesh.Less;
+import org.jboss.aesh.extensions.manual.aesh.Man;
+import org.jboss.aesh.extensions.more.aesh.More;
 import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 
 /**
- * Forge implementation of {@link CommandRegistry}
+ * Forge implementation of {@link CommandRegistry}.
+ * 
+ * It delegates to the Aesh commands if no command is found
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
@@ -27,20 +35,44 @@ public class ForgeCommandRegistry implements CommandRegistry
 {
    private final CommandManager commandManager;
    private final ShellImpl shell;
+   private final CommandRegistry aeshCommandRegistry;
 
    public ForgeCommandRegistry(ShellImpl shell, CommandManager commandManager)
    {
       this.shell = shell;
       this.commandManager = commandManager;
+
+      // Use Aesh commands
+      this.aeshCommandRegistry = new AeshCommandRegistryBuilder()
+               .command(Grep.class)
+               .command(Less.class)
+               .command(More.class)
+               .command(Man.class)
+               .create();
    }
 
    @Override
    public CommandContainer getCommand(String name, String completeLine) throws CommandNotFoundException
    {
+      try
+      {
+         return getForgeCommand(name, completeLine);
+      }
+      catch (CommandNotFoundException cnfe)
+      {
+         // Not a forge command, fallback to aesh command
+         return aeshCommandRegistry.getCommand(name, completeLine);
+      }
+   }
+
+   private CommandContainer getForgeCommand(String name, String completeLine) throws CommandNotFoundException
+   {
       ShellContextImpl shellContext = shell.newShellContext();
       AbstractShellInteraction cmd = commandManager.findCommand(shellContext, name);
       if (cmd == null)
+      {
          throw new CommandNotFoundException(name);
+      }
       try
       {
          CommandLineParser parser = cmd.getParser(shellContext, completeLine);
@@ -59,6 +91,14 @@ public class ForgeCommandRegistry implements CommandRegistry
 
    @Override
    public Set<String> getAllCommandNames()
+   {
+      Set<String> allCommands = new TreeSet<String>();
+      allCommands.addAll(getForgeCommandNames());
+      allCommands.addAll(aeshCommandRegistry.getAllCommandNames());
+      return allCommands;
+   }
+
+   private Set<String> getForgeCommandNames()
    {
       ShellContextImpl newShellContext = shell.newShellContext();
       try
