@@ -42,12 +42,14 @@ public class ForgeCommandRegistry implements CommandRegistry
       this.shell = shell;
       this.commandManager = commandManager;
 
+      Man manCommand = new Man();
+      manCommand.setRegistry(this);
       // Use Aesh commands
       this.aeshCommandRegistry = new AeshCommandRegistryBuilder()
                .command(Grep.class)
                .command(Less.class)
                .command(More.class)
-               .command(Man.class)
+               .command(manCommand)
                .create();
    }
 
@@ -75,7 +77,7 @@ public class ForgeCommandRegistry implements CommandRegistry
       }
       try
       {
-         CommandLineParser parser = cmd.getParser(shellContext, completeLine);
+         CommandLineParser parser = cmd.getParser(shellContext, completeLine == null ? name : completeLine);
          CommandAdapter command = new CommandAdapter(shell, cmd);
          return new AeshCommandContainer(parser, command);
       }

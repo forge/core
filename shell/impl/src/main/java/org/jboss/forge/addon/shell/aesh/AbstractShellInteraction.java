@@ -7,6 +7,10 @@
 
 package org.jboss.forge.addon.shell.aesh;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Map;
 
 import org.jboss.aesh.cl.parser.CommandLineParser;
@@ -16,7 +20,9 @@ import org.jboss.forge.addon.shell.ui.ShellValidationContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.furnace.util.Streams;
 
 /**
  * 
@@ -27,14 +33,15 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
    private final String name;
    private final ShellContext context;
    private final UICommand root;
-
+   private final UICommandMetadata metadata;
    protected final CommandLineUtil commandLineUtil;
 
    protected AbstractShellInteraction(UICommand root, ShellContext shellContext,
             CommandLineUtil commandLineUtil)
    {
       this.root = root;
-      this.name = ShellUtil.shellifyName(root.getMetadata(shellContext).getName());
+      this.metadata = root.getMetadata(shellContext);
+      this.name = ShellUtil.shellifyName(metadata.getName());
       this.context = shellContext;
       this.commandLineUtil = commandLineUtil;
    }
@@ -75,6 +82,38 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
    public final ShellContext getContext()
    {
       return context;
+   }
+
+   public File getManLocation()
+   {
+      URL manLocation = metadata.getDocLocation();
+      if (manLocation == null)
+      {
+         return null;
+      }
+      else
+      {
+         try
+         {
+            File tmpFile = File.createTempFile("mantmp", ".txt");
+            tmpFile.deleteOnExit();
+            FileOutputStream fos = null;
+            try
+            {
+               fos = new FileOutputStream(tmpFile);
+               Streams.write(manLocation.openStream(), fos);
+            }
+            finally
+            {
+               Streams.closeQuietly(fos);
+            }
+            return tmpFile;
+         }
+         catch (IOException ie)
+         {
+            throw new IllegalStateException("Error while fetching man page", ie);
+         }
+      }
    }
 
    @Override

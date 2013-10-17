@@ -7,12 +7,14 @@
 
 package org.jboss.forge.addon.shell.aesh;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import org.jboss.aesh.console.command.Command;
 import org.jboss.aesh.console.command.CommandInvocation;
 import org.jboss.aesh.console.command.CommandResult;
+import org.jboss.aesh.extensions.manual.ManCommand;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ShellMessages;
@@ -26,7 +28,7 @@ import org.jboss.forge.addon.ui.result.Result;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-class CommandAdapter implements Command<CommandInvocation>
+class CommandAdapter implements Command<CommandInvocation>, ManCommand
 {
    private final ShellImpl shell;
    private final AbstractShellInteraction interaction;
@@ -91,5 +93,11 @@ class CommandAdapter implements Command<CommandInvocation>
          }
       }
       return failure ? CommandResult.FAILURE : CommandResult.SUCCESS;
+   }
+
+   @Override
+   public File getManLocation()
+   {
+      return interaction.getManLocation();
    }
 }
