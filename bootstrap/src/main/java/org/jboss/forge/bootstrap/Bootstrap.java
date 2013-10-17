@@ -19,6 +19,7 @@ import java.util.ServiceLoader;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.impl.addons.AddonRepositoryImpl;
 import org.jboss.forge.furnace.manager.impl.AddonManagerImpl;
 import org.jboss.forge.furnace.manager.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.furnace.manager.request.AddonActionRequest;
@@ -39,7 +40,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 public class Bootstrap
 {
 
-   private final Furnace forge;
+   private final Furnace furnace;
    private boolean exitAfter = false;
 
    public static void main(final String[] args)
@@ -93,9 +94,9 @@ public class Bootstrap
       boolean listInstalled = false;
       String installAddon = null;
       String removeAddon = null;
-      forge = ServiceLoader.load(Furnace.class).iterator().next();
+      furnace = ServiceLoader.load(Furnace.class).iterator().next();
 
-      forge.setArgs(args);
+      furnace.setArgs(args);
 
       if (args.length > 0)
       {
@@ -115,23 +116,28 @@ public class Bootstrap
             }
             else if ("--addonDir".equals(args[i]) || "-a".equals(args[i]))
             {
-               forge.addRepository(AddonRepositoryMode.MUTABLE, new File(args[++i]));
+               furnace.addRepository(AddonRepositoryMode.MUTABLE, new File(args[++i]));
             }
             else if ("--batchMode".equals(args[i]) || "-b".equals(args[i]))
             {
-               forge.setServerMode(false);
+               furnace.setServerMode(false);
             }
             else if ("--debug".equals(args[i]) || "-d".equals(args[i]))
             {
                // This is just to avoid the Unknown option: --debug message below
+            }
+            else if ("--version".equals(args[i]) || "-v".equals(args[i]))
+            {
+               System.out.println("Forge version " + AddonRepositoryImpl.getRuntimeAPIVersion());
+               exitAfter = true;
             }
             else
                System.out.println("Unknown option: " + args[i]);
          }
       }
 
-      if (forge.getRepositories().isEmpty())
-         forge.addRepository(AddonRepositoryMode.MUTABLE, new File(OperatingSystemUtils.getUserForgeDir(), "addons"));
+      if (furnace.getRepositories().isEmpty())
+         furnace.addRepository(AddonRepositoryMode.MUTABLE, new File(OperatingSystemUtils.getUserForgeDir(), "addons"));
       if (listInstalled)
          list();
       if (installAddon != null)
@@ -144,7 +150,7 @@ public class Bootstrap
    {
       try
       {
-         for (AddonRepository repository : forge.getRepositories())
+         for (AddonRepository repository : furnace.getRepositories())
          {
             System.out.println(repository.getRootDirectory().getCanonicalPath() + ":");
             List<AddonId> addons = repository.listEnabled();
@@ -157,6 +163,7 @@ public class Bootstrap
       catch (Exception e)
       {
          e.printStackTrace();
+         System.out.println("> Forge version [" + AddonRepositoryImpl.getRuntimeAPIVersion() + "]");
       }
       finally
       {
@@ -167,7 +174,7 @@ public class Bootstrap
    private void start()
    {
       if (!exitAfter)
-         forge.start();
+         furnace.start();
    }
 
    private void install(String addonCoordinates)
@@ -175,7 +182,7 @@ public class Bootstrap
       try
       {
          AddonDependencyResolver resolver = new MavenAddonDependencyResolver();
-         AddonManagerImpl addonManager = new AddonManagerImpl(forge, resolver);
+         AddonManagerImpl addonManager = new AddonManagerImpl(furnace, resolver);
 
          AddonId addon;
          // This allows forge --install maven
@@ -202,6 +209,7 @@ public class Bootstrap
       catch (Exception e)
       {
          e.printStackTrace();
+         System.out.println("> Forge version [" + AddonRepositoryImpl.getRuntimeAPIVersion() + "]");
       }
       finally
       {
@@ -222,7 +230,7 @@ public class Bootstrap
          else
          {
             String coordinates = "org.jboss.forge.addon:" + addonCoordinates;
-            REPOS: for (AddonRepository repository : forge.getRepositories())
+            REPOS: for (AddonRepository repository : furnace.getRepositories())
             {
                for (AddonId id : repository.listEnabled())
                {
@@ -247,6 +255,7 @@ public class Bootstrap
       catch (Exception e)
       {
          e.printStackTrace();
+         System.out.println("> Forge version [" + AddonRepositoryImpl.getRuntimeAPIVersion() + "]");
       }
       finally
       {
