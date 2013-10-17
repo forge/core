@@ -50,7 +50,7 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
       {
          Result result = shell.execute(interaction);
          failure = (result instanceof Failed);
-         if (result != null && result.getMessage() != null)
+         if (result != null && result.getMessage() != null && !result.getMessage().isEmpty())
          {
             if (failure)
             {

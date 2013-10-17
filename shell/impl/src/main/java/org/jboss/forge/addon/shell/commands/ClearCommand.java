@@ -36,7 +36,7 @@ public class ClearCommand extends AbstractShellCommand
    public Result execute(ShellContext context) throws Exception
    {
       context.getProvider().getConsole().clear();
-      return Results.success("");
+      return Results.success();
    }
 
 }
