@@ -37,15 +37,15 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
 {
 
    @Inject
-   @WithAttributes(label = "Container", required = true)
+   @WithAttributes(shortName = 'c', label = "Container", required = true)
    private UISelectOne<PersistenceContainer> container;
 
    @Inject
-   @WithAttributes(label = "Provider", required = true)
+   @WithAttributes(shortName = 'p', label = "Provider", required = true)
    private UISelectOne<PersistenceProvider> provider;
 
    @Inject
-   @WithAttributes(label = "Install a JPA 2 metamodel generator?")
+   @WithAttributes(shortName = 'm', label = "Install a JPA 2 metamodel generator?")
    private UIInput<Boolean> configureMetadata;
 
    @Inject

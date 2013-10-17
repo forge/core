@@ -39,11 +39,11 @@ import org.jboss.shrinkwrap.descriptor.api.persistence21.PersistenceUnit;
 public class PersistenceSetupConnectionStep extends AbstractJavaEECommand implements UIWizardStep
 {
    @Inject
-   @WithAttributes(label = "Database Type", required = true)
+   @WithAttributes(shortName = 't', label = "Database Type", required = true)
    private UISelectOne<DatabaseType> dbType;
 
    @Inject
-   @WithAttributes(label = "DataSource Name", required = true)
+   @WithAttributes(shortName = 'd', label = "DataSource Name", required = true)
    private UIInput<String> dataSourceName;
 
    @Inject
