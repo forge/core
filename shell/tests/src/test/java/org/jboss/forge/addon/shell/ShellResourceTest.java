@@ -85,6 +85,24 @@ public class ShellResourceTest
       tempDir.delete();
    }
 
+   @SuppressWarnings("unchecked")
+   @Test(timeout = 10000)
+   public void testRmCommand() throws TimeoutException
+   {
+      File tempDir = OperatingSystemUtils.createTempDir();
+      DirectoryResource tempResource = resourceFactory.create(tempDir).reify(DirectoryResource.class);
+      tempDir.deleteOnExit();
+      FileResource<?> fileTxt = tempResource.getChildOfType(FileResource.class, "file.txt");
+      fileTxt.createNewFile();
+      fileTxt.deleteOnExit();
+
+      Shell shell = shellTest.getShell();
+      shell.setCurrentResource(tempResource);
+      Result pwdResult = shellTest.execute("rm -f file.txt", 10, TimeUnit.SECONDS);
+      Assert.assertNotNull(pwdResult);
+      Assert.assertFalse(fileTxt.exists());
+   }
+
    @Test(timeout = 10000)
    public void testChangeDirCommandCompletion() throws TimeoutException
    {
