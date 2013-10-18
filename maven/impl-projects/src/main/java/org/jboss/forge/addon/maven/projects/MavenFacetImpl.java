@@ -64,10 +64,9 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
  */
 public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFacet, MavenFacet
 {
-   private ProjectBuildingRequest request;
    private ProjectBuildingResult buildingResult;
    private ProjectBuildingResult fullBuildingResult;
-   private ProjectBuilder builder = null;
+   private ProjectBuilder builder;
    private ResourceMonitor monitor;
    private volatile boolean invalidateBuildingResult;
 
@@ -114,7 +113,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          populator.populateFromSettings(executionRequest, container.getSettings());
          populator.populateDefaults(executionRequest);
          RepositorySystem system = plexus.lookup(RepositorySystem.class);
-         request = executionRequest.getProjectBuildingRequest();
+         ProjectBuildingRequest request = executionRequest.getProjectBuildingRequest();
 
          ArtifactRepository localRepository = RepositoryUtils.toArtifactRepository("local",
                   new File(settings.getLocalRepository()).toURI().toURL().toString(), null, true, true);
