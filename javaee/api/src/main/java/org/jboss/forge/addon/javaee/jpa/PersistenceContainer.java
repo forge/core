@@ -6,8 +6,8 @@
  */
 package org.jboss.forge.addon.javaee.jpa;
 
-import org.jboss.shrinkwrap.descriptor.api.persistence21.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence21.PersistenceUnit;
+import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
 
 /**
  * Performs configuration on a {@link JPADataSource} to ensure it is properly set up for the this implementation.

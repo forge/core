@@ -28,9 +28,9 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.util.Refactory;
-import org.jboss.shrinkwrap.descriptor.api.persistence21.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence21.PersistenceUnit;
-import org.jboss.shrinkwrap.descriptor.api.persistence21.PersistenceUnitTransactionType;
+import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
+import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnitTransactionType;
 
 /**
  * This class contains JPA specific operations

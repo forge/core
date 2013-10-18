@@ -17,9 +17,9 @@ import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.MetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
-import org.jboss.shrinkwrap.descriptor.api.persistence21.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence21.PersistenceUnit;
-import org.jboss.shrinkwrap.descriptor.api.persistence21.Properties;
+import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
+import org.jboss.shrinkwrap.descriptor.api.persistence20.Properties;
 
 public class EclipseLinkProvider implements PersistenceProvider
 {
