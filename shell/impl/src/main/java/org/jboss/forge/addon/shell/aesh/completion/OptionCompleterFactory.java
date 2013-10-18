@@ -38,11 +38,6 @@ public class OptionCompleterFactory
       {
          strategy = new FileOptionCompleter(cwd, Filter.DIRECTORY);
       }
-      else if (inputType == InputType.CHECKBOX || Boolean.class
-               .isAssignableFrom(component.getValueType()))
-      {
-         strategy = null;
-      }
       else if (component instanceof SelectComponent)
       {
          strategy = new SelectComponentOptionCompleter((SelectComponent<?, Object>) component, converterFactory);

@@ -58,7 +58,7 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
    private UISelectOne<String> contentType;
 
    @Inject
-   @WithAttributes(label = "Targets", required = true, type = InputType.CHECKBOX)
+   @WithAttributes(label = "Targets", required = true)
    private UISelectMany<JavaClass> targets;
 
    @Inject
