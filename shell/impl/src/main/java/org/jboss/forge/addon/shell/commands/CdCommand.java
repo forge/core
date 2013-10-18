@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.shell.commands;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -61,7 +62,8 @@ public class CdCommand extends AbstractShellCommand
    {
       Shell shell = context.getProvider();
       FileResource<?> currentResource = shell.getCurrentResource();
-      Iterator<String> it = arguments.getValue().iterator();
+      Iterable<String> value = arguments.getValue();
+      Iterator<String> it = value == null ? Collections.<String> emptyList().iterator() : value.iterator();
       final Result result;
       if (it.hasNext())
       {
