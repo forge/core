@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.projects.impl;
 
+import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,13 +25,20 @@ import org.jboss.forge.furnace.util.Assert;
 @Singleton
 public class InMemoryProjectCache implements ProjectCache
 {
-   private Map<String, Project> projects = new ConcurrentHashMap<String, Project>();
+   private final Map<String, WeakReference<Project>> projects = new ConcurrentHashMap<String, WeakReference<Project>>();
 
    @Override
    public Project get(DirectoryResource dir)
    {
       Assert.notNull(dir, "Directory Resource should not be null");
-      return projects.get(dir.getFullyQualifiedName());
+
+      WeakReference<Project> ref = projects.get(dir.getFullyQualifiedName());
+
+      Project project = null;
+      if (ref != null)
+         project = ref.get();
+
+      return project;
    }
 
    @Override
@@ -43,7 +51,7 @@ public class InMemoryProjectCache implements ProjectCache
    public void store(Project project)
    {
       Assert.notNull(project, "Project should not be null");
-      this.projects.put(project.getProjectRoot().getFullyQualifiedName(), project);
+      this.projects.put(project.getProjectRoot().getFullyQualifiedName(), new WeakReference<Project>(project));
    }
 
    @Override
