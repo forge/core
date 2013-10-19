@@ -31,6 +31,7 @@ import org.jboss.forge.furnace.util.Assert;
 import org.xadisk.additional.XAFileInputStreamWrapper;
 import org.xadisk.additional.XAFileOutputStreamWrapper;
 import org.xadisk.bridge.proxies.interfaces.Session;
+import org.xadisk.bridge.proxies.interfaces.XADiskBasicIOOperations.PermissionType;
 import org.xadisk.bridge.proxies.interfaces.XAFileInputStream;
 import org.xadisk.bridge.proxies.interfaces.XAFileOutputStream;
 import org.xadisk.bridge.proxies.interfaces.XAFileSystem;
@@ -158,6 +159,15 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
       {
          return session.fileExists(f);
       }
+      catch (InsufficientPermissionOnFileException pe)
+      {
+         if (pe.getMissingPermission() == PermissionType.READ_DIRECTORY && !pe.getPath().equals(f.getAbsolutePath()))
+         {
+            // see https://java.net/jira/browse/XADISK-120
+            return false;
+         }
+         throw new ResourceTransactionException(pe);
+      }
       catch (Exception e)
       {
          throw new ResourceTransactionException(e);
@@ -171,6 +181,15 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
       try
       {
          return session.fileExistsAndIsDirectory(f);
+      }
+      catch (InsufficientPermissionOnFileException pe)
+      {
+         if (pe.getMissingPermission() == PermissionType.READ_DIRECTORY && !pe.getPath().equals(f.getAbsolutePath()))
+         {
+            // see https://java.net/jira/browse/XADISK-120
+            return false;
+         }
+         throw new ResourceTransactionException(pe);
       }
       catch (Exception e)
       {
@@ -319,20 +338,8 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
          // Must create the whole structure
          LinkedList<File> stack = new LinkedList<File>();
          File parent = file;
-         while (parent != null)
+         while (parent != null && !fileExistsAndIsDirectory(parent))
          {
-            try
-            {
-               if (session.fileExistsAndIsDirectory(parent))
-               {
-                  break;
-               }
-            }
-            catch (InsufficientPermissionOnFileException ignore)
-            {
-               // This exception happens if there are nested directories not yet created.
-               // Just ignore
-            }
             stack.push(parent);
             parent = parent.getParentFile();
          }
@@ -354,7 +361,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
       assertSessionCreated();
       try
       {
-         //This is the behavior of append = false in FileOutputStream
+         // This is the behavior of append = false in FileOutputStream
          session.truncateFile(f, 0L);
          XAFileOutputStream xaStream = session.createXAFileOutputStream(f, false);
          return new XAFileOutputStreamWrapper(xaStream);
