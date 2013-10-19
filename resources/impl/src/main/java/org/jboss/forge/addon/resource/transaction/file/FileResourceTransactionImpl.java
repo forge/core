@@ -354,6 +354,8 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
       assertSessionCreated();
       try
       {
+         //This is the behavior of append = false in FileOutputStream
+         session.truncateFile(f, 0L);
          XAFileOutputStream xaStream = session.createXAFileOutputStream(f, false);
          return new XAFileOutputStreamWrapper(xaStream);
       }
