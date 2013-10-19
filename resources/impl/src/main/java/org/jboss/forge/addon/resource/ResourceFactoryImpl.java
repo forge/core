@@ -13,7 +13,7 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.resource.monitor.FileMonitor;
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
-import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
+import org.jboss.forge.addon.resource.transaction.file.FileResourceTransactionImpl;
 import org.jboss.forge.addon.resource.transaction.file.FileResourceTransactionManager;
 import org.jboss.forge.addon.resource.util.RelatedClassComparator;
 import org.jboss.forge.furnace.addons.AddonRegistry;
@@ -103,8 +103,23 @@ public class ResourceFactoryImpl implements ResourceFactory
    }
 
    @Override
-   public ResourceTransaction getTransaction()
+   public FileResourceTransactionImpl getTransaction()
    {
       return transactionManager.getCurrentTransaction(this);
    }
+
+   @Override
+   public FileResourceOperations getFileOperations()
+   {
+      FileResourceTransactionImpl transaction = getTransaction();
+      if (transaction.isStarted())
+      {
+         return transaction;
+      }
+      else
+      {
+         return DefaultFileResourceOperations.INSTANCE;
+      }
+   }
+
 }

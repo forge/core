@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.resource;
 
+import java.io.File;
+
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 
@@ -54,4 +56,12 @@ public interface ResourceFactory
     *         if the implementation does not support it.
     */
    ResourceTransaction getTransaction();
+
+   /**
+    * Returns the operational layer for {@link File} objects. This object should be used if operations on a {@link File}
+    * should happen in a transactional context.
+    * 
+    * The default implementation invokes the {@link File} methods where applicable
+    */
+   FileResourceOperations getFileOperations();
 }

@@ -28,6 +28,7 @@ import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequestPopulator;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.building.StringModelSource;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -245,7 +246,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    @Override
    public MavenPomResource getPomResource()
    {
-      return getFaceted().getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
+      return getFaceted().getProjectRoot().getChildOfType(MavenPomResource.class, "pom.xml");
    }
 
    @Override
@@ -305,13 +306,13 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       {
          ProjectBuildingRequest request = null;
          request = getRequest();
-         File pomFile = getPomResource().getUnderlyingResourceObject();
+         MavenPomResource pomResource = getPomResource();
          if (request != null)
          {
             try
             {
                request.setResolveDependencies(true);
-               buildingResult = getBuilder().build(pomFile, request);
+               buildingResult = getBuilder().build(new StringModelSource(pomResource.getContents()), request);
                fullBuildingResult = buildingResult;
                invalidateBuildingResult = false;
             }

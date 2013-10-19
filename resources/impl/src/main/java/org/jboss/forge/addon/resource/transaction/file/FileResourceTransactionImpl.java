@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -38,6 +39,7 @@ import org.xadisk.filesystem.NativeSession;
 import org.xadisk.filesystem.exceptions.DirectoryNotEmptyException;
 import org.xadisk.filesystem.exceptions.FileAlreadyExistsException;
 import org.xadisk.filesystem.exceptions.FileNotExistsException;
+import org.xadisk.filesystem.exceptions.InsufficientPermissionOnFileException;
 import org.xadisk.filesystem.exceptions.NoTransactionAssociatedException;
 
 /**
@@ -279,6 +281,10 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
          session.createFile(file, false);
          return true;
       }
+      catch (FileAlreadyExistsException fae)
+      {
+         return false;
+      }
       catch (Exception e)
       {
          throw new ResourceTransactionException(e);
@@ -294,6 +300,10 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
          session.createFile(file, true);
          return true;
       }
+      catch (FileAlreadyExistsException fae)
+      {
+         return false;
+      }
       catch (Exception e)
       {
          throw new ResourceTransactionException(e);
@@ -306,11 +316,30 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
       assertSessionCreated();
       try
       {
-         session.createFile(file.getParentFile(), true);
-         return true;
-      }
-      catch (FileAlreadyExistsException fae)
-      {
+         // Must create the whole structure
+         LinkedList<File> stack = new LinkedList<File>();
+         File parent = file;
+         while (parent != null)
+         {
+            try
+            {
+               if (session.fileExistsAndIsDirectory(parent))
+               {
+                  break;
+               }
+            }
+            catch (InsufficientPermissionOnFileException ignore)
+            {
+               // This exception happens if there are nested directories not yet created.
+               // Just ignore
+            }
+            stack.push(parent);
+            parent = parent.getParentFile();
+         }
+         while (!stack.isEmpty())
+         {
+            session.createFile(stack.pop(), true);
+         }
          return true;
       }
       catch (Exception e)

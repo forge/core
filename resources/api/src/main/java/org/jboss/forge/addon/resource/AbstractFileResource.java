@@ -1,22 +1,15 @@
 package org.jboss.forge.addon.resource;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
-import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
-import org.jboss.forge.furnace.util.Streams;
 
 /**
  * A standard, built-in resource for representing files on the filesystem.
@@ -248,8 +241,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       {
          if (!exists())
          {
-            mkdirs();
-            delete();
+            getParent().mkdirs();
             if (!createNewFile())
             {
                throw new IOException("Failed to create file: " + file);
@@ -403,214 +395,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
 
    protected FileResourceOperations getFileOperations()
    {
-      ResourceTransaction transaction;
-      try
-      {
-         transaction = resourceFactory.getTransaction();
-      }
-      catch (UnsupportedOperationException uoe)
-      {
-         return DefaultFileOperations.INSTANCE;
-      }
-      if (transaction.isStarted())
-      {
-         // TODO: how will other resource types participate in a transaction? XA?
-         return (FileResourceOperations) transaction;
-      }
-      else
-      {
-         return DefaultFileOperations.INSTANCE;
-      }
+      return resourceFactory.getFileOperations();
    }
 
-   private static enum DefaultFileOperations implements FileResourceOperations
-   {
-      INSTANCE;
-
-      @Override
-      public boolean fileExists(File f)
-      {
-         return f.exists();
-      }
-
-      @Override
-      public boolean fileExistsAndIsDirectory(File f)
-      {
-         return f.isDirectory();
-      }
-
-      @Override
-      public File[] listFiles(File f)
-      {
-         return f.listFiles();
-      }
-
-      @Override
-      public long getFileLength(File f)
-      {
-         return f.length();
-      }
-
-      @Override
-      public boolean deleteFile(File file)
-      {
-         return file.delete();
-      }
-
-      @Override
-      public void deleteFileOnExit(File file)
-      {
-         file.deleteOnExit();
-      }
-
-      @Override
-      public boolean createNewFile(File file) throws IOException
-      {
-         return file.createNewFile();
-      }
-
-      @Override
-      public boolean mkdir(File file)
-      {
-         return file.mkdir();
-      }
-
-      @Override
-      public boolean mkdirs(File file)
-      {
-         return file.mkdirs();
-      }
-
-      @Override
-      public OutputStream createOutputStream(File file) throws IOException
-      {
-         return new FileOutputStream(file);
-      }
-
-      @Override
-      public InputStream createInputStream(File file) throws IOException
-      {
-         return new BufferedInputStream(new FileInputStream(file));
-      }
-
-      @Override
-      public boolean renameFile(File srcFile, File destFile)
-      {
-         if (srcFile == null)
-         {
-            throw new NullPointerException("Source must not be null");
-         }
-         if (destFile == null)
-         {
-            throw new NullPointerException("Destination must not be null");
-         }
-         return srcFile.renameTo(destFile);
-      }
-
-      /**
-       * Copies a file to a new location.
-       * <p>
-       * This method copies the contents of the specified source file to the specified destination file. The directory
-       * holding the destination file is created if it does not exist. If the destination file exists, then this method
-       * will overwrite it.
-       * <p>
-       * <strong>Note:</strong> Setting <code>preserveFileDate</code> to <code>true</code> tries to preserve the file's
-       * last modified date/times using {@link File#setLastModified(long)}, however it is not guaranteed that the
-       * operation will succeed. If the modification operation fails, no indication is provided.
-       * 
-       * @param srcFile an existing file to copy, must not be <code>null</code>
-       * @param destFile the new file, must not be <code>null</code>
-       * @param preserveFileDate true if the file date of the copy should be the same as the original
-       * 
-       * @throws NullPointerException if source or destination is <code>null</code>
-       * @throws IOException if source or destination is invalid
-       * @throws IOException if an IO error occurs during copying
-       * @see #copyFileToDirectory(File, File, boolean)
-       */
-      @Override
-      public void copyFile(File srcFile, File destFile) throws IOException
-      {
-         if (srcFile == null)
-         {
-            throw new NullPointerException("Source must not be null");
-         }
-         if (destFile == null)
-         {
-            throw new NullPointerException("Destination must not be null");
-         }
-         if (srcFile.exists() == false)
-         {
-            throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
-         }
-         if (srcFile.isDirectory())
-         {
-            throw new IOException("Source '" + srcFile + "' exists but is a directory");
-         }
-         if (srcFile.getCanonicalPath().equals(destFile.getCanonicalPath()))
-         {
-            throw new IOException("Source '" + srcFile + "' and destination '" + destFile + "' are the same");
-         }
-         if (destFile.getParentFile() != null && destFile.getParentFile().exists() == false)
-         {
-            if (destFile.getParentFile().mkdirs() == false)
-            {
-               throw new IOException("Destination '" + destFile + "' directory cannot be created");
-            }
-         }
-         if (destFile.exists() && destFile.canWrite() == false)
-         {
-            throw new IOException("Destination '" + destFile + "' exists but is read-only");
-         }
-         doCopyFile(srcFile, destFile);
-      }
-
-      /**
-       * Internal copy file method.
-       * 
-       * @param srcFile the validated source file, must not be <code>null</code>
-       * @param destFile the validated destination file, must not be <code>null</code>
-       * @throws IOException if an error occurs
-       */
-      private void doCopyFile(File srcFile, File destFile) throws IOException
-      {
-         if (destFile.exists() && destFile.isDirectory())
-         {
-            throw new IOException("Destination '" + destFile + "' exists but is a directory");
-         }
-
-         FileInputStream fis = null;
-         FileOutputStream fos = null;
-         FileChannel input = null;
-         FileChannel output = null;
-         try
-         {
-            fis = new FileInputStream(srcFile);
-            fos = new FileOutputStream(destFile);
-            input = fis.getChannel();
-            output = fos.getChannel();
-            long size = input.size();
-            long pos = 0;
-            long count = 0;
-            long FIFTY_MB = (1024L * 1024L) * 50L;
-            while (pos < size)
-            {
-               count = (size - pos) > FIFTY_MB ? FIFTY_MB : (size - pos);
-               pos += output.transferFrom(input, pos, count);
-            }
-         }
-         finally
-         {
-            Streams.closeQuietly(output);
-            Streams.closeQuietly(fos);
-            Streams.closeQuietly(input);
-            Streams.closeQuietly(fis);
-         }
-
-         if (srcFile.length() != destFile.length())
-         {
-            throw new IOException("Failed to copy full contents from '" +
-                     srcFile + "' to '" + destFile + "'");
-         }
-      }
-   }
 }

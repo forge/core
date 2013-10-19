@@ -38,7 +38,7 @@ public class XMLResourceImpl extends AbstractFileResource<XMLResource> implement
    @Override
    public Node getXmlSource() throws FileNotFoundException
    {
-      return XMLParser.parse(file);
+      return XMLParser.parse(getResourceInputStream());
    }
 
    @Override

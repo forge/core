@@ -8,7 +8,7 @@
 package org.jboss.forge.addon.maven.resources;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,10 +19,10 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.jboss.forge.addon.maven.resources.MavenPomResource;
 import org.jboss.forge.addon.resource.AbstractFileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.furnace.util.Streams;
 
 /**
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
@@ -107,21 +107,21 @@ public class MavenPomResourceImpl extends AbstractFileResource<MavenPomResource>
    {
       if (currentModel == null)
       {
+         InputStream stream = null;
          try
          {
             MavenXpp3Reader reader = new MavenXpp3Reader();
-            FileInputStream stream = new FileInputStream(getUnderlyingResourceObject());
-            if (stream.available() > 0)
-            {
-               currentModel = reader.read(stream);
-            }
-            stream.close();
-
+            stream = getResourceInputStream();
+            currentModel = reader.read(stream);
             currentModel.setPomFile(getUnderlyingResourceObject());
          }
          catch (Exception e)
          {
             throw new RuntimeException(e);
+         }
+         finally
+         {
+            Streams.closeQuietly(stream);
          }
       }
    }

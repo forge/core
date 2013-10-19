@@ -13,6 +13,8 @@ import java.util.List;
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.addon.resource.AbstractFileResource;
+import org.jboss.forge.addon.resource.DefaultFileResourceOperations;
+import org.jboss.forge.addon.resource.FileResourceOperations;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceFilter;
@@ -73,10 +75,16 @@ public class FileResourceFactory implements ResourceFactory
    {
       throw new UnsupportedOperationException();
    }
-   
+
    @Override
    public ResourceTransaction getTransaction()
    {
       throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public FileResourceOperations getFileOperations()
+   {
+      return DefaultFileResourceOperations.INSTANCE;
    }
 }

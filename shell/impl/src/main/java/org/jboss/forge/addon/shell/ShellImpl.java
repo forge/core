@@ -112,6 +112,7 @@ public class ShellImpl implements Shell
       catch (Exception e)
       {
          firePostCommandFailureListeners(shellCommand, e);
+         e.printStackTrace();
          result = Results.fail(e.getMessage(), e);
       }
       return result;
