@@ -146,8 +146,7 @@ public class FileResourceGeneratorTest
    @Test
    public void testDirectoryFlags() throws Exception
    {
-      File file = File.createTempFile("forge", "testDirectoryFlags");
-      file.delete();
+      File file = OperatingSystemUtils.createTempDir();
       DirectoryResource resource = factory.create(file).reify(DirectoryResource.class);
       resource.deleteOnExit();
       resource.mkdir();
@@ -168,8 +167,7 @@ public class FileResourceGeneratorTest
    @Test
    public void testRenameResource() throws Exception
    {
-      File tempFile = File.createTempFile("forge", "testRenameResource");
-      tempFile.delete();
+      File tempFile = OperatingSystemUtils.createTempDir();
       DirectoryResource tempDir = factory.create(tempFile).reify(DirectoryResource.class);
       tempDir.deleteOnExit();
 
