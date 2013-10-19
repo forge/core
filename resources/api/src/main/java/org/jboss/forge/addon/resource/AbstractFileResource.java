@@ -283,10 +283,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    {
       try
       {
-         if (mkdirs())
-         {
-            delete();
-         }
+         getParent().mkdirs();
          if (getFileOperations().createNewFile(file))
          {
             return true;
