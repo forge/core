@@ -311,7 +311,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
             try
             {
                request.setResolveDependencies(true);
-               buildingResult = getBuilder().build(pomResource.getUnderlyingResourceObject(), request);
+               buildingResult = getBuilder().build(new FileResourceModelSource(pomResource), request);
                fullBuildingResult = buildingResult;
                invalidateBuildingResult = false;
             }
