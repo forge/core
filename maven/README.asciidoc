@@ -21,6 +21,10 @@ This addon *exports services* for use in other addons. The Maven addon implement
 |yes
 |no
 
+|parser-xml
+|yes
+|no
+
 |projects
 |no
 |yes

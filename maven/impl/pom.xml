@@ -36,18 +36,22 @@
       </dependency>
 
       <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>xml-parser</artifactId>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>parser-xml</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
       </dependency>
 
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>resources-api</artifactId>
+         <artifactId>resources</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>dependencies-api</artifactId>
+         <artifactId>dependencies</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
    </dependencies>

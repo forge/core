@@ -53,12 +53,11 @@ public abstract class AbstractResource<T> extends AbstractFaceted<ResourceFacet>
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public <R extends Resource<?>> R reify(final Class<R> type)
    {
-      if (type.isAssignableFrom(this.getClass()))
+      if (type.isInstance(this))
       {
-         return (R) this;
+         return type.cast(this);
       }
       else
       {
@@ -68,7 +67,7 @@ public abstract class AbstractResource<T> extends AbstractFaceted<ResourceFacet>
 
    /**
     * Strategy method for returning child resources. Subclasses should implement or override this method.
-    *
+    * 
     * @return
     */
    protected abstract List<Resource<?>> doListResources();
@@ -98,7 +97,7 @@ public abstract class AbstractResource<T> extends AbstractFaceted<ResourceFacet>
 
       return result;
    }
-   
+
    @Override
    public String getContents()
    {

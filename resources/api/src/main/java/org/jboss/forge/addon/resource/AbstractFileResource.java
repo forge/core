@@ -315,21 +315,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    }
 
    @Override
-   @SuppressWarnings({ "unchecked", "rawtypes" })
-   public <R extends Resource<?>> R reify(final Class<R> type)
-   {
-      Resource<?> result = resourceFactory.create((Class) type, file);
-      if (result != null && type.isAssignableFrom(result.getClass()))
-      {
-         return (R) result;
-      }
-      else
-      {
-         return null;
-      }
-   }
-
-   @Override
    public boolean renameTo(final String pathspec)
    {
       return renameTo(new File(pathspec));

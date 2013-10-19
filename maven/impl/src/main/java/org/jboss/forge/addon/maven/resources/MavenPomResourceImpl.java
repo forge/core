@@ -19,7 +19,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.jboss.forge.addon.resource.AbstractFileResource;
+import org.jboss.forge.addon.parser.xml.resources.XMLResourceImpl;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.util.Streams;
@@ -29,7 +29,7 @@ import org.jboss.forge.furnace.util.Streams;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Vetoed
-public class MavenPomResourceImpl extends AbstractFileResource<MavenPomResource> implements MavenPomResource
+public class MavenPomResourceImpl extends XMLResourceImpl implements MavenPomResource
 {
    private Model currentModel;
 

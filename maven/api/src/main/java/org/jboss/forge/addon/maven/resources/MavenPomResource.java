@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.maven.resources;
 
 import org.apache.maven.model.Model;
+import org.jboss.forge.addon.parser.xml.resources.XMLResource;
 import org.jboss.forge.addon.resource.FileResource;
 
 /**
@@ -18,7 +19,7 @@ import org.jboss.forge.addon.resource.FileResource;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface MavenPomResource extends FileResource<MavenPomResource>
+public interface MavenPomResource extends XMLResource
 {
    /**
     * Get the current project {@link Model}
