@@ -378,8 +378,10 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileRes
       assertSessionCreated();
       try
       {
+         long fileLength = session.getFileLength(f);
          XAFileInputStream xaStream = session.createXAFileInputStream(f);
-         return new XAFileInputStreamWrapper(xaStream);
+         XAFileInputStreamWrapper xaWrapper = new XAFileInputStreamWrapper(xaStream);
+         return new AvailableInputStreamWrapper(xaWrapper, (int) fileLength);
       }
       catch (Exception e)
       {
