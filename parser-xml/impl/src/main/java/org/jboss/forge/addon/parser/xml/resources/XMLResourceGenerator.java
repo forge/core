@@ -26,7 +26,8 @@ public class XMLResourceGenerator implements ResourceGenerator<XMLResource, File
    }
 
    @Override
-   public <T extends Resource<File>> Class<?> getResourceType(Class<XMLResource> type, File resource)
+   public <T extends Resource<File>> Class<?> getResourceType(ResourceFactory factory, Class<XMLResource> type,
+            File resource)
    {
       return XMLResource.class;
    }

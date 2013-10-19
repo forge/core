@@ -59,7 +59,7 @@ public class ResourceFactoryImpl implements ResourceFactory
          {
             if (generator.handles(type, underlyingResource))
             {
-               Class resourceType = generator.getResourceType(type, underlyingResource);
+               Class resourceType = generator.getResourceType(this, type, underlyingResource);
                if (type.isAssignableFrom(resourceType))
                {
                   generated.put(resourceType, generator);

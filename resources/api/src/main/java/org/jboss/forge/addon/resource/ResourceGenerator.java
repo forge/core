@@ -24,8 +24,9 @@ public interface ResourceGenerator<RESOURCETYPE, UNDERLYINGTYPE>
 
    /**
     * Get the {@link Resource} type that will be generated for the given {@link Class} type and object instance.
+    * @param factory TODO
     */
-   public <T extends Resource<UNDERLYINGTYPE>> Class<?> getResourceType(Class<RESOURCETYPE> type,
-            final UNDERLYINGTYPE resource);
+   public <T extends Resource<UNDERLYINGTYPE>> Class<?> getResourceType(ResourceFactory factory,
+            Class<RESOURCETYPE> type, final UNDERLYINGTYPE resource);
 
 }

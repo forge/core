@@ -22,8 +22,13 @@ public class FileResourceGenerator implements ResourceGenerator<FileResource<?>,
    }
 
    @Override
-   public <T extends Resource<File>> Class<?> getResourceType(Class<FileResource<?>> type, File resource)
+   public <T extends Resource<File>> Class<?> getResourceType(ResourceFactory factory, Class<FileResource<?>> type,
+            File resource)
    {
-      return type;
+      FileResourceOperations fileOperations = factory.getFileOperations();
+      if ((DirectoryResource.class.isAssignableFrom(type) && (!fileOperations.fileExists(resource) || fileOperations
+               .fileExistsAndIsDirectory(resource))) || (fileOperations.fileExistsAndIsDirectory(resource)))
+         return DirectoryResource.class;
+      return FileResource.class;
    }
 }

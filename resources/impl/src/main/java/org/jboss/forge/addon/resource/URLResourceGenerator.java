@@ -11,9 +11,9 @@ import java.net.URL;
 
 /**
  * Generates {@link URLResource} objects
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class URLResourceGenerator implements ResourceGenerator<URLResource, URL>
 {
@@ -31,7 +31,8 @@ public class URLResourceGenerator implements ResourceGenerator<URLResource, URL>
    }
 
    @Override
-   public <T extends Resource<URL>> Class<?> getResourceType(Class<URLResource> type, URL resource)
+   public <T extends Resource<URL>> Class<?> getResourceType(ResourceFactory factory, Class<URLResource> type,
+            URL resource)
    {
       return type;
    }

@@ -26,7 +26,8 @@ public class JavaResourceGenerator implements ResourceGenerator<JavaResource, Fi
    }
 
    @Override
-   public <T extends Resource<File>> Class<?> getResourceType(Class<JavaResource> type, File resource)
+   public <T extends Resource<File>> Class<?> getResourceType(ResourceFactory factory, Class<JavaResource> type,
+            File resource)
    {
       return JavaResource.class;
    }

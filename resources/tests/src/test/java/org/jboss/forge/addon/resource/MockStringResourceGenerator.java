@@ -1,6 +1,5 @@
 package org.jboss.forge.addon.resource;
 
-
 public class MockStringResourceGenerator implements ResourceGenerator<MockStringResource, String>
 {
    @Override
@@ -23,7 +22,8 @@ public class MockStringResourceGenerator implements ResourceGenerator<MockString
    }
 
    @Override
-   public <T extends Resource<String>> Class<?> getResourceType(Class<MockStringResource> type, String resource)
+   public <T extends Resource<String>> Class<?> getResourceType(ResourceFactory factory,
+            Class<MockStringResource> type, String resource)
    {
       return MockStringResource.class;
    }

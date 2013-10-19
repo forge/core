@@ -32,7 +32,8 @@ public class MavenResourceGenerator implements ResourceGenerator<MavenPomResourc
    }
 
    @Override
-   public <T extends Resource<File>> Class<?> getResourceType(Class<MavenPomResource> type, File resource)
+   public <T extends Resource<File>> Class<?> getResourceType(ResourceFactory factory, Class<MavenPomResource> type,
+            File resource)
    {
       return MavenPomResource.class;
    }
