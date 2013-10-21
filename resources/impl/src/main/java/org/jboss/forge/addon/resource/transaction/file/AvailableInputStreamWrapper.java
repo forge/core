@@ -12,13 +12,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * This class provides an initial value for the delegated {@link InputStream} (normally the file size).
+ * This class provides an initial value for the {@link InputStream#available()} method in the delegated stream (Eg: the
+ * file size).
  * 
- * After a read operation read is called, it returns the available value from the underlying
+ * After {@link InputStream#read()} is called, it returns the available value from the delegated {@link InputStream}
  * 
- * This is used in {@link FileResourceTransactionImpl} because since some callers use the
- * {@link InputStream#available()} method to check if the stream can be read (however they shouldn't as per the
- * javadoc).
+ * This is used in {@link FileResourceTransactionImpl} because some callers use the {@link InputStream#available()}
+ * method to check if the stream can be read (ShrinkWrap Resolver - however they shouldn't as per the javadoc).
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
