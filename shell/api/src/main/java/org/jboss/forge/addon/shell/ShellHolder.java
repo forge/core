@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
@@ -22,7 +21,6 @@ import org.jboss.aesh.console.settings.SettingsBuilder;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@Singleton
 public class ShellHolder
 {
    @Inject
