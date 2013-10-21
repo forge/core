@@ -17,7 +17,7 @@ import java.io.OutputStream;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public interface FileResourceOperations
+public interface FileOperations
 {
    public boolean fileExists(File file);
 

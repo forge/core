@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.jboss.forge.addon.resource.FileResourceOperations;
+import org.jboss.forge.addon.resource.FileOperations;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.events.ResourceCreated;
@@ -48,7 +48,7 @@ import org.xadisk.filesystem.exceptions.NoTransactionAssociatedException;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class FileResourceTransactionImpl implements ResourceTransaction, FileResourceOperations
+public class FileResourceTransactionImpl implements ResourceTransaction, FileOperations
 {
    private final XAFileSystem fileSystem;
    private final ResourceFactory resourceFactory;

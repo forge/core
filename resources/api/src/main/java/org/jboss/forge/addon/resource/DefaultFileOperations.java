@@ -20,11 +20,11 @@ import java.nio.channels.FileChannel;
 import org.jboss.forge.furnace.util.Streams;
 
 /**
- * Default implementation for {@link FileResourceOperations} interface
+ * Default implementation for {@link FileOperations} interface
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public enum DefaultFileResourceOperations implements FileResourceOperations
+public enum DefaultFileOperations implements FileOperations
 {
    INSTANCE;
 

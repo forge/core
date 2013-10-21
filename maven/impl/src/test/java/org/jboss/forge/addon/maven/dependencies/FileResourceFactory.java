@@ -13,8 +13,8 @@ import java.util.List;
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.addon.resource.AbstractFileResource;
-import org.jboss.forge.addon.resource.DefaultFileResourceOperations;
-import org.jboss.forge.addon.resource.FileResourceOperations;
+import org.jboss.forge.addon.resource.DefaultFileOperations;
+import org.jboss.forge.addon.resource.FileOperations;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceFilter;
@@ -83,8 +83,8 @@ public class FileResourceFactory implements ResourceFactory
    }
 
    @Override
-   public FileResourceOperations getFileOperations()
+   public FileOperations getFileOperations()
    {
-      return DefaultFileResourceOperations.INSTANCE;
+      return DefaultFileOperations.INSTANCE;
    }
 }

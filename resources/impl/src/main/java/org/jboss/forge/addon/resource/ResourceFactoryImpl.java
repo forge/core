@@ -109,7 +109,7 @@ public class ResourceFactoryImpl implements ResourceFactory
    }
 
    @Override
-   public FileResourceOperations getFileOperations()
+   public FileOperations getFileOperations()
    {
       FileResourceTransactionImpl transaction = getTransaction();
       if (transaction.isStarted())
@@ -118,7 +118,7 @@ public class ResourceFactoryImpl implements ResourceFactory
       }
       else
       {
-         return DefaultFileResourceOperations.INSTANCE;
+         return DefaultFileOperations.INSTANCE;
       }
    }
 

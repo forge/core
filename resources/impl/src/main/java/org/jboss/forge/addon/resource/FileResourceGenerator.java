@@ -14,7 +14,7 @@ public class FileResourceGenerator implements ResourceGenerator<FileResource<?>,
    @SuppressWarnings("unchecked")
    public <T extends Resource<File>> T getResource(ResourceFactory factory, Class<FileResource<?>> type, File resource)
    {
-      FileResourceOperations fileOperations = factory.getFileOperations();
+      FileOperations fileOperations = factory.getFileOperations();
       if ((DirectoryResource.class.isAssignableFrom(type) && (!fileOperations.fileExists(resource) || fileOperations
                .fileExistsAndIsDirectory(resource))) || (fileOperations.fileExistsAndIsDirectory(resource)))
          return (T) new DirectoryResourceImpl(factory, resource);
@@ -25,7 +25,7 @@ public class FileResourceGenerator implements ResourceGenerator<FileResource<?>,
    public <T extends Resource<File>> Class<?> getResourceType(ResourceFactory factory, Class<FileResource<?>> type,
             File resource)
    {
-      FileResourceOperations fileOperations = factory.getFileOperations();
+      FileOperations fileOperations = factory.getFileOperations();
       if ((DirectoryResource.class.isAssignableFrom(type) && (!fileOperations.fileExists(resource) || fileOperations
                .fileExistsAndIsDirectory(resource))) || (fileOperations.fileExistsAndIsDirectory(resource)))
          return DirectoryResource.class;

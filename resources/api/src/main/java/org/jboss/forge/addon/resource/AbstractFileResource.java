@@ -369,7 +369,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       return resourceFactory.monitor(this, filter);
    }
 
-   protected FileResourceOperations getFileOperations()
+   protected FileOperations getFileOperations()
    {
       return resourceFactory.getFileOperations();
    }

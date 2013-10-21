@@ -63,5 +63,5 @@ public interface ResourceFactory
     * 
     * The default implementation invokes the {@link File} methods where applicable
     */
-   FileResourceOperations getFileOperations();
+   FileOperations getFileOperations();
 }
