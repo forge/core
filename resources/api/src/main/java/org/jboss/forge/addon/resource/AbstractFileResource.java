@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.util.Streams;
 
 /**
  * A standard, built-in resource for representing files on the filesystem.
@@ -251,20 +252,13 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          OutputStream out = getFileOperations().createOutputStream(file);
          try
          {
-            byte buf[] = new byte[1024];
-            int len;
-            while ((len = data.read(buf)) > 0)
-            {
-               out.write(buf, 0, len);
-            }
+            Streams.write(data, out);
          }
          finally
          {
-            if (data != null)
-               data.close();
-
+            Streams.closeQuietly(data);
             out.flush();
-            out.close();
+            Streams.closeQuietly(out);
             if (OperatingSystemUtils.isWindows())
             {
                System.gc();
