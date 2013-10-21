@@ -9,7 +9,6 @@ package org.jboss.forge.addon.shell;
 import java.io.Closeable;
 
 import org.jboss.aesh.console.AeshConsole;
-import org.jboss.aesh.console.Console;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.UIProvider;
 
@@ -22,7 +21,7 @@ import org.jboss.forge.addon.ui.UIProvider;
 public interface Shell extends UIProvider, Closeable
 {
    /**
-    * Get the native {@link Console} object.
+    * Get the native {@link AeshConsole} object.
     */
    public AeshConsole getConsole();
 
