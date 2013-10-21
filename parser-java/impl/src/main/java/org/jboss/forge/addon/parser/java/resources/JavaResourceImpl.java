@@ -129,7 +129,7 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    @Override
    public JavaSource<?> getJavaSource() throws FileNotFoundException
    {
-      return JavaParser.parse(file);
+      return JavaParser.parse(getResourceInputStream());
    }
 
    @Override
