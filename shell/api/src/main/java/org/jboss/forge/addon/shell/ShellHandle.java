@@ -21,7 +21,7 @@ import org.jboss.aesh.console.settings.SettingsBuilder;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class ShellHolder
+public class ShellHandle
 {
    @Inject
    private ShellFactory shellFactory;
