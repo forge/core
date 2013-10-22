@@ -21,15 +21,13 @@ Forge 2 is packaged inside an Eclipse plugin and also as a standalone ZIP file. 
 It is worth mentioning that the Eclipse plugin does not support access to shell yet.
 
 - Eclipse Update Site - http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/
-- Command line tools - https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha12&e=zip
+- Command line tools - https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha14&e=zip
 
 
 === Get Started with the Command line tools:
 
-NOTE: The shell is not fully working at the moment, so we recommend you to use the Forge 2 Eclipse Plugin
-
-- Download link:https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha12&e=zip[JBoss Forge 2.0.0.Alpha12]
-- Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha12/bin folder
+- Download link:https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha14&e=zip[JBoss Forge 2.0.0.Alpha14]
+- Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha14/bin folder
 
 Forge is now ready to go. 
 
