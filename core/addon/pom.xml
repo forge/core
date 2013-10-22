@@ -77,6 +77,11 @@
       <artifactId>ui</artifactId>
       <classifier>forge-addon</classifier>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.forge.addon</groupId>
+      <artifactId>shell</artifactId>
+      <classifier>forge-addon</classifier>
+    </dependency>    
   </dependencies>
   
   <build>
