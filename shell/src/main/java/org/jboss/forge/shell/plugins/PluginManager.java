@@ -157,13 +157,16 @@ public class PluginManager
                      + "] was not correctly marked as PROVIDED scope; this has been corrected.");
             deps.addDirectDependency(DependencyBuilder.create(dependency).setScopeType(ScopeType.PROVIDED));
          }
-         else if (dependency.getGroupId().equals("org.jboss.forge")
-                  && !providedDeps.contains(dependency.getArtifactId())
-                  && !ScopeType.TEST.equals(deps.getEffectiveDependency(dependency).getScopeTypeEnum()))
+         else if ("org.jboss.forge".equals(dependency.getGroupId())
+                  && !providedDeps.contains(dependency.getArtifactId()))
          {
-            ShellMessages.warn(shell,
-                     "Plugin has a dependency on internal Forge API [" + dependency
-                              + "] - this is not allowed and may cause failures.");
+            Dependency effectiveDependency = deps.getEffectiveDependency(dependency);
+            if (effectiveDependency != null && ScopeType.TEST != effectiveDependency.getScopeTypeEnum())
+            {
+               ShellMessages.warn(shell,
+                        "Plugin has a dependency on internal Forge API [" + dependency
+                                 + "] - this is not allowed and may cause failures.");
+            }
          }
       }
 
@@ -177,7 +180,8 @@ public class PluginManager
       }
       else
       {
-         rootProject.getFacet(PackagingFacet.class).createBuilder().addArguments("clean", "install").runTests(false).build();
+         rootProject.getFacet(PackagingFacet.class).createBuilder().addArguments("clean", "install").runTests(false)
+                  .build();
          artifact = pluginProject.getFacet(PackagingFacet.class).getFinalArtifact();
       }
       // However, get only the necessary plugin artifact
@@ -355,12 +359,12 @@ public class PluginManager
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       List<DependencyResource> pluginDependencies = new ArrayList<DependencyResource>();
-      
+
       // Hack to invalidate the cached full project build result in the MavenCoreFacet
-      // Thie ensures that resolution of any unresolved dependencies in a multi-module project will be re-attempted. 
+      // Thie ensures that resolution of any unresolved dependencies in a multi-module project will be re-attempted.
       MavenCoreFacet mvn = project.getFacet(MavenCoreFacet.class);
       mvn.setPOM(mvn.getPOM());
-      
+
       List<Dependency> effectiveDependenciesInScopes = deps.getEffectiveDependenciesInScopes(ScopeType.COMPILE,
                ScopeType.RUNTIME);
       for (Dependency d : effectiveDependenciesInScopes)
