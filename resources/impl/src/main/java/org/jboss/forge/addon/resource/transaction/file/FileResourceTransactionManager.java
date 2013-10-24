@@ -41,8 +41,7 @@ public class FileResourceTransactionManager
 
    public void startup(@Observes @Local PostStartup startup) throws Exception
    {
-      File tempDirectory = OperatingSystemUtils.getTempDirectory();
-      File xaDiskHome = new File(tempDirectory, "xadisk");
+      File xaDiskHome = OperatingSystemUtils.createTempDir();
       StandaloneFileSystemConfiguration config = new StandaloneFileSystemConfiguration(
                xaDiskHome.getAbsolutePath(), "furnace-instance");
       config.setTransactionTimeout(600);
@@ -72,5 +71,6 @@ public class FileResourceTransactionManager
          transaction = new FileResourceTransactionImpl(fileSystem, resourceFactory);
       }
       return transaction;
-   }
+   } 
+   
 }
