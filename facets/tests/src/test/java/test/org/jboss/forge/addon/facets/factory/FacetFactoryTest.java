@@ -24,13 +24,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import test.org.jboss.forge.addon.facets.factory.MockFacet;
-import test.org.jboss.forge.addon.facets.factory.MockFaceted;
-import test.org.jboss.forge.addon.facets.factory.NotFoundMockFacet;
-import test.org.jboss.forge.addon.facets.factory.SubMockFacet;
-import test.org.jboss.forge.addon.facets.factory.SubMockFacet2;
-import test.org.jboss.forge.addon.facets.factory.TestQualifier;
-
 @RunWith(Arquillian.class)
 public class FacetFactoryTest
 {
@@ -45,6 +38,7 @@ public class FacetFactoryTest
                .addBeansXML()
                .addClasses(FacetFactoryTest.class,
                         MockFacet.class,
+                        MockExceptionFacet.class,
                         MockFaceted.class,
                         SubMockFacet.class,
                         SubMockFacet2.class,
@@ -104,5 +98,33 @@ public class FacetFactoryTest
       MockFacet facet = facetFactory.install(faceted, MockFacet.class);
       Assert.assertNotNull(facet);
       Assert.assertTrue(faceted.hasFacet(MockFacet.class));
+   }
+
+   @Test
+   public void testFacetThrowsExceptionDuringInstallReturnsFalse() throws Exception
+   {
+      MockFaceted faceted = new MockFaceted();
+      Assert.assertFalse(facetFactory.install(faceted, facetFactory.create(faceted, MockExceptionFacet.class)));
+   }
+
+   @Test
+   public void testFacetThrowsExceptionDuringRegisterReturnsFalse() throws Exception
+   {
+      MockFaceted faceted = new MockFaceted();
+      Assert.assertFalse(facetFactory.register(faceted, facetFactory.create(faceted, MockExceptionFacet.class)));
+   }
+
+   @Test(expected = IllegalStateException.class)
+   public void testFacetThrowsExceptionDuringInstallTypeThrowsException() throws Exception
+   {
+      MockFaceted faceted = new MockFaceted();
+      facetFactory.install(faceted, MockExceptionFacet.class);
+   }
+
+   @Test(expected = IllegalStateException.class)
+   public void testFacetThrowsExceptionDuringRegisterTypeThrowsException() throws Exception
+   {
+      MockFaceted faceted = new MockFaceted();
+      facetFactory.register(faceted, MockExceptionFacet.class);
    }
 }

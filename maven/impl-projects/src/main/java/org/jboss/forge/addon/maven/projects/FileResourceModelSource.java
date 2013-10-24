@@ -44,6 +44,7 @@ public class FileResourceModelSource implements ModelSource2
       return fileResource.getUnderlyingResourceObject().getPath();
    }
 
+   @Override
    public ModelSource2 getRelatedSource(String relPath)
    {
       relPath = relPath.replace('\\', File.separatorChar).replace('/', File.separatorChar);

@@ -20,8 +20,6 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
-import org.jboss.forge.addon.projects.facets.ResourcesFacet;
-import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
@@ -90,7 +88,6 @@ public class MavenBuildSystemImplTest
       Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(MetadataFacet.class));
       Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(PackagingFacet.class));
       Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(DependencyFacet.class));
-      Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(ResourcesFacet.class));
    }
 
    @Test
@@ -120,8 +117,7 @@ public class MavenBuildSystemImplTest
                && project.hasFacet(MavenPluginFacet.class)
                && project.hasFacet(MetadataFacet.class)
                && project.hasFacet(PackagingFacet.class)
-               && project.hasFacet(DependencyFacet.class)
-               && project.hasFacet(ResourcesFacet.class);
+               && project.hasFacet(DependencyFacet.class);
       Assert.assertTrue(hasFacets);
 
       projectDir.delete(true);

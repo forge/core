@@ -9,7 +9,6 @@ package org.jboss.forge.addon.addons.facets;
 
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
-import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -20,7 +19,7 @@ import org.jboss.forge.addon.projects.ProjectFacet;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-@FacetConstraint({ JavaSourceFacet.class, DefaultFurnaceContainerAPIFacet.class, CDIFacet_1_1.class })
+@FacetConstraint({ JavaSourceFacet.class, DefaultFurnaceContainerAPIFacet.class })
 public class AddonAPIFacet extends AbstractFacet<Project> implements ProjectFacet
 {
    @Override

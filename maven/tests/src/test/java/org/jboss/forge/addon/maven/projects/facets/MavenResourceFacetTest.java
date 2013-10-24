@@ -8,6 +8,8 @@
 package org.jboss.forge.addon.maven.projects.facets;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -15,6 +17,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.maven.resources.MavenPomResource;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -61,7 +64,9 @@ public class MavenResourceFacetTest
    @Before
    public void setUp()
    {
-      project = projectFactory.createTempProject();
+      List<Class<? extends ProjectFacet>> facets = new ArrayList<Class<? extends ProjectFacet>>();
+      facets.add(ResourcesFacet.class);
+      project = projectFactory.createTempProject(facets);
    }
 
    @Test

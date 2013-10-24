@@ -35,6 +35,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
@@ -77,7 +78,7 @@ public class AddonProjectConfiguratorTest
    private ProjectFactory projectFactory;
 
    @Test
-   public void testCreateAddonProject() throws FileNotFoundException, FacetNotFoundException
+   public void testComplexAddonProject() throws FileNotFoundException, FacetNotFoundException
    {
       Project project = projectFactory.createTempProject();
       project.getProjectRoot().deleteOnExit();
@@ -92,6 +93,8 @@ public class AddonProjectConfiguratorTest
       Assert.assertTrue(project.hasFacet(AddonParentFacet.class));
       Assert.assertTrue(project.hasFacet(JavaCompilerFacet.class));
       Assert.assertFalse(project.hasFacet(JavaSourceFacet.class));
+      Assert.assertFalse(project.hasFacet(CDIFacet.class));
+      Assert.assertFalse(project.hasFacet(ResourcesFacet.class));
       DirectoryResource projectRoot = project.getProjectRoot();
 
       Assert.assertTrue("ADDON module is missing", projectRoot.getChild("addon").exists());
@@ -108,22 +111,28 @@ public class AddonProjectConfiguratorTest
 
       Assert.assertFalse(addonProject.hasFacet(JavaCompilerFacet.class));
       Assert.assertTrue(addonProject.hasFacet(JavaSourceFacet.class));
+      Assert.assertTrue(addonProject.hasFacet(ResourcesFacet.class));
+      Assert.assertFalse(addonProject.hasFacet(CDIFacet.class));
 
       Assert.assertFalse(apiProject.hasFacet(JavaCompilerFacet.class));
       Assert.assertTrue(apiProject.hasFacet(JavaSourceFacet.class));
+      Assert.assertTrue(apiProject.hasFacet(ResourcesFacet.class));
       Assert.assertTrue(apiProject.hasFacet(CDIFacet_1_1.class));
 
       Assert.assertFalse(implProject.hasFacet(JavaCompilerFacet.class));
       Assert.assertTrue(implProject.hasFacet(JavaSourceFacet.class));
+      Assert.assertTrue(implProject.hasFacet(ResourcesFacet.class));
       Assert.assertTrue(implProject.hasFacet(CDIFacet_1_1.class));
 
       Assert.assertFalse(spiProject.hasFacet(JavaCompilerFacet.class));
       Assert.assertTrue(spiProject.hasFacet(JavaSourceFacet.class));
+      Assert.assertTrue(spiProject.hasFacet(ResourcesFacet.class));
       Assert.assertTrue(spiProject.hasFacet(FurnaceAPIFacet.class));
       Assert.assertFalse(spiProject.hasFacet(CDIFacet_1_1.class));
 
       Assert.assertFalse(testsProject.hasFacet(JavaCompilerFacet.class));
       Assert.assertTrue(testsProject.hasFacet(JavaSourceFacet.class));
+      Assert.assertTrue(testsProject.hasFacet(ResourcesFacet.class));
       Assert.assertFalse(testsProject.hasFacet(CDIFacet_1_1.class));
 
       Dependency addonDependency = DependencyBuilder.create(
@@ -140,6 +149,7 @@ public class AddonProjectConfiguratorTest
        */
       Assert.assertNull(project.getFacet(MavenFacet.class).getPOM().getParent());
 
+      Assert.assertFalse(project.getProjectRoot().getChild("src").exists());
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
@@ -171,7 +181,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertEquals("provided", implProject.getFacet(DependencyFacet.class).getDirectDependency(spiDependency)
                .getScopeType());
 
-//      Assert.assertTrue(implProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
+      // Assert.assertTrue(implProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(implProject.getFacet(DependencyFacet.class).hasDirectDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertFalse(implProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(
@@ -195,7 +205,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertEquals("provided", apiProject.getFacet(DependencyFacet.class).getDirectDependency(spiDependency)
                .getScopeType());
 
-//      Assert.assertTrue(apiProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
+      // Assert.assertTrue(apiProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(apiProject.getFacet(DependencyFacet.class).hasDirectDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertFalse(apiProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(
@@ -212,7 +222,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertTrue(spiProject.getFacet(JavaSourceFacet.class)
                .getJavaResource("com.acme.testproject.package-info.java").exists());
 
-//      Assert.assertTrue(spiProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
+      // Assert.assertTrue(spiProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(spiProject.getFacet(DependencyFacet.class).hasDirectDependency(
                FurnaceAPIFacet.FURNACE_API_DEPENDENCY));
       Assert.assertFalse(spiProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(
@@ -253,7 +263,7 @@ public class AddonProjectConfiguratorTest
                addonProject.getFacet(DependencyFacet.class).getEffectiveDependency(spiDependency)
                         .getScopeType());
 
-//      Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
+      // Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasDirectDependency(
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
       Assert.assertFalse(addonProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(
@@ -284,7 +294,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(spiDependency));
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(spiDependency));
 
-//      Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
+      // Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasDirectDependency(
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
       Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(
@@ -358,7 +368,7 @@ public class AddonProjectConfiguratorTest
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
-      
+
       Assert.assertTrue(project.getProjectRoot().getChild("README.asciidoc").exists());
       project.getProjectRoot().delete(true);
       project.getProjectRoot().deleteOnExit();

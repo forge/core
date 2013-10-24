@@ -8,7 +8,9 @@
 package org.jboss.forge.addon.addons;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -36,6 +38,7 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.addons.AddonId;
@@ -55,7 +58,7 @@ public class AddonProjectConfigurator
 {
    private static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
 
-   private Logger log = Logger.getLogger(getClass().getName());
+   private final Logger log = Logger.getLogger(getClass().getName());
 
    @Inject
    private FacetFactory facetFactory;
@@ -80,6 +83,7 @@ public class AddonProjectConfigurator
       facetFactory.install(project, FurnacePluginFacet.class);
       facetFactory.install(project, AddonClassifierFacet.class);
       facetFactory.install(project, JavaSourceFacet.class);
+      facetFactory.install(project, ResourcesFacet.class);
       facetFactory.install(project, JavaCompilerFacet.class);
       facetFactory.install(project, DefaultFurnaceContainerFacet.class);
       facetFactory.install(project, CDIFacet_1_1.class);
@@ -116,8 +120,10 @@ public class AddonProjectConfigurator
       project.getFacet(FurnaceVersionFacet.class).setVersion(forgeVersion.toString());
 
       Project addonProject = createSubmoduleProject(project, "addon", projectName, AddonAddonFacet.class);
-      Project apiProject = createSubmoduleProject(project, "api", projectName + "-api", AddonAPIFacet.class);
-      Project implProject = createSubmoduleProject(project, "impl", projectName + "-impl", AddonImplFacet.class);
+      Project apiProject = createSubmoduleProject(project, "api", projectName + "-api", AddonAPIFacet.class,
+               CDIFacet_1_1.class);
+      Project implProject = createSubmoduleProject(project, "impl", projectName + "-impl", AddonImplFacet.class,
+               CDIFacet_1_1.class);
       Project spiProject = createSubmoduleProject(project, "spi", projectName + "-spi", AddonSPIFacet.class);
       Project testsProject = createSubmoduleProject(project, "tests", projectName + "-tests", AddonTestFacet.class);
 
@@ -206,7 +212,10 @@ public class AddonProjectConfigurator
    {
       DirectoryResource location = parent.getProjectRoot().getOrCreateChildDirectory(moduleName);
 
-      Project project = projectFactory.createProject(location, buildSystem, Arrays.asList(requiredProjectFacets));
+      List<Class<? extends ProjectFacet>> facets = new ArrayList<Class<? extends ProjectFacet>>();
+      facets.add(ResourcesFacet.class);
+      facets.addAll(Arrays.asList(requiredProjectFacets));
+      Project project = projectFactory.createProject(location, buildSystem, facets);
 
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
       metadata.setProjectName(artifactId);

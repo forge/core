@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -27,6 +29,8 @@ import org.jboss.forge.furnace.util.Predicate;
  */
 public class FacetFactoryImpl implements FacetFactory
 {
+   private static final Logger log = Logger.getLogger(FacetFactoryImpl.class.getName());
+
    @Inject
    private AddonRegistry registry;
 
@@ -203,7 +207,15 @@ public class FacetFactoryImpl implements FacetFactory
       if (faceted.hasFacet((Class<? extends FACETTYPE>) facet.getClass()))
          result = true;
       else if (FacetInspector.isConstraintSatisfied(faceted, requiredFacets) && filter.accept(facet))
-         result = ((MutableFaceted<FACETTYPE>) faceted).install(facet);
+         try
+         {
+            result = ((MutableFaceted<FACETTYPE>) faceted).install(facet);
+         }
+         catch (Exception e)
+         {
+            log.log(Level.WARNING, "Could not install Facet of type [" + facet.getClass() + "], due to exception: ", e);
+            result = false;
+         }
       return result;
    }
 
@@ -288,10 +300,21 @@ public class FacetFactoryImpl implements FacetFactory
 
       boolean result = false;
       if (faceted.hasFacet((Class<? extends FACETTYPE>) facet.getClass()))
+      {
          result = true;
+      }
       else if (FacetInspector.isConstraintSatisfied(faceted, relatedFacets))
-         result = ((MutableFaceted<FACETTYPE>) faceted).register(facet);
+      {
+         try
+         {
+            result = ((MutableFaceted<FACETTYPE>) faceted).register(facet);
+         }
+         catch (Exception e)
+         {
+            log.log(Level.WARNING, "Could not register Facet of type [" + facet.getClass() + "], due to exception: ", e);
+            result = false;
+         }
+      }
       return result;
    }
-
 }

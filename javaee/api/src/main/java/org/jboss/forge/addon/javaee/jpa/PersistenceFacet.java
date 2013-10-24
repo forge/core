@@ -8,9 +8,11 @@ package org.jboss.forge.addon.javaee.jpa;
 
 import java.util.List;
 
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.Configurable;
 import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
@@ -20,6 +22,7 @@ import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@FacetConstraint(ResourcesFacet.class)
 public interface PersistenceFacet extends JavaEEFacet, Configurable<PersistenceDescriptor>
 {
    /**

@@ -12,10 +12,12 @@ import javax.faces.application.ProjectStage;
 
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.facets.constraints.FacetConstraintType;
+import org.jboss.forge.addon.facets.constraints.FacetConstraints;
 import org.jboss.forge.addon.javaee.Configurable;
 import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.Resource;
 
 /**
@@ -23,7 +25,10 @@ import org.jboss.forge.addon.resource.Resource;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@FacetConstraint(value = { ServletFacet.class }, type = FacetConstraintType.OPTIONAL)
+@FacetConstraints({
+         @FacetConstraint(value = { ServletFacet.class }, type = FacetConstraintType.OPTIONAL),
+         @FacetConstraint(value = { ResourcesFacet.class }, type = FacetConstraintType.REQUIRED)
+})
 public interface FacesFacet<DESCRIPTOR> extends JavaEEFacet, Configurable<DESCRIPTOR>
 {
    ProjectStage getProjectStage();

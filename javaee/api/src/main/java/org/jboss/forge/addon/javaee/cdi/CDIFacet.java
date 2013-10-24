@@ -7,9 +7,12 @@
 
 package org.jboss.forge.addon.javaee.cdi;
 
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
+import org.jboss.forge.addon.facets.constraints.FacetConstraints;
 import org.jboss.forge.addon.javaee.Configurable;
 import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 /**
@@ -18,6 +21,9 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
+@FacetConstraints({
+         @FacetConstraint(ResourcesFacet.class)
+})
 public interface CDIFacet<T extends Descriptor> extends JavaEEFacet, Configurable<T>
 {
 }

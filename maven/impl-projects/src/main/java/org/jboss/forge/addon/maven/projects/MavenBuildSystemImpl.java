@@ -18,14 +18,12 @@ import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet;
-import org.jboss.forge.addon.maven.projects.facets.MavenResourcesFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenWebResourcesFacet;
 import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
-import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -58,7 +56,6 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
          factory.install(project, MavenMetadataFacet.class);
          factory.install(project, MavenPackagingFacet.class);
          factory.install(project, MavenDependencyFacet.class);
-         factory.install(project, MavenResourcesFacet.class);
          try
          {
             factory.register(project, MavenWebResourcesFacet.class);
@@ -94,7 +91,6 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
       result.add(DependencyFacet.class);
       result.add(MetadataFacet.class);
       result.add(PackagingFacet.class);
-      result.add(ResourcesFacet.class);
 
       return Collections.unmodifiableSet(result);
    }
