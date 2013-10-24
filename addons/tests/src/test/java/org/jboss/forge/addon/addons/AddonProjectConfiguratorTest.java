@@ -152,6 +152,8 @@ public class AddonProjectConfiguratorTest
       Assert.assertFalse(project.getProjectRoot().getChild("src").exists());
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
+      Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(
+               DependencyBuilder.create("javax.annotation:jsr250-api:1.0")));
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
                DependencyBuilder.create(addonProject.getFacet(MetadataFacet.class).getOutputDependency())
                         .setClassifier("forge-addon")));
@@ -188,6 +190,8 @@ public class AddonProjectConfiguratorTest
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertTrue(implProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
+      Assert.assertFalse(implProject.getFacet(DependencyFacet.class).hasDirectDependency(
+               DependencyBuilder.create("javax.annotation:jsr250-api:1.0")));
       Assert.assertTrue(implProject.hasFacet(AddonImplFacet.class));
       Assert.assertFalse(implProject.hasFacet(FurnacePluginFacet.class));
 
@@ -212,6 +216,8 @@ public class AddonProjectConfiguratorTest
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertTrue(apiProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
+      Assert.assertFalse(apiProject.getFacet(DependencyFacet.class).hasDirectDependency(
+               DependencyBuilder.create("javax.annotation:jsr250-api:1.0")));
       Assert.assertTrue(apiProject.hasFacet(AddonAPIFacet.class));
       Assert.assertFalse(apiProject.hasFacet(FurnacePluginFacet.class));
 
@@ -229,6 +235,8 @@ public class AddonProjectConfiguratorTest
                FurnaceAPIFacet.FURNACE_API_DEPENDENCY));
       Assert.assertTrue(spiProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                FurnaceAPIFacet.FURNACE_API_DEPENDENCY));
+      Assert.assertFalse(spiProject.getFacet(DependencyFacet.class).hasDirectDependency(
+               DependencyBuilder.create("javax.annotation:jsr250-api:1.0")));
       Assert.assertFalse(spiProject.hasFacet(DefaultFurnaceContainerFacet.class));
       Assert.assertFalse(spiProject.hasFacet(DefaultFurnaceContainerAPIFacet.class));
       Assert.assertFalse(spiProject.hasFacet(CDIFacet_1_1.class));
@@ -270,6 +278,8 @@ public class AddonProjectConfiguratorTest
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
+      Assert.assertFalse(addonProject.getFacet(DependencyFacet.class).hasDirectDependency(
+               DependencyBuilder.create("javax.annotation:jsr250-api:1.0")));
 
       Assert.assertTrue(addonProject.hasFacet(FurnacePluginFacet.class));
 
@@ -303,6 +313,8 @@ public class AddonProjectConfiguratorTest
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
       Assert.assertEquals(FURNACE_VERSION, testsProject.getFacet(DependencyFacet.class).getEffectiveDependency(
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY).getCoordinate().getVersion());
+      Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectDependency(
+               DependencyBuilder.create("javax.annotation:jsr250-api:1.0")));
 
       Assert.assertTrue(project.getProjectRoot().getChild("README.asciidoc").exists());
       project.getProjectRoot().delete(true);
@@ -368,6 +380,8 @@ public class AddonProjectConfiguratorTest
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
+      Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(
+               DependencyBuilder.create("javax.annotation:jsr250-api:1.0")));
 
       Assert.assertTrue(project.getProjectRoot().getChild("README.asciidoc").exists());
       project.getProjectRoot().delete(true);
