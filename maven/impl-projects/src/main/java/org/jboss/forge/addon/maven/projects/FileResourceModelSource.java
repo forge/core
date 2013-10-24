@@ -14,6 +14,7 @@ import java.net.URI;
 
 import org.apache.maven.model.building.ModelSource2;
 import org.jboss.forge.addon.resource.FileResource;
+import org.junit.Assert;
 
 /**
  * Wraps a {@link FileResource} as a model source.
@@ -27,6 +28,7 @@ public class FileResourceModelSource implements ModelSource2
 
    public FileResourceModelSource(FileResource<?> fileResource)
    {
+      Assert.assertNotNull(fileResource);
       this.fileResource = fileResource;
    }
 
@@ -46,13 +48,13 @@ public class FileResourceModelSource implements ModelSource2
    {
       relPath = relPath.replace('\\', File.separatorChar).replace('/', File.separatorChar);
       FileResource<?> relatedPom = fileResource.getParent().getChild(relPath).reify(FileResource.class);
-      if (relatedPom.isDirectory())
+      if (relatedPom != null && relatedPom.isDirectory())
       {
          // TODO figure out how to reuse ModelLocator.locatePom(File) here
          relatedPom = relatedPom.getChild("pom.xml").reify(FileResource.class);
       }
 
-      if (relatedPom.exists())
+      if (relatedPom != null && relatedPom.exists())
       {
          return new FileResourceModelSource(relatedPom);
       }
