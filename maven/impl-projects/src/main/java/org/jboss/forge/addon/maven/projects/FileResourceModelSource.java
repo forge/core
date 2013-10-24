@@ -14,7 +14,7 @@ import java.net.URI;
 
 import org.apache.maven.model.building.ModelSource2;
 import org.jboss.forge.addon.resource.FileResource;
-import org.junit.Assert;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * Wraps a {@link FileResource} as a model source.
@@ -28,7 +28,7 @@ public class FileResourceModelSource implements ModelSource2
 
    public FileResourceModelSource(FileResource<?> fileResource)
    {
-      Assert.assertNotNull(fileResource);
+      Assert.notNull(fileResource, "POM Resource may not be null");
       this.fileResource = fileResource;
    }
 
