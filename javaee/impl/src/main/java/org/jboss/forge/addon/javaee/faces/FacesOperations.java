@@ -10,6 +10,8 @@ package org.jboss.forge.addon.javaee.faces;
 import java.io.FileNotFoundException;
 
 import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 
@@ -134,6 +136,8 @@ public class FacesOperations
                .addThrows(ValidatorException.class);
       method.getOrigin().addImport(ValidatorException.class);
       method.getOrigin().addImport(FacesMessage.class);
+      method.getOrigin().addImport(FacesContext.class);
+      method.getOrigin().addImport(UIComponent.class);
       target.setContents(source);
       return method;
    }
