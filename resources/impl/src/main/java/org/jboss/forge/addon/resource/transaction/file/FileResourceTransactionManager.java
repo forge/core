@@ -45,6 +45,11 @@ public class FileResourceTransactionManager
       StandaloneFileSystemConfiguration config = new StandaloneFileSystemConfiguration(
                xaDiskHome.getAbsolutePath(), "furnace-instance");
       config.setTransactionTimeout(600);
+      // XADISK-95
+      if (OperatingSystemUtils.isWindows())
+      {
+         config.setSynchronizeDirectoryChanges(Boolean.FALSE);
+      }
       this.fileSystem = XAFileSystemProxy.bootNativeXAFileSystem(config);
       this.fileSystem.waitForBootup(10000);
    }
@@ -71,6 +76,6 @@ public class FileResourceTransactionManager
          transaction = new FileResourceTransactionImpl(fileSystem, resourceFactory);
       }
       return transaction;
-   } 
-   
+   }
+
 }
