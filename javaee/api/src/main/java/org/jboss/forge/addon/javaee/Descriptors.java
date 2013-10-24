@@ -7,6 +7,9 @@
 
 package org.jboss.forge.addon.javaee;
 
+import java.util.concurrent.Callable;
+
+import org.jboss.forge.furnace.util.ClassLoaders;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 
@@ -20,66 +23,80 @@ public final class Descriptors
 
    public static <T extends Descriptor> T create(final Class<T> type) throws IllegalArgumentException
    {
-      Thread currentThread = Thread.currentThread();
-      ClassLoader tccl = currentThread.getContextClassLoader();
       try
       {
-         currentThread.setContextClassLoader(type.getClassLoader());
-         return org.jboss.shrinkwrap.descriptor.api.Descriptors.create(type);
+         return ClassLoaders.executeIn(type.getClassLoader(), new Callable<T>()
+         {
+            @Override
+            public T call() throws Exception
+            {
+               return org.jboss.shrinkwrap.descriptor.api.Descriptors.create(type);
+            }
+         });
       }
-      finally
+      catch (Exception e)
       {
-         currentThread.setContextClassLoader(tccl);
+         throw new RuntimeException(e);
       }
    }
 
-   public static <T extends Descriptor> T create(final Class<T> type, String descriptorName)
+   public static <T extends Descriptor> T create(final Class<T> type, final String descriptorName)
             throws IllegalArgumentException
    {
-      Thread currentThread = Thread.currentThread();
-      ClassLoader tccl = currentThread.getContextClassLoader();
       try
       {
-         currentThread.setContextClassLoader(type.getClassLoader());
-         return org.jboss.shrinkwrap.descriptor.api.Descriptors.create(type, descriptorName);
+         return ClassLoaders.executeIn(type.getClassLoader(), new Callable<T>()
+         {
+            @Override
+            public T call() throws Exception
+            {
+               return org.jboss.shrinkwrap.descriptor.api.Descriptors.create(type, descriptorName);
+            }
+         });
       }
-      finally
+      catch (Exception e)
       {
-         currentThread.setContextClassLoader(tccl);
+         throw new RuntimeException(e);
       }
    }
 
    public static <T extends Descriptor> DescriptorImporter<T> importAs(final Class<T> type)
             throws IllegalArgumentException
    {
-      Thread currentThread = Thread.currentThread();
-      ClassLoader tccl = currentThread.getContextClassLoader();
       try
       {
-         currentThread.setContextClassLoader(type.getClassLoader());
-         return org.jboss.shrinkwrap.descriptor.api.Descriptors.importAs(type);
+         return ClassLoaders.executeIn(type.getClassLoader(), new Callable<DescriptorImporter<T>>()
+         {
+            @Override
+            public DescriptorImporter<T> call() throws Exception
+            {
+               return org.jboss.shrinkwrap.descriptor.api.Descriptors.importAs(type);
+            }
+         });
       }
-      finally
+      catch (Exception e)
       {
-         currentThread.setContextClassLoader(tccl);
+         throw new RuntimeException(e);
       }
-
    }
 
-   public static <T extends Descriptor> DescriptorImporter<T> importAs(final Class<T> type, String descriptorName)
+   public static <T extends Descriptor> DescriptorImporter<T> importAs(final Class<T> type, final String descriptorName)
             throws IllegalArgumentException
    {
-      Thread currentThread = Thread.currentThread();
-      ClassLoader tccl = currentThread.getContextClassLoader();
       try
       {
-         currentThread.setContextClassLoader(type.getClassLoader());
-         return org.jboss.shrinkwrap.descriptor.api.Descriptors.importAs(type, descriptorName);
+         return ClassLoaders.executeIn(type.getClassLoader(), new Callable<DescriptorImporter<T>>()
+         {
+            @Override
+            public DescriptorImporter<T> call() throws Exception
+            {
+               return org.jboss.shrinkwrap.descriptor.api.Descriptors.importAs(type, descriptorName);
+            }
+         });
       }
-      finally
+      catch (Exception e)
       {
-         currentThread.setContextClassLoader(tccl);
+         throw new RuntimeException(e);
       }
-
    }
 }
