@@ -136,7 +136,7 @@ public class NewConverterCommand extends AbstractJavaEECommand
          javaResource = facesOperations.newConverter(project, entityName, entityPackage);
       }
       context.setSelection(javaResource);
-      return Results.success("Entity " + javaResource + " created");
+      return Results.success("Converter " + javaResource + " created");
    }
 
    @Override

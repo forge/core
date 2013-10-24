@@ -9,6 +9,8 @@ package org.jboss.forge.addon.javaee.faces;
 
 import java.io.FileNotFoundException;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.parser.java.JavaSourceFactory;
@@ -17,6 +19,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.Method;
 
 /**
  * This class contains Faces specific operations
@@ -120,5 +123,18 @@ public class FacesOperations
       path = path.replace(".", "/") + ".java";
       JavaResource target = sourceDir.getChildOfType(JavaResource.class, path);
       return target;
+   }
+
+   public Method<JavaClass> addValidatorMethod(JavaResource target, String name) throws FileNotFoundException
+   {
+      JavaClass source = (JavaClass) target.getJavaSource();
+      Method<JavaClass> method = source.addMethod().setName(name)
+               .setParameters("final FacesContext context, final UIComponent component, final Object value")
+               .setBody("throw new ValidatorException(new FacesMessage(\"Validator not yet implemented.\"));")
+               .addThrows(ValidatorException.class);
+      method.getOrigin().addImport(ValidatorException.class);
+      method.getOrigin().addImport(FacesMessage.class);
+      target.setContents(source);
+      return method;
    }
 }

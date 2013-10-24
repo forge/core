@@ -7,13 +7,13 @@ import javax.faces.convert.FacesConverter;
 public class ValueConverter implements Converter
 {
    @Override
-   public Object getAsObject(FacesContext context, UIComponent component, String value)
+   public Object getAsObject(final FacesContext context, final UIComponent component, final String value)
    {
       throw new UnsupportedOperationException("not yet implemented");
    }
 
    @Override
-   public String getAsString(FacesContext context, UIComponent component, Object value)
+   public String getAsString(final FacesContext context, final UIComponent component, final Object value)
    {
       return value.toString();
    }

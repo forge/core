@@ -136,7 +136,7 @@ public class NewValidatorCommand extends AbstractJavaEECommand
          javaResource = facesOperations.newValidator(project, entityName, entityPackage);
       }
       context.setSelection(javaResource);
-      return Results.success("Entity " + javaResource + " created");
+      return Results.success("Validator " + javaResource + " created");
    }
 
    @Override

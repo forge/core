@@ -9,8 +9,9 @@ package org.jboss.forge.addon.parser.java;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.concurrent.Callable;
 
-import org.jboss.forge.addon.parser.java.JavaSourceFactory;
+import org.jboss.forge.furnace.util.ClassLoaders;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
@@ -24,9 +25,27 @@ public class JavaSourceFactoryImpl implements JavaSourceFactory
     * Open the given {@link File}, parsing its contents into a new {@link JavaClass} instance.
     */
    @Override
-   public JavaSource<?> parse(final File file) throws FileNotFoundException
+   public JavaSource<?> parse(final File data) throws FileNotFoundException
    {
-      return JavaParser.parse(file);
+      try
+      {
+         return ClassLoaders.executeIn(getClass().getClassLoader(), new Callable<JavaSource<?>>()
+         {
+            @Override
+            public JavaSource<?> call() throws Exception
+            {
+               return JavaParser.parse(data);
+            }
+         });
+      }
+      catch (FileNotFoundException e)
+      {
+         throw e;
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    /**
@@ -35,7 +54,21 @@ public class JavaSourceFactoryImpl implements JavaSourceFactory
    @Override
    public JavaSource<?> parse(final InputStream data)
    {
-      return JavaParser.parse(data);
+      try
+      {
+         return ClassLoaders.executeIn(getClass().getClassLoader(), new Callable<JavaSource<?>>()
+         {
+            @Override
+            public JavaSource<?> call() throws Exception
+            {
+               return JavaParser.parse(data);
+            }
+         });
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    /**
@@ -44,7 +77,21 @@ public class JavaSourceFactoryImpl implements JavaSourceFactory
    @Override
    public JavaSource<?> parse(final char[] data)
    {
-      return JavaParser.parse(data);
+      try
+      {
+         return ClassLoaders.executeIn(getClass().getClassLoader(), new Callable<JavaSource<?>>()
+         {
+            @Override
+            public JavaSource<?> call() throws Exception
+            {
+               return JavaParser.parse(data);
+            }
+         });
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    /**
@@ -53,7 +100,21 @@ public class JavaSourceFactoryImpl implements JavaSourceFactory
    @Override
    public JavaSource<?> parse(final String data)
    {
-      return JavaParser.parse(data);
+      try
+      {
+         return ClassLoaders.executeIn(getClass().getClassLoader(), new Callable<JavaSource<?>>()
+         {
+            @Override
+            public JavaSource<?> call() throws Exception
+            {
+               return JavaParser.parse(data);
+            }
+         });
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    /**
@@ -62,18 +123,50 @@ public class JavaSourceFactoryImpl implements JavaSourceFactory
    @Override
    public <T extends JavaSource<?>> T create(final Class<T> type)
    {
-      return JavaParser.create(type);
+      try
+      {
+         return ClassLoaders.executeIn(getClass().getClassLoader(), new Callable<T>()
+         {
+            @Override
+            public T call() throws Exception
+            {
+               return JavaParser.create(type);
+            }
+         });
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    /**
     * Read the given {@link File} and parse its data into a new {@link JavaSource} instance of the given type.
-    *
+    * 
     * @throws FileNotFoundException
     */
    @Override
-   public <T extends JavaSource<?>> T parse(final Class<T> type, final File file) throws FileNotFoundException
+   public <T extends JavaSource<?>> T parse(final Class<T> type, final File data) throws FileNotFoundException
    {
-      return JavaParser.parse(type, file);
+      try
+      {
+         return ClassLoaders.executeIn(getClass().getClassLoader(), new Callable<T>()
+         {
+            @Override
+            public T call() throws Exception
+            {
+               return JavaParser.parse(type, data);
+            }
+         });
+      }
+      catch (FileNotFoundException e)
+      {
+         throw e;
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    /**
@@ -82,7 +175,21 @@ public class JavaSourceFactoryImpl implements JavaSourceFactory
    @Override
    public <T extends JavaSource<?>> T parse(final Class<T> type, final InputStream data)
    {
-      return JavaParser.parse(type, data);
+      try
+      {
+         return ClassLoaders.executeIn(getClass().getClassLoader(), new Callable<T>()
+         {
+            @Override
+            public T call() throws Exception
+            {
+               return JavaParser.parse(type, data);
+            }
+         });
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    /**
@@ -91,7 +198,21 @@ public class JavaSourceFactoryImpl implements JavaSourceFactory
    @Override
    public <T extends JavaSource<?>> T parse(final Class<T> type, final char[] data)
    {
-      return JavaParser.parse(type, data);
+      try
+      {
+         return ClassLoaders.executeIn(getClass().getClassLoader(), new Callable<T>()
+         {
+            @Override
+            public T call() throws Exception
+            {
+               return JavaParser.parse(type, data);
+            }
+         });
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    /**
@@ -100,6 +221,20 @@ public class JavaSourceFactoryImpl implements JavaSourceFactory
    @Override
    public <T extends JavaSource<?>> T parse(final Class<T> type, final String data)
    {
-      return JavaParser.parse(type, data);
+      try
+      {
+         return ClassLoaders.executeIn(getClass().getClassLoader(), new Callable<T>()
+         {
+            @Override
+            public T call() throws Exception
+            {
+               return JavaParser.parse(type, data);
+            }
+         });
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 }

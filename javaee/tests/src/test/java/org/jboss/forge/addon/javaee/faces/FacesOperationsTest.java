@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.parser.java.JavaSourceFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -25,6 +26,8 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.Method;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -64,6 +67,9 @@ public class FacesOperationsTest
 
    @Inject
    private FacesOperations operations;
+
+   @Inject
+   private JavaSourceFactory sourceFactory;
 
    @Test
    public void testCreateConverterInDirectory() throws Exception
@@ -123,6 +129,25 @@ public class FacesOperationsTest
       Assert.assertTrue(child instanceof JavaResource);
       Assert.assertEquals("SampleValidator", ((JavaResource) child).getJavaSource().getName());
       Assert.assertEquals("org.example", ((JavaResource) child).getJavaSource().getPackage());
+   }
+
+   @Test
+   public void testCreateValidatorMethod() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, ResourcesFacet.class);
+      facetFactory.install(project, JavaSourceFacet.class);
+
+      JavaSourceFacet sourceFacet = project.getFacet(JavaSourceFacet.class);
+      JavaResource resource = sourceFacet.saveJavaSource(sourceFactory
+               .parse("package org.example; public class DemoBean {}"));
+
+      Method<JavaClass> method = operations.addValidatorMethod(resource, "validateUsername");
+      Assert.assertEquals(3, method.getParameters().size());
+
+      JavaClass source = (JavaClass) resource.getJavaSource();
+      Assert.assertEquals(1, source.getMethods().size());
+      Assert.assertEquals(method.toSignature(), source.getMethods().get(0).toSignature());
    }
 
 }

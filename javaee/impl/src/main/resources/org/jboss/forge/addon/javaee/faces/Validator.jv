@@ -9,7 +9,7 @@ import javax.faces.validator.ValidatorException;
 public class ValueValidator implements Validator
 {
    @Override
-   public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException
+   public void validate(final FacesContext context, final UIComponent component, final Object value) throws ValidatorException
    {
       throw new ValidatorException(new FacesMessage("Validator not yet implemented."));
    }

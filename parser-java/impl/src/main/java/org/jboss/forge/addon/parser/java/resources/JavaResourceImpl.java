@@ -14,12 +14,12 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jboss.forge.addon.parser.java.JavaSourceFactory;
 import org.jboss.forge.addon.resource.AbstractFileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.ResourceFacet;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.ParserException;
 import org.jboss.forge.parser.java.EnumConstant;
 import org.jboss.forge.parser.java.Field;
@@ -34,9 +34,12 @@ import org.jboss.forge.parser.java.Method;
  */
 public class JavaResourceImpl extends AbstractFileResource<JavaResource> implements JavaResource
 {
-   public JavaResourceImpl(final ResourceFactory factory, final File file)
+   private final JavaSourceFactory parser;
+
+   public JavaResourceImpl(final ResourceFactory factory, JavaSourceFactory parser, final File file)
    {
       super(factory, file);
+      this.parser = parser;
    }
 
    @Override
@@ -129,13 +132,13 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    @Override
    public JavaSource<?> getJavaSource() throws FileNotFoundException
    {
-      return JavaParser.parse(getResourceInputStream());
+      return parser.parse(getResourceInputStream());
    }
 
    @Override
    public JavaResourceImpl createFrom(final File file)
    {
-      return new JavaResourceImpl(resourceFactory, file);
+      return new JavaResourceImpl(resourceFactory, parser, file);
    }
 
    @Override
