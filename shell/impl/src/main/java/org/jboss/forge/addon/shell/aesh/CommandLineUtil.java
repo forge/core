@@ -85,9 +85,13 @@ public class CommandLineUtil
                      .description(input.getLabel())
                      .hasMultipleValues(isMultiple)
                      .hasValue(hasValue)
-                     .type(input.getValueType())
-                     .required(input.isRequired());
+                     .type(input.getValueType());
 
+            if (input.isRequired())
+            {
+               optionBuilder.required(true).renderer(OptionRenderers.REQUIRED);
+            }
+            
             OptionCompleter completer = OptionCompleterFactory.getCompletionFor(input, shellContext, converterFactory);
             optionBuilder.completer(completer);
             optionBuilder.activator(new OptionActivator()
@@ -119,7 +123,7 @@ public class CommandLineUtil
                   return InputComponents.convertToUIInputValue(converterFactory, input, value);
                }
             }).valueSeparator(' ');
-            
+
             if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
             {
                optionBuilder.shortName(input.getShortName());
