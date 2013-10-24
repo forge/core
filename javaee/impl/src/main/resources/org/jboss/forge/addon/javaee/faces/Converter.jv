@@ -1,0 +1,20 @@
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.convert.FacesConverter;
+
+@FacesConverter
+public class ValueConverter implements Converter
+{
+   @Override
+   public Object getAsObject(FacesContext context, UIComponent component, String value)
+   {
+      throw new UnsupportedOperationException("not yet implemented");
+   }
+
+   @Override
+   public String getAsString(FacesContext context, UIComponent component, Object value)
+   {
+      return value.toString();
+   }
+}
