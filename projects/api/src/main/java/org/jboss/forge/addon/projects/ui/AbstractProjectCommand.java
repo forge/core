@@ -9,8 +9,6 @@ package org.jboss.forge.addon.projects.ui;
 
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.facets.constraints.FacetConstraints;
 import org.jboss.forge.addon.facets.constraints.FacetInspector;
 import org.jboss.forge.addon.projects.Project;
@@ -31,9 +29,6 @@ import org.jboss.forge.addon.ui.context.UISelection;
  */
 public abstract class AbstractProjectCommand extends AbstractUICommand
 {
-   @Inject
-   private ProjectFactory projectFactory;
-
    @Override
    public boolean isEnabled(UIContext context)
    {
@@ -85,9 +80,6 @@ public abstract class AbstractProjectCommand extends AbstractUICommand
    /**
     * Returns a reference to the {@link ProjectFactory}.
     */
-   protected ProjectFactory getProjectFactory()
-   {
-      return projectFactory;
-   }
+   protected abstract ProjectFactory getProjectFactory();
 
 }

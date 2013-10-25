@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldContext;
@@ -51,6 +52,9 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    @WithAttributes(label = "Install Templates in src/main/templates?", defaultValue = "false")
    private UIInput<Boolean> installTemplates;
 
+   @Inject
+   private ProjectFactory factory;
+
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
@@ -82,7 +86,8 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    @Override
    public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("Scaffold: Setup").description("Setups the scaffold")
+      return Metadata.from(super.getMetadata(context), getClass()).name("Scaffold: Setup")
+               .description("Setups the scaffold")
                .category(Categories.create("Scaffold", "Setup"));
    }
 
@@ -102,5 +107,11 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    protected boolean isProjectRequired()
    {
       return true;
+   }
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return factory;
    }
 }

@@ -13,6 +13,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.building.BuildException;
 import org.jboss.forge.addon.projects.building.ProjectBuilder;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
@@ -47,26 +48,12 @@ public class BuildCommand extends AbstractProjectCommand
    @WithAttributes(label = "Profile")
    private UIInput<String> profile;
 
+   @Inject
+   private ProjectFactory projectFactory;
+
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      // profile.setCompleter(new UICompleter<String>()
-      // {
-      // @Override
-      // public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String
-      // value)
-      // {
-      // MavenFacet mavenCoreFacet = getSelectedProject(context).getFacet(MavenFacet.class);
-      // List<String> profiles = new ArrayList<String>();
-      // List<Profile> profileList = mavenCoreFacet.getPOM().getProfiles();
-      // for (Profile profile : profileList)
-      // {
-      // profiles.add(profile.getId());
-      // }
-      //
-      // return profiles;
-      // }
-      // });
       builder.add(arguments).add(notest).add(profile);
    }
 
@@ -130,5 +117,11 @@ public class BuildCommand extends AbstractProjectCommand
    protected boolean isProjectRequired()
    {
       return true;
+   }
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return projectFactory;
    }
 }

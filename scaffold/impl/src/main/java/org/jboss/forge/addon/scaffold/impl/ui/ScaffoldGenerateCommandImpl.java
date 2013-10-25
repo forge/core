@@ -9,6 +9,7 @@ package org.jboss.forge.addon.scaffold.impl.ui;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
@@ -49,6 +50,9 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    @WithAttributes(label = "Resources")
    private UISelectMany<FileResource<?>> resources;
 
+   @Inject
+   private ProjectFactory factory;
+
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
@@ -82,5 +86,11 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    protected boolean isProjectRequired()
    {
       return false;
+   }
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return factory;
    }
 }
