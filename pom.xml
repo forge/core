@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -62,6 +63,7 @@
       <forge.release.version>${project.version}</forge.release.version>
       <version.cdi>1.1</version.cdi>
       <version.furnace>2.0.0.Alpha14</version.furnace>
+      <version.furnace.simple>2.0.0-SNAPSHOT</version.furnace.simple>
       <version.jboss.spec>3.0.2.Final</version.jboss.spec>
       <version.junit>4.11</version.junit>
       <version.mvel>2.1.0.Final</version.mvel>
@@ -106,8 +108,8 @@
 
    <dependencyManagement>
       <dependencies>
-         <!-- Furnace Container -->
 
+         <!-- CDI Container -->
          <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
@@ -124,6 +126,26 @@
             <artifactId>cdi-impl</artifactId>
             <version>${version.furnace}</version>
          </dependency>
+
+         <!-- Simple Container -->
+         <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>simple</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${version.furnace.simple}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>simple-api</artifactId>
+            <version>${version.furnace.simple}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>simple-impl</artifactId>
+            <version>${version.furnace.simple}</version>
+         </dependency>
+
+         <!-- Furnace Runtime -->
          <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace</artifactId>
@@ -559,7 +581,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -576,7 +598,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -593,7 +615,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -612,7 +634,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                      </pluginExecutions>

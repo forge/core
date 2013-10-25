@@ -14,8 +14,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.inject.Singleton;
-
+import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Strings;
 
@@ -25,8 +24,7 @@ import org.jboss.forge.furnace.util.Strings;
  * href="http://www.rubyonrails.org">Ruby on Rails</a>, which is distributed under the <a
  * href="http://wiki.rubyonrails.org/rails/pages/License">Rails license</a>.
  */
-@Singleton
-public class Inflector
+public class Inflector implements Service
 {
    public Inflector()
    {
@@ -35,13 +33,11 @@ public class Inflector
 
    protected class Rule
    {
-
       protected final String expression;
       protected final Pattern expressionPattern;
       protected final String replacement;
 
-      protected Rule(String expression,
-               String replacement)
+      protected Rule(String expression, String replacement)
       {
          this.expression = expression;
          this.replacement = replacement != null ? replacement : "";
@@ -90,8 +86,8 @@ public class Inflector
       }
    }
 
-   private LinkedList<Rule> plurals = new LinkedList<Rule>();
-   private LinkedList<Rule> singulars = new LinkedList<Rule>();
+   private final LinkedList<Rule> plurals = new LinkedList<Rule>();
+   private final LinkedList<Rule> singulars = new LinkedList<Rule>();
    /**
     * The lowercase words that are to be excluded and not processed. This map can be modified by the users via
     * {@link #getUncountables()}.

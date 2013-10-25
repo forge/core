@@ -28,6 +28,7 @@ public class RestGenerationContextImpl implements RestGenerationContext
    /**
     * @return the project
     */
+   @Override
    public Project getProject()
    {
       return project;
@@ -36,6 +37,7 @@ public class RestGenerationContextImpl implements RestGenerationContext
    /**
     * @return the entity
     */
+   @Override
    public JavaClass getEntity()
    {
       return entity;
@@ -44,6 +46,7 @@ public class RestGenerationContextImpl implements RestGenerationContext
    /**
     * @return the targetPackageName
     */
+   @Override
    public String getTargetPackageName()
    {
       return targetPackageName;
@@ -52,6 +55,7 @@ public class RestGenerationContextImpl implements RestGenerationContext
    /**
     * @return the contentType
     */
+   @Override
    public String getContentType()
    {
       return contentType;
@@ -60,11 +64,13 @@ public class RestGenerationContextImpl implements RestGenerationContext
    /**
     * @return the persistenceUnitName
     */
+   @Override
    public String getPersistenceUnitName()
    {
       return persistenceUnitName;
    }
    
+   @Override
    public Inflector getInflector()
    {
       return inflector;
