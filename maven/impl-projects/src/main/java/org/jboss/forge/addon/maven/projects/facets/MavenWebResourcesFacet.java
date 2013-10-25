@@ -106,11 +106,6 @@ public class MavenWebResourcesFacet extends AbstractFacet<Project> implements We
             plugin = plugins.getPlugin(mvnWarPluginDep);
          }
 
-         if (plugin.getConfig() == null)
-         {
-
-         }
-
          if (!plugin.getConfig().hasConfigurationElement("failOnMissingWebXml"))
          {
             plugin.getConfig().addConfigurationElement(

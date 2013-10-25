@@ -14,24 +14,24 @@ import org.jboss.forge.addon.dependencies.Dependency;
 
 /**
  * Represents a Maven plugin
- *
+ * 
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
 
 public interface MavenPlugin extends PluginElement
 {
    /**
-    * Returns the {@link Coordinate} represented by this plugin
+    * Returns the {@link Coordinate} represented by this plugin.
     */
    Coordinate getCoordinate();
 
    /**
-    * Returns the {@link Configuration} associated with this plugin, if any
+    * Returns the {@link Configuration} associated with this plugin, if any. (Never null.)
     */
    Configuration getConfig();
 
    /**
-    * Return the list of {@link Execution} associated with this plugin, if any
+    * Return the list of {@link Execution} associated with this plugin, if any.
     */
    List<Execution> listExecutions();
 
@@ -41,7 +41,7 @@ public interface MavenPlugin extends PluginElement
    boolean isExtensionsEnabled();
 
    /**
-    * @return the dependencies for this plugin, if any
+    * @return the dependencies for this plugin, if any.
     */
    List<Dependency> getDirectDependencies();
 
