@@ -16,8 +16,6 @@ import javax.persistence.OneToOne;
 import org.jboss.forge.addon.javaee.rest.generation.RestGenerationContext;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.text.Inflector;
-import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
