@@ -119,6 +119,11 @@ public class GenerateConstraintWizardStep extends AbstractJavaEECommand implemen
                         .setDefaultValueFor(converterFactory, (InputComponent<?, Object>) inputComponent,
                                  defaultValue);
             }
+            else
+            {
+               // No default value found, it is required
+               inputComponent.setRequired(true);
+            }
          }
          catch (TypeNotPresentException tnpe)
          {
