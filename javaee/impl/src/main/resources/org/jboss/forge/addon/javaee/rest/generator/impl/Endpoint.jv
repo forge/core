@@ -65,7 +65,7 @@ public class ${entityTable}Endpoint
    @Produces("${contentType}")
    public List<${entity.getName()}> listAll(@QueryParam("start") Integer startPosition, @QueryParam("max") Integer maxResult)
    {
-      TypedQuery<Customer> findAllQuery = em.createQuery("${selectExpression} ${orderClause}", ${entity.getName()}.class);
+      TypedQuery<${entity.getName()}> findAllQuery = em.createQuery("${selectExpression} ${orderClause}", ${entity.getName()}.class);
       if (startPosition != null)
       {
          findAllQuery.setFirstResult(startPosition);
