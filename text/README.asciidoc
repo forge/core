@@ -1,0 +1,47 @@
+== text
+:idprefix: id_ 
+This addon provides *standalone* functionality.
+The text addon provides functionality to perform text-based transformations like inflection of words.
+        
+=== Dependencies: None (or)
+=== Depends on
+[options="header"]
+|===
+|Addon |Exported |Optional
+|org.jboss.forge.furnace.container:cdi
+|no
+|no
+|===
+
+== Setup
+This Addon requires the following installation steps.
+=== Add configuration to pom.xml 
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+(Make sure the dependency is put all the way to the left, and uses 3 spaces for indentation of GAV)
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.addon.text</groupId>
+   <artifactId>text</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----
+== Features
+Inflector for performing inflection on words:: 
+Allows for camelcasing, capitalization, humanization, pluralization etc. of words.
++
+[source,java]
+----
+@Inject private Inflector inflector;
+String plural = inflector.pluralize("foo");
+----
++
+[TIP] 
+====
+If your addon uses a container that does not support "@Inject" annotations, services such as the `Inflector` may also be 
+accessed via the `AddonRegistry`:
+----
+Imported<Inflector> imported = addonRegistry.getServices(Inflector.class);
+Inflector inflector = imported.get();
+----

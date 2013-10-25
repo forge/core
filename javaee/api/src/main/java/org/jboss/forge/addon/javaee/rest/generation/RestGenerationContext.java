@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.javaee.rest.generation;
 
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.text.Inflector;
 import org.jboss.forge.parser.java.JavaClass;
 
 /**
@@ -26,4 +27,6 @@ public interface RestGenerationContext
    public String getContentType();
 
    public String getPersistenceUnitName();
+   
+   public Inflector getInflector();
 }

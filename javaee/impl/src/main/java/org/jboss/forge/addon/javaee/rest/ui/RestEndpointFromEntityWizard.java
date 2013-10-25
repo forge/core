@@ -27,6 +27,7 @@ import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.text.Inflector;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
@@ -79,6 +80,9 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
 
    @Inject
    private EntityBasedResourceGenerator defaultResourceGenerator;
+   
+   @Inject
+   private Inflector inflector;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -216,6 +220,7 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
       // generationContext.setEntity(entity);
       generationContext.setPersistenceUnitName(persistenceUnit.getValue());
       generationContext.setTargetPackageName(packageName.getValue());
+      generationContext.setInflector(inflector);
       return generationContext;
    }
 
