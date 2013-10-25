@@ -9,6 +9,7 @@ package org.jboss.forge.addon.javaee.rest.generator;
 
 import org.jboss.forge.addon.javaee.rest.generation.RestGenerationContext;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.text.Inflector;
 import org.jboss.forge.parser.java.JavaClass;
 
 /**
@@ -22,6 +23,7 @@ public class RestGenerationContextImpl implements RestGenerationContext
    private String targetPackageName;
    private String contentType;
    private String persistenceUnitName;
+   private Inflector inflector;
 
    /**
     * @return the project
@@ -62,6 +64,11 @@ public class RestGenerationContextImpl implements RestGenerationContext
    {
       return persistenceUnitName;
    }
+   
+   public Inflector getInflector()
+   {
+      return inflector;
+   }
 
    public void setProject(Project project)
    {
@@ -86,5 +93,10 @@ public class RestGenerationContextImpl implements RestGenerationContext
    public void setPersistenceUnitName(String persistenceUnitName)
    {
       this.persistenceUnitName = persistenceUnitName;
+   }
+
+   public void setInflector(Inflector inflector)
+   {
+      this.inflector = inflector;
    }
 }

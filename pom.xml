@@ -319,6 +319,12 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>text</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>shell-test-harness</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
