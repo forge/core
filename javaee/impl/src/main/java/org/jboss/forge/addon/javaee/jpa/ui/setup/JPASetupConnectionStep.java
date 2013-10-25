@@ -7,14 +7,15 @@
 
 package org.jboss.forge.addon.javaee.jpa.ui.setup;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
-import org.jboss.forge.addon.javaee.jpa.PersistenceFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JavaEEDefaultContainer;
@@ -33,10 +34,10 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
-public class PersistenceSetupConnectionStep extends AbstractJavaEECommand implements UIWizardStep
+public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIWizardStep
 {
    @Inject
    @WithAttributes(shortName = 't', label = "Database Type", required = true)
@@ -190,12 +191,15 @@ public class PersistenceSetupConnectionStep extends AbstractJavaEECommand implem
       }
    }
 
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    private boolean isExistingPersistenceUnitName(Project project, String unitName)
    {
-      if (project != null && project.hasFacet(PersistenceFacet.class))
+      if (project != null && project.hasFacet(JPAFacet.class))
       {
-         PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
-         for (PersistenceUnit<PersistenceDescriptor> persistenceUnit : config.getAllPersistenceUnit())
+         JPAFacet<?> facet = project.getFacet(JPAFacet.class);
+         PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) facet.getConfig();
+         List<PersistenceUnitCommon> allPersistenceUnit = config.getAllPersistenceUnit();
+         for (PersistenceUnitCommon persistenceUnit : allPersistenceUnit)
          {
             if (unitName.equals(persistenceUnit.getName()))
             {
@@ -213,39 +217,10 @@ public class PersistenceSetupConnectionStep extends AbstractJavaEECommand implem
       JPADataSource dataSource = getDataSource(context);
       Boolean configureMetadata = (Boolean) context.getAttribute("ConfigureMetadata");
       String puName = persistenceUnitName.getValue();
-      FileResource<?> configFile = persistenceOperations.setup(puName, project, dataSource, configureMetadata);
+      FileResource<?> configFile = persistenceOperations
+               .setup(puName, project, dataSource, configureMetadata);
       context.setSelection(configFile);
       return Results.success("Persistence (JPA) is installed.");
-   }
-
-   public UISelectOne<DatabaseType> getDbType()
-   {
-      return dbType;
-   }
-
-   public UIInput<String> getDataSourceName()
-   {
-      return dataSourceName;
-   }
-
-   public UIInput<String> getJdbcDriver()
-   {
-      return jdbcDriver;
-   }
-
-   public UIInput<String> getDatabaseURL()
-   {
-      return databaseURL;
-   }
-
-   public UIInput<String> getUsername()
-   {
-      return username;
-   }
-
-   public UIInput<String> getPassword()
-   {
-      return password;
    }
 
    @Override

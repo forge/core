@@ -12,7 +12,8 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet_3_2;
-import org.jboss.forge.addon.javaee.jpa.PersistenceFacet;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_0;
 import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -106,9 +107,9 @@ public class ProjectHelperTest
    public void testJPASetup()
    {
       Project project = projectHelper.createWebProject();
-      PersistenceFacet jpa = projectHelper.installJPA(project);
+      JPAFacet_2_0 jpa = projectHelper.installJPA_2_0(project);
       Assert.assertNotNull(jpa);
-      Assert.assertTrue(project.hasFacet(PersistenceFacet.class));
+      Assert.assertTrue(project.hasFacet(JPAFacet.class));
    }
 
    @Test(expected = BuildException.class)
@@ -126,7 +127,7 @@ public class ProjectHelperTest
    public void testJPAEntityCreation() throws Exception
    {
       Project project = projectHelper.createWebProject();
-      projectHelper.installJPA(project);
+      projectHelper.installJPA_2_0(project);
       JavaResource jpaEntity = projectHelper.createJPAEntity(project, "Customer");
       Assert.assertTrue(jpaEntity.exists());
       Resource<?> build = project.getFacet(PackagingFacet.class).createBuilder().runTests(false).build();

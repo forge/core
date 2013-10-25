@@ -14,13 +14,13 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.javaee.jpa.PersistenceFacet;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceMetaModelFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.jpa.containers.CustomJTAContainer;
 import org.jboss.forge.addon.javaee.jpa.containers.JBossEAP6Container;
 import org.jboss.forge.addon.javaee.jpa.providers.HibernateMetaModelProvider;
-import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
+import org.jboss.forge.addon.javaee.jpa.providers.JavaEEDefaultProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -33,14 +33,15 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.ui.test.WizardListener;
 import org.jboss.forge.ui.test.WizardTester;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class PersistenceSetupWizardTest
+@SuppressWarnings({ "rawtypes", "unchecked" })
+public class JPASetupWizardTest
 {
    @Deployment
    @Dependencies({
@@ -65,7 +66,7 @@ public class PersistenceSetupWizardTest
    }
 
    @Inject
-   private HibernateProvider defaultProvider;
+   private JavaEEDefaultProvider defaultProvider;
 
    @Inject
    private CustomJTAContainer customJTAProvider;
@@ -77,9 +78,9 @@ public class PersistenceSetupWizardTest
    private ProjectFactory projectFactory;
 
    @Inject
-   private WizardTester<PersistenceSetupWizard> tester;
+   private WizardTester<JPASetupWizard> tester;
    @Inject
-   private WizardTester<PersistenceSetupWizard> tester2;
+   private WizardTester<JPASetupWizard> tester2;
 
    @Test
    public void testSetup() throws Exception
@@ -114,11 +115,9 @@ public class PersistenceSetupWizardTest
       Assert.assertEquals(2, counter.get());
 
       // Check SUT values
-      PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
-      List<PersistenceUnit<PersistenceDescriptor>> allUnits = config.getAllPersistenceUnit();
-      PersistenceUnit<PersistenceDescriptor> unit = allUnits.get(0);
-
-      Assert.assertEquals("java:jboss:jta-ds", unit.getJtaDataSource());
+      PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
+      List<PersistenceUnitCommon> allUnits = config.getAllPersistenceUnit();
+      Assert.assertEquals("java:jboss:jta-ds", allUnits.get(0).getJtaDataSource());
    }
 
    @Test
@@ -150,10 +149,9 @@ public class PersistenceSetupWizardTest
       });
 
       // Check SUT values
-      PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
-      List<PersistenceUnit<PersistenceDescriptor>> allUnits = config.getAllPersistenceUnit();
-      PersistenceUnit<PersistenceDescriptor> unit = allUnits.get(0);
-      Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME, unit.getName());
+      PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
+      List<PersistenceUnitCommon> allUnits = config.getAllPersistenceUnit();
+      Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME, allUnits.get(0).getName());
 
       tester2.setInitialSelection(project.getProjectRoot());
 
@@ -179,12 +177,10 @@ public class PersistenceSetupWizardTest
       });
 
       // Check SUT values
-      config = project.getFacet(PersistenceFacet.class).getConfig();
+      config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
       allUnits = config.getAllPersistenceUnit();
-      unit = allUnits.get(0);
-      Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME, unit.getName());
-      unit = allUnits.get(1);
-      Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME + "-1", unit.getName());
+      Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME, allUnits.get(0).getName());
+      Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME + "-1", allUnits.get(1).getName());
    }
 
    @Test
@@ -221,11 +217,10 @@ public class PersistenceSetupWizardTest
       Assert.assertEquals(2, counter.get());
 
       // Check SUT values
-      PersistenceDescriptor config = project.getFacet(PersistenceFacet.class).getConfig();
-      List<PersistenceUnit<PersistenceDescriptor>> allUnits = config.getAllPersistenceUnit();
-      PersistenceUnit<PersistenceDescriptor> unit = allUnits.get(0);
+      PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
+      List<PersistenceUnitCommon> allUnits = config.getAllPersistenceUnit();
 
-      Assert.assertEquals("java:jboss:jta-ds", unit.getJtaDataSource());
+      Assert.assertEquals("java:jboss:jta-ds", allUnits.get(0).getJtaDataSource());
 
       Assert.assertTrue(project.hasFacet(PersistenceMetaModelFacet.class));
       PersistenceMetaModelFacet facet = project.getFacet(PersistenceMetaModelFacet.class);

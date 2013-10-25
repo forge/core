@@ -9,10 +9,8 @@ package org.jboss.forge.addon.javaee.jpa.containers;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.parser.java.util.Strings;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnitTransactionType;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.Properties;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PropertiesCommon;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -22,14 +20,15 @@ public class CustomJDBCContainer implements PersistenceContainer
 {
 
    @Override
-   public PersistenceUnit<PersistenceDescriptor> setupConnection(PersistenceUnit<PersistenceDescriptor> unit,
+   @SuppressWarnings("rawtypes")
+   public PersistenceUnitCommon setupConnection(PersistenceUnitCommon unit,
             JPADataSource dataSource)
    {
-      unit.transactionType(PersistenceUnitTransactionType._RESOURCE_LOCAL);
+      unit.transactionType("RESOURCE_LOCAL");
       unit.nonJtaDataSource(null);
       unit.jtaDataSource(null);
 
-      Properties<PersistenceUnit<PersistenceDescriptor>> properties = unit.getOrCreateProperties();
+      PropertiesCommon properties = unit.getOrCreateProperties();
       properties.createProperty().name("javax.persistence.jdbc.driver").value(dataSource.getJdbcDriver());
       properties.createProperty().name("javax.persistence.jdbc.url").value(dataSource.getDatabaseURL());
       properties.createProperty().name("javax.persistence.jdbc.user").value(dataSource.getUsername());

@@ -20,8 +20,8 @@ import org.jboss.forge.addon.dependencies.util.NonSnapshotDependencyFilter;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.facets.constraints.FacetConstraints;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.MetaModelProvider;
-import org.jboss.forge.addon.javaee.jpa.PersistenceFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceMetaModelFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.maven.plugins.Configuration;
@@ -36,7 +36,8 @@ import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.parser.java.util.Strings;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
 /**
  * Implementation of {@link PersistenceMetaModelFacet}
@@ -44,7 +45,7 @@ import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @FacetConstraints({
-         @FacetConstraint(PersistenceFacet.class),
+         @FacetConstraint(JPAFacet.class),
          @FacetConstraint(MavenPluginFacet.class)
 })
 public class MavenPersistenceMetaModelFacet extends AbstractFacet<Project> implements PersistenceMetaModelFacet
@@ -103,10 +104,13 @@ public class MavenPersistenceMetaModelFacet extends AbstractFacet<Project> imple
       return getMetaModelProvider().getAptCoordinate();
    }
 
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    private MetaModelProvider lookupProvider()
    {
-      PersistenceDescriptor config = getFaceted().getFacet(PersistenceFacet.class).getConfig();
-      String providerName = config.getAllPersistenceUnit().size() > 0 ? config.getAllPersistenceUnit().get(0)
+      PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) getFaceted().getFacet(JPAFacet.class)
+               .getConfig();
+      List<PersistenceUnitCommon> allPersistenceUnit = config.getAllPersistenceUnit();
+      String providerName = allPersistenceUnit.size() > 0 ? allPersistenceUnit.get(0)
                .getProvider() : null;
 
       Imported<PersistenceProvider> services = addonRegistry.getServices(PersistenceProvider.class);

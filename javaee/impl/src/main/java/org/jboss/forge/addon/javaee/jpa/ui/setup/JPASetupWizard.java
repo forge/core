@@ -13,11 +13,13 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.PersistenceMetaModelFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JBossEAP6Container;
-import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
+import org.jboss.forge.addon.javaee.jpa.providers.JavaEEDefaultProvider;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -33,8 +35,11 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.services.Imported;
 
-public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIWizard
+public class JPASetupWizard extends AbstractJavaEECommand implements UIWizard
 {
+   @Inject
+   @WithAttributes(shortName = 'j', label = "JPA Version", required = true)
+   private UISelectOne<JPAFacet<?>> jpaVersion;
 
    @Inject
    @WithAttributes(shortName = 'c', label = "Container", required = true)
@@ -52,10 +57,13 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
    private JBossEAP6Container defaultContainer;
 
    @Inject
-   private HibernateProvider defaultProvider;
+   private JavaEEDefaultProvider defaultProvider;
 
    @Inject
    private Imported<PersistenceMetaModelFacet> metaModelFacets;
+
+   @Inject
+   private FacetFactory facetFactory;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -77,10 +85,33 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      initFacets();
       initContainers(builder.getUIContext());
       initProviders();
       initConfigureMetadata();
-      builder.add(container).add(provider).add(configureMetadata);
+      builder.add(jpaVersion).add(container).add(provider).add(configureMetadata);
+   }
+
+   private void initFacets()
+   {
+      jpaVersion.setItemLabelConverter(new Converter<JPAFacet<?>, String>()
+      {
+         @Override
+         public String convert(JPAFacet<?> source)
+         {
+            return source == null ? null : source.getSpecVersion().toString();
+         }
+      });
+
+      for (JPAFacet<?> choice : jpaVersion.getValueChoices())
+      {
+         if (jpaVersion.getValue() == null
+                  || choice.getSpecVersion().compareTo(jpaVersion.getValue().getSpecVersion()) >= 1)
+         {
+            jpaVersion.setDefaultValue(choice);
+         }
+      }
+
    }
 
    private void initContainers(UIContext context)
@@ -144,36 +175,26 @@ public class PersistenceSetupWizard extends AbstractJavaEECommand implements UIW
    public Result execute(final UIContext context) throws Exception
    {
       applyUIValues(context);
-      return Results.success();
+      if (facetFactory.install(getSelectedProject(context), jpaVersion.getValue()))
+      {
+         return Results.success("JPA has been installed.");
+      }
+      return Results.fail("Could not install JPA.");
    }
 
    @Override
    public NavigationResult next(UIContext context) throws Exception
    {
       applyUIValues(context);
-      return Results.navigateTo(PersistenceSetupConnectionStep.class);
+      return Results.navigateTo(JPASetupConnectionStep.class);
    }
 
    private void applyUIValues(final UIContext context)
    {
+      context.setAttribute(JPAFacet.class, jpaVersion.getValue());
       context.setAttribute(PersistenceProvider.class, provider.getValue());
       context.setAttribute(PersistenceContainer.class, container.getValue());
       context.setAttribute("ConfigureMetadata", configureMetadata.getValue());
-   }
-
-   public UISelectOne<PersistenceContainer> getContainers()
-   {
-      return container;
-   }
-
-   public UISelectOne<PersistenceProvider> getProviders()
-   {
-      return provider;
-   }
-
-   public UIInput<Boolean> getConfigureMetadata()
-   {
-      return configureMetadata;
    }
 
    @Override

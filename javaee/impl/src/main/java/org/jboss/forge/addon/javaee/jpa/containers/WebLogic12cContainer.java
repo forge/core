@@ -3,11 +3,8 @@ package org.jboss.forge.addon.javaee.jpa.containers;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnitTransactionType;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.Properties;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.Property;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PropertyCommon;
 
 /**
  * Weblogic 12c Persistence Container
@@ -22,17 +19,18 @@ public class WebLogic12cContainer implements PersistenceContainer
    public static final String WEBLOGIC_JTA_PLATFORM = "org.hibernate.service.jta.platform.internal.WeblogicJtaPlatform";
 
    @Override
-   public PersistenceUnit<PersistenceDescriptor> setupConnection(PersistenceUnit<PersistenceDescriptor> unit,
+   @SuppressWarnings("rawtypes")
+   public PersistenceUnitCommon setupConnection(PersistenceUnitCommon unit,
             JPADataSource dataSource)
    {
       if (HibernateProvider.JPA_PROVIDER.equals(unit.getProvider()))
       {
-         Property<Properties<PersistenceUnit<PersistenceDescriptor>>> property = unit.getOrCreateProperties()
+         PropertyCommon property = unit.getOrCreateProperties()
                   .createProperty();
          property.name(HIBERNATE_TRANSACTION_JTA_PLATFORM).value(WEBLOGIC_JTA_PLATFORM);
       }
 
-      unit.transactionType(PersistenceUnitTransactionType._JTA);
+      unit.transactionType("JTA");
       unit.jtaDataSource(dataSource.getJndiDataSource());
       unit.nonJtaDataSource(null);
 

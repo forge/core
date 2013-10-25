@@ -17,9 +17,8 @@ import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.MetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.Properties;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PropertiesCommon;
 
 public class EclipseLinkProvider implements PersistenceProvider
 {
@@ -73,11 +72,12 @@ public class EclipseLinkProvider implements PersistenceProvider
       PLATFORMS.put(DatabaseType.FIREBIRD, null);
    }
 
+   @SuppressWarnings("rawtypes")
    @Override
-   public PersistenceUnit<PersistenceDescriptor> configure(PersistenceUnit<PersistenceDescriptor> unit, JPADataSource ds)
+   public PersistenceUnitCommon configure(PersistenceUnitCommon unit, JPADataSource ds)
    {
       unit.excludeUnlistedClasses(Boolean.FALSE);
-      Properties<PersistenceUnit<PersistenceDescriptor>> properties = unit.getOrCreateProperties();
+      PropertiesCommon properties = unit.getOrCreateProperties();
       properties.createProperty().name("eclipselink.ddl-generation").value("drop-and-create-tables");
 
       if (!DatabaseType.DEFAULT.equals(ds.getDatabase()))

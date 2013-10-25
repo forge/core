@@ -391,7 +391,7 @@ public class FieldOperations
    {
       JavaClass result = null;
 
-      PersistenceFacet persistence = project.getFacet(PersistenceFacet.class);
+      JPAFacet<?> persistence = project.getFacet(JPAFacet.class);
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
 
       if (entity != null)

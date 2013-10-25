@@ -15,15 +15,16 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 
 /**
  * If installed, this {@link Project} supports features from the JPA specification.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@SuppressWarnings("rawtypes")
 @FacetConstraint(ResourcesFacet.class)
-public interface PersistenceFacet extends JavaEEFacet, Configurable<PersistenceDescriptor>
+public interface JPAFacet<DESCRIPTOR extends PersistenceCommonDescriptor> extends JavaEEFacet, Configurable<DESCRIPTOR>
 {
    /**
     * Get this {@link Project}'s default package for @Entity objects

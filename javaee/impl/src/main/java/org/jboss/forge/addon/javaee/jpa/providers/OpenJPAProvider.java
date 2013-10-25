@@ -17,10 +17,8 @@ import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.MetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.Properties;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.Property;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PropertyCommon;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -64,13 +62,14 @@ public class OpenJPAProvider implements PersistenceProvider
    }
 
    @Override
-   public PersistenceUnit<PersistenceDescriptor> configure(PersistenceUnit<PersistenceDescriptor> unit, JPADataSource ds)
+   @SuppressWarnings("rawtypes")
+   public PersistenceUnitCommon configure(PersistenceUnitCommon unit, JPADataSource ds)
    {
       unit.excludeUnlistedClasses(Boolean.FALSE);
 
       if (!DatabaseType.DEFAULT.equals(ds.getDatabase()))
       {
-         Property<Properties<PersistenceUnit<PersistenceDescriptor>>> dictProperty = unit.getOrCreateProperties()
+         PropertyCommon dictProperty = unit.getOrCreateProperties()
                   .createProperty();
          String dialect = DICTIONARY.get(ds.getDatabase());
          dictProperty.name("openjpa.jdbc.DBDictionary").value(dialect);

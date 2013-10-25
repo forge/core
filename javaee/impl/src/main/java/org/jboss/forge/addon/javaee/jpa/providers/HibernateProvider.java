@@ -17,9 +17,8 @@ import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.MetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.Properties;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PropertiesCommon;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -64,10 +63,11 @@ public class HibernateProvider implements PersistenceProvider
    }
 
    @Override
-   public PersistenceUnit<PersistenceDescriptor> configure(PersistenceUnit<PersistenceDescriptor> unit, JPADataSource ds)
+   @SuppressWarnings("rawtypes")
+   public PersistenceUnitCommon configure(PersistenceUnitCommon unit, JPADataSource ds)
    {
       unit.excludeUnlistedClasses(Boolean.FALSE);
-      Properties<PersistenceUnit<PersistenceDescriptor>> properties = unit.getOrCreateProperties();
+      PropertiesCommon properties = unit.getOrCreateProperties();
       properties.createProperty().name("hibernate.hbm2ddl.auto").value("create-drop");
       properties.createProperty().name("hibernate.show_sql").value("true");
       properties.createProperty().name("hibernate.format_sql").value("true");

@@ -9,8 +9,7 @@ package org.jboss.forge.addon.javaee.jpa;
 import java.util.List;
 
 import org.jboss.forge.addon.dependencies.Dependency;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
 /**
  * Performs configuration of a {@link JPADataSource} to ensure it is properly set up for this implementation.
@@ -34,7 +33,8 @@ public interface PersistenceProvider
    /**
     * Configure the {@link PersistenceUnitDef} and {@link JPADataSource}.
     */
-   PersistenceUnit<PersistenceDescriptor> configure(PersistenceUnit<PersistenceDescriptor> unit, JPADataSource ds);
+   @SuppressWarnings("rawtypes")
+   PersistenceUnitCommon configure(PersistenceUnitCommon unit, JPADataSource ds);
 
    /**
     * List any dependencies required by this provider.

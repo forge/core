@@ -19,7 +19,7 @@ import javax.ws.rs.core.MediaType;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
 import org.jboss.forge.addon.javaee.ejb.ui.EJBSetupWizard;
-import org.jboss.forge.addon.javaee.jpa.PersistenceFacet;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.rest.generation.RestResourceGenerator;
 import org.jboss.forge.addon.javaee.rest.generator.RestGenerationContextImpl;
 import org.jboss.forge.addon.javaee.rest.generator.impl.EntityBasedResourceGenerator;
@@ -44,8 +44,8 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
 /**
  * Generates REST endpoints from JPA Entities
@@ -80,7 +80,7 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
 
    @Inject
    private EntityBasedResourceGenerator defaultResourceGenerator;
-   
+
    @Inject
    private Inflector inflector;
 
@@ -92,12 +92,13 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
                .category(Categories.create(super.getMetadata(context).getCategory(), "JAX-RS"));
    }
 
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
       UIContext context = builder.getUIContext();
       Project project = getSelectedProject(context);
-      PersistenceFacet persistenceFacet = project.getFacet(PersistenceFacet.class);
+      JPAFacet<PersistenceCommonDescriptor> persistenceFacet = project.getFacet(JPAFacet.class);
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
       targets.setValueChoices(persistenceFacet.getAllEntities());
       targets.setItemLabelConverter(new Converter<JavaClass, String>()
@@ -109,8 +110,8 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
          }
       });
       List<String> persistenceUnits = new ArrayList<String>();
-      for (PersistenceUnit<PersistenceDescriptor> persistenceUnit : persistenceFacet.getConfig()
-               .getAllPersistenceUnit())
+      List<PersistenceUnitCommon> allUnits = persistenceFacet.getConfig().getAllPersistenceUnit();
+      for (PersistenceUnitCommon persistenceUnit : allUnits)
       {
          persistenceUnits.add(persistenceUnit.getName());
       }
@@ -197,7 +198,7 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
       if (super.isEnabled(context))
       {
          Project project = getSelectedProject(context);
-         enabled = project.hasFacet(PersistenceFacet.class) && project.hasFacet(JavaSourceFacet.class);
+         enabled = project.hasFacet(JPAFacet.class) && project.hasFacet(JavaSourceFacet.class);
       }
       else
       {

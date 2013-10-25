@@ -28,9 +28,8 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.util.Refactory;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
-import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnitTransactionType;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
 /**
  * This class contains JPA specific operations
@@ -56,20 +55,26 @@ public class PersistenceOperations
     * @param dataSource
     * @param configureMetadata
     */
-   public FileResource<?> setup(String unitName, Project project, JPADataSource dataSource, boolean configureMetadata)
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public FileResource<?> setup(String unitName, Project project,
+            JPADataSource dataSource,
+            boolean configureMetadata)
    {
       FileResource<?> result = null;
       if (project != null)
       {
-         PersistenceFacet facet = facetFactory.install(project, PersistenceFacet.class);
+         JPAFacet<PersistenceCommonDescriptor> facet = project.getFacet(JPAFacet.class);
          PersistenceContainer container = dataSource.getContainer();
          PersistenceProvider provider = dataSource.getProvider();
-         PersistenceDescriptor config = facet.getConfig();
-         PersistenceUnit<PersistenceDescriptor> unit = config.createPersistenceUnit();
+         PersistenceCommonDescriptor config = facet.getConfig();
+         PersistenceUnitCommon unit = config.createPersistenceUnit();
          unit.name(unitName).description(DEFAULT_UNIT_DESC);
-         unit.transactionType(container.isJTASupported() ? PersistenceUnitTransactionType._JTA
-                  : PersistenceUnitTransactionType._RESOURCE_LOCAL);
-         unit.provider(provider.getProvider());
+         unit.transactionType(container.isJTASupported() ? "JTA" : "RESOURCE_LOCAL");
+
+         if (provider.getProvider() != null)
+         {
+            unit.provider(provider.getProvider());
+         }
 
          container.setupConnection(unit, dataSource);
          provider.configure(unit, dataSource);

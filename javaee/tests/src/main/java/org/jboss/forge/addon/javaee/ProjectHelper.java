@@ -14,7 +14,8 @@ import javax.persistence.GenerationType;
 
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet_3_2;
-import org.jboss.forge.addon.javaee.jpa.PersistenceFacet;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_0;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.parser.java.projects.JavaProjectType;
 import org.jboss.forge.addon.parser.java.projects.JavaWebProjectType;
@@ -70,11 +71,11 @@ public class ProjectHelper
    }
 
    /**
-    * Installs the {@link PersistenceFacet} facet
+    * Installs the {@link JPAFacet} facet
     */
-   public PersistenceFacet installJPA(Project project)
+   public JPAFacet_2_0 installJPA_2_0(Project project)
    {
-      return facetFactory.install(project, PersistenceFacet.class);
+      return facetFactory.install(project, JPAFacet_2_0.class);
    }
 
    public JavaResource createJPAEntity(Project project, String entityName) throws IOException

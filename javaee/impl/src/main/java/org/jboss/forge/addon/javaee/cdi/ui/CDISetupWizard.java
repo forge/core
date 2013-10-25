@@ -16,7 +16,6 @@ import org.jboss.forge.addon.javaee.cdi.CDIFacet;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
-import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -29,7 +28,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@FacetConstraint({ DependencyFacet.class, ResourcesFacet.class, WebResourcesFacet.class })
+@FacetConstraint({ DependencyFacet.class, ResourcesFacet.class })
 public class CDISetupWizard extends AbstractJavaEECommand
 {
    @Override
@@ -46,12 +45,12 @@ public class CDISetupWizard extends AbstractJavaEECommand
 
    @Inject
    @WithAttributes(required = true, label = "CDI Version")
-   private UISelectOne<CDIFacet<?>> choices;
+   private UISelectOne<CDIFacet<?>> cdiVersion;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      choices.setItemLabelConverter(new Converter<CDIFacet<?>, String>()
+      cdiVersion.setItemLabelConverter(new Converter<CDIFacet<?>, String>()
       {
          @Override
          public String convert(CDIFacet<?> source)
@@ -60,21 +59,22 @@ public class CDISetupWizard extends AbstractJavaEECommand
          }
       });
 
-      for (CDIFacet<?> cdi : choices.getValueChoices())
+      for (CDIFacet<?> cdi : cdiVersion.getValueChoices())
       {
-         if (choices.getValue() == null || cdi.getSpecVersion().compareTo(choices.getValue().getSpecVersion()) >= 1)
+         if (cdiVersion.getValue() == null
+                  || cdi.getSpecVersion().compareTo(cdiVersion.getValue().getSpecVersion()) >= 1)
          {
-            choices.setDefaultValue(cdi);
+            cdiVersion.setDefaultValue(cdi);
          }
       }
 
-      builder.add(choices);
+      builder.add(cdiVersion);
    }
 
    @Override
    public Result execute(final UIContext context) throws Exception
    {
-      if (facetFactory.install(getSelectedProject(context), choices.getValue()))
+      if (facetFactory.install(getSelectedProject(context), cdiVersion.getValue()))
       {
          return Results.success("CDI has been installed.");
       }

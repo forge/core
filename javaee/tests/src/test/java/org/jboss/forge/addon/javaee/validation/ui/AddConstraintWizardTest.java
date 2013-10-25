@@ -69,7 +69,7 @@ public class AddConstraintWizardTest
    public void testRequiredFields() throws Exception
    {
       Project project = projectHelper.createWebProject();
-      projectHelper.installJPA(project);
+      projectHelper.installJPA_2_0(project);
       JavaResource jpaEntity = projectHelper.createJPAEntity(project, "Customer");
 
       wizard.setInitialSelection(project.getProjectRoot());

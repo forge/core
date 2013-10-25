@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.facets.FacetIsAmbiguousException;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -21,6 +22,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,18 +62,18 @@ public class PersistenceFacetTest
       project = projectFactory.createTempProject();
    }
 
-   @Test
+   @Test(expected = FacetIsAmbiguousException.class)
    public void testInstall()
    {
-      facetFactory.install(project, PersistenceFacet.class);
-      Assert.assertTrue(project.hasFacet(PersistenceFacet.class));
+      facetFactory.install(project, JPAFacet.class);
    }
 
    @Test
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    public void testCanWritePersistenceConfigFile() throws Exception
    {
-      facetFactory.install(project, PersistenceFacet.class);
-      PersistenceFacet persistence = project.getFacet(PersistenceFacet.class);
+      facetFactory.install(project, JPAFacet_2_0.class);
+      JPAFacet<PersistenceCommonDescriptor> persistence = project.getFacet(JPAFacet.class);
       assertNotNull(persistence);
 
       Assert.assertEquals("2.0", persistence.getConfig().getVersion());

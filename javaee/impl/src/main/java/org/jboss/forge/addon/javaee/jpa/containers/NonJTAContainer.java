@@ -9,6 +9,7 @@ package org.jboss.forge.addon.javaee.jpa.containers;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.parser.java.util.Strings;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnit;
 import org.jboss.shrinkwrap.descriptor.api.persistence20.PersistenceUnitTransactionType;
@@ -21,10 +22,11 @@ public class NonJTAContainer implements PersistenceContainer
 {
 
    @Override
-   public PersistenceUnit<PersistenceDescriptor> setupConnection(PersistenceUnit<PersistenceDescriptor> unit,
+   @SuppressWarnings("rawtypes")
+   public PersistenceUnitCommon setupConnection(PersistenceUnitCommon unit,
             JPADataSource dataSource)
    {
-      unit.transactionType(PersistenceUnitTransactionType._RESOURCE_LOCAL);
+      unit.transactionType("RESOURCE_LOCAL");
       if (dataSource.hasJdbcConnectionInfo())
       {
          // ShellMessages.info(writer, "Ignoring jdbc connection info [" + dataSource.getJdbcConnectionInfo() + "]");
