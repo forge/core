@@ -72,7 +72,6 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
       });
       List<Property> properties = introspector.getProperties();
       property.setValueChoices(properties);
-      property.setDefaultValue(properties.get(0));
    }
 
    private void setupConstraint()
