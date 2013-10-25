@@ -46,7 +46,6 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>shell-test-harness</artifactId>
          <classifier>forge-addon</classifier>
-         <version>2.0.0-SNAPSHOT</version>
          <scope>test</scope>
       </dependency>
 

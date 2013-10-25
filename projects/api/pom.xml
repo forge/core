@@ -17,19 +17,21 @@
 
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>resources-api</artifactId>
+         <artifactId>resources</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>dependencies-api</artifactId>
+         <artifactId>dependencies</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui-api</artifactId>
+         <artifactId>ui</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
-         <version>2.0.0-SNAPSHOT</version>
       </dependency>
    </dependencies>
 
