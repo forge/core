@@ -15,6 +15,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -74,6 +75,15 @@ public class MavenPackagingFacetTest
       MetadataFacet mFacet = project.getFacet(MetadataFacet.class);
       String finalName = mFacet.getProjectName() + "-" + mFacet.getProjectVersion();
       Assert.assertEquals(finalName, facet.getFinalName());
+   }
+
+   @Test
+   public void testBuildArtifactResolved() throws Exception
+   {
+      final PackagingFacet facet = project.getFacet(PackagingFacet.class);
+      Resource<?> finalArtifact = facet.getFinalArtifact();
+      Assert.assertFalse("Final Artifact contains unresolved ${project.basedir} property", finalArtifact
+               .getFullyQualifiedName().contains("${project.basedir}"));
    }
 
 }

@@ -82,7 +82,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    @Inject
    private PlexusContainer plexus;
 
-   public ProjectBuilder getBuilder()
+   private ProjectBuilder getBuilder()
    {
       if (builder == null)
          builder = plexus.lookup(ProjectBuilder.class);
@@ -311,7 +311,9 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
             try
             {
                request.setResolveDependencies(true);
-               buildingResult = getBuilder().build(new FileResourceModelSource(pomResource), request);
+               // FORGE-1287
+               // buildingResult = getBuilder().build(new FileResourceModelSource(pomResource), request);
+               buildingResult = getBuilder().build(pomResource.getUnderlyingResourceObject(), request);
                fullBuildingResult = buildingResult;
                invalidateBuildingResult = false;
             }

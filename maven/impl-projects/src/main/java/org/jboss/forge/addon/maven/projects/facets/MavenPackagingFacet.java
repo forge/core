@@ -110,7 +110,7 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
       {
          throw new IllegalStateException("Project final artifact name is not configured");
       }
-      return factory.create(new File(directory.trim() + "/" + finalName + "."
+      return factory.create(new File(directory.trim(), finalName + "."
                + getPackagingType().toLowerCase()));
    }
 
