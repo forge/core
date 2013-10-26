@@ -10,6 +10,8 @@ package org.jboss.forge.addon.shell.aesh;
 import org.jboss.aesh.cl.renderer.OptionRenderer;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
+import org.jboss.aesh.terminal.TerminalColor;
+import org.jboss.aesh.terminal.TerminalTextStyle;
 
 /**
  * Possible {@link OptionRenderer} implementations
@@ -20,22 +22,19 @@ public enum OptionRenderers implements OptionRenderer
 {
    REQUIRED
    {
+      private TerminalTextStyle STYLE = new TerminalTextStyle(CharacterType.BOLD);
+      private TerminalColor COLOR = new TerminalColor(42, Color.DEFAULT);
+
       @Override
-      public Color getBackgroundColor()
+      public TerminalColor getColor()
       {
-         return Color.DEFAULT_BG;
+         return COLOR;
       }
 
       @Override
-      public Color getTextColor()
+      public TerminalTextStyle getTextType()
       {
-         return Color.DEFAULT_TEXT;
-      }
-
-      @Override
-      public CharacterType getTextType()
-      {
-         return CharacterType.BOLD;
+         return STYLE;
       }
    }
 }

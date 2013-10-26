@@ -8,8 +8,8 @@
 package org.jboss.forge.addon.shell;
 
 import org.jboss.aesh.console.reader.AeshPrintStream;
-import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
+import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.aesh.terminal.TerminalString;
 
 /**
@@ -22,25 +22,25 @@ public abstract class ShellMessages
 {
    public static void success(final AeshPrintStream writer, final String message)
    {
-      writer.print(new TerminalString("***SUCCESS*** ", Color.DEFAULT_BG, Color.GREEN_TEXT, CharacterType.PLAIN));
+      writer.print(new TerminalString("***SUCCESS*** ", new TerminalColor(Color.GREEN, Color.DEFAULT)));
       writer.println(message);
    }
 
    public static void error(final AeshPrintStream writer, final String message)
    {
-      writer.print(new TerminalString("***ERROR*** ", Color.DEFAULT_BG, Color.RED_TEXT, CharacterType.PLAIN));
+      writer.print(new TerminalString("***ERROR*** ", new TerminalColor(Color.RED, Color.DEFAULT)));
       writer.println(message);
    }
 
    public static void info(final AeshPrintStream writer, final String message)
    {
-      writer.print(new TerminalString("***INFO*** ", Color.DEFAULT_BG, Color.BLUE_TEXT, CharacterType.PLAIN));
+      writer.print(new TerminalString("***INFO*** ", new TerminalColor(Color.BLUE, Color.DEFAULT)));
       writer.println(message);
    }
 
    public static void warn(final AeshPrintStream writer, final String message)
    {
-      writer.print(new TerminalString("***WARNING*** ", Color.DEFAULT_BG, Color.YELLOW_TEXT, CharacterType.PLAIN));
+      writer.print(new TerminalString("***WARNING*** ", new TerminalColor(Color.YELLOW, Color.DEFAULT)));
       writer.println(message);
    }
 }

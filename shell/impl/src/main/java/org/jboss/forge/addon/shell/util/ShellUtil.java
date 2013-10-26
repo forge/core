@@ -7,8 +7,8 @@
 
 package org.jboss.forge.addon.shell.util;
 
-import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
+import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.aesh.terminal.TerminalString;
 import org.jboss.forge.addon.resource.FileResource;
 
@@ -41,11 +41,11 @@ public class ShellUtil
       String name = resource.getName();
       if (resource.isDirectory())
       {
-         name = new TerminalString(name, Color.DEFAULT_BG, Color.BLUE_TEXT, CharacterType.PLAIN).toString();
+         name = new TerminalString(name, new TerminalColor(Color.BLUE, Color.DEFAULT)).toString();
       }
       else if (resource.isExecutable())
       {
-         name = new TerminalString(name, Color.DEFAULT_BG, Color.GREEN_TEXT, CharacterType.PLAIN).toString();
+         name = new TerminalString(name, new TerminalColor(Color.GREEN, Color.DEFAULT)).toString();
       }
       return name;
    }

@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.addon.shell;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,6 +19,7 @@ import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
+import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
 import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
@@ -90,13 +90,17 @@ public class ShellImpl implements Shell
    private Prompt createPrompt()
    {
       // [ currentdir]$
-      List<TerminalCharacter> prompt = new ArrayList<TerminalCharacter>();
-      prompt.add(new TerminalCharacter('[', Color.DEFAULT_BG, Color.BLUE_TEXT, CharacterType.BOLD));
+      List<TerminalCharacter> prompt = new LinkedList<TerminalCharacter>();
+      prompt.add(new TerminalCharacter('[', new TerminalColor(Color.BLUE, Color.DEFAULT),
+               CharacterType.BOLD));
       for (char c : currentResource.getName().toCharArray())
-         prompt.add(new TerminalCharacter(c, Color.DEFAULT_BG, Color.RED_TEXT, CharacterType.PLAIN));
-      prompt.add(new TerminalCharacter(']', Color.DEFAULT_BG, Color.BLUE_TEXT, CharacterType.BOLD));
-      prompt.add(new TerminalCharacter('$', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
-      prompt.add(new TerminalCharacter(' ', Color.DEFAULT_BG, Color.DEFAULT_TEXT));
+      {
+         prompt.add(new TerminalCharacter(c));
+      }
+      prompt.add(new TerminalCharacter(']', new TerminalColor(Color.BLUE, Color.DEFAULT),
+               CharacterType.BOLD));
+      prompt.add(new TerminalCharacter('$'));
+      prompt.add(new TerminalCharacter(' '));
       return new Prompt(prompt);
    }
 
