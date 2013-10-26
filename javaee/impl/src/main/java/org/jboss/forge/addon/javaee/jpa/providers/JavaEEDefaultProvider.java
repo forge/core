@@ -15,7 +15,6 @@ import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.MetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PropertiesCommon;
 
 /**
  * 
@@ -41,9 +40,9 @@ public class JavaEEDefaultProvider implements PersistenceProvider
    public PersistenceUnitCommon configure(PersistenceUnitCommon unit, JPADataSource ds)
    {
       unit.excludeUnlistedClasses(Boolean.FALSE);
-      PropertiesCommon properties = unit.getOrCreateProperties();
-      properties.createProperty().name("javax.persistence.schema-generation.database.action").value("create");
-      properties.createProperty().name("javax.persistence.schema-generation.scripts.action").value("drop-and-create");
+      // PropertiesCommon properties = unit.getOrCreateProperties();
+      // properties.createProperty().name("javax.persistence.schema-generation.database.action").value("create");
+      // properties.createProperty().name("javax.persistence.schema-generation.scripts.action").value("drop-and-create");
       return unit;
    }
 
