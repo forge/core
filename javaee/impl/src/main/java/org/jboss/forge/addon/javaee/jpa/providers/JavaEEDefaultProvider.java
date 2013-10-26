@@ -14,7 +14,10 @@ import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.MetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
+import org.jboss.forge.furnace.versions.SingleVersion;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PropertiesCommon;
 
 /**
  * 
@@ -40,9 +43,14 @@ public class JavaEEDefaultProvider implements PersistenceProvider
    public PersistenceUnitCommon configure(PersistenceUnitCommon unit, JPADataSource ds)
    {
       unit.excludeUnlistedClasses(Boolean.FALSE);
-      // PropertiesCommon properties = unit.getOrCreateProperties();
-      // properties.createProperty().name("javax.persistence.schema-generation.database.action").value("create");
-      // properties.createProperty().name("javax.persistence.schema-generation.scripts.action").value("drop-and-create");
+      PersistenceCommonDescriptor descriptor = (PersistenceCommonDescriptor) unit.up();
+      if (new SingleVersion(descriptor.getVersion()).compareTo(new SingleVersion("2.1")) >= 0)
+      {
+         PropertiesCommon properties = unit.getOrCreateProperties();
+         properties.createProperty().name("javax.persistence.schema-generation.database.action").value("create");
+         properties.createProperty().name("javax.persistence.schema-generation.scripts.action")
+                  .value("drop-and-create");
+      }
       return unit;
    }
 
