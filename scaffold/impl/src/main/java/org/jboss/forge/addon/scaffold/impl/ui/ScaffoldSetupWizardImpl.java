@@ -66,8 +66,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
          public Boolean call() throws Exception
          {
             ScaffoldProvider selectedProvider = provider.getValue();
-            ScaffoldContext scaffoldContext = newScaffoldContext();
-            return selectedProvider != null && selectedProvider.needsOverwriteConfirmation(scaffoldContext);
+            return selectedProvider != null;
          }
       });
       
@@ -85,7 +84,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
       builder.add(provider).add(target).add(overwrite);
    }
 
-   private ScaffoldContext newScaffoldContext()
+   private ScaffoldContext createScaffoldContext()
    {
       return new ScaffoldContext(target.getValue(), overwrite.getValue());
    }
@@ -111,7 +110,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
       ScaffoldProvider selectedProvider = provider.getValue();
       if(selectedProvider.getSetupFlow() == null)
       {
-         selectedProvider.setup(getSelectedProject(context), newScaffoldContext());
+         selectedProvider.setup(getSelectedProject(context), createScaffoldContext());
       }
       return Results.success();
    }

@@ -50,14 +50,6 @@ public interface ScaffoldProvider extends ProjectFacet, UIValidator
    List<Resource<?>> generateFrom(Iterable<Resource<?>> resources, ScaffoldContext scaffoldContext);
 
    /**
-    * Needs overwrite confirmation ?
-    * 
-    * @param scaffoldContext
-    * @return
-    */
-   boolean needsOverwriteConfirmation(ScaffoldContext scaffoldContext);
-
-   /**
     * Return the {@link UIWizardStep} class that begins the scaffold setup of this type, if any.
     */
    Class<? extends UIWizardStep> getSetupFlow();

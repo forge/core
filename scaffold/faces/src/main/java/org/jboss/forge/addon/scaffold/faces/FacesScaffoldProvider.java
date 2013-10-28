@@ -174,13 +174,6 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
    }
 
    @Override
-   public boolean needsOverwriteConfirmation(ScaffoldContext scaffoldContext)
-   {
-      // TODO Auto-generated method stub
-      return false;
-   }
-
-   @Override
    public Class<? extends UIWizardStep> getSetupFlow()
    {
       // TODO Auto-generated method stub
