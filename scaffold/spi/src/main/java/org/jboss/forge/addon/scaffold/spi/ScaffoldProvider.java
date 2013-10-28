@@ -12,6 +12,7 @@ import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
@@ -50,9 +51,9 @@ public interface ScaffoldProvider extends ProjectFacet, UIValidator
    List<Resource<?>> generateFrom(Iterable<Resource<?>> resources, ScaffoldContext scaffoldContext);
 
    /**
-    * Return the {@link UIWizardStep} class that begins the scaffold setup of this type, if any.
+    * Return the {@link List} of {@link UICommands} classes that begins the scaffold setup of this type, if any.
     */
-   Class<? extends UIWizardStep> getSetupFlow();
+   List<Class<? extends UICommand>> getSetupFlow();
 
    AccessStrategy getAccessStrategy();
 

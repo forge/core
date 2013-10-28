@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.scaffold.impl.ui;
 
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -17,6 +18,7 @@ import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.scaffold.ui.ScaffoldSetupWizard;
+import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -118,7 +120,16 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
-      return Results.navigateTo(provider.getValue().getSetupFlow());
+      List<Class<? extends UICommand>> setupFlow = provider.getValue().getSetupFlow();
+      if(setupFlow.isEmpty())
+      {
+         return null;
+      }
+      else
+      {
+         Class<? extends UICommand> next = setupFlow.remove(0);
+         return Results.navigateTo(next, (Class<? extends UICommand>[]) setupFlow.toArray());
+      }
    }
 
    @Override

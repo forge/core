@@ -16,6 +16,14 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.configuration.Configuration;
 import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.javaee.cdi.CDIFacet;
+import org.jboss.forge.addon.javaee.cdi.ui.CDISetupWizard;
+import org.jboss.forge.addon.javaee.ejb.EJBFacet;
+import org.jboss.forge.addon.javaee.ejb.ui.EJBSetupWizard;
+import org.jboss.forge.addon.javaee.faces.FacesFacet;
+import org.jboss.forge.addon.javaee.faces.ui.FacesSetupWizard;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet;
+import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
@@ -28,6 +36,7 @@ import org.jboss.forge.addon.scaffold.faces.util.ScaffoldUtil;
 import org.jboss.forge.addon.scaffold.spi.AccessStrategy;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
+import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.parser.xml.Node;
@@ -174,10 +183,26 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
    }
 
    @Override
-   public Class<? extends UIWizardStep> getSetupFlow()
+   public List<Class<? extends UICommand>> getSetupFlow()
    {
-      // TODO Auto-generated method stub
-      return null;
+      List<Class<? extends UICommand>> setupCommands = new ArrayList<Class<? extends UICommand>>();
+      if(!origin.hasFacet(JPAFacet.class))
+      {
+         setupCommands.add(JPASetupWizard.class);
+      }
+      if(!origin.hasFacet(CDIFacet.class))
+      {
+         setupCommands.add(CDISetupWizard.class);
+      }
+      if(!origin.hasFacet(EJBFacet.class))
+      {
+         setupCommands.add(EJBSetupWizard.class);
+      }
+      if(!origin.hasFacet(FacesFacet.class))
+      {
+         setupCommands.add(FacesSetupWizard.class);
+      }
+      return setupCommands;
    }
    
    protected List<Resource<?>> generateIndex(String targetDir, final Resource<?> template, final boolean overwrite)
