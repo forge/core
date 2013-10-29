@@ -13,6 +13,9 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.facets.AbstractFaceted;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldContext;
@@ -110,17 +113,17 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    public Result execute(UIExecutionContext context) throws Exception
    {
       ScaffoldProvider selectedProvider = provider.getValue();
-      if(selectedProvider.getSetupFlow() == null)
-      {
-         selectedProvider.setup(getSelectedProject(context), createScaffoldContext());
-      }
+      selectedProvider.setup(getSelectedProject(context), createScaffoldContext());
       return Results.success();
    }
 
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
-      List<Class<? extends UICommand>> setupFlow = provider.getValue().getSetupFlow();
+      ScaffoldProvider selectedProvider = provider.getValue();
+      Project project = getSelectedProject(context);
+      ((AbstractFacet) selectedProvider).setFaceted(project);
+      List<Class<? extends UICommand>> setupFlow = selectedProvider.getSetupFlow();
       if(setupFlow.isEmpty())
       {
          return null;
@@ -128,7 +131,8 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
       else
       {
          Class<? extends UICommand> next = setupFlow.remove(0);
-         return Results.navigateTo(next, (Class<? extends UICommand>[]) setupFlow.toArray());
+         Class<?>[] additional = setupFlow.toArray(new Class<?>[setupFlow.size()]);
+         return Results.navigateTo(next, (Class<? extends UICommand>[]) additional);
       }
    }
 

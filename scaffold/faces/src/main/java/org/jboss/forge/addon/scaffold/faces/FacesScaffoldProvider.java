@@ -25,6 +25,9 @@ import org.jboss.forge.addon.javaee.faces.ui.FacesSetupWizard;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
+import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
+import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
+import org.jboss.forge.addon.javaee.servlet.ui.ServletSetupWizard;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.FileResource;
@@ -197,6 +200,11 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       if(!origin.hasFacet(EJBFacet.class))
       {
          setupCommands.add(EJBSetupWizard.class);
+      }
+      if(!(origin.hasFacet(ServletFacet_3_0.class) || origin.hasFacet(ServletFacet_3_1.class)))
+      {
+         //TODO: FORGE-1296. Ensure that this wizard only sets up Servlet 3.0+
+         setupCommands.add(ServletSetupWizard.class);
       }
       if(!origin.hasFacet(FacesFacet.class))
       {
