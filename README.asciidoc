@@ -105,13 +105,13 @@ This plugin starts the Forge 2 Container and your installed addons, so you can u
 |yes
 
 |link:scaffold/README.asciidoc[Scaffold]
-|no
+|yes
 
 |link:shell/README.asciidoc[Shell]
-|no
+|yes
 
 |link:text/README.asciidoc[Text]
-|no
+|yes
 
 |link:ui/README.asciidoc[User Interface (UI)]
 |yes
