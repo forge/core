@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +40,10 @@ import org.jboss.forge.addon.scaffold.spi.ScaffoldContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
-import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.forge.parser.xml.Node;
-import org.jboss.forge.parser.xml.XMLParser;
+import org.jboss.shrinkwrap.descriptor.api.javaee6.ParamValueType;
+import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.spi.node.Node;
+import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor;
 import org.metawidget.statically.StaticUtils.IndentedWriter;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlOutcomeTargetLink;
@@ -379,52 +379,83 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
 
    protected void setupWebXML()
    {
-      ServletFacet servlet = this.origin.getFacet(ServletFacet.class);
-
-      Node webXML = removeConflictingErrorPages(servlet);
-      servlet.getConfigFile().setContents(XMLParser.toXMLInputStream(webXML));
-
-      /*TODO Fix ServletFacet
-      WebAppDescriptor servletConfig = servlet.getConfig();
-      WebResourcesFacet web = this.project.getFacet(WebResourcesFacet.class);
-
-      // (prefer /faces/error.xhtml)
-
-      String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource(ERROR_XHTML)).get(1);
-      servletConfig.errorPage(404, errorLocation);
-      servletConfig.errorPage(500, errorLocation);
-      
-      // Use the server timezone since we accept dates in that timezone, and it makes sense to display them in the same
-      if (servletConfig.getContextParam("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE") == null)
+      WebResourcesFacet web = this.origin.getFacet(WebResourcesFacet.class);
+      // TODO: Refactor this and remove the duplication
+      if (this.origin.hasFacet(ServletFacet_3_0.class))
       {
-         servletConfig.contextParam("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE", "true");
-      }
+         ServletFacet servlet = this.origin.getFacet(ServletFacet_3_0.class);
+         WebAppDescriptor servletConfig = (WebAppDescriptor) servlet.getConfig();
+         Node root = ((NodeDescriptor)servletConfig).getRootNode();
+         removeConflictingErrorPages(root);
+         
+         // (prefer /faces/error.xhtml)
 
-      servlet.saveConfig(servletConfig);
-      */
-   }
+         String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource(ERROR_XHTML)).get(1);
+         servletConfig.createErrorPage().errorCode("404").location(errorLocation);
+         servletConfig.createErrorPage().errorCode("500").location(errorLocation);
 
-   protected Node removeConflictingErrorPages(final ServletFacet servlet)
-   {
-      Node webXML = XMLParser.parse(servlet.getConfigFile().getResourceInputStream());
-      Node root = webXML.getRoot();
-      List<Node> errorPages = root.get("error-page");
-
-      for (String code : Arrays.asList("404", "500"))
-      {
-         for (Node errorPage : errorPages)
+         // Use the server timezone since we accept dates in that timezone, and it makes sense to display them in the
+         // same
+         boolean found = false;
+         for (ParamValueType<WebAppDescriptor> contextParam : servletConfig.getAllContextParam())
          {
-            if (code.equals(errorPage.getSingle("error-code").getText())
-                     /* && this.prompt.promptBoolean("Your web.xml already contains an error page for " + code
-                              + " status codes, replace it?") */)
+            if (contextParam.getParamName().equals("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE"))
             {
-               root.removeChild(errorPage);
+               found = true;
             }
          }
+         if (!found)
+         {
+            servletConfig.createContextParam()
+                     .paramName("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE").paramValue("true");
+         }
+         servlet.saveConfig(servletConfig);
       }
-      return webXML;
+      else if (this.origin.hasFacet(ServletFacet_3_1.class))
+      {
+         ServletFacet servlet = this.origin.getFacet(ServletFacet_3_1.class);
+         org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor servletConfig = (org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor) servlet
+                  .getConfig();
+         // (prefer /faces/error.xhtml)
+
+         String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource(ERROR_XHTML)).get(1);
+         servletConfig.createErrorPage().errorCode("404").location(errorLocation);
+         servletConfig.createErrorPage().errorCode("500").location(errorLocation);
+
+         // Use the server timezone since we accept dates in that timezone, and it makes sense to display them in the
+         // same
+         boolean found = false;
+         for (org.jboss.shrinkwrap.descriptor.api.javaee7.ParamValueType<org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor> contextParam : servletConfig
+                  .getAllContextParam())
+         {
+            if (contextParam.getParamName().equals("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE"))
+            {
+               found = true;
+            }
+         }
+         if (!found)
+         {
+            servletConfig.createContextParam()
+                     .paramName("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE").paramValue("true");
+         }
+         servlet.saveConfig(servletConfig);
+      }
    }
-   
+
+   private void removeConflictingErrorPages(Node root)
+   {
+      List<Node> nodeList = root.get("error-page");
+      for (Node errorPage : nodeList)
+      {
+         String errorCode = errorPage.getTextValueForPatternName("error-code");
+         if(errorCode.equals("404") || errorCode.equals("500"))
+         {
+            // TODO: Prompt before removing? A prompt existed in Forge 1.
+            root.removeChild(errorPage);
+         }
+      }
+   }
+
    /**
     * Generates the navigation menu based on scaffolded entities.
     */
