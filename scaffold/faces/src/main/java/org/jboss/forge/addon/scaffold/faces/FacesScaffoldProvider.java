@@ -381,6 +381,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
    {
       WebResourcesFacet web = this.origin.getFacet(WebResourcesFacet.class);
       // TODO: Refactor this and remove the duplication
+      // TODO: origin.getFacet(ServletFacet.class) returns null!!
       if (this.origin.hasFacet(ServletFacet_3_0.class))
       {
          ServletFacet servlet = this.origin.getFacet(ServletFacet_3_0.class);

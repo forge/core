@@ -105,7 +105,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    public Metadata getMetadata(UIContext context)
    {
       return Metadata.from(super.getMetadata(context), getClass()).name("Scaffold: Setup")
-               .description("Setups the scaffold")
+               .description("Setup the scaffold")
                .category(Categories.create("Scaffold", "Setup"));
    }
 
@@ -114,7 +114,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    {
       ScaffoldProvider selectedProvider = provider.getValue();
       selectedProvider.setup(getSelectedProject(context), createScaffoldContext());
-      return Results.success();
+      return Results.success("Scaffold was setup successfully.");
    }
 
    @Override
