@@ -3,7 +3,6 @@
 This addon provides *standalone* functionality.
 The text addon provides functionality to perform text-based transformations like inflection of words.
         
-=== Dependencies: None (or)
 === Depends on
 [options="header"]
 |===
