@@ -8,16 +8,18 @@ The text addon provides functionality to perform text-based transformations like
 [options="header"]
 |===
 |Addon |Exported |Optional
-|org.jboss.forge.furnace.container:cdi
+|org.jboss.forge.furnace.container:simple
 |no
 |no
 |===
 
 == Setup
 This Addon requires the following installation steps.
-=== Add configuration to pom.xml 
+
+=== Add configuration to pom.xml
+
 To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
-(Make sure the dependency is put all the way to the left, and uses 3 spaces for indentation of GAV)
+
 [source,xml]
 ----
 <dependency>
