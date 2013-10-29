@@ -68,7 +68,7 @@ public class CommandLineUtil
    {
       UICommandMetadata metadata = command.getMetadata(shellContext);
       ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()),
-               metadata.getDescription());
+               metadata.getDescription(), ForgeCommandValidator.INSTANCE);
 
       for (final InputComponent<?, Object> input : inputs.values())
       {
@@ -91,7 +91,6 @@ public class CommandLineUtil
             {
                optionBuilder.required(true).renderer(OptionRenderers.REQUIRED);
             }
-            
             OptionCompleter completer = OptionCompleterFactory.getCompletionFor(input, shellContext, converterFactory);
             optionBuilder.completer(completer);
             optionBuilder.activator(new OptionActivator()

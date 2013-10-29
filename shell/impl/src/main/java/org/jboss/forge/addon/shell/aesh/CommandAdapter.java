@@ -95,6 +95,11 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
       return failure ? CommandResult.FAILURE : CommandResult.SUCCESS;
    }
 
+   ShellValidationContext validate()
+   {
+      return interaction.validate();
+   }
+
    @Override
    public File getManLocation()
    {
