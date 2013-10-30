@@ -24,7 +24,7 @@
 
    <properties>
       <version.aesh>0.43-SNAPSHOT</version.aesh>
-      <version.aesh.extensions>0.42</version.aesh.extensions>
+      <version.aesh.extensions>0.43-SNAPSHOT</version.aesh.extensions>
    </properties>
 
    <dependencyManagement>
