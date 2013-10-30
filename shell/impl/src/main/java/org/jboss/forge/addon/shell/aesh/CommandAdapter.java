@@ -54,11 +54,11 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
          {
             if (failure)
             {
-               ShellMessages.error(shell.getConsole().err(), result.getMessage());
+               ShellMessages.error(shell.getConsole().getShell().err(), result.getMessage());
             }
             else
             {
-               ShellMessages.success(shell.getConsole().out(), result.getMessage());
+               ShellMessages.success(shell.getConsole().getShell().out(), result.getMessage());
             }
          }
          ShellContext context = interaction.getContext();
@@ -89,7 +89,7 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
          // Display the error messages
          for (String error : errors)
          {
-            ShellMessages.error(shell.getConsole().err(), error);
+            ShellMessages.error(shell.getConsole().getShell().err(), error);
          }
       }
       return failure ? CommandResult.FAILURE : CommandResult.SUCCESS;

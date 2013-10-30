@@ -53,7 +53,7 @@ public class EchoCommand extends AbstractShellCommand
             sb.append(val).append(' ');
          }
       }
-      shellContext.getProvider().getConsole().out().println(sb);
+      shellContext.getProvider().getOutput().out().println(sb);
       return Results.success();
    }
 }

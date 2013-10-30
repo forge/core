@@ -28,12 +28,12 @@ public class ShellUIOutputImpl implements UIOutput
    @Override
    public PrintStream out()
    {
-      return console.out();
+      return console.getShell().out();
    }
 
    @Override
    public PrintStream err()
    {
-      return console.err();
+      return console.getShell().err();
    }
 }
