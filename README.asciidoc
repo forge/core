@@ -110,6 +110,9 @@ This plugin starts the Forge 2 Container and your installed addons, so you can u
 |link:shell/README.asciidoc[Shell]
 |yes
 
+|link:templates/README.asciidoc[Templates]
+|yes
+
 |link:text/README.asciidoc[Text]
 |yes
 
