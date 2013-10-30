@@ -85,8 +85,10 @@
 
             <module>addon-manager</module>
             <module>addons</module>
-            <module>shell</module>
+            <module>convert</module>
+            <module>configuration</module>
             <module>dependencies</module>
+            <module>dev-tools-java</module>
             <module>environment</module>
             <module>facets</module>
             <module>javaee</module>
@@ -96,11 +98,11 @@
             <module>parser-xml</module>
             <module>resources</module>
             <module>ui</module>
-            <module>convert</module>
-            <module>configuration</module>
             <module>scaffold</module>
+            <module>shell</module>
             <module>templates</module>
             <module>text</module>
+
             <module>core</module>
          </modules>
       </profile>

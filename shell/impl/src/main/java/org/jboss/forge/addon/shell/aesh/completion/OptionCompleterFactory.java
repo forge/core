@@ -7,6 +7,7 @@ import org.jboss.aesh.cl.completer.OptionCompleter;
 import org.jboss.aesh.util.FileLister.Filter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
@@ -26,8 +27,11 @@ public class OptionCompleterFactory
             ConverterFactory converterFactory)
    {
       UISelection<FileResource<?>> selection = context.getInitialSelection();
+
+      // FIXME This should use the Resource API to allow completion of virtual resources.
       final File cwd = selection.isEmpty() ? OperatingSystemUtils.getUserHomeDir() : selection.get()
                .getUnderlyingResourceObject();
+
       InputType inputType = component.getFacet(HintsFacet.class).getInputType();
       OptionCompleter strategy = null;
       if (inputType == InputType.FILE_PICKER && cwd.isDirectory())
@@ -41,6 +45,11 @@ public class OptionCompleterFactory
       else if (component instanceof SelectComponent)
       {
          strategy = new SelectComponentOptionCompleter((SelectComponent<?, Object>) component, converterFactory);
+      }
+      else if (Resource.class.isAssignableFrom(component.getValueType()))
+      {
+         // fall back to Resource completion.
+         strategy = new FileOptionCompleter(cwd);
       }
       // Always try UICompleter first and then fallback to the chosen strategy
       strategy = new UICompleterOptionCompleter(strategy, context, component, converterFactory);

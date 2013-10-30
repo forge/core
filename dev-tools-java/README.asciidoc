@@ -1,0 +1,40 @@
+== dev-tools-java
+:idprefix: id_ 
+
+This addon provides *standalone* functionality. Development tools for Java Programming Language.
+        
+=== Dependencies: None (or)
+=== Depends on
+[options="header"]
+|===
+|Addon |Exported |Optional
+|parser-java
+|no
+|no
+|projects
+|no
+|no
+|ui
+|no
+|no
+|===
+
+== Setup
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>dev-tools-java</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----
+
+== Features
+Provides several UICommand implementations for working with the Java Programming Language :: 
+ *Register as service:* Registers a Java class for use with `java.util.ServiceLoader` (and similar mechanisms.) 
