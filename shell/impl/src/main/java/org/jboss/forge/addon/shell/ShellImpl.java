@@ -14,8 +14,11 @@ import javax.enterprise.inject.Vetoed;
 
 import org.jboss.aesh.console.AeshConsole;
 import org.jboss.aesh.console.AeshConsoleBuilder;
+import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.Prompt;
+import org.jboss.aesh.console.helper.InterruptHook;
 import org.jboss.aesh.console.settings.Settings;
+import org.jboss.aesh.console.settings.SettingsBuilder;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
@@ -56,7 +59,16 @@ public class ShellImpl implements Shell
    {
       this.currentResource = initialResource;
       this.addonRegistry = addonRegistry;
-      this.console = new AeshConsoleBuilder().prompt(createPrompt()).settings(settings)
+      Settings newSettings = new SettingsBuilder(settings).interruptHook(new InterruptHook()
+      {
+         @Override
+         public void handleInterrupt(Console console)
+         {
+            console.getShell().out().println("^C");
+            console.clearBufferAndDisplayPrompt();
+         }
+      }).create();
+      this.console = new AeshConsoleBuilder().prompt(createPrompt()).settings(newSettings)
                .commandRegistry(new ForgeCommandRegistry(this, commandManager))
                .create();
       this.output = new ShellUIOutputImpl(console);
