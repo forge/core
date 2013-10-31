@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -56,7 +57,10 @@ import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.events.ResourceEvent;
 import org.jboss.forge.addon.resource.monitor.ResourceListener;
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
+import org.jboss.forge.furnace.container.cdi.events.Local;
+import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
@@ -65,10 +69,9 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFacet, MavenFacet
 {
    private ProjectBuildingResult buildingResult;
-   private ProjectBuildingResult fullBuildingResult;
    private ProjectBuilder builder;
    private ResourceMonitor monitor;
-   private volatile boolean invalidateBuildingResult;
+   private ListenerRegistration<ResourceListener> listenerRegistration;
 
    @Inject
    private MavenContainer container;
@@ -202,7 +205,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
             throw new IllegalStateException("Could not create POM file.");
          pom.setContents(createDefaultPOM());
          monitor = pom.monitor();
-         monitor.addResourceListener(new ResourceListener()
+         listenerRegistration = monitor.addResourceListener(new ResourceListener()
          {
             @Override
             public void processEvent(ResourceEvent event)
@@ -212,6 +215,12 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          });
       }
       return isInstalled();
+   }
+
+   public void onShutdown(@Observes @Local PreShutdown event)
+   {
+      if (listenerRegistration != null)
+         listenerRegistration.removeListener();
    }
 
    @Override
@@ -301,7 +310,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
     */
    public synchronized ProjectBuildingResult getProjectBuildingResult()
    {
-      if (this.buildingResult == null || this.fullBuildingResult == null || invalidateBuildingResult)
+      if (this.buildingResult == null)
       {
          ProjectBuildingRequest request = null;
          request = getRequest();
@@ -314,8 +323,6 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
                // FORGE-1287
                // buildingResult = getBuilder().build(new FileResourceModelSource(pomResource), request);
                buildingResult = getBuilder().build(pomResource.getUnderlyingResourceObject(), request);
-               fullBuildingResult = buildingResult;
-               invalidateBuildingResult = false;
             }
             catch (RuntimeException full)
             {
@@ -331,12 +338,12 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
             throw new RuntimeException("Project building request was null");
          }
       }
-      return fullBuildingResult;
+      return buildingResult;
    }
 
    private void invalidateBuildingResults()
    {
-      this.invalidateBuildingResult = true;
+      this.buildingResult = null;
    }
 
    @Override

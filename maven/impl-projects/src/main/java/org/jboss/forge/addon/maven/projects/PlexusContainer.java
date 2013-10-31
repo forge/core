@@ -8,12 +8,15 @@ package org.jboss.forge.addon.maven.projects;
 
 import java.util.concurrent.Callable;
 
+import javax.enterprise.event.Observes;
 import javax.inject.Singleton;
 
 import org.codehaus.plexus.ContainerConfiguration;
 import org.codehaus.plexus.DefaultContainerConfiguration;
-import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.logging.console.ConsoleLoggerManager;
+import org.jboss.forge.addon.maven.projects.plexus.DefaultPlexusContainer;
+import org.jboss.forge.furnace.container.cdi.events.Local;
+import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.util.ClassLoaders;
 
 /**
@@ -41,6 +44,12 @@ class PlexusContainer
       {
          throw new RuntimeException("Could not look up component of type [" + type.getName() + "]", e);
       }
+   }
+
+   public void preShutdown(@Observes @Local PreShutdown event)
+   {
+      if (plexusContainer != null)
+         plexusContainer.dispose();
    }
 
    private org.codehaus.plexus.PlexusContainer getPlexusContainer() throws Exception
