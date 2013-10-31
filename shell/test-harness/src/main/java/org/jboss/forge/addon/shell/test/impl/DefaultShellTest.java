@@ -7,7 +7,6 @@
 package org.jboss.forge.addon.shell.test.impl;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
@@ -36,6 +35,7 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -55,7 +55,7 @@ public class DefaultShellTest implements ShellTest
    {
       if (shell == null)
       {
-         shell = factory.createShell(new File(""), provider.getSettings());
+         shell = factory.createShell(OperatingSystemUtils.getTempDirectory(), provider.getSettings());
          shell.addCommandExecutionListener(listener);
       }
       return shell;

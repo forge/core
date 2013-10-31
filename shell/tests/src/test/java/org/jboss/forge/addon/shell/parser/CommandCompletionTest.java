@@ -6,35 +6,28 @@
  */
 package org.jboss.forge.addon.shell.parser;
 
-import java.io.File;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+
 import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import static org.hamcrest.CoreMatchers.*;
-
-import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.mock.command.Career;
 import org.jboss.forge.addon.shell.mock.command.FooCommand;
 import org.jboss.forge.addon.shell.test.ShellTest;
-import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -64,9 +57,6 @@ public class CommandCompletionTest
    @Inject
    private ShellTest test;
 
-   @Inject
-   private ResourceFactory resourceFactory;
-
    @After
    public void after() throws IOException
    {
@@ -87,7 +77,6 @@ public class CommandCompletionTest
    }
 
    @Test
-   @Ignore("Ignoring short options at the moment")
    public void testCommandAutocompleteOptionShortName() throws Exception
    {
       test.waitForCompletion("foocommand -h ", "foocommand -h", 5, TimeUnit.SECONDS);
@@ -95,43 +84,6 @@ public class CommandCompletionTest
    }
 
    @Test
-   @Ignore("Until shell is fixed")
-   public void testEscapes() throws Exception
-   {
-      File tempDir = OperatingSystemUtils.createTempDir();
-      tempDir.deleteOnExit();
-      DirectoryResource currentResource = resourceFactory.create(DirectoryResource.class, tempDir);
-      Shell shell = test.getShell();
-      shell.setCurrentResource(currentResource);
-      DirectoryResource child = currentResource.getChildDirectory("Forge 2 Escape");
-      child.mkdir();
-      child.deleteOnExit();
-      Result result = test.execute("cd Forge\\ 2\\ Escape", 10, TimeUnit.SECONDS);
-      Assert.assertThat(result.getMessage(), CoreMatchers.nullValue());
-      Assert.assertEquals(shell.getCurrentResource(), child);
-      currentResource.delete(true);
-   }
-
-   @Test
-   public void testQuotes() throws Exception
-   {
-      File tempDir = OperatingSystemUtils.createTempDir();
-      tempDir.deleteOnExit();
-      DirectoryResource currentResource = resourceFactory.create(DirectoryResource.class, tempDir);
-      Shell shell = test.getShell();
-      shell.setCurrentResource(currentResource);
-      FileResource<?> child = currentResource.getChildDirectory("Forge 2 Escape");
-      child.mkdir();
-      child.deleteOnExit();
-      Result result = test.execute("cd \"Forge 2 Escape\"", 10, TimeUnit.SECONDS);
-      Assert.assertThat(result.getMessage(), nullValue());
-      Assert.assertEquals(shell.getCurrentResource(), child);
-      currentResource.delete(true);
-   }
-
-   // FIXME: this fails because it throws an exception when trying to create a ParsedCompleteObject
-   @Test
-   @Ignore("Until shell is fixed")
    public void testValuesWithSpaceCompletion() throws Exception
    {
       test.waitForCompletion("foocommand --valueWithSpaces Value\\ ",
@@ -145,7 +97,6 @@ public class CommandCompletionTest
    }
 
    @Test
-   @Ignore("Until shell is fixed")
    public void testValuesWithSpaceCompletionWithSlash() throws Exception
    {
       test.write("foocommand --valueWithSpaces Value\\");
@@ -161,8 +112,6 @@ public class CommandCompletionTest
                      allOf(not(containsString("Value 1")), not(containsString("Value 2")),
                               not(containsString("Value 10")),
                               not(containsString("Value 100"))));
-            String line = test.getBuffer();
-            Assert.assertEquals("foocommand --valueWithSpaces Value\\", line);
             return null;
          }
       }, 5, TimeUnit.SECONDS);

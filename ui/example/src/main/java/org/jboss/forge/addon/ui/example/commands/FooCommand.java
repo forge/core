@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.shell.mock.command;
+package org.jboss.forge.addon.ui.example.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +37,7 @@ public class FooCommand implements UICommand
    private UIInput<String> name;
 
    @Inject
-   @WithAttributes(label = "help", shortName = 'h')
+   @WithAttributes(label = "help")
    private UIInput<String> help;
 
    @Inject
