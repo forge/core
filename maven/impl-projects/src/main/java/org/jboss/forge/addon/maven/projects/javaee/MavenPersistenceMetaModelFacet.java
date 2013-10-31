@@ -35,7 +35,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
-import org.jboss.forge.parser.java.util.Strings;
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
@@ -118,7 +118,7 @@ public class MavenPersistenceMetaModelFacet extends AbstractFacet<Project> imple
       {
          try
          {
-            if (candidate.getProvider().equals(providerName))
+            if (Strings.compare(candidate.getProvider(), providerName))
             {
                return candidate.getMetaModelProvider();
             }
