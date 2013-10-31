@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.ui.impl;
+package org.jboss.forge.addon.ui.impl.input;
 
 import java.util.concurrent.Callable;
 
@@ -14,7 +14,6 @@ import javax.enterprise.inject.Vetoed;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.furnace.util.Callables;
 
 /**
@@ -25,16 +24,15 @@ import org.jboss.forge.furnace.util.Callables;
  * @param <VALUETYPE>
  */
 @Vetoed
-public class UIInputManyImpl<VALUETYPE> extends AbstractInputComponent<UIInputMany<VALUETYPE>, VALUETYPE>
-         implements UIInputMany<VALUETYPE>
+public class UIInputImpl<VALUETYPE> extends AbstractInputComponent<UIInput<VALUETYPE>, VALUETYPE> implements
+         UIInput<VALUETYPE>
 {
-
-   private Iterable<VALUETYPE> value;
-   private Callable<Iterable<VALUETYPE>> defaultValue;
+   private VALUETYPE value;
+   private Callable<VALUETYPE> defaultValue;
    private UICompleter<VALUETYPE> completer;
    private Converter<String, VALUETYPE> converter;
 
-   public UIInputManyImpl(String name, char shortName, Class<VALUETYPE> type)
+   public UIInputImpl(String name, char shortName, Class<VALUETYPE> type)
    {
       super(name, shortName, type);
    }
@@ -46,35 +44,35 @@ public class UIInputManyImpl<VALUETYPE> extends AbstractInputComponent<UIInputMa
    }
 
    @Override
-   public UIInputMany<VALUETYPE> setCompleter(UICompleter<VALUETYPE> completer)
+   public UIInput<VALUETYPE> setCompleter(UICompleter<VALUETYPE> completer)
    {
       this.completer = completer;
       return this;
    }
 
    @Override
-   public UIInputMany<VALUETYPE> setValue(Iterable<VALUETYPE> value)
+   public UIInput<VALUETYPE> setValue(VALUETYPE value)
    {
       this.value = value;
       return this;
    }
 
    @Override
-   public UIInputMany<VALUETYPE> setDefaultValue(Callable<Iterable<VALUETYPE>> callback)
+   public UIInput<VALUETYPE> setDefaultValue(Callable<VALUETYPE> callback)
    {
       this.defaultValue = callback;
       return this;
    }
 
    @Override
-   public UIInputMany<VALUETYPE> setDefaultValue(Iterable<VALUETYPE> value)
+   public UIInput<VALUETYPE> setDefaultValue(VALUETYPE value)
    {
       this.defaultValue = Callables.returning(value);
       return this;
    }
 
    @Override
-   public Iterable<VALUETYPE> getValue()
+   public VALUETYPE getValue()
    {
       return (value == null) ? Callables.call(defaultValue) : value;
    }
@@ -86,7 +84,7 @@ public class UIInputManyImpl<VALUETYPE> extends AbstractInputComponent<UIInputMa
    }
 
    @Override
-   public UIInputMany<VALUETYPE> setValueConverter(Converter<String, VALUETYPE> converter)
+   public UIInput<VALUETYPE> setValueConverter(Converter<String, VALUETYPE> converter)
    {
       this.converter = converter;
       return this;
@@ -95,7 +93,8 @@ public class UIInputManyImpl<VALUETYPE> extends AbstractInputComponent<UIInputMa
    @Override
    public String toString()
    {
-      return "UIInputManyImpl [name=" + getName() + ", shortName='" + getShortName() + "', value=" + value
-               + ", defaultValue=" + defaultValue + "]";
+      return "UIInputImpl [name=" + getName() + ", shortName='" + getShortName() + "', value=" + value
+               + ", defaultValue=" + defaultValue
+               + "]";
    }
 }

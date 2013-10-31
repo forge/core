@@ -4,51 +4,51 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.ui.impl;
+package org.jboss.forge.addon.ui.impl.input;
 
 import java.util.concurrent.Callable;
 
-import org.jboss.forge.addon.ui.input.UISelectMany;
+import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.furnace.util.Callables;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class UISelectManyImpl<VALUETYPE> extends AbstractUISelectInputComponent<UISelectMany<VALUETYPE>, VALUETYPE>
+public class UISelectOneImpl<VALUETYPE> extends AbstractUISelectInputComponent<UISelectOne<VALUETYPE>, VALUETYPE>
          implements
-         UISelectMany<VALUETYPE>
+         UISelectOne<VALUETYPE>
 {
-   private Iterable<VALUETYPE> value;
-   private Callable<Iterable<VALUETYPE>> defaultValue;
+   private VALUETYPE value;
+   private Callable<VALUETYPE> defaultValue;
 
-   public UISelectManyImpl(String name, char shortName, Class<VALUETYPE> type)
+   public UISelectOneImpl(String name, char shortName, Class<VALUETYPE> type)
    {
       super(name, shortName, type);
    }
 
    @Override
-   public UISelectMany<VALUETYPE> setValue(Iterable<VALUETYPE> value)
+   public UISelectOne<VALUETYPE> setValue(VALUETYPE value)
    {
       this.value = value;
       return this;
    }
 
    @Override
-   public UISelectMany<VALUETYPE> setDefaultValue(Callable<Iterable<VALUETYPE>> callback)
+   public UISelectOne<VALUETYPE> setDefaultValue(Callable<VALUETYPE> callback)
    {
       this.defaultValue = callback;
       return this;
    }
 
    @Override
-   public UISelectMany<VALUETYPE> setDefaultValue(Iterable<VALUETYPE> value)
+   public UISelectOne<VALUETYPE> setDefaultValue(VALUETYPE value)
    {
       this.defaultValue = Callables.returning(value);
       return this;
    }
 
    @Override
-   public Iterable<VALUETYPE> getValue()
+   public VALUETYPE getValue()
    {
       return (value == null) ? Callables.call(defaultValue) : value;
    }
@@ -56,7 +56,8 @@ public class UISelectManyImpl<VALUETYPE> extends AbstractUISelectInputComponent<
    @Override
    public String toString()
    {
-      return "UISelectManyImpl [name=" + getName() + ", shortName='" + getShortName() + "', value=" + value
+      return "UISelectOneImpl [name=" + getName() + ", shortName='" + getShortName() + "', value=" + value
                + ", defaultValue=" + defaultValue + "]";
    }
+
 }
