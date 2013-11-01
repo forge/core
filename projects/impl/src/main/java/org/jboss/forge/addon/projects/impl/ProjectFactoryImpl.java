@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -35,6 +36,8 @@ import org.jboss.forge.addon.resource.events.ResourceEvent;
 import org.jboss.forge.addon.resource.monitor.ResourceListener;
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.container.cdi.events.Local;
+import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
@@ -64,7 +67,18 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Inject
    private Imported<ProjectCache> caches;
 
-   private Predicate<ProjectFacet> notBuildSystemFilter = new Predicate<ProjectFacet>()
+   private final List<ListenerRegistration<ResourceListener>> listeners = new ArrayList<ListenerRegistration<ResourceListener>>();
+
+   void shutdown(@Observes @Local PreShutdown event)
+   {
+      invalidateCaches();
+      for (ListenerRegistration<ResourceListener> registration : listeners)
+      {
+         registration.removeListener();
+      }
+   }
+
+   private final Predicate<ProjectFacet> notBuildSystemFilter = new Predicate<ProjectFacet>()
    {
       @Override
       public boolean accept(ProjectFacet type)
@@ -350,7 +364,7 @@ public class ProjectFactoryImpl implements ProjectFactory
       }
 
       final ResourceMonitor monitor = project.getProjectRoot().monitor();
-      monitor.addResourceListener(new ResourceListener()
+      ListenerRegistration<ResourceListener> registration = monitor.addResourceListener(new ResourceListener()
       {
          @Override
          public void processEvent(ResourceEvent event)
@@ -369,6 +383,8 @@ public class ProjectFactoryImpl implements ProjectFactory
             monitor.cancel();
          }
       });
+
+      this.listeners.add(registration);
    }
 
    private void fireProjectCreated(Project project)

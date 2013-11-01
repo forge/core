@@ -17,6 +17,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -37,7 +38,7 @@ public class FileMonitor
 {
    private static final long CHECK_INTERVAL = Long.getLong("resource.monitor.interval", 5000L);
 
-   private Logger log = Logger.getLogger(getClass().getName());
+   private final Logger log = Logger.getLogger(getClass().getName());
    private FileAlterationMonitor alterationMonitor;
 
    public FileMonitor()
@@ -50,6 +51,7 @@ public class FileMonitor
          {
             Thread resourceMonitorThread = new Thread(r, "Resource File Monitor");
             resourceMonitorThread.setDaemon(true);
+            resourceMonitorThread.setContextClassLoader(null);
             return resourceMonitorThread;
          }
       });
@@ -62,6 +64,14 @@ public class FileMonitor
 
    void destroy(@Observes @Local PreShutdown preShutdown) throws Exception
    {
+      for (FileAlterationObserver observer : alterationMonitor.getObservers())
+      {
+         for (FileAlterationListener listener : observer.getListeners())
+         {
+            observer.removeListener(listener);
+         }
+         alterationMonitor.removeObserver(observer);
+      }
       alterationMonitor.stop();
    }
 
