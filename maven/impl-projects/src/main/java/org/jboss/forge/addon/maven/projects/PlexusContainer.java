@@ -49,7 +49,10 @@ class PlexusContainer
    public void preShutdown(@Observes @Local PreShutdown event)
    {
       if (plexusContainer != null)
+      {
          plexusContainer.dispose();
+         plexusContainer = null;
+      }
    }
 
    private org.codehaus.plexus.PlexusContainer getPlexusContainer() throws Exception
