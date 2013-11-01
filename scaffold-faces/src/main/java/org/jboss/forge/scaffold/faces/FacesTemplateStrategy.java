@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.scaffold.faces;
 
+import java.io.File;
 import java.util.Arrays;
 
 import org.jboss.forge.project.Project;
@@ -53,6 +54,7 @@ public class FacesTemplateStrategy implements TemplateStrategy
          if (ResourceUtil.isChildOf(dir, template))
          {
             String relativePath = template.getFullyQualifiedName().substring(dir.getFullyQualifiedName().length());
+            relativePath = relativePath.replace(File.separator, "/");
             return relativePath;
          }
       }
