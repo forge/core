@@ -83,6 +83,9 @@ This plugin starts the Forge 2 Container and your installed addons, so you can u
 |link:dependencies/README.asciidoc[Dependencies]
 |yes
 
+|link:dev-tools-java/README.asciidoc[Dev Tools - Java]
+|yes
+
 |link:environment/README.asciidoc[Environment]
 |yes
 
