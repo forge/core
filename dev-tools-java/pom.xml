@@ -12,6 +12,7 @@
 
    <groupId>org.jboss.forge.addon</groupId>
    <artifactId>dev-tools-java</artifactId>
+   <name>Forge - Dev Tools - Java</name>
 
    <dependencies>
       <dependency>
