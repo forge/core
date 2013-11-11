@@ -76,7 +76,6 @@ public class AddonProjectConfigurator
             throws FileNotFoundException, FacetNotFoundException
    {
       generateReadme(project);
-      // TODO Use or remove forgeVersion parameter
       facetFactory.install(project, FurnaceVersionFacet.class);
       project.getFacet(FurnaceVersionFacet.class).setVersion(forgeVersion.toString());
 
