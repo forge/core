@@ -17,23 +17,22 @@ import javax.persistence.Entity;
 import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
+import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 
 /**
- * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @SuppressWarnings("rawtypes")
 public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonDescriptor> extends AbstractJavaEEFacet
-         implements
-         JPAFacet<DESCRIPTOR>
+         implements JPAFacet<DESCRIPTOR>
 {
 
    public static final String DEFAULT_ENTITY_PACKAGE = "model";
@@ -98,43 +97,28 @@ public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonD
    @Override
    public List<JavaClass> getAllEntities()
    {
-      DirectoryResource packageFile = getEntityPackageDir();
-      return findEntitiesInFolder(packageFile);
-   }
-
-   private List<JavaClass> findEntitiesInFolder(final DirectoryResource packageFile)
-   {
-      List<JavaClass> result = new ArrayList<JavaClass>();
-      if (packageFile.exists())
+      final List<JavaClass> result = new ArrayList<JavaClass>();
+      JavaSourceFacet javaSourceFacet = getFaceted().getFacet(JavaSourceFacet.class);
+      javaSourceFacet.visitJavaSources(new JavaResourceVisitor()
       {
-         for (Resource<?> source : packageFile.listResources())
+         @Override
+         public void visit(JavaResource resource)
          {
-            if (source instanceof JavaResource)
+            try
             {
-               try
+               JavaSource<?> javaClass = resource.getJavaSource();
+               if (javaClass.hasAnnotation(Entity.class) && javaClass.isClass())
                {
-                  JavaSource<?> javaClass = ((JavaResource) source).getJavaSource();
-                  if (javaClass.hasAnnotation(Entity.class) && javaClass.isClass())
-                  {
-                     result.add((JavaClass) javaClass);
-                  }
-               }
-               catch (FileNotFoundException e)
-               {
-                  throw new IllegalStateException(e);
+                  result.add((JavaClass) javaClass);
                }
             }
+            catch (FileNotFoundException e)
+            {
+               throw new IllegalStateException(e);
+            }
          }
+      });
 
-         for (Resource<?> source : packageFile.listResources())
-         {
-            if (source instanceof DirectoryResource)
-            {
-               List<JavaClass> subResults = findEntitiesInFolder((DirectoryResource) source);
-               result.addAll(subResults);
-            }
-         }
-      }
       return result;
    }
 
