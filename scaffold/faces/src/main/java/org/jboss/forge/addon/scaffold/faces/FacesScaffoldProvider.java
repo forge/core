@@ -25,12 +25,21 @@ import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.FacetNotFoundException;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
+import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_0;
+import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
 import org.jboss.forge.addon.javaee.cdi.ui.CDISetupWizard;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
+import org.jboss.forge.addon.javaee.ejb.EJBFacet_3_1;
+import org.jboss.forge.addon.javaee.ejb.EJBFacet_3_2;
 import org.jboss.forge.addon.javaee.ejb.ui.EJBSetupWizard;
 import org.jboss.forge.addon.javaee.faces.FacesFacet;
+import org.jboss.forge.addon.javaee.faces.FacesFacet_2_0;
+import org.jboss.forge.addon.javaee.faces.FacesFacet_2_1;
+import org.jboss.forge.addon.javaee.faces.FacesFacet_2_2;
 import org.jboss.forge.addon.javaee.faces.ui.FacesSetupWizard;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_0;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_1;
 import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
@@ -238,24 +247,25 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
    public List<Class<? extends UICommand>> getSetupFlow()
    {
       List<Class<? extends UICommand>> setupCommands = new ArrayList<Class<? extends UICommand>>();
-      if(!origin.hasFacet(JPAFacet.class))
+      // FORGE-1304 detect all facet subtypes that we support
+      if(!origin.hasFacet(JPAFacet_2_0.class) && !origin.hasFacet(JPAFacet_2_1.class))
       {
          setupCommands.add(JPASetupWizard.class);
       }
-      if(!origin.hasFacet(CDIFacet.class))
+      if(!origin.hasFacet(CDIFacet_1_0.class) && origin.hasFacet(CDIFacet_1_1.class))
       {
          setupCommands.add(CDISetupWizard.class);
       }
-      if(!origin.hasFacet(EJBFacet.class))
+      if(!origin.hasFacet(EJBFacet_3_1.class) && !origin.hasFacet(EJBFacet_3_2.class))
       {
          setupCommands.add(EJBSetupWizard.class);
       }
-      if(!(origin.hasFacet(ServletFacet_3_0.class) || origin.hasFacet(ServletFacet_3_1.class)))
+      if(!origin.hasFacet(ServletFacet_3_0.class) && !origin.hasFacet(ServletFacet_3_1.class))
       {
          //TODO: FORGE-1296. Ensure that this wizard only sets up Servlet 3.0+
          setupCommands.add(ServletSetupWizard.class);
       }
-      if(!origin.hasFacet(FacesFacet.class))
+      if(!origin.hasFacet(FacesFacet_2_0.class) && !origin.hasFacet(FacesFacet_2_1.class) && !origin.hasFacet(FacesFacet_2_2.class))
       {
          setupCommands.add(FacesSetupWizard.class);
       }
