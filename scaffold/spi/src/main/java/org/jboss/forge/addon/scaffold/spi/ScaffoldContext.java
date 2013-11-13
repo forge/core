@@ -20,7 +20,7 @@ public class ScaffoldContext
    public ScaffoldContext(String targetDirectory, boolean overwrite)
    {
       super();
-      this.targetDirectory = targetDirectory;
+      this.targetDirectory = targetDirectory == null ? "" : targetDirectory;
       this.overwrite = overwrite;
    }
 

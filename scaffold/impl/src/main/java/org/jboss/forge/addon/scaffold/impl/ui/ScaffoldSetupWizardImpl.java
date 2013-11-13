@@ -49,7 +49,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    private UISelectOne<ScaffoldProvider> provider;
 
    @Inject
-   @WithAttributes(label = "Target Directory", required = true)
+   @WithAttributes(label = "Target Directory")
    private UIInput<String> target;
 
    @Inject
