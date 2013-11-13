@@ -7,14 +7,14 @@
 
 package org.jboss.forge.addon.scaffold.ui;
 
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.wizard.UIWizard;
 
 /**
  * To be used in subflows
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public interface ScaffoldGenerateCommand extends UICommand
+public interface ScaffoldGenerateCommand extends UIWizard
 {
 
 }

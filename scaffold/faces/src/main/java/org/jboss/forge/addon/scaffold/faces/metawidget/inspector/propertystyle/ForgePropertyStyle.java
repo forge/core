@@ -27,6 +27,7 @@ import org.jboss.forge.parser.java.Parameter;
 import org.jboss.forge.parser.java.Type;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.resource.ResourceException;
 import org.metawidget.inspector.iface.InspectorException;
 import org.metawidget.inspector.impl.propertystyle.BaseProperty;
 import org.metawidget.inspector.impl.propertystyle.BasePropertyStyle;
@@ -422,6 +423,12 @@ public class ForgePropertyStyle
          return javaSourceFact.getJavaResource(type).getJavaSource();
       }
       catch (FileNotFoundException e)
+      {
+         // Not a Forge-based type
+
+         return null;
+      }
+      catch (ResourceException e)
       {
          // Not a Forge-based type
 

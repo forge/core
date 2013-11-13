@@ -18,7 +18,7 @@ import org.jboss.forge.addon.facets.AbstractFaceted;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
-import org.jboss.forge.addon.scaffold.spi.ScaffoldContext;
+import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.scaffold.ui.ScaffoldSetupWizard;
 import org.jboss.forge.addon.ui.UICommand;
@@ -89,9 +89,9 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
       builder.add(provider).add(target).add(overwrite);
    }
 
-   private ScaffoldContext createScaffoldContext()
+   private ScaffoldSetupContext createSetupContext()
    {
-      return new ScaffoldContext(target.getValue(), overwrite.getValue());
+      return new ScaffoldSetupContext(target.getValue(), overwrite.getValue());
    }
 
    @Override
@@ -113,7 +113,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    public Result execute(UIExecutionContext context) throws Exception
    {
       ScaffoldProvider selectedProvider = provider.getValue();
-      selectedProvider.setup(getSelectedProject(context), createScaffoldContext());
+      selectedProvider.setup(getSelectedProject(context), createSetupContext());
       return Results.success("Scaffold was setup successfully.");
    }
 

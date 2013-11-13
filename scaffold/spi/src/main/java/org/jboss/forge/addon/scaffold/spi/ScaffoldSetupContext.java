@@ -12,12 +12,12 @@ package org.jboss.forge.addon.scaffold.spi;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class ScaffoldContext
+public class ScaffoldSetupContext
 {
    private final String targetDirectory;
    private final boolean overwrite;
 
-   public ScaffoldContext(String targetDirectory, boolean overwrite)
+   public ScaffoldSetupContext(String targetDirectory, boolean overwrite)
    {
       super();
       this.targetDirectory = targetDirectory == null ? "" : targetDirectory;

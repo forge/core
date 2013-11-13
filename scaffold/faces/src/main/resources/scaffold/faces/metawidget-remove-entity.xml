@@ -17,14 +17,14 @@
                                         <array>
                                                 <propertyTypeInspector xmlns="java:org.metawidget.inspector.propertytype" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
                                                         <propertyStyle>
-                                                                <forgePropertyStyle id="forgePropertyStyle" xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle" config="ForgePropertyStyleConfig">
+                                                                <forgePropertyStyle id="forgePropertyStyle" xmlns="java:org.jboss.forge.addon.scaffold.faces.metawidget.inspector.propertystyle" config="ForgePropertyStyleConfig">
                                                                         <project>
                                                                                 <forgeProject/>
                                                                         </project>
                                                                 </forgePropertyStyle>
                                                         </propertyStyle>
                                                 </propertyTypeInspector>
-                                                <forgeInspector xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
+                                                <forgeInspector xmlns="java:org.jboss.forge.addon.scaffold.faces.metawidget.inspector" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
                                                         <propertyStyle>
                                                                 <forgePropertyStyle refId="forgePropertyStyle"/>
                                                         </propertyStyle>
@@ -45,7 +45,7 @@
                 </inspector>
                 
                 <widgetBuilder>
-                        <removeEntityWidgetBuilder xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetbuilder"/>
+                        <removeEntityWidgetBuilder xmlns="java:org.jboss.forge.addon.scaffold.faces.metawidget.widgetbuilder"/>
                 </widgetBuilder>
 
         </staticJavaMetawidget>			

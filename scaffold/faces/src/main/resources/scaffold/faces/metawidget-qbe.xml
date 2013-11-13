@@ -17,14 +17,14 @@
                                         <array>
                                                 <propertyTypeInspector xmlns="java:org.metawidget.inspector.propertytype" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
                                                         <propertyStyle>
-                                                                <forgePropertyStyle id="forgePropertyStyle" xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector.propertystyle" config="ForgePropertyStyleConfig">
+                                                                <forgePropertyStyle id="forgePropertyStyle" xmlns="java:org.jboss.forge.addon.scaffold.faces.metawidget.inspector.propertystyle" config="ForgePropertyStyleConfig">
                                                                         <project>
                                                                                 <forgeProject/>
                                                                         </project>
                                                                 </forgePropertyStyle>
                                                         </propertyStyle>
                                                 </propertyTypeInspector>
-                                                <forgeInspector xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspector" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
+                                                <forgeInspector xmlns="java:org.jboss.forge.addon.scaffold.faces.metawidget.inspector" config="org.metawidget.inspector.impl.BaseObjectInspectorConfig">
                                                         <propertyStyle>
                                                                 <forgePropertyStyle refId="forgePropertyStyle"/>
                                                         </propertyStyle>
@@ -46,17 +46,17 @@
                 
                 <inspectionResultProcessors>
                     <array>
-                        <generatedValueInspectionResultProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.inspectionresultprocessor"/>
+                        <generatedValueInspectionResultProcessor xmlns="java:org.jboss.forge.addon.scaffold.faces.metawidget.inspectionresultprocessor"/>
                     </array>
                 </inspectionResultProcessors>
 		
                 <widgetBuilder>
-                        <queryByExampleWidgetBuilder xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetbuilder"/>
+                        <queryByExampleWidgetBuilder xmlns="java:org.jboss.forge.addon.scaffold.faces.metawidget.widgetbuilder"/>
                 </widgetBuilder>
 
                 <widgetProcessors>
                         <array>
-                                <unsearchableWidgetProcessor xmlns="java:org.jboss.forge.scaffold.faces.metawidget.widgetprocessor"/>
+                                <unsearchableWidgetProcessor xmlns="java:org.jboss.forge.addon.scaffold.faces.metawidget.widgetprocessor"/>
                         </array>
                 </widgetProcessors>
 		

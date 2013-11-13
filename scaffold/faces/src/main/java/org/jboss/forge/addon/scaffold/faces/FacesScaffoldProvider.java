@@ -3,18 +3,27 @@
  */
 package org.jboss.forge.addon.scaffold.faces;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
+import javax.persistence.CascadeType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 import org.jboss.forge.addon.configuration.Configuration;
+import org.jboss.forge.addon.dependencies.Dependency;
+import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.facets.FacetNotFoundException;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
 import org.jboss.forge.addon.javaee.cdi.ui.CDISetupWizard;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
@@ -27,7 +36,10 @@ import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.javaee.servlet.ui.ServletSetupWizard;
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -36,22 +48,38 @@ import org.jboss.forge.addon.scaffold.faces.freemarker.FreemarkerTemplateProcess
 import org.jboss.forge.addon.scaffold.faces.metawidget.config.ForgeConfigReader;
 import org.jboss.forge.addon.scaffold.faces.util.ScaffoldUtil;
 import org.jboss.forge.addon.scaffold.spi.AccessStrategy;
-import org.jboss.forge.addon.scaffold.spi.ScaffoldContext;
+import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
+import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.parser.JavaParser;
+import org.jboss.forge.parser.java.Annotation;
+import org.jboss.forge.parser.java.Field;
+import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.Member;
+import org.jboss.forge.parser.java.Method;
 import org.jboss.shrinkwrap.descriptor.api.javaee6.ParamValueType;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor;
+import org.metawidget.statically.StaticMetawidget;
 import org.metawidget.statically.StaticUtils.IndentedWriter;
+import org.metawidget.statically.StaticWidget;
+import org.metawidget.statically.faces.StaticFacesUtils;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlOutcomeTargetLink;
+import org.metawidget.statically.faces.component.html.widgetbuilder.ReadOnlyWidgetBuilder;
+import org.metawidget.statically.faces.component.html.widgetbuilder.richfaces.RichFacesWidgetBuilder;
 import org.metawidget.statically.html.widgetbuilder.HtmlTag;
 import org.metawidget.statically.javacode.StaticJavaMetawidget;
+import org.metawidget.util.ArrayUtils;
 import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.XmlUtils;
 import org.metawidget.util.simple.StringUtils;
+import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilder;
+import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilderConfig;
+import org.metawidget.widgetbuilder.iface.WidgetBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -85,6 +113,11 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
    private static final String ERROR_TEMPLATE = "scaffold/faces/error.xhtml";
    private static final String INDEX_TEMPLATE = "scaffold/faces/index.xhtml";
    private static final String INDEX_WELCOME_TEMPLATE = "scaffold/faces/index.html";
+   
+   private final Dependency richfaces3UI = DependencyBuilder.create("org.richfaces.ui:richfaces-ui");
+   private final Dependency richfaces3Impl = DependencyBuilder.create("org.richfaces.framework:richfaces-impl");
+   private final Dependency richfaces4UI = DependencyBuilder.create("org.richfaces.ui:richfaces-components-ui");
+   private final Dependency richfaces4Impl = DependencyBuilder.create("org.richfaces.core:richfaces-core-impl");
    
    protected FreemarkerTemplateProcessor templateProcessor;
    protected Template backingBeanTemplate;
@@ -163,7 +196,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
    }
 
    @Override
-   public List<Resource<?>> setup(Project project, ScaffoldContext scaffoldContext)
+   public List<Resource<?>> setup(Project project, ScaffoldSetupContext scaffoldContext)
    {
       if(this.origin == null)
       {
@@ -179,10 +212,26 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
    }
 
    @Override
-   public List<Resource<?>> generateFrom(Iterable<Resource<?>> resources, ScaffoldContext scaffoldContext)
+   public List<Resource<?>> generateFrom(Project project, ScaffoldGenerationContext scaffoldContext)
    {
-      // TODO Auto-generated method stub
-      return null;
+      List<Resource<?>> generatedResources = new ArrayList<Resource<?>>();
+      Collection<?> resources = scaffoldContext.getResources();
+      for (Object resource : resources)
+      {
+         JavaClass entity  = (JavaClass) resource;
+         String targetDir = scaffoldContext.getTargetDirectory();
+         Resource<?> template = null;
+         boolean overwrite = scaffoldContext.isOverwrite();
+         List<Resource<?>> generatedResourcesForEntity = this.generateFromEntity(targetDir , template, entity, overwrite );
+
+         // TODO give plugins a chance to react to generated resources, use event bus?
+         // if (!generatedResources.isEmpty())
+         // {
+         //    generatedEvent.fire(new ScaffoldGeneratedResources(provider, prepareResources(generatedResources)));
+         // }
+         generatedResources.addAll(generatedResourcesForEntity);
+      }
+      return generatedResources;
    }
 
    @Override
@@ -213,13 +262,34 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       return setupCommands;
    }
    
+   @Override
+   public List<Class<? extends UICommand>> getGenerationFlow()
+   {
+      List<Class<? extends UICommand>> generationCommands = new ArrayList<Class<? extends UICommand>>();
+      generationCommands.add(ScaffoldableEntitySelectionWizard.class);
+      return generationCommands;
+   }
+   
    protected List<Resource<?>> generateIndex(String targetDir, final Resource<?> template, final boolean overwrite)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       WebResourcesFacet web = this.origin.getFacet(WebResourcesFacet.class);
 
-      //TODO Fix ServletFacet
-      //this.project.getFacet(ServletFacet.class).getConfig().welcomeFile("/index.html");
+      // TODO: Refactor this and remove the duplication
+      // TODO: origin.getFacet(ServletFacet.class) returns null!!
+      if (this.origin.hasFacet(ServletFacet_3_0.class))
+      {
+         ServletFacet servlet = this.origin.getFacet(ServletFacet_3_0.class);
+         WebAppDescriptor servletConfig = (WebAppDescriptor) servlet.getConfig();
+         servletConfig.getOrCreateWelcomeFileList().welcomeFile("/index.html");
+      }
+      else if (this.origin.hasFacet(ServletFacet_3_1.class))
+      {
+         ServletFacet servlet = this.origin.getFacet(ServletFacet_3_1.class);
+         org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor servletConfig = (org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor) servlet
+                  .getConfig();
+         servletConfig.getOrCreateWelcomeFileList().welcomeFile("/index.html");
+      }
       loadTemplates();
 
       generateTemplates(targetDir, overwrite);
@@ -595,6 +665,345 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       this.rmEntityMetawidget = new StaticJavaMetawidget();
       this.rmEntityMetawidget.setConfigReader(configReader);
       this.rmEntityMetawidget.setConfig("scaffold/faces/metawidget-remove-entity.xml");
+   }
+   
+   private List<Resource<?>> generateFromEntity(String targetDir, final Resource<?> template, final JavaClass entity,
+            final boolean overwrite)
+   {
+      resetMetaWidgets();
+
+      // FORGE-460: setupRichFaces during generateFromEntity, not during setup, as generally 'richfaces setup' is called
+      // *after* 'scaffold setup'
+      // setupRichFaces();
+
+      // Track the list of resources generated
+
+      List<Resource<?>> result = new ArrayList<Resource<?>>();
+      try
+      {
+         JavaSourceFacet java = this.origin.getFacet(JavaSourceFacet.class);
+         WebResourcesFacet web = this.origin.getFacet(WebResourcesFacet.class);
+
+         loadTemplates();
+         Map<Object, Object> context = CollectionUtils.newHashMap();
+         context.put("entity", entity);
+         String ccEntity = StringUtils.decapitalize(entity.getName());
+         context.put("ccEntity", ccEntity);
+         context.put("rmEntity", ccEntity + "ToDelete");
+         setPrimaryKeyMetaData(context, entity);
+
+         // Prepare qbeMetawidget
+         this.qbeMetawidget.setPath(entity.getQualifiedName());
+         StringWriter stringWriter = new StringWriter();
+         this.qbeMetawidget.write(stringWriter, this.backingBeanTemplateQbeMetawidgetIndent);
+         context.put("qbeMetawidget", stringWriter.toString().trim());
+         
+         // Prepare removeEntityMetawidget
+         this.rmEntityMetawidget.setPath(entity.getQualifiedName());
+         stringWriter = new StringWriter();
+         this.rmEntityMetawidget.write(stringWriter, this.backingBeanTemplateRmEntityMetawidgetIndent);
+         context.put("rmEntityMetawidget", stringWriter.toString().trim());
+         
+         // Prepare Java imports
+         Set<String> qbeMetawidgetImports = this.qbeMetawidget.getImports();
+         Set<String> rmEntityMetawidgetImports = this.rmEntityMetawidget.getImports();
+         Set<String> metawidgetImports = CollectionUtils.newHashSet();
+         metawidgetImports.addAll(qbeMetawidgetImports);
+         metawidgetImports.addAll(rmEntityMetawidgetImports);
+         metawidgetImports.remove(entity.getQualifiedName());
+         context.put("metawidgetImports",
+                  CollectionUtils.toString(metawidgetImports, ";\r\nimport ", true, false));
+
+         // Create the Backing Bean for this entity
+         JavaClass viewBean = JavaParser.parse(JavaClass.class, this.templateProcessor.processTemplate(context, this.backingBeanTemplate));
+         viewBean.setPackage(java.getBasePackage() + ".view");
+         result.add(ScaffoldUtil.createOrOverwrite(java.getJavaResource(viewBean), viewBean.toString(),
+                  overwrite));
+
+         // Set new context for view generation
+         context = getTemplateContext(targetDir, template);
+         String beanName = StringUtils.decapitalize(viewBean.getName());
+         context.put("beanName", beanName);
+         context.put("ccEntity", ccEntity);
+         context.put("entityName", StringUtils.uncamelCase(entity.getName()));
+         setPrimaryKeyMetaData(context, entity);
+
+         // Prepare entityMetawidget
+         this.entityMetawidget.setValue(StaticFacesUtils.wrapExpression(beanName + "." + ccEntity));
+         this.entityMetawidget.setPath(entity.getQualifiedName());
+         this.entityMetawidget.setReadOnly(false);
+         this.entityMetawidget.setStyle(null);
+
+         // Generate create
+         writeEntityMetawidget(context, this.createTemplateEntityMetawidgetIndent, this.createTemplateNamespaces);
+
+         result.add(ScaffoldUtil.createOrOverwrite(
+                  web.getWebResource(targetDir + "/" + ccEntity + "/create.xhtml"),
+                  this.templateProcessor.processTemplate(context, this.createTemplate),
+                  overwrite));
+
+         // Generate view
+         this.entityMetawidget.setReadOnly(true);
+         writeEntityMetawidget(context, this.viewTemplateEntityMetawidgetIndent, this.viewTemplateNamespaces);
+
+         result.add(ScaffoldUtil.createOrOverwrite(
+                  web.getWebResource(targetDir + "/" + ccEntity + "/view.xhtml"),
+                  this.templateProcessor.processTemplate(context, this.viewTemplate), overwrite));
+
+         // Generate search
+         this.searchMetawidget.setValue(StaticFacesUtils.wrapExpression(beanName + ".example"));
+         this.searchMetawidget.setPath(entity.getQualifiedName());
+         this.beanMetawidget.setValue(StaticFacesUtils.wrapExpression(beanName + ".pageItems"));
+         this.beanMetawidget.setPath(viewBean.getQualifiedName() + "/pageItems");
+         writeSearchAndBeanMetawidget(context, this.searchTemplateSearchMetawidgetIndent,
+                  this.searchTemplateBeanMetawidgetIndent, this.searchTemplateNamespaces);
+
+         result.add(ScaffoldUtil.createOrOverwrite(
+                  web.getWebResource(targetDir + "/" + ccEntity + "/search.xhtml"),
+                  this.templateProcessor.processTemplate(context, this.searchTemplate), overwrite));
+
+         // Generate navigation
+         result.add(generateNavigation(targetDir, overwrite));
+
+         // Need ViewUtils and forge.taglib.xml for forgeview:asList
+         JavaClass viewUtils = JavaParser.parse(JavaClass.class, this.templateProcessor.processTemplate(context, this.viewUtilsTemplate));
+         viewUtils.setPackage(viewBean.getPackage());
+         result.add(ScaffoldUtil.createOrOverwrite(java.getJavaResource(viewUtils), viewUtils.toString(),
+                  true));
+
+         context.put("viewPackage", viewBean.getPackage());
+         result.add(ScaffoldUtil.createOrOverwrite(
+                  web.getWebResource("WEB-INF/classes/META-INF/forge.taglib.xml"),
+                  this.templateProcessor.processTemplate(context, this.taglibTemplate), true));
+
+         createInitializers(entity);
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException("Error generating default scaffolding: " + e.getMessage(), e);
+      }
+      return result;
+   }
+   
+   /**
+    * Writes the entity Metawidget and its namespaces into the given context.
+    */
+   protected void writeEntityMetawidget(final Map<Object, Object> context, final int entityMetawidgetIndent,
+            final Map<String, String> existingNamespaces)
+   {
+      StringWriter stringWriter = new StringWriter();
+      this.entityMetawidget.write(stringWriter, entityMetawidgetIndent);
+      context.put("metawidget", stringWriter.toString().trim());
+
+      Map<String, String> namespaces = this.entityMetawidget.getNamespaces();
+      namespaces.keySet().removeAll(existingNamespaces.keySet());
+      context.put("metawidgetNamespaces", namespacesToString(namespaces));
+   }
+
+   /**
+    * Writes the search Metawidget, the bean Metawidget and their namespaces into the given context.
+    */
+   protected void writeSearchAndBeanMetawidget(final Map<Object, Object> context, final int searchMetawidgetIndent,
+            final int beanMetawidgetIndent,
+            final Map<String, String> existingNamespaces)
+   {
+      StringWriter stringWriter = new StringWriter();
+      this.searchMetawidget.write(stringWriter, searchMetawidgetIndent);
+      context.put("searchMetawidget", stringWriter.toString().trim());
+
+      stringWriter = new StringWriter();
+      this.beanMetawidget.write(stringWriter, beanMetawidgetIndent);
+      context.put("beanMetawidget", stringWriter.toString().trim());
+
+      Map<String, String> namespaces = this.searchMetawidget.getNamespaces();
+      namespaces.putAll(this.beanMetawidget.getNamespaces());
+      namespaces.keySet().removeAll(existingNamespaces.keySet());
+      context.put("metawidgetNamespaces", namespacesToString(namespaces));
+   }
+   
+   protected String namespacesToString(final Map<String, String> namespaces)
+   {
+      StringBuilder builder = new StringBuilder();
+
+      for (Map.Entry<String, String> entry : namespaces.entrySet())
+      {
+         // At the start, break out of the current quote. Field must be in quotes so that we're valid XML
+
+         builder.append("\"\r\n\txmlns:");
+         builder.append(entry.getKey());
+         builder.append("=\"");
+         builder.append(entry.getValue());
+      }
+
+      return builder.toString();
+   }
+   
+   protected void createInitializers(final JavaClass entity) throws FacetNotFoundException, FileNotFoundException
+   {
+      boolean dirtyBit = false;
+      for (Field<JavaClass> field : entity.getFields())
+      {
+         if (field.hasAnnotation(OneToOne.class))
+         {
+            Annotation<JavaClass> oneToOne = field.getAnnotation(OneToOne.class);
+            if (oneToOne.getStringValue("mappedBy") == null && oneToOne.getStringValue("cascade") == null)
+            {
+               oneToOne.setEnumValue("cascade", CascadeType.ALL);
+               dirtyBit = true;
+            }
+            String methodName = "new" + StringUtils.capitalize(field.getName());
+            if (!entity.hasMethodSignature(methodName))
+            {
+               entity.addMethod().setName(methodName).setReturnTypeVoid().setPublic()
+                        .setBody("this." + field.getName() + " = new " + field.getType() + "();");
+               dirtyBit = true;
+            }
+         }
+      }
+      for (Method<JavaClass> method : entity.getMethods())
+      {
+         if (method.hasAnnotation(OneToOne.class))
+         {
+            Annotation<JavaClass> oneToOne = method.getAnnotation(OneToOne.class);
+            if (oneToOne.getStringValue("mappedBy") == null && oneToOne.getStringValue("cascade") == null)
+            {
+               oneToOne.setEnumValue("cascade", CascadeType.ALL);
+               dirtyBit = true;
+            }
+            String fieldName = StringUtils.camelCase(method.getName().substring(3));
+            String methodName = "new" + StringUtils.capitalize(fieldName);
+            if (!entity.hasMethodSignature(methodName))
+            {
+               entity.addMethod().setName(methodName).setReturnTypeVoid().setPublic()
+                        .setBody("this." + fieldName + " = new " + method.getReturnType() + "();");
+               dirtyBit = true;
+            }
+         }
+      }
+      if(dirtyBit)
+      {
+         this.origin.getFacet(JavaSourceFacet.class).saveJavaSource(entity);
+      }
+   }
+   
+   private void setPrimaryKeyMetaData(Map<Object, Object> context, final JavaClass entity)
+   {
+      String pkName = "id";
+      String pkType = "Long";
+      String nullablePkType = "Long";
+      for (Member<JavaClass, ?> m : entity.getMembers())
+      {
+         if (m.hasAnnotation(Id.class))
+         {
+            if (m instanceof Field)
+            {
+               Field<?> field = (Field<?>) m;
+               pkName = field.getName();
+               pkType = field.getType();
+               nullablePkType = pkType;
+               break;
+            }
+
+            Method<?> method = (Method<?>) m;
+            pkName = method.getName().substring(3);
+            if (method.getName().startsWith("get"))
+            {
+               pkType = method.getReturnType();
+            }
+            else
+            {
+               pkType = method.getParameters().get(0).getType();
+            }
+            nullablePkType = pkType;
+            break;
+         }
+      }
+
+      if ("int".equals(pkType))
+      {
+         nullablePkType = Integer.class.getSimpleName();
+      }
+      else if ("short".equals(pkType))
+      {
+         nullablePkType = Short.class.getSimpleName();
+      }
+      else if ("byte".equals(pkType))
+      {
+         nullablePkType = Byte.class.getSimpleName();
+      }
+      else if ("long".equals(pkType))
+      {
+         nullablePkType = Long.class.getSimpleName();
+      }
+
+      context.put("primaryKey", pkName);
+      context.put("primaryKeyCC", StringUtils.capitalize(pkName));
+      context.put("primaryKeyType", pkType);
+      context.put("nullablePrimaryKeyType", nullablePkType);
+   }
+   
+   protected void setupRichFaces()
+   {
+      if ((this.origin.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces3UI)
+               && this.origin.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces3Impl))
+               || (this.origin.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces4UI)
+               && this.origin.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces4Impl)))
+      {
+         this.entityMetawidget
+                  .setWidgetBuilder(insertRichFacesWidgetBuilder((CompositeWidgetBuilder<StaticWidget, StaticMetawidget>) this.entityMetawidget
+                           .getWidgetBuilder()));
+
+         this.searchMetawidget
+                  .setWidgetBuilder(insertRichFacesWidgetBuilder((CompositeWidgetBuilder<StaticWidget, StaticMetawidget>) this.searchMetawidget
+                           .getWidgetBuilder()));
+
+         this.beanMetawidget
+                  .setWidgetBuilder(insertRichFacesWidgetBuilder((CompositeWidgetBuilder<StaticWidget, StaticMetawidget>) this.beanMetawidget
+                           .getWidgetBuilder()));
+      }
+   }
+   
+   /**
+    * Locates a <code>ReadOnlyWidgetBuilder</code> in the list of WidgetBuilders, and inserts a
+    * <code>RichFacesWidgetBuilder</code> after it (unless there's a <code>RichFacesWidgetBuilder</code> in there
+    * already).
+    */
+   protected <W extends StaticWidget, M extends W> CompositeWidgetBuilder<W, M> insertRichFacesWidgetBuilder(
+            final CompositeWidgetBuilder<W, M> compositeWidgetBuilder)
+   {
+      // Get the current WidgetBuilders...
+
+      WidgetBuilder<W, M>[] existingWidgetBuilders = compositeWidgetBuilder.getWidgetBuilders();
+
+      // ...find the ReadOnlyWidgetBuilder (if any)...
+
+      int addAt = 0;
+
+      for (int loop = 0; loop < existingWidgetBuilders.length; loop++)
+      {
+         // ...(abort if there's already a RichFacesWidgetBuilder)...
+
+         // Use an Object loop variable here to avoid a nasty Java/Generics compiler bug
+         Object widgetBuilder = existingWidgetBuilders[loop];
+         if (widgetBuilder instanceof RichFacesWidgetBuilder)
+         {
+            return compositeWidgetBuilder;
+         }
+
+         if (widgetBuilder instanceof ReadOnlyWidgetBuilder)
+         {
+            addAt = loop + 1;
+         }
+      }
+
+      // ...and insert our RichFacesWidgetBuilder just after it
+
+      @SuppressWarnings("unchecked")
+      WidgetBuilder<W, M>[] newWidgetBuilders = (WidgetBuilder<W, M>[]) ArrayUtils.addAt(existingWidgetBuilders, addAt,
+               new RichFacesWidgetBuilder());
+
+      return new CompositeWidgetBuilder<W, M>(
+               new CompositeWidgetBuilderConfig<W, M>().setWidgetBuilders(newWidgetBuilders));
    }
 
 }
