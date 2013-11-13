@@ -73,6 +73,8 @@ public class ServletFacetTest
       Assert.assertFalse(config.getAllDisplayName().isEmpty());
       Assert.assertEquals(projectName, config.getAllDisplayName().get(0));
       Assert.assertFalse(facet.getConfigFile().exists());
+      Assert.assertTrue(project.hasFacet(ServletFacet.class));
+      Assert.assertNotNull(project.getFacet(ServletFacet.class));
    }
 
    @Test
@@ -89,6 +91,8 @@ public class ServletFacetTest
       Assert.assertFalse(config.getAllDisplayName().isEmpty());
       Assert.assertEquals(projectName, config.getAllDisplayName().get(0));
       Assert.assertFalse(facet.getConfigFile().exists());
+      Assert.assertTrue(project.hasFacet(ServletFacet.class));
+      Assert.assertNotNull(project.getFacet(ServletFacet.class));
    }
 
    @Test
@@ -104,6 +108,8 @@ public class ServletFacetTest
       String projectName = project.getFacet(MetadataFacet.class).getProjectName();
       Assert.assertFalse(config.getAllDisplayName().isEmpty());
       Assert.assertEquals(projectName, config.getAllDisplayName().get(0));
+      Assert.assertTrue(project.hasFacet(ServletFacet.class));
+      Assert.assertNotNull(project.getFacet(ServletFacet.class));
    }
 
 }
