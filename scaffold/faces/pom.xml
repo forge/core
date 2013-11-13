@@ -10,7 +10,6 @@
 	<name>Forge - Faces Scaffold provider</name>
 	<properties>
 		<freemarker.version>2.3.19</freemarker.version>
-		<seam.render.version>1.0.0.Final</seam.render.version>
 		<metawidget.version>2.4</metawidget.version>
 	</properties>
 	<dependencies>
