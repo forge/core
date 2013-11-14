@@ -4,8 +4,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 <h:head>
-	<title>#\{empty pageTitle ? '{#pageTitle}' : pageTitle}</title>
-	<link rel="icon" href="#\{resource\['favicon.ico']}" />
+	<title>${r"#{"}empty pageTitle ? '{#pageTitle}' : pageTitle}</title>
+	<link rel="icon" href='${r"#{"}resource["favicon.ico"]}' />
 	<h:outputStylesheet name="bootstrap.css" />
 	<h:outputStylesheet name="forge-style.css" />
 </h:head>
@@ -27,7 +27,7 @@
 	<div class="container forgecontainer">
 		<div id="navigation">
 			<h:link id="homeLink" outcome="${targetDir}/index.xhtml">
-				<img src="#\{resource\['forge-logo.png']}" alt="Forge... get hammered" border="0" />
+				<img src='${r"#{"}resource["forge-logo.png"]}' alt="Forge... get hammered" border="0" />
 			</h:link>
 			${navigation}
 		</div>

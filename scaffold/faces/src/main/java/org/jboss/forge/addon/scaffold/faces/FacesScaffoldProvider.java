@@ -451,7 +451,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       context.put("template", template);
       //TODO Fix ResourceUtil first 
       //context.put("templatePath", templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate()));
-      context.put("templatePath", "/resources/scaffold/paginator.xhtml");
+      context.put("templatePath", "/resources/scaffold/pageTemplate.xhtml");
       context.put("templateStrategy", templateStrategy);
       context.put("targetDir", targetDir);
       return context;
@@ -595,7 +595,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
          return ScaffoldUtil.createOrOverwrite((FileResource<?>) getTemplateStrategy()
                   .getDefaultTemplate(),
                   this.templateProcessor.processTemplate(context, navigationTemplate),
-                  overwrite);
+                  true);
       }
       finally
       {

@@ -8,8 +8,8 @@
 	template="${templatePath}">
 
 	<f:metadata>
-		<f:viewParam name="id" value="#\{${beanName}.id}"/>
-		<f:event type="preRenderView" listener="#\{${beanName}.retrieve}"/>
+		<f:viewParam name="id" value='${r"#{"}${beanName}.id}'/>
+		<f:event type="preRenderView" listener='${r"#{"}${beanName}.retrieve}'/>
 	</f:metadata>
 
 	<ui:param name="pageTitle" value="Create ${entityName}"/>
@@ -20,7 +20,7 @@
 
 	<ui:define name="subheader">
 		<c:choose>
-			<c:when test="#\{!empty ${beanName}.id}">
+			<c:when test='${r"#{"}!empty ${beanName}.id}'>
 				Edit existing ${entityName}
 			</c:when>
 			<c:otherwise>
@@ -38,13 +38,13 @@
 			${metawidget}
 
 			<div class="buttons">
-				<h:commandLink value="Save" action="#\{${beanName}.update}" styleClass="btn btn-primary"/>
+				<h:commandLink value="Save" action='${r"#{"}${beanName}.update}' styleClass="btn btn-primary"/>
 				<c:choose>
-					<c:when test="#\{!empty ${beanName}.id}">
+					<c:when test='${r"#{"}!empty ${beanName}.id}'>
 						<h:link value="Cancel" outcome="view" styleClass="btn btn-primary">
-							<f:param name="id" value="#\{${beanName}.id}"/>
+							<f:param name="id" value='${r"#{"}${beanName}.id}'/>
 						</h:link>
-						<h:commandLink value="Delete" action="#\{${beanName}.delete}" styleClass="btn btn-primary"/>
+						<h:commandLink value="Delete" action='${r"#{"}${beanName}.delete}' styleClass="btn btn-primary"/>
 					</c:when>
 					<c:otherwise>
 						<h:link value="Cancel" outcome="search" styleClass="btn btn-primary"/>

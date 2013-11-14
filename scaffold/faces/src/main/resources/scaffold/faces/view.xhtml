@@ -7,8 +7,8 @@
 	template="${templatePath}">
 
 	<f:metadata>
-		<f:viewParam name="id" value="#\{${beanName}.id}"/>
-		<f:event type="preRenderView" listener="#\{${beanName}.retrieve}"/>
+		<f:viewParam name="id" value='${r"#{"}${beanName}.id}'/>
+		<f:event type="preRenderView" listener='${r"#{"}${beanName}.retrieve}'/>
 	</f:metadata>
 
 	<ui:param name="pageTitle" value="View ${entityName}"/>
