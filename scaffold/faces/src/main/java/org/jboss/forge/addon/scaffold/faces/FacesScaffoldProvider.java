@@ -252,7 +252,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       {
          setupCommands.add(JPASetupWizard.class);
       }
-      if(!origin.hasFacet(CDIFacet_1_0.class) && origin.hasFacet(CDIFacet_1_1.class))
+      if(!origin.hasFacet(CDIFacet_1_0.class) && !origin.hasFacet(CDIFacet_1_1.class))
       {
          setupCommands.add(CDISetupWizard.class);
       }
