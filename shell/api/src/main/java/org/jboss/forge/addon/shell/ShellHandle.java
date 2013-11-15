@@ -10,6 +10,7 @@ package org.jboss.forge.addon.shell;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 
 import javax.inject.Inject;
 
@@ -28,10 +29,14 @@ public class ShellHandle
 
    private Shell shell;
 
-   public void initialize(File currentResource, InputStream stdIn, OutputStream stdOut, OutputStream stdErr)
+   public void initialize(File currentResource, InputStream stdIn, PrintStream stdOut, PrintStream stdErr)
    {
-      Settings settings = new SettingsBuilder().inputStream(stdIn)
-               .outputStream(stdOut).outputStreamError(stdErr).create();
+      Settings settings = new SettingsBuilder()
+              .inputStream(stdIn)
+              .outputStream(stdOut)
+              .outputStreamError(stdErr)
+              .enableMan(true)
+              .create();
       this.shell = shellFactory.createShell(currentResource, settings);
    }
 
