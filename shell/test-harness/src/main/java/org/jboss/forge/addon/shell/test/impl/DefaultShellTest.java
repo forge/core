@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.PrintStream;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -338,8 +339,8 @@ public class DefaultShellTest implements ShellTest
             inputStream = new PipedInputStream(stdin);
             settings = new SettingsBuilder()
                      .inputStream(inputStream)
-                     .outputStream(stdout)
-                     .outputStreamError(stderr)
+                     .outputStream(new PrintStream(stdout))
+                     .outputStreamError(new PrintStream(stderr))
                      .name("test")
                      .logging(true)
                      .terminal(new TestTerminal())

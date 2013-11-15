@@ -7,10 +7,11 @@
 
 package org.jboss.forge.addon.shell;
 
-import org.jboss.aesh.console.reader.AeshPrintStream;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.aesh.terminal.TerminalString;
+
+import java.io.PrintStream;
 
 /**
  * Used to generate properly formatted status messages.
@@ -20,25 +21,25 @@ import org.jboss.aesh.terminal.TerminalString;
  */
 public abstract class ShellMessages
 {
-   public static void success(final AeshPrintStream writer, final String message)
+   public static void success(final PrintStream writer, final String message)
    {
       writer.print(new TerminalString("***SUCCESS*** ", new TerminalColor(Color.GREEN, Color.DEFAULT)));
       writer.println(message);
    }
 
-   public static void error(final AeshPrintStream writer, final String message)
+   public static void error(final PrintStream writer, final String message)
    {
       writer.print(new TerminalString("***ERROR*** ", new TerminalColor(Color.RED, Color.DEFAULT)));
       writer.println(message);
    }
 
-   public static void info(final AeshPrintStream writer, final String message)
+   public static void info(final PrintStream writer, final String message)
    {
       writer.print(new TerminalString("***INFO*** ", new TerminalColor(Color.BLUE, Color.DEFAULT)));
       writer.println(message);
    }
 
-   public static void warn(final AeshPrintStream writer, final String message)
+   public static void warn(final PrintStream writer, final String message)
    {
       writer.print(new TerminalString("***WARNING*** ", new TerminalColor(Color.YELLOW, Color.DEFAULT)));
       writer.println(message);

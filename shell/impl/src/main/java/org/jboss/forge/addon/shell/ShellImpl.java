@@ -17,6 +17,7 @@ import org.jboss.aesh.console.AeshConsoleBuilder;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.Prompt;
 import org.jboss.aesh.console.helper.InterruptHook;
+import org.jboss.aesh.console.helper.ManProvider;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
 import org.jboss.aesh.terminal.CharacterType;
@@ -55,7 +56,7 @@ public class ShellImpl implements Shell
    private final UIOutput output;
 
    public ShellImpl(FileResource<?> initialResource, Settings settings, CommandManager commandManager,
-            AddonRegistry addonRegistry)
+            AddonRegistry addonRegistry, ManProvider manProvider)
    {
       this.currentResource = initialResource;
       this.addonRegistry = addonRegistry;
@@ -68,9 +69,12 @@ public class ShellImpl implements Shell
             console.clearBufferAndDisplayPrompt();
          }
       }).create();
-      this.console = new AeshConsoleBuilder().prompt(createPrompt()).settings(newSettings)
-               .commandRegistry(new ForgeCommandRegistry(this, commandManager))
-               .create();
+      this.console = new AeshConsoleBuilder()
+              .prompt(createPrompt())
+              .settings(newSettings)
+              .commandRegistry(new ForgeCommandRegistry(this, commandManager))
+              .manProvider(manProvider)
+              .create();
       this.output = new ShellUIOutputImpl(console);
       this.console.start();
    }
