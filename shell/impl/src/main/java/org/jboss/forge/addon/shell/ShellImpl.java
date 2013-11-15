@@ -17,7 +17,6 @@ import org.jboss.aesh.console.AeshConsoleBuilder;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.Prompt;
 import org.jboss.aesh.console.helper.InterruptHook;
-import org.jboss.aesh.console.helper.ManProvider;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
 import org.jboss.aesh.terminal.CharacterType;
@@ -27,6 +26,7 @@ import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
 import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
+import org.jboss.forge.addon.shell.aesh.ForgeManProvider;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIOutputImpl;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
@@ -56,7 +56,7 @@ public class ShellImpl implements Shell
    private final UIOutput output;
 
    public ShellImpl(FileResource<?> initialResource, Settings settings, CommandManager commandManager,
-            AddonRegistry addonRegistry, ManProvider manProvider)
+            AddonRegistry addonRegistry)
    {
       this.currentResource = initialResource;
       this.addonRegistry = addonRegistry;
@@ -70,11 +70,11 @@ public class ShellImpl implements Shell
          }
       }).create();
       this.console = new AeshConsoleBuilder()
-              .prompt(createPrompt())
-              .settings(newSettings)
-              .commandRegistry(new ForgeCommandRegistry(this, commandManager))
-              .manProvider(manProvider)
-              .create();
+               .prompt(createPrompt())
+               .settings(newSettings)
+               .commandRegistry(new ForgeCommandRegistry(this, commandManager))
+               .manProvider(new ForgeManProvider(this, commandManager))
+               .create();
       this.output = new ShellUIOutputImpl(console);
       this.console.start();
    }

@@ -93,7 +93,7 @@ public class CommandManager
       return result;
    }
 
-   private String getCommandName(ShellContext shellContext, UICommand cmd)
+   public String getCommandName(ShellContext shellContext, UICommand cmd)
    {
       return ShellUtil.shellifyName(cmd.getMetadata(shellContext).getName());
    }
