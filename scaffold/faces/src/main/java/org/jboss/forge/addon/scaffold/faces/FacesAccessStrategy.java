@@ -20,7 +20,7 @@ import org.jboss.forge.addon.javaee.faces.FacesFacet;
  */
 public class FacesAccessStrategy implements AccessStrategy
 {
-   final FacesFacet faces;
+   final FacesFacet<?> faces;
 
    public FacesAccessStrategy(final Project project)
    {
@@ -30,17 +30,13 @@ public class FacesAccessStrategy implements AccessStrategy
    @Override
    public List<String> getWebPaths(final Resource<?> resource)
    {
-      //TODO Fix FacesFacet 
-      //return this.faces.getWebPaths(resource);
-      return null;
+      return this.faces.getWebPaths(resource);
    }
 
    @Override
    public Resource<?> fromWebPath(final String path)
    {
-      //TODO: Fix FacesFacet
-      //return this.faces.getResourceForWebPath(path);
-      return null;
+      return this.faces.getResourceForWebPath(path);
    }
 
 }

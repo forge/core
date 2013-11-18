@@ -25,28 +25,18 @@ import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.FacetNotFoundException;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
-import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_0;
-import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
 import org.jboss.forge.addon.javaee.cdi.ui.CDISetupWizard;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
-import org.jboss.forge.addon.javaee.ejb.EJBFacet_3_1;
-import org.jboss.forge.addon.javaee.ejb.EJBFacet_3_2;
 import org.jboss.forge.addon.javaee.ejb.ui.EJBSetupWizard;
 import org.jboss.forge.addon.javaee.faces.FacesFacet;
-import org.jboss.forge.addon.javaee.faces.FacesFacet_2_0;
-import org.jboss.forge.addon.javaee.faces.FacesFacet_2_1;
-import org.jboss.forge.addon.javaee.faces.FacesFacet_2_2;
 import org.jboss.forge.addon.javaee.faces.ui.FacesSetupWizard;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
-import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_0;
-import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_1;
 import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.javaee.servlet.ui.ServletSetupWizard;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
@@ -247,25 +237,24 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
    public List<Class<? extends UICommand>> getSetupFlow()
    {
       List<Class<? extends UICommand>> setupCommands = new ArrayList<Class<? extends UICommand>>();
-      // FORGE-1304 detect all facet subtypes that we support
-      if(!origin.hasFacet(JPAFacet_2_0.class) && !origin.hasFacet(JPAFacet_2_1.class))
+      if(!origin.hasFacet(JPAFacet.class))
       {
          setupCommands.add(JPASetupWizard.class);
       }
-      if(!origin.hasFacet(CDIFacet_1_0.class) && !origin.hasFacet(CDIFacet_1_1.class))
+      if(!origin.hasFacet(CDIFacet.class))
       {
          setupCommands.add(CDISetupWizard.class);
       }
-      if(!origin.hasFacet(EJBFacet_3_1.class) && !origin.hasFacet(EJBFacet_3_2.class))
+      if(!origin.hasFacet(EJBFacet.class))
       {
          setupCommands.add(EJBSetupWizard.class);
       }
-      if(!origin.hasFacet(ServletFacet_3_0.class) && !origin.hasFacet(ServletFacet_3_1.class))
+      if(!origin.hasFacet(ServletFacet.class))
       {
          //TODO: FORGE-1296. Ensure that this wizard only sets up Servlet 3.0+
          setupCommands.add(ServletSetupWizard.class);
       }
-      if(!origin.hasFacet(FacesFacet_2_0.class) && !origin.hasFacet(FacesFacet_2_1.class) && !origin.hasFacet(FacesFacet_2_2.class))
+      if(!origin.hasFacet(FacesFacet.class))
       {
          setupCommands.add(FacesSetupWizard.class);
       }
@@ -285,17 +274,14 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       WebResourcesFacet web = this.origin.getFacet(WebResourcesFacet.class);
 
-      // TODO: Refactor this and remove the duplication
-      // TODO: origin.getFacet(ServletFacet.class) returns null!!
-      if (this.origin.hasFacet(ServletFacet_3_0.class))
+      ServletFacet servlet = this.origin.getFacet(ServletFacet.class);
+      if (servlet instanceof ServletFacet_3_0)
       {
-         ServletFacet servlet = this.origin.getFacet(ServletFacet_3_0.class);
          WebAppDescriptor servletConfig = (WebAppDescriptor) servlet.getConfig();
          servletConfig.getOrCreateWelcomeFileList().welcomeFile("/index.html");
       }
-      else if (this.origin.hasFacet(ServletFacet_3_1.class))
+      else if (servlet instanceof ServletFacet_3_1)
       {
-         ServletFacet servlet = this.origin.getFacet(ServletFacet_3_1.class);
          org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor servletConfig = (org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor) servlet
                   .getConfig();
          servletConfig.getOrCreateWelcomeFileList().welcomeFile("/index.html");
@@ -460,11 +446,9 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
    protected void setupWebXML()
    {
       WebResourcesFacet web = this.origin.getFacet(WebResourcesFacet.class);
-      // TODO: Refactor this and remove the duplication
-      // TODO: origin.getFacet(ServletFacet.class) returns null!!
-      if (this.origin.hasFacet(ServletFacet_3_0.class))
+      ServletFacet servlet = this.origin.getFacet(ServletFacet.class);
+      if (servlet instanceof ServletFacet_3_0)
       {
-         ServletFacet servlet = this.origin.getFacet(ServletFacet_3_0.class);
          WebAppDescriptor servletConfig = (WebAppDescriptor) servlet.getConfig();
          Node root = ((NodeDescriptor)servletConfig).getRootNode();
          removeConflictingErrorPages(root);
@@ -492,9 +476,8 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
          }
          servlet.saveConfig(servletConfig);
       }
-      else if (this.origin.hasFacet(ServletFacet_3_1.class))
+      else if (servlet instanceof ServletFacet_3_1)
       {
-         ServletFacet servlet = this.origin.getFacet(ServletFacet_3_1.class);
          org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor servletConfig = (org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor) servlet
                   .getConfig();
          // (prefer /faces/error.xhtml)
