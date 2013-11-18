@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>javaee-parent</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <version>2.0.0.Beta2</version>
    </parent>
    <artifactId>javaee-tests</artifactId>
    <name>Forge - JavaEE Tests</name>
@@ -22,7 +22,7 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui-test-harness</artifactId>
-         <version>2.0.0-SNAPSHOT</version>
+         <version>2.0.0.Beta2</version>
          <classifier>forge-addon</classifier>
       </dependency>
 
