@@ -231,15 +231,15 @@
 		</module-def>
 
 		<module-def name="org.eclipse.javaparser">
-			<maven-resource group="org.eclipse.core" artifact="contenttype" />
-			<maven-resource group="org.eclipse.core" artifact="jobs" />
-			<maven-resource group="org.eclipse.core" artifact="resources" />
-			<maven-resource group="org.eclipse.core" artifact="runtime" />
+			<maven-resource group="org.eclipse.core" artifact="org.eclipse.core.contenttype" />
+			<maven-resource group="org.eclipse.core" artifact="org.eclipse.core.jobs" />
+			<maven-resource group="org.eclipse.core" artifact="org.eclipse.core.resources" />
+			<maven-resource group="org.eclipse.core" artifact="org.eclipse.core.runtime" />
 			<maven-resource group="org.eclipse.tycho" artifact="org.eclipse.jdt.core" />
-			<maven-resource group="org.eclipse" artifact="osgi" />
-			<maven-resource group="org.eclipse.equinox" artifact="common" />
-			<maven-resource group="org.eclipse.equinox" artifact="preferences" />
-			<maven-resource group="org.eclipse" artifact="text" />
+			<maven-resource group="org.eclipse.osgi" artifact="org.eclipse.osgi" />
+			<maven-resource group="org.eclipse.equinox" artifact="org.eclipse.equinox.common" />
+			<maven-resource group="org.eclipse.equinox" artifact="org.eclipse.equinox.preferences" />
+			<maven-resource group="org.eclipse.text" artifact="org.eclipse.text" />
 		</module-def>
 
         <module-def name="org.freemarker">
