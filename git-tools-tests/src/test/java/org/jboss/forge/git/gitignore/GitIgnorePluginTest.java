@@ -81,7 +81,7 @@ public class GitIgnorePluginTest extends AbstractShellTest
       GitIgnoreResource gitignore = gitIgnoreResource();
       assertTrue(gitignore.exists());
       String content = Streams.toString(gitignore.getResourceInputStream());
-      assertTrue(content.contains(".classpath"));
+      assertTrue(content.contains(".settings"));
       assertTrue(content.contains("target/"));
    }
 
@@ -112,11 +112,11 @@ public class GitIgnorePluginTest extends AbstractShellTest
       // when
       doSetup();
       getShell().execute("gitignore create Eclipse");
-      getShell().execute("gitignore-edit remove .classpath");
+      getShell().execute("gitignore-edit remove target/");
 
       // then
       String content = Streams.toString(gitIgnoreResource().getResourceInputStream());
-      assertFalse(content.contains(".classpath"));
+      assertFalse(content.contains("target/"));
    }
 
    private Resource<?> doSetup() throws Exception
