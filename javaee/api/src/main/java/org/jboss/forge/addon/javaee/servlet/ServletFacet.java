@@ -16,6 +16,7 @@ import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
+import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFilter;
 import org.jboss.shrinkwrap.descriptor.api.webapp.WebAppCommonDescriptor;
@@ -43,4 +44,9 @@ public interface ServletFacet<DESCRIPTOR extends WebAppCommonDescriptor> extends
     * {@link ResourceFilter}.
     */
    List<Resource<?>> getResources(final ResourceFilter filter);
+
+   /**
+    * Return a reference to the WEB-INF folder of this project.
+    */
+   DirectoryResource getWebInfFolder();
 }

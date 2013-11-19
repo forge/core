@@ -97,6 +97,12 @@ public abstract class AbstractServletFacet<DESCRIPTOR extends WebAppCommonDescri
       return listChildrenRecursively(webRoot, filter);
    }
 
+   @Override
+   public DirectoryResource getWebInfFolder()
+   {
+      return getFaceted().getFacet(WebResourcesFacet.class).getWebRootDirectory().getChildDirectory("WEB-INF");
+   }
+
    private List<Resource<?>> listChildrenRecursively(final DirectoryResource current, final ResourceFilter filter)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
