@@ -27,7 +27,7 @@ It is worth mentioning that the Eclipse plugin does not support access to shell 
 === Get Started with the Command line tools:
 
 - Download link:https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.0.0.Alpha14&e=zip[JBoss Forge 2.0.0.Alpha14]
-- Extract the ZIP to a folder and navigate to forge-2.0.0.Alpha14/bin folder
+- Extract the ZIP to a directory and navigate to forge-2.0.0.Alpha14/bin directory
 
 Forge is now ready to go. 
 

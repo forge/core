@@ -62,7 +62,7 @@ Descriptors are handled by the https://github.com/shrinkwrap/descriptors[ShrinkW
 |Facet|Behavior when installing in a project
 
 |`CDIFacet`
-|Adds the necessary CDI 1.x dependencies to the build descriptor. Adds a `META-INF/beans.xml` to your resources folder or to `WEB-INF/beans.xml` if in a Web project. The facet provides access to the `BeansDescriptor` object to allow manipulation of the `beans.xml` file in a fluent way.
+|Adds the necessary CDI 1.x dependencies to the build descriptor. Adds a `META-INF/beans.xml` to your resources directory or to `WEB-INF/beans.xml` if in a Web project. The facet provides access to the `BeansDescriptor` object to allow manipulation of the `beans.xml` file in a fluent way.
 
 |`EJBFacet`
 |Adds the necessary EJB 3.x dependencies to the build descriptor. 

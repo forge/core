@@ -76,14 +76,14 @@ public class MavenResourceFacetTest
    }
 
    @Test
-   public void testResourceFolderNotNull() throws Exception
+   public void testResourceDirectoryNotNull() throws Exception
    {
       final ResourcesFacet facet = project.getFacet(ResourcesFacet.class);
-      Assert.assertNotNull("Resource folder is null", facet.getResourceDirectory());
+      Assert.assertNotNull("Resource Directory is null", facet.getResourceDirectory());
    }
 
    @Test
-   public void testDefaultResourceFolder() throws Exception
+   public void testDefaultResourceDirectory() throws Exception
    {
       MavenResourcesFacet facet = project.getFacet(MavenResourcesFacet.class);
       DirectoryResource expected = project.getProjectRoot().getChildDirectory(
@@ -92,7 +92,7 @@ public class MavenResourceFacetTest
    }
 
    @Test
-   public void testDefaultTestResourceFolder() throws Exception
+   public void testDefaultTestResourceDirectory() throws Exception
    {
       MavenResourcesFacet facet = project.getFacet(MavenResourcesFacet.class);
       DirectoryResource expected = project.getProjectRoot().getChildDirectory(
@@ -101,7 +101,7 @@ public class MavenResourceFacetTest
    }
 
    @Test
-   public void testCustomResourceFolder() throws Exception
+   public void testCustomResourceDirectory() throws Exception
    {
       MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
 
@@ -115,7 +115,7 @@ public class MavenResourceFacetTest
 
    @Test
    @Ignore("https://issues.jboss.org/browse/FORGE-1218")
-   public void testCustomResourceFolderWithProperty() throws Exception
+   public void testCustomResourceDirectoryWithProperty() throws Exception
    {
       MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
 
@@ -129,7 +129,7 @@ public class MavenResourceFacetTest
    }
 
    @Test
-   public void testCustomTestSourceFolder() throws Exception
+   public void testCustomTestSourceDirectory() throws Exception
    {
       MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
 
@@ -143,7 +143,7 @@ public class MavenResourceFacetTest
 
    @Test
    @Ignore("https://issues.jboss.org/browse/FORGE-1218")
-   public void testCustomTestSourceFolderWithProperty() throws Exception
+   public void testCustomTestSourceDirectoryWithProperty() throws Exception
    {
       MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
 

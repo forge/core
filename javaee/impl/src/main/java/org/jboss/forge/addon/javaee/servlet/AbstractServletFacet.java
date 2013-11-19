@@ -98,7 +98,7 @@ public abstract class AbstractServletFacet<DESCRIPTOR extends WebAppCommonDescri
    }
 
    @Override
-   public DirectoryResource getWebInfFolder()
+   public DirectoryResource getWebInfDirectory()
    {
       return getFaceted().getFacet(WebResourcesFacet.class).getWebRootDirectory().getChildDirectory("WEB-INF");
    }

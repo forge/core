@@ -46,7 +46,7 @@ public interface ServletFacet<DESCRIPTOR extends WebAppCommonDescriptor> extends
    List<Resource<?>> getResources(final ResourceFilter filter);
 
    /**
-    * Return a reference to the WEB-INF folder of this project.
+    * Return a reference to the WEB-INF directory of this project.
     */
-   DirectoryResource getWebInfFolder();
+   DirectoryResource getWebInfDirectory();
 }

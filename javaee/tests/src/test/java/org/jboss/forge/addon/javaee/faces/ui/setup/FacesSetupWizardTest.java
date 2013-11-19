@@ -80,7 +80,7 @@ public class FacesSetupWizardTest
       Assert.assertFalse(result instanceof Failed);
       Assert.assertTrue(project.hasFacet(FacesFacet.class));
       Assert.assertTrue(project.getFacet(FacesFacet.class).getConfigFile().exists());
-      Assert.assertTrue(project.getFacet(ServletFacet.class).getWebInfFolder().exists());
-      Assert.assertTrue(project.getFacet(ServletFacet.class).getWebInfFolder().getChild("faces-config.xml").exists());
+      Assert.assertTrue(project.getFacet(ServletFacet.class).getWebInfDirectory().exists());
+      Assert.assertTrue(project.getFacet(ServletFacet.class).getWebInfDirectory().getChild("faces-config.xml").exists());
    }
 }
