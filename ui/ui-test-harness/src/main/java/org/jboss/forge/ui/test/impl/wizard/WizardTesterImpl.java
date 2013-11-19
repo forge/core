@@ -7,6 +7,7 @@
 
 package org.jboss.forge.ui.test.impl.wizard;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -41,7 +42,7 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
 
    private final LinkedList<UIBuilderImpl> pages = new LinkedList<UIBuilderImpl>();
 
-   private Stack<Class<? extends UICommand>> subflows = new Stack<Class<? extends UICommand>>();
+   private final Stack<Class<? extends UICommand>> subflows = new Stack<Class<? extends UICommand>>();
 
    private final UIContextImpl context;
 
@@ -154,10 +155,23 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
    }
 
    @Override
-   public void finish(WizardListener listener) throws Exception
+   public List<Result> finish() throws Exception
+   {
+      return finish(new WizardListener()
+      {
+         @Override
+         public void wizardExecuted(UIWizard wizard, Result result)
+         {
+         }
+      });
+   }
+
+   @Override
+   public List<Result> finish(WizardListener listener) throws Exception
    {
       try
       {
+         List<Result> results = new ArrayList<Result>();
          for (UIBuilderImpl builder : pages)
          {
             // validate before execute
@@ -176,7 +190,9 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
             {
                listener.wizardExecuted((UIWizard) wizard, result);
             }
+            results.add(result);
          }
+         return results;
       }
       finally
       {

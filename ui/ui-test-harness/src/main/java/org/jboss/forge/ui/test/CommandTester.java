@@ -6,6 +6,7 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.result.Result;
 
 public interface CommandTester<C extends UICommand>
 {
@@ -16,7 +17,7 @@ public interface CommandTester<C extends UICommand>
     * @param the selected Resource
     */
    public void setInitialSelection(Resource<?>... selection);
-   
+
    /**
     * Launch the Command
     */
@@ -42,10 +43,19 @@ public interface CommandTester<C extends UICommand>
    /**
     * Finish clicked
     * 
-    * @param listener if you wish to listen for the result for the command dialog.
+    * @return {@link Result} the result.
     * @throws Exception if anything wrong happens
     */
-   public void execute(CommandExecutionListener listener) throws Exception;
+   public Result execute() throws Exception;
+
+   /**
+    * Finish clicked
+    * 
+    * @param listener if you wish to listen for the result for the command dialog.
+    * @return {@link Result} the result.
+    * @throws Exception if anything wrong happens
+    */
+   public Result execute(CommandExecutionListener listener) throws Exception;
 
    /**
     * Sets the value of a property

@@ -12,7 +12,9 @@ import java.util.List;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.NavigationResult;
+import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
  * A {@link WizardTester} allows easy testing of Wizard flows by using the Forge UI API
@@ -23,7 +25,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
  */
 public interface WizardTester<W extends UIWizard>
 {
-   
+
    /**
     * Sets the initial selection for the wizard
     * 
@@ -85,10 +87,19 @@ public interface WizardTester<W extends UIWizard>
    /**
     * Finish clicked
     * 
-    * @param listener if you wish to listen for the result for each page.
+    * @return A list of results, in order, from the executed {@link UIWizardStep} instances.
     * @throws Exception if anything wrong happens
     */
-   public void finish(WizardListener listener) throws Exception;
+   public List<Result> finish() throws Exception;
+
+   /**
+    * Finish clicked
+    * 
+    * @param listener if you wish to listen for the result for each page.
+    * @return A list of results, in order, from the executed {@link UIWizardStep} instances.
+    * @throws Exception if anything wrong happens
+    */
+   public List<Result> finish(WizardListener listener) throws Exception;
 
    /**
     * Sets the value of a property
