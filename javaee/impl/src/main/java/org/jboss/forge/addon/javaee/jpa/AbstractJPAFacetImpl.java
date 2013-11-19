@@ -78,7 +78,7 @@ public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonD
    {
       JavaSourceFacet sourceFacet = getFaceted().getFacet(JavaSourceFacet.class);
 
-      DirectoryResource entityRoot = sourceFacet.getBasePackageResource().getChildDirectory(DEFAULT_ENTITY_PACKAGE);
+      DirectoryResource entityRoot = sourceFacet.getBasePackageDirectory().getChildDirectory(DEFAULT_ENTITY_PACKAGE);
       if (!entityRoot.exists())
       {
          entityRoot.mkdirs();
@@ -91,7 +91,7 @@ public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonD
    public FileResource<?> getConfigFile()
    {
       ResourcesFacet resources = getFaceted().getFacet(ResourcesFacet.class);
-      return (FileResource<?>) resources.getResourceFolder().getChild("META-INF" + File.separator + "persistence.xml");
+      return (FileResource<?>) resources.getResourceDirectory().getChild("META-INF" + File.separator + "persistence.xml");
    }
 
    @Override

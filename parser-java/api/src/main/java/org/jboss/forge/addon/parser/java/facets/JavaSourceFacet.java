@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.parser.java.facets;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 
@@ -41,31 +40,31 @@ public interface JavaSourceFacet extends ProjectFacet
    public String getBasePackage();
 
    /**
-    * Return the base Java {@link Package} for this project, returned as a directory {@link File}
+    * Return the base Java {@link Package} for this project, returned as a {@link DirectoryResource}
     */
-   public DirectoryResource getBasePackageResource();
+   public DirectoryResource getBasePackageDirectory();
 
    /**
     * Get a list of {@link DirectoryResource}s this project uses to contain {@link Project} source documents (such as
     * .java files.)
     */
-   public List<DirectoryResource> getSourceFolders();
+   public List<DirectoryResource> getSourceDirectories();
 
    /**
     * Get the {@link DirectoryResource} this {@link Project} uses to store package-able source documents (such as .java
     * files.)
     */
-   public DirectoryResource getSourceFolder();
+   public DirectoryResource getSourceDirectory();
 
    /**
     * Get the {@link DirectoryResource} this {@link Project} uses to store test-scoped source documents (such as .java
     * files.) Files in this directory will never be packaged or deployed except when running Unit Tests.
     */
-   public DirectoryResource getTestSourceFolder();
+   public DirectoryResource getTestSourceDirectory();
 
    /**
-    * Create or update a Java file in the primary source directory: {@link #getSourceFolder()} - use information in the
-    * given {@link JavaSource} to determine the appropriate package; packages will be created if necessary.
+    * Create or update a Java file in the primary source directory: {@link #getSourceDirectory()} - use information in
+    * the given {@link JavaSource} to determine the appropriate package; packages will be created if necessary.
     * 
     * @param source The java class to create
     * @return The created or updated {@link JavaResource}
@@ -74,7 +73,7 @@ public interface JavaSourceFacet extends ProjectFacet
    public JavaResource saveJavaSource(JavaSource<?> source) throws FileNotFoundException;
 
    /**
-    * Create or update a Java file in the primary test source directory: {@link #getTestSourceFolder()} - use
+    * Create or update a Java file in the primary test source directory: {@link #getTestSourceDirectory()} - use
     * information in the given {@link JavaSource} to determine the appropriate package; packages will be created if
     * necessary.
     * 
@@ -84,7 +83,7 @@ public interface JavaSourceFacet extends ProjectFacet
    public JavaResource saveTestJavaSource(JavaSource<?> source) throws FileNotFoundException;
 
    /**
-    * Return the {@link JavaClass} at the given path relative to {@link #getSourceFolder()}.
+    * Return the {@link JavaClass} at the given path relative to {@link #getSourceDirectory()}.
     * 
     * @param relativePath The file or package path of the target Java source file.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
@@ -93,7 +92,7 @@ public interface JavaSourceFacet extends ProjectFacet
 
    /**
     * Attempt to locate and re-parse the given {@link JavaClass} from its location on disk, relative to
-    * {@link #getSourceFolder()}. The given instance will not be modified, and a new instance will be returned.
+    * {@link #getSourceDirectory()}. The given instance will not be modified, and a new instance will be returned.
     * 
     * @param javaClass The {@link JavaClass} to re-parse.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
@@ -101,7 +100,7 @@ public interface JavaSourceFacet extends ProjectFacet
    public JavaResource getJavaResource(JavaSource<?> javaClass) throws FileNotFoundException;
 
    /**
-    * Return the {@link JavaClass} at the given path relative to {@link #getTestSourceFolder()}.
+    * Return the {@link JavaClass} at the given path relative to {@link #getTestSourceDirectory()}.
     * 
     * @param relativePath The package path of the target Java source {@link JavaResource}.
     */
@@ -109,7 +108,7 @@ public interface JavaSourceFacet extends ProjectFacet
 
    /**
     * Attempt to locate and re-parse the given {@link JavaClass} from its location on disk, relative to
-    * {@link #getTestSourceFolder()}. The given instance will not be modified, and a new instance will be returned.
+    * {@link #getTestSourceDirectory()}. The given instance will not be modified, and a new instance will be returned.
     * 
     * @param javaClass The {@link JavaClass} to re-parse.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist

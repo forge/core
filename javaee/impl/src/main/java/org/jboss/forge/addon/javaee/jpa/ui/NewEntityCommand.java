@@ -90,7 +90,7 @@ public class NewEntityCommand extends AbstractJavaEECommand
       else if (project.hasFacet(JavaSourceFacet.class))
       {
          JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-         targetLocation.setDefaultValue(facet.getSourceFolder()).setEnabled(false);
+         targetLocation.setDefaultValue(facet.getSourceDirectory()).setEnabled(false);
          targetPackage.setValue(calculateModelPackage(project));
       }
       builder.add(targetLocation);

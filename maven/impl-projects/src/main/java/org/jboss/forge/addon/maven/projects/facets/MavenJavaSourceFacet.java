@@ -36,11 +36,11 @@ import org.jboss.forge.parser.java.JavaSource;
 public class MavenJavaSourceFacet extends AbstractFacet<Project> implements JavaSourceFacet
 {
    @Override
-   public List<DirectoryResource> getSourceFolders()
+   public List<DirectoryResource> getSourceDirectories()
    {
       List<DirectoryResource> result = new ArrayList<DirectoryResource>();
-      result.add(getSourceFolder());
-      result.add(getTestSourceFolder());
+      result.add(getSourceDirectory());
+      result.add(getTestSourceDirectory());
       return result;
    }
 
@@ -57,7 +57,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    @Override
    public String calculatePackage(final JavaResource resource)
    {
-      List<DirectoryResource> folders = getSourceFolders();
+      List<DirectoryResource> folders = getSourceDirectories();
       String pkg = null;
       for (DirectoryResource folder : folders)
       {
@@ -81,13 +81,13 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    }
 
    @Override
-   public DirectoryResource getBasePackageResource()
+   public DirectoryResource getBasePackageDirectory()
    {
-      return getSourceFolder().getChildDirectory(Packages.toFileSyntax(getBasePackage()));
+      return getSourceDirectory().getChildDirectory(Packages.toFileSyntax(getBasePackage()));
    }
 
    @Override
-   public DirectoryResource getSourceFolder()
+   public DirectoryResource getSourceDirectory()
    {
       MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
       Build build = mavenFacet.getPOM().getBuild();
@@ -105,7 +105,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    }
 
    @Override
-   public DirectoryResource getTestSourceFolder()
+   public DirectoryResource getTestSourceDirectory()
    {
       MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
       Build build = mavenFacet.getPOM().getBuild();
@@ -125,7 +125,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    @Override
    public boolean isInstalled()
    {
-      return getSourceFolder().exists();
+      return getSourceDirectory().exists();
    }
 
    @Override
@@ -133,7 +133,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    {
       if (!this.isInstalled())
       {
-         for (DirectoryResource folder : this.getSourceFolders())
+         for (DirectoryResource folder : this.getSourceDirectories())
          {
             folder.mkdirs();
          }
@@ -158,13 +158,13 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    @Override
    public JavaResource getJavaResource(final String relativePath) throws FileNotFoundException
    {
-      return getJavaResource(getSourceFolder(), relativePath);
+      return getJavaResource(getSourceDirectory(), relativePath);
    }
 
    @Override
    public JavaResource getTestJavaResource(final String relativePath) throws FileNotFoundException
    {
-      return getJavaResource(getTestSourceFolder(), relativePath);
+      return getJavaResource(getTestSourceDirectory(), relativePath);
    }
 
    private JavaResource getJavaResource(final DirectoryResource sourceDir, final String relativePath)
@@ -192,13 +192,13 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    @Override
    public void visitJavaSources(final JavaResourceVisitor visitor)
    {
-      visitSources(getSourceFolder(), visitor);
+      visitSources(getSourceDirectory(), visitor);
    }
 
    @Override
    public void visitJavaTestSources(final JavaResourceVisitor visitor)
    {
-      visitSources(getTestSourceFolder(), visitor);
+      visitSources(getTestSourceDirectory(), visitor);
    }
 
    private void visitSources(final Resource<?> searchFolder, final JavaResourceVisitor visitor)

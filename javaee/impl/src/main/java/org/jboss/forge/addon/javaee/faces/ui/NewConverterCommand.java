@@ -84,7 +84,7 @@ public class NewConverterCommand extends AbstractJavaEECommand
       else if (project.hasFacet(JavaSourceFacet.class))
       {
          JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-         targetLocation.setDefaultValue(facet.getSourceFolder()).setEnabled(false);
+         targetLocation.setDefaultValue(facet.getSourceDirectory()).setEnabled(false);
          targetPackage.setValue(calculateConverterPackage(project));
       }
       builder.add(targetLocation);

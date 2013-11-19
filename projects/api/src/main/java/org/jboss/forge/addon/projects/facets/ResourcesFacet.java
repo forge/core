@@ -23,23 +23,23 @@ public interface ResourcesFacet extends ProjectFacet
     * Get a list of {@link DirectoryResource}s representing the directories this project uses to contain {@link Project}
     * non-source documents (such as configuration files.)
     */
-   public List<DirectoryResource> getResourceFolders();
+   public List<DirectoryResource> getResourceDirectories();
 
    /**
     * Get the {@link DirectoryResource} representing the folder this {@link Project} uses to store package-able,
     * non-source documents (such as configuration files.)
     */
-   public DirectoryResource getResourceFolder();
+   public DirectoryResource getResourceDirectory();
 
    /**
     * Get the {@link DirectoryResource} representing the folder this {@link Project} uses to store test-scoped
     * non-source documents (such as configuration files.) Files in this directory will never be packaged or deployed
     * except when running Unit Tests.
     */
-   public DirectoryResource getTestResourceFolder();
+   public DirectoryResource getTestResourceDirectory();
 
    /**
-    * At the given path/filename relative to the project resources directory: {@link #getResourceFolder()} - create a
+    * At the given path/filename relative to the project resources directory: {@link #getResourceDirectory()} - create a
     * file containing the given bytes.
     * 
     * @return a handle to the {@link FileResource} that was created.
@@ -47,7 +47,7 @@ public interface ResourcesFacet extends ProjectFacet
    FileResource<?> createResource(char[] bytes, String relativeFilename);
 
    /**
-    * At the given path/filename relative to the project test resources directory: {@link #getTestResourceFolder()} -
+    * At the given path/filename relative to the project test resources directory: {@link #getTestResourceDirectory()} -
     * create a file containing the given bytes.
     * 
     * @return a handle to the {@link FileResource} that was created.
@@ -55,14 +55,14 @@ public interface ResourcesFacet extends ProjectFacet
    FileResource<?> createTestResource(char[] bytes, String relativeFilename);
 
    /**
-    * Return the {@link FileResource} at the given path relative to {@link #getResourceFolder()}. The
+    * Return the {@link FileResource} at the given path relative to {@link #getResourceDirectory()}. The
     * {@link FileResource} object is returned regardless of whether the target actually exists. To determine if the file
     * exists, you should call {@link FileResource#exists()} on the return value of this method.
     */
    FileResource<?> getResource(String relativePath);
 
    /**
-    * Attempt to locate a {@link FileResource} at the given path relative to {@link #getTestResourceFolder()}. The
+    * Attempt to locate a {@link FileResource} at the given path relative to {@link #getTestResourceDirectory()}. The
     * {@link FileResource} object is returned regardless of whether the target actually exists. To determine if the file
     * exists, you should call {@link FileResource#exists()} on the return value of this method.
     */

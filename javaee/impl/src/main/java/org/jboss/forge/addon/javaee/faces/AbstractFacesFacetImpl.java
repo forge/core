@@ -141,7 +141,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
       }
       else
       {
-         DirectoryResource root = project.getFacet(ResourcesFacet.class).getResourceFolder();
+         DirectoryResource root = project.getFacet(ResourcesFacet.class).getResourceDirectory();
          return (FileResource<?>) root.getChild("META-INF" + File.separator + "faces-config.xml");
       }
    }

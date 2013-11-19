@@ -101,7 +101,7 @@ public abstract class AbstractCDIFacetImpl<DESCRIPTOR extends Descriptor> extend
       }
       else
       {
-         DirectoryResource root = project.getFacet(ResourcesFacet.class).getResourceFolder();
+         DirectoryResource root = project.getFacet(ResourcesFacet.class).getResourceDirectory();
          return (FileResource<?>) root.getChild("META-INF" + File.separator + "beans.xml");
       }
    }

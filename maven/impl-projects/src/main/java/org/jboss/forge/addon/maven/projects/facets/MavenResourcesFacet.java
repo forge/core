@@ -32,16 +32,16 @@ import org.jboss.forge.addon.resource.FileResource;
 public class MavenResourcesFacet extends AbstractFacet<Project> implements ResourcesFacet
 {
    @Override
-   public List<DirectoryResource> getResourceFolders()
+   public List<DirectoryResource> getResourceDirectories()
    {
       List<DirectoryResource> result = new ArrayList<DirectoryResource>();
-      result.add(getResourceFolder());
-      result.add(getTestResourceFolder());
+      result.add(getResourceDirectory());
+      result.add(getTestResourceDirectory());
       return result;
    }
 
    @Override
-   public DirectoryResource getResourceFolder()
+   public DirectoryResource getResourceDirectory()
    {
       MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
       Build build = mavenFacet.getPOM().getBuild();
@@ -59,7 +59,7 @@ public class MavenResourcesFacet extends AbstractFacet<Project> implements Resou
    }
 
    @Override
-   public DirectoryResource getTestResourceFolder()
+   public DirectoryResource getTestResourceDirectory()
    {
       MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
       Build build = mavenFacet.getPOM().getBuild();
@@ -86,7 +86,7 @@ public class MavenResourcesFacet extends AbstractFacet<Project> implements Resou
    @Override
    public boolean isInstalled()
    {
-      return getResourceFolder().exists();
+      return getResourceDirectory().exists();
    }
 
    @Override
@@ -94,7 +94,7 @@ public class MavenResourcesFacet extends AbstractFacet<Project> implements Resou
    {
       if (!this.isInstalled())
       {
-         for (DirectoryResource folder : getResourceFolders())
+         for (DirectoryResource folder : getResourceDirectories())
          {
             folder.mkdirs();
          }
@@ -105,19 +105,19 @@ public class MavenResourcesFacet extends AbstractFacet<Project> implements Resou
    @Override
    public FileResource<?> getResource(final String relativePath)
    {
-      return (FileResource<?>) getResourceFolder().getChild(relativePath);
+      return (FileResource<?>) getResourceDirectory().getChild(relativePath);
    }
 
    @Override
    public FileResource<?> getTestResource(final String relativePath)
    {
-      return (FileResource<?>) getTestResourceFolder().getChild(relativePath);
+      return (FileResource<?>) getTestResourceDirectory().getChild(relativePath);
    }
 
    @Override
    public FileResource<?> createResource(final char[] bytes, final String relativeFilename)
    {
-      FileResource<?> file = (FileResource<?>) getResourceFolder().getChild(relativeFilename);
+      FileResource<?> file = (FileResource<?>) getResourceDirectory().getChild(relativeFilename);
       file.setContents(bytes);
       return file;
    }
@@ -125,7 +125,7 @@ public class MavenResourcesFacet extends AbstractFacet<Project> implements Resou
    @Override
    public FileResource<?> createTestResource(final char[] bytes, final String relativeFilename)
    {
-      FileResource<?> file = (FileResource<?>) getTestResourceFolder().getChild(relativeFilename);
+      FileResource<?> file = (FileResource<?>) getTestResourceDirectory().getChild(relativeFilename);
       file.setContents(bytes);
       return file;
    }
