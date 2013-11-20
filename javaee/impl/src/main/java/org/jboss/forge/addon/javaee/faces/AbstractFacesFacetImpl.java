@@ -102,10 +102,23 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
    @Override
    public boolean install()
    {
-      if (!getFaceted().hasFacet(ServletFacet_3_0.class) && getFaceted().hasFacet(ServletFacet_2_5.class)
-               && !hasServletMapping())
+      if (!isInstalled())
       {
-         setFacesMapping("*.xhtml");
+         // Add a faces-config.xml for WARs. Note - the facet can be activated even for JSF components.
+         String packagingType = getFaceted().getFacet(PackagingFacet.class).getPackagingType();
+         if (packagingType.equalsIgnoreCase("war"))
+         {
+            FileResource<?> descriptor = getConfigFile();
+            if (!descriptor.exists())
+            {
+               createDefaultConfig(descriptor);
+            }
+         }
+         if (!getFaceted().hasFacet(ServletFacet_3_0.class) && getFaceted().hasFacet(ServletFacet_2_5.class)
+                  && !hasServletMapping())
+         {
+            setFacesMapping("*.xhtml");
+         }
       }
       return super.install();
    }
@@ -442,6 +455,8 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
 
       return suffixes;
    }
+   
+   protected abstract void createDefaultConfig(FileResource<?> descriptor);
 
    private ServletMappingHelper helper = new ServletMappingHelper();
 

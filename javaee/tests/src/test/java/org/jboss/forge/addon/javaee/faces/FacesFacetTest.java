@@ -15,6 +15,7 @@ import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.FacetIsAmbiguousException;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
@@ -68,13 +69,15 @@ public class FacesFacetTest
    {
       Project project = projectFactory.createTempProject();
       Assert.assertNotNull(project);
+      PackagingFacet packaging = project.getFacet(PackagingFacet.class);
+      packaging.setPackagingType("war");
       FacesFacet_2_0 facet = facetFactory.install(project, FacesFacet_2_0.class);
       Assert.assertNotNull(facet);
       FileResource<?> configFile = facet.getConfigFile();
-      Assert.assertFalse(configFile.exists());
+      Assert.assertTrue(configFile.exists());
       org.jboss.shrinkwrap.descriptor.api.facesconfig20.WebFacesConfigDescriptor config = facet.getConfig();
       config.createApplication().defaultRenderKitId("foo");
-      Assert.assertFalse(configFile.exists());
+      Assert.assertTrue(configFile.exists());
       facet.saveConfig(config);
       Assert.assertTrue(configFile.exists());
       Assert.assertEquals("2.0", facet.getSpecVersion().toString());
@@ -86,13 +89,15 @@ public class FacesFacetTest
    {
       Project project = projectFactory.createTempProject();
       Assert.assertNotNull(project);
+      PackagingFacet packaging = project.getFacet(PackagingFacet.class);
+      packaging.setPackagingType("war");
       FacesFacet_2_1 facet = facetFactory.install(project, FacesFacet_2_1.class);
       Assert.assertNotNull(facet);
       FileResource<?> configFile = facet.getConfigFile();
-      Assert.assertFalse(configFile.exists());
+      Assert.assertTrue(configFile.exists());
       WebFacesConfigDescriptor config = facet.getConfig();
       config.createApplication().defaultRenderKitId("foo");
-      Assert.assertFalse(configFile.exists());
+      Assert.assertTrue(configFile.exists());
       facet.saveConfig(config);
       Assert.assertTrue(configFile.exists());
       Assert.assertEquals("2.1", facet.getSpecVersion().toString());
@@ -104,17 +109,50 @@ public class FacesFacetTest
    {
       Project project = projectFactory.createTempProject();
       Assert.assertNotNull(project);
+      PackagingFacet packaging = project.getFacet(PackagingFacet.class);
+      packaging.setPackagingType("war");
       FacesFacet_2_2 facet = facetFactory.install(project, FacesFacet_2_2.class);
       Assert.assertNotNull(facet);
       FileResource<?> configFile = facet.getConfigFile();
-      Assert.assertFalse(configFile.exists());
+      Assert.assertTrue(configFile.exists());
       org.jboss.shrinkwrap.descriptor.api.facesconfig22.WebFacesConfigDescriptor config = facet.getConfig();
       config.createApplication().defaultRenderKitId("foo");
-      Assert.assertFalse(configFile.exists());
+      Assert.assertTrue(configFile.exists());
       facet.saveConfig(config);
       Assert.assertTrue(configFile.exists());
       Assert.assertEquals("2.2", facet.getSpecVersion().toString());
       Assert.assertTrue(project.hasFacet(FacesFacet.class));
+   }
+   
+   @Test
+   public void testComponentLibraryConfigDescriptorCreation() throws Exception
+   {
+      // Create a temporary project of type JAR that acts as a component library instead of a web app and verify if
+      // faces-config.xml is created on facet installation.
+
+      // Faces 2.0
+      Project faces20Project = projectFactory.createTempProject();
+      Assert.assertNotNull(faces20Project);
+      FacesFacet_2_0 faces20Facet = facetFactory.install(faces20Project, FacesFacet_2_0.class);
+      Assert.assertNotNull(faces20Facet);
+      FileResource<?> configFile = faces20Facet.getConfigFile();
+      Assert.assertFalse(configFile.exists());
+      
+      // Faces 2.1
+      Project faces21Project = projectFactory.createTempProject();
+      Assert.assertNotNull(faces21Project);
+      FacesFacet_2_1 faces21Facet = facetFactory.install(faces21Project, FacesFacet_2_1.class);
+      Assert.assertNotNull(faces21Facet);
+      configFile = faces21Facet.getConfigFile();
+      Assert.assertFalse(configFile.exists());
+      
+      // Faces 2.2
+      Project project = projectFactory.createTempProject();
+      Assert.assertNotNull(project);
+      FacesFacet_2_2 facet = facetFactory.install(project, FacesFacet_2_2.class);
+      Assert.assertNotNull(facet);
+      configFile = facet.getConfigFile();
+      Assert.assertFalse(configFile.exists());
    }
 
 }

@@ -16,7 +16,9 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.addon.javaee.Descriptors;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.shrinkwrap.descriptor.api.facesconfig20.WebFacesConfigDescriptor;
@@ -61,5 +63,13 @@ public class FacesFacetImpl_2_0 extends AbstractFacesFacetImpl<WebFacesConfigDes
    protected Class<WebFacesConfigDescriptor> getDescriptorClass()
    {
       return WebFacesConfigDescriptor.class;
+   }
+
+   @Override
+   protected void createDefaultConfig(FileResource<?> descriptor)
+   {
+      WebFacesConfigDescriptor descriptorContents = Descriptors.create(WebFacesConfigDescriptor.class)
+               .version("2.0");
+      descriptor.setContents(descriptorContents.exportAsString());
    }
 }
