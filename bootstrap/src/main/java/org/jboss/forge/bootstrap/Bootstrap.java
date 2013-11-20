@@ -28,6 +28,7 @@ import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.versions.Version;
 
 /**
  * A class with a main method to bootstrap Furnace.
@@ -179,6 +180,7 @@ public class Bootstrap
 
    private void install(String addonCoordinates)
    {
+      Version runtimeAPIVersion = AddonRepositoryImpl.getRuntimeAPIVersion();
       try
       {
          AddonDependencyResolver resolver = new MavenAddonDependencyResolver();
@@ -198,7 +200,24 @@ public class Bootstrap
             {
                throw new IllegalArgumentException("No Artifact version found for " + coordinate);
             }
-            addon = versions[versions.length - 1];
+            else
+            {
+               AddonId selected = null;
+               for (int i = versions.length - 1; selected == null && i >= 0; i--)
+               {
+                  if (AddonRepositoryImpl.isApiCompatible(runtimeAPIVersion, versions[i]))
+                  {
+                     selected = versions[i];
+                  }
+               }
+               if (selected == null)
+               {
+                  throw new IllegalArgumentException("No compatible addon API version found for " + coordinate
+                           + " for API " + runtimeAPIVersion);
+               }
+
+               addon = selected;
+            }
          }
 
          // FIXME: May prompt for confirmation
@@ -209,7 +228,7 @@ public class Bootstrap
       catch (Exception e)
       {
          e.printStackTrace();
-         System.out.println("> Forge version [" + AddonRepositoryImpl.getRuntimeAPIVersion() + "]");
+         System.out.println("> Forge version [" + runtimeAPIVersion + "]");
       }
       finally
       {
