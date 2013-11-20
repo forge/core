@@ -10,9 +10,10 @@ import java.io.FileNotFoundException;
 
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
+import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.parser.java.JavaSource;
 
-class RestResourceTypeVisitor implements JavaResourceVisitor
+class RestResourceTypeVisitor extends JavaResourceVisitor
 {
    private String proposedPath;
    private boolean found;
@@ -25,7 +26,7 @@ class RestResourceTypeVisitor implements JavaResourceVisitor
 
    public String getQualifiedClassNameForMatch()
    {
-      if(javaSource != null)
+      if (javaSource != null)
       {
          return javaSource.getQualifiedName();
       }
@@ -43,7 +44,7 @@ class RestResourceTypeVisitor implements JavaResourceVisitor
    }
 
    @Override
-   public void visit(JavaResource javaResource)
+   public void visit(VisitContext context, JavaResource javaResource)
    {
       if (!found)
       {
@@ -53,7 +54,7 @@ class RestResourceTypeVisitor implements JavaResourceVisitor
             {
                String path = javaResource.getJavaSource().getAnnotation("javax.ws.rs.Path")
                         .getStringValue();
-               String absolutePath = path.endsWith("/") ? path.substring(0,path.lastIndexOf('/')) : path;
+               String absolutePath = path.endsWith("/") ? path.substring(0, path.lastIndexOf('/')) : path;
                if (absolutePath.equals(proposedPath))
                {
                   javaSource = javaResource.getJavaSource();

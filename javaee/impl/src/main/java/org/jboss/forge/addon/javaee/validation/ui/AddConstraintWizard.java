@@ -19,6 +19,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
@@ -65,7 +66,7 @@ public class AddConstraintWizard extends AbstractJavaEECommand implements UIWiza
          {
 
             @Override
-            public void visit(JavaResource resource)
+            public void visit(VisitContext context, JavaResource resource)
             {
                try
                {
@@ -110,7 +111,7 @@ public class AddConstraintWizard extends AbstractJavaEECommand implements UIWiza
       context.setAttribute(JavaResource.class, selectedClass);
       return Results.navigateTo(SelectFieldWizardStep.class);
    }
-   
+
    @Override
    public boolean isEnabled(UIContext context)
    {

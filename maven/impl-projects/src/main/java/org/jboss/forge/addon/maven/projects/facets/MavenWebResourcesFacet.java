@@ -28,6 +28,10 @@ import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFilter;
+import org.jboss.forge.addon.resource.visit.ResourceVisit;
+import org.jboss.forge.addon.resource.visit.ResourceVisitor;
 
 @Dependent
 @FacetConstraint({ MavenFacet.class, PackagingFacet.class })
@@ -143,6 +147,33 @@ public class MavenWebResourcesFacet extends AbstractFacet<Project> implements We
    public FileResource<?> createWebResource(final String data, final String relativePath)
    {
       return createWebResource(data.toCharArray(), relativePath);
+   }
+
+   @Override
+   public void visitWebResources(ResourceVisitor visitor)
+   {
+      for (DirectoryResource root : getWebRootDirectories())
+      {
+         ResourceVisit visit = new ResourceVisit(root);
+         visit.perform(visitor, new ResourceFilter()
+         {
+            @Override
+            public boolean accept(Resource<?> resource)
+            {
+               return resource instanceof DirectoryResource;
+            }
+         }, new ResourceFilter()
+         {
+            @Override
+            public boolean accept(Resource<?> type)
+            {
+               return true;
+            }
+         });
+
+         if (visit.isTerminated())
+            break;
+      }
    }
 
 }

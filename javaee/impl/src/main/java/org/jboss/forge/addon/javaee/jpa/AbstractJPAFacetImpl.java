@@ -22,6 +22,7 @@ import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
@@ -91,7 +92,8 @@ public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonD
    public FileResource<?> getConfigFile()
    {
       ResourcesFacet resources = getFaceted().getFacet(ResourcesFacet.class);
-      return (FileResource<?>) resources.getResourceDirectory().getChild("META-INF" + File.separator + "persistence.xml");
+      return (FileResource<?>) resources.getResourceDirectory().getChild(
+               "META-INF" + File.separator + "persistence.xml");
    }
 
    @Override
@@ -102,7 +104,7 @@ public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonD
       javaSourceFacet.visitJavaSources(new JavaResourceVisitor()
       {
          @Override
-         public void visit(JavaResource resource)
+         public void visit(VisitContext context, JavaResource resource)
          {
             try
             {

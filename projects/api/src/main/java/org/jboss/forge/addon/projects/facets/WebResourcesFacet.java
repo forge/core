@@ -13,6 +13,7 @@ import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.visit.ResourceVisitor;
 
 /**
  * A {@link Facet} containing APIs to interact with Java Web Projects
@@ -55,4 +56,11 @@ public interface WebResourcesFacet extends ProjectFacet
     * Get the given {@link FileResource} relative to the project Web Root directory: {@link #getWebRootDirectory()}
     */
    FileResource<?> getWebResource(String relativePath);
+
+   /**
+    * Recursively loops over all the resource directories and for each file it finds, calls the visitor.
+    * 
+    * @param visitor The {@link ResourceVisitor} that processes all the found files. Cannot be null.
+    */
+   public void visitWebResources(ResourceVisitor visitor);
 }

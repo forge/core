@@ -20,6 +20,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
@@ -97,12 +98,12 @@ public class NewConverterCommand extends AbstractJavaEECommand
       project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
       {
          @Override
-         public void visit(JavaResource javaResource)
+         public void visit(VisitContext context, JavaResource javaResource)
          {
             try
             {
                JavaSource<?> javaSource = javaResource.getJavaSource();
-               if (javaSource.hasAnnotation(Entity.class))
+               if (javaSource.hasAnnotation(Entity.class)) // FIXME should not use entity here
                {
                   value[0] = javaSource.getPackage();
                }

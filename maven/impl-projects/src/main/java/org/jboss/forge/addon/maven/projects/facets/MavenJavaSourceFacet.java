@@ -25,6 +25,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFilter;
+import org.jboss.forge.addon.resource.visit.ResourceVisit;
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.parser.java.JavaSource;
 
@@ -192,37 +193,43 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    @Override
    public void visitJavaSources(final JavaResourceVisitor visitor)
    {
-      visitSources(getSourceDirectory(), visitor);
+      new ResourceVisit(getSourceDirectory()).perform(visitor, new ResourceFilter()
+      {
+         @Override
+         public boolean accept(Resource<?> resource)
+         {
+            return resource instanceof DirectoryResource;
+         }
+      }, new ResourceFilter()
+      {
+
+         @Override
+         public boolean accept(Resource<?> type)
+         {
+            return type instanceof JavaResource;
+         }
+      });
    }
 
    @Override
    public void visitJavaTestSources(final JavaResourceVisitor visitor)
    {
-      visitSources(getTestSourceDirectory(), visitor);
-   }
-
-   private void visitSources(final Resource<?> searchFolder, final JavaResourceVisitor visitor)
-   {
-      if (searchFolder instanceof DirectoryResource)
+      new ResourceVisit(getTestSourceDirectory()).perform(visitor, new ResourceFilter()
+      {
+         @Override
+         public boolean accept(Resource<?> resource)
+         {
+            return resource instanceof DirectoryResource;
+         }
+      }, new ResourceFilter()
       {
 
-         searchFolder.listResources(new ResourceFilter()
+         @Override
+         public boolean accept(Resource<?> type)
          {
-            @Override
-            public boolean accept(Resource<?> resource)
-            {
-               if (resource instanceof DirectoryResource)
-               {
-                  visitSources(resource, visitor);
-               }
-               else if (resource instanceof JavaResource)
-               {
-                  visitor.visit((JavaResource) resource);
-               }
-
-               return false;
-            }
-         });
-      }
+            return type instanceof JavaResource;
+         }
+      });
    }
+
 }

@@ -6,12 +6,13 @@
  */
 package org.jboss.forge.addon.resource;
 
+import org.jboss.forge.furnace.util.Predicate;
+
 /**
  * Used to filter {@link Resource} instances during a given operation.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface ResourceFilter
+public interface ResourceFilter extends Predicate<Resource<?>>
 {
-   public boolean accept(Resource<?> resource);
 }

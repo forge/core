@@ -29,6 +29,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
@@ -153,7 +154,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          {
 
             @Override
-            public void visit(JavaResource resource)
+            public void visit(VisitContext context, JavaResource resource)
             {
                try
                {

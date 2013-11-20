@@ -15,6 +15,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 
@@ -34,7 +35,7 @@ public class RestConfigurationStrategyFactory
          javaSourceFacet.visitJavaSources(new JavaResourceVisitor()
          {
             @Override
-            public void visit(JavaResource javaResource)
+            public void visit(VisitContext context, JavaResource javaResource)
             {
                try
                {

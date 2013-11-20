@@ -20,6 +20,10 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFilter;
+import org.jboss.forge.addon.resource.visit.ResourceVisit;
+import org.jboss.forge.addon.resource.visit.ResourceVisitor;
 
 /**
  * Handles Maven Resource folders
@@ -128,5 +132,45 @@ public class MavenResourcesFacet extends AbstractFacet<Project> implements Resou
       FileResource<?> file = (FileResource<?>) getTestResourceDirectory().getChild(relativeFilename);
       file.setContents(bytes);
       return file;
+   }
+
+   @Override
+   public void visitResources(ResourceVisitor visitor)
+   {
+      new ResourceVisit(getResourceDirectory()).perform(visitor, new ResourceFilter()
+      {
+         @Override
+         public boolean accept(Resource<?> resource)
+         {
+            return resource instanceof DirectoryResource;
+         }
+      }, new ResourceFilter()
+      {
+         @Override
+         public boolean accept(Resource<?> type)
+         {
+            return true;
+         }
+      });
+   }
+
+   @Override
+   public void visitTestResources(ResourceVisitor visitor)
+   {
+      new ResourceVisit(getTestResourceDirectory()).perform(visitor, new ResourceFilter()
+      {
+         @Override
+         public boolean accept(Resource<?> resource)
+         {
+            return resource instanceof DirectoryResource;
+         }
+      }, new ResourceFilter()
+      {
+         @Override
+         public boolean accept(Resource<?> type)
+         {
+            return true;
+         }
+      });
    }
 }

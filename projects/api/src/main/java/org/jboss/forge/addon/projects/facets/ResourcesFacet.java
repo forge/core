@@ -13,6 +13,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.visit.ResourceVisitor;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -67,4 +68,18 @@ public interface ResourcesFacet extends ProjectFacet
     * exists, you should call {@link FileResource#exists()} on the return value of this method.
     */
    FileResource<?> getTestResource(String relativePath);
+
+   /**
+    * Recursively loops over all the resource directories and for each file it finds, calls the visitor.
+    * 
+    * @param visitor The {@link ResourceVisitor} that processes all the found files. Cannot be null.
+    */
+   public void visitResources(ResourceVisitor visitor);
+
+   /**
+    * Recursively loops over all the test resource directories and for each file it finds, calls the visitor.
+    * 
+    * @param visitor The {@link ResourceVisitor} that processes all the found files. Cannot be null.
+    */
+   public void visitTestResources(ResourceVisitor visitor);
 }
