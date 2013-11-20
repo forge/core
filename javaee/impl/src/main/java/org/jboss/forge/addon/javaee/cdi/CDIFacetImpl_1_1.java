@@ -64,12 +64,19 @@ public class CDIFacetImpl_1_1 extends AbstractCDIFacetImpl<BeansDescriptor> impl
    }
 
    @Override
+   public boolean isInstalled()
+   {
+      return super.isInstalled() && "1.1".equals(getConfig().getVersion());
+   }
+
+   @Override
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
       Map<Dependency, List<Dependency>> result = new LinkedHashMap<Dependency, List<Dependency>>();
 
       result.put(CDI_API, Arrays.asList(CDI_API));
-      result.put(JAVAX_ANNOTATION_API, Arrays.asList(JAVAX_ANNOTATION_API, JBOSS_ANNOTATION_API_1_1, JBOSS_ANNOTATION_API_1_2));
+      result.put(JAVAX_ANNOTATION_API,
+               Arrays.asList(JAVAX_ANNOTATION_API, JBOSS_ANNOTATION_API_1_1, JBOSS_ANNOTATION_API_1_2));
       result.put(JAVAX_INJECT, Arrays.asList(JAVAX_INJECT));
       result.put(JAVAX_INTERCEPTOR_API, Arrays.asList(JAVAX_INTERCEPTOR_API));
 

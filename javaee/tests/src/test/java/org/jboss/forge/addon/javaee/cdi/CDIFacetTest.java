@@ -87,4 +87,24 @@ public class CDIFacetTest
       assertNotNull(config);
    }
 
+   @Test
+   public void testCDIFacet1_1OnlyInProject() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, CDIFacet_1_1.class);
+      project = projectFactory.findProject(project.getProjectRoot());
+      Assert.assertTrue(project.hasFacet(CDIFacet_1_1.class));
+      Assert.assertFalse(project.hasFacet(CDIFacet_1_0.class));
+   }
+
+   @Test
+   public void testCDIFacet1_0OnlyInProject() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, CDIFacet_1_0.class);
+      project = projectFactory.findProject(project.getProjectRoot());
+      Assert.assertFalse(project.hasFacet(CDIFacet_1_1.class));
+      Assert.assertTrue(project.hasFacet(CDIFacet_1_0.class));
+   }
+
 }
