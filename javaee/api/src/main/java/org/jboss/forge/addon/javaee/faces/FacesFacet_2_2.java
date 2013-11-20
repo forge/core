@@ -10,7 +10,7 @@ package org.jboss.forge.addon.javaee.faces;
 import org.jboss.shrinkwrap.descriptor.api.facesconfig22.WebFacesConfigDescriptor;
 
 /**
- * JSF 2.1 specific version of {@link FacesFacet}
+ * JSF 2.2 specific version of {@link FacesFacet}
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
