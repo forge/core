@@ -64,20 +64,21 @@ public class CDIFacetImpl_1_0 extends AbstractCDIFacetImpl<BeansDescriptor> impl
    @Override
    public boolean isInstalled()
    {
+      boolean installed = super.isInstalled();
       // CDI 1.0 doesn't have a version attribute
-      if (super.isInstalled())
+      if (installed)
       {
          XMLResource xmlResource = (XMLResource) getConfigFile();
          try
          {
-            return xmlResource.getXmlSource().getAttribute("version") == null;
+            installed = xmlResource.getXmlSource().getAttribute("version") == null;
          }
          catch (FileNotFoundException e)
          {
-            return true;
+            installed = true;
          }
       }
-      return false;
+      return installed;
    }
 
    @Override

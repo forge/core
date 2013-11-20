@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.javaee.cdi;
 
+import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -17,6 +18,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.javaee.Descriptors;
+import org.jboss.forge.addon.parser.xml.resources.XMLResource;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
@@ -66,7 +68,20 @@ public class CDIFacetImpl_1_1 extends AbstractCDIFacetImpl<BeansDescriptor> impl
    @Override
    public boolean isInstalled()
    {
-      return super.isInstalled() && "1.1".equals(getConfig().getVersion());
+      boolean installed = super.isInstalled();
+      if (installed)
+      {
+         try
+         {
+            XMLResource xmlResource = (XMLResource) getConfigFile();
+            installed = "1.1".equals(xmlResource.getXmlSource().getAttribute("version"));
+         }
+         catch (FileNotFoundException e)
+         {
+            installed = false;
+         }
+      }
+      return installed;
    }
 
    @Override
