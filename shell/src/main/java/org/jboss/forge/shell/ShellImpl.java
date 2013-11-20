@@ -848,7 +848,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          {
             //
          }
-         print("[killed]");
+         print("^C");
          interruptedState = true;
       }
    }
@@ -1352,7 +1352,7 @@ public class ShellImpl extends AbstractShellPrompt implements Shell
          }
          catch (InterruptedException e)
          {
-            throw new RuntimeException("[killed]");
+            throw new RuntimeException("^C");
          }
          finally
          {
