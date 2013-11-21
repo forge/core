@@ -23,6 +23,7 @@ import org.jboss.forge.addon.javaee.jpa.providers.JavaEEDefaultProvider;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -172,9 +173,9 @@ public class JPASetupWizard extends AbstractJavaEECommand implements UIWizard
    }
 
    @Override
-   public Result execute(final UIContext context) throws Exception
+   public Result execute(final UIExecutionContext context) throws Exception
    {
-      applyUIValues(context);
+      applyUIValues(context.getUIContext());
       if (facetFactory.install(getSelectedProject(context), jpaVersion.getValue()))
       {
          return Results.success("JPA has been installed.");

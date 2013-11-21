@@ -21,6 +21,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -135,7 +136,7 @@ public class RestSetupWizard extends AbstractJavaEECommand
    }
 
    @Override
-   public Result execute(final UIContext context) throws Exception
+   public Result execute(final UIExecutionContext context) throws Exception
    {
       RestFacet facet = jaxrsVersion.getValue();
       if (facetFactory.install(getSelectedProject(context), facet))

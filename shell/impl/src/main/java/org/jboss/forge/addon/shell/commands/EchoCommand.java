@@ -10,9 +10,9 @@ package org.jboss.forge.addon.shell.commands;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
-import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
@@ -42,7 +42,7 @@ public class EchoCommand extends AbstractShellCommand
    }
 
    @Override
-   public Result execute(ShellContext shellContext) throws Exception
+   public Result execute(UIExecutionContext shellContext) throws Exception
    {
       StringBuilder sb = new StringBuilder();
       Iterable<String> value = arguments.getValue();
@@ -53,7 +53,7 @@ public class EchoCommand extends AbstractShellCommand
             sb.append(val).append(' ');
          }
       }
-      shellContext.getProvider().getOutput().out().println(sb);
+      shellContext.getUIContext().getProvider().getOutput().out().println(sb);
       return Results.success();
    }
 }

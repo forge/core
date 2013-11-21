@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.ui;
 
-import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.result.Result;
 
 /**
@@ -19,19 +19,19 @@ public abstract class AbstractCommandExecutionListener implements CommandExecuti
 {
 
    @Override
-   public void preCommandExecuted(UICommand command, UIContext context)
+   public void preCommandExecuted(UICommand command, UIExecutionContext context)
    {
       // do nothing
    }
 
    @Override
-   public void postCommandExecuted(UICommand command, UIContext context, Result result)
+   public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
    {
       // do nothing
    }
 
    @Override
-   public void postCommandFailure(UICommand command, UIContext context, Throwable failure)
+   public void postCommandFailure(UICommand command, UIExecutionContext context, Throwable failure)
    {
       // do nothing
 

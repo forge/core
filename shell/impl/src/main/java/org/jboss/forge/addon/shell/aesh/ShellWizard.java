@@ -18,6 +18,7 @@ import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellValidationContext;
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
@@ -79,7 +80,7 @@ public class ShellWizard extends AbstractShellInteraction
       {
          if (current instanceof UIWizard)
          {
-            NavigationResult next = ((UIWizard) current).next(getContext());
+            NavigationResult next = ((UIWizard) current).next(getExecutionContext().getUIContext());
             final Class<? extends UICommand> successor;
             // Proceed to next input
             if (next != null && next.getNext() != null)
@@ -126,9 +127,10 @@ public class ShellWizard extends AbstractShellInteraction
    public Result execute() throws Exception
    {
       Result result = null;
+      UIExecutionContext executionContext = getExecutionContext();
       for (ShellWizardStep step : steps)
       {
-         result = step.command.execute(getContext());
+         result = step.command.execute(executionContext);
       }
       return result;
    }
@@ -136,7 +138,7 @@ public class ShellWizard extends AbstractShellInteraction
    @Override
    public ShellValidationContext validate()
    {
-      ShellValidationContext validationContext = new ShellValidationContext(getContext());
+      ShellValidationContext validationContext = new ShellValidationContext(getExecutionContext().getUIContext());
       for (ShellWizardStep step : steps)
       {
          for (InputComponent<?, Object> input : step.inputs.values())

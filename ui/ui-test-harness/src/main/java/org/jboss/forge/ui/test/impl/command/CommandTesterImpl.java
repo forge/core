@@ -15,7 +15,7 @@ import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.InputComponents;
@@ -23,6 +23,7 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.ui.test.CommandTester;
 import org.jboss.forge.ui.test.impl.UIBuilderImpl;
 import org.jboss.forge.ui.test.impl.UIContextImpl;
+import org.jboss.forge.ui.test.impl.UIExecutionContextImpl;
 import org.jboss.forge.ui.test.impl.UIValidationContextImpl;
 
 /**
@@ -92,17 +93,17 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
       return execute(new CommandExecutionListener()
       {
          @Override
-         public void preCommandExecuted(UICommand command, UIContext context)
+         public void preCommandExecuted(UICommand command, UIExecutionContext context)
          {
          }
 
          @Override
-         public void postCommandFailure(UICommand command, UIContext context, Throwable failure)
+         public void postCommandFailure(UICommand command, UIExecutionContext context, Throwable failure)
          {
          }
 
          @Override
-         public void postCommandExecuted(UICommand command, UIContext context, Result result)
+         public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
          {
          }
       });
@@ -119,18 +120,20 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
          {
             throw new IllegalStateException(errors.toString());
          }
+         UIExecutionContext executionContext = new UIExecutionContextImpl(context);
          // All good. Hit it !
          UICommand command = builder.getCommand();
          if (listener != null)
          {
-            listener.preCommandExecuted(command, context);
+            listener.preCommandExecuted(command, executionContext);
          }
          try
          {
-            Result result = command.execute(context);
+
+            Result result = command.execute(executionContext);
             if (listener != null)
             {
-               listener.postCommandExecuted(command, context, result);
+               listener.postCommandExecuted(command, executionContext, result);
             }
             return result;
          }
@@ -138,7 +141,7 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
          {
             if (listener != null)
             {
-               listener.postCommandFailure(command, context, e);
+               listener.postCommandFailure(command, executionContext, e);
             }
             throw e;
          }

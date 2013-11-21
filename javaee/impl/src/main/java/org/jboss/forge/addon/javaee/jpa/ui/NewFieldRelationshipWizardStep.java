@@ -19,6 +19,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
@@ -75,14 +76,15 @@ public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implem
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception
+   public Result execute(UIExecutionContext context) throws Exception
    {
-      JavaResource entity = (JavaResource) context.getAttribute(JavaResource.class);
-      String fieldName = (String) context.getAttribute("fieldName");
-      String fieldType = (String) context.getAttribute("fieldType");
+      UIContext uiContext = context.getUIContext();
+      JavaResource entity = (JavaResource) uiContext.getAttribute(JavaResource.class);
+      String fieldName = (String) uiContext.getAttribute("fieldName");
+      String fieldType = (String) uiContext.getAttribute("fieldType");
 
       Project project = getSelectedProject(context);
-      RelationshipType relationship = RelationshipType.valueOf(context.getAttribute(RelationshipType.class).toString());
+      RelationshipType relationship = RelationshipType.valueOf(uiContext.getAttribute(RelationshipType.class).toString());
       switch (relationship)
       {
       case MANY_TO_MANY:

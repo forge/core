@@ -32,7 +32,7 @@ import org.jboss.forge.addon.shell.ShellFactory;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.util.Assert;
@@ -376,12 +376,12 @@ public class DefaultShellTest implements ShellTest
       Result result;
 
       @Override
-      public void preCommandExecuted(UICommand command, UIContext context)
+      public void preCommandExecuted(UICommand command, UIExecutionContext context)
       {
       }
 
       @Override
-      public void postCommandExecuted(UICommand command, UIContext context, Result result)
+      public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
       {
          synchronized (this)
          {

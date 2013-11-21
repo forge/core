@@ -18,10 +18,10 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
-import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.util.PathspecParser;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -58,9 +58,9 @@ public class CdCommand extends AbstractShellCommand
    }
 
    @Override
-   public Result execute(ShellContext context) throws Exception
+   public Result execute(UIExecutionContext context) throws Exception
    {
-      Shell shell = context.getProvider();
+      Shell shell = (Shell) context.getUIContext().getProvider();
       FileResource<?> currentResource = shell.getCurrentResource();
       Iterable<String> value = arguments.getValue();
       Iterator<String> it = value == null ? Collections.<String> emptyList().iterator() : value.iterator();

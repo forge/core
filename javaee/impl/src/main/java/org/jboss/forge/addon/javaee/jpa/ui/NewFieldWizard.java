@@ -32,6 +32,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
@@ -200,7 +201,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception
+   public Result execute(UIExecutionContext context) throws Exception
    {
       JavaResource javaResource = entity.getValue();
       String fieldNameStr = fieldName.getValue();
@@ -241,7 +242,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             JavaSourceFacet facet = selectedProject.getFacet(JavaSourceFacet.class);
             facet.saveJavaSource(field.getOrigin());
          }
-         context.setSelection(javaResource);
+         context.getUIContext().setSelection(javaResource);
          return Results.success("Field " + fieldName.getValue() + " created");
       }
       else

@@ -19,6 +19,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.ui.InputComponentFactory;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
@@ -173,11 +174,12 @@ public class GenerateConstraintWizardStep extends AbstractJavaEECommand implemen
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception
+   public Result execute(UIExecutionContext context) throws Exception
    {
-      Property property = (Property) context.getAttribute(Property.class);
-      ConstraintType constraintType = (ConstraintType) context.getAttribute(ConstraintType.class);
-      Boolean onAccessor = (Boolean) context.getAttribute("onAccessor");
+      UIContext uiContext = context.getUIContext();
+      Property property = (Property) uiContext.getAttribute(Property.class);
+      ConstraintType constraintType = (ConstraintType) uiContext.getAttribute(ConstraintType.class);
+      Boolean onAccessor = (Boolean) uiContext.getAttribute("onAccessor");
       final AnnotationTarget<JavaClass, ?> annotationTarget;
       if (onAccessor)
       {

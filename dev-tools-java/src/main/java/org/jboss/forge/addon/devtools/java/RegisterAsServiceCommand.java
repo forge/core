@@ -22,6 +22,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.InputComponentFactory;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
@@ -108,7 +109,7 @@ public class RegisterAsServiceCommand extends AbstractProjectCommand
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception
+   public Result execute(UIExecutionContext context) throws Exception
    {
       String implName = type.getValue().reify(JavaResource.class).getJavaSource().getQualifiedName();
       String interfaceName = serviceType.getValue();

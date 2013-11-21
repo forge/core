@@ -12,9 +12,9 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
-import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -50,7 +50,7 @@ public class StartTransactionCommand extends AbstractShellCommand
    }
 
    @Override
-   public Result execute(ShellContext shellContext) throws Exception
+   public Result execute(UIExecutionContext shellContext) throws Exception
    {
       ResourceTransaction transaction = resourceFactory.getTransaction();
       if (transaction.isStarted())

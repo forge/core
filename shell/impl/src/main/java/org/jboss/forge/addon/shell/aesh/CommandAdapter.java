@@ -61,7 +61,7 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
                ShellMessages.success(shell.getConsole().getShell().out(), result.getMessage());
             }
          }
-         ShellContext context = interaction.getContext();
+         ShellContext context = interaction.getExecutionContext().getUIContext();
          Object selection = context.getSelection();
          if (selection != null)
          {

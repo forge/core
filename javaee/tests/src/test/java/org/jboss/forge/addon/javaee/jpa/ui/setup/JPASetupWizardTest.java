@@ -23,14 +23,15 @@ import org.jboss.forge.addon.javaee.jpa.providers.HibernateMetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.providers.JavaEEDefaultProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.ui.AbstractCommandExecutionListener;
+import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.ui.test.WizardListener;
 import org.jboss.forge.ui.test.WizardTester;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
@@ -103,10 +104,10 @@ public class JPASetupWizardTest
 
       tester.setValueFor("dataSourceName", "java:jboss:jta-ds");
       final AtomicInteger counter = new AtomicInteger();
-      tester.finish(new WizardListener()
+      tester.finish(new AbstractCommandExecutionListener()
       {
          @Override
-         public void wizardExecuted(UIWizard wizard, Result result)
+         public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
          {
             counter.incrementAndGet();
          }
@@ -139,10 +140,10 @@ public class JPASetupWizardTest
       String result = tester.next();
       Assert.assertNull(result);
 
-      tester.finish(new WizardListener()
+      tester.finish(new AbstractCommandExecutionListener()
       {
          @Override
-         public void wizardExecuted(UIWizard wizard, Result result)
+         public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
          {
             Assert.assertFalse(result instanceof Failed);
          }
@@ -167,10 +168,10 @@ public class JPASetupWizardTest
       result = tester2.next();
       Assert.assertNull(result);
 
-      tester2.finish(new WizardListener()
+      tester2.finish(new AbstractCommandExecutionListener()
       {
          @Override
-         public void wizardExecuted(UIWizard wizard, Result result)
+         public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
          {
             Assert.assertFalse(result instanceof Failed);
          }
@@ -205,10 +206,10 @@ public class JPASetupWizardTest
 
       tester.setValueFor("dataSourceName", "java:jboss:jta-ds");
       final AtomicInteger counter = new AtomicInteger();
-      tester.finish(new WizardListener()
+      tester.finish(new AbstractCommandExecutionListener()
       {
          @Override
-         public void wizardExecuted(UIWizard wizard, Result result)
+         public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
          {
             counter.incrementAndGet();
          }

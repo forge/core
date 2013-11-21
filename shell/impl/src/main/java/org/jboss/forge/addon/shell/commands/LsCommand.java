@@ -14,11 +14,11 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
-import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.util.PathspecParser;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
@@ -59,9 +59,9 @@ public class LsCommand extends AbstractShellCommand
    }
 
    @Override
-   public Result execute(ShellContext context) throws Exception
+   public Result execute(UIExecutionContext context) throws Exception
    {
-      Shell shell = context.getProvider();
+      Shell shell = (Shell) context.getUIContext().getProvider();
       FileResource<?> currentResource = shell.getCurrentResource();
       Iterator<String> it = arguments.getValue() == null ? Collections.<String> emptyList().iterator() : arguments
                .getValue()
@@ -76,17 +76,16 @@ public class LsCommand extends AbstractShellCommand
       }
       else
       {
-         Shell provider = context.getProvider();
-         UIOutput output = provider.getOutput();
-         output.out().println(listMany(newResource.listResources(), context));
+         UIOutput output = shell.getOutput();
+         output.out().println(listMany(newResource.listResources(), shell));
          result = Results.success();
       }
       return result;
    }
 
-   private String listMany(Iterable<Resource<?>> files, ShellContext context)
+   private String listMany(Iterable<Resource<?>> files, Shell shell)
    {
-      TerminalSize terminalSize = context.getProvider().getConsole().getShell().getSize();
+      TerminalSize terminalSize = shell.getConsole().getShell().getSize();
       List<String> display = new ArrayList<String>();
       boolean showAll = all.getValue();
       if (files != null)

@@ -16,6 +16,7 @@ import java.util.Map;
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellUIBuilderImpl;
+import org.jboss.forge.addon.shell.ui.ShellUIExecutionContext;
 import org.jboss.forge.addon.shell.ui.ShellValidationContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
@@ -31,7 +32,7 @@ import org.jboss.forge.furnace.util.Streams;
 public abstract class AbstractShellInteraction implements Comparable<AbstractShellInteraction>
 {
    private final String name;
-   private final ShellContext context;
+   private final ShellUIExecutionContext executionContext;
    private final UICommand root;
    private final UICommandMetadata metadata;
    protected final CommandLineUtil commandLineUtil;
@@ -42,7 +43,7 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
       this.root = root;
       this.metadata = root.getMetadata(shellContext);
       this.name = ShellUtil.shellifyName(metadata.getName());
-      this.context = shellContext;
+      this.executionContext = new ShellUIExecutionContext(shellContext);
       this.commandLineUtil = commandLineUtil;
    }
 
@@ -57,7 +58,7 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
    protected Map<String, InputComponent<?, Object>> buildInputs(UICommand command)
    {
       // Initialize UICommand
-      ShellUIBuilderImpl builder = new ShellUIBuilderImpl(context);
+      ShellUIBuilderImpl builder = new ShellUIBuilderImpl(getExecutionContext().getUIContext());
       try
       {
          command.initializeUI(builder);
@@ -79,9 +80,9 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
       return name;
    }
 
-   public final ShellContext getContext()
+   public final ShellUIExecutionContext getExecutionContext()
    {
-      return context;
+      return executionContext;
    }
 
    public File getManLocation()

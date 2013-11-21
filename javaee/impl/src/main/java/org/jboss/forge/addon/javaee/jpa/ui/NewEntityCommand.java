@@ -24,6 +24,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -131,7 +132,7 @@ public class NewEntityCommand extends AbstractJavaEECommand
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception
+   public Result execute(UIExecutionContext context) throws Exception
    {
       String entityName = named.getValue();
       String entityPackage = targetPackage.getValue();
@@ -147,7 +148,7 @@ public class NewEntityCommand extends AbstractJavaEECommand
       {
          javaResource = persistenceOperations.newEntity(project, entityName, entityPackage, idStrategyChosen);
       }
-      context.setSelection(javaResource);
+      context.getUIContext().setSelection(javaResource);
       return Results.success("Entity " + javaResource + " created");
    }
 

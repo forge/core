@@ -13,6 +13,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -72,7 +73,7 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
    }
 
    @Override
-   public Result execute(UIContext context)
+   public Result execute(UIExecutionContext context)
    {
       Coordinate coordinate = project.getFacet(MetadataFacet.class).getOutputDependency().getCoordinate();
       try

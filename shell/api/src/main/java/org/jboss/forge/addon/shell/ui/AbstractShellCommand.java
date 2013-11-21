@@ -10,7 +10,6 @@ package org.jboss.forge.addon.shell.ui;
 import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
@@ -33,17 +32,10 @@ public abstract class AbstractShellCommand extends AbstractUICommand
       return (context instanceof ShellContext) && isEnabled((ShellContext) context);
    }
 
-   @Override
-   public final Result execute(UIContext context) throws Exception
-   {
-      return execute((ShellContext) context);
-   }
-
    // This method is meant to be overriden
    public boolean isEnabled(ShellContext context)
    {
       return true;
    }
 
-   public abstract Result execute(ShellContext shellContext) throws Exception;
 }

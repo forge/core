@@ -26,6 +26,7 @@ import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.SingleValued;
@@ -352,7 +353,7 @@ public class NewProjectWizard implements UIWizard
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception
+   public Result execute(UIExecutionContext context) throws Exception
    {
       Result result = Results.success("Project named '" + named.getValue() + "' has been created.");
       DirectoryResource directory = targetLocation.getValue();
@@ -374,12 +375,13 @@ public class NewProjectWizard implements UIWizard
 
          if (project != null)
          {
+            UIContext uiContext = context.getUIContext();
             MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
             metadataFacet.setProjectName(named.getValue());
             metadataFacet.setProjectVersion(version.getValue());
             metadataFacet.setTopLevelPackage(topLevelPackage.getValue());
-            context.setSelection(project.getProjectRoot());
-            context.setAttribute(Project.class, project);
+            uiContext.setSelection(project.getProjectRoot());
+            uiContext.setAttribute(Project.class, project);
          }
          else
             result = Results.fail("Could not create project of type: [" + value + "]");

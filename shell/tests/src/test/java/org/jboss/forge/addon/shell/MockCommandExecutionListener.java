@@ -8,7 +8,7 @@ package org.jboss.forge.addon.shell;
 
 import org.jboss.forge.addon.ui.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.result.Result;
 import org.junit.Assert;
 
@@ -21,7 +21,7 @@ public class MockCommandExecutionListener extends AbstractCommandExecutionListen
    private boolean post;
 
    @Override
-   public void preCommandExecuted(UICommand command, UIContext context)
+   public void preCommandExecuted(UICommand command, UIExecutionContext context)
    {
       Assert.assertNotNull(command);
       Assert.assertNotNull(context);
@@ -29,7 +29,7 @@ public class MockCommandExecutionListener extends AbstractCommandExecutionListen
    }
 
    @Override
-   public void postCommandExecuted(UICommand command, UIContext context, Result result)
+   public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
    {
       Assert.assertNotNull(command);
       Assert.assertNotNull(context);

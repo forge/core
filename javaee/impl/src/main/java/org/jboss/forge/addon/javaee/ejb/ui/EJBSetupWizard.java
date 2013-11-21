@@ -18,6 +18,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -74,9 +75,9 @@ public class EJBSetupWizard extends AbstractJavaEECommand
    }
 
    @Override
-   public Result execute(final UIContext context) throws Exception
+   public Result execute(final UIExecutionContext context) throws Exception
    {
-      if (facetFactory.install(getSelectedProject(context), ejbVersion.getValue()))
+      if (facetFactory.install(getSelectedProject(context.getUIContext()), ejbVersion.getValue()))
       {
          return Results.success("EJB has been installed.");
       }

@@ -30,6 +30,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.text.Inflector;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -156,9 +157,10 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
    }
 
    @Override
-   public Result execute(final UIContext context) throws Exception
+   public Result execute(final UIExecutionContext context) throws Exception
    {
-      RestGenerationContextImpl generationContext = createContextFor(context);
+      UIContext uiContext = context.getUIContext();
+      RestGenerationContextImpl generationContext = createContextFor(uiContext);
       Set<JavaClass> endpoints = generateEndpoints(generationContext);
       Project project = generationContext.getProject();
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
@@ -168,7 +170,7 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
       {
          selection.add(javaSourceFacet.saveJavaSource(javaClass));
       }
-      context.setSelection(selection);
+      uiContext.setSelection(selection);
       return Results.success("Endpoint created");
    }
 

@@ -23,6 +23,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -121,12 +122,13 @@ public class NewValidatorCommand extends AbstractJavaEECommand
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception
+   public Result execute(UIExecutionContext context) throws Exception
    {
       String entityName = named.getValue();
       String entityPackage = targetPackage.getValue();
       DirectoryResource targetDir = targetLocation.getValue();
-      Project project = getSelectedProject(context);
+      UIContext uiContext = context.getUIContext();
+      Project project = getSelectedProject(uiContext);
       JavaResource javaResource;
       if (project == null)
       {
@@ -136,7 +138,7 @@ public class NewValidatorCommand extends AbstractJavaEECommand
       {
          javaResource = facesOperations.newValidator(project, entityName, entityPackage);
       }
-      context.setSelection(javaResource);
+      uiContext.setSelection(javaResource);
       return Results.success("Validator " + javaResource + " created");
    }
 

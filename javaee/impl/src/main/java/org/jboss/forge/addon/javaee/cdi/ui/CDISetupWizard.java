@@ -18,6 +18,7 @@ import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -72,9 +73,9 @@ public class CDISetupWizard extends AbstractJavaEECommand
    }
 
    @Override
-   public Result execute(final UIContext context) throws Exception
+   public Result execute(final UIExecutionContext context) throws Exception
    {
-      if (facetFactory.install(getSelectedProject(context), cdiVersion.getValue()))
+      if (facetFactory.install(getSelectedProject(context.getUIContext()), cdiVersion.getValue()))
       {
          return Results.success("CDI has been installed.");
       }

@@ -2,10 +2,11 @@ package org.jboss.forge.addon.shell.commands;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
-import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
@@ -33,9 +34,10 @@ public class ExitCommand extends AbstractShellCommand
    }
 
    @Override
-   public Result execute(ShellContext context) throws Exception
+   public Result execute(UIExecutionContext context) throws Exception
    {
-      context.getProvider().getConsole().stop();
+      Shell shell = (Shell) context.getUIContext().getProvider();
+      shell.getConsole().stop();
       forge.stop();
       return Results.success();
    }

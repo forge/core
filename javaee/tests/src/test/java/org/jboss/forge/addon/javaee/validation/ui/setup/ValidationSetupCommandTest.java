@@ -10,7 +10,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
@@ -72,7 +72,7 @@ public class ValidationSetupCommandTest
       tester.execute(new AbstractCommandExecutionListener()
       {
          @Override
-         public void postCommandExecuted(UICommand command, UIContext context, Result result)
+         public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
          {
             if (result.getMessage().equals("Bean Validation is installed."))
             {

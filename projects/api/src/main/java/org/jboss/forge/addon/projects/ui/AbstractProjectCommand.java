@@ -18,6 +18,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIContextProvider;
 import org.jboss.forge.addon.ui.context.UISelection;
 
 /**
@@ -75,6 +76,11 @@ public abstract class AbstractProjectCommand extends AbstractUICommand
          project = getProjectFactory().findProject(initialSelection.get());
       }
       return project;
+   }
+
+   protected Project getSelectedProject(UIContextProvider contextProvider)
+   {
+      return getSelectedProject(contextProvider.getUIContext());
    }
 
    /**

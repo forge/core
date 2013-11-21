@@ -65,13 +65,13 @@ public class ShellSingleCommand extends AbstractShellInteraction
    @Override
    public Result execute() throws Exception
    {
-      return command.execute(getContext());
+      return command.execute(getExecutionContext());
    }
 
    @Override
    public ShellValidationContext validate()
    {
-      ShellValidationContext validationContext = new ShellValidationContext(getContext());
+      ShellValidationContext validationContext = new ShellValidationContext(getExecutionContext().getUIContext());
       for (InputComponent<?, Object> input : getInputs().values())
       {
          input.validate(validationContext);

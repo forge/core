@@ -10,6 +10,7 @@ package org.jboss.forge.ui.test;
 import java.util.List;
 
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
@@ -99,7 +100,7 @@ public interface WizardTester<W extends UIWizard>
     * @return A list of results, in order, from the executed {@link UIWizardStep} instances.
     * @throws Exception if anything wrong happens
     */
-   public List<Result> finish(WizardListener listener) throws Exception;
+   public List<Result> finish(CommandExecutionListener listener) throws Exception;
 
    /**
     * Sets the value of a property

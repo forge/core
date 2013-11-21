@@ -20,6 +20,7 @@ import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
@@ -128,9 +129,9 @@ public class FurnaceAddonSetupStep implements UIWizardStep
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception
+   public Result execute(UIExecutionContext context) throws Exception
    {
-      final Project project = (Project) context.getAttribute(Project.class);
+      final Project project = (Project) context.getUIContext().getAttribute(Project.class);
       Iterable<AddonId> dependencyAddons = addons.getValue();
       if (splitProjects.getValue())
       {

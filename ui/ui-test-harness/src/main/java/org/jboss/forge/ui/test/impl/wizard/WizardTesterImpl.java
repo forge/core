@@ -16,17 +16,19 @@ import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.ui.test.WizardListener;
 import org.jboss.forge.ui.test.WizardTester;
 import org.jboss.forge.ui.test.impl.UIBuilderImpl;
 import org.jboss.forge.ui.test.impl.UIContextImpl;
+import org.jboss.forge.ui.test.impl.UIExecutionContextImpl;
 import org.jboss.forge.ui.test.impl.UIValidationContextImpl;
 
 /**
@@ -157,17 +159,11 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
    @Override
    public List<Result> finish() throws Exception
    {
-      return finish(new WizardListener()
-      {
-         @Override
-         public void wizardExecuted(UIWizard wizard, Result result)
-         {
-         }
-      });
+      return finish(null);
    }
 
    @Override
-   public List<Result> finish(WizardListener listener) throws Exception
+   public List<Result> finish(CommandExecutionListener listener) throws Exception
    {
       try
       {
@@ -181,17 +177,34 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
                throw new IllegalStateException(errors.toString());
             }
          }
+         UIExecutionContext executionContext = new UIExecutionContextImpl(context);
          // All good. Hit it !
          for (UIBuilderImpl builder : pages)
          {
             UICommand wizard = builder.getCommand();
-            Result result = wizard.execute(context);
-            if (listener != null)
+            try
             {
-               listener.wizardExecuted((UIWizard) wizard, result);
+               if (listener != null)
+               {
+                  listener.preCommandExecuted(wizard, executionContext);
+               }
+               Result result = wizard.execute(executionContext);
+               if (listener != null)
+               {
+                  listener.postCommandExecuted(wizard, executionContext, result);
+               }
+               results.add(result);
             }
-            results.add(result);
+            catch (Exception e)
+            {
+               if (listener != null)
+               {
+                  listener.postCommandFailure(wizard, executionContext, e);
+               }
+               throw e;
+            }
          }
+
          return results;
       }
       finally

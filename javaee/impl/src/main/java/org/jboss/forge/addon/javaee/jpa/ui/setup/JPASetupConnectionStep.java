@@ -24,6 +24,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -211,15 +212,16 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception
+   public Result execute(UIExecutionContext context) throws Exception
    {
-      Project project = getSelectedProject(context);
-      JPADataSource dataSource = getDataSource(context);
-      Boolean configureMetadata = (Boolean) context.getAttribute("ConfigureMetadata");
+      UIContext uiContext = context.getUIContext();
+      Project project = getSelectedProject(uiContext);
+      JPADataSource dataSource = getDataSource(uiContext);
+      Boolean configureMetadata = (Boolean) uiContext.getAttribute("ConfigureMetadata");
       String puName = persistenceUnitName.getValue();
       FileResource<?> configFile = persistenceOperations
                .setup(puName, project, dataSource, configureMetadata);
-      context.setSelection(configFile);
+      uiContext.setSelection(configFile);
       return Results.success("Persistence (JPA) is installed.");
    }
 

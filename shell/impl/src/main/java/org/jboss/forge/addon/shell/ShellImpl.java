@@ -149,7 +149,7 @@ public class ShellImpl implements Shell
    {
       for (CommandExecutionListener listener : listeners)
       {
-         listener.preCommandExecuted(shellCommand.getSourceCommand(), shellCommand.getContext());
+         listener.preCommandExecuted(shellCommand.getSourceCommand(), shellCommand.getExecutionContext());
       }
    }
 
@@ -157,7 +157,7 @@ public class ShellImpl implements Shell
    {
       for (CommandExecutionListener listener : listeners)
       {
-         listener.postCommandExecuted(shellCommand.getSourceCommand(), shellCommand.getContext(), result);
+         listener.postCommandExecuted(shellCommand.getSourceCommand(), shellCommand.getExecutionContext(), result);
       }
 
    }
@@ -166,7 +166,7 @@ public class ShellImpl implements Shell
    {
       for (CommandExecutionListener listener : listeners)
       {
-         listener.postCommandFailure(shellCommand.getSourceCommand(), shellCommand.getContext(), failure);
+         listener.postCommandFailure(shellCommand.getSourceCommand(), shellCommand.getExecutionContext(), failure);
       }
 
    }

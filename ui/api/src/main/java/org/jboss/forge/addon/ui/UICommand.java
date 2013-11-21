@@ -9,6 +9,7 @@ package org.jboss.forge.addon.ui;
 
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -49,12 +50,12 @@ public interface UICommand extends UIValidator
    /**
     * Called when the {@link UICommand} should be executed.
     * 
-    * This method should NEVER execute if {@link UICommand#isEnabled(UIContext)} returns falseand
+    * This method should NEVER execute if {@link UICommand#isEnabled(UIContext)} returns false and
     * {@link UICommand#validate(UIValidationContext)} contains validation errors
     * 
     * @param context the context of the interaction
     * @return the result of this execution (see the {@link Results} class)
     * @throws Exception if anything wrong happens
     */
-   public Result execute(UIContext context) throws Exception;
+   public Result execute(UIExecutionContext context) throws Exception;
 }

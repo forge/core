@@ -12,6 +12,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
@@ -87,7 +88,7 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
    }
 
    @Override
-   public Result execute(UIContext context)
+   public Result execute(UIExecutionContext context)
    {
       String coordinates = getCoordinates();
       try

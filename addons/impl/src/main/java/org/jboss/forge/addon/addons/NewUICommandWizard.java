@@ -23,6 +23,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -101,7 +102,7 @@ public class NewUICommandWizard extends AbstractProjectCommand
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception
+   public Result execute(UIExecutionContext context) throws Exception
    {
       JavaResource javaResource;
       Project project = getSelectedProject(context);
@@ -117,7 +118,7 @@ public class NewUICommandWizard extends AbstractProjectCommand
          JavaClass javaClass = createCommand(named.getValue(), targetPackage.getValue(), categories.getValue());
          javaResource = java.saveJavaSource(javaClass);
       }
-      context.setSelection(javaResource);
+      context.getUIContext().setSelection(javaResource);
       return Results.success("Command " + javaResource + " created");
    }
 
@@ -134,6 +135,7 @@ public class NewUICommandWizard extends AbstractProjectCommand
       command.setSuperType(AbstractUICommand.class);
       command.addImport(UIBuilder.class);
       command.addImport(UIContext.class);
+      command.addImport(UIExecutionContext.class);
       command.addImport(UICommandMetadata.class);
       command.addImport(Metadata.class);
       command.addImport(Categories.class);
@@ -177,7 +179,7 @@ public class NewUICommandWizard extends AbstractProjectCommand
                .setPublic()
                .setName("execute")
                .setReturnType(Result.class)
-               .setParameters("UIContext context")
+               .setParameters("UIExecutionContext context")
                .setBody("return Results.fail(\"Not implemented!\");")
                .addAnnotation(Override.class);
 

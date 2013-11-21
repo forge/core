@@ -18,6 +18,7 @@ import org.jboss.forge.addon.javaee.validation.providers.JavaEEValidatorProvider
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -109,7 +110,7 @@ public class ValidationProviderSetupCommand extends AbstractJavaEECommand implem
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception
+   public Result execute(UIExecutionContext context) throws Exception
    {
       validationOperations.setup(getSelectedProject(context), providers.getValue(),
                providedScope.getValue(), messageInterpolator.getValue(), traversableResolver.getValue(),
