@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
+import org.jboss.forge.furnace.container.cdi.events.Local;
 import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
@@ -24,7 +25,7 @@ public class ShellInitializer
    @Inject
    private ShellFactory shellFactory;
 
-   public void startupDefaultShell(@Observes PostStartup startup) throws Exception
+   public void startupDefaultShell(@Observes @Local PostStartup startup) throws Exception
    {
       if (Boolean.getBoolean("forge.standalone"))
       {
