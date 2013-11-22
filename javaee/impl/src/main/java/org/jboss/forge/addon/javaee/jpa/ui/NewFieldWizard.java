@@ -9,6 +9,7 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +37,8 @@ import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
+import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -45,6 +48,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.util.Types;
@@ -60,7 +64,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    private UIInput<String> named;
 
    @Inject
-   @WithAttributes(label = "Type", description = "The type intended to be used for this field", type = InputType.JAVA_CLASS_PICKER, required = true)
+   @WithAttributes(label = "Type", description = "The type intended to be used for this field", type = InputType.JAVA_CLASS_PICKER, required = true, defaultValue = "String")
    private UIInput<String> typeName;
 
    @Inject
@@ -99,6 +103,23 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    {
       setupEntities(builder.getUIContext());
       setupRelationshipType();
+      typeName.setCompleter(new UICompleter<String>()
+      {
+         @Override
+         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
+         {
+            String[] types = { "byte", "float", "char", "double", "int", "long", "short", "boolean", "String" };
+            List<String> options = new ArrayList<String>();
+            for (String type : types)
+            {
+               if (Strings.isNullOrEmpty(value) || type.startsWith(value))
+               {
+                  options.add(type);
+               }
+            }
+            return options;
+         }
+      });
       lob.setEnabled(new Callable<Boolean>()
       {
          @Override
