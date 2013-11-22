@@ -45,11 +45,11 @@ import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyNodeBuilder;
 import org.jboss.forge.addon.maven.util.MavenConvertUtils;
-import org.jboss.forge.addon.maven.util.MavenRepositories;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.manager.maven.MavenOperationException;
+import org.jboss.forge.furnace.manager.maven.util.MavenRepositories;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.forge.furnace.util.Strings;
 
@@ -78,7 +78,9 @@ public class MavenDependencyResolver implements DependencyResolver
 
       Artifact queryArtifact = MavenConvertUtils.coordinateToMavenArtifact(query.getCoordinate());
 
-      List<RemoteRepository> remoteRepos = MavenRepositories.getRemoteRepositories(container, settings, query);
+      List<RemoteRepository> remoteRepos = MavenConvertUtils.convertToMavenRepos(query.getDependencyRepositories(),
+               settings);
+      remoteRepos.addAll(MavenRepositories.getRemoteRepositories(container, settings));
 
       CollectRequest collectRequest = new CollectRequest(new org.eclipse.aether.graph.Dependency(queryArtifact,
                query.getScopeType()), remoteRepos);
@@ -156,8 +158,9 @@ public class MavenDependencyResolver implements DependencyResolver
 
          DefaultRepositorySystemSession session = container.setupRepoSession(maven, settings);
          Artifact artifact = MavenConvertUtils.coordinateToMavenArtifact(dep);
-
-         List<RemoteRepository> remoteRepos = MavenRepositories.getRemoteRepositories(container, settings, query);
+         List<RemoteRepository> remoteRepos = MavenConvertUtils.convertToMavenRepos(query.getDependencyRepositories(),
+                  settings);
+         remoteRepos.addAll(MavenRepositories.getRemoteRepositories(container, settings));
 
          VersionRangeRequest rangeRequest = new VersionRangeRequest(artifact, remoteRepos, null);
 
@@ -176,7 +179,9 @@ public class MavenDependencyResolver implements DependencyResolver
       RepositorySystem system = container.getRepositorySystem();
       Settings settings = container.getSettings();
 
-      List<RemoteRepository> remoteRepos = MavenRepositories.getRemoteRepositories(container, settings, query);
+      List<RemoteRepository> remoteRepos = MavenConvertUtils.convertToMavenRepos(query.getDependencyRepositories(),
+               settings);
+      remoteRepos.addAll(MavenRepositories.getRemoteRepositories(container, settings));
 
       DefaultRepositorySystemSession session = container.setupRepoSession(system, settings);
       Artifact queryArtifact = MavenConvertUtils.coordinateToMavenArtifact(query.getCoordinate());
@@ -233,7 +238,9 @@ public class MavenDependencyResolver implements DependencyResolver
          final CoordinateBuilder coord = CoordinateBuilder.create(query.getCoordinate());
          Artifact queryArtifact = MavenConvertUtils.coordinateToMavenArtifact(coord);
 
-         List<RemoteRepository> remoteRepos = MavenRepositories.getRemoteRepositories(container, settings, query);
+         List<RemoteRepository> remoteRepos = MavenConvertUtils.convertToMavenRepos(query.getDependencyRepositories(),
+                  settings);
+         remoteRepos.addAll(MavenRepositories.getRemoteRepositories(container, settings));
          CollectRequest collectRequest = new CollectRequest(new org.eclipse.aether.graph.Dependency(queryArtifact,
                   null), remoteRepos);
 
@@ -265,8 +272,10 @@ public class MavenDependencyResolver implements DependencyResolver
          DefaultRepositorySystemSession session = container.setupRepoSession(system, settings);
          Artifact artifact = MavenConvertUtils.coordinateToMavenArtifact(query.getCoordinate());
 
-         List<RemoteRepository> mavenRepositories = MavenRepositories.getRemoteRepositories(container, settings, query);
-         ArtifactDescriptorRequest ar = new ArtifactDescriptorRequest(artifact, mavenRepositories, null);
+         List<RemoteRepository> remoteRepos = MavenConvertUtils.convertToMavenRepos(query.getDependencyRepositories(),
+                  settings);
+         remoteRepos.addAll(MavenRepositories.getRemoteRepositories(container, settings));
+         ArtifactDescriptorRequest ar = new ArtifactDescriptorRequest(artifact, remoteRepos, null);
          ArtifactDescriptorResult results = system.readArtifactDescriptor(session, ar);
 
          Artifact a = results.getArtifact();

@@ -29,26 +29,32 @@ import org.jboss.forge.addon.resource.ResourceFactory;
 
 public class MavenConvertUtils
 {
-   static RemoteRepository convertToMavenRepo(final DependencyRepository repo, final Settings settings)
+   public static RemoteRepository convertToMavenRepo(final DependencyRepository repo, final Settings settings)
    {
-      RemoteRepository.Builder remoteRepositoryBuilder = new RemoteRepository.Builder(repo.getId(), "default", repo.getUrl());
+      RemoteRepository.Builder remoteRepositoryBuilder = new RemoteRepository.Builder(repo.getId(), "default",
+               repo.getUrl());
       Proxy activeProxy = settings.getActiveProxy();
       if (activeProxy != null)
       {
-         Authentication auth = new AuthenticationBuilder().addUsername(activeProxy.getUsername()).addPassword(activeProxy.getPassword()).build();
-         remoteRepositoryBuilder.setProxy(new org.eclipse.aether.repository.Proxy(activeProxy.getProtocol(), activeProxy
-                  .getHost(), activeProxy.getPort(), auth));
+         Authentication auth = new AuthenticationBuilder().addUsername(activeProxy.getUsername())
+                  .addPassword(activeProxy.getPassword()).build();
+         remoteRepositoryBuilder.setProxy(new org.eclipse.aether.repository.Proxy(activeProxy.getProtocol(),
+                  activeProxy
+                           .getHost(), activeProxy.getPort(), auth));
       }
       return remoteRepositoryBuilder.build();
    }
 
-   static List<RemoteRepository> convertToMavenRepos(final List<DependencyRepository> repositories,
+   public static List<RemoteRepository> convertToMavenRepos(final List<DependencyRepository> repositories,
             final Settings settings)
    {
       List<RemoteRepository> remoteRepos = new ArrayList<RemoteRepository>();
-      for (DependencyRepository deprep : repositories)
+      if (repositories != null)
       {
-         remoteRepos.add(convertToMavenRepo(deprep, settings));
+         for (DependencyRepository deprep : repositories)
+         {
+            remoteRepos.add(convertToMavenRepo(deprep, settings));
+         }
       }
       return remoteRepos;
    }
