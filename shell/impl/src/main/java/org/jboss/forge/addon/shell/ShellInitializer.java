@@ -34,7 +34,7 @@ public class ShellInitializer
       }
    }
 
-   public void shutdown(@Observes PreShutdown preShutdown)
+   public void shutdown(@Observes @Local PreShutdown preShutdown)
    {
       destroyShell();
    }
