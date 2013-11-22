@@ -16,12 +16,10 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.shell.ui.ShellContext;
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
@@ -34,7 +32,7 @@ import org.jboss.forge.furnace.lock.LockMode;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class ListServicesCommand implements UICommand
+public class ListServicesCommand extends AbstractShellCommand
 {
    private Furnace furnace;
 
@@ -47,24 +45,12 @@ public class ListServicesCommand implements UICommand
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(getClass()).name("list-services").description("List all available services");
-   }
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return (context instanceof ShellContext);
+      return Metadata.forCommand(getClass()).name("services-list").description("List all available services");
    }
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-   }
-
-   @Override
-   public void validate(UIValidationContext context)
-   {
-
    }
 
    @Override
@@ -115,22 +101,22 @@ public class ListServicesCommand implements UICommand
 
    public String getName(Method method)
    {
-      String params = "(";
+      StringBuilder params = new StringBuilder("(");
       List<Class<?>> parameters = Arrays.asList(method.getParameterTypes());
 
       Iterator<Class<?>> iterator = parameters.iterator();
       while (iterator.hasNext())
       {
          Class<?> p = iterator.next();
-         params += p.getName();
+         params.append(p.getName());
 
          if (iterator.hasNext())
          {
-            params += ",";
+            params.append(",");
          }
       }
 
-      params += ")";
+      params.append(")");
 
       String returnType = method.getReturnType().getName() == null ? "void" : method.getReturnType().getName();
       return method.getName() + params + "::" + returnType;
