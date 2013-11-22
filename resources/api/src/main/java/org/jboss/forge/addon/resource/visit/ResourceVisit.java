@@ -72,7 +72,6 @@ public class ResourceVisit
       perform(root, context, visitor, recurseFilter, visitFilter);
    }
 
-   @SuppressWarnings({ "rawtypes" })
    private void perform(Resource<?> root, VisitContextImpl context, ResourceVisitor visitor,
             ResourceFilter recurseFilter, ResourceFilter visitFilter)
    {
