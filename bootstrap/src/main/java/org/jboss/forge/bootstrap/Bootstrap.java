@@ -28,7 +28,9 @@ import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
+import org.jboss.forge.furnace.versions.Versions;
 
 /**
  * A class with a main method to bootstrap Furnace.
@@ -205,7 +207,8 @@ public class Bootstrap
                AddonId selected = null;
                for (int i = versions.length - 1; selected == null && i >= 0; i--)
                {
-                  if (AddonRepositoryImpl.isApiCompatible(runtimeAPIVersion, versions[i]))
+                  String apiVersion = resolver.resolveAPIVersion(versions[i]);
+                  if (apiVersion != null && Versions.isApiCompatible(runtimeAPIVersion, new SingleVersion(apiVersion)))
                   {
                      selected = versions[i];
                   }
