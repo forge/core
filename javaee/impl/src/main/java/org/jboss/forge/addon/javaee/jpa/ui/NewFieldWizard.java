@@ -57,7 +57,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
 
    @Inject
    @WithAttributes(label = "Field Name", description = "The field name to be created in the target entity", required = true)
-   private UIInput<String> fieldName;
+   private UIInput<String> named;
 
    @Inject
    @WithAttributes(label = "Type", description = "The type intended to be used for this field", type = InputType.JAVA_CLASS_PICKER, required = true)
@@ -140,7 +140,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             return Date.class.getName().equals(typeValue) || Calendar.class.getName().equals(typeValue);
          }
       });
-      builder.add(entity).add(fieldName).add(typeName).add(temporalType).add(length).add(relationshipType).add(lob)
+      builder.add(entity).add(named).add(typeName).add(temporalType).add(length).add(relationshipType).add(lob)
                .add(primitive);
    }
 
@@ -204,7 +204,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    public Result execute(UIExecutionContext context) throws Exception
    {
       JavaResource javaResource = entity.getValue();
-      String fieldNameStr = fieldName.getValue();
+      String fieldNameStr = named.getValue();
       Field<JavaClass> field;
       JavaClass targetEntity = (JavaClass) javaResource.getJavaSource();
       RelationshipType value = relationshipType.getValue();
@@ -243,7 +243,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             facet.saveJavaSource(field.getOrigin());
          }
          context.getUIContext().setSelection(javaResource);
-         return Results.success("Field " + fieldName.getValue() + " created");
+         return Results.success("Field " + named.getValue() + " created");
       }
       else
       {
@@ -262,9 +262,9 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          if (javaResource != null)
          {
             JavaClass javaClass = (JavaClass) javaResource.getJavaSource();
-            if (javaClass.hasField(fieldName.getValue()))
+            if (javaClass.hasField(named.getValue()))
             {
-               validator.addValidationError(entity, "Field '" + fieldName.getValue() + "' already exists");
+               validator.addValidationError(entity, "Field '" + named.getValue() + "' already exists");
             }
          }
       }
@@ -310,7 +310,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    public NavigationResult next(UIContext context) throws Exception
    {
       context.setAttribute(JavaResource.class, entity.getValue());
-      context.setAttribute("fieldName", fieldName.getValue());
+      context.setAttribute("fieldName", named.getValue());
       context.setAttribute("fieldType", typeName.getValue());
       context.setAttribute(RelationshipType.class, relationshipType.getValue());
       context.getAttribute(RelationshipType.class);
