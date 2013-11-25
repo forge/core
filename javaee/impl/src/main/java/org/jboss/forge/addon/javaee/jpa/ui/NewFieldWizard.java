@@ -9,7 +9,6 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
