@@ -197,7 +197,7 @@ public class Bootstrap
          else
          {
             String coordinate = "org.jboss.forge.addon:" + addonCoordinates;
-            AddonId[] versions = resolver.resolveVersions(coordinate);
+            AddonId[] versions = resolver.resolveVersions(coordinate).get();
             if (versions.length == 0)
             {
                throw new IllegalArgumentException("No Artifact version found for " + coordinate);
@@ -207,7 +207,7 @@ public class Bootstrap
                AddonId selected = null;
                for (int i = versions.length - 1; selected == null && i >= 0; i--)
                {
-                  String apiVersion = resolver.resolveAPIVersion(versions[i]);
+                  String apiVersion = resolver.resolveAPIVersion(versions[i]).get();
                   if (apiVersion != null && Versions.isApiCompatible(runtimeAPIVersion, new SingleVersion(apiVersion)))
                   {
                      selected = versions[i];
