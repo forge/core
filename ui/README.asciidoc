@@ -135,7 +135,7 @@ public class ExampleCommand extends AbstractUICommand implements UICommand {
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception {
+   public Result execute(UIExecutionContext context) throws Exception {
       return Results.success("Hello,"+ name.getValue());
    }
 
@@ -166,7 +166,7 @@ public void initializeUI(UIBuilder builder) throws Exception {
 [source,java]
 ----
 @Override
-public Result execute(UIContext context) throws Exception {
+public Result execute(UIExecutionContext context) throws Exception {
    // Do the work here
    return Results.success("Hello,"+ name.getValue());
 }
@@ -212,7 +212,7 @@ public class MyInitialPage extends AbstractUICommand implements UIWizard {
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception {
+   public Result execute(UIExecutionContext context) throws Exception {
       return Results.success();
    }
 }
@@ -242,8 +242,8 @@ public class MyNextStep extends AbstractUICommand implements UIWizardStep {
    }
 
    @Override
-   public Result execute(UIContext context) throws Exception {
-      String firstName = (String) context.getAttribute("firstName");
+   public Result execute(UIExecutionContext executionContext) throws Exception {
+      String firstName = (String) executionContext.getUIContext().getAttribute("firstName");
       String fullName = firstName + " " + lastName.getValue(); 
       return Results.success("Hello,"+ fullName);
    }
@@ -281,5 +281,13 @@ There are two ways to pass state between wizard steps:
 
 CommandScoped classes are available during user interaction. The scope is destroyed when a command (or a wizard including its steps) is run or cancelled
 
- 
+=== Use UIOutput to display messages to the user
 
+The underlying UIProvider provides a method getOutput() returning a UIOutput.
+This object provides two methods: 
+
+. PrintStream out();
+. PrintStream err();
+
+Any information printed to these PrintStream objects will be displayed in the configured UI out/err streams. How it is displayed is up to the UI Provider implementation.
+ 
