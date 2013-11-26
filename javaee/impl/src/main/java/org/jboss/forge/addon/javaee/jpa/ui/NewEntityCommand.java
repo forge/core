@@ -50,7 +50,7 @@ public class NewEntityCommand extends AbstractJavaEECommand
    private UIInput<String> targetPackage;
 
    @Inject
-   @WithAttributes(label = "ID Column Generation Strategy", required = true)
+   @WithAttributes(label = "ID Column Generation Strategy")
    private UISelectOne<GenerationType> idStrategy;
 
    @Inject
@@ -137,6 +137,10 @@ public class NewEntityCommand extends AbstractJavaEECommand
       String entityName = named.getValue();
       String entityPackage = targetPackage.getValue();
       GenerationType idStrategyChosen = idStrategy.getValue();
+      if (idStrategyChosen == null)
+      {
+         idStrategyChosen = GenerationType.AUTO;
+      }
       DirectoryResource targetDir = targetLocation.getValue();
       Project project = getSelectedProject(context);
       JavaResource javaResource;
