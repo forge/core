@@ -19,14 +19,6 @@
          <artifactId>furnace-manager-resolver-maven</artifactId>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>dependencies-api</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>resources-api</artifactId>
-      </dependency>
-      <dependency>
          <groupId>org.jboss.forge.furnace</groupId>
          <artifactId>furnace</artifactId>
       </dependency>
