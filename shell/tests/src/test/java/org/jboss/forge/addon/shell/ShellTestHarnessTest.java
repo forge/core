@@ -59,7 +59,7 @@ public class ShellTestHarnessTest
    {
       Assert.assertNotNull(test);
 
-      Result result = test.execute("list-services", 15, TimeUnit.SECONDS);
+      Result result = test.execute("services-list", 15, TimeUnit.SECONDS);
       Assert.assertNotNull(result);
       Assert.assertFalse(result instanceof Failed);
    }

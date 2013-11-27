@@ -61,14 +61,13 @@ public class ListServicesCommand extends AbstractShellCommand
 
    private String listServices() throws IOException
    {
-      final StringBuilder builder = new StringBuilder();
-
-      furnace.getLockManager().performLocked(LockMode.READ, new Callable<Void>()
+      return furnace.getLockManager().performLocked(LockMode.READ, new Callable<String>()
       {
 
          @Override
-         public Void call() throws Exception
+         public String call() throws Exception
          {
+            final StringBuilder builder = new StringBuilder();
             Set<Addon> addons = furnace.getAddonRegistry().getAddons(new AddonFilter()
             {
                @Override
@@ -92,11 +91,10 @@ public class ListServicesCommand extends AbstractShellCommand
                }
             }
 
-            return null;
+            return builder.toString();
          }
 
       });
-      return builder.toString();
    }
 
    public String getName(Method method)
