@@ -82,7 +82,7 @@ public class MavenDependencyResolverTest
    public void testResolveVersions2() throws Exception
    {
       DependencyQuery query = DependencyQueryBuilder.create(CoordinateBuilder
-               .create("javax.annotation:jsr250-api"));
+               .create("org.jboss.forge.addon:maven-api"));
       List<Coordinate> versions = resolver.resolveVersions(query);
       Assert.assertNotNull(versions);
       Assert.assertFalse(versions.isEmpty());
@@ -92,7 +92,7 @@ public class MavenDependencyResolverTest
    public void testResolveVersionsDependency() throws Exception
    {
       DependencyQuery query = DependencyQueryBuilder.create(CoordinateBuilder
-               .create("org.jboss.forge:maven-api"));
+               .create("org.jboss.forge:resources-api"));
       List<Coordinate> versions = resolver.resolveVersions(query);
       Assert.assertNotNull(versions);
       Assert.assertFalse(versions.isEmpty());
