@@ -19,7 +19,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.scaffoldx.ScaffoldProvider;
 import org.jboss.forge.scaffoldx.ScaffoldQualifier;
-import org.jboss.forge.shell.project.ProjectScoped;
 
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.FileTemplateLoader;
@@ -36,7 +35,6 @@ import freemarker.template.TemplateException;
  * 
  * @author Vineet Reynolds 
  */
-@ProjectScoped
 public class FreemarkerClient
 {
 
