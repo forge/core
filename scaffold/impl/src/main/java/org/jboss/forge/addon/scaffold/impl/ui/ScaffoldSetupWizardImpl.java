@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.scaffold.impl.ui;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -89,11 +91,6 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
       builder.add(provider).add(target).add(overwrite);
    }
 
-   private ScaffoldSetupContext createSetupContext()
-   {
-      return new ScaffoldSetupContext(target.getValue(), overwrite.getValue());
-   }
-
    @Override
    public void validate(UIValidationContext validator)
    {
@@ -112,9 +109,8 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      ScaffoldProvider selectedProvider = provider.getValue();
-      selectedProvider.setup(getSelectedProject(context), createSetupContext());
-      return Results.success("Scaffold was setup successfully.");
+      // No-op. Scaffold setup is done in a separate step.
+      return Results.success();
    }
 
    @Override
@@ -123,17 +119,20 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
       ScaffoldProvider selectedProvider = provider.getValue();
       Project project = getSelectedProject(context);
       ((AbstractFacet) selectedProvider).setFaceted(project);
+      context.setAttribute(ScaffoldProvider.class, selectedProvider);
+      context.setAttribute(ScaffoldSetupContext.class, createSetupContext());
+      
+      // Get the step sequence from the selected scaffold provider
       List<Class<? extends UICommand>> setupFlow = selectedProvider.getSetupFlow();
-      if(setupFlow.isEmpty())
-      {
-         return null;
-      }
-      else
-      {
-         Class<? extends UICommand> next = setupFlow.remove(0);
-         Class<?>[] additional = setupFlow.toArray(new Class<?>[setupFlow.size()]);
-         return Results.navigateTo(next, (Class<? extends UICommand>[]) additional);
-      }
+      
+      // Add the execution logic step in the end so that the scaffold setup step is executed last after all other
+      // steps
+      setupFlow.add(ExecuteSetupCommand.class);
+
+      // Extract the first command to obtain the next step
+      Class<? extends UICommand> next = setupFlow.remove(0);
+      Class<?>[] additional = setupFlow.toArray(new Class<?>[setupFlow.size()]);
+      return Results.navigateTo(next, (Class<? extends UICommand>[]) additional);
    }
 
    @Override
@@ -146,5 +145,10 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    protected ProjectFactory getProjectFactory()
    {
       return factory;
+   }
+
+   private ScaffoldSetupContext createSetupContext()
+   {
+      return new ScaffoldSetupContext(target.getValue(), overwrite.getValue());
    }
 }

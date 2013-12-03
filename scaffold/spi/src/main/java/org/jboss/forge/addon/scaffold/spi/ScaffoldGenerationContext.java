@@ -15,8 +15,8 @@ import java.util.Collection;
  */
 public class ScaffoldGenerationContext
 {
-   private final String targetDirectory;
-   private final boolean overwrite;
+   private String targetDirectory;
+   private boolean overwrite;
    private Collection<?> resources;
 
    public ScaffoldGenerationContext(String targetDirectory, boolean overwrite, Collection<?> resources)
@@ -31,15 +31,30 @@ public class ScaffoldGenerationContext
    {
       return targetDirectory;
    }
+   
+   public void setTargetDirectory(String targetDirectory)
+   {
+      this.targetDirectory = targetDirectory;
+   }
 
    public boolean isOverwrite()
    {
       return overwrite;
    }
    
+   public void setOverwrite(boolean overwrite)
+   {
+      this.overwrite = overwrite;
+   }
+   
    public Collection<?> getResources()
    {
       return resources;
+   }
+   
+   public void setResources(Collection<?> resources)
+   {
+      this.resources = resources;
    }
 
 }

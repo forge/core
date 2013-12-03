@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.scaffold.impl.ui;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -97,10 +98,8 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      ScaffoldProvider selectedProvider = provider.getValue();
-      ResourceCollection resourceCollection = (ResourceCollection) context.getAttribute(ResourceCollection.class);
-      selectedProvider.generateFrom(getSelectedProject(context), createGenerationContext(resourceCollection.getResources()));
-      return Results.success("Scaffold was generated successfully.");
+      // No-op. Do nothing.
+      return Results.success();
    }
    
    @Override
@@ -109,18 +108,21 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
       ScaffoldProvider selectedProvider = provider.getValue();
       Project project = getSelectedProject(context);
       context.setAttribute(Project.class, project);
+      context.setAttribute(ScaffoldProvider.class, selectedProvider);
+      context.setAttribute(ScaffoldGenerationContext.class, populateGenerationContext(context));
       ((AbstractFacet) selectedProvider).setFaceted(project);
+      
+      // Get the step sequence from the selected scaffold provider
       List<Class<? extends UICommand>> generationFlow = selectedProvider.getGenerationFlow();
-      if(generationFlow.isEmpty())
-      {
-         return null;
-      }
-      else
-      {
-         Class<? extends UICommand> next = generationFlow.remove(0);
-         Class<?>[] additional = generationFlow.toArray(new Class<?>[generationFlow.size()]);
-         return Results.navigateTo(next, (Class<? extends UICommand>[]) additional);
-      }
+      
+      // Add the execution logic step in the end so that the scaffold generation step is executed last after all other
+      // steps
+      generationFlow.add(ExecuteGenerationCommand.class);
+
+      // Extract the first command to obtain the next step
+      Class<? extends UICommand> next = generationFlow.remove(0);
+      Class<?>[] additional = generationFlow.toArray(new Class<?>[generationFlow.size()]);
+      return Results.navigateTo(next, (Class<? extends UICommand>[]) additional);
    }
 
    @Override
@@ -135,9 +137,19 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
       return factory;
    }
    
-   private ScaffoldGenerationContext createGenerationContext(Collection resources)
+   private ScaffoldGenerationContext populateGenerationContext(UIContext context)
    {
-      return new ScaffoldGenerationContext(target.getValue(), overwrite.getValue(), resources);
+      ScaffoldGenerationContext generationContext = (ScaffoldGenerationContext) context.getAttribute(ScaffoldGenerationContext.class);
+      if(generationContext == null)
+      {
+         return new ScaffoldGenerationContext(target.getValue(), overwrite.getValue(), null);
+      }
+      else
+      {
+         generationContext.setTargetDirectory(target.getValue());
+         generationContext.setOverwrite(overwrite.getValue());
+         return generationContext;
+      }
    }
    
 }
