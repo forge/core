@@ -7,9 +7,8 @@
 
 package org.jboss.forge.addon.ui.controller;
 
-import java.util.List;
-
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.result.Result;
 
 /**
@@ -32,31 +31,24 @@ public interface CommandController
    public void launch() throws Exception;
 
    /**
-    * Is the wizard allowed to finish?
+    * Is the wizard allowed to execute ?
     */
-   public boolean canFinish();
-
-   /**
-    * Lets the controller know that some value in the Wizard was modified, so it should invalidate subsequent pages.
-    */
-   public void valueChanged();
+   public boolean canExecute();
 
    /**
     * Finish clicked
     * 
     * @throws Exception if anything wrong happens
     */
-   public Result finish() throws Exception;
+   public Result execute() throws Exception;
 
    /**
-    * Is the current wizard page valid ?
-    * 
-    * @return true if valid, false otherwise
+    * Call validate for the current page + inputs
     */
-   public boolean isValid();
+   public UIValidationContext validate();
 
    /**
-    * The validation errors for the current page
+    * Lets the controller know that some value in the Wizard was modified, so it should invalidate subsequent pages.
     */
-   public List<String> getErrorMessages();
+   public void valueChanged();
 }
