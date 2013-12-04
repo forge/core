@@ -90,7 +90,7 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
          successor = successors[0];
          for (int i = 1; i < successors.length; i++)
          {
-            subflows.push(successors[i]);
+            subflows.add(successors[i]);
          }
       }
       UIBuilderImpl nextBuilder = createBuilder((Class<W>) successor);
