@@ -91,7 +91,7 @@ public class ShellWizard extends AbstractShellInteraction
                {
                   if (successors[i] != null)
                   {
-                     subflows.push(successors[i]);
+                     subflows.add(successors[i]);
                   }
                }
             }
