@@ -37,7 +37,7 @@ abstract class WizardCommandControllerImpl extends AbstractCommandController imp
    }
 
    @Override
-   public void launch() throws Exception
+   public void initializeUI() throws Exception
    {
 
    }
@@ -57,7 +57,7 @@ abstract class WizardCommandControllerImpl extends AbstractCommandController imp
    }
 
    @Override
-   public boolean canFinish()
+   public boolean canExecute()
    {
       // TODO Auto-generated method stub
       return false;

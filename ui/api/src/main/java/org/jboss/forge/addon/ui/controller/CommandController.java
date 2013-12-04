@@ -24,11 +24,9 @@ public interface CommandController
    public UICommand getInitialCommand();
 
    /**
-    * Launch the currrent wizard execution
-    * 
-    * @throws Exception
+    * Initializes the current wizard
     */
-   public void launch() throws Exception;
+   public void initializeUI() throws Exception;
 
    /**
     * Is the wizard allowed to execute ?
