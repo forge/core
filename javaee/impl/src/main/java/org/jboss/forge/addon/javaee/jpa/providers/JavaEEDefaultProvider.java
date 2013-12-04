@@ -48,8 +48,6 @@ public class JavaEEDefaultProvider implements PersistenceProvider
       {
          PropertiesCommon properties = unit.getOrCreateProperties();
          properties.createProperty().name("javax.persistence.schema-generation.database.action").value("create");
-         properties.createProperty().name("javax.persistence.schema-generation.scripts.action")
-                  .value("drop-and-create");
       }
       return unit;
    }
