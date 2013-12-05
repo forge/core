@@ -8,18 +8,62 @@
 package org.jboss.forge.addon.ui.impl.controller;
 
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.spi.UIContextFactory;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-abstract class SingleCommandController extends AbstractCommandController
+class SingleCommandController extends AbstractCommandController
 {
-
-   public SingleCommandController(AddonRegistry addonRegistry, UICommand initialCommand)
+   public SingleCommandController(AddonRegistry addonRegistry, UIContextFactory contextFactory, UICommand initialCommand)
    {
-      super(addonRegistry, initialCommand);
+      super(addonRegistry, contextFactory, initialCommand);
+   }
+
+   @Override
+   public void initialize() throws Exception
+   {
+      UIBuilder uiBuilder = contextFactory.createUIBuilder(context);
+      initialCommand.initializeUI(uiBuilder);
+   }
+
+   @Override
+   public boolean canExecute()
+   {
+      // TODO Auto-generated method stub
+      return false;
+   }
+
+   @Override
+   public Result execute() throws Exception
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public UIValidationContext validate()
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public boolean isCurrentCommandRenderable()
+   {
+      return true;
+   }
+
+   @Override
+   public void valueChanged()
+   {
+      // TODO Auto-generated method stub
+
    }
 
 }

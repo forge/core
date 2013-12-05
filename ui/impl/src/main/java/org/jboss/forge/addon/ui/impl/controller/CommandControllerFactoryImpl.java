@@ -11,13 +11,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.spi.UIContextFactory;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
-import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
@@ -39,30 +37,13 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
    @Override
    public CommandController createSingleController(Class<? extends UICommand> command, UIContextFactory uiFactory)
    {
-      return null;
+      UICommand cmd = addonRegistry.getServices(command).get();
+      return new SingleCommandController(addonRegistry, uiFactory, cmd);
    }
 
    @Override
    public WizardCommandController createWizardController(Class<? extends UIWizard> wizard, UIContextFactory uiFactory)
    {
       return null;
-   }
-
-   public CommandController create(Class<? extends UICommand> command, UIContext context)
-   {
-      if (UIWizardStep.class.isAssignableFrom(command))
-      {
-         throw new IllegalArgumentException("Class " + command.getName()
-                  + " implements UIWizardStep, and it's not possible to start from a step");
-      }
-      else if (UIWizard.class.isAssignableFrom(command))
-      {
-         return null;
-      }
-      else if (UICommand.class.isAssignableFrom(command))
-      {
-         // return new SingleCommandController(addonRegistry, addonRegistry.getServices(command).get());
-      }
-      throw new IllegalArgumentException(command + " is not a valid UICommand");
    }
 }

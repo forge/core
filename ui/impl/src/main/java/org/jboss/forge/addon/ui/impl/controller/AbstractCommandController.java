@@ -8,7 +8,9 @@
 package org.jboss.forge.addon.ui.impl.controller;
 
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.spi.UIContextFactory;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
@@ -18,11 +20,16 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 public abstract class AbstractCommandController implements CommandController
 {
    protected final AddonRegistry addonRegistry;
-   private final UICommand initialCommand;
+   protected final UIContextFactory contextFactory;
+   protected final UIContext context;
+   protected final UICommand initialCommand;
 
-   protected AbstractCommandController(AddonRegistry addonRegistry, UICommand initialCommand)
+   protected AbstractCommandController(AddonRegistry addonRegistry, UIContextFactory contextFactory,
+            UICommand initialCommand)
    {
       this.addonRegistry = addonRegistry;
+      this.contextFactory = contextFactory;
+      this.context = contextFactory.createUIContext();
       this.initialCommand = initialCommand;
    }
 

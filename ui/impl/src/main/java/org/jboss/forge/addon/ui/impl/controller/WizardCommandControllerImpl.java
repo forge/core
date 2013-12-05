@@ -8,7 +8,10 @@
 package org.jboss.forge.addon.ui.impl.controller;
 
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
+import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.spi.UIContextFactory;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 
@@ -16,12 +19,13 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-abstract class WizardCommandControllerImpl extends AbstractCommandController implements WizardCommandController
+class WizardCommandControllerImpl extends AbstractCommandController implements WizardCommandController
 {
 
-   public WizardCommandControllerImpl(AddonRegistry addonRegistry, UIWizard initialCommand)
+   public WizardCommandControllerImpl(AddonRegistry addonRegistry, UIContextFactory contextFactory,
+            UIWizard initialCommand)
    {
-      super(addonRegistry, initialCommand);
+      super(addonRegistry, contextFactory, initialCommand);
    }
 
    @Override
@@ -37,7 +41,7 @@ abstract class WizardCommandControllerImpl extends AbstractCommandController imp
    }
 
    @Override
-   public void initializeUI() throws Exception
+   public void initialize() throws Exception
    {
 
    }
@@ -64,15 +68,13 @@ abstract class WizardCommandControllerImpl extends AbstractCommandController imp
    }
 
    @Override
-   public UICommand next() throws IllegalStateException
+   public void next() throws IllegalStateException
    {
-      return null;
    }
 
    @Override
-   public UICommand previous() throws IllegalStateException
+   public void previous() throws IllegalStateException
    {
-      return null;
    }
 
    @Override
@@ -80,6 +82,31 @@ abstract class WizardCommandControllerImpl extends AbstractCommandController imp
    {
       // TODO Auto-generated method stub
 
+   }
+
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.jboss.forge.addon.ui.controller.CommandController#execute()
+    */
+   @Override
+   public Result execute() throws Exception
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public UIValidationContext validate()
+   {
+      return null;
+   }
+
+   @Override
+   public boolean isCurrentCommandRenderable()
+   {
+      // TODO Auto-generated method stub
+      return false;
    }
 
 }

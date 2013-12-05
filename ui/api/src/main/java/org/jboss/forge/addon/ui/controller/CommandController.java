@@ -26,7 +26,7 @@ public interface CommandController
    /**
     * Initializes the current wizard
     */
-   public void initializeUI() throws Exception;
+   public void initialize() throws Exception;
 
    /**
     * Is the wizard allowed to execute ?
@@ -44,6 +44,12 @@ public interface CommandController
     * Call validate for the current page + inputs
     */
    public UIValidationContext validate();
+
+   /**
+    * Returns true if the current command has any input to render. Can only be called after
+    * {@link CommandController#initializeUI()}
+    */
+   public boolean isCurrentCommandRenderable();
 
    /**
     * Lets the controller know that some value in the Wizard was modified, so it should invalidate subsequent pages.

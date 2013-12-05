@@ -34,10 +34,10 @@ public interface WizardCommandController extends CommandController
    /**
     * Navigate to the next page. Throws {@link IllegalStateException} if navigation is not possible
     */
-   public UICommand next() throws IllegalStateException;
+   public void next() throws IllegalStateException;
 
    /**
     * Navigate to the previous visited page
     */
-   public UICommand previous() throws IllegalStateException;
+   public void previous() throws IllegalStateException;
 }
