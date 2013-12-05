@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.scaffold.impl.ui;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -16,7 +14,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.AbstractFacet;
-import org.jboss.forge.addon.facets.AbstractFaceted;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;

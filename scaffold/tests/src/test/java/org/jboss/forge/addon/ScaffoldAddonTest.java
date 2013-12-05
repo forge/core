@@ -9,8 +9,6 @@ package org.jboss.forge.addon;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -22,8 +20,6 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.services.Imported;
-import org.jboss.forge.furnace.spi.ExportedInstance;
-import org.jboss.forge.furnace.spi.ServiceRegistry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
