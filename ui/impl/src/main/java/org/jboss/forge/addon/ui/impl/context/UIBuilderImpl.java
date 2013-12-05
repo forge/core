@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.ui.impl.mock;
+package org.jboss.forge.addon.ui.impl.context;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,12 +18,13 @@ import org.jboss.forge.addon.ui.input.InputComponent;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class MockUIBuilder implements UIBuilder
+public class UIBuilderImpl implements UIBuilder
 {
+
    private final UIContext context;
    private List<InputComponent<?, ?>> inputs = new LinkedList<InputComponent<?, ?>>();
 
-   public MockUIBuilder(UIContext context)
+   public UIBuilderImpl(UIContext context)
    {
       this.context = context;
    }

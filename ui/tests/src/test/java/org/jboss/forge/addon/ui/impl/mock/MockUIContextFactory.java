@@ -30,7 +30,7 @@ public class MockUIContextFactory implements UIContextFactory
    @Override
    public UIBuilder createUIBuilder(UIContext context)
    {
-      return new MockUIBuilder(context);
+      return null;
    }
 
    @Override

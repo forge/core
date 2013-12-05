@@ -11,7 +11,6 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.ui.MyFirstWizard;
 import org.jboss.forge.addon.ui.impl.mock.MockUIContextFactory;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
@@ -61,7 +60,6 @@ public class CommandControllerTest
    {
       CommandController controller = controllerFactory.createSingleController(ExampleCommand.class,
                new MockUIContextFactory());
-      controller.initialize();
       Assert.assertTrue(controller.isCurrentCommandRenderable());
    }
 

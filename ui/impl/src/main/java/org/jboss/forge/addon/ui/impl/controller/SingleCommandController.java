@@ -7,9 +7,12 @@
 
 package org.jboss.forge.addon.ui.impl.controller;
 
+import java.util.List;
+
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.context.UIBuilder;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.impl.context.UIBuilderImpl;
+import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
+import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.spi.UIContextFactory;
 import org.jboss.forge.furnace.addons.AddonRegistry;
@@ -20,16 +23,20 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
  */
 class SingleCommandController extends AbstractCommandController
 {
+   private List<InputComponent<?, ?>> inputs;
+
    public SingleCommandController(AddonRegistry addonRegistry, UIContextFactory contextFactory, UICommand initialCommand)
+            throws Exception
    {
       super(addonRegistry, contextFactory, initialCommand);
+      initialize();
    }
 
-   @Override
-   public void initialize() throws Exception
+   private void initialize() throws Exception
    {
-      UIBuilder uiBuilder = contextFactory.createUIBuilder(context);
+      UIBuilderImpl uiBuilder = new UIBuilderImpl(context);
       initialCommand.initializeUI(uiBuilder);
+      inputs = uiBuilder.getInputs();
    }
 
    @Override
@@ -42,21 +49,33 @@ class SingleCommandController extends AbstractCommandController
    @Override
    public Result execute() throws Exception
    {
-      // TODO Auto-generated method stub
+
       return null;
    }
 
    @Override
-   public UIValidationContext validate()
+   public UIValidationContextImpl validate()
    {
-      // TODO Auto-generated method stub
-      return null;
+      UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
+      initialCommand.validate(validationContext);
+      for (InputComponent<?, ?> input : inputs)
+      {
+         validationContext.setCurrentInputComponent(input);
+         input.validate(validationContext);
+      }
+      validationContext.setCurrentInputComponent(null);
+      return validationContext;
    }
 
    @Override
    public boolean isCurrentCommandRenderable()
    {
-      return true;
+      return inputs.size() > 0;
+   }
+
+   public List<InputComponent<?, ?>> getInputs()
+   {
+      return inputs;
    }
 
    @Override

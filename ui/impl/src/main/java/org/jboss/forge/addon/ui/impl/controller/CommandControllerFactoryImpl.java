@@ -36,6 +36,7 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
 
    @Override
    public CommandController createSingleController(Class<? extends UICommand> command, UIContextFactory uiFactory)
+            throws Exception
    {
       UICommand cmd = addonRegistry.getServices(command).get();
       return new SingleCommandController(addonRegistry, uiFactory, cmd);

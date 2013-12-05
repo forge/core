@@ -19,16 +19,6 @@ import org.jboss.forge.addon.ui.result.Result;
 public interface CommandController
 {
    /**
-    * Returns the initial {@link UICommand}
-    */
-   public UICommand getInitialCommand();
-
-   /**
-    * Initializes the current wizard
-    */
-   public void initialize() throws Exception;
-
-   /**
     * Is the wizard allowed to execute ?
     */
    public boolean canExecute();
@@ -46,8 +36,7 @@ public interface CommandController
    public UIValidationContext validate();
 
    /**
-    * Returns true if the current command has any input to render. Can only be called after
-    * {@link CommandController#initializeUI()}
+    * Returns true if the current command has any input to render.
     */
    public boolean isCurrentCommandRenderable();
 

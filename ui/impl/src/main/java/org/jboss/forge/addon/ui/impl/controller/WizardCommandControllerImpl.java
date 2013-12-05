@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.ui.impl.controller;
 
-import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.result.Result;
@@ -26,24 +25,6 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
             UIWizard initialCommand)
    {
       super(addonRegistry, contextFactory, initialCommand);
-   }
-
-   @Override
-   public UIWizard getInitialCommand()
-   {
-      return (UIWizard) super.getInitialCommand();
-   }
-
-   @Override
-   public UICommand getCurrentCommand()
-   {
-      return null;
-   }
-
-   @Override
-   public void initialize() throws Exception
-   {
-
    }
 
    @Override

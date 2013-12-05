@@ -32,10 +32,4 @@ public abstract class AbstractCommandController implements CommandController
       this.context = contextFactory.createUIContext();
       this.initialCommand = initialCommand;
    }
-
-   @Override
-   public UICommand getInitialCommand()
-   {
-      return this.initialCommand;
-   }
 }

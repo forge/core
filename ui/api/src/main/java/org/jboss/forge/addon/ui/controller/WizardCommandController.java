@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.ui.controller;
 
-import org.jboss.forge.addon.ui.UICommand;
 
 /**
  * 
@@ -15,11 +14,6 @@ import org.jboss.forge.addon.ui.UICommand;
  */
 public interface WizardCommandController extends CommandController
 {
-   /**
-    * Returns the current {@link UICommand} based on the navigation
-    */
-   public UICommand getCurrentCommand();
-
    /**
     * Is it possible to navigate to the next page ?
     */
