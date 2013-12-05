@@ -219,7 +219,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       {
          JavaClass entity  = (JavaClass) resource;
          String targetDir = scaffoldContext.getTargetDirectory();
-         Resource<?> template = null;
+         Resource<?> template = (Resource<?>) scaffoldContext.getAttribute("pageTemplate");
          boolean overwrite = scaffoldContext.isOverwrite();
          List<Resource<?>> generatedResourcesForEntity = this.generateFromEntity(targetDir , template, entity, overwrite );
 
@@ -435,8 +435,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       HashMap<Object, Object> context;
       context = new HashMap<Object, Object>();
       context.put("template", template);
-      //TODO Fix ResourceUtil first 
-      //context.put("templatePath", templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate()));
+      context.put("templatePath", templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate()));
       context.put("templatePath", "/resources/scaffold/pageTemplate.xhtml");
       context.put("templateStrategy", templateStrategy);
       context.put("targetDir", targetDir);
@@ -667,6 +666,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
 
       // FORGE-460: setupRichFaces during generateFromEntity, not during setup, as generally 'richfaces setup' is called
       // *after* 'scaffold setup'
+      // TODO: Decide on whether to support Richfaces via the Faces scaffold
       // setupRichFaces();
 
       // Track the list of resources generated

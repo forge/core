@@ -13,6 +13,7 @@ import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.util.ResourceUtil;
 import org.jboss.forge.addon.scaffold.faces.TemplateStrategy;
 import org.jboss.forge.furnace.util.Streams;
 
@@ -50,13 +51,11 @@ public class FacesTemplateStrategy implements TemplateStrategy
    {
       WebResourcesFacet web = this.project.getFacet(WebResourcesFacet.class);
       for (DirectoryResource dir : web.getWebRootDirectories()) {
-         /* TODO: Port ResourceUtil
          if (ResourceUtil.isChildOf(dir, template))
          {
             String relativePath = template.getFullyQualifiedName().substring(dir.getFullyQualifiedName().length());
             return relativePath;
          }
-         */
       }
       throw new IllegalArgumentException("Not a valid template resource for this scaffold.");
    }
