@@ -31,7 +31,7 @@ public class CommandScopedTest
 {
    @Deployment
    @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
+      @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap
@@ -50,6 +50,12 @@ public class CommandScopedTest
 
    @Inject
    private WizardTester<WizardWithScopedObject> wizardTester;
+
+   @Test
+   public void testEnabled()
+   {
+      Assert.assertTrue(wizardTester.isEnabled());
+   }
 
    @Test
    public void testCommandScope() throws Exception
