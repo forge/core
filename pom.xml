@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-parent</artifactId>
-      <version>11</version>
+      <version>12</version>
    </parent>
 
    <groupId>org.jboss.forge</groupId>
@@ -67,7 +67,6 @@
       <version.mvel>2.1.0.Final</version.mvel>
       <version.jboss-logmanager>1.4.1.Final</version.jboss-logmanager>
       <version.slf4j>1.6.1</version.slf4j>
-      <version.surefire.plugin>2.16</version.surefire.plugin>
       <version.xmlparser>1.0.0.Final</version.xmlparser>
    </properties>
 
