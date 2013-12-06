@@ -32,7 +32,6 @@ public class URLResourceGeneratorTest
 {
    @Deployment
    @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:facets"),
             @AddonDependency(name = "org.jboss.forge.addon:resources") })
    public static ForgeArchive getDeployment()
    {
@@ -40,7 +39,6 @@ public class URLResourceGeneratorTest
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:facets"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:resources")
                );
 
