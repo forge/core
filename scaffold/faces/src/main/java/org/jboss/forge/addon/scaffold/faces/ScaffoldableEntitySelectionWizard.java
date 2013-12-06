@@ -34,14 +34,11 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
 {
    @Inject
    @WithAttributes(label = "Page Template")
-   private UIInput<File> pageTemplate;
+   private UIInput<FileResource<?>> pageTemplate;
    
    @Inject
    @WithAttributes(label = "Targets", required = true)
    private UISelectMany<JavaClass> targets;
-   
-   @Inject
-   private ResourceFactory resourceFactory;
    
    @Override
    public NavigationResult next(UIContext context) throws Exception
@@ -53,7 +50,7 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
       }
       context.setAttribute(ResourceCollection.class, resourceCollection );
       ScaffoldGenerationContext genCtx = (ScaffoldGenerationContext) context.getAttribute(ScaffoldGenerationContext.class);
-      genCtx.addAttribute("pageTemplate", resourceFactory.create(FileResource.class, pageTemplate));
+      genCtx.addAttribute("pageTemplate", pageTemplate.getValue());
       return null;
    }
 
@@ -97,10 +94,9 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
    @Override
    public void validate(UIValidationContext context)
    {
-      File inputTemplate = pageTemplate.getValue();
-      if (inputTemplate != null)
+      Resource<?> template = pageTemplate.getValue();
+      if (template != null)
       {
-         Resource<?> template = resourceFactory.create(FileResource.class, inputTemplate);
          if (template.exists())
          {
             UIContext uiContext = context.getUIContext();
