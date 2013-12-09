@@ -62,7 +62,7 @@ public class NewUICommandWizard extends AbstractProjectCommand
    private UIInput<DirectoryResource> targetLocation;
 
    @Inject
-   @WithAttributes(label = "Categories:", required = true)
+   @WithAttributes(label = "Categories:", required = false)
    private UIInputMany<String> categories;
 
    @Override
