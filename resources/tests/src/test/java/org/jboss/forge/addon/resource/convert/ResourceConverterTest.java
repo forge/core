@@ -15,6 +15,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -47,6 +48,9 @@ public class ResourceConverterTest
    @Inject
    private Converter<File, DirectoryResource> resourceDirConverter;
 
+   @Inject
+   private ResourceFactory resourceFactory;
+   
    @Test
    public void testNotNull() throws Exception
    {
@@ -60,4 +64,12 @@ public class ResourceConverterTest
       DirectoryResource output = resourceDirConverter.convert(input);
       Assert.assertNotNull(output);
    }
+   
+   @Test
+   public void testEmptyConversion() throws Exception
+   {
+      Assert.assertNull(resourceDirConverter.convert(null));
+      Assert.assertNull(resourceFactory.create(""));
+   }
+   
 }
