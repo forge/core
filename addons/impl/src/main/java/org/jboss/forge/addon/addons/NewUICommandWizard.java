@@ -50,7 +50,7 @@ public class NewUICommandWizard extends AbstractProjectCommand
    private JavaSourceFactory javaSourceFactory;
 
    @Inject
-   @WithAttributes(label = "Command name:", required = true)
+   @WithAttributes(label = "Command name", required = true)
    private UIInput<String> named;
 
    @Inject
@@ -62,7 +62,7 @@ public class NewUICommandWizard extends AbstractProjectCommand
    private UIInput<DirectoryResource> targetLocation;
 
    @Inject
-   @WithAttributes(label = "Categories:", required = false)
+   @WithAttributes(label = "Categories", required = false)
    private UIInputMany<String> categories;
 
    @Override
