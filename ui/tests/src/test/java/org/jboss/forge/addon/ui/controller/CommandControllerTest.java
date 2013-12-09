@@ -49,6 +49,9 @@ public class CommandControllerTest
    @Inject
    private CommandControllerFactory controllerFactory;
 
+   @Inject
+   private ExampleCommand exampleCommand;
+
    @Test
    public void testInjection() throws Exception
    {
@@ -58,7 +61,7 @@ public class CommandControllerTest
    @Test
    public void testSingleCommandController() throws Exception
    {
-      CommandController controller = controllerFactory.createSingleController(ExampleCommand.class,
+      CommandController controller = controllerFactory.createSingleController(exampleCommand,
                new MockUIContextFactory());
       Assert.assertTrue(controller.isCurrentCommandRenderable());
    }

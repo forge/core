@@ -35,15 +35,14 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
    }
 
    @Override
-   public CommandController createSingleController(Class<? extends UICommand> command, UIContextFactory uiFactory)
+   public CommandController createSingleController(UICommand command, UIContextFactory uiFactory)
             throws Exception
    {
-      UICommand cmd = addonRegistry.getServices(command).get();
-      return new SingleCommandController(addonRegistry, uiFactory, cmd);
+      return new SingleCommandController(addonRegistry, uiFactory, command);
    }
 
    @Override
-   public WizardCommandController createWizardController(Class<? extends UIWizard> wizard, UIContextFactory uiFactory)
+   public WizardCommandController createWizardController(UIWizard wizard, UIContextFactory uiFactory)
    {
       return null;
    }

@@ -21,12 +21,12 @@ public interface CommandControllerFactory
    /**
     * Create a {@link SingleCommandController}. Should be called when a single command execution must be performed.
     */
-   CommandController createSingleController(Class<? extends UICommand> command, UIContextFactory uiFactory)
+   CommandController createSingleController(UICommand command, UIContextFactory uiFactory)
             throws Exception;
 
    /**
     * Create a {@link WizardCommandController}. Should be called when a wizard (multisteps) execution must be performed.
     */
-   WizardCommandController createWizardController(Class<? extends UIWizard> wizard, UIContextFactory uiFactory)
+   WizardCommandController createWizardController(UIWizard wizard, UIContextFactory uiFactory)
             throws Exception;
 }
