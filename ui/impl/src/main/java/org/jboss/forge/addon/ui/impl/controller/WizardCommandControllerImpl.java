@@ -7,8 +7,11 @@
 
 package org.jboss.forge.addon.ui.impl.controller;
 
+import java.util.List;
+
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
+import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.spi.UIContextFactory;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
@@ -58,13 +61,6 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    {
    }
 
-   @Override
-   public void valueChanged()
-   {
-      // TODO Auto-generated method stub
-
-   }
-
    /*
     * (non-Javadoc)
     * 
@@ -83,11 +79,14 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       return null;
    }
 
+   /* (non-Javadoc)
+    * @see org.jboss.forge.addon.ui.controller.CommandController#getInputs()
+    */
    @Override
-   public boolean isCurrentCommandRenderable()
+   public List<InputComponent<?, Object>> getInputs()
    {
       // TODO Auto-generated method stub
-      return false;
+      return null;
    }
 
 }

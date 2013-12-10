@@ -22,7 +22,7 @@ public class UIBuilderImpl implements UIBuilder
 {
 
    private final UIContext context;
-   private List<InputComponent<?, ?>> inputs = new LinkedList<InputComponent<?, ?>>();
+   private List<InputComponent<?, Object>> inputs = new LinkedList<InputComponent<?, Object>>();
 
    public UIBuilderImpl(UIContext context)
    {
@@ -35,14 +35,15 @@ public class UIBuilderImpl implements UIBuilder
       return context;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public UIBuilder add(InputComponent<?, ?> input)
    {
-      inputs.add(input);
+      inputs.add((InputComponent<?, Object>) input);
       return this;
    }
 
-   public List<InputComponent<?, ?>> getInputs()
+   public List<InputComponent<?, Object>> getInputs()
    {
       return inputs;
    }

@@ -23,7 +23,7 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
  */
 class SingleCommandController extends AbstractCommandController
 {
-   private List<InputComponent<?, ?>> inputs;
+   private List<InputComponent<?, Object>> inputs;
 
    public SingleCommandController(AddonRegistry addonRegistry, UIContextFactory contextFactory, UICommand initialCommand)
             throws Exception
@@ -68,21 +68,8 @@ class SingleCommandController extends AbstractCommandController
    }
 
    @Override
-   public boolean isCurrentCommandRenderable()
-   {
-      return inputs.size() > 0;
-   }
-
-   public List<InputComponent<?, ?>> getInputs()
+   public List<InputComponent<?, Object>> getInputs()
    {
       return inputs;
    }
-
-   @Override
-   public void valueChanged()
-   {
-      // TODO Auto-generated method stub
-
-   }
-
 }

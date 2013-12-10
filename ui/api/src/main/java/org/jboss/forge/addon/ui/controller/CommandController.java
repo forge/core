@@ -7,8 +7,11 @@
 
 package org.jboss.forge.addon.ui.controller;
 
+import java.util.List;
+
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.Result;
 
 /**
@@ -36,12 +39,7 @@ public interface CommandController
    public UIValidationContext validate();
 
    /**
-    * Returns true if the current command has any input to render.
+    * Returns the inputs for this command
     */
-   public boolean isCurrentCommandRenderable();
-
-   /**
-    * Lets the controller know that some value in the Wizard was modified, so it should invalidate subsequent pages.
-    */
-   public void valueChanged();
+   public List<InputComponent<?, Object>> getInputs();
 }

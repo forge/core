@@ -7,8 +7,8 @@
 
 package org.jboss.forge.addon.ui.controller;
 
-
 /**
+ * A composite implementation for {@link CommandController}
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
