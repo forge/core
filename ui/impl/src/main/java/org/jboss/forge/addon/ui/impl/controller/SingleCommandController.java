@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.impl.context.UIBuilderImpl;
 import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
@@ -58,16 +59,17 @@ class SingleCommandController extends AbstractCommandController
    }
 
    @Override
-   public UIValidationContextImpl validate()
+   public UIValidationContext validate()
    {
-      UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
+//      UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
+      UIValidationContext validationContext = contextFactory.createUIValidationContext(context);
       initialCommand.validate(validationContext);
       for (InputComponent<?, ?> input : inputs.values())
       {
-         validationContext.setCurrentInputComponent(input);
+//         validationContext.setCurrentInputComponent(input);
          input.validate(validationContext);
       }
-      validationContext.setCurrentInputComponent(null);
+//      validationContext.setCurrentInputComponent(null);
       return validationContext;
    }
 
