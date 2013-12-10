@@ -7,8 +7,8 @@
 
 package org.jboss.forge.addon.ui.impl.context;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -22,7 +22,7 @@ public class UIBuilderImpl implements UIBuilder
 {
 
    private final UIContext context;
-   private List<InputComponent<?, Object>> inputs = new LinkedList<InputComponent<?, Object>>();
+   private Map<String, InputComponent<?, Object>> inputs = new LinkedHashMap<String, InputComponent<?, Object>>();
 
    public UIBuilderImpl(UIContext context)
    {
@@ -39,11 +39,11 @@ public class UIBuilderImpl implements UIBuilder
    @Override
    public UIBuilder add(InputComponent<?, ?> input)
    {
-      inputs.add((InputComponent<?, Object>) input);
+      inputs.put(input.getName(), (InputComponent<?, Object>) input);
       return this;
    }
 
-   public List<InputComponent<?, Object>> getInputs()
+   public Map<String, InputComponent<?, Object>> getInputs()
    {
       return inputs;
    }

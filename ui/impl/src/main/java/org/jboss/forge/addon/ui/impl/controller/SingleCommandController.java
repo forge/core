@@ -7,9 +7,13 @@
 
 package org.jboss.forge.addon.ui.impl.controller;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.impl.context.UIBuilderImpl;
 import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
@@ -23,7 +27,7 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
  */
 class SingleCommandController extends AbstractCommandController
 {
-   private List<InputComponent<?, Object>> inputs;
+   private Map<String, InputComponent<?, Object>> inputs = new LinkedHashMap<String, InputComponent<?, Object>>();
 
    public SingleCommandController(AddonRegistry addonRegistry, UIContextFactory contextFactory, UICommand initialCommand)
             throws Exception
@@ -58,7 +62,7 @@ class SingleCommandController extends AbstractCommandController
    {
       UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
       initialCommand.validate(validationContext);
-      for (InputComponent<?, ?> input : inputs)
+      for (InputComponent<?, ?> input : inputs.values())
       {
          validationContext.setCurrentInputComponent(input);
          input.validate(validationContext);
@@ -70,6 +74,18 @@ class SingleCommandController extends AbstractCommandController
    @Override
    public List<InputComponent<?, Object>> getInputs()
    {
-      return inputs;
+      return new ArrayList<InputComponent<?, Object>>(inputs.values());
+   }
+
+   @Override
+   public CommandController setValueFor(String inputName, Object value)
+   {
+      return this;
+   }
+
+   @Override
+   public Object getValueFor(String inputName)
+   {
+      return null;
    }
 }

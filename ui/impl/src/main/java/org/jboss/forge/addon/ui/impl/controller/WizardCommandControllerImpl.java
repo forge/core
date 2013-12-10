@@ -10,6 +10,7 @@ package org.jboss.forge.addon.ui.impl.controller;
 import java.util.List;
 
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.Result;
@@ -85,7 +86,24 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public List<InputComponent<?, Object>> getInputs()
    {
-      // TODO Auto-generated method stub
+      return null;
+   }
+
+   /* (non-Javadoc)
+    * @see org.jboss.forge.addon.ui.controller.CommandController#setValueFor(java.lang.String, java.lang.Object)
+    */
+   @Override
+   public CommandController setValueFor(String inputName, Object value)
+   {
+      return null;
+   }
+
+   /* (non-Javadoc)
+    * @see org.jboss.forge.addon.ui.controller.CommandController#getValueFor(java.lang.String)
+    */
+   @Override
+   public Object getValueFor(String inputName)
+   {
       return null;
    }
 

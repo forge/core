@@ -42,4 +42,14 @@ public interface CommandController
     * Returns the inputs for this command
     */
    public List<InputComponent<?, Object>> getInputs();
+
+   /**
+    * Sets the value for a specific input named by the specified name
+    */
+   public CommandController setValueFor(String inputName, Object value);
+
+   /**
+    * Gets the value for a specific input named by the specified name
+    */
+   public Object getValueFor(String inputName);
 }

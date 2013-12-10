@@ -63,7 +63,7 @@ public class CommandControllerTest
    {
       CommandController controller = controllerFactory.createSingleController(exampleCommand,
                new MockUIContextFactory());
-      Assert.assertTrue(controller.isCurrentCommandRenderable());
+      Assert.assertFalse(controller.getInputs().isEmpty());
    }
 
 }
