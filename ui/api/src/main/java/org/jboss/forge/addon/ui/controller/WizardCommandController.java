@@ -15,23 +15,26 @@ package org.jboss.forge.addon.ui.controller;
 public interface WizardCommandController extends CommandController
 {
    /**
-    * Is it possible to navigate to the next page ?
+    * Is it possible to navigate to the next page?
     */
-   public boolean canFlipToNextPage();
+   public boolean canMoveToNextStep();
 
    /**
-    * Is it possible to navigate to the previous page ?
+    * Is it possible to navigate to the previous page?
+    */
+   public boolean canMoveToPreviousStep();
+
+   /**
+    * Navigate to the next page.
     * 
+    * @throws IllegalStateException if navigation is not possible
     */
-   public boolean canFlipToPreviousPage();
-
-   /**
-    * Navigate to the next page. Throws {@link IllegalStateException} if navigation is not possible
-    */
-   public void next() throws IllegalStateException;
+   public WizardCommandController next() throws IllegalStateException;
 
    /**
     * Navigate to the previous visited page
+    * 
+    * @throws IllegalStateException if navigation is not possible
     */
-   public void previous() throws IllegalStateException;
+   public WizardCommandController previous() throws IllegalStateException;
 }

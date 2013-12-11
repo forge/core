@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.validation.UIValidationMessage;
 
@@ -21,6 +22,11 @@ import org.jboss.forge.addon.ui.validation.UIValidationMessage;
  */
 public interface CommandController
 {
+   /**
+    * @return the command metadata
+    */
+   public UICommandMetadata getMetadata();
+
    /**
     * Is the wizard allowed to execute ?
     */
@@ -39,11 +45,6 @@ public interface CommandController
    public List<UIValidationMessage> validate();
 
    /**
-    * Returns the inputs for this command
-    */
-   public List<InputComponent<?, Object>> getInputs();
-
-   /**
     * Sets the value for a specific input named by the specified name
     */
    public CommandController setValueFor(String inputName, Object value);
@@ -52,4 +53,20 @@ public interface CommandController
     * Gets the value for a specific input named by the specified name
     */
    public Object getValueFor(String inputName);
+
+   /**
+    * @return if the command is enabled
+    */
+   public boolean isEnabled();
+
+   /**
+    * Returns the inputs for this command
+    */
+   public List<InputComponent<?, Object>> getInputs();
+
+   /**
+    * @param inputName the input name
+    * @return the {@link InputComponent} in this command
+    */
+   public InputComponent<?, Object> getInput(String inputName);
 }
