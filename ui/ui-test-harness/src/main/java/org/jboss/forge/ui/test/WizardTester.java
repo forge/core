@@ -12,7 +12,6 @@ import java.util.List;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
@@ -42,10 +41,9 @@ public interface WizardTester<W extends UIWizard>
    /**
     * Next Wizard Page
     * 
-    * @return the message in the {@link NavigationResult} if any
     * @throws Exception this is the last page or there are validation errors
     */
-   public abstract String next() throws Exception;
+   public abstract void next() throws Exception;
 
    /**
     * Previous Wizard Page

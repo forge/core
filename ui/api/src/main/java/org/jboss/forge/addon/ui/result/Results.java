@@ -43,17 +43,11 @@ public final class Results
       {
          return null;
       }
-      return navigateTo(null, next, new Class[0]);
-   }
-
-   public static final NavigationResult navigateTo(Class<? extends UICommand> next,
-            Class<? extends UICommand>... additional)
-   {
-      return navigateTo(null, next, additional);
+      return navigateTo(next, new Class[0]);
    }
 
    @SuppressWarnings("unchecked")
-   public static final NavigationResult navigateTo(String message, Class<? extends UICommand> next,
+   public static final NavigationResult navigateTo(Class<? extends UICommand> next,
             Class<? extends UICommand>... additional)
    {
       if (next == null)
@@ -62,12 +56,12 @@ public final class Results
       Class<? extends UICommand>[] all = new Class[1 + additional.length];
       all[0] = next;
       System.arraycopy(additional, 0, all, 1, additional.length);
-      return new NavigationResultImpl(message, all);
+      return new NavigationResultImpl(all);
    }
 
    private static class SuccessfulResult implements Result
    {
-      private String message;
+      private final String message;
 
       SuccessfulResult(String message)
       {
@@ -83,7 +77,7 @@ public final class Results
 
    private static class FailedResult implements Result, Failed
    {
-      private String message;
+      private final String message;
       private Throwable e;
 
       FailedResult(String message)

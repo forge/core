@@ -11,11 +11,11 @@ import org.jboss.forge.addon.ui.UICommand;
 
 /**
  * The result of a navigation
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
-public interface NavigationResult extends Result
+public interface NavigationResult
 {
    Class<? extends UICommand>[] getNext();
 }

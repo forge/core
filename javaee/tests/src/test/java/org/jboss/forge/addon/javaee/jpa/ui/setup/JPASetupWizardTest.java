@@ -99,8 +99,7 @@ public class JPASetupWizardTest
       tester.setValueFor("container", customJTAProvider);
       Assert.assertTrue(tester.canFlipToNextPage());
 
-      String result = tester.next();
-      Assert.assertNull(result);
+      tester.next();
 
       tester.setValueFor("dataSourceName", "java:jboss:jta-ds");
       final AtomicInteger counter = new AtomicInteger();
@@ -137,8 +136,7 @@ public class JPASetupWizardTest
       tester.setValueFor("container", eap6Container);
       Assert.assertTrue(tester.canFlipToNextPage());
 
-      String result = tester.next();
-      Assert.assertNull(result);
+      tester.next();
 
       tester.finish(new AbstractCommandExecutionListener()
       {
@@ -165,8 +163,7 @@ public class JPASetupWizardTest
       tester2.setValueFor("container", eap6Container);
       Assert.assertTrue(tester2.canFlipToNextPage());
 
-      result = tester2.next();
-      Assert.assertNull(result);
+      tester2.next();
 
       tester2.finish(new AbstractCommandExecutionListener()
       {
@@ -201,8 +198,7 @@ public class JPASetupWizardTest
       tester.setValueFor("configureMetadata", Boolean.TRUE);
       Assert.assertTrue(tester.canFlipToNextPage());
 
-      String result = tester.next();
-      Assert.assertNull(result);
+      tester.next();
 
       tester.setValueFor("dataSourceName", "java:jboss:jta-ds");
       final AtomicInteger counter = new AtomicInteger();

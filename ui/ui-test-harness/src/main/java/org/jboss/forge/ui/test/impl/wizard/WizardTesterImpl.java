@@ -71,7 +71,7 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
 
    @SuppressWarnings("unchecked")
    @Override
-   public String next() throws Exception
+   public void next() throws Exception
    {
       if (!canFlipToNextPage())
       {
@@ -95,7 +95,6 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       }
       UIBuilderImpl nextBuilder = createBuilder((Class<W>) successor);
       pages.add(nextBuilder);
-      return result.getMessage();
    }
 
    @Override
