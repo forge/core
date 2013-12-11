@@ -8,19 +8,17 @@
 package org.jboss.forge.addon.ui.impl.controller;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.impl.context.UIBuilderImpl;
-import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.spi.UIContextFactory;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * 
@@ -28,66 +26,99 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
  */
 class SingleCommandController extends AbstractCommandController
 {
-   private Map<String, InputComponent<?, Object>> inputs = new LinkedHashMap<String, InputComponent<?, Object>>();
+   private UIBuilderImpl uiBuilder;
 
    public SingleCommandController(AddonRegistry addonRegistry, UIContextFactory contextFactory, UICommand initialCommand)
             throws Exception
    {
       super(addonRegistry, contextFactory, initialCommand);
-      initialize();
    }
 
-   private void initialize() throws Exception
+   @Override
+   public void initialize() throws Exception
    {
-      UIBuilderImpl uiBuilder = new UIBuilderImpl(context);
-      initialCommand.initializeUI(uiBuilder);
-      inputs = uiBuilder.getInputs();
+      if (!isInitialized())
+      {
+         uiBuilder = new UIBuilderImpl(context);
+         initialCommand.initializeUI(uiBuilder);
+      }
+   }
+
+   protected boolean isInitialized()
+   {
+      return (uiBuilder != null);
+   }
+
+   protected void assertInitialized()
+   {
+      Assert.isTrue(isInitialized(), "Controller must be initialized.");
    }
 
    @Override
    public boolean canExecute()
    {
-      // TODO Auto-generated method stub
       return false;
    }
 
    @Override
    public Result execute() throws Exception
    {
-
+      assertInitialized();
       return null;
-   }
-
-   @Override
-   public UIValidationContext validate()
-   {
-//      UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
-      UIValidationContext validationContext = contextFactory.createUIValidationContext(context);
-      initialCommand.validate(validationContext);
-      for (InputComponent<?, ?> input : inputs.values())
-      {
-//         validationContext.setCurrentInputComponent(input);
-         input.validate(validationContext);
-      }
-//      validationContext.setCurrentInputComponent(null);
-      return validationContext;
    }
 
    @Override
    public List<InputComponent<?, Object>> getInputs()
    {
-      return new ArrayList<InputComponent<?, Object>>(inputs.values());
+      assertInitialized();
+      return new ArrayList<InputComponent<?, Object>>(uiBuilder.getInputs().values());
    }
 
    @Override
    public CommandController setValueFor(String inputName, Object value)
    {
+      assertInitialized();
       return this;
    }
 
    @Override
    public Object getValueFor(String inputName)
    {
+      assertInitialized();
+      return null;
+   }
+
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.jboss.forge.addon.ui.controller.CommandController#getMetadata()
+    */
+   @Override
+   public UICommandMetadata getMetadata()
+   {
+      return null;
+   }
+
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.jboss.forge.addon.ui.controller.CommandController#isEnabled()
+    */
+   @Override
+   public boolean isEnabled()
+   {
+      return false;
+   }
+
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.jboss.forge.addon.ui.controller.CommandController#getInput(java.lang.String)
+    */
+   @Override
+   public InputComponent<?, Object> getInput(String inputName)
+   {
+      assertInitialized();
       return null;
    }
 }

@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.ui.spi;
 
-import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
@@ -23,11 +22,6 @@ public interface UIContextFactory
     * Creates the {@link UIContext} used
     */
    UIContext createUIContext();
-
-   /**
-    * Creates a {@link UIBuilder} when needed
-    */
-   UIBuilder createUIBuilder(UIContext context);
 
    /**
     * Creates a new {@link UIValidationContext}

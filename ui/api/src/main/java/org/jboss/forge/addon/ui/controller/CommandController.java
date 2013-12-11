@@ -1,7 +1,7 @@
 /**
  * Copyright 2013 Red Hat, Inc. and/or its affiliates.
  *
- * Licensed under the Eclipse Public License version 1.0, available at
+ * Licensed under the Eclipse License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
@@ -19,54 +19,79 @@ import org.jboss.forge.addon.ui.validation.UIValidationMessage;
  * A Controller for a specific {@link UICommand}
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface CommandController
 {
    /**
-    * @return the command metadata
-    */
-   public UICommandMetadata getMetadata();
-
-   /**
-    * Is the wizard allowed to execute ?
-    */
-   public boolean canExecute();
-
-   /**
-    * Finish clicked
+    * Initializes this controller by calling {@link UICommand#initializeUI(org.jboss.forge.addon.ui.context.UIBuilder)}
+    * on the underlying {@link UICommand} instance.
     * 
-    * @throws Exception if anything wrong happens
+    * @throws Exception if problems occurred during initialization
     */
-   public Result execute() throws Exception;
+   void initialize() throws Exception;
 
    /**
-    * Call validate for the current page + inputs
+    * Returns <code>true</code> if {@link CommandController#initialize()} has been called
     */
-   public List<UIValidationMessage> validate();
+   boolean isInitialized();
 
    /**
-    * Sets the value for a specific input named by the specified name
+    * Returns <code>true</code> if {@link UICommand#execute(org.jboss.forge.addon.ui.context.UIExecutionContext)} can be
+    * called
     */
-   public CommandController setValueFor(String inputName, Object value);
+   boolean canExecute();
 
    /**
-    * Gets the value for a specific input named by the specified name
+    * Calls {@link UICommand#execute(org.jboss.forge.addon.ui.context.UIExecutionContext)}
+    * 
+    * @throws Exception if problems occurred during initialization
     */
-   public Object getValueFor(String inputName);
+   Result execute() throws Exception;
 
    /**
-    * @return if the command is enabled
+    * Calls {@link UICommand#validate(org.jboss.forge.addon.ui.context.UIValidationContext)}, and
+    * {@link InputComponent#validate(org.jboss.forge.addon.ui.context.UIValidationContext)} for each
+    * {@link InputComponent}.
     */
-   public boolean isEnabled();
+   List<UIValidationMessage> validate();
 
    /**
-    * Returns the inputs for this command
+    * Sets the value of {@link InputComponent} with the given name.
     */
-   public List<InputComponent<?, Object>> getInputs();
+   CommandController setValueFor(String inputName, Object value);
+
+   /**
+    * Gets the value of {@link InputComponent} with the given name.
+    */
+   Object getValueFor(String inputName);
+
+   /**
+    * Returns a {@link List} of {@link InputComponent} instances for this command
+    */
+   List<InputComponent<?, Object>> getInputs();
 
    /**
     * @param inputName the input name
     * @return the {@link InputComponent} in this command
+    * @throws IllegalArgumentException if no input with the given name exists
     */
-   public InputComponent<?, Object> getInput(String inputName);
+   InputComponent<?, Object> getInput(String inputName) throws IllegalArgumentException;
+
+   /**
+    * Returns <code>true</code> if the {@link InputComponent} exists in the underlying {@link UICommand}
+    * 
+    * @param inputName the input name
+    */
+   boolean hasInput(String inputName);
+
+   /**
+    * @return the command metadata
+    */
+   UICommandMetadata getMetadata();
+
+   /**
+    * @return if the command is enabled
+    */
+   boolean isEnabled();
 }
