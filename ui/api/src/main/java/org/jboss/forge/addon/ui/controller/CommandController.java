@@ -10,9 +10,9 @@ package org.jboss.forge.addon.ui.controller;
 import java.util.List;
 
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.validation.UIValidationMessage;
 
 /**
  * A Controller for a specific {@link UICommand}
@@ -36,7 +36,7 @@ public interface CommandController
    /**
     * Call validate for the current page + inputs
     */
-   public UIValidationContext validate();
+   public List<UIValidationMessage> validate();
 
    /**
     * Returns the inputs for this command

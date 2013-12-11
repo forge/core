@@ -16,14 +16,19 @@ import org.jboss.forge.addon.ui.input.InputComponent;
  */
 public interface UIValidationMessage
 {
+   /**
+    * @return the description of this message
+    */
    String getDescription();
 
+   /**
+    * @return the severity of this message
+    */
    Severity getSeverity();
 
    /**
-    * Returns the input component that was referenced by this message (Can be null.)
-    * 
-    * @return null if there is no {@link InputComponent} associated with this message
+    * @return the {@link InputComponent} that was referenced by this message or null if there is no
+    *         {@link InputComponent} associated with this message
     */
    InputComponent<?, ?> getSource();
 
