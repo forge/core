@@ -13,6 +13,7 @@ import java.util.List;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.validation.UIValidationMessage;
 import org.jboss.forge.furnace.util.Assert;
 
 /**
@@ -78,5 +79,11 @@ public class ShellValidationContext implements UIValidationContext
    public List<String> getInformations()
    {
       return informations;
+   }
+
+   @Override
+   public List<UIValidationMessage> getMessages()
+   {
+      throw new UnsupportedOperationException();
    }
 }
