@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.jboss.aesh.cl.completer.FileOptionCompleter;
 import org.jboss.aesh.cl.completer.OptionCompleter;
+import org.jboss.aesh.console.command.completer.CompleterInvocation;
 import org.jboss.aesh.util.FileLister.Filter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.FileResource;
@@ -23,7 +24,9 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
  */
 public class OptionCompleterFactory
 {
-   public static OptionCompleter getCompletionFor(InputComponent<?, Object> component, ShellContext context,
+   @SuppressWarnings("unchecked")
+   public static OptionCompleter<CompleterInvocation> getCompletionFor(InputComponent<?, Object> component,
+            ShellContext context,
             ConverterFactory converterFactory)
    {
       UISelection<FileResource<?>> selection = context.getInitialSelection();
@@ -33,14 +36,14 @@ public class OptionCompleterFactory
                .getUnderlyingResourceObject();
 
       InputType inputType = component.getFacet(HintsFacet.class).getInputType();
-      OptionCompleter strategy = null;
+      OptionCompleter<CompleterInvocation> strategy = null;
       if (inputType == InputType.FILE_PICKER && cwd.isDirectory())
       {
-         strategy = new FileOptionCompleter(cwd);
+         strategy = new FileOptionCompleter(Filter.ALL);
       }
       else if (inputType == InputType.DIRECTORY_PICKER && cwd.isDirectory())
       {
-         strategy = new FileOptionCompleter(cwd, Filter.DIRECTORY);
+         strategy = new FileOptionCompleter(Filter.DIRECTORY);
       }
       else if (component instanceof SelectComponent)
       {
@@ -49,7 +52,7 @@ public class OptionCompleterFactory
       else if (Resource.class.isAssignableFrom(component.getValueType()))
       {
          // fall back to Resource completion.
-         strategy = new FileOptionCompleter(cwd);
+         strategy = new FileOptionCompleter(Filter.ALL);
       }
       // Always try UICompleter first and then fallback to the chosen strategy
       strategy = new UICompleterOptionCompleter(strategy, context, component, converterFactory);

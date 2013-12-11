@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jboss.aesh.cl.completer.CompleterData;
 import org.jboss.aesh.cl.completer.OptionCompleter;
+import org.jboss.aesh.console.command.completer.CompleterInvocation;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.ui.input.ManyValued;
@@ -26,7 +26,7 @@ import org.jboss.forge.addon.ui.util.InputComponents;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-class SelectComponentOptionCompleter implements OptionCompleter
+class SelectComponentOptionCompleter implements OptionCompleter<CompleterInvocation>
 {
    private final SelectComponent<?, Object> selectComponent;
    private final ConverterFactory converterFactory;
@@ -38,10 +38,10 @@ class SelectComponentOptionCompleter implements OptionCompleter
       this.selectComponent = selectComponent;
       this.converterFactory = converterFactory;
    }
-
+   
    @SuppressWarnings("unchecked")
    @Override
-   public void complete(final CompleterData completerData)
+   public void complete(final CompleterInvocation completerData)
    {
       final String completeValue = completerData.getGivenCompleteValue();
       Converter<Object, String> itemLabelConverter = (Converter<Object, String>) InputComponents

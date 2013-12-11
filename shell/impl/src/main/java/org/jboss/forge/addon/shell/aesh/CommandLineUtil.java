@@ -17,13 +17,16 @@ import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.activation.OptionActivator;
 import org.jboss.aesh.cl.builder.OptionBuilder;
 import org.jboss.aesh.cl.completer.OptionCompleter;
-import org.jboss.aesh.cl.converter.CLConverter;
+import org.jboss.aesh.cl.converter.Converter;
 import org.jboss.aesh.cl.exception.OptionParserException;
 import org.jboss.aesh.cl.internal.ProcessedCommand;
 import org.jboss.aesh.cl.internal.ProcessedOption;
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.aesh.cl.validator.OptionValidator;
 import org.jboss.aesh.cl.validator.OptionValidatorException;
+import org.jboss.aesh.console.command.completer.CompleterInvocation;
+import org.jboss.aesh.console.command.converter.ConverterInvocation;
+import org.jboss.aesh.console.command.validator.ValidatorInvocation;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.aesh.completion.OptionCompleterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
@@ -91,7 +94,7 @@ public class CommandLineUtil
             {
                optionBuilder.required(true).renderer(OptionRenderers.REQUIRED);
             }
-            OptionCompleter completer = OptionCompleterFactory.getCompletionFor(input, shellContext, converterFactory);
+            OptionCompleter<CompleterInvocation> completer = OptionCompleterFactory.getCompletionFor(input, shellContext, converterFactory);
             optionBuilder.completer(completer);
             optionBuilder.activator(new OptionActivator()
             {
@@ -100,11 +103,12 @@ public class CommandLineUtil
                {
                   return input.isEnabled();
                }
-            }).validator(new OptionValidator<Object>()
+            }).validator(new OptionValidator<ValidatorInvocation<Object>>()
             {
                @Override
-               public void validate(Object value) throws org.jboss.aesh.cl.validator.OptionValidatorException
+               public void validate(ValidatorInvocation<Object> validatorInvocation) throws OptionValidatorException
                {
+                  Object value = validatorInvocation.getValue();
                   InputComponents.setValueFor(converterFactory, input, value);
                   ShellValidationContext validationContext = new ShellValidationContext(shellContext);
                   input.validate(validationContext);
@@ -114,11 +118,12 @@ public class CommandLineUtil
                      throw new OptionValidatorException(errors.get(0));
                   }
                }
-            }).converter(new CLConverter<Object>()
+            }).converter(new Converter<Object, ConverterInvocation>()
             {
                @Override
-               public Object convert(String value)
+               public Object convert(ConverterInvocation converterInvocation) throws OptionValidatorException
                {
+                  String value = converterInvocation.getInput();
                   return InputComponents.convertToUIInputValue(converterFactory, input, value);
                }
             }).valueSeparator(' ');

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jboss.aesh.cl.completer.CompleterData;
 import org.jboss.aesh.cl.completer.OptionCompleter;
 import org.jboss.aesh.complete.Completion;
+import org.jboss.aesh.console.command.completer.CompleterInvocation;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
@@ -21,14 +21,14 @@ import org.jboss.forge.addon.ui.util.InputComponents;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-class UICompleterOptionCompleter implements OptionCompleter
+class UICompleterOptionCompleter implements OptionCompleter<CompleterInvocation>
 {
-   private final OptionCompleter fallback;
+   private final OptionCompleter<CompleterInvocation> fallback;
    private final InputComponent<?, Object> input;
    private final ConverterFactory converterFactory;
    private final ShellContext context;
 
-   public UICompleterOptionCompleter(OptionCompleter fallback, ShellContext context,
+   public UICompleterOptionCompleter(OptionCompleter<CompleterInvocation> fallback, ShellContext context,
             InputComponent<?, Object> input,
             ConverterFactory converterFactory)
    {
@@ -37,10 +37,10 @@ class UICompleterOptionCompleter implements OptionCompleter
       this.input = input;
       this.converterFactory = converterFactory;
    }
-   
+
    @SuppressWarnings("unchecked")
    @Override
-   public void complete(final CompleterData completerData)
+   public void complete(final CompleterInvocation completerData)
    {
       String completeValue = completerData.getGivenCompleteValue();
       UICompleter<Object> completer = InputComponents.getCompleterFor(input);
@@ -88,7 +88,7 @@ class UICompleterOptionCompleter implements OptionCompleter
                }
             }
          }
-         completerData.addAllCompleterValues(choices);         
+         completerData.addAllCompleterValues(choices);
       }
       else
       {

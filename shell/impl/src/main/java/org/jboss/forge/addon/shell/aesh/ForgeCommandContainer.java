@@ -31,7 +31,8 @@ class ForgeCommandContainer implements CommandContainer
       this.commandAdapter = commandAdapter;
    }
 
-   public void destroy()
+   @Override
+   public void close()
    {
       context.destroy();
    }
