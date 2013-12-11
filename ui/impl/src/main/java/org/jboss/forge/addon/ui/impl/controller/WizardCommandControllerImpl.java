@@ -7,12 +7,17 @@
 
 package org.jboss.forge.addon.ui.impl.controller;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.spi.UIRuntime;
 import org.jboss.forge.addon.ui.validation.UIValidationMessage;
@@ -21,231 +26,223 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
  * 
+ * Implementation for the {@link WizardCommandController} interface
+ * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 class WizardCommandControllerImpl extends AbstractCommandController implements WizardCommandController
 {
+   private final CommandControllerFactory controllerFactory;
 
-   public WizardCommandControllerImpl(AddonRegistry addonRegistry, UIRuntime contextFactory,
-            UIWizard initialCommand)
+   /**
+    * The execution flow
+    */
+   private final List<CommandController> flow = new ArrayList<>();
+
+   /**
+    * If there are any subflows, store here
+    */
+   private final LinkedList<Class<? extends UICommand>> subflow = new LinkedList<>();
+
+   /**
+    * The pointer that this flow is on. Starts with 0
+    */
+   private int flowPointer = 0;
+
+   public WizardCommandControllerImpl(AddonRegistry addonRegistry, UIRuntime runtime,
+            UIWizard initialCommand, CommandControllerFactory controllerFactory)
    {
-      super(addonRegistry, contextFactory, initialCommand);
+      super(addonRegistry, runtime, initialCommand);
+      this.controllerFactory = controllerFactory;
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.CommandController#initialize()
-    */
    @Override
    public void initialize() throws Exception
    {
-      // TODO Auto-generated method stub
-
+      getCurrentCommandController().initialize();
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.CommandController#isInitialized()
-    */
    @Override
    public boolean isInitialized()
    {
-      // TODO Auto-generated method stub
-      return false;
+      return getCurrentCommandController().isInitialized();
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.CommandController#execute()
-    */
    @Override
    public Result execute() throws Exception
    {
-      // TODO Auto-generated method stub
-      return null;
+      Result result = null;
+      for (CommandController controller : flow)
+      {
+         result = controller.execute();
+      }
+      return result;
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.CommandController#validate()
-    */
    @Override
    public List<UIValidationMessage> validate()
    {
-      // TODO Auto-generated method stub
-      return null;
+      return getCurrentCommandController().validate();
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.CommandController#isValid()
-    */
    @Override
    public boolean isValid()
    {
-      // TODO Auto-generated method stub
-      return false;
+      return getCurrentCommandController().isValid();
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.CommandController#setValueFor(java.lang.String, java.lang.Object)
-    */
    @Override
    public CommandController setValueFor(String inputName, Object value) throws IllegalArgumentException
    {
-      // TODO Auto-generated method stub
-      return null;
+      getCurrentCommandController().setValueFor(inputName, value);
+      return this;
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.CommandController#getValueFor(java.lang.String)
-    */
    @Override
    public Object getValueFor(String inputName) throws IllegalArgumentException
    {
-      // TODO Auto-generated method stub
-      return null;
+      return getCurrentCommandController().getValueFor(inputName);
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.CommandController#getInputs()
-    */
    @Override
    public List<InputComponent<?, ?>> getInputs()
    {
-      // TODO Auto-generated method stub
-      return null;
+      return getCurrentCommandController().getInputs();
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.CommandController#getInput(java.lang.String)
-    */
    @Override
-   public InputComponent<?, Object> getInput(String inputName) throws IllegalArgumentException
+   public InputComponent<?, ?> getInput(String inputName) throws IllegalArgumentException
    {
-      // TODO Auto-generated method stub
-      return null;
+      return getCurrentCommandController().getInput(inputName);
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.CommandController#hasInput(java.lang.String)
-    */
    @Override
    public boolean hasInput(String inputName)
    {
-      // TODO Auto-generated method stub
-      return false;
+      return getCurrentCommandController().hasInput(inputName);
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.CommandController#getMetadata()
-    */
    @Override
    public UICommandMetadata getMetadata()
    {
-      // TODO Auto-generated method stub
-      return null;
+      return getCurrentCommandController().getMetadata();
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.CommandController#isEnabled()
-    */
    @Override
    public boolean isEnabled()
    {
-      // TODO Auto-generated method stub
-      return false;
+      return getCurrentCommandController().isEnabled();
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see java.lang.AutoCloseable#close()
-    */
+   @Override
+   public UICommand getCommand()
+   {
+      return getCurrentCommandController().getCommand();
+   }
+
    @Override
    public void close() throws Exception
    {
-      // TODO Auto-generated method stub
-
+      context.close();
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.WizardCommandController#canMoveToNextStep()
-    */
    @Override
    public boolean canMoveToNextStep()
    {
-      // TODO Auto-generated method stub
-      return false;
+      try
+      {
+         // Move only if there is a next step or if there is a subflow set
+         Class<? extends UICommand>[] next = getNextFrom(getCurrentCommandController().getCommand());
+         return (next == null || !subflow.isEmpty());
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.WizardCommandController#canMoveToPreviousStep()
-    */
    @Override
    public boolean canMoveToPreviousStep()
    {
-      // TODO Auto-generated method stub
-      return false;
+      return flowPointer > 0;
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.WizardCommandController#next()
-    */
-   @Override
-   public WizardCommandController next() throws IllegalStateException
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.WizardCommandController#previous()
-    */
-   @Override
-   public WizardCommandController previous() throws IllegalStateException
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.WizardCommandController#canExecute()
-    */
    @Override
    public boolean canExecute()
    {
-      // TODO Auto-generated method stub
-      return false;
+      return true;
+   }
+
+   @Override
+   public WizardCommandController next() throws Exception
+   {
+      // If the limit was reached
+      if (flowPointer + 1 == flow.size())
+      {
+         final Class<? extends UICommand> next;
+         Class<? extends UICommand>[] result = getNextFrom(getCurrentCommandController().getCommand());
+         if (result == null)
+         {
+            if (subflow.isEmpty())
+            {
+               throw new IllegalStateException("No next page found");
+            }
+            else
+            {
+               next = subflow.pop();
+            }
+         }
+         else
+         {
+            next = result[0];
+            for (int i = 1; i < result.length; i++)
+            {
+               // Save this subflow for later
+               subflow.add(result[i]);
+            }
+         }
+         CommandController controller = createControllerFor(next);
+         flow.add(controller);
+      }
+      flowPointer++;
+      return this;
+   }
+
+   @Override
+   public WizardCommandController previous() throws IllegalStateException
+   {
+      if (flowPointer == 0)
+      {
+         throw new IllegalStateException("No previous page found");
+      }
+      flowPointer--;
+      return this;
+   }
+
+   private CommandController getCurrentCommandController()
+   {
+      return flow.get(flowPointer);
+   }
+
+   private CommandController createControllerFor(Class<? extends UICommand> commandClass) throws Exception
+   {
+      UICommand command = addonRegistry.getServices(commandClass).get();
+      return controllerFactory.createSingleController(command, runtime);
+   }
+
+   private Class<? extends UICommand>[] getNextFrom(UICommand command) throws Exception
+   {
+      Class<? extends UICommand>[] result;
+      if (command instanceof UIWizard)
+      {
+         NavigationResult next = ((UIWizard) command).next(context);
+         result = next.getNext();
+      }
+      else
+      {
+         result = null;
+      }
+      return result;
    }
 
 }

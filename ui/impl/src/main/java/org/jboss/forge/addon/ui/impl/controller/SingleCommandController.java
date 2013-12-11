@@ -203,6 +203,12 @@ class SingleCommandController extends AbstractCommandController
       context.close();
    }
 
+   @Override
+   public UICommand getCommand()
+   {
+      return initialCommand;
+   }
+
    protected ConverterFactory getConverterFactory()
    {
       return addonRegistry.getServices(ConverterFactory.class).get();

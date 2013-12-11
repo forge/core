@@ -31,14 +31,14 @@ public interface WizardCommandController extends CommandController
     * 
     * @throws IllegalStateException if navigation is not possible
     */
-   public WizardCommandController next() throws IllegalStateException;
+   public WizardCommandController next() throws Exception;
 
    /**
     * Navigate to the previous visited page
     * 
     * @throws IllegalStateException if navigation is not possible
     */
-   public WizardCommandController previous() throws IllegalStateException;
+   public WizardCommandController previous() throws Exception;
 
    /**
     * Returns <code>true</code> if {@link UICommand#execute(org.jboss.forge.addon.ui.context.UIExecutionContext)} can be

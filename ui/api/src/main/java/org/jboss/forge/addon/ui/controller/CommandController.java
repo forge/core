@@ -99,4 +99,9 @@ public interface CommandController extends AutoCloseable
     * @return if the command is enabled
     */
    boolean isEnabled();
+
+   /**
+    * @return the underlying command
+    */
+   UICommand getCommand();
 }
