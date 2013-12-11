@@ -14,7 +14,7 @@ import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
-import org.jboss.forge.addon.ui.spi.UIContextFactory;
+import org.jboss.forge.addon.ui.spi.UIRuntime;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 
@@ -35,14 +35,14 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
    }
 
    @Override
-   public CommandController createSingleController(UICommand command, UIContextFactory uiFactory)
+   public CommandController createSingleController(UICommand command, UIRuntime uiFactory)
             throws Exception
    {
       return new SingleCommandController(addonRegistry, uiFactory, command);
    }
 
    @Override
-   public WizardCommandController createWizardController(UIWizard wizard, UIContextFactory uiFactory)
+   public WizardCommandController createWizardController(UIWizard wizard, UIRuntime uiFactory)
    {
       return null;
    }

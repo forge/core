@@ -21,7 +21,7 @@ import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.addon.ui.spi.UIContextFactory;
+import org.jboss.forge.addon.ui.spi.UIRuntime;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.validation.UIValidationMessage;
 import org.jboss.forge.addon.ui.validation.UIValidationMessage.Severity;
@@ -36,10 +36,10 @@ class SingleCommandController extends AbstractCommandController
 {
    private UIBuilderImpl uiBuilder;
 
-   public SingleCommandController(AddonRegistry addonRegistry, UIContextFactory contextFactory, UICommand initialCommand)
+   public SingleCommandController(AddonRegistry addonRegistry, UIRuntime runtime, UICommand initialCommand)
             throws Exception
    {
-      super(addonRegistry, contextFactory, initialCommand);
+      super(addonRegistry, runtime, initialCommand);
    }
 
    @Override
@@ -67,7 +67,7 @@ class SingleCommandController extends AbstractCommandController
    public Result execute() throws Exception
    {
       assertInitialized();
-      UIProgressMonitor progressMonitor = contextFactory.createProgressMonitor(context);
+      UIProgressMonitor progressMonitor = runtime.createProgressMonitor(context);
       UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor);
       return initialCommand.execute(executionContext);
    }
@@ -153,6 +153,12 @@ class SingleCommandController extends AbstractCommandController
             return false;
       }
       return true;
+   }
+
+   @Override
+   public void close() throws Exception
+   {
+      context.close();
    }
 
    protected ConverterFactory getConverterFactory()

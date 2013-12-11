@@ -40,7 +40,7 @@ public class ExampleCommand implements UICommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      return Results.success();
+      return Results.success("Hello, " + firstName.getValue());
    }
 
    @Override

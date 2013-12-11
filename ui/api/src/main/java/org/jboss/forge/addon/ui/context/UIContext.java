@@ -20,7 +20,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public interface UIContext
+public interface UIContext extends AutoCloseable
 {
    /**
     * Get an {@link Object} from the {@link UIContext} attribute map.

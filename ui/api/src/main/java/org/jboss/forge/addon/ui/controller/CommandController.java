@@ -21,7 +21,7 @@ import org.jboss.forge.addon.ui.validation.UIValidationMessage;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface CommandController
+public interface CommandController extends AutoCloseable
 {
    /**
     * Initializes this controller by calling {@link UICommand#initializeUI(org.jboss.forge.addon.ui.context.UIBuilder)}

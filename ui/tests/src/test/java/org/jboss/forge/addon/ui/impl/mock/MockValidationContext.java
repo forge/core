@@ -15,6 +15,7 @@ import java.util.Map;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.validation.UIValidationMessage;
 
 /**
  * 
@@ -73,7 +74,7 @@ public class MockValidationContext implements UIValidationContext
       }
       list.add(infoMessage);
    }
-   
+
    @Override
    public InputComponent<?, ?> getCurrentInputComponent()
    {
@@ -93,6 +94,12 @@ public class MockValidationContext implements UIValidationContext
    public List<String> getInformationsFor(InputComponent<?, ?> input)
    {
       return infos.get(input);
+   }
+
+   @Override
+   public List<UIValidationMessage> getMessages()
+   {
+      throw new UnsupportedOperationException();
    }
 
 }

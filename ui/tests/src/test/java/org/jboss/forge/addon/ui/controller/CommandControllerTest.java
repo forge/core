@@ -11,7 +11,8 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.ui.impl.mock.MockUIContextFactory;
+import org.jboss.forge.addon.ui.impl.mock.MockUIRuntime;
+import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -37,7 +38,7 @@ public class CommandControllerTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addClasses(ExampleCommand.class, ExampleNoUICommand.class)
-               .addPackage(MockUIContextFactory.class.getPackage())
+               .addPackage(MockUIRuntime.class.getPackage())
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
@@ -62,9 +63,26 @@ public class CommandControllerTest
    public void testSingleCommandController() throws Exception
    {
       CommandController controller = controllerFactory.createSingleController(exampleCommand,
-               new MockUIContextFactory());
+               new MockUIRuntime());
       Assert.assertTrue(controller.isEnabled());
       Assert.assertFalse(controller.isInitialized());
+
+      controller.initialize();
+      Assert.assertFalse(controller.getInputs().isEmpty());
+      Assert.assertTrue(controller.hasInput("firstName"));
+      controller.setValueFor("firstName", "Forge");
+      Assert.assertEquals("Forge", controller.getValueFor("firstName"));
+      Assert.assertTrue(controller.isValid());
+      Result result = controller.execute();
+      Assert.assertTrue(controller.isValid());
+      Assert.assertEquals("Hello, Forge", result.getMessage());
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testInitialized() throws Exception
+   {
+      CommandController controller = controllerFactory.createSingleController(exampleCommand,
+               new MockUIRuntime());
       Assert.assertFalse(controller.getInputs().isEmpty());
    }
 

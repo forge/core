@@ -148,7 +148,7 @@ public class CommandTesterImpl<C extends UICommand> implements CommandTester<C>
       }
       finally
       {
-         context.destroy();
+         context.close();
       }
    }
 

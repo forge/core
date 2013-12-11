@@ -61,7 +61,8 @@ public class UIContextImpl extends AbstractUIContext
       }
    }
 
-   public void destroy()
+   @Override
+   public void close()
    {
       for (UIContextListener listener : listeners)
       {

@@ -53,10 +53,15 @@ public abstract class AbstractUIContext implements UIContext
    {
       map.put(key, value);
    }
-   
+
    @Override
    public UIProvider getProvider()
    {
       throw new UnsupportedOperationException("not implemented yet");
+   }
+
+   @Override
+   public void close() throws Exception
+   {
    }
 }

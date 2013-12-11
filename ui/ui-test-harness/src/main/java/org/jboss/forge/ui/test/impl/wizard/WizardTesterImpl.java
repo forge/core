@@ -208,7 +208,7 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       }
       finally
       {
-         context.destroy();
+         context.close();
       }
    }
 
