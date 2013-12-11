@@ -11,12 +11,13 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.services.Imported;
-import org.jboss.forge.ui.test.WizardTester;
+import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -49,32 +50,34 @@ public class CommandScopedTest
    private Imported<CommandScopedModel> modelInstance;
 
    @Inject
-   private WizardTester<WizardWithScopedObject> wizardTester;
+   private UITestHarness testHarness;
 
    @Test
    public void testCommandScope() throws Exception
    {
-      wizardTester.launch();
-      Assert.assertTrue(wizardTester.isValid());
+      WizardCommandController tester = testHarness.createWizardController(WizardWithScopedObject.class);
+      tester.initialize();
+      Assert.assertTrue(tester.isValid());
       CommandScopedModel model = modelInstance.get();
       Assert.assertNull(model.getName());
-      wizardTester.setValueFor("firstName", "Forge");
+      tester.setValueFor("firstName", "Forge");
       Assert.assertNotNull(model);
-      Assert.assertFalse(wizardTester.canFlipToNextPage());
+      Assert.assertFalse(tester.canMoveToNextStep());
       Assert.assertEquals("Forge", model.getName());
-      wizardTester.finish(null);
+      tester.execute();
    }
 
    @Test
    @org.junit.Ignore("FORGE-1209")
    public void testImportedWithCustomScope() throws Exception
    {
-      wizardTester.launch();
+      WizardCommandController tester = testHarness.createWizardController(WizardWithScopedObject.class);
+      tester.initialize();
       Assert.assertTrue("Should not be satisfied since there is no Context in scope", modelInstance.isUnsatisfied());
-      Assert.assertTrue(wizardTester.isValid());
+      Assert.assertTrue(tester.isValid());
       Assert.assertFalse("Should be satisfied since there command context was initialized",
                modelInstance.isUnsatisfied());
-      wizardTester.finish(null);
+      tester.execute();
       Assert.assertTrue("Should not be satisfied since there is no Context in scope after finish is called",
                modelInstance.isUnsatisfied());
    }

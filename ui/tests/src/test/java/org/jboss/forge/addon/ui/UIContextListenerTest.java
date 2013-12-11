@@ -11,12 +11,13 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.impl.mock.MockUIContextListener;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.ui.test.WizardTester;
+import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -49,15 +50,16 @@ public class UIContextListenerTest
    private MockUIContextListener listener;
 
    @Inject
-   private WizardTester<MyFirstWizard> wizardTester;
+   private UITestHarness testHarness;
 
    @Test
    public void testContextListenerIsSet() throws Exception
    {
-      wizardTester.launch();
-      Assert.assertTrue("Wizard is not on a valid state", wizardTester.isValid());
+      WizardCommandController tester = testHarness.createWizardController(MyFirstWizard.class);
+      tester.initialize();
+      Assert.assertTrue("Wizard is not on a valid state", tester.isValid());
       Assert.assertTrue("Listener is not set", listener.isContextInitialized());
-      wizardTester.finish(null);
+      tester.execute();
       Assert.assertFalse("Listener is still set", listener.isContextInitialized());
 
    }

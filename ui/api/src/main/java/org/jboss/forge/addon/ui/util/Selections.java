@@ -39,9 +39,13 @@ public final class Selections
    {
       private final List<SELECTIONTYPE> selection;
 
+      @SuppressWarnings("unchecked")
       public SelectionImpl(SELECTIONTYPE... type)
       {
-         this.selection = Arrays.asList(type);
+         if (type != null)
+            this.selection = Arrays.asList(type);
+         else
+            selection = Collections.emptyList();
       }
 
       @Override

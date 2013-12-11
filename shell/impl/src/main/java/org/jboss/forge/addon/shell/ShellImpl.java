@@ -29,14 +29,14 @@ import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
 import org.jboss.forge.addon.shell.aesh.ForgeManProvider;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIOutputImpl;
-import org.jboss.forge.addon.ui.CommandExecutionListener;
+import org.jboss.forge.addon.ui.AbstractUIProvider;
 import org.jboss.forge.addon.ui.context.UIContextListener;
+import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
-import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
 
 /**
@@ -46,9 +46,8 @@ import org.jboss.forge.furnace.util.Assert;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Vetoed
-public class ShellImpl implements Shell
+public class ShellImpl extends AbstractUIProvider implements Shell
 {
-   private final List<CommandExecutionListener> listeners = new LinkedList<CommandExecutionListener>();
 
    private FileResource<?> currentResource;
    private final AddonRegistry addonRegistry;
@@ -77,22 +76,6 @@ public class ShellImpl implements Shell
                .create();
       this.output = new ShellUIOutputImpl(console);
       this.console.start();
-   }
-
-   @Override
-   public ListenerRegistration<CommandExecutionListener> addCommandExecutionListener(
-            final CommandExecutionListener listener)
-   {
-      listeners.add(listener);
-      return new ListenerRegistration<CommandExecutionListener>()
-      {
-         @Override
-         public CommandExecutionListener removeListener()
-         {
-            listeners.remove(listener);
-            return listener;
-         }
-      };
    }
 
    private void updatePrompt()
@@ -147,7 +130,7 @@ public class ShellImpl implements Shell
 
    private void firePreCommandListeners(AbstractShellInteraction shellCommand)
    {
-      for (CommandExecutionListener listener : listeners)
+      for (CommandExecutionListener listener : getListeners())
       {
          listener.preCommandExecuted(shellCommand.getSourceCommand(), shellCommand.getExecutionContext());
       }
@@ -155,7 +138,7 @@ public class ShellImpl implements Shell
 
    private void firePostCommandListeners(AbstractShellInteraction shellCommand, Result result)
    {
-      for (CommandExecutionListener listener : listeners)
+      for (CommandExecutionListener listener : getListeners())
       {
          listener.postCommandExecuted(shellCommand.getSourceCommand(), shellCommand.getExecutionContext(), result);
       }
@@ -164,11 +147,10 @@ public class ShellImpl implements Shell
 
    private void firePostCommandFailureListeners(AbstractShellInteraction shellCommand, Throwable failure)
    {
-      for (CommandExecutionListener listener : listeners)
+      for (CommandExecutionListener listener : getListeners())
       {
          listener.postCommandFailure(shellCommand.getSourceCommand(), shellCommand.getExecutionContext(), failure);
       }
-
    }
 
    @PreDestroy

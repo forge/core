@@ -1,40 +1,38 @@
-/**
+/*
  * Copyright 2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.jboss.forge.ui.test.impl;
 
 import org.jboss.forge.addon.ui.DefaultUIProgressMonitor;
 import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.spi.UIRuntime;
 
 /**
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
- * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class UIExecutionContextImpl implements UIExecutionContext
+public class UIRuntimeImpl implements UIRuntime
 {
+   private final UIProgressMonitor progressMonitor = new DefaultUIProgressMonitor();
    private final UIContext context;
-   private final UIProgressMonitor progressMonitor;
 
-   public UIExecutionContextImpl(UIContext context)
+   public UIRuntimeImpl(UIContextImpl context)
    {
       this.context = context;
-      this.progressMonitor = new DefaultUIProgressMonitor();
    }
 
    @Override
-   public UIContext getUIContext()
+   public UIContext createUIContext()
    {
       return context;
    }
 
    @Override
-   public UIProgressMonitor getProgressMonitor()
+   public UIProgressMonitor createProgressMonitor(UIContext context)
    {
       return progressMonitor;
    }

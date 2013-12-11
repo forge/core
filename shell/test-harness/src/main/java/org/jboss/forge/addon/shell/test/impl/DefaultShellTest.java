@@ -44,8 +44,8 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 @Singleton
 public class DefaultShellTest implements ShellTest
 {
-   private TestCommandListener listener = new TestCommandListener();
-   private TestStreams provider = new TestStreams();
+   private final TestCommandListener listener = new TestCommandListener();
+   private final TestStreams provider = new TestStreams();
 
    @Inject
    private ShellFactory factory;
@@ -325,9 +325,9 @@ public class DefaultShellTest implements ShellTest
 
    private class TestStreams
    {
-      private PipedOutputStream stdin = new PipedOutputStream();
-      private ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-      private ByteArrayOutputStream stderr = new ByteArrayOutputStream();
+      private final PipedOutputStream stdin = new PipedOutputStream();
+      private final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+      private final ByteArrayOutputStream stderr = new ByteArrayOutputStream();
       private PipedInputStream inputStream;
 
       private Settings settings;
@@ -420,7 +420,7 @@ public class DefaultShellTest implements ShellTest
       getStdIn().write(string.getBytes());
    }
 
-   private KeyOperation completeChar = new KeyOperation(Key.CTRL_I, Operation.COMPLETE);
+   private final KeyOperation completeChar = new KeyOperation(Key.CTRL_I, Operation.COMPLETE);
 
    @Override
    public void sendCompletionSignal() throws IOException

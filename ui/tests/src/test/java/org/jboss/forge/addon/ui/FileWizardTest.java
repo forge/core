@@ -11,14 +11,14 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
-import org.jboss.forge.ui.test.WizardTester;
+import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -49,24 +49,21 @@ public class FileWizardTest
    }
 
    @Inject
-   private WizardTester<FileWizard> wizard;
-
-   @Test
-   public void testInjection() throws Exception
-   {
-      Assert.assertNotNull(wizard);
-   }
+   private UITestHarness testHarness;
 
    @Test
    public void testExecution() throws Exception
    {
-      wizard.launch();
-      InputComponent<?, ?> inputComponent = wizard.getInputComponent("file");
+      WizardCommandController wizard = testHarness.createWizardController(FileWizard.class);
+      wizard.initialize();
+      InputComponent<?, ?> inputComponent = wizard.getInput("file");
       Assert.assertNotNull(inputComponent);
-      wizard.setValueFor("file", OperatingSystemUtils.getUserHomePath());
-      Assert.assertNotNull(InputComponents.getValueFor(inputComponent));
-      wizard.setValueFor("file", "");
-      Assert.assertNull(InputComponents.getValueFor(inputComponent));
+      String name = inputComponent.getName();
+      Assert.assertEquals("file", name);
+      wizard.setValueFor(name, OperatingSystemUtils.getUserHomePath());
+      Assert.assertNotNull(wizard.getValueFor(name));
+      wizard.setValueFor(name, "");
+      Assert.assertNull(wizard.getValueFor(name));
       Assert.assertNotNull(wizard);
    }
 }

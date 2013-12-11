@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.ui.context;
 
-import org.jboss.forge.addon.ui.CommandExecutionListener;
+import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
 
 /**
  * Listener for lifecycle events of a {@link UIContext}.

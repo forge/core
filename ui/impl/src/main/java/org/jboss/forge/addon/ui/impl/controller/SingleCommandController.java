@@ -15,6 +15,7 @@ import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
 import org.jboss.forge.addon.ui.impl.context.UIBuilderImpl;
 import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
@@ -26,20 +27,22 @@ import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.validation.UIValidationMessage;
 import org.jboss.forge.addon.ui.validation.UIValidationMessage.Severity;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 
 /**
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 class SingleCommandController extends AbstractCommandController
 {
    private UIBuilderImpl uiBuilder;
 
-   public SingleCommandController(AddonRegistry addonRegistry, UIRuntime runtime, UICommand initialCommand)
+   public SingleCommandController(AddonRegistry addonRegistry, UIRuntime runtime, UICommand command)
             throws Exception
    {
-      super(addonRegistry, runtime, initialCommand);
+      super(addonRegistry, runtime, command);
    }
 
    @Override
@@ -69,14 +72,53 @@ class SingleCommandController extends AbstractCommandController
       assertInitialized();
       UIProgressMonitor progressMonitor = runtime.createProgressMonitor(context);
       UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor);
-      return initialCommand.execute(executionContext);
+
+      Imported<CommandExecutionListener> listeners = addonRegistry.getServices(CommandExecutionListener.class);
+      try
+      {
+         if (!isValid())
+         {
+            throw new IllegalStateException("Command is not in valid state and cannot be executed.");
+         }
+
+         for (CommandExecutionListener listener : listeners)
+         {
+            listener.preCommandExecuted(initialCommand, executionContext);
+         }
+
+         try
+         {
+            Result result = initialCommand.execute(executionContext);
+            for (CommandExecutionListener listener : listeners)
+            {
+               listener.postCommandExecuted(initialCommand, executionContext, result);
+            }
+            return result;
+         }
+         catch (Exception e)
+         {
+            for (CommandExecutionListener listener : listeners)
+            {
+               listener.postCommandFailure(initialCommand, executionContext, e);
+            }
+            throw e;
+         }
+      }
+      finally
+      {
+         for (CommandExecutionListener listener : listeners)
+         {
+            listeners.release(listener);
+         }
+         context.close();
+      }
    }
 
    @Override
-   public List<InputComponent<?, Object>> getInputs()
+   public List<InputComponent<?, ?>> getInputs()
    {
       assertInitialized();
-      return new ArrayList<InputComponent<?, Object>>(uiBuilder.getInputs().values());
+      return new ArrayList<InputComponent<?, ?>>(uiBuilder.getInputs().values());
    }
 
    @Override
@@ -126,7 +168,7 @@ class SingleCommandController extends AbstractCommandController
    {
       assertInitialized();
       UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
-      for (InputComponent<?, Object> inputComponent : getInputs())
+      for (InputComponent<?, ?> inputComponent : getInputs())
       {
          validationContext.setCurrentInputComponent(inputComponent);
          inputComponent.validate(validationContext);

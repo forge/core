@@ -41,6 +41,7 @@ public class UIContextImpl extends AbstractUIContext
       init();
    }
 
+   @SuppressWarnings("unchecked")
    public <T> void setInitialSelection(T... selection)
    {
       this.initialSelection = Selections.from(selection);

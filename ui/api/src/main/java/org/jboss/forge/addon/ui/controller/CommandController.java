@@ -37,7 +37,8 @@ public interface CommandController extends AutoCloseable
    boolean isInitialized();
 
    /**
-    * Calls {@link UICommand#execute(org.jboss.forge.addon.ui.context.UIExecutionContext)}
+    * Calls {@link UICommand#execute(org.jboss.forge.addon.ui.context.UIExecutionContext)}. Causes available
+    * {@link CommandExecutionListener} instances to be called.
     * 
     * @throws Exception if problems occurred during initialization
     */
@@ -73,14 +74,14 @@ public interface CommandController extends AutoCloseable
    /**
     * Returns a {@link List} of {@link InputComponent} instances for this command
     */
-   List<InputComponent<?, Object>> getInputs();
+   List<InputComponent<?, ?>> getInputs();
 
    /**
     * @param inputName the input name
     * @return the {@link InputComponent} in this command
     * @throws IllegalArgumentException if no input with the given name exists
     */
-   InputComponent<?, Object> getInput(String inputName) throws IllegalArgumentException;
+   InputComponent<?, ?> getInput(String inputName) throws IllegalArgumentException;
 
    /**
     * Returns <code>true</code> if the {@link InputComponent} exists in the underlying {@link UICommand}

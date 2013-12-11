@@ -22,6 +22,7 @@ import org.jboss.forge.addon.projects.mock.MockProjectType2;
 import org.jboss.forge.addon.projects.mock.MockProjectType3;
 import org.jboss.forge.addon.projects.mock.MockProjectTypeUnsatisfied;
 import org.jboss.forge.addon.projects.ui.NewProjectWizard;
+import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -30,7 +31,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.impl.util.Iterators;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
-import org.jboss.forge.ui.test.WizardTester;
+import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -66,7 +67,7 @@ public class NewProjectWizardBuildSystem2Test
    }
 
    @Inject
-   private WizardTester<NewProjectWizard> wizard;
+   private UITestHarness testHarness;
 
    @SuppressWarnings("unchecked")
    @Test
@@ -75,19 +76,20 @@ public class NewProjectWizardBuildSystem2Test
       File tempDir = OperatingSystemUtils.createTempDir();
       try
       {
-         wizard.launch();
-         Assert.assertFalse(wizard.canFlipToNextPage());
+         WizardCommandController wizard = testHarness.createWizardController(NewProjectWizard.class);
+         wizard.initialize();
+         Assert.assertFalse(wizard.canMoveToNextStep());
          wizard.setValueFor("named", "test");
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
          wizard.setValueFor("type", "mock");
-         Assert.assertEquals("buildsystem", InputComponents.getValueFor(wizard.getInputComponent("buildSystem"))
+         Assert.assertEquals("buildsystem", InputComponents.getValueFor(wizard.getInput("buildSystem"))
                   .toString());
 
          wizard.setValueFor("type", "mock2");
-         Assert.assertEquals("buildsystem2", InputComponents.getValueFor(wizard.getInputComponent("buildSystem"))
+         Assert.assertEquals("buildsystem2", InputComponents.getValueFor(wizard.getInput("buildSystem"))
                   .toString());
-         UISelectOne<BuildSystem> buildSystems = (UISelectOne<BuildSystem>) wizard.getInputComponent("buildSystem");
+         UISelectOne<BuildSystem> buildSystems = (UISelectOne<BuildSystem>) wizard.getInput("buildSystem");
          List<BuildSystem> choices = Iterators.asList(buildSystems.getValueChoices());
          Assert.assertEquals(1, choices.size());
 
@@ -111,13 +113,14 @@ public class NewProjectWizardBuildSystem2Test
       File tempDir = OperatingSystemUtils.createTempDir();
       try
       {
-         wizard.launch();
-         Assert.assertFalse(wizard.canFlipToNextPage());
+         WizardCommandController wizard = testHarness.createWizardController(NewProjectWizard.class);
+         wizard.initialize();
+         Assert.assertFalse(wizard.canMoveToNextStep());
          wizard.setValueFor("named", "test");
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
          wizard.setValueFor("type", "unsatisfied");
-         Assert.assertNotEquals("unsatisfied", InputComponents.getValueFor(wizard.getInputComponent("type")).toString());
+         Assert.assertNotEquals("unsatisfied", InputComponents.getValueFor(wizard.getInput("type")).toString());
       }
       finally
       {

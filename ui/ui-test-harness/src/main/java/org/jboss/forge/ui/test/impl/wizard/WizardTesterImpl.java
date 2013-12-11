@@ -16,19 +16,18 @@ import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.ui.CommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
+import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.ui.test.WizardTester;
 import org.jboss.forge.ui.test.impl.UIBuilderImpl;
 import org.jboss.forge.ui.test.impl.UIContextImpl;
-import org.jboss.forge.ui.test.impl.UIExecutionContextImpl;
 import org.jboss.forge.ui.test.impl.UIValidationContextImpl;
 
 /**
@@ -38,7 +37,7 @@ import org.jboss.forge.ui.test.impl.UIValidationContextImpl;
  * 
  */
 @Vetoed
-public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
+public class WizardTesterImpl<W extends UIWizard>
 {
    private final AddonRegistry addonRegistry;
 
@@ -57,20 +56,17 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       this.wizardClass = wizardClass;
    }
 
-   @Override
    public void setInitialSelection(Resource<?>... selection)
    {
       context.setInitialSelection(selection);
    }
 
-   @Override
    public void launch() throws Exception
    {
       pages.add(createBuilder(wizardClass));
    }
 
    @SuppressWarnings("unchecked")
-   @Override
    public void next() throws Exception
    {
       if (!canFlipToNextPage())
@@ -97,7 +93,6 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       pages.add(nextBuilder);
    }
 
-   @Override
    public void previous() throws Exception
    {
       if (!canFlipToPreviousPage())
@@ -107,7 +102,6 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       pages.removeLast();
    }
 
-   @Override
    public boolean canFlipToNextPage()
    {
       UIBuilderImpl currentBuilder = getCurrentBuilder();
@@ -131,37 +125,31 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       }
    }
 
-   @Override
    public boolean canFlipToPreviousPage()
    {
       return pages.size() > 1;
    }
 
-   @Override
    public boolean canFinish()
    {
       return getValidationErrors().isEmpty() && !canFlipToNextPage();
    }
 
-   @Override
    public boolean isValid()
    {
       return getValidationErrors().isEmpty();
    }
 
-   @Override
    public List<String> getValidationErrors()
    {
       return getValidationErrors(getCurrentBuilder());
    }
 
-   @Override
    public List<Result> finish() throws Exception
    {
       return finish(null);
    }
 
-   @Override
    public List<Result> finish(CommandExecutionListener listener) throws Exception
    {
       try
@@ -176,7 +164,7 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
                throw new IllegalStateException(errors.toString());
             }
          }
-         UIExecutionContext executionContext = new UIExecutionContextImpl(context);
+         UIExecutionContext executionContext = new UIExecutionContextImpl(context, null);
          // All good. Hit it !
          for (UIBuilderImpl builder : pages)
          {
@@ -226,7 +214,6 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
    }
 
    @SuppressWarnings("unchecked")
-   @Override
    public void setValueFor(String property, Object value)
    {
       UIBuilderImpl currentBuilder = getCurrentBuilder();
@@ -238,7 +225,6 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       InputComponents.setValueFor(getConverterFactory(), (InputComponent<?, Object>) input, value);
    }
 
-   @Override
    public InputComponent<?, ?> getInputComponent(String property)
    {
       UIBuilderImpl currentBuilder = getCurrentBuilder();
@@ -264,7 +250,6 @@ public class WizardTesterImpl<W extends UIWizard> implements WizardTester<W>
       return addonRegistry.getServices(ConverterFactory.class).get();
    }
 
-   @Override
    public boolean isEnabled()
    {
       return getCurrentBuilder().getCommand().isEnabled(context);

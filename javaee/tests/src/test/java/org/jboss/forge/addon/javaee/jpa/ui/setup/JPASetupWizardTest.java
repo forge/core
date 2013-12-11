@@ -26,13 +26,14 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.ui.test.WizardTester;
+import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
@@ -79,31 +80,29 @@ public class JPASetupWizardTest
    private ProjectFactory projectFactory;
 
    @Inject
-   private WizardTester<JPASetupWizard> tester;
-   @Inject
-   private WizardTester<JPASetupWizard> tester2;
+   private UITestHarness testHarness;
 
    @Test
    public void testSetup() throws Exception
    {
-      // Execute SUT
       final Project project = projectFactory.createTempProject();
-      tester.setInitialSelection(project.getProjectRoot());
+      WizardCommandController tester = testHarness.createWizardController(JPASetupWizard.class,
+               project.getProjectRoot());
 
-      // Launch
-      tester.launch();
+      tester.initialize();
 
-      Assert.assertFalse(tester.canFlipToPreviousPage());
+      Assert.assertFalse(tester.canMoveToPreviousStep());
       // Setting UI values
       tester.setValueFor("provider", defaultProvider);
       tester.setValueFor("container", customJTAProvider);
-      Assert.assertTrue(tester.canFlipToNextPage());
+      Assert.assertTrue(tester.canMoveToNextStep());
 
       tester.next();
 
+      Assert.assertTrue(tester.canExecute());
       tester.setValueFor("dataSourceName", "java:jboss:jta-ds");
       final AtomicInteger counter = new AtomicInteger();
-      tester.finish(new AbstractCommandExecutionListener()
+      tester.execute(new AbstractCommandExecutionListener()
       {
          @Override
          public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
@@ -125,20 +124,20 @@ public class JPASetupWizardTest
    {
       // Execute SUT
       final Project project = projectFactory.createTempProject();
-      tester.setInitialSelection(project.getProjectRoot());
+      WizardCommandController tester = testHarness.createWizardController(JPASetupWizard.class,
+               project.getProjectRoot());
 
-      // Launch
-      tester.launch();
+      tester.initialize();
 
-      Assert.assertFalse(tester.canFlipToPreviousPage());
+      Assert.assertFalse(tester.canMoveToPreviousStep());
       // Setting UI values
       tester.setValueFor("provider", defaultProvider);
       tester.setValueFor("container", eap6Container);
-      Assert.assertTrue(tester.canFlipToNextPage());
+      Assert.assertTrue(tester.canMoveToNextStep());
 
       tester.next();
 
-      tester.finish(new AbstractCommandExecutionListener()
+      tester.execute(new AbstractCommandExecutionListener()
       {
          @Override
          public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
@@ -152,20 +151,21 @@ public class JPASetupWizardTest
       List<PersistenceUnitCommon> allUnits = config.getAllPersistenceUnit();
       Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME, allUnits.get(0).getName());
 
-      tester2.setInitialSelection(project.getProjectRoot());
+      WizardCommandController tester2 = testHarness.createWizardController(JPASetupWizard.class,
+               project.getProjectRoot());
 
       // Launch
-      tester2.launch();
+      tester2.initialize();
 
-      Assert.assertFalse(tester2.canFlipToPreviousPage());
+      Assert.assertFalse(tester2.canMoveToPreviousStep());
       // Setting UI values
       tester2.setValueFor("provider", defaultProvider);
       tester2.setValueFor("container", eap6Container);
-      Assert.assertTrue(tester2.canFlipToNextPage());
+      Assert.assertTrue(tester2.canMoveToNextStep());
 
       tester2.next();
 
-      tester2.finish(new AbstractCommandExecutionListener()
+      tester2.execute(new AbstractCommandExecutionListener()
       {
          @Override
          public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
@@ -186,23 +186,23 @@ public class JPASetupWizardTest
    {
       // Execute SUT
       final Project project = projectFactory.createTempProject();
-      tester.setInitialSelection(project.getProjectRoot());
+      WizardCommandController tester = testHarness.createWizardController(JPASetupWizard.class,
+               project.getProjectRoot());
 
-      // Launch
-      tester.launch();
+      tester.initialize();
 
-      Assert.assertFalse(tester.canFlipToPreviousPage());
+      Assert.assertFalse(tester.canMoveToPreviousStep());
       // Setting UI values
       tester.setValueFor("provider", defaultProvider);
       tester.setValueFor("container", customJTAProvider);
       tester.setValueFor("configureMetadata", Boolean.TRUE);
-      Assert.assertTrue(tester.canFlipToNextPage());
+      Assert.assertTrue(tester.canMoveToNextStep());
 
       tester.next();
 
       tester.setValueFor("dataSourceName", "java:jboss:jta-ds");
       final AtomicInteger counter = new AtomicInteger();
-      tester.finish(new AbstractCommandExecutionListener()
+      tester.execute(new AbstractCommandExecutionListener()
       {
          @Override
          public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)

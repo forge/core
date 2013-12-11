@@ -4,8 +4,9 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.ui;
+package org.jboss.forge.addon.ui.controller;
 
+import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.result.Result;
 

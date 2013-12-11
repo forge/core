@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.ui;
 
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
 import org.jboss.forge.addon.ui.result.Result;
 
 /**

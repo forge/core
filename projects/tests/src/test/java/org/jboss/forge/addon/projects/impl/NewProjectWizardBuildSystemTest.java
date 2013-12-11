@@ -17,13 +17,14 @@ import org.jboss.forge.addon.projects.mock.MockBuildSystem;
 import org.jboss.forge.addon.projects.mock.MockProjectTypeNoRequiredFacets;
 import org.jboss.forge.addon.projects.mock.MockProjectTypeNullRequiredFacets;
 import org.jboss.forge.addon.projects.ui.NewProjectWizard;
+import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
-import org.jboss.forge.ui.test.WizardTester;
+import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -55,7 +56,7 @@ public class NewProjectWizardBuildSystemTest
    }
 
    @Inject
-   private WizardTester<NewProjectWizard> wizard;
+   private UITestHarness testHarness;
 
    @Test
    public void testProjectTypeWithNoBuildSystemRequirements() throws Exception
@@ -63,13 +64,14 @@ public class NewProjectWizardBuildSystemTest
       File tempDir = OperatingSystemUtils.createTempDir();
       try
       {
-         wizard.launch();
-         Assert.assertFalse(wizard.canFlipToNextPage());
+         WizardCommandController wizard = testHarness.createWizardController(NewProjectWizard.class);
+         wizard.initialize();
+         Assert.assertFalse(wizard.canMoveToNextStep());
          wizard.setValueFor("named", "test");
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
          wizard.setValueFor("type", "norequirements");
-         Assert.assertEquals("norequirements", InputComponents.getValueFor(wizard.getInputComponent("type")).toString());
+         Assert.assertEquals("norequirements", InputComponents.getValueFor(wizard.getInput("type")).toString());
       }
       finally
       {
@@ -83,13 +85,14 @@ public class NewProjectWizardBuildSystemTest
       File tempDir = OperatingSystemUtils.createTempDir();
       try
       {
-         wizard.launch();
-         Assert.assertFalse(wizard.canFlipToNextPage());
+         WizardCommandController wizard = testHarness.createWizardController(NewProjectWizard.class);
+         wizard.initialize();
+         Assert.assertFalse(wizard.canMoveToNextStep());
          wizard.setValueFor("named", "test");
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
          wizard.setValueFor("type", "nullrequirements");
-         Assert.assertEquals("nullrequirements", InputComponents.getValueFor(wizard.getInputComponent("type"))
+         Assert.assertEquals("nullrequirements", InputComponents.getValueFor(wizard.getInput("type"))
                   .toString());
       }
       finally

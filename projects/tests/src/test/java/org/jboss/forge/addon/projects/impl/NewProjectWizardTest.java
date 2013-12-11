@@ -16,12 +16,13 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.mock.MockBuildSystem;
 import org.jboss.forge.addon.projects.mock.MockProjectType;
 import org.jboss.forge.addon.projects.ui.NewProjectWizard;
+import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
-import org.jboss.forge.ui.test.WizardTester;
+import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -51,14 +52,9 @@ public class NewProjectWizardTest
       return archive;
    }
 
-   @Inject
-   private WizardTester<NewProjectWizard> wizard;
 
-   @Test
-   public void testInjectionNotNull()
-   {
-      Assert.assertNotNull(wizard);
-   }
+   @Inject
+   private UITestHarness testHarness;
 
    @Test
    public void testInvokeCommand() throws Exception
@@ -66,17 +62,18 @@ public class NewProjectWizardTest
       File tempDir = OperatingSystemUtils.createTempDir();
       try
       {
-         wizard.launch();
-         Assert.assertFalse(wizard.canFlipToNextPage());
+         WizardCommandController wizard = testHarness.createWizardController(NewProjectWizard.class);
+         wizard.initialize();
+         Assert.assertFalse(wizard.canMoveToNextStep());
          wizard.setValueFor("named", "test");
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
          wizard.setValueFor("type", "mock");
          Assert.assertTrue(wizard.isValid());
-         Assert.assertTrue(wizard.canFinish());
+         Assert.assertTrue(wizard.canExecute());
          File targetDirectory = new File(tempDir, "test");
          Assert.assertFalse(targetDirectory.exists());
-         wizard.finish(null);
+         wizard.execute();
 
          Assert.assertTrue(targetDirectory.exists());
       }
@@ -92,24 +89,25 @@ public class NewProjectWizardTest
       File tempDir = OperatingSystemUtils.createTempDir();
       try
       {
-         wizard.launch();
-         Assert.assertFalse(wizard.canFlipToNextPage());
+         WizardCommandController wizard = testHarness.createWizardController(NewProjectWizard.class);
+         wizard.initialize();
+         Assert.assertFalse(wizard.canMoveToNextStep());
          wizard.setValueFor("named", "Test Project Name Invalid");
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
          wizard.setValueFor("type", "mock");
 
          Assert.assertFalse(wizard.isValid());
-         Assert.assertFalse(wizard.canFinish());
+         Assert.assertFalse(wizard.canExecute());
 
          wizard.setValueFor("named", "Test-Project-Name-Valid");
 
          Assert.assertTrue(wizard.isValid());
-         Assert.assertTrue(wizard.canFinish());
+         Assert.assertTrue(wizard.canExecute());
 
          File targetDirectory = new File(tempDir, "Test-Project-Name-Valid");
          Assert.assertFalse(targetDirectory.exists());
-         wizard.finish(null);
+         wizard.execute();
 
          Assert.assertTrue(targetDirectory.exists());
       }
@@ -128,17 +126,18 @@ public class NewProjectWizardTest
       something.mkdirs();
       try
       {
-         wizard.launch();
-         Assert.assertFalse(wizard.canFlipToNextPage());
-         Assert.assertFalse(wizard.getInputComponent("overwrite").isEnabled());
+         WizardCommandController wizard = testHarness.createWizardController(NewProjectWizard.class);
+         wizard.initialize();
+         Assert.assertFalse(wizard.canMoveToNextStep());
+         Assert.assertFalse(wizard.getInput("overwrite").isEnabled());
          wizard.setValueFor("named", "test");
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
          wizard.setValueFor("type", "mock");
          Assert.assertFalse(wizard.isValid());
-         Assert.assertTrue(wizard.getInputComponent("overwrite").isEnabled());
-         Assert.assertFalse(wizard.canFlipToNextPage());
-         Assert.assertFalse(wizard.canFinish());
+         Assert.assertTrue(wizard.getInput("overwrite").isEnabled());
+         Assert.assertFalse(wizard.canMoveToNextStep());
+         Assert.assertFalse(wizard.canExecute());
       }
       finally
       {
