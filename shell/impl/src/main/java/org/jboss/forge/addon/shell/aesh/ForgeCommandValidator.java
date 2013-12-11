@@ -19,11 +19,11 @@ import org.jboss.forge.addon.shell.ui.ShellValidationContext;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
+@SuppressWarnings("rawtypes")
 public enum ForgeCommandValidator implements CommandValidator
 {
    INSTANCE;
 
-   @SuppressWarnings("rawtypes")
    @Override
    public void validate(Command command) throws CommandValidatorException
    {

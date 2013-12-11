@@ -6,6 +6,7 @@ import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIContextListener;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
@@ -16,8 +17,9 @@ import org.jboss.forge.furnace.Furnace;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class ExitCommand extends AbstractShellCommand
+public class ExitCommand extends AbstractShellCommand implements UIContextListener
 {
+   private static final String FORGE_SHUTDOWN_ATTRIBUTE = "forge.shutdown";
 
    @Inject
    private Furnace forge;
@@ -36,9 +38,27 @@ public class ExitCommand extends AbstractShellCommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      Shell shell = (Shell) context.getUIContext().getProvider();
-      shell.getConsole().stop();
-      forge.stop();
+      UIContext uiContext = context.getUIContext();
+      uiContext.setAttribute(FORGE_SHUTDOWN_ATTRIBUTE, Boolean.TRUE);
       return Results.success();
    }
+
+   @Override
+   public void contextDestroyed(UIContext context)
+   {
+      Boolean shutdown = (Boolean) context.getAttribute(FORGE_SHUTDOWN_ATTRIBUTE);
+      if (shutdown != null && shutdown)
+      {
+         Shell shell = (Shell) context.getProvider();
+         shell.getConsole().stop();
+         forge.stop();
+      }
+   }
+
+   @Override
+   public void contextInitialized(UIContext context)
+   {
+      // Do nothing
+   }
+
 }

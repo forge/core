@@ -12,7 +12,6 @@ import java.util.TreeSet;
 
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.aesh.console.command.CommandNotFoundException;
-import org.jboss.aesh.console.command.container.AeshCommandContainer;
 import org.jboss.aesh.console.command.container.CommandContainer;
 import org.jboss.aesh.console.command.registry.AeshCommandRegistryBuilder;
 import org.jboss.aesh.console.command.registry.CommandRegistry;
@@ -75,15 +74,11 @@ public class ForgeCommandRegistry implements CommandRegistry
       {
          CommandLineParser parser = cmd.getParser(shellContext, completeLine == null ? name : completeLine);
          CommandAdapter command = new CommandAdapter(shell, cmd);
-         return new AeshCommandContainer(parser, command);
+         return new ForgeCommandContainer(shellContext, parser, command);
       }
       catch (Exception e)
       {
          throw new RuntimeException("Error while creating parser: " + e.getMessage(), e);
-      }
-      finally
-      {
-         shellContext.destroy();
       }
    }
 

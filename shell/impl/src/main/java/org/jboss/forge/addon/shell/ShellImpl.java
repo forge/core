@@ -189,6 +189,7 @@ public class ShellImpl implements Shell
    {
       Assert.notNull(resource, "Current resource should not be null");
       this.currentResource = resource;
+      console.getAeshContext().setCurrentWorkingDirectory(resource.getUnderlyingResourceObject());
       updatePrompt();
    }
 
