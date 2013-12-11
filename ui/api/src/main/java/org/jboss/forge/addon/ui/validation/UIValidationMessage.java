@@ -34,6 +34,6 @@ public interface UIValidationMessage
 
    enum Severity
    {
-      INFO, ERROR, WARN;
+      ERROR, WARN, INFO;
    }
 }

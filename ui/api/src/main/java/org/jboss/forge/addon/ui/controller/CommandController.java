@@ -37,12 +37,6 @@ public interface CommandController
    boolean isInitialized();
 
    /**
-    * Returns <code>true</code> if {@link UICommand#execute(org.jboss.forge.addon.ui.context.UIExecutionContext)} can be
-    * called
-    */
-   boolean canExecute();
-
-   /**
     * Calls {@link UICommand#execute(org.jboss.forge.addon.ui.context.UIExecutionContext)}
     * 
     * @throws Exception if problems occurred during initialization
@@ -51,20 +45,30 @@ public interface CommandController
 
    /**
     * Calls {@link UICommand#validate(org.jboss.forge.addon.ui.context.UIValidationContext)}, and
-    * {@link InputComponent#validate(org.jboss.forge.addon.ui.context.UIValidationContext)} for each
+    * {@link InputComponent#validate(org.jboss.forge.addon.ui.context.UIValidationContext)} for each enabled
     * {@link InputComponent}.
     */
    List<UIValidationMessage> validate();
 
    /**
-    * Sets the value of {@link InputComponent} with the given name.
+    * Returns <code>true</code> if the {@link CommandController#validate()} method contains no
+    * {@link UIValidationMessage} instances with an ERROR severity
     */
-   CommandController setValueFor(String inputName, Object value);
+   boolean isValid();
+
+   /**
+    * Sets the value of {@link InputComponent} with the given name.
+    * 
+    * @throws IllegalArgumentException if no input with the given name exists
+    */
+   CommandController setValueFor(String inputName, Object value) throws IllegalArgumentException;
 
    /**
     * Gets the value of {@link InputComponent} with the given name.
+    * 
+    * @throws IllegalArgumentException if no input with the given name exists
     */
-   Object getValueFor(String inputName);
+   Object getValueFor(String inputName) throws IllegalArgumentException;
 
    /**
     * Returns a {@link List} of {@link InputComponent} instances for this command

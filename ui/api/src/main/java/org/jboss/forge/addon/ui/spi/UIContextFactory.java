@@ -7,9 +7,8 @@
 
 package org.jboss.forge.addon.ui.spi;
 
+import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 
 /**
  * Creates UI objects. Should be implemented by UI Providers
@@ -24,12 +23,7 @@ public interface UIContextFactory
    UIContext createUIContext();
 
    /**
-    * Creates a new {@link UIValidationContext}
+    * Creates a new {@link UIProgressMonitor}
     */
-   UIValidationContext createUIValidationContext(UIContext context);
-
-   /**
-    * Creates a new {@link UIExecutionContext}
-    */
-   UIExecutionContext createUIExecutionContext(UIContext context);
+   UIProgressMonitor createProgressMonitor(UIContext context);
 }

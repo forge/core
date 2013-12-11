@@ -47,5 +47,4 @@ public class UIBuilderImpl implements UIBuilder
    {
       return inputs;
    }
-
 }

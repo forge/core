@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.ui.controller;
 
+import org.jboss.forge.addon.ui.UICommand;
+
 /**
  * A composite implementation for {@link CommandController}
  * 
@@ -37,4 +39,11 @@ public interface WizardCommandController extends CommandController
     * @throws IllegalStateException if navigation is not possible
     */
    public WizardCommandController previous() throws IllegalStateException;
+
+   /**
+    * Returns <code>true</code> if {@link UICommand#execute(org.jboss.forge.addon.ui.context.UIExecutionContext)} can be
+    * called
+    */
+   boolean canExecute();
+
 }
