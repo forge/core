@@ -22,6 +22,12 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>ui-example</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>resources</artifactId>
          <classifier>forge-addon</classifier>
          <scope>test</scope>

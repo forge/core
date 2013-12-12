@@ -176,6 +176,8 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public WizardCommandController next() throws Exception
    {
+      assertInitialized();
+      assertValid();
       // If the limit was reached
       if (flowPointer + 1 == flow.size())
       {
@@ -211,6 +213,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public WizardCommandController previous() throws IllegalStateException
    {
+      assertInitialized();
       if (flowPointer == 0)
       {
          throw new IllegalStateException("No previous page found");

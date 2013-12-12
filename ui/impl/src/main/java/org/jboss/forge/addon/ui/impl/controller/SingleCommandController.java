@@ -61,11 +61,6 @@ class SingleCommandController extends AbstractCommandController
       return (uiBuilder != null);
    }
 
-   protected void assertInitialized()
-   {
-      Assert.isTrue(isInitialized(), "Controller must be initialized.");
-   }
-
    @Override
    public Result execute() throws Exception
    {
@@ -76,11 +71,7 @@ class SingleCommandController extends AbstractCommandController
       Imported<CommandExecutionListener> listeners = addonRegistry.getServices(CommandExecutionListener.class);
       try
       {
-         if (!isValid())
-         {
-            throw new IllegalStateException("Command is not in valid state and cannot be executed.");
-         }
-
+         assertValid();
          for (CommandExecutionListener listener : listeners)
          {
             listener.preCommandExecuted(initialCommand, executionContext);
@@ -110,7 +101,6 @@ class SingleCommandController extends AbstractCommandController
          {
             listeners.release(listener);
          }
-         context.close();
       }
    }
 
@@ -156,10 +146,7 @@ class SingleCommandController extends AbstractCommandController
       assertInitialized();
       Map<String, InputComponent<?, Object>> inputs = uiBuilder.getInputs();
       InputComponent<?, Object> inputComponent = inputs.get(inputName);
-      if (inputComponent == null)
-      {
-         throw new IllegalArgumentException("No such input [" + inputName + "].");
-      }
+      Assert.notNull(inputComponent, "No such input [" + inputName + "].");
       return inputComponent;
    }
 

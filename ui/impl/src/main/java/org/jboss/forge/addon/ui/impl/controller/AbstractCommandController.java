@@ -12,6 +12,7 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.spi.UIRuntime;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * 
@@ -32,4 +33,16 @@ public abstract class AbstractCommandController implements CommandController
       this.context = contextFactory.createUIContext();
       this.initialCommand = initialCommand;
    }
+
+   protected void assertInitialized()
+   {
+      Assert.isTrue(isInitialized(), "Controller must be initialized.");
+   }
+   
+   protected void assertValid()
+   {
+      Assert.isTrue(isValid(), "Controller is not in valid state.");
+   }
+
+
 }
