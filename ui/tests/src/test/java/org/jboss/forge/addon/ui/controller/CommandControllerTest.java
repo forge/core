@@ -53,6 +53,9 @@ public class CommandControllerTest
    @Inject
    private ExampleCommand exampleCommand;
 
+   @Inject
+   private ExampleNoUICommand exampleNoUICommand;
+
    @Test
    public void testInjection() throws Exception
    {
@@ -84,6 +87,18 @@ public class CommandControllerTest
       CommandController controller = controllerFactory.createSingleController(exampleCommand,
                new MockUIRuntime());
       Assert.assertFalse(controller.getInputs().isEmpty());
+   }
+
+   @Test
+   public void testExampleNoUI() throws Exception
+   {
+      CommandController controller = controllerFactory.createSingleController(exampleNoUICommand,
+               new MockUIRuntime());
+      controller.initialize();
+      Assert.assertTrue(controller.getInputs().isEmpty());
+      Assert.assertTrue(controller.isValid());
+      Result result = controller.execute();
+      Assert.assertEquals("Executed", result.getMessage());
    }
 
 }

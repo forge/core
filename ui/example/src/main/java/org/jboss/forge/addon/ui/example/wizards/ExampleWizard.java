@@ -31,7 +31,7 @@ public class ExampleWizard extends AbstractUICommand implements UIWizard
 {
 
    @Inject
-   @WithAttributes(label = "First Name", shortName = 'f')
+   @WithAttributes(label = "First Name", shortName = 'f', required = true)
    private UIInput<String> firstName;
 
    @Inject

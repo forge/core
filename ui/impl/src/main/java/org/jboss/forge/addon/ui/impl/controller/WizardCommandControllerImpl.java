@@ -50,10 +50,11 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    private int flowPointer = 0;
 
    public WizardCommandControllerImpl(AddonRegistry addonRegistry, UIRuntime runtime,
-            UIWizard initialCommand, CommandControllerFactory controllerFactory)
+            UIWizard initialCommand, CommandControllerFactory controllerFactory) throws Exception
    {
       super(addonRegistry, runtime, initialCommand);
       this.controllerFactory = controllerFactory;
+      flow.add(createControllerFor(initialCommand));
    }
 
    @Override
@@ -95,6 +96,8 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    public CommandController setValueFor(String inputName, Object value) throws IllegalArgumentException
    {
       getCurrentCommandController().setValueFor(inputName, value);
+      // Remove subsequent pages
+      flow.subList(flowPointer + 1, flow.size()).clear();
       return this;
    }
 
@@ -153,7 +156,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       {
          // Move only if there is a next step or if there is a subflow set
          Class<? extends UICommand>[] next = getNextFrom(getCurrentCommandController().getCommand());
-         return (next == null || !subflow.isEmpty());
+         return (next != null || !subflow.isEmpty());
       }
       catch (Exception e)
       {
@@ -230,6 +233,11 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    private CommandController createControllerFor(Class<? extends UICommand> commandClass) throws Exception
    {
       UICommand command = addonRegistry.getServices(commandClass).get();
+      return createControllerFor(command);
+   }
+
+   private CommandController createControllerFor(UICommand command) throws Exception
+   {
       return controllerFactory.createSingleController(command, runtime);
    }
 

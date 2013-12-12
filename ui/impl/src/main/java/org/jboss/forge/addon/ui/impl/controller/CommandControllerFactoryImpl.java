@@ -41,7 +41,7 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
    }
 
    @Override
-   public WizardCommandController createWizardController(UIWizard wizard, UIRuntime runtime)
+   public WizardCommandController createWizardController(UIWizard wizard, UIRuntime runtime) throws Exception
    {
       return new WizardCommandControllerImpl(addonRegistry, runtime, wizard, this);
    }
