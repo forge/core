@@ -32,9 +32,9 @@ class ForgeCommandContainer implements CommandContainer
    }
 
    @Override
-   public void close()
+   public void close() throws Exception
    {
-      context.destroy();
+      context.close();
    }
 
    @SuppressWarnings("rawtypes")

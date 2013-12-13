@@ -67,7 +67,7 @@ public abstract class AbstractUIContext implements UIContext
    }
 
    @Override
-   public void close() throws Exception
+   public void close()
    {
       clearListeners();
    }

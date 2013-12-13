@@ -56,11 +56,14 @@ public class ShellContextImpl extends AbstractUIContext implements ShellContext
       }
    }
 
-   public void destroy()
+   @Override
+   public void close()
    {
+      super.close();
       for (UIContextListener listener : listeners)
       {
          listener.contextDestroyed(this);
       }
+
    }
 }

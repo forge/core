@@ -145,14 +145,9 @@ public class ForgeCommandRegistry implements CommandRegistry
 
    private Set<String> getForgeCommandNames()
    {
-      ShellContextImpl newShellContext = shell.createUIContext();
-      try
+      try (ShellContextImpl newShellContext = shell.createUIContext())
       {
          return commandManager.getAllCommandNames(newShellContext);
-      }
-      finally
-      {
-         newShellContext.destroy();
       }
    }
 

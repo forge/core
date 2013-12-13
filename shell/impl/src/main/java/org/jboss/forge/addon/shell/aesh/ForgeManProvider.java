@@ -38,8 +38,7 @@ public class ForgeManProvider implements ManProvider
    {
       for (UICommand cmd : manager.getAllCommands())
       {
-         ShellContextImpl context = shell.createUIContext();
-         try
+         try (ShellContextImpl context = shell.createUIContext())
          {
             if (command.equals(manager.getCommandName(context, cmd)))
             {
@@ -53,10 +52,6 @@ public class ForgeManProvider implements ManProvider
                      return stream;
                }
             }
-         }
-         finally
-         {
-            context.destroy();
          }
       }
       return null;

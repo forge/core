@@ -1,5 +1,8 @@
 package org.jboss.forge.addon.shell;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.annotation.PreDestroy;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -44,7 +47,14 @@ public class ShellInitializer
    {
       if (this.shell != null)
       {
-         this.shell.close();
+         try
+         {
+            this.shell.close();
+         }
+         catch (Exception ignore)
+         {
+            Logger.getLogger(getClass().getName()).log(Level.FINE, "Error while closing Shell", ignore);
+         }
          this.shell = null;
       }
    }

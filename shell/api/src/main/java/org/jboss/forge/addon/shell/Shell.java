@@ -6,11 +6,11 @@
  */
 package org.jboss.forge.addon.shell;
 
-import java.io.Closeable;
-
 import org.jboss.aesh.console.AeshConsole;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.UIProvider;
+import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
  * The command line shell.
@@ -18,12 +18,12 @@ import org.jboss.forge.addon.ui.UIProvider;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public interface Shell extends UIProvider, Closeable
+public interface Shell extends UIProvider, AutoCloseable
 {
    /**
     * Get the native {@link AeshConsole} object.
     */
-   public AeshConsole getConsole();
+   AeshConsole getConsole();
 
    /**
     * Sets the current working directory
@@ -31,16 +31,16 @@ public interface Shell extends UIProvider, Closeable
     * @param resource should be a {@link FileResource}
     * @throws IllegalArgumentException if resource is null
     */
-   public void setCurrentResource(FileResource<?> resource);
+   void setCurrentResource(FileResource<?> resource);
 
    /**
     * Returns the current working directory.
     */
-   public FileResource<?> getCurrentResource();
+   FileResource<?> getCurrentResource();
 
    /**
-    * Disposes this Shell object
+    * Add a {@link CommandExecutionListener}, returning the {@link ListenerRegistration} with which it may subsequently
+    * be removed.
     */
-   @Override
-   public void close();
+   ListenerRegistration<CommandExecutionListener> addCommandExecutionListener(CommandExecutionListener listener);
 }

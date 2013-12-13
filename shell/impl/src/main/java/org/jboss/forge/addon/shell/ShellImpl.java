@@ -33,10 +33,12 @@ import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIContextListener;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
+import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.spi.UIRuntime;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
 
 /**
@@ -52,6 +54,7 @@ public class ShellImpl implements Shell, UIRuntime
    private final AddonRegistry addonRegistry;
    private final AeshConsole console;
    private final UIOutput output;
+   private final List<CommandExecutionListener> executionListeners = new LinkedList<>();
 
    public ShellImpl(FileResource<?> initialResource, Settings settings, CommandManager commandManager,
             AddonRegistry addonRegistry, CommandControllerFactory commandFactory)
@@ -148,7 +151,27 @@ public class ShellImpl implements Shell, UIRuntime
    {
       Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
       ShellContextImpl shellContextImpl = new ShellContextImpl(this, currentResource, listeners);
+      for (CommandExecutionListener listener : executionListeners)
+      {
+         shellContextImpl.addCommandExecutionListener(listener);
+      }
       return shellContextImpl;
+   }
+
+   @Override
+   public ListenerRegistration<CommandExecutionListener> addCommandExecutionListener(
+            final CommandExecutionListener listener)
+   {
+      executionListeners.add(listener);
+      return new ListenerRegistration<CommandExecutionListener>()
+      {
+         @Override
+         public CommandExecutionListener removeListener()
+         {
+            executionListeners.remove(listener);
+            return listener;
+         }
+      };
    }
 
    @Override
