@@ -97,10 +97,11 @@ public class JPASetupWizardTest
       tester.setValueFor("container", customJTAProvider);
       Assert.assertTrue(tester.canMoveToNextStep());
 
-      tester.next();
+      tester.next().initialize();
 
-      Assert.assertTrue(tester.canExecute());
+      Assert.assertFalse(tester.isValid());
       tester.setValueFor("dataSourceName", "java:jboss:jta-ds");
+      Assert.assertTrue(tester.isValid());
       final AtomicInteger counter = new AtomicInteger();
       tester.getContext().addCommandExecutionListener(new AbstractCommandExecutionListener()
       {
@@ -136,7 +137,7 @@ public class JPASetupWizardTest
       tester.setValueFor("container", eap6Container);
       Assert.assertTrue(tester.canMoveToNextStep());
 
-      tester.next();
+      tester.next().initialize();
 
       Result result = tester.execute();
       Assert.assertFalse(result instanceof Failed);
@@ -158,7 +159,7 @@ public class JPASetupWizardTest
       tester2.setValueFor("container", eap6Container);
       Assert.assertTrue(tester2.canMoveToNextStep());
 
-      tester2.next();
+      tester2.next().initialize();
 
       result = tester2.execute();
       Assert.assertFalse(result instanceof Failed);
@@ -187,7 +188,7 @@ public class JPASetupWizardTest
       tester.setValueFor("configureMetadata", Boolean.TRUE);
       Assert.assertTrue(tester.canMoveToNextStep());
 
-      tester.next();
+      tester.next().initialize();
 
       tester.setValueFor("dataSourceName", "java:jboss:jta-ds");
       final AtomicInteger counter = new AtomicInteger();

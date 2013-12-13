@@ -295,15 +295,12 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
 
    private Class<? extends UICommand>[] getNextFrom(UICommand command) throws Exception
    {
-      Class<? extends UICommand>[] result;
+      Class<? extends UICommand>[] result = null;
       if (command instanceof UIWizard)
       {
          NavigationResult next = ((UIWizard) command).next(context);
-         result = next.getNext();
-      }
-      else
-      {
-         result = null;
+         if (next != null)
+            result = next.getNext();
       }
       return result;
    }
