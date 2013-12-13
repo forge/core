@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.ui.impl.controller;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -69,7 +70,13 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
       UIProgressMonitor progressMonitor = runtime.createProgressMonitor(context);
       UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor);
 
-      Iterable<CommandExecutionListener> listeners = context.getListeners();
+      Set<CommandExecutionListener> listeners = new LinkedHashSet<>();
+      listeners.addAll(context.getListeners());
+      for (CommandExecutionListener listener : addonRegistry
+               .getServices(CommandExecutionListener.class))
+      {
+         listeners.add(listener);
+      }
       assertValid();
       for (CommandExecutionListener listener : listeners)
       {

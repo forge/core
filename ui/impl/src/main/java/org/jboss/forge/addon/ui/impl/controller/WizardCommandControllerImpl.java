@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.ui.impl.controller;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -82,33 +83,41 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       assertInitialized();
       UIProgressMonitor progressMonitor = runtime.createProgressMonitor(context);
       UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor);
-      Iterable<CommandExecutionListener> listeners = context.getListeners();
-      assertValid();
-      try
+      Set<CommandExecutionListener> listeners = new LinkedHashSet<>();
+      listeners.addAll(context.getListeners());
+      for (CommandExecutionListener listener : addonRegistry
+               .getServices(CommandExecutionListener.class))
       {
-         for (CommandController controller : flow)
+         listeners.add(listener);
+      }
+      assertValid();
+      for (CommandController controller : flow)
+      {
+         try
          {
             UICommand command = controller.getCommand();
             for (CommandExecutionListener listener : listeners)
             {
                listener.preCommandExecuted(command, executionContext);
             }
+
             result = command.execute(executionContext);
             for (CommandExecutionListener listener : listeners)
             {
                listener.postCommandExecuted(command, executionContext, result);
             }
          }
-         return result;
-      }
-      catch (Exception e)
-      {
-         for (CommandExecutionListener listener : listeners)
+         catch (Exception e)
          {
-            listener.postCommandFailure(initialCommand, executionContext, e);
+            for (CommandExecutionListener listener : listeners)
+            {
+               listener.postCommandFailure(initialCommand, executionContext, e);
+            }
+
+            throw e;
          }
-         throw e;
       }
+      return result;
    }
 
    @Override
