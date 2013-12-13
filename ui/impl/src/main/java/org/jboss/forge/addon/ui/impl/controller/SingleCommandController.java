@@ -10,10 +10,12 @@ package org.jboss.forge.addon.ui.impl.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.UIProgressMonitor;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
 import org.jboss.forge.addon.ui.impl.context.UIBuilderImpl;
@@ -43,6 +45,12 @@ class SingleCommandController extends AbstractCommandController
             throws Exception
    {
       super(addonRegistry, runtime, command);
+   }
+
+   SingleCommandController(AddonRegistry addonRegistry, UIRuntime runtime, UICommand command, UIContext context)
+            throws Exception
+   {
+      super(addonRegistry, runtime, command, context);
    }
 
    @Override
@@ -185,6 +193,13 @@ class SingleCommandController extends AbstractCommandController
    }
 
    @Override
+   public Set<String> getInputNames()
+   {
+      assertInitialized();
+      return uiBuilder.getInputs().keySet();
+   }
+
+   @Override
    public void close() throws Exception
    {
       context.close();
@@ -200,4 +215,5 @@ class SingleCommandController extends AbstractCommandController
    {
       return addonRegistry.getServices(ConverterFactory.class).get();
    }
+
 }

@@ -8,8 +8,10 @@
 package org.jboss.forge.addon.ui.controller;
 
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
@@ -77,6 +79,11 @@ public interface CommandController extends AutoCloseable
    List<InputComponent<?, ?>> getInputs();
 
    /**
+    * Returns a {@link Set} of the input names for this command
+    */
+   Set<String> getInputNames();
+
+   /**
     * @param inputName the input name
     * @return the {@link InputComponent} in this command
     * @throws IllegalArgumentException if no input with the given name exists
@@ -104,4 +111,9 @@ public interface CommandController extends AutoCloseable
     * @return the underlying command
     */
    UICommand getCommand();
+
+   /**
+    * @return the underlying {@link UIContext} object
+    */
+   UIContext getContext();
 }

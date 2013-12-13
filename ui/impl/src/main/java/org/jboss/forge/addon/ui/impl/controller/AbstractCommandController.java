@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.ui.impl.controller;
 
+import java.util.Set;
+
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
@@ -25,24 +27,60 @@ public abstract class AbstractCommandController implements CommandController
    protected final UIContext context;
    protected final UICommand initialCommand;
 
-   protected AbstractCommandController(AddonRegistry addonRegistry, UIRuntime contextFactory,
+   protected AbstractCommandController(AddonRegistry addonRegistry, UIRuntime runtime,
             UICommand initialCommand)
    {
+      this(addonRegistry, runtime, initialCommand, runtime.createUIContext());
+   }
+
+   protected AbstractCommandController(AddonRegistry addonRegistry, UIRuntime runtime,
+            UICommand initialCommand, UIContext context)
+   {
       this.addonRegistry = addonRegistry;
-      this.runtime = contextFactory;
-      this.context = contextFactory.createUIContext();
+      this.runtime = runtime;
       this.initialCommand = initialCommand;
+      this.context = context;
    }
 
    protected void assertInitialized()
    {
       Assert.isTrue(isInitialized(), "Controller must be initialized.");
    }
-   
+
    protected void assertValid()
    {
       Assert.isTrue(isValid(), "Controller is not in valid state.");
    }
 
+   @Override
+   public UIContext getContext()
+   {
+      return context;
+   }
 
+   @Override
+   public boolean equals(Object obj)
+   {
+      boolean result = false;
+      if (obj instanceof CommandController)
+      {
+         CommandController newController = (CommandController) obj;
+         // Same class Name
+         if (getCommand().getClass().getName().equals(newController.getCommand().getClass().getName()))
+         {
+            result = true;
+         }
+         else if (isInitialized() && newController.isInitialized())
+         {
+            // Compare inputs
+            Set<String> originalInputNames = getInputNames();
+            Set<String> newInputNames = newController.getInputNames();
+            if (originalInputNames.containsAll(newInputNames) && newInputNames.containsAll(originalInputNames))
+            {
+               result = true;
+            }
+         }
+      }
+      return result;
+   }
 }

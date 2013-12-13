@@ -102,7 +102,7 @@ public class JPASetupWizardTest
       Assert.assertTrue(tester.canExecute());
       tester.setValueFor("dataSourceName", "java:jboss:jta-ds");
       final AtomicInteger counter = new AtomicInteger();
-      tester.execute(new AbstractCommandExecutionListener()
+      tester.getContext().getProvider().addCommandExecutionListener(new AbstractCommandExecutionListener()
       {
          @Override
          public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
@@ -110,6 +110,7 @@ public class JPASetupWizardTest
             counter.incrementAndGet();
          }
       });
+      tester.execute();
       // Ensure that the two pages were invoked
       Assert.assertEquals(2, counter.get());
 
@@ -137,14 +138,8 @@ public class JPASetupWizardTest
 
       tester.next();
 
-      tester.execute(new AbstractCommandExecutionListener()
-      {
-         @Override
-         public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
-         {
-            Assert.assertFalse(result instanceof Failed);
-         }
-      });
+      Result result = tester.execute();
+      Assert.assertFalse(result instanceof Failed);
 
       // Check SUT values
       PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
@@ -165,14 +160,8 @@ public class JPASetupWizardTest
 
       tester2.next();
 
-      tester2.execute(new AbstractCommandExecutionListener()
-      {
-         @Override
-         public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
-         {
-            Assert.assertFalse(result instanceof Failed);
-         }
-      });
+      result = tester2.execute();
+      Assert.assertFalse(result instanceof Failed);
 
       // Check SUT values
       config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
@@ -202,7 +191,7 @@ public class JPASetupWizardTest
 
       tester.setValueFor("dataSourceName", "java:jboss:jta-ds");
       final AtomicInteger counter = new AtomicInteger();
-      tester.execute(new AbstractCommandExecutionListener()
+      tester.getContext().getProvider().addCommandExecutionListener(new AbstractCommandExecutionListener()
       {
          @Override
          public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
@@ -210,6 +199,7 @@ public class JPASetupWizardTest
             counter.incrementAndGet();
          }
       });
+      tester.execute();
       // Ensure that the two pages were invoked
       Assert.assertEquals(2, counter.get());
 

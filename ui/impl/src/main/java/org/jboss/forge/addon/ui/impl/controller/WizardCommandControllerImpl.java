@@ -10,11 +10,14 @@ package org.jboss.forge.addon.ui.impl.controller;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.controller.CommandController;
-import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
+import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
+import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.NavigationResult;
@@ -23,6 +26,7 @@ import org.jboss.forge.addon.ui.spi.UIRuntime;
 import org.jboss.forge.addon.ui.validation.UIValidationMessage;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.services.Imported;
 
 /**
  * 
@@ -32,8 +36,6 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
  */
 class WizardCommandControllerImpl extends AbstractCommandController implements WizardCommandController
 {
-   private final CommandControllerFactory controllerFactory;
-
    /**
     * The execution flow
     */
@@ -50,10 +52,9 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    private int flowPointer = 0;
 
    public WizardCommandControllerImpl(AddonRegistry addonRegistry, UIRuntime runtime,
-            UIWizard initialCommand, CommandControllerFactory controllerFactory) throws Exception
+            UIWizard initialCommand) throws Exception
    {
       super(addonRegistry, runtime, initialCommand);
-      this.controllerFactory = controllerFactory;
       flow.add(createControllerFor(initialCommand));
    }
 
@@ -73,11 +74,47 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    public Result execute() throws Exception
    {
       Result result = null;
-      for (CommandController controller : flow)
+
+      assertInitialized();
+      UIProgressMonitor progressMonitor = runtime.createProgressMonitor(context);
+      UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor);
+      Imported<CommandExecutionListener> listeners = addonRegistry.getServices(CommandExecutionListener.class);
+      try
       {
-         result = controller.execute();
+         assertValid();
+         try
+         {
+            for (CommandController controller : flow)
+            {
+               UICommand command = controller.getCommand();
+               for (CommandExecutionListener listener : listeners)
+               {
+                  listener.preCommandExecuted(command, executionContext);
+               }
+               result = command.execute(executionContext);
+               for (CommandExecutionListener listener : listeners)
+               {
+                  listener.postCommandExecuted(command, executionContext, result);
+               }
+            }
+            return result;
+         }
+         catch (Exception e)
+         {
+            for (CommandExecutionListener listener : listeners)
+            {
+               listener.postCommandFailure(initialCommand, executionContext, e);
+            }
+            throw e;
+         }
       }
-      return result;
+      finally
+      {
+         for (CommandExecutionListener listener : listeners)
+         {
+            listeners.release(listener);
+         }
+      }
    }
 
    @Override
@@ -173,7 +210,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public boolean canExecute()
    {
-      return true;
+      return !canMoveToNextStep() && isValid();
    }
 
    @Override
@@ -185,7 +222,8 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       if (flowPointer + 1 == flow.size())
       {
          final Class<? extends UICommand> next;
-         Class<? extends UICommand>[] result = getNextFrom(getCurrentCommandController().getCommand());
+         CommandController currentController = getCurrentCommandController();
+         Class<? extends UICommand>[] result = getNextFrom(currentController.getCommand());
          if (result == null)
          {
             if (subflow.isEmpty())
@@ -203,7 +241,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
             for (int i = 1; i < result.length; i++)
             {
                // Save this subflow for later
-               subflow.add(result[i]);
+               subflow.addLast(result[i]);
             }
          }
          CommandController controller = createControllerFor(next);
@@ -238,7 +276,18 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
 
    private CommandController createControllerFor(UICommand command) throws Exception
    {
-      return controllerFactory.createSingleController(command, runtime);
+      return new SingleCommandController(addonRegistry, runtime, command, context);
+   }
+
+   /*
+    * (non-Javadoc)
+    * 
+    * @see org.jboss.forge.addon.ui.controller.CommandController#getInputNames()
+    */
+   @Override
+   public Set<String> getInputNames()
+   {
+      return getCurrentCommandController().getInputNames();
    }
 
    private Class<? extends UICommand>[] getNextFrom(UICommand command) throws Exception
@@ -255,5 +304,4 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       }
       return result;
    }
-
 }
