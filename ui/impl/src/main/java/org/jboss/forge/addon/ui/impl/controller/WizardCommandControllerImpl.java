@@ -93,9 +93,9 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       assertValid();
       for (CommandController controller : flow)
       {
+         UICommand command = controller.getCommand();
          try
          {
-            UICommand command = controller.getCommand();
             for (CommandExecutionListener listener : listeners)
             {
                listener.preCommandExecuted(command, executionContext);
@@ -111,7 +111,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
          {
             for (CommandExecutionListener listener : listeners)
             {
-               listener.postCommandFailure(initialCommand, executionContext, e);
+               listener.postCommandFailure(command, executionContext, e);
             }
 
             throw e;
