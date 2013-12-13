@@ -45,4 +45,10 @@ public class UIValidationMessageImpl implements UIValidationMessage
       return this.inputComponent;
    }
 
+   @Override
+   public String toString()
+   {
+      return "[" + severity + "] " + description;
+   }
+
 }
