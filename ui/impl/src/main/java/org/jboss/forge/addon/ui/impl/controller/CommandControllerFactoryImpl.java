@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.SingleCommandController;
@@ -37,22 +38,22 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
    }
 
    @Override
-   public CommandController createController(UICommand command, UIRuntime runtime)
+   public CommandController createController(UIContext context, UICommand command, UIRuntime runtime)
    {
       if (command instanceof UIWizard)
-         return createWizardController((UIWizard) command, runtime);
-      return createSingleController(command, runtime);
+         return createWizardController(context, (UIWizard) command, runtime);
+      return createSingleController(context, command, runtime);
    }
 
    @Override
-   public SingleCommandController createSingleController(UICommand command, UIRuntime runtime)
+   public SingleCommandController createSingleController(UIContext context, UICommand command, UIRuntime runtime)
    {
-      return new SingleCommandControllerImpl(addonRegistry, runtime, command);
+      return new SingleCommandControllerImpl(addonRegistry, runtime, command, context);
    }
 
    @Override
-   public WizardCommandController createWizardController(UIWizard wizard, UIRuntime runtime)
+   public WizardCommandController createWizardController(UIContext context, UIWizard wizard, UIRuntime runtime)
    {
-      return new WizardCommandControllerImpl(addonRegistry, runtime, wizard);
+      return new WizardCommandControllerImpl(context, addonRegistry, runtime, wizard, this);
    }
 }

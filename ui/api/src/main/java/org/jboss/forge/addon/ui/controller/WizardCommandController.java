@@ -8,7 +8,6 @@
 package org.jboss.forge.addon.ui.controller;
 
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
@@ -18,12 +17,6 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
  */
 public interface WizardCommandController extends CommandController
 {
-   /**
-    * Return the underlying {@link UIWizard} instance.
-    */
-   @Override
-   public UIWizard getCommand();
-
    /**
     * Return <code>true</code> if navigation to the next {@link UIWizardStep} is possible.
     */

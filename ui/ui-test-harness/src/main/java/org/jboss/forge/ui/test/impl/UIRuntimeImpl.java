@@ -18,17 +18,9 @@ import org.jboss.forge.addon.ui.spi.UIRuntime;
 public class UIRuntimeImpl implements UIRuntime
 {
    private final UIProgressMonitor progressMonitor = new DefaultUIProgressMonitor();
-   private final UIContext context;
 
-   public UIRuntimeImpl(UIContextImpl context)
+   public UIRuntimeImpl()
    {
-      this.context = context;
-   }
-
-   @Override
-   public UIContext createUIContext()
-   {
-      return context;
    }
 
    @Override

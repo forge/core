@@ -30,12 +30,6 @@ public abstract class AbstractCommandController implements CommandController
    protected final UICommand initialCommand;
 
    protected AbstractCommandController(AddonRegistry addonRegistry, UIRuntime runtime,
-            UICommand initialCommand)
-   {
-      this(addonRegistry, runtime, initialCommand, runtime.createUIContext());
-   }
-
-   protected AbstractCommandController(AddonRegistry addonRegistry, UIRuntime runtime,
             UICommand initialCommand, UIContext context)
    {
       this.addonRegistry = addonRegistry;

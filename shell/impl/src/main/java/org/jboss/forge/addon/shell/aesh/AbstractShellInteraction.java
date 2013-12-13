@@ -17,6 +17,7 @@ import java.util.Map;
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -32,10 +33,12 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
    private final CommandController controller;
    private final UICommandMetadata metadata;
    protected final CommandLineUtil commandLineUtil;
+   private final UIContext context;
 
    protected AbstractShellInteraction(CommandController controller, ShellContext shellContext,
             CommandLineUtil commandLineUtil)
    {
+      this.context = shellContext;
       this.controller = controller;
       this.metadata = controller.getMetadata();
       this.name = ShellUtil.shellifyName(metadata.getName());
@@ -53,6 +56,11 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
          result.put(input.getName(), (InputComponent<?, Object>) input);
       }
       return result;
+   }
+
+   public UIContext getContext()
+   {
+      return context;
    }
 
    public CommandController getSourceCommand()

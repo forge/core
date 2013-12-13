@@ -18,13 +18,6 @@ import org.jboss.forge.addon.ui.spi.UIRuntime;
  */
 public class MockUIRuntime implements UIRuntime
 {
-
-   @Override
-   public UIContext createUIContext()
-   {
-      return new MockUIContext();
-   }
-
    @Override
    public UIProgressMonitor createProgressMonitor(UIContext context)
    {

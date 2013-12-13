@@ -42,13 +42,7 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
 {
    private UIBuilderImpl uiBuilder;
 
-   public SingleCommandControllerImpl(AddonRegistry addonRegistry, UIRuntime runtime, UICommand command)
-   {
-      super(addonRegistry, runtime, command);
-   }
-
-   SingleCommandController(AddonRegistry addonRegistry, UIRuntime runtime, UICommand command, UIContext context)
-            throws Exception
+   SingleCommandControllerImpl(AddonRegistry addonRegistry, UIRuntime runtime, UICommand command, UIContext context)
    {
       super(addonRegistry, runtime, command, context);
    }

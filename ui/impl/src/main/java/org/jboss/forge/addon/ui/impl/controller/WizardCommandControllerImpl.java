@@ -14,7 +14,9 @@ import java.util.Set;
 
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.UIProgressMonitor;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
@@ -51,11 +53,14 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
     */
    private int flowPointer = 0;
 
-   public WizardCommandControllerImpl(AddonRegistry addonRegistry, UIRuntime runtime,
+   private final CommandControllerFactory controllerFactory;
+
+   public WizardCommandControllerImpl(UIContext context, AddonRegistry addonRegistry, UIRuntime runtime,
             UIWizard initialCommand, CommandControllerFactory controllerFactory)
    {
-      super(addonRegistry, runtime, initialCommand);
-      flow.add(createControllerFor(initialCommand));
+      super(addonRegistry, runtime, initialCommand, context);
+      this.controllerFactory = controllerFactory;
+      flow.add(createControllerFor(context, initialCommand));
    }
 
    @Override
@@ -271,12 +276,12 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    private CommandController createControllerFor(Class<? extends UICommand> commandClass) throws Exception
    {
       UICommand command = addonRegistry.getServices(commandClass).get();
-      return createControllerFor(command);
+      return createControllerFor(context, command);
    }
 
-   private CommandController createControllerFor(UICommand command)
+   private CommandController createControllerFor(UIContext context, UICommand command)
    {
-      return new SingleCommandController(addonRegistry, runtime, command, context);
+      return controllerFactory.createSingleController(context, command, runtime);
    }
 
    /*

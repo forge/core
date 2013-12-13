@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.ui.controller;
 
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.spi.UIRuntime;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 
@@ -22,15 +23,16 @@ public interface CommandControllerFactory
    /**
     * Create a {@link CommandController} of the correct type for the given {@link UICommand}.
     */
-   CommandController createController(UICommand command, UIRuntime runtime);
+   CommandController createController(UIContext context, UICommand command, UIRuntime runtime);
 
    /**
     * Create a {@link SingleCommandController}. Should be called when a single command execution must be performed.
     */
-   SingleCommandController createSingleController(UICommand command, UIRuntime runtime);
+   SingleCommandController createSingleController(UIContext context, UICommand command, UIRuntime runtime);
 
    /**
-    * Create a {@link WizardCommandController}. Should be called when a wizard (multisteps) execution must be performed.
+    * Create a {@link WizardCommandController}. Should be called when a wizard (multiple step) execution must be
+    * performed.
     */
-   WizardCommandController createWizardController(UIWizard wizard, UIRuntime runtime);
+   WizardCommandController createWizardController(UIContext context, UIWizard wizard, UIRuntime runtime);
 }

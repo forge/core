@@ -18,11 +18,6 @@ import org.jboss.forge.addon.ui.context.UIContext;
 public interface UIRuntime
 {
    /**
-    * Creates the {@link UIContext} used
-    */
-   UIContext createUIContext();
-
-   /**
     * Creates a new {@link UIProgressMonitor}
     */
    UIProgressMonitor createProgressMonitor(UIContext context);

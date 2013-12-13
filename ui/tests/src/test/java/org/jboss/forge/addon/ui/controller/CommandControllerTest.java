@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.ui.impl.mock.MockUIContext;
 import org.jboss.forge.addon.ui.impl.mock.MockUIRuntime;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -65,7 +66,7 @@ public class CommandControllerTest
    @Test
    public void testSingleCommandController() throws Exception
    {
-      CommandController controller = controllerFactory.createSingleController(exampleCommand,
+      CommandController controller = controllerFactory.createSingleController(new MockUIContext(), exampleCommand,
                new MockUIRuntime());
       Assert.assertTrue(controller.isEnabled());
       Assert.assertFalse(controller.isInitialized());
@@ -84,7 +85,7 @@ public class CommandControllerTest
    @Test(expected = IllegalArgumentException.class)
    public void testInitialized() throws Exception
    {
-      CommandController controller = controllerFactory.createSingleController(exampleCommand,
+      CommandController controller = controllerFactory.createSingleController(new MockUIContext(), exampleCommand,
                new MockUIRuntime());
       Assert.assertFalse(controller.getInputs().isEmpty());
    }
@@ -92,7 +93,7 @@ public class CommandControllerTest
    @Test
    public void testExampleNoUI() throws Exception
    {
-      CommandController controller = controllerFactory.createSingleController(exampleNoUICommand,
+      CommandController controller = controllerFactory.createSingleController(new MockUIContext(), exampleNoUICommand,
                new MockUIRuntime());
       controller.initialize();
       Assert.assertTrue(controller.getInputs().isEmpty());

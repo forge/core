@@ -49,8 +49,8 @@ public class UITestHarness
       Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
       UISelection<Resource<?>> selection = Selections.from(initialSelection);
       UIContextImpl context = new UIContextImpl(new UIProviderImpl(true), listeners, selection);
-      return factory.createSingleController(addonRegistry.getServices(commandClass).get(),
-               new UIRuntimeImpl(context));
+      return factory
+               .createSingleController(context, addonRegistry.getServices(commandClass).get(), new UIRuntimeImpl());
    }
 
    public WizardCommandController createWizardController(Class<? extends UIWizard> wizardClass) throws Exception
@@ -64,7 +64,7 @@ public class UITestHarness
       Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
       UISelection<Resource<?>> selection = Selections.from(initialSelection);
       UIContextImpl context = new UIContextImpl(new UIProviderImpl(true), listeners, selection);
-      return factory.createWizardController(addonRegistry.getServices(wizardClass).get(),
-               new UIRuntimeImpl(context));
+      return factory.createWizardController(context, addonRegistry.getServices(wizardClass).get(),
+               new UIRuntimeImpl());
    }
 }
