@@ -9,8 +9,9 @@ package org.jboss.forge.addon.shell;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -32,17 +33,24 @@ public class ShellHandle
    public void initialize(File currentResource, InputStream stdIn, PrintStream stdOut, PrintStream stdErr)
    {
       Settings settings = new SettingsBuilder()
-              .inputStream(stdIn)
-              .outputStream(stdOut)
-              .outputStreamError(stdErr)
-              .enableMan(true)
-              .create();
+               .inputStream(stdIn)
+               .outputStream(stdOut)
+               .outputStreamError(stdErr)
+               .enableMan(true)
+               .create();
       this.shell = shellFactory.createShell(currentResource, settings);
    }
 
    public void destroy()
    {
       if (this.shell != null)
-         this.shell.close();
+         try
+         {
+            this.shell.close();
+         }
+         catch (Exception e)
+         {
+            Logger.getLogger(getClass().getName()).log(Level.FINE, "Error while closing Shell", e);
+         }
    }
 }
