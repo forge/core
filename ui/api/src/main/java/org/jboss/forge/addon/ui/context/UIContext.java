@@ -7,10 +7,14 @@
 
 package org.jboss.forge.addon.ui.context;
 
+import java.util.Set;
+
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.UIProvider;
+import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
  * An {@link UIContext} holds information about the environment the {@link UICommand} is being run, such as the initial
@@ -64,5 +68,16 @@ public interface UIContext extends AutoCloseable
     * Returns the {@link UIProvider} that created this {@link UIContext} object
     */
    UIProvider getProvider();
+
+   /**
+    * Add a {@link CommandExecutionListener}, returning the {@link ListenerRegistration} with which it may subsequently
+    * be removed.
+    */
+   ListenerRegistration<CommandExecutionListener> addCommandExecutionListener(CommandExecutionListener listener);
+
+   /**
+    * Returns the registered {@link CommandExecutionListener} objects for this {@link UIContext}
+    */
+   Set<CommandExecutionListener> getListeners();
 
 }

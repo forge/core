@@ -11,12 +11,13 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.ui.test.CommandTester;
+import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -52,35 +53,37 @@ public class ValidationSetupCommandTest
    private ProjectFactory projectFactory;
 
    @Inject
-   private CommandTester<ValidationProviderSetupCommand> tester;
+   private UITestHarness testHarness;
 
    @Test
    public void testNewEntity() throws Exception
    {
-      // Execute SUT
       final Project project = projectFactory.createTempProject();
-      tester.setInitialSelection(project.getProjectRoot());
-      
-      // Launch
-      tester.launch();
-
-      Assert.assertTrue(tester.canExecute());
-      tester.setValueFor("providedScope", false);
-      Assert.assertTrue(tester.canExecute());
-
-      final AtomicBoolean flag = new AtomicBoolean();
-      tester.execute(new AbstractCommandExecutionListener()
+      try (CommandController tester = testHarness.createCommandController(ValidationProviderSetupCommand.class,
+               project.getProjectRoot()))
       {
-         @Override
-         public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
+         // Launch
+         tester.initialize();
+
+         Assert.assertTrue(tester.isValid());
+         tester.setValueFor("providedScope", false);
+         Assert.assertTrue(tester.isValid());
+
+         final AtomicBoolean flag = new AtomicBoolean();
+         tester.getContext().addCommandExecutionListener(new AbstractCommandExecutionListener()
          {
-            if (result.getMessage().equals("Bean Validation is installed."))
+            @Override
+            public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
             {
-               flag.set(true);
+               if (result.getMessage().equals("Bean Validation is installed."))
+               {
+                  flag.set(true);
+               }
             }
-         }
-      });
-      // Ensure that the two pages were invoked
-      Assert.assertEquals(true, flag.get());
+         });
+         tester.execute();
+         // Ensure that the two pages were invoked
+         Assert.assertEquals(true, flag.get());
+      }
    }
 }

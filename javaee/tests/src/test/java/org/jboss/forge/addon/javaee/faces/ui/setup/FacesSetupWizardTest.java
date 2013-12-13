@@ -18,13 +18,14 @@ import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.ui.test.CommandTester;
+import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -62,25 +63,27 @@ public class FacesSetupWizardTest
    private ProjectFactory projectFactory;
 
    @Inject
-   private CommandTester<FacesSetupWizard> tester;
+   private UITestHarness testHarness;
 
    @Test
    public void testSetupCreatesFacesConfigXML() throws Exception
    {
       final Project project = projectFactory.createTempProject();
       facetFactory.install(project, ServletFacet_3_1.class);
-      tester.setInitialSelection(project.getProjectRoot());
+      try (CommandController tester = testHarness.createCommandController(FacesSetupWizard.class,
+               project.getProjectRoot()))
+      {
+         tester.initialize();
+         Assert.assertTrue(tester.isValid());
 
-      tester.launch();
+         Result result = tester.execute();
 
-      Assert.assertTrue(tester.canExecute());
-
-      Result result = tester.execute();
-
-      Assert.assertFalse(result instanceof Failed);
-      Assert.assertTrue(project.hasFacet(FacesFacet.class));
-      Assert.assertTrue(project.getFacet(FacesFacet.class).getConfigFile().exists());
-      Assert.assertTrue(project.getFacet(ServletFacet.class).getWebInfDirectory().exists());
-      Assert.assertTrue(project.getFacet(ServletFacet.class).getWebInfDirectory().getChild("faces-config.xml").exists());
+         Assert.assertFalse(result instanceof Failed);
+         Assert.assertTrue(project.hasFacet(FacesFacet.class));
+         Assert.assertTrue(project.getFacet(FacesFacet.class).getConfigFile().exists());
+         Assert.assertTrue(project.getFacet(ServletFacet.class).getWebInfDirectory().exists());
+         Assert.assertTrue(project.getFacet(ServletFacet.class).getWebInfDirectory().getChild("faces-config.xml")
+                  .exists());
+      }
    }
 }

@@ -30,7 +30,6 @@ import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.validation.UIValidationMessage;
 import org.jboss.forge.addon.ui.validation.UIValidationMessage.Severity;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 
 /**
@@ -70,39 +69,29 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
       UIProgressMonitor progressMonitor = runtime.createProgressMonitor(context);
       UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor);
 
-      Imported<CommandExecutionListener> listeners = addonRegistry.getServices(CommandExecutionListener.class);
+      Iterable<CommandExecutionListener> listeners = context.getListeners();
+      assertValid();
+      for (CommandExecutionListener listener : listeners)
+      {
+         listener.preCommandExecuted(initialCommand, executionContext);
+      }
+
       try
       {
-         assertValid();
+         Result result = initialCommand.execute(executionContext);
          for (CommandExecutionListener listener : listeners)
          {
-            listener.preCommandExecuted(initialCommand, executionContext);
+            listener.postCommandExecuted(initialCommand, executionContext, result);
          }
-
-         try
-         {
-            Result result = initialCommand.execute(executionContext);
-            for (CommandExecutionListener listener : listeners)
-            {
-               listener.postCommandExecuted(initialCommand, executionContext, result);
-            }
-            return result;
-         }
-         catch (Exception e)
-         {
-            for (CommandExecutionListener listener : listeners)
-            {
-               listener.postCommandFailure(initialCommand, executionContext, e);
-            }
-            throw e;
-         }
+         return result;
       }
-      finally
+      catch (Exception e)
       {
          for (CommandExecutionListener listener : listeners)
          {
-            listeners.release(listener);
+            listener.postCommandFailure(initialCommand, executionContext, e);
          }
+         throw e;
       }
    }
 

@@ -15,6 +15,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -22,7 +23,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.ui.test.WizardTester;
+import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -60,7 +61,7 @@ public class AddConstraintWizardTest
    }
 
    @Inject
-   private WizardTester<AddConstraintWizard> wizard;
+   private UITestHarness testHarness;
 
    @Inject
    private ProjectHelper projectHelper;
@@ -72,28 +73,28 @@ public class AddConstraintWizardTest
       projectHelper.installJPA_2_0(project);
       JavaResource jpaEntity = projectHelper.createJPAEntity(project, "Customer");
 
-      wizard.setInitialSelection(project.getProjectRoot());
-      wizard.launch();
+      WizardCommandController wizard = testHarness.createWizardController(AddConstraintWizard.class, project.getProjectRoot());
+      wizard.initialize();
       // Page 1
       {
          wizard.setValueFor("javaClass", jpaEntity);
-         Assert.assertTrue(wizard.canFlipToNextPage());
+         Assert.assertTrue(wizard.canMoveToNextStep());
       }
-      wizard.next();
+      wizard.next().initialize();
       // Page 2
       {
          wizard.setValueFor("property", "id");
          wizard.setValueFor("constraint", CoreConstraints.PATTERN);
-         Assert.assertTrue(wizard.canFlipToNextPage());
+         Assert.assertTrue(wizard.canMoveToNextStep());
       }
-      wizard.next();
+      wizard.next().initialize();
       // Page 3
       {
-         Assert.assertFalse(wizard.canFinish());
+         Assert.assertFalse(wizard.isValid());
          wizard.setValueFor("regexp", "[0-9]");
-         Assert.assertTrue(wizard.canFinish());
+         Assert.assertTrue(wizard.isValid());
       }
-      wizard.finish(null);
+      wizard.execute();
       JavaClass javaClass = (JavaClass) jpaEntity.getJavaSource();
       Field<JavaClass> field = javaClass.getField("id");
       Annotation<JavaClass> pattern = field.getAnnotation(Pattern.class);

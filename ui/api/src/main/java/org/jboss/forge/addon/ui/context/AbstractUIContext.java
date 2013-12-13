@@ -6,10 +6,15 @@
  */
 package org.jboss.forge.addon.ui.context;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.forge.addon.ui.UIProvider;
+import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
  * This class provides a skeletal implementation of the <tt>UIContext</tt> interface, to minimize the effort required to
@@ -22,6 +27,7 @@ public abstract class AbstractUIContext implements UIContext
 {
    private final Map<Object, Object> map = new HashMap<>();
    private Object selection;
+   private final Set<CommandExecutionListener> listeners = new LinkedHashSet<>();
 
    @Override
    @SuppressWarnings("unchecked")
@@ -63,5 +69,33 @@ public abstract class AbstractUIContext implements UIContext
    @Override
    public void close() throws Exception
    {
+      clearListeners();
    }
+
+   @Override
+   public ListenerRegistration<CommandExecutionListener> addCommandExecutionListener(
+            final CommandExecutionListener listener)
+   {
+      listeners.add(listener);
+      return new ListenerRegistration<CommandExecutionListener>()
+      {
+         @Override
+         public CommandExecutionListener removeListener()
+         {
+            listeners.remove(listener);
+            return listener;
+         }
+      };
+   }
+
+   public Set<CommandExecutionListener> getListeners()
+   {
+      return Collections.unmodifiableSet(listeners);
+   }
+
+   public void clearListeners()
+   {
+      listeners.clear();
+   }
+
 }

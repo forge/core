@@ -2,7 +2,6 @@ package org.jboss.forge.addon.ui;
 
 import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
 import org.jboss.forge.addon.ui.output.UIOutput;
-import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
  * A {@link UIProvider} allows registering of {@link CommandExecutionListener} objects independently of the underlying
@@ -12,12 +11,6 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
  */
 public interface UIProvider
 {
-   /**
-    * Add a {@link CommandExecutionListener}, returning the {@link ListenerRegistration} with which it may subsequently
-    * be removed.
-    */
-   public ListenerRegistration<CommandExecutionListener> addCommandExecutionListener(CommandExecutionListener listener);
-
    /**
     * Returns true if this {@link UIProvider} is running a Graphical User Interface.
     */

@@ -25,7 +25,11 @@
          <version>2.0.0-SNAPSHOT</version>
          <classifier>forge-addon</classifier>
       </dependency>
-
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>ui</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>javaee</artifactId>

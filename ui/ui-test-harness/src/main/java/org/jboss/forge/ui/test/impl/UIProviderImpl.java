@@ -7,7 +7,6 @@
 
 package org.jboss.forge.ui.test.impl;
 
-import org.jboss.forge.addon.ui.AbstractUIProvider;
 import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.output.UIOutput;
 
@@ -15,7 +14,7 @@ import org.jboss.forge.addon.ui.output.UIOutput;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class UIProviderImpl extends AbstractUIProvider implements UIProvider
+public class UIProviderImpl implements UIProvider
 {
    private final boolean graphical;
    private final UIOutput output;

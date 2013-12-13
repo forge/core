@@ -102,7 +102,7 @@ public class JPASetupWizardTest
       Assert.assertTrue(tester.canExecute());
       tester.setValueFor("dataSourceName", "java:jboss:jta-ds");
       final AtomicInteger counter = new AtomicInteger();
-      tester.getContext().getProvider().addCommandExecutionListener(new AbstractCommandExecutionListener()
+      tester.getContext().addCommandExecutionListener(new AbstractCommandExecutionListener()
       {
          @Override
          public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
@@ -191,7 +191,7 @@ public class JPASetupWizardTest
 
       tester.setValueFor("dataSourceName", "java:jboss:jta-ds");
       final AtomicInteger counter = new AtomicInteger();
-      tester.getContext().getProvider().addCommandExecutionListener(new AbstractCommandExecutionListener()
+      tester.getContext().addCommandExecutionListener(new AbstractCommandExecutionListener()
       {
          @Override
          public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
