@@ -27,7 +27,7 @@ public interface UIValidationMessage
    Severity getSeverity();
 
    /**
-    * @return the {@link InputComponent} that was referenced by this message or null if there is no
+    * @return the {@link InputComponent} that was referenced by this message or <code>null</code> if there is no
     *         {@link InputComponent} associated with this message
     */
    InputComponent<?, ?> getSource();

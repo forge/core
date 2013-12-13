@@ -7,7 +7,6 @@
 package org.jboss.forge.addon.shell.aesh;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -30,15 +29,16 @@ import org.jboss.aesh.console.command.validator.ValidatorInvocation;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.aesh.completion.OptionCompleterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
-import org.jboss.forge.addon.shell.ui.ShellValidationContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SingleValued;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.util.InputComponents;
+import org.jboss.forge.addon.ui.validation.UIValidationMessage;
+import org.jboss.forge.addon.ui.validation.UIValidationMessage.Severity;
 
 /**
  * Contains utility methods to parse command lines
@@ -52,24 +52,24 @@ public class CommandLineUtil
 
    private static final String ARGUMENTS_INPUT_NAME = "arguments";
 
-   private ConverterFactory converterFactory;
+   private final ConverterFactory converterFactory;
 
    public CommandLineUtil(ConverterFactory converterFactory)
    {
       this.converterFactory = converterFactory;
    }
 
-   public CommandLineParser generateParser(UICommand command, ShellContext shellContext,
+   public CommandLineParser generateParser(CommandController command, ShellContext shellContext,
             Map<String, InputComponent<?, Object>> inputs)
    {
       ProcessedCommand processedCommand = generateCommand(command, shellContext, inputs);
       return new ForgeCommandLineParser(processedCommand, this, inputs);
    }
 
-   private ProcessedCommand generateCommand(final UICommand command, final ShellContext shellContext,
+   private ProcessedCommand generateCommand(final CommandController command, final ShellContext shellContext,
             final Map<String, InputComponent<?, Object>> inputs)
    {
-      UICommandMetadata metadata = command.getMetadata(shellContext);
+      UICommandMetadata metadata = command.getMetadata();
       ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()),
                metadata.getDescription(), ForgeCommandValidator.INSTANCE);
 
@@ -94,7 +94,8 @@ public class CommandLineUtil
             {
                optionBuilder.required(true).renderer(OptionRenderers.REQUIRED);
             }
-            OptionCompleter<CompleterInvocation> completer = OptionCompleterFactory.getCompletionFor(input, shellContext, converterFactory);
+            OptionCompleter<CompleterInvocation> completer = OptionCompleterFactory.getCompletionFor(
+                     input, shellContext, converterFactory);
             optionBuilder.completer(completer);
             optionBuilder.activator(new OptionActivator()
             {
@@ -110,12 +111,12 @@ public class CommandLineUtil
                {
                   Object value = validatorInvocation.getValue();
                   InputComponents.setValueFor(converterFactory, input, value);
-                  ShellValidationContext validationContext = new ShellValidationContext(shellContext);
-                  input.validate(validationContext);
-                  List<String> errors = validationContext.getErrors();
-                  if (!errors.isEmpty())
+                  for (UIValidationMessage message : command.validate(input))
                   {
-                     throw new OptionValidatorException(errors.get(0));
+                     if (message.getSource() == input && message.getSeverity() == Severity.ERROR)
+                     {
+                        throw new OptionValidatorException(message.getDescription());
+                     }
                   }
                }
             }).converter(new Converter<Object, ConverterInvocation>()
@@ -153,7 +154,7 @@ public class CommandLineUtil
    public Map<String, InputComponent<?, Object>> populateUIInputs(CommandLine commandLine,
             Map<String, InputComponent<?, Object>> inputs)
    {
-      Map<String, InputComponent<?, Object>> populatedInputs = new HashMap<String, InputComponent<?, Object>>();
+      Map<String, InputComponent<?, Object>> populatedInputs = new HashMap<>();
       for (Entry<String, InputComponent<?, Object>> entry : inputs.entrySet())
       {
          String name = entry.getKey();

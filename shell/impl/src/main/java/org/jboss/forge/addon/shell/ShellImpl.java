@@ -28,7 +28,6 @@ import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
 import org.jboss.forge.addon.shell.aesh.ForgeManProvider;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIOutputImpl;
-import org.jboss.forge.addon.ui.AbstractUIProvider;
 import org.jboss.forge.addon.ui.DefaultUIProgressMonitor;
 import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -47,7 +46,7 @@ import org.jboss.forge.furnace.util.Assert;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Vetoed
-public class ShellImpl extends AbstractUIProvider implements Shell, UIRuntime
+public class ShellImpl implements Shell, UIRuntime
 {
    private FileResource<?> currentResource;
    private final AddonRegistry addonRegistry;
@@ -145,7 +144,6 @@ public class ShellImpl extends AbstractUIProvider implements Shell, UIRuntime
       return output;
    }
 
-   @Override
    public ShellContextImpl createUIContext()
    {
       Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);

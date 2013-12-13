@@ -12,12 +12,14 @@ import java.util.List;
 import org.jboss.aesh.cl.validator.CommandValidator;
 import org.jboss.aesh.cl.validator.CommandValidatorException;
 import org.jboss.aesh.console.command.Command;
-import org.jboss.forge.addon.shell.ui.ShellValidationContext;
+import org.jboss.forge.addon.ui.validation.UIValidationMessage;
+import org.jboss.forge.addon.ui.validation.UIValidationMessage.Severity;
 
 /**
  * Forge {@link CommandValidator} implementation
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @SuppressWarnings("rawtypes")
 public enum ForgeCommandValidator implements CommandValidator
@@ -29,11 +31,11 @@ public enum ForgeCommandValidator implements CommandValidator
    {
       if (command instanceof CommandAdapter)
       {
-         ShellValidationContext context = ((CommandAdapter) command).validate();
-         List<String> errors = context.getErrors();
-         if (!errors.isEmpty())
+         List<UIValidationMessage> messages = ((CommandAdapter) command).validate();
+         for (UIValidationMessage message : messages)
          {
-            throw new CommandValidatorException(errors.get(0));
+            if (message.getSeverity() == Severity.ERROR)
+               throw new CommandValidatorException(message.getDescription());
          }
       }
    }

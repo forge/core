@@ -54,6 +54,12 @@ public interface CommandController extends AutoCloseable
    List<UIValidationMessage> validate();
 
    /**
+    * Calls {@link InputComponent#validate(org.jboss.forge.addon.ui.context.UIValidationContext)} for the given
+    * {@link InputComponent} belonging to the underlying {@link UICommand}.
+    */
+   List<UIValidationMessage> validate(InputComponent<?, Object> input);
+
+   /**
     * Returns <code>true</code> if the {@link CommandController#validate()} method contains no
     * {@link UIValidationMessage} instances with an ERROR severity
     */

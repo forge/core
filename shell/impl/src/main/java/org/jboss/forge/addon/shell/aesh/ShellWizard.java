@@ -47,7 +47,7 @@ public class ShellWizard extends AbstractShellInteraction
             throws Exception
    {
       Map<String, InputComponent<?, Object>> inputs = getInputs();
-      CommandLineParser parser = commandLineUtil.generateParser(getSourceCommand().getCommand(), shellContext, inputs);
+      CommandLineParser parser = commandLineUtil.generateParser(getSourceCommand(), shellContext, inputs);
       CommandLine cmdLine = parser.parse(line, true);
       Map<String, InputComponent<?, Object>> populatedInputs = commandLineUtil.populateUIInputs(cmdLine, inputs);
       if (getSourceCommand().isValid())

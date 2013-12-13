@@ -34,6 +34,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
  * It delegates to the Aesh commands if no command is found
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class ForgeCommandRegistry implements CommandRegistry
 {
@@ -77,7 +78,7 @@ public class ForgeCommandRegistry implements CommandRegistry
 
    private CommandContainer getForgeCommand(String name, String completeLine) throws CommandNotFoundException
    {
-      ShellContextImpl shellContext = shell.newShellContext();
+      ShellContextImpl shellContext = shell.createUIContext();
       AbstractShellInteraction cmd = findCommand(shellContext, name);
       if (cmd == null)
       {
@@ -105,12 +106,12 @@ public class ForgeCommandRegistry implements CommandRegistry
          {
             if (cmd instanceof UIWizard)
             {
-               result = new ShellWizard(commandFactory.createWizardController((UIWizard) cmd, shell), shellContext,
-                        cmdLineUtil, this);
+               result = new ShellWizard(commandFactory.createWizardController(shellContext, (UIWizard) cmd, shell),
+                        shellContext, cmdLineUtil, this);
             }
             else
             {
-               result = new ShellSingleCommand(commandFactory.createSingleController(cmd, shell),
+               result = new ShellSingleCommand(commandFactory.createSingleController(shellContext, cmd, shell),
                         shellContext, cmdLineUtil);
             }
             break;
@@ -144,7 +145,7 @@ public class ForgeCommandRegistry implements CommandRegistry
 
    private Set<String> getForgeCommandNames()
    {
-      ShellContextImpl newShellContext = shell.newShellContext();
+      ShellContextImpl newShellContext = shell.createUIContext();
       try
       {
          return commandManager.getAllCommandNames(newShellContext);

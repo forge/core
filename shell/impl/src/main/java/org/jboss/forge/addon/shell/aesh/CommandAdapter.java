@@ -9,6 +9,7 @@ package org.jboss.forge.addon.shell.aesh;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,11 +24,14 @@ import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.validation.UIValidationMessage;
+import org.jboss.forge.addon.ui.validation.UIValidationMessage.Severity;
 
 /**
  * Adapts the current {@link AbstractShellInteraction} to a {@link Command}
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 class CommandAdapter implements Command<CommandInvocation>, ManCommand
 {
@@ -42,14 +46,19 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
       this.interaction = interaction;
    }
 
+   public List<UIValidationMessage> validate()
+   {
+      return interaction.getSourceCommand().validate();
+   }
+
    @SuppressWarnings("unchecked")
    @Override
    public CommandResult execute(CommandInvocation commandInvocation) throws IOException
    {
+      boolean failure = true;
       if (interaction.getSourceCommand().isValid())
       {
-         Result result = interaction.getSourceCommand().execute();
-
+         Result result = null;
          try
          {
             result = interaction.getSourceCommand().execute();
@@ -68,11 +77,12 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
             }
             else
             {
+               failure = false;
                ShellMessages.success(shell.getConsole().getShell().out(), result.getMessage());
             }
          }
 
-         ShellContext context = interaction.getSourceCommand().getCurrentSelection();
+         ShellContext context = interaction.getContext().getSelection();
          Object selection = context.getSelection();
          if (selection != null)
          {
@@ -92,15 +102,14 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
                shell.setCurrentResource((FileResource<?>) selection);
             }
          }
-
       }
       else
       {
-         failure = true;
-         // Display the error messages
-         for (String error : errors)
+         List<UIValidationMessage> messages = interaction.getSourceCommand().validate();
+         for (UIValidationMessage message : messages)
          {
-            ShellMessages.error(shell.getConsole().getShell().err(), error);
+            if (message.getSeverity() == Severity.ERROR)
+               ShellMessages.error(shell.getConsole().getShell().err(), message.getDescription());
          }
       }
       return failure ? CommandResult.FAILURE : CommandResult.SUCCESS;

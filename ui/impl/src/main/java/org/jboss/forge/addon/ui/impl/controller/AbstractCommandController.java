@@ -7,12 +7,16 @@
 
 package org.jboss.forge.addon.ui.impl.controller;
 
+import java.util.List;
 import java.util.Set;
 
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
+import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.spi.UIRuntime;
+import org.jboss.forge.addon.ui.validation.UIValidationMessage;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.util.Assert;
 
@@ -46,6 +50,17 @@ public abstract class AbstractCommandController implements CommandController
    protected void assertValid()
    {
       Assert.isTrue(isValid(), "Controller is not in valid state.");
+   }
+
+   @Override
+   public List<UIValidationMessage> validate(InputComponent<?, Object> input)
+   {
+      assertInitialized();
+      Assert.notNull(input, "InputComponent must not be null.");
+      Assert.isTrue(getInputs().contains(input), "InputComponent must belong to this command.");
+      UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
+      input.validate(validationContext);
+      return validationContext.getMessages();
    }
 
    @Override
