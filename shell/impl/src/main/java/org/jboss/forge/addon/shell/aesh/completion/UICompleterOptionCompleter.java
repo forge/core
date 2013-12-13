@@ -28,13 +28,13 @@ class UICompleterOptionCompleter implements OptionCompleter<CompleterInvocation>
    private final ConverterFactory converterFactory;
    private final ShellContext context;
 
+   @SuppressWarnings("unchecked")
    public UICompleterOptionCompleter(OptionCompleter<CompleterInvocation> fallback, ShellContext context,
-            InputComponent<?, Object> input,
-            ConverterFactory converterFactory)
+            InputComponent<?, ?> input, ConverterFactory converterFactory)
    {
       this.fallback = fallback;
       this.context = context;
-      this.input = input;
+      this.input = (InputComponent<?, Object>) input;
       this.converterFactory = converterFactory;
    }
 
@@ -56,7 +56,7 @@ class UICompleterOptionCompleter implements OptionCompleter<CompleterInvocation>
          {
             converter = converterFactory.getConverter(input.getValueType(), String.class);
          }
-         List<String> choices = new ArrayList<String>();
+         List<String> choices = new ArrayList<>();
          for (Object proposal : completer.getCompletionProposals(context, input, completeValue))
          {
             if (proposal != null)

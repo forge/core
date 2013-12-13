@@ -24,10 +24,8 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
  */
 public class OptionCompleterFactory
 {
-   @SuppressWarnings("unchecked")
    public static OptionCompleter<CompleterInvocation> getCompletionFor(InputComponent<?, Object> component,
-            ShellContext context,
-            ConverterFactory converterFactory)
+            ShellContext context, ConverterFactory converterFactory)
    {
       UISelection<FileResource<?>> selection = context.getInitialSelection();
 

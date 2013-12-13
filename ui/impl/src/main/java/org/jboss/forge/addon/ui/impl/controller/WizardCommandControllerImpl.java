@@ -52,7 +52,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    private int flowPointer = 0;
 
    public WizardCommandControllerImpl(AddonRegistry addonRegistry, UIRuntime runtime,
-            UIWizard initialCommand) throws Exception
+            UIWizard initialCommand, CommandControllerFactory controllerFactory)
    {
       super(addonRegistry, runtime, initialCommand);
       flow.add(createControllerFor(initialCommand));
@@ -274,7 +274,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       return createControllerFor(command);
    }
 
-   private CommandController createControllerFor(UICommand command) throws Exception
+   private CommandController createControllerFor(UICommand command)
    {
       return new SingleCommandController(addonRegistry, runtime, command, context);
    }

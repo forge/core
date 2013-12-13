@@ -6,14 +6,10 @@
  */
 package org.jboss.forge.addon.shell.aesh;
 
-import java.util.Map;
-
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.forge.addon.shell.ui.ShellContext;
-import org.jboss.forge.addon.shell.ui.ShellValidationContext;
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.controller.CommandController;
 
 /**
  * Encapsulates a {@link UICommand} to be useful in a Shell context
@@ -24,14 +20,13 @@ import org.jboss.forge.addon.ui.result.Result;
  */
 public class ShellSingleCommand extends AbstractShellInteraction
 {
-   private final UICommand command;
-   private Map<String, InputComponent<?, Object>> inputs;
+   private final CommandController command;
    private CommandLineParser commandLineParser;
 
    /**
     * Creates a new {@link ShellSingleCommand} based on the shell and initial selection
     */
-   public ShellSingleCommand(UICommand command, ShellContext shellContext, CommandLineUtil commandLineUtil)
+   public ShellSingleCommand(CommandController command, ShellContext shellContext, CommandLineUtil commandLineUtil)
    {
       super(command, shellContext, commandLineUtil);
       this.command = command;
@@ -42,42 +37,9 @@ public class ShellSingleCommand extends AbstractShellInteraction
    {
       if (this.commandLineParser == null)
       {
-         this.commandLineParser = commandLineUtil.generateParser(this.command, shellContext, getInputs());
+         this.commandLineParser = commandLineUtil.generateParser(this.command.getCommand(), shellContext, getInputs());
       }
       return this.commandLineParser;
    }
 
-   public UICommand getCommand()
-   {
-      return command;
-   }
-
-   @Override
-   public Map<String, InputComponent<?, Object>> getInputs()
-   {
-      if (inputs == null)
-      {
-         inputs = buildInputs(command);
-      }
-      return inputs;
-   }
-
-   @Override
-   public Result execute() throws Exception
-   {
-      return command.execute(getExecutionContext());
-   }
-
-   @Override
-   public ShellValidationContext validate()
-   {
-      ShellValidationContext validationContext = new ShellValidationContext(getExecutionContext().getUIContext());
-      for (InputComponent<?, Object> input : getInputs().values())
-      {
-         input.validate(validationContext);
-      }
-      command.validate(validationContext);
-
-      return validationContext;
-   }
 }

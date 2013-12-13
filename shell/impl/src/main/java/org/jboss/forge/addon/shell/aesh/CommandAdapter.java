@@ -9,7 +9,8 @@ package org.jboss.forge.addon.shell.aesh;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.aesh.console.command.Command;
 import org.jboss.aesh.console.command.CommandResult;
@@ -19,9 +20,9 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ShellMessages;
 import org.jboss.forge.addon.shell.ui.ShellContext;
-import org.jboss.forge.addon.shell.ui.ShellValidationContext;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.result.Results;
 
 /**
  * Adapts the current {@link AbstractShellInteraction} to a {@link Command}
@@ -30,6 +31,8 @@ import org.jboss.forge.addon.ui.result.Result;
  */
 class CommandAdapter implements Command<CommandInvocation>, ManCommand
 {
+   private static final Logger log = Logger.getLogger(CommandAdapter.class.getName());
+
    private final ShellImpl shell;
    private final AbstractShellInteraction interaction;
 
@@ -43,16 +46,23 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
    @Override
    public CommandResult execute(CommandInvocation commandInvocation) throws IOException
    {
-      boolean failure;
-      ShellValidationContext validationContext = interaction.validate();
-      List<String> errors = validationContext.getErrors();
-      if (errors.isEmpty())
+      if (interaction.getSourceCommand().isValid())
       {
-         Result result = shell.execute(interaction);
-         failure = (result instanceof Failed);
+         Result result = interaction.getSourceCommand().execute();
+
+         try
+         {
+            result = interaction.getSourceCommand().execute();
+         }
+         catch (Exception e)
+         {
+            log.log(Level.SEVERE, "Failed to execute [" + interaction.getName() + "] due to exception.", e);
+            result = Results.fail(e.getMessage(), e);
+         }
+
          if (result != null && result.getMessage() != null && !result.getMessage().isEmpty())
          {
-            if (failure)
+            if (result instanceof Failed)
             {
                ShellMessages.error(shell.getConsole().getShell().err(), result.getMessage());
             }
@@ -61,7 +71,8 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
                ShellMessages.success(shell.getConsole().getShell().out(), result.getMessage());
             }
          }
-         ShellContext context = interaction.getExecutionContext().getUIContext();
+
+         ShellContext context = interaction.getSourceCommand().getCurrentSelection();
          Object selection = context.getSelection();
          if (selection != null)
          {
@@ -93,11 +104,6 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
          }
       }
       return failure ? CommandResult.FAILURE : CommandResult.SUCCESS;
-   }
-
-   ShellValidationContext validate()
-   {
-      return interaction.validate();
    }
 
    @Override

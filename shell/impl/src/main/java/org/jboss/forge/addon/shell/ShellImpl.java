@@ -24,17 +24,18 @@ import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
 import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
 import org.jboss.forge.addon.shell.aesh.ForgeManProvider;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIOutputImpl;
 import org.jboss.forge.addon.ui.AbstractUIProvider;
+import org.jboss.forge.addon.ui.DefaultUIProgressMonitor;
+import org.jboss.forge.addon.ui.UIProgressMonitor;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIContextListener;
-import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
+import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.output.UIOutput;
-import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.spi.UIRuntime;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
@@ -46,16 +47,15 @@ import org.jboss.forge.furnace.util.Assert;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Vetoed
-public class ShellImpl extends AbstractUIProvider implements Shell
+public class ShellImpl extends AbstractUIProvider implements Shell, UIRuntime
 {
-
    private FileResource<?> currentResource;
    private final AddonRegistry addonRegistry;
    private final AeshConsole console;
    private final UIOutput output;
 
    public ShellImpl(FileResource<?> initialResource, Settings settings, CommandManager commandManager,
-            AddonRegistry addonRegistry)
+            AddonRegistry addonRegistry, CommandControllerFactory commandFactory)
    {
       this.currentResource = initialResource;
       this.addonRegistry = addonRegistry;
@@ -71,7 +71,9 @@ public class ShellImpl extends AbstractUIProvider implements Shell
       this.console = new AeshConsoleBuilder()
                .prompt(createPrompt())
                .settings(newSettings)
-               .commandRegistry(new ForgeCommandRegistry(this, commandManager))
+               .commandRegistry(
+                        new ForgeCommandRegistry(this, commandManager, commandFactory, commandManager
+                                 .getConverterFactory()))
                .manProvider(new ForgeManProvider(this, commandManager))
                .create();
       this.output = new ShellUIOutputImpl(console);
@@ -89,7 +91,7 @@ public class ShellImpl extends AbstractUIProvider implements Shell
    private Prompt createPrompt()
    {
       // [ currentdir]$
-      List<TerminalCharacter> prompt = new LinkedList<TerminalCharacter>();
+      List<TerminalCharacter> prompt = new LinkedList<>();
       prompt.add(new TerminalCharacter('[', new TerminalColor(Color.BLUE, Color.DEFAULT),
                CharacterType.BOLD));
       for (char c : currentResource.getName().toCharArray())
@@ -101,56 +103,6 @@ public class ShellImpl extends AbstractUIProvider implements Shell
       prompt.add(new TerminalCharacter('$'));
       prompt.add(new TerminalCharacter(' '));
       return new Prompt(prompt);
-   }
-
-   public Result execute(AbstractShellInteraction shellCommand)
-   {
-      Result result = null;
-      try
-      {
-         firePreCommandListeners(shellCommand);
-         result = shellCommand.execute();
-         firePostCommandListeners(shellCommand, result);
-      }
-      catch (Exception e)
-      {
-         firePostCommandFailureListeners(shellCommand, e);
-         e.printStackTrace();
-         result = Results.fail(e.getMessage(), e);
-      }
-      return result;
-   }
-
-   public ShellContextImpl newShellContext()
-   {
-      Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
-      ShellContextImpl shellContextImpl = new ShellContextImpl(this, currentResource, listeners);
-      return shellContextImpl;
-   }
-
-   private void firePreCommandListeners(AbstractShellInteraction shellCommand)
-   {
-      for (CommandExecutionListener listener : getListeners())
-      {
-         listener.preCommandExecuted(shellCommand.getSourceCommand(), shellCommand.getExecutionContext());
-      }
-   }
-
-   private void firePostCommandListeners(AbstractShellInteraction shellCommand, Result result)
-   {
-      for (CommandExecutionListener listener : getListeners())
-      {
-         listener.postCommandExecuted(shellCommand.getSourceCommand(), shellCommand.getExecutionContext(), result);
-      }
-
-   }
-
-   private void firePostCommandFailureListeners(AbstractShellInteraction shellCommand, Throwable failure)
-   {
-      for (CommandExecutionListener listener : getListeners())
-      {
-         listener.postCommandFailure(shellCommand.getSourceCommand(), shellCommand.getExecutionContext(), failure);
-      }
    }
 
    @PreDestroy
@@ -191,5 +143,19 @@ public class ShellImpl extends AbstractUIProvider implements Shell
    public UIOutput getOutput()
    {
       return output;
+   }
+
+   @Override
+   public ShellContextImpl createUIContext()
+   {
+      Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
+      ShellContextImpl shellContextImpl = new ShellContextImpl(this, currentResource, listeners);
+      return shellContextImpl;
+   }
+
+   @Override
+   public UIProgressMonitor createProgressMonitor(UIContext context)
+   {
+      return new DefaultUIProgressMonitor();
    }
 }

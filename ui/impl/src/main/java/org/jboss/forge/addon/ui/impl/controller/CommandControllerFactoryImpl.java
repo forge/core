@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
+import org.jboss.forge.addon.ui.controller.SingleCommandController;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.spi.UIRuntime;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
@@ -22,6 +23,7 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
  * Creates {@link CommandController} objects
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Singleton
 public class CommandControllerFactoryImpl implements CommandControllerFactory
@@ -35,13 +37,21 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
    }
 
    @Override
-   public CommandController createSingleController(UICommand command, UIRuntime runtime) throws Exception
+   public CommandController createController(UICommand command, UIRuntime runtime)
    {
-      return new SingleCommandController(addonRegistry, runtime, command);
+      if (command instanceof UIWizard)
+         return createWizardController((UIWizard) command, runtime);
+      return createSingleController(command, runtime);
    }
 
    @Override
-   public WizardCommandController createWizardController(UIWizard wizard, UIRuntime runtime) throws Exception
+   public SingleCommandController createSingleController(UICommand command, UIRuntime runtime)
+   {
+      return new SingleCommandControllerImpl(addonRegistry, runtime, command);
+   }
+
+   @Override
+   public WizardCommandController createWizardController(UIWizard wizard, UIRuntime runtime)
    {
       return new WizardCommandControllerImpl(addonRegistry, runtime, wizard);
    }

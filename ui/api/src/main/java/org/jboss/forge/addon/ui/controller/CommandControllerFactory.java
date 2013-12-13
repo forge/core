@@ -15,16 +15,22 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
  * Creates {@link CommandController} objects
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface CommandControllerFactory
 {
    /**
+    * Create a {@link CommandController} of the correct type for the given {@link UICommand}.
+    */
+   CommandController createController(UICommand command, UIRuntime runtime);
+
+   /**
     * Create a {@link SingleCommandController}. Should be called when a single command execution must be performed.
     */
-   CommandController createSingleController(UICommand command, UIRuntime runtime) throws Exception;
+   SingleCommandController createSingleController(UICommand command, UIRuntime runtime);
 
    /**
     * Create a {@link WizardCommandController}. Should be called when a wizard (multisteps) execution must be performed.
     */
-   WizardCommandController createWizardController(UIWizard wizard, UIRuntime runtime) throws Exception;
+   WizardCommandController createWizardController(UIWizard wizard, UIRuntime runtime);
 }

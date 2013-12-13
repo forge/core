@@ -18,6 +18,7 @@ import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
+import org.jboss.forge.addon.ui.controller.SingleCommandController;
 import org.jboss.forge.addon.ui.impl.context.UIBuilderImpl;
 import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
@@ -37,12 +38,11 @@ import org.jboss.forge.furnace.util.Assert;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-class SingleCommandController extends AbstractCommandController
+class SingleCommandControllerImpl extends AbstractCommandController implements SingleCommandController
 {
    private UIBuilderImpl uiBuilder;
 
-   public SingleCommandController(AddonRegistry addonRegistry, UIRuntime runtime, UICommand command)
-            throws Exception
+   public SingleCommandControllerImpl(AddonRegistry addonRegistry, UIRuntime runtime, UICommand command)
    {
       super(addonRegistry, runtime, command);
    }

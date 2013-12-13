@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.util.Assert;
 
@@ -28,14 +29,17 @@ public class ShellFactoryImpl implements ShellFactory
    private final ResourceFactory resourceFactory;
    private final AddonRegistry addonRegistry;
    private final CommandManager commandManager;
+   private final CommandControllerFactory commandFactory;
 
    @Inject
    public ShellFactoryImpl(AddonRegistry addonRegistry, CommandManager commandManager,
+            CommandControllerFactory commandFactory,
             ResourceFactory resourceFactory)
    {
       super();
       this.addonRegistry = addonRegistry;
       this.commandManager = commandManager;
+      this.commandFactory = commandFactory;
       this.resourceFactory = resourceFactory;
    }
 
@@ -44,7 +48,7 @@ public class ShellFactoryImpl implements ShellFactory
    {
       Assert.notNull(settings, "Settings cannot be null");
       FileResource<?> initialResource = resourceFactory.create(initialSelection).reify(FileResource.class);
-      return new ShellImpl(initialResource, settings, commandManager, addonRegistry);
+      return new ShellImpl(initialResource, settings, commandManager, addonRegistry, commandFactory);
    }
 
 }

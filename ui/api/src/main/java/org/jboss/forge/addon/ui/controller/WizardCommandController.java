@@ -8,6 +8,8 @@
 package org.jboss.forge.addon.ui.controller;
 
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
  * A composite implementation for {@link CommandController}
@@ -17,24 +19,30 @@ import org.jboss.forge.addon.ui.UICommand;
 public interface WizardCommandController extends CommandController
 {
    /**
-    * Is it possible to navigate to the next page?
+    * Return the underlying {@link UIWizard} instance.
+    */
+   @Override
+   public UIWizard getCommand();
+
+   /**
+    * Return <code>true</code> if navigation to the next {@link UIWizardStep} is possible.
     */
    public boolean canMoveToNextStep();
 
    /**
-    * Is it possible to navigate to the previous page?
+    * Return <code>true</code> if navigation to the previous {@link UIWizardStep} is possible.
     */
    public boolean canMoveToPreviousStep();
 
    /**
-    * Navigate to the next page.
+    * Navigate to the next {@link UIWizardStep}.
     * 
     * @throws IllegalStateException if navigation is not possible
     */
    public WizardCommandController next() throws Exception;
 
    /**
-    * Navigate to the previous visited page
+    * Navigate to the previous {@link UIWizardStep}.
     * 
     * @throws IllegalStateException if navigation is not possible
     */
@@ -42,7 +50,7 @@ public interface WizardCommandController extends CommandController
 
    /**
     * Returns <code>true</code> if {@link UICommand#execute(org.jboss.forge.addon.ui.context.UIExecutionContext)} can be
-    * called
+    * called.
     */
    boolean canExecute();
 

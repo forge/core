@@ -10,15 +10,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
-import org.jboss.forge.addon.shell.aesh.AbstractShellInteraction;
-import org.jboss.forge.addon.shell.aesh.CommandLineUtil;
 import org.jboss.forge.addon.shell.aesh.ShellSingleCommand;
-import org.jboss.forge.addon.shell.aesh.ShellWizard;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.util.Commands;
-import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.forge.furnace.event.PreShutdown;
@@ -35,7 +31,6 @@ public class CommandManager
    private final AddonRegistry addonRegistry;
 
    private Imported<UICommand> allCommands;
-   private CommandLineUtil commandLineUtil;
    private ConverterFactory converterFactory;
 
    private List<UICommand> commandCache;
@@ -63,34 +58,12 @@ public class CommandManager
 
    public Set<String> getAllCommandNames(ShellContext shellContext)
    {
-      Set<String> commands = new TreeSet<String>();
+      Set<String> commands = new TreeSet<>();
       for (UICommand cmd : Commands.getEnabledCommands(getAllCommands(), shellContext))
       {
          commands.add(getCommandName(shellContext, cmd));
       }
       return commands;
-   }
-
-   public AbstractShellInteraction findCommand(ShellContext shellContext, String commandName)
-   {
-      AbstractShellInteraction result = null;
-      CommandLineUtil cmdLineUtil = getCommandLineUtil();
-      for (UICommand cmd : Commands.getEnabledCommands(getAllCommands(), shellContext))
-      {
-         if (commandName.equals(getCommandName(shellContext, cmd)))
-         {
-            if (cmd instanceof UIWizard)
-            {
-               result = new ShellWizard((UIWizard) cmd, shellContext, cmdLineUtil, this);
-            }
-            else
-            {
-               result = new ShellSingleCommand(cmd, shellContext, cmdLineUtil);
-            }
-            break;
-         }
-      }
-      return result;
    }
 
    public String getCommandName(ShellContext shellContext, UICommand cmd)
@@ -106,22 +79,13 @@ public class CommandManager
       }
       if (commandCache == null)
       {
-         commandCache = new LinkedList<UICommand>();
+         commandCache = new LinkedList<>();
          for (UICommand command : allCommands)
          {
             commandCache.add(command);
          }
       }
       return allCommands;
-   }
-
-   private CommandLineUtil getCommandLineUtil()
-   {
-      if (commandLineUtil == null)
-      {
-         commandLineUtil = new CommandLineUtil(getConverterFactory());
-      }
-      return commandLineUtil;
    }
 
    ConverterFactory getConverterFactory()

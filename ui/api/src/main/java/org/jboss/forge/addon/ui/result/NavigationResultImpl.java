@@ -13,6 +13,7 @@ class NavigationResultImpl implements NavigationResult
 {
    private final Class<? extends UICommand>[] next;
 
+   @SuppressWarnings("unchecked")
    public NavigationResultImpl(Class<? extends UICommand>... next)
    {
       this.next = next;

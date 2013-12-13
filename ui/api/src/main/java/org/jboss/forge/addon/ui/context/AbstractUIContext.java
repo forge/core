@@ -20,7 +20,7 @@ import org.jboss.forge.addon.ui.UIProvider;
  */
 public abstract class AbstractUIContext implements UIContext
 {
-   private Map<Object, Object> map = new HashMap<Object, Object>();
+   private final Map<Object, Object> map = new HashMap<>();
    private Object selection;
 
    @Override
@@ -31,9 +31,9 @@ public abstract class AbstractUIContext implements UIContext
    }
 
    @Override
-   public <SELECTIONTYPE> void setSelection(SELECTIONTYPE resource)
+   public <SELECTIONTYPE> void setSelection(SELECTIONTYPE selection)
    {
-      this.selection = resource;
+      this.selection = selection;
    }
 
    @Override

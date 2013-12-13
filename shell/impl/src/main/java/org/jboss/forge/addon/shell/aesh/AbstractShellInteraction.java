@@ -11,78 +11,58 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.forge.addon.shell.ui.ShellContext;
-import org.jboss.forge.addon.shell.ui.ShellUIBuilderImpl;
-import org.jboss.forge.addon.shell.ui.ShellUIExecutionContext;
-import org.jboss.forge.addon.shell.ui.ShellValidationContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.furnace.util.Streams;
 
 /**
- * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public abstract class AbstractShellInteraction implements Comparable<AbstractShellInteraction>
 {
    private final String name;
-   private final ShellUIExecutionContext executionContext;
-   private final UICommand root;
+   private final CommandController controller;
    private final UICommandMetadata metadata;
    protected final CommandLineUtil commandLineUtil;
 
-   protected AbstractShellInteraction(UICommand root, ShellContext shellContext,
+   protected AbstractShellInteraction(CommandController controller, ShellContext shellContext,
             CommandLineUtil commandLineUtil)
    {
-      this.root = root;
-      this.metadata = root.getMetadata(shellContext);
+      this.controller = controller;
+      this.metadata = controller.getMetadata();
       this.name = ShellUtil.shellifyName(metadata.getName());
-      this.executionContext = new ShellUIExecutionContext(shellContext);
       this.commandLineUtil = commandLineUtil;
    }
 
    public abstract CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception;
 
-   public abstract Map<String, InputComponent<?, Object>> getInputs();
-
-   public abstract ShellValidationContext validate();
-
-   public abstract Result execute() throws Exception;
-
-   protected Map<String, InputComponent<?, Object>> buildInputs(UICommand command)
+   @SuppressWarnings("unchecked")
+   public Map<String, InputComponent<?, Object>> getInputs()
    {
-      // Initialize UICommand
-      ShellUIBuilderImpl builder = new ShellUIBuilderImpl(getExecutionContext().getUIContext());
-      try
+      Map<String, InputComponent<?, Object>> result = new HashMap<>();
+      for (InputComponent<?, ?> input : controller.getInputs())
       {
-         command.initializeUI(builder);
+         result.put(input.getName(), (InputComponent<?, Object>) input);
       }
-      catch (Exception e)
-      {
-         throw new RuntimeException("Error while initializing command", e);
-      }
-      return builder.getComponentMap();
+      return result;
    }
 
-   public UICommand getSourceCommand()
+   public CommandController getSourceCommand()
    {
-      return root;
+      return controller;
    }
 
    public final String getName()
    {
       return name;
-   }
-
-   public final ShellUIExecutionContext getExecutionContext()
-   {
-      return executionContext;
    }
 
    public File getManLocation()
