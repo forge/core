@@ -28,7 +28,6 @@ public class MockBuildSystem implements BuildSystem
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public Iterable<Class<? extends BuildSystemFacet>> getProvidedFacetTypes()
    {
       return Arrays.<Class<? extends BuildSystemFacet>> asList(MetadataFacet.class);

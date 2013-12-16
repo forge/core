@@ -133,7 +133,6 @@ public class ProjectFactoryImplTest
    }
 
    @Test
-   @SuppressWarnings("unchecked")
    public void testCreateTempProjectWithFacets()
    {
       Project project = projectFactory.createTempProject(Arrays
@@ -143,7 +142,6 @@ public class ProjectFactoryImplTest
    }
 
    @Test
-   @SuppressWarnings("unchecked")
    public void testCreateTempProjectWithBuildSystemAndFacets()
    {
       BuildSystem buildSystem = buildSystems.get();

@@ -32,7 +32,6 @@ public class MockProjectType implements ProjectType
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
    {
       return Arrays.<Class<? extends ProjectFacet>> asList(MetadataFacet.class);
