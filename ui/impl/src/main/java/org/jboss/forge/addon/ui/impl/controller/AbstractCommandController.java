@@ -53,11 +53,11 @@ public abstract class AbstractCommandController implements CommandController
    }
 
    @Override
-   public List<UIValidationMessage> validate(InputComponent<?, Object> input)
+   public List<UIValidationMessage> validate(InputComponent<?, ?> input)
    {
       assertInitialized();
       Assert.notNull(input, "InputComponent must not be null.");
-      Assert.isTrue(getInputs().contains(input), "InputComponent must belong to this command.");
+      Assert.isTrue(getInputs().values().contains(input), "InputComponent must belong to this command.");
       UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
       input.validate(validationContext);
       return validationContext.getMessages();
@@ -84,8 +84,8 @@ public abstract class AbstractCommandController implements CommandController
          else if (isInitialized() && newController.isInitialized())
          {
             // Compare inputs
-            Set<String> originalInputNames = getInputNames();
-            Set<String> newInputNames = newController.getInputNames();
+            Set<String> originalInputNames = getInputs().keySet();
+            Set<String> newInputNames = newController.getInputs().keySet();
             if (originalInputNames.containsAll(newInputNames) && newInputNames.containsAll(originalInputNames))
             {
                result = true;

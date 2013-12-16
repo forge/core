@@ -7,12 +7,12 @@
 
 package org.jboss.forge.addon.shell.aesh;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.forge.addon.shell.ui.ShellContext;
-import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.input.InputComponent;
 
@@ -39,24 +39,25 @@ public class ShellWizard extends AbstractShellInteraction
    @Override
    public CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception
    {
-      UICommand command = getController().getCommand();
-      return populate(command, shellContext, completeLine);
+      getController().initialize();
+      return populate(shellContext, completeLine, new HashMap<String, InputComponent<?, ?>>());
    }
 
-   private CommandLineParser populate(UICommand command, ShellContext shellContext, String line)
+   private CommandLineParser populate(ShellContext shellContext, String line,
+            final Map<String, InputComponent<?, ?>> inputs)
             throws Exception
    {
-      Map<String, InputComponent<?, Object>> inputs = getInputs();
+      inputs.putAll(getController().getInputs());
       CommandLineParser parser = commandLineUtil.generateParser(getController(), shellContext, inputs);
       CommandLine cmdLine = parser.parse(line, true);
-      Map<String, InputComponent<?, Object>> populatedInputs = commandLineUtil.populateUIInputs(cmdLine, inputs);
+      Map<String, InputComponent<?, ?>> populatedInputs = commandLineUtil.populateUIInputs(cmdLine, inputs);
       if (getController().isValid())
       {
          if (getController().canMoveToNextStep())
          {
             getController().next().initialize();
             inputs.keySet().retainAll(populatedInputs.keySet());
-            parser = populate(command, shellContext, line);
+            parser = populate(shellContext, line, inputs);
          }
       }
       return parser;

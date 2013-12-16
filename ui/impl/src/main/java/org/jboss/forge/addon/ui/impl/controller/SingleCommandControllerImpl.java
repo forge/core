@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.ui.impl.controller;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +30,6 @@ import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.validation.UIValidationMessage;
 import org.jboss.forge.addon.ui.validation.UIValidationMessage.Severity;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.util.Assert;
 
 /**
  * 
@@ -103,18 +101,19 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
    }
 
    @Override
-   public List<InputComponent<?, ?>> getInputs()
+   public Map<String, InputComponent<?, ?>> getInputs()
    {
       assertInitialized();
-      return new ArrayList<InputComponent<?, ?>>(uiBuilder.getInputs().values());
+      return uiBuilder.getInputs();
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public CommandController setValueFor(String inputName, Object value)
    {
       assertInitialized();
-      InputComponent<?, Object> input = getInput(inputName);
-      InputComponents.setValueFor(getConverterFactory(), input, value);
+      InputComponent<?, ?> input = getInputs().get(inputName);
+      InputComponents.setValueFor(getConverterFactory(), (InputComponent<?, Object>) input, value);
       return this;
    }
 
@@ -122,7 +121,7 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
    public Object getValueFor(String inputName) throws IllegalArgumentException
    {
       assertInitialized();
-      InputComponent<?, Object> input = getInput(inputName);
+      InputComponent<?, ?> input = getInputs().get(inputName);
       return InputComponents.getValueFor(input);
    }
 
@@ -139,21 +138,11 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
    }
 
    @Override
-   public InputComponent<?, Object> getInput(String inputName)
-   {
-      assertInitialized();
-      Map<String, InputComponent<?, Object>> inputs = uiBuilder.getInputs();
-      InputComponent<?, Object> inputComponent = inputs.get(inputName);
-      Assert.notNull(inputComponent, "No such input [" + inputName + "].");
-      return inputComponent;
-   }
-
-   @Override
    public List<UIValidationMessage> validate()
    {
       assertInitialized();
       UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
-      for (InputComponent<?, ?> inputComponent : getInputs())
+      for (InputComponent<?, ?> inputComponent : getInputs().values())
       {
          validationContext.setCurrentInputComponent(inputComponent);
          inputComponent.validate(validationContext);
@@ -161,14 +150,6 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
       validationContext.setCurrentInputComponent(null);
       initialCommand.validate(validationContext);
       return validationContext.getMessages();
-   }
-
-   @Override
-   public boolean hasInput(String inputName)
-   {
-      assertInitialized();
-      Map<String, InputComponent<?, Object>> inputs = uiBuilder.getInputs();
-      return inputs.containsKey(inputName);
    }
 
    @Override
@@ -180,13 +161,6 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
             return false;
       }
       return true;
-   }
-
-   @Override
-   public Set<String> getInputNames()
-   {
-      assertInitialized();
-      return uiBuilder.getInputs().keySet();
    }
 
    @Override
@@ -205,5 +179,4 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
    {
       return addonRegistry.getServices(ConverterFactory.class).get();
    }
-
 }

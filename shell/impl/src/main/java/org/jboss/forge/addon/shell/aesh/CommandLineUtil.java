@@ -60,20 +60,20 @@ public class CommandLineUtil
    }
 
    public CommandLineParser generateParser(CommandController command, ShellContext shellContext,
-            Map<String, InputComponent<?, Object>> inputs)
+            Map<String, InputComponent<?, ?>> inputs)
    {
       ProcessedCommand processedCommand = generateCommand(command, shellContext, inputs);
       return new ForgeCommandLineParser(processedCommand, this, inputs);
    }
 
    private ProcessedCommand generateCommand(final CommandController command, final ShellContext shellContext,
-            final Map<String, InputComponent<?, Object>> inputs)
+            final Map<String, InputComponent<?, ?>> inputs)
    {
       UICommandMetadata metadata = command.getMetadata();
       ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()),
                metadata.getDescription(), ForgeCommandValidator.INSTANCE);
 
-      for (final InputComponent<?, Object> input : inputs.values())
+      for (final InputComponent<?, ?> input : inputs.values())
       {
          final Object defaultValue = InputComponents.getValueFor(input);
          final boolean isMultiple = input instanceof ManyValued;
@@ -151,14 +151,14 @@ public class CommandLineUtil
       return parameter;
    }
 
-   public Map<String, InputComponent<?, Object>> populateUIInputs(CommandLine commandLine,
-            Map<String, InputComponent<?, Object>> inputs)
+   public Map<String, InputComponent<?, ?>> populateUIInputs(CommandLine commandLine,
+            Map<String, InputComponent<?, ?>> inputs)
    {
-      Map<String, InputComponent<?, Object>> populatedInputs = new HashMap<>();
-      for (Entry<String, InputComponent<?, Object>> entry : inputs.entrySet())
+      Map<String, InputComponent<?, ?>> populatedInputs = new HashMap<>();
+      for (Entry<String, InputComponent<?, ?>> entry : inputs.entrySet())
       {
          String name = entry.getKey();
-         InputComponent<?, Object> input = entry.getValue();
+         InputComponent<?, ?> input = entry.getValue();
          if (ARGUMENTS_INPUT_NAME.equals(name))
          {
             InputComponents.setValueFor(converterFactory, input, commandLine.getArgument().getValue());

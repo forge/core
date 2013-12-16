@@ -23,10 +23,10 @@ import org.jboss.forge.addon.ui.input.InputComponent;
  */
 public class ForgeCommandPopulator implements CommandPopulator
 {
-   private final Map<String, InputComponent<?, Object>> inputs;
+   private final Map<String, InputComponent<?, ?>> inputs;
    private final CommandLineUtil commandLineUtil;
 
-   public ForgeCommandPopulator(CommandLineUtil commandLineUtil, Map<String, InputComponent<?, Object>> inputs)
+   public ForgeCommandPopulator(CommandLineUtil commandLineUtil, Map<String, InputComponent<?, ?>> inputs)
    {
       this.commandLineUtil = commandLineUtil;
       this.inputs = inputs;

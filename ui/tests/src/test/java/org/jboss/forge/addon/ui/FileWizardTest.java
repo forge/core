@@ -56,7 +56,7 @@ public class FileWizardTest
    {
       WizardCommandController wizard = testHarness.createWizardController(FileWizard.class);
       wizard.initialize();
-      InputComponent<?, ?> inputComponent = wizard.getInput("file");
+      InputComponent<?, ?> inputComponent = wizard.getInputs().get("file");
       Assert.assertNotNull(inputComponent);
       String name = inputComponent.getName();
       Assert.assertEquals("file", name);

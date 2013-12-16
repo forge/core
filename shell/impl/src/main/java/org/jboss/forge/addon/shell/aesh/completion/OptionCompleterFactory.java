@@ -24,7 +24,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
  */
 public class OptionCompleterFactory
 {
-   public static OptionCompleter<CompleterInvocation> getCompletionFor(InputComponent<?, Object> component,
+   public static OptionCompleter<CompleterInvocation> getCompletionFor(InputComponent<?, ?> component,
             ShellContext context, ConverterFactory converterFactory)
    {
       UISelection<FileResource<?>> selection = context.getInitialSelection();

@@ -85,7 +85,7 @@ public final class InputComponents
     * @param component
     * @param value
     */
-   public static void setValueFor(final ConverterFactory converterFactory, final InputComponent<?, Object> component,
+   public static void setValueFor(final ConverterFactory converterFactory, final InputComponent<?, ?> component,
             final Object value)
    {
       if (component instanceof SingleValued)
@@ -119,7 +119,7 @@ public final class InputComponents
    }
 
    private static void setSingleInputValue(final ConverterFactory converterFactory,
-            final InputComponent<?, Object> input, final Object value, boolean defaultValue)
+            final InputComponent<?, ?> input, final Object value, boolean defaultValue)
    {
       final Object convertedType;
       if (value != null)
@@ -141,7 +141,7 @@ public final class InputComponents
    }
 
    private static void setManyInputValue(final ConverterFactory converterFactory,
-            final InputComponent<?, Object> input, Object value, boolean defaultValue)
+            final InputComponent<?, ?> input, Object value, boolean defaultValue)
    {
       final Iterable<Object> convertedValues;
       if (value != null)
@@ -182,11 +182,11 @@ public final class InputComponents
     * @return
     */
    public static Object convertToUIInputValue(final ConverterFactory converterFactory,
-            final InputComponent<?, Object> input, final Object value)
+            final InputComponent<?, ?> input, final Object value)
    {
       final Object result;
       Class<Object> sourceType = (Class<Object>) value.getClass();
-      Class<Object> targetType = input.getValueType();
+      Class<Object> targetType = (Class<Object>) input.getValueType();
       if (!targetType.isAssignableFrom(sourceType))
       {
          if (input instanceof SelectComponent)
@@ -219,7 +219,7 @@ public final class InputComponents
          }
          else
          {
-            Converter<String, Object> valueConverter = input.getValueConverter();
+            Converter<String, Object> valueConverter = (Converter<String, Object>) input.getValueConverter();
             if (valueConverter != null)
             {
                if (value instanceof String)

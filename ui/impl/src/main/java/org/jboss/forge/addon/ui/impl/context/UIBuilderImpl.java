@@ -22,7 +22,7 @@ public class UIBuilderImpl implements UIBuilder
 {
 
    private final UIContext context;
-   private Map<String, InputComponent<?, Object>> inputs = new LinkedHashMap<String, InputComponent<?, Object>>();
+   private Map<String, InputComponent<?, ?>> inputs = new LinkedHashMap<>();
 
    public UIBuilderImpl(UIContext context)
    {
@@ -43,7 +43,7 @@ public class UIBuilderImpl implements UIBuilder
       return this;
    }
 
-   public Map<String, InputComponent<?, Object>> getInputs()
+   public Map<String, InputComponent<?, ?>> getInputs()
    {
       return inputs;
    }

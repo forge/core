@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jboss.forge.addon.ui.UICommand;
@@ -148,21 +149,9 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    }
 
    @Override
-   public List<InputComponent<?, ?>> getInputs()
+   public Map<String, InputComponent<?, ?>> getInputs()
    {
       return getCurrentCommandController().getInputs();
-   }
-
-   @Override
-   public InputComponent<?, ?> getInput(String inputName) throws IllegalArgumentException
-   {
-      return getCurrentCommandController().getInput(inputName);
-   }
-
-   @Override
-   public boolean hasInput(String inputName)
-   {
-      return getCurrentCommandController().hasInput(inputName);
    }
 
    @Override
@@ -280,17 +269,6 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    private CommandController createControllerFor(UIContext context, UICommand command)
    {
       return controllerFactory.createSingleController(context, command, runtime);
-   }
-
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.controller.CommandController#getInputNames()
-    */
-   @Override
-   public Set<String> getInputNames()
-   {
-      return getCurrentCommandController().getInputNames();
    }
 
    private Class<? extends UICommand>[] getNextFrom(UICommand command) throws Exception

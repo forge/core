@@ -8,7 +8,7 @@
 package org.jboss.forge.addon.ui.controller;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -57,7 +57,7 @@ public interface CommandController extends AutoCloseable
     * Calls {@link InputComponent#validate(org.jboss.forge.addon.ui.context.UIValidationContext)} for the given
     * {@link InputComponent} belonging to the underlying {@link UICommand}.
     */
-   List<UIValidationMessage> validate(InputComponent<?, Object> input);
+   List<UIValidationMessage> validate(InputComponent<?, ?> input);
 
    /**
     * Returns <code>true</code> if the {@link CommandController#validate()} method contains no
@@ -80,28 +80,9 @@ public interface CommandController extends AutoCloseable
    Object getValueFor(String inputName) throws IllegalArgumentException;
 
    /**
-    * Returns a {@link List} of {@link InputComponent} instances for this command
+    * Returns a {@link Map} of {@link InputComponent} instances for this command
     */
-   List<InputComponent<?, ?>> getInputs();
-
-   /**
-    * Returns a {@link Set} of the input names for this command
-    */
-   Set<String> getInputNames();
-
-   /**
-    * @param inputName the input name
-    * @return the {@link InputComponent} in this command
-    * @throws IllegalArgumentException if no input with the given name exists
-    */
-   InputComponent<?, ?> getInput(String inputName) throws IllegalArgumentException;
-
-   /**
-    * Returns <code>true</code> if the {@link InputComponent} exists in the underlying {@link UICommand}
-    * 
-    * @param inputName the input name
-    */
-   boolean hasInput(String inputName);
+   Map<String, InputComponent<?,?>> getInputs();
 
    /**
     * @return the command metadata

@@ -129,13 +129,13 @@ public class NewProjectWizardTest
          WizardCommandController wizard = testHarness.createWizardController(NewProjectWizard.class);
          wizard.initialize();
          Assert.assertFalse(wizard.canMoveToNextStep());
-         Assert.assertFalse(wizard.getInput("overwrite").isEnabled());
+         Assert.assertFalse(wizard.getInputs().get("overwrite").isEnabled());
          wizard.setValueFor("named", "test");
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
          wizard.setValueFor("type", "mock");
          Assert.assertFalse(wizard.isValid());
-         Assert.assertTrue(wizard.getInput("overwrite").isEnabled());
+         Assert.assertTrue(wizard.getInputs().get("overwrite").isEnabled());
          Assert.assertFalse(wizard.canMoveToNextStep());
          Assert.assertFalse(wizard.canExecute());
       }

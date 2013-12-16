@@ -73,7 +73,7 @@ public class CommandControllerTest
 
       controller.initialize();
       Assert.assertFalse(controller.getInputs().isEmpty());
-      Assert.assertTrue(controller.hasInput("firstName"));
+      Assert.assertTrue(controller.getInputs().containsKey("firstName"));
       controller.setValueFor("firstName", "Forge");
       Assert.assertEquals("Forge", controller.getValueFor("firstName"));
       Assert.assertTrue(controller.isValid());

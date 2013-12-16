@@ -23,7 +23,7 @@ public class ForgeCommandLineParser extends AeshCommandLineParser
    private final CommandPopulator commandPopulator;
 
    public ForgeCommandLineParser(ProcessedCommand command, CommandLineUtil commandLineUtil,
-            Map<String, InputComponent<?, Object>> inputs)
+            Map<String, InputComponent<?, ?>> inputs)
    {
       super(command);
       this.commandPopulator = new ForgeCommandPopulator(commandLineUtil, inputs);

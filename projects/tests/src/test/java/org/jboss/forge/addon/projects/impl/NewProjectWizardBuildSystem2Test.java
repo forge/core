@@ -83,13 +83,13 @@ public class NewProjectWizardBuildSystem2Test
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
          wizard.setValueFor("type", "mock");
-         Assert.assertEquals("buildsystem", InputComponents.getValueFor(wizard.getInput("buildSystem"))
+         Assert.assertEquals("buildsystem", InputComponents.getValueFor(wizard.getInputs().get("buildSystem"))
                   .toString());
 
          wizard.setValueFor("type", "mock2");
-         Assert.assertEquals("buildsystem2", InputComponents.getValueFor(wizard.getInput("buildSystem"))
+         Assert.assertEquals("buildsystem2", InputComponents.getValueFor(wizard.getInputs().get("buildSystem"))
                   .toString());
-         UISelectOne<BuildSystem> buildSystems = (UISelectOne<BuildSystem>) wizard.getInput("buildSystem");
+         UISelectOne<BuildSystem> buildSystems = (UISelectOne<BuildSystem>) wizard.getInputs().get("buildSystem");
          List<BuildSystem> choices = Iterators.asList(buildSystems.getValueChoices());
          Assert.assertEquals(1, choices.size());
 
@@ -120,7 +120,7 @@ public class NewProjectWizardBuildSystem2Test
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
          wizard.setValueFor("type", "unsatisfied");
-         Assert.assertNotEquals("unsatisfied", InputComponents.getValueFor(wizard.getInput("type")).toString());
+         Assert.assertNotEquals("unsatisfied", InputComponents.getValueFor(wizard.getInputs().get("type")).toString());
       }
       finally
       {

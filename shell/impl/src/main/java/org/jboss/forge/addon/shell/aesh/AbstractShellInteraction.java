@@ -7,15 +7,11 @@
 
 package org.jboss.forge.addon.shell.aesh;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
-import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 
 /**
@@ -41,17 +37,6 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
    }
 
    public abstract CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception;
-
-   @SuppressWarnings("unchecked")
-   public Map<String, InputComponent<?, Object>> getInputs()
-   {
-      Map<String, InputComponent<?, Object>> result = new HashMap<>();
-      for (InputComponent<?, ?> input : controller.getInputs())
-      {
-         result.put(input.getName(), (InputComponent<?, Object>) input);
-      }
-      return result;
-   }
 
    public UIContext getContext()
    {

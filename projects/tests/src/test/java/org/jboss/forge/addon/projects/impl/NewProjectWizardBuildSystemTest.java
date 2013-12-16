@@ -71,7 +71,7 @@ public class NewProjectWizardBuildSystemTest
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
          wizard.setValueFor("type", "norequirements");
-         Assert.assertEquals("norequirements", InputComponents.getValueFor(wizard.getInput("type")).toString());
+         Assert.assertEquals("norequirements", InputComponents.getValueFor(wizard.getInputs().get("type")).toString());
       }
       finally
       {
@@ -92,7 +92,7 @@ public class NewProjectWizardBuildSystemTest
          wizard.setValueFor("targetLocation", tempDir);
          wizard.setValueFor("topLevelPackage", "org.example");
          wizard.setValueFor("type", "nullrequirements");
-         Assert.assertEquals("nullrequirements", InputComponents.getValueFor(wizard.getInput("type"))
+         Assert.assertEquals("nullrequirements", InputComponents.getValueFor(wizard.getInputs().get("type"))
                   .toString());
       }
       finally

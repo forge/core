@@ -38,7 +38,7 @@ public class ShellSingleCommand extends AbstractShellInteraction
       if (this.commandLineParser == null)
       {
          controller.initialize();
-         this.commandLineParser = commandLineUtil.generateParser(this.controller, shellContext, getInputs());
+         this.commandLineParser = commandLineUtil.generateParser(this.controller, shellContext, controller.getInputs());
       }
       return this.commandLineParser;
    }
