@@ -18,7 +18,6 @@ import org.jboss.aesh.console.command.invocation.CommandInvocation;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ShellMessages;
-import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
