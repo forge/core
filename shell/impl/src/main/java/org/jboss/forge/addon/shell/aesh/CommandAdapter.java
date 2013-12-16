@@ -53,7 +53,7 @@ class CommandAdapter implements Command<CommandInvocation>
    @Override
    public CommandResult execute(CommandInvocation commandInvocation) throws IOException
    {
-      boolean failure = true;
+      boolean failure = false;
       if (interaction.getController().isValid())
       {
          Result result = null;
@@ -72,16 +72,16 @@ class CommandAdapter implements Command<CommandInvocation>
             if (result instanceof Failed)
             {
                ShellMessages.error(shell.getConsole().getShell().err(), result.getMessage());
+               failure = true;
             }
             else
             {
-               failure = false;
                ShellMessages.success(shell.getConsole().getShell().out(), result.getMessage());
+               failure = false;
             }
          }
 
-         ShellContext context = interaction.getContext().getSelection();
-         Object selection = context.getSelection();
+         Object selection = interaction.getContext().getSelection();
          if (selection != null)
          {
             if (selection instanceof Iterable<?>)
