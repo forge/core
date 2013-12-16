@@ -31,6 +31,7 @@ import org.jboss.forge.addon.shell.aesh.completion.OptionCompleterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.ManyValued;
@@ -69,7 +70,8 @@ public class CommandLineUtil
    private ProcessedCommand generateCommand(final CommandController command, final ShellContext shellContext,
             final Map<String, InputComponent<?, ?>> inputs)
    {
-      UICommandMetadata metadata = command.getMetadata();
+      UICommandMetadata metadata = (command instanceof WizardCommandController) ? ((WizardCommandController) command)
+               .getInitialMetadata() : command.getMetadata();
       ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()),
                metadata.getDescription(), ForgeCommandValidator.INSTANCE);
 

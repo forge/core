@@ -8,6 +8,8 @@
 package org.jboss.forge.addon.ui.controller;
 
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
@@ -18,28 +20,34 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 public interface WizardCommandController extends CommandController
 {
    /**
+    * Return the {@link UICommandMetadata} of the initial {@link UICommand} from which the underlying {@link UIWizard}
+    * was launched.
+    */
+   UICommandMetadata getInitialMetadata();
+
+   /**
     * Return <code>true</code> if navigation to the next {@link UIWizardStep} is possible.
     */
-   public boolean canMoveToNextStep();
+   boolean canMoveToNextStep();
 
    /**
     * Return <code>true</code> if navigation to the previous {@link UIWizardStep} is possible.
     */
-   public boolean canMoveToPreviousStep();
+   boolean canMoveToPreviousStep();
 
    /**
     * Navigate to the next {@link UIWizardStep}.
     * 
     * @throws IllegalStateException if navigation is not possible
     */
-   public WizardCommandController next() throws Exception;
+   WizardCommandController next() throws Exception;
 
    /**
     * Navigate to the previous {@link UIWizardStep}.
     * 
     * @throws IllegalStateException if navigation is not possible
     */
-   public WizardCommandController previous() throws Exception;
+   WizardCommandController previous() throws Exception;
 
    /**
     * Returns <code>true</code> if {@link UICommand#execute(org.jboss.forge.addon.ui.context.UIExecutionContext)} can be

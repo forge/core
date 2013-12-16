@@ -157,6 +157,12 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public UICommandMetadata getMetadata()
    {
+      return getCurrentCommandController().getMetadata();
+   }
+
+   @Override
+   public UICommandMetadata getInitialMetadata()
+   {
       return flow.get(0).getMetadata();
    }
 
