@@ -31,15 +31,15 @@ public class ShellWizard extends AbstractShellInteraction
    }
 
    @Override
-   public WizardCommandController getSourceCommand()
+   public WizardCommandController getController()
    {
-      return (WizardCommandController) super.getSourceCommand();
+      return (WizardCommandController) super.getController();
    }
 
    @Override
    public CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception
    {
-      UICommand command = getSourceCommand().getCommand();
+      UICommand command = getController().getCommand();
       return populate(command, shellContext, completeLine);
    }
 
@@ -47,14 +47,14 @@ public class ShellWizard extends AbstractShellInteraction
             throws Exception
    {
       Map<String, InputComponent<?, Object>> inputs = getInputs();
-      CommandLineParser parser = commandLineUtil.generateParser(getSourceCommand(), shellContext, inputs);
+      CommandLineParser parser = commandLineUtil.generateParser(getController(), shellContext, inputs);
       CommandLine cmdLine = parser.parse(line, true);
       Map<String, InputComponent<?, Object>> populatedInputs = commandLineUtil.populateUIInputs(cmdLine, inputs);
-      if (getSourceCommand().isValid())
+      if (getController().isValid())
       {
-         if (getSourceCommand().canMoveToNextStep())
+         if (getController().canMoveToNextStep())
          {
-            getSourceCommand().next();
+            getController().next().initialize();
             inputs.keySet().retainAll(populatedInputs.keySet());
             parser = populate(command, shellContext, line);
          }

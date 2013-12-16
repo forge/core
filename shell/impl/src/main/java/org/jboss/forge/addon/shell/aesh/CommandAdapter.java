@@ -48,7 +48,7 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
 
    public List<UIValidationMessage> validate()
    {
-      return interaction.getSourceCommand().validate();
+      return interaction.getController().validate();
    }
 
    @SuppressWarnings("unchecked")
@@ -56,12 +56,12 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
    public CommandResult execute(CommandInvocation commandInvocation) throws IOException
    {
       boolean failure = true;
-      if (interaction.getSourceCommand().isValid())
+      if (interaction.getController().isValid())
       {
          Result result = null;
          try
          {
-            result = interaction.getSourceCommand().execute();
+            result = interaction.getController().execute();
          }
          catch (Exception e)
          {
@@ -105,7 +105,7 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
       }
       else
       {
-         List<UIValidationMessage> messages = interaction.getSourceCommand().validate();
+         List<UIValidationMessage> messages = interaction.getController().validate();
          for (UIValidationMessage message : messages)
          {
             if (message.getSeverity() == Severity.ERROR)

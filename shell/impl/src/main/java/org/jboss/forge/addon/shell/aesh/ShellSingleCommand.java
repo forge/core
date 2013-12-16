@@ -20,16 +20,16 @@ import org.jboss.forge.addon.ui.controller.CommandController;
  */
 public class ShellSingleCommand extends AbstractShellInteraction
 {
-   private final CommandController command;
+   private final CommandController controller;
    private CommandLineParser commandLineParser;
 
    /**
     * Creates a new {@link ShellSingleCommand} based on the shell and initial selection
     */
-   public ShellSingleCommand(CommandController command, ShellContext shellContext, CommandLineUtil commandLineUtil)
+   public ShellSingleCommand(CommandController controller, ShellContext shellContext, CommandLineUtil commandLineUtil)
    {
-      super(command, shellContext, commandLineUtil);
-      this.command = command;
+      super(controller, shellContext, commandLineUtil);
+      this.controller = controller;
    }
 
    @Override
@@ -37,7 +37,8 @@ public class ShellSingleCommand extends AbstractShellInteraction
    {
       if (this.commandLineParser == null)
       {
-         this.commandLineParser = commandLineUtil.generateParser(this.command, shellContext, getInputs());
+         controller.initialize();
+         this.commandLineParser = commandLineUtil.generateParser(this.controller, shellContext, getInputs());
       }
       return this.commandLineParser;
    }

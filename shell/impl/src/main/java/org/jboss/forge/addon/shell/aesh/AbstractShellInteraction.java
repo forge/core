@@ -63,7 +63,7 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
       return context;
    }
 
-   public CommandController getSourceCommand()
+   public CommandController getController()
    {
       return controller;
    }
