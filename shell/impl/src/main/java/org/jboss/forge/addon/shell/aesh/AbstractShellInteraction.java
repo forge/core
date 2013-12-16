@@ -7,10 +7,6 @@
 
 package org.jboss.forge.addon.shell.aesh;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +17,6 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.furnace.util.Streams;
 
 /**
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
@@ -71,38 +66,6 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
    public final String getName()
    {
       return name;
-   }
-
-   public File getManLocation()
-   {
-      URL manLocation = metadata.getDocLocation();
-      if (manLocation == null)
-      {
-         return null;
-      }
-      else
-      {
-         try
-         {
-            File tmpFile = File.createTempFile("mantmp", ".txt");
-            tmpFile.deleteOnExit();
-            FileOutputStream fos = null;
-            try
-            {
-               fos = new FileOutputStream(tmpFile);
-               Streams.write(manLocation.openStream(), fos);
-            }
-            finally
-            {
-               Streams.closeQuietly(fos);
-            }
-            return tmpFile;
-         }
-         catch (IOException ie)
-         {
-            throw new IllegalStateException("Error while fetching man page", ie);
-         }
-      }
    }
 
    @Override

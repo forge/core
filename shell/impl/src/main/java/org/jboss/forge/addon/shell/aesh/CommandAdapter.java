@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.shell.aesh;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -16,7 +15,6 @@ import java.util.logging.Logger;
 import org.jboss.aesh.console.command.Command;
 import org.jboss.aesh.console.command.CommandResult;
 import org.jboss.aesh.console.command.invocation.CommandInvocation;
-import org.jboss.aesh.extensions.manual.ManCommand;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ShellMessages;
@@ -33,7 +31,7 @@ import org.jboss.forge.addon.ui.validation.UIValidationMessage.Severity;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-class CommandAdapter implements Command<CommandInvocation>, ManCommand
+class CommandAdapter implements Command<CommandInvocation>
 {
    private static final Logger log = Logger.getLogger(CommandAdapter.class.getName());
 
@@ -113,11 +111,5 @@ class CommandAdapter implements Command<CommandInvocation>, ManCommand
          }
       }
       return failure ? CommandResult.FAILURE : CommandResult.SUCCESS;
-   }
-
-   @Override
-   public File getManLocation()
-   {
-      return interaction.getManLocation();
    }
 }
