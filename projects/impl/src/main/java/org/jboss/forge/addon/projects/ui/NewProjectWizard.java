@@ -87,7 +87,7 @@ public class NewProjectWizard implements UIWizard
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(getClass()).name("New Project").description("Create a new project")
+      return Metadata.forCommand(getClass()).name("Project: New").description("Create a new project")
                .category(Categories.create("Project", "Generation"));
    }
 
@@ -178,7 +178,7 @@ public class NewProjectWizard implements UIWizard
       }
 
       // Add Project types
-      List<ProjectType> projectTypes = new ArrayList<ProjectType>();
+      List<ProjectType> projectTypes = new ArrayList<>();
       for (ProjectType projectType : type.getValueChoices())
       {
          boolean buildable = false;
@@ -253,7 +253,7 @@ public class NewProjectWizard implements UIWizard
          @Override
          public Iterable<BuildSystem> call() throws Exception
          {
-            List<BuildSystem> result = new ArrayList<BuildSystem>();
+            List<BuildSystem> result = new ArrayList<>();
             for (BuildSystem buildSystemType : buildSystems)
             {
                ProjectType projectType = type.getValue();
@@ -321,7 +321,7 @@ public class NewProjectWizard implements UIWizard
    @SuppressWarnings("unchecked")
    private Iterable<Class<? extends BuildSystemFacet>> getRequiredBuildSystemFacets(ProjectType type)
    {
-      Set<Class<? extends BuildSystemFacet>> result = new HashSet<Class<? extends BuildSystemFacet>>();
+      Set<Class<? extends BuildSystemFacet>> result = new HashSet<>();
       Iterable<Class<? extends ProjectFacet>> requiredFacets = type.getRequiredFacets();
       if (requiredFacets != null)
       {
