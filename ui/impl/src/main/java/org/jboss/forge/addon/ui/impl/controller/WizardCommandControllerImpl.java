@@ -94,6 +94,10 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       assertValid();
       for (CommandController controller : flow)
       {
+         if (progressMonitor.isCancelled())
+         {
+            break;
+         }
          UICommand command = controller.getCommand();
          try
          {

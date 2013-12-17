@@ -67,6 +67,10 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
       assertInitialized();
       UIProgressMonitor progressMonitor = runtime.createProgressMonitor(context);
       UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor);
+      if (progressMonitor.isCancelled())
+      {
+         return null;
+      }
 
       Set<CommandExecutionListener> listeners = new LinkedHashSet<>();
       listeners.addAll(context.getListeners());
