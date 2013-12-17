@@ -102,7 +102,7 @@ public class NewProjectWizard implements UIWizard
    {
       configureProjectNamedInput();
       configureVersionInput();
-      configuteTargetLocationInput(builder);
+      configureTargetLocationInput(builder);
       configureOverwriteInput();
       configureProjectTypeInput(builder);
       configureTopLevelPackageInput();
@@ -130,7 +130,7 @@ public class NewProjectWizard implements UIWizard
       version.setDefaultValue("1.0.0-SNAPSHOT");
    }
 
-   private void configuteTargetLocationInput(final UIBuilder builder)
+   private void configureTargetLocationInput(final UIBuilder builder)
    {
       UISelection<Resource<?>> currentSelection = builder.getUIContext().getInitialSelection();
       if (!currentSelection.isEmpty())
