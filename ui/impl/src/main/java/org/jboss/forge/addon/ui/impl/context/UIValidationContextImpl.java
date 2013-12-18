@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.ui.impl.context;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,7 +21,6 @@ import org.jboss.forge.furnace.util.Assert;
 
 public class UIValidationContextImpl implements UIValidationContext
 {
-
    private List<UIValidationMessage> messages = new LinkedList<>();
    private UIContext context;
    private InputComponent<?, ?> currentInputComponent;
@@ -72,6 +73,14 @@ public class UIValidationContextImpl implements UIValidationContext
    @Override
    public List<UIValidationMessage> getMessages()
    {
+      Collections.sort(messages, new Comparator<UIValidationMessage>()
+      {
+         @Override
+         public int compare(UIValidationMessage o1, UIValidationMessage o2)
+         {
+            return o1.getSeverity().compareTo(o2.getSeverity());
+         }
+      });
       return messages;
    }
 }
