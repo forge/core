@@ -61,10 +61,8 @@ public final class InputComponents
    }
 
    /**
-    * @return the value stored in this {@link InputComponent}
-    * @deprecated Use {@link InputComponent#getValue()}
+    * Returns the value stored in this {@link InputComponent}. <code>null</code> if the component is null
     */
-   @Deprecated
    public static Object getValueFor(InputComponent<?, ?> component)
    {
       return (component == null) ? null : component.getValue();
