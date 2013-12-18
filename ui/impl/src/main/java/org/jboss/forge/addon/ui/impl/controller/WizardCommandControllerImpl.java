@@ -141,9 +141,17 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    public CommandController setValueFor(String inputName, Object value) throws IllegalArgumentException
    {
       getCurrentCommandController().setValueFor(inputName, value);
-      // Remove subsequent pages
-      flow.subList(flowPointer + 1, flow.size()).clear();
+      
+      removeSubsequentPages();
       return this;
+   }
+
+   /**
+    * Remove stale pages
+    */
+   private void removeSubsequentPages()
+   {
+      flow.subList(flowPointer + 1, flow.size()).clear();
    }
 
    @Override
