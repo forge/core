@@ -9,6 +9,7 @@ package org.jboss.forge.addon.ui.controller;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 
 import javax.inject.Inject;
 
@@ -17,6 +18,11 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.ui.example.wizards.ExampleStepOne;
 import org.jboss.forge.addon.ui.example.wizards.ExampleStepTwo;
 import org.jboss.forge.addon.ui.example.wizards.ExampleWizard;
+import org.jboss.forge.addon.ui.example.wizards.subflow.ExampleFlow;
+import org.jboss.forge.addon.ui.example.wizards.subflow.FlowOneOneStep;
+import org.jboss.forge.addon.ui.example.wizards.subflow.FlowOneStep;
+import org.jboss.forge.addon.ui.example.wizards.subflow.FlowTwoStep;
+import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -24,6 +30,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -100,4 +107,99 @@ public class WizardCommandControllerTest
 
       }
    }
+
+   @Test
+   public void testNormalWizardFlow() throws Exception
+   {
+      try (WizardCommandController controller = testHarness.createWizardController(ExampleFlow.class))
+      {
+         Assert.assertThat(controller.getCommand(), is(instanceOf(ExampleFlow.class)));
+         controller.initialize();
+         controller.setValueFor("name", "Forge");
+         controller.setValueFor("number", 42);
+         controller.next().initialize();
+         Assert.assertThat(controller.getCommand(), is(instanceOf(FlowOneStep.class)));
+         controller.setValueFor("flowOneInput", "Value");
+         controller.next().initialize();
+         Assert.assertThat(controller.getCommand(), is(instanceOf(FlowOneOneStep.class)));
+         controller.setValueFor("flowOneOneInput", "Value Two");
+         controller.next().initialize();
+         Assert.assertThat(controller.getCommand(), is(instanceOf(FlowTwoStep.class)));
+         controller.setValueFor("flowTwoInput", "Value Three");
+         Assert.assertFalse(controller.canMoveToNextStep());
+         Assert.assertTrue(controller.canExecute());
+         Assert.assertThat(controller.execute(), is(not(instanceOf(Failed.class))));
+      }
+   }
+
+   @Test
+   @Ignore("FORGE-1347")
+   public void testStaleStepsWizardFlow() throws Exception
+   {
+      try (WizardCommandController controller = testHarness.createWizardController(ExampleFlow.class))
+      {
+         Assert.assertThat(controller.getCommand(), is(instanceOf(ExampleFlow.class)));
+         controller.initialize();
+         controller.setValueFor("name", "Forge");
+         controller.setValueFor("number", 42);
+         controller.next().initialize();
+         Assert.assertThat(controller.getCommand(), is(instanceOf(FlowOneStep.class)));
+         controller.setValueFor("flowOneInput", "Value");
+         controller.next().initialize();
+         Assert.assertThat(controller.getCommand(), is(instanceOf(FlowOneOneStep.class)));
+         controller.setValueFor("flowOneOneInput", "Value Two");
+         controller.next().initialize();
+         Assert.assertThat(controller.getCommand(), is(instanceOf(FlowTwoStep.class)));
+         controller.setValueFor("flowTwoInput", "Value Three");
+
+         controller.previous().previous();
+         Assert.assertThat(controller.getCommand(), is(instanceOf(FlowOneStep.class)));
+         controller.setValueFor("flowOneInput", "Changed Value");
+         controller.next();
+         Assert.assertTrue("FlowOneOneStep shouldn't have been removed", controller.isInitialized());
+         controller.next();
+         Assert.assertTrue("FlowTwoStep shouldn't have been removed", controller.isInitialized());
+
+         Assert.assertFalse(controller.canMoveToNextStep());
+         Assert.assertTrue(controller.canExecute());
+         Assert.assertThat(controller.execute(), is(not(instanceOf(Failed.class))));
+      }
+   }
+
+   @Ignore("FORGE-1347")
+   @Test
+   public void testSubflowOrder() throws Exception
+   {
+      try (WizardCommandController controller = testHarness.createWizardController(ExampleFlow.class))
+      {
+         Assert.assertThat(controller.getCommand(), is(instanceOf(ExampleFlow.class)));
+         controller.initialize();
+         controller.setValueFor("name", "Forge");
+         controller.setValueFor("number", 42);
+         controller.next().initialize();
+         Assert.assertThat(controller.getCommand(), is(instanceOf(FlowOneStep.class)));
+         controller.setValueFor("flowOneInput", "Value");
+         controller.next().initialize();
+         Assert.assertThat(controller.getCommand(), is(instanceOf(FlowOneOneStep.class)));
+         controller.setValueFor("flowOneOneInput", "Value Two");
+         controller.next().initialize();
+         Assert.assertThat(controller.getCommand(), is(instanceOf(FlowTwoStep.class)));
+         controller.setValueFor("flowTwoInput", "Value Three");
+
+         controller.previous().previous();
+         Assert.assertThat(controller.getCommand(), is(instanceOf(FlowOneStep.class)));
+         controller.setValueFor("flowOneInput", "Changed Value");
+         controller.next().initialize();
+         Assert.assertThat(controller.getCommand(), is(instanceOf(FlowOneOneStep.class)));
+         controller.setValueFor("flowOneOneInput", "Value Two");
+         controller.next().initialize();
+         Assert.assertThat(controller.getCommand(), is(instanceOf(FlowTwoStep.class)));
+         controller.setValueFor("flowTwoInput", "Value Three");
+
+         Assert.assertFalse(controller.canMoveToNextStep());
+         Assert.assertTrue(controller.canExecute());
+         Assert.assertThat(controller.execute(), is(not(instanceOf(Failed.class))));
+      }
+   }
+
 }
