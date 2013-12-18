@@ -67,13 +67,13 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public void initialize() throws Exception
    {
-      getCurrentCommandController().initialize();
+      getCurrentController().initialize();
    }
 
    @Override
    public boolean isInitialized()
    {
-      return getCurrentCommandController().isInitialized();
+      return getCurrentController().isInitialized();
    }
 
    @Override
@@ -128,48 +128,39 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public List<UIValidationMessage> validate()
    {
-      return getCurrentCommandController().validate();
+      return getCurrentController().validate();
    }
 
    @Override
    public boolean isValid()
    {
-      return getCurrentCommandController().isValid();
+      return getCurrentController().isValid();
    }
 
    @Override
    public CommandController setValueFor(String inputName, Object value) throws IllegalArgumentException
    {
-      getCurrentCommandController().setValueFor(inputName, value);
-      
+      getCurrentController().setValueFor(inputName, value);
       removeSubsequentPages();
       return this;
-   }
-
-   /**
-    * Remove stale pages
-    */
-   private void removeSubsequentPages()
-   {
-      flow.subList(flowPointer + 1, flow.size()).clear();
    }
 
    @Override
    public Object getValueFor(String inputName) throws IllegalArgumentException
    {
-      return getCurrentCommandController().getValueFor(inputName);
+      return getCurrentController().getValueFor(inputName);
    }
 
    @Override
    public Map<String, InputComponent<?, ?>> getInputs()
    {
-      return getCurrentCommandController().getInputs();
+      return getCurrentController().getInputs();
    }
 
    @Override
    public UICommandMetadata getMetadata()
    {
-      return getCurrentCommandController().getMetadata();
+      return getCurrentController().getMetadata();
    }
 
    @Override
@@ -181,13 +172,13 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public boolean isEnabled()
    {
-      return getCurrentCommandController().isEnabled();
+      return getCurrentController().isEnabled();
    }
 
    @Override
    public UICommand getCommand()
    {
-      return getCurrentCommandController().getCommand();
+      return getCurrentController().getCommand();
    }
 
    @Override
@@ -202,7 +193,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       try
       {
          // Move only if there is a next step or if there is a subflow set
-         Class<? extends UICommand>[] next = getNextFrom(getCurrentCommandController().getCommand());
+         Class<? extends UICommand>[] next = getNextFrom(getCurrentController().getCommand());
          return (next != null || !subflow.isEmpty());
       }
       catch (Exception e)
@@ -232,13 +223,13 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       if (flowPointer + 1 == flow.size())
       {
          final Class<? extends UICommand> next;
-         CommandController currentController = getCurrentCommandController();
+         CommandController currentController = getCurrentController();
          Class<? extends UICommand>[] result = getNextFrom(currentController.getCommand());
          if (result == null)
          {
             if (subflow.isEmpty())
             {
-               throw new IllegalStateException("No next page found");
+               throw new IllegalStateException("No next step found");
             }
             else
             {
@@ -265,18 +256,24 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    public WizardCommandController previous() throws IllegalStateException
    {
       assertInitialized();
-      if (flowPointer == 0)
+      if (!canMoveToPreviousStep())
       {
-         throw new IllegalStateException("No previous page found");
+         throw new IllegalStateException("No previous step found");
       }
       flowPointer--;
       return this;
    }
 
-   private CommandController getCurrentCommandController()
+   private CommandController getCurrentController()
    {
       return flow.get(flowPointer);
    }
+
+//   private CommandController getNextController()
+//   {
+//      int idx = flowPointer + 1;
+//      return (idx < flow.size()) ? flow.get(idx) : null;
+//   }
 
    private CommandController createControllerFor(Class<? extends UICommand> commandClass) throws Exception
    {
@@ -300,4 +297,14 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       }
       return result;
    }
+
+   /**
+    * Remove stale pages
+    */
+   private void removeSubsequentPages()
+   {
+      flow.subList(flowPointer + 1, flow.size()).clear();
+      subflow.clear();
+   }
+
 }
