@@ -69,10 +69,10 @@ for /f "delims=. tokens=1-3" %%v in ("%JAVAVER%") do (
    set JAVAVER_MINOR=%%w
 )
 
-if %JAVAVER_MINOR% geq 6 goto chkFHome
+if %JAVAVER_MINOR% geq 7 goto chkFHome
 
 echo.
-echo A Java 1.6 or higher JRE is required to run Forge. "%JAVA_HOME%\bin\java.exe" is version %JAVAVER%
+echo A Java 1.7 or higher JRE is required to run Forge. "%JAVA_HOME%\bin\java.exe" is version %JAVAVER%
 echo.
 goto error
 

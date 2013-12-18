@@ -141,9 +141,9 @@ fi
 
 JAVAVER=`"$JAVACMD" -version 2>&1`
 case $JAVAVER in
-*1.[6-9]*) ;;
-*1.[1-5]*)
-	echo " Error: a Java 1.6 or higher JRE is required to run Forge; found [$JAVACMD -version == $JAVAVER]."
+*1.[7-9]*) ;;
+*1.[1-6]*)
+	echo " Error: a Java 1.7 or higher JRE is required to run Forge; found [$JAVACMD -version == $JAVAVER]."
 	exit 1
  ;;
 esac
