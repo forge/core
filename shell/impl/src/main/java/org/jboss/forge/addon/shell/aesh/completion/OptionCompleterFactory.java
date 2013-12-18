@@ -22,6 +22,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
+@SuppressWarnings("unchecked")
 public class OptionCompleterFactory
 {
    public static OptionCompleter<CompleterInvocation> getCompletionFor(InputComponent<?, ?> component,
