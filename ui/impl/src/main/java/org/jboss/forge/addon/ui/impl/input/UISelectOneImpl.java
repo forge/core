@@ -54,6 +54,18 @@ public class UISelectOneImpl<VALUETYPE> extends AbstractUISelectInputComponent<U
    }
 
    @Override
+   public boolean hasDefaultValue()
+   {
+      return defaultValue != null;
+   }
+
+   @Override
+   public boolean hasValue()
+   {
+      return value != null;
+   }
+
+   @Override
    public String toString()
    {
       return "UISelectOneImpl [name=" + getName() + ", shortName='" + getShortName() + "', value=" + value

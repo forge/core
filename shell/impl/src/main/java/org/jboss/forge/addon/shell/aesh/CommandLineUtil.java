@@ -92,7 +92,7 @@ public class CommandLineUtil
                      .hasValue(hasValue)
                      .type(input.getValueType());
 
-            if (input.isRequired())
+            if (input.isRequired() && !input.hasDefaultValue() && !input.hasValue())
             {
                optionBuilder.required(true).renderer(OptionRenderers.REQUIRED);
             }

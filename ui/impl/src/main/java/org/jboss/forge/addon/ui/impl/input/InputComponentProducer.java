@@ -189,7 +189,7 @@ public class InputComponentProducer implements InputComponentFactory
    @SuppressWarnings("unchecked")
    public <T> UIInput<T> createInput(String name, char shortName, Class<T> valueType)
    {
-      UIInputImpl<T> input = new UIInputImpl<T>(name, shortName, valueType);
+      UIInputImpl<T> input = new UIInputImpl<>(name, shortName, valueType);
       configureRequiredFacets(input);
       if (Boolean.class.equals(valueType))
          ((UIInput<Boolean>) input).setDefaultValue(Boolean.FALSE);
@@ -199,7 +199,7 @@ public class InputComponentProducer implements InputComponentFactory
    @Override
    public <T> UIInputMany<T> createInputMany(String name, char shortName, Class<T> valueType)
    {
-      UIInputManyImpl<T> input = new UIInputManyImpl<T>(name, shortName, valueType);
+      UIInputManyImpl<T> input = new UIInputManyImpl<>(name, shortName, valueType);
       configureRequiredFacets(input);
       return input;
    }
@@ -207,7 +207,7 @@ public class InputComponentProducer implements InputComponentFactory
    @Override
    public <T> UISelectOne<T> createSelectOne(String name, char shortName, Class<T> valueType)
    {
-      UISelectOneImpl<T> input = new UISelectOneImpl<T>(name, shortName, valueType);
+      UISelectOneImpl<T> input = new UISelectOneImpl<>(name, shortName, valueType);
       configureRequiredFacets(input);
       return input;
    }
@@ -215,7 +215,7 @@ public class InputComponentProducer implements InputComponentFactory
    @Override
    public <T> UISelectMany<T> createSelectMany(String name, char shortName, Class<T> valueType)
    {
-      UISelectManyImpl<T> input = new UISelectManyImpl<T>(name, shortName, valueType);
+      UISelectManyImpl<T> input = new UISelectManyImpl<>(name, shortName, valueType);
       configureRequiredFacets(input);
       return input;
    }

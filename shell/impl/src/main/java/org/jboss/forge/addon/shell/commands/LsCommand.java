@@ -39,7 +39,7 @@ public class LsCommand extends AbstractShellCommand
    ResourceFactory resourceFactory;
 
    @Inject
-   @WithAttributes(label = "Arguments", type = InputType.DIRECTORY_PICKER)
+   @WithAttributes(label = "Arguments")
    private UIInputMany<String> arguments;
 
    @Inject
@@ -86,7 +86,7 @@ public class LsCommand extends AbstractShellCommand
    private String listMany(Iterable<Resource<?>> files, Shell shell)
    {
       TerminalSize terminalSize = shell.getConsole().getShell().getSize();
-      List<String> display = new ArrayList<String>();
+      List<String> display = new ArrayList<>();
       boolean showAll = all.getValue();
       if (files != null)
       {

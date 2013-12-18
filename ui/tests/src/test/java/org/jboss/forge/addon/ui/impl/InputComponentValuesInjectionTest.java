@@ -22,7 +22,6 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.ui.InputComponentFactory;
-import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -39,7 +38,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class InputComponentValuesInjectionTest
 {
    @Deployment
@@ -74,7 +72,7 @@ public class InputComponentValuesInjectionTest
    {
       UIInputMany<Career> inputMany = inputFactory.createInputMany("inputMany", Career.class);
       Iterable<String> stringIterable = Arrays.asList("TECHNOLOGY", "MEDICINE");
-      InputComponents.setValueFor(converterFactory, (InputComponent) inputMany, stringIterable);
+      InputComponents.setValueFor(converterFactory, inputMany, stringIterable);
       Iterable<Career> value = inputMany.getValue();
       Assert.assertNotNull(value);
       Iterator<Career> iterator = value.iterator();
@@ -91,7 +89,7 @@ public class InputComponentValuesInjectionTest
       UISelectMany<Career> selectMany = inputFactory.createSelectMany("inputMany", Career.class);
       selectMany.setValueChoices(Arrays.asList(Career.values()));
       Iterable<String> stringIterable = Arrays.asList("TECHNOLOGY", "MEDICINE");
-      InputComponents.setValueFor(converterFactory, (InputComponent) selectMany, stringIterable);
+      InputComponents.setValueFor(converterFactory, selectMany, stringIterable);
       Iterable<Career> value = selectMany.getValue();
       Assert.assertNotNull(value);
       Iterator<Career> iterator = value.iterator();
@@ -108,7 +106,7 @@ public class InputComponentValuesInjectionTest
       UISelectMany<Version> versions = inputFactory.createSelectMany("versions", Version.class);
       List<Version> versionList = Arrays.<Version> asList(new SingleVersion("1.0.0"), new SingleVersion("2.0.0"));
       versions.setValueChoices(versionList);
-      InputComponents.setValueFor(converterFactory, (InputComponent) versions, Arrays.asList("1.0.0", "2.0.0"));
+      InputComponents.setValueFor(converterFactory, versions, Arrays.asList("1.0.0", "2.0.0"));
       Iterator<Version> value = versions.getValue().iterator();
       Assert.assertThat(value.hasNext(), is(true));
       Assert.assertThat(value.next(), is(sameInstance(versionList.get(0))));

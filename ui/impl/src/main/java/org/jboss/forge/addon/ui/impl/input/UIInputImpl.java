@@ -97,4 +97,16 @@ public class UIInputImpl<VALUETYPE> extends AbstractInputComponent<UIInput<VALUE
                + ", defaultValue=" + defaultValue
                + "]";
    }
+
+   @Override
+   public boolean hasDefaultValue()
+   {
+      return defaultValue != null;
+   }
+
+   @Override
+   public boolean hasValue()
+   {
+      return value != null;
+   }
 }
