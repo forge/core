@@ -62,21 +62,12 @@ public final class InputComponents
 
    /**
     * @return the value stored in this {@link InputComponent}
+    * @deprecated Use {@link InputComponent#getValue()}
     */
+   @Deprecated
    public static Object getValueFor(InputComponent<?, ?> component)
    {
-      if (component instanceof SingleValued)
-      {
-         return ((SingleValued<?, Object>) component).getValue();
-      }
-      else if (component instanceof ManyValued)
-      {
-         return ((ManyValued<?, Object>) component).getValue();
-      }
-      else
-      {
-         return null;
-      }
+      return (component == null) ? null : component.getValue();
    }
 
    /**

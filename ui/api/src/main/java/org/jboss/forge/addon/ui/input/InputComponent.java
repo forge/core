@@ -19,6 +19,7 @@ import org.jboss.forge.addon.ui.facets.HintsFacet;
  * This is the parent interface of all inputs.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<HintsFacet>, UIValidator
 {
@@ -138,4 +139,9 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
     */
    IMPLTYPE setValidator(UIValidator validator);
 
+   /**
+    * Returns the value associated with this component. If the value is not set, the default value is returned. If the
+    * default value is not set, <code>null</code> is returned
+    */
+   Object getValue();
 }
