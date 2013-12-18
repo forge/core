@@ -77,9 +77,9 @@ public abstract class AbstractCommandController implements CommandController
       {
          CommandController newController = (CommandController) obj;
          // Same class Name
-         if (getCommand().getClass().getName().equals(newController.getCommand().getClass().getName()))
+         if (!getCommand().getClass().getName().equals(newController.getCommand().getClass().getName()))
          {
-            result = true;
+            result = false;
          }
          else if (isInitialized() && newController.isInitialized())
          {
