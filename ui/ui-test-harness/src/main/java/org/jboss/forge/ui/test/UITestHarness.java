@@ -25,10 +25,10 @@ import org.jboss.forge.ui.test.impl.UIProviderImpl;
 import org.jboss.forge.ui.test.impl.UIRuntimeImpl;
 
 /**
- * A factory for {@link CommandTester} objects
+ * Creates {@link CommandController} objects for the purpose of unit testing
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class UITestHarness
 {
