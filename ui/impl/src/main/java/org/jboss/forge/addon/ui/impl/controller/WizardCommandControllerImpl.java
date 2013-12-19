@@ -8,11 +8,15 @@
 package org.jboss.forge.addon.ui.impl.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.UIProgressMonitor;
@@ -39,15 +43,16 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
  */
 class WizardCommandControllerImpl extends AbstractCommandController implements WizardCommandController
 {
+   private Logger logger = Logger.getLogger(getClass().getName());
    /**
     * The execution flow
     */
-   private final List<CommandController> flow = new ArrayList<>();
+   private final List<WizardStepEntry> flow = new ArrayList<>();
 
    /**
     * If there are any subflows, store here
     */
-   private final LinkedList<Class<? extends UICommand>> subflow = new LinkedList<>();
+   private final LinkedList<WizardStepEntry> subflow = new LinkedList<>();
 
    /**
     * The pointer that this flow is on. Starts with 0
@@ -61,7 +66,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    {
       super(addonRegistry, runtime, initialCommand, context);
       this.controllerFactory = controllerFactory;
-      flow.add(createControllerFor(context, initialCommand));
+      flow.add(createEntry(initialCommand, false));
    }
 
    @Override
@@ -92,8 +97,9 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
          listeners.add(listener);
       }
       assertValid();
-      for (CommandController controller : flow)
+      for (WizardStepEntry entry : flow)
       {
+         CommandController controller = entry.controller;
          if (progressMonitor.isCancelled())
          {
             break;
@@ -141,7 +147,6 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    public CommandController setValueFor(String inputName, Object value) throws IllegalArgumentException
    {
       getCurrentController().setValueFor(inputName, value);
-      removeSubsequentPages();
       return this;
    }
 
@@ -166,7 +171,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public UICommandMetadata getInitialMetadata()
    {
-      return flow.get(0).getMetadata();
+      return flow.get(0).controller.getMetadata();
    }
 
    @Override
@@ -194,10 +199,11 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       {
          // Move only if there is a next step or if there is a subflow set
          Class<? extends UICommand>[] next = getNextFrom(getCurrentController().getCommand());
-         return (next != null || !subflow.isEmpty());
+         return (getNextEntry() != null || (next != null || !subflow.isEmpty()));
       }
       catch (Exception e)
       {
+         logger.log(Level.SEVERE, "Error while calculating next step", e);
          throw new RuntimeException(e);
       }
    }
@@ -219,37 +225,71 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    {
       assertInitialized();
       assertValid();
-      // If the limit was reached
-      if (flowPointer + 1 == flow.size())
+
+      WizardStepEntry currentEntry = getCurrentEntry();
+      WizardStepEntry nextEntry = getNextEntry();
+      Class<? extends UICommand>[] result = getNextFrom(currentEntry.controller.getCommand());
+      if (nextEntry == null)
       {
-         final Class<? extends UICommand> next;
-         CommandController currentController = getCurrentController();
-         Class<? extends UICommand>[] result = getNextFrom(currentController.getCommand());
-         if (result == null)
+         addNextFlowStep(result);
+      }
+      else
+      {
+         // There is already a next page, did the object returned from UICommand.next() changed ?
+         if (!Arrays.equals(currentEntry.next, result))
          {
-            if (subflow.isEmpty())
+            // Update current entry
+            currentEntry.next = result;
+            // Remove subsequent pages and push the subflows back to the stack
+            Iterator<WizardStepEntry> it = flow.listIterator(flowPointer + 1);
+            int subflowIdx = 0;
+            while (it.hasNext())
             {
-               throw new IllegalStateException("No next step found");
+               WizardStepEntry entry = it.next();
+               if (entry.subflowHead && !subflow.contains(entry))
+               {
+                  subflow.add(subflowIdx++, entry);
+               }
+               it.remove();
             }
-            else
-            {
-               next = subflow.pop();
-            }
+            addNextFlowStep(result);
          }
-         else
-         {
-            next = result[0];
-            for (int i = 1; i < result.length; i++)
-            {
-               // Save this subflow for later
-               subflow.addLast(result[i]);
-            }
-         }
-         CommandController controller = createControllerFor(next);
-         flow.add(controller);
       }
       flowPointer++;
       return this;
+   }
+
+   /**
+    * @param result
+    */
+   private void addNextFlowStep(Class<? extends UICommand>[] result)
+   {
+      final WizardStepEntry next;
+      if (result == null)
+      {
+         if (subflow.isEmpty())
+         {
+            throw new IllegalStateException("No next step found");
+         }
+         else
+         {
+            next = subflow.pop();
+         }
+      }
+      else
+      {
+         next = createEntry(result[0], false);
+         for (int i = 1; i < result.length; i++)
+         {
+            // Save this subflow for later
+            WizardStepEntry subflowEntry = createEntry(result[i], true);
+            if (!subflow.contains(subflowEntry))
+            {
+               subflow.add(subflowEntry);
+            }
+         }
+      }
+      flow.add(next);
    }
 
    @Override
@@ -264,26 +304,48 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       return this;
    }
 
-   private CommandController getCurrentController()
+   private WizardStepEntry getCurrentEntry()
    {
       return flow.get(flowPointer);
    }
 
-//   private CommandController getNextController()
-//   {
-//      int idx = flowPointer + 1;
-//      return (idx < flow.size()) ? flow.get(idx) : null;
-//   }
-
-   private CommandController createControllerFor(Class<? extends UICommand> commandClass) throws Exception
+   private WizardStepEntry getNextEntry()
    {
-      UICommand command = addonRegistry.getServices(commandClass).get();
-      return createControllerFor(context, command);
+      int nextIdx = flowPointer + 1;
+      return (nextIdx < flow.size()) ? flow.get(nextIdx) : null;
    }
 
-   private CommandController createControllerFor(UIContext context, UICommand command)
+   private CommandController getCurrentController()
    {
-      return controllerFactory.createSingleController(context, command, runtime);
+      return getCurrentEntry().controller;
+   }
+
+   private WizardStepEntry createEntry(Class<? extends UICommand> commandClass, boolean subflowHead)
+   {
+      UICommand command = createCommand(commandClass);
+      return createEntry(command, subflowHead);
+   }
+
+   private UICommand createCommand(Class<? extends UICommand> commandClass)
+   {
+      UICommand command = addonRegistry.getServices(commandClass).get();
+      return command;
+   }
+
+   private WizardStepEntry createEntry(UICommand command, boolean subflowHead)
+   {
+      CommandController controller = controllerFactory.createSingleController(context, command, runtime);
+      Class<? extends UICommand>[] next;
+      try
+      {
+         next = getNextFrom(command);
+      }
+      catch (Exception e)
+      {
+         logger.log(Level.SEVERE, "Cannot fetch the next steps from " + command, e);
+         next = null;
+      }
+      return new WizardStepEntry(controller, next, subflowHead);
    }
 
    private Class<? extends UICommand>[] getNextFrom(UICommand command) throws Exception
@@ -298,13 +360,50 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       return result;
    }
 
-   /**
-    * Remove stale pages
-    */
-   private void removeSubsequentPages()
+   private static class WizardStepEntry
    {
-      flow.subList(flowPointer + 1, flow.size()).clear();
-      subflow.clear();
-   }
+      final CommandController controller;
+      Class<? extends UICommand>[] next;
+      // If this entry starts a subflow
+      final boolean subflowHead;
 
+      public WizardStepEntry(CommandController controller, Class<? extends UICommand>[] next, boolean subflowHead)
+      {
+         this.controller = controller;
+         this.next = next;
+         this.subflowHead = subflowHead;
+      }
+
+      @Override
+      public int hashCode()
+      {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((controller == null) ? 0 : controller.hashCode());
+         result = prime * result + Arrays.hashCode(next);
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj)
+      {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         WizardStepEntry other = (WizardStepEntry) obj;
+         if (controller == null)
+         {
+            if (other.controller != null)
+               return false;
+         }
+         else if (!controller.equals(other.controller))
+            return false;
+         if (!Arrays.equals(next, other.next))
+            return false;
+         return true;
+      }
+   }
 }

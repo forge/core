@@ -30,7 +30,6 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -133,7 +132,6 @@ public class WizardCommandControllerTest
    }
 
    @Test
-   @Ignore("FORGE-1347")
    public void testStaleStepsWizardFlow() throws Exception
    {
       try (WizardCommandController controller = testHarness.createWizardController(ExampleFlow.class))
@@ -166,7 +164,6 @@ public class WizardCommandControllerTest
       }
    }
 
-   @Ignore("FORGE-1347")
    @Test
    public void testSubflowOrder() throws Exception
    {

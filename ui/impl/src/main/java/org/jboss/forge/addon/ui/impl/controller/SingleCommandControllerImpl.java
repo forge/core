@@ -115,8 +115,11 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
    @Override
    public CommandController setValueFor(String inputName, Object value)
    {
-      assertInitialized();
       InputComponent<?, ?> input = getInputs().get(inputName);
+      if (input == null)
+      {
+         throw new IllegalArgumentException("Input named '" + inputName + "' does not exist");
+      }
       InputComponents.setValueFor(getConverterFactory(), (InputComponent<?, Object>) input, value);
       return this;
    }
@@ -124,7 +127,6 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
    @Override
    public Object getValueFor(String inputName) throws IllegalArgumentException
    {
-      assertInitialized();
       InputComponent<?, ?> input = getInputs().get(inputName);
       return InputComponents.getValueFor(input);
    }
