@@ -195,17 +195,8 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public boolean canMoveToNextStep()
    {
-      try
-      {
-         // Move only if there is a next step or if there is a subflow set
-         Class<? extends UICommand>[] next = getNextFrom(getCurrentController().getCommand());
-         return (getNextEntry() != null || (next != null || !subflow.isEmpty()));
-      }
-      catch (Exception e)
-      {
-         logger.log(Level.SEVERE, "Error while calculating next step", e);
-         throw new RuntimeException(e);
-      }
+      Class<? extends UICommand>[] next = getNextFrom(getCurrentController().getCommand());
+      return (getNextEntry() != null || (next != null || !subflow.isEmpty()));
    }
 
    @Override
@@ -217,7 +208,21 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public boolean canExecute()
    {
-      return !canMoveToNextStep() && isValid();
+      for (WizardStepEntry entry : flow)
+      {
+         if (!entry.controller.canExecute())
+         {
+            return false;
+         }
+      }
+
+      // Checking if there is any next page left
+      Class<? extends UICommand>[] next = getNextFrom(flow.get(flow.size() - 1).controller.getCommand());
+      if (next != null || !subflow.isEmpty())
+      {
+         return false;
+      }
+      return true;
    }
 
    @Override
@@ -375,27 +380,29 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    private WizardStepEntry createEntry(UICommand command, boolean subflowHead)
    {
       CommandController controller = controllerFactory.createSingleController(context, command, runtime);
-      Class<? extends UICommand>[] next;
-      try
-      {
-         next = getNextFrom(command);
-      }
-      catch (Exception e)
-      {
-         logger.log(Level.SEVERE, "Cannot fetch the next steps from " + command, e);
-         next = null;
-      }
+      Class<? extends UICommand>[] next = getNextFrom(command);
       return new WizardStepEntry(controller, next, subflowHead);
    }
 
-   private Class<? extends UICommand>[] getNextFrom(UICommand command) throws Exception
+   private Class<? extends UICommand>[] getNextFrom(UICommand command)
    {
       Class<? extends UICommand>[] result = null;
       if (command instanceof UIWizard)
       {
-         NavigationResult next = ((UIWizard) command).next(context);
+         NavigationResult next;
+         try
+         {
+            next = ((UIWizard) command).next(context);
+         }
+         catch (Exception e)
+         {
+            logger.log(Level.SEVERE, "Cannot fetch the next steps from " + command, e);
+            next = null;
+         }
          if (next != null)
+         {
             result = next.getNext();
+         }
       }
       return result;
    }

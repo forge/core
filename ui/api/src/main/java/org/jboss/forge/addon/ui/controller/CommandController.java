@@ -103,4 +103,11 @@ public interface CommandController extends AutoCloseable
     * @return the underlying {@link UIContext} object
     */
    UIContext getContext();
+   
+   /**
+    * Returns <code>true</code> if {@link UICommand#execute(org.jboss.forge.addon.ui.context.UIExecutionContext)} can be
+    * called.
+    */
+   boolean canExecute();
+   
 }

@@ -48,11 +48,4 @@ public interface WizardCommandController extends CommandController
     * @throws IllegalStateException if navigation is not possible
     */
    WizardCommandController previous() throws Exception;
-
-   /**
-    * Returns <code>true</code> if {@link UICommand#execute(org.jboss.forge.addon.ui.context.UIExecutionContext)} can be
-    * called.
-    */
-   boolean canExecute();
-
 }

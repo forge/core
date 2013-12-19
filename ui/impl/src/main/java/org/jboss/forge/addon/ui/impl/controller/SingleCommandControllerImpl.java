@@ -65,6 +65,7 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
    public Result execute() throws Exception
    {
       assertInitialized();
+      assertValid();
       UIProgressMonitor progressMonitor = runtime.createProgressMonitor(context);
       UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor);
       if (progressMonitor.isCancelled())
@@ -79,7 +80,6 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
       {
          listeners.add(listener);
       }
-      assertValid();
       for (CommandExecutionListener listener : listeners)
       {
          listener.preCommandExecuted(initialCommand, executionContext);
@@ -102,6 +102,12 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
          }
          throw e;
       }
+   }
+
+   @Override
+   public boolean canExecute()
+   {
+      return isInitialized() && isValid();
    }
 
    @Override
