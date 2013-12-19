@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.ui.example.wizards.ChangesInputOneWizard;
 import org.jboss.forge.addon.ui.example.wizards.ExampleStepOne;
 import org.jboss.forge.addon.ui.example.wizards.ExampleStepTwo;
 import org.jboss.forge.addon.ui.example.wizards.ExampleWizard;
@@ -196,6 +197,25 @@ public class WizardCommandControllerTest
          Assert.assertFalse(controller.canMoveToNextStep());
          Assert.assertTrue(controller.canExecute());
          Assert.assertThat(controller.execute(), is(not(instanceOf(Failed.class))));
+      }
+   }
+
+   // FORGE-1372
+   @Test
+   public void testDynamicInputs() throws Exception
+   {
+      try (WizardCommandController controller = testHarness.createWizardController(ChangesInputOneWizard.class))
+      {
+         controller.initialize();
+         controller.setValueFor("chooseInputTwo", Boolean.FALSE);
+         controller.next().initialize();
+         Assert.assertTrue("Should have added one input", controller.getInputs().size() == 1);
+         Assert.assertTrue("Input inputOne not added", controller.getInputs().containsKey("inputOne"));
+         controller.previous();
+         controller.setValueFor("chooseInputTwo", Boolean.TRUE);
+         controller.next().initialize();
+         Assert.assertTrue("Should have added one input", controller.getInputs().size() == 1);
+         Assert.assertTrue("Input inputTwo not added", controller.getInputs().containsKey("inputTwo"));
       }
    }
 

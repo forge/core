@@ -240,23 +240,63 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
          {
             // Update current entry
             currentEntry.next = result;
-            // Remove subsequent pages and push the subflows back to the stack
-            Iterator<WizardStepEntry> it = flow.listIterator(flowPointer + 1);
-            int subflowIdx = 0;
-            while (it.hasNext())
-            {
-               WizardStepEntry entry = it.next();
-               if (entry.subflowHead && !subflow.contains(entry))
-               {
-                  subflow.add(subflowIdx++, entry);
-               }
-               it.remove();
-            }
+            cleanSubsequentStalePages();
             addNextFlowStep(result);
+         }
+         else
+         {
+            // FORGE-1372- Test if the inputs changed.
+            final UICommand command;
+            if (result == null)
+            {
+               if (subflow.isEmpty())
+               {
+                  command = null;
+               }
+               else
+               {
+                  command = createCommand(subflow.peek().controller.getCommand().getClass());
+               }
+            }
+            else
+            {
+               command = createCommand(result[0]);
+            }
+            if (command != null)
+            {
+               CommandController ctrl = controllerFactory.createController(context, command, runtime);
+               ctrl.initialize();
+               Set<String> currentInputsKeySet = nextEntry.controller.getInputs().keySet();
+               Set<String> keySet = ctrl.getInputs().keySet();
+               if (!(currentInputsKeySet.containsAll(keySet) && keySet.containsAll(currentInputsKeySet)))
+               {
+                  cleanSubsequentStalePages();
+                  addNextFlowStep(result);
+               }
+            }
          }
       }
       flowPointer++;
       return this;
+   }
+
+   /**
+    * 
+    */
+   private void cleanSubsequentStalePages()
+   {
+      // Remove subsequent pages and push the subflows back to the stack
+      Iterator<WizardStepEntry> it = flow.listIterator(flowPointer + 1);
+      int subflowIdx = 0;
+      while (it.hasNext())
+      {
+         WizardStepEntry entry = it.next();
+         if (entry.subflowHead && !subflow.contains(entry))
+         {
+            subflow.add(subflowIdx++, entry);
+         }
+         it.remove();
+      }
    }
 
    /**
