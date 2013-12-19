@@ -8,6 +8,7 @@ package org.jboss.forge.addon.shell;
 
 import org.jboss.aesh.console.AeshConsole;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
@@ -31,12 +32,12 @@ public interface Shell extends UIProvider, AutoCloseable
     * @param resource should be a {@link FileResource}
     * @throws IllegalArgumentException if resource is null
     */
-   void setCurrentResource(FileResource<?> resource);
+   void setCurrentResource(Resource<?> resource);
 
    /**
     * Returns the current working directory.
     */
-   FileResource<?> getCurrentResource();
+   Resource<?> getCurrentResource();
 
    /**
     * Add a {@link CommandExecutionListener}, returning the {@link ListenerRegistration} with which it may subsequently

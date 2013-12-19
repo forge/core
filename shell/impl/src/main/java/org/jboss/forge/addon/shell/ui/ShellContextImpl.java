@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.shell.ui;
 
-import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.ui.context.AbstractUIContext;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -22,15 +22,15 @@ import org.jboss.forge.addon.ui.util.Selections;
  */
 public class ShellContextImpl extends AbstractUIContext implements ShellContext
 {
-   private Shell shell;
-   private UISelection<?> initialSelection;
+   private final Shell shell;
+   private final UISelection<?> initialSelection;
    private final Iterable<UIContextListener> listeners;
 
    @SuppressWarnings("unchecked")
-   public ShellContextImpl(Shell shell, FileResource<?> initialSelection, Iterable<UIContextListener> listeners)
+   public ShellContextImpl(Shell shell, Resource<?> currentResource, Iterable<UIContextListener> listeners)
    {
       this.shell = shell;
-      this.initialSelection = Selections.from(initialSelection);
+      this.initialSelection = Selections.from(currentResource);
       this.listeners = listeners;
       init();
    }

@@ -16,7 +16,6 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.util.PathspecParser;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -60,8 +59,7 @@ public class CdCommand extends AbstractShellCommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      Shell shell = (Shell) context.getUIContext().getProvider();
-      FileResource<?> currentResource = shell.getCurrentResource();
+      Resource<?> currentResource = (Resource<?>) context.getUIContext().getInitialSelection().get();
       Iterable<String> value = arguments.getValue();
       Iterator<String> it = value == null ? Collections.<String> emptyList().iterator() : value.iterator();
       final Result result;
@@ -82,7 +80,7 @@ public class CdCommand extends AbstractShellCommand
             }
             else
             {
-               shell.setCurrentResource(newFileResource);
+               context.getUIContext().setSelection(newFileResource);
                result = Results.success();
             }
          }

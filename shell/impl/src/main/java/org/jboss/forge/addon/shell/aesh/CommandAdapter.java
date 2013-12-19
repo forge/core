@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import org.jboss.aesh.console.command.Command;
 import org.jboss.aesh.console.command.CommandResult;
 import org.jboss.aesh.console.command.invocation.CommandInvocation;
-import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ShellMessages;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -85,7 +85,7 @@ class CommandAdapter implements Command<CommandInvocation>
          {
             if (selection instanceof Iterable<?>)
             {
-               for (FileResource<?> item : (Iterable<FileResource<?>>) selection)
+               for (Resource<?> item : (Iterable<Resource<?>>) selection)
                {
                   if (item != null)
                   {
@@ -96,7 +96,7 @@ class CommandAdapter implements Command<CommandInvocation>
             }
             else
             {
-               shell.setCurrentResource((FileResource<?>) selection);
+               shell.setCurrentResource((Resource<?>) selection);
             }
          }
       }

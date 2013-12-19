@@ -19,7 +19,7 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
 /**
  * An {@link UIContext} holds information about the environment the {@link UICommand} is being run, such as the initial
  * selection and attributes that could be shared among several {@link UIWizardStep} of a single {@link UIWizard}
- * instance
+ * instance.
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
@@ -27,7 +27,7 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
 public interface UIContext extends AutoCloseable
 {
    /**
-    * Get an {@link Object} from the {@link UIContext} attribute map.
+    * Get an {@link Object} from the {@link UIContext} attribute map. (May be <code>null</code>.)
     * 
     * @return <code>null</code> if no value was set.
     */
@@ -46,26 +46,24 @@ public interface UIContext extends AutoCloseable
    public void setAttribute(Object key, Object value);
 
    /**
-    * Get the user's initial selection. Never null
+    * Get the user's selection at the time this command was initialized/selected. (Never <code>null</code>.)
     */
    <SELECTIONTYPE> UISelection<SELECTIONTYPE> getInitialSelection();
 
    /**
-    * Sets the current selection.
-    * 
-    * @param resource the resource to be selected
+    * Sets the current selection. (This will change the current working directory or current selection, depending on the
+    * {@link UIProvider} implementation.)
     */
    <SELECTIONTYPE> void setSelection(SELECTIONTYPE resource);
 
    /**
-    * Returns the selection passed on the {@link UIContext#setSelection(Object)} method or null if no selection is
-    * needed for this interaction
-    * 
+    * Returns the selection set by {@link UIContext#setSelection(Object)}, or <code>null</code> if no selection was
+    * provided for this interaction.
     */
    <SELECTIONTYPE> SELECTIONTYPE getSelection();
 
    /**
-    * Returns the {@link UIProvider} that created this {@link UIContext} object
+    * Returns the {@link UIProvider} that created this {@link UIContext} object. (Never <code>null</code>.)
     */
    UIProvider getProvider();
 
@@ -76,7 +74,8 @@ public interface UIContext extends AutoCloseable
    ListenerRegistration<CommandExecutionListener> addCommandExecutionListener(CommandExecutionListener listener);
 
    /**
-    * Returns the registered {@link CommandExecutionListener} objects for this {@link UIContext}
+    * Returns the registered {@link CommandExecutionListener} objects for this {@link UIContext}. (Never
+    * <code>null</code>.)
     */
    Set<CommandExecutionListener> getListeners();
 

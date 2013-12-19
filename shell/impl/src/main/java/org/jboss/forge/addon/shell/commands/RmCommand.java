@@ -11,10 +11,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.util.PathspecParser;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -68,8 +67,7 @@ public class RmCommand extends AbstractShellCommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      Shell shell = (Shell) context.getUIContext().getProvider();
-      FileResource<?> currentResource = shell.getCurrentResource();
+      Resource<?> currentResource = (Resource<?>) context.getUIContext().getInitialSelection().get();
       for (String file : arguments.getValue())
       {
          List<Resource<?>> resources = new PathspecParser(resourceFactory, currentResource, file).resolve();
@@ -77,10 +75,11 @@ public class RmCommand extends AbstractShellCommand
          {
             if (!resource.exists())
             {
-               return Results.fail(file + ": No such file or directory");
+               return Results.fail(file + ": no such file or directory");
             }
          }
       }
+
       boolean forceOption = force.getValue();
       boolean recurse = recursive.getValue();
       for (String file : arguments.getValue())
@@ -88,13 +87,20 @@ public class RmCommand extends AbstractShellCommand
          List<Resource<?>> resources = new PathspecParser(resourceFactory, currentResource, file).resolve();
          for (Resource<?> resource : resources)
          {
-            // TODO: Prompt for removal
+            if ((resource instanceof DirectoryResource))
+            {
+               if (resource.listResources().isEmpty())
+                  forceOption = true;
+               else if (!forceOption)
+                  return Results.fail("rm: directory not empty and cannot be removed without '--force' '-f' option.");
+            }
+
             if (forceOption)
             {
                if (!resource.delete(recurse))
                {
                   return Results.fail("rm: cannot remove ‘" + resource.getFullyQualifiedName()
-                           + "’: No such file or directory");
+                           + "’: Error occurred during deletion");
                }
             }
          }
@@ -103,8 +109,7 @@ public class RmCommand extends AbstractShellCommand
       {
          currentResource = currentResource.getParent();
       }
-      shell.setCurrentResource(currentResource);
-
+      context.getUIContext().setSelection(currentResource);
       return Results.success();
    }
 }

@@ -39,7 +39,7 @@ public class LsCommand extends AbstractShellCommand
    ResourceFactory resourceFactory;
 
    @Inject
-   @WithAttributes(label = "Arguments")
+   @WithAttributes(label = "Arguments", type = InputType.FILE_PICKER)
    private UIInputMany<String> arguments;
 
    @Inject
@@ -61,41 +61,42 @@ public class LsCommand extends AbstractShellCommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      Shell shell = (Shell) context.getUIContext().getProvider();
-      FileResource<?> currentResource = shell.getCurrentResource();
-      Iterator<String> it = arguments.getValue() == null ? Collections.<String> emptyList().iterator() : arguments
-               .getValue()
-               .iterator();
       final Result result;
-      final FileResource<?> newResource = (it.hasNext()) ? new PathspecParser(
-               resourceFactory, currentResource, it.next()).resolve().get(0).reify(FileResource.class)
-               : currentResource;
-      if (!newResource.exists())
+
+      Shell shell = (Shell) context.getUIContext().getProvider();
+      Resource<?> currentResource = shell.getCurrentResource();
+      Iterator<String> it = arguments.getValue() == null ? Collections.<String> emptyList().iterator() : arguments
+               .getValue().iterator();
+
+      final Resource<?> resource = (it.hasNext()) ?
+               (new PathspecParser(resourceFactory, currentResource, it.next()).resolve().get(0)) : currentResource;
+
+      if (!resource.exists())
       {
-         result = Results.fail(newResource.getName() + ": No such file or directory");
+         result = Results.fail(resource.getName() + ": No such file or directory");
       }
       else
       {
          UIOutput output = shell.getOutput();
-         output.out().println(listMany(newResource.listResources(), shell));
+         output.out().println(listMany(resource.listResources(), shell));
          result = Results.success();
       }
       return result;
    }
 
-   private String listMany(Iterable<Resource<?>> files, Shell shell)
+   private String listMany(Iterable<Resource<?>> resources, Shell shell)
    {
       TerminalSize terminalSize = shell.getConsole().getShell().getSize();
       List<String> display = new ArrayList<>();
       boolean showAll = all.getValue();
-      if (files != null)
+      if (resources != null)
       {
-         for (Resource<?> file : files)
+         for (Resource<?> resource : resources)
          {
             String name;
-            if (file instanceof FileResource)
+            if (resource instanceof FileResource)
             {
-               FileResource<?> fileResource = (FileResource<?>) file;
+               FileResource<?> fileResource = (FileResource<?>) resource;
                if (!showAll && fileResource.getName().startsWith("."))
                {
                   continue;
@@ -104,7 +105,7 @@ public class LsCommand extends AbstractShellCommand
             }
             else
             {
-               name = file.getName();
+               name = resource.getName();
             }
             display.add(name);
          }

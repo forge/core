@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.shell.commands;
 
-import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -44,7 +44,7 @@ public class PwdCommand extends AbstractShellCommand
    {
       Shell provider = (Shell) shellContext.getUIContext().getProvider();
       UIOutput output = provider.getOutput();
-      FileResource<?> currentResource = provider.getCurrentResource();
+      Resource<?> currentResource = provider.getCurrentResource();
       output.out().println(currentResource.getFullyQualifiedName());
       return Results.success();
    }

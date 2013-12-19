@@ -24,6 +24,7 @@ import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
 import org.jboss.forge.addon.shell.aesh.ForgeManProvider;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
@@ -50,7 +51,7 @@ import org.jboss.forge.furnace.util.Assert;
 @Vetoed
 public class ShellImpl implements Shell, UIRuntime
 {
-   private FileResource<?> currentResource;
+   private Resource<?> currentResource;
    private final AddonRegistry addonRegistry;
    private final AeshConsole console;
    private final UIOutput output;
@@ -115,17 +116,23 @@ public class ShellImpl implements Shell, UIRuntime
    }
 
    @Override
-   public FileResource<?> getCurrentResource()
+   public Resource<?> getCurrentResource()
    {
       return currentResource;
    }
 
    @Override
-   public void setCurrentResource(FileResource<?> resource)
+   public void setCurrentResource(final Resource<?> resource)
    {
       Assert.notNull(resource, "Current resource should not be null");
       this.currentResource = resource;
-      console.getAeshContext().setCurrentWorkingDirectory(resource.getUnderlyingResourceObject());
+
+      Resource<?> temp = resource;
+      while (!(temp instanceof FileResource<?>) && temp != null)
+      {
+         temp = temp.getParent();
+      }
+      console.getAeshContext().setCurrentWorkingDirectory(((FileResource<?>) temp).getUnderlyingResourceObject());
       updatePrompt();
    }
 
