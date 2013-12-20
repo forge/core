@@ -33,6 +33,7 @@ import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
@@ -327,13 +328,14 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    }
 
    @Override
-   public NavigationResult next(UIContext context) throws Exception
+   public NavigationResult next(UINavigationContext context) throws Exception
    {
-      context.setAttribute(JavaResource.class, entity.getValue());
-      context.setAttribute("fieldName", named.getValue());
-      context.setAttribute("fieldType", typeName.getValue());
-      context.setAttribute(RelationshipType.class, relationshipType.getValue());
-      context.getAttribute(RelationshipType.class);
+      UIContext uiContext = context.getUIContext();
+      uiContext.setAttribute(JavaResource.class, entity.getValue());
+      uiContext.setAttribute("fieldName", named.getValue());
+      uiContext.setAttribute("fieldType", typeName.getValue());
+      uiContext.setAttribute(RelationshipType.class, relationshipType.getValue());
+      uiContext.getAttribute(RelationshipType.class);
       if (relationshipType.getValue() == RelationshipType.BASIC)
       {
          return null;

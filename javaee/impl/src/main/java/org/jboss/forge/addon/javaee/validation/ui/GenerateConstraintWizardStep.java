@@ -20,6 +20,7 @@ import org.jboss.forge.addon.ui.InputComponentFactory;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
@@ -47,7 +48,7 @@ public class GenerateConstraintWizardStep extends AbstractJavaEECommand implemen
    private Map<String, InputComponent<?, ?>> inputs = new HashMap<String, InputComponent<?, ?>>();
 
    @Override
-   public NavigationResult next(UIContext context) throws Exception
+   public NavigationResult next(UINavigationContext context) throws Exception
    {
       return null;
    }

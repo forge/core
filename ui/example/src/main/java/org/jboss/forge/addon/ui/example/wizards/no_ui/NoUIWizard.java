@@ -5,47 +5,38 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.ui.example.wizards;
-
-import javax.inject.Inject;
+package org.jboss.forge.addon.ui.example.wizards.no_ui;
 
 import org.jboss.forge.addon.ui.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UINavigationContext;
-import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 
 /**
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class ChangesInputOneWizard extends AbstractUICommand implements UIWizard
+public class NoUIWizard extends AbstractUICommand implements UIWizard
 {
-
-   @Inject
-   private UIInput<Boolean> chooseInputTwo;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(chooseInputTwo);
    }
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      return Results.success();
+      return null;
    }
 
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
-      context.getUIContext().setAttribute("input-to-choose", chooseInputTwo.getValue());
-      return Results.navigateTo(ChangesInputTwoWizardStep.class);
+      return null;
    }
 
 }

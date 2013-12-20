@@ -8,7 +8,7 @@
 package org.jboss.forge.addon.ui.wizard;
 
 import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 
 /**
@@ -24,5 +24,5 @@ public interface UIWizard extends UICommand
    /**
     * Returns the next {@link UIWizardStep}, or null if this is the last {@link UICommand} in the flow.
     */
-   public NavigationResult next(UIContext context) throws Exception;
+   public NavigationResult next(UINavigationContext context) throws Exception;
 }

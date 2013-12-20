@@ -22,6 +22,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -117,12 +118,13 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
    }
 
    @Override
-   public NavigationResult next(UIContext context) throws Exception
+   public NavigationResult next(UINavigationContext context) throws Exception
    {
       ConstraintType constraintType = constraint.getValue();
-      context.setAttribute(Property.class, property.getValue());
-      context.setAttribute(ConstraintType.class, constraintType);
-      context.setAttribute("onAccessor", onAccessor.getValue());
+      UIContext uiContext = context.getUIContext();
+      uiContext.setAttribute(Property.class, property.getValue());
+      uiContext.setAttribute(ConstraintType.class, constraintType);
+      uiContext.setAttribute("onAccessor", onAccessor.getValue());
       if (constraintType == CoreConstraints.VALID)
       {
          return null;

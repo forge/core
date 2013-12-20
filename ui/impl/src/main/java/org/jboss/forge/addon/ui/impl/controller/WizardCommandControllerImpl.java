@@ -26,6 +26,7 @@ import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
+import org.jboss.forge.addon.ui.impl.context.UINavigationContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.NavigationResult;
@@ -392,7 +393,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
          NavigationResult next;
          try
          {
-            next = ((UIWizard) command).next(context);
+            next = ((UIWizard) command).next(new UINavigationContextImpl(context));
          }
          catch (Exception e)
          {

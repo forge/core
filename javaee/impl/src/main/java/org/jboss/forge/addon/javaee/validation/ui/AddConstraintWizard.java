@@ -23,6 +23,7 @@ import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -106,10 +107,10 @@ public class AddConstraintWizard extends AbstractJavaEECommand implements UIWiza
    }
 
    @Override
-   public NavigationResult next(UIContext context) throws Exception
+   public NavigationResult next(UINavigationContext context) throws Exception
    {
       JavaResource selectedClass = javaClass.getValue();
-      context.setAttribute(JavaResource.class, selectedClass);
+      context.getUIContext().setAttribute(JavaResource.class, selectedClass);
       return Results.navigateTo(SelectFieldWizardStep.class);
    }
 
