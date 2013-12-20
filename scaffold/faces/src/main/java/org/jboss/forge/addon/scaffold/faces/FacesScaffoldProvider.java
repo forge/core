@@ -219,6 +219,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       {
          JavaClass entity  = (JavaClass) resource;
          String targetDir = scaffoldContext.getTargetDirectory();
+         targetDir = (targetDir == null) ? "" : targetDir;
          Resource<?> template = (Resource<?>) scaffoldContext.getAttribute("pageTemplate");
          boolean overwrite = scaffoldContext.isOverwrite();
          List<Resource<?>> generatedResourcesForEntity = this.generateFromEntity(targetDir , template, entity, overwrite );
