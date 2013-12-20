@@ -218,8 +218,16 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       }
 
       // Checking if there is any next page left
-      Class<? extends UICommand>[] next = getNextFrom(flow.get(flow.size() - 1).controller.getCommand());
-      if (next != null || !subflow.isEmpty())
+      CommandController lastController = flow.get(flow.size() - 1).controller;
+      if (lastController.isInitialized())
+      {
+         Class<? extends UICommand>[] next = getNextFrom(flow.get(flow.size() - 1).controller.getCommand());
+         if (next != null || !subflow.isEmpty())
+         {
+            return false;
+         }
+      }
+      else
       {
          return false;
       }
@@ -237,6 +245,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       Class<? extends UICommand>[] result = getNextFrom(currentEntry.controller.getCommand());
       if (nextEntry == null)
       {
+         currentEntry.next = result;
          addNextFlowStep(result);
       }
       else
@@ -381,8 +390,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    private WizardStepEntry createEntry(UICommand command, boolean subflowHead)
    {
       CommandController controller = controllerFactory.createSingleController(context, command, runtime);
-      Class<? extends UICommand>[] next = getNextFrom(command);
-      return new WizardStepEntry(controller, next, subflowHead);
+      return new WizardStepEntry(controller, subflowHead);
    }
 
    private Class<? extends UICommand>[] getNextFrom(UICommand command)
@@ -415,10 +423,9 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       // If this entry starts a subflow
       final boolean subflowHead;
 
-      public WizardStepEntry(CommandController controller, Class<? extends UICommand>[] next, boolean subflowHead)
+      public WizardStepEntry(CommandController controller, boolean subflowHead)
       {
          this.controller = controller;
-         this.next = next;
          this.subflowHead = subflowHead;
       }
 
