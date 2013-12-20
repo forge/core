@@ -74,6 +74,8 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
       });
       List<Property> properties = introspector.getProperties();
       property.setValueChoices(properties);
+      if (!properties.isEmpty())
+         property.setDefaultValue(properties.get(0));
    }
 
    private void setupConstraint()
@@ -96,7 +98,8 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
          @Override
          public Boolean call() throws Exception
          {
-            return property.getValue().isReadable();
+            Property value = property.getValue();
+            return value == null ? Boolean.FALSE : value.isReadable();
          }
       });
    }
