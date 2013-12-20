@@ -35,6 +35,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.spi.UIRuntime;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.proxy.Proxies;
 
 /**
  * 
@@ -197,7 +198,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    public boolean canMoveToNextStep()
    {
       Class<? extends UICommand>[] next = getNextFrom(getCurrentController().getCommand());
-      return (getNextEntry() != null || (next != null || !subflow.isEmpty()));
+      return (isValid() && getNextEntry() != null || (next != null || !subflow.isEmpty()));
    }
 
    @Override
@@ -270,7 +271,8 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
                }
                else
                {
-                  command = createCommand(subflow.peek().controller.getCommand().getClass());
+                  UICommand command2 = Proxies.unwrap(subflow.peek().controller.getCommand());
+                  command = createCommand(command2.getClass());
                }
             }
             else
