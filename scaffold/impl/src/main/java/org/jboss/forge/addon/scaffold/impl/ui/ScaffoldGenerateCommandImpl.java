@@ -23,6 +23,7 @@ import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -100,13 +101,14 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    }
    
    @Override
-   public NavigationResult next(UIContext context) throws Exception
+   public NavigationResult next(UINavigationContext context) throws Exception
    {
       ScaffoldProvider selectedProvider = provider.getValue();
-      Project project = getSelectedProject(context);
-      context.setAttribute(Project.class, project);
-      context.setAttribute(ScaffoldProvider.class, selectedProvider);
-      context.setAttribute(ScaffoldGenerationContext.class, populateGenerationContext(context));
+      UIContext uiContext = context.getUIContext();
+      Project project = getSelectedProject(uiContext);
+      uiContext.setAttribute(Project.class, project);
+      uiContext.setAttribute(ScaffoldProvider.class, selectedProvider);
+      uiContext.setAttribute(ScaffoldGenerationContext.class, populateGenerationContext(uiContext));
       ((AbstractFacet) selectedProvider).setFaceted(project);
       
       // Get the step sequence from the selected scaffold provider

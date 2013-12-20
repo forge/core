@@ -12,6 +12,7 @@ import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.NavigationResult;
@@ -46,7 +47,7 @@ public class ExecuteGenerationStep extends AbstractProjectCommand implements UIW
    }
    
    @Override
-   public NavigationResult next(UIContext context) throws Exception
+   public NavigationResult next(UINavigationContext context) throws Exception
    {
       // This is the last step
       return null;

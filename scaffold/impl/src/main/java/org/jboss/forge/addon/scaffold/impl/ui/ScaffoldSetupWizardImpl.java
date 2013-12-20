@@ -116,8 +116,9 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
       ScaffoldProvider selectedProvider = provider.getValue();
       Project project = getSelectedProject(context);
       ((AbstractFacet) selectedProvider).setFaceted(project);
-      context.setAttribute(ScaffoldProvider.class, selectedProvider);
-      context.setAttribute(ScaffoldSetupContext.class, createSetupContext());
+      UIContext uiContext = context.getUIContext();
+      uiContext.setAttribute(ScaffoldProvider.class, selectedProvider);
+      uiContext.setAttribute(ScaffoldSetupContext.class, createSetupContext());
       
       // Get the step sequence from the selected scaffold provider
       List<Class<? extends UICommand>> setupFlow = selectedProvider.getSetupFlow();
@@ -129,7 +130,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
       // Extract the first command to obtain the next step
       Class<? extends UICommand> next = setupFlow.remove(0);
       Class<?>[] additional = setupFlow.toArray(new Class<?>[setupFlow.size()]);
-      return Results.navigateTo(next, (Class<? extends UICommand>[]) additional);
+      return context.navigateTo(next, (Class<? extends UICommand>[]) additional);
    }
 
    @Override

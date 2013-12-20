@@ -15,6 +15,7 @@ import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
@@ -38,15 +39,16 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
    private UISelectMany<JavaClass> targets;
    
    @Override
-   public NavigationResult next(UIContext context) throws Exception
+   public NavigationResult next(UINavigationContext context) throws Exception
    {
       ResourceCollection resourceCollection = new ResourceCollection();
       for (JavaClass klass : targets.getValue())
       {
          resourceCollection.addToCollection(klass);
       }
-      context.setAttribute(ResourceCollection.class, resourceCollection );
-      ScaffoldGenerationContext genCtx = (ScaffoldGenerationContext) context.getAttribute(ScaffoldGenerationContext.class);
+      UIContext uiContext = context.getUIContext();
+      uiContext.setAttribute(ResourceCollection.class, resourceCollection );
+      ScaffoldGenerationContext genCtx = (ScaffoldGenerationContext) uiContext.getAttribute(ScaffoldGenerationContext.class);
       genCtx.addAttribute("pageTemplate", pageTemplate.getValue());
       return null;
    }
