@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Profile;
-import org.jboss.forge.addon.maven.resources.MavenProfileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.VirtualResource;
@@ -40,10 +39,10 @@ public class MavenProfileResourceImpl extends VirtualResource<Profile> implement
    @Override
    protected List<Resource<?>> doListResources()
    {
-      List<Resource<?>> children = new ArrayList<Resource<?>>();
+      List<Resource<?>> children = new ArrayList<>();
       for (Dependency dep : profile.getDependencies())
       {
-         children.add(new MavenDependencyResourceImpl(this, dep));
+         children.add(new MavenDependencyResourceImpl(getResourceFactory(), this, dep));
       }
       return children;
    }

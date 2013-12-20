@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.apache.maven.model.Dependency;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.VirtualResource;
 
 /**
@@ -22,9 +23,9 @@ public class MavenDependencyResourceImpl extends VirtualResource<Dependency>
 {
    private final Dependency dependency;
 
-   public MavenDependencyResourceImpl(Resource<?> parent, Dependency dependency)
+   public MavenDependencyResourceImpl(ResourceFactory factory, Resource<?> parent, Dependency dependency)
    {
-      super(null, parent);
+      super(factory, parent);
       this.dependency = dependency;
    }
 

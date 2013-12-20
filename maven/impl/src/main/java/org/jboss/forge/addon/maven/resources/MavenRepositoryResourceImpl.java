@@ -43,7 +43,7 @@ public class MavenRepositoryResourceImpl extends VirtualResource<Repository>
    @Override
    protected List<Resource<?>> doListResources()
    {
-      List<Resource<?>> children = new ArrayList<Resource<?>>();
+      List<Resource<?>> children = new ArrayList<>();
       return children;
    }
 

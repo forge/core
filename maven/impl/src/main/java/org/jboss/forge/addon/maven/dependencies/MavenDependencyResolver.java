@@ -69,7 +69,7 @@ public class MavenDependencyResolver implements DependencyResolver
    @Override
    public Set<Dependency> resolveDependencies(DependencyQuery query)
    {
-      Set<Dependency> result = new HashSet<Dependency>();
+      Set<Dependency> result = new HashSet<>();
       Predicate<Dependency> filter = query.getDependencyFilter();
       RepositorySystem system = container.getRepositorySystem();
       Settings settings = container.getSettings();
@@ -118,7 +118,7 @@ public class MavenDependencyResolver implements DependencyResolver
    public List<Coordinate> resolveVersions(DependencyQuery query)
    {
       VersionRangeResult r = getVersions(query);
-      List<Coordinate> result = new ArrayList<Coordinate>();
+      List<Coordinate> result = new ArrayList<>();
       Predicate<Dependency> filter = query.getDependencyFilter();
       for (Version v : r.getVersions())
       {

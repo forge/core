@@ -48,7 +48,7 @@ public class MavenConvertUtils
    public static List<RemoteRepository> convertToMavenRepos(final List<DependencyRepository> repositories,
             final Settings settings)
    {
-      List<RemoteRepository> remoteRepos = new ArrayList<RemoteRepository>();
+      List<RemoteRepository> remoteRepos = new ArrayList<>();
       if (repositories != null)
       {
          for (DependencyRepository deprep : repositories)

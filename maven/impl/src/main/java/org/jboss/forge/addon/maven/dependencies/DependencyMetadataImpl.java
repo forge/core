@@ -32,19 +32,19 @@ public class DependencyMetadataImpl implements DependencyMetadata
    {
       this.dependency = query;
 
-      this.repositories = new ArrayList<DependencyRepository>();
+      this.repositories = new ArrayList<>();
       for (RemoteRepository r : descriptor.getRepositories())
       {
          repositories.add(new DependencyRepository(r.getId(), r.getUrl()));
       }
 
-      managedDependencies = new ArrayList<Dependency>();
+      managedDependencies = new ArrayList<>();
       for (org.eclipse.aether.graph.Dependency d : descriptor.getManagedDependencies())
       {
          managedDependencies.add(convertToForge(d));
       }
 
-      dependencies = new ArrayList<Dependency>();
+      dependencies = new ArrayList<>();
       for (org.eclipse.aether.graph.Dependency d : descriptor.getDependencies())
       {
          dependencies.add(convertToForge(d));

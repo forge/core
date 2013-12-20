@@ -55,7 +55,7 @@ public class MavenPomResourceImpl extends XMLResourceImpl implements MavenPomRes
    @Override
    protected List<Resource<?>> doListResources()
    {
-      List<Resource<?>> children = new ArrayList<Resource<?>>();
+      List<Resource<?>> children = new ArrayList<>();
       listDependencies(children);
       listProfiles(children);
       listRepositories(children);
@@ -76,7 +76,7 @@ public class MavenPomResourceImpl extends XMLResourceImpl implements MavenPomRes
       Model model = getCurrentModel();
       for (Dependency dep : model.getDependencies())
       {
-         children.add(new MavenDependencyResourceImpl(this, dep));
+         children.add(new MavenDependencyResourceImpl(getResourceFactory(), this, dep));
       }
    }
 

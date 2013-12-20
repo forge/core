@@ -108,7 +108,7 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
 
    private void setExclusions(final Collection<org.eclipse.aether.graph.Exclusion> exclusions)
    {
-      List<Exclusion> result = new ArrayList<Exclusion>();
+      List<Exclusion> result = new ArrayList<>();
       for (org.eclipse.aether.graph.Exclusion exclusion : exclusions)
       {
          Exclusion temp = new Exclusion();
@@ -134,7 +134,7 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
    @Override
    public List<Coordinate> getExcludedCoordinates()
    {
-      List<Coordinate> result = new ArrayList<Coordinate>();
+      List<Coordinate> result = new ArrayList<>();
       List<Exclusion> exclusions = this.getExclusions();
       for (Exclusion exclusion : exclusions)
       {
@@ -147,7 +147,7 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
 
    public static List<Dependency> fromMavenList(final List<org.apache.maven.model.Dependency> dependencies)
    {
-      List<Dependency> result = new ArrayList<Dependency>();
+      List<Dependency> result = new ArrayList<>();
 
       for (org.apache.maven.model.Dependency dep : dependencies)
       {
@@ -159,7 +159,7 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
 
    public static List<org.apache.maven.model.Dependency> toMavenList(final List<Dependency> dependencies)
    {
-      List<org.apache.maven.model.Dependency> result = new ArrayList<org.apache.maven.model.Dependency>();
+      List<org.apache.maven.model.Dependency> result = new ArrayList<>();
 
       for (Dependency dep : dependencies)
       {
@@ -183,7 +183,7 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
 
    public static List<Dependency> fromAetherList(final List<org.eclipse.aether.graph.Dependency> dependencies)
    {
-      List<Dependency> result = new ArrayList<Dependency>();
+      List<Dependency> result = new ArrayList<>();
       for (org.eclipse.aether.graph.Dependency dependency : dependencies)
       {
          result.add(new MavenDependencyAdapter(dependency));
