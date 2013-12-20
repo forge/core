@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.scaffold.impl.ui;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -18,7 +16,6 @@ import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
-import org.jboss.forge.addon.scaffold.spi.ResourceCollection;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.scaffold.ui.ScaffoldGenerateCommand;
@@ -117,7 +114,7 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
       
       // Add the execution logic step in the end so that the scaffold generation step is executed last after all other
       // steps
-      generationFlow.add(ExecuteGenerationCommand.class);
+      generationFlow.add(ExecuteGenerationStep.class);
 
       // Extract the first command to obtain the next step
       Class<? extends UICommand> next = generationFlow.remove(0);

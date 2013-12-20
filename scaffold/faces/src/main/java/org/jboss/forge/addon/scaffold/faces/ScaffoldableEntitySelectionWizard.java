@@ -1,7 +1,5 @@
 package org.jboss.forge.addon.scaffold.faces;
 
-import java.io.File;
-
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
@@ -11,7 +9,6 @@ import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourceUtil;
 import org.jboss.forge.addon.scaffold.spi.ResourceCollection;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
