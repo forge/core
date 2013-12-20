@@ -15,7 +15,7 @@ import java.util.Map;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage;
+import org.jboss.forge.addon.ui.output.UIMessage;
 
 /**
  * 
@@ -97,7 +97,7 @@ public class MockValidationContext implements UIValidationContext
    }
 
    @Override
-   public List<UIValidationMessage> getMessages()
+   public List<UIMessage> getMessages()
    {
       throw new UnsupportedOperationException();
    }

@@ -15,8 +15,8 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.spi.UIRuntime;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.util.Assert;
 
@@ -53,7 +53,7 @@ public abstract class AbstractCommandController implements CommandController
    }
 
    @Override
-   public List<UIValidationMessage> validate(InputComponent<?, ?> input)
+   public List<UIMessage> validate(InputComponent<?, ?> input)
    {
       assertInitialized();
       Assert.notNull(input, "InputComponent must not be null.");

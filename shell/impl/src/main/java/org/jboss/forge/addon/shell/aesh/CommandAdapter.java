@@ -18,11 +18,11 @@ import org.jboss.aesh.console.command.invocation.CommandInvocation;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ShellMessages;
+import org.jboss.forge.addon.ui.output.UIMessage;
+import org.jboss.forge.addon.ui.output.UIMessage.Severity;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage.Severity;
 
 /**
  * Adapts the current {@link AbstractShellInteraction} to a {@link Command}
@@ -43,7 +43,7 @@ class CommandAdapter implements Command<CommandInvocation>
       this.interaction = interaction;
    }
 
-   public List<UIValidationMessage> validate()
+   public List<UIMessage> validate()
    {
       return interaction.getController().validate();
    }
@@ -102,8 +102,8 @@ class CommandAdapter implements Command<CommandInvocation>
       }
       else
       {
-         List<UIValidationMessage> messages = interaction.getController().validate();
-         for (UIValidationMessage message : messages)
+         List<UIMessage> messages = interaction.getController().validate();
+         for (UIMessage message : messages)
          {
             if (message.getSeverity() == Severity.ERROR)
                ShellMessages.error(shell.getConsole().getShell().err(), message.getDescription());

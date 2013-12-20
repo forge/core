@@ -14,14 +14,15 @@ import java.util.List;
 
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.impl.output.UIMessageImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage.Severity;
+import org.jboss.forge.addon.ui.output.UIMessage;
+import org.jboss.forge.addon.ui.output.UIMessage.Severity;
 import org.jboss.forge.furnace.util.Assert;
 
 public class UIValidationContextImpl implements UIValidationContext
 {
-   private List<UIValidationMessage> messages = new LinkedList<>();
+   private List<UIMessage> messages = new LinkedList<>();
    private UIContext context;
    private InputComponent<?, ?> currentInputComponent;
 
@@ -35,21 +36,21 @@ public class UIValidationContextImpl implements UIValidationContext
             String errorMessage)
    {
       Assert.notNull(errorMessage, "Error Message cannot be null");
-      messages.add(new UIValidationMessageImpl(Severity.ERROR, errorMessage, input));
+      messages.add(new UIMessageImpl(Severity.ERROR, errorMessage, input));
    }
 
    @Override
    public void addValidationWarning(InputComponent<?, ?> input, String warningMessage)
    {
       Assert.notNull(warningMessage, "Warning Message cannot be null");
-      messages.add(new UIValidationMessageImpl(Severity.WARN, warningMessage, input));
+      messages.add(new UIMessageImpl(Severity.WARN, warningMessage, input));
    }
 
    @Override
    public void addValidationInformation(InputComponent<?, ?> input, String infoMessage)
    {
       Assert.notNull(infoMessage, "Information Message cannot be null");
-      messages.add(new UIValidationMessageImpl(Severity.INFO, infoMessage, input));
+      messages.add(new UIMessageImpl(Severity.INFO, infoMessage, input));
 
    }
 
@@ -71,12 +72,12 @@ public class UIValidationContextImpl implements UIValidationContext
    }
 
    @Override
-   public List<UIValidationMessage> getMessages()
+   public List<UIMessage> getMessages()
    {
-      Collections.sort(messages, new Comparator<UIValidationMessage>()
+      Collections.sort(messages, new Comparator<UIMessage>()
       {
          @Override
-         public int compare(UIValidationMessage o1, UIValidationMessage o2)
+         public int compare(UIMessage o1, UIMessage o2)
          {
             return o1.getSeverity().compareTo(o2.getSeverity());
          }

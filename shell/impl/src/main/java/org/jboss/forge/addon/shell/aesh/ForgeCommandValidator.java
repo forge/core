@@ -12,8 +12,8 @@ import java.util.List;
 import org.jboss.aesh.cl.validator.CommandValidator;
 import org.jboss.aesh.cl.validator.CommandValidatorException;
 import org.jboss.aesh.console.command.Command;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage.Severity;
+import org.jboss.forge.addon.ui.output.UIMessage;
+import org.jboss.forge.addon.ui.output.UIMessage.Severity;
 
 /**
  * Forge {@link CommandValidator} implementation
@@ -31,8 +31,8 @@ public enum ForgeCommandValidator implements CommandValidator
    {
       if (command instanceof CommandAdapter)
       {
-         List<UIValidationMessage> messages = ((CommandAdapter) command).validate();
-         for (UIValidationMessage message : messages)
+         List<UIMessage> messages = ((CommandAdapter) command).validate();
+         for (UIMessage message : messages)
          {
             if (message.getSeverity() == Severity.ERROR)
                throw new CommandValidatorException(message.getDescription());

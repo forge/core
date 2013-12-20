@@ -5,16 +5,16 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.ui.validation;
+package org.jboss.forge.addon.ui.output;
 
 import org.jboss.forge.addon.ui.input.InputComponent;
 
 /**
- * A validation message
+ * A message to be displayed
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public interface UIValidationMessage
+public interface UIMessage
 {
    /**
     * @return the description of this message

@@ -37,9 +37,9 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SingleValued;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.output.UIMessage;
+import org.jboss.forge.addon.ui.output.UIMessage.Severity;
 import org.jboss.forge.addon.ui.util.InputComponents;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage.Severity;
 
 /**
  * Contains utility methods to parse command lines
@@ -113,7 +113,7 @@ public class CommandLineUtil
                {
                   Object value = validatorInvocation.getValue();
                   InputComponents.setValueFor(converterFactory, input, value);
-                  for (UIValidationMessage message : command.validate(input))
+                  for (UIMessage message : command.validate(input))
                   {
                      if (message.getSource() == input && message.getSeverity() == Severity.ERROR)
                      {

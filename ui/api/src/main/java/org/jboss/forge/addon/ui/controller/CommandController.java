@@ -14,8 +14,8 @@ import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage;
 
 /**
  * A Controller for a specific {@link UICommand}
@@ -51,17 +51,17 @@ public interface CommandController extends AutoCloseable
     * {@link InputComponent#validate(org.jboss.forge.addon.ui.context.UIValidationContext)} for each enabled
     * {@link InputComponent}.
     */
-   List<UIValidationMessage> validate();
+   List<UIMessage> validate();
 
    /**
     * Calls {@link InputComponent#validate(org.jboss.forge.addon.ui.context.UIValidationContext)} for the given
     * {@link InputComponent} belonging to the underlying {@link UICommand}.
     */
-   List<UIValidationMessage> validate(InputComponent<?, ?> input);
+   List<UIMessage> validate(InputComponent<?, ?> input);
 
    /**
     * Returns <code>true</code> if the {@link CommandController#validate()} method contains no
-    * {@link UIValidationMessage} instances with an ERROR severity
+    * {@link UIMessage} instances with an ERROR severity
     */
    boolean isValid();
 

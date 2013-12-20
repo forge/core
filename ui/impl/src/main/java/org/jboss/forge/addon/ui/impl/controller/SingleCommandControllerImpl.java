@@ -24,11 +24,11 @@ import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.output.UIMessage;
+import org.jboss.forge.addon.ui.output.UIMessage.Severity;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.spi.UIRuntime;
 import org.jboss.forge.addon.ui.util.InputComponents;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage.Severity;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
@@ -150,7 +150,7 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
    }
 
    @Override
-   public List<UIValidationMessage> validate()
+   public List<UIMessage> validate()
    {
       assertInitialized();
       UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
@@ -167,7 +167,7 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
    @Override
    public boolean isValid()
    {
-      for (UIValidationMessage message : validate())
+      for (UIMessage message : validate())
       {
          if (message.getSeverity() == Severity.ERROR)
             return false;

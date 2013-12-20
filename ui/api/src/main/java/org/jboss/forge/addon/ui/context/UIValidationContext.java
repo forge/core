@@ -10,7 +10,7 @@ package org.jboss.forge.addon.ui.context;
 import java.util.List;
 
 import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage;
+import org.jboss.forge.addon.ui.output.UIMessage;
 
 /**
  * Stores information about validation.
@@ -49,7 +49,7 @@ public interface UIValidationContext extends UIContextProvider
    public InputComponent<?, ?> getCurrentInputComponent();
 
    /**
-    * @return the {@link UIValidationMessage} objects added to this context
+    * @return the {@link UIMessage} objects added to this context
     */
-   public List<UIValidationMessage> getMessages();
+   public List<UIMessage> getMessages();
 }

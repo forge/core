@@ -29,10 +29,10 @@ import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.impl.context.UINavigationContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.spi.UIRuntime;
-import org.jboss.forge.addon.ui.validation.UIValidationMessage;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 
@@ -133,7 +133,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    }
 
    @Override
-   public List<UIValidationMessage> validate()
+   public List<UIMessage> validate()
    {
       return getCurrentController().validate();
    }
