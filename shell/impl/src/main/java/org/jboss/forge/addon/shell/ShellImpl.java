@@ -23,6 +23,7 @@ import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.aesh.terminal.TerminalColor;
+import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
@@ -128,11 +129,14 @@ public class ShellImpl implements Shell, UIRuntime
       this.currentResource = resource;
 
       Resource<?> temp = resource;
-      while (!(temp instanceof FileResource<?>) && temp != null)
+      while (!(temp instanceof DirectoryResource) && temp != null)
       {
          temp = temp.getParent();
       }
-      console.getAeshContext().setCurrentWorkingDirectory(((FileResource<?>) temp).getUnderlyingResourceObject());
+      if (temp instanceof DirectoryResource)
+      {
+         console.getAeshContext().setCurrentWorkingDirectory(((DirectoryResource) temp).getUnderlyingResourceObject());
+      }
       updatePrompt();
    }
 
