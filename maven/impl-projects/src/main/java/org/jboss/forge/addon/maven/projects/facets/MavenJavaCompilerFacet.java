@@ -72,8 +72,8 @@ public class MavenJavaCompilerFacet extends AbstractFacet<Project> implements Ja
             Xpp3Dom dom = Xpp3DomBuilder.build(
                      new ByteArrayInputStream(
                               ("<configuration>" +
-                                       "<source>1.6</source>" +
-                                       "<target>1.6</target>" +
+                                       "<source>1.7</source>" +
+                                       "<target>1.7</target>" +
                                        "<encoding>UTF-8</encoding>" +
                                        "</configuration>").getBytes()),
                      "UTF-8");
