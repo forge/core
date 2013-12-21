@@ -33,22 +33,26 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
    @Inject
    @WithAttributes(label = "Page Template")
    private UIInput<FileResource<?>> pageTemplate;
-   
+
    @Inject
    @WithAttributes(label = "Targets", required = true)
    private UISelectMany<JavaClass> targets;
-   
+
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
       ResourceCollection resourceCollection = new ResourceCollection();
-      for (JavaClass klass : targets.getValue())
+      if (targets.getValue() != null)
       {
-         resourceCollection.addToCollection(klass);
+         for (JavaClass klass : targets.getValue())
+         {
+            resourceCollection.addToCollection(klass);
+         }
       }
       UIContext uiContext = context.getUIContext();
-      uiContext.setAttribute(ResourceCollection.class, resourceCollection );
-      ScaffoldGenerationContext genCtx = (ScaffoldGenerationContext) uiContext.getAttribute(ScaffoldGenerationContext.class);
+      uiContext.setAttribute(ResourceCollection.class, resourceCollection);
+      ScaffoldGenerationContext genCtx = (ScaffoldGenerationContext) uiContext
+               .getAttribute(ScaffoldGenerationContext.class);
       genCtx.addAttribute("pageTemplate", pageTemplate.getValue());
       return null;
    }
@@ -56,7 +60,8 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(getClass()).name("Select JPA entities").description("Select the JPA entities to be used for scaffolding.");
+      return Metadata.forCommand(getClass()).name("Select JPA entities")
+               .description("Select the JPA entities to be used for scaffolding.");
    }
 
    @Override
@@ -69,7 +74,7 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
    public void initializeUI(UIBuilder builder) throws Exception
    {
       UIContext context = builder.getUIContext();
-      
+
       Project project = (Project) context.getAttribute(Project.class);
       JPAFacet<PersistenceCommonDescriptor> persistenceFacet = project.getFacet(JPAFacet.class);
       targets.setValueChoices(persistenceFacet.getAllEntities());
