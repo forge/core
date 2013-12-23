@@ -6,9 +6,12 @@
  */
 package org.jboss.forge.addon.ui.impl.input;
 
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.jboss.forge.addon.ui.input.UISelectOne;
+import org.jboss.forge.addon.ui.input.ValueChangeListener;
+import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.util.Callables;
 
 /**
@@ -29,6 +32,11 @@ public class UISelectOneImpl<VALUETYPE> extends AbstractUISelectInputComponent<U
    @Override
    public UISelectOne<VALUETYPE> setValue(VALUETYPE value)
    {
+      Set<ValueChangeListener> listeners = getValueChangeListeners();
+      if (!listeners.isEmpty() && !InputComponents.areEqual(getValue(), value))
+      {
+         fireValueChangeListeners(value);
+      }
       this.value = value;
       return this;
    }

@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.ui.impl.input;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.enterprise.inject.Vetoed;
@@ -18,7 +20,10 @@ import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.ValueChangeListener;
+import org.jboss.forge.addon.ui.input.events.ValueChangeEvent;
 import org.jboss.forge.addon.ui.util.InputComponents;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Callables;
 
 /**
@@ -45,6 +50,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
 
    private Converter<String, VALUETYPE> valueConverter;
    private UIValidator validator;
+   private Set<ValueChangeListener> valueChangeListeners = new LinkedHashSet<>();;
 
    public AbstractInputComponent(String name, char shortName, Class<VALUETYPE> type)
    {
@@ -195,4 +201,34 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
          this.validator.validate(context);
       }
    }
+
+   @Override
+   public ListenerRegistration<ValueChangeListener> addValueChangeListener(final ValueChangeListener listener)
+   {
+      valueChangeListeners.add(listener);
+      return new ListenerRegistration<ValueChangeListener>()
+      {
+         @Override
+         public ValueChangeListener removeListener()
+         {
+            valueChangeListeners.remove(listener);
+            return listener;
+         }
+      };
+   }
+
+   protected Set<ValueChangeListener> getValueChangeListeners()
+   {
+      return valueChangeListeners;
+   }
+
+   protected void fireValueChangeListeners(Object newValue)
+   {
+      ValueChangeEvent evt = new ValueChangeEvent(this, getValue(), newValue);
+      for (ValueChangeListener listener : getValueChangeListeners())
+      {
+         listener.valueChanged(evt);
+      }
+   }
+
 }

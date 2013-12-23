@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.ui.impl.input;
 
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.enterprise.inject.Vetoed;
@@ -14,6 +15,8 @@ import javax.enterprise.inject.Vetoed;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.ValueChangeListener;
+import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.util.Callables;
 
 /**
@@ -53,6 +56,11 @@ public class UIInputImpl<VALUETYPE> extends AbstractInputComponent<UIInput<VALUE
    @Override
    public UIInput<VALUETYPE> setValue(VALUETYPE value)
    {
+      Set<ValueChangeListener> listeners = getValueChangeListeners();
+      if (!listeners.isEmpty() && !InputComponents.areEqual(getValue(), value))
+      {
+         fireValueChangeListeners(value);
+      }
       this.value = value;
       return this;
    }

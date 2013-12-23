@@ -14,6 +14,7 @@ import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
  * This is the parent interface of all inputs.
@@ -144,4 +145,9 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
     * default value is not set, <code>null</code> is returned
     */
    Object getValue();
+
+   /**
+    * Listens for changes in the value of this input
+    */
+   ListenerRegistration<ValueChangeListener> addValueChangeListener(ValueChangeListener listener);
 }

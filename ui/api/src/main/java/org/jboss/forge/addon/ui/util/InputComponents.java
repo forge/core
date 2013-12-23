@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.ui.util;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jboss.forge.addon.convert.CompositeConverter;
@@ -353,4 +354,53 @@ public final class InputComponents
       }
       return result;
    }
+
+   /**
+    * Determines whether two possibly-null objects are equal. Returns:
+    * 
+    * <ul>
+    * <li>{@code true} if {@code a} and {@code b} are both null.
+    * <li>{@code true} if {@code a} and {@code b} are both non-null and they are equal according to
+    * {@link Object#equals(Object)}.
+    * <li>{@code false} in all other situations.
+    * </ul>
+    * 
+    * <p>
+    * This assumes that any non-null objects passed to this function conform to the {@code equals()} contract.
+    */
+   public static boolean areEqual(Object a, Object b)
+   {
+      return a == b || (a != null && a.equals(b));
+   }
+
+   /**
+    * Determines whether two iterables contain equal elements in the same order. More specifically, this method returns
+    * {@code true} if {@code iterable1} and {@code iterable2} contain the same number of elements and every element of
+    * {@code iterable1} is equal to the corresponding element of {@code iterable2}.
+    */
+   public static boolean areElementsEqual(
+            Iterable<?> iterable1, Iterable<?> iterable2)
+   {
+      if (iterable1 == null || iterable2 == null)
+      {
+         return false;
+      }
+      Iterator<?> iterator1 = iterable1.iterator();
+      Iterator<?> iterator2 = iterable2.iterator();
+      while (iterator1.hasNext())
+      {
+         if (!iterator2.hasNext())
+         {
+            return false;
+         }
+         Object o1 = iterator1.next();
+         Object o2 = iterator2.next();
+         if (!areEqual(o1, o2))
+         {
+            return false;
+         }
+      }
+      return !iterator2.hasNext();
+   }
+
 }
