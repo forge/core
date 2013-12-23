@@ -16,6 +16,7 @@ import org.jboss.aesh.console.AeshConsole;
 import org.jboss.aesh.console.AeshConsoleBuilder;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.Prompt;
+import org.jboss.aesh.console.command.invocation.CommandInvocation;
 import org.jboss.aesh.console.helper.InterruptHook;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
@@ -30,12 +31,17 @@ import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
 import org.jboss.forge.addon.shell.aesh.ForgeManProvider;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIOutputImpl;
+import org.jboss.forge.addon.shell.ui.ShellUIPromptImpl;
+import org.jboss.forge.addon.ui.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.DefaultUIProgressMonitor;
+import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIContextListener;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
+import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.spi.UIRuntime;
 import org.jboss.forge.furnace.addons.AddonRegistry;
@@ -53,6 +59,8 @@ import org.jboss.forge.furnace.util.Assert;
 public class ShellImpl implements Shell, UIRuntime
 {
    private Resource<?> currentResource;
+   private UIPrompt prompt;
+
    private final AddonRegistry addonRegistry;
    private final AeshConsole console;
    private final UIOutput output;
@@ -162,6 +170,7 @@ public class ShellImpl implements Shell, UIRuntime
    {
       Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
       ShellContextImpl shellContextImpl = new ShellContextImpl(this, currentResource, listeners);
+      shellContextImpl.addCommandExecutionListener(new InitializePromptListener());
       for (CommandExecutionListener listener : executionListeners)
       {
          shellContextImpl.addCommandExecutionListener(listener);
@@ -186,8 +195,25 @@ public class ShellImpl implements Shell, UIRuntime
    }
 
    @Override
+   public UIPrompt getPrompt()
+   {
+      return prompt;
+   }
+
+   @Override
    public UIProgressMonitor createProgressMonitor(UIContext context)
    {
       return new DefaultUIProgressMonitor();
+   }
+
+   private class InitializePromptListener extends AbstractCommandExecutionListener
+   {
+      @Override
+      public void preCommandExecuted(UICommand command, UIExecutionContext context)
+      {
+         CommandInvocation commandInvocation = (CommandInvocation) context.getUIContext().getAttributeMap()
+                  .get(CommandInvocation.class);
+         ShellImpl.this.prompt = new ShellUIPromptImpl(console, commandInvocation);
+      }
    }
 }
