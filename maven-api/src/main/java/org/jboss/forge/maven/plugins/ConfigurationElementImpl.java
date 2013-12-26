@@ -96,7 +96,7 @@ public class ConfigurationElementImpl implements ConfigurationElement
    @Override
    public boolean hasChildByName(String name, boolean directChildsOnly)
    {
-      return hasConfigElementByContentRecursive(this, name, FilterType.CONTENT, directChildsOnly);
+      return hasConfigElementByContentRecursive(this, name, FilterType.NAME, directChildsOnly);
    }
 
    @Override
