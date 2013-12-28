@@ -125,6 +125,7 @@ public class MavenPluginAdapter extends org.apache.maven.model.Plugin implements
       setConfiguration(plugin.getConfiguration());
       setExecutions(clone.getExecutions());
       setExtensions(clone.getExtensions());
+      setDependencies(clone.getDependencies());
    }
 
    @Override

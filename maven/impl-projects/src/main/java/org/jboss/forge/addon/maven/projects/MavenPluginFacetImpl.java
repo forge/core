@@ -27,12 +27,8 @@ import org.jboss.forge.addon.dependencies.DependencyRepository;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.util.Dependencies;
 import org.jboss.forge.addon.facets.AbstractFacet;
-import org.jboss.forge.addon.maven.plugins.Execution;
 import org.jboss.forge.addon.maven.plugins.MavenPlugin;
 import org.jboss.forge.addon.maven.plugins.MavenPluginAdapter;
-import org.jboss.forge.addon.maven.plugins.MavenPluginBuilder;
-import org.jboss.forge.addon.maven.projects.MavenFacet;
-import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.maven.projects.facets.exceptions.PluginNotFoundException;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.parser.java.util.Strings;
@@ -86,19 +82,7 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
       List<org.apache.maven.model.Plugin> pomPlugins = getPluginsPOM(managedPlugin, effectivePlugin);
       for (org.apache.maven.model.Plugin plugin : pomPlugins)
       {
-         MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
-         MavenPluginBuilder pluginBuilder = MavenPluginBuilder
-                  .create()
-                  .setCoordinate(
-                           CoordinateBuilder.create().setGroupId(plugin.getGroupId())
-                                    .setArtifactId(plugin.getArtifactId()).setVersion(plugin.getVersion()))
-
-                  .setConfiguration(adapter.getConfig());
-         for (Execution execution : adapter.listExecutions())
-         {
-            pluginBuilder.addExecution(execution);
-         }
-         plugins.add(pluginBuilder);
+         plugins.add(new MavenPluginAdapter(plugin));
       }
       return plugins;
    }
