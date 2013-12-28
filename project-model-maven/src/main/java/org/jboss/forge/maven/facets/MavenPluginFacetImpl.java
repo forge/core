@@ -10,7 +10,6 @@ package org.jboss.forge.maven.facets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +17,6 @@ import javax.enterprise.context.Dependent;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.Repository;
@@ -26,12 +24,8 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.jboss.forge.maven.MavenCoreFacet;
 import org.jboss.forge.maven.MavenPluginFacet;
 import org.jboss.forge.maven.facets.exceptions.PluginNotFoundException;
-import org.jboss.forge.maven.plugins.ConfigurationImpl;
-import org.jboss.forge.maven.plugins.Execution;
-import org.jboss.forge.maven.plugins.ExecutionBuilder;
 import org.jboss.forge.maven.plugins.MavenPlugin;
 import org.jboss.forge.maven.plugins.MavenPluginAdapter;
-import org.jboss.forge.maven.plugins.MavenPluginBuilder;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.Facet;
 import org.jboss.forge.project.dependencies.Dependency;
@@ -111,19 +105,7 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
       List<org.apache.maven.model.Plugin> pomPlugins = getPluginsPOM(managedPlugin, effectivePlugin);
       for (org.apache.maven.model.Plugin plugin : pomPlugins)
       {
-         MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
-         MavenPluginBuilder pluginBuilder = MavenPluginBuilder
-                  .create()
-                  .setDependency(
-                           DependencyBuilder.create().setGroupId(plugin.getGroupId())
-                                    .setArtifactId(plugin.getArtifactId()).setVersion(plugin.getVersion()))
-
-                  .setConfiguration(adapter.getConfig());
-         for (Execution execution : adapter.listExecutions())
-         {
-            pluginBuilder.addExecution(execution);
-         }
-         plugins.add(pluginBuilder);
+         plugins.add(new MavenPluginAdapter(plugin));
       }
       return plugins;
    }
