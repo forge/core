@@ -63,7 +63,7 @@ public class RegisterAsServiceCommand extends AbstractProjectCommand
    {
       return Metadata.forCommand(RegisterAsServiceCommand.class).category(Categories.create("Java", "ServiceLoader"))
                .description("Register a Java type as a service implementation.")
-               .name("Register as ServiceLoader service");
+               .name("Service: Register as ServiceLoader");
    }
 
    @Override
