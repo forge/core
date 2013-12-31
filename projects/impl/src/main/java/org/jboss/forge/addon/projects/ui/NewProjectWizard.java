@@ -20,6 +20,7 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
@@ -58,19 +59,23 @@ public class NewProjectWizard implements UIWizard
    private Imported<BuildSystem> buildSystems;
 
    @Inject
-   @WithAttributes(label = "Project name:", required = true)
+   @WithAttributes(label = "Project name", required = true)
    private UIInput<String> named;
 
    @Inject
-   @WithAttributes(label = "Top level package:")
+   @WithAttributes(label = "Top level package")
    private UIInput<String> topLevelPackage;
 
    @Inject
-   @WithAttributes(label = "Version:", required = false)
+   @WithAttributes(label = "Version")
    private UIInput<String> version;
 
    @Inject
-   @WithAttributes(label = "Project location:")
+   @WithAttributes(label = "Final Name")
+   private UIInput<String> finalName;
+
+   @Inject
+   @WithAttributes(label = "Project location")
    private UIInput<DirectoryResource> targetLocation;
 
    @Inject
@@ -109,7 +114,7 @@ public class NewProjectWizard implements UIWizard
       configureTopLevelPackageInput();
       configureBuildSystemInput();
 
-      builder.add(named).add(topLevelPackage).add(version).add(targetLocation).add(overwrite).add(type)
+      builder.add(named).add(topLevelPackage).add(version).add(finalName).add(targetLocation).add(overwrite).add(type)
                .add(buildSystem);
    }
 
@@ -381,6 +386,13 @@ public class NewProjectWizard implements UIWizard
             metadataFacet.setProjectName(named.getValue());
             metadataFacet.setProjectVersion(version.getValue());
             metadataFacet.setTopLevelPackage(topLevelPackage.getValue());
+
+            if (finalName.hasValue())
+            {
+               PackagingFacet packagingFacet = project.getFacet(PackagingFacet.class);
+               packagingFacet.setFinalName(finalName.getValue());
+            }
+
             uiContext.setSelection(project.getProjectRoot());
             uiContext.setAttribute(Project.class, project);
          }
