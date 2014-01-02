@@ -14,6 +14,7 @@ import org.jboss.forge.addon.shell.aesh.ShellSingleCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.event.PostStartup;
@@ -66,9 +67,9 @@ public class CommandManager
       return commands;
    }
 
-   public String getCommandName(ShellContext shellContext, UICommand cmd)
+   public String getCommandName(UIContext context, UICommand cmd)
    {
-      return ShellUtil.shellifyName(cmd.getMetadata(shellContext).getName());
+      return ShellUtil.shellifyName(cmd.getMetadata(context).getName());
    }
 
    public Iterable<UICommand> getAllCommands()
