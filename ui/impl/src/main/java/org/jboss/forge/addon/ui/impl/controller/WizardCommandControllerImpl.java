@@ -45,7 +45,7 @@ import org.jboss.forge.furnace.proxy.Proxies;
  */
 class WizardCommandControllerImpl extends AbstractCommandController implements WizardCommandController
 {
-   private Logger logger = Logger.getLogger(getClass().getName());
+   private final Logger logger = Logger.getLogger(getClass().getName());
    /**
     * The execution flow
     */
@@ -197,6 +197,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public boolean canMoveToNextStep()
    {
+      assertInitialized();
       Class<? extends UICommand>[] next = getNextFrom(getCurrentController().getCommand());
       return (isValid() && getNextEntry() != null || (next != null || !subflow.isEmpty()));
    }
@@ -204,12 +205,14 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public boolean canMoveToPreviousStep()
    {
+      assertInitialized();
       return flowPointer > 0;
    }
 
    @Override
    public boolean canExecute()
    {
+      assertInitialized();
       for (WizardStepEntry entry : flow)
       {
          if (!entry.controller.canExecute())

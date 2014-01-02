@@ -29,12 +29,12 @@ public interface CommandController extends AutoCloseable
     * Initializes this controller by calling {@link UICommand#initializeUI(org.jboss.forge.addon.ui.context.UIBuilder)}
     * on the underlying {@link UICommand} instance.
     * 
-    * @throws Exception if problems occurred during initialization
+    * @throws Exception if problems occurred during initialization.
     */
    void initialize() throws Exception;
 
    /**
-    * Returns <code>true</code> if {@link CommandController#initialize()} has been called
+    * Returns <code>true</code> if {@link CommandController#initialize()} has been called.
     */
    boolean isInitialized();
 
@@ -42,6 +42,7 @@ public interface CommandController extends AutoCloseable
     * Calls {@link UICommand#execute(org.jboss.forge.addon.ui.context.UIExecutionContext)}. Causes available
     * {@link CommandExecutionListener} instances to be called.
     * 
+    * @throws IllegalStateException if {@link #initialize()} has not been called before invoking this method.
     * @throws Exception if problems occurred during initialization
     */
    Result execute() throws Exception;
@@ -50,64 +51,77 @@ public interface CommandController extends AutoCloseable
     * Calls {@link UICommand#validate(org.jboss.forge.addon.ui.context.UIValidationContext)}, and
     * {@link InputComponent#validate(org.jboss.forge.addon.ui.context.UIValidationContext)} for each enabled
     * {@link InputComponent}.
+    * 
+    * @throws IllegalStateException if {@link #initialize()} has not been called before invoking this method.
     */
    List<UIMessage> validate();
 
    /**
     * Calls {@link InputComponent#validate(org.jboss.forge.addon.ui.context.UIValidationContext)} for the given
     * {@link InputComponent} belonging to the underlying {@link UICommand}.
+    * 
+    * @throws IllegalStateException if {@link #initialize()} has not been called before invoking this method.
     */
    List<UIMessage> validate(InputComponent<?, ?> input);
 
    /**
-    * Returns <code>true</code> if the {@link CommandController#validate()} method contains no
-    * {@link UIMessage} instances with an ERROR severity
+    * Returns <code>true</code> if the {@link CommandController#validate()} method contains no {@link UIMessage}
+    * instances with an ERROR severity
+    * 
+    * @throws IllegalStateException if {@link #initialize()} has not been called before invoking this method.
     */
    boolean isValid();
 
    /**
     * Sets the value of {@link InputComponent} with the given name.
     * 
-    * @throws IllegalArgumentException if no input with the given name exists
+    * @throws IllegalArgumentException if no {@link InputComponent} with the given name exists
+    * @throws IllegalStateException if {@link #initialize()} has not been called before invoking this method.
     */
    CommandController setValueFor(String inputName, Object value) throws IllegalArgumentException;
 
    /**
     * Gets the value of {@link InputComponent} with the given name.
     * 
-    * @throws IllegalArgumentException if no input with the given name exists
+    * @throws IllegalArgumentException if no {@link InputComponent} with the given name exists
+    * @throws IllegalStateException if {@link #initialize()} has not been called before invoking this method.
     */
    Object getValueFor(String inputName) throws IllegalArgumentException;
 
    /**
-    * Returns a {@link Map} of {@link InputComponent} instances for this command
+    * Returns a {@link Map} of {@link InputComponent} instances for this command.
+    * 
+    * @throws IllegalStateException if {@link #initialize()} has not been called before invoking this method.
     */
-   Map<String, InputComponent<?,?>> getInputs();
+   Map<String, InputComponent<?, ?>> getInputs();
 
    /**
-    * @return the command metadata
+    * @return the result of the current {@link UICommand#getMetadata(UIContext)}. Does not require initialization.
     */
    UICommandMetadata getMetadata();
 
    /**
-    * @return if the command is enabled
+    * @return if the current {@link UICommand#isEnabled(UIContext)} is <code>true</code>. Does not require
+    *         initialization.
     */
    boolean isEnabled();
 
    /**
-    * @return the underlying command
+    * @return the underlying {@link UICommand}.
     */
    UICommand getCommand();
 
    /**
-    * @return the underlying {@link UIContext} object
+    * @return the underlying {@link UIContext} object.
     */
    UIContext getContext();
-   
+
    /**
     * Returns <code>true</code> if {@link UICommand#execute(org.jboss.forge.addon.ui.context.UIExecutionContext)} can be
     * called.
+    * 
+    * @throws IllegalStateException if {@link #initialize()} has not been called before invoking this method.
     */
    boolean canExecute();
-   
+
 }

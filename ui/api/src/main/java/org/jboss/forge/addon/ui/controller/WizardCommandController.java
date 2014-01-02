@@ -27,25 +27,31 @@ public interface WizardCommandController extends CommandController
 
    /**
     * Return <code>true</code> if navigation to the next {@link UIWizardStep} is possible.
+    * 
+    * @throws IllegalStateException if {@link #initialize()} has not been called before invoking this method.
     */
    boolean canMoveToNextStep();
 
    /**
     * Return <code>true</code> if navigation to the previous {@link UIWizardStep} is possible.
+    * 
+    * @throws IllegalStateException if {@link #initialize()} has not been called before invoking this method.
     */
    boolean canMoveToPreviousStep();
 
    /**
     * Navigate to the next {@link UIWizardStep}.
     * 
-    * @throws IllegalStateException if navigation is not possible
+    * @throws IllegalStateException if {@link #initialize()} has not been called before invoking this method or
+    *            navigation is not possible.
     */
    WizardCommandController next() throws Exception;
 
    /**
     * Navigate to the previous {@link UIWizardStep}.
     * 
-    * @throws IllegalStateException if navigation is not possible
+    * @throws IllegalStateException if {@link #initialize()} has not been called before invoking this method or
+    *            navigation is not possible
     */
    WizardCommandController previous() throws Exception;
 }

@@ -186,7 +186,7 @@ implement the `UIWizard` interface.
 public class MyInitialPage extends AbstractUICommand implements UIWizard {
 }
 ----
-. Notice that the `next(UIContext context)` method must be implemented in addition to the standard `UICommand` 
+. Notice that the `next(UINavigationContext context)` method must be implemented in addition to the standard `UICommand` 
 methods. Be sure to store relevant values as context attributes so that they may be accessed via subsequent
 wizard steps.
 +
@@ -206,7 +206,7 @@ public class MyInitialPage extends AbstractUICommand implements UIWizard {
    }
    
    @Override
-   public NavigationResult next(UIContext context) throws Exception {
+   public NavigationResult next(UINavigationContext context) throws Exception {
       context.putAttribute("firstName", firstName.getValue());
       return Results.navigateTo(MyNextStep.class);
    }
