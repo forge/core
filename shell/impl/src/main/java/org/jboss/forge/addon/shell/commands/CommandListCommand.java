@@ -6,9 +6,11 @@
  */
 package org.jboss.forge.addon.shell.commands;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
@@ -30,6 +32,7 @@ import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.spi.UIRuntime;
@@ -68,24 +71,28 @@ public class CommandListCommand extends AbstractShellCommand
       TerminalSize terminalSize = shell.getConsole().getShell().getSize();
       List<String> display = new ArrayList<>();
 
-      List<CommandController> controllers = new ArrayList<>();
+      Set<CommandController> controllers = new TreeSet<>(new CommandControllerComparator());
       for (UICommand command : manager.getAllCommands())
       {
          controllers.add(getCommandController(context, command));
       }
 
-      Collections.sort(controllers, new CommandControllerComparator());
-
       for (CommandController controller : controllers)
       {
          String name = manager.getCommandName(context.getUIContext(), controller.getCommand());
-         display.add(controller.getMetadata().getCategory()
-                  + " > " + new TerminalString(name, new TerminalColor(controller.isEnabled() ? Color.BLUE : Color.RED,
-                           Color.DEFAULT)).toString() + " - " + controller.getMetadata().getDescription());
+         UICommandMetadata metadata = controller.getMetadata();
+         display.add(metadata.getCategory()
+                  + " > "
+                  + new TerminalString(name, new TerminalColor(controller.isEnabled() ? Color.BLUE : Color.RED,
+                           Color.DEFAULT)).toString() + " - " + metadata.getDescription());
       }
 
-      return Results.success(Parser.formatDisplayList(display.toArray(new String[display.size()]),
+      UIOutput output = context.getUIContext().getProvider().getOutput();
+      PrintStream out = output.out();
+      out.println(Parser.formatDisplayList(display.toArray(new String[display.size()]),
                terminalSize.getHeight(), terminalSize.getWidth()));
+
+      return Results.success();
    }
 
    private CommandController getCommandController(UIExecutionContext context, UICommand command)

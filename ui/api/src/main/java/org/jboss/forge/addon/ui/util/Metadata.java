@@ -59,7 +59,8 @@ public class Metadata implements UICommandMetadata
    private Metadata(Class<? extends UICommand> type)
    {
       this.type = type;
-      docLocation(getDocLocationFor(type)).name(type.getName()).category(Categories.create("Uncategorized"));
+      docLocation(getDocLocationFor(type)).name(type.getName()).category(Categories.create("Uncategorized"))
+               .description("No description");
    }
 
    /**

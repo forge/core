@@ -69,7 +69,7 @@ public class NewUICommandWizard extends AbstractProjectCommand
    public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(NewUICommandWizard.class)
-               .name("Addon: New Command")
+               .name("Addon: New Command").description("Generates a UICommand implementation")
                .category(Categories.create("Addon", "Generate"));
    }
 
