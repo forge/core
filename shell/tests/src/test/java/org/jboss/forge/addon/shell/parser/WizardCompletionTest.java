@@ -26,7 +26,6 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -53,6 +52,8 @@ public class WizardCompletionTest
       return archive;
    }
 
+   private final int timeoutQuantity = 5;
+
    @Inject
    private ShellTest test;
 
@@ -63,16 +64,13 @@ public class WizardCompletionTest
    }
 
    @Test(timeout = 10000)
-   @Ignore("Until shell is fixed")
    public void testWizardInitialStepAutocomplete() throws Exception
    {
-      int timeoutQuantity = 5;
       test.clearScreen();
       test.waitForCompletion("mockwizard ", "mockw", timeoutQuantity, TimeUnit.SECONDS);
       test.waitForCompletion("mockwizard --values ", "--v", timeoutQuantity, TimeUnit.SECONDS);
       String stdout = test.waitForCompletion("mockwizard --values foo --", "foo --", timeoutQuantity, TimeUnit.SECONDS);
 
-      // FIXME: this fails because the AbstractShellInteraction.getCompletionOptions do not return all these options!
       Assert.assertThat(stdout, containsString("--proceed"));
       Assert.assertThat(stdout, containsString("--key"));
       Assert.assertThat(stdout, not(containsString("--selections")));
@@ -95,27 +93,28 @@ public class WizardCompletionTest
    }
 
    @Test(timeout = 10000)
-   @Ignore("Until shell is fixed")
    public void testWizardInitialStepAutocompleteBooleanFlagWithValue() throws Exception
    {
       test.clearScreen();
-      test.waitForCompletion("mockwizard ", "mockw", 5, TimeUnit.SECONDS);
-      test.waitForCompletion("mockwizard --values ", "--v", 5, TimeUnit.SECONDS);
-      String stdout = test.waitForCompletion("mockwizard --values foo --", "foo --", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("mockwizard ", "mockw", timeoutQuantity, TimeUnit.SECONDS);
+      test.waitForCompletion("mockwizard --values ", "--v", timeoutQuantity, TimeUnit.SECONDS);
+      String stdout = test.waitForCompletion("mockwizard --values foo --", "foo --", timeoutQuantity, TimeUnit.SECONDS);
 
       Assert.assertThat(stdout, containsString("--proceed"));
       Assert.assertThat(stdout, containsString("--key"));
       Assert.assertThat(stdout, not(containsString("--selections")));
       Assert.assertThat(stdout, not(containsString("--done")));
 
-      test.waitForCompletion("mockwizard --values foo --proceed ", "p", 5, TimeUnit.SECONDS);
-      stdout = test.waitForCompletion("mockwizard --values foo --proceed true --", "true --", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("mockwizard --values foo --proceed ", "p", timeoutQuantity, TimeUnit.SECONDS);
+      stdout = test.waitForCompletion("mockwizard --values foo --proceed true --", "true --", timeoutQuantity,
+               TimeUnit.SECONDS);
 
       Assert.assertThat(stdout, containsString("--key"));
       Assert.assertThat(stdout, containsString("--done"));
       Assert.assertThat(stdout, containsString("--selections"));
 
-      test.waitForCompletion("mockwizard --values foo --proceed true --selections ", "sel", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("mockwizard --values foo --proceed true --selections ", "sel", timeoutQuantity,
+               TimeUnit.SECONDS);
    }
 
 }
