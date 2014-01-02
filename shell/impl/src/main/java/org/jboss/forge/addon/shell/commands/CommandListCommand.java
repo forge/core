@@ -8,7 +8,6 @@ package org.jboss.forge.addon.shell.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -21,6 +20,8 @@ import org.jboss.aesh.terminal.TerminalString;
 import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
+import org.jboss.forge.addon.shell.util.CommandControllerComparator;
+import org.jboss.forge.addon.ui.DefaultUIProgressMonitor;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -73,36 +74,7 @@ public class CommandListCommand extends AbstractShellCommand
          controllers.add(getCommandController(context, command));
       }
 
-      Collections.sort(controllers, new Comparator<CommandController>()
-      {
-         @Override
-         public int compare(CommandController left, CommandController right)
-         {
-            if (left == right)
-               return 0;
-            if (right == null)
-               return 1;
-            if (left == null)
-               return -1;
-
-            int categoryResult = left.getMetadata().getCategory().toString()
-                     .compareTo(right.getMetadata().getCategory().toString());
-            if (categoryResult == 0)
-            {
-               String leftName = left.getMetadata().getName();
-               String rightName = right.getMetadata().getName();
-
-               if (leftName == rightName)
-                  return 0;
-               if (leftName == null)
-                  return -1;
-
-               return leftName.compareTo(rightName);
-            }
-
-            return categoryResult;
-         }
-      });
+      Collections.sort(controllers, new CommandControllerComparator());
 
       for (CommandController controller : controllers)
       {
@@ -123,47 +95,8 @@ public class CommandListCommand extends AbstractShellCommand
          @Override
          public UIProgressMonitor createProgressMonitor(UIContext context)
          {
-            return new UIProgressMonitor()
-            {
-               @Override
-               public void worked(int work)
-               {
-               }
-
-               @Override
-               public void subTask(String name)
-               {
-               }
-
-               @Override
-               public void setTaskName(String name)
-               {
-               }
-
-               @Override
-               public void setCancelled(boolean value)
-               {
-               }
-
-               @Override
-               public boolean isCancelled()
-               {
-                  return false;
-               }
-
-               @Override
-               public void done()
-               {
-               }
-
-               @Override
-               public void beginTask(String name, int totalWork)
-               {
-
-               }
-            };
+            return new DefaultUIProgressMonitor();
          }
       });
    }
-
 }
