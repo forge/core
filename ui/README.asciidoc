@@ -207,7 +207,7 @@ public class MyInitialPage extends AbstractUICommand implements UIWizard {
    
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception {
-      context.putAttribute("firstName", firstName.getValue());
+      context.getAttributeMap().put("firstName", firstName.getValue());
       return Results.navigateTo(MyNextStep.class);
    }
 
@@ -236,14 +236,14 @@ public class MyNextStep extends AbstractUICommand implements UIWizardStep {
    }
    
    @Override
-   public NavigationResult next(UIContext context) throws Exception {
+   public NavigationResult next(UINavigationContext context) throws Exception {
       // End of interaction, return null
       return null;
    }
 
    @Override
    public Result execute(UIExecutionContext executionContext) throws Exception {
-      String firstName = (String) executionContext.getUIContext().getAttribute("firstName");
+      String firstName = (String) executionContext.getUIContext().getAttributeMap().get("firstName");
       String fullName = firstName + " " + lastName.getValue(); 
       return Results.success("Hello,"+ fullName);
    }
@@ -276,7 +276,7 @@ public class MyNextStep extends AbstractUICommand implements UIWizardStep {
 
 There are two ways to pass state between wizard steps:
 
-. Add state in UIContext using UIContext.setAttribute
+. Add state in UIContext using UIContext.getAttributeMap().put
 . Create a class with @CommandScoped and add the necessary attributes on it
 
 CommandScoped classes are available during user interaction. The scope is destroyed when a command (or a wizard including its steps) is run or cancelled
