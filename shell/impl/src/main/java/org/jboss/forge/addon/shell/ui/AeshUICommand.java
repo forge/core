@@ -18,7 +18,9 @@ import org.jboss.aesh.cl.internal.ProcessedCommand;
 import org.jboss.aesh.cl.parser.CommandLineCompletionParser;
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.aesh.cl.parser.CommandPopulator;
+import org.jboss.aesh.cl.parser.ParsedCompleteObject;
 import org.jboss.aesh.cl.validator.OptionValidatorException;
+import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.console.InvocationProviders;
 import org.jboss.aesh.console.command.Command;
 import org.jboss.aesh.console.command.CommandResult;
@@ -44,9 +46,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 @Vetoed
 public class AeshUICommand implements UICommand
 {
-
    private final Command<CommandInvocation> command;
-   private final CommandPopulator commandPopulator;
    private final CommandLineParser commandLineParser;
 
    @SuppressWarnings("unchecked")
@@ -54,7 +54,6 @@ public class AeshUICommand implements UICommand
    {
       this.command = container.getCommand();
       this.commandLineParser = container.getParser();
-      this.commandPopulator = commandLineParser.getCommandPopulator();
    }
 
    @Override
@@ -110,7 +109,24 @@ public class AeshUICommand implements UICommand
       @Override
       public CommandLineCompletionParser getCompletionParser()
       {
-         return commandLineParser.getCompletionParser();
+         return new CommandLineCompletionParser()
+         {
+            @Override
+            @SuppressWarnings("rawtypes")
+            public void injectValuesAndComplete(ParsedCompleteObject completeObject, Command originalCommand,
+                     CompleteOperation completeOperation, InvocationProviders invocationProviders)
+            {
+               commandLineParser.getCompletionParser().injectValuesAndComplete(completeObject,
+                        AeshUICommand.this.command,
+                        completeOperation, invocationProviders);
+            }
+
+            @Override
+            public ParsedCompleteObject findCompleteObject(String line, int cursor) throws CommandLineParserException
+            {
+               return commandLineParser.getCompletionParser().findCompleteObject(line, cursor);
+            }
+         };
       }
 
       @Override
@@ -122,7 +138,7 @@ public class AeshUICommand implements UICommand
             public void populateObject(Object instance, CommandLine line, InvocationProviders invocationProviders,
                      boolean validate) throws CommandLineParserException, OptionValidatorException
             {
-               commandPopulator.populateObject(command, line, invocationProviders, validate);
+               commandLineParser.getCommandPopulator().populateObject(command, line, invocationProviders, validate);
             }
          };
       }
