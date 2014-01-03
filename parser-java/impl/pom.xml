@@ -36,5 +36,17 @@
          <classifier>forge-addon</classifier>
          <optional>true</optional>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>ui</artifactId>
+         <classifier>forge-addon</classifier>
+         <optional>true</optional>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>projects</artifactId>
+         <classifier>forge-addon</classifier>
+         <optional>true</optional>
+      </dependency>
    </dependencies>
 </project>

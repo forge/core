@@ -35,6 +35,21 @@
          <optional>true</optional>
       </dependency>
       <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>ui-test-harness</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>test</scope>
+         <optional>true</optional>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>maven</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>test</scope>
+         <optional>true</optional>
+      </dependency>
+      
+      <dependency>
          <groupId>org.jboss.forge.furnace.test</groupId>
          <artifactId>furnace-test-harness</artifactId>
          <scope>test</scope>
