@@ -50,7 +50,7 @@ public class ManProviderTest
       return archive;
    }
 
-   private final int timeoutQuantity = 100000;
+   private final int timeoutQuantity = 5;
 
    @Inject
    private ShellTest test;
@@ -61,7 +61,7 @@ public class ManProviderTest
       test.clearScreen();
    }
 
-   @Test(timeout = 200000000)
+   @Test(timeout = 10000)
    public void testWizardInitialStepAutocomplete() throws Exception
    {
       test.clearScreen();
