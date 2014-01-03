@@ -55,7 +55,7 @@ public class ManProviderTest
       return archive;
    }
 
-   private final int timeoutQuantity = 5;
+   private final int timeoutQuantity = 500;
 
    @Inject
    private ShellTest test;
@@ -80,7 +80,7 @@ public class ManProviderTest
       Assert.assertTrue(listener.isPostExecuted());
    }
 
-   @Test(timeout = 10000)
+   @Test(timeout = 10000000)
    public void testManPageForUndocumentedForgeCommand() throws Exception
    {
       test.clearScreen();
@@ -92,6 +92,6 @@ public class ManProviderTest
       Assert.assertThat(out, containsString("required"));
       Assert.assertThat(out, containsString("help"));
       Assert.assertThat(out, containsString("target location"));
-      Assert.assertThat(out, containsString("[org.jboss.forge.addon.resource.FileResource]"));
+      Assert.assertThat(out, containsString("[FileResource]"));
    }
 }

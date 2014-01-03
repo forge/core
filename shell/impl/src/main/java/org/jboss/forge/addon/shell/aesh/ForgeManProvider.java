@@ -168,15 +168,17 @@ public class ForgeManProvider implements ManProvider
             result.append("[");
             if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
             {
-               result.append("*-").append(input.getShortName()).append("* ");
+               result.append("-").append(input.getShortName()).append(" ");
             }
             result.append("--").append(input.getName()).append("] ");
+            result.append(input.getValueType().getSimpleName()).append(" ");
          }
       }
 
       if (arguments != null)
       {
          result.append("[ ... ").append(arguments.getLabel() == null ? " args" : arguments.getLabel()).append("] ");
+         result.append(arguments.getValueType().getSimpleName()).append(" ");
       }
 
       return result.toString();
@@ -189,7 +191,7 @@ public class ForgeManProvider implements ManProvider
       if (cmd.getMetadata(context).getDescription() != null)
          result.append(cmd.getMetadata(context).getDescription());
       if (UIWizard.class.isAssignableFrom(cmd.getMetadata(context).getType()))
-         result.append("(*multi-step wizard* - some options may not be auto-documented in this man page.)");
+         result.append(" (*multi-step wizard* - some options may not be auto-documented in this man page.)");
 
       result.append("\n\n");
 
@@ -203,13 +205,12 @@ public class ForgeManProvider implements ManProvider
          }
          else
          {
+            result.append("   ");
             if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
-               result.append("-").append(input.getShortName());
-            else
-               result.append("  ");
+               result.append("-").append(input.getShortName()).append("   ");
 
-            result.append("\t").append(input.getName());
-            result.append("\n");
+            result.append(input.getName());
+            result.append("\n      ");
 
             if (!input.getName().equals(input.getLabel()))
             {
@@ -220,7 +221,7 @@ public class ForgeManProvider implements ManProvider
             }
 
             result.append(input.getDescription() == null ? "" : input.getDescription());
-            result.append(" [").append(input.getValueType().getName()).append("]");
+            result.append(" [").append(input.getValueType().getSimpleName()).append("]");
             if (input.isRequired())
                result.append(" (*required*)");
 
@@ -231,7 +232,8 @@ public class ForgeManProvider implements ManProvider
       if (arguments != null)
       {
          result.append("[");
-         result.append(arguments.getLabel() == null ? "L " + arguments.getValueType().getName() + "; ... arguments"
+         result.append(arguments.getLabel() == null ? "L " + arguments.getValueType().getSimpleName()
+                  + "; ... arguments"
                   : arguments.getLabel());
          result.append("] ");
       }
