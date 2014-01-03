@@ -1,6 +1,7 @@
 package org.jboss.forge.addon.scaffold.impl.ui;
 
 import java.util.Collection;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -23,7 +24,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 public class ExecuteGenerationStep extends AbstractProjectCommand implements UIWizardStep
 {
-   
+
    @Inject
    private ProjectFactory factory;
 
@@ -45,7 +46,7 @@ public class ExecuteGenerationStep extends AbstractProjectCommand implements UIW
    {
       // No-op! No UI is necessary for this wizard step.
    }
-   
+
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
@@ -56,16 +57,18 @@ public class ExecuteGenerationStep extends AbstractProjectCommand implements UIW
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      ScaffoldProvider selectedProvider = (ScaffoldProvider) context.getUIContext().getAttribute(ScaffoldProvider.class);
-      ResourceCollection resourceCollection = (ResourceCollection) context.getUIContext().getAttribute(ResourceCollection.class);
-      selectedProvider.generateFrom(getSelectedProject(context), populateGenerationContext(context.getUIContext(), resourceCollection.getResources()));
+      Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
+      ScaffoldProvider selectedProvider = (ScaffoldProvider) attributeMap.get(ScaffoldProvider.class);
+      ResourceCollection resourceCollection = (ResourceCollection) attributeMap.get(ResourceCollection.class);
+      selectedProvider.generateFrom(getSelectedProject(context),
+               populateGenerationContext(context.getUIContext(), resourceCollection.getResources()));
       return Results.success("Scaffold was generated successfully.");
    }
 
    @Override
    public void validate(UIValidationContext context)
    {
-      //No op
+      // No op
    }
 
    @Override
@@ -79,10 +82,12 @@ public class ExecuteGenerationStep extends AbstractProjectCommand implements UIW
    {
       return factory;
    }
-   
-   private ScaffoldGenerationContext populateGenerationContext(UIContext context, Collection resources)
+
+   private ScaffoldGenerationContext populateGenerationContext(UIContext context, Collection<?> resources)
    {
-      ScaffoldGenerationContext generationContext = (ScaffoldGenerationContext) context.getAttribute(ScaffoldGenerationContext.class);
+      Map<Object, Object> attributeMap = context.getAttributeMap();
+      ScaffoldGenerationContext generationContext = (ScaffoldGenerationContext) attributeMap
+               .get(ScaffoldGenerationContext.class);
       generationContext.setResources(resources);
       return generationContext;
    }

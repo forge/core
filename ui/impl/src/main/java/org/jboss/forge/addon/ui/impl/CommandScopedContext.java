@@ -135,11 +135,11 @@ public class CommandScopedContext implements Context, UIContextListener
    private Map<Contextual<?>, Object> getComponentInstanceMap()
    {
       ConcurrentHashMap<Contextual<?>, Object> map = (ConcurrentHashMap<Contextual<?>, Object>) getCurrentContext()
-               .getAttribute(COMPONENT_MAP_NAME);
+               .getAttributeMap().get(COMPONENT_MAP_NAME);
       if (map == null)
       {
          map = new ConcurrentHashMap<Contextual<?>, Object>();
-         getCurrentContext().setAttribute(COMPONENT_MAP_NAME, map);
+         getCurrentContext().getAttributeMap().put(COMPONENT_MAP_NAME, map);
       }
       return map;
    }
@@ -147,11 +147,11 @@ public class CommandScopedContext implements Context, UIContextListener
    private Map<Contextual<?>, CreationalContext<?>> getCreationalContextMap()
    {
       Map<Contextual<?>, CreationalContext<?>> map = (ConcurrentHashMap<Contextual<?>, CreationalContext<?>>) getCurrentContext()
-               .getAttribute(CREATIONAL_MAP_NAME);
+               .getAttributeMap().get(CREATIONAL_MAP_NAME);
       if (map == null)
       {
          map = new ConcurrentHashMap<Contextual<?>, CreationalContext<?>>();
-         getCurrentContext().setAttribute(CREATIONAL_MAP_NAME, map);
+         getCurrentContext().getAttributeMap().put(CREATIONAL_MAP_NAME, map);
       }
       return map;
    }

@@ -57,7 +57,7 @@ public class GenerateConstraintWizardStep extends AbstractJavaEECommand implemen
    public void initializeUI(UIBuilder builder) throws Exception
    {
       UIContext context = builder.getUIContext();
-      ConstraintType constraintType = (ConstraintType) context.getAttribute(ConstraintType.class);
+      ConstraintType constraintType = (ConstraintType) context.getAttributeMap().get(ConstraintType.class);
       generateConstraintInputs(builder, constraintType.getConstraint());
    }
 
@@ -178,9 +178,10 @@ public class GenerateConstraintWizardStep extends AbstractJavaEECommand implemen
    public Result execute(UIExecutionContext context) throws Exception
    {
       UIContext uiContext = context.getUIContext();
-      Property property = (Property) uiContext.getAttribute(Property.class);
-      ConstraintType constraintType = (ConstraintType) uiContext.getAttribute(ConstraintType.class);
-      Boolean onAccessor = (Boolean) uiContext.getAttribute("onAccessor");
+      Map<Object, Object> attributeMap = uiContext.getAttributeMap();
+      Property property = (Property) attributeMap.get(Property.class);
+      ConstraintType constraintType = (ConstraintType) attributeMap.get(ConstraintType.class);
+      Boolean onAccessor = (Boolean) attributeMap.get("onAccessor");
       final AnnotationTarget<JavaClass, ?> annotationTarget;
       if (onAccessor)
       {

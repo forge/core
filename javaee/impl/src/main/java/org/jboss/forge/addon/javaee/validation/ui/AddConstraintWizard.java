@@ -110,7 +110,7 @@ public class AddConstraintWizard extends AbstractJavaEECommand implements UIWiza
    public NavigationResult next(UINavigationContext context) throws Exception
    {
       JavaResource selectedClass = javaClass.getValue();
-      context.getUIContext().setAttribute(JavaResource.class, selectedClass);
+      context.getUIContext().getAttributeMap().put(JavaResource.class, selectedClass);
       return Results.navigateTo(SelectFieldWizardStep.class);
    }
 

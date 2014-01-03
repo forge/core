@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -330,12 +331,11 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
-      UIContext uiContext = context.getUIContext();
-      uiContext.setAttribute(JavaResource.class, entity.getValue());
-      uiContext.setAttribute("fieldName", named.getValue());
-      uiContext.setAttribute("fieldType", typeName.getValue());
-      uiContext.setAttribute(RelationshipType.class, relationshipType.getValue());
-      uiContext.getAttribute(RelationshipType.class);
+      Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
+      attributeMap.put(JavaResource.class, entity.getValue());
+      attributeMap.put("fieldName", named.getValue());
+      attributeMap.put("fieldType", typeName.getValue());
+      attributeMap.put(RelationshipType.class, relationshipType.getValue());
       if (relationshipType.getValue() == RelationshipType.BASIC)
       {
          return null;

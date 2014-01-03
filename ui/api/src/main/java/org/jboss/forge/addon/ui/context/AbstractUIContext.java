@@ -43,23 +43,11 @@ public abstract class AbstractUIContext implements UIContext
    }
 
    @Override
-   public Object getAttribute(Object key)
+   public Map<Object, Object> getAttributeMap()
    {
-      return map.get(key);
+      return map;
    }
-
-   @Override
-   public Object removeAttribute(Object key)
-   {
-      return map.remove(key);
-   }
-
-   @Override
-   public void setAttribute(Object key, Object value)
-   {
-      map.put(key, value);
-   }
-
+   
    @Override
    public UIProvider getProvider()
    {

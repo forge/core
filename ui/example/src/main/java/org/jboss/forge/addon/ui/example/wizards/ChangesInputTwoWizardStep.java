@@ -37,7 +37,7 @@ public class ChangesInputTwoWizardStep extends AbstractUICommand implements UIWi
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      Boolean chooseInputTwo = (Boolean) builder.getUIContext().getAttribute("input-to-choose");
+      Boolean chooseInputTwo = (Boolean) builder.getUIContext().getAttributeMap().get("input-to-choose");
       if (chooseInputTwo)
       {
          builder.add(inputTwo);

@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.ui.context;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.jboss.forge.addon.ui.UICommand;
@@ -27,23 +28,9 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
 public interface UIContext extends AutoCloseable
 {
    /**
-    * Get an {@link Object} from the {@link UIContext} attribute map. (May be <code>null</code>.)
-    * 
-    * @return <code>null</code> if no value was set.
+    * Returns a modifiable map for this {@link UIContext}
     */
-   public Object getAttribute(Object key);
-
-   /**
-    * Remove an {@link Object} from the {@link UIContext} attribute map.
-    * 
-    * @return <code>null</code> if no value was set.
-    */
-   public Object removeAttribute(Object key);
-
-   /**
-    * Set an {@link Object} key in the {@link UIContext} attribute map to the given value.
-    */
-   public void setAttribute(Object key, Object value);
+   Map<Object, Object> getAttributeMap();
 
    /**
     * Get the user's selection at the time this command was initialized/selected. (Never <code>null</code>.)

@@ -44,7 +44,7 @@ public class ChangesInputOneWizard extends AbstractUICommand implements UIWizard
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
-      context.getUIContext().setAttribute("input-to-choose", chooseInputTwo.getValue());
+      context.getUIContext().getAttributeMap().put("input-to-choose", chooseInputTwo.getValue());
       return Results.navigateTo(ChangesInputTwoWizardStep.class);
    }
 

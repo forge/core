@@ -1,5 +1,7 @@
 package org.jboss.forge.addon.scaffold.faces;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
@@ -49,10 +51,10 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
             resourceCollection.addToCollection(klass);
          }
       }
-      UIContext uiContext = context.getUIContext();
-      uiContext.setAttribute(ResourceCollection.class, resourceCollection);
-      ScaffoldGenerationContext genCtx = (ScaffoldGenerationContext) uiContext
-               .getAttribute(ScaffoldGenerationContext.class);
+      Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
+
+      attributeMap.put(ResourceCollection.class, resourceCollection);
+      ScaffoldGenerationContext genCtx = (ScaffoldGenerationContext) attributeMap.get(ScaffoldGenerationContext.class);
       genCtx.addAttribute("pageTemplate", pageTemplate.getValue());
       return null;
    }
@@ -73,9 +75,9 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      UIContext context = builder.getUIContext();
+      Map<Object, Object> attributeMap = builder.getUIContext().getAttributeMap();
 
-      Project project = (Project) context.getAttribute(Project.class);
+      Project project = (Project) attributeMap.get(Project.class);
       JPAFacet<PersistenceCommonDescriptor> persistenceFacet = project.getFacet(JPAFacet.class);
       targets.setValueChoices(persistenceFacet.getAllEntities());
       targets.setItemLabelConverter(new Converter<JavaClass, String>()
@@ -103,8 +105,8 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
       {
          if (template.exists())
          {
-            UIContext uiContext = context.getUIContext();
-            Project project = (Project) uiContext.getAttribute(Project.class);
+            Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
+            Project project = (Project) attributeMap.get(Project.class);
             WebResourcesFacet web = project.getFacet(WebResourcesFacet.class);
             boolean isValidTemplate = false;
             for (DirectoryResource dir : web.getWebRootDirectories())

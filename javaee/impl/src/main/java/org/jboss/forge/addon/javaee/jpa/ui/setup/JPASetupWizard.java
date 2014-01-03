@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.javaee.jpa.ui.setup;
 
 import java.util.Comparator;
+import java.util.Map;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
@@ -193,10 +194,11 @@ public class JPASetupWizard extends AbstractJavaEECommand implements UIWizard
 
    private void applyUIValues(final UIContext context)
    {
-      context.setAttribute(JPAFacet.class, jpaVersion.getValue());
-      context.setAttribute(PersistenceProvider.class, provider.getValue());
-      context.setAttribute(PersistenceContainer.class, container.getValue());
-      context.setAttribute("ConfigureMetadata", configureMetadata.getValue());
+      Map<Object, Object> attributeMap = context.getAttributeMap();
+      attributeMap.put(JPAFacet.class, jpaVersion.getValue());
+      attributeMap.put(PersistenceProvider.class, provider.getValue());
+      attributeMap.put(PersistenceContainer.class, container.getValue());
+      attributeMap.put("ConfigureMetadata", configureMetadata.getValue());
    }
 
    @Override

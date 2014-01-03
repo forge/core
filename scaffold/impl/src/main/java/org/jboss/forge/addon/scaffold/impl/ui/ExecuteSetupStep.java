@@ -1,5 +1,7 @@
 package org.jboss.forge.addon.scaffold.impl.ui;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -23,7 +25,7 @@ public class ExecuteSetupStep extends AbstractProjectCommand implements UIWizard
 
    @Inject
    private ProjectFactory factory;
-   
+
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
@@ -42,7 +44,7 @@ public class ExecuteSetupStep extends AbstractProjectCommand implements UIWizard
    {
       // No-op. This command has no UI.
    }
-   
+
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
@@ -53,10 +55,10 @@ public class ExecuteSetupStep extends AbstractProjectCommand implements UIWizard
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      ScaffoldProvider selectedProvider = (ScaffoldProvider) context.getUIContext()
-               .getAttribute(ScaffoldProvider.class);
-      ScaffoldSetupContext setupContext = (ScaffoldSetupContext) context.getUIContext().getAttribute(
-               ScaffoldSetupContext.class);
+      Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
+
+      ScaffoldProvider selectedProvider = (ScaffoldProvider) attributeMap.get(ScaffoldProvider.class);
+      ScaffoldSetupContext setupContext = (ScaffoldSetupContext) attributeMap.get(ScaffoldSetupContext.class);
       selectedProvider.setup(getSelectedProject(context), setupContext);
       // No-op. Scaffold setup is done in a separate step.
       return Results.success("Scaffold was setup successfully.");
@@ -65,7 +67,7 @@ public class ExecuteSetupStep extends AbstractProjectCommand implements UIWizard
    @Override
    public void validate(UIValidationContext context)
    {
-      //No-op. Nothing to validate here.
+      // No-op. Nothing to validate here.
    }
 
    @Override

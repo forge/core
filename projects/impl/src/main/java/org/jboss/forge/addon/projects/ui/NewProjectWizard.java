@@ -394,7 +394,7 @@ public class NewProjectWizard implements UIWizard
             }
 
             uiContext.setSelection(project.getProjectRoot());
-            uiContext.setAttribute(Project.class, project);
+            uiContext.getAttributeMap().put(Project.class, project);
          }
          else
             result = Results.fail("Could not create project of type: [" + value + "]");

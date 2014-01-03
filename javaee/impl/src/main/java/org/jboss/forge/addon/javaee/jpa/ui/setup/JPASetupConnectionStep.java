@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.javaee.jpa.ui.setup;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -96,7 +97,7 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
    public void initializeUI(UIBuilder builder) throws Exception
    {
       UIContext uiContext = builder.getUIContext();
-      PersistenceContainer pc = (PersistenceContainer) uiContext.getAttribute(PersistenceContainer.class);
+      PersistenceContainer pc = (PersistenceContainer) uiContext.getAttributeMap().get(PersistenceContainer.class);
       initDBType(uiContext);
       initDatasourceName(uiContext);
       initPersistenceUnitName(builder);
@@ -129,7 +130,7 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
          @Override
          public String call() throws Exception
          {
-            PersistenceContainer pc = (PersistenceContainer) uiContext.getAttribute(PersistenceContainer.class);
+            PersistenceContainer pc = (PersistenceContainer) uiContext.getAttributeMap().get(PersistenceContainer.class);
             if (pc instanceof JavaEEDefaultContainer)
             {
                return ((JavaEEDefaultContainer) pc).getDefaultDataSource();
@@ -147,7 +148,7 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
          public DatabaseType call() throws Exception
          {
             DatabaseType type = DatabaseType.DEFAULT;
-            PersistenceContainer pc = (PersistenceContainer) uiContext.getAttribute(PersistenceContainer.class);
+            PersistenceContainer pc = (PersistenceContainer) uiContext.getAttributeMap().get(PersistenceContainer.class);
             if (pc instanceof JavaEEDefaultContainer)
             {
                type = ((JavaEEDefaultContainer) pc).getDefaultDatabaseType();
@@ -165,8 +166,9 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
       dataSource.setDatabaseURL(databaseURL.getValue());
       dataSource.setUsername(username.getValue());
       dataSource.setPassword(password.getValue());
-      dataSource.setProvider((PersistenceProvider) context.getAttribute(PersistenceProvider.class));
-      dataSource.setContainer((PersistenceContainer) context.getAttribute(PersistenceContainer.class));
+      Map<Object, Object> attributeMap = context.getAttributeMap();
+      dataSource.setProvider((PersistenceProvider) attributeMap.get(PersistenceProvider.class));
+      dataSource.setContainer((PersistenceContainer) attributeMap.get(PersistenceContainer.class));
       return dataSource;
    }
 
@@ -218,7 +220,7 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
       UIContext uiContext = context.getUIContext();
       Project project = getSelectedProject(uiContext);
       JPADataSource dataSource = getDataSource(uiContext);
-      Boolean configureMetadata = (Boolean) uiContext.getAttribute("ConfigureMetadata");
+      Boolean configureMetadata = (Boolean) uiContext.getAttributeMap().get("ConfigureMetadata");
       String puName = persistenceUnitName.getValue();
       FileResource<?> configFile = persistenceOperations
                .setup(puName, project, dataSource, configureMetadata);

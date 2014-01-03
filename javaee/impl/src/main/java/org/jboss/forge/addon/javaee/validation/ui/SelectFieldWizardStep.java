@@ -8,6 +8,7 @@ package org.jboss.forge.addon.javaee.validation.ui;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -61,7 +62,7 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
 
    private void setupProperty(UIContext context) throws Exception
    {
-      JavaResource selectedResource = (JavaResource) context.getAttribute(JavaResource.class);
+      JavaResource selectedResource = (JavaResource) context.getAttributeMap().get(JavaResource.class);
       JavaClass javaClass = (JavaClass) selectedResource.getJavaSource();
       JavaClassIntrospector introspector = new JavaClassIntrospector(javaClass);
       property.setItemLabelConverter(new Converter<Property, String>()
@@ -125,9 +126,10 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
    {
       ConstraintType constraintType = constraint.getValue();
       UIContext uiContext = context.getUIContext();
-      uiContext.setAttribute(Property.class, property.getValue());
-      uiContext.setAttribute(ConstraintType.class, constraintType);
-      uiContext.setAttribute("onAccessor", onAccessor.getValue());
+      Map<Object, Object> attributeMap = uiContext.getAttributeMap();
+      attributeMap.put(Property.class, property.getValue());
+      attributeMap.put(ConstraintType.class, constraintType);
+      attributeMap.put("onAccessor", onAccessor.getValue());
       if (constraintType == CoreConstraints.VALID)
       {
          return null;

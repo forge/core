@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.javaee.jpa.ui;
 
 import java.util.EnumSet;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.persistence.CascadeType;
@@ -58,7 +59,8 @@ public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implem
    public void initializeUI(UIBuilder builder) throws Exception
    {
       UIContext context = builder.getUIContext();
-      RelationshipType relationship = RelationshipType.valueOf(context.getAttribute(RelationshipType.class).toString());
+      Map<Object, Object> attributeMap = context.getAttributeMap();
+      RelationshipType relationship = RelationshipType.valueOf(attributeMap.get(RelationshipType.class).toString());
       cascadeType.setValueChoices(EnumSet.range(CascadeType.PERSIST, CascadeType.DETACH));
       switch (relationship)
       {
@@ -80,12 +82,14 @@ public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implem
    public Result execute(UIExecutionContext context) throws Exception
    {
       UIContext uiContext = context.getUIContext();
-      JavaResource entity = (JavaResource) uiContext.getAttribute(JavaResource.class);
-      String fieldName = (String) uiContext.getAttribute("fieldName");
-      String fieldType = (String) uiContext.getAttribute("fieldType");
+      Map<Object, Object> attributeMap = uiContext.getAttributeMap();
+
+      JavaResource entity = (JavaResource) attributeMap.get(JavaResource.class);
+      String fieldName = (String) attributeMap.get("fieldName");
+      String fieldType = (String) attributeMap.get("fieldType");
 
       Project project = getSelectedProject(context);
-      RelationshipType relationship = RelationshipType.valueOf(uiContext.getAttribute(RelationshipType.class).toString());
+      RelationshipType relationship = RelationshipType.valueOf(attributeMap.get(RelationshipType.class).toString());
       switch (relationship)
       {
       case MANY_TO_MANY:

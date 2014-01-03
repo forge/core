@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.scaffold.impl.ui;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -56,10 +57,10 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
 
    @Inject
    private ProjectFactory factory;
-   
+
    @Inject
    private Imported<ScaffoldProvider> scaffoldProviders;
-   
+
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
@@ -67,11 +68,11 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
       provider.setValueChoices(scaffoldProviders);
       provider.setItemLabelConverter(new Converter<ScaffoldProvider, String>()
       {
-         
+
          @Override
          public String convert(ScaffoldProvider source)
          {
-            return source == null ? null: source.getName();
+            return source == null ? null : source.getName();
          }
       });
       builder.add(provider).add(target).add(overwrite);
@@ -99,21 +100,23 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
       // No-op. Do nothing.
       return Results.success();
    }
-   
+
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
       ScaffoldProvider selectedProvider = provider.getValue();
       UIContext uiContext = context.getUIContext();
       Project project = getSelectedProject(uiContext);
-      uiContext.setAttribute(Project.class, project);
-      uiContext.setAttribute(ScaffoldProvider.class, selectedProvider);
-      uiContext.setAttribute(ScaffoldGenerationContext.class, populateGenerationContext(uiContext));
+      Map<Object, Object> attributeMap = uiContext.getAttributeMap();
+
+      attributeMap.put(Project.class, project);
+      attributeMap.put(ScaffoldProvider.class, selectedProvider);
+      attributeMap.put(ScaffoldGenerationContext.class, populateGenerationContext(uiContext));
       ((AbstractFacet) selectedProvider).setFaceted(project);
-      
+
       // Get the step sequence from the selected scaffold provider
       List<Class<? extends UICommand>> generationFlow = selectedProvider.getGenerationFlow();
-      
+
       // Add the execution logic step in the end so that the scaffold generation step is executed last after all other
       // steps
       generationFlow.add(ExecuteGenerationStep.class);
@@ -135,11 +138,13 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    {
       return factory;
    }
-   
+
    private ScaffoldGenerationContext populateGenerationContext(UIContext context)
    {
-      ScaffoldGenerationContext generationContext = (ScaffoldGenerationContext) context.getAttribute(ScaffoldGenerationContext.class);
-      if(generationContext == null)
+      Map<Object, Object> attributeMap = context.getAttributeMap();
+      ScaffoldGenerationContext generationContext = (ScaffoldGenerationContext) attributeMap
+               .get(ScaffoldGenerationContext.class);
+      if (generationContext == null)
       {
          return new ScaffoldGenerationContext(target.getValue(), overwrite.getValue(), null);
       }
@@ -150,5 +155,5 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
          return generationContext;
       }
    }
-   
+
 }

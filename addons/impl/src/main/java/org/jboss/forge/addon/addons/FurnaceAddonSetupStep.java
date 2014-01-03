@@ -132,7 +132,7 @@ public class FurnaceAddonSetupStep implements UIWizardStep
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      final Project project = (Project) context.getUIContext().getAttribute(Project.class);
+      final Project project = (Project) context.getUIContext().getAttributeMap().get(Project.class);
       Iterable<AddonId> dependencyAddons = addons.getValue();
       if (splitProjects.getValue())
       {
