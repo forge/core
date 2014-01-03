@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.shell.MockCommandExecutionListener;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
@@ -42,6 +43,7 @@ public class ManProviderTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addBeansXML()
+               .addClass(MockCommandExecutionListener.class)
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
@@ -62,13 +64,17 @@ public class ManProviderTest
    }
 
    @Test(timeout = 10000)
-   public void testWizardInitialStepAutocomplete() throws Exception
+   public void testManOutput() throws Exception
    {
       test.clearScreen();
+      MockCommandExecutionListener listener = new MockCommandExecutionListener();
+      test.getShell().addCommandExecutionListener(listener);
       Result result = test.execute("man exit", timeoutQuantity, TimeUnit.SECONDS);
       Assert.assertFalse(result instanceof Failed);
       String out = test.getStdOut();
       Assert.assertThat(out, containsString("exit the shell"));
+      Assert.assertTrue(listener.isPreExecuted());
+      Assert.assertTrue(listener.isPostExecuted());
    }
 
 }

@@ -10,6 +10,7 @@ package org.jboss.forge.addon.shell.aesh;
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.aesh.console.command.Command;
 import org.jboss.aesh.console.command.container.CommandContainer;
+import org.jboss.aesh.console.command.invocation.CommandInvocation;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 
 /**
@@ -21,14 +22,14 @@ class ForgeCommandContainer implements CommandContainer
 {
    private final ShellContextImpl context;
    private final CommandLineParser parser;
-   private final CommandAdapter commandAdapter;
+   private final Command<CommandInvocation> command;
 
    ForgeCommandContainer(ShellContextImpl context, CommandLineParser parser,
-            CommandAdapter commandAdapter)
+            Command<CommandInvocation> command)
    {
       this.context = context;
       this.parser = parser;
-      this.commandAdapter = commandAdapter;
+      this.command = command;
    }
 
    @Override
@@ -41,7 +42,7 @@ class ForgeCommandContainer implements CommandContainer
    @Override
    public Command getCommand()
    {
-      return commandAdapter;
+      return command;
    }
 
    @Override

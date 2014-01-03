@@ -9,6 +9,7 @@ package org.jboss.forge.addon.shell.aesh;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +19,7 @@ import org.jboss.aesh.console.command.invocation.CommandInvocation;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ShellMessages;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.output.UIMessage.Severity;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -35,11 +37,13 @@ class CommandAdapter implements Command<CommandInvocation>
    private static final Logger log = Logger.getLogger(CommandAdapter.class.getName());
 
    private final ShellImpl shell;
+   private final ShellContext shellContext;
    private final AbstractShellInteraction interaction;
 
-   public CommandAdapter(ShellImpl shell, AbstractShellInteraction interaction)
+   public CommandAdapter(ShellImpl shell, ShellContext shellContext, AbstractShellInteraction interaction)
    {
       this.shell = shell;
+      this.shellContext = shellContext;
       this.interaction = interaction;
    }
 
@@ -52,6 +56,8 @@ class CommandAdapter implements Command<CommandInvocation>
    @Override
    public CommandResult execute(CommandInvocation commandInvocation) throws IOException
    {
+      Map<Object, Object> attributeMap = shellContext.getAttributeMap();
+      attributeMap.put(CommandInvocation.class, commandInvocation);
       boolean failure = false;
       if (interaction.getController().isValid())
       {
