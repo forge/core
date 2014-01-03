@@ -38,7 +38,7 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
 {
    @Inject
    @WithAttributes(label = "Property", description = "The property on which the constraint applies", required = true, type = InputType.DROPDOWN)
-   private UISelectOne<Property> property;
+   private UISelectOne<Property> onProperty;
 
    @Inject
    @WithAttributes(label = "Constraint", description = "The type of constraint to add", required = true, type = InputType.DROPDOWN)
@@ -57,7 +57,7 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
       setupProperty(builder.getUIContext());
       setupConstraint();
       setupAccessor();
-      builder.add(property).add(constraint).add(onAccessor);
+      builder.add(onProperty).add(constraint).add(onAccessor);
    }
 
    private void setupProperty(UIContext context) throws Exception
@@ -65,7 +65,7 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
       JavaResource selectedResource = (JavaResource) context.getAttributeMap().get(JavaResource.class);
       JavaClass javaClass = (JavaClass) selectedResource.getJavaSource();
       JavaClassIntrospector introspector = new JavaClassIntrospector(javaClass);
-      property.setItemLabelConverter(new Converter<Property, String>()
+      onProperty.setItemLabelConverter(new Converter<Property, String>()
       {
          @Override
          public String convert(Property source)
@@ -74,9 +74,9 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
          }
       });
       List<Property> properties = introspector.getProperties();
-      property.setValueChoices(properties);
+      onProperty.setValueChoices(properties);
       if (!properties.isEmpty())
-         property.setDefaultValue(properties.get(0));
+         onProperty.setDefaultValue(properties.get(0));
    }
 
    private void setupConstraint()
@@ -99,7 +99,7 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
          @Override
          public Boolean call() throws Exception
          {
-            Property value = property.getValue();
+            Property value = onProperty.getValue();
             return value == null ? Boolean.FALSE : value.isReadable();
          }
       });
@@ -112,7 +112,7 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
       if (constraintType == CoreConstraints.VALID)
       {
          Project project = getSelectedProject(context);
-         Result result = constraintOperations.addValidConstraint(project, property.getValue(), onAccessor.getValue());
+         Result result = constraintOperations.addValidConstraint(project, onProperty.getValue(), onAccessor.getValue());
          return result;
       }
       else
@@ -127,7 +127,7 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
       ConstraintType constraintType = constraint.getValue();
       UIContext uiContext = context.getUIContext();
       Map<Object, Object> attributeMap = uiContext.getAttributeMap();
-      attributeMap.put(Property.class, property.getValue());
+      attributeMap.put(Property.class, onProperty.getValue());
       attributeMap.put(ConstraintType.class, constraintType);
       attributeMap.put("onAccessor", onAccessor.getValue());
       if (constraintType == CoreConstraints.VALID)
