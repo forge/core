@@ -31,7 +31,6 @@ import org.jboss.forge.addon.ui.util.Metadata;
 
 public class ValidationProviderSetupCommand extends AbstractJavaEECommand implements UICommand
 {
-
    @Inject
    @WithAttributes(label = "Bean Validation provider", required = true)
    private UISelectOne<ValidationProvider> providers;
@@ -62,7 +61,7 @@ public class ValidationProviderSetupCommand extends AbstractJavaEECommand implem
    public Metadata getMetadata(UIContext context)
    {
       Metadata metadata = Metadata.from(super.getMetadata(context), getClass());
-      return metadata.name("Bean Validation: Setup")
+      return metadata.name("Validation: Setup")
                .description("Setup Bean Validation in your project")
                .category(Categories.create(metadata.getCategory().getName(), "Bean Validation"));
    }
