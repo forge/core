@@ -40,7 +40,7 @@ public class JAXWSSetupWizard extends AbstractJavaEECommand
    public Metadata getMetadata(UIContext context)
    {
       return Metadata.from(super.getMetadata(context), getClass()).name("SOAP: Setup")
-               .description("Setup JAX-WS in your project")
+               .description("Setup JAX-WS (SOAP) in your project")
                .category(Categories.create(super.getMetadata(context).getCategory(), "JAX-WS"));
    }
 
