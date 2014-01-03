@@ -32,7 +32,7 @@ public class AddonRemoveCommand extends AbstractUICommand implements AddonComman
 {
 
    @Inject
-   private Furnace forge;
+   private Furnace furnace;
 
    @Inject
    private AddonManager manager;
@@ -48,15 +48,16 @@ public class AddonRemoveCommand extends AbstractUICommand implements AddonComman
    public Metadata getMetadata(UIContext context)
    {
       boolean gui = context.getProvider().isGUI();
-      return Metadata.from(super.getMetadata(context), getClass()).name(gui ? ADDON_REMOVE_COMMAND_NAME : ADDON_REMOVE_COMMAND_NAME_NO_GUI)
+      return Metadata.from(super.getMetadata(context), getClass())
+               .name(gui ? ADDON_REMOVE_COMMAND_NAME : ADDON_REMOVE_COMMAND_NAME_NO_GUI)
                .description(ADDON_REMOVE_COMMAND_DESCRIPTION).category(Categories.create(ADDON_MANAGER_CATEGORIES));
    }
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      Set<AddonId> choices = new TreeSet<AddonId>();
-      for (AddonRepository repository : forge.getRepositories())
+      Set<AddonId> choices = new TreeSet<>();
+      for (AddonRepository repository : furnace.getRepositories())
       {
          // Avoid immutable repositories
          if (repository instanceof MutableAddonRepository)
