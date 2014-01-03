@@ -22,7 +22,7 @@ public class CategoriesTest
    {
       UICategory category = Categories.create();
       Assert.assertNotNull(category);
-      Assert.assertEquals("", category.getName());
+      Assert.assertEquals(Categories.createDefault().getName(), category.getName());
       Assert.assertNull(category.getSubCategory());
    }
 
