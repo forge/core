@@ -16,6 +16,8 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.shell.MockCommandExecutionListener;
+import org.jboss.forge.addon.shell.mock.command.Career;
+import org.jboss.forge.addon.shell.mock.command.FooCommand;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
@@ -42,6 +44,7 @@ public class ManProviderTest
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+               .addClasses(FooCommand.class, Career.class)
                .addBeansXML()
                .addClass(MockCommandExecutionListener.class)
                .addAsAddonDependencies(
@@ -77,4 +80,18 @@ public class ManProviderTest
       Assert.assertTrue(listener.isPostExecuted());
    }
 
+   @Test(timeout = 10000)
+   public void testManPageForUndocumentedForgeCommand() throws Exception
+   {
+      test.clearScreen();
+      Result result = test.execute("man foocommand", timeoutQuantity, TimeUnit.SECONDS);
+      Assert.assertFalse(result instanceof Failed);
+      String out = test.getStdOut();
+      Assert.assertThat(out, containsString("foocommand -- Uncategorized"));
+      Assert.assertThat(out, containsString("Do some foo"));
+      Assert.assertThat(out, containsString("required"));
+      Assert.assertThat(out, containsString("help"));
+      Assert.assertThat(out, containsString("target location"));
+      Assert.assertThat(out, containsString("[org.jboss.forge.addon.resource.FileResource]"));
+   }
 }

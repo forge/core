@@ -12,6 +12,7 @@ import java.util.Arrays;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -20,6 +21,7 @@ import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -42,19 +44,20 @@ public class FooCommand implements UICommand
    private UIInput<String> help;
 
    @Inject
-   @WithAttributes(label = "bool")
+   @WithAttributes(label = "bool", shortName = 'b')
    private UIInput<Boolean> bool;
 
    @Inject
    @WithAttributes(label = "bar", required = true, defaultValue = "BAAAR")
-   private UIInput<String> bar;
+   private UIInput<FileResource<?>> bar;
 
    @Inject
    @WithAttributes(label = "bar2")
    private UIInput<String> bar2;
 
    @Inject
-   @WithAttributes(label = "target location")
+   @WithAttributes(label = "target location", description = "This is where the new foo will be created. Typically "
+            + "should be in a place where you won't forget it for too long.")
    private UIInput<DirectoryResource> targetLocation;
 
    @Inject
@@ -71,6 +74,9 @@ public class FooCommand implements UICommand
    @Inject
    @WithAttributes(label = "Disabled", enabled = false)
    private UIInput<String> disabledOption;
+
+   @Inject
+   private UIInputMany<String> arguments;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -95,7 +101,7 @@ public class FooCommand implements UICommand
          {
             if (value == null || value.length() == 0)
             {
-               ArrayList<String> list = new ArrayList<String>();
+               ArrayList<String> list = new ArrayList<>();
                list.add("HELP");
                list.add("HALP");
                return list;
@@ -105,7 +111,7 @@ public class FooCommand implements UICommand
       });
 
       builder.add(name).add(help).add(bool).add(bar).add(bar2).add(targetLocation).add(valueWithSpaces).add(career)
-               .add(manyCareer).add(disabledOption);
+               .add(manyCareer).add(disabledOption).add(arguments);
    }
 
    @Override
