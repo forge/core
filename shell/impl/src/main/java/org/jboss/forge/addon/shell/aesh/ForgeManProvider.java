@@ -6,10 +6,9 @@
  */
 package org.jboss.forge.addon.shell.aesh;
 
-import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
+import java.net.URL;
 
 import org.jboss.aesh.console.helper.ManProvider;
 import org.jboss.forge.addon.shell.CommandManager;
@@ -22,8 +21,6 @@ import org.jboss.forge.addon.ui.UICommand;
  */
 public class ForgeManProvider implements ManProvider
 {
-   private static final List<String> extensions = Arrays.asList("txt", "ad", "asciidoc");
-
    private final ShellImpl shell;
    private final CommandManager manager;
 
@@ -42,14 +39,17 @@ public class ForgeManProvider implements ManProvider
          {
             if (command.equals(manager.getCommandName(context, cmd)))
             {
-               Class<? extends UICommand> commandType = cmd.getMetadata(context).getType();
-               InputStream stream = null;
-               for (String ext : extensions)
+               URL docLocation = cmd.getMetadata(context).getDocLocation();
+               if (docLocation != null)
                {
-                  stream = commandType.getClassLoader().getResourceAsStream(
-                           commandType.getName().replaceAll("\\.", File.separator) + "." + ext);
-                  if (stream != null)
-                     return stream;
+                  try
+                  {
+                     return docLocation.openStream();
+                  }
+                  catch (IOException e)
+                  {
+                     return null;
+                  }
                }
             }
          }

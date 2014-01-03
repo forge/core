@@ -24,7 +24,8 @@ public class Metadata implements UICommandMetadata
             ".txt",
             ".asciidoc.gzip",
             ".asciidoc.gz",
-            ".asciidoc" };
+            ".asciidoc",
+            ".ad"};
 
    private String name;
    private String description;
