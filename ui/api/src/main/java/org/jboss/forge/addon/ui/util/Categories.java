@@ -17,10 +17,19 @@ import org.jboss.forge.furnace.util.Assert;
  * Utility for creating hierarchical {@link UICategory} instances.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class Categories
 {
-   public static final String DEFAULT = "";
+   private static final String DEFAULT = "Uncategorized";
+
+   /**
+    * Returns the default category
+    */
+   public static UICategory createDefault()
+   {
+      return Categories.create(DEFAULT);
+   }
 
    /**
     * Using the given {@link UICategory} as a parent, produce a hierarchical {@link UICategory} instance from the given

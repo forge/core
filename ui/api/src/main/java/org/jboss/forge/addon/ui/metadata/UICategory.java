@@ -6,16 +6,16 @@
  */
 package org.jboss.forge.addon.ui.metadata;
 
-import org.jboss.forge.addon.ui.util.Categories;
+import org.jboss.forge.addon.ui.UICommand;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * The category a {@link UICommand} belongs to
  * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public interface UICategory
 {
-   public static final UICategory NO_CATEGORY = Categories.create("Uncategorized");
-
    String getName();
 
    UICategory getSubCategory();
