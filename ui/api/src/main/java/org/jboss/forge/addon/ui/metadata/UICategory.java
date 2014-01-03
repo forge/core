@@ -6,12 +6,16 @@
  */
 package org.jboss.forge.addon.ui.metadata;
 
+import org.jboss.forge.addon.ui.util.Categories;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
 public interface UICategory
 {
+   public static final UICategory NO_CATEGORY = Categories.create("Uncategorized");
+
    String getName();
 
    UICategory getSubCategory();

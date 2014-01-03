@@ -6,8 +6,8 @@
  */
 package org.jboss.forge.addon.ui.util;
 
+import org.jboss.forge.addon.ui.metadata.UICategory;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.util.Categories;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,8 +23,8 @@ public class MetadataTest
    {
       UICommandMetadata metadata = new MockCommand().getMetadata(null);
       Assert.assertEquals(MockCommand.class.getName(), metadata.getName());
-      Assert.assertEquals(Categories.create("Uncategorized"), metadata.getCategory());
-      Assert.assertNull(metadata.getDescription());
+      Assert.assertEquals(UICategory.NO_CATEGORY, metadata.getCategory());
+      Assert.assertEquals(UICommandMetadata.NO_DESCRIPTION, metadata.getDescription());
       Assert.assertEquals(MockCommand.class.getResource("MockCommand.txt"), metadata.getDocLocation());
    }
 
@@ -33,8 +33,8 @@ public class MetadataTest
    {
       UICommandMetadata metadata = new MockCommand3().getMetadata(null);
       Assert.assertEquals("A Name", metadata.getName());
-      Assert.assertEquals(Categories.create("Uncategorized"), metadata.getCategory());
-      Assert.assertNull(metadata.getDescription());
+      Assert.assertEquals(UICategory.NO_CATEGORY, metadata.getCategory());
+      Assert.assertEquals(UICommandMetadata.NO_DESCRIPTION, metadata.getDescription());
       Assert.assertNull(metadata.getDocLocation());
    }
 

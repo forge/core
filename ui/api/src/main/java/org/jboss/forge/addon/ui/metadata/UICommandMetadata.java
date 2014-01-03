@@ -12,10 +12,18 @@ import java.net.URL;
 import org.jboss.forge.addon.ui.UICommand;
 
 /**
+ * Describes a {@link UICommand} implementation
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public interface UICommandMetadata
 {
+   /**
+    * Label used when no description is set
+    */
+   public static final String NO_DESCRIPTION = "No Description";
+
    /**
     * Returns the {@link Class} of the corresponding {@link UICommand}.
     */
