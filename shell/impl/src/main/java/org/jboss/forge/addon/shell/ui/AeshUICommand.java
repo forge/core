@@ -85,7 +85,14 @@ public class AeshUICommand implements UICommand
       Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
       CommandInvocation commandInvocation = (CommandInvocation) attributeMap.get(CommandInvocation.class);
       CommandResult result = command.execute(commandInvocation);
-      return result == CommandResult.SUCCESS ? Results.success() : Results.fail("Failure while executing aesh command");
+      if (result == CommandResult.FAILURE)
+      {
+         return Results.fail("Failure while executing aesh command");
+      }
+      else
+      {
+         return Results.success();
+      }
    }
 
    public CommandLineParser getCommandLineParser()
