@@ -60,7 +60,7 @@ public class AddonListCommand extends AbstractUICommand implements AddonCommandC
          if (iterator.hasNext())
             builder.append("\n");
       }
-      return Results.success("Currently installed addons: " + builder.toString());
+      return Results.success("Currently installed addons: \n" + builder.toString());
    }
 
    @Override
