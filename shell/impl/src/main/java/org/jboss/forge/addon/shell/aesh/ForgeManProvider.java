@@ -122,7 +122,7 @@ public class ForgeManProvider implements ManProvider
          result = result.replaceAll("%name%", manager.getCommandName(context, cmd));
          result = result.replaceAll("%description%", cmd.getMetadata(context).getCategory().toString());
 
-         result = result.replaceAll("%synopsis%", buildSynoosis(cmd, context, inputs));
+         result = result.replaceAll("%synopsis%", buildSynopsis(cmd, context, inputs));
          result = result.replaceAll("%options%", buildOptions(cmd, context, inputs));
          result = result.replaceAll("%addon%", getSourceAddonName(cmd, context));
 
@@ -139,7 +139,7 @@ public class ForgeManProvider implements ManProvider
       return cmd.getMetadata(context).getType().getClassLoader().toString();
    }
 
-   private String buildSynoosis(UICommand cmd, UIContext context, List<InputComponent<?, ?>> inputs)
+   private String buildSynopsis(UICommand cmd, UIContext context, List<InputComponent<?, ?>> inputs)
    {
       StringBuilder result = new StringBuilder();
       result.append(manager.getCommandName(context, cmd)).append(" [-");
