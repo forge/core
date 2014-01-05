@@ -8,11 +8,11 @@ What's new and noteworthy?
 
 - *Addons*: What were previously called "Plugins" in Forge 1, are now "Addons" in Forge 2. This decision was made to clear up confusing verbiage like, "Plugin X has N Plugins" (due to the org.jboss.forge.plugins.Plugin interface.)
 
-- *Modular Container fully rewritten*:: The Forge runtime is now a fully functional Java module system based on JBoss Modules (The same engine behind JBoss AS 7+ and JBoss EAP). This means you may now pick-and-choose which addons are important for you.
+- *Modular Container fully rewritten*: The Forge runtime is now a fully functional Java module system based on JBoss Modules (The same engine behind JBoss AS 7+ and JBoss EAP). This means you may now pick-and-choose which addons are important for you.
 
-- *Smaller, leaner, and faster*:: Forge 2 now sports a slimmer four megabyte download size, and starts up in under three seconds. (Compared to upwards of 10+ seconds for Forge 1)
+- *Smaller, leaner, and faster*: Forge 2 now sports a slimmer four megabyte download size, and starts up in under three seconds. (Compared to upwards of 10+ seconds for Forge 1)
 
-- *Better IDE Integration*:: Forge 2 addons have been de-coupled from the command line, meaning you can create addons that run as wizards in the IDE, as well as commands in the shell - the same code works in both environments.
+- *Better IDE Integration*: Forge 2 addons have been de-coupled from the command line, meaning you can create addons that run as wizards in the IDE, as well as commands in the shell - the same code works in both environments.
 
 We are currently in the process of migrating Forge 1 to Forge 2, so expect to find some Forge 1 functionality missing in the early versions of Forge 2.
 
@@ -537,4 +537,4 @@ Depending on the Forge environment in which you are running, installation steps 
 
 For Eclipse:: Open the Forge quick-assist menu, select either "Build and install an Addon" or "Install an addon" to build and install your project, or install a pre-built maven artifact.
 
-For the Shell:: Make sure that you have run a _mvn install_ prior to executing _forge --install artifactId:groupId:version_ on the native system terminal command line.
+For the Shell:: Make sure that you have run a _mvn install_ prior to executing _forge --install groupId:artifactId,version_ on the native system terminal command line.
