@@ -83,7 +83,7 @@ public class AddConstraintWizardTest
       wizard.next().initialize();
       // Page 2
       {
-         wizard.setValueFor("property", "id");
+         wizard.setValueFor("onProperty", "id");
          wizard.setValueFor("constraint", CoreConstraints.PATTERN);
          Assert.assertTrue(wizard.canMoveToNextStep());
       }
