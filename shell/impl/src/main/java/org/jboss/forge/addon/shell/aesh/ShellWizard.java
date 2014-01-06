@@ -9,7 +9,6 @@ package org.jboss.forge.addon.shell.aesh;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.parser.CommandLineParser;
@@ -41,59 +40,23 @@ public class ShellWizard extends AbstractShellInteraction
    public CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception
    {
       getController().initialize();
-      return populate(
-               shellContext,
-               completeLine,
-               new HashMap<String, InputComponent<?, ?>>(),
-               new HashMap<String, InputComponent<?, ?>>());
+      return populate(shellContext, completeLine, new HashMap<String, InputComponent<?, ?>>());
    }
 
    private CommandLineParser populate(ShellContext shellContext, String line,
-            final Map<String, InputComponent<?, ?>> inputs, Map<String, InputComponent<?, ?>> lastUnpopulatedInputs
-            ) throws Exception
+            final Map<String, InputComponent<?, ?>> inputs)
+            throws Exception
    {
-      inputs.putAll(getController().getInputs());
-
-      CommandLineParser parser = commandLineUtil.generateParser(getController(), shellContext, inputs);
+      WizardCommandController controller = getController();
+      inputs.putAll(controller.getInputs());
+      CommandLineParser parser = commandLineUtil.generateParser(controller, shellContext, inputs);
       CommandLine cmdLine = parser.parse(line, true);
-      inputs.keySet().retainAll(commandLineUtil.populateUIInputs(cmdLine, inputs).keySet());
-
-      Map<String, InputComponent<?, ?>> currentCommandPopulatedInputs = commandLineUtil.populateUIInputs(cmdLine,
-               getController().getInputs());
-      if (currentCommandPopulatedInputs.isEmpty() && !lastUnpopulatedInputs.isEmpty())
+      commandLineUtil.populateUIInputs(cmdLine, inputs);
+      if (controller.canMoveToNextStep())
       {
-         inputs.putAll(getUnpopulatedInputs(getController()));
-         inputs.putAll(lastUnpopulatedInputs);
-         parser = commandLineUtil.generateParser(getController(), shellContext, inputs);
-         parser.parse(line, true);
-      }
-
-      if (getController().isValid())
-      {
-         if (getController().canMoveToNextStep())
-         {
-            Map<String, InputComponent<?, ?>> unpopulatedInputs = getUnpopulatedInputs(getController());
-
-            getController().next().initialize();
-            parser = populate(shellContext, line, inputs, unpopulatedInputs);
-         }
+         controller.next().initialize();
+         parser = populate(shellContext, line, inputs);
       }
       return parser;
-   }
-
-   private Map<String, InputComponent<?, ?>> getUnpopulatedInputs(WizardCommandController controller)
-   {
-      Map<String, InputComponent<?, ?>> result = new HashMap<>();
-      Map<String, InputComponent<?, ?>> inputs = controller.getInputs();
-      for (Entry<String, InputComponent<?, ?>> entry : inputs.entrySet())
-      {
-         String name = entry.getKey();
-         InputComponent<?, ?> input = entry.getValue();
-         if (!input.hasValue())
-         {
-            result.put(name, input);
-         }
-      }
-      return result;
    }
 }
