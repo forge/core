@@ -9,7 +9,6 @@ package org.jboss.forge.addon.shell.aesh;
 import static org.hamcrest.CoreMatchers.containsString;
 
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -36,8 +35,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ManProviderTest
 {
-   private static final Logger log = Logger.getLogger(ManProviderTest.class.getName());
-
    @Deployment
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness")
