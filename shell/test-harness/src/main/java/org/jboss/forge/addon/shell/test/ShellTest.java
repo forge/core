@@ -36,7 +36,8 @@ public interface ShellTest
 
    /**
     * Execute the given line and return the {@link Result}. Fail if not complete within the given quantity of
-    * {@link TimeUnit}. Clears STDOUT and STDERR before execution.
+    * {@link TimeUnit}. Clears STDOUT and STDERR before execution. (Appends the newline character to the given input if
+    * necessary, and calls {@link OutputStream#flush()} on {@link #getStdIn()}).
     * 
     * @throws TimeoutException if the given command was not executed successfully within the allotted timeout.
     */
@@ -119,7 +120,7 @@ public interface ShellTest
    String getStdErr();
 
    /**
-    * Write to STDIN.
+    * Write to STDIN. (Does not call {@link OutputStream#flush()} on {@link #getStdIn()}.)
     */
    void write(String string) throws IOException;
 
