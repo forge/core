@@ -8,8 +8,8 @@ package org.jboss.forge.addon.shell.aesh;
 
 import static org.hamcrest.CoreMatchers.containsString;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -26,7 +26,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +36,8 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ManProviderTest
 {
+   private static final Logger log = Logger.getLogger(ManProviderTest.class.getName());
+
    @Deployment
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness")
@@ -60,16 +61,9 @@ public class ManProviderTest
    @Inject
    private ShellTest test;
 
-   @After
-   public void after() throws IOException
-   {
-      test.clearScreen();
-   }
-
    @Test(timeout = 10000)
    public void testManOutput() throws Exception
    {
-      test.clearScreen();
       MockCommandExecutionListener listener = new MockCommandExecutionListener();
       test.getShell().addCommandExecutionListener(listener);
       Result result = test.execute("man exit", timeoutQuantity, TimeUnit.SECONDS);
@@ -78,12 +72,14 @@ public class ManProviderTest
       Assert.assertThat(out, containsString("exit the shell"));
       Assert.assertTrue(listener.isPreExecuted());
       Assert.assertTrue(listener.isPostExecuted());
+      test.write("q");
+      test.getStdIn().flush();
+      test.clearScreen();
    }
 
-   @Test(timeout = 10000000)
+   @Test(timeout = 10000)
    public void testManPageForUndocumentedForgeCommand() throws Exception
    {
-      test.clearScreen();
       Result result = test.execute("man foocommand", timeoutQuantity, TimeUnit.SECONDS);
       Assert.assertFalse(result instanceof Failed);
       String out = test.getStdOut();
@@ -93,5 +89,8 @@ public class ManProviderTest
       Assert.assertThat(out, containsString("help"));
       Assert.assertThat(out, containsString("target location"));
       Assert.assertThat(out, containsString("[FileResource]"));
+      test.write("q");
+      test.getStdIn().flush();
+      test.clearScreen();
    }
 }
