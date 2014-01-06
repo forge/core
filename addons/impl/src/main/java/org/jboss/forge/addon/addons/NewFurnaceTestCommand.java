@@ -13,6 +13,7 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.addons.facets.AddonTestFacet;
 import org.jboss.forge.addon.parser.java.JavaSourceFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -97,7 +98,7 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(getClass()).name("Addon: New Test Case")
+      return Metadata.forCommand(getClass()).name("Addon: Test New")
                .description("Generates a Furnace test case for an addon")
                .category(Categories.create("Addon", "Generate"));
    }
@@ -160,6 +161,12 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
       JavaResource javaResource = facet.saveTestJavaSource(javaClass);
       uiContext.setSelection(javaResource);
       return Results.success("Test class " + javaClass.getQualifiedName() + " created");
+   }
+
+   @Override
+   public boolean isEnabled(UIContext context)
+   {
+      return super.isEnabled(context) && getSelectedProject(context).hasFacet(AddonTestFacet.class);
    }
 
    @Override

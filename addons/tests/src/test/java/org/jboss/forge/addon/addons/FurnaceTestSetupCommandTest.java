@@ -7,17 +7,11 @@
 
 package org.jboss.forge.addon.addons;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.addons.facets.AddonTestFacet;
-import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.controller.CommandController;
@@ -29,7 +23,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -41,7 +34,7 @@ import org.junit.runner.RunWith;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-public class NewFurnaceTestCommandTest
+public class FurnaceTestSetupCommandTest
 {
 
    @Deployment
@@ -70,9 +63,6 @@ public class NewFurnaceTestCommandTest
    private ProjectFactory projectFactory;
 
    @Inject
-   private FacetFactory facetFactory;
-
-   @Inject
    private UITestHarness testHarness;
 
    @SuppressWarnings("unchecked")
@@ -80,24 +70,16 @@ public class NewFurnaceTestCommandTest
    public void testCreateTestClass() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      facetFactory.install(project, JavaSourceFacet.class);
-      facetFactory.install(project, AddonTestFacet.class);
 
-      CommandController controller = testHarness.createCommandController(NewFurnaceTestCommand.class,
+      CommandController controller = testHarness.createCommandController(NewFurnaceTestSetupCommand.class,
                project.getProjectRoot());
       controller.initialize();
-      controller.setValueFor("named", "MyTestCase");
-      controller.setValueFor("packageName", "org.jboss.forge.test");
       UISelectMany<AddonId> component = (UISelectMany<AddonId>) controller.getInputs().get("addonDependencies");
       controller.setValueFor("addonDependencies", component.getValueChoices());
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
       Assert.assertFalse(result instanceof Failed);
 
-      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      JavaResource javaResource = facet.getTestJavaResource("org.jboss.forge.test.MyTestCase");
-      Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaClass.class)));
-      Assert.assertFalse(javaResource.getJavaSource().hasSyntaxErrors());
+      Assert.assertTrue(project.hasFacet(AddonTestFacet.class));
    }
 }
