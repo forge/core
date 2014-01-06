@@ -199,7 +199,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    {
       assertInitialized();
       Class<? extends UICommand>[] next = getNextFrom(getCurrentController().getCommand());
-      return (isValid() && getNextEntry() != null || (next != null || !subflow.isEmpty()));
+      return (isValid() && (getNextEntry() != null || (next != null || !subflow.isEmpty())));
    }
 
    @Override
