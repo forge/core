@@ -344,6 +344,12 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>scaffold-faces</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>         
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>shell</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
