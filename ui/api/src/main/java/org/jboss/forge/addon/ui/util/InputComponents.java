@@ -141,12 +141,20 @@ public final class InputComponents
          {
             for (Object itValue : (Iterable) value)
             {
-               convertedValuesList.add(convertToUIInputValue(converterFactory, input, itValue));
+               Object singleValue = convertToUIInputValue(converterFactory, input, itValue);
+               if (singleValue != null)
+               {
+                  convertedValuesList.add(singleValue);
+               }
             }
          }
          else
          {
-            convertedValuesList.add(convertToUIInputValue(converterFactory, input, value));
+            Object singleValue = convertToUIInputValue(converterFactory, input, value);
+            if (singleValue != null)
+            {
+               convertedValuesList.add(singleValue);
+            }
          }
          convertedValues = convertedValuesList;
       }
