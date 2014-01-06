@@ -66,9 +66,9 @@ public class ForgeManProvider implements ManProvider
    @Override
    public InputStream getManualDocument(String command)
    {
-      for (UICommand cmd : manager.getAllCommands())
+      try (ShellContextImpl context = shell.createUIContext())
       {
-         try (ShellContextImpl context = shell.createUIContext())
+         for (UICommand cmd : manager.getAllCommands())
          {
             if (command.equals(manager.getCommandName(context, cmd)))
             {
