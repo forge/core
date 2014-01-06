@@ -338,6 +338,12 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>scaffold</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>shell</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
@@ -426,12 +432,6 @@
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>resources-impl</artifactId>
             <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>example</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
          </dependency>
       </dependencies>
    </dependencyManagement>
