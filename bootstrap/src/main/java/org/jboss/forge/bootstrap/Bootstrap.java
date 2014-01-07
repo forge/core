@@ -45,6 +45,7 @@ public class Bootstrap
 
    private final Furnace furnace;
    private boolean exitAfter = false;
+   private boolean confirmAction = true;
 
    public static void main(final String[] args)
    {
@@ -133,6 +134,10 @@ public class Bootstrap
             {
                System.out.println("Forge version " + AddonRepositoryImpl.getRuntimeAPIVersion());
                exitAfter = true;
+            }
+            else if ("-y".equals(args[i]))
+            {
+               confirmAction = false;
             }
             else
                System.out.println("Unknown option: " + args[i]);
@@ -223,10 +228,20 @@ public class Bootstrap
             }
          }
 
-         // FIXME: May prompt for confirmation
          AddonActionRequest request = addonManager.install(addon);
          System.out.println(request);
+         if (confirmAction)
+         {
+            String result = System.console().readLine("Is that correct [y/N]? ");
+            if (!"Y".equalsIgnoreCase(result.trim()))
+            {
+               System.out.println("Ignoring installation...");
+               return;
+            }
+         }
          request.perform();
+         System.out.println("Installation successfully performed.");
+         System.out.println();
       }
       catch (Exception e)
       {
