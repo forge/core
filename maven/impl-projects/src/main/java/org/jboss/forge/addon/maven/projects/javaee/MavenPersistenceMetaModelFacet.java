@@ -36,8 +36,8 @@ import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Strings;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceUnitCommonType;
 
 /**
  * Implementation of {@link PersistenceMetaModelFacet}
@@ -109,7 +109,7 @@ public class MavenPersistenceMetaModelFacet extends AbstractFacet<Project> imple
    {
       PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) getFaceted().getFacet(JPAFacet.class)
                .getConfig();
-      List<PersistenceUnitCommon> allPersistenceUnit = config.getAllPersistenceUnit();
+      List<PersistenceUnitCommonType> allPersistenceUnit = config.getAllPersistenceUnit();
       String providerName = allPersistenceUnit.size() > 0 ? allPersistenceUnit.get(0)
                .getProvider() : null;
 

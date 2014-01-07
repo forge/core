@@ -9,7 +9,7 @@ package org.jboss.forge.addon.javaee.jpa;
 import java.util.List;
 
 import org.jboss.forge.addon.dependencies.Dependency;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceUnitCommonType;
 
 /**
  * Performs configuration of a {@link JPADataSource} to ensure it is properly set up for this implementation.
@@ -34,7 +34,7 @@ public interface PersistenceProvider
     * Configure the {@link PersistenceUnitDef} and {@link JPADataSource}.
     */
    @SuppressWarnings("rawtypes")
-   PersistenceUnitCommon configure(PersistenceUnitCommon unit, JPADataSource ds);
+   PersistenceUnitCommonType configure(PersistenceUnitCommonType unit, JPADataSource ds);
 
    /**
     * List any dependencies required by this provider.

@@ -25,7 +25,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceCommonDescriptor;
 
 /**
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>

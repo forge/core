@@ -28,8 +28,8 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.util.Refactory;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceUnitCommonType;
 
 /**
  * This class contains JPA specific operations
@@ -67,7 +67,7 @@ public class PersistenceOperations
          PersistenceContainer container = dataSource.getContainer();
          PersistenceProvider provider = dataSource.getProvider();
          PersistenceCommonDescriptor config = facet.getConfig();
-         PersistenceUnitCommon unit = config.createPersistenceUnit();
+         PersistenceUnitCommonType unit = config.createPersistenceUnit();
          unit.name(unitName).description(DEFAULT_UNIT_DESC);
          unit.transactionType(container.isJTASupported() ? "JTA" : "RESOURCE_LOCAL");
 

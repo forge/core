@@ -19,7 +19,7 @@ import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFilter;
-import org.jboss.shrinkwrap.descriptor.api.webapp.WebAppCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.common.WebAppCommonDescriptor;
 
 /**
  * If installed, this {@link Project} supports features from the Servlet specification.

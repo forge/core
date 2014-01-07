@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.addon.javaee.jpa;
 
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceUnitCommonType;
 
 /**
  * Performs configuration on a {@link JPADataSource} to ensure it is properly set up for the this implementation.
@@ -31,7 +31,7 @@ public interface PersistenceContainer
     * Set up the connection info.
     */
    @SuppressWarnings("rawtypes")
-   PersistenceUnitCommon setupConnection(PersistenceUnitCommon unit,
+   PersistenceUnitCommonType setupConnection(PersistenceUnitCommonType unit,
             JPADataSource dataSource);
 
    /**

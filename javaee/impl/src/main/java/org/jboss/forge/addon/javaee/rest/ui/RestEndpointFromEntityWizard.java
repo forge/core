@@ -46,8 +46,8 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceUnitCommonType;
 
 /**
  * Generates REST endpoints from JPA Entities
@@ -112,8 +112,8 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
          }
       });
       List<String> persistenceUnits = new ArrayList<String>();
-      List<PersistenceUnitCommon> allUnits = persistenceFacet.getConfig().getAllPersistenceUnit();
-      for (PersistenceUnitCommon persistenceUnit : allUnits)
+      List<PersistenceUnitCommonType> allUnits = persistenceFacet.getConfig().getAllPersistenceUnit();
+      for (PersistenceUnitCommonType persistenceUnit : allUnits)
       {
          persistenceUnits.add(persistenceUnit.getName());
       }

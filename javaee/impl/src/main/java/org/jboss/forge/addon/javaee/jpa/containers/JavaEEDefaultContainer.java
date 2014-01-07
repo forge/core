@@ -9,7 +9,7 @@ package org.jboss.forge.addon.javaee.jpa.containers;
 import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceUnitCommonType;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -19,7 +19,7 @@ public abstract class JavaEEDefaultContainer implements PersistenceContainer
 
    @Override
    @SuppressWarnings("rawtypes")
-   public PersistenceUnitCommon setupConnection(PersistenceUnitCommon unit,
+   public PersistenceUnitCommonType setupConnection(PersistenceUnitCommonType unit,
             JPADataSource dataSource)
    {
       // ShellMessages.info(getWriter(), "Setting transaction-type=\"JTA\"");

@@ -41,10 +41,10 @@ import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
+import org.jboss.shrinkwrap.descriptor.api.common.ServletMappingCommonType;
+import org.jboss.shrinkwrap.descriptor.api.common.WebAppCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.javaee5.ParamValueType;
-import org.jboss.shrinkwrap.descriptor.api.webapp.WebAppCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.webcommon.ServletMappingCommonType;
 
 /**
  * Common Implementation for all JSF versions

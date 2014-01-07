@@ -15,9 +15,8 @@ import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.MetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.furnace.versions.SingleVersion;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PropertiesCommon;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceUnitCommonType;
 
 /**
  * 
@@ -40,7 +39,7 @@ public class JavaEEDefaultProvider implements PersistenceProvider
 
    @Override
    @SuppressWarnings("rawtypes")
-   public PersistenceUnitCommon configure(PersistenceUnitCommon unit, JPADataSource ds)
+   public PersistenceUnitCommonType configure(PersistenceUnitCommonType unit, JPADataSource ds)
    {
       unit.excludeUnlistedClasses(Boolean.FALSE);
       PersistenceCommonDescriptor descriptor = (PersistenceCommonDescriptor) unit.up();

@@ -3,8 +3,7 @@ package org.jboss.forge.addon.javaee.jpa.containers;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PropertyCommon;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceUnitCommonType;
 
 /**
  * Weblogic 12c Persistence Container
@@ -20,7 +19,7 @@ public class WebLogic12cContainer implements PersistenceContainer
 
    @Override
    @SuppressWarnings("rawtypes")
-   public PersistenceUnitCommon setupConnection(PersistenceUnitCommon unit,
+   public PersistenceUnitCommonType setupConnection(PersistenceUnitCommonType unit,
             JPADataSource dataSource)
    {
       if (HibernateProvider.JPA_PROVIDER.equals(unit.getProvider()))

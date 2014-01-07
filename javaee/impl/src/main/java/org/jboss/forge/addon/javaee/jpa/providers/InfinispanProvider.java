@@ -14,8 +14,7 @@ import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.MetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PropertyCommon;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceUnitCommonType;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -27,7 +26,7 @@ public class InfinispanProvider implements PersistenceProvider
 
    @Override
    @SuppressWarnings("rawtypes")
-   public PersistenceUnitCommon configure(PersistenceUnitCommon unit, JPADataSource ds)
+   public PersistenceUnitCommonType configure(PersistenceUnitCommonType unit, JPADataSource ds)
    {
       unit.excludeUnlistedClasses(Boolean.FALSE);
       PropertyCommon dialectProperty = unit.getOrCreateProperties().createProperty();

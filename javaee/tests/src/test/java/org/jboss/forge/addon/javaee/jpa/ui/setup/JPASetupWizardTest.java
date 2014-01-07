@@ -35,8 +35,8 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceUnitCommonType;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -117,7 +117,7 @@ public class JPASetupWizardTest
 
       // Check SUT values
       PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
-      List<PersistenceUnitCommon> allUnits = config.getAllPersistenceUnit();
+      List<PersistenceUnitCommonType> allUnits = config.getAllPersistenceUnit();
       Assert.assertEquals("java:jboss:jta-ds", allUnits.get(0).getJtaDataSource());
    }
 
@@ -144,7 +144,7 @@ public class JPASetupWizardTest
 
       // Check SUT values
       PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
-      List<PersistenceUnitCommon> allUnits = config.getAllPersistenceUnit();
+      List<PersistenceUnitCommonType> allUnits = config.getAllPersistenceUnit();
       Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME, allUnits.get(0).getName());
 
       WizardCommandController tester2 = testHarness.createWizardController(JPASetupWizard.class,
@@ -206,7 +206,7 @@ public class JPASetupWizardTest
 
       // Check SUT values
       PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
-      List<PersistenceUnitCommon> allUnits = config.getAllPersistenceUnit();
+      List<PersistenceUnitCommonType> allUnits = config.getAllPersistenceUnit();
 
       Assert.assertEquals("java:jboss:jta-ds", allUnits.get(0).getJtaDataSource());
 

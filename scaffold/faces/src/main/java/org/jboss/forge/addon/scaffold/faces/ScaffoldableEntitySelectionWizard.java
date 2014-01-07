@@ -28,7 +28,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceCommonDescriptor;
 
 public class ScaffoldableEntitySelectionWizard implements UIWizardStep
 {

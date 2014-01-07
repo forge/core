@@ -37,8 +37,8 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceUnitCommonType;
 
 public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIWizardStep
 {
@@ -202,8 +202,8 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
       {
          JPAFacet<?> facet = project.getFacet(JPAFacet.class);
          PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) facet.getConfig();
-         List<PersistenceUnitCommon> allPersistenceUnit = config.getAllPersistenceUnit();
-         for (PersistenceUnitCommon persistenceUnit : allPersistenceUnit)
+         List<PersistenceUnitCommonType> allPersistenceUnit = config.getAllPersistenceUnit();
+         for (PersistenceUnitCommonType persistenceUnit : allPersistenceUnit)
          {
             if (unitName.equals(persistenceUnit.getName()))
             {

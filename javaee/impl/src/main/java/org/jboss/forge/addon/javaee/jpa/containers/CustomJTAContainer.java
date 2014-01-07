@@ -8,7 +8,7 @@ package org.jboss.forge.addon.javaee.jpa.containers;
 
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.common.PersistenceUnitCommonType;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -19,7 +19,7 @@ public class CustomJTAContainer implements PersistenceContainer
 
    @Override
    @SuppressWarnings("rawtypes")
-   public PersistenceUnitCommon setupConnection(PersistenceUnitCommon unit,
+   public PersistenceUnitCommonType setupConnection(PersistenceUnitCommonType unit,
             JPADataSource dataSource)
    {
       unit.transactionType("JTA");
