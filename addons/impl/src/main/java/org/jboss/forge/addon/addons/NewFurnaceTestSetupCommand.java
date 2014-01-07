@@ -68,7 +68,8 @@ public class NewFurnaceTestSetupCommand extends AbstractProjectCommand
          {
             for (AddonId id : repository.listEnabled())
             {
-               choices.add(id);
+               if (id.getName().contains(":"))
+                  choices.add(id);
             }
          }
       }
@@ -92,7 +93,7 @@ public class NewFurnaceTestSetupCommand extends AbstractProjectCommand
    {
       UIContext uiContext = context.getUIContext();
       Project project = getSelectedProject(uiContext);
-      
+
       facetFactory.install(project, FurnaceVersionFacet.class);
       project.getFacet(FurnaceVersionFacet.class).setVersion(furnace.getVersion().toString());
 

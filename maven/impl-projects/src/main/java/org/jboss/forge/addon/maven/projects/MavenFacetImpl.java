@@ -350,7 +350,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    public Map<String, String> getProperties()
    {
       Properties properties = getProjectBuildingResult().getProject().getProperties();
-      Map<String, String> result = new HashMap<String, String>();
+      Map<String, String> result = new HashMap<>();
       for (Entry<Object, Object> o : properties.entrySet())
       {
          result.put((String) o.getKey(), (String) o.getValue());
