@@ -82,6 +82,7 @@
             <module>addons</module>
             <module>convert</module>
             <module>configuration</module>
+            <module>database-tools</module>
             <module>dependencies</module>
             <module>dev-tools-java</module>
             <module>environment</module>
