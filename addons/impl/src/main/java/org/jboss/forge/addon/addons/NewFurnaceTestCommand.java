@@ -14,11 +14,14 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.addons.facets.AddonTestFacet;
+import org.jboss.forge.addon.dependencies.Dependency;
+import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.parser.java.JavaSourceFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -56,6 +59,9 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
 
    @Inject
    private Furnace furnace;
+
+   @Inject
+   private DependencyInstaller dependencyInstaller;
 
    @Inject
    @WithAttributes(label = "Package Name", type = InputType.JAVA_PACKAGE_PICKER)
@@ -106,6 +112,8 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
+      UIContext uiContext = context.getUIContext();
+      Project project = getSelectedProject(uiContext);
       JavaClass javaClass = javaSourceFactory.create(JavaClass.class).setName(named.getValue())
                .setPackage(packageName.getValue());
 
@@ -133,9 +141,26 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
          while (it.hasNext())
          {
             AddonId addonId = it.next();
+            Dependency dependency = DependencyBuilder.create(addonId.getName()).setVersion(
+                     addonId.getVersion().toString());
             String name = addonId.getName();
-            body.append("AddonDependencyEntry.create(\"").append(name).append("\")");
-            dependenciesAnnotationBody.append("@AddonDependency(name = \"").append(name).append("\")");
+            String version = null;
+            if (dependencyInstaller.isInstalled(project, dependency))
+            {
+               version = addonId.getVersion().toString();
+            }
+            body.append("AddonDependencyEntry.create(\"").append(name);
+            dependenciesAnnotationBody.append("@AddonDependency(name = \"").append(name);
+            if (version != null)
+            {
+               body.append("\", \"");
+               body.append(version);
+               dependenciesAnnotationBody.append("\", version=\"");
+               dependenciesAnnotationBody.append(version);
+            }
+
+            body.append("\")");
+            dependenciesAnnotationBody.append("\")");
             if (it.hasNext())
             {
                body.append(",");
@@ -155,8 +180,6 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
          getDeployment.addAnnotation("Dependencies").setLiteralValue("{" + annotationBody + "}");
       }
 
-      UIContext uiContext = context.getUIContext();
-      Project project = getSelectedProject(uiContext);
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.saveTestJavaSource(javaClass);
       uiContext.setSelection(javaResource);
