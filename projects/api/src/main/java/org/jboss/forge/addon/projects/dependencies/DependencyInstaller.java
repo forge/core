@@ -45,5 +45,5 @@ public interface DependencyInstaller
     * <p>
     * <b>Project requires: {@link DependencyFacet}
     */
-   boolean isManaged(Project origin, Dependency fORGE_CONTAINER_DEPENDENCY);
+   boolean isManaged(Project origin, Dependency dependency);
 }
