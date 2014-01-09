@@ -24,9 +24,9 @@ public class MockConnectionProfileManagerImpl extends ConnectionProfileManagerIm
    
    private void addDummyProfile() {
       ConnectionProfile profile = new ConnectionProfile();
-      profile.name = "dummy";
-      profile.dialect = "dialect";
-      profiles.put(profile.name, profile);
+      profile.setName("dummy");
+      profile.setDialect("dialect");
+      profiles.put(profile.getName(), profile);
    }
 
    @Override
@@ -40,7 +40,7 @@ public class MockConnectionProfileManagerImpl extends ConnectionProfileManagerIm
    {
       profiles.clear();
       for (ConnectionProfile profile : connectionProfiles) {
-         profiles.put(profile.name, profile);
+         profiles.put(profile.getName(), profile);
       }
    }
    

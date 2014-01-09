@@ -101,7 +101,7 @@ public class CreateConnectionProfileCommandTest
       Assert.assertEquals(2, profiles.size());
       ConnectionProfile profile = profiles.get("test");
       Assert.assertNotNull(profile);
-      Assert.assertEquals("org.h2.Driver", profile.driver);
+      Assert.assertEquals("org.h2.Driver", profile.getDriver());
    }
    
    private FileResource<?> resolveH2DriverJarResource() {

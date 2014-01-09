@@ -66,12 +66,12 @@ public class ConnectionProfileDetailsStep extends ConnectionProfileDetailsPage i
                         descriptor.connectionProfileName);
       if (cp != null)
       {
-         jdbcUrl.setValue(cp.url);
-         userName.setValue(cp.user);
-         userPassword.setValue(cp.password);
-         hibernateDialect.setValue(HibernateDialect.fromClassName(cp.dialect));
-         driverLocation.setValue(createResource(cp.path));
-         driverClass.setValue(cp.driver);
+         jdbcUrl.setValue(cp.getUrl());
+         userName.setValue(cp.getUser());
+         userPassword.setValue(cp.getPassword());
+         hibernateDialect.setValue(HibernateDialect.fromClassName(cp.getDialect()));
+         driverLocation.setValue(createResource(cp.getPath()));
+         driverClass.setValue(cp.getDriver());
       }
    }
 

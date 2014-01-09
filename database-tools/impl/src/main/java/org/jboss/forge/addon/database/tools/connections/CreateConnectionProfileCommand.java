@@ -57,17 +57,17 @@ public class CreateConnectionProfileCommand extends ConnectionProfileDetailsPage
       Map<String, ConnectionProfile> connectionProfiles =
                provider.getConnectionProfileManager().loadConnectionProfiles();
       ConnectionProfile connectionProfile = new ConnectionProfile();
-      connectionProfile.name = name.getValue();
-      connectionProfile.dialect = hibernateDialect.getValue().getClassName();
-      connectionProfile.driver = driverClass.getValue();
-      connectionProfile.path = driverLocation.getValue().getFullyQualifiedName();
-      connectionProfile.url = jdbcUrl.getValue();
-      connectionProfile.user = userName.getValue();
+      connectionProfile.setName(name.getValue());
+      connectionProfile.setDialect(hibernateDialect.getValue().getClassName());
+      connectionProfile.setDriver(driverClass.getValue());
+      connectionProfile.setPath(driverLocation.getValue().getFullyQualifiedName());
+      connectionProfile.setUrl(jdbcUrl.getValue());
+      connectionProfile.setUser(userName.getValue());
       connectionProfiles.put(name.getValue(), connectionProfile);
       provider.getConnectionProfileManager().saveConnectionProfiles(connectionProfiles.values());
       return Results.success(
                "Connection profile " +
-                        connectionProfile.name +
+                        connectionProfile.getName() +
                         " has been saved succesfully");
    }
 

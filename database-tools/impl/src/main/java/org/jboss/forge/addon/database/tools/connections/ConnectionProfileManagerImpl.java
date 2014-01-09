@@ -37,13 +37,13 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
             if (!child.getName().equals("connection-profile"))
                continue; // Only profile elements are valid
             ConnectionProfile descriptor = new ConnectionProfile();
-            descriptor.name = child.getAttribute(NAME);
-            descriptor.dialect = child.getAttribute(DIALECT);
-            descriptor.driver = child.getAttribute(DRIVER);
-            descriptor.path = child.getAttribute(PATH_TO_DRIVER);
-            descriptor.url = child.getAttribute(URL);
-            descriptor.user = child.getAttribute(USER);
-            result.put(descriptor.name, descriptor);
+            descriptor.setName(child.getAttribute(NAME));
+            descriptor.setDialect(child.getAttribute(DIALECT));
+            descriptor.setDriver(child.getAttribute(DRIVER));
+            descriptor.setPath(child.getAttribute(PATH_TO_DRIVER));
+            descriptor.setUrl(child.getAttribute(URL));
+            descriptor.setUser(child.getAttribute(USER));
+            result.put(descriptor.getName(), descriptor);
          }
       }
       return result;
@@ -56,12 +56,12 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
       for (ConnectionProfile descriptor : connectionProfiles)
       {
          Node child = root.createChild("connection-profile");
-         child.attribute(NAME, descriptor.name);
-         child.attribute(DIALECT, descriptor.dialect);
-         child.attribute(DRIVER, descriptor.driver);
-         child.attribute(PATH_TO_DRIVER, descriptor.path);
-         child.attribute(URL, descriptor.url);
-         child.attribute(USER, descriptor.user);
+         child.attribute(NAME, descriptor.getName());
+         child.attribute(DIALECT, descriptor.getDialect());
+         child.attribute(DRIVER, descriptor.getDriver());
+         child.attribute(PATH_TO_DRIVER, descriptor.getPath());
+         child.attribute(URL, descriptor.getUrl());
+         child.attribute(USER, descriptor.getUser());
       }
       if (root.getChildren().isEmpty())
       {
