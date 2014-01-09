@@ -40,22 +40,36 @@ public class ShellWizard extends AbstractShellInteraction
    public CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception
    {
       getController().initialize();
-      return populate(shellContext, completeLine, new HashMap<String, InputComponent<?, ?>>());
+      return populate(shellContext, completeLine, new HashMap<String, InputComponent<?, ?>>(),
+               new HashMap<String, InputComponent<?, ?>>());
    }
 
    private CommandLineParser populate(ShellContext shellContext, String line,
-            final Map<String, InputComponent<?, ?>> inputs)
+            final Map<String, InputComponent<?, ?>> allInputs, Map<String, InputComponent<?, ?>> lastPage)
             throws Exception
    {
       WizardCommandController controller = getController();
-      inputs.putAll(controller.getInputs());
-      CommandLineParser parser = commandLineUtil.generateParser(controller, shellContext, inputs);
+      Map<String, InputComponent<?, ?>> pageInputs = new HashMap<>(controller.getInputs());
+      allInputs.putAll(pageInputs);
+      CommandLineParser parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
       CommandLine cmdLine = parser.parse(line, true);
-      commandLineUtil.populateUIInputs(cmdLine, inputs);
+      Map<String, InputComponent<?, ?>> populatedInputs = commandLineUtil.populateUIInputs(cmdLine, allInputs);
+      for (String input : pageInputs.keySet())
+      {
+         if (populatedInputs.containsKey(input))
+         {
+            // Trim inputs from last page, because information from the current page was provided
+            lastPage.keySet().removeAll(populatedInputs.keySet());
+            allInputs.keySet().removeAll(lastPage.keySet());
+            parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
+            break;
+         }
+      }
+
       if (controller.canMoveToNextStep())
       {
          controller.next().initialize();
-         parser = populate(shellContext, line, inputs);
+         parser = populate(shellContext, line, allInputs, pageInputs);
       }
       return parser;
    }
