@@ -49,7 +49,7 @@ public class Bootstrap
 
    public static void main(final String[] args)
    {
-      final List<String> bootstrapArgs = new ArrayList<String>();
+      final List<String> bootstrapArgs = new ArrayList<>();
       final Properties systemProperties = System.getProperties();
       // Set system properties
       for (String arg : args)
@@ -232,15 +232,15 @@ public class Bootstrap
          System.out.println(request);
          if (confirmAction)
          {
-            String result = System.console().readLine("Is that correct [y/N]? ");
+            String result = System.console().readLine("Continue and finish installation [y/N]? ");
             if (!"Y".equalsIgnoreCase(result.trim()))
             {
-               System.out.println("Ignoring installation...");
+               System.out.println("Aborting installation...");
                return;
             }
          }
          request.perform();
-         System.out.println("Installation successfully performed.");
+         System.out.println("Installation completed successfully.");
          System.out.println();
       }
       catch (Exception e)
