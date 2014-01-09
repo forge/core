@@ -14,10 +14,6 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManager;
-import org.jboss.forge.addon.database.tools.connections.CreateConnectionProfileCommand;
-import org.jboss.forge.addon.database.tools.connections.HibernateDialect;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.DependencyQuery;
 import org.jboss.forge.addon.dependencies.DependencyResolver;
@@ -31,7 +27,6 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -67,13 +62,13 @@ public class CreateConnectionProfileCommandTest
 
    @Inject
    private ConnectionProfileManager manager;
-   
+
    @Inject
    private UITestHarness testHarness;
 
    @Inject
    private DependencyResolver resolver;
-   
+
    @Test
    public void testConnectionProfileManager() throws Exception
    {
@@ -85,12 +80,12 @@ public class CreateConnectionProfileCommandTest
       profiles = manager.loadConnectionProfiles();
       Assert.assertEquals(0, profiles.size());
    }
-   
-   @Ignore
+
    @Test
-   public void testCreateConnectionProfileCommand() throws Exception {
-	  CommandController command = testHarness.createCommandController(CreateConnectionProfileCommand.class);
-	  command.initialize();
+   public void testCreateConnectionProfileCommand() throws Exception
+   {
+      CommandController command = testHarness.createCommandController(CreateConnectionProfileCommand.class);
+      command.initialize();
       command.setValueFor("name", "test");
       command.setValueFor("jdbcUrl", "jdbc:h2:~/app-root/data/sakila");
       command.setValueFor("userName", "sa");
@@ -100,18 +95,22 @@ public class CreateConnectionProfileCommandTest
       command.setValueFor("driverClass", "org.h2.Driver");
       command.execute();
       Map<String, ConnectionProfile> profiles = manager.loadConnectionProfiles();
-      Assert.assertEquals(2, profiles.size());
+      Assert.assertEquals(1, profiles.size());
       ConnectionProfile profile = profiles.get("test");
       Assert.assertNotNull(profile);
       Assert.assertEquals("org.h2.Driver", profile.getDriver());
    }
-   
-   private FileResource<?> resolveH2DriverJarResource() {
+
+   private FileResource<?> resolveH2DriverJarResource()
+   {
       DependencyQuery query = DependencyQueryBuilder.create("com.h2database:h2:1.3.167");
       Dependency dependency = resolver.resolveArtifact(query);
-      if (dependency != null) {
+      if (dependency != null)
+      {
          return dependency.getArtifact();
-      } else {
+      }
+      else
+      {
          return null;
       }
    }
