@@ -53,7 +53,7 @@ public class GenerateEntitiesCommandTest
             @AddonDependency(name = "org.jboss.forge.addon:projects"),
             @AddonDependency(name = "org.jboss.forge.addon:javaee"),
             @AddonDependency(name = "org.jboss.forge.addon:ui"),
-            @AddonDependency(name = "org.jboss.forge.addon:hibernate-tools"),
+            @AddonDependency(name = "org.jboss.forge.addon:database-tools"),
             @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
             @AddonDependency(name = "org.jboss.forge.addon:maven")
    })
@@ -67,7 +67,7 @@ public class GenerateEntitiesCommandTest
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:hibernate-tools"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:database-tools"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"))
                .addClass(Server.class)
                .addClass(ShutdownHandler.class)

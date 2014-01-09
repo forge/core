@@ -34,7 +34,7 @@ public class ConnectionProfileManagerTest
             @AddonDependency(name = "org.jboss.forge.addon:ui"),
             @AddonDependency(name = "org.jboss.forge.addon:configuration"),
             @AddonDependency(name = "org.jboss.forge.addon:projects"),
-            @AddonDependency(name = "org.jboss.forge.addon:hibernate-tools")
+            @AddonDependency(name = "org.jboss.forge.addon:database-tools")
    })
    public static ForgeArchive getDeployment()
    {
@@ -43,7 +43,7 @@ public class ConnectionProfileManagerTest
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:hibernate-tools")
+                        AddonDependencyEntry.create("org.jboss.forge.addon:database-tools")
                );
       return archive;
    }
