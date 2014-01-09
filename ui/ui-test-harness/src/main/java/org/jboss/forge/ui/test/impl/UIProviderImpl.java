@@ -8,7 +8,6 @@
 package org.jboss.forge.ui.test.impl;
 
 import org.jboss.forge.addon.ui.UIProvider;
-import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.output.UIOutput;
 
 /**
@@ -19,13 +18,11 @@ public class UIProviderImpl implements UIProvider
 {
    private final boolean graphical;
    private final UIOutput output;
-   private final UIPrompt prompt;
 
    public UIProviderImpl(boolean graphical)
    {
       this.graphical = graphical;
       this.output = new UIOutputImpl(System.out, System.err);
-      this.prompt = new UIPromptImpl();
    }
 
    @Override
@@ -39,11 +36,4 @@ public class UIProviderImpl implements UIProvider
    {
       return output;
    }
-
-   @Override
-   public UIPrompt getPrompt()
-   {
-      return prompt;
-   }
-
 }

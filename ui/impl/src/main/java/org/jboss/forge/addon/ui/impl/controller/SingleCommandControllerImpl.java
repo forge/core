@@ -23,6 +23,7 @@ import org.jboss.forge.addon.ui.impl.context.UIBuilderImpl;
 import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.output.UIMessage.Severity;
@@ -67,7 +68,8 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
       assertInitialized();
       assertValid();
       UIProgressMonitor progressMonitor = runtime.createProgressMonitor(context);
-      UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor);
+      UIPrompt prompt = runtime.createPrompt(context);
+      UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor, prompt);
       if (progressMonitor.isCancelled())
       {
          return null;

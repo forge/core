@@ -32,13 +32,10 @@ import org.jboss.forge.addon.shell.aesh.ForgeManProvider;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIOutputImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIPromptImpl;
-import org.jboss.forge.addon.ui.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.DefaultUIProgressMonitor;
-import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIContextListener;
-import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
 import org.jboss.forge.addon.ui.input.UIPrompt;
@@ -59,7 +56,6 @@ import org.jboss.forge.furnace.util.Assert;
 public class ShellImpl implements Shell, UIRuntime
 {
    private Resource<?> currentResource;
-   private UIPrompt prompt;
 
    private final AddonRegistry addonRegistry;
    private final AeshConsole console;
@@ -170,7 +166,6 @@ public class ShellImpl implements Shell, UIRuntime
    {
       Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
       ShellContextImpl shellContextImpl = new ShellContextImpl(this, currentResource, listeners);
-      shellContextImpl.addCommandExecutionListener(new InitializePromptListener());
       for (CommandExecutionListener listener : executionListeners)
       {
          shellContextImpl.addCommandExecutionListener(listener);
@@ -195,25 +190,16 @@ public class ShellImpl implements Shell, UIRuntime
    }
 
    @Override
-   public UIPrompt getPrompt()
-   {
-      return prompt;
-   }
-
-   @Override
    public UIProgressMonitor createProgressMonitor(UIContext context)
    {
       return new DefaultUIProgressMonitor();
    }
 
-   private class InitializePromptListener extends AbstractCommandExecutionListener
+   @Override
+   public UIPrompt createPrompt(UIContext context)
    {
-      @Override
-      public void preCommandExecuted(UICommand command, UIExecutionContext context)
-      {
-         CommandInvocation commandInvocation = (CommandInvocation) context.getUIContext().getAttributeMap()
-                  .get(CommandInvocation.class);
-         ShellImpl.this.prompt = new ShellUIPromptImpl(console, commandInvocation);
-      }
+      CommandInvocation commandInvocation = (CommandInvocation) context.getAttributeMap()
+               .get(CommandInvocation.class);
+      return new ShellUIPromptImpl(console, commandInvocation);
    }
 }

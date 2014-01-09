@@ -9,6 +9,7 @@ package org.jboss.forge.ui.test.impl;
 import org.jboss.forge.addon.ui.DefaultUIProgressMonitor;
 import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.spi.UIRuntime;
 
 /**
@@ -18,6 +19,7 @@ import org.jboss.forge.addon.ui.spi.UIRuntime;
 public class UIRuntimeImpl implements UIRuntime
 {
    private final UIProgressMonitor progressMonitor = new DefaultUIProgressMonitor();
+   private final UIPrompt prompt = new UIPromptImpl();
 
    public UIRuntimeImpl()
    {
@@ -29,4 +31,9 @@ public class UIRuntimeImpl implements UIRuntime
       return progressMonitor;
    }
 
+   @Override
+   public UIPrompt createPrompt(UIContext context)
+   {
+      return prompt;
+   }
 }

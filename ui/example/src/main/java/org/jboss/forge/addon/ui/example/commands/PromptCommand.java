@@ -42,7 +42,7 @@ public class PromptCommand extends AbstractUICommand
    {
       UIProvider provider = context.getUIContext().getProvider();
       UIOutput output = provider.getOutput();
-      UIPrompt prompt = provider.getPrompt();
+      UIPrompt prompt = context.getPrompt();
       boolean answer = prompt.promptBoolean("Do you love Forge 2?");
       output.out().println("You answered: " + answer);
       return null;

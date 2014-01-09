@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.ui.context;
 
 import org.jboss.forge.addon.ui.UIProgressMonitor;
+import org.jboss.forge.addon.ui.input.UIPrompt;
 
 /**
  * A {@link UIExecutionContext} is created when the execution phase is requested
@@ -20,5 +21,10 @@ public interface UIExecutionContext extends UIContextProvider
     * Returns the {@link UIProgressMonitor} for this execution
     */
    UIProgressMonitor getProgressMonitor();
+
+   /**
+    * Returns the object used to prompt for messages during a UI interaction
+    */
+   UIPrompt getPrompt();
 
 }

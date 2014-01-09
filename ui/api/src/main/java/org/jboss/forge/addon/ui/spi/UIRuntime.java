@@ -9,6 +9,7 @@ package org.jboss.forge.addon.ui.spi;
 
 import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.input.UIPrompt;
 
 /**
  * Creates UI objects. Should be implemented by UI Providers
@@ -21,4 +22,9 @@ public interface UIRuntime
     * Creates a new {@link UIProgressMonitor}
     */
    UIProgressMonitor createProgressMonitor(UIContext context);
+
+   /**
+    * Create a new {@link UIPrompt}
+    */
+   UIPrompt createPrompt(UIContext context);
 }

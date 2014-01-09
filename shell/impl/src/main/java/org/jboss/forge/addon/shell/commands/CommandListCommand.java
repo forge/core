@@ -31,6 +31,7 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
+import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
@@ -103,6 +104,12 @@ public class CommandListCommand extends AbstractShellCommand
          public UIProgressMonitor createProgressMonitor(UIContext context)
          {
             return new DefaultUIProgressMonitor();
+         }
+
+         @Override
+         public UIPrompt createPrompt(UIContext context)
+         {
+            return null;
          }
       });
    }

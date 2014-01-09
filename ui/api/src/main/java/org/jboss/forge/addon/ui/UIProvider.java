@@ -1,7 +1,6 @@
 package org.jboss.forge.addon.ui;
 
 import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
-import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.output.UIOutput;
 
 /**
@@ -21,9 +20,4 @@ public interface UIProvider
     * Returns the output object used to display messages during a UI interation
     */
    UIOutput getOutput();
-
-   /**
-    * Returns the object used to prompt for messages during a UI interaction
-    */
-   UIPrompt getPrompt();
 }

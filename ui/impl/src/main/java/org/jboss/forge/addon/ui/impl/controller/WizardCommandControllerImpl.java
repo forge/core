@@ -28,6 +28,7 @@ import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.impl.context.UINavigationContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.result.NavigationResult;
@@ -90,7 +91,8 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
 
       assertInitialized();
       UIProgressMonitor progressMonitor = runtime.createProgressMonitor(context);
-      UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor);
+      UIPrompt prompt = runtime.createPrompt(context);
+      UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor, prompt);
       Set<CommandExecutionListener> listeners = new LinkedHashSet<>();
       listeners.addAll(context.getListeners());
       for (CommandExecutionListener listener : addonRegistry

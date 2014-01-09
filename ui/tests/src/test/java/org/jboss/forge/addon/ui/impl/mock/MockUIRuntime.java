@@ -10,6 +10,7 @@ package org.jboss.forge.addon.ui.impl.mock;
 import org.jboss.forge.addon.ui.DefaultUIProgressMonitor;
 import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.spi.UIRuntime;
 
 /**
@@ -23,4 +24,11 @@ public class MockUIRuntime implements UIRuntime
    {
       return new DefaultUIProgressMonitor();
    }
+   
+   @Override
+   public UIPrompt createPrompt(UIContext context)
+   {
+      return new MockUIPrompt();
+   }
+   
 }
