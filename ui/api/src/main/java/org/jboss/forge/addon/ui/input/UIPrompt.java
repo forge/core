@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.ui.input;
 
-
 /**
  * Used when an addon needs to prompt for ad-hoc user input
  * 
@@ -16,9 +15,14 @@ package org.jboss.forge.addon.ui.input;
 public interface UIPrompt
 {
    /**
-    * Prompt for user input, and return as a String.
+    * Prompt for user input, first printing the given line, then return user input as a String.
     */
-   String prompt();
+   String prompt(String message);
+
+   /**
+    * First print the given message, prompt the user for input (masking keystrokes for secrecy,) then return user input.
+    */
+   String promptSecret(String message);
 
    /**
     * Prompt for boolean user input (Y/n), first printing the given message, then returning user input as a boolean. The

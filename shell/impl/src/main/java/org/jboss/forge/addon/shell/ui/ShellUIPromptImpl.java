@@ -42,9 +42,23 @@ public class ShellUIPromptImpl implements UIPrompt
    }
 
    @Override
-   public String prompt()
+   public String prompt(String message)
    {
+      PrintStream out = console.getShell().out();
+      out.print(message);
       List<CommandOperation> input = commandInvocation.getInput();
+      out.println();
+      String output = toString(input);
+      return output;
+   }
+
+   @Override
+   public String promptSecret(String message)
+   {
+      PrintStream out = console.getShell().out();
+      out.print(message);
+      List<CommandOperation> input = commandInvocation.getInput();
+      out.println();
       String output = toString(input);
       return output;
    }
@@ -52,12 +66,7 @@ public class ShellUIPromptImpl implements UIPrompt
    @Override
    public boolean promptBoolean(String message)
    {
-      PrintStream out = console.getShell().out();
-      out.print(message + " [y/N]");
-      List<CommandOperation> input = commandInvocation.getInput();
-      out.println();
-      String output = toString(input);
-      return "Y".equalsIgnoreCase(output);
+      return "Y".equalsIgnoreCase(prompt(message + " [y/N]"));
    }
 
 }
