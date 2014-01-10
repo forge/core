@@ -57,6 +57,7 @@ public class ShellWizard extends AbstractShellInteraction
       boolean inputsChanged = false;
       for (String input : pageInputs.keySet())
       {
+         // TODO: May not work correctly with Subflows
          if (populatedInputs.containsKey(input))
          {
             // Trim inputs from last page, because information from the current page was provided
