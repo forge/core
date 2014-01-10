@@ -54,6 +54,7 @@ public class ShellWizard extends AbstractShellInteraction
       CommandLineParser parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
       CommandLine cmdLine = parser.parse(line, true);
       Map<String, InputComponent<?, ?>> populatedInputs = commandLineUtil.populateUIInputs(cmdLine, allInputs);
+      boolean inputsChanged = false;
       for (String input : pageInputs.keySet())
       {
          if (populatedInputs.containsKey(input))
@@ -61,7 +62,7 @@ public class ShellWizard extends AbstractShellInteraction
             // Trim inputs from last page, because information from the current page was provided
             lastPage.keySet().removeAll(populatedInputs.keySet());
             allInputs.keySet().removeAll(lastPage.keySet());
-            parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
+            inputsChanged = true;
             break;
          }
       }
@@ -70,6 +71,10 @@ public class ShellWizard extends AbstractShellInteraction
       {
          controller.next().initialize();
          parser = populate(shellContext, line, allInputs, pageInputs);
+      }
+      else if (inputsChanged)
+      {
+         parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
       }
       return parser;
    }
