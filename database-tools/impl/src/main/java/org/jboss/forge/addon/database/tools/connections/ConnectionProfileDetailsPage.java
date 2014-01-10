@@ -87,7 +87,7 @@ public class ConnectionProfileDetailsPage
             return dialect == null ? null : dialect.getDatabaseName() + " : " + dialect.getClassName();
          }
       });
-      driverLocation.setValidator(new UIValidator()
+      driverLocation.addValidator(new UIValidator()
       { 
          @Override
          public void validate(UIValidationContext context)
