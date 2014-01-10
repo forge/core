@@ -23,16 +23,16 @@ public interface CommandControllerFactory
    /**
     * Create a {@link CommandController} of the correct type for the given {@link UICommand}.
     */
-   CommandController createController(UIContext context, UICommand command, UIRuntime runtime);
+   CommandController createController(UIContext context, UIRuntime runtime, UICommand command);
 
    /**
     * Create a {@link SingleCommandController}. Should be called when a single command execution must be performed.
     */
-   SingleCommandController createSingleController(UIContext context, UICommand command, UIRuntime runtime);
+   SingleCommandController createSingleController(UIContext context, UIRuntime runtime, UICommand command);
 
    /**
     * Create a {@link WizardCommandController}. Should be called when a wizard (multiple step) execution must be
     * performed.
     */
-   WizardCommandController createWizardController(UIContext context, UIWizard wizard, UIRuntime runtime);
+   WizardCommandController createWizardController(UIContext context, UIRuntime runtime, UIWizard wizard);
 }

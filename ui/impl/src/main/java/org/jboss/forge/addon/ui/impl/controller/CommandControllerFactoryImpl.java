@@ -38,21 +38,21 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
    }
 
    @Override
-   public CommandController createController(UIContext context, UICommand command, UIRuntime runtime)
+   public CommandController createController(UIContext context, UIRuntime runtime, UICommand command)
    {
       if (command instanceof UIWizard)
-         return createWizardController(context, (UIWizard) command, runtime);
-      return createSingleController(context, command, runtime);
+         return createWizardController(context, runtime, (UIWizard) command);
+      return createSingleController(context, runtime, command);
    }
 
    @Override
-   public SingleCommandController createSingleController(UIContext context, UICommand command, UIRuntime runtime)
+   public SingleCommandController createSingleController(UIContext context, UIRuntime runtime, UICommand command)
    {
       return new SingleCommandControllerImpl(addonRegistry, runtime, command, context);
    }
 
    @Override
-   public WizardCommandController createWizardController(UIContext context, UIWizard wizard, UIRuntime runtime)
+   public WizardCommandController createWizardController(UIContext context, UIRuntime runtime, UIWizard wizard)
    {
       return new WizardCommandControllerImpl(context, addonRegistry, runtime, wizard, this);
    }

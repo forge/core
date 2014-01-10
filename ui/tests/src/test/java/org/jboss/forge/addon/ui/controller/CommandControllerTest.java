@@ -66,8 +66,8 @@ public class CommandControllerTest
    @Test
    public void testSingleCommandController() throws Exception
    {
-      CommandController controller = controllerFactory.createSingleController(new MockUIContext(), exampleCommand,
-               new MockUIRuntime());
+      CommandController controller = controllerFactory.createSingleController(new MockUIContext(), new MockUIRuntime(),
+               exampleCommand);
       Assert.assertTrue(controller.isEnabled());
       Assert.assertFalse(controller.isInitialized());
 
@@ -85,16 +85,16 @@ public class CommandControllerTest
    @Test(expected = IllegalArgumentException.class)
    public void testInitialized() throws Exception
    {
-      CommandController controller = controllerFactory.createSingleController(new MockUIContext(), exampleCommand,
-               new MockUIRuntime());
+      CommandController controller = controllerFactory.createSingleController(new MockUIContext(), new MockUIRuntime(),
+               exampleCommand);
       Assert.assertFalse(controller.getInputs().isEmpty());
    }
 
    @Test
    public void testExampleNoUI() throws Exception
    {
-      CommandController controller = controllerFactory.createSingleController(new MockUIContext(), exampleNoUICommand,
-               new MockUIRuntime());
+      CommandController controller = controllerFactory.createSingleController(new MockUIContext(), new MockUIRuntime(),
+               exampleNoUICommand);
       controller.initialize();
       Assert.assertTrue(controller.getInputs().isEmpty());
       Assert.assertTrue(controller.isValid());

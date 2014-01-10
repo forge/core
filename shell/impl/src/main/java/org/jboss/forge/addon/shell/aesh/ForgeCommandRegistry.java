@@ -81,7 +81,7 @@ public class ForgeCommandRegistry implements CommandRegistry
          // Not a forge command, fallback to aesh command
          CommandContainer nativeCommand = aeshCommandRegistry.getCommand(name, completeLine);
          AeshUICommand aeshCommand = new AeshUICommand(nativeCommand);
-         SingleCommandController controller = commandFactory.createSingleController(shellContext, aeshCommand, shell);
+         SingleCommandController controller = commandFactory.createSingleController(shellContext, shell, aeshCommand);
          try
          {
             controller.initialize();
@@ -126,12 +126,12 @@ public class ForgeCommandRegistry implements CommandRegistry
          {
             if (cmd instanceof UIWizard)
             {
-               result = new ShellWizard(commandFactory.createWizardController(shellContext, (UIWizard) cmd, shell),
+               result = new ShellWizard(commandFactory.createWizardController(shellContext, shell, (UIWizard) cmd),
                         shellContext, cmdLineUtil, this);
             }
             else
             {
-               result = new ShellSingleCommand(commandFactory.createSingleController(shellContext, cmd, shell),
+               result = new ShellSingleCommand(commandFactory.createSingleController(shellContext, shell, cmd),
                         shellContext, cmdLineUtil);
             }
             break;

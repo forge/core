@@ -98,7 +98,7 @@ public class CommandListCommand extends AbstractShellCommand
 
    private CommandController getCommandController(UIExecutionContext context, UICommand command)
    {
-      return factory.createController(context.getUIContext(), command, new UIRuntime()
+      return factory.createController(context.getUIContext(), new UIRuntime()
       {
          @Override
          public UIProgressMonitor createProgressMonitor(UIContext context)
@@ -111,6 +111,6 @@ public class CommandListCommand extends AbstractShellCommand
          {
             return null;
          }
-      });
+      }, command);
    }
 }

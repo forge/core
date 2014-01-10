@@ -286,7 +286,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
             }
             if (command != null)
             {
-               CommandController ctrl = controllerFactory.createController(context, command, runtime);
+               CommandController ctrl = controllerFactory.createController(context, runtime, command);
                ctrl.initialize();
                Set<String> currentInputsKeySet = nextEntry.controller.getInputs().keySet();
                Set<String> keySet = ctrl.getInputs().keySet();
@@ -396,7 +396,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
 
    private WizardStepEntry createEntry(UICommand command, boolean subflowHead)
    {
-      CommandController controller = controllerFactory.createSingleController(context, command, runtime);
+      CommandController controller = controllerFactory.createSingleController(context, runtime, command);
       return new WizardStepEntry(controller, subflowHead);
    }
 
