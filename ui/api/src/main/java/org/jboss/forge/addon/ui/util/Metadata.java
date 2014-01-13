@@ -8,7 +8,7 @@ package org.jboss.forge.addon.ui.util;
 
 import java.net.URL;
 
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.metadata.UICategory;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.furnace.util.Assert;
@@ -25,14 +25,14 @@ public class Metadata implements UICommandMetadata
             ".asciidoc.gzip",
             ".asciidoc.gz",
             ".asciidoc",
-            ".ad"};
+            ".ad" };
 
    private String name;
    private String description;
    private UICategory category;
    private URL docLocation;
 
-   private final Class<? extends UICommand> type;
+   private final Class<?> type;
 
    /**
     * Create a new {@link UICommandMetadata} implementation from the given {@link UICommandMetadata} origin, and the
@@ -51,16 +51,16 @@ public class Metadata implements UICommandMetadata
    /**
     * Create a new {@link UICommandMetadata} for the given {@link UICommand} type.
     */
-   public static Metadata forCommand(Class<? extends UICommand> type)
+   public static Metadata forCommand(Class<?> type)
    {
       Assert.notNull(type, "UICommand type must not be null.");
       return new Metadata(type);
    }
 
-   private Metadata(Class<? extends UICommand> type)
+   private Metadata(Class<?> type2)
    {
-      this.type = type;
-      docLocation(getDocLocationFor(type)).name(type.getName()).category(Categories.createDefault())
+      this.type = type2;
+      docLocation(getDocLocationFor(type2)).name(type2.getName()).category(Categories.createDefault())
                .description(UICommandMetadata.NO_DESCRIPTION);
    }
 
@@ -100,7 +100,7 @@ public class Metadata implements UICommandMetadata
       return this;
    }
 
-   private URL getDocLocationFor(Class<? extends UICommand> type)
+   private URL getDocLocationFor(Class<?> type)
    {
       URL url = null;
       for (String extension : VALID_DOC_EXTENSIONS)
@@ -150,7 +150,7 @@ public class Metadata implements UICommandMetadata
    }
 
    @Override
-   public Class<? extends UICommand> getType()
+   public Class<?> getType()
    {
       return type;
    }

@@ -12,8 +12,8 @@ import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.ui.UICommand;
-import org.jboss.forge.addon.ui.UIValidator;
+import org.jboss.forge.addon.ui.command.UICommand;
+import org.jboss.forge.addon.ui.validate.UIValidator;
 
 /**
  * Provides an implementation of Scaffolding for various UI code generation operations.

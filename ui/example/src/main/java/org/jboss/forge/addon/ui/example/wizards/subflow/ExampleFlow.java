@@ -9,7 +9,7 @@ package org.jboss.forge.addon.ui.example.wizards.subflow;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.ui.AbstractUICommand;
+import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;

@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jboss.forge.addon.ui.UIProvider;
-import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
+import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
@@ -76,6 +76,7 @@ public abstract class AbstractUIContext implements UIContext
       };
    }
 
+   @Override
    public Set<CommandExecutionListener> getListeners()
    {
       return Collections.unmodifiableSet(listeners);

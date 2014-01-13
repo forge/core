@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.ui.controller;
 
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.UICommand;
 
 /**
  * Represents a {@link CommandController} for a single (non-wizard) {@link UICommand}.

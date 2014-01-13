@@ -10,7 +10,7 @@ import org.jboss.aesh.console.AeshConsole;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.UIProvider;
-import org.jboss.forge.addon.ui.controller.CommandExecutionListener;
+import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**

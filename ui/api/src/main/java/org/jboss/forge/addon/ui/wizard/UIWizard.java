@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.ui.wizard;
 
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 

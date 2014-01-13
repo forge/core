@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.ui.controller;
 
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;

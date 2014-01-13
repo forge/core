@@ -5,12 +5,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.ui.util;
+package org.jboss.forge.addon.ui.validate;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.furnace.util.Assert;
 

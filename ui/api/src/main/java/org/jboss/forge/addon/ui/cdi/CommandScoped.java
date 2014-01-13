@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 
 import javax.enterprise.context.NormalScope;
 
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.UICommand;
 
 /**
  * Declares a bean as being scoped to the current {@link UICommand}. Beans using this scope will be destroyed when the

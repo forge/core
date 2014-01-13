@@ -5,12 +5,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.ui;
+package org.jboss.forge.addon.ui.input;
 
-import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.addon.ui.input.UIInputMany;
-import org.jboss.forge.addon.ui.input.UISelectMany;
-import org.jboss.forge.addon.ui.input.UISelectOne;
 
 /**
  * Allows creation of input components without injection
