@@ -15,7 +15,11 @@
          <artifactId>cdi-api</artifactId>
          <scope>provided</scope>
       </dependency>
-
+      <dependency>
+         <groupId>org.jboss.forge.furnace.container</groupId>
+         <artifactId>cdi-impl</artifactId>
+         <scope>provided</scope>
+      </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui-api</artifactId>

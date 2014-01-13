@@ -8,7 +8,6 @@
 package org.jboss.forge.addon.shell.ui;
 
 import java.io.PrintStream;
-import java.util.List;
 
 import org.jboss.aesh.console.AeshConsole;
 import org.jboss.aesh.console.command.CommandOperation;
@@ -31,24 +30,14 @@ public class ShellUIPromptImpl implements UIPrompt
       this.commandInvocation = commandInvocation;
    }
 
-   private String toString(List<CommandOperation> operationList)
-   {
-      StringBuilder sb = new StringBuilder();
-      for (CommandOperation commandOperation : operationList)
-      {
-         sb.append(commandOperation.getInputKey().getAsChar());
-      }
-      return sb.toString();
-   }
-
    @Override
    public String prompt(String message)
    {
       PrintStream out = console.getShell().out();
       out.print(message);
-      List<CommandOperation> input = commandInvocation.getInput();
+      CommandOperation input = commandInvocation.getInput();
       out.println();
-      String output = toString(input);
+      String output = String.valueOf(input.getInputKey().getAsChar());
       return output;
    }
 
@@ -57,9 +46,9 @@ public class ShellUIPromptImpl implements UIPrompt
    {
       PrintStream out = console.getShell().out();
       out.print(message);
-      List<CommandOperation> input = commandInvocation.getInput();
+      CommandOperation input = commandInvocation.getInput();
       out.println();
-      String output = toString(input);
+      String output = String.valueOf(input.getInputKey().getAsChar());
       return output;
    }
 

@@ -1,11 +1,8 @@
 package org.jboss.forge.addon.shell;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -13,13 +10,11 @@ import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.aesh.ShellSingleCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.CommandFactory;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.event.PostStartup;
-import org.jboss.forge.furnace.event.PreShutdown;
-import org.jboss.forge.furnace.services.Imported;
 
 /**
  * Manages {@link ShellSingleCommand} objects
@@ -31,25 +26,13 @@ public class CommandManager
 {
    private final AddonRegistry addonRegistry;
 
-   private Imported<UICommand> allCommands;
    private ConverterFactory converterFactory;
-
-   private List<UICommand> commandCache;
+   private CommandFactory commandFactory;
 
    @Inject
    public CommandManager(final AddonRegistry addonRegistry)
    {
       this.addonRegistry = addonRegistry;
-   }
-
-   public void addonStarted(@Observes PostStartup event)
-   {
-      commandCache = null;
-   }
-
-   public void addonStopped(@Observes PreShutdown event)
-   {
-      commandCache = null;
    }
 
    public UICommand lookup(Class<? extends UICommand> type)
@@ -74,19 +57,11 @@ public class CommandManager
 
    public Iterable<UICommand> getAllCommands()
    {
-      if (allCommands == null)
+      if (commandFactory == null)
       {
-         allCommands = addonRegistry.getServices(UICommand.class);
+         commandFactory = addonRegistry.getServices(CommandFactory.class).get();
       }
-      if (commandCache == null)
-      {
-         commandCache = new LinkedList<>();
-         for (UICommand command : allCommands)
-         {
-            commandCache.add(command);
-         }
-      }
-      return allCommands;
+      return commandFactory.getCommands();
    }
 
    ConverterFactory getConverterFactory()

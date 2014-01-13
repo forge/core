@@ -6,8 +6,8 @@
  */
 package org.jboss.forge.addon.shell;
 
-import org.jboss.forge.addon.ui.AbstractCommandExecutionListener;
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.AbstractCommandExecutionListener;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.result.Result;
 import org.junit.Assert;

@@ -1,7 +1,7 @@
 package org.jboss.forge.addon.shell.ui;
 
 import org.jboss.forge.addon.shell.Shell;
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;

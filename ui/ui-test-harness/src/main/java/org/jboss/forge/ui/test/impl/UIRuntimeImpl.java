@@ -6,11 +6,11 @@
  */
 package org.jboss.forge.ui.test.impl;
 
-import org.jboss.forge.addon.ui.DefaultUIProgressMonitor;
-import org.jboss.forge.addon.ui.UIProgressMonitor;
+import org.jboss.forge.addon.ui.UIRuntime;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.UIPrompt;
-import org.jboss.forge.addon.ui.spi.UIRuntime;
+import org.jboss.forge.addon.ui.progress.DefaultUIProgressMonitor;
+import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

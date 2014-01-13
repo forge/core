@@ -7,8 +7,9 @@
 
 package org.jboss.forge.addon.ui.util;
 
-import org.jboss.forge.addon.ui.UIValidator;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.validate.CompositeUIValidator;
+import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.junit.Assert;
 import org.junit.Test;
 

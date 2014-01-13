@@ -7,10 +7,10 @@
 
 package org.jboss.forge.addon.ui.impl.context;
 
-import org.jboss.forge.addon.ui.UIProgressMonitor;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UIPrompt;
+import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 
 /**
  * Implementation of the {@link UIExecutionContext} interface

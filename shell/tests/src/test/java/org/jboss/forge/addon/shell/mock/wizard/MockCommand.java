@@ -9,8 +9,8 @@ package org.jboss.forge.addon.shell.mock.wizard;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.ui.AbstractUICommand;
-import org.jboss.forge.addon.ui.UICommand;
+import org.jboss.forge.addon.ui.command.AbstractUICommand;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;

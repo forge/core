@@ -11,10 +11,11 @@ import java.util.concurrent.Callable;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.MutableFaceted;
-import org.jboss.forge.addon.ui.UICommand;
 import org.jboss.forge.addon.ui.UIProvider;
-import org.jboss.forge.addon.ui.UIValidator;
+import org.jboss.forge.addon.ui.command.UICommand;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
+import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
@@ -23,7 +24,7 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<HintsFacet>, UIValidator
+public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<HintsFacet>
 {
    /**
     * Return the label for this {@link InputComponent}. This is typically used when displaying inputs in more graphical
@@ -84,7 +85,7 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
 
    /**
     * Return the current {@link UIValidator} with which this {@link InputComponent} should be validated.
-    */   
+    */
    Set<UIValidator> getValidators();
 
    /**
@@ -151,4 +152,11 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
     * Listens for changes in the value of this input
     */
    ListenerRegistration<ValueChangeListener> addValueChangeListener(ValueChangeListener listener);
+
+   /**
+    * Validate the current {@link UIInput}.
+    * 
+    * @param validator the {@link UIValidationContext} object that holds validation errors
+    */
+   void validate(UIValidationContext context);
 }
