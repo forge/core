@@ -114,12 +114,23 @@ goto error
 set FORGE_CMD_LINE_ARGS=
 set FORGE_PLUGIN_DIR=
 set FORGE_DEBUG_ARGS=
+
+set "args=%*"
+set "args=%args:,=:comma:%"
+set "args=%args:;=:semicolon:%"
+
+for %%x in (%args%) do (
+    set "arg=%%~x"
+    set "arg=!arg::comma:=,!"
+    set "arg=!arg::semicolon:=;!"
+    if "!arg!"=="--debug" set FORGE_DEBUG_ARGS=-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
+    set "FORGE_CMD_LINE_ARGS=!FORGE_CMD_LINE_ARGS! "!arg!""
+)
+
 :initArgs
+setlocal enableextensions enabledelayedexpansion
 if %1a==a goto endInit
-set FORGE_CMD_LINE_ARGS=%FORGE_CMD_LINE_ARGS% %1
-if "%FORGE_PLUGIN_DIR%"=="-pluginDir" set FORGE_PLUGIN_DIR=%1
-if "%1"=="-pluginDir" set FORGE_PLUGIN_DIR=%1
-if "%1"=="--debug" set FORGE_DEBUG_ARGS=-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
+
 shift
 goto initArgs
 @REM Reaching here means variables are defined and arguments have been captured
