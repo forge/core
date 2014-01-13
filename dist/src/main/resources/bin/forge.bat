@@ -112,7 +112,6 @@ goto error
 @REM Initializing the argument line and the plugin directory if any
 :init
 set FORGE_CMD_LINE_ARGS=
-set FORGE_PLUGIN_DIR=
 set FORGE_DEBUG_ARGS=
 
 set "args=%*"
