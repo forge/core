@@ -130,14 +130,13 @@ SET FORGE_JAVA_EXE="%JAVA_HOME%\bin\java.exe"
 @REM -- 4NT shell
 if "%@eval[2+2]" == "4" goto 4NTCWJars
 
-set JBOSS_MODULES="%FORGE_HOME%\jboss-modules.jar"
 goto runForge
 
 @REM Start Forge
 :runForge
 set FORGE_MAIN_CLASS=org.jboss.forge.bootstrap.Bootstrap
 %FORGE_JAVA_EXE% %FORGE_DEBUG_ARGS% %FORGE_OPTS% "-Dforge.standalone=true" "-Dforge.home=%FORGE_HOME%" ^
-   -cp "%FORGE_HOME%\lib\*" %FORGE_MAIN_CLASS% %FORGE_CMD_LINE_ARGS%
+   -cp ".;%FORGE_HOME%\lib\*" %FORGE_MAIN_CLASS% %FORGE_CMD_LINE_ARGS%
 if ERRORLEVEL 1 goto error
 goto end
 
