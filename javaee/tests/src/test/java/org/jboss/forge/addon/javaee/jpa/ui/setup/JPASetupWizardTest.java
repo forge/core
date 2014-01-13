@@ -175,7 +175,7 @@ public class JPASetupWizardTest
    public void testSetupMetadata() throws Exception
    {
       // Execute SUT
-      final Project project = projectFactory.createTempProject();
+      Project project = projectFactory.createTempProject();
       WizardCommandController tester = testHarness.createWizardController(JPASetupWizard.class,
                project.getProjectRoot());
 
@@ -204,6 +204,9 @@ public class JPASetupWizardTest
       // Ensure that the two pages were invoked
       Assert.assertEquals(2, counter.get());
 
+      // Reload to refresh facets.
+      project = projectFactory.findProject(project.getProjectRoot());
+      
       // Check SUT values
       PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
       List<PersistenceUnitCommon> allUnits = config.getAllPersistenceUnit();
