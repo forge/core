@@ -115,6 +115,8 @@ setlocal enableextensions enabledelayedexpansion
 set FORGE_CMD_LINE_ARGS=
 set FORGE_DEBUG_ARGS=
 
+if "%1"=="" goto initArgs
+
 set "args=%*"
 set "args=%args:,=:comma:%"
 set "args=%args:;=:semicolon:%"
