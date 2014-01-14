@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2014 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -7,6 +7,10 @@
 
 package org.jboss.forge.addon.shell.commands;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +20,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.resource.URLResource;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.util.PathspecParser;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -30,17 +35,16 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
- * Changes to the current directory
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class CdCommand extends AbstractShellCommand
+public class OpenCommand extends AbstractShellCommand
 {
    @Inject
    ResourceFactory resourceFactory;
 
    @Inject
-   @WithAttributes(label = "Arguments", type = InputType.DIRECTORY_PICKER)
+   @WithAttributes(label = "Arguments", type = InputType.FILE_PICKER)
    private UIInputMany<String> arguments;
 
    @Override
@@ -52,8 +56,8 @@ public class CdCommand extends AbstractShellCommand
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("cd")
-               .description("Change the current directory");
+      return Metadata.from(super.getMetadata(context), getClass()).name("open")
+               .description("Open files with the default system application");
    }
 
    @Override
@@ -73,22 +77,43 @@ public class CdCommand extends AbstractShellCommand
          }
          else
          {
-            FileResource<?> newFileResource = newResource.get(0).reify(FileResource.class);
-            if (newFileResource == null)
+            for (Resource<?> resource : newResource)
             {
-               result = Results.fail(newPath + ": Invalid path");
+               openResource(resource);
             }
-            else
-            {
-               context.getUIContext().setSelection(newFileResource);
-               result = Results.success();
-            }
+            result = Results.success();
          }
+      }
+      else if (currentResource != null)
+      {
+         openResource(currentResource);
+         result = Results.success();
       }
       else
       {
-         result = Results.success();
+         result = Results.fail("Resource not found");
       }
       return result;
    }
+
+   private void openResource(Resource<?> resource) throws IOException
+   {
+      Desktop dt = Desktop.getDesktop();
+      if (resource instanceof FileResource<?>)
+      {
+         dt.open((File) resource.getUnderlyingResourceObject());
+      }
+      else if (resource instanceof URLResource)
+      {
+         try
+         {
+            dt.browse(((URLResource) resource).getUnderlyingResourceObject().toURI());
+         }
+         catch (URISyntaxException e)
+         {
+            throw new RuntimeException("Bad URL syntax: " + e.getInput(), e);
+         }
+      }
+   }
+
 }
