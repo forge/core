@@ -20,10 +20,7 @@ import org.jboss.aesh.console.command.invocation.CommandInvocation;
 import org.jboss.aesh.console.helper.InterruptHook;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
-import org.jboss.aesh.terminal.CharacterType;
-import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
-import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -100,14 +97,12 @@ public class ShellImpl implements Shell, UIRuntime
    {
       // [ currentdir]$
       List<TerminalCharacter> prompt = new LinkedList<>();
-      prompt.add(new TerminalCharacter('[', new TerminalColor(Color.BLUE, Color.DEFAULT),
-               CharacterType.BOLD));
+      prompt.add(new TerminalCharacter('['));
       for (char c : currentResource.getName().toCharArray())
       {
          prompt.add(new TerminalCharacter(c));
       }
-      prompt.add(new TerminalCharacter(']', new TerminalColor(Color.BLUE, Color.DEFAULT),
-               CharacterType.BOLD));
+      prompt.add(new TerminalCharacter(']'));
       prompt.add(new TerminalCharacter('$'));
       prompt.add(new TerminalCharacter(' '));
       return new Prompt(prompt);
