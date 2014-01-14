@@ -12,6 +12,7 @@ import java.util.List;
 import javax.annotation.PreDestroy;
 import javax.enterprise.inject.Vetoed;
 
+import org.fusesource.jansi.Ansi;
 import org.jboss.aesh.console.AeshConsole;
 import org.jboss.aesh.console.AeshConsoleBuilder;
 import org.jboss.aesh.console.Console;
@@ -20,10 +21,6 @@ import org.jboss.aesh.console.command.invocation.CommandInvocation;
 import org.jboss.aesh.console.helper.InterruptHook;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
-import org.jboss.aesh.terminal.CharacterType;
-import org.jboss.aesh.terminal.Color;
-import org.jboss.aesh.terminal.TerminalCharacter;
-import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -99,18 +96,12 @@ public class ShellImpl implements Shell, UIRuntime
    private Prompt createPrompt()
    {
       // [ currentdir]$
-      List<TerminalCharacter> prompt = new LinkedList<>();
-      prompt.add(new TerminalCharacter('[', new TerminalColor(Color.BLUE, Color.DEFAULT),
-               CharacterType.BOLD));
-      for (char c : currentResource.getName().toCharArray())
-      {
-         prompt.add(new TerminalCharacter(c));
-      }
-      prompt.add(new TerminalCharacter(']', new TerminalColor(Color.BLUE, Color.DEFAULT),
-               CharacterType.BOLD));
-      prompt.add(new TerminalCharacter('$'));
-      prompt.add(new TerminalCharacter(' '));
-      return new Prompt(prompt);
+      StringBuilder sb = new StringBuilder();
+      Ansi.ansi(sb).fg(Ansi.Color.BLUE).bold().render("[").reset();
+      Ansi.ansi(sb).render(currentResource.getName()).reset();
+      Ansi.ansi(sb).fg(Ansi.Color.BLUE).bold().render("]").reset();
+      Ansi.ansi(sb).render("$ ").reset();
+      return new Prompt(sb.toString());
    }
 
    @PreDestroy
