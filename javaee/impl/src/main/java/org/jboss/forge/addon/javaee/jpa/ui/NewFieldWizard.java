@@ -52,7 +52,6 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.util.Types;
 
 public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
 {
@@ -71,10 +70,6 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    @Inject
    @WithAttributes(label = "Relationship", description = "The type of the relationship", type = InputType.RADIO)
    private UISelectOne<RelationshipType> relationshipType;
-
-   @Inject
-   @WithAttributes(label = "Use Primitive Version?", description = "For this field type, use the primitive version", defaultValue = "false")
-   private UIInput<Boolean> primitive;
 
    @Inject
    @WithAttributes(label = "Is LOB?", description = "If the relationship is a LOB, in this case, it will ignore the value in the Type field", defaultValue = "false")
@@ -126,14 +121,6 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          @Override
          public Boolean call() throws Exception
          {
-            return !primitive.getValue() && relationshipType.getValue() == RelationshipType.BASIC;
-         }
-      });
-      primitive.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
             return relationshipType.getValue() == RelationshipType.BASIC;
          }
       });
@@ -162,8 +149,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             return Date.class.getName().equals(typeValue) || Calendar.class.getName().equals(typeValue);
          }
       });
-      builder.add(entity).add(named).add(typeName).add(temporalType).add(length).add(relationshipType).add(lob)
-               .add(primitive);
+      builder.add(entity).add(named).add(typeName).add(temporalType).add(length).add(relationshipType).add(lob);
    }
 
    private void setupEntities(UIContext context)
@@ -232,13 +218,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
       RelationshipType value = relationshipType.getValue();
       if (value == RelationshipType.BASIC)
       {
-         if (primitive.getValue())
-         {
-            String fieldType = getPrimitiveTypeFor(typeName.getValue());
-            field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
-                     Column.class.getCanonicalName());
-         }
-         else if (lob.getValue())
+         if (lob.getValue())
          {
             String fieldType = byte[].class.getName();
             field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr, Lob.class.getName());
@@ -294,14 +274,6 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
       {
          validator.addValidationError(entity, "Entity could not be found");
       }
-      if (primitive.getValue())
-      {
-         String primitiveType = getPrimitiveTypeFor(typeName.getValue());
-         if (primitiveType == null)
-         {
-            validator.addValidationError(typeName, "Type is not a wrapper of a primitive type");
-         }
-      }
 
       if (length.isEnabled())
       {
@@ -310,22 +282,6 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             validator.addValidationError(length, "Length should be a positive integer");
          }
       }
-   }
-
-   private String getPrimitiveTypeFor(String value)
-   {
-      if (value == null)
-         return null;
-      String val = value.toLowerCase().replaceAll("java.lang.", "");
-      if (val.equals("integer"))
-      {
-         val = "int";
-      }
-      else if (val.equals("character"))
-      {
-         val = "char";
-      }
-      return (Types.isPrimitive(val)) ? val : null;
    }
 
    @Override
