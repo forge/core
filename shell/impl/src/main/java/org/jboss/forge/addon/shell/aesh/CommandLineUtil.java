@@ -163,7 +163,7 @@ public class CommandLineUtil
          InputComponent<?, ?> input = entry.getValue();
          if (ARGUMENTS_INPUT_NAME.equals(name))
          {
-            InputComponents.setValueFor(converterFactory, input, commandLine.getArgument().getValue());
+            InputComponents.setValueFor(converterFactory, input, commandLine.getArgument().getValues());
             populatedInputs.put(name, input);
          }
          if (commandLine.hasOption(name))
