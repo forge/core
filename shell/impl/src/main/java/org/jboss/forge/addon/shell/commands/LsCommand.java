@@ -36,7 +36,7 @@ public class LsCommand extends AbstractShellCommand
 {
 
    @Inject
-   ResourceFactory resourceFactory;
+   private ResourceFactory resourceFactory;
 
    @Inject
    @WithAttributes(label = "Arguments", type = InputType.FILE_PICKER)

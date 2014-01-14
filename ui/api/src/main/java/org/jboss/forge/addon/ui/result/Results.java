@@ -26,6 +26,11 @@ public final class Results
       return new SuccessfulResult(message);
    }
 
+   public static final Result fail()
+   {
+      return fail(null);
+   }
+
    public static final Result fail(String message)
    {
       return new FailedResult(message);
