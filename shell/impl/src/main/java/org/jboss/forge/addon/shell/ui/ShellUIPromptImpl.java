@@ -10,7 +10,6 @@ package org.jboss.forge.addon.shell.ui;
 import java.io.PrintStream;
 
 import org.jboss.aesh.console.AeshConsole;
-import org.jboss.aesh.console.command.CommandOperation;
 import org.jboss.aesh.console.command.invocation.CommandInvocation;
 import org.jboss.forge.addon.ui.input.UIPrompt;
 
@@ -35,9 +34,16 @@ public class ShellUIPromptImpl implements UIPrompt
    {
       PrintStream out = console.getShell().out();
       out.print(message);
-      CommandOperation input = commandInvocation.getInput();
+      String output;
+      try
+      {
+         output = String.valueOf(commandInvocation.getInput().getInputKey().getAsChar());
+      }
+      catch (InterruptedException e)
+      {
+         output = null;
+      }
       out.println();
-      String output = String.valueOf(input.getInputKey().getAsChar());
       return output;
    }
 
@@ -46,9 +52,16 @@ public class ShellUIPromptImpl implements UIPrompt
    {
       PrintStream out = console.getShell().out();
       out.print(message);
-      CommandOperation input = commandInvocation.getInput();
+      String output;
+      try
+      {
+         output = String.valueOf(commandInvocation.getInput().getInputKey().getAsChar());
+      }
+      catch (InterruptedException e)
+      {
+         output = null;
+      }
       out.println();
-      String output = String.valueOf(input.getInputKey().getAsChar());
       return output;
    }
 
