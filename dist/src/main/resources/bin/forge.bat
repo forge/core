@@ -111,6 +111,7 @@ goto error
 
 @REM Initializing the argument line and the plugin directory if any
 :init
+setlocal enableextensions enabledelayedexpansion
 set FORGE_CMD_LINE_ARGS=
 set FORGE_DEBUG_ARGS=
 
