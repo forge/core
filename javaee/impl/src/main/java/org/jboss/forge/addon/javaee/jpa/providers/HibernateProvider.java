@@ -53,6 +53,7 @@ public class HibernateProvider implements PersistenceProvider
       DIALECTS.put(DatabaseType.INFORMIX, "org.hibernate.dialect.InformixDialect");
       DIALECTS.put(DatabaseType.HSQLDB, "org.hibernate.dialect.HSQLDialect");
       DIALECTS.put(DatabaseType.HSQLDB_IN_MEMORY, "org.hibernate.dialect.HSQLDialect");
+      DIALECTS.put(DatabaseType.H2, "org.hibernate.dialect.H2Dialect");
       DIALECTS.put(DatabaseType.INGRES, "org.hibernate.dialect.IngresDialect");
       DIALECTS.put(DatabaseType.PROGRESS, "org.hibernate.dialect.ProgressDialect");
       DIALECTS.put(DatabaseType.MCKOI, "org.hibernate.dialect.MckoiDialect");

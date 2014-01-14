@@ -34,6 +34,7 @@ public enum DatabaseType
    SAP_DB,
    INFORMIX,
    HSQLDB,
+   H2,
    INGRES,
    PROGRESS,
    MCKOI,

@@ -52,6 +52,7 @@ public class OpenJPAProvider implements PersistenceProvider
       DICTIONARY.put(DatabaseType.INFORMIX, "informix");
       DICTIONARY.put(DatabaseType.HSQLDB, "hsql");
       DICTIONARY.put(DatabaseType.HSQLDB_IN_MEMORY, "hsql");
+      DICTIONARY.put(DatabaseType.H2, "");
       DICTIONARY.put(DatabaseType.INGRES, null);
       DICTIONARY.put(DatabaseType.PROGRESS, null);
       DICTIONARY.put(DatabaseType.MCKOI, null);

@@ -63,6 +63,7 @@ public class EclipseLinkProvider implements PersistenceProvider
       PLATFORMS.put(DatabaseType.INFORMIX, "org.eclipse.persistence.platform.database.InformixPlatform");
       PLATFORMS.put(DatabaseType.HSQLDB, "org.eclipse.persistence.platform.database.HSQLPlatform");
       PLATFORMS.put(DatabaseType.HSQLDB_IN_MEMORY, "org.eclipse.persistence.platform.database.HSQLPlatform");
+      PLATFORMS.put(DatabaseType.H2, "org.eclipse.persistence.platform.database.H2Platform");
       PLATFORMS.put(DatabaseType.INGRES, null);
       PLATFORMS.put(DatabaseType.PROGRESS, null);
       PLATFORMS.put(DatabaseType.MCKOI, null);
