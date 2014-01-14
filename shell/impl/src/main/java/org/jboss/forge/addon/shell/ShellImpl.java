@@ -96,12 +96,16 @@ public class ShellImpl implements Shell, UIRuntime
    private Prompt createPrompt()
    {
       // [ currentdir]$
-      StringBuilder sb = new StringBuilder();
-      Ansi.ansi(sb).fg(Ansi.Color.BLUE).bold().render("[").reset();
-      Ansi.ansi(sb).render(currentResource.getName()).reset();
-      Ansi.ansi(sb).fg(Ansi.Color.BLUE).bold().render("]").reset();
-      Ansi.ansi(sb).render("$ ").reset();
-      return new Prompt(sb.toString());
+      StringBuilder plain = new StringBuilder();
+      plain.append("[").append(currentResource.getName()).append("]$ ");
+      
+      StringBuilder ansi = new StringBuilder();
+      Ansi.ansi(ansi).fg(Ansi.Color.BLUE).bold().render("[").reset();
+      Ansi.ansi(ansi).render(currentResource.getName()).reset();
+      Ansi.ansi(ansi).fg(Ansi.Color.BLUE).bold().render("]").reset();
+      Ansi.ansi(ansi).render("$ ").reset();
+
+      return new Prompt(plain.toString(), ansi.toString());
    }
 
    @PreDestroy
