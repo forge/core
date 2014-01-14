@@ -38,14 +38,14 @@ import org.jboss.forge.furnace.versions.Versions;
  * You can deploy addons by calling {@link Bootstrap#install(String)}
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class Bootstrap
 {
 
    private final Furnace furnace;
    private boolean exitAfter = false;
-   private boolean confirmAction = true;
+   private boolean batchMode = false;
 
    public static void main(final String[] args)
    {
@@ -124,6 +124,7 @@ public class Bootstrap
             }
             else if ("--batchMode".equals(args[i]) || "-b".equals(args[i]))
             {
+               batchMode = true;
                furnace.setServerMode(false);
             }
             else if ("--debug".equals(args[i]) || "-d".equals(args[i]))
@@ -134,10 +135,6 @@ public class Bootstrap
             {
                System.out.println("Forge version " + AddonRepositoryImpl.getRuntimeAPIVersion());
                exitAfter = true;
-            }
-            else if ("-y".equals(args[i]))
-            {
-               confirmAction = false;
             }
             else
                System.out.println("Unknown option: " + args[i]);
@@ -179,10 +176,36 @@ public class Bootstrap
       }
    }
 
+   private List<AddonId> getEnabledAddonIds()
+   {
+      List<AddonId> result = new ArrayList<>();
+      for (AddonRepository repository : furnace.getRepositories())
+      {
+         List<AddonId> addons = repository.listEnabled();
+         result.addAll(addons);
+      }
+      return result;
+   }
+
    private void start()
    {
       if (!exitAfter)
+      {
+         if (!batchMode)
+         {
+            List<AddonId> addonIds = getEnabledAddonIds();
+            if (addonIds.isEmpty())
+            {
+               String result = System.console().readLine(
+                        "There are no addons installed; install core addons now? [Y,n] ");
+               if (!"n".equalsIgnoreCase(result.trim()))
+               {
+                  install("core");
+               }
+            }
+         }
          furnace.start();
+      }
    }
 
    private void install(String addonCoordinates)
@@ -230,12 +253,12 @@ public class Bootstrap
 
          AddonActionRequest request = addonManager.install(addon);
          System.out.println(request);
-         if (confirmAction)
+         if (!batchMode)
          {
-            String result = System.console().readLine("Continue and finish installation [y/N]? ");
-            if (!"Y".equalsIgnoreCase(result.trim()))
+            String result = System.console().readLine("Confirm installation [Y/n]? ");
+            if ("n".equalsIgnoreCase(result.trim()))
             {
-               System.out.println("Aborting installation...");
+               System.out.println("Installation aborted.");
                return;
             }
          }
