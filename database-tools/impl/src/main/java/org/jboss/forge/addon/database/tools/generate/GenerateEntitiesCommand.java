@@ -36,11 +36,17 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
 	private ProjectFactory projectFactory;
 
 	@Inject
-	@WithAttributes(label = "Target package", type = InputType.JAVA_PACKAGE_PICKER, description = "The name of the target package in which to generate the entities", required = true)
+	@WithAttributes(
+			label = "Target package", 
+			type = InputType.JAVA_PACKAGE_PICKER, 
+			description = "The name of the target package in which to generate the entities", 
+			required = true)
 	private UIInput<String> targetPackage;
 
 	@Inject
-	@WithAttributes(label = "Connection Profile", description = "Select the database connection profile you want to use")
+	@WithAttributes(
+			label = "Connection Profile", 
+			description = "Select the database connection profile you want to use")
 	private UISelectOne<String> connectionProfile;
 
 	@Override
