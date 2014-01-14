@@ -91,19 +91,25 @@ public class ConnectionProfileDetailsStep extends ConnectionProfileDetailsPage i
    public void validate(UIValidationContext context)
    {
       super.validate(context);
-      descriptor.urls = helper.getDriverUrls(driverLocation.getValue());
+      if (driverLocation.getValue() != null) {
+    	  descriptor.urls = helper.getDriverUrls(driverLocation.getValue());
+      }
       descriptor.driverClass = driverClass.getValue();
       descriptor.connectionProperties = createConnectionProperties();
    }
    
    private Properties createConnectionProperties() {
       Properties result = new Properties();
-      result.setProperty("hibernate.connection.driver_class", driverClass.getValue());
-      result.setProperty("hibernate.connection.username", userName.getValue());
-      result.setProperty("hibernate.dialect", hibernateDialect.getValue().getClassName());
+      result.setProperty("hibernate.connection.driver_class", 
+    		  driverClass.getValue() == null ? "" : driverClass.getValue());
+      result.setProperty("hibernate.connection.username", 
+    		  userName.getValue() == null ? "" : userName.getValue());
+      result.setProperty("hibernate.dialect", 
+    		  hibernateDialect.getValue() == null ? "" : hibernateDialect.getValue().getClassName());
       result.setProperty("hibernate.connection.password",
-               userPassword.getValue() == null ? "" : userPassword.getValue());
-      result.setProperty("hibernate.connection.url", jdbcUrl.getValue());
+              userPassword.getValue() == null ? "" : userPassword.getValue());
+      result.setProperty("hibernate.connection.url", 
+    		  jdbcUrl.getValue() == null ? "" : jdbcUrl.getValue());
       return result;
    }
    
