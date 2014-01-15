@@ -22,8 +22,10 @@ import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
+import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -82,6 +84,8 @@ public class RmCommand extends AbstractShellCommand
 
       boolean forceOption = force.getValue();
       boolean recurse = recursive.getValue();
+      UIPrompt prompt = context.getPrompt();
+      UIOutput output = context.getUIContext().getProvider().getOutput();
       for (String file : arguments.getValue())
       {
          List<Resource<?>> resources = new PathspecParser(resourceFactory, currentResource, file).resolve();
@@ -89,20 +93,36 @@ public class RmCommand extends AbstractShellCommand
          {
             if ((resource instanceof DirectoryResource))
             {
-               if (resource.listResources().isEmpty())
-                  forceOption = true;
-               else if (!forceOption)
-                  return Results.fail("rm: directory not empty and cannot be removed without '--force' '-f' option.");
+               if (!recurse)
+               {
+                  output.err().println(
+                           "rm: cannot remove '" + resource.getName()
+                                    + "': Is a directory ");
+               }
+               else if (!resource.listResources().isEmpty() && !forceOption)
+               {
+                  output.err().println(
+                           "rm: directory '" + resource.getName()
+                                    + "' not empty and cannot be deleted without '--force' '-f' option.");
+               }
+               else if (forceOption || prompt.promptBoolean("Delete '" + resource.getFullyQualifiedName() + "'?"))
+               {
+                  if (!resource.delete(recurse))
+                  {
+                     output.err().println("rm: cannot remove ‘" + resource.getFullyQualifiedName()
+                              + "’: Error occurred during deletion");
+                  }
+               }
             }
-
-            if (forceOption)
+            else
             {
                if (!resource.delete(recurse))
                {
-                  return Results.fail("rm: cannot remove ‘" + resource.getFullyQualifiedName()
+                  output.err().println("rm: cannot remove ‘" + resource.getFullyQualifiedName()
                            + "’: Error occurred during deletion");
                }
             }
+
          }
       }
       while (!currentResource.exists())
