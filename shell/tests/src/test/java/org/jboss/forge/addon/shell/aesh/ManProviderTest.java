@@ -24,6 +24,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -63,21 +64,19 @@ public class ManProviderTest
    {
       MockCommandExecutionListener listener = new MockCommandExecutionListener();
       test.getShell().addCommandExecutionListener(listener);
-      Result result = test.execute("man exit", timeoutQuantity, TimeUnit.SECONDS);
+      Result result = test.execute("man exit"+OperatingSystemUtils.getLineSeparator()+"q", timeoutQuantity, TimeUnit.SECONDS);
       Assert.assertFalse(result instanceof Failed);
       String out = test.getStdOut();
       Assert.assertThat(out, containsString("exit the shell"));
       Assert.assertTrue(listener.isPreExecuted());
       Assert.assertTrue(listener.isPostExecuted());
-      test.write("q");
-      test.getStdIn().flush();
       test.clearScreen();
    }
 
    @Test(timeout = 10000)
    public void testManPageForUndocumentedForgeCommand() throws Exception
    {
-      Result result = test.execute("man foocommand", timeoutQuantity, TimeUnit.SECONDS);
+      Result result = test.execute("man foocommand"+OperatingSystemUtils.getLineSeparator()+"q", timeoutQuantity, TimeUnit.SECONDS);
       Assert.assertFalse(result instanceof Failed);
       String out = test.getStdOut();
       Assert.assertThat(out, containsString("foocommand -- Uncategorized"));
@@ -86,8 +85,6 @@ public class ManProviderTest
       Assert.assertThat(out, containsString("help"));
       Assert.assertThat(out, containsString("target location"));
       Assert.assertThat(out, containsString("[FileResource]"));
-      test.write("q");
-      test.getStdIn().flush();
       test.clearScreen();
    }
 }
