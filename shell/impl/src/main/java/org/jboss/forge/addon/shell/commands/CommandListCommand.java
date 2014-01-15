@@ -84,7 +84,7 @@ public class CommandListCommand extends AbstractShellCommand
          UICommandMetadata metadata = controller.getMetadata();
          display.add(metadata.getCategory()
                   + " > "
-                  + new TerminalString(name, new TerminalColor(controller.isEnabled() ? Color.BLUE : Color.RED,
+                  + new TerminalString(name, new TerminalColor(controller.isEnabled() ? Color.CYAN : Color.RED,
                            Color.DEFAULT)).toString() + " - " + metadata.getDescription());
       }
 
