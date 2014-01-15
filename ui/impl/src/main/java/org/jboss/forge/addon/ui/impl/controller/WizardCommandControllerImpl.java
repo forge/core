@@ -32,6 +32,7 @@ import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
+import org.jboss.forge.addon.ui.result.CompositeResult;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
@@ -87,8 +88,6 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public Result execute() throws Exception
    {
-      Result result = null;
-
       assertInitialized();
       UIProgressMonitor progressMonitor = runtime.createProgressMonitor(context);
       UIPrompt prompt = runtime.createPrompt(context);
@@ -101,6 +100,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
          listeners.add(listener);
       }
       assertValid();
+      List<Result> results = new LinkedList<>();
       for (WizardStepEntry entry : flow)
       {
          CommandController controller = entry.controller;
@@ -116,11 +116,12 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
                listener.preCommandExecuted(command, executionContext);
             }
 
-            result = command.execute(executionContext);
+            Result currentResult = command.execute(executionContext);
             for (CommandExecutionListener listener : listeners)
             {
-               listener.postCommandExecuted(command, executionContext, result);
+               listener.postCommandExecuted(command, executionContext, currentResult);
             }
+            results.add(currentResult);
          }
          catch (Exception e)
          {
@@ -132,7 +133,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
             throw e;
          }
       }
-      return result;
+      return new CompositeResult(results);
    }
 
    @Override
