@@ -57,15 +57,15 @@ public class ManProviderTest
    @Inject
    private ShellTest test;
 
-   @Test(timeout = 10000000)
+   @Test(timeout = 10000)
    public void testManOutput() throws Exception
    {
       MockCommandExecutionListener listener = new MockCommandExecutionListener();
       test.getShell().addCommandExecutionListener(listener);
       test.execute("man exit");
-      test.write("q");
-      test.waitForStdOutValue("exit the shell", timeoutQuantity, TimeUnit.SECONDS);
-      Assert.assertThat(test.getStdOut(), containsString("exit the shell"));
+      test.execute("q");
+      test.waitForStdOutValue("Exit the shell", timeoutQuantity, TimeUnit.SECONDS);
+      Assert.assertThat(test.getStdOut(), containsString("Exit the shell"));
       Assert.assertTrue(listener.isPreExecuted());
       Assert.assertTrue(listener.isPostExecuted());
       Assert.assertFalse(listener.getResult() instanceof Failed);
