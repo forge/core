@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -34,6 +35,8 @@ import org.jboss.forge.addon.ui.command.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.furnace.container.cdi.events.Local;
+import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
@@ -75,6 +78,15 @@ public class DefaultShellTest implements ShellTest
    public void init()
    {
       getShell();
+   }
+
+   public void teardown(@Observes @Local PreShutdown event) throws Exception
+   {
+      if (shell != null)
+      {
+         shell.close();
+         shell = null;
+      }
    }
 
    @Override
