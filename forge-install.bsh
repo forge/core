@@ -17,7 +17,7 @@ then
 		rm -rf forge
 	fi
 
-	unzip forge.zip
+	jar xf forge.zip
 	rm forge.zip
 	#there is only one... versioned "folder" name so rename it to forge
 	mv forge* forge
