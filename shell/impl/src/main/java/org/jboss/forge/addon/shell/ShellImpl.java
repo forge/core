@@ -12,7 +12,6 @@ import java.util.List;
 import javax.annotation.PreDestroy;
 import javax.enterprise.inject.Vetoed;
 
-import org.fusesource.jansi.Ansi;
 import org.jboss.aesh.console.AeshConsole;
 import org.jboss.aesh.console.AeshConsoleBuilder;
 import org.jboss.aesh.console.Console;
@@ -103,16 +102,16 @@ public class ShellImpl implements Shell, UIRuntime
       // [ currentdir]$
       if (OperatingSystemUtils.isWindows())
       {
-         StringBuilder plain = new StringBuilder();
-         plain.append("[").append(currentResource.getName()).append("]$ ");
-
-         StringBuilder ansi = new StringBuilder();
-         Ansi.ansi(ansi).fg(Ansi.Color.BLUE).bold().render("[").reset();
-         Ansi.ansi(ansi).render(currentResource.getName()).reset();
-         Ansi.ansi(ansi).fg(Ansi.Color.BLUE).bold().render("]").reset();
-         Ansi.ansi(ansi).render("$ ").reset();
-
-         return new Prompt(plain.toString(), ansi.toString());
+         List<TerminalCharacter> prompt = new LinkedList<>();
+         prompt.add(new TerminalCharacter('['));
+         for (char c : currentResource.getName().toCharArray())
+         {
+            prompt.add(new TerminalCharacter(c));
+         }
+         prompt.add(new TerminalCharacter(']'));
+         prompt.add(new TerminalCharacter('$'));
+         prompt.add(new TerminalCharacter(' '));
+         return new Prompt(prompt);
       }
       else
       {
