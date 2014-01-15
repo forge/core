@@ -180,7 +180,7 @@ public class JPASetupWizard extends AbstractJavaEECommand implements UIWizard
       applyUIValues(context.getUIContext());
       if (facetFactory.install(getSelectedProject(context), jpaVersion.getValue()))
       {
-         return Results.success("JPA has been installed.");
+         return Results.success();
       }
       return Results.fail("Could not install JPA.");
    }
