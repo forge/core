@@ -35,7 +35,7 @@ public class JavaProjectType implements ProjectType
    @Override
    public Class<? extends UIWizardStep> getSetupFlow()
    {
-      return null;
+      return JavaProjectTypeStep.class;
    }
 
    @Override
