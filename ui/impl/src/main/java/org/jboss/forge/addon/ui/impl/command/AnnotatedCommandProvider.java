@@ -11,6 +11,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -44,13 +46,22 @@ public class AnnotatedCommandProvider implements CommandProvider
    @Inject
    private AnnotatedCommandExtension extension;
 
+   private Logger logger = Logger.getLogger(getClass().getName());
+
    @Override
    public Iterable<UICommand> getCommands()
    {
       Set<UICommand> result = new HashSet<>();
       for (Method method : extension.getAnnotatedCommandMethods())
       {
-         result.add(createAnnotatedCommand(method));
+         try
+         {
+            result.add(createAnnotatedCommand(method));
+         }
+         catch (Exception e)
+         {
+            logger.log(Level.SEVERE, "Error while creating command for method " + method.getName(), e);
+         }
       }
       return result;
    }
