@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jboss.forge.addon.ui.annotation.Command;
+import org.jboss.forge.addon.ui.annotation.handler.EnableCommandHandler;
 import org.jboss.forge.addon.ui.command.CommandProvider;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.impl.annotation.AnnotationCommandAdapter;
@@ -57,7 +58,9 @@ public class AnnotatedCommandProvider implements CommandProvider
    private UICommand createAnnotatedCommand(Method method)
    {
       Object instance = registry.getServices(method.getDeclaringClass()).get();
-      return new AnnotationCommandAdapter(method, instance, factory);
+      Command ann = method.getAnnotation(Command.class);
+      EnableCommandHandler handler = registry.getServices(ann.enabledHandler()).get();
+      return new AnnotationCommandAdapter(method, instance, factory, handler);
    }
 
    public void addonInitialized(@Observes PreShutdown shutdown)

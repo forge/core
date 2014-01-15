@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.jboss.forge.addon.ui.annotation.Command;
 import org.jboss.forge.addon.ui.annotation.Option;
+import org.jboss.forge.addon.ui.annotation.handler.EnableCommandHandler;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -41,26 +42,33 @@ public class AnnotationCommandAdapter implements UICommand
    private final InputComponentProducer factory;
    private final Method method;
    private final Object instance;
+   private final EnableCommandHandler enabledHandler;
 
-   public AnnotationCommandAdapter(Method method, Object instance, InputComponentProducer factory)
+   public AnnotationCommandAdapter(Method method, Object instance, InputComponentProducer factory,
+            EnableCommandHandler handler)
    {
-      super();
       this.method = method;
       this.instance = instance;
       this.factory = factory;
+      this.enabledHandler = handler;
    }
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
       Command ann = method.getAnnotation(Command.class);
-      return Metadata.forCommand(method.getDeclaringClass()).name(ann.value());
+      String name = ann.value();
+      if (name.isEmpty())
+      {
+         name = method.getName();
+      }
+      return Metadata.forCommand(method.getDeclaringClass()).name(name).description(ann.help());
    }
 
    @Override
    public boolean isEnabled(UIContext context)
    {
-      return true;
+      return enabledHandler.isEnabled(context);
    }
 
    @Override

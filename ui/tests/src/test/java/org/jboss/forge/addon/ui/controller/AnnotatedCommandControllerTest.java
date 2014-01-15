@@ -38,6 +38,7 @@ public class AnnotatedCommandControllerTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
+               .addClass(EnabledHandlerCommand.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
@@ -69,4 +70,24 @@ public class AnnotatedCommandControllerTest
       }
    }
 
+   @Test
+   public void testEnabledHandler() throws Exception
+   {
+      try (CommandController controller = testHarness.createCommandController("enabled"))
+      {
+         Assert.assertTrue(controller.isEnabled());
+      }
+      try (CommandController controller = testHarness.createCommandController("disabled"))
+      {
+         Assert.assertFalse(controller.isEnabled());
+      }
+      try (CommandController controller = testHarness.createCommandController("gui"))
+      {
+         Assert.assertTrue(controller.isEnabled());
+      }
+      try (CommandController controller = testHarness.createCommandController("nongui"))
+      {
+         Assert.assertFalse(controller.isEnabled());
+      }
+   }
 }

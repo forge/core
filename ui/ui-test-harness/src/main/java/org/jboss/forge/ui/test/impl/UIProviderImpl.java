@@ -16,7 +16,7 @@ import org.jboss.forge.addon.ui.output.UIOutput;
  */
 public class UIProviderImpl implements UIProvider
 {
-   private final boolean graphical;
+   private boolean graphical;
    private final UIOutput output;
 
    public UIProviderImpl(boolean graphical)
@@ -29,6 +29,11 @@ public class UIProviderImpl implements UIProvider
    public boolean isGUI()
    {
       return graphical;
+   }
+
+   public void setGUI(boolean graphical)
+   {
+      this.graphical = graphical;
    }
 
    @Override

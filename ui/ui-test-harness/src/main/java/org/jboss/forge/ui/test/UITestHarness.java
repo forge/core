@@ -44,6 +44,8 @@ public class UITestHarness
    @Inject
    private CommandControllerFactory factory;
 
+   private UIProviderImpl providerImpl;
+
    public CommandController createCommandController(String name) throws Exception
    {
       return createCommandController(name, (Resource<?>) null);
@@ -100,11 +102,20 @@ public class UITestHarness
       return new UIRuntimeImpl();
    }
 
+   public UIProviderImpl getProvider()
+   {
+      if (providerImpl == null)
+      {
+         providerImpl = new UIProviderImpl(true);
+      }
+      return providerImpl;
+   }
+
    private UIContextImpl getUIContextInstance(Resource<?>... initialSelection)
    {
       Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
       UISelection<Resource<?>> selection = Selections.from(initialSelection);
-      UIContextImpl context = new UIContextImpl(new UIProviderImpl(true), listeners, selection);
+      UIContextImpl context = new UIContextImpl(getProvider(), listeners, selection);
       return context;
    }
 }
