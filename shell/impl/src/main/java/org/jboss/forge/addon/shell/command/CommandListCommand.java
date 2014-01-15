@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.shell.commands;
+package org.jboss.forge.addon.shell.command;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

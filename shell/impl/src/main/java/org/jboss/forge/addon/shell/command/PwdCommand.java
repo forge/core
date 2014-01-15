@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.shell.commands;
+package org.jboss.forge.addon.shell.command;
 
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.Shell;

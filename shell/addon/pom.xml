@@ -39,6 +39,12 @@
          <artifactId>resources</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>projects</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+      
       <!-- Furnace Container -->
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>

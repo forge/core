@@ -34,6 +34,11 @@
          <artifactId>shell-test-harness</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>maven</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
 
       <dependency>
          <groupId>org.jboss.forge.furnace.test</groupId>

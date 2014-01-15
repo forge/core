@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.shell.commands.transaction;
+package org.jboss.forge.addon.shell.command.transaction;
 
 import javax.inject.Inject;
 
@@ -25,7 +25,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class CommitTransactionCommand extends AbstractShellCommand
+public class RollbackTransactionCommand extends AbstractShellCommand
 {
    @Inject
    ResourceFactory resourceFactory;
@@ -33,8 +33,8 @@ public class CommitTransactionCommand extends AbstractShellCommand
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("transaction-commit")
-               .description("Commits a transaction");
+      return Metadata.from(super.getMetadata(context), getClass()).name("transaction-rollback")
+               .description("Rollbacks a transaction");
    }
 
    @Override
@@ -57,7 +57,7 @@ public class CommitTransactionCommand extends AbstractShellCommand
       {
          return Results.fail("Resource Transaction is not started");
       }
-      transaction.commit();
+      transaction.rollback();
       return Results.success();
    }
 

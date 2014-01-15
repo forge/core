@@ -1,26 +1,23 @@
 /**
- * Copyright 2014 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.shell.commands;
+package org.jboss.forge.addon.shell.command;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.URLResource;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.util.PathspecParser;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -35,16 +32,17 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
+ * Changes to the current directory
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class OpenCommand extends AbstractShellCommand
+public class CdCommand extends AbstractShellCommand
 {
    @Inject
    ResourceFactory resourceFactory;
 
    @Inject
-   @WithAttributes(label = "Arguments", type = InputType.FILE_PICKER)
+   @WithAttributes(label = "Arguments", type = InputType.DIRECTORY_PICKER)
    private UIInputMany<String> arguments;
 
    @Override
@@ -56,64 +54,53 @@ public class OpenCommand extends AbstractShellCommand
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("open")
-               .description("Open files with the default system application");
+      return Metadata.from(super.getMetadata(context), getClass()).name("cd")
+               .description("Change the current directory");
    }
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      Resource<?> currentResource = (Resource<?>) context.getUIContext().getInitialSelection().get();
+      UIContext uiContext = context.getUIContext();
+      Resource<?> currentResource = (Resource<?>) uiContext.getInitialSelection().get();
       Iterable<String> value = arguments.getValue();
       Iterator<String> it = value == null ? Collections.<String> emptyIterator() : value.iterator();
+      Project project = getSelectedProject(uiContext);
       final Result result;
       if (it.hasNext())
       {
          String newPath = it.next();
-         final List<Resource<?>> newResource = new PathspecParser(resourceFactory, currentResource, newPath).resolve();
+         final List<Resource<?>> newResource;
+         if ("~".equals(newPath) && project != null)
+         {
+            newResource = Arrays.<Resource<?>> asList(project.getProjectRoot());
+         }
+         else
+         {
+            newResource = new PathspecParser(resourceFactory, currentResource, newPath).resolve();
+         }
          if (newResource.isEmpty() || !newResource.get(0).exists())
          {
             result = Results.fail(newPath + ": No such file or directory");
          }
          else
          {
-            for (Resource<?> resource : newResource)
+            FileResource<?> newFileResource = newResource.get(0).reify(FileResource.class);
+            if (newFileResource == null)
             {
-               openResource(resource);
+               result = Results.fail(newPath + ": Invalid path");
             }
-            result = Results.success();
+            else
+            {
+               uiContext.setSelection(newFileResource);
+               result = Results.success();
+            }
          }
-      }
-      else if (currentResource != null)
-      {
-         openResource(currentResource);
-         result = Results.success();
       }
       else
       {
-         result = Results.fail("Resource not found");
+         result = Results.success();
       }
       return result;
    }
-
-   private void openResource(Resource<?> resource) throws IOException
-   {
-      Desktop dt = Desktop.getDesktop();
-      if (resource instanceof FileResource<?>)
-      {
-         dt.open((File) resource.getUnderlyingResourceObject());
-      }
-      else if (resource instanceof URLResource)
-      {
-         try
-         {
-            dt.browse(((URLResource) resource).getUnderlyingResourceObject().toURI());
-         }
-         catch (URISyntaxException e)
-         {
-            throw new RuntimeException("Bad URL syntax: " + e.getInput(), e);
-         }
-      }
-   }
-
 }

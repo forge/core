@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.shell.commands;
+package org.jboss.forge.addon.shell.command;
 
 import java.util.ArrayList;
 import java.util.Collections;

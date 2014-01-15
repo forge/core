@@ -1,10 +1,6 @@
-/*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
- *
- * Licensed under the Eclipse Public License version 1.0, available at
- * http://www.eclipse.org/legal/epl-v10.html
- */
-package org.jboss.forge.addon.shell.commands;
+package org.jboss.forge.addon.shell.command;
+
+import javax.inject.Inject;
 
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
@@ -15,21 +11,25 @@ import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.Furnace;
 
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
-public class ClearCommand extends AbstractShellCommand
+public class ExitCommand extends AbstractShellCommand
 {
+
+   @Inject
+   private Furnace forge;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("clear").description("Clear the console");
+      return Metadata.from(super.getMetadata(context), getClass()).name("exit").description("Exit the shell");
    }
 
    @Override
-   public void initializeUI(UIBuilder builder) throws Exception
+   public void initializeUI(UIBuilder context) throws Exception
    {
    }
 
@@ -37,8 +37,8 @@ public class ClearCommand extends AbstractShellCommand
    public Result execute(UIExecutionContext context) throws Exception
    {
       Shell shell = (Shell) context.getUIContext().getProvider();
-      shell.getConsole().clear();
+      shell.getConsole().stop();
+      forge.stop();
       return Results.success();
    }
-
 }

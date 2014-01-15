@@ -5,60 +5,64 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.shell.commands.transaction;
+package org.jboss.forge.addon.shell.command.transaction;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
-import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
+ * Starts a {@link ResourceTransaction}
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class RollbackTransactionCommand extends AbstractShellCommand
+public class StartTransactionCommand extends AbstractShellCommand
 {
    @Inject
    ResourceFactory resourceFactory;
 
+   @Inject
+   @WithAttributes(label = "Timeout", shortName = 't', defaultValue = "0")
+   private UIInput<Integer> timeout;
+
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("transaction-rollback")
-               .description("Rollbacks a transaction");
+      return Metadata.from(super.getMetadata(context), getClass()).name("transaction-start")
+               .description("Starts a transaction");
    }
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-   }
-
-   @Override
-   public boolean isEnabled(ShellContext context)
-   {
-      ResourceTransaction transaction = resourceFactory.getTransaction();
-      return transaction.isStarted();
+      builder.add(timeout);
    }
 
    @Override
    public Result execute(UIExecutionContext shellContext) throws Exception
    {
       ResourceTransaction transaction = resourceFactory.getTransaction();
-      if (!transaction.isStarted())
+      if (transaction.isStarted())
       {
-         return Results.fail("Resource Transaction is not started");
+         return Results.fail("Resource Transaction is already started");
       }
-      transaction.rollback();
-      return Results.success();
+      if (timeout.getValue() != null)
+      {
+         transaction.setTransactionTimeout(timeout.getValue());
+      }
+      transaction.begin();
+      return Results.success("Resource Transaction started");
    }
 
 }
