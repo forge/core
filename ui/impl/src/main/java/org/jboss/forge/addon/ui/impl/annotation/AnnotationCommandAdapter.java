@@ -10,7 +10,6 @@ package org.jboss.forge.addon.ui.impl.annotation;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.jboss.forge.addon.ui.annotation.Command;
@@ -90,7 +89,7 @@ public class AnnotationCommandAdapter implements UICommand
 
             String paramName = (option == null || option.value().isEmpty()) ? "param" + position : option.value();
             InputComponent<?, ?> input;
-            if (Collection.class.isAssignableFrom(parameterType))
+            if (Iterable.class.isAssignableFrom(parameterType))
             {
                // TODO: UIInputMany or UISelectMany ?
                input = factory.createInputMany(paramName, parameterType);
