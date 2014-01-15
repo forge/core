@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.manager.impl.commands.AddonCommandConstants;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
@@ -64,7 +65,7 @@ public class AddonListCommandTest
    public void testAddonListCommand() throws Exception
    {
       test.clearScreen();
-      Result result = test.execute("addon-list", timeoutQuantity, TimeUnit.SECONDS);
+      Result result = test.execute(AddonCommandConstants.ADDON_LIST_COMMAND_NAME, timeoutQuantity, TimeUnit.SECONDS);
       Assert.assertFalse(result instanceof Failed);
       String out = test.getStdOut();
       Assert.assertThat(out, containsString("org.jboss.forge.addon:maven"));
