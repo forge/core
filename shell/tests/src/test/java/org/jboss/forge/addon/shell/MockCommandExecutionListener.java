@@ -19,6 +19,7 @@ public class MockCommandExecutionListener extends AbstractCommandExecutionListen
 {
    private boolean pre;
    private boolean post;
+   private Result result;
 
    @Override
    public void preCommandExecuted(UICommand command, UIExecutionContext context)
@@ -35,6 +36,7 @@ public class MockCommandExecutionListener extends AbstractCommandExecutionListen
       Assert.assertNotNull(context);
       Assert.assertNotNull(result);
       this.post = true;
+      this.result = result;
    }
 
    public boolean isPreExecuted()
@@ -45,5 +47,10 @@ public class MockCommandExecutionListener extends AbstractCommandExecutionListen
    public boolean isPostExecuted()
    {
       return post;
+   }
+
+   public Result getResult()
+   {
+      return result;
    }
 }

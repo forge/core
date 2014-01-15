@@ -51,6 +51,15 @@ public class DefaultShellTest implements ShellTest
    private ShellFactory factory;
    private Shell shell;
 
+   private final Callable<?> nullCallable = new Callable<Void>()
+   {
+      @Override
+      public Void call() throws Exception
+      {
+         return null;
+      }
+   };
+
    @Override
    public Shell getShell()
    {
@@ -76,6 +85,23 @@ public class DefaultShellTest implements ShellTest
    }
 
    @Override
+   public void execute(String line)
+   {
+      Assert.notNull(line, "Line to execute cannot be null.");
+
+      try
+      {
+         if (!line.trim().endsWith(OperatingSystemUtils.getLineSeparator()))
+            line = line + OperatingSystemUtils.getLineSeparator();
+         provider.getStdIn().write(line.getBytes());
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException(e);
+      }
+   }
+
+   @Override
    public Result execute(String line, int quantity, TimeUnit unit) throws TimeoutException
    {
       Assert.notNull(line, "Line to execute cannot be null.");
@@ -83,8 +109,8 @@ public class DefaultShellTest implements ShellTest
       Result result;
       try
       {
-         if (!line.trim().endsWith("\n"))
-            line = line + "\n";
+         if (!line.trim().endsWith(OperatingSystemUtils.getLineSeparator()))
+            line = line + OperatingSystemUtils.getLineSeparator();
          listener.reset();
          provider.getStdIn().write(line.getBytes());
          long start = System.currentTimeMillis();
@@ -116,7 +142,7 @@ public class DefaultShellTest implements ShellTest
    @Override
    public void waitForStdOutChanged(final String value, int quantity, TimeUnit unit) throws TimeoutException
    {
-      waitForStream(new Callable<Void>()
+      waitForStreamChanged(new Callable<Void>()
       {
          @Override
          public Void call() throws Exception
@@ -131,7 +157,7 @@ public class DefaultShellTest implements ShellTest
    @Override
    public void waitForStdErrChanged(final String value, int quantity, TimeUnit unit) throws TimeoutException
    {
-      waitForStream(new Callable<Void>()
+      waitForStreamChanged(new Callable<Void>()
       {
          @Override
          public Void call() throws Exception
@@ -146,35 +172,46 @@ public class DefaultShellTest implements ShellTest
    @Override
    public String waitForStdOutChanged(Callable<?> task, int quantity, TimeUnit unit) throws TimeoutException
    {
-      waitForStream(task, provider.getStdOut(), quantity, unit);
+      waitForStreamChanged(task, provider.getStdOut(), quantity, unit);
       return new String(provider.getStdOut().toByteArray());
    }
 
    @Override
    public String waitForStdErrChanged(Callable<?> task, int quantity, TimeUnit unit) throws TimeoutException
    {
-      waitForStream(task, provider.getStdErr(), quantity, unit);
+      waitForStreamChanged(task, provider.getStdErr(), quantity, unit);
       return new String(provider.getStdErr().toByteArray());
    }
 
    @Override
-   public void waitForStdOutValue(Callable<Void> task, int timeout, TimeUnit unit, String expected)
-            throws TimeoutException
+   public void waitForStdOutValue(String expected, int timeout, TimeUnit unit) throws TimeoutException
    {
-      waitForStreamValue(task, provider.getStdOut(), timeout, unit, expected);
+      waitForStreamValue(nullCallable, provider.getStdOut(), expected, timeout, unit);
    }
 
    @Override
-   public void waitForStdErrValue(Callable<Void> task, int timeout, TimeUnit unit, String expected)
-            throws TimeoutException
+   public void waitForStdErrValue(String expected, int timeout, TimeUnit unit) throws TimeoutException
    {
-      waitForStreamValue(task, provider.getStdErr(), timeout, unit, expected);
+      waitForStreamValue(nullCallable, provider.getStdErr(), expected, timeout, unit);
    }
 
-   private void waitForStream(Callable<?> task, ByteArrayOutputStream stream, int quantity, TimeUnit unit)
+   @Override
+   public void waitForStdOutValue(Callable<Void> task, String expected, int timeout, TimeUnit unit)
             throws TimeoutException
    {
-      stream.reset();
+      clearAndWaitForStreamValue(task, provider.getStdOut(), expected, timeout, unit);
+   }
+
+   @Override
+   public void waitForStdErrValue(Callable<Void> task, String expected, int timeout, TimeUnit unit)
+            throws TimeoutException
+   {
+      clearAndWaitForStreamValue(task, provider.getStdErr(), expected, timeout, unit);
+   }
+
+   private void waitForStreamChanged(Callable<?> task, ByteArrayOutputStream stream, int quantity, TimeUnit unit)
+            throws TimeoutException
+   {
       final int size = stream.size();
       try
       {
@@ -205,10 +242,16 @@ public class DefaultShellTest implements ShellTest
       }
    }
 
-   private void waitForStreamValue(Callable<?> task, ByteArrayOutputStream stream, int quantity, TimeUnit unit,
-            String expected) throws TimeoutException
+   private void clearAndWaitForStreamValue(Callable<?> task, ByteArrayOutputStream stream, String expected,
+            int quantity, TimeUnit unit) throws TimeoutException
    {
       stream.reset();
+      waitForStreamValue(task, stream, expected, quantity, unit);
+   }
+
+   private void waitForStreamValue(Callable<?> task, ByteArrayOutputStream stream, String expected, int quantity,
+            TimeUnit unit) throws TimeoutException
+   {
       try
       {
          task.call();
@@ -273,7 +316,7 @@ public class DefaultShellTest implements ShellTest
    }
 
    @Override
-   public void waitForBufferValue(Callable<?> task, int quantity, TimeUnit unit, String expected)
+   public void waitForBufferValue(Callable<?> task, String expected, int quantity, TimeUnit unit)
             throws TimeoutException
    {
       try
@@ -430,9 +473,17 @@ public class DefaultShellTest implements ShellTest
 
    private TimeoutException throwTimeout(String message) throws TimeoutException
    {
-      return new TimeoutException(message + "\n\nSTDOUT: " + provider.getStdOut().toString()
-               + "\n\nSTDERR: " + provider.getStdErr().toString()
-               + "\n\nBUFFER: [" + getBuffer() + "]\n");
+      return new TimeoutException(message
+               + OperatingSystemUtils.getLineSeparator()
+               + OperatingSystemUtils.getLineSeparator()
+               + "STDOUT: " + provider.getStdOut().toString()
+               + OperatingSystemUtils.getLineSeparator()
+               + OperatingSystemUtils.getLineSeparator()
+               + "STDERR: " + provider.getStdErr().toString()
+               + OperatingSystemUtils.getLineSeparator()
+               + OperatingSystemUtils.getLineSeparator()
+               + "BUFFER: [" + getBuffer() + "]"
+               + OperatingSystemUtils.getLineSeparator());
    };
 
    @Override
@@ -445,12 +496,12 @@ public class DefaultShellTest implements ShellTest
             @Override
             public String call() throws Exception
             {
-               getStdIn().write((Key.CTRL_U.getAsChar() + "\n").getBytes());
+               getStdIn().write((Key.CTRL_U.getAsChar() + OperatingSystemUtils.getLineSeparator()).getBytes());
                provider.getStdOut().reset();
                provider.getStdErr().reset();
                return null;
             }
-         }, 10, TimeUnit.SECONDS, "");
+         }, "", 10, TimeUnit.SECONDS);
       }
       catch (TimeoutException e)
       {
@@ -476,10 +527,10 @@ public class DefaultShellTest implements ShellTest
                   sendCompletionSignal();
                   return null;
                }
-            }, quantity, unit, expected);
+            }, expected, quantity, unit);
             return null;
          }
-      }, quantity, unit, expected);
+      }, expected, quantity, unit);
 
       return getStdOut();
    }
@@ -501,10 +552,10 @@ public class DefaultShellTest implements ShellTest
                   sendCompletionSignal();
                   return null;
                }
-            }, quantity, unit, buffer);
+            }, buffer, quantity, unit);
             return null;
          }
-      }, quantity, unit, buffer);
+      }, buffer, quantity, unit);
 
       return getStdOut();
    }

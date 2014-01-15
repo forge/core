@@ -19,12 +19,10 @@ import org.jboss.forge.addon.shell.mock.command.Career;
 import org.jboss.forge.addon.shell.mock.command.FooCommand;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Failed;
-import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -59,25 +57,29 @@ public class ManProviderTest
    @Inject
    private ShellTest test;
 
-   @Test(timeout = 10000)
+   @Test(timeout = 10000000)
    public void testManOutput() throws Exception
    {
       MockCommandExecutionListener listener = new MockCommandExecutionListener();
       test.getShell().addCommandExecutionListener(listener);
-      Result result = test.execute("man exit"+OperatingSystemUtils.getLineSeparator()+"q", timeoutQuantity, TimeUnit.SECONDS);
-      Assert.assertFalse(result instanceof Failed);
-      String out = test.getStdOut();
-      Assert.assertThat(out, containsString("exit the shell"));
+      test.execute("man exit");
+      test.write("q");
+      test.waitForStdOutValue("exit the shell", timeoutQuantity, TimeUnit.SECONDS);
+      Assert.assertThat(test.getStdOut(), containsString("exit the shell"));
       Assert.assertTrue(listener.isPreExecuted());
       Assert.assertTrue(listener.isPostExecuted());
+      Assert.assertFalse(listener.getResult() instanceof Failed);
       test.clearScreen();
    }
 
    @Test(timeout = 10000)
    public void testManPageForUndocumentedForgeCommand() throws Exception
    {
-      Result result = test.execute("man foocommand"+OperatingSystemUtils.getLineSeparator()+"q", timeoutQuantity, TimeUnit.SECONDS);
-      Assert.assertFalse(result instanceof Failed);
+      MockCommandExecutionListener listener = new MockCommandExecutionListener();
+      test.getShell().addCommandExecutionListener(listener);
+      test.execute("man foocommand");
+      test.write("q");
+      test.waitForStdOutValue("foocommand -- Uncategorized", timeoutQuantity, TimeUnit.SECONDS);
       String out = test.getStdOut();
       Assert.assertThat(out, containsString("foocommand -- Uncategorized"));
       Assert.assertThat(out, containsString("Do some foo"));
@@ -85,6 +87,7 @@ public class ManProviderTest
       Assert.assertThat(out, containsString("help"));
       Assert.assertThat(out, containsString("target location"));
       Assert.assertThat(out, containsString("[FileResource]"));
+      Assert.assertFalse(listener.getResult() instanceof Failed);
       test.clearScreen();
    }
 }

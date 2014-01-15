@@ -18,7 +18,8 @@ import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.ui.result.Result;
 
 /**
- * Utility for interacting with the Forge shell in a synchronous manner.
+ * Utility for interacting with the Forge {@link Shell} in an asynchronous manner, providing methods to perform blocking
+ * writes, reads, and other test functions.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -35,41 +36,46 @@ public interface ShellTest
    Shell getShell();
 
    /**
+    * Execute the given line without waiting for it to run to completion.
+    */
+   void execute(String line);
+
+   /**
     * Execute the given line and return the {@link Result}. Fail if not complete within the given quantity of
-    * {@link TimeUnit}. Clears STDOUT and STDERR before execution. (Appends the newline character to the given input if
-    * necessary, and calls {@link OutputStream#flush()} on {@link #getStdIn()}).
+    * {@link TimeUnit}. (Appends the newline character to the given input if necessary, and calls
+    * {@link OutputStream#flush()} on {@link #getStdIn()}).
     * 
     * @throws TimeoutException if the given command was not executed successfully within the allotted timeout.
     */
    Result execute(String line, int quantity, TimeUnit unit) throws TimeoutException;
 
    /**
-    * Wait for the console {@link Buffer} to be updated the given task is executed.
+    * Wait for the console {@link Buffer} to be updated after the given task is executed.
     * 
     * @throws TimeoutException if the timeout is reached without detecting a buffer value change.
     */
    void waitForBufferChanged(Callable<?> task, int quantity, TimeUnit unit) throws TimeoutException;
 
    /**
-    * Wait for the console {@link Buffer} to be updated the given task is executed, and assert that it matches the given
-    * {@link String}.
+    * Wait for the console {@link Buffer} to be updated after the given task is executed, and assert that it matches the
+    * given {@link String}.
     * 
     * @throws TimeoutException if the timeout is reached without detecting the appropriate value.
     */
-   void waitForBufferValue(Callable<?> task, int quantity, TimeUnit unit, String expected) throws TimeoutException;
+   void waitForBufferValue(Callable<?> task, String expected, int quantity, TimeUnit unit) throws TimeoutException;
 
    /**
-    * Clear and wait for the next write to STDOUT. Send the provided line to STDIN. Fail if no write occurs within the
-    * given quantity of {@link TimeUnit}
+    * Clear and wait for the next write to STDOUT. Send the provided line to STDIN.
     * 
-    * @throws TimeoutException if the timeout is reached without detecting a write to STDOUT.
+    * @throws TimeoutException if the timeout is reached without detecting the expected write to STDOUT.
     */
    void waitForStdOutChanged(String input, int quantity, TimeUnit unit) throws TimeoutException;
 
    /**
-    * Execute the given {@link Callable} task, waiting for STDOUT and returning the resultant output.
+    * lear and wait for the next write to STDOUT. Execute the given {@link Callable} task, waiting for STDOUT and
+    * returning the resultant output.
     * 
-    * @throws TimeoutException if the timeout is reached without detecting a write to STDOUT.
+    * @throws TimeoutException if the timeout is reached without detecting the expected write to STDOUT.
     */
    String waitForStdOutChanged(Callable<?> task, int quantity, TimeUnit unit) throws TimeoutException;
 
@@ -79,7 +85,7 @@ public interface ShellTest
     * 
     * @throws TimeoutException if the timeout is reached without detecting the expected write to STDOUT.
     */
-   void waitForStdOutValue(Callable<Void> task, int timeout, TimeUnit unit, String expected) throws TimeoutException;
+   void waitForStdOutValue(Callable<Void> task, String expected, int timeout, TimeUnit unit) throws TimeoutException;
 
    /**
     * Clear and wait for the next write to STDOUT. Send the provided line to STDIN. Fail if no write occurs within the
@@ -90,19 +96,33 @@ public interface ShellTest
    void waitForStdErrChanged(String input, int quantity, TimeUnit unit) throws TimeoutException;
 
    /**
-    * Execute the given {@link Callable} task, waiting for STDERR and returning the resultant output.
+    * Wait for STDOUT to write the expected value. Does not clear STDOUT before waiting.
+    * 
+    * @throws TimeoutException if the timeout is reached without detecting the expected write to STDOUT.
+    */
+   void waitForStdOutValue(String expected, int timeout, TimeUnit unit) throws TimeoutException;
+
+   /**
+    * Wait for STDERR to write the expected value. Does not clear STDERR before waiting.
+    * 
+    * @throws TimeoutException if the timeout is reached without detecting the expected write to STDERR.
+    */
+   void waitForStdErrValue(String expected, int timeout, TimeUnit unit) throws TimeoutException;
+
+   /**
+    * Clear STDERR, execute the given {@link Callable} task, waiting for STDERR and returning the resultant output.
     * 
     * @throws TimeoutException if the timeout is reached without detecting a write to STDERR.
     */
    String waitForStdErrChanged(Callable<?> callable, int quantity, TimeUnit unit) throws TimeoutException;
 
    /**
-    * Execute the given {@link Callable} task, waiting for STDERR to be updated, and assert that it matches the given
-    * value.
+    * Clear STDERR, execute the given {@link Callable} task, waiting for STDERR to be updated, and assert that it
+    * matches the given value.
     * 
     * @throws TimeoutException if the timeout is reached without detecting the expected write to STDERR.
     */
-   void waitForStdErrValue(Callable<Void> task, int timeout, TimeUnit unit, String expected) throws TimeoutException;
+   void waitForStdErrValue(Callable<Void> task, String expected, int timeout, TimeUnit unit) throws TimeoutException;
 
    /**
     * Get the STDIN {@link OutputStream} for writing.
