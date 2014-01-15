@@ -22,7 +22,7 @@ public class CreateConnectionProfileCommand extends ConnectionProfileDetailsPage
    
    private static final String[] COMMAND_CATEGORY = { "Database", "Connections" };
    private static final String COMMAND_NAME = "Connection Profile: Create";
-   private static final String COMMAND_DESCRIPTION = "Command to create a database connectin profile.";
+   private static final String COMMAND_DESCRIPTION = "Command to create a database connection profile.";
 
    @Inject
    private ConnectionProfileManagerProvider provider;
