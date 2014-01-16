@@ -10,6 +10,7 @@ import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
@@ -60,7 +61,10 @@ public class AddonListCommand extends AbstractUICommand implements AddonCommandC
          if (iterator.hasNext())
             builder.append("\n");
       }
-      return Results.success("Currently installed addons: \n" + builder.toString());
+      UIOutput output = context.getUIContext().getProvider().getOutput();
+      output.out().println("Currently installed addons:");
+      output.out().println(builder.toString());
+      return Results.success();
    }
 
    @Override
