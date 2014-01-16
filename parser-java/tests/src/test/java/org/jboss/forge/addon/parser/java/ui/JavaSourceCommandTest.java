@@ -27,7 +27,10 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.parser.java.JavaAnnotation;
+import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaEnum;
+import org.jboss.forge.parser.java.JavaInterface;
 import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -39,7 +42,7 @@ import org.junit.runner.RunWith;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-public class JavaEnumCommandTest
+public class JavaSourceCommandTest
 {
    @Deployment
    @Dependencies({
@@ -74,6 +77,27 @@ public class JavaEnumCommandTest
    private FacetFactory facetFactory;
 
    @Test
+   public void testCreateAnnotation() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, JavaSourceFacet.class);
+      CommandController controller = testHarness.createCommandController(JavaAnnotationCommand.class,
+               project.getProjectRoot());
+      controller.initialize();
+      controller.setValueFor("named", "CreditCardType");
+      controller.setValueFor("packageName", "org.jboss.forge.test");
+      Assert.assertTrue(controller.isValid());
+      Assert.assertTrue(controller.canExecute());
+      Result result = controller.execute();
+      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
+      Assert.assertNotNull(javaResource);
+      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaAnnotation.class)));
+   }
+
+   @Test
    public void testCreateEnum() throws Exception
    {
       Project project = projectFactory.createTempProject();
@@ -92,6 +116,48 @@ public class JavaEnumCommandTest
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaEnum.class)));
+   }
+
+   @Test
+   public void testCreateClass() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, JavaSourceFacet.class);
+      CommandController controller = testHarness.createCommandController(JavaClassCommand.class,
+               project.getProjectRoot());
+      controller.initialize();
+      controller.setValueFor("named", "CreditCardType");
+      controller.setValueFor("packageName", "org.jboss.forge.test");
+      Assert.assertTrue(controller.isValid());
+      Assert.assertTrue(controller.canExecute());
+      Result result = controller.execute();
+      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
+      Assert.assertNotNull(javaResource);
+      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaClass.class)));
+   }
+
+   @Test
+   public void testCreateInterface() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, JavaSourceFacet.class);
+      CommandController controller = testHarness.createCommandController(JavaInterfaceCommand.class,
+               project.getProjectRoot());
+      controller.initialize();
+      controller.setValueFor("named", "CreditCardType");
+      controller.setValueFor("packageName", "org.jboss.forge.test");
+      Assert.assertTrue(controller.isValid());
+      Assert.assertTrue(controller.canExecute());
+      Result result = controller.execute();
+      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
+      Assert.assertNotNull(javaResource);
+      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaInterface.class)));
    }
 
 }

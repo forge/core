@@ -7,24 +7,23 @@
 
 package org.jboss.forge.addon.parser.java.ui;
 
-import org.jboss.forge.parser.java.JavaEnum;
+import org.jboss.forge.parser.java.JavaInterface;
 import org.jboss.forge.parser.java.JavaSource;
 
 /**
- * 
- * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaEnumCommand extends AbstractJavaSourceCommand
+public class JavaInterfaceCommand extends AbstractJavaSourceCommand
 {
    @Override
    protected Class<? extends JavaSource<?>> getSourceType()
    {
-      return JavaEnum.class;
+      return JavaInterface.class;
    }
 
    @Override
    protected String getType()
    {
-      return "Enum";
+      return "Interface";
    }
 }
