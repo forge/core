@@ -27,12 +27,12 @@ import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.impl.context.UINavigationContextImpl;
+import org.jboss.forge.addon.ui.impl.result.CompositeResultImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
-import org.jboss.forge.addon.ui.result.CompositeResult;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
@@ -133,7 +133,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
             throw e;
          }
       }
-      return new CompositeResult(results);
+      return new CompositeResultImpl(results);
    }
 
    @Override
