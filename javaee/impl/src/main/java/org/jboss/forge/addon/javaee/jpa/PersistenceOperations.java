@@ -69,7 +69,6 @@ public class PersistenceOperations
          PersistenceCommonDescriptor config = facet.getConfig();
          PersistenceUnitCommon unit = config.createPersistenceUnit();
          unit.name(unitName).description(DEFAULT_UNIT_DESC);
-         unit.transactionType(container.isJTASupported() ? "JTA" : "RESOURCE_LOCAL");
 
          if (provider.getProvider() != null)
          {

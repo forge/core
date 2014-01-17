@@ -62,7 +62,7 @@ public abstract class JavaEEDefaultContainer implements PersistenceContainer
    public abstract DatabaseType getDefaultDatabaseType();
 
    @Override
-   public boolean isJTASupported()
+   public boolean isDataSourceRequired()
    {
       return true;
    }

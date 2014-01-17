@@ -59,7 +59,7 @@ public class CustomJDBCContainer implements PersistenceContainer
    }
 
    @Override
-   public boolean isJTASupported()
+   public boolean isDataSourceRequired()
    {
       return false;
    }

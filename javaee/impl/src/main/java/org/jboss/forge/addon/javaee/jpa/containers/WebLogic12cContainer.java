@@ -47,7 +47,7 @@ public class WebLogic12cContainer implements PersistenceContainer
    }
 
    @Override
-   public boolean isJTASupported()
+   public boolean isDataSourceRequired()
    {
       return true;
    }

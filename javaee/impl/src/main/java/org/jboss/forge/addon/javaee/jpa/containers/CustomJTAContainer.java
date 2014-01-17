@@ -39,7 +39,7 @@ public class CustomJTAContainer implements PersistenceContainer
    }
 
    @Override
-   public boolean isJTASupported()
+   public boolean isDataSourceRequired()
    {
       return true;
    }

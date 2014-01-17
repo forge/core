@@ -102,7 +102,7 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
       initDatasourceName(uiContext);
       initPersistenceUnitName(builder);
       builder.add(dbType);
-      if (pc.isJTASupported())
+      if (pc.isDataSourceRequired())
       {
          builder.add(dataSourceName);
       }

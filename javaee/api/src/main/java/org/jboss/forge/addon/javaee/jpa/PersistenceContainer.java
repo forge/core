@@ -35,7 +35,7 @@ public interface PersistenceContainer
             JPADataSource dataSource);
 
    /**
-    * @return true if this {@link PersistenceContainer} supports JTA configuration
+    * @return true if this {@link PersistenceContainer} requires a DataSource to function properly
     */
-   boolean isJTASupported();
+   boolean isDataSourceRequired();
 }
