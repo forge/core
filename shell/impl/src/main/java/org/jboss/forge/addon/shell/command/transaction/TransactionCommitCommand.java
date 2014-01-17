@@ -25,7 +25,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class CommitTransactionCommand extends AbstractShellCommand
+public class TransactionCommitCommand extends AbstractShellCommand
 {
    @Inject
    ResourceFactory resourceFactory;

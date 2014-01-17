@@ -27,7 +27,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class StartTransactionCommand extends AbstractShellCommand
+public class TransactionStartCommand extends AbstractShellCommand
 {
    @Inject
    ResourceFactory resourceFactory;
