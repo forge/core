@@ -71,6 +71,7 @@ public class AutomaticTransactionCommandListener implements CommandExecutionList
             }
 
             ArrayList<ResourceEvent> events = new ArrayList<>(aggregator.getResourceEvents());
+            aggregator.clear();
             Collections.sort(events, new Comparator<ResourceEvent>()
             {
                @Override

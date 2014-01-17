@@ -37,4 +37,9 @@ public class AggregateChangesTransactionListener implements ResourceTransactionL
    {
       return events;
    }
+
+   public void clear()
+   {
+      events.clear();
+   }
 }

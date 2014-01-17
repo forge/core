@@ -129,8 +129,11 @@ public class TrackChangesCommandTest
       test.waitForStdOutValue("Deleted " + tempDir.getFullyQualifiedName() + "/foo.txt", SHELL_TIMEOUT,
                TimeUnit.SECONDS);
 
+      test.clearScreen();
       Assert.assertFalse(test.execute("transaction-track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
       test.waitForStdOutValue("Resource change tracking is OFF.", SHELL_TIMEOUT, TimeUnit.SECONDS);
+      Assert.assertFalse(test.getStdOut().contains("Wrote " + tempDir.getFullyQualifiedName() + "/foo.txt"));
+      Assert.assertFalse(test.getStdOut().contains("Deleted " + tempDir.getFullyQualifiedName() + "/foo.txt"));
    }
 
    @Test(timeout = 10000)
