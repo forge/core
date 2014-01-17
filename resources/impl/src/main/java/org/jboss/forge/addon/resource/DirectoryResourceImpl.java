@@ -160,7 +160,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    @Override
    public synchronized DirectoryResource getParent()
    {
-      if (getParent() == null)
+      if (super.getParent() == null)
       {
          File parentFile = file.getParentFile();
          if (parentFile == null)
@@ -168,9 +168,9 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
             return null;
          }
 
-         setParent(createFrom(parentFile));
+         super.setParent(createFrom(parentFile));
       }
-      return getParent();
+      return super.getParent();
    }
 
    @Override
