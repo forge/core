@@ -20,6 +20,8 @@ import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceFilter;
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
+import org.jboss.forge.addon.resource.transaction.ResourceTransactionListener;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
  * Simple {@link ResourceFactory} for working outside of a container environment.
@@ -86,5 +88,11 @@ public class FileResourceFactory implements ResourceFactory
    public FileOperations getFileOperations()
    {
       return DefaultFileOperations.INSTANCE;
+   }
+
+   @Override
+   public ListenerRegistration<ResourceTransactionListener> addTransactionListener(ResourceTransactionListener listener)
+   {
+      throw new UnsupportedOperationException();
    }
 }

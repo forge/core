@@ -10,6 +10,8 @@ import java.io.File;
 
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
+import org.jboss.forge.addon.resource.transaction.ResourceTransactionListener;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -64,4 +66,9 @@ public interface ResourceFactory
     * The default implementation invokes the {@link File} methods where applicable
     */
    FileOperations getFileOperations();
+
+   /**
+    * Add a {@link ResourceTransactionListener} to be notified when {@link ResourceTransaction} events occur.
+    */
+   ListenerRegistration<ResourceTransactionListener> addTransactionListener(ResourceTransactionListener listener);
 }

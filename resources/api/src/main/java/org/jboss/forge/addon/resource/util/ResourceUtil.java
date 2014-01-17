@@ -14,10 +14,11 @@ import java.util.List;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFilter;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * A set of utilities to work with the resources API.
- *
+ * 
  * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author Vineet Reynolds
@@ -26,7 +27,7 @@ public class ResourceUtil
 {
    /**
     * A simple utility method to locate the outermost contextual File reference for the specified resource.
-    *
+    * 
     * @param r resource instance.
     * @return outermost relevant file context.
     */
@@ -77,7 +78,7 @@ public class ResourceUtil
    @SuppressWarnings("unchecked")
    public static <E extends Resource<?>, R extends Collection<E>> R filter(ResourceFilter filter, Collection<E> list)
    {
-      List<E> result = new ArrayList<E>();
+      List<E> result = new ArrayList<>();
       for (E resource : list)
       {
          if (filter.accept(resource))
@@ -104,4 +105,18 @@ public class ResourceUtil
       return (R) filter(filter, list);
    }
 
+   public static boolean isParentOf(Resource<?> parent, Resource<?> child)
+   {
+      Assert.notNull(parent, "Parent resource must not be null.");
+      Assert.notNull(child, "Child resource must not be null.");
+
+      while (child.getParent() != null)
+      {
+         if (parent == child.getParent() || parent.equals(child.getParent()))
+            return true;
+
+         child = child.getParent();
+      }
+      return false;
+   }
 }

@@ -9,6 +9,8 @@ package org.jboss.forge.addon.resource.transaction.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,9 +19,11 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Singleton;
 
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.resource.transaction.ResourceTransactionListener;
 import org.jboss.forge.furnace.container.cdi.events.Local;
 import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.forge.furnace.event.PreShutdown;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.xadisk.bridge.proxies.interfaces.XAFileSystem;
@@ -33,11 +37,13 @@ import org.xadisk.filesystem.standalone.StandaloneFileSystemConfiguration;
 @Singleton
 public class FileResourceTransactionManager
 {
-   private Logger logger = Logger.getLogger(getClass().getName());
+   private final Logger logger = Logger.getLogger(getClass().getName());
 
    private XAFileSystem fileSystem;
 
    private FileResourceTransactionImpl transaction;
+
+   private final List<ResourceTransactionListener> listeners = new CopyOnWriteArrayList<>();
 
    public void startup(@Observes @Local PostStartup startup) throws Exception
    {
@@ -73,9 +79,29 @@ public class FileResourceTransactionManager
       Assert.notNull(fileSystem, "FileSystem was not yet initialized. Is the Furnace container running?");
       if (transaction == null)
       {
-         transaction = new FileResourceTransactionImpl(fileSystem, resourceFactory);
+         transaction = new FileResourceTransactionImpl(this, fileSystem, resourceFactory);
       }
       return transaction;
+   }
+
+   public ListenerRegistration<ResourceTransactionListener> addTransactionListener(
+            final ResourceTransactionListener listener)
+   {
+      listeners.add(listener);
+      return new ListenerRegistration<ResourceTransactionListener>()
+      {
+         @Override
+         public ResourceTransactionListener removeListener()
+         {
+            listeners.remove(listener);
+            return listener;
+         }
+      };
+   }
+
+   public List<ResourceTransactionListener> getTransactionListeners()
+   {
+      return listeners;
    }
 
 }

@@ -38,7 +38,7 @@ public abstract class AbstractShellCommand extends AbstractProjectCommand
       return (context instanceof ShellContext) && isEnabled((ShellContext) context);
    }
 
-   // This method is meant to be overriden
+   // This method is meant to be overridden
    public boolean isEnabled(ShellContext context)
    {
       return true;
@@ -49,7 +49,7 @@ public abstract class AbstractShellCommand extends AbstractProjectCommand
    {
       return projectFactory;
    }
-   
+
    @Override
    protected boolean isProjectRequired()
    {

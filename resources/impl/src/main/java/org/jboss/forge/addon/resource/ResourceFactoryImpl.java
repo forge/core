@@ -13,11 +13,13 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.resource.monitor.FileMonitor;
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
+import org.jboss.forge.addon.resource.transaction.ResourceTransactionListener;
 import org.jboss.forge.addon.resource.transaction.file.FileResourceTransactionImpl;
 import org.jboss.forge.addon.resource.transaction.file.FileResourceTransactionManager;
 import org.jboss.forge.addon.resource.util.RelatedClassComparator;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
 
 /**
@@ -120,5 +122,11 @@ public class ResourceFactoryImpl implements ResourceFactory
       {
          return DefaultFileOperations.INSTANCE;
       }
+   }
+
+   @Override
+   public ListenerRegistration<ResourceTransactionListener> addTransactionListener(ResourceTransactionListener listener)
+   {
+      return transactionManager.addTransactionListener(listener);
    }
 }

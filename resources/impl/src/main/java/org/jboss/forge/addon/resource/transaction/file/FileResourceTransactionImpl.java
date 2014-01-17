@@ -17,6 +17,8 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.forge.addon.resource.FileOperations;
 import org.jboss.forge.addon.resource.Resource;
@@ -27,6 +29,7 @@ import org.jboss.forge.addon.resource.events.ResourceEvent;
 import org.jboss.forge.addon.resource.events.ResourceModified;
 import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 import org.jboss.forge.addon.resource.transaction.ResourceTransactionException;
+import org.jboss.forge.addon.resource.transaction.ResourceTransactionListener;
 import org.jboss.forge.furnace.util.Assert;
 import org.xadisk.additional.XAFileInputStreamWrapper;
 import org.xadisk.additional.XAFileOutputStreamWrapper;
@@ -47,17 +50,23 @@ import org.xadisk.filesystem.exceptions.NoTransactionAssociatedException;
  * Implementation of the {@link ResourceTransaction} interface for files
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class FileResourceTransactionImpl implements ResourceTransaction, FileOperations
 {
+   private static final Logger log = Logger.getLogger(FileResourceTransactionImpl.class.getName());
+
+   private final FileResourceTransactionManager manager;
    private final XAFileSystem fileSystem;
    private final ResourceFactory resourceFactory;
 
    private volatile Session session;
-   private int timeout;
+   private int timeout = 0;
 
-   public FileResourceTransactionImpl(XAFileSystem fileSystem, ResourceFactory resourceFactory)
+   public FileResourceTransactionImpl(FileResourceTransactionManager manager, XAFileSystem fileSystem,
+            ResourceFactory resourceFactory)
    {
+      this.manager = manager;
       this.fileSystem = fileSystem;
       this.resourceFactory = resourceFactory;
    }
@@ -66,9 +75,22 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    public void begin() throws ResourceTransactionException
    {
       this.session = fileSystem.createSessionForLocalTransaction();
-      if (timeout != 0)
+      if (timeout > 0)
       {
          this.session.setTransactionTimeout(timeout);
+      }
+
+      for (ResourceTransactionListener listener : manager.getTransactionListeners())
+      {
+         try
+         {
+            listener.transactionStarted(this);
+         }
+         catch (Exception e)
+         {
+            log.log(Level.SEVERE, "Error encountered while notifying ResourceTransactionListener: ["
+                     + listener + "]", e);
+         }
       }
    }
 
@@ -78,7 +100,21 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       assertSessionCreated();
       try
       {
+         Set<ResourceEvent> changeSet = getChangeSet();
          session.commit();
+
+         for (ResourceTransactionListener listener : manager.getTransactionListeners())
+         {
+            try
+            {
+               listener.transactionCommitted(this, changeSet);
+            }
+            catch (Exception e)
+            {
+               log.log(Level.SEVERE, "Error encountered while notifying ResourceTransactionListener: ["
+                        + listener + "]", e);
+            }
+         }
       }
       catch (NoTransactionAssociatedException e)
       {
@@ -97,6 +133,19 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       try
       {
          session.rollback();
+
+         for (ResourceTransactionListener listener : manager.getTransactionListeners())
+         {
+            try
+            {
+               listener.transactionRolledBack(this);
+            }
+            catch (Exception e)
+            {
+               log.log(Level.SEVERE, "Error encountered while notifying ResourceTransactionListener: ["
+                        + listener + "]", e);
+            }
+         }
       }
       catch (NoTransactionAssociatedException e)
       {
@@ -397,6 +446,12 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
          throw new ResourceTransactionException("Timeout cannot be a negative value");
       }
       this.timeout = seconds;
+   }
+
+   @Override
+   public int getTransactionTimeout()
+   {
+      return this.session == null ? timeout : this.session.getTransactionTimeout();
    }
 
    @Override

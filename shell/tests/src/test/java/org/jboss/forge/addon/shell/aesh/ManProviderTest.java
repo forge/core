@@ -14,7 +14,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.shell.MockCommandExecutionListener;
+import org.jboss.forge.addon.shell.mock.MockCommandExecutionListener;
 import org.jboss.forge.addon.shell.mock.command.Career;
 import org.jboss.forge.addon.shell.mock.command.FooCommand;
 import org.jboss.forge.addon.shell.test.ShellTest;

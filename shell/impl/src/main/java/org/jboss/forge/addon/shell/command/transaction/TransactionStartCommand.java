@@ -30,7 +30,10 @@ import org.jboss.forge.addon.ui.util.Metadata;
 public class TransactionStartCommand extends AbstractShellCommand
 {
    @Inject
-   ResourceFactory resourceFactory;
+   private ResourceFactory resourceFactory;
+
+   @Inject
+   private TrackChangesSettings trackChangesSettings;
 
    @Inject
    @WithAttributes(label = "Timeout", shortName = 't', defaultValue = "0")
@@ -53,9 +56,13 @@ public class TransactionStartCommand extends AbstractShellCommand
    public Result execute(UIExecutionContext shellContext) throws Exception
    {
       ResourceTransaction transaction = resourceFactory.getTransaction();
+
       if (transaction.isStarted())
       {
-         return Results.fail("Resource Transaction is already started");
+         if (trackChangesSettings.isTrackChanges() && !trackChangesSettings.isInForeignTransaction())
+            transaction.rollback();
+         else
+            return Results.fail("Resource Transaction is already started");
       }
       if (timeout.getValue() != null)
       {
@@ -64,5 +71,4 @@ public class TransactionStartCommand extends AbstractShellCommand
       transaction.begin();
       return Results.success("Resource Transaction started");
    }
-
 }
