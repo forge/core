@@ -38,7 +38,8 @@ public class CommandControllerTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addClasses(ExampleCommand.class, ExampleNoUICommand.class)
+               .addClasses(ExampleCommand.class, ExampleNoUICommand.class, FlowExampleStep.class,
+                        FlowExampleWizard.class)
                .addPackage(MockUIRuntime.class.getPackage())
                .addBeansXML()
                .addAsAddonDependencies(
@@ -56,6 +57,9 @@ public class CommandControllerTest
 
    @Inject
    private ExampleNoUICommand exampleNoUICommand;
+
+   @Inject
+   private FlowExampleWizard flowExampleWizard;
 
    @Test
    public void testInjection() throws Exception
@@ -100,6 +104,26 @@ public class CommandControllerTest
       Assert.assertTrue(controller.isValid());
       Result result = controller.execute();
       Assert.assertEquals("Executed", result.getMessage());
+   }
+
+   @Test
+   public void testWizardCanMoveToNextStep() throws Exception
+   {
+      try (WizardCommandController controller = controllerFactory.createWizardController(new MockUIContext(),
+               new MockUIRuntime(),
+               flowExampleWizard))
+      {
+         controller.initialize();
+         Assert.assertFalse(controller.canMoveToNextStep());
+         controller.setValueFor("hasNext", Boolean.TRUE);
+         Assert.assertTrue(controller.canMoveToNextStep());
+         controller.next().initialize();
+         controller.previous();
+         Assert.assertTrue(controller.canMoveToNextStep());
+         controller.setValueFor("hasNext", Boolean.FALSE);
+         Assert.assertFalse(controller.canMoveToNextStep());
+      }
+
    }
 
 }
