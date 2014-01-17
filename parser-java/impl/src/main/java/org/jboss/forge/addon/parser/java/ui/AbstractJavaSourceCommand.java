@@ -118,7 +118,7 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
          javaResource = javaSourceFacet.saveJavaSource(source);
       }
       uiContext.setSelection(javaResource);
-      return Results.success(getType() + " " + source.getName() + " was created");
+      return Results.success(getType() + " " + source.getQualifiedName() + " was created");
    }
 
    @Override
