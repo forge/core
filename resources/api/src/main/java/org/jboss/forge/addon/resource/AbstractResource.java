@@ -18,12 +18,13 @@ import org.jboss.forge.furnace.util.Streams;
 
 /**
  * @author Mike Brock <cbrock@redhat.com>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  */
 public abstract class AbstractResource<T> extends AbstractFaceted<ResourceFacet> implements Resource<T>
 {
-   protected final ResourceFactory resourceFactory;
-   protected Resource<?> parent;
+   private final ResourceFactory resourceFactory;
+   private Resource<?> parent;
 
    protected AbstractResource(final ResourceFactory factory, final Resource<?> parent)
    {
@@ -50,6 +51,14 @@ public abstract class AbstractResource<T> extends AbstractFaceted<ResourceFacet>
    public Resource<?> getParent()
    {
       return parent;
+   }
+
+   /**
+    * Set the parent {@link Resource}.
+    */
+   protected void setParent(Resource<?> parent)
+   {
+      this.parent = parent;
    }
 
    @Override
@@ -84,7 +93,7 @@ public abstract class AbstractResource<T> extends AbstractFaceted<ResourceFacet>
    @Override
    public synchronized List<Resource<?>> listResources(final ResourceFilter filter)
    {
-      List<Resource<?>> result = new ArrayList<Resource<?>>();
+      List<Resource<?>> result = new ArrayList<>();
       for (Resource<?> resource : doListResources())
       {
          if (filter.accept(resource))

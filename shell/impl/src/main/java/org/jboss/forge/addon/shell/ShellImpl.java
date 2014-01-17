@@ -27,6 +27,7 @@ import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
 import org.jboss.forge.addon.shell.aesh.ForgeManProvider;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
@@ -63,8 +64,8 @@ public class ShellImpl implements Shell, UIRuntime
    private final UIOutput output;
    private final List<CommandExecutionListener> executionListeners = new LinkedList<>();
 
-   public ShellImpl(FileResource<?> initialResource, Settings settings, CommandManager commandManager,
-            AddonRegistry addonRegistry, CommandControllerFactory commandFactory)
+   public ShellImpl(ResourceFactory factory, FileResource<?> initialResource, Settings settings,
+            CommandManager commandManager, AddonRegistry addonRegistry, CommandControllerFactory commandFactory)
    {
       this.currentResource = initialResource;
       this.addonRegistry = addonRegistry;

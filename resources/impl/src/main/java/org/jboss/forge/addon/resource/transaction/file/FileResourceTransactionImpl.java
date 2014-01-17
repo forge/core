@@ -119,7 +119,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    public Set<ResourceEvent> getChangeSet()
    {
       assertSessionCreated();
-      Set<ResourceEvent> changes = new LinkedHashSet<ResourceEvent>();
+      Set<ResourceEvent> changes = new LinkedHashSet<>();
       try
       {
          // Using reflection, since the field is unavailable
@@ -336,7 +336,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       try
       {
          // Must create the whole structure
-         LinkedList<File> stack = new LinkedList<File>();
+         LinkedList<File> stack = new LinkedList<>();
          File parent = file;
          while (parent != null && !fileExistsAndIsDirectory(parent))
          {

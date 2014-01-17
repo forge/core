@@ -19,7 +19,6 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 /**
  * A standard, build-in, resource for representing directories on the file-system.
  * 
- * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResource> implements DirectoryResource
@@ -41,14 +40,14 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
 
       if (listCache == null)
       {
-         listCache = new LinkedList<Resource<?>>();
+         listCache = new LinkedList<>();
 
          File[] files = getFileOperations().listFiles(file);
          if (files != null)
          {
             for (File f : files)
             {
-               listCache.add(resourceFactory.create(f));
+               listCache.add(getResourceFactory().create(f));
             }
          }
       }
@@ -62,7 +61,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    @Override
    public Resource<?> getChild(final String name)
    {
-      return resourceFactory.create(new File(file.getAbsolutePath(), name));
+      return getResourceFactory().create(new File(file.getAbsolutePath(), name));
    }
 
    /**
@@ -84,7 +83,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
 
       if (!(result instanceof DirectoryResourceImpl))
       {
-         result = new DirectoryResourceImpl(resourceFactory, new File(file.getAbsoluteFile(), name));
+         result = new DirectoryResourceImpl(getResourceFactory(), new File(file.getAbsoluteFile(), name));
       }
       return (DirectoryResourceImpl) result;
    }
@@ -123,7 +122,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
       else
       {
          E underlyingResource = (E) child.getUnderlyingResourceObject();
-         result = resourceFactory.create(type, underlyingResource);
+         result = getResourceFactory().create(type, underlyingResource);
       }
       return result;
    }
@@ -155,13 +154,13 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
          getFileOperations().mkdirs(file);
       }
 
-      return new DirectoryResourceImpl(resourceFactory, file);
+      return new DirectoryResourceImpl(getResourceFactory(), file);
    }
 
    @Override
    public synchronized DirectoryResource getParent()
    {
-      if (parent == null)
+      if (getParent() == null)
       {
          File parentFile = file.getParentFile();
          if (parentFile == null)
@@ -169,9 +168,9 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
             return null;
          }
 
-         parent = createFrom(parentFile);
+         setParent(createFrom(parentFile));
       }
-      return (DirectoryResource) parent;
+      return getParent();
    }
 
    @Override

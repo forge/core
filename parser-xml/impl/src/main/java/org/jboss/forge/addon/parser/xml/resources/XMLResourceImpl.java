@@ -44,7 +44,7 @@ public class XMLResourceImpl extends AbstractFileResource<XMLResource> implement
    @Override
    public Resource<File> createFrom(File file)
    {
-      return new XMLResourceImpl(resourceFactory, file);
+      return new XMLResourceImpl(getResourceFactory(), file);
    }
 
    @Override

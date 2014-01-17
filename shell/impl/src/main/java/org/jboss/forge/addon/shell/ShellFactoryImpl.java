@@ -48,7 +48,7 @@ public class ShellFactoryImpl implements ShellFactory
    {
       Assert.notNull(settings, "Settings cannot be null");
       FileResource<?> initialResource = resourceFactory.create(initialSelection).reify(FileResource.class);
-      return new ShellImpl(initialResource, settings, commandManager, addonRegistry, commandFactory);
+      return new ShellImpl(resourceFactory, initialResource, settings, commandManager, addonRegistry, commandFactory);
    }
 
 }

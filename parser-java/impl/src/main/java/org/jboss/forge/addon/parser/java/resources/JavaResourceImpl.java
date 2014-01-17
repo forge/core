@@ -46,7 +46,7 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    public Resource<?> getChild(final String name)
    {
       List<Resource<?>> children = doListResources();
-      List<Resource<?>> subset = new ArrayList<Resource<?>>();
+      List<Resource<?>> subset = new ArrayList<>();
 
       for (Resource<?> child : children)
       {
@@ -81,7 +81,7 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    {
       try
       {
-         List<Resource<?>> list = new LinkedList<Resource<?>>();
+         List<Resource<?>> list = new LinkedList<>();
 
          for (Member<?, ?> member : getJavaSource().getMembers())
          {
@@ -138,7 +138,7 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    @Override
    public JavaResourceImpl createFrom(final File file)
    {
-      return new JavaResourceImpl(resourceFactory, parser, file);
+      return new JavaResourceImpl(getResourceFactory(), parser, file);
    }
 
    @Override

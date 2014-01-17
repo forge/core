@@ -68,7 +68,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public DirectoryResource getParent()
    {
-      return file.getParentFile() != null ? resourceFactory.create(DirectoryResource.class, file.getParentFile())
+      return file.getParentFile() != null ? getResourceFactory().create(DirectoryResource.class, file.getParentFile())
                : null;
    }
 
@@ -107,7 +107,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    }
 
    @Override
-   public void markUpToDate()
+   public void refresh()
    {
       lastModification = getUnderlyingResourceObject().lastModified();
    }
@@ -360,18 +360,18 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public ResourceMonitor monitor()
    {
-      return resourceFactory.monitor(this);
+      return getResourceFactory().monitor(this);
    }
 
    @Override
    public ResourceMonitor monitor(ResourceFilter filter)
    {
-      return resourceFactory.monitor(this, filter);
+      return getResourceFactory().monitor(this, filter);
    }
 
    protected FileOperations getFileOperations()
    {
-      return resourceFactory.getFileOperations();
+      return getResourceFactory().getFileOperations();
    }
 
 }

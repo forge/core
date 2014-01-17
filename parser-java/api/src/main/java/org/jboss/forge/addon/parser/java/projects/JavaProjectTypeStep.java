@@ -37,7 +37,7 @@ public class JavaProjectTypeStep extends AbstractUICommand implements UIWizardSt
 {
 
    @Inject
-   @WithAttributes(label = "Create Main Class?", description = "Toggle creation of a simple Main() script in the root package, valid for jar projects only")
+   @WithAttributes(label = "Create Main Class", description = "Toggle creation of a simple Main() script in the root package, valid for jar projects only")
    private UIInput<Boolean> createMain;
 
    @Override
@@ -53,6 +53,7 @@ public class JavaProjectTypeStep extends AbstractUICommand implements UIWizardSt
                .description("Information setup for the Java project type");
    }
 
+   @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
       builder.add(createMain);

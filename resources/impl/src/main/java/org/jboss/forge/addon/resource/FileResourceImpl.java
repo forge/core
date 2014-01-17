@@ -27,7 +27,7 @@ public class FileResourceImpl extends AbstractFileResource<FileResourceImpl>
    @Override
    public FileResourceImpl createFrom(final File file)
    {
-      return new FileResourceImpl(resourceFactory, file);
+      return new FileResourceImpl(getResourceFactory(), file);
    }
 
    @Override

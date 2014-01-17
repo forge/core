@@ -48,7 +48,7 @@ public class ResourceFactoryImpl implements ResourceFactory
       T result = null;
       synchronized (this)
       {
-         TreeMap<Class<?>, ResourceGenerator> generated = new TreeMap<Class<?>, ResourceGenerator>(
+         TreeMap<Class<?>, ResourceGenerator> generated = new TreeMap<>(
                   new RelatedClassComparator());
 
          // FIXME Workaround for FORGE-1263
@@ -121,5 +121,4 @@ public class ResourceFactoryImpl implements ResourceFactory
          return DefaultFileOperations.INSTANCE;
       }
    }
-
 }

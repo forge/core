@@ -67,7 +67,7 @@ public class MavenPomResourceImpl extends XMLResourceImpl implements MavenPomRes
       List<Repository> repositories = getCurrentModel().getRepositories();
       for (Repository repository : repositories)
       {
-         children.add(new MavenRepositoryResourceImpl(getResourceFactory(), parent, repository));
+         children.add(new MavenRepositoryResourceImpl(getResourceFactory(), getParent(), repository));
       }
    }
 
@@ -100,7 +100,7 @@ public class MavenPomResourceImpl extends XMLResourceImpl implements MavenPomRes
    @Override
    public Resource<File> createFrom(File file)
    {
-      return new MavenPomResourceImpl(resourceFactory, file);
+      return new MavenPomResourceImpl(getResourceFactory(), file);
    }
 
    private void initialize()

@@ -9,7 +9,6 @@ import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 /**
  * A standard, built-in resource for representing files on the filesystem.
  * 
- * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface FileResource<T extends FileResource<T>> extends Resource<File>
@@ -27,9 +26,9 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>
    public boolean isStale();
 
    /**
-    * Re-read the last modified timestamp for this resource.
+    * Re-read the file-system meta-data for this resource (such as last modified time-stamp, and permissions.)
     */
-   public void markUpToDate();
+   public void refresh();
 
    /**
     * Create a new single directory for this resource. This will not succeed if any parent directories needed for this
