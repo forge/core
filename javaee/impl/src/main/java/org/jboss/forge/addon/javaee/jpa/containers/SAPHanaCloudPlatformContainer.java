@@ -2,7 +2,7 @@ package org.jboss.forge.addon.javaee.jpa.containers;
 
 import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 
-public class SAPLeanJavaServerContainer extends JavaEEDefaultContainer
+public class SAPHanaCloudPlatformContainer extends JavaEEDefaultContainer
 {
 
    private static final String DEFAULT_DATA_SOURCE = "jdbc/DefaultDB";
@@ -22,6 +22,6 @@ public class SAPLeanJavaServerContainer extends JavaEEDefaultContainer
    @Override
    public String getName(boolean isGUI)
    {
-      return isGUI ? "SAP Lean Java Server" : "SAP_LJS";
+      return isGUI ? "SAP HANA Cloud Platform" : "SAP_HCP";
    }
 }
