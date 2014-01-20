@@ -73,6 +73,36 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       flow.add(createEntry(initialCommand, false));
    }
 
+   /**
+    * Refreshes the current flow so it's possible to eagerly fetch all the steps
+    */
+   private void refreshFlow()
+   {
+      try
+      {
+         initialize();
+      }
+      catch (Exception e1)
+      {
+         // TODO Auto-generated catch block
+         e1.printStackTrace();
+      }
+      int currentFlowPointer = this.flowPointer;
+      this.flowPointer = 0;
+      while (canMoveToNextStep())
+      {
+         try
+         {
+            next().initialize();
+         }
+         catch (Exception e)
+         {
+            break;
+         }
+      }
+      this.flowPointer = currentFlowPointer;
+   }
+
    @Override
    public void initialize() throws Exception
    {
@@ -216,6 +246,8 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    public boolean canExecute()
    {
       assertInitialized();
+      // FORGE-1466: Eager initialization so canExecute() works
+      refreshFlow();
       for (WizardStepEntry entry : flow)
       {
          if (!entry.controller.canExecute())
