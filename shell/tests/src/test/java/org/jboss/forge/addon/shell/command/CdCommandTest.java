@@ -68,14 +68,14 @@ public class CdCommandTest
    {
       Project project = projectFactory.createTempProject();
       String projectPath = project.getProjectRoot().getFullyQualifiedName();
-      shellTest.execute("cd " + projectPath);
+      shellTest.execute("cd " + projectPath, 5, TimeUnit.SECONDS);
       shellTest.clearScreen();
       shellTest.execute("pwd", 5, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString(projectPath));
 
-      shellTest.execute("mkdir abc");
-      shellTest.execute("cd abc");
-      shellTest.execute("cd ~");
+      shellTest.execute("mkdir abc", 5, TimeUnit.SECONDS);
+      shellTest.execute("cd abc", 5, TimeUnit.SECONDS);
+      shellTest.execute("cd ~", 5, TimeUnit.SECONDS);
       shellTest.clearScreen();
       shellTest.execute("pwd", 5, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString(projectPath));
