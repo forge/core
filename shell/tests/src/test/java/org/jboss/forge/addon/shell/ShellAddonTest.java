@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import org.hamcrest.CoreMatchers;
 import org.jboss.aesh.edit.KeyOperation;
 import org.jboss.aesh.edit.actions.Operation;
 import org.jboss.aesh.terminal.Key;
@@ -23,6 +24,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -91,4 +93,11 @@ public class ShellAddonTest
       System.out.println("ERR:" + test.getStdErr());
    }
 
+   @Test
+   @Ignore("Until ShellTest is used properly")
+   public void testDidYouMean() throws Exception
+   {
+      test.waitForStdOutChanged("cde\n", 5, TimeUnit.SECONDS);
+      Assert.assertThat(test.getStdOut(), CoreMatchers.containsString("Did you mean this?"));
+   }
 }

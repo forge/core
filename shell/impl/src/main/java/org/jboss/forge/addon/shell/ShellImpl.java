@@ -27,6 +27,7 @@ import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.shell.aesh.ForgeCommandNotFoundHandler;
 import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIOutputImpl;
@@ -76,12 +77,14 @@ public class ShellImpl implements Shell, UIRuntime
             console.clearBufferAndDisplayPrompt();
          }
       }).create();
+      final ForgeCommandRegistry registry = new ForgeCommandRegistry(this, commandManager, commandFactory,
+               commandManager
+                        .getConverterFactory());
       this.console = new AeshConsoleBuilder()
                .prompt(createPrompt())
                .settings(newSettings)
-               .commandRegistry(
-                        new ForgeCommandRegistry(this, commandManager, commandFactory, commandManager
-                                 .getConverterFactory()))
+               .commandRegistry(registry)
+               .commandNotFoundHandler(new ForgeCommandNotFoundHandler(registry))
                .create();
       this.output = new ShellUIOutputImpl(console);
       this.console.start();
