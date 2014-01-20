@@ -28,7 +28,6 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
-import org.jboss.forge.addon.shell.aesh.ForgeManProvider;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIOutputImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIPromptImpl;
@@ -83,7 +82,6 @@ public class ShellImpl implements Shell, UIRuntime
                .commandRegistry(
                         new ForgeCommandRegistry(this, commandManager, commandFactory, commandManager
                                  .getConverterFactory()))
-               .manProvider(new ForgeManProvider(this, commandManager))
                .create();
       this.output = new ShellUIOutputImpl(console);
       this.console.start();
