@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -70,5 +71,11 @@ public class TransactionStartCommand extends AbstractShellCommand
       }
       transaction.begin();
       return Results.success("Resource Transaction started");
+   }
+
+   @Override
+   public boolean isEnabled(ShellContext context)
+   {
+      return super.isEnabled(context) & !resourceFactory.getTransaction().isStarted();
    }
 }
