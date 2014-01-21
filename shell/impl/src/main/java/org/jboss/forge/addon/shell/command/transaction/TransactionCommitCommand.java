@@ -45,8 +45,7 @@ public class TransactionCommitCommand extends AbstractShellCommand
    @Override
    public boolean isEnabled(ShellContext context)
    {
-      ResourceTransaction transaction = resourceFactory.getTransaction();
-      return transaction.isStarted();
+      return super.isEnabled(context) && resourceFactory.getTransaction().isStarted();
    }
 
    @Override
