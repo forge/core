@@ -76,7 +76,8 @@ public class NoUIWizardControllerDecorator implements WizardCommandController
    @Override
    public CommandController setValueFor(String inputName, Object value) throws IllegalArgumentException
    {
-      return controller.setValueFor(inputName, value);
+      controller.setValueFor(inputName, value);
+      return this; 
    }
 
    @Override
