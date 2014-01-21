@@ -39,7 +39,7 @@ public class ForgeCommandNotFoundHandler implements CommandNotFoundHandler
    {
       String commandName = line.split(" ")[0];
       // Find similar plugins
-      Set<String> similarPlugins = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+      Set<String> similarPlugins = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
       for (String command : commandRegistry.getAllCommandNames())
       {
          if (getLevenshteinDistance(commandName, command) < LETTERS_NEEDED_TO_BE_REPLACED)

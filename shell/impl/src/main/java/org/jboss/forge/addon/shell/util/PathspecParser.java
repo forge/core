@@ -51,7 +51,7 @@ public class PathspecParser
 
    private final boolean isWindows = OperatingSystemUtils.isWindows();
 
-   List<Resource<?>> results = new LinkedList<Resource<?>>();
+   List<Resource<?>> results = new LinkedList<>();
 
    public PathspecParser(final ResourceFactory factory, final Resource<?> res, final String path)
    {
@@ -178,7 +178,7 @@ public class PathspecParser
                   p = Pattern.compile(Pattern.quote(regex));
                }
 
-               List<Resource<?>> res = new LinkedList<Resource<?>>();
+               List<Resource<?>> res = new LinkedList<>();
 
                for (Resource<?> child : r.listResources())
                {
