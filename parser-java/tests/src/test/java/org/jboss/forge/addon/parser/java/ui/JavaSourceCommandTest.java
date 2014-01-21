@@ -85,7 +85,7 @@ public class JavaSourceCommandTest
                project.getProjectRoot());
       controller.initialize();
       controller.setValueFor("named", "CreditCardType");
-      controller.setValueFor("packageName", "org.jboss.forge.test");
+      controller.setValueFor("targetPackage", "org.jboss.forge.test");
       Assert.assertTrue(controller.isValid());
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
@@ -106,7 +106,7 @@ public class JavaSourceCommandTest
                project.getProjectRoot());
       controller.initialize();
       controller.setValueFor("named", "CreditCardType");
-      controller.setValueFor("packageName", "org.jboss.forge.test");
+      controller.setValueFor("targetPackage", "org.jboss.forge.test");
       Assert.assertTrue(controller.isValid());
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
@@ -127,7 +127,7 @@ public class JavaSourceCommandTest
                project.getProjectRoot());
       controller.initialize();
       controller.setValueFor("named", "CreditCardType");
-      controller.setValueFor("packageName", "org.jboss.forge.test");
+      controller.setValueFor("targetPackage", "org.jboss.forge.test");
       Assert.assertTrue(controller.isValid());
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
@@ -148,7 +148,7 @@ public class JavaSourceCommandTest
                project.getProjectRoot());
       controller.initialize();
       controller.setValueFor("named", "CreditCardType");
-      controller.setValueFor("packageName", "org.jboss.forge.test");
+      controller.setValueFor("targetPackage", "org.jboss.forge.test");
       Assert.assertTrue(controller.isValid());
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();

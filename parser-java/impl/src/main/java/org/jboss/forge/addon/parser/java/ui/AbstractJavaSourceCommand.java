@@ -46,7 +46,7 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
 
    @Inject
    @WithAttributes(label = "Package Name", type = InputType.JAVA_PACKAGE_PICKER)
-   private UIInput<String> packageName;
+   private UIInput<String> targetPackage;
 
    @Inject
    @WithAttributes(label = "Type Name", required = true)
@@ -64,7 +64,7 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
                context.addValidationError(named, "Invalid java type name.");
          }
       });
-      builder.add(packageName).add(named);
+      builder.add(targetPackage).add(named);
    }
 
    @Override
@@ -93,9 +93,9 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
       JavaSource<?> source = JavaParser.create(getSourceType()).setName(named.getValue());
       JavaResource javaResource;
-      if (packageName.hasValue())
+      if (targetPackage.hasValue())
       {
-         source.setPackage(packageName.getValue());
+         source.setPackage(targetPackage.getValue());
       }
       else
       {
