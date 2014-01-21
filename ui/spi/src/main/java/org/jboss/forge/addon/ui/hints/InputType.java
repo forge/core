@@ -16,6 +16,12 @@ package org.jboss.forge.addon.ui.hints;
  */
 public final class InputType
 {
+   /**
+    * Not instantiable
+    */
+   private InputType()
+   {
+   }
 
    private static final String PREFIX = "org.jboss.forge.inputType.";
 
