@@ -14,24 +14,20 @@ package org.jboss.forge.addon.ui.hints;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public enum InputType
+public final class InputType
 {
-   DEFAULT,
 
-   CHECKBOX,
+   private static final String PREFIX = "org.jboss.forge.inputType.";
 
-   TEXTBOX,
-   TEXTAREA,
-
-   FILE_PICKER,
-   DIRECTORY_PICKER,
-
-   DROPDOWN,
-   RADIO,
-
-   SECRET,
-
-   JAVA_CLASS_PICKER,
-
-   JAVA_PACKAGE_PICKER;
+   public static final String DEFAULT = PREFIX + "DEFAULT";
+   public static final String CHECKBOX = PREFIX + "CHECKBOX";
+   public static final String TEXTBOX = PREFIX + "TEXTBOX";
+   public static final String TEXTAREA = PREFIX + "TEXTAREA";
+   public static final String FILE_PICKER = PREFIX + "FILE_PICKER";
+   public static final String DIRECTORY_PICKER = PREFIX + "DIRECTORY_PICKER";
+   public static final String DROPDOWN = PREFIX + "DROPDOWN";
+   public static final String RADIO = PREFIX + "RADIO";
+   public static final String SECRET = PREFIX + "SECRET";
+   public static final String JAVA_CLASS_PICKER = PREFIX + "JAVA_CLASS_PICKER";
+   public static final String JAVA_PACKAGE_PICKER = PREFIX + "JAVA_PACKAGE_PICKER";
 }

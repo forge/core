@@ -215,7 +215,7 @@ public class UIInputInjectionTest
    public void testInputType()
    {
       HintsFacet hints = firstName.getFacet(HintsFacet.class);
-      InputType inputType = hints.getInputType();
+      String inputType = hints.getInputType();
       Assert.assertEquals(InputType.DEFAULT, inputType);
 
       hints.setInputType(InputType.TEXTAREA);

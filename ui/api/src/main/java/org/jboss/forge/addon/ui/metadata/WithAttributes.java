@@ -61,7 +61,7 @@ public @interface WithAttributes
    /**
     * The {@link InputType} for this {@link InputComponent}.
     */
-   InputType type() default InputType.DEFAULT;
+   String type() default InputType.DEFAULT;
 
    /**
     * The default value for this {@link InputComponent}.

@@ -34,13 +34,13 @@ public class OptionCompleterFactory
       final File cwd = selection.isEmpty() ? OperatingSystemUtils.getUserHomeDir() : selection.get()
                .getUnderlyingResourceObject();
 
-      InputType inputType = component.getFacet(HintsFacet.class).getInputType();
+      String inputType = component.getFacet(HintsFacet.class).getInputType();
       OptionCompleter<CompleterInvocation> strategy = null;
-      if (inputType == InputType.FILE_PICKER && cwd.isDirectory())
+      if (InputType.FILE_PICKER.equals(inputType) && cwd.isDirectory())
       {
          strategy = new FileOptionCompleter(Filter.ALL);
       }
-      else if (inputType == InputType.DIRECTORY_PICKER && cwd.isDirectory())
+      else if (InputType.DIRECTORY_PICKER.equals(inputType) && cwd.isDirectory())
       {
          strategy = new FileOptionCompleter(Filter.DIRECTORY);
       }

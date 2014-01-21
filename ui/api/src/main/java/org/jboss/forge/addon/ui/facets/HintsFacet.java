@@ -8,7 +8,6 @@
 package org.jboss.forge.addon.ui.facets;
 
 import org.jboss.forge.addon.facets.Facet;
-import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
 
 /**
@@ -19,8 +18,8 @@ import org.jboss.forge.addon.ui.input.InputComponent;
  */
 public interface HintsFacet extends Facet<InputComponent<?, ?>>
 {
-   public abstract InputType getInputType();
+   public abstract String getInputType();
 
-   public abstract HintsFacet setInputType(InputType type);
+   public abstract HintsFacet setInputType(String type);
 
 }

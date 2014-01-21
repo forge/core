@@ -41,9 +41,9 @@ public final class InputComponents
    /**
     * @return the {@link InputType} object associated to this {@link InputComponent}
     */
-   public static InputType getInputType(InputComponent<?, ?> input)
+   public static String getInputType(InputComponent<?, ?> input)
    {
-      InputType result = InputType.DEFAULT;
+      String result = InputType.DEFAULT;
       for (Facet f : input.getFacets())
       {
          if (HintsFacet.class.isInstance(f))

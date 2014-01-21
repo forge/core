@@ -10,7 +10,6 @@ import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.HintsLookup;
-import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
 
 /**
@@ -20,7 +19,7 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 public class HintsFacetImpl extends AbstractFacet<InputComponent<?, ?>> implements HintsFacet
 {
    private HintsLookup hintsLookup;
-   private InputType inputType;
+   private String inputType;
 
    public HintsFacetImpl(InputComponent<?, ?> origin, Environment environment)
    {
@@ -46,7 +45,7 @@ public class HintsFacetImpl extends AbstractFacet<InputComponent<?, ?>> implemen
    }
 
    @Override
-   public InputType getInputType()
+   public String getInputType()
    {
       if (inputType == null)
       {
@@ -56,7 +55,7 @@ public class HintsFacetImpl extends AbstractFacet<InputComponent<?, ?>> implemen
    }
 
    @Override
-   public HintsFacet setInputType(InputType type)
+   public HintsFacet setInputType(String type)
    {
       inputType = type;
       return this;

@@ -58,7 +58,7 @@ public class ResourceHintsTest
    public void testSimpleHintLookup() throws Exception
    {
       HintsLookup hints = new HintsLookup(environment);
-      InputType type = hints.getInputType(FileResource.class);
+      String type = hints.getInputType(FileResource.class);
       Assert.assertNotNull(type);
       Assert.assertEquals(InputType.FILE_PICKER, type);
    }

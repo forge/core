@@ -23,13 +23,13 @@ public class HintsLookup implements Category
       this.environment = environment;
    }
 
-   public InputType getInputType(Class<?> valueType)
+   public String getInputType(Class<?> valueType)
    {
-      InputType inputType = (InputType) environment.get(HintsLookup.class).get(valueType);
+      String inputType = (String) environment.get(HintsLookup.class).get(valueType);
       return inputType == null ? InputType.DEFAULT : inputType;
    }
 
-   public void setInputType(Class<?> valueType, InputType type)
+   public void setInputType(Class<?> valueType, String type)
    {
       environment.get(HintsLookup.class).put(valueType, type);
    }

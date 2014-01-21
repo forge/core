@@ -61,7 +61,7 @@ public class ParserHintsTest
    public void testSimpleHintLookup() throws Exception
    {
       HintsLookup hints = new HintsLookup(environment);
-      InputType type = hints.getInputType(JavaResource.class);
+      String type = hints.getInputType(JavaResource.class);
       Assert.assertNotNull(type);
       Assert.assertEquals(InputType.JAVA_CLASS_PICKER, type);
    }
