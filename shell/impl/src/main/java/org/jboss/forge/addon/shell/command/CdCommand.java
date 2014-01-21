@@ -71,7 +71,7 @@ public class CdCommand extends AbstractShellCommand
       {
          String newPath = it.next();
          final List<Resource<?>> newResource;
-         if ("~".equals(newPath) && project != null)
+         if ("~~".equals(newPath) && project != null)
          {
             newResource = Arrays.<Resource<?>> asList(project.getProjectRoot());
          }

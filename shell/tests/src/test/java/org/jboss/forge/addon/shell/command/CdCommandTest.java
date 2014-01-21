@@ -75,7 +75,7 @@ public class CdCommandTest
 
       shellTest.execute("mkdir abc", 5, TimeUnit.SECONDS);
       shellTest.execute("cd abc", 5, TimeUnit.SECONDS);
-      shellTest.execute("cd ~", 5, TimeUnit.SECONDS);
+      shellTest.execute("cd ~~", 5, TimeUnit.SECONDS);
       shellTest.clearScreen();
       shellTest.execute("pwd", 5, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString(projectPath));

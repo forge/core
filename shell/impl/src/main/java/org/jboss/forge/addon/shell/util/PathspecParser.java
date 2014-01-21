@@ -89,7 +89,7 @@ public class PathspecParser
       }
       else if (path.startsWith("~"))
       {
-         File homeDir = new File(System.getProperty("user.home")).getAbsoluteFile();
+         File homeDir = OperatingSystemUtils.getUserHomeDir();
 
          if (path.length() == 1)
          {
