@@ -54,6 +54,8 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
    @Override
    public WizardCommandController createWizardController(UIContext context, UIRuntime runtime, UIWizard wizard)
    {
-      return new WizardCommandControllerImpl(context, addonRegistry, runtime, wizard, this);
+      WizardCommandControllerImpl controller = new WizardCommandControllerImpl(context, addonRegistry, runtime, wizard,
+               this);
+      return new NoUIWizardControllerDecorator(controller);
    }
 }
