@@ -33,6 +33,8 @@ public interface FacesFacet<DESCRIPTOR> extends JavaEEFacet, Configurable<DESCRI
 {
    ProjectStage getProjectStage();
 
+   void setProjectStage(ProjectStage projectStage);
+
    List<String> getFaceletsViewMappings();
 
    List<String> getFaceletsDefaultSuffixes();
@@ -50,4 +52,5 @@ public interface FacesFacet<DESCRIPTOR> extends JavaEEFacet, Configurable<DESCRI
    List<String> getEffectiveFacesServletMappings();
 
    List<String> getFacesServletMappings();
+
 }

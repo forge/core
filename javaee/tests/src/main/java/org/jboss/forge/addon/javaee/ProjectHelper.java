@@ -14,9 +14,11 @@ import javax.persistence.GenerationType;
 
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet_3_2;
+import org.jboss.forge.addon.javaee.faces.FacesFacet_2_2;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_0;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
+import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.parser.java.projects.JavaProjectType;
 import org.jboss.forge.addon.parser.java.projects.JavaWebProjectType;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -68,6 +70,22 @@ public class ProjectHelper
    public EJBFacet_3_2 installEJB_3_2(Project project)
    {
       return facetFactory.install(project, EJBFacet_3_2.class);
+   }
+
+   /**
+    * Installs the {@link ServletFacet_3_1} facet
+    */
+   public ServletFacet_3_1 installServlet_3_1(Project project)
+   {
+      return facetFactory.install(project, ServletFacet_3_1.class);
+   }
+
+   /**
+    * Installs the {@link FacesFacet_2_2} facet
+    */
+   public FacesFacet_2_2 installFaces_2_2(Project project)
+   {
+      return facetFactory.install(project, FacesFacet_2_2.class);
    }
 
    /**

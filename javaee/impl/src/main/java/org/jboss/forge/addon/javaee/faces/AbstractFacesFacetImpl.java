@@ -41,6 +41,7 @@ import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
+import org.jboss.shrinkwrap.descriptor.api.javaee.ParamValueCommonType;
 import org.jboss.shrinkwrap.descriptor.api.javaee5.ParamValueType;
 import org.jboss.shrinkwrap.descriptor.api.webapp.WebAppCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
@@ -167,8 +168,8 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
       {
          ServletFacet<?> servlet = getFaceted().getFacet(ServletFacet.class);
          WebAppCommonDescriptor config = servlet.getConfig();
-         List<ParamValueType<WebAppCommonDescriptor>> params = config.getAllContextParam();
-         for (ParamValueType<WebAppCommonDescriptor> param : params)
+         List<ParamValueCommonType> params = config.getAllContextParam();
+         for (ParamValueCommonType param : params)
          {
             if (JAVAX_FACES_PROJECT_STAGE.equals(param.getParamName()))
             {
@@ -178,6 +179,34 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
       }
 
       return ProjectStage.Production;
+   }
+
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   @Override
+   public void setProjectStage(ProjectStage projectStage)
+   {
+      if (getFaceted().hasFacet(ServletFacet.class))
+      {
+         ServletFacet servlet = getFaceted().getFacet(ServletFacet.class);
+         WebAppCommonDescriptor config = (WebAppCommonDescriptor) servlet.getConfig();
+         List<ParamValueCommonType> params = config.getAllContextParam();
+         ParamValueCommonType projectStageParam = null;
+         for (ParamValueCommonType param : params)
+         {
+            if (JAVAX_FACES_PROJECT_STAGE.equals(param.getParamName()))
+            {
+               projectStageParam = param;
+               break;
+            }
+         }
+         if (projectStageParam == null)
+         {
+            projectStageParam = config.createContextParam();
+            projectStageParam.paramName(JAVAX_FACES_PROJECT_STAGE);
+         }
+         projectStageParam.paramValue(projectStage.toString());
+         servlet.saveConfig(config);
+      }
    }
 
    @Override
@@ -455,7 +484,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
 
       return suffixes;
    }
-   
+
    protected abstract void createDefaultConfig(FileResource<?> descriptor);
 
    private ServletMappingHelper helper = new ServletMappingHelper();

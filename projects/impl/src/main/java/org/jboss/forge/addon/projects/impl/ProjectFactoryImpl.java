@@ -157,6 +157,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Override
    public Project findProject(FileResource<?> target, BuildSystem buildSystem, Predicate<Project> filter)
    {
+      Assert.notNull(target, "Target cannot be null");
       if (filter == null)
       {
          filter = acceptsAllProjects;
