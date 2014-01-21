@@ -71,7 +71,7 @@ public class TrackChangesCommandTest
       tempDir.deleteOnExit();
 
       test.getShell().setCurrentResource(tempDir);
-      Assert.assertFalse(test.execute("transaction-track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertFalse(test.execute("track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
       test.waitForStdOutValue("Resource change tracking is ON.", SHELL_TIMEOUT, TimeUnit.SECONDS);
 
       Assert.assertFalse(test.execute("touch foo.txt", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
@@ -81,7 +81,7 @@ public class TrackChangesCommandTest
       test.waitForStdOutValue("Deleted " + tempDir.getFullyQualifiedName() + "/foo.txt", SHELL_TIMEOUT,
                TimeUnit.SECONDS);
 
-      Assert.assertFalse(test.execute("transaction-track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertFalse(test.execute("track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
       test.waitForStdOutValue("Resource change tracking is OFF.", SHELL_TIMEOUT, TimeUnit.SECONDS);
    }
 
@@ -94,7 +94,7 @@ public class TrackChangesCommandTest
 
       test.getShell().setCurrentResource(tempDir);
       Assert.assertFalse(test.execute("transaction-start", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
-      Assert.assertFalse(test.execute("transaction-track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertFalse(test.execute("track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
 
       Assert.assertFalse(test.execute("touch foo.txt", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
       Assert.assertFalse(test.execute("rm foo.txt", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
@@ -105,7 +105,7 @@ public class TrackChangesCommandTest
       test.waitForStdOutValue("Deleted " + tempDir.getFullyQualifiedName() + "/foo.txt", SHELL_TIMEOUT,
                TimeUnit.SECONDS);
 
-      Assert.assertFalse(test.execute("transaction-track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertFalse(test.execute("track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
       test.waitForStdOutValue("Resource change tracking is OFF.", SHELL_TIMEOUT, TimeUnit.SECONDS);
    }
 
@@ -117,7 +117,7 @@ public class TrackChangesCommandTest
       tempDir.deleteOnExit();
 
       test.getShell().setCurrentResource(tempDir);
-      Assert.assertFalse(test.execute("transaction-track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertFalse(test.execute("track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
       Assert.assertFalse(test.execute("transaction-start", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
 
       Assert.assertFalse(test.execute("touch foo.txt", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
@@ -130,7 +130,7 @@ public class TrackChangesCommandTest
                TimeUnit.SECONDS);
 
       test.clearScreen();
-      Assert.assertFalse(test.execute("transaction-track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertFalse(test.execute("track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
       test.waitForStdOutValue("Resource change tracking is OFF.", SHELL_TIMEOUT, TimeUnit.SECONDS);
       Assert.assertFalse(test.getStdOut().contains("Wrote " + tempDir.getFullyQualifiedName() + "/foo.txt"));
       Assert.assertFalse(test.getStdOut().contains("Deleted " + tempDir.getFullyQualifiedName() + "/foo.txt"));
@@ -171,7 +171,7 @@ public class TrackChangesCommandTest
 
       Assert.assertFalse(flag.get());
 
-      Assert.assertFalse(test.execute("transaction-track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertFalse(test.execute("track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
       test.waitForStdOutValue("Resource change tracking is ON.", SHELL_TIMEOUT, TimeUnit.SECONDS);
 
       Assert.assertFalse(test.execute("rm foo.txt", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
@@ -180,7 +180,7 @@ public class TrackChangesCommandTest
 
       Assert.assertTrue(flag.get());
 
-      Assert.assertFalse(test.execute("transaction-track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertFalse(test.execute("track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
       test.waitForStdOutValue("Resource change tracking is OFF.", SHELL_TIMEOUT, TimeUnit.SECONDS);
    }
 }

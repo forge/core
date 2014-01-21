@@ -32,7 +32,7 @@ public class TrackChangesCommand extends AbstractShellCommand
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("transaction-track-changes")
+      return Metadata.from(super.getMetadata(context), getClass()).name("track-changes")
                .description("Initiate a transaction for each executed command.");
    }
 
