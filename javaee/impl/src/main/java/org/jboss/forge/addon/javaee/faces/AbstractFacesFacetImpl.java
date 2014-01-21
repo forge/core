@@ -42,7 +42,6 @@ import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.javaee.ParamValueCommonType;
-import org.jboss.shrinkwrap.descriptor.api.javaee5.ParamValueType;
 import org.jboss.shrinkwrap.descriptor.api.webapp.WebAppCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webcommon.ServletMappingCommonType;
@@ -438,8 +437,8 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
       {
          ServletFacet<?> servlet = getFaceted().getFacet(ServletFacet.class);
          WebAppCommonDescriptor config = servlet.getConfig();
-         List<ParamValueType<WebAppCommonDescriptor>> params = config.getAllContextParam();
-         for (ParamValueType<WebAppCommonDescriptor> param : params)
+         List<ParamValueCommonType> params = config.getAllContextParam();
+         for (ParamValueCommonType param : params)
          {
             if (JAVAX_FACES_DEFAULT_SUFFIX.equals(param.getParamName()))
             {
@@ -469,8 +468,8 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
       {
          ServletFacet<?> servlet = getFaceted().getFacet(ServletFacet.class);
          WebAppCommonDescriptor config = servlet.getConfig();
-         List<ParamValueType<WebAppCommonDescriptor>> params = config.getAllContextParam();
-         for (ParamValueType<WebAppCommonDescriptor> param : params)
+         List<ParamValueCommonType> params = config.getAllContextParam();
+         for (ParamValueCommonType param : params)
          {
             if (FACELETS_VIEW_MAPPINGS.equals(param.getParamName()))
             {
