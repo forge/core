@@ -9,12 +9,14 @@ package org.jboss.forge.addon.shell.command;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -92,7 +94,6 @@ public class RunCommand extends AbstractShellCommand
    {
       List<Result> results = new ArrayList<>();
       Resource<?> currentResource = (Resource<?>) context.getUIContext().getInitialSelection().get();
-      Shell shell = (Shell) context.getUIContext().getProvider();
 
       ALL: for (String path : arguments.getValue())
       {
@@ -101,13 +102,15 @@ public class RunCommand extends AbstractShellCommand
          {
             if (resource.exists())
             {
-               PipedOutputStream stdin = new PipedOutputStream();
+               final PipedOutputStream stdin = new PipedOutputStream();
+               final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+               final ByteArrayOutputStream stderr = new ByteArrayOutputStream();
                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
 
                Shell scriptShell = shellFactory.createShell((File) resource.getParent().getUnderlyingResourceObject(),
                         new SettingsBuilder().inputStream(new PipedInputStream(stdin))
-                                 .outputStream(shell.getConsole().getShell().out())
-                                 .outputStreamError(shell.getConsole().getShell().err()).create());
+                                 .outputStream(new PrintStream(stdout))
+                                 .outputStreamError(new PrintStream(stderr)).create());
 
                BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getResourceInputStream()));
 
@@ -122,6 +125,9 @@ public class RunCommand extends AbstractShellCommand
                                  TimeUnit.SECONDS, startTime);
 
                         results.add(result);
+
+                        context.getUIContext().getProvider().getOutput().out().write(stdout.toByteArray());
+                        context.getUIContext().getProvider().getOutput().err().write(stderr.toByteArray());
 
                         if (result instanceof Failed)
                            break ALL;
