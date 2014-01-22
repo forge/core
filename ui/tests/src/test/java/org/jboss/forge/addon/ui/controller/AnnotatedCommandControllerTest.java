@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.ui.controller.mock.EnabledHandlerCommand;
 import org.jboss.forge.addon.ui.example.commands.ExampleAnnotatedCommand;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;

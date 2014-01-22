@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.ui.controller;
+package org.jboss.forge.addon.ui.controller.mock;
 
 import org.jboss.forge.addon.ui.annotation.Command;
 import org.jboss.forge.addon.ui.annotation.handler.DisabledHandler;

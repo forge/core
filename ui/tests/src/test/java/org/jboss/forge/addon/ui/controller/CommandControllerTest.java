@@ -11,6 +11,10 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.ui.controller.mock.ExampleCommand;
+import org.jboss.forge.addon.ui.controller.mock.ExampleNoUICommand;
+import org.jboss.forge.addon.ui.controller.mock.FlowExampleStep;
+import org.jboss.forge.addon.ui.controller.mock.FlowExampleWizard;
 import org.jboss.forge.addon.ui.impl.mock.MockUIContext;
 import org.jboss.forge.addon.ui.impl.mock.MockUIRuntime;
 import org.jboss.forge.addon.ui.result.Result;
@@ -102,6 +106,7 @@ public class CommandControllerTest
       controller.initialize();
       Assert.assertTrue(controller.getInputs().isEmpty());
       Assert.assertTrue(controller.isValid());
+      Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
       Assert.assertEquals("Executed", result.getMessage());
    }
@@ -123,7 +128,5 @@ public class CommandControllerTest
          controller.setValueFor("hasNext", Boolean.FALSE);
          Assert.assertFalse(controller.canMoveToNextStep());
       }
-
    }
-
 }
