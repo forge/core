@@ -26,9 +26,9 @@ import org.jboss.forge.addon.ui.result.Result;
  */
 public class NoUIWizardControllerDecorator implements WizardCommandController
 {
-   private final WizardCommandController controller;
+   private final WizardCommandControllerImpl controller;
 
-   public NoUIWizardControllerDecorator(WizardCommandController controller)
+   public NoUIWizardControllerDecorator(WizardCommandControllerImpl controller)
    {
       this.controller = controller;
    }
@@ -37,10 +37,104 @@ public class NoUIWizardControllerDecorator implements WizardCommandController
    public void initialize() throws Exception
    {
       controller.initialize();
-      if (this.controller.getInputs().isEmpty() && controller.canMoveToNextStep())
+      if (this.controller.getInputs().isEmpty() && canMoveToNextStep())
       {
-         moveToNextStepWithUI();
+         next();
       }
+   }
+
+   @Override
+   public boolean canMoveToNextStep()
+   {
+      boolean result = false;
+      if (controller.canMoveToNextStep())
+      {
+         int flowPointer = controller.getFlowPointer();
+         try
+         {
+            while (!result && controller.canMoveToNextStep())
+            {
+               controller.next().initialize();
+               if (!controller.getInputs().isEmpty())
+               {
+                  result = true;
+               }
+            }
+         }
+         catch (Exception ignored)
+         {
+
+         }
+         finally
+         {
+            controller.setFlowPointer(flowPointer);
+         }
+      }
+      return result;
+   }
+
+   @Override
+   public boolean canMoveToPreviousStep()
+   {
+      boolean result = false;
+      if (controller.canMoveToPreviousStep())
+      {
+         int flowPointer = controller.getFlowPointer();
+         try
+         {
+            while (!result && controller.canMoveToPreviousStep())
+            {
+               controller.previous();
+               if (!controller.getInputs().isEmpty())
+               {
+                  result = true;
+               }
+            }
+         }
+         catch (Exception ignored)
+         {
+
+         }
+         finally
+         {
+            controller.setFlowPointer(flowPointer);
+         }
+      }
+      return result;
+   }
+
+   @Override
+   public WizardCommandController next() throws Exception
+   {
+      int pointer = controller.getFlowPointer();
+      while (controller.canMoveToNextStep())
+      {
+         controller.next().initialize();
+         if (!controller.getInputs().isEmpty())
+         {
+            pointer = controller.getFlowPointer();
+            break;
+         }
+      }
+      controller.setFlowPointer(pointer);
+      return this;
+   }
+
+   @Override
+   public WizardCommandController previous() throws Exception
+   {
+      int pointer = controller.getFlowPointer();
+      while (controller.canMoveToPreviousStep())
+      {
+         controller.previous();
+         if (!controller.getInputs().isEmpty())
+         {
+            pointer = controller.getFlowPointer();
+            break;
+         }
+      }
+      controller.setFlowPointer(pointer);
+      return this;
    }
 
    @Override
@@ -77,7 +171,7 @@ public class NoUIWizardControllerDecorator implements WizardCommandController
    public CommandController setValueFor(String inputName, Object value) throws IllegalArgumentException
    {
       controller.setValueFor(inputName, value);
-      return this; 
+      return this;
    }
 
    @Override
@@ -133,49 +227,4 @@ public class NoUIWizardControllerDecorator implements WizardCommandController
    {
       return controller.getInitialMetadata();
    }
-
-   @Override
-   public boolean canMoveToNextStep()
-   {
-      return controller.canMoveToNextStep();
-   }
-
-   @Override
-   public boolean canMoveToPreviousStep()
-   {
-      return controller.canMoveToPreviousStep();
-   }
-
-   @Override
-   public WizardCommandController next() throws Exception
-   {
-      moveToNextStepWithUI();
-      return this;
-   }
-
-   @Override
-   public WizardCommandController previous() throws Exception
-   {
-      moveToPreviousStepWithUI();
-      return this;
-   }
-
-   private void moveToNextStepWithUI() throws Exception
-   {
-      do
-      {
-         controller.next().initialize();
-      }
-      while (controller.getInputs().isEmpty() && controller.canMoveToNextStep());
-   }
-
-   private void moveToPreviousStepWithUI() throws Exception
-   {
-      do
-      {
-         controller.previous();
-      }
-      while (controller.getInputs().isEmpty() && controller.canMoveToPreviousStep());
-   }
-
 }
