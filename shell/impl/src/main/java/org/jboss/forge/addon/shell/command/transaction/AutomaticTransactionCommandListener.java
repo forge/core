@@ -9,13 +9,19 @@ package org.jboss.forge.addon.shell.command.transaction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.events.ResourceCreated;
 import org.jboss.forge.addon.resource.events.ResourceDeleted;
 import org.jboss.forge.addon.resource.events.ResourceEvent;
-import org.jboss.forge.addon.resource.events.ResourceModified;
 import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.addon.ui.command.UICommand;
@@ -82,21 +88,32 @@ public class AutomaticTransactionCommandListener implements CommandExecutionList
                            .compareTo(right.getResource().getFullyQualifiedName());
                }
             });
+            Map<EventType, Set<String>> organizedEvents = organize(events);
+            UIOutput output = context.getUIContext().getProvider().getOutput();
 
-            for (ResourceEvent event : events)
+            for (Entry<EventType, Set<String>> entry : organizedEvents.entrySet())
             {
-               UIOutput output = context.getUIContext().getProvider().getOutput();
-               if (event instanceof ResourceCreated)
+               switch (entry.getKey())
                {
-                  output.out().println("Created  " + event.getResource().getFullyQualifiedName());
-               }
-               else if (event instanceof ResourceModified)
-               {
-                  output.out().println("Modified " + event.getResource().getFullyQualifiedName());
-               }
-               else if (event instanceof ResourceDeleted)
-               {
-                  output.out().println("Deleted  " + event.getResource().getFullyQualifiedName());
+               case CREATED:
+                  for (String resourceName : entry.getValue())
+                  {
+                     output.out().println("Created  " + resourceName);
+                  }
+                  break;
+               case DELETED:
+                  for (String resourceName : entry.getValue())
+                  {
+                     output.out().println("Deleted  " + resourceName);
+                  }
+                  break;
+               case MODIFIED:
+                  for (String resourceName : entry.getValue())
+                  {
+                     output.out().println("Modified " + resourceName);
+                  }
+
+                  break;
                }
             }
          }
@@ -111,5 +128,58 @@ public class AutomaticTransactionCommandListener implements CommandExecutionList
       {
          transaction.rollback();
       }
+   }
+
+   private enum EventType
+   {
+      CREATED, DELETED, MODIFIED
+   }
+
+   private Map<EventType, Set<String>> organize(final Iterable<ResourceEvent> events)
+   {
+      Map<EventType, Set<String>> result = new HashMap<>();
+      for (ResourceEvent e : events)
+      {
+         Resource<?> resource = e.getResource();
+         final EventType eventType;
+         if (e instanceof ResourceCreated)
+         {
+            eventType = EventType.CREATED;
+         }
+         else if (e instanceof ResourceDeleted)
+         {
+            eventType = EventType.DELETED;
+         }
+         else
+         {
+            eventType = EventType.MODIFIED;
+         }
+         Set<String> list = result.get(eventType);
+         if (list == null)
+         {
+            list = new TreeSet<>();
+            result.put(eventType, list);
+         }
+         list.add(resource.getFullyQualifiedName());
+      }
+
+      // Remove Resource from MODIFIED if Created or Deleted
+      Set<String> createdResources = result.get(EventType.CREATED);
+      Set<String> modifiedResource = result.get(EventType.MODIFIED);
+      Set<String> deletedResources = result.get(EventType.DELETED);
+      if (modifiedResource != null)
+      {
+         Iterator<String> it = modifiedResource.iterator();
+         while (it.hasNext())
+         {
+            String resource = it.next();
+            if ((createdResources != null && createdResources.contains(resource)) ||
+                     (deletedResources != null && deletedResources.contains(resource)))
+            {
+               it.remove();
+            }
+         }
+      }
+      return result;
    }
 }
