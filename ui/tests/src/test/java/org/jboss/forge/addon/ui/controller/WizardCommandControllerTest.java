@@ -82,7 +82,6 @@ public class WizardCommandControllerTest
          // Going to example Step One
          controller.next();
          Assert.assertThat(controller.getCommand(), is(instanceOf(ExampleStepOne.class)));
-         Assert.assertFalse(controller.isInitialized());
          controller.initialize();
          Assert.assertTrue(controller.isInitialized());
 
@@ -100,7 +99,6 @@ public class WizardCommandControllerTest
          // Should go to ExampleStepTwo
          Assert.assertTrue(controller.canMoveToNextStep());
          controller.next();
-         Assert.assertFalse(controller.isInitialized());
          controller.initialize();
          Assert.assertTrue(controller.isInitialized());
          Assert.assertThat(controller.getCommand(), is(instanceOf(ExampleStepTwo.class)));
