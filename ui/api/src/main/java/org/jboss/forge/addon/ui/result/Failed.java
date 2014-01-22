@@ -7,11 +7,15 @@
 package org.jboss.forge.addon.ui.result;
 
 /**
- * Represents a failed {@link Result}
+ * Represents a failed {@link Result}.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface Failed extends Result
 {
+   /**
+    * Return the {@link Exception} that caused command execution failure. (May be <code>null</code> if no
+    * {@link Exception} was thrown.)
+    */
    public Throwable getException();
 }

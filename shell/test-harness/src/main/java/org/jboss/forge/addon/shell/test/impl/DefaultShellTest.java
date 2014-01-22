@@ -35,6 +35,7 @@ import org.jboss.forge.addon.ui.command.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.furnace.container.cdi.events.Local;
 import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.exception.ContainerException;
@@ -441,6 +442,15 @@ public class DefaultShellTest implements ShellTest
          synchronized (this)
          {
             this.result = result;
+         }
+      }
+
+      @Override
+      public void postCommandFailure(UICommand command, UIExecutionContext context, Throwable failure)
+      {
+         synchronized (this)
+         {
+            this.result = Results.fail("Error encountered during command execution.", failure);
          }
       }
 

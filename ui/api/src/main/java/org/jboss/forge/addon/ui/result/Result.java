@@ -6,12 +6,17 @@
  */
 package org.jboss.forge.addon.ui.result;
 
+import org.jboss.forge.addon.ui.command.UICommand;
+
 /**
- * The result of an execution
- *
+ * The result of a {@link UICommand}.
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface Result
 {
+   /**
+    * Get the output message from the executed {@link UICommand}.
+    */
    public String getMessage();
 }

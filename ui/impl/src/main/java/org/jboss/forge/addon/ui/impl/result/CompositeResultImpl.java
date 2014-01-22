@@ -10,6 +10,7 @@ package org.jboss.forge.addon.ui.impl.result;
 import java.util.List;
 
 import org.jboss.forge.addon.ui.result.CompositeResult;
+import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.furnace.util.Assert;
 
@@ -17,8 +18,9 @@ import org.jboss.forge.furnace.util.Assert;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class CompositeResultImpl implements CompositeResult
+public abstract class CompositeResultImpl implements CompositeResult
 {
+
    public final List<Result> results;
 
    public CompositeResultImpl(List<Result> results)
@@ -33,10 +35,54 @@ public class CompositeResultImpl implements CompositeResult
       return results;
    }
 
+   @Override
    public String getMessage()
    {
       throw new UnsupportedOperationException(
                "getMessage() should not be called in a CompositeResult. Call getResults() instead.");
    }
 
+   public static Result from(List<Result> results)
+   {
+      boolean failed = false;
+      Throwable throwable = null;
+      for (Result result : results)
+      {
+         if (result instanceof Failed)
+         {
+            failed = true;
+            throwable = ((Failed) result).getException();
+            break;
+         }
+      }
+
+      if (failed)
+         return new CompositeResultFailed(results, throwable);
+      return new CompositeResultSuccess(results);
+   }
+
+   private static class CompositeResultFailed extends CompositeResultImpl implements Result, Failed
+   {
+      private final Throwable exception;
+
+      public CompositeResultFailed(List<Result> results, Throwable e)
+      {
+         super(results);
+         this.exception = e;
+      }
+
+      @Override
+      public Throwable getException()
+      {
+         return exception;
+      }
+   }
+
+   private static class CompositeResultSuccess extends CompositeResultImpl implements Result
+   {
+      public CompositeResultSuccess(List<Result> results)
+      {
+         super(results);
+      }
+   }
 }

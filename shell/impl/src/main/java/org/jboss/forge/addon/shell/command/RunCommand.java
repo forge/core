@@ -15,6 +15,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -37,10 +38,12 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.hints.InputType;
+import org.jboss.forge.addon.ui.impl.result.CompositeResultImpl;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -87,9 +90,11 @@ public class RunCommand extends AbstractShellCommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
+      List<Result> results = new ArrayList<>();
       Resource<?> currentResource = (Resource<?>) context.getUIContext().getInitialSelection().get();
       Shell shell = (Shell) context.getUIContext().getProvider();
-      for (String path : arguments.getValue())
+
+      ALL: for (String path : arguments.getValue())
       {
          List<Resource<?>> resources = new PathspecParser(resourceFactory, currentResource, path).resolve();
          for (Resource<?> resource : resources)
@@ -113,11 +118,18 @@ public class RunCommand extends AbstractShellCommand
                   {
                      try
                      {
-                        execute(scriptShell, writer, reader.readLine(), timeout.getValue(), TimeUnit.SECONDS, startTime);
+                        Result result = execute(scriptShell, writer, reader.readLine(), timeout.getValue(),
+                                 TimeUnit.SECONDS, startTime);
+
+                        results.add(result);
+
+                        if (result instanceof Failed)
+                           break ALL;
                      }
                      catch (TimeoutException e)
                      {
-                        return Results.fail(path + ": timed out.");
+                        results.add(Results.fail(path + ": timed out."));
+                        break ALL;
                      }
                   }
                }
@@ -129,12 +141,13 @@ public class RunCommand extends AbstractShellCommand
             }
             else
             {
-               return Results.fail(path + ": not found.");
+               results.add(Results.fail(path + ": not found."));
+               break ALL;
             }
          }
       }
 
-      return Results.success();
+      return CompositeResultImpl.from(results);
    }
 
    public Result execute(Shell shell, BufferedWriter stdin, String line, int quantity, TimeUnit unit, long startTime)
@@ -195,6 +208,15 @@ public class RunCommand extends AbstractShellCommand
          synchronized (this)
          {
             this.result = result;
+         }
+      }
+
+      @Override
+      public void postCommandFailure(UICommand command, UIExecutionContext context, Throwable failure)
+      {
+         synchronized (this)
+         {
+            this.result = Results.fail("Error encountered during command execution.", failure);
          }
       }
 

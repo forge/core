@@ -17,6 +17,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.shell.mock.command.ThrowExceptionCommand;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
@@ -49,6 +50,7 @@ public class RunCommandTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
+               .addClasses(ThrowExceptionCommand.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
@@ -112,5 +114,19 @@ public class RunCommandTest
       Assert.assertTrue(child2.exists());
       child.delete();
       child2.delete();
+   }
+
+   @Test
+   public void testRunScriptFailure() throws Exception
+   {
+      DirectoryResource temp = (DirectoryResource) resourceFactory.create(OperatingSystemUtils.createTempDir());
+      temp.deleteOnExit();
+      shellTest.getShell().setCurrentResource(temp);
+
+      FileResource<?> script = (FileResource<?>) temp.getChild("script.fsh");
+      script.setContents("throw-exception");
+
+      Result result = shellTest.execute("run script.fsh", COMMAND_TIMEOUT, TimeUnit.SECONDS);
+      Assert.assertTrue(result instanceof Failed);
    }
 }

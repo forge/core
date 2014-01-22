@@ -16,31 +16,49 @@ import org.jboss.forge.addon.ui.command.UICommand;
  */
 public final class Results
 {
+   /**
+    * Create a successful {@link Result}.
+    */
    public static final Result success()
    {
       return success(null);
    }
 
+   /**
+    * Create a successful {@link Result} with a message.
+    */
    public static final Result success(String message)
    {
       return new SuccessfulResult(message);
    }
 
+   /**
+    * Create a failed {@link Result}.
+    */
    public static final Result fail()
    {
       return fail(null);
    }
 
+   /**
+    * Create a failed {@link Result} with a message.
+    */
    public static final Result fail(String message)
    {
       return new FailedResult(message);
    }
 
+   /**
+    * Create a failed {@link Result} with a message and {@link Throwable} root cause.
+    */
    public static final Result fail(String message, Throwable e)
    {
       return new FailedResult(message, e);
    }
 
+   /**
+    * Create a failed {@link NavigationResult} using the given {@link UICommand} type as the target.
+    */
    @SuppressWarnings("unchecked")
    public static final NavigationResult navigateTo(Class<? extends UICommand> next)
    {
@@ -51,6 +69,9 @@ public final class Results
       return navigateTo(next, new Class[0]);
    }
 
+   /**
+    * Create a failed {@link NavigationResult} using the given {@link UICommand} types as the targets.
+    */
    @SuppressWarnings("unchecked")
    public static final NavigationResult navigateTo(Class<? extends UICommand> next,
             Class<? extends UICommand>... additional)
@@ -77,6 +98,12 @@ public final class Results
       public String getMessage()
       {
          return message;
+      }
+
+      @Override
+      public String toString()
+      {
+         return "Success [" + message + "]";
       }
    }
 
@@ -106,6 +133,12 @@ public final class Results
       public Throwable getException()
       {
          return e;
+      }
+
+      @Override
+      public String toString()
+      {
+         return "Failed [" + message + "]";
       }
    }
 }
