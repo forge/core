@@ -87,11 +87,11 @@ public class AutomaticTransactionCommandListener implements CommandExecutionList
                UIOutput output = context.getUIContext().getProvider().getOutput();
                if (event instanceof ResourceCreated)
                {
-                  output.out().println("Wrote " + event.getResource().getFullyQualifiedName());
+                  output.out().println("Created " + event.getResource().getFullyQualifiedName());
                }
                else if (event instanceof ResourceModified)
                {
-                  output.out().println("Wrote " + event.getResource().getFullyQualifiedName());
+                  output.out().println("Changed " + event.getResource().getFullyQualifiedName());
                }
                else if (event instanceof ResourceDeleted)
                {
