@@ -119,6 +119,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    public Result execute() throws Exception
    {
       assertInitialized();
+      assertValid();
       UIProgressMonitor progressMonitor = runtime.createProgressMonitor(context);
       UIPrompt prompt = runtime.createPrompt(context);
       UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor, prompt);
@@ -129,7 +130,6 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       {
          listeners.add(listener);
       }
-      assertValid();
       List<Result> results = new LinkedList<>();
       for (WizardStepEntry entry : flow)
       {
@@ -247,7 +247,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    {
       assertInitialized();
       // FORGE-1466: Eager initialization so canExecute() works
-      refreshFlow();
+//      refreshFlow();
       for (WizardStepEntry entry : flow)
       {
          if (!entry.controller.canExecute())
@@ -399,6 +399,16 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       return this;
    }
 
+   protected int getFlowPointer()
+   {
+      return flowPointer;
+   }
+
+   protected void setFlowPointer(int flowPointer)
+   {
+      this.flowPointer = flowPointer;
+   }
+   
    private WizardStepEntry getCurrentEntry()
    {
       return flow.get(flowPointer);
