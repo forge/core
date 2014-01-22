@@ -9,6 +9,7 @@ package org.jboss.forge.addon.shell.command.transaction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.events.ResourceCreated;
@@ -70,7 +71,7 @@ public class AutomaticTransactionCommandListener implements CommandExecutionList
                transaction.commit();
             }
 
-            ArrayList<ResourceEvent> events = new ArrayList<>(aggregator.getResourceEvents());
+            List<ResourceEvent> events = new ArrayList<>(aggregator.getResourceEvents());
             aggregator.clear();
             Collections.sort(events, new Comparator<ResourceEvent>()
             {
@@ -87,15 +88,15 @@ public class AutomaticTransactionCommandListener implements CommandExecutionList
                UIOutput output = context.getUIContext().getProvider().getOutput();
                if (event instanceof ResourceCreated)
                {
-                  output.out().println("Created " + event.getResource().getFullyQualifiedName());
+                  output.out().println("Created  " + event.getResource().getFullyQualifiedName());
                }
                else if (event instanceof ResourceModified)
                {
-                  output.out().println("Changed " + event.getResource().getFullyQualifiedName());
+                  output.out().println("Modified " + event.getResource().getFullyQualifiedName());
                }
                else if (event instanceof ResourceDeleted)
                {
-                  output.out().println("Deleted " + event.getResource().getFullyQualifiedName());
+                  output.out().println("Deleted  " + event.getResource().getFullyQualifiedName());
                }
             }
          }
