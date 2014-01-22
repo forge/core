@@ -142,18 +142,22 @@ public class WizardCommandControllerTest
          controller.next().initialize();
          Assert.assertThat(controller.getCommand(), is(instanceOf(FlowOneStep.class)));
          controller.setValueFor("flowOneInput", "Value");
+         Assert.assertTrue(controller.canMoveToNextStep());
          controller.next().initialize();
          Assert.assertThat(controller.getCommand(), is(instanceOf(FlowOneOneStep.class)));
          controller.setValueFor("flowOneOneInput", "Value Two");
+         Assert.assertTrue(controller.canMoveToNextStep());
          controller.next().initialize();
          Assert.assertThat(controller.getCommand(), is(instanceOf(FlowTwoStep.class)));
          controller.setValueFor("flowTwoInput", "Value Three");
-
+         Assert.assertTrue(controller.canMoveToPreviousStep());
          controller.previous().previous();
          Assert.assertThat(controller.getCommand(), is(instanceOf(FlowOneStep.class)));
          controller.setValueFor("flowOneInput", "Changed Value");
+         Assert.assertTrue(controller.canMoveToNextStep());
          controller.next();
          Assert.assertTrue("FlowOneOneStep shouldn't have been removed", controller.isInitialized());
+         Assert.assertTrue(controller.canMoveToNextStep());
          controller.next();
          Assert.assertTrue("FlowTwoStep shouldn't have been removed", controller.isInitialized());
 
@@ -185,9 +189,11 @@ public class WizardCommandControllerTest
          controller.previous().previous();
          Assert.assertThat(controller.getCommand(), is(instanceOf(FlowOneStep.class)));
          controller.setValueFor("flowOneInput", "Changed Value");
+         Assert.assertTrue(controller.canMoveToNextStep());
          controller.next().initialize();
          Assert.assertThat(controller.getCommand(), is(instanceOf(FlowOneOneStep.class)));
          controller.setValueFor("flowOneOneInput", "Value Two");
+         Assert.assertTrue(controller.canMoveToNextStep());
          controller.next().initialize();
          Assert.assertThat(controller.getCommand(), is(instanceOf(FlowTwoStep.class)));
          controller.setValueFor("flowTwoInput", "Value Three");
@@ -209,8 +215,10 @@ public class WizardCommandControllerTest
          controller.next().initialize();
          Assert.assertTrue("Should have added one input", controller.getInputs().size() == 1);
          Assert.assertTrue("Input inputOne not added", controller.getInputs().containsKey("inputOne"));
+         Assert.assertTrue(controller.canMoveToPreviousStep());
          controller.previous();
          controller.setValueFor("chooseInputTwo", Boolean.TRUE);
+         Assert.assertTrue(controller.canMoveToNextStep());
          controller.next().initialize();
          Assert.assertTrue("Should have added one input", controller.getInputs().size() == 1);
          Assert.assertTrue("Input inputTwo not added", controller.getInputs().containsKey("inputTwo"));

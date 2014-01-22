@@ -9,6 +9,7 @@ package org.jboss.forge.addon.ui.impl.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -57,6 +58,8 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
     * If there are any subflows, store here
     */
    private final LinkedList<WizardStepEntry> subflow = new LinkedList<>();
+
+   private final Map<Integer, WizardStepEntry> usedSubflows = new HashMap<>();
 
    /**
     * The pointer that this flow is on. Starts with 0
@@ -225,14 +228,21 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    public void close() throws Exception
    {
       context.close();
+      subflow.clear();
+      flow.clear();
+      usedSubflows.clear();
    }
 
    @Override
    public boolean canMoveToNextStep()
    {
       assertInitialized();
+      if (!isValid())
+      {
+         return false;
+      }
       Class<? extends UICommand>[] next = getNextFrom(getCurrentController().getCommand());
-      return isValid() && (next != null || !subflow.isEmpty());
+      return ((next != null || !subflow.isEmpty()) || usedSubflows.containsKey(flowPointer));
    }
 
    @Override
@@ -247,7 +257,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    {
       assertInitialized();
       // FORGE-1466: Eager initialization so canExecute() works
-//      refreshFlow();
+      refreshFlow();
       for (WizardStepEntry entry : flow)
       {
          if (!entry.controller.canExecute())
@@ -369,6 +379,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
          else
          {
             next = subflow.pop();
+            usedSubflows.put(flowPointer, next);
          }
       }
       else
@@ -408,7 +419,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    {
       this.flowPointer = flowPointer;
    }
-   
+
    private WizardStepEntry getCurrentEntry()
    {
       return flow.get(flowPointer);
