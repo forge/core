@@ -8,6 +8,7 @@ package org.jboss.forge.addon.shell;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.inject.Vetoed;
@@ -17,6 +18,7 @@ import org.jboss.aesh.console.AeshConsoleBuilder;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.Prompt;
 import org.jboss.aesh.console.command.invocation.CommandInvocation;
+import org.jboss.aesh.console.export.ExportManager;
 import org.jboss.aesh.console.helper.InterruptHook;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
@@ -187,6 +189,21 @@ public class ShellImpl implements Shell, UIRuntime
       for (CommandExecutionListener listener : executionListeners)
       {
          shellContextImpl.addCommandExecutionListener(listener);
+      }
+      ExportManager exportManager = console.getExportManager();
+      if (exportManager != null)
+      {
+         Map<Object, Object> attributeMap = shellContextImpl.getAttributeMap();
+         for (String variableName : exportManager.getAllNames())
+         {
+            // Variable name ends with "=". Aesh Bug?
+            if (variableName.endsWith("="))
+            {
+               variableName = variableName.split("=")[0];
+            }
+            String variableValue = exportManager.getValue(variableName);
+            attributeMap.put(variableName, variableValue);
+         }
       }
       return shellContextImpl;
    }
