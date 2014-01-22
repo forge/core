@@ -129,4 +129,14 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>
     * Monitors this FileResource using the given filter
     */
    ResourceMonitor monitor(ResourceFilter filter);
+
+   /**
+    * Get the last modified time-stamp of this resource.
+    */
+   public long getLastModified();
+
+   /**
+    * Set the last modified time-stamp of this resource.
+    */
+   public void setLastModified(long currentTimeMillis);
 }

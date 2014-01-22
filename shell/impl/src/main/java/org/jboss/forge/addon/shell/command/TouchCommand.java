@@ -58,6 +58,7 @@ public class TouchCommand extends AbstractShellCommand
    }
 
    @Override
+   @SuppressWarnings("unchecked")
    public Result execute(UIExecutionContext context) throws Exception
    {
       Resource<?> currentResource = (Resource<?>) context.getUIContext().getInitialSelection().get();
@@ -66,18 +67,16 @@ public class TouchCommand extends AbstractShellCommand
          List<Resource<?>> resources = new PathspecParser(resourceFactory, currentResource, path).resolve();
          for (Resource<?> resource : resources)
          {
+            FileResource<?> file = resourceFactory.create(FileResource.class,
+                     new File(resource.getFullyQualifiedName()));
+
             if (resource.exists())
             {
-               return Results.fail(path + ": Resource already exists.");
+               file.setLastModified(System.currentTimeMillis());
             }
-            else
+            else if (!file.createNewFile())
             {
-               @SuppressWarnings("unchecked")
-               FileResource<?> file = resourceFactory.create(FileResource.class,
-                        new File(resource.getFullyQualifiedName()));
-
-               if (!file.createNewFile())
-                  return Results.fail(path + ": File could not be created.");
+               return Results.fail(path + ": File could not be created.");
             }
          }
       }

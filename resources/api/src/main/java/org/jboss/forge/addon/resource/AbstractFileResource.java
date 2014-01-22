@@ -374,4 +374,16 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       return getResourceFactory().getFileOperations();
    }
 
+   @Override
+   public long getLastModified()
+   {
+      return file.lastModified();
+   }
+
+   @Override
+   public void setLastModified(long time)
+   {
+      file.setLastModified(time);
+   }
+
 }
