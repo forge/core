@@ -56,6 +56,7 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
    {
       WizardCommandControllerImpl controller = new WizardCommandControllerImpl(context, addonRegistry, runtime, wizard,
                this);
-      return new NoUIWizardControllerDecorator(controller);
+      return controller;
+      // return new NoUIWizardControllerDecorator(controller);
    }
 }
