@@ -76,7 +76,7 @@ public class TouchCommand extends AbstractShellCommand
             }
             else if (!file.createNewFile())
             {
-               return Results.fail(path + ": File could not be created.");
+               return Results.fail(path + ": file could not be created.");
             }
          }
       }
