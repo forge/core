@@ -1,11 +1,12 @@
 package org.jboss.forge.addon.ui;
 
-import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.addon.ui.output.UIOutput;
 
 /**
- * A {@link UIProvider} allows registering of {@link CommandExecutionListener} objects independently of the underlying
- * UI provider used (Shell, Eclipse, Idea)
+ * A {@link UIProvider} provides access to the underlying UI implementation.
+ * 
+ * Information like, if it is running under a GUI, as well as the out/err streams are available from implementations of
+ * this interface
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
@@ -17,7 +18,7 @@ public interface UIProvider
    boolean isGUI();
 
    /**
-    * Returns the output object used to display messages during a UI interation
+    * Returns the output object used to display messages during a UI interaction
     */
    UIOutput getOutput();
 }
