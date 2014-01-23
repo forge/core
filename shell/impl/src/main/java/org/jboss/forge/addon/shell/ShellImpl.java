@@ -17,7 +17,6 @@ import org.jboss.aesh.console.AeshConsole;
 import org.jboss.aesh.console.AeshConsoleBuilder;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.Prompt;
-import org.jboss.aesh.console.command.invocation.CommandInvocation;
 import org.jboss.aesh.console.export.ExportManager;
 import org.jboss.aesh.console.helper.InterruptHook;
 import org.jboss.aesh.console.settings.Settings;
@@ -233,8 +232,6 @@ public class ShellImpl implements Shell, UIRuntime
    @Override
    public UIPrompt createPrompt(UIContext context)
    {
-      CommandInvocation commandInvocation = (CommandInvocation) context.getAttributeMap()
-               .get(CommandInvocation.class);
-      return new ShellUIPromptImpl(console, commandInvocation);
+      return new ShellUIPromptImpl(context, console);
    }
 }

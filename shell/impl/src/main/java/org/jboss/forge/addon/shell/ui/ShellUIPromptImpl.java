@@ -11,6 +11,7 @@ import java.io.PrintStream;
 
 import org.jboss.aesh.console.AeshConsole;
 import org.jboss.aesh.console.command.invocation.CommandInvocation;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.UIPrompt;
 
 /**
@@ -20,18 +21,25 @@ import org.jboss.forge.addon.ui.input.UIPrompt;
  */
 public class ShellUIPromptImpl implements UIPrompt
 {
+   private final UIContext context;
    private final AeshConsole console;
    private final CommandInvocation commandInvocation;
 
-   public ShellUIPromptImpl(AeshConsole console, CommandInvocation commandInvocation)
+   public ShellUIPromptImpl(UIContext context, AeshConsole console)
    {
+      this.context = context;
       this.console = console;
-      this.commandInvocation = commandInvocation;
+      this.commandInvocation = (CommandInvocation) context.getAttributeMap()
+               .get(CommandInvocation.class);
    }
 
    @Override
    public String prompt(String message)
    {
+      if (isAcceptDefaultsEnabled())
+      {
+         return null;
+      }
       PrintStream out = console.getShell().out();
       out.print(message);
       String output;
@@ -50,6 +58,10 @@ public class ShellUIPromptImpl implements UIPrompt
    @Override
    public String promptSecret(String message)
    {
+      if (isAcceptDefaultsEnabled())
+      {
+         return null;
+      }
       PrintStream out = console.getShell().out();
       out.print(message);
       String output;
@@ -68,7 +80,17 @@ public class ShellUIPromptImpl implements UIPrompt
    @Override
    public boolean promptBoolean(String message)
    {
+      if (isAcceptDefaultsEnabled())
+      {
+         return true;
+      }
       return "Y".equalsIgnoreCase(prompt(message + " [y/N]"));
+   }
+
+   private boolean isAcceptDefaultsEnabled()
+   {
+      Object acceptDefaultsFlag = context.getAttributeMap().get("ACCEPT_DEFAULTS");
+      return acceptDefaultsFlag != null && "true".equalsIgnoreCase(acceptDefaultsFlag.toString());
    }
 
 }
