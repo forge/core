@@ -42,7 +42,7 @@ public class ConverterFactoryImpl implements ConverterFactory
       {
          if (String.class.equals(source) && !registry.getServices(target).isUnsatisfied())
          {
-            result = (Converter<S, T>) new StringToImportedInstanceConverter<T>(target, registry);
+            result = (Converter<S, T>) new StringToImportedInstanceConverter<>(target, registry);
          }
          else if (String.class.equals(target))
          {
@@ -56,13 +56,13 @@ public class ConverterFactoryImpl implements ConverterFactory
          {
             try
             {
-               result = new MethodConverter<S, T>(source, target, null, target.getMethod("valueOf", source));
+               result = new MethodConverter<>(source, target, null, target.getMethod("valueOf", source));
             }
             catch (NoSuchMethodException noValueOf)
             {
                try
                {
-                  result = new ConstructorConverter<S, T>(source, target, target.getConstructor(source));
+                  result = new ConstructorConverter<>(source, target, target.getConstructor(source));
                }
                catch (NoSuchMethodException noConstructor)
                {
