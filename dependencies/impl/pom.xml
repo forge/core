@@ -14,8 +14,13 @@
          <artifactId>dependencies-api</artifactId>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge.furnace</groupId>
-         <artifactId>furnace-api</artifactId>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>convert-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.furnace.container</groupId>
+         <artifactId>simple-api</artifactId>
          <scope>provided</scope>
       </dependency>
    </dependencies>

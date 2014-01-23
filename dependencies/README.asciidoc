@@ -17,6 +17,14 @@ with an artifact repository.
 |yes
 |no
 
+|convert
+|no
+|yes
+
+|org.jboss.forge.furnace.container:simple
+|no
+|no
+
 |===
 
 == Setup
