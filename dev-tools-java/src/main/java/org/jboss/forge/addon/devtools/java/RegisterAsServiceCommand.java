@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
@@ -85,7 +86,7 @@ public class RegisterAsServiceCommand extends AbstractProjectCommand
          @Override
          public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
          {
-            Set<String> result = new LinkedHashSet<String>();
+            Set<String> result = new LinkedHashSet<>();
             if (type.getValue() != null)
             {
                try
@@ -93,7 +94,12 @@ public class RegisterAsServiceCommand extends AbstractProjectCommand
                   JavaSource<?> source = type.getValue().getJavaSource();
                   if (source instanceof InterfaceCapable)
                   {
-                     result.addAll(((InterfaceCapable<?>) source).getInterfaces());
+                     List<String> interfaces = ((InterfaceCapable<?>) source).getInterfaces();
+                     for (String type : interfaces)
+                     {
+                        if (type.startsWith(value))
+                           result.add(type);
+                     }
                   }
                }
                catch (FileNotFoundException e)

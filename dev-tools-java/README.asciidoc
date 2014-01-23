@@ -3,7 +3,6 @@
 
 This addon provides *standalone* functionality. Development tools for Java Programming Language.
         
-=== Dependencies: None (or)
 === Depends on
 [options="header"]
 |===
@@ -15,6 +14,10 @@ This addon provides *standalone* functionality. Development tools for Java Progr
 |no
 |no
 |ui
+|no
+|no
+
+|org.jboss.forge.furnace.container:simple
 |no
 |no
 |===
