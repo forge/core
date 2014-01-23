@@ -13,6 +13,8 @@ import javax.inject.Inject;
 import javax.persistence.GenerationType;
 
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_0;
+import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet_3_2;
 import org.jboss.forge.addon.javaee.faces.FacesFacet_2_2;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
@@ -94,6 +96,22 @@ public class ProjectHelper
    public JPAFacet_2_0 installJPA_2_0(Project project)
    {
       return facetFactory.install(project, JPAFacet_2_0.class);
+   }
+
+   /**
+    * Installs the {@link CDIFacet_1_0} facet
+    */
+   public CDIFacet_1_0 installCDI_1_0(Project project)
+   {
+      return facetFactory.install(project, CDIFacet_1_0.class);
+   }
+
+   /**
+    * Installs the {@link CDIFacet_1_1} facet
+    */
+   public CDIFacet_1_1 installCDI_1_1(Project project)
+   {
+      return facetFactory.install(project, CDIFacet_1_1.class);
    }
 
    public JavaResource createJPAEntity(Project project, String entityName) throws IOException
