@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.addons;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.inject.Inject;
@@ -97,8 +98,8 @@ public class NewUICommandWizard extends AbstractProjectCommand
          targetLocation.setDefaultValue(facet.getSourceDirectory()).setEnabled(false);
          targetPackage.setValue(calculateModelPackage(project));
       }
-      builder.add(targetLocation);
-      builder.add(targetPackage).add(named).add(categories);
+      categories.setDefaultValue(new ArrayList<String>());
+      builder.add(targetLocation).add(targetPackage).add(named).add(categories);
    }
 
    @Override
