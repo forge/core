@@ -3,7 +3,13 @@
 
 This addon provides *standalone* functionality and *exports services* for use in other addons. The projects addon allows for project creation, modification and comprehension. It also provides integration points for build tools, dependency management systems, and source file manipulation.
 
-The projects addon also supplies the "New Project" wizard
+The projects addon also supplies several commands in the `Project:*` category, such as:
+
+* Project: New
+* Project: Add Dependencies
+* Project: Add Managed Dependencies
+* Project: Remove Dependencies
+* Project: Remove Managed Dependencies
 
 === Depends on
 
@@ -179,15 +185,23 @@ public class ProjectFacetB extends AbstractFacet<Project> implements ProjectFace
 +
 In summary, the `FacetFactory` and `ProjectFactory` services will recursively check for and install missing prerequisite `ProjectFacet` types, before proceeding to install the requsted facet type. This allows for very simple dependency management, and avoids many opportunities for `NullPointerException`.
 
-ProjectLocator services for custom project types::
-If you wish to implement a custom project type in your addon, you will need to use the `ProjectLocator` service API. Each time a method in the `ProjectFactory` is called, all available `ProjectLocator` instances are queried until a valid project result is found.
+BuildSystem services for custom project types::
+
+If you wish to implement a custom project type in your addon, you will need to use the `BuildSystem` service API. Each time a method in the `ProjectFactory` is called, all available `BuildSystem` instances are queried in priority order until a valid project result is found.
++
+`BuildSystem` implementations must also publish the `BuildSystemFacet` types that they provide. This is done via the `getProvidedFacetTypes()` method. `BuildSystemFacet` implementations may only be installed by the `BuildSystem` implementation that produces them. They will not be installed automatically by the `ProjectFactory`. 
 +
 [source,java]
 ----
-public class CustomProjectLocator implements ProjectLocator {
+public class CustomBuildSystem implements BuildSystem {
 
    @Inject
    private FacetFactory factory;
+
+   @Override
+   public String getType() {
+      return "my-custom-build-system"
+   }
 
    @Override
    public Project createProject(final DirectoryResource dir) {
@@ -209,6 +223,15 @@ public class CustomProjectLocator implements ProjectLocator {
       return dir.getChild("custom-project-config.txt").exists();
    }
 
+   @Override
+   public Iterable<Class<? extends BuildSystemFacet>> getProvidedFacetTypes() {
+      return Arrays.asList(CustomBuildSystemFacet.class);
+   }
+
+   @Override
+   public int priority()
+      return 0;
+   }
 }
 ----
 
@@ -256,8 +279,8 @@ public class CustomProjectType implements ProjectType {
    }
 
    @Override
-   public String toString() {
-      return "Custom - With Mustard";
+   public int priority() {
+      return 0;
    }
 }
 ----
