@@ -19,7 +19,7 @@ import org.jboss.forge.addon.facets.AbstractFaceted;
  */
 public abstract class AbstractProject extends AbstractFaceted<ProjectFacet> implements Project
 {
-   private final Map<Object, Object> attributes = new HashMap<Object, Object>();
+   private final Map<Object, Object> attributes = new HashMap<>();
 
    @Override
    public Object getAttribute(final Object key)

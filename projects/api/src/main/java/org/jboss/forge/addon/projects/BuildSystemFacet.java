@@ -6,8 +6,11 @@
  */
 package org.jboss.forge.addon.projects;
 
+import org.jboss.forge.addon.facets.Facet;
+
 /**
- * A {@link ProjectFacet} specifically provided by {@link BuildSystem} instances.
+ * A {@link ProjectFacet} specifically provided by {@link BuildSystem} instances. {@link Facet} types implementing this
+ * interface will not be installed automatically by the {@link ProjectFactory}.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
