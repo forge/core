@@ -18,6 +18,7 @@ import org.jboss.forge.maven.plugins.ConfigurationBuilder;
 import org.jboss.forge.maven.plugins.ConfigurationElement;
 import org.jboss.forge.maven.plugins.ExecutionBuilder;
 import org.jboss.forge.maven.plugins.MavenPlugin;
+import org.jboss.forge.maven.plugins.MavenPluginAdapter;
 import org.jboss.forge.maven.plugins.MavenPluginBuilder;
 import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.project.dependencies.Dependency;
@@ -152,6 +153,7 @@ public class PersistenceMetaModelFacetImpl extends BaseFacet implements Persiste
       {
          ConfigurationElement proc = ConfigurationBuilder.create().createConfigurationElement("proc").setText("none");
          config.addConfigurationElement(proc);
+         ((MavenPluginAdapter)compiler).setConfig(config);
       }
       pluginFacet.updatePlugin(compiler);
    }
