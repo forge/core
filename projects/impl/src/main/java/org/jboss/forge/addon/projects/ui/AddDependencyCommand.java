@@ -69,7 +69,7 @@ public class AddDependencyCommand extends AbstractProjectCommand
 
       this.installer.install(project, gav);
 
-      return Results.fail("Not implemented!");
+      return Results.success("Dependency "+gav+" installed.");
    }
 
    @Override
