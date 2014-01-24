@@ -169,19 +169,24 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
    {
       // Get plugin
       MavenPlugin pluginToRemove = null;
-      if (managedPlugin && hasManagedPlugin(dependency)) {
+      if (managedPlugin && hasManagedPlugin(dependency))
+      {
          pluginToRemove = getManagedPlugin(dependency);
-      } else if (hasPlugin(dependency)) {
+      }
+      else if (hasPlugin(dependency))
+      {
          pluginToRemove = getPlugin(dependency);
-      } 
+      }
       // Remove if it exists
-      if (pluginToRemove != null) {
+      if (pluginToRemove != null)
+      {
          MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
          Model pom = mavenCoreFacet.getPOM();
          Build build = pom.getBuild(); // We know for sure it isnt null because the plugin exists
          if (managedPlugin)
          {
-            PluginManagement pluginManagement = build.getPluginManagement(); // We know for sure it isnt null because the plugin exists
+            PluginManagement pluginManagement = build.getPluginManagement(); // We know for sure it isnt null because
+                                                                             // the plugin exists
             pluginManagement.removePlugin(new MavenPluginAdapter(pluginToRemove));
          }
          else
@@ -195,32 +200,12 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
 
    private void updatePlugin(final MavenPlugin plugin, boolean managedPlugin)
    {
-//      MavenCoreFacet mavenCoreFacet = project.getFacet(MavenCoreFacet.class);
-//      Model pom = mavenCoreFacet.getPOM();
-//      List<org.apache.maven.model.Plugin> pomPlugins = getPluginsPOM(managedPlugin, false);
-//      for (org.apache.maven.model.Plugin pomPlugin : pomPlugins)
-//      {
-//         Dependency pluginDep = DependencyBuilder.create().setGroupId(pomPlugin.getGroupId())
-//                  .setArtifactId(pomPlugin.getArtifactId());
-//
-//         if (DependencyBuilder.areEquivalent(pluginDep, plugin.getDependency()))
-//         {
-//            MavenPluginAdapter adapter = new MavenPluginAdapter(plugin);
-//            pomPlugin.setConfiguration(adapter.getConfiguration());
-//            pomPlugin.setExecutions(adapter.getExecutions());
-//            pomPlugin.setExtensions(adapter.getExtensions());
-//            pomPlugin.setInherited(adapter.getInherited());
-//            pomPlugin.setVersion(adapter.getVersion());
-//            mavenCoreFacet.setPOM(pom);
-//            break;
-//         }
-//      }
+      this.removePlugin(plugin.getDependency(), managedPlugin);
+      if (!this.hasPlugin(plugin.getDependency(), managedPlugin, false))
+      {
+         this.addPlugin(plugin, managedPlugin);
+      }
 
-         this.removePlugin(plugin.getDependency(), managedPlugin);
-         if (! this.hasPlugin(plugin.getDependency(), managedPlugin, false)) {
-            this.addPlugin(plugin, managedPlugin);
-         }
-         
    }
 
    @Override
@@ -420,72 +405,90 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
       }
       return Collections.unmodifiableList(results);
    }
-   
+
    @Override
-   public MavenPlugin merge(final MavenPlugin dominant, final MavenPlugin recessive) {
+   public MavenPlugin merge(final MavenPlugin dominant, final MavenPlugin recessive)
+   {
       MavenPluginAdapter merged = new MavenPluginAdapter(dominant);
       if (DependencyBuilder.areEquivalent(dominant.getDependency(), recessive.getDependency()))
       {
          MavenPluginAdapter recessiveAdaptater = new MavenPluginAdapter(recessive);
          // Merge the configurations
-         Xpp3Dom mergedDomConfig = Xpp3Dom.mergeXpp3Dom((Xpp3Dom)merged.getConfiguration(),(Xpp3Dom)recessiveAdaptater.getConfiguration());
+         Xpp3Dom mergedDomConfig = Xpp3Dom.mergeXpp3Dom((Xpp3Dom) merged.getConfiguration(),
+                  (Xpp3Dom) recessiveAdaptater.getConfiguration());
          merged.setConfiguration(mergedDomConfig);
          // Merge the executions
-         List<PluginExecution> mergedExecutions = mergePluginsExecutions(merged.getExecutionsAsMap(),recessiveAdaptater.getExecutionsAsMap());
+         List<PluginExecution> mergedExecutions = mergePluginsExecutions(merged.getExecutionsAsMap(),
+                  recessiveAdaptater.getExecutionsAsMap());
          merged.setExecutions(mergedExecutions);
          // Merge dependencies; only version required, we already know that groupId and artifactId are equals
-         if (Strings.isNullOrEmpty(merged.getVersion())) {
+         if (Strings.isNullOrEmpty(merged.getVersion()))
+         {
             merged.setVersion(recessiveAdaptater.getVersion());
          }
          // Extension flag
-         if (Strings.isNullOrEmpty(merged.getExtensions())) {
+         if (Strings.isNullOrEmpty(merged.getExtensions()))
+         {
             merged.setExtensions(recessiveAdaptater.getExtensions());
          }
          // Inherited flag
-         if (Strings.isNullOrEmpty(merged.getInherited())) {
+         if (Strings.isNullOrEmpty(merged.getInherited()))
+         {
             merged.setExtensions(recessiveAdaptater.getInherited());
          }
       }
       return merged;
    }
 
-   private List<PluginExecution> mergePluginsExecutions(final Map<String, PluginExecution> dominant, final Map<String, PluginExecution> recessive) 
+   private List<PluginExecution> mergePluginsExecutions(final Map<String, PluginExecution> dominant,
+            final Map<String, PluginExecution> recessive)
    {
       List<PluginExecution> executions = new ArrayList<PluginExecution>();
       // Create a list of dominant executions, with the configurations merged with recessive if needed
-      for (Map.Entry<String, PluginExecution> entry : dominant.entrySet()) {
+      for (Map.Entry<String, PluginExecution> entry : dominant.entrySet())
+      {
          PluginExecution pluginExecution = entry.getValue();
          PluginExecution mergedPluginExecution = new PluginExecution();
          mergedPluginExecution.setId(pluginExecution.getId());
          // Phase
-         if (Strings.isNullOrEmpty(pluginExecution.getPhase()) && recessive.containsKey(entry.getKey()) ) {
+         if (Strings.isNullOrEmpty(pluginExecution.getPhase()) && recessive.containsKey(entry.getKey()))
+         {
             mergedPluginExecution.setPhase(recessive.get(entry.getKey()).getPhase());
-         } else {
+         }
+         else
+         {
             mergedPluginExecution.setPhase(pluginExecution.getPhase());
          }
          // Goals
-         Map<String, Boolean> hasGoals = new HashMap<String,Boolean>();
-         for (String goal : pluginExecution.getGoals()) {
+         Map<String, Boolean> hasGoals = new HashMap<String, Boolean>();
+         for (String goal : pluginExecution.getGoals())
+         {
             mergedPluginExecution.addGoal(goal);
-            hasGoals.put(goal,new Boolean(true));
+            hasGoals.put(goal, new Boolean(true));
          }
-         if (recessive.containsKey(entry.getKey())) {
-            for (String goal : recessive.get(entry.getKey()).getGoals()) {
-               if (! hasGoals.containsKey(goal)) {
+         if (recessive.containsKey(entry.getKey()))
+         {
+            for (String goal : recessive.get(entry.getKey()).getGoals())
+            {
+               if (!hasGoals.containsKey(goal))
+               {
                   mergedPluginExecution.addGoal(goal);
                }
-            }  
+            }
          }
          // Configurations
-         if (pluginExecution.getConfiguration() != null) {
+         if (pluginExecution.getConfiguration() != null)
+         {
             if (recessive.containsKey(entry.getKey())
-                && recessive.get(entry.getKey()).getConfiguration() != null) 
+                     && recessive.get(entry.getKey()).getConfiguration() != null)
             {
                // Merge configurations
-               Xpp3Dom mergedDomConfig = Xpp3Dom.mergeXpp3Dom((Xpp3Dom)pluginExecution.getConfiguration(),(Xpp3Dom)recessive.get(entry.getKey()).getConfiguration());
+               Xpp3Dom mergedDomConfig = Xpp3Dom.mergeXpp3Dom((Xpp3Dom) pluginExecution.getConfiguration(),
+                        (Xpp3Dom) recessive.get(entry.getKey()).getConfiguration());
                mergedPluginExecution.setConfiguration(mergedDomConfig);
             }
-            else {
+            else
+            {
                // Keep master config
                mergedPluginExecution.setConfiguration(pluginExecution.getConfiguration());
             }
@@ -493,24 +496,28 @@ public class MavenPluginFacetImpl extends BaseFacet implements MavenPluginFacet,
          executions.add(mergedPluginExecution);
       }
       // Add the executions of the recessive that are not defined in dominant
-      for (Map.Entry<String, PluginExecution> entry : recessive.entrySet()) {
-         if (! dominant.containsKey(entry.getKey())) {
+      for (Map.Entry<String, PluginExecution> entry : recessive.entrySet())
+      {
+         if (!dominant.containsKey(entry.getKey()))
+         {
             PluginExecution pluginExecution = entry.getValue();
             PluginExecution mergedPluginExecution = new PluginExecution();
             mergedPluginExecution.setId(pluginExecution.getId());
             mergedPluginExecution.setPhase(pluginExecution.getPhase());
             // Goals
-            for (String goal : pluginExecution.getGoals()) {
+            for (String goal : pluginExecution.getGoals())
+            {
                mergedPluginExecution.addGoal(goal);
             }
             // Configuration
-            if (pluginExecution.getConfiguration() != null) {
-               mergedPluginExecution.setConfiguration( pluginExecution.getConfiguration());
+            if (pluginExecution.getConfiguration() != null)
+            {
+               mergedPluginExecution.setConfiguration(pluginExecution.getConfiguration());
             }
             executions.add(mergedPluginExecution);
          }
       }
       return executions;
    }
- 
+
 }
