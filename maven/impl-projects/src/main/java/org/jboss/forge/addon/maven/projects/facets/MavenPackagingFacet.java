@@ -99,19 +99,29 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    public Resource<?> getFinalArtifact()
    {
       MavenFacetImpl mvn = (MavenFacetImpl) getFaceted().getFacet(MavenFacet.class);
-      String directory = mvn.getProjectBuildingResult().getProject().getBuild().getDirectory();
-      String finalName = mvn.getProjectBuildingResult().getProject().getBuild().getFinalName();
 
-      if (Strings.isNullOrEmpty(directory))
+      try
       {
-         throw new IllegalStateException("Project build directory is not configured");
+         Build build = mvn.getProjectBuildingResult().getProject().getBuild();
+         String directory = build.getDirectory();
+         String finalName = build.getFinalName();
+
+         if (Strings.isNullOrEmpty(directory))
+         {
+            throw new IllegalStateException("Project build directory is not configured");
+         }
+         if (Strings.isNullOrEmpty(finalName))
+         {
+            throw new IllegalStateException("Project final artifact name is not configured");
+         }
+         return factory.create(new File(directory.trim(), finalName + "."
+                  + getPackagingType().toLowerCase()));
       }
-      if (Strings.isNullOrEmpty(finalName))
+      catch (Exception e)
       {
-         throw new IllegalStateException("Project final artifact name is not configured");
+         throw new RuntimeException("Could not resolve build directory for project ["
+                  + mvn.getPomResource().getFullyQualifiedName() + "]");
       }
-      return factory.create(new File(directory.trim(), finalName + "."
-               + getPackagingType().toLowerCase()));
    }
 
    @Override

@@ -110,4 +110,9 @@ public interface MetadataFacet extends BuildSystemFacet
     */
    BuildSystem getBuildSystem();
 
+   /**
+    * Returns <code>true</code> if the underlying {@link Project} metadata is in a valid state.
+    */
+   boolean isValid();
+
 }

@@ -21,7 +21,6 @@ import org.jboss.forge.addon.maven.plugins.ConfigurationImpl;
 import org.jboss.forge.addon.maven.plugins.MavenPlugin;
 import org.jboss.forge.addon.maven.plugins.MavenPluginAdapter;
 import org.jboss.forge.addon.maven.plugins.MavenPluginInstaller;
-import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.furnace.util.Predicate;
@@ -29,7 +28,7 @@ import org.jboss.forge.parser.java.util.Strings;
 
 /**
  * Responsible for installing a given {@link MavenPlugin} into the current project..
- *
+ * 
  * @author <a href="mailto:salmon_charles@gmail.com">Charles-Edouard Salmon</a>
  */
 public class MavenPluginInstallImpl implements MavenPluginInstaller
@@ -37,14 +36,14 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
    /**
     * Merge the plugin definition with existing configuration
     */
-   private boolean mergeWithExisting = true;
+   private final boolean mergeWithExisting = true;
 
    /**
     * Filter plugin definition with existing hierarchy configuration All properties having equivalent counterparts in
     * the hierarchy (in plugin or plugin mamnagement sections of the parent) will be removed from the new plugin
     * definition (to preserve hierarchy precedence.
     */
-   private boolean preserveHierarchyPrecedence = true;
+   private final boolean preserveHierarchyPrecedence = true;
 
    private MavenPlugin install(Project project, final MavenPlugin plugin, boolean managed)
    {
@@ -252,7 +251,7 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
             merged.setExtensions(null);
          }
          // Config
-         Map<String, String> cfgElmtsRefMap = new HashMap<String, String>();
+         Map<String, String> cfgElmtsRefMap = new HashMap<>();
          Configuration mergedConfiguration = merged.getConfig();
          if (dominant.getConfig() != null && recessive.getConfig() != null)
          {
@@ -294,7 +293,7 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
                      pluginExecutionMerged.setPhase(null);
                   }
                   // Goals
-                  Map<String, Boolean> hasGoals = new HashMap<String, Boolean>();
+                  Map<String, Boolean> hasGoals = new HashMap<>();
                   for (String goal : pluginExecutionRecessive.getGoals())
                   {
                      hasGoals.put(goal, new Boolean(true));
@@ -308,7 +307,7 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
                      }
                   }
                   // Configurations
-                  Map<String, String> cfgExecElmtsRefMap = new HashMap<String, String>();
+                  Map<String, String> cfgExecElmtsRefMap = new HashMap<>();
                   if (pluginExecutionRecessive.getConfiguration() != null
                            && pluginExecutionDominant.getConfiguration() != null)
                   {

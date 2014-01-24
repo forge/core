@@ -107,7 +107,7 @@ public interface DependencyFacet extends BuildSystemFacet
 
    /**
     * Searches {@link Project} and returns a managed dependency matching the given {@link Dependency} at any level of
-    * the project hierarchy; return null otherwise. This method ignores {@link Dependency#getScopeType()}
+    * the project hierarchy; return <code>null</code> otherwise. This method ignores {@link Dependency#getScopeType()}
     * <p/>
     * See also: {@link DependencyBuilder}.
     * <p/>
@@ -214,7 +214,7 @@ public interface DependencyFacet extends BuildSystemFacet
 
    /**
     * Remove the given {@link DependencyRepository} from the current project. Return true if the repository was removed;
-    * return false otherwise. Return the removed repository, or null if no repository was removed.
+    * return false otherwise. Return the removed repository, or  if no repository was removed.
     */
    public DependencyRepository removeRepository(String url);
 

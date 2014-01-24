@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -68,6 +70,8 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
  */
 public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFacet, MavenFacet
 {
+   private static final Logger log = Logger.getLogger(MavenFacetImpl.class.getName());
+
    private ProjectBuildingResult buildingResult;
    private ProjectBuilder builder;
    private ResourceMonitor monitor;
@@ -122,7 +126,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
                   new File(settings.getLocalRepository()).toURI().toURL().toString(), null, true, true);
          request.setLocalRepository(localRepository);
 
-         List<ArtifactRepository> settingsRepos = new ArrayList<ArtifactRepository>(request.getRemoteRepositories());
+         List<ArtifactRepository> settingsRepos = new ArrayList<>(request.getRemoteRepositories());
          List<String> activeProfiles = settings.getActiveProfiles();
 
          Map<String, Profile> profiles = settings.getProfilesAsMap();
@@ -308,7 +312,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    /*
     * POM manipulation methods
     */
-   public synchronized ProjectBuildingResult getProjectBuildingResult()
+   public synchronized ProjectBuildingResult getProjectBuildingResult() throws Exception
    {
       if (this.buildingResult == null)
       {
@@ -349,12 +353,23 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    @Override
    public Map<String, String> getProperties()
    {
-      Properties properties = getProjectBuildingResult().getProject().getProperties();
       Map<String, String> result = new HashMap<>();
-      for (Entry<Object, Object> o : properties.entrySet())
+
+      try
       {
-         result.put((String) o.getKey(), (String) o.getValue());
+         Properties properties = getProjectBuildingResult().getProject().getProperties();
+         for (Entry<Object, Object> o : properties.entrySet())
+         {
+            result.put((String) o.getKey(), (String) o.getValue());
+         }
       }
+      catch (Exception e)
+      {
+         log.log(Level.WARNING, "Failed to resolve properties in [" + getPomResource().getFullyQualifiedName() + "].");
+         log.log(Level.FINE, "Failed to resolve properties in Project [" + getPomResource().getFullyQualifiedName()
+                  + "].", e);
+      }
+
       return result;
    }
 
@@ -362,16 +377,26 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    public String resolveProperties(String input)
    {
       String result = input;
-      if (input != null)
+      try
       {
-         Properties properties = getProjectBuildingResult().getProject().getProperties();
-
-         for (Entry<Object, Object> e : properties.entrySet())
+         if (input != null)
          {
-            String key = "\\$\\{" + e.getKey().toString() + "\\}";
-            Object value = e.getValue();
-            result = result.replaceAll(key, value.toString());
+            Properties properties = getProjectBuildingResult().getProject().getProperties();
+
+            for (Entry<Object, Object> e : properties.entrySet())
+            {
+               String key = "\\$\\{" + e.getKey().toString() + "\\}";
+               Object value = e.getValue();
+               result = result.replaceAll(key, value.toString());
+            }
          }
+      }
+      catch (Exception e)
+      {
+         log.log(Level.WARNING, "Failed to resolve properties in [" + getPomResource().getFullyQualifiedName()
+                  + "] for input value [" + input + "].");
+         log.log(Level.FINE, "Failed to resolve properties in Project [" + getPomResource().getFullyQualifiedName()
+                  + "].", e);
       }
 
       return result;
@@ -444,6 +469,20 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    {
       return factory.create(new File(container.getSettings().getLocalRepository())).reify(
                DirectoryResource.class);
+   }
+
+   @Override
+   public boolean isPomValid()
+   {
+      try
+      {
+         getProjectBuildingResult();
+         return true;
+      }
+      catch (Exception e)
+      {
+         return false;
+      }
    }
 
 }

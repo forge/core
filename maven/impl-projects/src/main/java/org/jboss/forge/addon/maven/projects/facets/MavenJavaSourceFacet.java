@@ -39,7 +39,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    @Override
    public List<DirectoryResource> getSourceDirectories()
    {
-      List<DirectoryResource> result = new ArrayList<DirectoryResource>();
+      List<DirectoryResource> result = new ArrayList<>();
       result.add(getSourceDirectory());
       result.add(getTestSourceDirectory());
       return result;

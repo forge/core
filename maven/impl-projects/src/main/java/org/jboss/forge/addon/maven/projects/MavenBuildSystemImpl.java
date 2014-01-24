@@ -85,7 +85,7 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
    @Override
    public Set<Class<? extends BuildSystemFacet>> getProvidedFacetTypes()
    {
-      Set<Class<? extends BuildSystemFacet>> result = new HashSet<Class<? extends BuildSystemFacet>>();
+      Set<Class<? extends BuildSystemFacet>> result = new HashSet<>();
       result.add(MavenFacet.class);
       result.add(MavenPluginFacet.class);
       result.add(DependencyFacet.class);

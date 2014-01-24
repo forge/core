@@ -69,7 +69,7 @@ public class MavenWebResourcesFacet extends AbstractFacet<Project> implements We
    @Override
    public List<DirectoryResource> getWebRootDirectories()
    {
-      List<DirectoryResource> result = new ArrayList<DirectoryResource>();
+      List<DirectoryResource> result = new ArrayList<>();
       result.add(getWebRootDirectory());
       return result;
    }

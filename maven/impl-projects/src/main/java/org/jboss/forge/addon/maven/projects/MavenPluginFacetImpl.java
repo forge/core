@@ -78,7 +78,7 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
 
    private List<MavenPlugin> listConfiguredPlugins(boolean managedPlugin, boolean effectivePlugin)
    {
-      List<MavenPlugin> plugins = new ArrayList<MavenPlugin>();
+      List<MavenPlugin> plugins = new ArrayList<>();
       List<org.apache.maven.model.Plugin> pomPlugins = getPluginsPOM(managedPlugin, effectivePlugin);
       for (org.apache.maven.model.Plugin plugin : pomPlugins)
       {
@@ -355,7 +355,7 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
    @Override
    public List<DependencyRepository> getPluginRepositories()
    {
-      List<DependencyRepository> results = new ArrayList<DependencyRepository>();
+      List<DependencyRepository> results = new ArrayList<>();
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
       List<Repository> repos = pom.getPluginRepositories();
@@ -407,7 +407,7 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
    private List<PluginExecution> mergePluginsExecutions(final Map<String, PluginExecution> dominant,
             final Map<String, PluginExecution> recessive)
    {
-      List<PluginExecution> executions = new ArrayList<PluginExecution>();
+      List<PluginExecution> executions = new ArrayList<>();
       // Create a list of dominant executions, with the configurations merged with recessive if needed
       for (Map.Entry<String, PluginExecution> entry : dominant.entrySet())
       {
@@ -424,7 +424,7 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
             mergedPluginExecution.setPhase(pluginExecution.getPhase());
          }
          // Goals
-         Map<String, Boolean> hasGoals = new HashMap<String, Boolean>();
+         Map<String, Boolean> hasGoals = new HashMap<>();
          for (String goal : pluginExecution.getGoals())
          {
             mergedPluginExecution.addGoal(goal);

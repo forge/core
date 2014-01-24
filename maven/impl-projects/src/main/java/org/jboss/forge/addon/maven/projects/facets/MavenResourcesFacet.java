@@ -38,7 +38,7 @@ public class MavenResourcesFacet extends AbstractFacet<Project> implements Resou
    @Override
    public List<DirectoryResource> getResourceDirectories()
    {
-      List<DirectoryResource> result = new ArrayList<DirectoryResource>();
+      List<DirectoryResource> result = new ArrayList<>();
       result.add(getResourceDirectory());
       result.add(getTestResourceDirectory());
       return result;

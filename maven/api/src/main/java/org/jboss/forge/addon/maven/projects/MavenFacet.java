@@ -78,4 +78,9 @@ public interface MavenFacet extends BuildSystemFacet
     */
    DirectoryResource getLocalRepositoryDirectory();
 
+   /**
+    * Returns <code>true</code> if the underlying {@link Project} POM is in a build-able state.
+    */
+   boolean isPomValid();
+
 }

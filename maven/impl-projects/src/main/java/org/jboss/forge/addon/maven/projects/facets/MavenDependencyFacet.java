@@ -9,6 +9,8 @@ package org.jboss.forge.addon.maven.projects.facets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -42,6 +44,8 @@ import org.jboss.forge.addon.projects.facets.DependencyFacet;
 @FacetConstraint(MavenFacet.class)
 public class MavenDependencyFacet extends AbstractFacet<Project> implements DependencyFacet
 {
+   private static final Logger log = Logger.getLogger(MavenDependencyFacet.class.getName());
+
    @Inject
    private DependencyResolver resolver;
 
@@ -94,7 +98,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       Model pom = maven.getPOM();
       List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
 
-      List<Dependency> toBeRemoved = new ArrayList<Dependency>();
+      List<Dependency> toBeRemoved = new ArrayList<>();
       for (Dependency dependency : dependencies)
       {
          if (Dependencies.areEquivalent(dependency, resolveProperties(dep)))
@@ -114,7 +118,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       Model pom = maven.getPOM();
       List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
 
-      List<Dependency> result = new ArrayList<Dependency>();
+      List<Dependency> result = new ArrayList<>();
       for (Dependency dependency : dependencies)
       {
          result.add(resolveProperties(dependency));
@@ -162,15 +166,25 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public List<Dependency> getEffectiveDependencies()
    {
-      MavenFacetImpl maven = getFaceted().getFacet(MavenFacetImpl.class);
-      ProjectBuildingResult projectBuildingResult = maven.getProjectBuildingResult();
-      DependencyResolutionResult dependencyResolutionResult = projectBuildingResult.getDependencyResolutionResult();
-      List<Dependency> deps = MavenDependencyAdapter.fromAetherList(dependencyResolutionResult.getDependencies());
+      List<Dependency> result = new ArrayList<>();
 
-      List<Dependency> result = new ArrayList<Dependency>();
-      for (Dependency dependency : deps)
+      MavenFacetImpl maven = getFaceted().getFacet(MavenFacetImpl.class);
+      try
       {
-         result.add(resolveProperties(dependency));
+         ProjectBuildingResult projectBuildingResult = maven.getProjectBuildingResult();
+         DependencyResolutionResult dependencyResolutionResult = projectBuildingResult.getDependencyResolutionResult();
+         List<Dependency> deps = MavenDependencyAdapter.fromAetherList(dependencyResolutionResult.getDependencies());
+
+         for (Dependency dependency : deps)
+         {
+            result.add(resolveProperties(dependency));
+         }
+
+      }
+      catch (Exception e)
+      {
+         log.log(Level.SEVERE, "Could not resolve managed dependencies in project ["
+                  + maven.getPomResource().getFullyQualifiedName() + "]. ", e);
       }
 
       return result;
@@ -221,17 +235,25 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    public Dependency getEffectiveManagedDependency(final Dependency manDep)
    {
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      DependencyManagement depMan = ((MavenFacetImpl) maven).getProjectBuildingResult().getProject()
-               .getDependencyManagement();
-      List<Dependency> managedDependencies = (depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
-               .getDependencies()) : new ArrayList<Dependency>());
-
-      for (Dependency managedDependency : managedDependencies)
+      try
       {
-         if (Dependencies.areEquivalent(managedDependency, resolveProperties(manDep)))
+         DependencyManagement depMan = ((MavenFacetImpl) maven).getProjectBuildingResult().getProject()
+                  .getDependencyManagement();
+         List<Dependency> managedDependencies = (depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
+                  .getDependencies()) : new ArrayList<Dependency>());
+
+         for (Dependency managedDependency : managedDependencies)
          {
-            return resolveProperties(managedDependency);
+            if (Dependencies.areEquivalent(managedDependency, resolveProperties(manDep)))
+            {
+               return resolveProperties(managedDependency);
+            }
          }
+      }
+      catch (Exception e)
+      {
+         log.log(Level.SEVERE, "Could not resolve managed dependencies in project ["
+                  + maven.getPomResource().getFullyQualifiedName() + "]. ", e);
       }
       return null;
    }
@@ -266,7 +288,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
 
       List<Dependency> managedDependencies = MavenDependencyAdapter.fromMavenList(depMan.getDependencies());
 
-      List<Dependency> toBeRemoved = new ArrayList<Dependency>();
+      List<Dependency> toBeRemoved = new ArrayList<>();
       for (Dependency managedDependency : managedDependencies)
       {
          if (Dependencies.areEquivalent(managedDependency, manDep))
@@ -291,9 +313,9 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       if (depMan != null)
          managedDependencies = MavenDependencyAdapter.fromMavenList(depMan.getDependencies());
       else
-         managedDependencies = new ArrayList<Dependency>();
+         managedDependencies = new ArrayList<>();
 
-      List<Dependency> result = new ArrayList<Dependency>();
+      List<Dependency> result = new ArrayList<>();
       for (Dependency dependency : managedDependencies)
       {
          result.add(resolveProperties(dependency));
@@ -381,7 +403,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public List<DependencyRepository> getRepositories()
    {
-      List<DependencyRepository> results = new ArrayList<DependencyRepository>();
+      List<DependencyRepository> results = new ArrayList<>();
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getPOM();
       List<Repository> repos = pom.getRepositories();
@@ -436,7 +458,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public List<Dependency> getDependenciesInScopes(final String... scopes)
    {
-      List<Dependency> result = new ArrayList<Dependency>();
+      List<Dependency> result = new ArrayList<>();
       List<Dependency> dependencies = getDependencies();
       for (Dependency dependency : dependencies)
       {
@@ -456,7 +478,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public List<Dependency> getEffectiveDependenciesInScopes(final String... scopes)
    {
-      List<Dependency> result = new ArrayList<Dependency>();
+      List<Dependency> result = new ArrayList<>();
       List<Dependency> dependencies = getEffectiveDependencies();
       for (Dependency dependency : dependencies)
       {

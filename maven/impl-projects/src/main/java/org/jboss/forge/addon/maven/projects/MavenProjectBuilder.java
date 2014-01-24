@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.maven.environment.Network;
-import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.building.BuildException;
 import org.jboss.forge.addon.projects.building.ProjectBuilder;
@@ -30,7 +29,7 @@ public class MavenProjectBuilder implements ProjectBuilder
    private final Project project;
 
    private boolean runTests = true;
-   private final List<String> args = new ArrayList<String>();
+   private final List<String> args = new ArrayList<>();
 
    public MavenProjectBuilder(final Environment environment, final Project project)
    {
@@ -61,7 +60,7 @@ public class MavenProjectBuilder implements ProjectBuilder
    @Override
    public Resource<?> build(PrintStream out, PrintStream err) throws BuildException
    {
-      List<String> selected = new ArrayList<String>();
+      List<String> selected = new ArrayList<>();
       selected.addAll(Arrays.asList("clean", "package"));
 
       if ((args != null) && (!args.isEmpty()))
