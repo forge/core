@@ -29,11 +29,11 @@ import org.jboss.forge.furnace.util.Streams;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Vetoed
-public class MavenPomResourceImpl extends XMLResourceImpl implements MavenPomResource
+public class MavenModelResourceImpl extends XMLResourceImpl implements MavenModelResource
 {
    private Model currentModel;
 
-   public MavenPomResourceImpl(final ResourceFactory factory, final File file)
+   public MavenModelResourceImpl(final ResourceFactory factory, final File file)
    {
       super(factory, file);
    }
@@ -100,7 +100,7 @@ public class MavenPomResourceImpl extends XMLResourceImpl implements MavenPomRes
    @Override
    public Resource<File> createFrom(File file)
    {
-      return new MavenPomResourceImpl(getResourceFactory(), file);
+      return new MavenModelResourceImpl(getResourceFactory(), file);
    }
 
    private void initialize()

@@ -51,7 +51,7 @@ import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.maven.environment.Network;
 import org.jboss.forge.addon.maven.projects.util.NativeSystemCall;
 import org.jboss.forge.addon.maven.projects.util.RepositoryUtils;
-import org.jboss.forge.addon.maven.resources.MavenPomResource;
+import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -204,7 +204,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    {
       if (!isInstalled())
       {
-         MavenPomResource pom = getPomResource();
+         MavenModelResource pom = getModelResource();
          if (!pom.createNewFile())
             throw new IllegalStateException("Could not create POM file.");
          pom.setContents(createDefaultPOM());
@@ -256,22 +256,22 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    }
 
    @Override
-   public MavenPomResource getPomResource()
+   public MavenModelResource getModelResource()
    {
-      return getFaceted().getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
+      return getFaceted().getProjectRoot().getChild("pom.xml").reify(MavenModelResource.class);
    }
 
    @Override
    public boolean isInstalled()
    {
-      MavenPomResource pom = getPomResource();
+      MavenModelResource pom = getModelResource();
       return pom != null && pom.exists();
    }
 
    @Override
    public Model getModel()
    {
-      return getPomResource().getCurrentModel();
+      return getModelResource().getCurrentModel();
    }
 
    @Override
@@ -283,11 +283,11 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       try
       {
          writer.write(fw, pom);
-         getPomResource().setContents(outputStream.toString());
+         getModelResource().setContents(outputStream.toString());
       }
       catch (IOException e)
       {
-         throw new RuntimeException("Could not write POM file: " + getPomResource().getFullyQualifiedName(), e);
+         throw new RuntimeException("Could not write POM file: " + getModelResource().getFullyQualifiedName(), e);
       }
       finally
       {
@@ -318,7 +318,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       {
          ProjectBuildingRequest request = null;
          request = getRequest();
-         MavenPomResource pomResource = getPomResource();
+         MavenModelResource pomResource = getModelResource();
          if (request != null)
          {
             try
@@ -365,8 +365,8 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       }
       catch (Exception e)
       {
-         log.log(Level.WARNING, "Failed to resolve properties in [" + getPomResource().getFullyQualifiedName() + "].");
-         log.log(Level.FINE, "Failed to resolve properties in Project [" + getPomResource().getFullyQualifiedName()
+         log.log(Level.WARNING, "Failed to resolve properties in [" + getModelResource().getFullyQualifiedName() + "].");
+         log.log(Level.FINE, "Failed to resolve properties in Project [" + getModelResource().getFullyQualifiedName()
                   + "].", e);
       }
 
@@ -393,9 +393,9 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       }
       catch (Exception e)
       {
-         log.log(Level.WARNING, "Failed to resolve properties in [" + getPomResource().getFullyQualifiedName()
+         log.log(Level.WARNING, "Failed to resolve properties in [" + getModelResource().getFullyQualifiedName()
                   + "] for input value [" + input + "].");
-         log.log(Level.FINE, "Failed to resolve properties in Project [" + getPomResource().getFullyQualifiedName()
+         log.log(Level.FINE, "Failed to resolve properties in Project [" + getModelResource().getFullyQualifiedName()
                   + "].", e);
       }
 

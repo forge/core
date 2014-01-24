@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.model.Model;
-import org.jboss.forge.addon.maven.resources.MavenPomResource;
+import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.addon.projects.BuildSystemFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -25,9 +25,9 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 public interface MavenFacet extends BuildSystemFacet
 {
    /**
-    * Get the {@link MavenPomResource} for this {@link Project}.
+    * Get the {@link MavenModelResource} for this {@link Project}.
     */
-   MavenPomResource getPomResource();
+   MavenModelResource getModelResource();
 
    /**
     * Get the current Maven {@link Model} for this {@link Project}.

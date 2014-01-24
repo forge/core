@@ -184,7 +184,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       catch (Exception e)
       {
          log.log(Level.SEVERE, "Could not resolve managed dependencies in project ["
-                  + maven.getPomResource().getFullyQualifiedName() + "]. ", e);
+                  + maven.getModelResource().getFullyQualifiedName() + "]. ", e);
       }
 
       return result;
@@ -253,7 +253,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       catch (Exception e)
       {
          log.log(Level.SEVERE, "Could not resolve managed dependencies in project ["
-                  + maven.getPomResource().getFullyQualifiedName() + "]. ", e);
+                  + maven.getModelResource().getFullyQualifiedName() + "]. ", e);
       }
       return null;
    }

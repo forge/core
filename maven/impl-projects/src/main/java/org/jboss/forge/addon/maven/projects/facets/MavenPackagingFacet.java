@@ -120,7 +120,7 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
       catch (Exception e)
       {
          throw new RuntimeException("Could not resolve build directory for project ["
-                  + mvn.getPomResource().getFullyQualifiedName() + "]");
+                  + mvn.getModelResource().getFullyQualifiedName() + "]");
       }
    }
 

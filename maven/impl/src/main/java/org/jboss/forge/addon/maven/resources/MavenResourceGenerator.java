@@ -12,7 +12,7 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceGenerator;
 
-public class MavenResourceGenerator implements ResourceGenerator<MavenPomResource, File>
+public class MavenResourceGenerator implements ResourceGenerator<MavenModelResource, File>
 {
    @Override
    public boolean handles(Class<?> type, Object resource)
@@ -26,15 +26,15 @@ public class MavenResourceGenerator implements ResourceGenerator<MavenPomResourc
 
    @Override
    @SuppressWarnings("unchecked")
-   public <T extends Resource<File>> T getResource(ResourceFactory factory, Class<MavenPomResource> type, File resource)
+   public <T extends Resource<File>> T getResource(ResourceFactory factory, Class<MavenModelResource> type, File resource)
    {
-      return (T) new MavenPomResourceImpl(factory, resource);
+      return (T) new MavenModelResourceImpl(factory, resource);
    }
 
    @Override
-   public <T extends Resource<File>> Class<?> getResourceType(ResourceFactory factory, Class<MavenPomResource> type,
+   public <T extends Resource<File>> Class<?> getResourceType(ResourceFactory factory, Class<MavenModelResource> type,
             File resource)
    {
-      return MavenPomResource.class;
+      return MavenModelResource.class;
    }
 }

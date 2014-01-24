@@ -19,7 +19,7 @@ import org.jboss.forge.addon.resource.FileResource;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface MavenPomResource extends XMLResource
+public interface MavenModelResource extends XMLResource
 {
    /**
     * Get the current project {@link Model}

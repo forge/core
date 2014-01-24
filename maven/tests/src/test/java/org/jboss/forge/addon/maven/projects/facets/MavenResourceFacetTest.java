@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.maven.resources.MavenPomResource;
+import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -103,7 +103,7 @@ public class MavenResourceFacetTest
    @Test
    public void testCustomResourceDirectory() throws Exception
    {
-      MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
+      MavenModelResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenModelResource.class);
 
       pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><resources><resource><directory>foo</directory></resource></resources></build></project>");
 
@@ -117,7 +117,7 @@ public class MavenResourceFacetTest
    @Ignore("https://issues.jboss.org/browse/FORGE-1218")
    public void testCustomResourceDirectoryWithProperty() throws Exception
    {
-      MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
+      MavenModelResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenModelResource.class);
 
       pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><resources><resource><directory>${project.basedir}"
                + File.separator + "foo</directory></resource></resources></build></project>");
@@ -131,7 +131,7 @@ public class MavenResourceFacetTest
    @Test
    public void testCustomTestSourceDirectory() throws Exception
    {
-      MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
+      MavenModelResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenModelResource.class);
 
       pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><testResources><testResource><directory>foo</directory></testResource></testResources></build></project>");
 
@@ -145,7 +145,7 @@ public class MavenResourceFacetTest
    @Ignore("https://issues.jboss.org/browse/FORGE-1218")
    public void testCustomTestSourceDirectoryWithProperty() throws Exception
    {
-      MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
+      MavenModelResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenModelResource.class);
 
       pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><testResources><testResource><directory>${project.basedir}"
                + File.separator + "foo</directory></testResource></testResources></build></project>");

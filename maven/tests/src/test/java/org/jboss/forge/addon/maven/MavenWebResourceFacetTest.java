@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.maven.resources.MavenPomResource;
+import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
@@ -95,7 +95,7 @@ public class MavenWebResourceFacetTest
    public void testCustomWebappFolder() throws Exception
    {
       WebResourcesFacet facet = facetFactory.install(project, WebResourcesFacet.class);
-      MavenPomResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenPomResource.class);
+      MavenModelResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenModelResource.class);
       pom.setContents("<project><modelVersion>4.0.0.</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><plugins><plugin><artifactId>maven-war-plugin</artifactId><version>2.4</version><configuration><warSourceDirectory>WebContent</warSourceDirectory><failOnMissingWebXml>false</failOnMissingWebXml></configuration></plugin></plugins></build></project>");
       DirectoryResource expected = project.getProjectRoot().getChildDirectory(
                "WebContent");
