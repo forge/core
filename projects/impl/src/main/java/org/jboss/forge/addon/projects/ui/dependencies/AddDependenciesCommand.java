@@ -28,7 +28,7 @@ public class AddDependenciesCommand extends AbstractProjectCommand
    public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(AddDependenciesCommand.class)
-               .description("Add one or more dependencies to the current project.")
+               .description("Add one or more arguments to the current project.")
                .name("Project: Add Dependencies")
                .category(Categories.create("Project", "Manage"));
    }
@@ -41,13 +41,13 @@ public class AddDependenciesCommand extends AbstractProjectCommand
 
    @Inject
    @WithAttributes(shortName = 'd', label = "Coordinates", required = true,
-            description = "The coordinates of the dependencies to be added [groupId :artifactId {:version :scope :packaging}]")
-   private UIInputMany<Dependency> dependencies;
+            description = "The coordinates of the arguments to be added [groupId :artifactId {:version :scope :packaging}]")
+   private UIInputMany<Dependency> arguments;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(dependencies);
+      builder.add(arguments);
    }
 
    @Override
@@ -56,10 +56,10 @@ public class AddDependenciesCommand extends AbstractProjectCommand
       Project project = getSelectedProject(context.getUIContext());
       final DependencyFacet deps = project.getFacet(DependencyFacet.class);
 
-      if (dependencies.hasValue())
+      if (arguments.hasValue())
       {
          int count = 0;
-         for (Dependency gav : dependencies.getValue())
+         for (Dependency gav : arguments.getValue())
          {
             Dependency existingDep = deps.getEffectiveManagedDependency(DependencyBuilder.create(gav).setVersion(null));
             if (existingDep != null)
@@ -83,7 +83,7 @@ public class AddDependenciesCommand extends AbstractProjectCommand
 
          return Results.success("Installed [" + count + "] dependenc" + (count == 1 ? "y" : "ies") + ".");
       }
-      return Results.fail("No dependencies specified.");
+      return Results.fail("No arguments specified.");
    }
 
    @Override

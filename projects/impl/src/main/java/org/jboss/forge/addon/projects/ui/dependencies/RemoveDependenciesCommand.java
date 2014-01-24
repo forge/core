@@ -27,7 +27,7 @@ public class RemoveDependenciesCommand extends AbstractProjectCommand
    public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(RemoveDependenciesCommand.class)
-               .description("Remove one or more dependencies from the current project.")
+               .description("Remove one or more arguments from the current project.")
                .name("Project: Remove Dependencies")
                .category(Categories.create("Project", "Manage"));
    }
@@ -37,20 +37,20 @@ public class RemoveDependenciesCommand extends AbstractProjectCommand
 
    @Inject
    @WithAttributes(shortName = 'd', label = "Coordinates", required = true,
-            description = "The coordinates of the dependencies to be removed [groupId :artifactId {:version :scope :packaging}]")
-   private UISelectMany<Dependency> dependencies;
+            description = "The coordinates of the arguments to be removed [groupId :artifactId {:version :scope :packaging}]")
+   private UISelectMany<Dependency> arguments;
 
    @Inject
-   @WithAttributes(shortName = 'r', label = "Remove managed dependencies", defaultValue = "false", required = false,
-            description = "Also remove any related managed dependencies from the current project, if possible.")
+   @WithAttributes(shortName = 'r', label = "Remove managed arguments", defaultValue = "false", required = false,
+            description = "Also remove any related managed arguments from the current project, if possible.")
    private UIInput<Boolean> removeManaged;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
       Project project = getSelectedProject(builder.getUIContext());
-      dependencies.setValueChoices(project.getFacet(DependencyFacet.class).getDependencies());
-      builder.add(dependencies).add(removeManaged);
+      arguments.setValueChoices(project.getFacet(DependencyFacet.class).getDependencies());
+      builder.add(arguments).add(removeManaged);
    }
 
    @Override
@@ -59,10 +59,10 @@ public class RemoveDependenciesCommand extends AbstractProjectCommand
       Project project = getSelectedProject(context.getUIContext());
       final DependencyFacet deps = project.getFacet(DependencyFacet.class);
 
-      if (dependencies.hasValue())
+      if (arguments.hasValue())
       {
          int count = 0;
-         for (Dependency gav : dependencies.getValue())
+         for (Dependency gav : arguments.getValue())
          {
             deps.removeDependency(gav);
             if(removeManaged.getValue())
@@ -74,7 +74,7 @@ public class RemoveDependenciesCommand extends AbstractProjectCommand
 
          return Results.success("Removed [" + count + "] dependenc" + (count == 1 ? "y" : "ies") + ".");
       }
-      return Results.fail("No dependencies specified.");
+      return Results.fail("No arguments specified.");
    }
 
    @Override

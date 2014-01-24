@@ -96,7 +96,7 @@ public class ProjectDependencyCommandsTest
          CommandController command = testHarness.createCommandController(AddDependenciesCommand.class,
                   project.getProjectRoot());
          command.initialize();
-         command.setValueFor("dependencies", COORDINATES);
+         command.setValueFor("arguments", COORDINATES);
          Assert.assertTrue(command.isValid());
          Assert.assertTrue(command.canExecute());
          command.execute();
@@ -130,7 +130,7 @@ public class ProjectDependencyCommandsTest
          CommandController command = testHarness.createCommandController(AddDependenciesCommand.class,
                   project.getProjectRoot());
          command.initialize();
-         command.setValueFor("dependencies", Arrays.asList(COORDINATES, COORDINATES2));
+         command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
          Assert.assertTrue(command.isValid());
          Assert.assertTrue(command.canExecute());
          command.execute();
@@ -164,7 +164,7 @@ public class ProjectDependencyCommandsTest
          CommandController command = testHarness.createCommandController(AddManagedDependenciesCommand.class,
                   project.getProjectRoot());
          command.initialize();
-         command.setValueFor("dependencies", COORDINATES);
+         command.setValueFor("arguments", COORDINATES);
          Assert.assertTrue(command.isValid());
          Assert.assertTrue(command.canExecute());
          command.execute();
@@ -198,7 +198,7 @@ public class ProjectDependencyCommandsTest
          CommandController command = testHarness.createCommandController(AddManagedDependenciesCommand.class,
                   project.getProjectRoot());
          command.initialize();
-         command.setValueFor("dependencies", Arrays.asList(COORDINATES, COORDINATES2));
+         command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
          Assert.assertTrue(command.isValid());
          Assert.assertTrue(command.canExecute());
          command.execute();
@@ -234,7 +234,7 @@ public class ProjectDependencyCommandsTest
          CommandController command = testHarness.createCommandController(RemoveDependenciesCommand.class,
                   project.getProjectRoot());
          command.initialize();
-         command.setValueFor("dependencies", DEPENDENCY);
+         command.setValueFor("arguments", DEPENDENCY);
          command.setValueFor("removeManaged", "true");
          Assert.assertTrue(command.isValid());
          Assert.assertTrue(command.canExecute());
@@ -272,7 +272,7 @@ public class ProjectDependencyCommandsTest
          CommandController command = testHarness.createCommandController(RemoveDependenciesCommand.class,
                   project.getProjectRoot());
          command.initialize();
-         command.setValueFor("dependencies", Arrays.asList(DEPENDENCY, DEPENDENCY2));
+         command.setValueFor("arguments", Arrays.asList(DEPENDENCY, DEPENDENCY2));
          command.setValueFor("removeManaged", "false");
          Assert.assertTrue(command.isValid());
          Assert.assertTrue(command.canExecute());
@@ -309,7 +309,7 @@ public class ProjectDependencyCommandsTest
          CommandController command = testHarness.createCommandController(RemoveManagedDependenciesCommand.class,
                   project.getProjectRoot());
          command.initialize();
-         command.setValueFor("dependencies", DEPENDENCY);
+         command.setValueFor("arguments", DEPENDENCY);
          command.setValueFor("removeUnmanaged", "true");
          Assert.assertTrue(command.isValid());
          Assert.assertTrue(command.canExecute());
@@ -347,7 +347,7 @@ public class ProjectDependencyCommandsTest
          CommandController command = testHarness.createCommandController(RemoveManagedDependenciesCommand.class,
                   project.getProjectRoot());
          command.initialize();
-         command.setValueFor("dependencies", Arrays.asList(DEPENDENCY, DEPENDENCY2));
+         command.setValueFor("arguments", Arrays.asList(DEPENDENCY, DEPENDENCY2));
          command.setValueFor("removeUnmanaged", "false");
          Assert.assertTrue(command.isValid());
          Assert.assertTrue(command.canExecute());

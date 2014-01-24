@@ -41,13 +41,13 @@ public class AddManagedDependenciesCommand extends AbstractProjectCommand
 
    @Inject
    @WithAttributes(shortName = 'd', label = "Coordinates", required = true,
-            description = "The coordinates of the managed dependencies to be added [groupId :artifactId {:version :scope :packaging}]")
-   private UIInputMany<Dependency> dependencies;
+            description = "The coordinates of the managed arguments to be added [groupId :artifactId {:version :scope :packaging}]")
+   private UIInputMany<Dependency> arguments;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(dependencies);
+      builder.add(arguments);
    }
 
    @Override
@@ -56,10 +56,10 @@ public class AddManagedDependenciesCommand extends AbstractProjectCommand
       Project project = getSelectedProject(context.getUIContext());
       final DependencyFacet deps = project.getFacet(DependencyFacet.class);
 
-      if (dependencies.hasValue())
+      if (arguments.hasValue())
       {
          int count = 0;
-         for (Dependency dependency : dependencies.getValue())
+         for (Dependency dependency : arguments.getValue())
          {
 
             Dependency existingDep = deps.getEffectiveManagedDependency(DependencyBuilder.create(dependency)
@@ -83,7 +83,7 @@ public class AddManagedDependenciesCommand extends AbstractProjectCommand
          return Results.success("Installed [" + count + "] dependenc" + (count == 1 ? "y" : "ies") + ".");
       }
 
-      return Results.fail("No dependencies specified.");
+      return Results.fail("No arguments specified.");
    }
 
    @Override
