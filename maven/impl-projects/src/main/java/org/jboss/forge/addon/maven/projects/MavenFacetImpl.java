@@ -269,13 +269,13 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    }
 
    @Override
-   public Model getPOM()
+   public Model getModel()
    {
       return getPomResource().getCurrentModel();
    }
 
    @Override
-   public void setPOM(final Model pom)
+   public void setModel(final Model pom)
    {
       MavenXpp3Writer writer = new MavenXpp3Writer();
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -472,7 +472,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    }
 
    @Override
-   public boolean isPomValid()
+   public boolean isModelValid()
    {
       try
       {

@@ -90,7 +90,7 @@ public class MavenMultiModuleProviderTest
       projectFactory.createProject(subProjectDir, locator);
 
       MavenFacet mavenFacet = parentProject.getFacet(MavenFacet.class);
-      List<String> modules = mavenFacet.getPOM().getModules();
+      List<String> modules = mavenFacet.getModel().getModules();
       Assert.assertTrue(!modules.isEmpty());
       Assert.assertEquals("sub", modules.get(0));
    }

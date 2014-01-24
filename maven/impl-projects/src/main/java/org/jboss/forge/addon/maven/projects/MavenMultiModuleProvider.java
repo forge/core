@@ -36,7 +36,7 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
       {
          Project parent = projectFactory.findProject(parentDir);
          MavenFacet parentMavenFacet = parent.getFacet(MavenFacet.class);
-         Model parentPom = parentMavenFacet.getPOM();
+         Model parentPom = parentMavenFacet.getModel();
          parentPom.setPackaging("pom");
 
          String moduleDir = project.getProjectRoot().getFullyQualifiedName()
@@ -45,10 +45,10 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
             moduleDir = moduleDir.substring(1);
 
          parentPom.addModule(moduleDir);
-         parentMavenFacet.setPOM(parentPom);
+         parentMavenFacet.setModel(parentPom);
 
          MavenFacet projectMavenFacet = project.getFacet(MavenFacet.class);
-         Model pom = projectMavenFacet.getPOM();
+         Model pom = projectMavenFacet.getModel();
 
          Parent projectParent = new Parent();
          projectParent.setGroupId(parentPom.getGroupId());
@@ -67,7 +67,7 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
          pom.setGroupId(null);
          pom.setVersion(null);
          pom.setParent(projectParent);
-         projectMavenFacet.setPOM(pom);
+         projectMavenFacet.setModel(pom);
       }
    }
 

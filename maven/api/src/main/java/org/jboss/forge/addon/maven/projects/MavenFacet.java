@@ -32,12 +32,12 @@ public interface MavenFacet extends BuildSystemFacet
    /**
     * Get the current Maven {@link Model} for this {@link Project}.
     */
-   Model getPOM();
+   Model getModel();
 
    /**
     * Set the current Maven {@link Model} for this {@link Project}.
     */
-   void setPOM(Model pom);
+   void setModel(Model pom);
 
    /**
     * Get a {@link Map} of all resolvable project properties.
@@ -79,8 +79,8 @@ public interface MavenFacet extends BuildSystemFacet
    DirectoryResource getLocalRepositoryDirectory();
 
    /**
-    * Returns <code>true</code> if the underlying {@link Project} POM is in a build-able state.
+    * Returns <code>true</code> if the underlying {@link Project} {@link Model} is in a build-able state.
     */
-   boolean isPomValid();
+   boolean isModelValid();
 
 }

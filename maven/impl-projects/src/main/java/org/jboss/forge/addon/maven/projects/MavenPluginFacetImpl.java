@@ -57,7 +57,7 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
    private List<org.apache.maven.model.Plugin> getPluginsPOM(boolean managedPlugin, boolean effectivePlugin)
    {
       MavenFacet mavenCoreFacet = getFaceted().getFacet(MavenFacet.class);
-      Build build = mavenCoreFacet.getPOM().getBuild();
+      Build build = mavenCoreFacet.getModel().getBuild();
       if (build != null)
       {
          if (managedPlugin)
@@ -90,7 +90,7 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
    private void addPlugin(final MavenPlugin plugin, boolean managedPlugin)
    {
       MavenFacet mavenCoreFacet = getFaceted().getFacet(MavenFacet.class);
-      Model pom = mavenCoreFacet.getPOM();
+      Model pom = mavenCoreFacet.getModel();
       Build build = pom.getBuild();
       if (build == null)
          build = new Build();
@@ -109,7 +109,7 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
          build.addPlugin(new MavenPluginAdapter(plugin));
       }
       pom.setBuild(build);
-      mavenCoreFacet.setPOM(pom);
+      mavenCoreFacet.setModel(pom);
    }
 
    private MavenPlugin getPlugin(final Coordinate dependency, boolean managedPlugin, boolean effectivePlugin)
@@ -158,7 +158,7 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
       if (pluginToRemove != null)
       {
          MavenFacet mavenCoreFacet = getFaceted().getFacet(MavenFacet.class);
-         Model pom = mavenCoreFacet.getPOM();
+         Model pom = mavenCoreFacet.getModel();
          Build build = pom.getBuild(); // We know for sure it isnt null because the plugin exists
          if (managedPlugin)
          {
@@ -171,7 +171,7 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
             build.removePlugin(new MavenPluginAdapter(pluginToRemove));
          }
          pom.setBuild(build);
-         mavenCoreFacet.setPOM(pom);
+         mavenCoreFacet.setModel(pom);
       }
    }
 
@@ -298,12 +298,12 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
       if (!hasPluginRepository(url))
       {
          MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-         Model pom = maven.getPOM();
+         Model pom = maven.getModel();
          Repository repo = new Repository();
          repo.setId(name);
          repo.setUrl(url);
          pom.getPluginRepositories().add(repo);
-         maven.setPOM(pom);
+         maven.setModel(pom);
       }
    }
 
@@ -313,7 +313,7 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
       if (url != null)
       {
          MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-         Model pom = maven.getPOM();
+         Model pom = maven.getModel();
          List<Repository> repositories = pom.getPluginRepositories();
          if (repositories != null)
          {
@@ -322,7 +322,7 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
                if (repo.getUrl().trim().equals(url.trim()))
                {
                   repositories.remove(repo);
-                  maven.setPOM(pom);
+                  maven.setModel(pom);
                   return true;
                }
             }
@@ -337,14 +337,14 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
       if (url != null)
       {
          MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-         Model pom = maven.getPOM();
+         Model pom = maven.getModel();
          List<Repository> repos = pom.getPluginRepositories();
          for (Repository repo : repos)
          {
             if (repo.getUrl().equals(url.trim()))
             {
                repos.remove(repo);
-               maven.setPOM(pom);
+               maven.setModel(pom);
                return new DependencyRepository(repo.getId(), repo.getUrl());
             }
          }
@@ -357,7 +357,7 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
    {
       List<DependencyRepository> results = new ArrayList<>();
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      Model pom = maven.getModel();
       List<Repository> repos = pom.getPluginRepositories();
 
       if (repos != null)

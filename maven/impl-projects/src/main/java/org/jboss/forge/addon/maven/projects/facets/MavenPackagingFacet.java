@@ -58,9 +58,9 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
       if (!oldType.equals(type))
       {
          MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
-         Model pom = mavenFacet.getPOM();
+         Model pom = mavenFacet.getModel();
          pom.setPackaging(type);
-         mavenFacet.setPOM(pom);
+         mavenFacet.setModel(pom);
 
          event.fire(new PackagingChanged(getFaceted(), oldType, type));
       }
@@ -70,7 +70,7 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    public String getPackagingType()
    {
       MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
-      Model pom = mavenFacet.getPOM();
+      Model pom = mavenFacet.getModel();
       String packaging = pom.getPackaging();
       if (packaging != null)
       {
@@ -140,7 +140,7 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    public String getFinalName()
    {
       MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
-      Model pom = mavenFacet.getPOM();
+      Model pom = mavenFacet.getModel();
       Build build = pom.getBuild();
       return build != null ? build.getFinalName() : getDefaultFinalName();
    }
@@ -151,7 +151,7 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    private String getDefaultFinalName()
    {
       MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
-      Model pom = mavenFacet.getPOM();
+      Model pom = mavenFacet.getModel();
       String version = pom.getVersion();
       if (version == null && pom.getParent() != null)
          version = pom.getParent().getVersion();
@@ -162,7 +162,7 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    public void setFinalName(final String finalName)
    {
       MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
-      Model pom = mavenFacet.getPOM();
+      Model pom = mavenFacet.getModel();
       Build build = pom.getBuild();
       if (build == null)
       {
@@ -170,6 +170,6 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
          pom.setBuild(build);
       }
       pom.getBuild().setFinalName(finalName);
-      mavenFacet.setPOM(pom);
+      mavenFacet.setModel(pom);
    }
 }

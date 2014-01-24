@@ -34,7 +34,7 @@ public class MavenJavaCompilerFacet extends AbstractFacet<Project> implements Ja
    public boolean isInstalled()
    {
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      Model pom = maven.getModel();
       Build build = pom.getBuild();
       if (build == null)
       {
@@ -50,7 +50,7 @@ public class MavenJavaCompilerFacet extends AbstractFacet<Project> implements Ja
    {
       // FIXME WOW this needs to be simplified somehow...
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      Model pom = maven.getModel();
       Build build = pom.getBuild();
       if (build == null)
       {
@@ -88,7 +88,7 @@ public class MavenJavaCompilerFacet extends AbstractFacet<Project> implements Ja
 
       build.addPlugin(javaCompilerPlugin);
       pom.setBuild(build);
-      maven.setPOM(pom);
+      maven.setModel(pom);
       return true;
    }
 

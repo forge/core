@@ -78,7 +78,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    @Override
    public String getBasePackage()
    {
-      return Packages.toValidPackageName(getFaceted().getFacet(MavenFacet.class).getPOM().getGroupId());
+      return Packages.toValidPackageName(getFaceted().getFacet(MavenFacet.class).getModel().getGroupId());
    }
 
    @Override
@@ -91,7 +91,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    public DirectoryResource getSourceDirectory()
    {
       MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
-      Build build = mavenFacet.getPOM().getBuild();
+      Build build = mavenFacet.getModel().getBuild();
       String srcFolderName;
       if (build != null && build.getSourceDirectory() != null)
       {
@@ -109,7 +109,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    public DirectoryResource getTestSourceDirectory()
    {
       MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
-      Build build = mavenFacet.getPOM().getBuild();
+      Build build = mavenFacet.getModel().getBuild();
       String srcFolderName;
       if (build != null && build.getTestSourceDirectory() != null)
       {

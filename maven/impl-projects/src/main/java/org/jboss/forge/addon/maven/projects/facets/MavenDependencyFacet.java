@@ -67,18 +67,18 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       removeDependency(dep);
 
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      Model pom = maven.getModel();
       List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
       dependencies.add(dep);
       pom.setDependencies(MavenDependencyAdapter.toMavenList(dependencies));
-      maven.setPOM(pom);
+      maven.setModel(pom);
    }
 
    @Override
    public boolean hasDirectDependency(final Dependency dependency)
    {
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      Model pom = maven.getModel();
       List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
 
       for (Dependency dep : dependencies)
@@ -95,7 +95,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    public void removeDependency(final Dependency dep)
    {
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      Model pom = maven.getModel();
       List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
 
       List<Dependency> toBeRemoved = new ArrayList<>();
@@ -108,14 +108,14 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       }
       dependencies.removeAll(toBeRemoved);
       pom.setDependencies(MavenDependencyAdapter.toMavenList(dependencies));
-      maven.setPOM(pom);
+      maven.setModel(pom);
    }
 
    @Override
    public List<Dependency> getDependencies()
    {
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      Model pom = maven.getModel();
       List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
 
       List<Dependency> result = new ArrayList<>();
@@ -131,7 +131,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    public Dependency getDirectDependency(final Dependency dependency)
    {
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      Model pom = maven.getModel();
       List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
 
       for (Dependency dep : dependencies)
@@ -196,7 +196,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       if (!hasEffectiveManagedDependency(resolveProperties(manDep)))
       {
          MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-         Model pom = maven.getPOM();
+         Model pom = maven.getModel();
          DependencyManagement depMan = pom.getDependencyManagement();
          depMan = depMan != null ? depMan : new DependencyManagement();
 
@@ -204,7 +204,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
          managedDependencies.add(manDep);
          depMan.setDependencies(MavenDependencyAdapter.toMavenList(managedDependencies));
          pom.setDependencyManagement(depMan);
-         maven.setPOM(pom);
+         maven.setModel(pom);
       }
    }
 
@@ -214,7 +214,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       removeManagedDependency(dep);
 
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      Model pom = maven.getModel();
       DependencyManagement depMan = pom.getDependencyManagement();
       depMan = depMan != null ? depMan : new DependencyManagement();
 
@@ -222,7 +222,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       managedDependencies.add(dep);
       depMan.setDependencies(MavenDependencyAdapter.toMavenList(managedDependencies));
       pom.setDependencyManagement(depMan);
-      maven.setPOM(pom);
+      maven.setModel(pom);
    }
 
    @Override
@@ -262,7 +262,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    public boolean hasDirectManagedDependency(final Dependency managedDependency)
    {
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      Model pom = maven.getModel();
       DependencyManagement depMan = pom.getDependencyManagement();
 
       List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
@@ -282,7 +282,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    public void removeManagedDependency(final Dependency manDep)
    {
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      Model pom = maven.getModel();
       DependencyManagement depMan = pom.getDependencyManagement();
       depMan = depMan != null ? depMan : new DependencyManagement();
 
@@ -299,14 +299,14 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       managedDependencies.removeAll(toBeRemoved);
       depMan.setDependencies(MavenDependencyAdapter.toMavenList(managedDependencies));
       pom.setDependencyManagement(depMan);
-      maven.setPOM(pom);
+      maven.setModel(pom);
    }
 
    @Override
    public List<Dependency> getManagedDependencies()
    {
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      Model pom = maven.getModel();
       DependencyManagement depMan = pom.getDependencyManagement();
 
       List<Dependency> managedDependencies = null;
@@ -327,7 +327,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    public Dependency getDirectManagedDependency(final Dependency manDep)
    {
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      Model pom = maven.getModel();
       DependencyManagement depMan = pom.getDependencyManagement();
 
       List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
@@ -391,12 +391,12 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       if (!hasRepository(url))
       {
          MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-         Model pom = maven.getPOM();
+         Model pom = maven.getModel();
          Repository repo = new Repository();
          repo.setId(name);
          repo.setUrl(url);
          pom.getRepositories().add(repo);
-         maven.setPOM(pom);
+         maven.setModel(pom);
       }
    }
 
@@ -405,7 +405,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    {
       List<DependencyRepository> results = new ArrayList<>();
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-      Model pom = maven.getPOM();
+      Model pom = maven.getModel();
       List<Repository> repos = pom.getRepositories();
       for (Repository repo : repos)
       {
@@ -420,7 +420,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       if (url != null)
       {
          MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-         Model pom = maven.getPOM();
+         Model pom = maven.getModel();
          List<Repository> repositories = pom.getRepositories();
          for (Repository repo : repositories)
          {
@@ -439,14 +439,14 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       if (url != null)
       {
          MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-         Model pom = maven.getPOM();
+         Model pom = maven.getModel();
          List<Repository> repos = pom.getRepositories();
          for (Repository repo : repos)
          {
             if (repo.getUrl().equals(url.trim()))
             {
                repos.remove(repo);
-               maven.setPOM(pom);
+               maven.setModel(pom);
                return new DependencyRepository(repo.getId(), repo.getUrl());
             }
          }

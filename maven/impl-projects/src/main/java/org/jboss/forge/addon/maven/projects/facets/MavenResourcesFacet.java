@@ -48,7 +48,7 @@ public class MavenResourcesFacet extends AbstractFacet<Project> implements Resou
    public DirectoryResource getResourceDirectory()
    {
       MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
-      Build build = mavenFacet.getPOM().getBuild();
+      Build build = mavenFacet.getModel().getBuild();
       final String resFolderName;
       if (build != null && !build.getResources().isEmpty() && build.getResources().get(0).getDirectory() != null)
       {
@@ -66,7 +66,7 @@ public class MavenResourcesFacet extends AbstractFacet<Project> implements Resou
    public DirectoryResource getTestResourceDirectory()
    {
       MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
-      Build build = mavenFacet.getPOM().getBuild();
+      Build build = mavenFacet.getModel().getBuild();
       final String resFolderName;
       if (build != null && !build.getTestResources().isEmpty()
                && build.getTestResources().get(0).getDirectory() != null)
