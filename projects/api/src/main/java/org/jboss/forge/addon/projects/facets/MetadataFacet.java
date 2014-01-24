@@ -28,7 +28,7 @@ public interface MetadataFacet extends BuildSystemFacet
    /**
     * Set the name of this {@link Project}.
     */
-   void setProjectName(String name);
+   MetadataFacet setProjectName(String name);
 
    /**
     * Get the top level package of this {@link Project}.
@@ -38,7 +38,7 @@ public interface MetadataFacet extends BuildSystemFacet
    /**
     * Set the top level package of this {@link Project}.
     */
-   void setTopLevelPackage(String groupId);
+   MetadataFacet setTopLevelPackage(String groupId);
 
    /**
     * Get the version of this {@link Project}.
@@ -48,7 +48,7 @@ public interface MetadataFacet extends BuildSystemFacet
    /**
     * Set the version of this {@link Project}.
     */
-   void setProjectVersion(String version);
+   MetadataFacet setProjectVersion(String version);
 
    /**
     * Return a handle to the final output dependency of this {@link Project}.
@@ -97,7 +97,7 @@ public interface MetadataFacet extends BuildSystemFacet
     * Properties can be used anywhere in a {@link Project} configuration and its dependencies, and will be expanded
     * during building to the resolved property value.
     */
-   void setDirectProperty(String name, String value);
+   MetadataFacet setDirectProperty(String name, String value);
 
    /**
     * Remove a build property by name. (Build properties, such as ${my.version}, can be used anywhere in a dependency,
