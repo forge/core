@@ -29,6 +29,7 @@ import org.jboss.forge.addon.maven.plugins.ConfigurationBuilder;
 import org.jboss.forge.addon.maven.plugins.ConfigurationElement;
 import org.jboss.forge.addon.maven.plugins.ExecutionBuilder;
 import org.jboss.forge.addon.maven.plugins.MavenPlugin;
+import org.jboss.forge.addon.maven.plugins.MavenPluginAdapter;
 import org.jboss.forge.addon.maven.plugins.MavenPluginBuilder;
 import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.Project;
@@ -186,20 +187,21 @@ public class MavenPersistenceMetaModelFacet extends AbstractFacet<Project> imple
                .setGroupId("org.apache.maven.plugins")
                .setArtifactId("maven-compiler-plugin");
       MavenPluginFacet pluginFacet = getFaceted().getFacet(MavenPluginFacet.class);
-      final MavenPlugin compiler;
+      final MavenPluginAdapter compiler;
       if (pluginFacet.hasPlugin(compilerDependency))
       {
-         compiler = pluginFacet.getPlugin(compilerDependency);
+         compiler = new MavenPluginAdapter(pluginFacet.getPlugin(compilerDependency));
       }
       else
       {
-         compiler = MavenPluginBuilder.create().setCoordinate(compilerDependency);
+         compiler = new MavenPluginAdapter(MavenPluginBuilder.create().setCoordinate(compilerDependency));
       }
       Configuration config = compiler.getConfig();
       if (!config.hasConfigurationElement("proc"))
       {
          ConfigurationElement proc = ConfigurationBuilder.create().createConfigurationElement("proc").setText("none");
          config.addConfigurationElement(proc);
+         compiler.setConfig(config);
       }
       pluginFacet.updatePlugin(compiler);
    }
