@@ -72,7 +72,7 @@ public interface MetadataFacet extends BuildSystemFacet
     * Properties can be used anywhere in a {@link Project} configuration and its dependencies, and will be expanded
     * during building to the resolved property value.
     */
-   public Map<String, String> getDirectProperties();
+   Map<String, String> getDirectProperties();
 
    /**
     * Get a build property by name. Returns <code>null</code> if no such property exists in the {@link Project} and its
@@ -89,7 +89,7 @@ public interface MetadataFacet extends BuildSystemFacet
     * Properties can be used anywhere in a {@link Project} configuration and its dependencies, and will be expanded
     * during building to the resolved property value.
     */
-   public String getDirectProperty(String name);
+   String getDirectProperty(String name);
 
    /**
     * Set a build dependency property in the current project. This overrides any existing or inherited properties.
@@ -97,13 +97,13 @@ public interface MetadataFacet extends BuildSystemFacet
     * Properties can be used anywhere in a {@link Project} configuration and its dependencies, and will be expanded
     * during building to the resolved property value.
     */
-   public void setDirectProperty(String name, String value);
+   void setDirectProperty(String name, String value);
 
    /**
     * Remove a build property by name. (Build properties, such as ${my.version}, can be used anywhere in a dependency,
     * and will be expanded during building to their property value.)
     */
-   public String removeDirectProperty(String name);
+   String removeDirectProperty(String name);
 
    /**
     * Return the {@link BuildSystem} being used in the current {@link Project}.
