@@ -3,17 +3,16 @@ package org.jboss.forge.addon.projects.ui.dependencies;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.Dependency;
-import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.input.UIInputMany;
+import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -22,14 +21,14 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 @FacetConstraint(DependencyFacet.class)
-public class AddDependenciesCommand extends AbstractProjectCommand
+public class RemoveManagedDependenciesCommand extends AbstractProjectCommand
 {
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(AddDependenciesCommand.class)
-               .description("Add one or more dependencies to the current project.")
-               .name("Project: Add Dependencies")
+      return Metadata.forCommand(RemoveManagedDependenciesCommand.class)
+               .description("Remove one or more managed dependencies from the current project.")
+               .name("Project: Remove Managed Dependencies")
                .category(Categories.create("Project", "Manage"));
    }
 
@@ -37,17 +36,21 @@ public class AddDependenciesCommand extends AbstractProjectCommand
    private ProjectFactory factory;
 
    @Inject
-   private DependencyInstaller installer;
+   @WithAttributes(shortName = 'd', label = "Coordinates", required = true,
+            description = "The coordinates of the managed dependencies to be removed [groupId :artifactId {:version :scope :packaging}]")
+   private UISelectMany<Dependency> dependencies;
 
    @Inject
-   @WithAttributes(shortName = 'd', label = "Coordinates", required = true,
-            description = "The coordinates of the dependencies to be added [groupId :artifactId {:version :scope :packaging}]")
-   private UIInputMany<Dependency> dependencies;
+   @WithAttributes(shortName = 'r', label = "Remove un-managed dependencies", defaultValue = "false", required = false,
+            description = "Also remove any related dependencies from the current project if they are now un-managed, if possible.")
+   private UIInput<Boolean> removeUnmanaged;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(dependencies);
+      Project project = getSelectedProject(builder.getUIContext());
+      dependencies.setValueChoices(project.getFacet(DependencyFacet.class).getDependencies());
+      builder.add(dependencies).add(removeUnmanaged);
    }
 
    @Override
@@ -61,27 +64,15 @@ public class AddDependenciesCommand extends AbstractProjectCommand
          int count = 0;
          for (Dependency gav : dependencies.getValue())
          {
-            Dependency existingDep = deps.getEffectiveManagedDependency(DependencyBuilder.create(gav).setVersion(null));
-            if (existingDep != null)
+            deps.removeManagedDependency(gav);
+            if (removeUnmanaged.getValue() && !deps.hasEffectiveManagedDependency(gav))
             {
-               if (context.getPrompt().promptBoolean(String.format(
-                        "Dependency [%s:%s] is currently managed. "
-                                 + "Reference the existing managed dependency [%s:%s:%s]?",
-                        gav.getCoordinate().getArtifactId(),
-                        gav.getCoordinate().getGroupId(),
-                        existingDep.getCoordinate().getGroupId(),
-                        existingDep.getCoordinate().getArtifactId(),
-                        existingDep.getCoordinate().getVersion())))
-               {
-                  gav = existingDep;
-               }
+               deps.removeDependency(gav);
             }
-
-            this.installer.install(project, gav);
             count++;
          }
 
-         return Results.success("Installed [" + count + "] dependenc" + (count == 1 ? "y" : "ies") + ".");
+         return Results.success("Removed [" + count + "] dependenc" + (count == 1 ? "y" : "ies") + ".");
       }
       return Results.fail("No dependencies specified.");
    }
