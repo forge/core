@@ -208,7 +208,7 @@ public class CustomBuildSystem implements BuildSystem {
       Project project = new CustomProject(dir);
 
       try {
-         factory.install(project, CustomFacet.class);
+         factory.install(project, CustomBuildSystemFacet.class);
       }
       catch (RuntimeException e) {
          throw new IllegalStateException("Could not install Custom functionality into Project located at ["
