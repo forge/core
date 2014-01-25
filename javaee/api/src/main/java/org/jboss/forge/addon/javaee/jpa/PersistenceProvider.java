@@ -9,6 +9,7 @@ package org.jboss.forge.addon.javaee.jpa;
 import java.util.List;
 
 import org.jboss.forge.addon.dependencies.Dependency;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
 /**
@@ -31,10 +32,11 @@ public interface PersistenceProvider
    String getProvider();
 
    /**
-    * Configure the {@link PersistenceUnitDef} and {@link JPADataSource}.
+    * Configure the {@link PersistenceUnitCommon} and {@link JPADataSource}.
     */
    @SuppressWarnings("rawtypes")
-   PersistenceUnitCommon configure(PersistenceUnitCommon unit, JPADataSource ds);
+   PersistenceUnitCommon configure(PersistenceUnitCommon unit, JPADataSource ds,
+            Project project);
 
    /**
     * List any dependencies required by this provider.

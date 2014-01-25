@@ -23,6 +23,7 @@ import org.jboss.forge.addon.javaee.jpa.providers.HibernateMetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.providers.JavaEEDefaultProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.command.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -37,6 +38,8 @@ import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PropertiesCommon;
+import org.jboss.shrinkwrap.descriptor.api.persistence21.Property;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -85,7 +88,7 @@ public class JPASetupWizardTest
    @Test
    public void testSetup() throws Exception
    {
-      final Project project = projectFactory.createTempProject();
+      Project project = projectFactory.createTempProject();
       WizardCommandController tester = testHarness.createWizardController(JPASetupWizard.class,
                project.getProjectRoot());
 
@@ -115,10 +118,14 @@ public class JPASetupWizardTest
       // Ensure that the two pages were invoked
       Assert.assertEquals(2, counter.get());
 
+      // Reload to refresh facets.
+      project = projectFactory.findProject(project.getProjectRoot());
+      
       // Check SUT values
       PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
       List<PersistenceUnitCommon> allUnits = config.getAllPersistenceUnit();
       Assert.assertEquals("java:jboss:jta-ds", allUnits.get(0).getJtaDataSource());
+      assertDefaultProviderProperties(allUnits.get(0).getOrCreateProperties(), project.getFacet(MetadataFacet.class).getProjectName());
    }
 
    @Test
@@ -216,5 +223,27 @@ public class JPASetupWizardTest
       Assert.assertTrue(project.hasFacet(PersistenceMetaModelFacet.class));
       PersistenceMetaModelFacet facet = project.getFacet(PersistenceMetaModelFacet.class);
       Assert.assertEquals(new HibernateMetaModelProvider().getProcessor(), facet.getProcessor());
+   }
+
+   private void assertDefaultProviderProperties(PropertiesCommon puProperties, String projectName)
+   {
+      assertPropertyValue(puProperties, "javax.persistence.schema-generation.database.action", "drop-and-create");
+      assertPropertyValue(puProperties, "javax.persistence.schema-generation.scripts.action", "drop-and-create");
+      assertPropertyValue(puProperties, "javax.persistence.schema-generation.scripts.create-target", projectName + "Create.ddl");
+      assertPropertyValue(puProperties, "javax.persistence.schema-generation.scripts.drop-target", projectName + "Drop.ddl");
+   }
+
+   private void assertPropertyValue(PropertiesCommon puProperties, String name, String expectedValue)
+   {
+      List<Property<?>> allProperties = puProperties.getAllProperty();
+      for (Property property : allProperties)
+      {
+         if (property.getName().equals(name))
+         {
+            Assert.assertEquals(expectedValue, property.getValue());
+            return;
+         }
+      }
+      Assert.fail("No property with name " + name + " was defined for this persistence unit.");
    }
 }

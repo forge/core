@@ -17,6 +17,7 @@ import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.MetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PropertiesCommon;
 
@@ -65,7 +66,7 @@ public class HibernateProvider implements PersistenceProvider
 
    @Override
    @SuppressWarnings("rawtypes")
-   public PersistenceUnitCommon configure(PersistenceUnitCommon unit, JPADataSource ds)
+   public PersistenceUnitCommon configure(PersistenceUnitCommon unit, JPADataSource ds, Project project)
    {
       unit.excludeUnlistedClasses(Boolean.FALSE);
       PropertiesCommon properties = unit.getOrCreateProperties();

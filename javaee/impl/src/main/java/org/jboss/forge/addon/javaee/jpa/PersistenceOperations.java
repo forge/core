@@ -76,7 +76,7 @@ public class PersistenceOperations
          }
 
          container.setupConnection(unit, dataSource);
-         provider.configure(unit, dataSource);
+         provider.configure(unit, dataSource, project);
          facet.saveConfig(config);
          result = facet.getConfigFile();
          if (configureMetadata)
