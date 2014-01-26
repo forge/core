@@ -55,9 +55,9 @@ public class UITestHarness
    {
       CommandController result = null;
       Iterable<UICommand> commands = commandFactory.getCommands();
+      UIContextImpl context = getUIContextInstance(initialSelection);
       for (UICommand command : commands)
       {
-         UIContextImpl context = getUIContextInstance(initialSelection);
          UICommandMetadata metadata = command.getMetadata(context);
          if (name.equals(metadata.getName()))
          {
