@@ -1,7 +1,5 @@
 package org.jboss.forge.spec.javaee.rest;
 
-import java.util.List;
-
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -9,19 +7,26 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
 /**
- * 
+ * A REST resource for the ${entity.getName()} entity.
  */
 @Stateless
 @Path("${resourcePath}")
-public class ${entityTable}Resource extends BaseEntityResource<${entity.getName()}>
+public class ${entityTable}Resource extends BaseEntityResource<${entity.getName()},${idType}>
 {
    @PersistenceContext(unitName="${persistenceUnitName}")
    private EntityManager em;
 
+   /**
+    * <p>
+    * A method for creating a new ${entity.getName()}
+    * </p>
+    * 
+    * @param entity The new ${entity.getName()} to be created
+    * @return
+    */
    @POST
    @Consumes("${contentType}")
    public Response create(${entity.getName()} entity)
@@ -29,23 +34,9 @@ public class ${entityTable}Resource extends BaseEntityResource<${entity.getName(
       em.persist(entity);
       return Response.created(UriBuilder.fromResource(${entityTable}Resource.class).path(String.valueOf(entity.${getIdStatement})).build()).build();
    }
-
-   @DELETE
-   @Path("/{id:[0-9][0-9]*}")
-   public Response deleteById(@PathParam("id") ${idType} id)
-   {
-      ${entity.getName()} entity = em.find(${entity.getName()}.class, id);
-      if (entity == null) {
-        return Response.status(Status.NOT_FOUND).build();
-      }
-      em.remove(entity);
-      return Response.noContent().build();
-   }
-
-   @GET
-   @Path("/{id:[0-9][0-9]*}")
-   @Produces("${contentType}")
-   public Response findById(@PathParam("id") ${idType} id)
+   
+   @Override
+   public ${entity.getName()} findById(${idType} id)
    {
       TypedQuery<${entity.getName()}> findByIdQuery = em.createQuery("${selectExpression} ${idClause} ${orderClause}", ${entity.getName()}.class);
       findByIdQuery.setParameter("entityId", id);
@@ -55,35 +46,7 @@ public class ${entityTable}Resource extends BaseEntityResource<${entity.getName(
       } catch (NoResultException nre) {
          entity = null;
       }
-      if (entity == null) {
-        return Response.status(Status.NOT_FOUND).build();
-      }
-      return Response.ok(entity).build();
+      return entity;
    }
 
-   @GET
-   @Produces("${contentType}")
-   public List<${entity.getName()}> listAll(@QueryParam("start") Integer startPosition, @QueryParam("max") Integer maxResult)
-   {
-      TypedQuery<${entity.getName()}> findAllQuery = em.createQuery("${selectExpression} ${orderClause}", ${entity.getName()}.class);
-      if (startPosition != null)
-      {
-         findAllQuery.setFirstResult(startPosition);
-      }
-      if (maxResult != null)
-      {
-         findAllQuery.setMaxResults(maxResult);
-      }
-      final List<${entity.getName()}> results = findAllQuery.getResultList();
-      return results;
-   }
-
-   @PUT
-   @Path("/{id:[0-9][0-9]*}")
-   @Consumes("${contentType}")
-   public Response update(${entity.getName()} entity)
-   {
-      entity = em.merge(entity);
-      return Response.noContent().build();
-   }
 }

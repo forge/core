@@ -51,6 +51,7 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
       }
       String idType = ResourceGeneratorUtil.resolveIdType(entity);
       String persistenceUnitName = context.getPersistenceUnitName();
+      String idFieldName = ResourceGeneratorUtil.resolveIdName(entity);
       String idGetterName = ResourceGeneratorUtil.resolveIdGetterName(entity);
       String entityTable = ResourceGeneratorUtil.getEntityTable(entity);
       String selectExpression = ResourceGeneratorUtil.getSelectExpression(entity, entityTable);
@@ -62,6 +63,7 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
       Map<Object, Object> map = new HashMap<Object, Object>();
       map.put("entity", entity);
       map.put("idType", idType);
+      map.put("id", idFieldName);
       map.put("getIdStatement", idGetterName);
       map.put("contentType", contentType);
       map.put("persistenceUnitName", persistenceUnitName);

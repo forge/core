@@ -149,6 +149,35 @@ public class ResourceGeneratorUtil
 
       return result;
    }
+   
+   public static String resolveIdName(JavaClass entity)
+   {
+      String result = null;
+
+      for (Member<JavaClass, ?> member : entity.getMembers())
+      {
+         if (member.hasAnnotation(Id.class))
+         {
+            result = member.getName();
+            if (member instanceof Method)
+            {
+               if (result.startsWith("get"))
+               {
+                  result = result.substring(2);
+               }
+            }
+         }
+      }
+
+      if (result == null)
+      {
+         throw new RuntimeException("Could not determine @Id field name for @Entity ["
+                  + entity.getQualifiedName()
+                  + "]. Aborting.");
+      }
+
+      return result;
+   }
 
    public static String getEntityTable(final JavaClass entity)
    {
