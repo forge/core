@@ -17,7 +17,7 @@ import javax.ws.rs.core.UriBuilder;
  */
 @Stateless
 @Path("${resourcePath}")
-public class ${entityTable}Endpoint
+public class ${entityTable}Resource extends BaseEntityResource<${entity.getName()}>
 {
    @PersistenceContext(unitName="${persistenceUnitName}")
    private EntityManager em;
@@ -27,7 +27,7 @@ public class ${entityTable}Endpoint
    public Response create(${entity.getName()} entity)
    {
       em.persist(entity);
-      return Response.created(UriBuilder.fromResource(${entityTable}Endpoint.class).path(String.valueOf(entity.${getIdStatement})).build()).build();
+      return Response.created(UriBuilder.fromResource(${entityTable}Resource.class).path(String.valueOf(entity.${getIdStatement})).build()).build();
    }
 
    @DELETE

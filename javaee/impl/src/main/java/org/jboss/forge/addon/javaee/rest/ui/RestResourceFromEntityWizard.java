@@ -50,11 +50,11 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescript
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
 /**
- * Generates REST endpoints from JPA Entities
+ * Generates REST resources from JPA Entities
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implements UIWizard
+public class RestResourceFromEntityWizard extends AbstractJavaEECommand implements UIWizard
 {
    @Inject
    @WithAttributes(label = "Content Type", defaultValue = MediaType.APPLICATION_XML, required = true)
@@ -89,8 +89,8 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("REST: Endpoint From Entity")
-               .description("Generate REST endpoints from JPA entities")
+      return Metadata.from(super.getMetadata(context), getClass()).name("REST: Resource From Entity")
+               .description("Generate REST resources from JPA entities")
                .category(Categories.create(super.getMetadata(context).getCategory(), "JAX-RS"));
    }
 
@@ -162,20 +162,20 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
    {
       UIContext uiContext = context.getUIContext();
       RestGenerationContextImpl generationContext = createContextFor(uiContext);
-      Set<JavaClass> endpoints = generateEndpoints(generationContext);
+      Set<JavaClass> resources = generateResources(generationContext);
       Project project = generationContext.getProject();
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
       List<JavaResource> selection = new ArrayList<JavaResource>();
 
-      for (JavaClass javaClass : endpoints)
+      for (JavaClass javaClass : resources)
       {
          selection.add(javaSourceFacet.saveJavaSource(javaClass));
       }
       uiContext.setSelection(selection);
-      return Results.success("Endpoint created");
+      return Results.success("REST resource created");
    }
 
-   private Set<JavaClass> generateEndpoints(RestGenerationContextImpl generationContext) throws Exception
+   private Set<JavaClass> generateResources(RestGenerationContextImpl generationContext) throws Exception
    {
       RestResourceGenerator selectedGenerator = generator.getValue();
       Set<JavaClass> classes = new HashSet<JavaClass>();

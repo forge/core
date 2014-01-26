@@ -29,7 +29,7 @@ public interface RestResourceGenerator
    String getDescription();
 
    /**
-    * Generate a REST endpoint based on a context
+    * Generate a REST resource based on a context
     */
    List<JavaClass> generateFrom(RestGenerationContext context) throws Exception;
 

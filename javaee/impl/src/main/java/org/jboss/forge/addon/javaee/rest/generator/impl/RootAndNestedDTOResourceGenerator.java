@@ -91,7 +91,7 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
       map.put("orderClause", orderClause);
       map.put("resourcePath", resourcePath);
 
-      Resource<URL> templateResource = resourceFactory.create(getClass().getResource("EndpointWithDTO.jv"));
+      Resource<URL> templateResource = resourceFactory.create(getClass().getResource("ResourceWithDTO.jv"));
       TemplateProcessor processor = processorFactory.fromTemplate(templateResource);
       String output = processor.process(map);
       JavaClass resource = JavaParser.parse(JavaClass.class, output);

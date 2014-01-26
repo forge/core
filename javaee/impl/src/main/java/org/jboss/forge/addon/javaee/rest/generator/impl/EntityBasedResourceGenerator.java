@@ -7,7 +7,7 @@
 package org.jboss.forge.addon.javaee.rest.generator.impl;
 
 import java.net.URL;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,14 +70,24 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
       map.put("idClause", idClause);
       map.put("orderClause", orderClause);
       map.put("resourcePath", resourcePath);
+      
+      List<JavaClass> generatedClasses = new ArrayList<JavaClass>();
+      
+      Resource<URL> baseResourceTemplate = resourceFactory.create(getClass().getResource("BaseEntityResource.jv"));
+      TemplateProcessor baseResourceProcessor = processorFactory.fromTemplate(baseResourceTemplate);
+      String baseResourceAsString = baseResourceProcessor.process(map);
+      JavaClass baseResource = JavaParser.parse(JavaClass.class, baseResourceAsString);
+      baseResource.setPackage(context.getTargetPackageName());
+      generatedClasses.add(baseResource);
 
-      Resource<URL> templateResource = resourceFactory.create(getClass().getResource("Endpoint.jv"));
-      TemplateProcessor processor = processorFactory.fromTemplate(templateResource);
-      String output = processor.process(map);
-      JavaClass resource = JavaParser.parse(JavaClass.class, output);
-      resource.addImport(entity.getQualifiedName());
-      resource.setPackage(context.getTargetPackageName());
-      return Arrays.asList(resource);
+      Resource<URL> restResourceTemplate = resourceFactory.create(getClass().getResource("Resource.jv"));
+      TemplateProcessor restResourceProcessor = processorFactory.fromTemplate(restResourceTemplate);
+      String restResourceAsString = restResourceProcessor.process(map);
+      JavaClass restResource = JavaParser.parse(JavaClass.class, restResourceAsString);
+      restResource.addImport(entity.getQualifiedName());
+      restResource.setPackage(context.getTargetPackageName());
+      generatedClasses.add(restResource);
+      return generatedClasses;
    }
 
    @Override

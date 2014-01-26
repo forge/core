@@ -1,0 +1,196 @@
+package org.jboss.forge.addon.javaee.rest.generator.impl;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
+
+public abstract class BaseEntityResource<T, K>
+{
+
+   @Inject
+   private EntityManager em;
+
+   private Class<T> entityClass;
+
+   public BaseEntityResource()
+   {
+   }
+
+   public BaseEntityResource(Class<T> entityClass)
+   {
+      this.entityClass = entityClass;
+   }
+
+   public EntityManager getEntityManager()
+   {
+      return em;
+   }
+
+   /**
+    * <p>
+    * A method for retrieving all entities of a given type. Supports the query parameters <code>start</code> and
+    * <code>maxResults</code> for pagination.
+    * </p>
+    * 
+    * @param uriInfo application and request context information (see {@see UriInfo} class information for more details)
+    * @return
+    */
+   @GET
+   @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
+   public List<T> getAll(@Context UriInfo uriInfo)
+   {
+      return getAll(uriInfo.getQueryParameters());
+   }
+
+   public List<T> getAll(MultivaluedMap<String, String> queryParameters)
+   {
+      final CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+      final CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
+      Root<T> root = criteriaQuery.from(entityClass);
+      Predicate[] predicates = extractPredicates(queryParameters, criteriaBuilder, root);
+      criteriaQuery.select(criteriaQuery.getSelection()).where(predicates);
+      criteriaQuery.orderBy(criteriaBuilder.asc(root.get("id")));
+      TypedQuery<T> query = em.createQuery(criteriaQuery);
+      if (queryParameters.containsKey("start"))
+      {
+         Integer firstRecord = Integer.parseInt(queryParameters.getFirst("start")) - 1;
+         query.setFirstResult(firstRecord);
+      }
+      if (queryParameters.containsKey("maxResults"))
+      {
+         Integer maxResults = Integer.parseInt(queryParameters.getFirst("maxResults"));
+         query.setMaxResults(maxResults);
+      }
+      return query.getResultList();
+   }
+
+   /**
+    * <p>
+    * A method for counting all entities of a given type
+    * </p>
+    * 
+    * @param uriInfo application and request context information (see {@see UriInfo} class information for more details)
+    * @return
+    */
+   @GET
+   @Path("/count")
+   @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
+   public Map<String, Long> getCount(@Context UriInfo uriInfo)
+   {
+      CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+      CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+      Root<T> root = criteriaQuery.from(entityClass);
+      criteriaQuery.select(criteriaBuilder.count(root));
+      Predicate[] predicates = extractPredicates(uriInfo.getQueryParameters(), criteriaBuilder, root);
+      criteriaQuery.where(predicates);
+      Map<String, Long> result = new HashMap<String, Long>();
+      result.put("count", em.createQuery(criteriaQuery).getSingleResult());
+      return result;
+   }
+
+   /**
+    * <p>
+    * Subclasses may choose to expand the set of supported query parameters (for adding more filtering criteria on
+    * search and count) by overriding this method.
+    * </p>
+    * 
+    * @param queryParameters - the HTTP query parameters received by the REST resource
+    * @param criteriaBuilder - @{link CriteriaBuilder} used by the invoker
+    * @param root @{link Root} used by the invoker
+    * @return a list of {@link Predicate}s that will added as query parameters
+    */
+   protected Predicate[] extractPredicates(MultivaluedMap<String, String> queryParameters,
+            CriteriaBuilder criteriaBuilder, Root<T> root)
+   {
+      return new Predicate[] {};
+   }
+
+   /**
+    * <p>
+    * A method for retrieving individual entity instances.
+    * </p>
+    * 
+    * @param id entity id
+    * @return
+    */
+   @GET
+   @Path("/{id:[0-9][0-9]*}")
+   @Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
+   public Response getSingleInstance(@PathParam("id") K id)
+   {
+      T entity = findById(id);
+      if (entity == null) {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+      return Response.ok(entity).build();
+   }
+   
+   /**
+    * <p>
+    * A method for deleting individual entity instances.
+    * </p>
+    * 
+    * @param id entity id
+    * @return
+    */
+   @DELETE
+   @Path("/{id:[0-9][0-9]*}")
+   public Response deleteById(@PathParam("id") K id)
+   {
+      T entity = findById(id);
+      if (entity == null) {
+        return Response.status(Status.NOT_FOUND).build();
+      }
+      em.remove(entity);
+      return Response.noContent().build();
+   }
+   
+   /**
+    * <p>
+    * A method for updating individual entity instances.
+    * </p>
+    * 
+    * @param entity Updated contents for entity
+    * @return
+    */
+   @PUT
+   @Path("/{id:[0-9][0-9]*}")
+   @Consumes("${contentType}")
+   public Response update(T entity)
+   {
+      entity = em.merge(entity);
+      return Response.noContent().build();
+   }
+
+   public T findById(K id)
+   {
+      final CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+      final CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
+      Root<T> root = criteriaQuery.from(entityClass);
+      Predicate condition = criteriaBuilder.equal(root.get("id"), id);
+      criteriaQuery.select(criteriaBuilder.createQuery(entityClass).getSelection()).where(condition);
+      T entity = em.createQuery(criteriaQuery).getSingleResult();
+      return entity;
+   }
+}

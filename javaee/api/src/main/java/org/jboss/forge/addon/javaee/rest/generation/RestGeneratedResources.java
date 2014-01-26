@@ -19,7 +19,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
  */
 public class RestGeneratedResources
 {
-   private final List<JavaResource> endpoints;
+   private final List<JavaResource> resources;
    private final List<JavaResource> entities;
    private final List<JavaResource> others;
 
@@ -29,21 +29,21 @@ public class RestGeneratedResources
    }
 
    public RestGeneratedResources(List<JavaResource> entities,
-            List<JavaResource> endpoints)
+            List<JavaResource> resources)
    {
-      this(entities, endpoints, new ArrayList<JavaResource>());
+      this(entities, resources, new ArrayList<JavaResource>());
    }
 
-   public RestGeneratedResources(List<JavaResource> entities, List<JavaResource> endpoints, List<JavaResource> others)
+   public RestGeneratedResources(List<JavaResource> entities, List<JavaResource> resources, List<JavaResource> others)
    {
       this.entities = entities;
-      this.endpoints = endpoints;
+      this.resources = resources;
       this.others = others;
    }
 
-   public List<JavaResource> getEndpoints()
+   public List<JavaResource> getResources()
    {
-      return endpoints;
+      return resources;
    }
 
    public List<JavaResource> getEntities()
@@ -56,14 +56,14 @@ public class RestGeneratedResources
       return others;
    }
 
-   public void addToEndpoints(JavaResource endpoint)
+   public void addToResources(JavaResource resource)
    {
-      this.endpoints.add(endpoint);
+      this.resources.add(resource);
    }
    
-   public void addToEndpoints(Collection<JavaResource> endpoints)
+   public void addToResources(Collection<JavaResource> resources)
    {
-      this.endpoints.addAll(endpoints);
+      this.resources.addAll(resources);
    }
 
    public void addToEntities(JavaResource entity)

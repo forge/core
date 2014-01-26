@@ -35,7 +35,7 @@ public class ResourceGeneratorUtil
       String packageName = context.getTargetPackageName();
       String entityTable = getEntityTable(context.getEntity());
       Project project = context.getProject();
-      String proposedQualifiedClassName = packageName + "." + entityTable + "Endpoint";
+      String proposedQualifiedClassName = packageName + "." + entityTable + "Resource";
       String proposedResourcePath = "/" + context.getInflector().pluralize(entityTable.toLowerCase());
       RestResourceTypeVisitor resourceTypeVisitor = new RestResourceTypeVisitor();
       resourceTypeVisitor.setFound(false);
