@@ -36,7 +36,7 @@ public class MockBuildSystem implements BuildSystem
    @Override
    public Project createProject(DirectoryResource targetDir)
    {
-      return null;
+      return new MockProject(targetDir);
    }
 
    @Override
