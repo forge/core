@@ -65,13 +65,28 @@ public class LsCommand extends AbstractShellCommand
 
       Shell shell = (Shell) context.getUIContext().getProvider();
       Resource<?> currentResource = shell.getCurrentResource();
-      Iterator<String> it = arguments.getValue() == null ? Collections.<String> emptyList().iterator() : arguments
-               .getValue().iterator();
+      Iterator<String> it = arguments.hasValue() ? arguments.getValue().iterator() : Collections
+               .<String> emptyIterator();
 
-      final Resource<?> resource = (it.hasNext()) ?
-               (new PathspecParser(resourceFactory, currentResource, it.next()).resolve().get(0)) : currentResource;
+      final Resource<?> resource;
 
-      if (!resource.exists())
+      if (it.hasNext())
+      {
+         List<Resource<?>> resourceList = new PathspecParser(resourceFactory, currentResource, it.next()).resolve();
+         if (resourceList.isEmpty())
+         {
+            resource = null;
+         }
+         else
+         {
+            resource = resourceList.get(0);
+         }
+      }
+      else
+      {
+         resource = currentResource;
+      }
+      if (resource == null || !resource.exists())
       {
          result = Results.fail(resource.getName() + ": No such file or directory");
       }
