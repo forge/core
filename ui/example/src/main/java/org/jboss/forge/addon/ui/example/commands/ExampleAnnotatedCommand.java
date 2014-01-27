@@ -27,7 +27,7 @@ public class ExampleAnnotatedCommand
       return "Hello there !";
    }
 
-   @Command(value = "Annotation Commands: Number 2", categories = "Root")
+   @Command("Annotation Commands: Number 2")
    public void executeWithReservedParameters(
             @Option(value = "name", label = "Field Name", required = true) String name,
             UIOutput output,

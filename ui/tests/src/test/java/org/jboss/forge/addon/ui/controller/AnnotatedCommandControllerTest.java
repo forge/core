@@ -85,7 +85,7 @@ public class AnnotatedCommandControllerTest
       {
          UICommandMetadata metadata = controller.getMetadata();
          Assert.assertEquals("Annotation Commands: Number 2", metadata.getName());
-         Assert.assertEquals(Categories.create("Root"), metadata.getCategory());
+         Assert.assertEquals(Categories.createDefault(), metadata.getCategory());
       }
    }
 
