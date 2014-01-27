@@ -8,16 +8,17 @@
 package org.jboss.forge.addon.ui.annotation.handler;
 
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class DisabledHandler implements EnableCommandHandler
+public class EnabledPredicate implements Predicate<UIContext>
 {
    @Override
-   public boolean isEnabled(UIContext context)
+   public boolean accept(UIContext type)
    {
-      return false;
+      return true;
    }
 }

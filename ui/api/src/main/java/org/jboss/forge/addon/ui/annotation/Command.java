@@ -15,8 +15,8 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.jboss.forge.addon.ui.annotation.handler.EnabledHandler;
-import org.jboss.forge.addon.ui.annotation.handler.EnableCommandHandler;
+import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * Represents a single command to be run on a Shell.
@@ -42,5 +42,5 @@ public @interface Command
    /**
     * The handler to determine if this command should be enabled
     */
-   Class<? extends EnableCommandHandler> enabledHandler() default EnabledHandler.class;
+   Class<? extends Predicate<UIContext>>[] enabled() default {};
 }

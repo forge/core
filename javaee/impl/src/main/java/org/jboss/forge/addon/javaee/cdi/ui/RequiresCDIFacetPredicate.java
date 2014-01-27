@@ -8,7 +8,7 @@
 package org.jboss.forge.addon.javaee.cdi.ui;
 
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
-import org.jboss.forge.addon.projects.ui.RequiresProjectEnabledHandler;
+import org.jboss.forge.addon.projects.ui.RequiresProjectPredicate;
 import org.jboss.forge.addon.ui.context.UIContext;
 
 /**
@@ -16,12 +16,12 @@ import org.jboss.forge.addon.ui.context.UIContext;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class RequiresCDIFacetNonGUIEnabledHandler extends RequiresProjectEnabledHandler
+public class RequiresCDIFacetPredicate extends RequiresProjectPredicate
 {
    @Override
-   public boolean isEnabled(UIContext context)
+   public boolean accept(UIContext context)
    {
-      boolean enabled = super.isEnabled(context);
+      boolean enabled = super.accept(context);
       if (enabled)
       {
          enabled = !context.getProvider().isGUI() && getProject(context).hasFacet(CDIFacet.class);

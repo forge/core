@@ -14,7 +14,6 @@ import java.util.List;
 
 import org.jboss.forge.addon.ui.annotation.Command;
 import org.jboss.forge.addon.ui.annotation.Option;
-import org.jboss.forge.addon.ui.annotation.handler.EnableCommandHandler;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -28,6 +27,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * This class acts as an adapter to the UI API for methods with the annotation @Command
@@ -41,15 +41,15 @@ public class AnnotationCommandAdapter implements UICommand
    private final InputComponentProducer factory;
    private final Method method;
    private final Object instance;
-   private final EnableCommandHandler enabledHandler;
+   private final List<Predicate<UIContext>> enabledPredicates;
 
    public AnnotationCommandAdapter(Method method, Object instance, InputComponentProducer factory,
-            EnableCommandHandler handler)
+            List<Predicate<UIContext>> enabledPredicates)
    {
       this.method = method;
       this.instance = instance;
       this.factory = factory;
-      this.enabledHandler = handler;
+      this.enabledPredicates = enabledPredicates;
    }
 
    @Override
@@ -67,7 +67,12 @@ public class AnnotationCommandAdapter implements UICommand
    @Override
    public boolean isEnabled(UIContext context)
    {
-      return enabledHandler.isEnabled(context);
+      boolean enabled = true;
+      for (int i = 0; enabled && (i < enabledPredicates.size()); i++)
+      {
+         enabled &= enabledPredicates.get(i).accept(context);
+      }
+      return enabled;
    }
 
    @Override
