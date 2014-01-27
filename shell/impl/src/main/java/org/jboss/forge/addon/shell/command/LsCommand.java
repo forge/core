@@ -61,39 +61,35 @@ public class LsCommand extends AbstractShellCommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      final Result result;
-
       Shell shell = (Shell) context.getUIContext().getProvider();
       Resource<?> currentResource = shell.getCurrentResource();
       Iterator<String> it = arguments.hasValue() ? arguments.getValue().iterator() : Collections
                .<String> emptyIterator();
 
-      final Resource<?> resource;
-
+      List<Resource<?>> resourceList;
       if (it.hasNext())
       {
-         List<Resource<?>> resourceList = new PathspecParser(resourceFactory, currentResource, it.next()).resolve();
-         if (resourceList.isEmpty())
+         String value = it.next();
+         boolean searching = (value.matches(".*(\\?|\\*)+.*"));
+         resourceList = new PathspecParser(resourceFactory, currentResource, value).resolve();
+         if (!searching && !resourceList.isEmpty() && resourceList.get(0).exists())
          {
-            resource = null;
-         }
-         else
-         {
-            resource = resourceList.get(0);
+            resourceList = resourceList.get(0).listResources();
          }
       }
       else
       {
-         resource = currentResource;
+         resourceList = currentResource.listResources();
       }
-      if (resource == null || !resource.exists())
+      final Result result;
+      if (!resourceList.isEmpty() && !resourceList.get(0).exists())
       {
-         result = Results.fail(resource.getName() + ": No such file or directory");
+         result = Results.fail(resourceList.get(0).getName() + ": No such file or directory");
       }
       else
       {
          UIOutput output = shell.getOutput();
-         output.out().println(listMany(resource.listResources(), shell));
+         output.out().println(listMany(resourceList, shell));
          result = Results.success();
       }
       return result;

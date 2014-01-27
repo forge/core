@@ -23,7 +23,6 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -65,7 +64,6 @@ public class LsCommandTest
    private ProjectFactory projectFactory;
 
    @Test
-   @Ignore("Assertion is failing for some unknown reason")
    public void testLsCommand() throws Exception
    {
       Project project = projectFactory.createTempProject();
@@ -73,7 +71,7 @@ public class LsCommandTest
       shellTest.execute("cd " + projectPath, 5, TimeUnit.SECONDS);
       shellTest.execute("touch file.txt", 5, TimeUnit.SECONDS);
       shellTest.clearScreen();
-      shellTest.execute("ls *file*", 5, TimeUnit.SECONDS);
+      shellTest.execute("ls *file*", 5, TimeUnit.HOURS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString("file.txt"));
    }
 }
