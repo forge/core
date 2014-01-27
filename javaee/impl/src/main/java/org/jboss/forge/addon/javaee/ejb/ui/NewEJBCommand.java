@@ -4,15 +4,15 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.javaee.jpa.ui;
+package org.jboss.forge.addon.javaee.ejb.ui;
 
 import java.io.FileNotFoundException;
 
 import javax.inject.Inject;
 import javax.persistence.Entity;
-import javax.persistence.GenerationType;
 
-import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
+import org.jboss.forge.addon.javaee.ejb.EJBOperations;
+import org.jboss.forge.addon.javaee.ejb.EJBType;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -25,24 +25,27 @@ import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.parser.java.JavaSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewEntityCommand extends AbstractJavaEECommand
+public class NewEJBCommand extends AbstractJavaEECommand implements UIWizard
 {
    @Inject
-   @WithAttributes(label = "Entity name", description = "The simple name of the generated class", required = true)
+   @WithAttributes(label = "Class name", description = "The simple name of the generated class", required = true)
    private UIInput<String> named;
 
    @Inject
@@ -50,28 +53,32 @@ public class NewEntityCommand extends AbstractJavaEECommand
    private UIInput<String> targetPackage;
 
    @Inject
-   @WithAttributes(label = "ID Column Generation Strategy")
-   private UISelectOne<GenerationType> idStrategy;
+   @WithAttributes(label = "Serializable", description = "If this EJB should implement the Serializable interface.", defaultValue = "true")
+   private UIInput<Boolean> serializable;
+
+   @Inject
+   @WithAttributes(label = "Type", description = "Type type of EJB to be generated.")
+   private UISelectOne<EJBType> type;
 
    @Inject
    @WithAttributes(label = "Target Directory", required = true)
    private UIInput<DirectoryResource> targetLocation;
 
    @Inject
-   private PersistenceOperations persistenceOperations;
+   private EJBOperations ejbOperations;
 
    @Override
    public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("JPA: New Entity")
-               .description("Create a new JPA Entity")
-               .category(Categories.create(super.getMetadata(context).getCategory(), "JPA"));
+      return Metadata.from(super.getMetadata(context), getClass()).name("EJB: New Bean")
+               .description("Create a new EJB")
+               .category(Categories.create(super.getMetadata(context).getCategory(), "EJB"));
    }
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      idStrategy.setDefaultValue(GenerationType.AUTO);
+      type.setDefaultValue(EJBType.STATELESS);
       Project project = getSelectedProject(builder.getUIContext());
       if (project == null)
       {
@@ -95,14 +102,10 @@ public class NewEntityCommand extends AbstractJavaEECommand
          targetLocation.setDefaultValue(facet.getSourceDirectory()).setEnabled(false);
          targetPackage.setValue(calculateModelPackage(project));
       }
-      builder.add(targetLocation);
-      builder.add(targetPackage).add(named).add(idStrategy);
+
+      builder.add(targetLocation).add(targetPackage).add(named).add(type).add(serializable);
    }
 
-   /**
-    * @param project
-    * @return
-    */
    private String calculateModelPackage(Project project)
    {
       final String[] value = new String[1];
@@ -126,7 +129,7 @@ public class NewEntityCommand extends AbstractJavaEECommand
       });
       if (value[0] == null)
       {
-         value[0] = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
+         value[0] = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".ejb";
       }
       return value[0];
    }
@@ -136,29 +139,39 @@ public class NewEntityCommand extends AbstractJavaEECommand
    {
       String entityName = named.getValue();
       String entityPackage = targetPackage.getValue();
-      GenerationType idStrategyChosen = idStrategy.getValue();
-      if (idStrategyChosen == null)
-      {
-         idStrategyChosen = GenerationType.AUTO;
-      }
+      EJBType ejbTypeChosen = type.getValue();
       DirectoryResource targetDir = targetLocation.getValue();
-      Project project = getSelectedProject(context);
       JavaResource javaResource;
+
+      Project project = getSelectedProject(context);
       if (project == null)
       {
-         javaResource = persistenceOperations.newEntity(targetDir, entityName, entityPackage, idStrategyChosen);
+         javaResource = ejbOperations.newEJB(targetDir, entityName, entityPackage, ejbTypeChosen,
+                  serializable.getValue());
       }
       else
       {
-         javaResource = persistenceOperations.newEntity(project, entityName, entityPackage, idStrategyChosen);
+         javaResource = ejbOperations
+                  .newEJB(project, entityName, entityPackage, ejbTypeChosen, serializable.getValue());
       }
+
+      context.getUIContext().getAttributeMap().put(JavaResource.class, javaResource);
+
       context.getUIContext().setSelection(javaResource);
-      return Results.success("Entity " + javaResource + " created");
+      return Results.success("EJB " + javaResource + " created.");
    }
 
    @Override
    protected boolean isProjectRequired()
    {
       return false;
+   }
+
+   @Override
+   public NavigationResult next(UINavigationContext context) throws Exception
+   {
+      if (EJBType.MESSAGEDRIVEN.equals(type.getValue()))
+         return Results.navigateTo(NewMDBSetupStep.class);
+      return null;
    }
 }

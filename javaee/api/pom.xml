@@ -56,6 +56,11 @@
          <groupId>org.jboss.spec.javax.ejb</groupId>
          <artifactId>jboss-ejb-api_3.1_spec</artifactId>
       </dependency>
+      <!-- JMS -->
+      <dependency>
+         <groupId>org.jboss.spec.javax.jms</groupId>
+         <artifactId>jboss-jms-api_1.1_spec</artifactId>
+      </dependency>
       <!-- Servlet -->
       <dependency>
          <groupId>org.jboss.spec.javax.servlet</groupId>
