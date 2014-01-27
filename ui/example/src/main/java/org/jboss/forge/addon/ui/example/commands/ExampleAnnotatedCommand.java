@@ -17,7 +17,7 @@ import org.jboss.forge.addon.ui.output.UIOutput;
 
 public class ExampleAnnotatedCommand
 {
-   @Command("Annotation Commands: Number 1")
+   @Command(value = "Annotation Commands: Number 1", categories = { "Root", "Branch" })
    public String executeFromAnnotation(
             @Option(value = "name", label = "Field Name", required = true) String name,
             @Option(value = "elementType", label = "Element Type") ElementType elementType,
@@ -27,7 +27,7 @@ public class ExampleAnnotatedCommand
       return "Hello there !";
    }
 
-   @Command("Annotation Commands: Number 2")
+   @Command(value = "Annotation Commands: Number 2", categories = "Root")
    public void executeWithReservedParameters(
             @Option(value = "name", label = "Field Name", required = true) String name,
             UIOutput output,

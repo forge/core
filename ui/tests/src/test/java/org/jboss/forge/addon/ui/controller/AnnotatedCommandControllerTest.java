@@ -13,6 +13,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.ui.controller.mock.EnabledHandlerCommand;
 import org.jboss.forge.addon.ui.example.commands.ExampleAnnotatedCommand;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -58,7 +60,6 @@ public class AnnotatedCommandControllerTest
    {
       try (CommandController controller = testHarness.createCommandController("Annotation Commands: Number 1"))
       {
-         Assert.assertFalse(controller.isInitialized());
          controller.initialize();
          Assert.assertTrue(controller.isInitialized());
          Assert.assertEquals("Annotation Commands: Number 1", controller.getMetadata().getName());
@@ -68,6 +69,23 @@ public class AnnotatedCommandControllerTest
          Assert.assertTrue(controller.isValid());
 
          Assert.assertTrue(controller.getMetadata().getType().equals(ExampleAnnotatedCommand.class));
+      }
+   }
+
+   @Test
+   public void testCommandMetadata() throws Exception
+   {
+      try (CommandController controller = testHarness.createCommandController("Annotation Commands: Number 1"))
+      {
+         UICommandMetadata metadata = controller.getMetadata();
+         Assert.assertEquals("Annotation Commands: Number 1", metadata.getName());
+         Assert.assertEquals(Categories.create("Root", "Branch"), metadata.getCategory());
+      }
+      try (CommandController controller = testHarness.createCommandController("Annotation Commands: Number 2"))
+      {
+         UICommandMetadata metadata = controller.getMetadata();
+         Assert.assertEquals("Annotation Commands: Number 2", metadata.getName());
+         Assert.assertEquals(Categories.create("Root"), metadata.getCategory());
       }
    }
 

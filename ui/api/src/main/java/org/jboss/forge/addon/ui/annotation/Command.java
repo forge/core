@@ -43,4 +43,10 @@ public @interface Command
     * The handler to determine if this command should be enabled
     */
    Class<? extends Predicate<UIContext>>[] enabled() default {};
+
+   /**
+    * Categories for this command
+    */
+   String[] categories() default {};
+
 }
