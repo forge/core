@@ -8,10 +8,10 @@
 package org.jboss.forge.addon.ui.controller.mock;
 
 import org.jboss.forge.addon.ui.annotation.Command;
-import org.jboss.forge.addon.ui.annotation.handler.DisabledPredicate;
-import org.jboss.forge.addon.ui.annotation.handler.EnabledPredicate;
-import org.jboss.forge.addon.ui.annotation.handler.GUIEnabledPredicate;
-import org.jboss.forge.addon.ui.annotation.handler.NonGUIEnabledPredicate;
+import org.jboss.forge.addon.ui.annotation.predicate.DisabledPredicate;
+import org.jboss.forge.addon.ui.annotation.predicate.EnabledPredicate;
+import org.jboss.forge.addon.ui.annotation.predicate.GUIEnabledPredicate;
+import org.jboss.forge.addon.ui.annotation.predicate.NonGUIEnabledPredicate;
 import org.jboss.forge.addon.ui.output.UIOutput;
 
 /**

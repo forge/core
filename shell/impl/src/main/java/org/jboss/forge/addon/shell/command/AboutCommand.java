@@ -10,7 +10,7 @@ package org.jboss.forge.addon.shell.command;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.ui.annotation.Command;
-import org.jboss.forge.addon.ui.annotation.handler.NonGUIEnabledPredicate;
+import org.jboss.forge.addon.ui.annotation.predicate.NonGUIEnabledPredicate;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.versions.Version;

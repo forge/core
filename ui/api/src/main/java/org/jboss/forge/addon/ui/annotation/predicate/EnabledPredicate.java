@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.ui.annotation.handler;
+package org.jboss.forge.addon.ui.annotation.predicate;
 
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.furnace.util.Predicate;
