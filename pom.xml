@@ -359,7 +359,7 @@
             <artifactId>scaffold-faces</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
-         </dependency>         
+         </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>shell</artifactId>
@@ -580,6 +580,8 @@
                <artifactId>maven-surefire-plugin</artifactId>
                <configuration>
                   <argLine>-Xms256m -Xmx512m -XX:MaxPermSize=160m</argLine>
+                  <forkCount>4</forkCount>
+                  <reuseForks>true</reuseForks>
                   <systemProperties>
                      <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
                   </systemProperties>
