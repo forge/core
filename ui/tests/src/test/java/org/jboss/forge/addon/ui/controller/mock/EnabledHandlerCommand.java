@@ -8,10 +8,10 @@
 package org.jboss.forge.addon.ui.controller.mock;
 
 import org.jboss.forge.addon.ui.annotation.Command;
-import org.jboss.forge.addon.ui.annotation.handler.DisabledHandler;
-import org.jboss.forge.addon.ui.annotation.handler.EnabledHandler;
-import org.jboss.forge.addon.ui.annotation.handler.GUIEnabledHandler;
-import org.jboss.forge.addon.ui.annotation.handler.NonGUIEnabledHandler;
+import org.jboss.forge.addon.ui.annotation.handler.DisabledPredicate;
+import org.jboss.forge.addon.ui.annotation.handler.EnabledPredicate;
+import org.jboss.forge.addon.ui.annotation.handler.GUIEnabledPredicate;
+import org.jboss.forge.addon.ui.annotation.handler.NonGUIEnabledPredicate;
 import org.jboss.forge.addon.ui.output.UIOutput;
 
 /**
@@ -21,25 +21,25 @@ import org.jboss.forge.addon.ui.output.UIOutput;
 public class EnabledHandlerCommand
 {
 
-   @Command(enabledHandler = EnabledHandler.class)
+   @Command(enabled = EnabledPredicate.class)
    public void enabled(final UIOutput output)
    {
       output.out().println("enabled executed!");
    }
 
-   @Command(enabledHandler = DisabledHandler.class)
+   @Command(enabled = DisabledPredicate.class)
    public void disabled(final UIOutput output)
    {
       output.out().println("disabled executed!");
    }
 
-   @Command(enabledHandler = NonGUIEnabledHandler.class)
+   @Command(enabled = NonGUIEnabledPredicate.class)
    public void nongui(final UIOutput output)
    {
       output.out().println("nongui executed!");
    }
 
-   @Command(enabledHandler = GUIEnabledHandler.class)
+   @Command(enabled = GUIEnabledPredicate.class)
    public void gui(final UIOutput output)
    {
       output.out().println("gui executed!");

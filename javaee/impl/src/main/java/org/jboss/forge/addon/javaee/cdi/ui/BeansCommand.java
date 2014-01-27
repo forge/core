@@ -35,7 +35,7 @@ public class BeansCommand
    @Inject
    private ProjectFactory projectFactory;
 
-   @Command(value = "cdi-list-interceptors", enabledHandler = RequiresCDIFacetNonGUIEnabledHandler.class)
+   @Command(value = "cdi-list-interceptors", enabled = RequiresCDIFacetPredicate.class)
    public void listInterceptors(final UIContext context, final UIOutput output)
    {
       CDIFacet<?> cdi = getProject(context).getFacet(CDIFacet.class);
@@ -55,7 +55,7 @@ public class BeansCommand
       }
    }
 
-   @Command(value = "cdi-list-alternatives", enabledHandler = RequiresCDIFacetNonGUIEnabledHandler.class)
+   @Command(value = "cdi-list-alternatives", enabled = RequiresCDIFacetPredicate.class)
    public void listAlternatives(final UIContext context, final UIOutput output)
    {
       CDIFacet<?> cdi = getProject(context).getFacet(CDIFacet.class);
@@ -79,7 +79,7 @@ public class BeansCommand
       }
    }
 
-   @Command(value = "cdi-list-decorators", enabledHandler = RequiresCDIFacetNonGUIEnabledHandler.class)
+   @Command(value = "cdi-list-decorators", enabled = RequiresCDIFacetPredicate.class)
    public void listDecorators(final UIContext context, final UIOutput output)
    {
       CDIFacet<?> cdi = getProject(context).getFacet(CDIFacet.class);

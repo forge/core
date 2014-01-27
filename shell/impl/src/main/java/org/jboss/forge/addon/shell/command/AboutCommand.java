@@ -10,7 +10,7 @@ package org.jboss.forge.addon.shell.command;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.ui.annotation.Command;
-import org.jboss.forge.addon.ui.annotation.handler.NonGUIEnabledHandler;
+import org.jboss.forge.addon.ui.annotation.handler.NonGUIEnabledPredicate;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.versions.Version;
@@ -24,7 +24,7 @@ public class AboutCommand
    @Inject
    Furnace furnace;
 
-   @Command(value = "version", help = "Displays the current Forge version.", enabledHandler = NonGUIEnabledHandler.class)
+   @Command(value = "version", help = "Displays the current Forge version.", enabled = NonGUIEnabledPredicate.class)
    public void showVersion(final UIOutput output)
    {
       Version version = furnace.getVersion();
@@ -32,7 +32,7 @@ public class AboutCommand
                "JBoss Forge, version [ " + version + " ] - JBoss, by Red Hat, Inc. [ http://jboss.org/forge ]");
    }
 
-   @Command(value = "about", help = "Display information about this forge.", enabledHandler = NonGUIEnabledHandler.class)
+   @Command(value = "about", help = "Display information about this forge.", enabled = NonGUIEnabledPredicate.class)
    public void showAbout(final UIOutput output)
    {
       output.out().println();
