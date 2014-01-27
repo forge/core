@@ -49,8 +49,9 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    private UISelectOne<ScaffoldProvider> provider;
 
    @Inject
-   @WithAttributes(label = "Target Directory")
-   private UIInput<String> target;
+   @WithAttributes(label = "Web Root Path", description = "The web root path where the scaffolding will be "
+            + "placed/accessible from the client browser (default '/').")
+   private UIInput<String> webRoot;
 
    @Inject
    @WithAttributes(label = "Overwrite existing files?", defaultValue = "false")
@@ -74,19 +75,19 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
             return selectedProvider != null;
          }
       });
-      
+
       provider.setDefaultValue(scaffoldProviders.get());
       provider.setValueChoices(scaffoldProviders);
       provider.setItemLabelConverter(new Converter<ScaffoldProvider, String>()
       {
-         
+
          @Override
          public String convert(ScaffoldProvider source)
          {
-            return source == null ? null: source.getName();
+            return source == null ? null : source.getName();
          }
       });
-      builder.add(provider).add(target).add(overwrite);
+      builder.add(provider).add(webRoot).add(overwrite);
    }
 
    @Override
@@ -121,10 +122,10 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
       Map<Object, Object> attributeMap = uiContext.getAttributeMap();
       attributeMap.put(ScaffoldProvider.class, selectedProvider);
       attributeMap.put(ScaffoldSetupContext.class, createSetupContext());
-      
+
       // Get the step sequence from the selected scaffold provider
       List<Class<? extends UICommand>> setupFlow = selectedProvider.getSetupFlow();
-      
+
       // Add the execution logic step in the end so that the scaffold setup step is executed last after all other
       // steps
       setupFlow.add(ExecuteSetupStep.class);
@@ -149,6 +150,6 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
 
    private ScaffoldSetupContext createSetupContext()
    {
-      return new ScaffoldSetupContext(target.getValue(), overwrite.getValue());
+      return new ScaffoldSetupContext(webRoot.getValue(), overwrite.getValue());
    }
 }

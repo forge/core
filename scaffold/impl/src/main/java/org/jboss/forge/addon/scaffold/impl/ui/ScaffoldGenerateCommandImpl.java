@@ -48,8 +48,9 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    private UISelectOne<ScaffoldProvider> provider;
 
    @Inject
-   @WithAttributes(label = "Target Directory")
-   private UIInput<String> target;
+   @WithAttributes(label = "Web Root Path", description = "The web root path where the scaffolding will be "
+            + "placed/accessible from the client browser (default '/').")
+   private UIInput<String> webRoot;
 
    @Inject
    @WithAttributes(label = "Overwrite existing files?")
@@ -75,7 +76,7 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
             return source == null ? null : source.getName();
          }
       });
-      builder.add(provider).add(target).add(overwrite);
+      builder.add(provider).add(webRoot).add(overwrite);
    }
 
    @Override
@@ -146,11 +147,11 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
                .get(ScaffoldGenerationContext.class);
       if (generationContext == null)
       {
-         return new ScaffoldGenerationContext(target.getValue(), overwrite.getValue(), null);
+         return new ScaffoldGenerationContext(webRoot.getValue(), overwrite.getValue(), null);
       }
       else
       {
-         generationContext.setTargetDirectory(target.getValue());
+         generationContext.setTargetDirectory(webRoot.getValue());
          generationContext.setOverwrite(overwrite.getValue());
          return generationContext;
       }
