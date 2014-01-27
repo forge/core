@@ -57,7 +57,7 @@ public class TransactionCommitCommand extends AbstractShellCommand
          return Results.fail("Resource Transaction is not started");
       }
       transaction.commit();
-      return Results.success();
+      return Results.success("Resource Transaction was committed");
    }
 
 }
