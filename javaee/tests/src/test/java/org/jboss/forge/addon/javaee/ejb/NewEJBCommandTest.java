@@ -13,6 +13,8 @@ import static org.hamcrest.CoreMatchers.not;
 
 import javax.ejb.MessageDriven;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.jms.Message;
 
@@ -20,10 +22,13 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.javaee.ProjectHelper;
+import org.jboss.forge.addon.javaee.ejb.ui.EJBSetClassTransactionAttributeCommand;
+import org.jboss.forge.addon.javaee.ejb.ui.EJBSetMethodTransactionAttributeCommand;
 import org.jboss.forge.addon.javaee.ejb.ui.NewEJBCommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
@@ -135,5 +140,78 @@ public class NewEJBCommandTest
       Assert.assertTrue(javaResource.getJavaSource().hasAnnotation(MessageDriven.class));
       Assert.assertFalse(((JavaClass) javaResource.getJavaSource()).hasField("serialVersionUID"));
       Assert.assertNotNull(((JavaClass) javaResource.getJavaSource()).getMethod("onMessage", Message.class));
+   }
+
+   @Test
+   public void testSetTransactionAttributeOnEJB() throws Exception
+   {
+      Project project = projectHelper.createJavaLibraryProject();
+      facetFactory.install(project, JavaSourceFacet.class);
+      WizardCommandController controller = testHarness.createWizardController(NewEJBCommand.class,
+               project.getProjectRoot());
+      controller.initialize();
+      controller.setValueFor("named", "TestEJB");
+      controller.setValueFor("type", EJBType.MESSAGEDRIVEN);
+      controller.setValueFor("targetPackage", "org.jboss.forge.test");
+      controller.setValueFor("serializable", "true");
+      Assert.assertTrue(controller.isValid());
+      Assert.assertFalse(controller.canExecute());
+
+      Assert.assertTrue(controller.canMoveToNextStep());
+      controller.next();
+      Assert.assertFalse(controller.canExecute());
+
+      controller.setValueFor("destType", JMSDestinationType.TOPIC);
+      controller.setValueFor("destName", "destination");
+
+      Assert.assertTrue(controller.canExecute());
+
+      Result result = controller.execute();
+      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.TestEJB");
+      Assert.assertNotNull(javaResource);
+      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaClass.class)));
+      Assert.assertTrue(javaResource.getJavaSource().hasAnnotation(MessageDriven.class));
+      Assert.assertTrue(((JavaClass) javaResource.getJavaSource()).hasField("serialVersionUID"));
+      Assert.assertNotNull(((JavaClass) javaResource.getJavaSource()).getMethod("onMessage", Message.class));
+
+      CommandController controller2 = testHarness.createCommandController(EJBSetClassTransactionAttributeCommand.class,
+               project.getProjectRoot());
+
+      controller2.initialize();
+      Assert.assertFalse(controller2.canExecute());
+      controller2.setValueFor("ejb", "org.jboss.forge.test.TestEJB");
+      controller2.setValueFor("type", TransactionAttributeType.NOT_SUPPORTED);
+      Assert.assertTrue(controller2.canExecute());
+
+      Assert.assertFalse(((JavaClass) javaResource.getJavaSource()).hasAnnotation(TransactionAttribute.class));
+      controller2.execute();
+      Assert.assertTrue(((JavaClass) javaResource.getJavaSource()).hasAnnotation(TransactionAttribute.class));
+      Assert.assertEquals(TransactionAttributeType.NOT_SUPPORTED,
+               ((JavaClass) javaResource.getJavaSource()).getAnnotation(TransactionAttribute.class).getEnumValue(
+                        TransactionAttributeType.class));
+
+      CommandController controller3 = testHarness.createCommandController(
+               EJBSetMethodTransactionAttributeCommand.class,
+               project.getProjectRoot());
+
+      controller3.initialize();
+      Assert.assertFalse(controller3.canExecute());
+      controller3.setValueFor("ejb", "org.jboss.forge.test.TestEJB");
+      controller3.setValueFor("method", "onMessage(Message)::void");
+      controller3.setValueFor("type", TransactionAttributeType.NEVER);
+      Assert.assertTrue(controller3.canExecute());
+
+      Assert.assertFalse(((JavaClass) javaResource.getJavaSource()).getMethod("onMessage", Message.class)
+               .hasAnnotation(TransactionAttribute.class));
+      controller3.execute();
+      Assert.assertTrue(((JavaClass) javaResource.getJavaSource()).getMethod("onMessage", Message.class).hasAnnotation(
+               TransactionAttribute.class));
+      Assert.assertEquals(TransactionAttributeType.NEVER,
+               ((JavaClass) javaResource.getJavaSource()).getMethod("onMessage", Message.class)
+                        .getAnnotation(TransactionAttribute.class).getEnumValue(TransactionAttributeType.class));
+
    }
 }
