@@ -114,9 +114,7 @@ public class UITestHarness
    private UIContextImpl getUIContextInstance(Resource<?>... initialSelection)
    {
       Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
-      UISelection<Resource<?>> selection = (initialSelection == null || initialSelection[0] == null) ? Selections
-               .<Resource<?>> emptySelection()
-               : Selections.from(initialSelection);
+      UISelection<Resource<?>> selection = Selections.from(initialSelection);
       UIContextImpl context = new UIContextImpl(getProvider(), listeners, selection);
       return context;
    }

@@ -26,7 +26,14 @@ public final class Selections
    @SuppressWarnings({ "unchecked", "rawtypes" })
    public static <SELECTIONTYPE> UISelection<SELECTIONTYPE> from(SELECTIONTYPE... type)
    {
-      return new SelectionImpl(type);
+      if (type == null || type.length == 0 || type[0] == null)
+      {
+         return emptySelection();
+      }
+      else
+      {
+         return new SelectionImpl(type);
+      }
    }
 
    @SuppressWarnings("unchecked")
