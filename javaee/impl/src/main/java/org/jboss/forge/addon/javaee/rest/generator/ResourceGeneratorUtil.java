@@ -98,7 +98,7 @@ public class ResourceGeneratorUtil
                type = ((Method<?>) member).getReturnType();
                if (name.startsWith("get"))
                {
-                  name = name.substring(2);
+                  name = name.substring(3);
                }
             }
             else if (member instanceof Field)
@@ -163,7 +163,7 @@ public class ResourceGeneratorUtil
             {
                if (result.startsWith("get"))
                {
-                  result = result.substring(2);
+                  result = result.substring(3);
                }
             }
          }
@@ -219,7 +219,7 @@ public class ResourceGeneratorUtil
             {
                if (name.startsWith("get"))
                {
-                  associationField = Strings.uncapitalize(name.substring(2));
+                  associationField = Strings.uncapitalize(name.substring(3));
                }
             }
             else if (member instanceof Field)
@@ -256,7 +256,7 @@ public class ResourceGeneratorUtil
             if (member instanceof Method)
             {
                // Getters are expected to obey JavaBean conventions
-               id = Strings.uncapitalize(memberName.substring(2));
+               id = Strings.uncapitalize(memberName.substring(3));
             }
             if (member instanceof Field)
             {
@@ -283,7 +283,7 @@ public class ResourceGeneratorUtil
             if (member instanceof Method)
             {
                // Getters are expected to obey JavaBean conventions
-               id = Strings.uncapitalize(memberName.substring(2));
+               id = Strings.uncapitalize(memberName.substring(3));
             }
             if (member instanceof Field)
             {
