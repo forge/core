@@ -65,7 +65,7 @@ public class UITestHarness
             break;
          }
       }
-      Assert.notNull(result, "Could not instantiate CommandController for command: " + name);
+      Assert.notNull(result, "Command " + name + " not found");
       return result;
    }
 
