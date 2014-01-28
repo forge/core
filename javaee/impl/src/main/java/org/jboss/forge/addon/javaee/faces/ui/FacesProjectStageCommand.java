@@ -33,7 +33,7 @@ public class FacesProjectStageCommand extends AbstractJavaEECommand
 {
 
    @Inject
-   @WithAttributes(label = "")
+   @WithAttributes(label = "Project Stage", description = "Sets the JSF project stage")
    private UISelectOne<ProjectStage> set;
 
    @Override
