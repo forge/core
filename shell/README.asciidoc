@@ -1,0 +1,163 @@
+== shell
+:idprefix: id_ 
+
+This addon provides *standalone* functionality and *exports services* for use in other addons. The shell addon is a `UIProvider`, and can be used to run `UICommand` instances  from other installed addons.
+
+
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|convert
+|yes
+|no
+
+|resources
+|yes
+|no
+
+|shell-spi
+|yes
+|no
+
+|ui
+|yes
+|no
+
+|org.jboss.forge.furnace.container:cdi
+|no
+|no
+
+|===
+
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml] 
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>shell</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----      
+
+== Features
+
+The shell addon supplies several built-in commands::
++
+[options="header"]
+|===
+|Command |Description
+
+|about
+|Displays information about the current Forge
+
+|cat
+|The cat utility reads files sequentially, writing them to the standard output.
+
+|cd
+|Change the current directory.
+
+|clear
+|Clear the screen.
+
+|command-list
+|List all currently installed commands.
+
+|echo
+|Display a line of text.
+
+|exit
+|Exit the shell and shut down Forge.
+
+|ls
+|List the children of the current resource.
+
+|mkdir
+|Create a directory (or directories.)
+
+|open
+|Open a resource with the system configured application.
+
+|pwd
+|Print the current working resource.
+
+|rm
+|Delete the specified resources.
+
+|run
+|Run a script containing additional commands.
+
+|touch
+|Create a new file or update an existing file's last modified timestamp.
+
+|===
+
+Real testing with the Shell test harness::
+ To facilitate testing, or other situations where temporary projects may be required, the `shell-test-harness` addon is available to facilitate otherwise difficult asynchronous testing of the `Shell`.
++
+To use the `shell-test-harness`, you must include the following dependency in your pom.xml.
++
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>shell-test-harness</artifactId>
+   <classifier>forge-addon</classifier>
+</dependency>
+----
++
+Then you must include the harness as a dependency of your test `@Deployment` method. You should now be able to test the shell, and other commands supplied by addons included in your test case:
++
+TIP: The `ShellTest` interface provides the actual APIs with which testing is performed.
++
+[source,java]
+----
+
+@RunWith(Arquillian.class)
+public class ExampleShellTest
+{
+   @Deployment
+   @Dependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
+            @AddonDependency(name = "org.example:my-addon")
+   })
+   public static ForgeArchive getDeployment()
+   {
+      ForgeArchive archive = ShrinkWrap
+               .create(ForgeArchive.class)
+               .addBeansXML()
+               .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.example:my-addon"),
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),        
+                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness")
+               );
+
+      return archive;
+   }
+
+   @Inject
+   private ShellTest test;
+
+   @Test
+   public void testCommandExecution() throws Exception
+   {
+      Result result = test.execute("my-command --input1 foo --input2 org.example", 10, TimeUnit.SECONDS);
+
+      Assert.assertFalse(result instanceof Failed);
+   }
+}
+----
+
+
+
+
