@@ -65,8 +65,8 @@ public class RestSetupWizard extends AbstractJavaEECommand
    private UIInput<String> applicationPath;
 
    @Inject
-   @WithAttributes(label = "Package Name", type = InputType.JAVA_PACKAGE_PICKER)
-   private UIInput<String> packageName;
+   @WithAttributes(label = "Target Package", type = InputType.JAVA_PACKAGE_PICKER)
+   private UIInput<String> targetPackage;
 
    @Inject
    @WithAttributes(label = "Class Name", defaultValue = "RestApplication")
@@ -77,7 +77,7 @@ public class RestSetupWizard extends AbstractJavaEECommand
    {
       configureVersions();
       configureActivationStrategy(builder.getUIContext());
-      builder.add(jaxrsVersion).add(applicationPath).add(config).add(packageName).add(className);
+      builder.add(jaxrsVersion).add(applicationPath).add(config).add(targetPackage).add(className);
    }
 
    private void configureActivationStrategy(UIContext context)
@@ -102,10 +102,10 @@ public class RestSetupWizard extends AbstractJavaEECommand
             }
          });
       }
-      packageName.setRequired(appClassChosen).setEnabled(appClassChosen);
+      targetPackage.setRequired(appClassChosen).setEnabled(appClassChosen);
       className.setRequired(appClassChosen).setEnabled(appClassChosen);
       Project project = getSelectedProject(context);
-      packageName.setDefaultValue(project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".rest");
+      targetPackage.setDefaultValue(project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".rest");
    }
 
    private void configureVersions()
@@ -149,7 +149,7 @@ public class RestSetupWizard extends AbstractJavaEECommand
          }
          else
          {
-            JavaClass javaClass = JavaParser.create(JavaClass.class).setPackage(packageName.getValue())
+            JavaClass javaClass = JavaParser.create(JavaClass.class).setPackage(targetPackage.getValue())
                      .setName(className.getValue());
             strategy = RestConfigurationStrategyFactory.createUsingJavaClass(path, javaClass);
          }
