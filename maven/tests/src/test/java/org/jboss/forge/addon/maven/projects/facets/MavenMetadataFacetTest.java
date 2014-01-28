@@ -70,8 +70,8 @@ public class MavenMetadataFacetTest
    public void testGetBuildSystem() throws Exception
    {
       final MetadataFacet facet = project.getFacet(MetadataFacet.class);
-      Assert.assertNotNull("ProjectProvider name is null", facet.getBuildSystem());
-      Assert.assertTrue(facet.getBuildSystem() instanceof MavenBuildSystem);
+      Assert.assertNotNull("ProjectProvider name is null", facet.getProjectProvider());
+      Assert.assertTrue(facet.getProjectProvider() instanceof MavenBuildSystem);
    }
 
 }

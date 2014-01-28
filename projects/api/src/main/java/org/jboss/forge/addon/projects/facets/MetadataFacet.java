@@ -108,7 +108,7 @@ public interface MetadataFacet extends ProvidedProjectFacet
    /**
     * Return the {@link ProjectProvider} being used in the current {@link Project}.
     */
-   ProjectProvider getBuildSystem();
+   ProjectProvider getProjectProvider();
 
    /**
     * Returns <code>true</code> if the underlying {@link Project} metadata is in a valid state.

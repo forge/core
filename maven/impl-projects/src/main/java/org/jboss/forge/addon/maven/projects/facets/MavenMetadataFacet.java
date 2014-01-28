@@ -38,7 +38,7 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    private MavenBuildSystem buildSystem;
 
    @Override
-   public ProjectProvider getBuildSystem()
+   public ProjectProvider getProjectProvider()
    {
       return buildSystem;
    }
