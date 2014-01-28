@@ -93,7 +93,7 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
       JavaSource<?> source = JavaParser.create(getSourceType()).setName(named.getValue());
       JavaResource javaResource;
-      if (targetPackage.hasValue())
+      if (targetPackage.hasValue() || targetPackage.hasDefaultValue())
       {
          source.setPackage(targetPackage.getValue());
       }
@@ -125,6 +125,16 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
    protected boolean isProjectRequired()
    {
       return true;
+   }
+
+   protected UIInput<String> getTargetPackage()
+   {
+      return targetPackage;
+   }
+
+   protected UIInput<String> getNamed()
+   {
+      return named;
    }
 
    @Override
