@@ -8,8 +8,11 @@ package org.jboss.forge.addon.javaee.ejb.ui;
 
 import java.io.FileNotFoundException;
 
+import javax.ejb.MessageDriven;
+import javax.ejb.Singleton;
+import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.Entity;
 
 import org.jboss.forge.addon.javaee.ejb.EJBOperations;
 import org.jboss.forge.addon.javaee.ejb.EJBType;
@@ -100,13 +103,13 @@ public class NewEJBCommand extends AbstractJavaEECommand implements UIWizard
       {
          JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
          targetLocation.setDefaultValue(facet.getSourceDirectory()).setEnabled(false);
-         targetPackage.setValue(calculateModelPackage(project));
+         targetPackage.setValue(calculateServicePackage(project));
       }
 
       builder.add(targetLocation).add(targetPackage).add(named).add(type).add(serializable);
    }
 
-   private String calculateModelPackage(Project project)
+   private String calculateServicePackage(Project project)
    {
       final String[] value = new String[1];
       project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
@@ -117,7 +120,8 @@ public class NewEJBCommand extends AbstractJavaEECommand implements UIWizard
             try
             {
                JavaSource<?> javaSource = javaResource.getJavaSource();
-               if (javaSource.hasAnnotation(Entity.class))
+               if (javaSource.hasAnnotation(Stateless.class) || javaSource.hasAnnotation(Stateful.class)
+                        || javaSource.hasAnnotation(MessageDriven.class) || javaSource.hasAnnotation(Singleton.class))
                {
                   value[0] = javaSource.getPackage();
                }
@@ -129,7 +133,7 @@ public class NewEJBCommand extends AbstractJavaEECommand implements UIWizard
       });
       if (value[0] == null)
       {
-         value[0] = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".ejb";
+         value[0] = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".service";
       }
       return value[0];
    }
