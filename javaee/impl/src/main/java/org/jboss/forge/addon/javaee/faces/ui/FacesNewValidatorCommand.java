@@ -37,7 +37,7 @@ import org.jboss.forge.parser.java.JavaSource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewValidatorCommand extends AbstractJavaEECommand
+public class FacesNewValidatorCommand extends AbstractJavaEECommand
 {
 
    @Inject

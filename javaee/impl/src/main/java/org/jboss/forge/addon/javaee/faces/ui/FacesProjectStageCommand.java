@@ -29,7 +29,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class ProjectStageCommand extends AbstractJavaEECommand
+public class FacesProjectStageCommand extends AbstractJavaEECommand
 {
 
    @Inject

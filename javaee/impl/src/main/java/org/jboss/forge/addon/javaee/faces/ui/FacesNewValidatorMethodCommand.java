@@ -32,7 +32,7 @@ import org.jboss.forge.parser.java.Method;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewValidatorMethodCommand extends AbstractJavaEECommand
+public class FacesNewValidatorMethodCommand extends AbstractJavaEECommand
 {
 
    @Inject

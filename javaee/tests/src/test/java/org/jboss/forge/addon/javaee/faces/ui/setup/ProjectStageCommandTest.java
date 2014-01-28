@@ -14,7 +14,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.javaee.faces.FacesFacet_2_2;
-import org.jboss.forge.addon.javaee.faces.ui.ProjectStageCommand;
+import org.jboss.forge.addon.javaee.faces.ui.FacesProjectStageCommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -71,7 +71,7 @@ public class ProjectStageCommandTest
       projectHelper.installServlet_3_1(project);
       FacesFacet_2_2 facesFacet = projectHelper.installFaces_2_2(project);
       Assert.assertEquals(ProjectStage.Production, facesFacet.getProjectStage());
-      try (CommandController controller = testHarness.createCommandController(ProjectStageCommand.class,
+      try (CommandController controller = testHarness.createCommandController(FacesProjectStageCommand.class,
                project.getRootDirectory()))
       {
          controller.initialize();

@@ -37,7 +37,7 @@ import org.jboss.forge.parser.java.JavaSource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewConverterCommand extends AbstractJavaEECommand
+public class FacesNewConverterCommand extends AbstractJavaEECommand
 {
 
    @Inject
