@@ -23,7 +23,7 @@ import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.maven.projects.MavenBuildSystem;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
-import org.jboss.forge.addon.projects.BuildSystem;
+import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 
@@ -38,7 +38,7 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    private MavenBuildSystem buildSystem;
 
    @Override
-   public BuildSystem getBuildSystem()
+   public ProjectProvider getBuildSystem()
    {
       return buildSystem;
    }

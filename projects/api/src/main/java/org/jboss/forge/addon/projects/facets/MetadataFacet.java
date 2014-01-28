@@ -10,15 +10,15 @@ package org.jboss.forge.addon.projects.facets;
 import java.util.Map;
 
 import org.jboss.forge.addon.dependencies.Dependency;
-import org.jboss.forge.addon.projects.BuildSystem;
-import org.jboss.forge.addon.projects.BuildSystemFacet;
+import org.jboss.forge.addon.projects.ProjectProvider;
+import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.Project;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface MetadataFacet extends BuildSystemFacet
+public interface MetadataFacet extends ProvidedProjectFacet
 {
    /**
     * Get the name of this {@link Project}.
@@ -106,9 +106,9 @@ public interface MetadataFacet extends BuildSystemFacet
    String removeDirectProperty(String name);
 
    /**
-    * Return the {@link BuildSystem} being used in the current {@link Project}.
+    * Return the {@link ProjectProvider} being used in the current {@link Project}.
     */
-   BuildSystem getBuildSystem();
+   ProjectProvider getBuildSystem();
 
    /**
     * Returns <code>true</code> if the underlying {@link Project} metadata is in a valid state.

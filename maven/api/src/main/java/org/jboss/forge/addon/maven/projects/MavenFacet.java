@@ -12,7 +12,7 @@ import java.util.Map;
 
 import org.apache.maven.model.Model;
 import org.jboss.forge.addon.maven.resources.MavenModelResource;
-import org.jboss.forge.addon.projects.BuildSystemFacet;
+import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -22,7 +22,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface MavenFacet extends BuildSystemFacet
+public interface MavenFacet extends ProvidedProjectFacet
 {
    /**
     * Get the {@link MavenModelResource} for this {@link Project}.

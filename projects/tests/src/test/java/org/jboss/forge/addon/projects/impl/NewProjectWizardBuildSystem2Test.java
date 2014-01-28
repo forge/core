@@ -14,7 +14,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.projects.BuildSystem;
+import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.mock.MockBuildSystem;
 import org.jboss.forge.addon.projects.mock.MockBuildSystem2;
 import org.jboss.forge.addon.projects.mock.MockProjectType;
@@ -89,8 +89,8 @@ public class NewProjectWizardBuildSystem2Test
          wizard.setValueFor("type", "mock2");
          Assert.assertEquals("buildsystem2", InputComponents.getValueFor(wizard.getInputs().get("buildSystem"))
                   .toString());
-         UISelectOne<BuildSystem> buildSystems = (UISelectOne<BuildSystem>) wizard.getInputs().get("buildSystem");
-         List<BuildSystem> choices = Iterators.asList(buildSystems.getValueChoices());
+         UISelectOne<ProjectProvider> buildSystems = (UISelectOne<ProjectProvider>) wizard.getInputs().get("buildSystem");
+         List<ProjectProvider> choices = Iterators.asList(buildSystems.getValueChoices());
          Assert.assertEquals(1, choices.size());
 
          wizard.setValueFor("type", "mock3");

@@ -13,8 +13,8 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
-import org.jboss.forge.addon.projects.BuildSystem;
-import org.jboss.forge.addon.projects.BuildSystemFacet;
+import org.jboss.forge.addon.projects.ProjectProvider;
+import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -56,7 +56,7 @@ public class NewProjectWizard implements UIWizard
    private ResourceFactory resourceFactory;
 
    @Inject
-   private Imported<BuildSystem> buildSystems;
+   private Imported<ProjectProvider> buildSystems;
 
    @Inject
    @WithAttributes(label = "Project name", required = true)
@@ -88,7 +88,7 @@ public class NewProjectWizard implements UIWizard
 
    @Inject
    @WithAttributes(label = "Build System:", required = true)
-   private UISelectOne<BuildSystem> buildSystem;
+   private UISelectOne<ProjectProvider> buildSystem;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -188,7 +188,7 @@ public class NewProjectWizard implements UIWizard
       for (ProjectType projectType : type.getValueChoices())
       {
          boolean buildable = false;
-         for (BuildSystem buildSystem : buildSystems)
+         for (ProjectProvider buildSystem : buildSystems)
          {
             if (isProjectTypeBuildable(projectType, buildSystem))
             {
@@ -200,7 +200,7 @@ public class NewProjectWizard implements UIWizard
 
          if (!buildable)
             log.log(Level.FINE, "ProjectType [" + projectType.getType() + "] "
-                     + "deactivated because it cannot be built with any registered BuildSystem instances ["
+                     + "deactivated because it cannot be built with any registered ProjectProvider instances ["
                      + buildSystems + "].");
       }
 
@@ -245,22 +245,22 @@ public class NewProjectWizard implements UIWizard
    private void configureBuildSystemInput()
    {
       buildSystem.setRequired(true);
-      buildSystem.setItemLabelConverter(new Converter<BuildSystem, String>()
+      buildSystem.setItemLabelConverter(new Converter<ProjectProvider, String>()
       {
          @Override
-         public String convert(BuildSystem source)
+         public String convert(ProjectProvider source)
          {
             return source == null ? null : source.getType();
          }
       });
 
-      buildSystem.setValueChoices(new Callable<Iterable<BuildSystem>>()
+      buildSystem.setValueChoices(new Callable<Iterable<ProjectProvider>>()
       {
          @Override
-         public Iterable<BuildSystem> call() throws Exception
+         public Iterable<ProjectProvider> call() throws Exception
          {
-            List<BuildSystem> result = new ArrayList<>();
-            for (BuildSystem buildSystemType : buildSystems)
+            List<ProjectProvider> result = new ArrayList<>();
+            for (ProjectProvider buildSystemType : buildSystems)
             {
                ProjectType projectType = type.getValue();
                if (projectType != null)
@@ -272,10 +272,10 @@ public class NewProjectWizard implements UIWizard
                   result.add(buildSystemType);
             }
 
-            Collections.sort(result, new Comparator<BuildSystem>()
+            Collections.sort(result, new Comparator<ProjectProvider>()
             {
                @Override
-               public int compare(BuildSystem left, BuildSystem right)
+               public int compare(ProjectProvider left, ProjectProvider right)
                {
                   return new Integer(left.priority()).compareTo(right.priority());
                }
@@ -285,10 +285,10 @@ public class NewProjectWizard implements UIWizard
          }
       });
 
-      buildSystem.setDefaultValue(new Callable<BuildSystem>()
+      buildSystem.setDefaultValue(new Callable<ProjectProvider>()
       {
          @Override
-         public BuildSystem call() throws Exception
+         public ProjectProvider call() throws Exception
          {
             if (buildSystem.getValueChoices().iterator().hasNext())
             {
@@ -299,20 +299,20 @@ public class NewProjectWizard implements UIWizard
       });
    }
 
-   private boolean isProjectTypeBuildable(ProjectType type, BuildSystem buildSystem)
+   private boolean isProjectTypeBuildable(ProjectType type, ProjectProvider buildSystem)
    {
       boolean result = false;
-      Iterable<Class<? extends BuildSystemFacet>> requiredFacets = getRequiredBuildSystemFacets(type);
+      Iterable<Class<? extends ProvidedProjectFacet>> requiredFacets = getRequiredBuildSystemFacets(type);
       if (requiredFacets == null || !requiredFacets.iterator().hasNext())
       {
          result = true;
       }
       else
       {
-         for (Class<? extends BuildSystemFacet> required : requiredFacets)
+         for (Class<? extends ProvidedProjectFacet> required : requiredFacets)
          {
             result = false;
-            for (Class<? extends BuildSystemFacet> provided : buildSystem.getProvidedFacetTypes())
+            for (Class<? extends ProvidedProjectFacet> provided : buildSystem.getProvidedFacetTypes())
             {
                if (provided.isAssignableFrom(required))
                   result = true;
@@ -325,17 +325,17 @@ public class NewProjectWizard implements UIWizard
    }
 
    @SuppressWarnings("unchecked")
-   private Iterable<Class<? extends BuildSystemFacet>> getRequiredBuildSystemFacets(ProjectType type)
+   private Iterable<Class<? extends ProvidedProjectFacet>> getRequiredBuildSystemFacets(ProjectType type)
    {
-      Set<Class<? extends BuildSystemFacet>> result = new HashSet<>();
+      Set<Class<? extends ProvidedProjectFacet>> result = new HashSet<>();
       Iterable<Class<? extends ProjectFacet>> requiredFacets = type.getRequiredFacets();
       if (requiredFacets != null)
       {
          for (Class<? extends ProjectFacet> facetType : requiredFacets)
          {
-            if (BuildSystemFacet.class.isAssignableFrom(facetType))
+            if (ProvidedProjectFacet.class.isAssignableFrom(facetType))
             {
-               result.add((Class<? extends BuildSystemFacet>) facetType);
+               result.add((Class<? extends ProvidedProjectFacet>) facetType);
             }
          }
       }

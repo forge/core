@@ -19,7 +19,7 @@ import org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenWebResourcesFacet;
-import org.jboss.forge.addon.projects.BuildSystemFacet;
+import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
@@ -83,9 +83,9 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
    }
 
    @Override
-   public Set<Class<? extends BuildSystemFacet>> getProvidedFacetTypes()
+   public Set<Class<? extends ProvidedProjectFacet>> getProvidedFacetTypes()
    {
-      Set<Class<? extends BuildSystemFacet>> result = new HashSet<>();
+      Set<Class<? extends ProvidedProjectFacet>> result = new HashSet<>();
       result.add(MavenFacet.class);
       result.add(MavenPluginFacet.class);
       result.add(DependencyFacet.class);

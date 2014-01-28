@@ -6,22 +6,23 @@ import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 
 /**
- * Creates and locates {@link Project} instances for a specific build system. E.g: Maven, Gradle, and so on...
+ * Creates and locates {@link Project} instances for a specific technology. E.g: Maven, Gradle, JavaScript, HTML, and so
+ * on...
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface BuildSystem
+public interface ProjectProvider
 {
    /**
-    * Return the human-readable name for this {@link BuildSystem}. This should be relatively unique.
+    * Return the human-readable name for this {@link ProjectProvider}. This should be relatively unique.
     */
    public String getType();
 
    /**
     * Return the {@link Set} of default {@link Facet} types provided by {@link Project} instances of this
-    * {@link BuildSystem} type.
+    * {@link ProjectProvider} type.
     */
-   public Iterable<Class<? extends BuildSystemFacet>> getProvidedFacetTypes();
+   public Iterable<Class<? extends ProvidedProjectFacet>> getProvidedFacetTypes();
 
    /**
     * Create a new or existing {@link Project} with the given {@link DirectoryResource} as
@@ -35,7 +36,7 @@ public interface BuildSystem
    public boolean containsProject(DirectoryResource resource);
 
    /**
-    * Returns the priority of this {@link BuildSystem}. Lower values receive a higher priority.
+    * Returns the priority of this {@link ProjectProvider}. Lower values receive a higher priority.
     */
    public int priority();
 }

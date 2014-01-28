@@ -21,8 +21,8 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.projects.BuildSystem;
-import org.jboss.forge.addon.projects.BuildSystemFacet;
+import org.jboss.forge.addon.projects.ProjectProvider;
+import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectAssociationProvider;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -83,7 +83,7 @@ public class ProjectFactoryImpl implements ProjectFactory
       @Override
       public boolean accept(ProjectFacet type)
       {
-         return !(type instanceof BuildSystemFacet);
+         return !(type instanceof ProvidedProjectFacet);
       }
    };
 
@@ -102,8 +102,8 @@ public class ProjectFactoryImpl implements ProjectFactory
    public Project findProject(FileResource<?> target)
    {
       Project result = null;
-      Imported<BuildSystem> instances = registry.getServices(BuildSystem.class);
-      for (BuildSystem buildSystem : instances)
+      Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
+      for (ProjectProvider buildSystem : instances)
       {
          try
          {
@@ -121,7 +121,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public Project findProject(FileResource<?> target, BuildSystem buildSystem)
+   public Project findProject(FileResource<?> target, ProjectProvider buildSystem)
    {
       return findProject(target, buildSystem, acceptsAllProjects);
    }
@@ -135,8 +135,8 @@ public class ProjectFactoryImpl implements ProjectFactory
       }
 
       Project result = null;
-      Imported<BuildSystem> instances = registry.getServices(BuildSystem.class);
-      for (BuildSystem buildSystem : instances)
+      Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
+      for (ProjectProvider buildSystem : instances)
       {
          try
          {
@@ -155,7 +155,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public Project findProject(FileResource<?> target, BuildSystem buildSystem, Predicate<Project> filter)
+   public Project findProject(FileResource<?> target, ProjectProvider buildSystem, Predicate<Project> filter)
    {
       Assert.notNull(target, "Target cannot be null");
       if (filter == null)
@@ -206,13 +206,13 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public Project createProject(DirectoryResource projectDir, BuildSystem buildSystem)
+   public Project createProject(DirectoryResource projectDir, ProjectProvider buildSystem)
    {
       return createProject(projectDir, buildSystem, null);
    }
 
    @Override
-   public Project createProject(DirectoryResource target, BuildSystem buildSystem,
+   public Project createProject(DirectoryResource target, ProjectProvider buildSystem,
             Iterable<Class<? extends ProjectFacet>> facetTypes)
    {
       Assert.notNull(target, "Target project directory must not be null.");
@@ -249,7 +249,7 @@ public class ProjectFactoryImpl implements ProjectFactory
          {
             try
             {
-               if (!BuildSystemFacet.class.isAssignableFrom(facetType))
+               if (!ProvidedProjectFacet.class.isAssignableFrom(facetType))
                {
                   Iterable<? extends ProjectFacet> facets = factory.createFacets(result, facetType);
                   for (ProjectFacet projectFacet : facets)
@@ -283,17 +283,17 @@ public class ProjectFactoryImpl implements ProjectFactory
       return result;
    }
 
-   private Iterable<Class<? extends BuildSystemFacet>> getMissingBuildSystemFacets(BuildSystem buildSystem,
-            Iterable<Class<? extends BuildSystemFacet>> requiredFacets)
+   private Iterable<Class<? extends ProvidedProjectFacet>> getMissingBuildSystemFacets(ProjectProvider buildSystem,
+            Iterable<Class<? extends ProvidedProjectFacet>> requiredFacets)
    {
-      Set<Class<? extends BuildSystemFacet>> result = new HashSet<Class<? extends BuildSystemFacet>>();
-      Iterable<Class<? extends BuildSystemFacet>> providedFacetTypes = buildSystem.getProvidedFacetTypes();
+      Set<Class<? extends ProvidedProjectFacet>> result = new HashSet<Class<? extends ProvidedProjectFacet>>();
+      Iterable<Class<? extends ProvidedProjectFacet>> providedFacetTypes = buildSystem.getProvidedFacetTypes();
       if (requiredFacets != null && providedFacetTypes != null)
       {
-         for (Class<? extends BuildSystemFacet> required : requiredFacets)
+         for (Class<? extends ProvidedProjectFacet> required : requiredFacets)
          {
             boolean found = false;
-            for (Class<? extends BuildSystemFacet> provided : providedFacetTypes)
+            for (Class<? extends ProvidedProjectFacet> provided : providedFacetTypes)
             {
                if (provided.isAssignableFrom(required))
                   found = true;
@@ -305,10 +305,10 @@ public class ProjectFactoryImpl implements ProjectFactory
       return result;
    }
 
-   private boolean isBuildable(BuildSystem buildSystem, Iterable<Class<? extends ProjectFacet>> facets)
+   private boolean isBuildable(ProjectProvider buildSystem, Iterable<Class<? extends ProjectFacet>> facets)
    {
       boolean result = false;
-      Iterable<Class<? extends BuildSystemFacet>> requiredFacets = getRequiredBuildSystemFacets(facets);
+      Iterable<Class<? extends ProvidedProjectFacet>> requiredFacets = getRequiredBuildSystemFacets(facets);
       if (requiredFacets == null)
       {
          result = true;
@@ -321,15 +321,15 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @SuppressWarnings("unchecked")
-   private Iterable<Class<? extends BuildSystemFacet>> getRequiredBuildSystemFacets(
+   private Iterable<Class<? extends ProvidedProjectFacet>> getRequiredBuildSystemFacets(
             Iterable<Class<? extends ProjectFacet>> facets)
    {
-      Set<Class<? extends BuildSystemFacet>> result = new HashSet<Class<? extends BuildSystemFacet>>();
+      Set<Class<? extends ProvidedProjectFacet>> result = new HashSet<Class<? extends ProvidedProjectFacet>>();
       for (Class<? extends ProjectFacet> facetType : facets)
       {
-         if (BuildSystemFacet.class.isAssignableFrom(facetType))
+         if (ProvidedProjectFacet.class.isAssignableFrom(facetType))
          {
-            result.add((Class<? extends BuildSystemFacet>) facetType);
+            result.add((Class<? extends ProvidedProjectFacet>) facetType);
          }
       }
       return result;
@@ -409,13 +409,13 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Override
    public Project createTempProject(Iterable<Class<? extends ProjectFacet>> facetTypes) throws IllegalStateException
    {
-      Imported<BuildSystem> buildSystems = registry.getServices(BuildSystem.class);
+      Imported<ProjectProvider> buildSystems = registry.getServices(ProjectProvider.class);
       if (buildSystems.isAmbiguous())
          throw new IllegalStateException(
                   "Cannot create generic temporary project in environment where multiple build systems are available. "
                            + "A single build system must be selected.");
 
-      BuildSystem buildSystem = buildSystems.get();
+      ProjectProvider buildSystem = buildSystems.get();
       try
       {
          return createTempProject(buildSystem, facetTypes);
@@ -427,13 +427,13 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public Project createTempProject(BuildSystem buildSystem)
+   public Project createTempProject(ProjectProvider buildSystem)
    {
       return createTempProject(buildSystem, Collections.<Class<? extends ProjectFacet>> emptySet());
    }
 
    @Override
-   public Project createTempProject(BuildSystem buildSystem, Iterable<Class<? extends ProjectFacet>> facetTypes)
+   public Project createTempProject(ProjectProvider buildSystem, Iterable<Class<? extends ProjectFacet>> facetTypes)
    {
       File rootDirectory = OperatingSystemUtils.createTempDir();
       DirectoryResource addonDir = resourceFactory.create(DirectoryResource.class, rootDirectory);
@@ -463,8 +463,8 @@ public class ProjectFactoryImpl implements ProjectFactory
    public boolean containsProject(DirectoryResource bound, FileResource<?> target)
    {
       boolean found = false;
-      Imported<BuildSystem> instances = registry.getServices(BuildSystem.class);
-      for (BuildSystem buildSystem : instances)
+      Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
+      for (ProjectProvider buildSystem : instances)
       {
          try
          {
@@ -481,7 +481,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public boolean containsProject(DirectoryResource bound, FileResource<?> target, BuildSystem buildSystem)
+   public boolean containsProject(DirectoryResource bound, FileResource<?> target, ProjectProvider buildSystem)
    {
       Assert.notNull(bound, "Boundary should not be null");
       Assert.isTrue(isParent(bound, target), "Target should be a child of bound");
@@ -519,8 +519,8 @@ public class ProjectFactoryImpl implements ProjectFactory
    public boolean containsProject(FileResource<?> target)
    {
       boolean found = false;
-      Imported<BuildSystem> instances = registry.getServices(BuildSystem.class);
-      for (BuildSystem buildSystem : instances)
+      Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
+      for (ProjectProvider buildSystem : instances)
       {
          try
          {
@@ -537,7 +537,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public boolean containsProject(FileResource<?> target, BuildSystem buildSystem)
+   public boolean containsProject(FileResource<?> target, ProjectProvider buildSystem)
    {
       Assert.notNull(target, "Target resource must not be null.");
       Assert.notNull(buildSystem, "Project build system must not be null.");

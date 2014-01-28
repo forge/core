@@ -8,8 +8,8 @@ package org.jboss.forge.addon.projects.mock;
 
 import java.util.Arrays;
 
-import org.jboss.forge.addon.projects.BuildSystem;
-import org.jboss.forge.addon.projects.BuildSystemFacet;
+import org.jboss.forge.addon.projects.ProjectProvider;
+import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -17,7 +17,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MockBuildSystem2 implements BuildSystem
+public class MockBuildSystem2 implements ProjectProvider
 {
 
    @Override
@@ -27,9 +27,9 @@ public class MockBuildSystem2 implements BuildSystem
    }
 
    @Override
-   public Iterable<Class<? extends BuildSystemFacet>> getProvidedFacetTypes()
+   public Iterable<Class<? extends ProvidedProjectFacet>> getProvidedFacetTypes()
    {
-      return Arrays.<Class<? extends BuildSystemFacet>> asList(PackagingFacet.class);
+      return Arrays.<Class<? extends ProvidedProjectFacet>> asList(PackagingFacet.class);
    }
 
    @Override

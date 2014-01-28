@@ -32,16 +32,16 @@ public interface ProjectFactory
    public Project findProject(final FileResource<?> target, Predicate<Project> filter);
 
    /**
-    * Locate a {@link Project} with the given {@link BuildSystem} in the ancestry of the given {@link FileResource}.
+    * Locate a {@link Project} with the given {@link ProjectProvider} in the ancestry of the given {@link FileResource}.
     * Return <code>null</code> if no {@link Project} could be located.
     */
-   public Project findProject(final FileResource<?> target, BuildSystem buildSystem);
+   public Project findProject(final FileResource<?> target, ProjectProvider buildSystem);
 
    /**
-    * Locate a {@link Project} using the given {@link BuildSystem} in the ancestry of the given {@link FileResource}.
+    * Locate a {@link Project} using the given {@link ProjectProvider} in the ancestry of the given {@link FileResource}.
     * Filter results using the given {@link Predicate}. Return <code>null</code> if no {@link Project} could be located.
     */
-   public Project findProject(final FileResource<?> target, BuildSystem buildSystem, Predicate<Project> filter);
+   public Project findProject(final FileResource<?> target, ProjectProvider buildSystem, Predicate<Project> filter);
 
    /**
     * Invalidate all known {@link ProjectCache} instances. This causes the {@link ProjectFactory} to create new
@@ -50,15 +50,15 @@ public interface ProjectFactory
    public void invalidateCaches();
 
    /**
-    * Create a {@link Project} in the specified {@link DirectoryResource}, using the given {@link BuildSystem}.
+    * Create a {@link Project} in the specified {@link DirectoryResource}, using the given {@link ProjectProvider}.
     */
-   public Project createProject(DirectoryResource projectDir, BuildSystem buildSystem);
+   public Project createProject(DirectoryResource projectDir, ProjectProvider buildSystem);
 
    /**
     * Create a {@link Project} with the given {@link ProjectFacet} types in the specified {@link DirectoryResource},
-    * using the given {@link BuildSystem}.
+    * using the given {@link ProjectProvider}.
     */
-   public Project createProject(DirectoryResource targetDir, BuildSystem buildSystem,
+   public Project createProject(DirectoryResource targetDir, ProjectProvider buildSystem,
             Iterable<Class<? extends ProjectFacet>> facetTypes);
 
    /**
@@ -68,10 +68,10 @@ public interface ProjectFactory
    public boolean containsProject(final FileResource<?> target);
 
    /**
-    * Returns true if a {@link Project} of the given {@link BuildSystem} exists in the ancestry of the given
+    * Returns true if a {@link Project} of the given {@link ProjectProvider} exists in the ancestry of the given
     * {@link FileResource}. false if no {@link Project} could be located
     */
-   public boolean containsProject(final FileResource<?> target, BuildSystem buildSystem);
+   public boolean containsProject(final FileResource<?> target, ProjectProvider buildSystem);
 
    /**
     * Returns true if a {@link Project} exists in the ancestry of the given {@link FileResource}. false if no
@@ -80,16 +80,16 @@ public interface ProjectFactory
    public boolean containsProject(final DirectoryResource bound, final FileResource<?> target);
 
    /**
-    * Returns true if a {@link Project} of the given {@link BuildSystem} exists in the ancestry of the given
+    * Returns true if a {@link Project} of the given {@link ProjectProvider} exists in the ancestry of the given
     * {@link FileResource}. false if no {@link Project} could be located. Throws {@link IllegalArgumentException} if
     * target is not a child of bound
     */
-   public boolean containsProject(final DirectoryResource bound, final FileResource<?> target, BuildSystem buildSystem);
+   public boolean containsProject(final DirectoryResource bound, final FileResource<?> target, ProjectProvider buildSystem);
 
    /**
     * Create a {@link Project} in a temporary location. This method is useful for testing purposes.
     * 
-    * @throws IllegalStateException when multiple {@link BuildSystem} implementations are available.
+    * @throws IllegalStateException when multiple {@link ProjectProvider} implementations are available.
     */
    public Project createTempProject() throws IllegalStateException;
 
@@ -97,21 +97,21 @@ public interface ProjectFactory
     * Create a {@link Project}, with the given {@link ProjectFacet} types, in a temporary location. This method is
     * useful for testing purposes.
     * 
-    * @throws IllegalStateException when multiple {@link BuildSystem} implementations are available.
+    * @throws IllegalStateException when multiple {@link ProjectProvider} implementations are available.
     */
    public Project createTempProject(Iterable<Class<? extends ProjectFacet>> facetTypes) throws IllegalStateException;
 
    /**
-    * Create a {@link Project} in a temporary location, using the given {@link BuildSystem}. This method is useful for
+    * Create a {@link Project} in a temporary location, using the given {@link ProjectProvider}. This method is useful for
     * testing purposes.
     */
-   public Project createTempProject(BuildSystem buildSystem);
+   public Project createTempProject(ProjectProvider buildSystem);
 
    /**
     * Create a {@link Project}, with the given {@link ProjectFacet} types, in a temporary location. This method is
     * useful for testing purposes.
     */
-   public Project createTempProject(BuildSystem buildSystem, Iterable<Class<? extends ProjectFacet>> facetTypes);
+   public Project createTempProject(ProjectProvider buildSystem, Iterable<Class<? extends ProjectFacet>> facetTypes);
 
    /**
     * Register a listener for {@link Project} events.

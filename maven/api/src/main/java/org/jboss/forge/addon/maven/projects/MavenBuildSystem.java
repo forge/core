@@ -6,14 +6,14 @@
  */
 package org.jboss.forge.addon.maven.projects;
 
-import org.jboss.forge.addon.projects.BuildSystem;
+import org.jboss.forge.addon.projects.ProjectProvider;
 
 /**
- * Marker interface for the Maven {@link BuildSystem}.
+ * Marker interface for the Maven {@link ProjectProvider}.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public interface MavenBuildSystem extends BuildSystem
+public interface MavenBuildSystem extends ProjectProvider
 {
 }

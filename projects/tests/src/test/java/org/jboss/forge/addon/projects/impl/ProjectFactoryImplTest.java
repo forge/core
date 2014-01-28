@@ -14,7 +14,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.projects.BuildSystem;
+import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -61,7 +61,7 @@ public class ProjectFactoryImplTest
    private ProjectFactory projectFactory;
 
    @Inject
-   private Imported<BuildSystem> buildSystems;
+   private Imported<ProjectProvider> buildSystems;
 
    @Test
    public void testInjectionNotNull()
@@ -120,7 +120,7 @@ public class ProjectFactoryImplTest
    @Test
    public void testCreateTempProjectWithBuildSystem() throws Exception
    {
-      BuildSystem buildSystem = buildSystems.get();
+      ProjectProvider buildSystem = buildSystems.get();
       try
       {
          Project project = projectFactory.createTempProject(buildSystem);
@@ -144,7 +144,7 @@ public class ProjectFactoryImplTest
    @Test
    public void testCreateTempProjectWithBuildSystemAndFacets()
    {
-      BuildSystem buildSystem = buildSystems.get();
+      ProjectProvider buildSystem = buildSystems.get();
       try
       {
          Project project = projectFactory.createTempProject(buildSystem,
@@ -175,7 +175,7 @@ public class ProjectFactoryImplTest
    @Test
    public void testContainsProjectWithBuildSystem()
    {
-      BuildSystem buildSystem = buildSystems.get();
+      ProjectProvider buildSystem = buildSystems.get();
       try
       {
          Project project = projectFactory.createTempProject(buildSystem);

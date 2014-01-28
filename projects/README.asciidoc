@@ -185,15 +185,15 @@ public class ProjectFacetB extends AbstractFacet<Project> implements ProjectFace
 +
 In summary, the `FacetFactory` and `ProjectFactory` services will recursively check for and install missing prerequisite `ProjectFacet` types, before proceeding to install the requsted facet type. This allows for very simple dependency management, and avoids many opportunities for `NullPointerException`.
 
-BuildSystem services for custom project types::
+ProjectProvider services for custom project types::
 
-If you wish to implement a custom project type in your addon, you will need to use the `BuildSystem` service API. Each time a method in the `ProjectFactory` is called, all available `BuildSystem` instances are queried in priority order until a valid project result is found.
+If you wish to implement a custom project type in your addon, you will need to use the `ProjectProvider` service API. Each time a method in the `ProjectFactory` is called, all available `ProjectProvider` instances are queried in priority order until a valid project result is found.
 +
-`BuildSystem` implementations must also publish the `BuildSystemFacet` types that they provide. This is done via the `getProvidedFacetTypes()` method. `BuildSystemFacet` implementations may only be installed by the `BuildSystem` implementation that produces them. They will not be installed automatically by the `ProjectFactory`. 
+`ProjectProvider` implementations must also publish the `ProvidedProjectFacet` types that they provide. This is done via the `getProvidedFacetTypes()` method. `ProvidedProjectFacet` implementations may only be installed by the `ProjectProvider` implementation that produces them. They will not be installed automatically by the `ProjectFactory`. 
 +
 [source,java]
 ----
-public class CustomBuildSystem implements BuildSystem {
+public class CustomProjectProvider implements ProjectProvider {
 
    @Inject
    private FacetFactory factory;
@@ -208,7 +208,7 @@ public class CustomBuildSystem implements BuildSystem {
       Project project = new CustomProject(dir);
 
       try {
-         factory.install(project, CustomBuildSystemFacet.class);
+         factory.install(project, CustomProvidedProjectFacet.class);
       }
       catch (RuntimeException e) {
          throw new IllegalStateException("Could not install Custom functionality into Project located at ["
@@ -224,8 +224,8 @@ public class CustomBuildSystem implements BuildSystem {
    }
 
    @Override
-   public Iterable<Class<? extends BuildSystemFacet>> getProvidedFacetTypes() {
-      return Arrays.asList(CustomBuildSystemFacet.class);
+   public Iterable<Class<? extends ProvidedProjectFacet>> getProvidedFacetTypes() {
+      return Arrays.asList(CustomProvidedProjectFacet.class);
    }
 
    @Override
