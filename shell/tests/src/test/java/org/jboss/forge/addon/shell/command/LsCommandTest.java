@@ -67,7 +67,7 @@ public class LsCommandTest
    public void testLsCommand() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      String projectPath = project.getProjectRoot().getFullyQualifiedName();
+      String projectPath = project.getRootDirectory().getFullyQualifiedName();
       shellTest.execute("cd " + projectPath, 5, TimeUnit.SECONDS);
       shellTest.execute("touch file.txt", 5, TimeUnit.SECONDS);
       shellTest.clearScreen();

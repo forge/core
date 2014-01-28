@@ -81,7 +81,7 @@ public class AddonProjectConfiguratorTest
    public void testComplexAddonProject() throws FileNotFoundException, FacetNotFoundException
    {
       Project project = projectFactory.createTempProject();
-      project.getProjectRoot().deleteOnExit();
+      project.getRootDirectory().deleteOnExit();
 
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
@@ -95,7 +95,7 @@ public class AddonProjectConfiguratorTest
       Assert.assertFalse(project.hasFacet(JavaSourceFacet.class));
       Assert.assertFalse(project.hasFacet(CDIFacet.class));
       Assert.assertFalse(project.hasFacet(ResourcesFacet.class));
-      DirectoryResource projectRoot = project.getProjectRoot();
+      DirectoryResource projectRoot = project.getRootDirectory();
 
       Assert.assertTrue("ADDON module is missing", projectRoot.getChild("addon").exists());
       Assert.assertTrue("API module is missing", projectRoot.getChild("api").exists());
@@ -149,7 +149,7 @@ public class AddonProjectConfiguratorTest
        */
       Assert.assertNull(project.getFacet(MavenFacet.class).getModel().getParent());
 
-      Assert.assertFalse(project.getProjectRoot().getChild("src").exists());
+      Assert.assertFalse(project.getRootDirectory().getChild("src").exists());
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(
@@ -316,16 +316,16 @@ public class AddonProjectConfiguratorTest
       Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectDependency(
                DependencyBuilder.create("javax.annotation:jsr250-api:1.0")));
 
-      Assert.assertTrue(project.getProjectRoot().getChild("README.asciidoc").exists());
-      project.getProjectRoot().delete(true);
-      project.getProjectRoot().deleteOnExit();
+      Assert.assertTrue(project.getRootDirectory().getChild("README.asciidoc").exists());
+      project.getRootDirectory().delete(true);
+      project.getRootDirectory().deleteOnExit();
    }
 
    @Test
    public void testSimpleAddonProject() throws FileNotFoundException, FacetNotFoundException
    {
       Project project = projectFactory.createTempProject();
-      project.getProjectRoot().deleteOnExit();
+      project.getRootDirectory().deleteOnExit();
 
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
@@ -383,9 +383,9 @@ public class AddonProjectConfiguratorTest
       Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(
                DependencyBuilder.create("javax.annotation:jsr250-api:1.0")));
 
-      Assert.assertTrue(project.getProjectRoot().getChild("README.asciidoc").exists());
-      project.getProjectRoot().delete(true);
-      project.getProjectRoot().deleteOnExit();
+      Assert.assertTrue(project.getRootDirectory().getChild("README.asciidoc").exists());
+      project.getRootDirectory().delete(true);
+      project.getRootDirectory().deleteOnExit();
    }
 
    @Test
@@ -393,7 +393,7 @@ public class AddonProjectConfiguratorTest
    public void testDependencyResolution() throws FileNotFoundException, FacetNotFoundException
    {
       Project project = projectFactory.createTempProject();
-      project.getProjectRoot().deleteOnExit();
+      project.getRootDirectory().deleteOnExit();
 
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
@@ -403,7 +403,7 @@ public class AddonProjectConfiguratorTest
       SingleVersion forgeVersion = new SingleVersion("2.0.0.Alpha3");
       configurator.setupComplexAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
 
-      DirectoryResource projectRoot = project.getProjectRoot();
+      DirectoryResource projectRoot = project.getRootDirectory();
 
       Assert.assertTrue("SPI module is missing", projectRoot.getChild("spi").exists());
       Assert.assertTrue("TESTS module is missing", projectRoot.getChild("tests").exists());

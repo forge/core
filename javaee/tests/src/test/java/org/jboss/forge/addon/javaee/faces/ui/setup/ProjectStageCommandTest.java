@@ -72,7 +72,7 @@ public class ProjectStageCommandTest
       FacesFacet_2_2 facesFacet = projectHelper.installFaces_2_2(project);
       Assert.assertEquals(ProjectStage.Production, facesFacet.getProjectStage());
       try (CommandController controller = testHarness.createCommandController(ProjectStageCommand.class,
-               project.getProjectRoot()))
+               project.getRootDirectory()))
       {
          controller.initialize();
          Assert.assertTrue(controller.isEnabled());

@@ -54,7 +54,7 @@ public class ProjectRootCdTokenHandler implements CdTokenHandler
                   Project project = factory.findProject((FileResource<?>) resource);
                   if (project != null)
                   {
-                     result.add(project.getProjectRoot());
+                     result.add(project.getRootDirectory());
                   }
                }
             }

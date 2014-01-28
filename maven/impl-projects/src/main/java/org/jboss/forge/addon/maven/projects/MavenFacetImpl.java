@@ -258,7 +258,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    @Override
    public MavenModelResource getModelResource()
    {
-      return getFaceted().getProjectRoot().getChild("pom.xml").reify(MavenModelResource.class);
+      return getFaceted().getRootDirectory().getChild("pom.xml").reify(MavenModelResource.class);
    }
 
    @Override
@@ -426,7 +426,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          parms = new String[] { "" };
       }
       MavenCli cli = new MavenCli();
-      int i = cli.doMain(parms, getFaceted().getProjectRoot().getFullyQualifiedName(),
+      int i = cli.doMain(parms, getFaceted().getRootDirectory().getFullyQualifiedName(),
                out, err);
       return i == 0;
    }
@@ -447,7 +447,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    {
       try
       {
-         int returnValue = NativeSystemCall.execFromPath(getMvnCommand(), parms, out, getFaceted().getProjectRoot());
+         int returnValue = NativeSystemCall.execFromPath(getMvnCommand(), parms, out, getFaceted().getRootDirectory());
          if (returnValue == 0)
             return true;
          else

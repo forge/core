@@ -90,7 +90,7 @@ public class JPASetupWizardTest
    {
       Project project = projectFactory.createTempProject();
       WizardCommandController tester = testHarness.createWizardController(JPASetupWizard.class,
-               project.getProjectRoot());
+               project.getRootDirectory());
 
       tester.initialize();
 
@@ -119,7 +119,7 @@ public class JPASetupWizardTest
       Assert.assertEquals(2, counter.get());
 
       // Reload to refresh facets.
-      project = projectFactory.findProject(project.getProjectRoot());
+      project = projectFactory.findProject(project.getRootDirectory());
       
       // Check SUT values
       PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
@@ -134,7 +134,7 @@ public class JPASetupWizardTest
       // Execute SUT
       final Project project = projectFactory.createTempProject();
       WizardCommandController tester = testHarness.createWizardController(JPASetupWizard.class,
-               project.getProjectRoot());
+               project.getRootDirectory());
 
       tester.initialize();
 
@@ -155,7 +155,7 @@ public class JPASetupWizardTest
       Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME, allUnits.get(0).getName());
 
       WizardCommandController tester2 = testHarness.createWizardController(JPASetupWizard.class,
-               project.getProjectRoot());
+               project.getRootDirectory());
 
       // Launch
       tester2.initialize();
@@ -184,7 +184,7 @@ public class JPASetupWizardTest
       // Execute SUT
       Project project = projectFactory.createTempProject();
       WizardCommandController tester = testHarness.createWizardController(JPASetupWizard.class,
-               project.getProjectRoot());
+               project.getRootDirectory());
 
       tester.initialize();
 
@@ -212,7 +212,7 @@ public class JPASetupWizardTest
       Assert.assertEquals(2, counter.get());
 
       // Reload to refresh facets.
-      project = projectFactory.findProject(project.getProjectRoot());
+      project = projectFactory.findProject(project.getRootDirectory());
       
       // Check SUT values
       PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();

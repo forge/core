@@ -68,11 +68,11 @@ public class ProjectFactoryCacheTest
       Project project = projectFactory.createTempProject();
 
       Assert.assertNotNull(project);
-      Project found = projectFactory.findProject(project.getProjectRoot());
+      Project found = projectFactory.findProject(project.getRootDirectory());
       Assert.assertNotNull(found);
       Assert.assertSame(project, found);
 
-      Assert.assertNull(projectFactory.findProject(project.getProjectRoot(), new Predicate<Project>()
+      Assert.assertNull(projectFactory.findProject(project.getRootDirectory(), new Predicate<Project>()
       {
          @Override
          public boolean accept(Project type)
@@ -81,16 +81,16 @@ public class ProjectFactoryCacheTest
          }
       }));
 
-      Project found2 = projectFactory.findProject(project.getProjectRoot().getChildDirectory("src/main/java"));
+      Project found2 = projectFactory.findProject(project.getRootDirectory().getChildDirectory("src/main/java"));
       Assert.assertNotNull(found2);
       Assert.assertSame(found, found2);
 
       Project project2 = projectFactory.createTempProject();
       Assert.assertNotSame(found2, project2);
-      Assert.assertNotEquals(found2.getProjectRoot().getFullyQualifiedName(), project2.getProjectRoot()
+      Assert.assertNotEquals(found2.getRootDirectory().getFullyQualifiedName(), project2.getRootDirectory()
                .getFullyQualifiedName());
 
-      project.getProjectRoot().delete(true);
+      project.getRootDirectory().delete(true);
    }
 
 }

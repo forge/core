@@ -62,7 +62,7 @@ public class MavenWebResourcesFacet extends AbstractFacet<Project> implements We
       {
          webappFolderName = "src" + File.separator + "main" + File.separator + "webapp";
       }
-      DirectoryResource projectRoot = project.getProjectRoot();
+      DirectoryResource projectRoot = project.getRootDirectory();
       return projectRoot.getChildDirectory(webappFolderName);
    }
 

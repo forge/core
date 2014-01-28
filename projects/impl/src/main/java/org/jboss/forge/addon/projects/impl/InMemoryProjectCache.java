@@ -51,13 +51,13 @@ public class InMemoryProjectCache implements ProjectCache
    public void store(Project project)
    {
       Assert.notNull(project, "Project should not be null");
-      this.projects.put(project.getProjectRoot().getFullyQualifiedName(), new WeakReference<Project>(project));
+      this.projects.put(project.getRootDirectory().getFullyQualifiedName(), new WeakReference<Project>(project));
    }
 
    @Override
    public void evict(Project project)
    {
-      this.projects.remove(project.getProjectRoot().getFullyQualifiedName());
+      this.projects.remove(project.getRootDirectory().getFullyQualifiedName());
    }
 
 }

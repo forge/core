@@ -71,7 +71,7 @@ public class MavenWebResourceFacetTest
    public void tearDown()
    {
       if (project != null)
-         project.getProjectRoot().delete(true);
+         project.getRootDirectory().delete(true);
    }
 
    @Test
@@ -86,7 +86,7 @@ public class MavenWebResourceFacetTest
    public void testDefaultWebappFolder() throws Exception
    {
       WebResourcesFacet facet = facetFactory.install(project, WebResourcesFacet.class);
-      DirectoryResource expected = project.getProjectRoot().getChildDirectory(
+      DirectoryResource expected = project.getRootDirectory().getChildDirectory(
                "src" + File.separator + "main" + File.separator + "webapp");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getWebRootDirectory().getFullyQualifiedName());
    }
@@ -95,9 +95,9 @@ public class MavenWebResourceFacetTest
    public void testCustomWebappFolder() throws Exception
    {
       WebResourcesFacet facet = facetFactory.install(project, WebResourcesFacet.class);
-      MavenModelResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenModelResource.class);
+      MavenModelResource pom = project.getRootDirectory().getChild("pom.xml").reify(MavenModelResource.class);
       pom.setContents("<project><modelVersion>4.0.0.</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><plugins><plugin><artifactId>maven-war-plugin</artifactId><version>2.4</version><configuration><warSourceDirectory>WebContent</warSourceDirectory><failOnMissingWebXml>false</failOnMissingWebXml></configuration></plugin></plugins></build></project>");
-      DirectoryResource expected = project.getProjectRoot().getChildDirectory(
+      DirectoryResource expected = project.getRootDirectory().getChildDirectory(
                "WebContent");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getWebRootDirectory().getFullyQualifiedName());
    }

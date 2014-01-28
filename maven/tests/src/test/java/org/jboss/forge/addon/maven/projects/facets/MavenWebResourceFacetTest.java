@@ -92,7 +92,7 @@ public class MavenWebResourceFacetTest
    public void testDefaultWebResourceFolder() throws Exception
    {
       WebResourcesFacet facet = project.getFacet(MavenWebResourcesFacet.class);
-      DirectoryResource expected = project.getProjectRoot().getChildDirectory(
+      DirectoryResource expected = project.getRootDirectory().getChildDirectory(
                "src" + File.separator + "main" + File.separator + "webapp");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getWebRootDirectory().getFullyQualifiedName());
    }
@@ -100,14 +100,14 @@ public class MavenWebResourceFacetTest
    @Test
    public void testCustomWebResourceFolder() throws Exception
    {
-      MavenModelResource pom = project.getProjectRoot().getChild("pom.xml").reify(MavenModelResource.class);
+      MavenModelResource pom = project.getRootDirectory().getChild("pom.xml").reify(MavenModelResource.class);
 
       pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-war-plugin</artifactId><version>2.1-beta-1</version><configuration>"
                + "<warSourceDirectory>foo</warSourceDirectory>"
                + "</configuration></plugin></plugins></build></project>");
 
       WebResourcesFacet facet = project.getFacet(MavenWebResourcesFacet.class);
-      DirectoryResource expected = project.getProjectRoot().getChildDirectory("foo");
+      DirectoryResource expected = project.getRootDirectory().getChildDirectory("foo");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getWebRootDirectory().getFullyQualifiedName());
    }
 }

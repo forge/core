@@ -87,7 +87,7 @@ public class NewEJBCommandTest
       Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
       WizardCommandController controller = testHarness.createWizardController(NewEJBCommand.class,
-               project.getProjectRoot());
+               project.getRootDirectory());
       controller.initialize();
       controller.setValueFor("named", "TestEJB");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");
@@ -112,7 +112,7 @@ public class NewEJBCommandTest
       Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
       WizardCommandController controller = testHarness.createWizardController(NewEJBCommand.class,
-               project.getProjectRoot());
+               project.getRootDirectory());
       controller.initialize();
       controller.setValueFor("named", "TestEJB");
       controller.setValueFor("type", EJBType.MESSAGEDRIVEN);
@@ -148,7 +148,7 @@ public class NewEJBCommandTest
       Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
       WizardCommandController controller = testHarness.createWizardController(NewEJBCommand.class,
-               project.getProjectRoot());
+               project.getRootDirectory());
       controller.initialize();
       controller.setValueFor("named", "TestEJB");
       controller.setValueFor("type", EJBType.MESSAGEDRIVEN);
@@ -178,7 +178,7 @@ public class NewEJBCommandTest
       Assert.assertNotNull(((JavaClass) javaResource.getJavaSource()).getMethod("onMessage", Message.class));
 
       CommandController controller2 = testHarness.createCommandController(EJBSetClassTransactionAttributeCommand.class,
-               project.getProjectRoot());
+               project.getRootDirectory());
 
       controller2.initialize();
       Assert.assertFalse(controller2.canExecute());
@@ -195,7 +195,7 @@ public class NewEJBCommandTest
 
       CommandController controller3 = testHarness.createCommandController(
                EJBSetMethodTransactionAttributeCommand.class,
-               project.getProjectRoot());
+               project.getRootDirectory());
 
       controller3.initialize();
       Assert.assertFalse(controller3.canExecute());

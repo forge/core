@@ -82,7 +82,7 @@ public class JavaSourceCommandTest
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
       CommandController controller = testHarness.createCommandController(JavaAnnotationCommand.class,
-               project.getProjectRoot());
+               project.getRootDirectory());
       controller.initialize();
       controller.setValueFor("named", "CreditCardType");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");
@@ -103,7 +103,7 @@ public class JavaSourceCommandTest
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
       CommandController controller = testHarness.createCommandController(JavaEnumCommand.class,
-               project.getProjectRoot());
+               project.getRootDirectory());
       controller.initialize();
       controller.setValueFor("named", "CreditCardType");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");
@@ -124,7 +124,7 @@ public class JavaSourceCommandTest
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
       CommandController controller = testHarness.createCommandController(JavaClassCommand.class,
-               project.getProjectRoot());
+               project.getRootDirectory());
       controller.initialize();
       controller.setValueFor("named", "CreditCardType");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");
@@ -145,7 +145,7 @@ public class JavaSourceCommandTest
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
       CommandController controller = testHarness.createCommandController(JavaInterfaceCommand.class,
-               project.getProjectRoot());
+               project.getRootDirectory());
       controller.initialize();
       controller.setValueFor("named", "CreditCardType");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");

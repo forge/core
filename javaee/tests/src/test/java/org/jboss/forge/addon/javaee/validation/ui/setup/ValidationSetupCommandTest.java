@@ -60,7 +60,7 @@ public class ValidationSetupCommandTest
    {
       final Project project = projectFactory.createTempProject();
       try (CommandController tester = testHarness.createCommandController(ValidationProviderSetupCommand.class,
-               project.getProjectRoot()))
+               project.getRootDirectory()))
       {
          // Launch
          tester.initialize();

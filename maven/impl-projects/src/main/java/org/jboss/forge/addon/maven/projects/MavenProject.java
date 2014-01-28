@@ -27,7 +27,7 @@ class MavenProject extends AbstractProject
    }
 
    @Override
-   public DirectoryResource getProjectRoot()
+   public DirectoryResource getRootDirectory()
    {
       return projectRoot;
    }

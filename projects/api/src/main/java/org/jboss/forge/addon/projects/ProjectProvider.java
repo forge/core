@@ -26,7 +26,7 @@ public interface ProjectProvider
 
    /**
     * Create a new or existing {@link Project} with the given {@link DirectoryResource} as
-    * {@link Project#getProjectRoot()}.
+    * {@link Project#getRootDirectory()}.
     */
    public Project createProject(DirectoryResource targetDir);
 

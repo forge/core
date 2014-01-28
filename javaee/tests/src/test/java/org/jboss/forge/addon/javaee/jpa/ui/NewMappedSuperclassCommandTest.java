@@ -81,7 +81,7 @@ public class NewMappedSuperclassCommandTest
       Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
       try (CommandController controller = testHarness.createCommandController(NewMappedSuperclassCommand.class,
-               project.getProjectRoot()))
+               project.getRootDirectory()))
       {
          controller.initialize();
          controller.setValueFor("named", "CreditCardType");
@@ -104,7 +104,7 @@ public class NewMappedSuperclassCommandTest
       Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
       try (CommandController controller = testHarness.createCommandController(NewMappedSuperclassCommand.class,
-               project.getProjectRoot()))
+               project.getRootDirectory()))
       {
          controller.initialize();
          controller.setValueFor("named", "CreditCardType");

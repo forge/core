@@ -36,5 +36,5 @@ public interface Project extends Faceted<ProjectFacet>
    /**
     * Get the {@link DirectoryResource} representing the root directory of this {@link Project}.
     */
-   public DirectoryResource getProjectRoot();
+   public DirectoryResource getRootDirectory();
 }

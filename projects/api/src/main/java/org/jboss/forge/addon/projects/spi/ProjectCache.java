@@ -18,7 +18,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 public interface ProjectCache
 {
    /**
-    * Retrieve a {@link Project} from the cache, using {@link Project#getProjectRoot()} as the key.
+    * Retrieve a {@link Project} from the cache, using {@link Project#getRootDirectory()} as the key.
     */
    Project get(DirectoryResource target);
 

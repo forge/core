@@ -107,10 +107,10 @@ public class AddonProjectConfigurator
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
       String projectName = metadata.getProjectName();
       metadata.setProjectName(projectName + "-parent");
-      DirectoryResource newRoot = project.getProjectRoot().getParent().getChildDirectory(metadata.getProjectName());
+      DirectoryResource newRoot = project.getRootDirectory().getParent().getChildDirectory(metadata.getProjectName());
       // FORGE-877: there's an eclipse (not m2e) limitation that says if a project is located directly in the workspace
       // folder, then the imported project's name is always the same as the folder it is contained in.
-      if (newRoot.exists() || !project.getProjectRoot().renameTo(newRoot))
+      if (newRoot.exists() || !project.getRootDirectory().renameTo(newRoot))
       {
          log.warning("Could not rename project root");
       }
@@ -176,7 +176,7 @@ public class AddonProjectConfigurator
    private void generateReadme(Project project)
    {
       String readmeTemplate = Streams.toString(getClass().getResourceAsStream("README.asciidoc"));
-      FileResource<?> child = project.getProjectRoot().getChildOfType(FileResource.class, "README.asciidoc");
+      FileResource<?> child = project.getRootDirectory().getChildOfType(FileResource.class, "README.asciidoc");
 
       // TODO: Replace with template addon
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
@@ -209,7 +209,7 @@ public class AddonProjectConfigurator
    private Project createSubmoduleProject(final Project parent, String moduleName, String artifactId,
             Class<? extends ProjectFacet>... requiredProjectFacets)
    {
-      DirectoryResource location = parent.getProjectRoot().getOrCreateChildDirectory(moduleName);
+      DirectoryResource location = parent.getRootDirectory().getOrCreateChildDirectory(moduleName);
 
       List<Class<? extends ProjectFacet>> facets = new ArrayList<Class<? extends ProjectFacet>>();
       facets.add(ResourcesFacet.class);

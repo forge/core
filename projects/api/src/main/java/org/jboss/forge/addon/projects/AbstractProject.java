@@ -47,7 +47,7 @@ public abstract class AbstractProject extends AbstractFaceted<ProjectFacet> impl
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((getProjectRoot() == null) ? 0 : getProjectRoot().hashCode());
+      result = prime * result + ((getRootDirectory() == null) ? 0 : getRootDirectory().hashCode());
       return result;
    }
 
@@ -61,12 +61,12 @@ public abstract class AbstractProject extends AbstractFaceted<ProjectFacet> impl
       if (getClass() != obj.getClass())
          return false;
       AbstractProject other = (AbstractProject) obj;
-      if (getProjectRoot() == null)
+      if (getRootDirectory() == null)
       {
-         if (other.getProjectRoot() != null)
+         if (other.getRootDirectory() != null)
             return false;
       }
-      else if (!getProjectRoot().equals(other.getProjectRoot()))
+      else if (!getRootDirectory().equals(other.getRootDirectory()))
          return false;
       return true;
    }

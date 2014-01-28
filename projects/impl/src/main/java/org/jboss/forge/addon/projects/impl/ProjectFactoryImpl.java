@@ -227,7 +227,7 @@ public class ProjectFactoryImpl implements ProjectFactory
       Project result = projectProvider.createProject(target);
       if (result != null)
       {
-         DirectoryResource parentDir = result.getProjectRoot().getParent().reify(DirectoryResource.class);
+         DirectoryResource parentDir = result.getRootDirectory().getParent().reify(DirectoryResource.class);
          if (parentDir != null)
          {
             Imported<ProjectAssociationProvider> buildSystemInstances = registry
@@ -364,7 +364,7 @@ public class ProjectFactoryImpl implements ProjectFactory
          }
       }
 
-      final ResourceMonitor monitor = project.getProjectRoot().monitor();
+      final ResourceMonitor monitor = project.getRootDirectory().monitor();
       ListenerRegistration<ResourceListener> registration = monitor.addResourceListener(new ResourceListener()
       {
          @Override

@@ -67,7 +67,7 @@ public class CdCommandTest
    public void testCDProject() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      String projectPath = project.getProjectRoot().getFullyQualifiedName();
+      String projectPath = project.getRootDirectory().getFullyQualifiedName();
       shellTest.execute("cd " + projectPath, 5, TimeUnit.SECONDS);
       shellTest.clearScreen();
       shellTest.execute("pwd", 5, TimeUnit.SECONDS);

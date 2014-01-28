@@ -564,7 +564,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       unorderedList.write(writer);
 
       Map<Object, Object> context = CollectionUtils.newHashMap();
-      context.put("appName", StringUtils.uncamelCase(this.origin.getProjectRoot().getName()));
+      context.put("appName", StringUtils.uncamelCase(this.origin.getRootDirectory().getName()));
       context.put("navigation", writer.toString().trim());
       context.put("targetDir", targetDir);
 

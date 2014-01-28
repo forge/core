@@ -73,7 +73,7 @@ public class AddConstraintWizardTest
       projectHelper.installJPA_2_0(project);
       JavaResource jpaEntity = projectHelper.createJPAEntity(project, "Customer");
 
-      WizardCommandController wizard = testHarness.createWizardController(AddConstraintWizard.class, project.getProjectRoot());
+      WizardCommandController wizard = testHarness.createWizardController(AddConstraintWizard.class, project.getRootDirectory());
       wizard.initialize();
       // Page 1
       {

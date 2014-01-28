@@ -58,7 +58,7 @@ public class MavenResourcesFacet extends AbstractFacet<Project> implements Resou
       {
          resFolderName = "src" + File.separator + "main" + File.separator + "resources";
       }
-      DirectoryResource projectRoot = getFaceted().getProjectRoot();
+      DirectoryResource projectRoot = getFaceted().getRootDirectory();
       return projectRoot.getChildDirectory(resFolderName);
    }
 
@@ -77,7 +77,7 @@ public class MavenResourcesFacet extends AbstractFacet<Project> implements Resou
       {
          resFolderName = "src" + File.separator + "test" + File.separator + "resources";
       }
-      DirectoryResource projectRoot = getFaceted().getProjectRoot();
+      DirectoryResource projectRoot = getFaceted().getRootDirectory();
       return projectRoot.getChildDirectory(resFolderName);
    }
 

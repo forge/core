@@ -39,8 +39,8 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
          Model parentPom = parentMavenFacet.getModel();
          parentPom.setPackaging("pom");
 
-         String moduleDir = project.getProjectRoot().getFullyQualifiedName()
-                  .substring(parent.getProjectRoot().getFullyQualifiedName().length());
+         String moduleDir = project.getRootDirectory().getFullyQualifiedName()
+                  .substring(parent.getRootDirectory().getFullyQualifiedName().length());
          if (moduleDir.startsWith(File.separator))
             moduleDir = moduleDir.substring(1);
 
@@ -55,8 +55,8 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
          projectParent.setArtifactId(parentPom.getArtifactId());
          projectParent.setVersion(parentPom.getVersion());
 
-         DirectoryResource root = project.getProjectRoot();
-         DirectoryResource parentRoot = parent.getProjectRoot();
+         DirectoryResource root = project.getRootDirectory();
+         DirectoryResource parentRoot = parent.getRootDirectory();
 
          // Calculate parent relative path
          String delta = root.getFullyQualifiedName().substring(parentRoot.getFullyQualifiedName().length());
@@ -74,6 +74,6 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
    @Override
    public boolean canAssociate(final Project project, final DirectoryResource parent)
    {
-      return parent.getChild("pom.xml").exists() && project.getProjectRoot().getChild("pom.xml").exists();
+      return parent.getChild("pom.xml").exists() && project.getRootDirectory().getChild("pom.xml").exists();
    }
 }

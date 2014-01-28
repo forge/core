@@ -393,7 +393,7 @@ public class NewProjectWizard implements UIWizard
                packagingFacet.setFinalName(finalName.getValue());
             }
 
-            uiContext.setSelection(project.getProjectRoot());
+            uiContext.setSelection(project.getRootDirectory());
             uiContext.getAttributeMap().put(Project.class, project);
          }
          else

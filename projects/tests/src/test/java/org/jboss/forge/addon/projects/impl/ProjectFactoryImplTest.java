@@ -94,8 +94,8 @@ public class ProjectFactoryImplTest
       Project project = projectFactory.createTempProject();
 
       Assert.assertNotNull(project);
-      Assert.assertNotNull(projectFactory.findProject(project.getProjectRoot()));
-      Assert.assertNull(projectFactory.findProject(project.getProjectRoot(), new Predicate<Project>()
+      Assert.assertNotNull(projectFactory.findProject(project.getRootDirectory()));
+      Assert.assertNull(projectFactory.findProject(project.getRootDirectory(), new Predicate<Project>()
       {
          @Override
          public boolean accept(Project type)
@@ -104,9 +104,9 @@ public class ProjectFactoryImplTest
          }
       }));
 
-      Assert.assertNotNull(projectFactory.findProject(project.getProjectRoot().getChildDirectory("src/main/java")));
+      Assert.assertNotNull(projectFactory.findProject(project.getRootDirectory().getChildDirectory("src/main/java")));
 
-      project.getProjectRoot().delete(true);
+      project.getRootDirectory().delete(true);
    }
 
    @Test
@@ -163,7 +163,7 @@ public class ProjectFactoryImplTest
    {
       Project project = projectFactory.createTempProject();
       Assert.assertNotNull(project);
-      DirectoryResource projectRoot = project.getProjectRoot();
+      DirectoryResource projectRoot = project.getRootDirectory();
       Assert.assertTrue(projectFactory.containsProject(projectRoot, projectRoot));
       Assert.assertTrue(projectFactory.containsProject(projectRoot, projectRoot.getChildDirectory("src")));
 
@@ -180,7 +180,7 @@ public class ProjectFactoryImplTest
       {
          Project project = projectFactory.createTempProject(buildSystem);
          Assert.assertNotNull(project);
-         DirectoryResource projectRoot = project.getProjectRoot();
+         DirectoryResource projectRoot = project.getRootDirectory();
          Assert.assertTrue(projectFactory.containsProject(projectRoot, projectRoot, buildSystem));
          Assert.assertTrue(projectFactory.containsProject(projectRoot, projectRoot.getChildDirectory("src"),
                   buildSystem));

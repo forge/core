@@ -94,7 +94,7 @@ public class FacesOperationsTest
       Assert.assertTrue(converter.exists());
 
       Assert.assertEquals("SampleConverter.java", converter.getName());
-      Resource<?> child = project.getProjectRoot().getChild("src/main/java/org/example/SampleConverter.java");
+      Resource<?> child = project.getRootDirectory().getChild("src/main/java/org/example/SampleConverter.java");
       Assert.assertTrue(child.exists());
       Assert.assertTrue(child instanceof JavaResource);
       Assert.assertEquals("SampleConverter", ((JavaResource) child).getJavaSource().getName());
@@ -124,7 +124,7 @@ public class FacesOperationsTest
       Assert.assertTrue(validator.exists());
 
       Assert.assertEquals("SampleValidator.java", validator.getName());
-      Resource<?> child = project.getProjectRoot().getChild("src/main/java/org/example/SampleValidator.java");
+      Resource<?> child = project.getRootDirectory().getChild("src/main/java/org/example/SampleValidator.java");
       Assert.assertTrue(child.exists());
       Assert.assertTrue(child instanceof JavaResource);
       Assert.assertEquals("SampleValidator", ((JavaResource) child).getJavaSource().getName());

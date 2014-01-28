@@ -71,7 +71,7 @@ public class FacesSetupWizardTest
       final Project project = projectFactory.createTempProject();
       facetFactory.install(project, ServletFacet_3_1.class);
       try (CommandController tester = testHarness.createCommandController(FacesSetupWizard.class,
-               project.getProjectRoot()))
+               project.getRootDirectory()))
       {
          tester.initialize();
          Assert.assertTrue(tester.isValid());

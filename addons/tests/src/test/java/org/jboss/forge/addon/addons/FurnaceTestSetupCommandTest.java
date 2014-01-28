@@ -72,7 +72,7 @@ public class FurnaceTestSetupCommandTest
       Project project = projectFactory.createTempProject();
 
       CommandController controller = testHarness.createCommandController(NewFurnaceTestSetupCommand.class,
-               project.getProjectRoot());
+               project.getRootDirectory());
       controller.initialize();
       UISelectMany<AddonId> component = (UISelectMany<AddonId>) controller.getInputs().get("addonDependencies");
       controller.setValueFor("addonDependencies", component.getValueChoices());
