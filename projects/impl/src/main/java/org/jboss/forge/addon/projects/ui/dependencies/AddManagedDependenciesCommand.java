@@ -28,8 +28,8 @@ public class AddManagedDependenciesCommand extends AbstractProjectCommand
    public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(AddManagedDependenciesCommand.class)
-               .description("Add a managed dependency to the current project.")
-               .name("Project: Add Managed Dependency")
+               .description("Add one or more managed dependencies to the current project.")
+               .name("Project: Add Managed Dependencies")
                .category(Categories.create("Project", "Manage"));
    }
 
