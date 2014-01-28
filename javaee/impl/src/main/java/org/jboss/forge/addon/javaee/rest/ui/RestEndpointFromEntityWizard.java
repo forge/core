@@ -89,7 +89,7 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("REST: Generate Endpoint From Entity")
+      return Metadata.from(super.getMetadata(context), getClass()).name("REST: Generate Endpoints From Entities")
                .description("Generate REST endpoints from JPA entities")
                .category(Categories.create(super.getMetadata(context).getCategory(), "JAX-RS"));
    }
