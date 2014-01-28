@@ -365,6 +365,12 @@
             <artifactId>shell</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
+         </dependency>         
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>shell-spi</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>

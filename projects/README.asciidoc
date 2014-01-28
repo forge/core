@@ -37,6 +37,10 @@ The projects addon also supplies several commands in the `Project:*` category, s
 |no
 |yes
 
+|shell-spi
+|no
+|yes
+
 |org.jboss.forge.furnace.container:cdi
 |no
 |no

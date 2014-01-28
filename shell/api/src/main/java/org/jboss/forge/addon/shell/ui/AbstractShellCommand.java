@@ -7,10 +7,7 @@
 
 package org.jboss.forge.addon.shell.ui;
 
-import javax.inject.Inject;
-
-import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
+import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.util.Categories;
@@ -21,11 +18,8 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public abstract class AbstractShellCommand extends AbstractProjectCommand
+public abstract class AbstractShellCommand extends AbstractUICommand
 {
-   @Inject
-   private ProjectFactory projectFactory;
-
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
@@ -43,17 +37,4 @@ public abstract class AbstractShellCommand extends AbstractProjectCommand
    {
       return true;
    }
-
-   @Override
-   protected ProjectFactory getProjectFactory()
-   {
-      return projectFactory;
-   }
-
-   @Override
-   protected boolean isProjectRequired()
-   {
-      return false;
-   }
-
 }
