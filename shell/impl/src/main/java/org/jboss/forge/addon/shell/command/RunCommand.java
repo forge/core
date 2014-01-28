@@ -10,7 +10,6 @@ package org.jboss.forge.addon.shell.command;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -26,6 +25,7 @@ import javax.inject.Inject;
 
 import org.jboss.aesh.console.settings.SettingsBuilder;
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.shell.Shell;
@@ -107,7 +107,8 @@ public class RunCommand extends AbstractShellCommand
                final ByteArrayOutputStream stderr = new ByteArrayOutputStream();
                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
 
-               Shell scriptShell = shellFactory.createShell((File) resource.getParent().getUnderlyingResourceObject(),
+               Shell scriptShell = shellFactory.createShell(((FileResource<?>) context.getUIContext()
+                        .getInitialSelection().get()).getUnderlyingResourceObject(),
                         new SettingsBuilder().inputStream(new PipedInputStream(stdin))
                                  .outputStream(new PrintStream(stdout))
                                  .outputStreamError(new PrintStream(stderr)).create());
@@ -134,7 +135,7 @@ public class RunCommand extends AbstractShellCommand
                      }
                      catch (TimeoutException e)
                      {
-                        results.add(Results.fail(path + ": timed out."));
+                        results.add(Results.fail(path + ": timed out.", e));
                         break ALL;
                      }
                   }
