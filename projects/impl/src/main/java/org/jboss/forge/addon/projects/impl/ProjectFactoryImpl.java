@@ -78,7 +78,7 @@ public class ProjectFactoryImpl implements ProjectFactory
       }
    }
 
-   private final Predicate<ProjectFacet> notBuildSystemFilter = new Predicate<ProjectFacet>()
+   private final Predicate<ProjectFacet> notProvidedProjectFacetFilter = new Predicate<ProjectFacet>()
    {
       @Override
       public boolean accept(ProjectFacet type)
@@ -103,15 +103,15 @@ public class ProjectFactoryImpl implements ProjectFactory
    {
       Project result = null;
       Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
-      for (ProjectProvider buildSystem : instances)
+      for (ProjectProvider projectProvider : instances)
       {
          try
          {
-            result = findProject(target, buildSystem);
+            result = findProject(target, projectProvider);
          }
          finally
          {
-            instances.release(buildSystem);
+            instances.release(projectProvider);
          }
 
          if (result != null)
@@ -121,9 +121,9 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public Project findProject(FileResource<?> target, ProjectProvider buildSystem)
+   public Project findProject(FileResource<?> target, ProjectProvider projectProvider)
    {
-      return findProject(target, buildSystem, acceptsAllProjects);
+      return findProject(target, projectProvider, acceptsAllProjects);
    }
 
    @Override
@@ -136,15 +136,15 @@ public class ProjectFactoryImpl implements ProjectFactory
 
       Project result = null;
       Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
-      for (ProjectProvider buildSystem : instances)
+      for (ProjectProvider projectProvider : instances)
       {
          try
          {
-            result = findProject(target, buildSystem, filter);
+            result = findProject(target, projectProvider, filter);
          }
          finally
          {
-            instances.release(buildSystem);
+            instances.release(projectProvider);
          }
 
          if (result != null)
@@ -155,7 +155,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public Project findProject(FileResource<?> target, ProjectProvider buildSystem, Predicate<Project> filter)
+   public Project findProject(FileResource<?> target, ProjectProvider projectProvider, Predicate<Project> filter)
    {
       Assert.notNull(target, "Target cannot be null");
       if (filter == null)
@@ -186,9 +186,9 @@ public class ProjectFactoryImpl implements ProjectFactory
             }
          }
 
-         if (result == null && buildSystem.containsProject(r))
+         if (result == null && projectProvider.containsProject(r))
          {
-            result = buildSystem.createProject(r);
+            result = projectProvider.createProject(r);
             if (result != null && !filter.accept(result))
                result = null;
 
@@ -206,25 +206,25 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public Project createProject(DirectoryResource projectDir, ProjectProvider buildSystem)
+   public Project createProject(DirectoryResource projectDir, ProjectProvider projectProvider)
    {
-      return createProject(projectDir, buildSystem, null);
+      return createProject(projectDir, projectProvider, null);
    }
 
    @Override
-   public Project createProject(DirectoryResource target, ProjectProvider buildSystem,
+   public Project createProject(DirectoryResource target, ProjectProvider projectProvider,
             Iterable<Class<? extends ProjectFacet>> facetTypes)
    {
       Assert.notNull(target, "Target project directory must not be null.");
-      Assert.notNull(buildSystem, "Build system type must not be null.");
+      Assert.notNull(projectProvider, "Build system type must not be null.");
 
       if (facetTypes != null)
-         Assert.isTrue(isBuildable(buildSystem, facetTypes),
-                  "The provided build system [" + buildSystem.getType()
+         Assert.isTrue(isBuildable(projectProvider, facetTypes),
+                  "The provided build system [" + projectProvider.getType()
                            + "] cannot create a project that requires facets of the following types: "
-                           + getMissingBuildSystemFacets(buildSystem, getRequiredBuildSystemFacets(facetTypes)));
+                           + getMissingProvidedProjectFacets(projectProvider, getRequiredProvidedProjectFacets(facetTypes)));
 
-      Project result = buildSystem.createProject(target);
+      Project result = projectProvider.createProject(target);
       if (result != null)
       {
          DirectoryResource parentDir = result.getProjectRoot().getParent().reify(DirectoryResource.class);
@@ -254,7 +254,7 @@ public class ProjectFactoryImpl implements ProjectFactory
                   Iterable<? extends ProjectFacet> facets = factory.createFacets(result, facetType);
                   for (ProjectFacet projectFacet : facets)
                   {
-                     if (factory.install(result, projectFacet, notBuildSystemFilter))
+                     if (factory.install(result, projectFacet, notProvidedProjectFacetFilter))
                      {
                         break;
                      }
@@ -283,7 +283,7 @@ public class ProjectFactoryImpl implements ProjectFactory
       return result;
    }
 
-   private Iterable<Class<? extends ProvidedProjectFacet>> getMissingBuildSystemFacets(ProjectProvider buildSystem,
+   private Iterable<Class<? extends ProvidedProjectFacet>> getMissingProvidedProjectFacets(ProjectProvider buildSystem,
             Iterable<Class<? extends ProvidedProjectFacet>> requiredFacets)
    {
       Set<Class<? extends ProvidedProjectFacet>> result = new HashSet<Class<? extends ProvidedProjectFacet>>();
@@ -308,20 +308,20 @@ public class ProjectFactoryImpl implements ProjectFactory
    private boolean isBuildable(ProjectProvider buildSystem, Iterable<Class<? extends ProjectFacet>> facets)
    {
       boolean result = false;
-      Iterable<Class<? extends ProvidedProjectFacet>> requiredFacets = getRequiredBuildSystemFacets(facets);
+      Iterable<Class<? extends ProvidedProjectFacet>> requiredFacets = getRequiredProvidedProjectFacets(facets);
       if (requiredFacets == null)
       {
          result = true;
       }
       else
       {
-         result = !getMissingBuildSystemFacets(buildSystem, requiredFacets).iterator().hasNext();
+         result = !getMissingProvidedProjectFacets(buildSystem, requiredFacets).iterator().hasNext();
       }
       return result;
    }
 
    @SuppressWarnings("unchecked")
-   private Iterable<Class<? extends ProvidedProjectFacet>> getRequiredBuildSystemFacets(
+   private Iterable<Class<? extends ProvidedProjectFacet>> getRequiredProvidedProjectFacets(
             Iterable<Class<? extends ProjectFacet>> facets)
    {
       Set<Class<? extends ProvidedProjectFacet>> result = new HashSet<Class<? extends ProvidedProjectFacet>>();
