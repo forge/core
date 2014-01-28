@@ -28,8 +28,8 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
 public class GenerateEntitiesCommand extends AbstractProjectCommand implements
 		UIWizard {
 
-	private static String[] COMMAND_CATEGORY = { "Java EE", "Generate" };
-	private static String COMMAND_NAME = "Entities from Tables";
+	private static String[] COMMAND_CATEGORY = { "Java EE", "JPA" };
+	private static String COMMAND_NAME = "JPA: Generate Entities from Tables";
 	private static String COMMAND_DESCRIPTION = "Command to generate Java EE entities from database tables.";
 
 	@Inject
