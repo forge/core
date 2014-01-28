@@ -37,7 +37,7 @@ public class FacesNewValidatorMethodCommand extends AbstractJavaEECommand
 
    @Inject
    @WithAttributes(label = "Target Java class", description = "The Java class in which the method will be created", required = true, type = InputType.JAVA_CLASS_PICKER)
-   private UIInput<JavaResource> target;
+   private UIInput<JavaResource> targetClass;
 
    @Inject
    @WithAttributes(label = "Validator method name", required = true)
@@ -60,9 +60,9 @@ public class FacesNewValidatorMethodCommand extends AbstractJavaEECommand
       Object selection = builder.getUIContext().getInitialSelection().get();
       if (selection instanceof JavaResource)
       {
-         target.setDefaultValue((JavaResource) selection);
+         targetClass.setDefaultValue((JavaResource) selection);
       }
-      builder.add(target).add(named);
+      builder.add(targetClass).add(named);
    }
 
    @Override
@@ -70,26 +70,26 @@ public class FacesNewValidatorMethodCommand extends AbstractJavaEECommand
    {
       try
       {
-         JavaClass source = (JavaClass) target.getValue().reify(JavaResource.class).getJavaSource();
+         JavaClass source = (JavaClass) targetClass.getValue().reify(JavaResource.class).getJavaSource();
          Method<JavaClass> method = source.getMethod(named.getValue(), FacesContext.class, UIComponent.class,
                   Object.class);
 
          if (method != null)
             validator.addValidationError(named, "A validator with that name already exists in '"
-                     + target.getValue().getJavaSource().getQualifiedName() + "'");
+                     + targetClass.getValue().getJavaSource().getQualifiedName() + "'");
 
          super.validate(validator);
       }
       catch (FileNotFoundException e)
       {
-         validator.addValidationError(target, "Target Java class not found.");
+         validator.addValidationError(targetClass, "Target Java class not found.");
       }
    }
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      Method<JavaClass> method = operations.addValidatorMethod(target.getValue().reify(JavaResource.class),
+      Method<JavaClass> method = operations.addValidatorMethod(targetClass.getValue().reify(JavaResource.class),
                named.getValue());
       return Results.success("Validator method '" + method.toSignature() + "' created");
    }
