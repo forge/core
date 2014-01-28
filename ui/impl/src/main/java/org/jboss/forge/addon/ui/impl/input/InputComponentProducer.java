@@ -45,6 +45,7 @@ public class InputComponentProducer implements InputComponentFactory
 {
    private final AddonRegistry addonRegistry;
    private final Environment environment;
+   private final ConverterFactory converterFactory;
    private final Imported<InputComponentInjectionEnricher> enrichers;
 
    @Inject
@@ -52,6 +53,7 @@ public class InputComponentProducer implements InputComponentFactory
    {
       this.addonRegistry = addonRegistry;
       this.environment = addonRegistry.getServices(Environment.class).get();
+      this.converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
       this.enrichers = addonRegistry.getServices(InputComponentInjectionEnricher.class);
    }
 
@@ -236,26 +238,16 @@ public class InputComponentProducer implements InputComponentFactory
          input.setDescription(atts.description());
 
          // Set input type
-         if (atts.type() != InputType.DEFAULT)
+         if (!InputType.DEFAULT.equals(atts.type()))
          {
             input.getFacet(HintsFacet.class).setInputType(atts.type());
          }
 
          // Set Default Value
-         if (!"".equals(atts.defaultValue()))
+         if (!atts.defaultValue().isEmpty())
          {
-            Imported<ConverterFactory> instance = addonRegistry.getServices(ConverterFactory.class);
-            ConverterFactory converterFactory = instance.get();
-            try
-            {
-               InputComponents.setDefaultValueFor(converterFactory, (InputComponent<?, Object>) input,
-                        atts.defaultValue());
-            }
-            finally
-            {
-               instance.release(converterFactory);
-            }
-
+            InputComponents.setDefaultValueFor(converterFactory, (InputComponent<?, Object>) input,
+                     atts.defaultValue());
          }
       }
    }
@@ -279,26 +271,16 @@ public class InputComponentProducer implements InputComponentFactory
          input.setDescription(option.description());
 
          // Set input type
-         if (option.type() != InputType.DEFAULT)
+         if (!InputType.DEFAULT.equals(option.type()))
          {
             input.getFacet(HintsFacet.class).setInputType(option.type());
          }
 
          // Set Default Value
-         if (!"".equals(option.defaultValue()))
+         if (!option.defaultValue().isEmpty())
          {
-            Imported<ConverterFactory> instance = addonRegistry.getServices(ConverterFactory.class);
-            ConverterFactory converterFactory = instance.get();
-            try
-            {
-               InputComponents.setDefaultValueFor(converterFactory, (InputComponent<?, Object>) input,
-                        option.defaultValue());
-            }
-            finally
-            {
-               instance.release(converterFactory);
-            }
-
+            InputComponents.setDefaultValueFor(converterFactory, (InputComponent<?, Object>) input,
+                     option.defaultValue());
          }
       }
    }
