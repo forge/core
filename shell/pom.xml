@@ -23,8 +23,8 @@
    </modules>
 
    <properties>
-      <version.aesh>0.47-SNAPSHOT</version.aesh>
-      <version.aesh.extensions>0.47-SNAPSHOT</version.aesh.extensions>
+      <version.aesh>0.48-SNAPSHOT</version.aesh>
+      <version.aesh.extensions>0.48-SNAPSHOT</version.aesh.extensions>
    </properties>
 
    <dependencyManagement>
@@ -32,12 +32,12 @@
          <dependency>
             <groupId>org.jboss.aesh</groupId>
             <artifactId>aesh</artifactId>
-            <version>0.48-SNAPSHOT</version>
+            <version>${version.aesh}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.aesh</groupId>
             <artifactId>aesh-extensions</artifactId>
-            <version>0.48-SNAPSHOT</version>
+            <version>${version.aesh.extensions}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
