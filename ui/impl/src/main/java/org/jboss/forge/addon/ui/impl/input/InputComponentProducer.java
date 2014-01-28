@@ -266,7 +266,14 @@ public class InputComponentProducer implements InputComponentFactory
       if (option != null)
       {
          input.setEnabled(option.enabled());
-         input.setLabel(option.label());
+         if (option.label().isEmpty())
+         {
+            input.setLabel(option.value());
+         }
+         else
+         {
+            input.setLabel(option.label());
+         }
          input.setRequired(option.required());
          input.setRequiredMessage(option.requiredMessage());
          input.setDescription(option.description());
