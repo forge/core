@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.ui.command;
 
+import java.util.Arrays;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -14,6 +16,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.mock.ExampleCommand;
 import org.jboss.forge.addon.ui.controller.mock.ExampleNoUICommand;
+import org.jboss.forge.addon.ui.controller.mock.FlowExampleStep;
 import org.jboss.forge.addon.ui.example.commands.ExampleAnnotatedCommand;
 import org.jboss.forge.addon.ui.impl.mock.MockUIContext;
 import org.jboss.forge.addon.ui.impl.mock.MockUIRuntime;
@@ -42,7 +45,7 @@ public class CommandFactoryTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addClasses(ExampleCommand.class, ExampleNoUICommand.class, ExampleAnnotatedCommand.class)
+               .addClasses(ExampleCommand.class, ExampleNoUICommand.class, ExampleAnnotatedCommand.class, FlowExampleStep.class)
                .addPackage(MockUIRuntime.class.getPackage())
                .addBeansXML()
                .addAsAddonDependencies(

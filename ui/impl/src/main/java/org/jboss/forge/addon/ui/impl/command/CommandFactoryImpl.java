@@ -14,6 +14,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.ui.command.CommandFactory;
 import org.jboss.forge.addon.ui.command.CommandProvider;
 import org.jboss.forge.addon.ui.command.UICommand;
+import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 
@@ -36,7 +37,10 @@ public class CommandFactoryImpl implements CommandFactory
          {
             for (UICommand command : provider.getCommands())
             {
-               result.add(command);
+               if (!(command instanceof UIWizardStep))
+               {
+                  result.add(command);
+               }
             }
             instances.release(provider);
          }
