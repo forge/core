@@ -58,16 +58,16 @@ import org.jboss.forge.parser.java.JavaSource;
 public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
 {
    @Inject
-   @WithAttributes(label = "Entity", description = "The entity which the field will be created", required = true, type = InputType.DROPDOWN)
-   private UISelectOne<JavaResource> entity;
+   @WithAttributes(label = "Target Entity", description = "The targetEntity which the field will be created", required = true, type = InputType.DROPDOWN)
+   private UISelectOne<JavaResource> targetEntity;
 
    @Inject
-   @WithAttributes(label = "Field Name", description = "The field name to be created in the target entity", required = true)
+   @WithAttributes(label = "Field Name", description = "The field name to be created in the target targetEntity", required = true)
    private UIInput<String> named;
 
    @Inject
-   @WithAttributes(label = "Type", description = "The type intended to be used for this field", type = InputType.JAVA_CLASS_PICKER, required = true, defaultValue = "String")
-   private UIInput<String> typeName;
+   @WithAttributes(label = "Target Field Type", description = "The type intended to be used for this field", type = InputType.JAVA_CLASS_PICKER, required = true, defaultValue = "String")
+   private UIInput<String> targetFieldType;
 
    @Inject
    @WithAttributes(label = "Relationship", description = "The type of the relationship", type = InputType.RADIO)
@@ -101,18 +101,38 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    {
       setupEntities(builder.getUIContext());
       setupRelationshipType();
-      typeName.setCompleter(new UICompleter<String>()
+      final Project project = getSelectedProject(builder);
+      targetFieldType.setCompleter(new UICompleter<String>()
       {
          @Override
-         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
+         public Iterable<String> getCompletionProposals(final UIContext context, final InputComponent<?, String> input,
+                  final String value)
          {
             String[] types = { "byte", "float", "char", "double", "int", "long", "short", "boolean", "String" };
-            List<String> options = new ArrayList<String>();
+            final List<String> options = new ArrayList<String>();
             for (String type : types)
             {
                if (Strings.isNullOrEmpty(value) || type.startsWith(value))
                {
                   options.add(type);
+               }
+            }
+            if (project != null)
+            {
+               for (JavaResource resource : getProjectEntities(project))
+               {
+                  try
+                  {
+                     JavaSource<?> javaSource = resource.getJavaSource();
+                     String qualifiedName = javaSource.getQualifiedName();
+                     if (Strings.isNullOrEmpty(value) || qualifiedName.startsWith(value))
+                     {
+                        options.add(qualifiedName);
+                     }
+                  }
+                  catch (FileNotFoundException ignored)
+                  {
+                  }
                }
             }
             return options;
@@ -126,7 +146,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             return relationshipType.getValue() == RelationshipType.BASIC;
          }
       });
-      typeName.setEnabled(new Callable<Boolean>()
+      targetFieldType.setEnabled(new Callable<Boolean>()
       {
          @Override
          public Boolean call() throws Exception
@@ -147,18 +167,41 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          @Override
          public Boolean call() throws Exception
          {
-            String typeValue = typeName.getValue();
+            String typeValue = targetFieldType.getValue();
             return Date.class.getName().equals(typeValue) || Calendar.class.getName().equals(typeValue);
          }
       });
-      builder.add(entity).add(named).add(typeName).add(temporalType).add(length).add(relationshipType).add(lob);
+      builder.add(targetEntity).add(named).add(targetFieldType).add(temporalType).add(length).add(relationshipType).add(lob);
    }
 
    private void setupEntities(UIContext context)
    {
       UISelection<FileResource<?>> selection = context.getInitialSelection();
       Project project = getSelectedProject(context);
-      final List<JavaResource> entities = new ArrayList<JavaResource>();
+      final List<JavaResource> entities = getProjectEntities(project);
+      targetEntity.setValueChoices(entities);
+      int idx = -1;
+      if (!selection.isEmpty())
+      {
+         idx = entities.indexOf(selection.get());
+      }
+      if (idx == -1)
+      {
+         idx = entities.size() - 1;
+      }
+      if (idx != -1)
+      {
+         targetEntity.setDefaultValue(entities.get(idx));
+      }
+   }
+
+   /**
+    * @param project
+    * @param entities
+    */
+   private List<JavaResource> getProjectEntities(Project project)
+   {
+      final List<JavaResource> entities = new ArrayList<>();
       if (project != null)
       {
          project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
@@ -182,20 +225,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             }
          });
       }
-      entity.setValueChoices(entities);
-      int idx = -1;
-      if (!selection.isEmpty())
-      {
-         idx = entities.indexOf(selection.get());
-      }
-      if (idx == -1)
-      {
-         idx = entities.size() - 1;
-      }
-      if (idx != -1)
-      {
-         entity.setDefaultValue(entities.get(idx));
-      }
+      return entities;
    }
 
    private void setupRelationshipType()
@@ -214,7 +244,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      JavaResource javaResource = entity.getValue();
+      JavaResource javaResource = targetEntity.getValue();
       String fieldNameStr = named.getValue();
       Field<JavaClass> field;
       JavaClass targetEntity = (JavaClass) javaResource.getJavaSource();
@@ -229,7 +259,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          }
          else
          {
-            String fieldType = typeName.getValue();
+            String fieldType = targetFieldType.getValue();
             field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
                      Column.class.getCanonicalName());
          }
@@ -263,19 +293,19 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
       super.validate(validator);
       try
       {
-         JavaResource javaResource = entity.getValue();
+         JavaResource javaResource = targetEntity.getValue();
          if (javaResource != null)
          {
             JavaClass javaClass = (JavaClass) javaResource.getJavaSource();
             if (javaClass.hasField(named.getValue()))
             {
-               validator.addValidationError(entity, "Field '" + named.getValue() + "' already exists");
+               validator.addValidationError(targetEntity, "Field '" + named.getValue() + "' already exists");
             }
          }
       }
       catch (FileNotFoundException ffe)
       {
-         validator.addValidationError(entity, "Entity could not be found");
+         validator.addValidationError(targetEntity, "Entity could not be found");
       }
 
       if (length.isEnabled())
@@ -291,9 +321,9 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    public NavigationResult next(UINavigationContext context) throws Exception
    {
       Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
-      attributeMap.put(JavaResource.class, entity.getValue());
+      attributeMap.put(JavaResource.class, targetEntity.getValue());
       attributeMap.put("fieldName", named.getValue());
-      attributeMap.put("fieldType", typeName.getValue());
+      attributeMap.put("fieldType", targetFieldType.getValue());
       attributeMap.put(RelationshipType.class, relationshipType.getValue());
       if (relationshipType.getValue() == RelationshipType.BASIC)
       {
