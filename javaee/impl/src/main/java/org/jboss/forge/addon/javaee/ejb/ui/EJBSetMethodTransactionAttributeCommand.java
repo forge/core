@@ -50,15 +50,15 @@ import org.jboss.forge.parser.java.Method;
 public class EJBSetMethodTransactionAttributeCommand extends AbstractJavaEECommand
 {
    @Inject
-   @WithAttributes(label = "EJB", description = "The EJB containing methods to be modified.", required = true, type = InputType.DROPDOWN)
-   private UISelectOne<JavaResource> ejb;
+   @WithAttributes(label = "Target EJB", description = "The EJB containing methods to be modified.", required = true, type = InputType.DROPDOWN)
+   private UISelectOne<JavaResource> targetEjb;
 
    @Inject
    @WithAttributes(label = "Method", description = "The method on which the transaction type will be set.", required = true, type = InputType.DROPDOWN)
    private UISelectOne<JavaMethodResource> method;
 
    @Inject
-   @WithAttributes(label = "Transaction Type", description = "The type of the transacation", required = true)
+   @WithAttributes(label = "Transaction Type", description = "The type of the transaction", required = true)
    private UISelectOne<TransactionAttributeType> type;
 
    @Override
@@ -74,7 +74,7 @@ public class EJBSetMethodTransactionAttributeCommand extends AbstractJavaEEComma
    {
       setupEJBs(builder.getUIContext());
       setupMethods(builder.getUIContext());
-      builder.add(ejb).add(method).add(type);
+      builder.add(targetEjb).add(method).add(type);
    }
 
    private void setupMethods(UIContext uiContext)
@@ -84,7 +84,7 @@ public class EJBSetMethodTransactionAttributeCommand extends AbstractJavaEEComma
          @Override
          public Boolean call() throws Exception
          {
-            return ejb.hasValue();
+            return targetEjb.hasValue();
          }
       });
       method.setValueChoices(new Callable<Iterable<JavaMethodResource>>()
@@ -94,9 +94,9 @@ public class EJBSetMethodTransactionAttributeCommand extends AbstractJavaEEComma
          {
             List<JavaMethodResource> result = new ArrayList<>();
 
-            if (ejb.hasValue())
+            if (targetEjb.hasValue())
             {
-               JavaResource source = ejb.getValue();
+               JavaResource source = targetEjb.getValue();
                for (Resource<?> resource : source.listResources())
                {
                   if (resource instanceof JavaMethodResource)
@@ -151,7 +151,7 @@ public class EJBSetMethodTransactionAttributeCommand extends AbstractJavaEEComma
             }
          });
       }
-      ejb.setValueChoices(entities);
+      targetEjb.setValueChoices(entities);
       int idx = -1;
       if (!selection.isEmpty())
       {
@@ -163,7 +163,7 @@ public class EJBSetMethodTransactionAttributeCommand extends AbstractJavaEEComma
       }
       if (idx != -1)
       {
-         ejb.setDefaultValue(entities.get(idx));
+         targetEjb.setDefaultValue(entities.get(idx));
       }
    }
 
@@ -201,11 +201,11 @@ public class EJBSetMethodTransactionAttributeCommand extends AbstractJavaEEComma
       super.validate(validator);
       try
       {
-         ejb.getValue().getJavaSource();
+         targetEjb.getValue().getJavaSource();
       }
-      catch (FileNotFoundException e)
+      catch (FileNotFoundException | NullPointerException e)
       {
-         validator.addValidationError(ejb, "Type [" + ejb.getValue() + "] could not be found");
+         validator.addValidationError(targetEjb, "Type [" + targetEjb.getValue() + "] could not be found");
       }
    }
 

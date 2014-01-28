@@ -44,11 +44,11 @@ import org.jboss.forge.parser.java.JavaClass;
 public class EJBSetClassTransactionAttributeCommand extends AbstractJavaEECommand
 {
    @Inject
-   @WithAttributes(label = "EJB", description = "The EJB on which the transaction type will be set", required = true, type = InputType.DROPDOWN)
-   private UISelectOne<JavaResource> ejb;
+   @WithAttributes(label = "Target EJB", description = "The EJB on which the transaction type will be set", required = true, type = InputType.DROPDOWN)
+   private UISelectOne<JavaResource> targetEjb;
 
    @Inject
-   @WithAttributes(label = "Transaction Type", description = "The type of the transacation", required = true)
+   @WithAttributes(label = "Transaction Type", description = "The type of the transaction", required = true)
    private UISelectOne<TransactionAttributeType> type;
 
    @Override
@@ -63,7 +63,7 @@ public class EJBSetClassTransactionAttributeCommand extends AbstractJavaEEComman
    public void initializeUI(UIBuilder builder) throws Exception
    {
       setupEntities(builder.getUIContext());
-      builder.add(ejb).add(type);
+      builder.add(targetEjb).add(type);
    }
 
    private void setupEntities(UIContext context)
@@ -97,7 +97,7 @@ public class EJBSetClassTransactionAttributeCommand extends AbstractJavaEEComman
             }
          });
       }
-      ejb.setValueChoices(entities);
+      targetEjb.setValueChoices(entities);
       int idx = -1;
       if (!selection.isEmpty())
       {
@@ -109,14 +109,14 @@ public class EJBSetClassTransactionAttributeCommand extends AbstractJavaEEComman
       }
       if (idx != -1)
       {
-         ejb.setDefaultValue(entities.get(idx));
+         targetEjb.setDefaultValue(entities.get(idx));
       }
    }
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      JavaResource resource = ejb.getValue();
+      JavaResource resource = targetEjb.getValue();
 
       Annotation<JavaClass> annotation;
       JavaClass ejb = (JavaClass) resource.getJavaSource();
@@ -142,11 +142,11 @@ public class EJBSetClassTransactionAttributeCommand extends AbstractJavaEEComman
       super.validate(validator);
       try
       {
-         ejb.getValue().getJavaSource();
+         targetEjb.getValue().getJavaSource();
       }
-      catch (FileNotFoundException e)
+      catch (FileNotFoundException | NullPointerException e)
       {
-         validator.addValidationError(ejb, "Type [" + ejb.getValue() + "] could not be found");
+         validator.addValidationError(targetEjb, "Type [" + targetEjb.getValue() + "] could not be found");
       }
    }
 

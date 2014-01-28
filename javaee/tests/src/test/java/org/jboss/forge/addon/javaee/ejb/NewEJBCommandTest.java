@@ -182,7 +182,7 @@ public class NewEJBCommandTest
 
       controller2.initialize();
       Assert.assertFalse(controller2.canExecute());
-      controller2.setValueFor("ejb", "org.jboss.forge.test.TestEJB");
+      controller2.setValueFor("targetEjb", "org.jboss.forge.test.TestEJB");
       controller2.setValueFor("type", TransactionAttributeType.NOT_SUPPORTED);
       Assert.assertTrue(controller2.canExecute());
 
@@ -199,7 +199,7 @@ public class NewEJBCommandTest
 
       controller3.initialize();
       Assert.assertFalse(controller3.canExecute());
-      controller3.setValueFor("ejb", "org.jboss.forge.test.TestEJB");
+      controller3.setValueFor("targetEjb", "org.jboss.forge.test.TestEJB");
       controller3.setValueFor("method", "onMessage(Message)::void");
       controller3.setValueFor("type", TransactionAttributeType.NEVER);
       Assert.assertTrue(controller3.canExecute());
