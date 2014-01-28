@@ -87,7 +87,7 @@ public class ProjectRepositoryCommandTest
    public void testAddRepository() throws Exception
    {
       try (CommandController c = testHarness
-               .createCommandController(AddRepositoryCommand.class, project.getProjectRoot()))
+               .createCommandController(AddRepositoryCommand.class, project.getRootDirectory()))
       {
          c.initialize();
          Assert.assertFalse(c.isValid());
@@ -108,7 +108,7 @@ public class ProjectRepositoryCommandTest
    {
       project.getFacet(DependencyFacet.class).addRepository("repo", "http://my-repo.com");
       try (CommandController c = testHarness
-               .createCommandController(RemoveRepositoryCommand.class, project.getProjectRoot()))
+               .createCommandController(RemoveRepositoryCommand.class, project.getRootDirectory()))
       {
          c.initialize();
          Assert.assertFalse(c.isValid());
