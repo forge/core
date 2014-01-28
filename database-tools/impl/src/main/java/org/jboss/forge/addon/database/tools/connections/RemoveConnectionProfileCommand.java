@@ -21,7 +21,7 @@ public class RemoveConnectionProfileCommand extends AbstractUICommand
 {
 
    private static final String[] COMMAND_CATEGORY = { "Database", "Connections" };
-   private static final String COMMAND_NAME = "Connection Profile: Remove";
+   private static final String COMMAND_NAME = "Connection: Remove Profile";
    private static final String COMMAND_DESCRIPTION = "Command to remove a database connection profile.";
 
    @Inject
