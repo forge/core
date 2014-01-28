@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -52,6 +53,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.JavaSource;
 
 public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
 {
@@ -167,7 +169,8 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             {
                try
                {
-                  if (resource.getJavaSource().hasAnnotation(Entity.class))
+                  JavaSource<?> javaSource = resource.getJavaSource();
+                  if (javaSource.hasAnnotation(Entity.class) || javaSource.hasAnnotation(MappedSuperclass.class))
                   {
                      entities.add(resource);
                   }
