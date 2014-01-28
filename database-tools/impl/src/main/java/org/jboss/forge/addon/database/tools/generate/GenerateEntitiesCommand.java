@@ -29,7 +29,7 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
 		UIWizard {
 
 	private static String[] COMMAND_CATEGORY = { "Java EE", "JPA" };
-	private static String COMMAND_NAME = "JPA: Generate Entities from Tables";
+	private static String COMMAND_NAME = "JPA: Generate Entities From Tables";
 	private static String COMMAND_DESCRIPTION = "Command to generate Java EE entities from database tables.";
 
 	@Inject
