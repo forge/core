@@ -39,7 +39,7 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
  */
 public class PersistenceOperations
 {
-   public static final String DEFAULT_UNIT_NAME = "forge-default";
+   public static final String DEFAULT_UNIT_SUFFIX = "-persistence-unit";
    public static final String DEFAULT_UNIT_DESC = "Forge Persistence Unit";
 
    @Inject

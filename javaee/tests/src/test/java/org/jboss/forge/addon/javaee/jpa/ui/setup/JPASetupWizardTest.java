@@ -152,7 +152,7 @@ public class JPASetupWizardTest
       // Check SUT values
       PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
       List<PersistenceUnitCommon> allUnits = config.getAllPersistenceUnit();
-      Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME, allUnits.get(0).getName());
+      Assert.assertEquals(project.getFacet(MetadataFacet.class).getProjectName() + PersistenceOperations.DEFAULT_UNIT_SUFFIX, allUnits.get(0).getName());
 
       WizardCommandController tester2 = testHarness.createWizardController(JPASetupWizard.class,
                project.getRootDirectory());
@@ -174,8 +174,8 @@ public class JPASetupWizardTest
       // Check SUT values
       config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
       allUnits = config.getAllPersistenceUnit();
-      Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME, allUnits.get(0).getName());
-      Assert.assertEquals(PersistenceOperations.DEFAULT_UNIT_NAME + "-1", allUnits.get(1).getName());
+      Assert.assertEquals(project.getFacet(MetadataFacet.class).getProjectName() +PersistenceOperations.DEFAULT_UNIT_SUFFIX, allUnits.get(0).getName());
+      Assert.assertEquals(project.getFacet(MetadataFacet.class).getProjectName() +PersistenceOperations.DEFAULT_UNIT_SUFFIX + "-1", allUnits.get(1).getName());
    }
 
    @Test

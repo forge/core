@@ -22,6 +22,7 @@ import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JavaEEDefaultContainer;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -115,10 +116,11 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
    private void initPersistenceUnitName(UIBuilder builder)
    {
       int i = 1;
-      String unitName = PersistenceOperations.DEFAULT_UNIT_NAME;
+      String projectName = getSelectedProject(builder.getUIContext()).getFacet(MetadataFacet.class).getProjectName();
+      String unitName = projectName + PersistenceOperations.DEFAULT_UNIT_SUFFIX;
       while (isExistingPersistenceUnitName(getSelectedProject(builder.getUIContext()), unitName))
       {
-         unitName = PersistenceOperations.DEFAULT_UNIT_NAME + "-" + i++;
+         unitName = projectName + PersistenceOperations.DEFAULT_UNIT_SUFFIX + "-" + i++;
       }
       builder.add(persistenceUnitName.setDefaultValue(unitName));
    }
@@ -130,7 +132,8 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
          @Override
          public String call() throws Exception
          {
-            PersistenceContainer pc = (PersistenceContainer) uiContext.getAttributeMap().get(PersistenceContainer.class);
+            PersistenceContainer pc = (PersistenceContainer) uiContext.getAttributeMap()
+                     .get(PersistenceContainer.class);
             if (pc instanceof JavaEEDefaultContainer)
             {
                return ((JavaEEDefaultContainer) pc).getDefaultDataSource();
@@ -148,7 +151,8 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
          public DatabaseType call() throws Exception
          {
             DatabaseType type = DatabaseType.DEFAULT;
-            PersistenceContainer pc = (PersistenceContainer) uiContext.getAttributeMap().get(PersistenceContainer.class);
+            PersistenceContainer pc = (PersistenceContainer) uiContext.getAttributeMap()
+                     .get(PersistenceContainer.class);
             if (pc instanceof JavaEEDefaultContainer)
             {
                type = ((JavaEEDefaultContainer) pc).getDefaultDatabaseType();
@@ -201,7 +205,7 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
       if (project != null && project.hasFacet(JPAFacet.class))
       {
          JPAFacet<?> facet = project.getFacet(JPAFacet.class);
-         PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) facet.getConfig();
+         PersistenceCommonDescriptor config = facet.getConfig();
          List<PersistenceUnitCommon> allPersistenceUnit = config.getAllPersistenceUnit();
          for (PersistenceUnitCommon persistenceUnit : allPersistenceUnit)
          {
