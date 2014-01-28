@@ -89,7 +89,7 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("REST: Endpoint From Entity")
+      return Metadata.from(super.getMetadata(context), getClass()).name("REST: Generate Endpoint From Entity")
                .description("Generate REST endpoints from JPA entities")
                .category(Categories.create(super.getMetadata(context).getCategory(), "JAX-RS"));
    }
@@ -111,7 +111,7 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
             return source == null ? null : source.getQualifiedName();
          }
       });
-      List<String> persistenceUnits = new ArrayList<String>();
+      List<String> persistenceUnits = new ArrayList<>();
       List<PersistenceUnitCommon> allUnits = persistenceFacet.getConfig().getAllPersistenceUnit();
       for (PersistenceUnitCommon persistenceUnit : allUnits)
       {
@@ -165,7 +165,7 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
       Set<JavaClass> endpoints = generateEndpoints(generationContext);
       Project project = generationContext.getProject();
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
-      List<JavaResource> selection = new ArrayList<JavaResource>();
+      List<JavaResource> selection = new ArrayList<>();
 
       for (JavaClass javaClass : endpoints)
       {
@@ -178,7 +178,7 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
    private Set<JavaClass> generateEndpoints(RestGenerationContextImpl generationContext) throws Exception
    {
       RestResourceGenerator selectedGenerator = generator.getValue();
-      Set<JavaClass> classes = new HashSet<JavaClass>();
+      Set<JavaClass> classes = new HashSet<>();
       for (JavaClass target : targets.getValue())
       {
          generationContext.setEntity(target);
