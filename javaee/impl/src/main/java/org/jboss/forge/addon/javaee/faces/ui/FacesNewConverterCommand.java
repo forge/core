@@ -8,8 +8,8 @@ package org.jboss.forge.addon.javaee.faces.ui;
 
 import java.io.FileNotFoundException;
 
+import javax.faces.convert.FacesConverter;
 import javax.inject.Inject;
-import javax.persistence.Entity;
 
 import org.jboss.forge.addon.javaee.faces.FacesOperations;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
@@ -104,7 +104,7 @@ public class FacesNewConverterCommand extends AbstractJavaEECommand
             try
             {
                JavaSource<?> javaSource = javaResource.getJavaSource();
-               if (javaSource.hasAnnotation(Entity.class)) // FIXME should not use entity here
+               if (javaSource.hasAnnotation(FacesConverter.class))
                {
                   value[0] = javaSource.getPackage();
                }
@@ -116,7 +116,7 @@ public class FacesNewConverterCommand extends AbstractJavaEECommand
       });
       if (value[0] == null)
       {
-         value[0] = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".convert";
+         value[0] = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".converter";
       }
       return value[0];
    }
