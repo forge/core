@@ -23,6 +23,7 @@ import org.jboss.forge.furnace.impl.addons.AddonRepositoryImpl;
 import org.jboss.forge.furnace.manager.impl.AddonManagerImpl;
 import org.jboss.forge.furnace.manager.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.furnace.manager.request.AddonActionRequest;
+import org.jboss.forge.furnace.manager.request.RemoveRequest;
 import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
@@ -281,35 +282,50 @@ public class Bootstrap
    {
       try
       {
+         AddonDependencyResolver resolver = new MavenAddonDependencyResolver();
+         AddonManagerImpl addonManager = new AddonManagerImpl(furnace, resolver);
          AddonId addon = null;
+         String coordinates;
          // This allows forge --remove maven
          if (addonCoordinates.contains(","))
          {
-            addon = AddonId.fromCoordinates(addonCoordinates);
+            coordinates = AddonId.fromCoordinates(addonCoordinates).getName();
          }
          else
          {
-            String coordinates = "org.jboss.forge.addon:" + addonCoordinates;
-            REPOS: for (AddonRepository repository : furnace.getRepositories())
+            coordinates = "org.jboss.forge.addon:" + addonCoordinates;
+         }
+         REPOS: for (AddonRepository repository : furnace.getRepositories())
+         {
+            for (AddonId id : repository.listEnabled())
             {
-               for (AddonId id : repository.listEnabled())
+               if (coordinates.equals(id.getName()))
                {
-                  if (coordinates.equals(id.getName()))
+                  addon = id;
+                  if (repository instanceof MutableAddonRepository)
                   {
-                     addon = id;
-                     if (repository instanceof MutableAddonRepository)
+                     RemoveRequest request = addonManager.remove(id, ((MutableAddonRepository) repository));
+                     System.out.println(request);
+                     if (!batchMode)
                      {
-                        ((MutableAddonRepository) repository).disable(addon);
-                        ((MutableAddonRepository) repository).undeploy(addon);
+                        String result = System.console().readLine("Confirm uninstallation [Y/n]? ");
+                        if ("n".equalsIgnoreCase(result.trim()))
+                        {
+                           System.out.println("Uninstallation aborted.");
+                           return;
+                        }
                      }
-                     break REPOS;
+                     request.perform();
+                     System.out.println("Uninstallation completed successfully.");
+                     System.out.println();
                   }
+                  break REPOS;
                }
             }
-            if (addon == null)
-            {
-               throw new IllegalArgumentException("No addon exists with id " + coordinates);
-            }
+         }
+         if (addon == null)
+         {
+            throw new IllegalArgumentException("No addon exists with id " + coordinates);
          }
       }
       catch (Exception e)
