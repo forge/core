@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.addon.shell.aesh;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -156,7 +156,7 @@ public class CommandLineUtil
    public Map<String, InputComponent<?, ?>> populateUIInputs(CommandLine commandLine,
             Map<String, InputComponent<?, ?>> inputs)
    {
-      Map<String, InputComponent<?, ?>> populatedInputs = new HashMap<>();
+      Map<String, InputComponent<?, ?>> populatedInputs = new LinkedHashMap<>();
       for (Entry<String, InputComponent<?, ?>> entry : inputs.entrySet())
       {
          String name = entry.getKey();

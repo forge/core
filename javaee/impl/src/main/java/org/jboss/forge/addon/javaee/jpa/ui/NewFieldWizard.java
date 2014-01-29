@@ -9,6 +9,7 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -102,7 +103,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
       setupEntities(builder.getUIContext());
       setupRelationshipType();
       final Project project = getSelectedProject(builder);
-      final String[] types = { "byte", "float", "char", "double", "int", "long", "short", "boolean", "String" };
+      final List<String> types = Arrays.asList("byte", "float", "char", "double", "int", "long", "short", "boolean", "String");
       type.setCompleter(new UICompleter<String>()
       {
          @Override
@@ -139,15 +140,14 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          }
       });
 
-      // relationshipType.setEnabled(new Callable<Boolean>()
-      // {
-      // @Override
-      // public Boolean call() throws Exception
-      // {
-      // List<String> basicTypes = Arrays.asList(types);
-      // return !basicTypes.contains(type.getValue());
-      // }
-      // });
+      relationshipType.setEnabled(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return !types.contains(type.getValue());
+         }
+      });
 
       lob.setEnabled(new Callable<Boolean>()
       {

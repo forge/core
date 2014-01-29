@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.shell.aesh;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jboss.aesh.cl.CommandLine;
@@ -40,8 +40,8 @@ public class ShellWizard extends AbstractShellInteraction
    public CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception
    {
       getController().initialize();
-      return populate(shellContext, completeLine, new HashMap<String, InputComponent<?, ?>>(),
-               new HashMap<String, InputComponent<?, ?>>());
+      return populate(shellContext, completeLine, new LinkedHashMap<String, InputComponent<?, ?>>(),
+               new LinkedHashMap<String, InputComponent<?, ?>>());
    }
 
    private CommandLineParser populate(ShellContext shellContext, String line,
@@ -49,11 +49,17 @@ public class ShellWizard extends AbstractShellInteraction
             throws Exception
    {
       WizardCommandController controller = getController();
-      Map<String, InputComponent<?, ?>> pageInputs = new HashMap<>(controller.getInputs());
+      Map<String, InputComponent<?, ?>> pageInputs = new LinkedHashMap<>(controller.getInputs());
       allInputs.putAll(pageInputs);
       CommandLineParser parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
       CommandLine cmdLine = parser.parse(line, true);
       Map<String, InputComponent<?, ?>> populatedInputs = commandLineUtil.populateUIInputs(cmdLine, allInputs);
+
+      // Second pass to ensure disabled fields are set
+      parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
+      cmdLine = parser.parse(line, true);
+      populatedInputs = commandLineUtil.populateUIInputs(cmdLine, allInputs);
+      
       boolean inputsChanged = false;
       for (String input : pageInputs.keySet())
       {
