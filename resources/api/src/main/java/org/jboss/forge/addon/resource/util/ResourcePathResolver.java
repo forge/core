@@ -29,7 +29,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
  * 
  * Example:<br/>
  * <code>
- *    List<Resource<?>> res = new ResourcePathResolver(factoryInstance, relativeResource, "../../foobar");
+ *    List<Resource<?>> res = new ResourcePathResolver(factoryInstance, relativeResource, "../../foobar").resolve();
  * </code>
  * 
  * Where <tt>factoryInstance</tt> is an instance of {@link ResourceFactory}, <tt>relativeResource</tt> is a resource,
