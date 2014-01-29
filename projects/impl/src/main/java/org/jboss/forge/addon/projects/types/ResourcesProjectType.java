@@ -38,7 +38,7 @@ public class ResourcesProjectType implements ProjectType
    @Override
    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
    {
-      List<Class<? extends ProjectFacet>> result = new ArrayList<Class<? extends ProjectFacet>>();
+      List<Class<? extends ProjectFacet>> result = new ArrayList<>();
       result.add(MetadataFacet.class);
       result.add(PackagingFacet.class);
       result.add(DependencyFacet.class);
@@ -49,7 +49,7 @@ public class ResourcesProjectType implements ProjectType
    @Override
    public String toString()
    {
-      return "jar-resources";
+      return "resource-jar";
    }
 
    @Override
