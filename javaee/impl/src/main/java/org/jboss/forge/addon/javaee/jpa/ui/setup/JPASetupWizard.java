@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_0;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.PersistenceMetaModelFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
@@ -63,6 +64,9 @@ public class JPASetupWizard extends AbstractJavaEECommand implements UIWizard
    private JavaEEDefaultProvider defaultProvider;
 
    @Inject
+   private JPAFacet_2_0 jpaFacet_2_0;
+
+   @Inject
    private Imported<PersistenceMetaModelFacet> metaModelFacets;
 
    @Inject
@@ -105,16 +109,7 @@ public class JPASetupWizard extends AbstractJavaEECommand implements UIWizard
             return source == null ? null : source.getSpecVersion().toString();
          }
       });
-
-      for (JPAFacet<?> choice : jpaVersion.getValueChoices())
-      {
-         if (jpaVersion.getValue() == null
-                  || choice.getSpecVersion().compareTo(jpaVersion.getValue().getSpecVersion()) >= 1)
-         {
-            jpaVersion.setDefaultValue(choice);
-         }
-      }
-
+      jpaVersion.setDefaultValue(jpaFacet_2_0);
    }
 
    private void initContainers(UIContext context)

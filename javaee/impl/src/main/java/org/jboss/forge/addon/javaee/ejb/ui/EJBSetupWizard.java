@@ -13,6 +13,7 @@ import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
+import org.jboss.forge.addon.javaee.ejb.EJBFacet_3_1;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
@@ -51,6 +52,9 @@ public class EJBSetupWizard extends AbstractJavaEECommand
    @WithAttributes(required = true, label = "EJB Version")
    private UISelectOne<EJBFacet> ejbVersion;
 
+   @Inject
+   private EJBFacet_3_1 ejbFacet_3_1;
+
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
@@ -63,14 +67,7 @@ public class EJBSetupWizard extends AbstractJavaEECommand
          }
       });
 
-      for (EJBFacet choice : ejbVersion.getValueChoices())
-      {
-         if (ejbVersion.getValue() == null || choice.getSpecVersion().compareTo(ejbVersion.getValue().getSpecVersion()) >= 1)
-         {
-            ejbVersion.setDefaultValue(choice);
-         }
-      }
-
+      ejbVersion.setDefaultValue(ejbFacet_3_1);
       builder.add(ejbVersion);
    }
 
