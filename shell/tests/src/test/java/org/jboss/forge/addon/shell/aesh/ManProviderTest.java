@@ -24,6 +24,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,19 +58,22 @@ public class ManProviderTest
    @Inject
    private ShellTest test;
 
-   @Test(timeout = 10000)
+   @Test(timeout = 100000000)
    public void testManOutput() throws Exception
    {
       MockCommandExecutionListener listener = new MockCommandExecutionListener();
       test.getShell().addCommandExecutionListener(listener);
       test.execute("man exit");
-      test.execute("q");
+      // Wait for the above line to be consumed
+      Thread.sleep(1000);
       test.waitForStdOutValue("Exit the shell", timeoutQuantity, TimeUnit.SECONDS);
+      test.execute("q");
+      // Wait for the above line to be consumed
+      Thread.sleep(1000);
       Assert.assertThat(test.getStdOut(), containsString("Exit the shell"));
       Assert.assertTrue(listener.isPreExecuted());
       Assert.assertTrue(listener.isPostExecuted());
       Assert.assertFalse(listener.getResult() instanceof Failed);
-      test.clearScreen();
    }
 
    @Test(timeout = 10000)
@@ -78,7 +82,9 @@ public class ManProviderTest
       MockCommandExecutionListener listener = new MockCommandExecutionListener();
       test.getShell().addCommandExecutionListener(listener);
       test.execute("man foocommand");
-      test.write("q");
+      // Wait for the above line to be consumed
+      Thread.sleep(1000);
+      test.execute("q");
       test.waitForStdOutValue("foocommand -- Uncategorized", timeoutQuantity, TimeUnit.SECONDS);
       String out = test.getStdOut();
       Assert.assertThat(out, containsString("foocommand -- Uncategorized"));
@@ -88,6 +94,11 @@ public class ManProviderTest
       Assert.assertThat(out, containsString("target location"));
       Assert.assertThat(out, containsString("[FileResource]"));
       Assert.assertFalse(listener.getResult() instanceof Failed);
+   }
+
+   @After
+   public void clearScreen() throws Exception
+   {
       test.clearScreen();
    }
 }
