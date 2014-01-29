@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.util.PathspecParser;
+import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -72,7 +72,7 @@ public class RmCommand extends AbstractShellCommand
       Resource<?> currentResource = (Resource<?>) context.getUIContext().getInitialSelection().get();
       for (String file : arguments.getValue())
       {
-         List<Resource<?>> resources = new PathspecParser(resourceFactory, currentResource, file).resolve();
+         List<Resource<?>> resources = new ResourcePathResolver(resourceFactory, currentResource, file).resolve();
          for (Resource<?> resource : resources)
          {
             if (!resource.exists())
@@ -88,7 +88,7 @@ public class RmCommand extends AbstractShellCommand
       UIOutput output = context.getUIContext().getProvider().getOutput();
       for (String file : arguments.getValue())
       {
-         List<Resource<?>> resources = new PathspecParser(resourceFactory, currentResource, file).resolve();
+         List<Resource<?>> resources = new ResourcePathResolver(resourceFactory, currentResource, file).resolve();
          for (Resource<?> resource : resources)
          {
             if ((resource instanceof DirectoryResource))

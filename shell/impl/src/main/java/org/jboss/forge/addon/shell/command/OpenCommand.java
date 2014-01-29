@@ -21,7 +21,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.URLResource;
-import org.jboss.forge.addon.resource.util.PathspecParser;
+import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -70,7 +70,7 @@ public class OpenCommand extends AbstractShellCommand
       if (it.hasNext())
       {
          String newPath = it.next();
-         final List<Resource<?>> newResource = new PathspecParser(resourceFactory, currentResource, newPath).resolve();
+         final List<Resource<?>> newResource = new ResourcePathResolver(resourceFactory, currentResource, newPath).resolve();
          if (newResource.isEmpty() || !newResource.get(0).exists())
          {
             result = Results.fail(newPath + ": No such file or directory");

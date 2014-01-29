@@ -12,7 +12,7 @@ import org.jboss.aesh.terminal.TerminalSize;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.util.PathspecParser;
+import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.util.ShellUtil;
@@ -71,7 +71,7 @@ public class LsCommand extends AbstractShellCommand
       {
          String value = it.next();
          boolean searching = (value.matches(".*(\\?|\\*)+.*"));
-         resourceList = new PathspecParser(resourceFactory, currentResource, value).resolve();
+         resourceList = new ResourcePathResolver(resourceFactory, currentResource, value).resolve();
          if (!searching && !resourceList.isEmpty() && resourceList.get(0).exists())
          {
             resourceList = resourceList.get(0).listResources();

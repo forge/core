@@ -29,7 +29,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
  * 
  * Example:<br/>
  * <code>
- *    List<Resource<?>> res = new PathspecParser(factoryInstance, relativeResource, "../../foobar");
+ *    List<Resource<?>> res = new ResourcePathResolver(factoryInstance, relativeResource, "../../foobar");
  * </code>
  * 
  * Where <tt>factoryInstance</tt> is an instance of {@link ResourceFactory}, <tt>relativeResource</tt> is a resource,
@@ -40,7 +40,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
  * 
  * @author Mike Brock
  */
-public class PathspecParser
+public class ResourcePathResolver
 {
    private int cursor;
    private final int length;
@@ -53,7 +53,7 @@ public class PathspecParser
 
    List<Resource<?>> results = new LinkedList<>();
 
-   public PathspecParser(final ResourceFactory factory, final Resource<?> res, final String path)
+   public ResourcePathResolver(final ResourceFactory factory, final Resource<?> res, final String path)
    {
       this.factory = factory;
       this.res = res;
@@ -61,7 +61,7 @@ public class PathspecParser
       this.length = path.length();
    }
 
-   private PathspecParser(final ResourceFactory factory, final Resource<?> res, final String path, int cursor)
+   private ResourcePathResolver(final ResourceFactory factory, final Resource<?> res, final String path, int cursor)
    {
       this.factory = factory;
       this.res = res;
@@ -204,7 +204,7 @@ public class PathspecParser
                {
                   for (Resource<?> child : res)
                   {
-                     results.addAll(new PathspecParser(factory, child, path, cursor).resolve());
+                     results.addAll(new ResourcePathResolver(factory, child, path, cursor).resolve());
                   }
                }
                else

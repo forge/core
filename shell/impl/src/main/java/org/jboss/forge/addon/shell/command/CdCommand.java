@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.util.PathspecParser;
+import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.spi.command.CdTokenHandler;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -103,7 +103,7 @@ public class CdCommand extends AbstractShellCommand
          if (newResource == null)
          {
             Resource<?> currentResource = (Resource<?>) uiContext.getInitialSelection().get();
-            newResource = new PathspecParser(resourceFactory, currentResource, token).resolve();
+            newResource = new ResourcePathResolver(resourceFactory, currentResource, token).resolve();
          }
 
          if (newResource.isEmpty() || !newResource.get(0).exists())

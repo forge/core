@@ -28,7 +28,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.util.PathspecParser;
+import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ShellFactory;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
@@ -97,7 +97,7 @@ public class RunCommand extends AbstractShellCommand
 
       ALL: for (String path : arguments.getValue())
       {
-         List<Resource<?>> resources = new PathspecParser(resourceFactory, currentResource, path).resolve();
+         List<Resource<?>> resources = new ResourcePathResolver(resourceFactory, currentResource, path).resolve();
          for (Resource<?> resource : resources)
          {
             if (resource.exists())
