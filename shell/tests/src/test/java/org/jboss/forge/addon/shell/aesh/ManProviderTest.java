@@ -58,7 +58,7 @@ public class ManProviderTest
    @Inject
    private ShellTest test;
 
-   @Test(timeout = 100000000)
+   @Test(timeout = 10000)
    public void testManOutput() throws Exception
    {
       MockCommandExecutionListener listener = new MockCommandExecutionListener();
