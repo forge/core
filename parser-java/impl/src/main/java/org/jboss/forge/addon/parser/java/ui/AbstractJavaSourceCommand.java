@@ -8,19 +8,26 @@
 package org.jboss.forge.addon.parser.java.ui;
 
 import java.io.PrintStream;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
+import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
+import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
+import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -33,6 +40,7 @@ import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.SyntaxError;
+import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.parser.java.util.Types;
 
 /**
@@ -55,6 +63,7 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      // Setup named
       named.addValidator(new UIValidator()
       {
          @Override
@@ -64,6 +73,41 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
                context.addValidationError(named, "Invalid java type name.");
          }
       });
+
+      // Setup targetPackage
+      Project project = getSelectedProject(builder);
+      if (project != null && project.hasFacet(JavaSourceFacet.class))
+      {
+         final Set<String> packageNames = new TreeSet<>();
+         final JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
+         javaSourceFacet.visitJavaSources(new JavaResourceVisitor()
+         {
+            @Override
+            public void visit(VisitContext context, JavaResource javaResource)
+            {
+               String packageName = javaSourceFacet.calculatePackage(javaResource);
+               packageNames.add(packageName);
+            }
+         });
+         targetPackage.setCompleter(new UICompleter<String>()
+         {
+
+            @Override
+            public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input,
+                     String value)
+            {
+               Set<String> result = new LinkedHashSet<>();
+               for (String packageName : packageNames)
+               {
+                  if (Strings.isNullOrEmpty(value) || packageName.startsWith(value))
+                  {
+                     result.add(packageName);
+                  }
+               }
+               return result;
+            }
+         });
+      }
       builder.add(targetPackage).add(named);
    }
 
