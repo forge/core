@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.shell.util;
+package org.jboss.forge.addon.resource.util;
 
 import java.io.File;
 import java.net.MalformedURLException;
