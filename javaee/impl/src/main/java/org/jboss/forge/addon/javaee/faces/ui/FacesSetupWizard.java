@@ -13,6 +13,7 @@ import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.faces.FacesFacet;
+import org.jboss.forge.addon.javaee.faces.FacesFacet_2_0;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
@@ -52,6 +53,9 @@ public class FacesSetupWizard extends AbstractJavaEECommand
    @WithAttributes(required = true, label = "JavaServer Faces Version")
    private UISelectOne<FacesFacet> facesVersion;
 
+   @Inject
+   private FacesFacet_2_0 facesFacet_2_0;
+   
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
@@ -63,15 +67,7 @@ public class FacesSetupWizard extends AbstractJavaEECommand
             return source.getSpecVersion().toString();
          }
       });
-
-      for (FacesFacet choice : facesVersion.getValueChoices())
-      {
-         if (facesVersion.getValue() == null || choice.getSpecVersion().compareTo(facesVersion.getValue().getSpecVersion()) >= 1)
-         {
-            facesVersion.setDefaultValue(choice);
-         }
-      }
-
+      facesVersion.setDefaultValue(facesFacet_2_0);
       builder.add(facesVersion);
    }
 

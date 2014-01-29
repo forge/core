@@ -13,6 +13,7 @@ import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
+import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_0;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
@@ -48,6 +49,9 @@ public class CDISetupWizard extends AbstractJavaEECommand
    @WithAttributes(required = true, label = "CDI Version")
    private UISelectOne<CDIFacet<?>> cdiVersion;
 
+   @Inject
+   private CDIFacet_1_0 cdiFacet_1_0;
+
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
@@ -60,14 +64,7 @@ public class CDISetupWizard extends AbstractJavaEECommand
          }
       });
 
-      for (CDIFacet<?> cdi : cdiVersion.getValueChoices())
-      {
-         if (cdiVersion.getValue() == null
-                  || cdi.getSpecVersion().compareTo(cdiVersion.getValue().getSpecVersion()) >= 1)
-         {
-            cdiVersion.setDefaultValue(cdi);
-         }
-      }
+      cdiVersion.setDefaultValue(cdiFacet_1_0);
 
       builder.add(cdiVersion);
    }

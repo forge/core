@@ -13,6 +13,7 @@ import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
+import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
@@ -50,6 +51,9 @@ public class ServletSetupWizard extends AbstractJavaEECommand
    @Inject
    @WithAttributes(required = true, label = "Servlet Version")
    private UISelectOne<ServletFacet<?>> servletVersion;
+   
+   @Inject
+   private ServletFacet_3_0 servletFacet_3_0;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
@@ -63,13 +67,7 @@ public class ServletSetupWizard extends AbstractJavaEECommand
          }
       });
 
-      for (ServletFacet<?> choice : servletVersion.getValueChoices())
-      {
-         if (servletVersion.getValue() == null || choice.getSpecVersion().compareTo(servletVersion.getValue().getSpecVersion()) >= 1)
-         {
-            servletVersion.setDefaultValue(choice);
-         }
-      }
+      servletVersion.setDefaultValue(servletFacet_3_0);
 
       builder.add(servletVersion);
    }
