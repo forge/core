@@ -9,11 +9,9 @@ package org.jboss.forge.addon.javaee.servlet.ui;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
-import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
@@ -49,26 +47,12 @@ public class ServletSetupWizard extends AbstractJavaEECommand
    private FacetFactory facetFactory;
 
    @Inject
-   @WithAttributes(required = true, label = "Servlet Version")
+   @WithAttributes(required = true, label = "Servlet Version", defaultValue = "3.0")
    private UISelectOne<ServletFacet<?>> servletVersion;
-   
-   @Inject
-   private ServletFacet_3_0 servletFacet_3_0;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      servletVersion.setItemLabelConverter(new Converter<ServletFacet<?>, String>()
-      {
-         @Override
-         public String convert(ServletFacet<?> source)
-         {
-            return source.getSpecVersion().toString();
-         }
-      });
-
-      servletVersion.setDefaultValue(servletFacet_3_0);
-
       builder.add(servletVersion);
    }
 

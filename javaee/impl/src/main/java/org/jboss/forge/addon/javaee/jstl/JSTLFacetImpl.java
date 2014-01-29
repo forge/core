@@ -48,7 +48,7 @@ public class JSTLFacetImpl extends AbstractJavaEEFacet implements JSTLFacet
    @Override
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
-      Map<Dependency, List<Dependency>> result = new HashMap<Dependency, List<Dependency>>();
+      Map<Dependency, List<Dependency>> result = new HashMap<>();
       result.put(JBOSS_JSTL_API, Arrays.asList(JBOSS_JSTL_API));
       return result;
    }

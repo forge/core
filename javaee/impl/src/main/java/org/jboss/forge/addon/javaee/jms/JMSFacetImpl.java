@@ -47,7 +47,7 @@ public class JMSFacetImpl extends AbstractJavaEEFacet implements JMSFacet
    @Override
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
-      Map<Dependency, List<Dependency>> result = new HashMap<Dependency, List<Dependency>>();
+      Map<Dependency, List<Dependency>> result = new HashMap<>();
       result.put(JBOSS_JMS_API, Arrays.asList(JBOSS_JMS_API));
       return result;
    }

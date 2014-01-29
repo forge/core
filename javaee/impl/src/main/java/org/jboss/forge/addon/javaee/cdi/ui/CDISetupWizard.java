@@ -9,11 +9,9 @@ package org.jboss.forge.addon.javaee.cdi.ui;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
-import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_0;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
@@ -46,26 +44,12 @@ public class CDISetupWizard extends AbstractJavaEECommand
    private FacetFactory facetFactory;
 
    @Inject
-   @WithAttributes(required = true, label = "CDI Version")
+   @WithAttributes(required = true, label = "CDI Version", defaultValue = "1.0")
    private UISelectOne<CDIFacet<?>> cdiVersion;
-
-   @Inject
-   private CDIFacet_1_0 cdiFacet_1_0;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      cdiVersion.setItemLabelConverter(new Converter<CDIFacet<?>, String>()
-      {
-         @Override
-         public String convert(CDIFacet<?> source)
-         {
-            return source.getSpecVersion().toString();
-         }
-      });
-
-      cdiVersion.setDefaultValue(cdiFacet_1_0);
-
       builder.add(cdiVersion);
    }
 

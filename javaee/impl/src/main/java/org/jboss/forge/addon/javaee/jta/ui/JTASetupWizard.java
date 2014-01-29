@@ -9,7 +9,6 @@ package org.jboss.forge.addon.javaee.jta.ui;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.jta.JTAFacet;
@@ -48,29 +47,12 @@ public class JTASetupWizard extends AbstractJavaEECommand
    private FacetFactory facetFactory;
 
    @Inject
-   @WithAttributes(required = true, label = "JTA Version")
+   @WithAttributes(required = true, label = "JTA Version", defaultValue = "1.1")
    private UISelectOne<JTAFacet> version;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      version.setItemLabelConverter(new Converter<JTAFacet, String>()
-      {
-         @Override
-         public String convert(JTAFacet source)
-         {
-            return source.getSpecVersion().toString();
-         }
-      });
-
-      for (JTAFacet choice : version.getValueChoices())
-      {
-         if (version.getValue() == null || choice.getSpecVersion().compareTo(version.getValue().getSpecVersion()) >= 1)
-         {
-            version.setDefaultValue(choice);
-         }
-      }
-
       builder.add(version);
    }
 

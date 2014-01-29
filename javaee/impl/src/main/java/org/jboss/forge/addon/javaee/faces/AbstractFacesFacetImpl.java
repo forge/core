@@ -137,7 +137,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
       {
          descriptor = Descriptors.create(getDescriptorClass());
       }
-      return (DESCRIPTOR) descriptor;
+      return descriptor;
    }
 
    protected abstract Class<DESCRIPTOR> getDescriptorClass();
@@ -218,7 +218,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
    @SuppressWarnings("rawtypes")
    public List<String> getEffectiveFacesServletMappings()
    {
-      List<String> results = new ArrayList<String>();
+      List<String> results = new ArrayList<>();
       ServletFacet<?> servlet = getFaceted().getFacet(ServletFacet.class);
       WebAppCommonDescriptor webXml = servlet.getConfig();
 
@@ -239,7 +239,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
    private List<String> getExplicitFacesServletMappings()
    {
       ServletFacet<?> servletFacet = getFaceted().getFacet(ServletFacet.class);
-      List<String> results = new ArrayList<String>();
+      List<String> results = new ArrayList<>();
       for (ServletMappingCommonType mapping : (List<ServletMappingCommonType>) servletFacet.getConfig()
                .getAllServletMapping())
       {
@@ -282,13 +282,13 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
             }
          }
       }
-      return new ArrayList<String>();
+      return new ArrayList<>();
    }
 
    @Override
    public List<String> getWebPaths(final String path)
    {
-      List<String> results = new ArrayList<String>();
+      List<String> results = new ArrayList<>();
       if (getResourceForWebPath(path) == null)
       {
          List<String> mappings = getEffectiveFacesServletMappings();
@@ -335,7 +335,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
          List<String> strings = Arrays.asList(path.split("/"));
          for (DirectoryResource d : webRootDirectories)
          {
-            Queue<String> queue = new LinkedList<String>();
+            Queue<String> queue = new LinkedList<>();
             queue.addAll(strings);
 
             Resource<?> temp = d;
@@ -393,7 +393,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
          {
             StringBuffer result = new StringBuffer();
 
-            Map<Pattern, String> patterns = new HashMap<Pattern, String>();
+            Map<Pattern, String> patterns = new HashMap<>();
 
             Pattern pathMapping = Pattern.compile("^(/.*)/\\*$");
             Pattern extensionMapping = Pattern.compile("^\\*(\\..*)$");
@@ -432,7 +432,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
    @SuppressWarnings({ "rawtypes", "unchecked" })
    public List<String> getFacesSuffixes()
    {
-      List<String> suffixes = new ArrayList<String>();
+      List<String> suffixes = new ArrayList<>();
       if (getFaceted().hasFacet(ServletFacet.class))
       {
          ServletFacet<?> servlet = getFaceted().getFacet(ServletFacet.class);
@@ -463,7 +463,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
    @SuppressWarnings({ "rawtypes", "unchecked" })
    public List<String> getFaceletsViewMappings()
    {
-      List<String> suffixes = new ArrayList<String>();
+      List<String> suffixes = new ArrayList<>();
       if (getFaceted().hasFacet(ServletFacet.class))
       {
          ServletFacet<?> servlet = getFaceted().getFacet(ServletFacet.class);
@@ -486,7 +486,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
 
    protected abstract void createDefaultConfig(FileResource<?> descriptor);
 
-   private ServletMappingHelper helper = new ServletMappingHelper();
+   private final ServletMappingHelper helper = new ServletMappingHelper();
 
    public static class ServletMappingHelper
    {

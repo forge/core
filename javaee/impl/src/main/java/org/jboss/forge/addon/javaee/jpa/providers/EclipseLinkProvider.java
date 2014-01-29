@@ -25,7 +25,7 @@ public class EclipseLinkProvider implements PersistenceProvider
 {
    public static final String JPA_PROVIDER = "org.eclipse.persistence.jpa.PersistenceProvider";
 
-   private static Map<DatabaseType, String> PLATFORMS = new HashMap<DatabaseType, String>();
+   private static Map<DatabaseType, String> PLATFORMS = new HashMap<>();
 
    static
    {

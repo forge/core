@@ -61,7 +61,7 @@ public class AddConstraintWizard extends AbstractJavaEECommand implements UIWiza
    {
       UISelection<FileResource<?>> selection = context.getInitialSelection();
       Project project = getSelectedProject(context);
-      final List<JavaResource> classes = new ArrayList<JavaResource>();
+      final List<JavaResource> classes = new ArrayList<>();
       if (project != null)
       {
          project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()

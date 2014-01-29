@@ -53,7 +53,7 @@ public class RestSetupWizard extends AbstractJavaEECommand
    private FacetFactory facetFactory;
 
    @Inject
-   @WithAttributes(required = true, label = "JAX-RS Version")
+   @WithAttributes(required = true, label = "JAX-RS Version", defaultValue = "1.1")
    private UISelectOne<RestFacet> jaxrsVersion;
 
    @Inject
@@ -75,7 +75,6 @@ public class RestSetupWizard extends AbstractJavaEECommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      configureVersions();
       configureActivationStrategy(builder.getUIContext());
       builder.add(jaxrsVersion).add(applicationPath).add(config).add(targetPackage).add(className);
    }
@@ -106,27 +105,6 @@ public class RestSetupWizard extends AbstractJavaEECommand
       className.setRequired(appClassChosen).setEnabled(appClassChosen);
       Project project = getSelectedProject(context);
       targetPackage.setDefaultValue(project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".rest");
-   }
-
-   private void configureVersions()
-   {
-      jaxrsVersion.setItemLabelConverter(new Converter<RestFacet, String>()
-      {
-         @Override
-         public String convert(RestFacet source)
-         {
-            return source.getSpecVersion().toString();
-         }
-      });
-
-      for (RestFacet choice : jaxrsVersion.getValueChoices())
-      {
-         if (jaxrsVersion.getValue() == null
-                  || choice.getSpecVersion().compareTo(jaxrsVersion.getValue().getSpecVersion()) >= 1)
-         {
-            jaxrsVersion.setDefaultValue(choice);
-         }
-      }
    }
 
    @Override

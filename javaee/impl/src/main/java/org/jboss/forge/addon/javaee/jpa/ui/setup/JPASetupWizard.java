@@ -16,7 +16,6 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
-import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_0;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.PersistenceMetaModelFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
@@ -42,7 +41,7 @@ import org.jboss.forge.furnace.services.Imported;
 public class JPASetupWizard extends AbstractJavaEECommand implements UIWizard
 {
    @Inject
-   @WithAttributes(shortName = 'j', label = "JPA Version", required = true)
+   @WithAttributes(shortName = 'j', label = "JPA Version", required = true, defaultValue = "2.0")
    private UISelectOne<JPAFacet<?>> jpaVersion;
 
    @Inject
@@ -62,9 +61,6 @@ public class JPASetupWizard extends AbstractJavaEECommand implements UIWizard
 
    @Inject
    private JavaEEDefaultProvider defaultProvider;
-
-   @Inject
-   private JPAFacet_2_0 jpaFacet_2_0;
 
    @Inject
    private Imported<PersistenceMetaModelFacet> metaModelFacets;
@@ -92,24 +88,10 @@ public class JPASetupWizard extends AbstractJavaEECommand implements UIWizard
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      initFacets();
       initContainers(builder.getUIContext());
       initProviders();
       initConfigureMetadata();
       builder.add(jpaVersion).add(container).add(provider).add(configureMetadata);
-   }
-
-   private void initFacets()
-   {
-      jpaVersion.setItemLabelConverter(new Converter<JPAFacet<?>, String>()
-      {
-         @Override
-         public String convert(JPAFacet<?> source)
-         {
-            return source == null ? null : source.getSpecVersion().toString();
-         }
-      });
-      jpaVersion.setDefaultValue(jpaFacet_2_0);
    }
 
    private void initContainers(UIContext context)
@@ -124,7 +106,7 @@ public class JPASetupWizard extends AbstractJavaEECommand implements UIWizard
          }
       });
       // Ordering items:
-      TreeSet<PersistenceContainer> treeSet = new TreeSet<PersistenceContainer>(new Comparator<PersistenceContainer>()
+      TreeSet<PersistenceContainer> treeSet = new TreeSet<>(new Comparator<PersistenceContainer>()
       {
          @Override
          public int compare(PersistenceContainer o1, PersistenceContainer o2)

@@ -29,7 +29,7 @@ public class OpenJPAProvider implements PersistenceProvider
 {
    public static final String JPA_PROVIDER = "org.apache.openjpa.persistence.PersistenceProviderImpl";
 
-   private static Map<DatabaseType, String> DICTIONARY = new HashMap<DatabaseType, String>();
+   private static Map<DatabaseType, String> DICTIONARY = new HashMap<>();
 
    static
    {

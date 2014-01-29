@@ -9,7 +9,6 @@ package org.jboss.forge.addon.javaee.jaxws.ui.setup;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.facets.JAXWSFacet;
@@ -48,30 +47,12 @@ public class JAXWSSetupWizard extends AbstractJavaEECommand
    private FacetFactory facetFactory;
 
    @Inject
-   @WithAttributes(required = true, label = "JAX-WS Version")
+   @WithAttributes(required = true, label = "JAX-WS Version", defaultValue = "2.2")
    private UISelectOne<JAXWSFacet> jaxwsVersion;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      jaxwsVersion.setItemLabelConverter(new Converter<JAXWSFacet, String>()
-      {
-         @Override
-         public String convert(JAXWSFacet source)
-         {
-            return source.getSpecVersion().toString();
-         }
-      });
-
-      for (JAXWSFacet choice : jaxwsVersion.getValueChoices())
-      {
-         if (jaxwsVersion.getValue() == null
-                  || choice.getSpecVersion().compareTo(jaxwsVersion.getValue().getSpecVersion()) >= 1)
-         {
-            jaxwsVersion.setDefaultValue(choice);
-         }
-      }
-
       builder.add(jaxwsVersion);
    }
 

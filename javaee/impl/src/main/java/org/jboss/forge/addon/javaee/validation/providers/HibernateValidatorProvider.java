@@ -42,7 +42,7 @@ public class HibernateValidatorProvider implements ValidationProvider
                .setArtifactId("hibernate-validator")
                .setScopeType("provided");
 
-      final Set<Dependency> dependenciesTmpSet = new LinkedHashSet<Dependency>();
+      final Set<Dependency> dependenciesTmpSet = new LinkedHashSet<>();
       dependenciesTmpSet.add(hibernateValidator);
 
       this.dependencies = unmodifiableSet(dependenciesTmpSet);

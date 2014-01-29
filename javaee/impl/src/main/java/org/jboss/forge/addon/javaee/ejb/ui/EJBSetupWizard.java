@@ -9,11 +9,9 @@ package org.jboss.forge.addon.javaee.ejb.ui;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
-import org.jboss.forge.addon.javaee.ejb.EJBFacet_3_1;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
@@ -49,25 +47,12 @@ public class EJBSetupWizard extends AbstractJavaEECommand
    private FacetFactory facetFactory;
 
    @Inject
-   @WithAttributes(required = true, label = "EJB Version")
+   @WithAttributes(required = true, label = "EJB Version", defaultValue = "3.1")
    private UISelectOne<EJBFacet> ejbVersion;
-
-   @Inject
-   private EJBFacet_3_1 ejbFacet_3_1;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      ejbVersion.setItemLabelConverter(new Converter<EJBFacet, String>()
-      {
-         @Override
-         public String convert(EJBFacet source)
-         {
-            return source.getSpecVersion().toString();
-         }
-      });
-
-      ejbVersion.setDefaultValue(ejbFacet_3_1);
       builder.add(ejbVersion);
    }
 

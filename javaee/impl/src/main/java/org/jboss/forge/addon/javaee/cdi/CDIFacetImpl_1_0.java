@@ -90,7 +90,7 @@ public class CDIFacetImpl_1_0 extends AbstractCDIFacetImpl<BeansDescriptor> impl
    @Override
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
-      Map<Dependency, List<Dependency>> result = new LinkedHashMap<Dependency, List<Dependency>>();
+      Map<Dependency, List<Dependency>> result = new LinkedHashMap<>();
 
       result.put(CDI_API, Arrays.asList(CDI_API));
       result.put(JAVAX_ANNOTATION_API,

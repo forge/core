@@ -105,7 +105,7 @@ public abstract class AbstractServletFacet<DESCRIPTOR extends WebAppCommonDescri
 
    private List<Resource<?>> listChildrenRecursively(final DirectoryResource current, final ResourceFilter filter)
    {
-      List<Resource<?>> result = new ArrayList<Resource<?>>();
+      List<Resource<?>> result = new ArrayList<>();
       List<Resource<?>> list = current.listResources();
       if (list != null)
       {

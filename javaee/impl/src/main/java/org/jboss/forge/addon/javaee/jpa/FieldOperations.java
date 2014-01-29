@@ -125,7 +125,7 @@ public class FieldOperations
    {
       if (cascadeTypes != null)
       {
-         List<CascadeType> cascades = new ArrayList<CascadeType>();
+         List<CascadeType> cascades = new ArrayList<>();
          for (CascadeType cascade : cascadeTypes)
          {
             cascades.add(cascade);

@@ -109,7 +109,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
                   final String value)
          {
             String[] types = { "byte", "float", "char", "double", "int", "long", "short", "boolean", "String" };
-            final List<String> options = new ArrayList<String>();
+            final List<String> options = new ArrayList<>();
             for (String type : types)
             {
                if (Strings.isNullOrEmpty(value) || type.startsWith(value))

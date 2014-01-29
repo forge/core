@@ -59,7 +59,7 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
                ResourceGeneratorUtil.getJpqlEntityVariable(entityTable));
       String resourcePath = ResourceGeneratorUtil.getResourcePath(context);
 
-      Map<Object, Object> map = new HashMap<Object, Object>();
+      Map<Object, Object> map = new HashMap<>();
       map.put("entity", entity);
       map.put("idType", idType);
       map.put("getIdStatement", idGetterName);

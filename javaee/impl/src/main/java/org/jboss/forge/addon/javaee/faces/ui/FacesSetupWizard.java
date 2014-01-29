@@ -9,11 +9,9 @@ package org.jboss.forge.addon.javaee.faces.ui;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.faces.FacesFacet;
-import org.jboss.forge.addon.javaee.faces.FacesFacet_2_0;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
@@ -50,24 +48,12 @@ public class FacesSetupWizard extends AbstractJavaEECommand
    private FacetFactory facetFactory;
 
    @Inject
-   @WithAttributes(required = true, label = "JavaServer Faces Version")
+   @WithAttributes(required = true, label = "JavaServer Faces Version", defaultValue = "2.0")
    private UISelectOne<FacesFacet> facesVersion;
 
-   @Inject
-   private FacesFacet_2_0 facesFacet_2_0;
-   
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      facesVersion.setItemLabelConverter(new Converter<FacesFacet, String>()
-      {
-         @Override
-         public String convert(FacesFacet source)
-         {
-            return source.getSpecVersion().toString();
-         }
-      });
-      facesVersion.setDefaultValue(facesFacet_2_0);
       builder.add(facesVersion);
    }
 

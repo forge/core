@@ -48,7 +48,7 @@ public class FacesFacetImpl_2_2 extends AbstractFacesFacetImpl<WebFacesConfigDes
    @Override
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
-      Map<Dependency, List<Dependency>> result = new LinkedHashMap<Dependency, List<Dependency>>();
+      Map<Dependency, List<Dependency>> result = new LinkedHashMap<>();
       result.put(FACES_2_2, Arrays.asList(FACES_2_2));
       return result;
    }

@@ -39,7 +39,7 @@ public class RestFacetImpl_1_1 extends AbstractRestFacet implements RestFacet_1_
    @Override
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
-      Map<Dependency, List<Dependency>> result = new LinkedHashMap<Dependency, List<Dependency>>();
+      Map<Dependency, List<Dependency>> result = new LinkedHashMap<>();
       result.put(JAX_RS_1_1, Arrays.asList(JAX_RS_1_1));
       return result;
    }

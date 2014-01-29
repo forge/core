@@ -60,7 +60,7 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
    @Override
    public List<JavaClass> generateFrom(RestGenerationContext context) throws Exception
    {
-      List<JavaClass> result = new ArrayList<JavaClass>();
+      List<JavaClass> result = new ArrayList<>();
       JavaClass entity = context.getEntity();
 
       Project project = context.getProject();
@@ -78,7 +78,7 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
       DTOCollection createdDtos = from(project, entity, context.getTargetPackageName() + ".dto");
       JavaClass rootDto = createdDtos.getDTOFor(entity, true);
 
-      Map<Object, Object> map = new HashMap<Object, Object>();
+      Map<Object, Object> map = new HashMap<>();
       map.put("entity", entity);
       map.put("dto", rootDto);
       map.put("idType", idType);

@@ -45,7 +45,7 @@ public class GenerateConstraintWizardStep extends AbstractJavaEECommand implemen
    @Inject
    private ConverterFactory converterFactory;
 
-   private Map<String, InputComponent<?, ?>> inputs = new HashMap<String, InputComponent<?, ?>>();
+   private final Map<String, InputComponent<?, ?>> inputs = new HashMap<>();
 
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
@@ -118,7 +118,7 @@ public class GenerateConstraintWizardStep extends AbstractJavaEECommand implemen
                   defaultValue = defaultValues;
                }
                InputComponents
-                        .setDefaultValueFor(converterFactory, (InputComponent<?, Object>) inputComponent,
+                        .setDefaultValueFor(converterFactory, inputComponent,
                                  defaultValue);
             }
             else
@@ -146,7 +146,7 @@ public class GenerateConstraintWizardStep extends AbstractJavaEECommand implemen
     */
    private List<Object> toList(Class<?> valueType, Object arrayObject)
    {
-      List<Object> defaultValues = new ArrayList<Object>();
+      List<Object> defaultValues = new ArrayList<>();
       int length = Array.getLength(arrayObject);
       boolean isClassType = (valueType == Class.class);
       for (int i = 0; i < length; i++)
@@ -278,7 +278,7 @@ public class GenerateConstraintWizardStep extends AbstractJavaEECommand implemen
    {
       Assert.notNull(values, "null array not accepted");
 
-      final List<String> literals = new ArrayList<String>();
+      final List<String> literals = new ArrayList<>();
 
       for (Object value : values)
       {

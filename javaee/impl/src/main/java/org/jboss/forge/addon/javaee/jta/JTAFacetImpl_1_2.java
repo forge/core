@@ -45,7 +45,7 @@ public class JTAFacetImpl_1_2 extends AbstractJTAFacetImpl implements JTAFacet_1
    @Override
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
-      Map<Dependency, List<Dependency>> result = new HashMap<Dependency, List<Dependency>>();
+      Map<Dependency, List<Dependency>> result = new HashMap<>();
       result.put(JTA_API, Arrays.asList(JTA_API));
       return result;
    }

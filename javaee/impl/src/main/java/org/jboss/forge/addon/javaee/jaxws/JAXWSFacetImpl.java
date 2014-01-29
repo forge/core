@@ -56,7 +56,7 @@ public class JAXWSFacetImpl extends AbstractJavaEEFacet implements JAXWSFacet
    @Override
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
-      Map<Dependency, List<Dependency>> result = new HashMap<Dependency, List<Dependency>>();
+      Map<Dependency, List<Dependency>> result = new HashMap<>();
       result.put(JBOSS_JAXB_API, Arrays.asList(JBOSS_JAXB_API));
       result.put(JBOSS_JAXRPC_API, Arrays.asList(JBOSS_JAXRPC_API));
       result.put(JBOSS_SAAJ_API, Arrays.asList(JBOSS_SAAJ_API));

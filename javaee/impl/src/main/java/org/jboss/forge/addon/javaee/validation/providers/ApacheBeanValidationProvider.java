@@ -41,7 +41,7 @@ public class ApacheBeanValidationProvider implements ValidationProvider
                .setGroupId("org.apache.bval")
                .setArtifactId("org.apache.bval.bundle");
 
-      final Set<Dependency> tmpSet = new LinkedHashSet<Dependency>();
+      final Set<Dependency> tmpSet = new LinkedHashSet<>();
       tmpSet.add(apacheBeanValidation);
 
       this.dependencies = unmodifiableSet(tmpSet);

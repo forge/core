@@ -22,7 +22,7 @@ import org.jboss.forge.parser.java.JavaClass;
 public class DTOCollection
 {
 
-   private Map<JavaClass, DTOPair> dtos = new HashMap<JavaClass, DTOPair>();
+   private final Map<JavaClass, DTOPair> dtos = new HashMap<>();
 
    /**
     * Retrieves all the DTOs present in this instance.
@@ -31,7 +31,7 @@ public class DTOCollection
     */
    public Collection<JavaClass> allResources()
    {
-      Set<JavaClass> result = new HashSet<JavaClass>();
+      Set<JavaClass> result = new HashSet<>();
       for (DTOPair pair : dtos.values())
       {
          if (pair.rootDTO != null)

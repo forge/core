@@ -35,15 +35,15 @@ import org.jboss.forge.parser.java.util.Types;
 public class DTOClassBuilder
 {
    private JavaClass dto;
-   private boolean topLevel;
+   private final boolean topLevel;
    private String dtoClassName;
    private boolean isEmbeddedType;
-   private JavaClass entity;
-   private StringBuilder copyCtorBuilder;
-   private StringBuilder assembleJPABuilder;
+   private final JavaClass entity;
+   private final StringBuilder copyCtorBuilder;
+   private final StringBuilder assembleJPABuilder;
    private Method<JavaClass> assembleJPA;
    private Method<JavaClass> copyCtor;
-   private Property idProperty;
+   private final Property idProperty;
    private final TemplateProcessor initializeJPAEntityFromId;
    private final TemplateProcessor assembleCollection;
    private final TemplateProcessor initializeNestedDTOCollection;
@@ -164,7 +164,7 @@ public class DTOClassBuilder
       {
          dto.addImport(TypedQuery.class);
 
-         Map<Object, Object> map = new HashMap<Object, Object>();
+         Map<Object, Object> map = new HashMap<>();
          map.put("id", idProperty.getName());
          map.put("entityName", entity.getName());
          map.put("jpqlVar", entity.getName().toLowerCase().substring(0, 1));
@@ -305,7 +305,7 @@ public class DTOClassBuilder
       String fieldName = property.getName();
       String simpleParameterizedType = parameterizedType.getName();
 
-      Map<Object, Object> map = new HashMap<Object, Object>();
+      Map<Object, Object> map = new HashMap<>();
       map.put("reverseIdGetter", nestedDtoId.getAccessor().getName() + "()");
       map.put("fieldName", fieldName);
       map.put("fieldGetter", property.getAccessor().getName() + "()");
@@ -352,7 +352,7 @@ public class DTOClassBuilder
    {
       dto.addImport(parameterizedType.getQualifiedName());
       dto.addImport(Iterator.class);
-      Map<Object, Object> map = new HashMap<Object, Object>();
+      Map<Object, Object> map = new HashMap<>();
       map.put("fieldName", property.getName());
       map.put("nestedDTOType", nestedDTOClass.getName());
       map.put("collectionIterator", "iter" + Strings.capitalize(property.getName()));

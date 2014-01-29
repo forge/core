@@ -29,7 +29,7 @@ public class HibernateProvider implements PersistenceProvider
 {
    public static final String JPA_PROVIDER = "org.hibernate.ejb.HibernatePersistence";
 
-   private static Map<DatabaseType, String> DIALECTS = new HashMap<DatabaseType, String>();
+   private static Map<DatabaseType, String> DIALECTS = new HashMap<>();
 
    static
    {

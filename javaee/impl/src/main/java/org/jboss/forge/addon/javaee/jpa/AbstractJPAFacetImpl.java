@@ -99,7 +99,7 @@ public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonD
    @Override
    public List<JavaClass> getAllEntities()
    {
-      final List<JavaClass> result = new ArrayList<JavaClass>();
+      final List<JavaClass> result = new ArrayList<>();
       JavaSourceFacet javaSourceFacet = getFaceted().getFacet(JavaSourceFacet.class);
       javaSourceFacet.visitJavaSources(new JavaResourceVisitor()
       {

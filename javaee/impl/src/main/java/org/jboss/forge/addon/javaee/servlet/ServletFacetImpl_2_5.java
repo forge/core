@@ -66,7 +66,7 @@ public class ServletFacetImpl_2_5 extends AbstractServletFacet<WebAppDescriptor>
    @Override
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
-      Map<Dependency, List<Dependency>> map = new LinkedHashMap<Dependency, List<Dependency>>();
+      Map<Dependency, List<Dependency>> map = new LinkedHashMap<>();
       map.put(JAVAX_SERVLET_API, Arrays.asList(JAVAX_SERVLET_API));
       return map;
    }
