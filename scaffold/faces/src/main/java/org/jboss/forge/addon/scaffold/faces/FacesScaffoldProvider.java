@@ -197,10 +197,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
    @Override
    public List<Resource<?>> setup(Project project, ScaffoldSetupContext scaffoldContext)
    {
-      if(this.origin == null)
-      {
-         origin = project;
-      }
+      this.origin = project;
       String targetDir = scaffoldContext.getTargetDirectory();
       boolean overwrite = scaffoldContext.isOverwrite();
       Resource<?> template = null;

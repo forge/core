@@ -120,7 +120,7 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
 
       // Add the execution logic step in the end so that the scaffold generation step is executed last after all other
       // steps
-      generationFlow.add(ExecuteGenerationStep.class);
+      generationFlow.add(ScaffoldExecuteGenerationStep.class);
 
       // Extract the first command to obtain the next step
       Class<? extends UICommand> next = generationFlow.remove(0);

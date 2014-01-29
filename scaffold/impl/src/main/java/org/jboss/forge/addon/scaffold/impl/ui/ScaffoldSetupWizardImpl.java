@@ -128,7 +128,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
 
       // Add the execution logic step in the end so that the scaffold setup step is executed last after all other
       // steps
-      setupFlow.add(ExecuteSetupStep.class);
+      setupFlow.add(ScaffoldExecuteSetupStep.class);
 
       // Extract the first command to obtain the next step
       Class<? extends UICommand> next = setupFlow.remove(0);

@@ -1,15 +1,13 @@
 package org.jboss.forge.addon.scaffold.impl.ui;
 
-import java.util.Collection;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
-import org.jboss.forge.addon.scaffold.spi.ResourceCollection;
-import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
+import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -22,7 +20,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
-public class ExecuteGenerationStep extends AbstractProjectCommand implements UIWizardStep
+public class ScaffoldExecuteSetupStep extends AbstractProjectCommand implements UIWizardStep
 {
 
    @Inject
@@ -31,8 +29,8 @@ public class ExecuteGenerationStep extends AbstractProjectCommand implements UIW
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("Scaffold: Generate")
-               .description("Generate the scaffold");
+      return Metadata.forCommand(getClass()).name("Scaffold: Setup")
+               .description("Setup the scaffold");
    }
 
    @Override
@@ -44,7 +42,7 @@ public class ExecuteGenerationStep extends AbstractProjectCommand implements UIW
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      // No-op! No UI is necessary for this wizard step.
+      // No-op. This command has no UI.
    }
 
    @Override
@@ -58,17 +56,18 @@ public class ExecuteGenerationStep extends AbstractProjectCommand implements UIW
    public Result execute(UIExecutionContext context) throws Exception
    {
       Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
+
       ScaffoldProvider selectedProvider = (ScaffoldProvider) attributeMap.get(ScaffoldProvider.class);
-      ResourceCollection resourceCollection = (ResourceCollection) attributeMap.get(ResourceCollection.class);
-      selectedProvider.generateFrom(getSelectedProject(context),
-               populateGenerationContext(context.getUIContext(), resourceCollection.getResources()));
-      return Results.success("Scaffold was generated successfully.");
+      ScaffoldSetupContext setupContext = (ScaffoldSetupContext) attributeMap.get(ScaffoldSetupContext.class);
+      selectedProvider.setup(getSelectedProject(context), setupContext);
+      // No-op. Scaffold setup is done in a separate step.
+      return Results.success("Scaffold was setup successfully.");
    }
 
    @Override
    public void validate(UIValidationContext context)
    {
-      // No op
+      // No-op. Nothing to validate here.
    }
 
    @Override
@@ -81,15 +80,6 @@ public class ExecuteGenerationStep extends AbstractProjectCommand implements UIW
    protected ProjectFactory getProjectFactory()
    {
       return factory;
-   }
-
-   private ScaffoldGenerationContext populateGenerationContext(UIContext context, Collection<?> resources)
-   {
-      Map<Object, Object> attributeMap = context.getAttributeMap();
-      ScaffoldGenerationContext generationContext = (ScaffoldGenerationContext) attributeMap
-               .get(ScaffoldGenerationContext.class);
-      generationContext.setResources(resources);
-      return generationContext;
    }
 
 }
