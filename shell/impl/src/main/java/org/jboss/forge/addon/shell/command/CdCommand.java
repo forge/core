@@ -50,7 +50,7 @@ public class CdCommand extends AbstractShellCommand
    private Imported<CdTokenHandler> handlers;
 
    @Inject
-   @WithAttributes(label = "Arguments", type = InputType.DIRECTORY_PICKER)
+   @WithAttributes(label = "Arguments", type = InputType.FILE_PICKER)
    private UIInputMany<String> arguments;
 
    @Override
