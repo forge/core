@@ -96,6 +96,7 @@ public class JPASetupWizardTest
 
       Assert.assertFalse(tester.canMoveToPreviousStep());
       // Setting UI values
+      tester.setValueFor("jpaVersion", "2.1");
       tester.setValueFor("provider", defaultProvider);
       tester.setValueFor("container", customJTAProvider);
       Assert.assertTrue(tester.canMoveToNextStep());
