@@ -37,6 +37,7 @@ public class LsCommandTest
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.addon:maven"),
             @AddonDependency(name = "org.jboss.forge.addon:ui"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
             @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
             @AddonDependency(name = "org.jboss.forge.addon:resources"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
@@ -49,6 +50,7 @@ public class LsCommandTest
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:resources"),
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
