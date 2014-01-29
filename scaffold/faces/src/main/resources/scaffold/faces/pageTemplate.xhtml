@@ -4,7 +4,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 <h:head>
-	<title>#{empty pageTitle ? 'Page Title' : pageTitle}</title>
+	<title>${r"#{"}empty pageTitle ? 'Page Title' : pageTitle}</title>
 	<link rel="icon" href='${r"#{"}resource["favicon.ico"]}' />
 	<h:outputStylesheet name="bootstrap.css" />
 	<h:outputStylesheet name="forge-style.css" />
