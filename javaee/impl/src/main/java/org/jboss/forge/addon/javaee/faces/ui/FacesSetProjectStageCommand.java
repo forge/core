@@ -29,17 +29,17 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class FacesProjectStageCommand extends AbstractJavaEECommand
+public class FacesSetProjectStageCommand extends AbstractJavaEECommand
 {
 
    @Inject
    @WithAttributes(label = "Project Stage", description = "Sets the JSF project stage")
-   private UISelectOne<ProjectStage> set;
+   private UISelectOne<ProjectStage> stage;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(set);
+      builder.add(stage);
    }
 
    @Override
@@ -57,9 +57,9 @@ public class FacesProjectStageCommand extends AbstractJavaEECommand
       final Result result;
       Project project = getSelectedProject(context.getUIContext());
       FacesFacet facesFacet = project.getFacet(FacesFacet.class);
-      if (set.hasValue())
+      if (stage.hasValue())
       {
-         ProjectStage projectStage = set.getValue();
+         ProjectStage projectStage = stage.getValue();
          facesFacet.setProjectStage(projectStage);
          result = Results.success("Faces PROJECT_STAGE updated to: " + projectStage);
       }
