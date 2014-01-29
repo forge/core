@@ -66,11 +66,11 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    private UIInput<String> named;
 
    @Inject
-   @WithAttributes(label = "Target Field Type", description = "The type intended to be used for this field", type = InputType.JAVA_CLASS_PICKER, required = true, defaultValue = "String")
-   private UIInput<String> targetFieldType;
+   @WithAttributes(label = "Field Type", description = "The type intended to be used for this field", type = InputType.JAVA_CLASS_PICKER, required = true, defaultValue = "String")
+   private UIInput<String> type;
 
    @Inject
-   @WithAttributes(label = "Relationship", description = "The type of the relationship", type = InputType.RADIO)
+   @WithAttributes(label = "Relationship Type", description = "The the relationship type", type = InputType.RADIO)
    private UISelectOne<RelationshipType> relationshipType;
 
    @Inject
@@ -102,13 +102,13 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
       setupEntities(builder.getUIContext());
       setupRelationshipType();
       final Project project = getSelectedProject(builder);
-      targetFieldType.setCompleter(new UICompleter<String>()
+      final String[] types = { "byte", "float", "char", "double", "int", "long", "short", "boolean", "String" };
+      type.setCompleter(new UICompleter<String>()
       {
          @Override
          public Iterable<String> getCompletionProposals(final UIContext context, final InputComponent<?, String> input,
                   final String value)
          {
-            String[] types = { "byte", "float", "char", "double", "int", "long", "short", "boolean", "String" };
             final List<String> options = new ArrayList<>();
             for (String type : types)
             {
@@ -138,6 +138,17 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             return options;
          }
       });
+
+      // relationshipType.setEnabled(new Callable<Boolean>()
+      // {
+      // @Override
+      // public Boolean call() throws Exception
+      // {
+      // List<String> basicTypes = Arrays.asList(types);
+      // return !basicTypes.contains(type.getValue());
+      // }
+      // });
+
       lob.setEnabled(new Callable<Boolean>()
       {
          @Override
@@ -146,7 +157,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             return relationshipType.getValue() == RelationshipType.BASIC;
          }
       });
-      targetFieldType.setEnabled(new Callable<Boolean>()
+      type.setEnabled(new Callable<Boolean>()
       {
          @Override
          public Boolean call() throws Exception
@@ -167,11 +178,12 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          @Override
          public Boolean call() throws Exception
          {
-            String typeValue = targetFieldType.getValue();
+            String typeValue = type.getValue();
             return Date.class.getName().equals(typeValue) || Calendar.class.getName().equals(typeValue);
          }
       });
-      builder.add(targetEntity).add(named).add(targetFieldType).add(temporalType).add(length).add(relationshipType).add(lob);
+      builder.add(targetEntity).add(named).add(type).add(temporalType).add(length).add(relationshipType)
+               .add(lob);
    }
 
    private void setupEntities(UIContext context)
@@ -259,7 +271,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          }
          else
          {
-            String fieldType = targetFieldType.getValue();
+            String fieldType = type.getValue();
             field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
                      Column.class.getCanonicalName());
          }
@@ -323,7 +335,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
       Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
       attributeMap.put(JavaResource.class, targetEntity.getValue());
       attributeMap.put("fieldName", named.getValue());
-      attributeMap.put("fieldType", targetFieldType.getValue());
+      attributeMap.put("fieldType", type.getValue());
       attributeMap.put(RelationshipType.class, relationshipType.getValue());
       if (relationshipType.getValue() == RelationshipType.BASIC)
       {
