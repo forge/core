@@ -56,7 +56,7 @@
       <forge.scm.connection>scm:git:git://github.com/forge/core.git</forge.scm.connection>
       <forge.developer.connection>scm:git:git@github.com:forge/core.git</forge.developer.connection>
       <forge.scm.url>http://github.com/forge/core</forge.scm.url>
-      <forge.release.codename>Beta</forge.release.codename>
+      <forge.release.codename>Two</forge.release.codename>
       <forge.release.version>${project.version}</forge.release.version>
       <version.cdi>1.1</version.cdi>
       <version.furnace>2.0.0.Final</version.furnace>
