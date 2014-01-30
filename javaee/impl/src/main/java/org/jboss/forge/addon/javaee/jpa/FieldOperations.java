@@ -20,6 +20,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -376,7 +377,8 @@ public class FieldOperations
       for (Field<JavaClass> f : targetEntity.getFields())
       {
          if (!"id".equals(f.getName()) && !"version".equals(f.getName())
-                  && (f.getTypeInspector().isPrimitive() || Types.isJavaLang(f.getType())))
+                  && (f.getTypeInspector().isPrimitive() || Types.isJavaLang(f.getType()))
+                  && !f.hasAnnotation(Transient.class))
          {
             fields.add(f);
          }

@@ -23,6 +23,7 @@ import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.FieldOperations;
@@ -41,6 +42,7 @@ import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -71,7 +73,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    private UIInput<String> type;
 
    @Inject
-   @WithAttributes(label = "Relationship Type", description = "The the relationship type", type = InputType.RADIO)
+   @WithAttributes(label = "Relationship Type", description = "The relationship type", type = InputType.RADIO)
    private UISelectOne<RelationshipType> relationshipType;
 
    @Inject
@@ -89,6 +91,11 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    @Inject
    private FieldOperations fieldOperations;
 
+   @Inject
+   private InputComponentFactory inputFactory;
+
+   private UIInput<Boolean> transientField;
+
    @Override
    public Metadata getMetadata(UIContext context)
    {
@@ -100,10 +107,15 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      final Project project = getSelectedProject(builder);
       setupEntities(builder.getUIContext());
       setupRelationshipType();
-      final Project project = getSelectedProject(builder);
-      final List<String> types = Arrays.asList("byte", "float", "char", "double", "int", "long", "short", "boolean", "String");
+
+      transientField = inputFactory.createInput("transient", 't', Boolean.class);
+      transientField.setDescription("Creates a field with @Transient").setDefaultValue(Boolean.FALSE);
+
+      final List<String> types = Arrays.asList("byte", "float", "char", "double", "int", "long", "short", "boolean",
+               "String");
       type.setCompleter(new UICompleter<String>()
       {
          @Override
@@ -145,7 +157,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          @Override
          public Boolean call() throws Exception
          {
-            return !types.contains(type.getValue());
+            return !types.contains(type.getValue()) && !transientField.getValue();
          }
       });
 
@@ -154,7 +166,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          @Override
          public Boolean call() throws Exception
          {
-            return relationshipType.getValue() == RelationshipType.BASIC;
+            return relationshipType.getValue() == RelationshipType.BASIC && !transientField.getValue();
          }
       });
       type.setEnabled(new Callable<Boolean>()
@@ -162,7 +174,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          @Override
          public Boolean call() throws Exception
          {
-            return !lob.getValue();
+            return !lob.getValue() && !transientField.getValue();
          }
       });
       length.setEnabled(new Callable<Boolean>()
@@ -170,7 +182,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          @Override
          public Boolean call() throws Exception
          {
-            return !lob.getValue();
+            return !lob.getValue() && !transientField.getValue();
          }
       });
       temporalType.setEnabled(new Callable<Boolean>()
@@ -179,11 +191,12 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          public Boolean call() throws Exception
          {
             String typeValue = type.getValue();
-            return Date.class.getName().equals(typeValue) || Calendar.class.getName().equals(typeValue);
+            return !transientField.getValue()
+                     && (Date.class.getName().equals(typeValue) || Calendar.class.getName().equals(typeValue));
          }
       });
       builder.add(targetEntity).add(named).add(type).add(temporalType).add(length).add(relationshipType)
-               .add(lob);
+               .add(lob).add(transientField);
    }
 
    private void setupEntities(UIContext context)
@@ -261,7 +274,15 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
       Field<JavaClass> field;
       JavaClass targetEntity = (JavaClass) javaResource.getJavaSource();
       RelationshipType value = relationshipType.getValue();
-      if (value == RelationshipType.BASIC)
+      if (transientField.getValue())
+      {
+         String fieldType = type.getValue();
+         field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
+                  Transient.class.getCanonicalName());
+         setCurrentWorkingResource(context, javaResource, field);
+         return Results.success("Transient Field " + named.getValue() + " created");
+      }
+      else if (value == RelationshipType.BASIC)
       {
          if (lob.getValue())
          {
@@ -283,13 +304,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          {
             field.addAnnotation(Temporal.class).setEnumValue(temporalType.getValue());
          }
-         Project selectedProject = getSelectedProject(context);
-         if (selectedProject != null)
-         {
-            JavaSourceFacet facet = selectedProject.getFacet(JavaSourceFacet.class);
-            facet.saveJavaSource(field.getOrigin());
-         }
-         context.getUIContext().setSelection(javaResource);
+         setCurrentWorkingResource(context, javaResource, field);
          return Results.success("Field " + named.getValue() + " created");
       }
       else
@@ -297,6 +312,24 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          // Field creation will occur in NewFieldRelationshipWizardStep
          return Results.success();
       }
+   }
+
+   /**
+    * @param context
+    * @param javaResource
+    * @param field
+    * @throws FileNotFoundException
+    */
+   private void setCurrentWorkingResource(UIExecutionContext context, JavaResource javaResource, Field<JavaClass> field)
+            throws FileNotFoundException
+   {
+      Project selectedProject = getSelectedProject(context);
+      if (selectedProject != null)
+      {
+         JavaSourceFacet facet = selectedProject.getFacet(JavaSourceFacet.class);
+         facet.saveJavaSource(field.getOrigin());
+      }
+      context.getUIContext().setSelection(javaResource);
    }
 
    @Override
