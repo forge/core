@@ -166,7 +166,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
             throw e;
          }
       }
-      return CompositeResultImpl.from(results);
+      return (results.size() == 1) ? results.get(0) : CompositeResultImpl.from(results);
    }
 
    @Override

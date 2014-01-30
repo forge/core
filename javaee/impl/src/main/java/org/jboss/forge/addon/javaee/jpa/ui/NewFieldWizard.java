@@ -273,7 +273,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
       String fieldNameStr = named.getValue();
       Field<JavaClass> field;
       JavaClass targetEntity = (JavaClass) javaResource.getJavaSource();
-      RelationshipType value = relationshipType.getValue();
+      RelationshipType value = (relationshipType.isEnabled()) ? relationshipType.getValue() : RelationshipType.BASIC;
       if (transientField.getValue())
       {
          String fieldType = type.getValue();
