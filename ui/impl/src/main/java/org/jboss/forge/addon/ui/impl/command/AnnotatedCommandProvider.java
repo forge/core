@@ -30,6 +30,7 @@ import org.jboss.forge.addon.ui.impl.input.InputComponentProducer;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.event.PreShutdown;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Predicate;
 
 /**
@@ -59,7 +60,11 @@ public class AnnotatedCommandProvider implements CommandProvider
       {
          try
          {
-            result.add(createAnnotatedCommand(method));
+            UICommand cmd = createAnnotatedCommand(method);
+            if (cmd != null)
+            {
+               result.add(cmd);
+            }
          }
          catch (Exception e)
          {
@@ -71,7 +76,14 @@ public class AnnotatedCommandProvider implements CommandProvider
 
    private UICommand createAnnotatedCommand(Method method)
    {
-      Object instance = registry.getServices(method.getDeclaringClass()).get();
+      Imported<?> service = registry.getServices(method.getDeclaringClass());
+      if (service.isUnsatisfied())
+      {
+         // Class may not be loaded yet
+         logger.log(Level.SEVERE, "Error while finding " + method.getDeclaringClass() + " as a service");
+         return null;
+      }
+      Object instance = service.get();
       Command ann = method.getAnnotation(Command.class);
 
       List<Predicate<UIContext>> enabledPredicates = new ArrayList<>();
