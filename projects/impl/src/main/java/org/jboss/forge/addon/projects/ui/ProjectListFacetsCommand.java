@@ -61,9 +61,9 @@ public class ProjectListFacetsCommand extends AbstractProjectCommand
       PrintStream out = uiContext.getProvider().getOutput().out();
       for (ProjectFacet facet : project.getFacets())
       {
-         Class<? extends ProjectFacet> type = facet.getClass();
-         String name = Proxies.unwrapProxyClassName(type);
-         out.println(name);
+         Object unwrappedFacet = Proxies.unwrap(facet);
+         Class<?> type = unwrappedFacet.getClass();
+         out.println(type.getSimpleName() + "\t[" + unwrappedFacet + "]");
       }
       out.println();
       return Results.success();
