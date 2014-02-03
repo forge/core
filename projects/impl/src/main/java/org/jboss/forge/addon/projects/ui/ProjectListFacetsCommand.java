@@ -40,11 +40,6 @@ public class ProjectListFacetsCommand extends AbstractProjectCommand
    {
    }
 
-   /*
-    * (non-Javadoc)
-    * 
-    * @see org.jboss.forge.addon.ui.command.AbstractUICommand#getMetadata(org.jboss.forge.addon.ui.context.UIContext)
-    */
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
@@ -67,6 +62,12 @@ public class ProjectListFacetsCommand extends AbstractProjectCommand
       }
       out.println();
       return Results.success();
+   }
+
+   @Override
+   public boolean isEnabled(UIContext context)
+   {
+      return super.isEnabled(context) && !context.getProvider().isGUI();
    }
 
    @Override
