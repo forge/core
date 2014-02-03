@@ -54,12 +54,12 @@ public class ShellExportTest
    @Inject
    private ShellTest shellTest;
 
-   @Test
+   @Test(timeout = 10000)
    public void testExport() throws Exception
    {
       shellTest.execute("export A_VARIABLE=123");
       shellTest.clearScreen();
-      Result result = shellTest.execute("echo-export", 5, TimeUnit.HOURS);
+      Result result = shellTest.execute("echo-export", 5, TimeUnit.SECONDS);
       Assert.assertThat(result.getMessage(), CoreMatchers.containsString("123"));
    }
 
