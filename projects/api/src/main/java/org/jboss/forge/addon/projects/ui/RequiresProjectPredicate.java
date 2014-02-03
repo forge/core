@@ -9,11 +9,9 @@ package org.jboss.forge.addon.projects.ui;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.furnace.util.Predicate;
 
 /**
@@ -29,27 +27,6 @@ public class RequiresProjectPredicate implements Predicate<UIContext>
    @Override
    public boolean accept(UIContext context)
    {
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (!initialSelection.isEmpty())
-      {
-         return projectFactory.containsProject(initialSelection.get());
-      }
-      return false;
+      return Projects.containsProject(projectFactory, context);
    }
-
-   protected Project getProject(UIContext context)
-   {
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (!initialSelection.isEmpty())
-      {
-         return projectFactory.findProject(initialSelection.get());
-      }
-      return null;
-   }
-
-   protected ProjectFactory getProjectFactory()
-   {
-      return projectFactory;
-   }
-
 }
