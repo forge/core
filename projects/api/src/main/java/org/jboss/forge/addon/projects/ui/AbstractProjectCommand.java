@@ -14,7 +14,7 @@ import org.jboss.forge.addon.facets.constraints.FacetInspector;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -56,12 +56,7 @@ public abstract class AbstractProjectCommand extends AbstractUICommand
     */
    protected boolean containsProject(UIContext context)
    {
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (!initialSelection.isEmpty())
-      {
-         return getProjectFactory().containsProject(initialSelection.get());
-      }
-      return false;
+      return Projects.containsProject(getProjectFactory(), context);
    }
 
    /**
@@ -69,18 +64,12 @@ public abstract class AbstractProjectCommand extends AbstractUICommand
     */
    protected Project getSelectedProject(UIContext context)
    {
-      Project project = null;
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (!initialSelection.isEmpty())
-      {
-         project = getProjectFactory().findProject(initialSelection.get());
-      }
-      return project;
+      return Projects.getSelectedProject(getProjectFactory(), context);
    }
 
    protected Project getSelectedProject(UIContextProvider contextProvider)
    {
-      return getSelectedProject(contextProvider.getUIContext());
+      return Projects.getSelectedProject(getProjectFactory(), contextProvider.getUIContext());
    }
 
    /**
