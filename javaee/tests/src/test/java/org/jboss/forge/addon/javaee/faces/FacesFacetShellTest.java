@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.javaee.faces;
 
+import static org.hamcrest.CoreMatchers.containsString;
+
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -24,7 +26,6 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -88,12 +89,12 @@ public class FacesFacetShellTest
    }
 
    @Test
-   @Ignore("project-new fails with timeout")
    public void testFacesFacetAvailabilityThroughShellOnly() throws Exception
    {
       shell.execute("project-new --named project" + System.nanoTime(), 10, TimeUnit.SECONDS);
       shell.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
+      clearScreen();
       shell.execute("project-list-facets", 5, TimeUnit.SECONDS);
-      Assert.assertThat(shell.getStdOut(), CoreMatchers.containsString("FacesFacet"));
+      Assert.assertThat(shell.getStdOut(), containsString("FacesFacet"));
    }
 }

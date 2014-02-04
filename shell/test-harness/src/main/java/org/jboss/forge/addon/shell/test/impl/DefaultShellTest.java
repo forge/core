@@ -439,43 +439,28 @@ public class DefaultShellTest implements ShellTest
       @Override
       public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
       {
-         synchronized (this)
-         {
-            this.result = result;
-         }
+         this.result = (result == null) ? Results.success() : result;
       }
 
       @Override
       public void postCommandFailure(UICommand command, UIExecutionContext context, Throwable failure)
       {
-         synchronized (this)
-         {
-            this.result = Results.fail("Error encountered during command execution.", failure);
-         }
+         this.result = Results.fail("Error encountered during command execution.", failure);
       }
 
       public boolean isExecuted()
       {
-         synchronized (this)
-         {
-            return result != null;
-         }
+         return result != null;
       }
 
       public Result getResult()
       {
-         synchronized (this)
-         {
-            return result;
-         }
+         return result;
       }
 
       public void reset()
       {
-         synchronized (this)
-         {
-            result = null;
-         }
+         result = null;
       }
    }
 
