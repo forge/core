@@ -11,12 +11,15 @@ import java.util.List;
 import java.util.Set;
 
 import org.jboss.forge.addon.ui.UIRuntime;
+import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.output.UIMessage;
+import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.util.Assert;
 
@@ -93,5 +96,32 @@ public abstract class AbstractCommandController implements CommandController
          }
       }
       return result;
+   }
+
+   protected void firePreCommandExecuted(UIExecutionContext executionContext,
+            Set<CommandExecutionListener> listeners, UICommand command)
+   {
+      for (CommandExecutionListener listener : listeners)
+      {
+         listener.preCommandExecuted(command, executionContext);
+      }
+   }
+
+   protected void firePostCommandFailure(UIExecutionContext executionContext,
+            Set<CommandExecutionListener> listeners, UICommand command, Exception e)
+   {
+      for (CommandExecutionListener listener : listeners)
+      {
+         listener.postCommandFailure(command, executionContext, e);
+      }
+   }
+
+   protected void firePostCommandExecuted(UIExecutionContext executionContext,
+            Set<CommandExecutionListener> listeners, UICommand command, Result currentResult)
+   {
+      for (CommandExecutionListener listener : listeners)
+      {
+         listener.postCommandExecuted(command, executionContext, currentResult);
+      }
    }
 }

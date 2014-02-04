@@ -19,18 +19,17 @@ public interface CommandExecutionListener
    /**
     * Called when the given {@link UICommand} is about to be executed. Provides the current {@link UIExecutionContext}.
     */
-   public void preCommandExecuted(UICommand command, UIExecutionContext context);
+   void preCommandExecuted(UICommand command, UIExecutionContext context);
 
    /**
     * Called after the given {@link UICommand} has been executed. Provides the command {@link Result} and current
     * {@link UIExecutionContext}.
     */
-   public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result);
+   void postCommandExecuted(UICommand command, UIExecutionContext context, Result result);
 
    /**
     * Called after the given {@link UICommand} has been executed. Provides the command {@link Result} and current
     * {@link UIExecutionContext}.
     */
-   public void postCommandFailure(UICommand command, UIExecutionContext context, Throwable failure);
-
+   void postCommandFailure(UICommand command, UIExecutionContext context, Throwable failure);
 }

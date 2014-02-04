@@ -23,6 +23,7 @@ import org.jboss.forge.addon.ui.UIRuntime;
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
@@ -37,6 +38,7 @@ import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.forge.addon.ui.wizard.WizardExecutionListener;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.proxy.Proxies;
 
@@ -134,39 +136,76 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
          listeners.add(listener);
       }
       List<Result> results = new LinkedList<>();
-      for (WizardStepEntry entry : flow)
+      try
       {
-         CommandController controller = entry.controller;
-         if (progressMonitor.isCancelled())
+         firePreWizardExecuted(executionContext, listeners);
+         for (WizardStepEntry entry : flow)
          {
-            break;
-         }
-         UICommand command = controller.getCommand();
-         try
-         {
-            for (CommandExecutionListener listener : listeners)
+            CommandController controller = entry.controller;
+            if (progressMonitor.isCancelled())
             {
-               listener.preCommandExecuted(command, executionContext);
+               break;
             }
-
-            Result currentResult = command.execute(executionContext);
-            for (CommandExecutionListener listener : listeners)
+            UICommand command = controller.getCommand();
+            try
             {
-               listener.postCommandExecuted(command, executionContext, currentResult);
+               firePreCommandExecuted(executionContext, listeners, command);
+               Result currentResult = command.execute(executionContext);
+               results.add(currentResult);
+               firePostCommandExecuted(executionContext, listeners, command, currentResult);
             }
-            results.add(currentResult);
-         }
-         catch (Exception e)
-         {
-            for (CommandExecutionListener listener : listeners)
+            catch (Exception e)
             {
-               listener.postCommandFailure(command, executionContext, e);
+               firePostCommandFailure(executionContext, listeners, command, e);
+               throw e;
             }
-
-            throw e;
          }
       }
-      return (results.size() == 1) ? results.get(0) : CompositeResultImpl.from(results);
+      catch (Exception e)
+      {
+         firePostWizardFailure(executionContext, listeners, e);
+         throw e;
+      }
+      Result result = (results.size() == 1) ? results.get(0) : CompositeResultImpl.from(results);
+      firePostWizardExecuted(executionContext, listeners, result);
+      return result;
+   }
+
+   protected void firePreWizardExecuted(UIExecutionContext executionContext,
+            Set<CommandExecutionListener> listeners)
+   {
+      for (CommandExecutionListener listener : listeners)
+      {
+         if (listener instanceof WizardExecutionListener)
+         {
+            ((WizardExecutionListener) listener).preWizardExecuted((UIWizard) initialCommand, executionContext);
+         }
+      }
+   }
+
+   protected void firePostWizardFailure(UIExecutionContext executionContext,
+            Set<CommandExecutionListener> listeners, Exception e)
+   {
+      for (CommandExecutionListener listener : listeners)
+      {
+         if (listener instanceof WizardExecutionListener)
+         {
+            ((WizardExecutionListener) listener).postWizardFailure((UIWizard) initialCommand, executionContext, e);
+         }
+      }
+   }
+
+   protected void firePostWizardExecuted(UIExecutionContext executionContext,
+            Set<CommandExecutionListener> listeners, Result currentResult)
+   {
+      for (CommandExecutionListener listener : listeners)
+      {
+         if (listener instanceof WizardExecutionListener)
+         {
+            ((WizardExecutionListener) listener).postWizardExecuted((UIWizard) initialCommand, executionContext,
+                     currentResult);
+         }
+      }
    }
 
    @Override

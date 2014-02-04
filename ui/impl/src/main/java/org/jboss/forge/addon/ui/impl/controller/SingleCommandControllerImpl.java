@@ -82,26 +82,16 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
       {
          listeners.add(listener);
       }
-      for (CommandExecutionListener listener : listeners)
-      {
-         listener.preCommandExecuted(initialCommand, executionContext);
-      }
-
+      firePreCommandExecuted(executionContext, listeners, initialCommand);
       try
       {
          Result result = initialCommand.execute(executionContext);
-         for (CommandExecutionListener listener : listeners)
-         {
-            listener.postCommandExecuted(initialCommand, executionContext, result);
-         }
+         firePostCommandExecuted(executionContext, listeners, initialCommand, result);
          return result;
       }
       catch (Exception e)
       {
-         for (CommandExecutionListener listener : listeners)
-         {
-            listener.postCommandFailure(initialCommand, executionContext, e);
-         }
+         firePostCommandFailure(executionContext, listeners, initialCommand, e);
          throw e;
       }
    }
