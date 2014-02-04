@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.shell.command;
 
-import java.io.File;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -58,7 +57,6 @@ public class TouchCommand extends AbstractShellCommand
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public Result execute(UIExecutionContext context) throws Exception
    {
       Resource<?> currentResource = (Resource<?>) context.getUIContext().getInitialSelection().get();
@@ -67,16 +65,17 @@ public class TouchCommand extends AbstractShellCommand
          List<Resource<?>> resources = new ResourcePathResolver(resourceFactory, currentResource, path).resolve();
          for (Resource<?> resource : resources)
          {
-            FileResource<?> file = resourceFactory.create(FileResource.class,
-                     new File(resource.getFullyQualifiedName()));
-
-            if (resource.exists())
+            FileResource<?> file = resource.reify(FileResource.class);
+            if (file != null)
             {
-               file.setLastModified(System.currentTimeMillis());
-            }
-            else if (!file.createNewFile())
-            {
-               return Results.fail(path + ": file could not be created.");
+               if (file.exists())
+               {
+                  file.setLastModified(System.currentTimeMillis());
+               }
+               else if (!file.createNewFile())
+               {
+                  return Results.fail(path + ": file could not be created.");
+               }
             }
          }
       }
