@@ -36,6 +36,8 @@ import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.forge.addon.ui.wizard.WizardExecutionListener;
 import org.jboss.forge.furnace.container.cdi.events.Local;
 import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.exception.ContainerException;
@@ -427,40 +429,61 @@ public class DefaultShellTest implements ShellTest
 
    }
 
-   public class TestCommandListener extends AbstractCommandExecutionListener
+   public class TestCommandListener extends AbstractCommandExecutionListener implements WizardExecutionListener
    {
+      boolean isWizard;
       volatile Result result;
 
       @Override
-      public void preCommandExecuted(UICommand command, UIExecutionContext context)
+      public void preWizardExecuted(UIWizard wizard, UIExecutionContext context)
       {
+         isWizard = true;
       }
 
       @Override
       public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
       {
-         this.result = (result == null) ? Results.success() : result;
+         if (!isWizard)
+         {
+            this.result = (result == null) ? Results.success() : result;
+         }
       }
 
       @Override
       public void postCommandFailure(UICommand command, UIExecutionContext context, Throwable failure)
+      {
+         if (!isWizard)
+         {
+            this.result = Results.fail("Error encountered during command execution.", failure);
+         }
+      }
+
+      @Override
+      public void postWizardExecuted(UIWizard wizard, UIExecutionContext context, Result result)
+      {
+         this.result = (result == null) ? Results.success() : result;
+      }
+
+      @Override
+      public void postWizardFailure(UIWizard wizard, UIExecutionContext context, Throwable failure)
       {
          this.result = Results.fail("Error encountered during command execution.", failure);
       }
 
       public boolean isExecuted()
       {
-         return result != null;
+         return this.result != null;
       }
 
       public Result getResult()
       {
-         return result;
+         return this.result;
       }
 
       public void reset()
       {
-         result = null;
+         this.result = null;
+         this.isWizard = false;
       }
    }
 
