@@ -429,7 +429,7 @@ public class DefaultShellTest implements ShellTest
 
    public class TestCommandListener extends AbstractCommandExecutionListener
    {
-      Result result;
+      volatile Result result;
 
       @Override
       public void preCommandExecuted(UICommand command, UIExecutionContext context)
