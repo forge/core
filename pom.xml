@@ -68,39 +68,59 @@
       <version.xmlparser>1.0.0.Final</version.xmlparser>
    </properties>
 
+   <modules>
+      <module>bootstrap</module>
+      <module>dist</module>
+
+      <module>addon-manager</module>
+      <module>addons</module>
+      <module>convert</module>
+      <module>configuration</module>
+      <module>database-tools</module>
+      <module>dependencies</module>
+      <module>dev-tools-java</module>
+      <module>environment</module>
+      <module>facets</module>
+      <module>javaee</module>
+      <module>maven</module>
+      <module>projects</module>
+      <module>parser-java</module>
+      <module>parser-xml</module>
+      <module>resources</module>
+      <module>ui</module>
+      <module>scaffold</module>
+      <module>shell</module>
+      <module>templates</module>
+      <module>text</module>
+
+      <module>core</module>
+   </modules>
+
    <profiles>
       <profile>
-         <id>all</id>
+         <id>teamcity</id>
          <activation>
-            <activeByDefault>true</activeByDefault>
+            <property>
+               <name>teamcity.maven.userSettings.path</name>
+               <value>!false</value>
+            </property>
          </activation>
-         <modules>
-            <module>bootstrap</module>
-            <module>dist</module>
-
-            <module>addon-manager</module>
-            <module>addons</module>
-            <module>convert</module>
-            <module>configuration</module>
-            <module>database-tools</module>
-            <module>dependencies</module>
-            <module>dev-tools-java</module>
-            <module>environment</module>
-            <module>facets</module>
-            <module>javaee</module>
-            <module>maven</module>
-            <module>projects</module>
-            <module>parser-java</module>
-            <module>parser-xml</module>
-            <module>resources</module>
-            <module>ui</module>
-            <module>scaffold</module>
-            <module>shell</module>
-            <module>templates</module>
-            <module>text</module>
-
-            <module>core</module>
-         </modules>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                  <inherited>true</inherited>
+                  <configuration>
+                     <systemPropertyVariables>
+                        <org.apache.maven.user-settings>
+                           ${teamcity.maven.userSettings.path}
+                        </org.apache.maven.user-settings>
+                     </systemPropertyVariables>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
       </profile>
    </profiles>
 
@@ -359,13 +379,13 @@
             <artifactId>scaffold-faces</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
-         </dependency>         
+         </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>shell</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
-         </dependency>         
+         </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>shell-spi</artifactId>
