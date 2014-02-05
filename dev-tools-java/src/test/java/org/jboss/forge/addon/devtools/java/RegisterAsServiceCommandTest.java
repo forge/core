@@ -18,8 +18,7 @@ public class RegisterAsServiceCommandTest
 {
    @Deployment
    @Dependencies({
-            // FIXME remove hard-coded version
-            @AddonDependency(name = "org.jboss.forge.addon:dev-tools-java", version = "2.0.0-SNAPSHOT"),
+            @AddonDependency(name = "org.jboss.forge.addon:dev-tools-java"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
    public static ForgeArchive getDeployment()
    {
