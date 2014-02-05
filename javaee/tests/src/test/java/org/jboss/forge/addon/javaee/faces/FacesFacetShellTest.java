@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
@@ -85,7 +84,7 @@ public class FacesFacetShellTest
       shell.getShell().setCurrentResource(project.getRootDirectory());
       shell.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
       shell.execute("project-list-facets", 5, TimeUnit.SECONDS);
-      Assert.assertThat(shell.getStdOut(), CoreMatchers.containsString("FacesFacet"));
+      Assert.assertThat(shell.getStdOut(), containsString("FacesFacet"));
    }
 
    @Test
