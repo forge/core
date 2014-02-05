@@ -9,6 +9,7 @@ package org.jboss.forge.addon.javaee.faces;
 
 import static org.hamcrest.CoreMatchers.containsString;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -22,6 +23,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -90,6 +92,8 @@ public class FacesFacetShellTest
    @Test
    public void testFacesFacetAvailabilityThroughShellOnly() throws Exception
    {
+      File tmpDir = OperatingSystemUtils.createTempDir();
+      shell.execute("cd " + tmpDir.getAbsolutePath(), 5, TimeUnit.SECONDS);
       shell.execute("project-new --named project" + System.nanoTime(), 10, TimeUnit.SECONDS);
       shell.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
       clearScreen();
