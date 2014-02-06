@@ -56,12 +56,12 @@ public class AddonListCommandTest
       return archive;
    }
 
-   private final int timeoutQuantity = 5;
+   private final int timeoutQuantity = 10;
 
    @Inject
    private ShellTest test;
 
-   @Test(timeout = 10000)
+   @Test(timeout = 15000)
    public void testAddonListCommand() throws Exception
    {
       test.clearScreen();
