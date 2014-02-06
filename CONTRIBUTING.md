@@ -80,7 +80,7 @@ License Information and Contributor Agreement
 ### Java,  Javascript and CSS files
 
       /**
-       * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+       * Copyright 2014 Red Hat, Inc. and/or its affiliates.
        *
        * Licensed under the Eclipse Public License version 1.0, available at
        * http://www.eclipse.org/legal/epl-v10.html
@@ -89,7 +89,7 @@ License Information and Contributor Agreement
 ### HTML, XML, XSD and XHTML files
 
       <!--
-       ~ Copyright 2013 Red Hat, Inc. and/or its affiliates.
+       ~ Copyright 2014 Red Hat, Inc. and/or its affiliates.
        ~
        ~ Licensed under the Eclipse Public License version 1.0, available at
        ~ http://www.eclipse.org/legal/epl-v10.html
@@ -97,7 +97,7 @@ License Information and Contributor Agreement
 
 ### Properties files and Bash Scripts
 
-       # Copyright 2013 Red Hat, Inc. and/or its affiliates.
+       # Copyright 2014 Red Hat, Inc. and/or its affiliates.
        #
        # Licensed under the Eclipse Public License version 1.0, available at
        # http://www.eclipse.org/legal/epl-v10.html
@@ -105,7 +105,7 @@ License Information and Contributor Agreement
 ### SQL files
 
       --
-      -- Copyright 2013 Red Hat, Inc. and/or its affiliates.
+      -- Copyright 2014 Red Hat, Inc. and/or its affiliates.
       --
       -- Licensed under the Eclipse Public License version 1.0, available at
       -- http://www.eclipse.org/legal/epl-v10.html
@@ -114,7 +114,7 @@ License Information and Contributor Agreement
 ### JSP files
 
       <%--
-      Copyright 2013 Red Hat, Inc. and/or its affiliates.
+      Copyright 2014 Red Hat, Inc. and/or its affiliates.
 
       Licensed under the Eclipse Public License version 1.0, available at
       http://www.eclipse.org/legal/epl-v10.html
