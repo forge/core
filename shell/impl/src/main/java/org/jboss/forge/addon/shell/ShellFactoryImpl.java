@@ -12,13 +12,11 @@ import java.io.File;
 import javax.inject.Inject;
 
 import org.jboss.aesh.console.settings.Settings;
-import org.jboss.aesh.console.settings.SettingsBuilder;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.util.Assert;
-import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
  * Creates {@link Shell} instances
@@ -50,16 +48,7 @@ public class ShellFactoryImpl implements ShellFactory
    {
       Assert.notNull(settings, "Settings cannot be null");
       FileResource<?> initialResource = resourceFactory.create(initialSelection).reify(FileResource.class);
-      File forgeHome = OperatingSystemUtils.getUserForgeDir();
-      File history = new File(forgeHome, "history");
-      File alias = new File(forgeHome, "alias");
-      File export = new File(forgeHome, "export");
-      Settings newSettings = new SettingsBuilder(settings)
-               .historyFile(history)
-               .aliasFile(alias)
-               .setExportFile(export)
-               .create();
-      return new ShellImpl(initialResource, newSettings, commandManager, addonRegistry, commandFactory);
+      return new ShellImpl(initialResource, settings, commandManager, addonRegistry, commandFactory);
    }
 
 }
