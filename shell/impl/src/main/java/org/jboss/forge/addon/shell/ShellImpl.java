@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.shell;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -69,15 +70,24 @@ public class ShellImpl implements Shell, UIRuntime
    {
       this.currentResource = initialResource;
       this.addonRegistry = addonRegistry;
-      Settings newSettings = new SettingsBuilder(settings).interruptHook(new InterruptHook()
-      {
-         @Override
-         public void handleInterrupt(Console console)
-         {
-            console.getShell().out().println("^C");
-            console.clearBufferAndDisplayPrompt();
-         }
-      }).create();
+      // Set the paths for the Aesh history, alias and export files.
+      File forgeHome = OperatingSystemUtils.getUserForgeDir();
+      File history = new File(forgeHome, "history");
+      File alias = new File(forgeHome, "alias");
+      File export = new File(forgeHome, "export");
+      Settings newSettings = new SettingsBuilder(settings)
+               .historyFile(history)
+               .aliasFile(alias)
+               .exportFile(export)
+               .interruptHook(new InterruptHook()
+               {
+                  @Override
+                  public void handleInterrupt(Console console)
+                  {
+                     console.getShell().out().println("^C");
+                     console.clearBufferAndDisplayPrompt();
+                  }
+               }).create();
       final ForgeCommandRegistry registry = new ForgeCommandRegistry(this, commandManager, commandFactory,
                commandManager
                         .getConverterFactory());
