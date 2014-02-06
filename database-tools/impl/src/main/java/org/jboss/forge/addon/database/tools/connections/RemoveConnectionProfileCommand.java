@@ -83,7 +83,7 @@ public class RemoveConnectionProfileCommand extends AbstractUICommand
       {
          message += " " + removedProfiles + " has";
       }
-      message += " been removed succesfully";
+      message += " been removed successfully";
       return Results.success(message);
    }
 

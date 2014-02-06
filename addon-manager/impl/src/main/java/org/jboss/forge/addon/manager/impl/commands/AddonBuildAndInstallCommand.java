@@ -94,7 +94,7 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
          Addons.waitUntilStopped(registry.getAddon(id));
          InstallRequest installRequest = addonManager.install(id);
          installRequest.perform();
-         return Results.success("Addon " + coordinate.toString() + " was installed succesfully.");
+         return Results.success("Addon " + coordinate.toString() + " was installed successfully.");
       }
       catch (Throwable t)
       {
