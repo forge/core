@@ -34,11 +34,6 @@ import org.jboss.forge.parser.java.util.Strings;
 public class MavenPluginInstallImpl implements MavenPluginInstaller
 {
    /**
-    * Merge the plugin definition with existing configuration
-    */
-   private final boolean mergeWithExisting = true;
-
-   /**
     * Filter plugin definition with existing hierarchy configuration All properties having equivalent counterparts in
     * the hierarchy (in plugin or plugin mamnagement sections of the parent) will be removed from the new plugin
     * definition (to preserve hierarchy precedence.
@@ -62,20 +57,10 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
       if (managed && plugins.hasEffectiveManagedPlugin(pluginCoordinates))
       {
          existing = plugins.getEffectiveManagedPlugin(pluginCoordinates);
-         if (plugins.hasManagedPlugin(pluginCoordinates) && !mergeWithExisting)
-         {
-            // If no merge, existing should not have any of the direct managed-plugin configuration
-            existing = diff(existing, plugins.getManagedPlugin(pluginCoordinates));
-         }
       }
       else if (plugins.hasEffectivePlugin(pluginCoordinates))
       {
          existing = plugins.getEffectivePlugin(pluginCoordinates);
-         if (plugins.hasPlugin(pluginCoordinates) && !mergeWithExisting)
-         {
-            // If no merge, existing should not have any of the direct plugin configuration
-            existing = diff(existing, plugins.getPlugin(pluginCoordinates));
-         }
       }
 
       MavenPlugin filteredPlugin = plugin;
@@ -94,16 +79,13 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
 
       MavenPlugin mergedPlugin = filteredPlugin;
       // merged plugin is a merge with the direct plugin(management)
-      if (mergeWithExisting)
+      if (managed && managedPlugin != null)
       {
-         if (managed && managedPlugin != null)
-         {
-            mergedPlugin = plugins.merge(mergedPlugin, managedPlugin);
-         }
-         else if (!managed && plugins.hasPlugin(pluginCoordinates))
-         {
-            mergedPlugin = plugins.merge(mergedPlugin, plugins.getPlugin(pluginCoordinates));
-         }
+         mergedPlugin = plugins.merge(mergedPlugin, managedPlugin);
+      }
+      else if (!managed && plugins.hasPlugin(pluginCoordinates))
+      {
+         mergedPlugin = plugins.merge(mergedPlugin, plugins.getPlugin(pluginCoordinates));
       }
 
       // Resolve version
@@ -118,7 +100,7 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
       }
 
       // Install the plugin
-      MavenPluginAdapter pluginToInstall = new MavenPluginAdapter(mergeWithExisting ? mergedPlugin : filteredPlugin);
+      MavenPluginAdapter pluginToInstall = new MavenPluginAdapter(mergedPlugin);
       pluginToInstall.setVersion(versionToInstall);
       if (!managed)
       {
