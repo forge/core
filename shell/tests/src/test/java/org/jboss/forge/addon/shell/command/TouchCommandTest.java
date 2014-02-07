@@ -97,8 +97,11 @@ public class TouchCommandTest
 
       Result result = shellTest.execute("touch foo.txt", 5, TimeUnit.SECONDS);
       Assert.assertFalse(result instanceof Failed);
-
-      Assert.assertTrue(lastModified < child.getLastModified());
+      
+      long newLastModified = child.getLastModified();
+      Assert.assertTrue("Last modified not changed Original: " + lastModified + " New: " + newLastModified,
+               newLastModified - lastModified > 0);
+      
       Assert.assertTrue(child.exists());
       child.delete();
    }
