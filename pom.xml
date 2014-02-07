@@ -490,6 +490,22 @@
 
    <build>
       <plugins>
+         <!-- Ignoring unused plugin execution -->
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>buildnumber-maven-plugin</artifactId>
+            <inherited>true</inherited>
+            <executions>
+               <execution>
+                  <id>get-build-timestamp</id>
+                  <phase>none</phase>
+               </execution>
+               <execution>
+                  <id>get-scm-revision</id>
+                  <phase>none</phase>
+               </execution>
+            </executions>
+         </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-release-plugin</artifactId>
