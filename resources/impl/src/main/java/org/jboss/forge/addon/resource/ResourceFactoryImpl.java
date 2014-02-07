@@ -41,8 +41,6 @@ public class ResourceFactoryImpl implements ResourceFactory
    @Inject
    private FileResourceTransactionManager transactionManager;
 
-   private Imported<ResourceGenerator<?, ?>> instances;
-
    @Override
    @SuppressWarnings({ "unchecked", "rawtypes" })
    public <E, T extends Resource<E>> T create(final Class<T> type, final E underlyingResource)
@@ -53,9 +51,7 @@ public class ResourceFactoryImpl implements ResourceFactory
          TreeMap<Class<?>, ResourceGenerator> generated = new TreeMap<>(
                   new RelatedClassComparator());
 
-         // FIXME Workaround for FORGE-1263
-         if (instances == null)
-            instances = (Imported) registry.getServices(ResourceGenerator.class);
+         Imported<ResourceGenerator> instances = registry.getServices(ResourceGenerator.class);
 
          for (ResourceGenerator generator : instances)
          {
