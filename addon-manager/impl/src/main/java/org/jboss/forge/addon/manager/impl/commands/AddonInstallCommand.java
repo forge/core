@@ -94,7 +94,7 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
       try
       {
          addonManager.install(AddonId.fromCoordinates(coordinates)).perform();
-         return Results.success("Addon " + coordinates + " was installed succesfully.");
+         return Results.success("Addon " + coordinates + " was installed successfully.");
       }
       catch (Throwable t)
       {

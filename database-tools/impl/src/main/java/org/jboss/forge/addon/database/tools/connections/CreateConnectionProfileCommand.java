@@ -68,7 +68,7 @@ public class CreateConnectionProfileCommand extends ConnectionProfileDetailsPage
       return Results.success(
                "Connection profile " +
                         connectionProfile.getName() +
-                        " has been saved succesfully");
+                        " has been saved successfully");
    }
 
    @Override
