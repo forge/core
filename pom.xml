@@ -96,34 +96,6 @@
       <module>core</module>
    </modules>
 
-   <profiles>
-      <profile>
-         <id>teamcity</id>
-         <activation>
-            <property>
-               <name>teamcity.maven.userSettings.path</name>
-               <value>!false</value>
-            </property>
-         </activation>
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <inherited>true</inherited>
-                  <configuration>
-                     <systemPropertyVariables>
-                        <org.apache.maven.user-settings>
-                           ${teamcity.maven.userSettings.path}
-                        </org.apache.maven.user-settings>
-                     </systemPropertyVariables>
-                  </configuration>
-               </plugin>
-            </plugins>
-         </build>
-      </profile>
-   </profiles>
-
    <dependencyManagement>
       <dependencies>
 
@@ -621,6 +593,7 @@
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-surefire-plugin</artifactId>
                <configuration>
+                  <redirectTestOutputToFile>true</redirectTestOutputToFile>
                   <argLine>-Xms256m -Xmx512m -XX:MaxPermSize=160m</argLine>
                   <systemProperties>
                      <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
