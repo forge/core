@@ -33,7 +33,6 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-@Ignore("It fails in TeamCity. Investigate")
 public class NewProjectShellTest
 {
    @Deployment
@@ -72,7 +71,7 @@ public class NewProjectShellTest
    {
       File target = OperatingSystemUtils.createTempDir();
 
-      Result result = test.execute(("new-project " +
+      Result result = test.execute(("project-new " +
                "--named lincoln " +
                "--topLevelPackage org.lincoln " +
                "--targetLocation " + target.getAbsolutePath() + " " +
@@ -93,7 +92,7 @@ public class NewProjectShellTest
    {
       File target = OperatingSystemUtils.createTempDir();
 
-      Result result = test.execute(("new-project " +
+      Result result = test.execute(("project-new " +
                "--named lincoln-three " +
                "--targetLocation " + target.getAbsolutePath() + " " +
                "--type \"Maven - Resources\" " +
@@ -116,29 +115,29 @@ public class NewProjectShellTest
    @Ignore("Until shell is fixed")
    public void testCompletionFlow() throws Exception
    {
-      test.waitForCompletion("new-project ", "new-pr", 5, TimeUnit.SECONDS);
-      test.waitForCompletion("new-project --", "", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("project-new ", "project-n", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("project-new --", "", 5, TimeUnit.SECONDS);
 
       String stdout = test.waitForCompletion(5, TimeUnit.SECONDS);
       Assert.assertThat(stdout, containsString("--named"));
       Assert.assertThat(stdout, containsString("--topLevelPackage"));
       Assert.assertThat(stdout, containsString("--targetLocation"));
-      Assert.assertThat(stdout, containsString("--overwrite"));
+      Assert.assertThat(stdout, not(containsString("--overwrite")));
       Assert.assertThat(stdout, containsString("--type"));
       Assert.assertThat(stdout, containsString("--version"));
       Assert.assertThat(stdout, not(containsString("--addons")));
 
-      stdout = test.waitForCompletion("new-project --named lincoln --type Maven\\ -\\ ",
+      stdout = test.waitForCompletion("project-new --named lincoln --type Maven\\ -\\ ",
                "named lincoln --type Mave",
                5, TimeUnit.SECONDS);
 
       Assert.assertThat(stdout, containsString("Maven - Java"));
       Assert.assertThat(stdout, containsString("Maven - Resources"));
 
-      stdout = test.waitForCompletion("new-project --named lincoln --type Maven\\ -\\ Java ",
+      stdout = test.waitForCompletion("project-new --named lincoln --type Maven\\ -\\ Java ",
                "J", 5, TimeUnit.SECONDS);
 
-      stdout = test.waitForCompletion("new-project --named lincoln --type Maven\\ -\\ Java --",
+      stdout = test.waitForCompletion("project-new --named lincoln --type Maven\\ -\\ Java --",
                "--", 5, TimeUnit.SECONDS);
 
       Assert.assertThat(stdout, containsString("--topLevelPackage"));
