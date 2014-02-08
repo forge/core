@@ -152,7 +152,7 @@ public class ProjectFactoryImpl implements ProjectFactory
 
       Project result = null;
 
-      Iterator<DirectoryResource> pathIterator = allDirectoriesOnPath(fileToDir(target.getParent())).iterator();
+      Iterator<DirectoryResource> pathIterator = allDirectoriesOnPath(fileToDir(target)).iterator();
       while (pathIterator.hasNext() && result == null)
       {
          result = findProjectInDirectory(pathIterator.next(), projectProvider, filter);
