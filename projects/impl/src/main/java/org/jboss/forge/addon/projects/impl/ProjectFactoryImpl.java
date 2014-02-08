@@ -122,20 +122,25 @@ public class ProjectFactoryImpl implements ProjectFactory
       Project result = null;
       Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
 
-      for (DirectoryResource dir : allDirectoriesOnPath(fileToDir(target)))
+      try
+      {
+         for (DirectoryResource dir : allDirectoriesOnPath(fileToDir(target)))
+         {
+            for (ProjectProvider projectProvider : instances)
+            {
+               result = findProjectInDirectory(dir, projectProvider, filter);
+            }
+
+            if (result != null)
+               break;
+         }
+      }
+      finally
       {
          for (ProjectProvider projectProvider : instances)
          {
-            result = findProjectInDirectory(dir, projectProvider, filter);
+            instances.release(projectProvider);
          }
-         
-         if (result != null)
-            break;
-      }
-      
-      for (ProjectProvider projectProvider : instances)
-      {
-         instances.release(projectProvider);
       }
 
       return result;
@@ -203,7 +208,7 @@ public class ProjectFactoryImpl implements ProjectFactory
          }
       }
 
-      if (projectProvider.containsProject(target))
+      if (result == null && projectProvider.containsProject(target))
       {
          result = projectProvider.createProject(target);
          if (result != null && !filter.accept(result))
