@@ -133,7 +133,7 @@ public class DefaultShellTest implements ShellTest
          {
             if (System.currentTimeMillis() > (start + TimeUnit.MILLISECONDS.convert(quantity, unit)))
             {
-               throw throwTimeout("Timeout expired waiting for command [" + line + "] to execute.");
+               throwTimeout("Timeout expired waiting for command [" + line + "] to execute.");
             }
 
             try
@@ -243,7 +243,7 @@ public class DefaultShellTest implements ShellTest
          if (System.currentTimeMillis() >= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
                   && stream.size() == size)
          {
-            throw throwTimeout("Timeout occurred while waiting for stream to be written.");
+            throwTimeout("Timeout occurred while waiting for stream to be written.");
          }
 
          try
@@ -282,7 +282,7 @@ public class DefaultShellTest implements ShellTest
          if (System.currentTimeMillis() >= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
                   && !new String(stream.toByteArray()).contains(expected))
          {
-            throw throwTimeout("Timeout occurred while waiting for stream value [" + expected + "].");
+            throwTimeout("Timeout occurred while waiting for stream value [" + expected + "].");
          }
 
          try
@@ -315,7 +315,7 @@ public class DefaultShellTest implements ShellTest
          if (System.currentTimeMillis() >= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
                   && buffer.equals(getBuffer()))
          {
-            throw throwTimeout("Timeout occurred while waiting for buffer value to change from [" + buffer
+            throwTimeout("Timeout occurred while waiting for buffer value to change from [" + buffer
                      + "].");
          }
 
@@ -349,7 +349,7 @@ public class DefaultShellTest implements ShellTest
          if (System.currentTimeMillis() >= (start + TimeUnit.MILLISECONDS.convert(quantity, unit))
                   && !getBuffer().equals(expected))
          {
-            throw throwTimeout("Timeout occurred while waiting for buffer to equal value [" + expected + "].");
+            throwTimeout("Timeout occurred while waiting for buffer to equal value [" + expected + "].");
          }
 
          try
@@ -501,9 +501,9 @@ public class DefaultShellTest implements ShellTest
       getStdIn().write(completeChar.getFirstValue());
    }
 
-   private TimeoutException throwTimeout(String message) throws TimeoutException
+   private void throwTimeout(String message) throws TimeoutException
    {
-      return new TimeoutException(message
+      throw new TimeoutException(message
                + OperatingSystemUtils.getLineSeparator()
                + OperatingSystemUtils.getLineSeparator()
                + "STDOUT: " + provider.getStdOut().toString()
