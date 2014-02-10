@@ -6,14 +6,19 @@
  */
 package org.jboss.forge.addon.javaee.jpa;
 
-import java.io.File;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
+
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.javaee.ProjectHelper;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.shell.test.ShellTest;
+import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
@@ -21,7 +26,6 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -29,7 +33,6 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-@Ignore("Review")
 public class NewEntityCommandShellTest
 {
    @Deployment
@@ -44,6 +47,7 @@ public class NewEntityCommandShellTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addBeansXML()
+               .addClass(ProjectHelper.class)
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
@@ -57,23 +61,22 @@ public class NewEntityCommandShellTest
    @Inject
    private ShellTest test;
 
+   @Inject
+   private ProjectHelper projectHelper;
+
    @Test
    public void testContainerInjection() throws Exception
    {
-      File target = File.createTempFile("jpa-new-entity", ".java");
-      target.delete();
-
+      Project project = projectHelper.createJavaLibraryProject();
+      test.getShell().setCurrentResource(project.getRootDirectory());
+      projectHelper.installJPA_2_0(project);
       Result result = test.execute(("jpa-new-entity " +
-               "--named lincoln " +
+               "--named Customer " +
                "--targetPackage org.lincoln " +
-               "--idStrategy AUTO"), 30, TimeUnit.SECONDS);
+               "--idStrategy AUTO"), 10, TimeUnit.SECONDS);
 
-      Assert.assertNotNull(result);
-
-      // Assert.assertTrue(target.exists());
-      // Assert.assertTrue(target.isDirectory());
-      // File projectDir = new File(target, "lincoln");
-      // Assert.assertTrue(projectDir.exists());
-      // Assert.assertTrue(new File(projectDir, "pom.xml").exists());
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
+      Assert.assertTrue(project.hasFacet(JPAFacet.class));
+      Assert.assertEquals(1, project.getFacet(JPAFacet.class).getAllEntities().size());
    }
 }

@@ -50,7 +50,7 @@ public class NewEntityCommand extends AbstractJavaEECommand
    private UIInput<String> targetPackage;
 
    @Inject
-   @WithAttributes(label = "ID Column Generation Strategy")
+   @WithAttributes(label = "ID Column Generation Strategy", defaultValue = "AUTO")
    private UISelectOne<GenerationType> idStrategy;
 
    @Inject
