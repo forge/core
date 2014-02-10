@@ -31,6 +31,7 @@ import org.jboss.forge.addon.javaee.ejb.ui.EJBSetupWizard;
 import org.jboss.forge.addon.javaee.faces.FacesFacet;
 import org.jboss.forge.addon.javaee.faces.ui.FacesSetupWizard;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
+import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
@@ -39,6 +40,7 @@ import org.jboss.forge.addon.javaee.servlet.ui.ServletSetupWizard;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
+import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -674,6 +676,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       {
          JavaSourceFacet java = this.origin.getFacet(JavaSourceFacet.class);
          WebResourcesFacet web = this.origin.getFacet(WebResourcesFacet.class);
+         MetadataFacet metadata = this.origin.getFacet(MetadataFacet.class);
 
          loadTemplates();
          Map<Object, Object> context = CollectionUtils.newHashMap();
@@ -704,6 +707,9 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
          metawidgetImports.remove(entity.getQualifiedName());
          context.put("metawidgetImports",
                   CollectionUtils.toString(metawidgetImports, ";\r\nimport ", true, false));
+
+         // Prepare JPA Persistence Unit
+         context.put("persistenceUnitName", metadata.getProjectName() + PersistenceOperations.DEFAULT_UNIT_SUFFIX);
 
          // Create the Backing Bean for this entity
          JavaClass viewBean = JavaParser.parse(JavaClass.class, this.templateProcessor.processTemplate(context, this.backingBeanTemplate));
