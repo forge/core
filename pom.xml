@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -68,33 +69,72 @@
       <version.xmlparser>1.0.0.Final</version.xmlparser>
    </properties>
 
-   <modules>
-      <module>bootstrap</module>
-      <module>dist</module>
+   <profiles>
+      <profile>
+         <id>all</id>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <modules>
+            <module>addon-manager</module>
+            <module>addons</module>
+            <module>convert</module>
+            <module>configuration</module>
+            <module>database-tools</module>
+            <module>dependencies</module>
+            <module>dev-tools-java</module>
+            <module>environment</module>
+            <module>facets</module>
+            <module>javaee</module>
+            <module>maven</module>
+            <module>projects</module>
+            <module>parser-java</module>
+            <module>parser-xml</module>
+            <module>resources</module>
+            <module>ui</module>
+            <module>scaffold</module>
+            <module>shell</module>
+            <module>templates</module>
+            <module>text</module>
 
-      <module>addon-manager</module>
-      <module>addons</module>
-      <module>convert</module>
-      <module>configuration</module>
-      <module>database-tools</module>
-      <module>dependencies</module>
-      <module>dev-tools-java</module>
-      <module>environment</module>
-      <module>facets</module>
-      <module>javaee</module>
-      <module>maven</module>
-      <module>projects</module>
-      <module>parser-java</module>
-      <module>parser-xml</module>
-      <module>resources</module>
-      <module>ui</module>
-      <module>scaffold</module>
-      <module>shell</module>
-      <module>templates</module>
-      <module>text</module>
-
-      <module>core</module>
-   </modules>
+            <module>core</module>
+            <module>bootstrap</module>
+            <module>dist</module>
+         </modules>
+      </profile>
+      <profile>
+         <id>javadoc</id>
+         <activation>
+            <property>
+               <name>javadoc</name>
+               <value>true</value>
+            </property>
+         </activation>
+         <modules>
+            <module>addon-manager/api</module>
+            <module>addon-manager/spi</module>
+            <module>addons/api</module>
+            <module>convert/api</module>
+            <module>configuration/api</module>
+            <module>dependencies/api</module>
+            <module>environment/api</module>
+            <module>facets/api</module>
+            <module>javaee/api</module>
+            <module>maven/api</module>
+            <module>projects/api</module>
+            <module>parser-java/api</module>
+            <module>parser-xml/api</module>
+            <module>resources/api</module>
+            <module>ui/api</module>
+            <module>ui/spi</module>
+            <module>ui/ui-test-harness</module>
+            <module>scaffold/api</module>
+            <module>shell/api</module>
+            <module>templates/api</module>
+            <module>text</module>
+         </modules>
+      </profile>
+   </profiles>
 
    <dependencyManagement>
       <dependencies>
@@ -253,6 +293,16 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>addon-manager-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>addon-manager-impl</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>addon-manager-spi</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
@@ -265,9 +315,19 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>addons-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>configuration</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>configuration-api</artifactId>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
@@ -294,6 +354,16 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>dependencies-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>dependencies-impl</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dev-tools-java</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
@@ -306,9 +376,19 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>environment-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>facets</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>facets-api</artifactId>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
@@ -318,9 +398,24 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>maven</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>maven-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>maven-impl</artifactId>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
@@ -330,9 +425,19 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>parser-java-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>projects</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>projects-api</artifactId>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
@@ -342,9 +447,24 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>resources-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>resources-impl</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>scaffold</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>scaffold-api</artifactId>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
@@ -360,7 +480,29 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>shell-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>shell-spi</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>templates</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>templates-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>templates-spi</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
@@ -408,46 +550,6 @@
             <groupId>org.jboss.forge</groupId>
             <artifactId>xml-parser</artifactId>
             <version>${version.xmlparser}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>addon-manager-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>addon-manager-impl</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>dependencies-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>dependencies-impl</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>maven-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>maven-impl</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>resources-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>resources-impl</artifactId>
-            <version>${project.version}</version>
          </dependency>
       </dependencies>
    </dependencyManagement>
@@ -623,7 +725,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -640,7 +742,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -657,7 +759,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -676,7 +778,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore />
+                              <ignore/>
                            </action>
                         </pluginExecution>
                      </pluginExecutions>
