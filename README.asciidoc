@@ -16,6 +16,8 @@ What's new and noteworthy?
 
 We are currently in the process of migrating Forge 1 to Forge 2, so expect to find some Forge 1 functionality missing in the early versions of Forge 2.
 
+See the JavaDocs here: http://docs.jboss.org/forge/javadoc/2.0.1-SNAPSHOT/
+
 == Download Forge 2:    
 Forge 2 is packaged inside an Eclipse plugin and also as a standalone ZIP file. They are independent of each other.
 It is worth mentioning that the Eclipse plugin does not support access to shell yet.
