@@ -61,4 +61,10 @@ public class ProfileImpl implements Profile
    {
       this.activateByDefault = activateByDefault;
    }
+
+   @Override
+   public org.apache.maven.model.Profile getAsMavenProfile()
+   {
+      return new ProfileAdapter(this);
+   }
 }
