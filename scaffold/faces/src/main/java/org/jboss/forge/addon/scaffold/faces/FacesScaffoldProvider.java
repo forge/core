@@ -61,6 +61,7 @@ import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.Member;
 import org.jboss.forge.parser.java.Method;
 import org.jboss.shrinkwrap.descriptor.api.javaee6.ParamValueType;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor;
@@ -676,7 +677,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       {
          JavaSourceFacet java = this.origin.getFacet(JavaSourceFacet.class);
          WebResourcesFacet web = this.origin.getFacet(WebResourcesFacet.class);
-         MetadataFacet metadata = this.origin.getFacet(MetadataFacet.class);
+         JPAFacet<PersistenceCommonDescriptor> jpa = this.origin.getFacet(JPAFacet.class);
 
          loadTemplates();
          Map<Object, Object> context = CollectionUtils.newHashMap();
@@ -709,7 +710,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
                   CollectionUtils.toString(metawidgetImports, ";\r\nimport ", true, false));
 
          // Prepare JPA Persistence Unit
-         context.put("persistenceUnitName", metadata.getProjectName() + PersistenceOperations.DEFAULT_UNIT_SUFFIX);
+         context.put("persistenceUnitName", jpa.getConfig().getOrCreatePersistenceUnit().getName());
 
          // Create the Backing Bean for this entity
          JavaClass viewBean = JavaParser.parse(JavaClass.class, this.templateProcessor.processTemplate(context, this.backingBeanTemplate));
