@@ -24,4 +24,6 @@ public interface Profile
    List<DependencyRepository> listRepositories();
 
    Properties getProperties();
+
+   org.apache.maven.model.Profile getAsMavenProfile();
 }
