@@ -11,9 +11,9 @@ import java.util.List;
 
 /**
  * Represents an <execution> element in the pom.xml
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public interface Execution
 {

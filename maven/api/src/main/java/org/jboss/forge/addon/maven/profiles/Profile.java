@@ -15,13 +15,13 @@ import org.jboss.forge.addon.dependencies.DependencyRepository;
 
 public interface Profile
 {
-    String getId();
+   String getId();
 
-    boolean isActiveByDefault();
+   boolean isActiveByDefault();
 
-    List<Dependency> listDependencies();
+   List<Dependency> listDependencies();
 
-    List<DependencyRepository> listRepositories();
+   List<DependencyRepository> listRepositories();
 
-    Properties getProperties();
+   Properties getProperties();
 }

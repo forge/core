@@ -15,29 +15,29 @@ import org.jboss.forge.addon.dependencies.DependencyRepository;
 
 public class ProfileAdapter extends org.apache.maven.model.Profile
 {
-    private static final long serialVersionUID = 4863517832291256970L;
+   private static final long serialVersionUID = 4863517832291256970L;
 
-    public ProfileAdapter(final Profile profile)
-    {
-        setId(profile.getId());
-        Activation activation = new Activation();
-        activation.setActiveByDefault(profile.isActiveByDefault());
+   public ProfileAdapter(final Profile profile)
+   {
+      setId(profile.getId());
+      Activation activation = new Activation();
+      activation.setActiveByDefault(profile.isActiveByDefault());
 
-        setActivation(activation);
+      setActivation(activation);
 
-        for (Dependency dependency : profile.listDependencies())
-        {
-            getDependencies().add(new MavenDependencyAdapter(dependency));
-        }
+      for (Dependency dependency : profile.listDependencies())
+      {
+         getDependencies().add(new MavenDependencyAdapter(dependency));
+      }
 
-        for (DependencyRepository repository : profile.listRepositories())
-        {
-            Repository mavenRepository = new Repository();
-            mavenRepository.setId(repository.getId());
-            mavenRepository.setUrl(repository.getUrl());
-            getRepositories().add(mavenRepository);
-        }
+      for (DependencyRepository repository : profile.listRepositories())
+      {
+         Repository mavenRepository = new Repository();
+         mavenRepository.setId(repository.getId());
+         mavenRepository.setUrl(repository.getUrl());
+         getRepositories().add(mavenRepository);
+      }
 
-        setProperties(profile.getProperties());
-    }
+      setProperties(profile.getProperties());
+   }
 }

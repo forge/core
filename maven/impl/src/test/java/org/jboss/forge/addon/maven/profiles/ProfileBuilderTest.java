@@ -19,59 +19,59 @@ import org.junit.Test;
 
 public class ProfileBuilderTest
 {
-    @Test
-    public void testCreateWithExistingProfile() throws Exception
-    {
-        ProfileImpl profile = new ProfileImpl();
-        profile.setId("testprofile");
+   @Test
+   public void testCreateWithExistingProfile() throws Exception
+   {
+      ProfileImpl profile = new ProfileImpl();
+      profile.setId("testprofile");
 
-        ProfileBuilder profileBuilder = ProfileBuilder.create(profile);
-        assertThat(profileBuilder.getId(), is(profile.getId()));
-    }
+      ProfileBuilder profileBuilder = ProfileBuilder.create(profile);
+      assertThat(profileBuilder.getId(), is(profile.getId()));
+   }
 
-    @Test
-    public void testCreate()
-    {
-        ProfileBuilder profileBuilder = ProfileBuilder.create();
-        assertNotNull(profileBuilder);
-    }
+   @Test
+   public void testCreate()
+   {
+      ProfileBuilder profileBuilder = ProfileBuilder.create();
+      assertNotNull(profileBuilder);
+   }
 
-    @Test
-    public void testMethodChaining()
-    {
-        ProfileBuilder profileBuilder =
-                ProfileBuilder.create()
+   @Test
+   public void testMethodChaining()
+   {
+      ProfileBuilder profileBuilder =
+               ProfileBuilder.create()
                         .setId("myid")
                         .setActiveByDefault(true)
                         .addDependency(DependencyBuilder.create("mygroupId:myartifactId"))
                         .addRepository(new DependencyRepository("id", "url"));
 
-        assertTrue(profileBuilder.isActiveByDefault());
-    }
+      assertTrue(profileBuilder.isActiveByDefault());
+   }
 
-    @Test
-    public void testAsMavenProfile()
-    {
-        ProfileBuilder profileBuilder =
-                ProfileBuilder.create()
+   @Test
+   public void testAsMavenProfile()
+   {
+      ProfileBuilder profileBuilder =
+               ProfileBuilder.create()
                         .setId("myid")
                         .setActiveByDefault(true)
                         .addDependency(DependencyBuilder.create("mygroupId:myartifactId"))
                         .addRepository(new DependencyRepository("id", "url"));
-        Profile mavenProfile = profileBuilder.getAsMavenProfile();
-        assertThat(mavenProfile.getId(), is(profileBuilder.getId()));
-    }
+      Profile mavenProfile = profileBuilder.getAsMavenProfile();
+      assertThat(mavenProfile.getId(), is(profileBuilder.getId()));
+   }
 
-    @Test
-    public void testAddProperty()
-    {
-        ProfileBuilder profileBuilder =
-                ProfileBuilder.create()
+   @Test
+   public void testAddProperty()
+   {
+      ProfileBuilder profileBuilder =
+               ProfileBuilder.create()
                         .addProperty("prop1", "val1")
                         .addProperty("prop2", "val2")
                         .addProperty("prop3", "prop3");
 
-        Profile mavenProfile = profileBuilder.getAsMavenProfile();
-        assertThat(mavenProfile.getProperties().size(), is(3));
-    }
+      Profile mavenProfile = profileBuilder.getAsMavenProfile();
+      assertThat(mavenProfile.getProperties().size(), is(3));
+   }
 }

@@ -26,7 +26,8 @@ public class MavenResourceGenerator implements ResourceGenerator<MavenModelResou
 
    @Override
    @SuppressWarnings("unchecked")
-   public <T extends Resource<File>> T getResource(ResourceFactory factory, Class<MavenModelResource> type, File resource)
+   public <T extends Resource<File>> T getResource(ResourceFactory factory, Class<MavenModelResource> type,
+            File resource)
    {
       return (T) new MavenModelResourceImpl(factory, resource);
    }

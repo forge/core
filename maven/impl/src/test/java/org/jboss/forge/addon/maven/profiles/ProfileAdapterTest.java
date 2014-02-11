@@ -16,21 +16,21 @@ import org.junit.Test;
 
 public class ProfileAdapterTest
 {
-    @Test
-    public void testCreateFromProfile()
-    {
-        ProfileBuilder profileBuilder =
-                ProfileBuilder.create()
+   @Test
+   public void testCreateFromProfile()
+   {
+      ProfileBuilder profileBuilder =
+               ProfileBuilder.create()
                         .setId("myid")
                         .setActiveByDefault(true)
                         .addDependency(DependencyBuilder.create("mygroupId:myartifactId"))
                         .addDependency(DependencyBuilder.create("mygroupId:mysecond"))
                         .addRepository(new DependencyRepository("id", "url"));
 
-        ProfileAdapter profileAdapter = new ProfileAdapter(profileBuilder);
-        assertThat(profileAdapter.getId(), is(profileBuilder.getId()));
-        assertThat(profileAdapter.getActivation().isActiveByDefault(), is(true));
-        assertThat(profileAdapter.getDependencies().size(), is(2));
-        assertThat(profileAdapter.getRepositories().size(), is(1));
-    }
+      ProfileAdapter profileAdapter = new ProfileAdapter(profileBuilder);
+      assertThat(profileAdapter.getId(), is(profileBuilder.getId()));
+      assertThat(profileAdapter.getActivation().isActiveByDefault(), is(true));
+      assertThat(profileAdapter.getDependencies().size(), is(2));
+      assertThat(profileAdapter.getRepositories().size(), is(1));
+   }
 }

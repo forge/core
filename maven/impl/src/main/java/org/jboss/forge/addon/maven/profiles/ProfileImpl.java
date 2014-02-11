@@ -16,44 +16,49 @@ import org.jboss.forge.addon.dependencies.DependencyRepository;
 
 public class ProfileImpl implements Profile
 {
-    private String id;
-    private boolean activateByDefault;
-    private List<Dependency> dependencies = new ArrayList<Dependency>();
-    private List<DependencyRepository> repositories = new ArrayList<DependencyRepository>();
-    private Properties properties = new Properties();
+   private String id;
+   private boolean activateByDefault;
+   private List<Dependency> dependencies = new ArrayList<Dependency>();
+   private List<DependencyRepository> repositories = new ArrayList<DependencyRepository>();
+   private Properties properties = new Properties();
 
-    @Override public String getId()
-    {
-        return id;
-    }
+   @Override
+   public String getId()
+   {
+      return id;
+   }
 
-    @Override public boolean isActiveByDefault()
-    {
-        return activateByDefault;
-    }
+   @Override
+   public boolean isActiveByDefault()
+   {
+      return activateByDefault;
+   }
 
-    @Override public List<Dependency> listDependencies()
-    {
-        return dependencies;
-    }
+   @Override
+   public List<Dependency> listDependencies()
+   {
+      return dependencies;
+   }
 
-    @Override public List<DependencyRepository> listRepositories()
-    {
-        return repositories;
-    }
+   @Override
+   public List<DependencyRepository> listRepositories()
+   {
+      return repositories;
+   }
 
-    @Override public Properties getProperties()
-    {
-        return properties;
-    }
+   @Override
+   public Properties getProperties()
+   {
+      return properties;
+   }
 
-    public void setId(String id)
-    {
-        this.id = id;
-    }
+   public void setId(String id)
+   {
+      this.id = id;
+   }
 
-    public void setActivateByDefault(boolean activateByDefault)
-    {
-        this.activateByDefault = activateByDefault;
-    }
+   public void setActivateByDefault(boolean activateByDefault)
+   {
+      this.activateByDefault = activateByDefault;
+   }
 }
