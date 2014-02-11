@@ -27,11 +27,11 @@ import org.jboss.forge.addon.projects.ui.dependencies.AddManagedDependenciesComm
 import org.jboss.forge.addon.projects.ui.dependencies.RemoveDependenciesCommand;
 import org.jboss.forge.addon.projects.ui.dependencies.RemoveManagedDependenciesCommand;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
