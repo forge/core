@@ -127,7 +127,7 @@
             <module>resources/api</module>
             <module>ui/api</module>
             <module>ui/spi</module>
-            <module>ui/ui-test-harness</module>
+            <module>ui/test-harness</module>
             <module>scaffold/api</module>
             <module>shell/api</module>
             <module>templates/api</module>
