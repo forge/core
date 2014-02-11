@@ -17,15 +17,15 @@ import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_0;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.ui.annotation.Command;
 import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.shrinkwrap.descriptor.api.beans11.Alternatives;
 import org.jboss.shrinkwrap.descriptor.api.beans11.BeansDescriptor;
 
 /**
+ * Common CDI commands
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
@@ -101,11 +101,6 @@ public class BeansCommand
 
    protected Project getProject(UIContext context)
    {
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (!initialSelection.isEmpty())
-      {
-         return projectFactory.findProject(initialSelection.get());
-      }
-      return null;
+      return Projects.getSelectedProject(projectFactory, context);
    }
 }
