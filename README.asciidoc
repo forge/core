@@ -482,6 +482,8 @@ public class ExampleFurnaceTest {
 }
 ---- 
 
+NOTE: The `@Dependencies` annotation is used to specify addons that must be deployed before the Addon-Under-Test is deployed in Furnace. The `AddonDependencyEntry.create(...)` method is used to specify addons that the Addon-Under-Test depends on.
+
 Now that the test case deploys and depends on your addon, you may access services from it via injection:
 
 [source,java]
