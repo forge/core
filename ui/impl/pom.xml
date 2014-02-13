@@ -28,7 +28,6 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>convert-api</artifactId>
-         <version>${project.version}</version>
          <scope>provided</scope>
       </dependency>
 
