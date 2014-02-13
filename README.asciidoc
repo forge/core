@@ -516,7 +516,7 @@ public class ExampleFurnaceTest {
 ---- 
 
 This is the basic premise of using the test-harness. For detailed examples, take a 
-https://github.com/forge/core/tree/2.0/resources/tests/src/test/java/org/jboss/forge/addon/resource[look at some of the existing
+https://github.com/forge/core/tree/master/resources/tests/src/test/java/org/jboss/forge/addon/resource[look at some of the existing
 Forge test cases] in our github repository.
 
 NOTE: The `version` parameter in `@AddonDependency` and in the `AddonDependencyEntry.create(...)` method are optional. By not specifying them means that the test harness 
