@@ -14,7 +14,6 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.util.ResourceUtil;
-import org.jboss.forge.addon.scaffold.faces.TemplateStrategy;
 import org.jboss.forge.furnace.util.Streams;
 
 

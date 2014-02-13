@@ -37,7 +37,7 @@ public interface ScaffoldProvider extends ProjectFacet, UIValidator
    String getDescription();
 
    /**
-    * Set up this scaffold provider, installing any necessary {@link Facet} or {@link Plugin} implementations as
+    * Set up this scaffold provider, installing any necessary {@link Facet} implementations as
     * necessary. Install the templates in the provider to the src/main/templates directory of the project.
     */
    List<Resource<?>> setup(Project project, ScaffoldSetupContext scaffoldContext);
