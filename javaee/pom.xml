@@ -18,6 +18,7 @@
       <module>addon</module>
       <module>api</module>
       <module>impl</module>
+      <module>faces</module>
       <module>tests</module>
    </modules>
 

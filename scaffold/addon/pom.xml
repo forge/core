@@ -23,12 +23,6 @@
 			<artifactId>scaffold-spi</artifactId>
 			<classifier>forge-addon</classifier>
 		</dependency>
-		<dependency>
-			<groupId>org.jboss.forge.addon</groupId>
-			<artifactId>scaffold-faces</artifactId>
-			<classifier>forge-addon</classifier>
-			<version>${project.version}</version>
-		</dependency>
 
 		<!-- Addon Dependencies -->
 		<dependency>
@@ -44,11 +38,6 @@
 		<dependency>
 			<groupId>org.jboss.forge.addon</groupId>
 			<artifactId>resources</artifactId>
-			<classifier>forge-addon</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.forge.addon</groupId>
-			<artifactId>javaee</artifactId>
 			<classifier>forge-addon</classifier>
 		</dependency>
 
