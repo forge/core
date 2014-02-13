@@ -37,10 +37,18 @@ public interface ScaffoldProvider
    String getDescription();
 
    /**
-    * Set up this scaffold provider, installing any necessary {@link Facet} implementations as
-    * necessary. Install the templates in the provider to the src/main/templates directory of the project.
+    * Set up this scaffold provider, installing any necessary {@link Facet} implementations as necessary. Install the
+    * templates in the provider to the src/main/templates directory of the project.
     */
-   List<Resource<?>> setup(Project project, ScaffoldSetupContext scaffoldContext);
+   List<Resource<?>> setup(Project project, ScaffoldSetupContext setupContext);
+
+   /**
+    * Verifies whether the provider was setup or not. This is used to determine whether the setup method should be
+    * executed.
+    * 
+    * @return boolean value indicating whether the provider was setup
+    */
+   boolean isSetup(ScaffoldSetupContext setupContext);
 
    /**
     * Generate a set of create, read, update, delete pages for the given collection of {@link Resource}s present in the
@@ -48,13 +56,13 @@ public interface ScaffoldProvider
     * {@link ScaffoldProvider}. It is the responsibility of the ScaffoldProvider to verify whether it can act on the
     * provided resource.
     */
-   List<Resource<?>> generateFrom(Project project, ScaffoldGenerationContext scaffoldContext);
+   List<Resource<?>> generateFrom(Project project, ScaffoldGenerationContext generationContext);
 
    /**
     * Return the {@link List} of {@link UICommand} classes that begins the scaffold setup of this type, if any.
     */
    List<Class<? extends UICommand>> getSetupFlow();
-   
+
    /**
     * Return the {@link List} of {@link UICommand} classes that begins the scaffold generation of this type, if any.
     */
