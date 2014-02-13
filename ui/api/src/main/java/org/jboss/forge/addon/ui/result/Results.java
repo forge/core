@@ -70,6 +70,18 @@ public final class Results
    }
 
    /**
+    * Create a failed {@link NavigationResult} using the given {@link UICommand} array as the target.
+    */
+   public static final NavigationResult navigateTo(Class<? extends UICommand>[] next)
+   {
+      if (next == null)
+      {
+         return null;
+      }
+      return new NavigationResultImpl(next);
+   }
+
+   /**
     * Create a failed {@link NavigationResult} using the given {@link UICommand} types as the targets.
     */
    @SuppressWarnings("unchecked")

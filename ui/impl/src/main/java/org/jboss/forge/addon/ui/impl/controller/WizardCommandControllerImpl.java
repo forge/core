@@ -25,7 +25,6 @@ import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
-import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.impl.context.UINavigationContextImpl;
@@ -68,10 +67,10 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
     */
    private int flowPointer = 0;
 
-   private final CommandControllerFactory controllerFactory;
+   private final CommandControllerFactoryImpl controllerFactory;
 
    public WizardCommandControllerImpl(UIContext context, AddonRegistry addonRegistry, UIRuntime runtime,
-            UIWizard initialCommand, CommandControllerFactory controllerFactory)
+            UIWizard initialCommand, CommandControllerFactoryImpl controllerFactory)
    {
       super(addonRegistry, runtime, initialCommand, context);
       this.controllerFactory = controllerFactory;
@@ -368,7 +367,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
             }
             if (command != null)
             {
-               CommandController ctrl = controllerFactory.createController(context, runtime, command);
+               CommandController ctrl = controllerFactory.doCreateSingleController(context, runtime, command);
                ctrl.initialize();
                Set<String> currentInputsKeySet = nextEntry.controller.getInputs().keySet();
                Set<String> keySet = ctrl.getInputs().keySet();
@@ -489,7 +488,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
 
    private WizardStepEntry createEntry(UICommand command, boolean subflowHead)
    {
-      CommandController controller = controllerFactory.createSingleController(context, runtime, command);
+      CommandController controller = controllerFactory.doCreateSingleController(context, runtime, command);
       return new WizardStepEntry(controller, subflowHead);
    }
 
