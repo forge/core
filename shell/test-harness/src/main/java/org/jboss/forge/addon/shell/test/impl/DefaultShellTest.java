@@ -403,7 +403,6 @@ public class DefaultShellTest implements ShellTest
                      .logging(true)
                      .terminal(new TestTerminal())
                      .create();
-            settings.getOperationManager().addOperation(new KeyOperation(Key.ENTER, Operation.NEW_LINE));
          }
          catch (IOException e)
          {
