@@ -110,6 +110,10 @@ public class ForgeCommandRegistry implements CommandRegistry
          CommandAdapter command = new CommandAdapter(shell, shellContext, cmd);
          return new ForgeCommandContainer(shellContext, parser, command);
       }
+      catch (RuntimeException e)
+      {
+         throw e;
+      }
       catch (Exception e)
       {
          throw new RuntimeException("Error while creating parser: " + e.getMessage(), e);

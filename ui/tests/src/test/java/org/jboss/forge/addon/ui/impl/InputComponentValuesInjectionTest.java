@@ -125,4 +125,20 @@ public class InputComponentValuesInjectionTest
       UISelectOne<Boolean> selectOne = inputFactory.createSelectOne("selectOne", Boolean.class);
       Assert.assertThat(selectOne.getValueChoices(), nullValue());
    }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testSetInvalidValueInSelectOne()
+   {
+      UISelectOne<String> selectOne = inputFactory.createSelectOne("selectOne", String.class);
+      selectOne.setValueChoices(Arrays.asList("A", "B", "C"));
+      selectOne.setValue("D");
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   public void testSetInvalidValueInSelectMany()
+   {
+      UISelectMany<String> selectMany = inputFactory.createSelectMany("selectMany", String.class);
+      selectMany.setValueChoices(Arrays.asList("A", "B", "C"));
+      selectMany.setValue(Arrays.asList("B", "D"));
+   }
 }

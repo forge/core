@@ -68,4 +68,23 @@ public abstract class AbstractUISelectInputComponent<IMPLTYPE extends SelectComp
       return (IMPLTYPE) this;
    }
 
+   protected void assertChoicesInValueChoices(Iterable<VALUETYPE> choices)
+   {
+      for (VALUETYPE choice : choices)
+      {
+         assertChoiceInValueChoices(choice);
+      }
+   }
+
+   protected void assertChoiceInValueChoices(VALUETYPE choice)
+   {
+      for (VALUETYPE type : getValueChoices())
+      {
+         if (type.equals(choice))
+         {
+            return;
+         }
+      }
+      throw new IllegalArgumentException(choice + " is not a valid value for " + getName());
+   }
 }

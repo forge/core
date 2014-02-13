@@ -23,6 +23,7 @@ import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.SingleValued;
 import org.jboss.forge.addon.ui.input.UICompleter;
+import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Strings;
 
 /**
@@ -173,11 +174,8 @@ public final class InputComponents
    }
 
    /**
-    * Returns the converted value that matches the input
-    * 
-    * @param input
-    * @param value
-    * @return
+    * Returns the converted value that matches the input. Throws {@link IllegalArgumentException} if input is a
+    * {@link SelectComponent} and the value cannot be converted
     */
    public static Object convertToUIInputValue(final ConverterFactory converterFactory,
             final InputComponent<?, ?> input, final Object value)
@@ -213,6 +211,7 @@ public final class InputComponents
                   }
                }
             }
+            Assert.notNull(chosenObj, "'" + value + "' is not a valid value for " + input.getName());
             result = chosenObj;
          }
          else
