@@ -50,6 +50,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 @Singleton
 public class DefaultShellTest implements ShellTest
 {
+   private static final String LINE_SEPARATOR = OperatingSystemUtils.getLineSeparator();
    private final TestCommandListener listener = new TestCommandListener();
    private final TestStreams provider = new TestStreams();
 
@@ -106,8 +107,8 @@ public class DefaultShellTest implements ShellTest
 
       try
       {
-         if (!line.endsWith(OperatingSystemUtils.getLineSeparator()))
-            line = line + OperatingSystemUtils.getLineSeparator();
+         if (!line.endsWith(LINE_SEPARATOR))
+            line = line + LINE_SEPARATOR;
          provider.getStdIn().write(line.getBytes());
       }
       catch (IOException e)
@@ -124,8 +125,8 @@ public class DefaultShellTest implements ShellTest
       Result result;
       try
       {
-         if (!line.endsWith(OperatingSystemUtils.getLineSeparator()))
-            line = line + OperatingSystemUtils.getLineSeparator();
+         if (!line.endsWith(LINE_SEPARATOR))
+            line = line + LINE_SEPARATOR;
          listener.reset();
          provider.getStdIn().write(line.getBytes());
          long start = System.currentTimeMillis();
@@ -503,16 +504,16 @@ public class DefaultShellTest implements ShellTest
    private void throwTimeout(String message) throws TimeoutException
    {
       throw new TimeoutException(message
-               + OperatingSystemUtils.getLineSeparator()
-               + OperatingSystemUtils.getLineSeparator()
+               + LINE_SEPARATOR
+               + LINE_SEPARATOR
                + "STDOUT: " + provider.getStdOut().toString()
-               + OperatingSystemUtils.getLineSeparator()
-               + OperatingSystemUtils.getLineSeparator()
+               + LINE_SEPARATOR
+               + LINE_SEPARATOR
                + "STDERR: " + provider.getStdErr().toString()
-               + OperatingSystemUtils.getLineSeparator()
-               + OperatingSystemUtils.getLineSeparator()
+               + LINE_SEPARATOR
+               + LINE_SEPARATOR
                + "BUFFER: [" + getBuffer() + "]"
-               + OperatingSystemUtils.getLineSeparator());
+               + LINE_SEPARATOR);
    };
 
    @Override
@@ -525,7 +526,7 @@ public class DefaultShellTest implements ShellTest
             @Override
             public String call() throws Exception
             {
-               getStdIn().write((Key.CTRL_U.getAsChar() + OperatingSystemUtils.getLineSeparator()).getBytes());
+               getStdIn().write((Key.CTRL_U.getAsChar() + LINE_SEPARATOR).getBytes());
                provider.getStdOut().reset();
                provider.getStdErr().reset();
                return null;
