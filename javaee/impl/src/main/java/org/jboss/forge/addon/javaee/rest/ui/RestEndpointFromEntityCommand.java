@@ -20,31 +20,31 @@ import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
 import org.jboss.forge.addon.javaee.ejb.ui.EJBSetupWizard;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
+import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
+import org.jboss.forge.addon.javaee.rest.RestFacet;
 import org.jboss.forge.addon.javaee.rest.generation.RestResourceGenerator;
 import org.jboss.forge.addon.javaee.rest.generator.RestGenerationContextImpl;
 import org.jboss.forge.addon.javaee.rest.generator.impl.EntityBasedResourceGenerator;
+import org.jboss.forge.addon.javaee.rest.ui.setup.RestSetupWizard;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.text.Inflector;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.context.UINavigationContext;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
-import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
@@ -54,7 +54,7 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implements UIWizard
+public class RestEndpointFromEntityCommand extends AbstractJavaEECommand
 {
    @Inject
    @WithAttributes(label = "Content Type", defaultValue = MediaType.APPLICATION_XML, required = true)
@@ -189,28 +189,6 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
    }
 
    @Override
-   public void validate(final UIValidationContext validator)
-   {
-      super.validate(validator);
-   }
-
-   @Override
-   public boolean isEnabled(final UIContext context)
-   {
-      boolean enabled;
-      if (super.isEnabled(context))
-      {
-         Project project = getSelectedProject(context);
-         enabled = project.hasFacet(JPAFacet.class) && project.hasFacet(JavaSourceFacet.class);
-      }
-      else
-      {
-         enabled = false;
-      }
-      return enabled;
-   }
-
-   @Override
    protected boolean isProjectRequired()
    {
       return true;
@@ -221,7 +199,6 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
       RestGenerationContextImpl generationContext = new RestGenerationContextImpl();
       generationContext.setProject(getSelectedProject(context));
       generationContext.setContentType(contentType.getValue());
-      // generationContext.setEntity(entity);
       generationContext.setPersistenceUnitName(persistenceUnit.getValue());
       generationContext.setTargetPackageName(packageName.getValue());
       generationContext.setInflector(inflector);
@@ -229,17 +206,23 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
    }
 
    @Override
-   public NavigationResult next(UINavigationContext context) throws Exception
+   public List<Class<? extends UICommand>> getSetupSteps(UIContext context)
    {
+      List<Class<? extends UICommand>> setup = new ArrayList<>();
       Project project = getSelectedProject(context);
-      if (project.hasFacet(EJBFacet.class))
+      if (!project.hasFacet(RestFacet.class))
       {
-         return null;
+         setup.add(RestSetupWizard.class);
       }
-      else
+      if (!project.hasFacet(JPAFacet.class))
       {
-         return Results.navigateTo(EJBSetupWizard.class);
+         setup.add(JPASetupWizard.class);
       }
+      if (!project.hasFacet(EJBFacet.class))
+      {
+         setup.add(EJBSetupWizard.class);
+      }
+      return setup;
    }
 
 }
