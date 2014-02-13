@@ -83,8 +83,6 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    public void validate(UIValidationContext validator)
    {
       super.validate(validator);
-      ScaffoldProvider scaffold = provider.getValue();
-      scaffold.validate(validator);
    }
 
    @Override

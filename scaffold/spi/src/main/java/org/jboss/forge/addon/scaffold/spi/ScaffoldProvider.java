@@ -20,7 +20,7 @@ import org.jboss.forge.addon.ui.validate.UIValidator;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface ScaffoldProvider extends ProjectFacet, UIValidator
+public interface ScaffoldProvider
 {
    /**
     * Return the name for this {@link ScaffoldProvider}
@@ -51,12 +51,12 @@ public interface ScaffoldProvider extends ProjectFacet, UIValidator
    List<Resource<?>> generateFrom(Project project, ScaffoldGenerationContext scaffoldContext);
 
    /**
-    * Return the {@link List} of {@link UICommands} classes that begins the scaffold setup of this type, if any.
+    * Return the {@link List} of {@link UICommand} classes that begins the scaffold setup of this type, if any.
     */
    List<Class<? extends UICommand>> getSetupFlow();
    
    /**
-    * Return the {@link List} of {@link UICommands} classes that begins the scaffold generation of this type, if any.
+    * Return the {@link List} of {@link UICommand} classes that begins the scaffold generation of this type, if any.
     */
    List<Class<? extends UICommand>> getGenerationFlow();
 

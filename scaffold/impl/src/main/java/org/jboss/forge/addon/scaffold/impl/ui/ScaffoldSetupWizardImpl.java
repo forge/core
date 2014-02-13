@@ -94,7 +94,6 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    public void validate(UIValidationContext validator)
    {
       super.validate(validator);
-      provider.getValue().validate(validator);
    }
 
    @Override

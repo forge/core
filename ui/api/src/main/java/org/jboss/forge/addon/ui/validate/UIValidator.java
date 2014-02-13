@@ -22,7 +22,7 @@ public interface UIValidator
    /**
     * Should validate against the current {@link UIInput} values supplied in the {@link UICommand} implementation class.
     * 
-    * @param validator the {@link UIValidationContext} object that holds validation errors
+    * @param context the {@link UIValidationContext} object that holds validation errors
     */
    public abstract void validate(UIValidationContext context);
 }

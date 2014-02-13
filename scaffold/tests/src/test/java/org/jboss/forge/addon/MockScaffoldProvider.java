@@ -7,7 +7,6 @@ import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
 import org.jboss.forge.addon.ui.command.UICommand;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 
 import java.util.List;
 
@@ -53,35 +52,5 @@ public class MockScaffoldProvider implements ScaffoldProvider
    public AccessStrategy getAccessStrategy()
    {
       return null;
-   }
-
-   @Override
-   public Project getFaceted()
-   {
-      return null;
-   }
-
-   @Override
-   public boolean install()
-   {
-      return false;
-   }
-
-   @Override
-   public boolean isInstalled()
-   {
-      return false;
-   }
-
-   @Override
-   public boolean uninstall()
-   {
-      return false;
-   }
-
-   @Override
-   public void validate(UIValidationContext context)
-   {
-
    }
 }
