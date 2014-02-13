@@ -20,14 +20,18 @@ import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
 import org.jboss.forge.addon.javaee.ejb.ui.EJBSetupWizard;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
+import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
+import org.jboss.forge.addon.javaee.rest.RestFacet;
 import org.jboss.forge.addon.javaee.rest.generation.RestResourceGenerator;
 import org.jboss.forge.addon.javaee.rest.generator.RestGenerationContextImpl;
 import org.jboss.forge.addon.javaee.rest.generator.impl.EntityBasedResourceGenerator;
+import org.jboss.forge.addon.javaee.rest.ui.setup.RestSetupWizard;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.text.Inflector;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -240,6 +244,22 @@ public class RestEndpointFromEntityWizard extends AbstractJavaEECommand implemen
       {
          return Results.navigateTo(EJBSetupWizard.class);
       }
+   }
+
+   @Override
+   public List<Class<? extends UICommand>> getSetupSteps(UIContext context)
+   {
+      List<Class<? extends UICommand>> setup = new ArrayList<>();
+      Project project = getSelectedProject(context);
+      if (!project.hasFacet(RestFacet.class))
+      {
+         setup.add(RestSetupWizard.class);
+      }
+      if (!project.hasFacet(JPAFacet.class))
+      {
+         setup.add(JPASetupWizard.class);
+      }
+      return setup;
    }
 
 }
