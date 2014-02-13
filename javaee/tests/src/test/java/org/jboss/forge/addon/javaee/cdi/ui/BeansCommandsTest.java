@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.javaee.cdi.ui;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -25,6 +26,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -64,6 +66,12 @@ public class BeansCommandsTest
 
    @Inject
    private ProjectHelper projectHelper;
+   
+   @Before
+   public void before() throws IOException
+   {
+      shellTest.clearScreen();
+   }
 
    @Test
    public void testListAlternatives_1_1() throws Exception
