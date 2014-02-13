@@ -106,7 +106,7 @@ public class DefaultShellTest implements ShellTest
 
       try
       {
-         if (!line.trim().endsWith(OperatingSystemUtils.getLineSeparator()))
+         if (!line.endsWith(OperatingSystemUtils.getLineSeparator()))
             line = line + OperatingSystemUtils.getLineSeparator();
          provider.getStdIn().write(line.getBytes());
       }
@@ -124,7 +124,7 @@ public class DefaultShellTest implements ShellTest
       Result result;
       try
       {
-         if (!line.trim().endsWith(OperatingSystemUtils.getLineSeparator()))
+         if (!line.endsWith(OperatingSystemUtils.getLineSeparator()))
             line = line + OperatingSystemUtils.getLineSeparator();
          listener.reset();
          provider.getStdIn().write(line.getBytes());
