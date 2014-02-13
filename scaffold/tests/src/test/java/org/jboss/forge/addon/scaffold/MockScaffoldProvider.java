@@ -1,4 +1,4 @@
-package org.jboss.forge.addon;
+package org.jboss.forge.addon.scaffold;
 
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.Resource;
@@ -12,26 +12,39 @@ import java.util.List;
 
 public class MockScaffoldProvider implements ScaffoldProvider
 {
+
+   public static final String PROVIDER_NAME = "Mock Scaffold Provider";
+   public static final String PROVIDER_DESCRIPTION = "Mock Scaffold Provider for use in tests";
+
+   private boolean isSetup;
+
    @Override
    public String getName()
    {
-      return "Mock Scaffold Provider";
+      return PROVIDER_NAME;
    }
 
    @Override
    public String getDescription()
    {
-      return "Mock Scaffold Provider for use in tests";
+      return PROVIDER_DESCRIPTION;
    }
 
    @Override
-   public List<Resource<?>> setup(Project project, ScaffoldSetupContext scaffoldContext)
+   public List<Resource<?>> setup(Project project, ScaffoldSetupContext setupContext)
    {
+      isSetup = true;
       return null;
    }
 
    @Override
-   public List<Resource<?>> generateFrom(Project project, ScaffoldGenerationContext scaffoldContext)
+   public boolean isSetup(ScaffoldSetupContext setupContext)
+   {
+      return isSetup;
+   }
+
+   @Override
+   public List<Resource<?>> generateFrom(Project project, ScaffoldGenerationContext generationContext)
    {
       return null;
    }

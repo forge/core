@@ -146,7 +146,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
    private Configuration config;
    private Project project;
-   
+
    @Inject
    public FacesScaffoldProvider(final Configuration config, final FreemarkerTemplateProcessor templateProcessor)
    {
@@ -173,11 +173,11 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    }
 
    @Override
-   public List<Resource<?>> setup(Project project, ScaffoldSetupContext scaffoldContext)
+   public List<Resource<?>> setup(Project project, ScaffoldSetupContext setupContext)
    {
       setProject(project);
-      String targetDir = scaffoldContext.getTargetDirectory();
-      boolean overwrite = scaffoldContext.isOverwrite();
+      String targetDir = setupContext.getTargetDirectory();
+      boolean overwrite = setupContext.isOverwrite();
       Resource<?> template = null;
       List<Resource<?>> resources = generateIndex(targetDir, template, overwrite);
       setupWebXML();
@@ -186,18 +186,32 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    }
 
    @Override
-   public List<Resource<?>> generateFrom(Project project, ScaffoldGenerationContext scaffoldContext)
+   public boolean isSetup(ScaffoldSetupContext setupContext)
+   {
+      WebResourcesFacet web = project.getFacet(WebResourcesFacet.class);
+      String targetDir = setupContext.getTargetDirectory();
+      FileResource<?> indexFacelet = web.getWebResource(targetDir + "/index.xhtml");
+      FileResource<?> indexPage = web.getWebResource(targetDir + "/index.html");
+      if (indexFacelet.exists() && indexPage.exists())
+      {
+         return true;
+      }
+      return false;
+   }
+
+   @Override
+   public List<Resource<?>> generateFrom(Project project, ScaffoldGenerationContext generationContext)
    {
       setProject(project);
       List<Resource<?>> generatedResources = new ArrayList<Resource<?>>();
-      Collection<?> resources = scaffoldContext.getResources();
+      Collection<?> resources = generationContext.getResources();
       for (Object resource : resources)
       {
          JavaClass entity = (JavaClass) resource;
-         String targetDir = scaffoldContext.getTargetDirectory();
+         String targetDir = generationContext.getTargetDirectory();
          targetDir = (targetDir == null) ? "" : targetDir;
-         Resource<?> template = (Resource<?>) scaffoldContext.getAttribute("pageTemplate");
-         boolean overwrite = scaffoldContext.isOverwrite();
+         Resource<?> template = (Resource<?>) generationContext.getAttribute("pageTemplate");
+         boolean overwrite = generationContext.isOverwrite();
          List<Resource<?>> generatedResourcesForEntity = this
                   .generateFromEntity(targetDir, template, entity, overwrite);
 
@@ -215,24 +229,24 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    public List<Class<? extends UICommand>> getSetupFlow()
    {
       List<Class<? extends UICommand>> setupCommands = new ArrayList<Class<? extends UICommand>>();
-      if(!project.hasFacet(JPAFacet.class))
+      if (!project.hasFacet(JPAFacet.class))
       {
          setupCommands.add(JPASetupWizard.class);
       }
-      if(!project.hasFacet(CDIFacet.class))
+      if (!project.hasFacet(CDIFacet.class))
       {
          setupCommands.add(CDISetupCommand.class);
       }
-      if(!project.hasFacet(EJBFacet.class))
+      if (!project.hasFacet(EJBFacet.class))
       {
          setupCommands.add(EJBSetupWizard.class);
       }
-      if(!project.hasFacet(ServletFacet.class))
+      if (!project.hasFacet(ServletFacet.class))
       {
          // TODO: FORGE-1296. Ensure that this wizard only sets up Servlet 3.0+
          setupCommands.add(ServletSetupWizard.class);
       }
-      if(!project.hasFacet(FacesFacet.class))
+      if (!project.hasFacet(FacesFacet.class))
       {
          setupCommands.add(FacesSetupWizard.class);
       }
