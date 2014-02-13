@@ -9,6 +9,7 @@ package org.jboss.forge.addon.ui.impl.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -18,6 +19,7 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.logmanager.Logger;
 
 /**
  * This decorator supresses the pages where no {@link InputComponent} is provided
@@ -27,6 +29,7 @@ import org.jboss.forge.addon.ui.result.Result;
 public class NoUIWizardControllerDecorator implements WizardCommandController
 {
    private final WizardCommandControllerImpl controller;
+   private static final Logger log = Logger.getLogger(NoUIWizardControllerDecorator.class.getName());
 
    public NoUIWizardControllerDecorator(WizardCommandControllerImpl controller)
    {
@@ -61,9 +64,9 @@ public class NoUIWizardControllerDecorator implements WizardCommandController
                }
             }
          }
-         catch (Exception ignored)
+         catch (Exception e)
          {
-
+            log.log(Level.SEVERE, "Error while navigating to next step", e);
          }
          finally
          {
