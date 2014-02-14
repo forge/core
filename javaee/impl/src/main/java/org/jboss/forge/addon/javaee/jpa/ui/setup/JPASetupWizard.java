@@ -22,6 +22,7 @@ import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JBossEAP6Container;
 import org.jboss.forge.addon.javaee.jpa.providers.JavaEEDefaultProvider;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -74,15 +75,6 @@ public class JPASetupWizard extends AbstractJavaEECommand implements UIWizard
       return Metadata.from(super.getMetadata(context), getClass()).name("JPA: Setup")
                .description("Setup JPA in your project")
                .category(Categories.create(super.getMetadata(context).getCategory().getName(), "JPA"));
-   }
-
-   /**
-    * Return true only if a project is selected
-    */
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return containsProject(context);
    }
 
    @Override
@@ -155,7 +147,9 @@ public class JPASetupWizard extends AbstractJavaEECommand implements UIWizard
    public Result execute(final UIExecutionContext context) throws Exception
    {
       applyUIValues(context.getUIContext());
-      if (facetFactory.install(getSelectedProject(context), jpaVersion.getValue()))
+      Project project = getSelectedProject(context);
+      JPAFacet<?> facet = jpaVersion.getValue();
+      if (facetFactory.install(project, facet))
       {
          return Results.success();
       }
@@ -181,6 +175,6 @@ public class JPASetupWizard extends AbstractJavaEECommand implements UIWizard
    @Override
    protected boolean isProjectRequired()
    {
-      return false;
+      return true;
    }
 }
