@@ -1,19 +1,21 @@
 package org.jboss.forge.addon.scaffold.spi;
 
+import org.jboss.forge.addon.resource.Resource;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class ResourceCollection
 {
-   private List resources = new ArrayList();
+   private List<Resource<?>> resources = new ArrayList<Resource<?>>();
 
-   public Collection<?> getResources()
+   public Collection<Resource<?>> getResources()
    {
       return resources;
    }
 
-   public void addToCollection(Object resource)
+   public void addToCollection(Resource<?> resource)
    {
       resources.add(resource);
    }
