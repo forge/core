@@ -10,6 +10,7 @@ package org.jboss.forge.addon.ui.impl.controller;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -19,7 +20,6 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.logmanager.Logger;
 
 /**
  * This decorator supresses the pages where no {@link InputComponent} is provided
