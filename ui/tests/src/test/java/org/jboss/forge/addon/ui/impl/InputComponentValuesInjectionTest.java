@@ -34,6 +34,7 @@ import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -127,6 +128,7 @@ public class InputComponentValuesInjectionTest
    }
 
    @Test(expected = IllegalArgumentException.class)
+   @Ignore("Assertions commented out")
    public void testSetInvalidValueInSelectOne()
    {
       UISelectOne<String> selectOne = inputFactory.createSelectOne("selectOne", String.class);
@@ -135,6 +137,7 @@ public class InputComponentValuesInjectionTest
    }
 
    @Test(expected = IllegalArgumentException.class)
+   @Ignore("Assertions commented out")
    public void testSetInvalidValueInSelectMany()
    {
       UISelectMany<String> selectMany = inputFactory.createSelectMany("selectMany", String.class);
