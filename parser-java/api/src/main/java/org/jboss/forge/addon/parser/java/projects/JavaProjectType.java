@@ -60,6 +60,6 @@ public class JavaProjectType implements ProjectType
    @Override
    public int priority()
    {
-      return 0;
+      return 100;
    }
 }
