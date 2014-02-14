@@ -23,7 +23,6 @@ import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.SingleValued;
 import org.jboss.forge.addon.ui.input.UICompleter;
-import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Strings;
 
 /**
@@ -211,7 +210,7 @@ public final class InputComponents
                   }
                }
             }
-            Assert.notNull(chosenObj, "'" + value + "' is not a valid value for " + input.getName());
+//            Assert.notNull(chosenObj, "'" + value + "' is not a valid value for " + input.getName());
             result = chosenObj;
          }
          else
