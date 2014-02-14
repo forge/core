@@ -37,7 +37,7 @@ import org.jboss.forge.parser.java.JavaClass;
 public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWizardStep
 {
    @Inject
-   @WithAttributes(label = "Property", description = "The property on which the constraint applies", required = true, type = InputType.DROPDOWN)
+   @WithAttributes(label = "On Property", description = "The property on which the constraint applies", required = true, type = InputType.DROPDOWN)
    private UISelectOne<Property> onProperty;
 
    @Inject
@@ -75,8 +75,6 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
       });
       List<Property> properties = introspector.getProperties();
       onProperty.setValueChoices(properties);
-      if (!properties.isEmpty())
-         onProperty.setDefaultValue(properties.get(0));
    }
 
    private void setupConstraint()
