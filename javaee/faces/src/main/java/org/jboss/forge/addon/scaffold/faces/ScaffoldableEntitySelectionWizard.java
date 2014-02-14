@@ -11,6 +11,7 @@ import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourceUtil;
 import org.jboss.forge.addon.scaffold.spi.ResourceCollection;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
@@ -28,6 +29,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 
 public class ScaffoldableEntitySelectionWizard implements UIWizardStep
@@ -40,6 +42,9 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
    @WithAttributes(label = "Targets", required = true)
    private UISelectMany<JavaClass> targets;
 
+   @Inject
+   ResourceFactory resourceFactory;
+
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
@@ -48,7 +53,8 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
       {
          for (JavaClass klass : targets.getValue())
          {
-            resourceCollection.addToCollection(klass);
+             Resource<? extends JavaSource<?>> resource = resourceFactory.create(klass.getEnclosingType());
+             resourceCollection.addToCollection(resource);
          }
       }
       Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();

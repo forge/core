@@ -14,6 +14,12 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.scaffold.mock.MockProvider;
+import org.jboss.forge.addon.scaffold.mock.Scaffoldable;
+import org.jboss.forge.addon.scaffold.mock.ScaffoldedResource;
+import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -26,8 +32,8 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.jboss.forge.addon.scaffold.MockScaffoldProvider.PROVIDER_DESCRIPTION;
-import static org.jboss.forge.addon.scaffold.MockScaffoldProvider.PROVIDER_NAME;
+import static org.jboss.forge.addon.scaffold.mock.MockProvider.PROVIDER_DESCRIPTION;
+import static org.jboss.forge.addon.scaffold.mock.MockProvider.PROVIDER_NAME;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
@@ -45,7 +51,8 @@ public class ScaffoldAddonTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addClasses(MockScaffoldProvider.class, ProjectHelper.class)
+               .addPackage(MockProvider.class.getPackage())
+               .addClass(ProjectHelper.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
@@ -64,18 +71,20 @@ public class ScaffoldAddonTest
    @Inject
    private ProjectHelper projectHelper;
 
+   @Inject
+   private ResourceFactory resourceFactory;
+
    @Test
    public void testCanLoadScaffoldProviders() throws Exception
    {
+      // Setup
+
+      // Execute
       Imported<ScaffoldProvider> providerInstances = registry.getServices(ScaffoldProvider.class);
-      List<ScaffoldProvider> providerList = new ArrayList<ScaffoldProvider>();
-      for (ScaffoldProvider provider : providerInstances)
-      {
-         providerList.add(provider);
-      }
-      assertFalse(providerList.isEmpty());
-      assertNotNull(providerList.get(0));
       ScaffoldProvider scaffoldProvider = providerInstances.get();
+
+      // Verify
+      assertNotNull(scaffoldProvider);
       assertEquals(PROVIDER_NAME, scaffoldProvider.getName());
       assertEquals(PROVIDER_DESCRIPTION, scaffoldProvider.getDescription());
    }
@@ -83,12 +92,43 @@ public class ScaffoldAddonTest
    @Test
    public void testCanSetupScaffoldProvider() throws Exception
    {
-      Imported<ScaffoldProvider> providerInstances = registry.getServices(ScaffoldProvider.class);
-      ScaffoldProvider scaffoldProvider = providerInstances.get();
-      assertNotNull(scaffoldProvider);
+      // Setup
+      ScaffoldProvider scaffoldProvider = getScaffoldProvider();
+      Project project = projectHelper.createWebProject();
+      ScaffoldSetupContext setupContext = new ScaffoldSetupContext("", true);
+
+      // Execute
+      scaffoldProvider.setup(project, setupContext);
+
+      // Verify
+      assertTrue(scaffoldProvider.isSetup(setupContext));
+   }
+
+   @Test
+   public void testCanGenerateScaffold() throws Exception
+   {
+      // Setup
+      ScaffoldProvider scaffoldProvider = getScaffoldProvider();
       Project project = projectHelper.createWebProject();
       ScaffoldSetupContext setupContext = new ScaffoldSetupContext("", true);
       scaffoldProvider.setup(project, setupContext);
-      assertTrue(scaffoldProvider.isSetup(setupContext));
+
+      // Execute
+      List<Resource<?>> scaffoldables = new ArrayList<Resource<?>>();
+      scaffoldables.add(resourceFactory.create(new Scaffoldable("mock")));
+      ScaffoldGenerationContext generationContext = new ScaffoldGenerationContext("", true, scaffoldables);
+      List<Resource<?>> generatedResources = scaffoldProvider.generateFrom(project, generationContext);
+
+      // Verify
+      assertTrue(generatedResources.size() > 0);
+      assertTrue(generatedResources.get(0) instanceof ScaffoldedResource);
+   }
+
+   private ScaffoldProvider getScaffoldProvider()
+   {
+      Imported<ScaffoldProvider> providerInstances = registry.getServices(ScaffoldProvider.class);
+      ScaffoldProvider scaffoldProvider = providerInstances.get();
+      assertNotNull(scaffoldProvider);
+      return scaffoldProvider;
    }
 }

@@ -1,22 +1,29 @@
-package org.jboss.forge.addon.scaffold;
+package org.jboss.forge.addon.scaffold.mock;
 
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.scaffold.spi.AccessStrategy;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
 import org.jboss.forge.addon.ui.command.UICommand;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public class MockScaffoldProvider implements ScaffoldProvider
+public class MockProvider implements ScaffoldProvider
 {
 
    public static final String PROVIDER_NAME = "Mock Scaffold Provider";
    public static final String PROVIDER_DESCRIPTION = "Mock Scaffold Provider for use in tests";
 
    private boolean isSetup;
+
+   @Inject
+   private ResourceFactory resourceFactory;
 
    @Override
    public String getName()
@@ -46,7 +53,14 @@ public class MockScaffoldProvider implements ScaffoldProvider
    @Override
    public List<Resource<?>> generateFrom(Project project, ScaffoldGenerationContext generationContext)
    {
-      return null;
+      List<Resource<?>> result = new ArrayList<Resource<?>>();
+      for (Resource<?> resource : generationContext.getResources())
+      {
+         Scaffoldable scaffoldable = ((ScaffoldableResource) resource).getUnderlyingResourceObject();
+         Scaffolded scaffolded = new Scaffolded(scaffoldable.getName());
+         result.add(new ScaffoldedResource(resourceFactory, scaffolded));
+      }
+      return result;
    }
 
    @Override

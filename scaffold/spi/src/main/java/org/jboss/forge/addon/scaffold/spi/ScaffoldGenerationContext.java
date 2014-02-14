@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.scaffold.spi;
 
+import org.jboss.forge.addon.resource.Resource;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,10 +21,10 @@ public class ScaffoldGenerationContext
 {
    private String targetDirectory;
    private boolean overwrite;
-   private Collection<?> resources;
+   private Collection<Resource<?>> resources;
    private Map<String, Object> attributes;
 
-   public ScaffoldGenerationContext(String targetDirectory, boolean overwrite, Collection<?> resources)
+   public ScaffoldGenerationContext(String targetDirectory, boolean overwrite, Collection<Resource<?>> resources)
    {
       super();
       this.targetDirectory = targetDirectory == null ? "" : targetDirectory;
@@ -51,12 +53,12 @@ public class ScaffoldGenerationContext
       this.overwrite = overwrite;
    }
    
-   public Collection<?> getResources()
+   public Collection<Resource<?>> getResources()
    {
       return resources;
    }
    
-   public void setResources(Collection<?> resources)
+   public void setResources(Collection<Resource<?>> resources)
    {
       this.resources = resources;
    }

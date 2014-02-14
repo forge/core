@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.scaffold.spi.ResourceCollection;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
@@ -83,7 +84,7 @@ public class ScaffoldExecuteGenerationStep extends AbstractProjectCommand implem
       return factory;
    }
 
-   private ScaffoldGenerationContext populateGenerationContext(UIContext context, Collection<?> resources)
+   private ScaffoldGenerationContext populateGenerationContext(UIContext context, Collection<Resource<?>> resources)
    {
       Map<Object, Object> attributeMap = context.getAttributeMap();
       ScaffoldGenerationContext generationContext = (ScaffoldGenerationContext) attributeMap
