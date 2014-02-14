@@ -32,7 +32,7 @@ public class UISelectOneImpl<VALUETYPE> extends AbstractUISelectInputComponent<U
    @Override
    public UISelectOne<VALUETYPE> setValue(VALUETYPE value)
    {
-      assertChoiceInValueChoices(value);
+      // assertChoiceInValueChoices(value);
       Set<ValueChangeListener> listeners = getValueChangeListeners();
       if (!listeners.isEmpty() && !InputComponents.areEqual(getValue(), value))
       {
