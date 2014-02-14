@@ -398,10 +398,6 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
       {
          setup.add(JPASetupWizard.class);
       }
-      else if (project.getFacet(JPAFacet.class).getAllEntities().isEmpty())
-      {
-         setup.add(NewEntityCommand.class);
-      }
       return setup;
    }
 
