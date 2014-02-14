@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jboss.forge.furnace.proxy.Proxies;
+
 /**
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -44,7 +46,7 @@ public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Mut
    @Override
    public boolean install(FACETTYPE facet)
    {
-      if (facet.getFaceted() != this)
+      if (Proxies.unwrap(facet.getFaceted()) != this)
          throw new IllegalArgumentException("[" + facet + "].getOrigin() was [" + facet.getFaceted()
                   + "] but needed to be [" + this + "]. If your facet type implements "
                   + MutableFacet.class.getSimpleName() + ", " +
@@ -64,7 +66,7 @@ public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Mut
    @Override
    public boolean register(FACETTYPE facet)
    {
-      if (facet.getFaceted() != this)
+      if (Proxies.unwrap(facet.getFaceted()) != this)
          throw new IllegalArgumentException("[" + facet + "].getOrigin() was [" + facet.getFaceted()
                   + "] but needed to be [" + this + "]. If your facet type implements "
                   + MutableFacet.class.getSimpleName() + ", " +

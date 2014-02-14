@@ -15,5 +15,10 @@
          <artifactId>furnace-api</artifactId>
          <scope>provided</scope>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-proxy</artifactId>
+         <scope>provided</scope>
+      </dependency>
    </dependencies>
 </project>
