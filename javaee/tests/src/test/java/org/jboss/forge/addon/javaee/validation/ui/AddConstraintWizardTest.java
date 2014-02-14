@@ -71,6 +71,7 @@ public class AddConstraintWizardTest
    {
       Project project = projectHelper.createWebProject();
       projectHelper.installJPA_2_0(project);
+      projectHelper.installValidation(project);
       JavaResource jpaEntity = projectHelper.createJPAEntity(project, "Customer");
 
       WizardCommandController wizard = testHarness.createWizardController(AddConstraintWizard.class, project.getRootDirectory());
