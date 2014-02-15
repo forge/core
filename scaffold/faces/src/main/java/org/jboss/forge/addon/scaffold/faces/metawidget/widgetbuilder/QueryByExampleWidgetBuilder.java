@@ -62,8 +62,8 @@ public class QueryByExampleWidgetBuilder
                   new JavaStatement("String " + name + " = this.example.get" + StringUtils.capitalize(name) + "()"));
          JavaStatement ifNotEmpty = new JavaStatement("if (" + name + " != null && !\"\".equals(" + name + "))");
          ifNotEmpty.getChildren().add(
-                  new JavaStatement("predicatesList.add(builder.like(root.<String>get(\"" + name + "\"), '%' + " + name
-                           + " + '%'))"));
+                  new JavaStatement("predicatesList.add(builder.like(builder.lower(root.<String>get(\"" + name + "\")), '%' + " + name
+                           + ".toLowerCase() + '%'))"));
          toReturn.getChildren().add(ifNotEmpty);
          return toReturn;
       }
