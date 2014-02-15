@@ -210,10 +210,6 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
       {
          idx = entities.indexOf(selection.get());
       }
-      if (idx == -1)
-      {
-         idx = entities.size() - 1;
-      }
       if (idx != -1)
       {
          targetEntity.setDefaultValue(entities.get(idx));

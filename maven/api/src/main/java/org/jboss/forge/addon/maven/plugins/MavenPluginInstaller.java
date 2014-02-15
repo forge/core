@@ -4,9 +4,9 @@ import org.jboss.forge.addon.projects.Project;
 
 /**
  * Responsible for installing a given {@link MavenPlugin} into the current project. Resolves available plugins.
- *
+ * 
  * @author <a href="mailto:salmon_charles@gmail.com">charless</a>
- *
+ * 
  */
 public interface MavenPluginInstaller
 {

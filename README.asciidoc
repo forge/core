@@ -16,6 +16,8 @@ What's new and noteworthy?
 
 We are currently in the process of migrating Forge 1 to Forge 2, so expect to find some Forge 1 functionality missing in the early versions of Forge 2.
 
+See the JavaDocs here: http://docs.jboss.org/forge/javadoc/2.0.1-SNAPSHOT/
+
 == Download Forge 2:    
 Forge 2 is packaged inside an Eclipse plugin and also as a standalone ZIP file. They are independent of each other.
 It is worth mentioning that the Eclipse plugin does not support access to shell yet.
@@ -480,6 +482,8 @@ public class ExampleFurnaceTest {
 }
 ---- 
 
+NOTE: The `@Dependencies` annotation is used to specify addons that must be deployed before the Addon-Under-Test is deployed in Furnace. The `AddonDependencyEntry.create(...)` method is used to specify addons that the Addon-Under-Test depends on.
+
 Now that the test case deploys and depends on your addon, you may access services from it via injection:
 
 [source,java]
@@ -512,7 +516,7 @@ public class ExampleFurnaceTest {
 ---- 
 
 This is the basic premise of using the test-harness. For detailed examples, take a 
-https://github.com/forge/core/tree/2.0/resources/tests/src/test/java/org/jboss/forge/addon/resource[look at some of the existing
+https://github.com/forge/core/tree/master/resources/tests/src/test/java/org/jboss/forge/addon/resource[look at some of the existing
 Forge test cases] in our github repository.
 
 NOTE: The `version` parameter in `@AddonDependency` and in the `AddonDependencyEntry.create(...)` method are optional. By not specifying them means that the test harness 

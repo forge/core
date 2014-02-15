@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.ui.command;
 
-import java.util.Arrays;
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -45,7 +43,8 @@ public class CommandFactoryTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addClasses(ExampleCommand.class, ExampleNoUICommand.class, ExampleAnnotatedCommand.class, FlowExampleStep.class)
+               .addClasses(ExampleCommand.class, ExampleNoUICommand.class, ExampleAnnotatedCommand.class,
+                        FlowExampleStep.class)
                .addPackage(MockUIRuntime.class.getPackage())
                .addBeansXML()
                .addAsAddonDependencies(

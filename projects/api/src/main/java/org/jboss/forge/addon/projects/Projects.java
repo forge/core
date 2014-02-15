@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.projects;
 
+import java.util.Map;
+
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
@@ -19,15 +21,28 @@ import org.jboss.forge.addon.ui.context.UISelection;
 public final class Projects
 {
    /**
+    * Stores the project inside the {@link UIContext}, to avoid unnecessary lookups
+    */
+   private static final String SCOPED_PROJECT_KEY = "org.jboss.forge.projects.CURRENT_PROJECT";
+
+   /**
     * @return the project if {@link UIContext#getInitialSelection()} returns a path containing a project, null otherwise
     */
    public static Project getSelectedProject(ProjectFactory projectFactory, UIContext context)
    {
-      Project project = null;
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (!initialSelection.isEmpty())
+      Map<Object, Object> attributeMap = context.getAttributeMap();
+      Project project = (Project) attributeMap.get(SCOPED_PROJECT_KEY);
+      if (project == null)
       {
-         project = projectFactory.findProject(initialSelection.get());
+         UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
+         if (!initialSelection.isEmpty())
+         {
+            project = projectFactory.findProject(initialSelection.get());
+         }
+         if (project != null)
+         {
+            attributeMap.put(SCOPED_PROJECT_KEY, project);
+         }
       }
       return project;
    }
@@ -37,12 +52,16 @@ public final class Projects
     */
    public static boolean containsProject(ProjectFactory projectFactory, UIContext context)
    {
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (!initialSelection.isEmpty())
+      Project project = (Project) context.getAttributeMap().get(SCOPED_PROJECT_KEY);
+      if (project == null)
       {
-         return projectFactory.containsProject(initialSelection.get());
+         UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
+         if (!initialSelection.isEmpty())
+         {
+            return projectFactory.containsProject(initialSelection.get());
+         }
+         return false;
       }
-      return false;
-
+      return true;
    }
 }

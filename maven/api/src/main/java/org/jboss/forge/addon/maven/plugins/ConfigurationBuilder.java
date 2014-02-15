@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * Builds a {@link Configuration} object
- *
+ * 
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
 public class ConfigurationBuilder implements Configuration

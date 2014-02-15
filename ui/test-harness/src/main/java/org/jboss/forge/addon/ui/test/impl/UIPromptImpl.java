@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui.test.impl;
+package org.jboss.forge.addon.ui.test.impl;
 
 import org.jboss.forge.addon.ui.input.UIPrompt;
 

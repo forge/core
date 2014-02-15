@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.ui.test;
+package org.jboss.forge.addon.ui.test;
 
 import javax.inject.Inject;
 
@@ -18,14 +18,14 @@ import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.test.impl.UIContextImpl;
+import org.jboss.forge.addon.ui.test.impl.UIProviderImpl;
+import org.jboss.forge.addon.ui.test.impl.UIRuntimeImpl;
 import org.jboss.forge.addon.ui.util.Selections;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
-import org.jboss.forge.ui.test.impl.UIContextImpl;
-import org.jboss.forge.ui.test.impl.UIProviderImpl;
-import org.jboss.forge.ui.test.impl.UIRuntimeImpl;
 
 /**
  * Creates {@link CommandController} objects for the purpose of unit testing
