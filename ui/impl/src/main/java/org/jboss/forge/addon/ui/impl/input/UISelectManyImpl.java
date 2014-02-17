@@ -32,6 +32,7 @@ public class UISelectManyImpl<VALUETYPE> extends AbstractUISelectInputComponent<
    @Override
    public UISelectMany<VALUETYPE> setValue(Iterable<VALUETYPE> value)
    {
+      // assertChoicesInValueChoices(value);
       Set<ValueChangeListener> listeners = getValueChangeListeners();
       if (!listeners.isEmpty() && !InputComponents.areElementsEqual(getValue(), value))
       {

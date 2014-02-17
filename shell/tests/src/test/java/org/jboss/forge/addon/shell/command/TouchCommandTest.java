@@ -7,6 +7,11 @@
 
 package org.jboss.forge.addon.shell.command;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -96,12 +101,13 @@ public class TouchCommandTest
       Thread.sleep(500);
 
       Result result = shellTest.execute("touch foo.txt", 5, TimeUnit.SECONDS);
-      Assert.assertFalse(result instanceof Failed);
-      
+      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      Assert.assertThat(result.getMessage(), is(not(equalTo(""))));
+
       long newLastModified = child.getLastModified();
       Assert.assertTrue("Last modified not changed Original: " + lastModified + " New: " + newLastModified,
                newLastModified - lastModified > 0);
-      
+
       Assert.assertTrue(child.exists());
       child.delete();
    }

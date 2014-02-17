@@ -9,7 +9,7 @@ package org.jboss.forge.addon.ui.impl.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -25,7 +25,6 @@ import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
-import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.impl.context.UINavigationContextImpl;
@@ -40,7 +39,6 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.addon.ui.wizard.WizardExecutionListener;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.proxy.Proxies;
 
 /**
  * 
@@ -61,17 +59,17 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
     */
    private final LinkedList<WizardStepEntry> subflow = new LinkedList<>();
 
-   private final Map<Integer, WizardStepEntry> usedSubflows = new HashMap<>();
+   private final Set<Integer> usedSubflows = new HashSet<>();
 
    /**
     * The pointer that this flow is on. Starts with 0
     */
    private int flowPointer = 0;
 
-   private final CommandControllerFactory controllerFactory;
+   private final CommandControllerFactoryImpl controllerFactory;
 
    public WizardCommandControllerImpl(UIContext context, AddonRegistry addonRegistry, UIRuntime runtime,
-            UIWizard initialCommand, CommandControllerFactory controllerFactory)
+            UIWizard initialCommand, CommandControllerFactoryImpl controllerFactory)
    {
       super(addonRegistry, runtime, initialCommand, context);
       this.controllerFactory = controllerFactory;
@@ -281,7 +279,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
          return false;
       }
       Class<? extends UICommand>[] next = getNextFrom(getCurrentController().getCommand());
-      return ((next != null || !subflow.isEmpty()) || usedSubflows.containsKey(flowPointer));
+      return ((next != null || !subflow.isEmpty()) || usedSubflows.contains(flowPointer));
    }
 
    @Override
@@ -322,6 +320,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       return true;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public WizardCommandController next() throws Exception
    {
@@ -358,8 +357,8 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
                }
                else
                {
-                  UICommand command2 = Proxies.unwrap(subflow.peek().controller.getCommand());
-                  command = createCommand(command2.getClass());
+                  UICommandMetadata metadata = subflow.peek().controller.getCommand().getMetadata(context);
+                  command = createCommand((Class<? extends UICommand>) metadata.getType());
                }
             }
             else
@@ -368,7 +367,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
             }
             if (command != null)
             {
-               CommandController ctrl = controllerFactory.createController(context, runtime, command);
+               CommandController ctrl = controllerFactory.doCreateSingleController(context, runtime, command);
                ctrl.initialize();
                Set<String> currentInputsKeySet = nextEntry.controller.getInputs().keySet();
                Set<String> keySet = ctrl.getInputs().keySet();
@@ -418,7 +417,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
          else
          {
             next = subflow.pop();
-            usedSubflows.put(flowPointer, next);
+            usedSubflows.add(flowPointer);
          }
       }
       else
@@ -489,7 +488,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
 
    private WizardStepEntry createEntry(UICommand command, boolean subflowHead)
    {
-      CommandController controller = controllerFactory.createSingleController(context, runtime, command);
+      CommandController controller = controllerFactory.doCreateSingleController(context, runtime, command);
       return new WizardStepEntry(controller, subflowHead);
    }
 

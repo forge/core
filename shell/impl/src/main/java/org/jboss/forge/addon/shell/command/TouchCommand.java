@@ -63,6 +63,10 @@ public class TouchCommand extends AbstractShellCommand
       for (String path : arguments.getValue())
       {
          List<Resource<?>> resources = new ResourcePathResolver(resourceFactory, currentResource, path).resolve();
+         if (resources.isEmpty())
+         {
+            return Results.fail(path + ": path could not be resolved");
+         }
          for (Resource<?> resource : resources)
          {
             FileResource<?> file = resource.reify(FileResource.class);

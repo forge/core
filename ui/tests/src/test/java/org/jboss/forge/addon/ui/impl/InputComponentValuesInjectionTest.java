@@ -34,6 +34,7 @@ import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -124,5 +125,23 @@ public class InputComponentValuesInjectionTest
       // Manually created choice values are null
       UISelectOne<Boolean> selectOne = inputFactory.createSelectOne("selectOne", Boolean.class);
       Assert.assertThat(selectOne.getValueChoices(), nullValue());
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   @Ignore("Assertions commented out")
+   public void testSetInvalidValueInSelectOne()
+   {
+      UISelectOne<String> selectOne = inputFactory.createSelectOne("selectOne", String.class);
+      selectOne.setValueChoices(Arrays.asList("A", "B", "C"));
+      selectOne.setValue("D");
+   }
+
+   @Test(expected = IllegalArgumentException.class)
+   @Ignore("Assertions commented out")
+   public void testSetInvalidValueInSelectMany()
+   {
+      UISelectMany<String> selectMany = inputFactory.createSelectMany("selectMany", String.class);
+      selectMany.setValueChoices(Arrays.asList("A", "B", "C"));
+      selectMany.setValue(Arrays.asList("B", "D"));
    }
 }

@@ -26,10 +26,11 @@ import org.jboss.forge.addon.shell.ui.AeshUICommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.ui.command.UICommand;
+import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.SingleCommandController;
+import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.util.Commands;
-import org.jboss.forge.addon.ui.wizard.UIWizard;
 
 /**
  * Forge implementation of {@link CommandRegistry}.
@@ -110,6 +111,10 @@ public class ForgeCommandRegistry implements CommandRegistry
          CommandAdapter command = new CommandAdapter(shell, shellContext, cmd);
          return new ForgeCommandContainer(shellContext, parser, command);
       }
+      catch (RuntimeException e)
+      {
+         throw e;
+      }
       catch (Exception e)
       {
          throw new RuntimeException("Error while creating parser: " + e.getMessage(), e);
@@ -124,15 +129,14 @@ public class ForgeCommandRegistry implements CommandRegistry
       {
          if (commandName.equals(commandManager.getCommandName(shellContext, cmd)))
          {
-            if (cmd instanceof UIWizard)
+            CommandController controller = commandFactory.createController(shellContext, shell, cmd);
+            if (controller instanceof WizardCommandController)
             {
-               result = new ShellWizard(commandFactory.createWizardController(shellContext, shell, (UIWizard) cmd),
-                        shellContext, cmdLineUtil, this);
+               result = new ShellWizard((WizardCommandController) controller, shellContext, cmdLineUtil, this);
             }
             else
             {
-               result = new ShellSingleCommand(commandFactory.createSingleController(shellContext, shell, cmd),
-                        shellContext, cmdLineUtil);
+               result = new ShellSingleCommand(controller, shellContext, cmdLineUtil);
             }
             break;
          }

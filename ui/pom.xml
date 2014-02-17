@@ -20,7 +20,7 @@
       <module>addon</module>
       <module>tests</module>
       <module>example</module>
-      <module>ui-test-harness</module>
+      <module>test-harness</module>
    </modules>
 
    <dependencyManagement>

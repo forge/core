@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.shell.aesh;
 
+import java.io.File;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -75,10 +76,12 @@ public class TrackChangesCommandTest
       test.waitForStdOutValue("Resource change tracking is ON.", SHELL_TIMEOUT, TimeUnit.SECONDS);
 
       Assert.assertFalse(test.execute("touch foo.txt", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
-      test.waitForStdOutValue("Created  " + tempDir.getFullyQualifiedName() + "/foo.txt", SHELL_TIMEOUT, TimeUnit.SECONDS);
+      test.waitForStdOutValue("Created  " + tempDir.getFullyQualifiedName() + File.separator + "foo.txt",
+               SHELL_TIMEOUT, TimeUnit.SECONDS);
 
       Assert.assertFalse(test.execute("rm foo.txt", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
-      test.waitForStdOutValue("Deleted  " + tempDir.getFullyQualifiedName() + "/foo.txt", SHELL_TIMEOUT,
+      test.waitForStdOutValue("Deleted  " + tempDir.getFullyQualifiedName() + File.separator +
+               "foo.txt", SHELL_TIMEOUT,
                TimeUnit.SECONDS);
 
       Assert.assertFalse(test.execute("track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
@@ -101,8 +104,10 @@ public class TrackChangesCommandTest
 
       test.clearScreen();
       Assert.assertFalse(test.execute("transaction-commit", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
-      test.waitForStdOutValue("Created  " + tempDir.getFullyQualifiedName() + "/foo.txt", SHELL_TIMEOUT, TimeUnit.SECONDS);
-      test.waitForStdOutValue("Deleted  " + tempDir.getFullyQualifiedName() + "/foo.txt", SHELL_TIMEOUT,
+      test.waitForStdOutValue("Created  " + tempDir.getFullyQualifiedName() + File.separator
+               + "foo.txt", SHELL_TIMEOUT, TimeUnit.SECONDS);
+      test.waitForStdOutValue("Deleted  " + tempDir.getFullyQualifiedName() + File.separator
+               + "foo.txt", SHELL_TIMEOUT,
                TimeUnit.SECONDS);
 
       Assert.assertFalse(test.execute("track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
@@ -125,15 +130,19 @@ public class TrackChangesCommandTest
 
       test.clearScreen();
       Assert.assertFalse(test.execute("transaction-commit", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
-      test.waitForStdOutValue("Created  " + tempDir.getFullyQualifiedName() + "/foo.txt", SHELL_TIMEOUT, TimeUnit.SECONDS);
-      test.waitForStdOutValue("Deleted  " + tempDir.getFullyQualifiedName() + "/foo.txt", SHELL_TIMEOUT,
+      test.waitForStdOutValue("Created  " + tempDir.getFullyQualifiedName() + File.separator + "foo.txt",
+               SHELL_TIMEOUT, TimeUnit.SECONDS);
+      test.waitForStdOutValue("Deleted  " + tempDir.getFullyQualifiedName() + File.separator + "foo.txt",
+               SHELL_TIMEOUT,
                TimeUnit.SECONDS);
 
       test.clearScreen();
       Assert.assertFalse(test.execute("track-changes", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
       test.waitForStdOutValue("Resource change tracking is OFF.", SHELL_TIMEOUT, TimeUnit.SECONDS);
-      Assert.assertFalse(test.getStdOut().contains("Modified " + tempDir.getFullyQualifiedName() + "/foo.txt"));
-      Assert.assertFalse(test.getStdOut().contains("Deleted  " + tempDir.getFullyQualifiedName() + "/foo.txt"));
+      Assert.assertFalse(test.getStdOut().contains(
+               "Modified " + tempDir.getFullyQualifiedName() + File.separator + "foo.txt"));
+      Assert.assertFalse(test.getStdOut().contains(
+               "Deleted  " + tempDir.getFullyQualifiedName() + File.separator + "foo.txt"));
    }
 
    @Test(timeout = 10000)
@@ -175,7 +184,8 @@ public class TrackChangesCommandTest
       test.waitForStdOutValue("Resource change tracking is ON.", SHELL_TIMEOUT, TimeUnit.SECONDS);
 
       Assert.assertFalse(test.execute("rm foo.txt", SHELL_TIMEOUT, TimeUnit.SECONDS) instanceof Failed);
-      test.waitForStdOutValue("Deleted  " + tempDir.getFullyQualifiedName() + "/foo.txt", SHELL_TIMEOUT,
+      test.waitForStdOutValue("Deleted  " + tempDir.getFullyQualifiedName() + File.separator + "foo.txt",
+               SHELL_TIMEOUT,
                TimeUnit.SECONDS);
 
       Assert.assertTrue(flag.get());

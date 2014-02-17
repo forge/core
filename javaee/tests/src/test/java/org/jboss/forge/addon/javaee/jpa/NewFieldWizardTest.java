@@ -19,13 +19,13 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.ui.test.UITestHarness;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -84,6 +84,7 @@ public class NewFieldWizardTest
          controller.setValueFor("targetEntity", entity);
          Assert.assertFalse(controller.canExecute());
          controller.setValueFor("named", "firstName");
+         controller.setValueFor("columnName", "FIRST_NAME_COLUMN");
          Assert.assertFalse(controller.canMoveToNextStep());
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
@@ -95,6 +96,7 @@ public class NewFieldWizardTest
       final Field<JavaClass> field = javaClass.getField("firstName");
       Assert.assertTrue(field.hasAnnotation(Column.class));
       Assert.assertEquals("String", field.getType());
+      Assert.assertEquals("FIRST_NAME_COLUMN", field.getAnnotation(Column.class).getStringValue("name"));
    }
 
    @Test

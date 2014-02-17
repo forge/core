@@ -60,6 +60,6 @@ public class JavaWebProjectType implements ProjectType
    @Override
    public int priority()
    {
-      return 100;
+      return 0;
    }
 }

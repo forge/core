@@ -58,6 +58,10 @@ public class NewEntityCommand extends AbstractJavaEECommand
    private UIInput<DirectoryResource> targetLocation;
 
    @Inject
+   @WithAttributes(label = "Table Name")
+   private UIInput<String> tableName;
+
+   @Inject
    private PersistenceOperations persistenceOperations;
 
    @Override
@@ -96,7 +100,7 @@ public class NewEntityCommand extends AbstractJavaEECommand
          targetPackage.setValue(calculateModelPackage(project));
       }
       builder.add(targetLocation);
-      builder.add(targetPackage).add(named).add(idStrategy);
+      builder.add(targetPackage).add(named).add(idStrategy).add(tableName);
    }
 
    /**
@@ -146,11 +150,13 @@ public class NewEntityCommand extends AbstractJavaEECommand
       JavaResource javaResource;
       if (project == null)
       {
-         javaResource = persistenceOperations.newEntity(targetDir, entityName, entityPackage, idStrategyChosen);
+         javaResource = persistenceOperations.newEntity(targetDir, entityName, entityPackage, idStrategyChosen,
+                  tableName.getValue());
       }
       else
       {
-         javaResource = persistenceOperations.newEntity(project, entityName, entityPackage, idStrategyChosen);
+         javaResource = persistenceOperations.newEntity(project, entityName, entityPackage, idStrategyChosen,
+                  tableName.getValue());
       }
       context.getUIContext().setSelection(javaResource);
       return Results.success("Entity " + javaResource + " created");

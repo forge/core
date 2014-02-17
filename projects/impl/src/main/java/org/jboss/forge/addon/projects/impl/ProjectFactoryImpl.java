@@ -21,13 +21,13 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.projects.ProjectProvider;
-import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectAssociationProvider;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ProjectListener;
+import org.jboss.forge.addon.projects.ProjectProvider;
+import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.spi.ProjectCache;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
@@ -101,23 +101,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Override
    public Project findProject(FileResource<?> target)
    {
-      Project result = null;
-      Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
-      for (ProjectProvider projectProvider : instances)
-      {
-         try
-         {
-            result = findProject(target, projectProvider);
-         }
-         finally
-         {
-            instances.release(projectProvider);
-         }
-
-         if (result != null)
-            break;
-      }
-      return result;
+      return findProject(target, (Predicate<Project>) null);
    }
 
    @Override
@@ -136,19 +120,26 @@ public class ProjectFactoryImpl implements ProjectFactory
 
       Project result = null;
       Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
-      for (ProjectProvider projectProvider : instances)
+
+      try
       {
-         try
+         for (DirectoryResource dir : allDirectoriesOnPath(fileToDir(target)))
          {
-            result = findProject(target, projectProvider, filter);
+            for (ProjectProvider projectProvider : instances)
+            {
+               result = findProjectInDirectory(dir, projectProvider, filter);
+            }
+
+            if (result != null)
+               break;
          }
-         finally
+      }
+      finally
+      {
+         for (ProjectProvider projectProvider : instances)
          {
             instances.release(projectProvider);
          }
-
-         if (result != null)
-            break;
       }
 
       return result;
@@ -164,42 +155,85 @@ public class ProjectFactoryImpl implements ProjectFactory
       }
 
       Project result = null;
-      DirectoryResource r = (target instanceof DirectoryResource) ? (DirectoryResource) target : target
-               .getParent();
-      while (r != null && result == null)
-      {
-         Iterator<ProjectCache> cacheIterator = caches.iterator();
-         while (cacheIterator.hasNext() && result == null)
-         {
-            ProjectCache cache = cacheIterator.next();
-            try
-            {
-               result = cache.get(r);
-               if (result != null && !filter.accept(result))
-                  result = null;
-               if (result != null)
-                  break;
-            }
-            finally
-            {
-               caches.release(cache);
-            }
-         }
 
-         if (result == null && projectProvider.containsProject(r))
+      Iterator<DirectoryResource> pathIterator = allDirectoriesOnPath(fileToDir(target)).iterator();
+      while (pathIterator.hasNext() && result == null)
+      {
+         result = findProjectInDirectory(pathIterator.next(), projectProvider, filter);
+      }
+
+      return result;
+   }
+
+   /**
+    * Returns all directories on path starting from given directory up to the root.
+    */
+   private List<DirectoryResource> allDirectoriesOnPath(DirectoryResource startingDir)
+   {
+      List<DirectoryResource> result = new ArrayList<>();
+
+      while (startingDir != null)
+      {
+         result.add(startingDir);
+         startingDir = startingDir.getParent();
+      }
+
+      return result;
+   }
+
+   /**
+    * Returns project residing in given directory, if no such is found then null is returned.
+    */
+   private Project findProjectInDirectory(DirectoryResource target, ProjectProvider projectProvider,
+            Predicate<Project> filter)
+   {
+      Project result = null;
+
+      Iterator<ProjectCache> cacheIterator = caches.iterator();
+      while (cacheIterator.hasNext())
+      {
+         ProjectCache cache = cacheIterator.next();
+         try
          {
-            result = projectProvider.createProject(r);
+            result = cache.get(target);
             if (result != null && !filter.accept(result))
                result = null;
-
             if (result != null)
-            {
-               registerAvailableFacets(result);
-               cacheProject(result);
-            }
+               break;
          }
+         finally
+         {
+            caches.release(cache);
+         }
+      }
 
-         r = r.getParent();
+      if (result == null && projectProvider.containsProject(target))
+      {
+         result = projectProvider.createProject(target);
+         if (result != null && !filter.accept(result))
+            result = null;
+
+         if (result != null)
+         {
+            registerAvailableFacets(result);
+            cacheProject(result);
+         }
+      }
+
+      return result;
+   }
+
+   private DirectoryResource fileToDir(FileResource<?> file)
+   {
+      DirectoryResource result = null;
+
+      if (file instanceof DirectoryResource)
+      {
+         result = (DirectoryResource) file;
+      }
+      else
+      {
+         result = file.getParent();
       }
 
       return result;
@@ -219,10 +253,13 @@ public class ProjectFactoryImpl implements ProjectFactory
       Assert.notNull(projectProvider, "Build system type must not be null.");
 
       if (facetTypes != null)
-         Assert.isTrue(isBuildable(projectProvider, facetTypes),
-                  "The provided build system [" + projectProvider.getType()
+         Assert.isTrue(
+                  isBuildable(projectProvider, facetTypes),
+                  "The provided build system ["
+                           + projectProvider.getType()
                            + "] cannot create a project that requires facets of the following types: "
-                           + getMissingProvidedProjectFacets(projectProvider, getRequiredProvidedProjectFacets(facetTypes)));
+                           + getMissingProvidedProjectFacets(projectProvider,
+                                    getRequiredProvidedProjectFacets(facetTypes)));
 
       Project result = projectProvider.createProject(target);
       if (result != null)
