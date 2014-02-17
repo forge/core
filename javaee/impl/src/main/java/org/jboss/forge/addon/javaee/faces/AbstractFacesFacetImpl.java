@@ -57,7 +57,6 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
    private static final String FACELETS_VIEW_MAPPINGS = "javax.faces.FACELETS_VIEW_MAPPINGS";
    private static final String FACES_SERVLET_NAME = "Faces Facet";
    private static final String JAVAX_FACES_DEFAULT_SUFFIX = "javax.faces.DEFAULT_SUFFIX";
-   private static final String JAVAX_FACES_PROJECT_STAGE = "javax.faces.PROJECT_STAGE";
 
    public AbstractFacesFacetImpl(DependencyInstaller installer)
    {
@@ -170,7 +169,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
          List<ParamValueCommonType> params = config.getAllContextParam();
          for (ParamValueCommonType param : params)
          {
-            if (JAVAX_FACES_PROJECT_STAGE.equals(param.getParamName()))
+            if (ProjectStage.PROJECT_STAGE_PARAM_NAME.equals(param.getParamName()))
             {
                return ProjectStage.valueOf(ProjectStage.class, param.getParamValue());
             }
@@ -192,7 +191,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
          ParamValueCommonType projectStageParam = null;
          for (ParamValueCommonType param : params)
          {
-            if (JAVAX_FACES_PROJECT_STAGE.equals(param.getParamName()))
+            if (ProjectStage.PROJECT_STAGE_PARAM_NAME.equals(param.getParamName()))
             {
                projectStageParam = param;
                break;
@@ -201,7 +200,7 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
          if (projectStageParam == null)
          {
             projectStageParam = config.createContextParam();
-            projectStageParam.paramName(JAVAX_FACES_PROJECT_STAGE);
+            projectStageParam.paramName(ProjectStage.PROJECT_STAGE_PARAM_NAME);
          }
          projectStageParam.paramValue(projectStage.toString());
          servlet.saveConfig(config);
