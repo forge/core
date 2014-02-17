@@ -45,7 +45,14 @@ Install the required addons by running the following commands:
 IMPORTANT: Make sure your *settings.xml* is properly configured to use the Maven central repository or, if you wish to use a SNAPSHOT version from a core addon, the JBoss Nexus Repository, otherwise the installation will fail.
 Instructions on how to setup your *settings.xml* can be found on https://community.jboss.org/wiki/MavenGettingStarted-Developers
 
-If you wish to install the prototype Forge 2 Shell based on link:http://aeshell.github.io/[Aesh], be sure to run the following:
+If you wish to install the core addons including the shell, "Project: New", the "Java EE" commands, and all other provided functionality, you should run the following command:
+
+[source,cmd]
+----
+    forge --install core
+----
+
+If you only wish to install the prototype Forge 2 Shell based on link:http://aeshell.github.io/[Aesh], run the following command instead:
 
 [source,cmd]
 ----
