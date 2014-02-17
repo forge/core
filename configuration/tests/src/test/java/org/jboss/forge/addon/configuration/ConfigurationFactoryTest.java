@@ -21,6 +21,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -54,6 +55,23 @@ public class ConfigurationFactoryTest
 
    @Inject
    private ResourceFactory resourceFactory;
+
+   @Inject
+   private Configuration userConfiguration;
+
+   @BeforeClass
+   public static void setUserConfig() throws Exception
+   {
+      File tmpFile = File.createTempFile("user_config", ".xml");
+      System.setProperty(ConfigurationFactoryImpl.USER_CONFIG_PATH, tmpFile.getAbsolutePath());
+   }
+
+   @Test
+   public void testUserConfiguration()
+   {
+      userConfiguration.setProperty("key", "value");
+      Assert.assertEquals("value", userConfiguration.getString("key"));
+   }
 
    @Test
    public void testConfigurationFactory() throws Exception
