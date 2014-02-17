@@ -15,7 +15,7 @@ import javax.inject.Singleton;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.ui.command.UICommand;
-import org.jboss.forge.addon.ui.command.UICommandEnricher;
+import org.jboss.forge.addon.ui.command.UICommandTransformer;
 import org.jboss.forge.addon.ui.context.UIContext;
 
 /**
@@ -24,14 +24,14 @@ import org.jboss.forge.addon.ui.context.UIContext;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @Singleton
-public class JavaEEUICommandEnricher implements UICommandEnricher
+public class JavaEEUICommandTransformer implements UICommandTransformer
 {
    @Inject
    private ProjectFactory projectFactory;
 
    @SuppressWarnings("unchecked")
    @Override
-   public UICommand enrich(UIContext context, UICommand original)
+   public UICommand transform(UIContext context, UICommand original)
    {
       final UICommand result;
       if (original instanceof AbstractJavaEECommand && Projects.containsProject(projectFactory, context))

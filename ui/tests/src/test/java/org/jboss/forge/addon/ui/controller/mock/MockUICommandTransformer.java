@@ -10,21 +10,21 @@ package org.jboss.forge.addon.ui.controller.mock;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.ui.command.UICommand;
-import org.jboss.forge.addon.ui.command.UICommandEnricher;
+import org.jboss.forge.addon.ui.command.UICommandTransformer;
 import org.jboss.forge.addon.ui.context.UIContext;
 
 /**
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class MockUICommandEnricher implements UICommandEnricher
+public class MockUICommandTransformer implements UICommandTransformer
 {
 
    @Inject
    private ExampleNoUICommand noUICommand;
 
    @Override
-   public UICommand enrich(UIContext context, UICommand original)
+   public UICommand transform(UIContext context, UICommand original)
    {
       return noUICommand;
    }

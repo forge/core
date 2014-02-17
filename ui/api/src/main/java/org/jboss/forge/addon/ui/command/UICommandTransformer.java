@@ -10,15 +10,15 @@ package org.jboss.forge.addon.ui.command;
 import org.jboss.forge.addon.ui.context.UIContext;
 
 /**
- * A {@link UICommandEnricher} can enrich the original command into another command (add steps)
+ * A {@link UICommandTransformer} can transform the original command into another command
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public interface UICommandEnricher
+public interface UICommandTransformer
 {
    /**
     * Called by the UI API when a command is about to be used. Should never return null.
     */
-   UICommand enrich(UIContext context, UICommand original);
+   UICommand transform(UIContext context, UICommand original);
 
 }
