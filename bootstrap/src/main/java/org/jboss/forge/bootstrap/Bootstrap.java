@@ -44,6 +44,7 @@ import org.jboss.forge.furnace.versions.Versions;
 public class Bootstrap
 {
 
+   private static final String FORGE_ADDON_GROUP_ID = "org.jboss.forge.addon:";
    private final Furnace furnace;
    private boolean exitAfter = false;
    private boolean batchMode = false;
@@ -221,11 +222,14 @@ public class Bootstrap
          // This allows forge --install maven
          if (addonCoordinates.contains(","))
          {
-            addon = AddonId.fromCoordinates(addonCoordinates);
+            if (addonCoordinates.contains(":"))
+               addon = AddonId.fromCoordinates(addonCoordinates);
+            else
+               addon = AddonId.fromCoordinates(FORGE_ADDON_GROUP_ID + addonCoordinates);
          }
          else
          {
-            String coordinate = "org.jboss.forge.addon:" + addonCoordinates;
+            String coordinate = FORGE_ADDON_GROUP_ID + addonCoordinates;
             AddonId[] versions = resolver.resolveVersions(coordinate).get();
             if (versions.length == 0)
             {
@@ -289,11 +293,15 @@ public class Bootstrap
          // This allows forge --remove maven
          if (addonCoordinates.contains(","))
          {
-            coordinates = AddonId.fromCoordinates(addonCoordinates).getName();
+            if (addonCoordinates.contains(":"))
+               addon = AddonId.fromCoordinates(addonCoordinates);
+            else
+               addon = AddonId.fromCoordinates(FORGE_ADDON_GROUP_ID + addonCoordinates);
+            coordinates = addon.getName();
          }
          else
          {
-            coordinates = "org.jboss.forge.addon:" + addonCoordinates;
+            coordinates = FORGE_ADDON_GROUP_ID + addonCoordinates;
          }
          REPOS: for (AddonRepository repository : furnace.getRepositories())
          {
@@ -304,7 +312,7 @@ public class Bootstrap
                   addon = id;
                   if (repository instanceof MutableAddonRepository)
                   {
-                     RemoveRequest request = addonManager.remove(id, ((MutableAddonRepository) repository));
+                     RemoveRequest request = addonManager.remove(id, (repository));
                      System.out.println(request);
                      if (!batchMode)
                      {
