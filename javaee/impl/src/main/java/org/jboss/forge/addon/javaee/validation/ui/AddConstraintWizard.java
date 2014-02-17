@@ -14,12 +14,14 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.javaee.validation.ValidationFacet;
+import org.jboss.forge.addon.javaee.validation.ui.setup.ValidationProviderSetupCommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.visit.VisitContext;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -115,15 +117,21 @@ public class AddConstraintWizard extends AbstractJavaEECommand implements UIWiza
    }
 
    @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return super.isEnabled(context) && getSelectedProject(context).hasFacet(ValidationFacet.class);
-   }
-
-   @Override
    protected boolean isProjectRequired()
    {
       return true;
+   }
+
+   @Override
+   public List<Class<? extends UICommand>> getSetupSteps(UIContext context)
+   {
+      List<Class<? extends UICommand>> setup = new ArrayList<>();
+      Project project = getSelectedProject(context);
+      if (!project.hasFacet(ValidationFacet.class))
+      {
+         setup.add(ValidationProviderSetupCommand.class);
+      }
+      return setup;
    }
 
 }

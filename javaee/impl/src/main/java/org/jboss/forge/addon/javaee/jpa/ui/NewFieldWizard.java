@@ -27,6 +27,8 @@ import javax.persistence.Transient;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.FieldOperations;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet;
+import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -34,6 +36,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.visit.VisitContext;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -397,4 +400,17 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    {
       return false;
    }
+
+   @Override
+   public List<Class<? extends UICommand>> getSetupSteps(UIContext context)
+   {
+      List<Class<? extends UICommand>> setup = new ArrayList<>();
+      Project project = getSelectedProject(context);
+      if (!project.hasFacet(JPAFacet.class))
+      {
+         setup.add(JPASetupWizard.class);
+      }
+      return setup;
+   }
+
 }

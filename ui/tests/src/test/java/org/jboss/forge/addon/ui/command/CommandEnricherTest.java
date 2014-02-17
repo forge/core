@@ -15,7 +15,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.mock.ExampleCommand;
 import org.jboss.forge.addon.ui.controller.mock.ExampleNoUICommand;
-import org.jboss.forge.addon.ui.controller.mock.MockUICommandEnricher;
+import org.jboss.forge.addon.ui.controller.mock.MockUICommandTransformer;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
@@ -43,7 +43,7 @@ public class CommandEnricherTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addClasses(ExampleCommand.class, ExampleNoUICommand.class, MockUICommandEnricher.class)
+               .addClasses(ExampleCommand.class, ExampleNoUICommand.class, MockUICommandTransformer.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),

@@ -21,6 +21,7 @@ import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_0;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
+import org.jboss.forge.addon.javaee.validation.ValidationFacet;
 import org.jboss.forge.addon.parser.java.projects.JavaProjectType;
 import org.jboss.forge.addon.parser.java.projects.JavaWebProjectType;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -112,6 +113,14 @@ public class ProjectHelper
    public CDIFacet_1_1 installCDI_1_1(Project project)
    {
       return facetFactory.install(project, CDIFacet_1_1.class);
+   }
+
+   /**
+    * Installs the {@link ValidationFacet} facet
+    */
+   public ValidationFacet installValidation(Project project)
+   {
+      return facetFactory.install(project, ValidationFacet.class);
    }
 
    public JavaResource createJPAEntity(Project project, String entityName) throws IOException

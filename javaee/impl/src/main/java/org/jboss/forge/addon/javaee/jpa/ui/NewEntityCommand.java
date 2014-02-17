@@ -7,12 +7,16 @@
 package org.jboss.forge.addon.javaee.jpa.ui;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.Entity;
 import javax.persistence.GenerationType;
 
+import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
+import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -22,6 +26,7 @@ import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.visit.VisitContext;
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -166,5 +171,17 @@ public class NewEntityCommand extends AbstractJavaEECommand
    protected boolean isProjectRequired()
    {
       return false;
+   }
+
+   @Override
+   public List<Class<? extends UICommand>> getSetupSteps(UIContext context)
+   {
+      List<Class<? extends UICommand>> setup = new ArrayList<>();
+      Project project = getSelectedProject(context);
+      if (!project.hasFacet(JPAFacet.class))
+      {
+         setup.add(JPASetupWizard.class);
+      }
+      return setup;
    }
 }

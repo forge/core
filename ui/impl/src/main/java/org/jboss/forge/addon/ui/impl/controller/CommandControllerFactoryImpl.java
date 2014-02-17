@@ -14,7 +14,7 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.ui.UIRuntime;
 import org.jboss.forge.addon.ui.command.UICommand;
-import org.jboss.forge.addon.ui.command.UICommandEnricher;
+import org.jboss.forge.addon.ui.command.UICommandTransformer;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
@@ -35,14 +35,14 @@ import org.jboss.forge.furnace.services.Imported;
 public class CommandControllerFactoryImpl implements CommandControllerFactory
 {
    private final AddonRegistry addonRegistry;
-   private final Imported<UICommandEnricher> enrichers;
+   private final Imported<UICommandTransformer> transformers;
    private final Logger log = Logger.getLogger(getClass().getName());
 
    @Inject
    public CommandControllerFactoryImpl(AddonRegistry addonRegistry)
    {
       this.addonRegistry = addonRegistry;
-      this.enrichers = this.addonRegistry.getServices(UICommandEnricher.class);
+      this.transformers = this.addonRegistry.getServices(UICommandTransformer.class);
    }
 
    @Override
@@ -86,9 +86,9 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
    private UICommand enrich(final UIContext context, final UICommand originalCommand)
    {
       UICommand command = originalCommand;
-      for (UICommandEnricher enricher : enrichers)
+      for (UICommandTransformer enricher : transformers)
       {
-         UICommand tmpCommand = enricher.enrich(context, command);
+         UICommand tmpCommand = enricher.transform(context, command);
          if (tmpCommand == null)
          {
             log.warning("Enricher implementation " + Proxies.unwrapProxyClassName(enricher.getClass())
