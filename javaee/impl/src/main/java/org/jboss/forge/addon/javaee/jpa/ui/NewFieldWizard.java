@@ -89,6 +89,10 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    private UISelectOne<TemporalType> temporalType;
 
    @Inject
+   @WithAttributes(label = "Column Name", description = "The column name. Defaults to the field name if not informed")
+   private UIInput<String> columnName;
+
+   @Inject
    private FieldOperations fieldOperations;
 
    @Inject
@@ -177,6 +181,14 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             return !lob.getValue() && !transientField.getValue();
          }
       });
+      columnName.setEnabled(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return !transientField.getValue();
+         }
+      });
       length.setEnabled(new Callable<Boolean>()
       {
          @Override
@@ -195,7 +207,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
                      && (Date.class.getName().equals(typeValue) || Calendar.class.getName().equals(typeValue));
          }
       });
-      builder.add(targetEntity).add(named).add(type).add(temporalType).add(length).add(relationshipType)
+      builder.add(targetEntity).add(named).add(type).add(temporalType).add(columnName).add(length).add(relationshipType)
                .add(lob).add(transientField);
    }
 
@@ -295,6 +307,10 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          if (length.isEnabled() && length.getValue() != null && length.getValue().intValue() != 255)
          {
             field.getAnnotation(Column.class).setLiteralValue("length", String.valueOf(length.getValue()));
+         }
+         if (columnName.isEnabled() && columnName.hasValue())
+         {
+            field.getAnnotation(Column.class).setLiteralValue("name", columnName.getValue());
          }
          if (temporalType.isEnabled())
          {

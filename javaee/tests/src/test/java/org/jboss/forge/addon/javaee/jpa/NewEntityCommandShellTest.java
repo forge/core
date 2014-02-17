@@ -9,13 +9,16 @@ package org.jboss.forge.addon.javaee.jpa;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.persistence.Table;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
+import org.jboss.forge.addon.javaee.jpa.ui.NewEntityCommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -24,13 +27,17 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
+ * Tests the {@link NewEntityCommand} behavior
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
 public class NewEntityCommandShellTest
@@ -64,19 +71,23 @@ public class NewEntityCommandShellTest
    @Inject
    private ProjectHelper projectHelper;
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testContainerInjection() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
       test.getShell().setCurrentResource(project.getRootDirectory());
       projectHelper.installJPA_2_0(project);
-      Result result = test.execute(("jpa-new-entity " +
-               "--named Customer " +
-               "--targetPackage org.lincoln " +
-               "--idStrategy AUTO"), 10, TimeUnit.SECONDS);
+      Result result = test
+               .execute(("jpa-new-entity --named Customer --targetPackage org.lincoln --idStrategy AUTO --tableName CUSTOMER_TABLE"),
+                        10, TimeUnit.SECONDS);
 
       Assert.assertThat(result, not(instanceOf(Failed.class)));
       Assert.assertTrue(project.hasFacet(JPAFacet.class));
-      Assert.assertEquals(1, project.getFacet(JPAFacet.class).getAllEntities().size());
+      List<JavaClass> allEntities = project.getFacet(JPAFacet.class).getAllEntities();
+      Assert.assertEquals(1, allEntities.size());
+      JavaClass customerEntity = allEntities.get(0);
+      Assert.assertTrue(customerEntity.hasAnnotation(Table.class));
+      Assert.assertEquals("CUSTOMER_TABLE", customerEntity.getAnnotation(Table.class).getStringValue("name"));
    }
 }

@@ -16,6 +16,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.jboss.forge.addon.facets.FacetFactory;
@@ -107,12 +108,51 @@ public class PersistenceOperations
     * @return the created java resource
     * @throws FileNotFoundException if something wrong happens while saving the {@link JavaClass}
     */
-   public JavaResource newEntity(Project project, String entityName, String entityPackage, GenerationType idStrategy)
+   public JavaResource newEntity(Project project, String entityName, String entityPackage, GenerationType idStrategy,
+            String tableName)
             throws FileNotFoundException
    {
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      JavaClass javaClass = createJavaClass(entityName, entityPackage, idStrategy);
+      JavaClass javaClass = createJavaClass(entityName, entityPackage, idStrategy, tableName);
       return java.saveJavaSource(javaClass);
+   }
+
+   /**
+    * Creates a new {@link JavaResource} in the specified target. If a project is available, use
+    * {@link PersistenceOperations#newEntity(Project, String, String, GenerationType)}
+    * 
+    * @param target the target directory resource to create this class
+    * @param entityName the name of the entity
+    * @param entityPackage the package of the entity to be created
+    * @param idStrategy the ID strategy chosen for this entity
+    * @param tableName the table name (optional)
+    * @return the created java resource
+    * @throws FileNotFoundException if something wrong happens while saving the {@link JavaClass}
+    */
+   public JavaResource newEntity(DirectoryResource target, String entityName, String entityPackage,
+            GenerationType idStrategy, String tableName)
+   {
+      JavaClass javaClass = createJavaClass(entityName, entityPackage, idStrategy, tableName);
+      JavaResource javaResource = getJavaResource(target, javaClass.getName());
+      javaResource.setContents(javaClass);
+      return javaResource;
+   }
+
+   /**
+    * Creates a new {@link JavaResource} in the specified project. If no project is available, use
+    * {@link PersistenceOperations#newEntity(DirectoryResource, String, String, GenerationType)}
+    * 
+    * @param project the current project to create the entity. Must not be null
+    * @param entityName the name of the entity
+    * @param entityPackage the package of the entity to be created
+    * @param idStrategy the ID strategy chosen for this entity
+    * @return the created java resource
+    * @throws FileNotFoundException if something wrong happens while saving the {@link JavaClass}
+    */
+   public JavaResource newEntity(Project project, String entityName, String entityPackage, GenerationType idStrategy)
+            throws FileNotFoundException
+   {
+      return newEntity(project, entityName, entityPackage, idStrategy, null);
    }
 
    /**
@@ -129,20 +169,22 @@ public class PersistenceOperations
    public JavaResource newEntity(DirectoryResource target, String entityName, String entityPackage,
             GenerationType idStrategy)
    {
-      JavaClass javaClass = createJavaClass(entityName, entityPackage, idStrategy);
-      JavaResource javaResource = getJavaResource(target, javaClass.getName());
-      javaResource.setContents(javaClass);
-      return javaResource;
+      return newEntity(target, entityName, entityPackage, idStrategy, null);
    }
 
    @SuppressWarnings("unchecked")
-   private JavaClass createJavaClass(String entityName, String entityPackage, GenerationType idStrategy)
+   private JavaClass createJavaClass(String entityName, String entityPackage, GenerationType idStrategy,
+            String tableName)
    {
       JavaClass javaClass = javaSourceFactory.create(JavaClass.class)
                .setName(entityName)
                .setPublic()
                .addAnnotation(Entity.class).getOrigin()
                .addInterface(Serializable.class);
+      if (tableName != null && !tableName.isEmpty())
+      {
+         javaClass.addAnnotation(Table.class).setStringValue("name", tableName);
+      }
       if (entityPackage != null && !entityPackage.isEmpty())
       {
          javaClass.setPackage(entityPackage);

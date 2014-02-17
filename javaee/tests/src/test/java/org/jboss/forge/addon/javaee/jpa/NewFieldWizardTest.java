@@ -84,6 +84,7 @@ public class NewFieldWizardTest
          controller.setValueFor("targetEntity", entity);
          Assert.assertFalse(controller.canExecute());
          controller.setValueFor("named", "firstName");
+         controller.setValueFor("columnName", "FIRST_NAME_COLUMN");
          Assert.assertFalse(controller.canMoveToNextStep());
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
@@ -95,6 +96,7 @@ public class NewFieldWizardTest
       final Field<JavaClass> field = javaClass.getField("firstName");
       Assert.assertTrue(field.hasAnnotation(Column.class));
       Assert.assertEquals("String", field.getType());
+      Assert.assertEquals("FIRST_NAME_COLUMN", field.getAnnotation(Column.class).getStringValue("name"));
    }
 
    @Test
