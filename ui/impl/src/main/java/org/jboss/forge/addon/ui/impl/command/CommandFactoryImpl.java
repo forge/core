@@ -7,6 +7,7 @@
 package org.jboss.forge.addon.ui.impl.command;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -35,8 +36,11 @@ public class CommandFactoryImpl implements CommandFactory
          Imported<CommandProvider> instances = registry.getServices(CommandProvider.class);
          for (CommandProvider provider : instances)
          {
-            for (UICommand command : provider.getCommands())
+            Iterable<UICommand> commands = provider.getCommands();
+            Iterator<UICommand> iterator = commands.iterator();
+            while (iterator.hasNext())
             {
+               UICommand command = iterator.next();
                if (!(command instanceof UIWizardStep))
                {
                   result.add(command);

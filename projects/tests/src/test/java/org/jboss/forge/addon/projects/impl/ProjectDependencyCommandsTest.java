@@ -75,8 +75,8 @@ public class ProjectDependencyCommandsTest
    @Inject
    private DependencyInstaller installer;
 
-   private static final String COORDINATES = "org.jboss.forge.addon:projects-api:2.0.0-SNAPSHOT";
-   private static final String COORDINATES2 = "org.jboss.forge.addon:projects-impl:2.0.0-SNAPSHOT";
+   private static final String COORDINATES = "org.jboss.forge.addon:projects-api:2.0.0.Final";
+   private static final String COORDINATES2 = "org.jboss.forge.addon:projects-impl:2.0.0.Final";
    private static final Dependency DEPENDENCY = DependencyBuilder.create(COORDINATES);
    private static final Dependency DEPENDENCY2 = DependencyBuilder.create(COORDINATES2);
 
