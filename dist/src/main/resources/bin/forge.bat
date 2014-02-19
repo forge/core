@@ -20,6 +20,8 @@
 
 @echo off
 
+set ADDON_DIR=
+
 @REM set %USERHOME% to equivalent of $HOME
 if not "%USERHOME%" == "" goto OkUserhome
 set "USERHOME=%USERPROFILE%"
@@ -147,9 +149,11 @@ goto runForge
 
 @REM Start Forge
 :runForge
+
+if exist "%FORGE_HOME%\addons" set ADDONS_DIR=--immutableAddonDir "%FORGE_HOME%\addons" 
 set FORGE_MAIN_CLASS=org.jboss.forge.bootstrap.Bootstrap
 %FORGE_JAVA_EXE% %FORGE_DEBUG_ARGS% %FORGE_OPTS% "-Dforge.standalone=true" "-Dforge.home=%FORGE_HOME%" ^
-   -cp ".;%FORGE_HOME%\lib\*" %FORGE_MAIN_CLASS% %FORGE_CMD_LINE_ARGS%
+   -cp ".;%FORGE_HOME%\lib\*" %FORGE_MAIN_CLASS% %FORGE_CMD_LINE_ARGS% %ADDONS_DIR%
 if ERRORLEVEL 1 goto error
 goto end
 
