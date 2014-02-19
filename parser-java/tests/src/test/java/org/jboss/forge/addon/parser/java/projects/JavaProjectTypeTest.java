@@ -54,19 +54,24 @@ public class JavaProjectTypeTest
    {
       boolean foundJar = false;
       boolean foundWar = false;
+      boolean foundEar = false;
       for (ProjectType type : types)
       {
-         if ("Java Library".equals(type.getType()))
+         if ("Java Enterprise Archive".equals(type.getType()))
+         {
+            foundEar = true;
+         }
+         else if ("Java Library".equals(type.getType()))
          {
             foundJar = true;
          }
-         if ("Java Web Application".equals(type.getType()))
+         else if ("Java Web Application".equals(type.getType()))
          {
             foundWar = true;
          }
       }
+      Assert.assertTrue(foundEar);
       Assert.assertTrue(foundJar);
       Assert.assertTrue(foundWar);
    }
-
 }
