@@ -124,6 +124,10 @@ public class Bootstrap
             {
                furnace.addRepository(AddonRepositoryMode.MUTABLE, new File(args[++i]));
             }
+            else if ("--immutableAddonDir".equals(args[i]) || "-m".equals(args[i]))
+            {
+               furnace.addRepository(AddonRepositoryMode.IMMUTABLE, new File(args[++i]));
+            }
             else if ("--batchMode".equals(args[i]) || "-b".equals(args[i]))
             {
                batchMode = true;
@@ -143,7 +147,7 @@ public class Bootstrap
          }
       }
 
-      if (furnace.getRepositories().isEmpty())
+      if (!containsMutableRepository(furnace.getRepositories()))
          furnace.addRepository(AddonRepositoryMode.MUTABLE, new File(OperatingSystemUtils.getUserForgeDir(), "addons"));
       if (listInstalled)
          list();
@@ -151,6 +155,20 @@ public class Bootstrap
          install(installAddon);
       if (removeAddon != null)
          remove(removeAddon);
+   }
+
+   private boolean containsMutableRepository(List<AddonRepository> repositories)
+   {
+      boolean result = false;
+      for (AddonRepository repository : repositories)
+      {
+         if (repository instanceof MutableAddonRepository)
+         {
+            result = true;
+            break;
+         }
+      }
+      return result;
    }
 
    private void list()
