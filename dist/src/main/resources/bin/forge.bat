@@ -109,7 +109,7 @@ echo.
 goto error
 @REM ==== END VALIDATION ====
 
-@REM Initializing the argument line and the plugin directory if any
+@REM Initializing the argument line
 :init
 setlocal enableextensions enabledelayedexpansion
 set FORGE_CMD_LINE_ARGS=
