@@ -26,6 +26,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -64,6 +65,9 @@ public class NewFieldWizardTest
    private UITestHarness uiTestHarness;
 
    private Project project;
+
+   @Inject
+   private FieldOperations fieldOperations;
 
    @Before
    public void setUp()
@@ -125,4 +129,35 @@ public class NewFieldWizardTest
       Assert.assertTrue(field.hasAnnotation(Transient.class));
       Assert.assertEquals("String", field.getType());
    }
+
+   @Test
+   public void testUpdateExistingField() throws Exception
+   {
+      JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
+      JavaSource<?> javaSource = entity.getJavaSource();
+      fieldOperations.addFieldTo((JavaClass) javaSource, "String", "firstName");
+      entity.setContents(javaSource.toString());
+      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+               project.getRootDirectory()))
+      {
+         controller.initialize();
+         Assert.assertTrue(controller.isEnabled());
+         controller.setValueFor("targetEntity", entity);
+         Assert.assertFalse(controller.canExecute());
+         controller.setValueFor("named", "firstName");
+         controller.setValueFor("length", "100");
+         Assert.assertFalse(controller.canMoveToNextStep());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertFalse(result instanceof Failed);
+         Assert.assertEquals("Field firstName updated", result.getMessage());
+      }
+      JavaClass javaClass = (JavaClass) entity.getJavaSource();
+      Assert.assertTrue(javaClass.hasField("firstName"));
+      final Field<JavaClass> field = javaClass.getField("firstName");
+      Assert.assertTrue(field.hasAnnotation(Column.class));
+      Assert.assertEquals("String", field.getType());
+      Assert.assertEquals("100", field.getAnnotation(Column.class).getStringValue("length"));
+   }
+
 }

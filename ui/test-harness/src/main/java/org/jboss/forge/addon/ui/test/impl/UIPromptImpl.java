@@ -16,34 +16,23 @@ import org.jboss.forge.addon.ui.input.UIPrompt;
 public class UIPromptImpl implements UIPrompt
 {
 
-   /* (non-Javadoc)
-    * @see org.jboss.forge.addon.ui.input.UIPrompt#prompt(java.lang.String)
-    */
    @Override
    public String prompt(String message)
    {
-      // TODO Auto-generated method stub
       return null;
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.forge.addon.ui.input.UIPrompt#promptSecret(java.lang.String)
-    */
    @Override
    public String promptSecret(String message)
    {
-      // TODO Auto-generated method stub
       return null;
    }
 
-   /* (non-Javadoc)
-    * @see org.jboss.forge.addon.ui.input.UIPrompt#promptBoolean(java.lang.String)
-    */
    @Override
    public boolean promptBoolean(String message)
    {
-      // TODO Auto-generated method stub
-      return false;
+      //TODO: Change
+      return true;
    }
 
 }

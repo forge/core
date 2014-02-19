@@ -48,6 +48,7 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
@@ -210,7 +211,8 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
                      && (Date.class.getName().equals(typeValue) || Calendar.class.getName().equals(typeValue));
          }
       });
-      builder.add(targetEntity).add(named).add(type).add(temporalType).add(columnName).add(length).add(relationshipType)
+      builder.add(targetEntity).add(named).add(type).add(temporalType).add(columnName).add(length)
+               .add(relationshipType)
                .add(lob).add(transientField);
    }
 
@@ -282,8 +284,21 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    {
       JavaResource javaResource = targetEntity.getValue();
       String fieldNameStr = named.getValue();
-      Field<JavaClass> field;
       JavaClass targetEntity = (JavaClass) javaResource.getJavaSource();
+      Field<JavaClass> field = targetEntity.getField(fieldNameStr);
+      String action = (field == null) ? "created" : "updated";
+      if (field != null)
+      {
+         UIPrompt prompt = context.getPrompt();
+         if (prompt.promptBoolean("Field '" + field.getName() + "' already exists. Do you want to overwrite it?"))
+         {
+            fieldOperations.removeField(targetEntity, field);
+         }
+         else
+         {
+            return Results.fail("Field '" + field.getName() + "' already exists.");
+         }
+      }
       RelationshipType value = (relationshipType.isEnabled()) ? relationshipType.getValue() : RelationshipType.BASIC;
       if (transientField.getValue())
       {
@@ -291,7 +306,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
          field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
                   Transient.class.getCanonicalName());
          setCurrentWorkingResource(context, javaResource, field);
-         return Results.success("Transient Field " + named.getValue() + " created");
+         return Results.success("Transient Field " + named.getValue() + " " + action);
       }
       else if (value == RelationshipType.BASIC)
       {
@@ -320,7 +335,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             field.addAnnotation(Temporal.class).setEnumValue(temporalType.getValue());
          }
          setCurrentWorkingResource(context, javaResource, field);
-         return Results.success("Field " + named.getValue() + " created");
+         return Results.success("Field " + named.getValue() + " " + action);
       }
       else
       {
@@ -359,7 +374,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
             JavaClass javaClass = (JavaClass) javaResource.getJavaSource();
             if (javaClass.hasField(named.getValue()))
             {
-               validator.addValidationError(targetEntity, "Field '" + named.getValue() + "' already exists");
+               validator.addValidationWarning(targetEntity, "Field '" + named.getValue() + "' already exists");
             }
          }
       }

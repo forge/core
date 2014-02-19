@@ -31,6 +31,7 @@ import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.util.Refactory;
 import org.jboss.forge.parser.java.util.Types;
 
@@ -42,6 +43,31 @@ import org.jboss.forge.parser.java.util.Types;
  */
 public class FieldOperations
 {
+   /**
+    * Remove the field, including its getters and setters and updating toString()
+    * 
+    * @param targetEntity
+    * @param field
+    */
+   public void removeField(final JavaClass targetEntity, final Field<JavaClass> field)
+   {
+      targetEntity.removeField(field);
+      String methodNameSuffix = Strings.capitalize(field.getName());
+      // Condition to remove getField()
+      if (targetEntity.hasMethodSignature("get" + methodNameSuffix))
+      {
+         Method<JavaClass> method = targetEntity.getMethod("get" + methodNameSuffix);
+         targetEntity.removeMethod(method);
+      }
+      // Condition to remove setField()
+      if (targetEntity.hasMethodSignature("set" + methodNameSuffix, field.getQualifiedType()))
+      {
+         Method<JavaClass> method = targetEntity.getMethod("set" + methodNameSuffix, field.getQualifiedType());
+         targetEntity.removeMethod(method);
+      }
+      updateToString(targetEntity);
+   }
+
    public Field<JavaClass> addFieldTo(final JavaClass targetEntity, final String fieldType,
             final String fieldName, String... annotations)
             throws FileNotFoundException
