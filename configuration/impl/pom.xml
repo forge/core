@@ -14,7 +14,7 @@
          <artifactId>cdi-api</artifactId>
          <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>configuration-api</artifactId>
@@ -24,6 +24,12 @@
          <groupId>commons-configuration</groupId>
          <artifactId>commons-configuration</artifactId>
          <version>1.10</version>
+      </dependency>
+      <!--  Used in XMLConfiguration -->
+      <dependency>
+         <groupId>commons-collections</groupId>
+         <artifactId>commons-collections</artifactId>
+         <version>3.2.1</version>
       </dependency>
    </dependencies>
 </project>
