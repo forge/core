@@ -38,10 +38,9 @@ public class Commands
          }
          catch (Exception e)
          {
-            log.log(Level.SEVERE,
-                     "Could not call method " + UICommand.class.getName()
-                              + "`isEnabled(UIContext ctx)` of type [" + uiCommand + "] with Metadata ["
-                              + getMetadata(uiCommand, context) + "].", e);
+            log.log(Level.SEVERE, "Could not call method " + UICommand.class.getName()
+                     + "`isEnabled(UIContext ctx)` of type [" + uiCommand + "] with Metadata ["
+                     + getMetadata(uiCommand, context) + "].", e);
          }
       }
       return result;
@@ -58,7 +57,8 @@ public class Commands
       }
       catch (Exception e)
       {
-         // log this too maybe? not sure it's really useful here.
+         log.log(Level.SEVERE, "Could not call method " + UICommand.class.getName()
+                  + "`getMetadata(UIContext ctx)` of type [" + command + "].", e);
       }
       return result;
    }
