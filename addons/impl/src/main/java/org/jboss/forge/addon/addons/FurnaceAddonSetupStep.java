@@ -18,11 +18,11 @@ import org.jboss.forge.addon.dependencies.DependencyResolver;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UINavigationContext;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -47,25 +47,29 @@ import org.jboss.forge.furnace.versions.Version;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public class FurnaceAddonSetupStep implements UIWizardStep
+public class FurnaceAddonSetupStep extends AbstractUICommand implements UIWizardStep
 {
+   @Inject
+   @WithAttributes(label = "Furnace Version", required = true)
+   private UISelectOne<Version> furnaceVersion;
+
+   @Inject
+   @WithAttributes(label = "Furnace container", required = true, requiredMessage = "You must select one Furnace container")
+   private UISelectOne<AddonId> furnaceContainer;
+
    @Inject
    @WithAttributes(label = "Create API, Impl, SPI, Tests, and Addon modules")
    private UIInput<Boolean> splitProjects;
 
    @Inject
-   @WithAttributes(label = "Furnace Version:", required = true)
-   private UISelectOne<Version> forgeVersion;
-
-   @Inject
-   @WithAttributes(label = "Depend on these addons:")
+   @WithAttributes(label = "Depend on these addons")
    private UISelectMany<AddonId> addons;
 
    @Inject
    private DependencyResolver dependencyResolver;
 
    @Inject
-   private Furnace forge;
+   private Furnace furnace;
 
    @Inject
    private AddonProjectConfigurator addonProjectFactory;
@@ -79,37 +83,36 @@ public class FurnaceAddonSetupStep implements UIWizardStep
    }
 
    @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return true;
-   }
-
-   @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
       configureVersions();
-      configureSplitProjects();
       configureAddonDependencies();
 
-      builder.add(forgeVersion).add(splitProjects).add(addons);
-   }
-
-   private void configureSplitProjects()
-   {
-      splitProjects.setDefaultValue(Boolean.FALSE);
+      builder.add(furnaceVersion).add(furnaceContainer).add(splitProjects).add(addons);
    }
 
    private void configureAddonDependencies()
    {
-      Set<AddonId> choices = new TreeSet<AddonId>();
-      for (AddonRepository repository : forge.getRepositories())
+      Set<AddonId> addonChoices = new TreeSet<AddonId>();
+      Set<AddonId> containerChoices = new TreeSet<AddonId>();
+      for (AddonRepository repository : furnace.getRepositories())
       {
          for (AddonId id : repository.listEnabled())
          {
-            choices.add(id);
+            // TODO: Furnace should provide some way to detect if an addon is a Container type
+            boolean isContainerAddon = id.getName().contains("org.jboss.forge.furnace.container");
+            if (isContainerAddon)
+            {
+               containerChoices.add(id);
+            }
+            else
+            {
+               addonChoices.add(id);
+            }
          }
       }
-      addons.setValueChoices(choices);
+      addons.setValueChoices(addonChoices);
+      furnaceContainer.setValueChoices(containerChoices);
    }
 
    private void configureVersions()
@@ -120,27 +123,27 @@ public class FurnaceAddonSetupStep implements UIWizardStep
       {
          versions.add(new SingleVersion(versionCoord.getVersion()));
       }
-      forgeVersion.setValueChoices(versions);
-      forgeVersion.setDefaultValue(forge.getVersion());
-   }
-
-   @Override
-   public void validate(UIValidationContext validator)
-   {
+      furnaceVersion.setValueChoices(versions);
+      furnaceVersion.setDefaultValue(furnace.getVersion());
    }
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
       final Project project = (Project) context.getUIContext().getAttributeMap().get(Project.class);
-      Iterable<AddonId> dependencyAddons = addons.getValue();
+      Set<AddonId> dependencyAddons = new TreeSet<>();
+      for (AddonId id : addons.getValue())
+      {
+         dependencyAddons.add(id);
+      }
+      dependencyAddons.add(furnaceContainer.getValue());
       if (splitProjects.getValue())
       {
-         addonProjectFactory.setupComplexAddonProject(project, forgeVersion.getValue(), dependencyAddons);
+         addonProjectFactory.setupComplexAddonProject(project, furnaceVersion.getValue(), dependencyAddons);
       }
       else
       {
-         addonProjectFactory.setupSimpleAddonProject(project, forgeVersion.getValue(), dependencyAddons);
+         addonProjectFactory.setupSimpleAddonProject(project, furnaceVersion.getValue(), dependencyAddons);
       }
 
       return Results.success();
