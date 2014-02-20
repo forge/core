@@ -142,7 +142,7 @@ public class Metadata implements UICommandMetadata
    @Override
    public String toString()
    {
-      return "UICommandMetadataBase {" +
+      return "Metadata [" +
                "name: " + name +
                ", description: " + description +
                ", category: " + category +

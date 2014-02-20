@@ -2,9 +2,12 @@ package org.jboss.forge.addon.ui.util;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
@@ -15,19 +18,47 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
  */
 public class Commands
 {
+   private static final Logger log = Logger.getLogger(Commands.class.getName());
+
    /**
     * Returns the main commands from this {@link Iterable} (that is, the ones that are enabled and not a
     * {@link UIWizardStep} instance)
     */
    public static Iterable<UICommand> getEnabledCommands(Iterable<UICommand> commands, UIContext context)
    {
-      List<UICommand> result = new LinkedList<UICommand>();
+      List<UICommand> result = new LinkedList<>();
       for (UICommand uiCommand : commands)
       {
-         if (uiCommand.isEnabled(context) && !(uiCommand instanceof UIWizardStep))
+         try
          {
-            result.add(uiCommand);
+            if (uiCommand.isEnabled(context) && !(uiCommand instanceof UIWizardStep))
+            {
+               result.add(uiCommand);
+            }
          }
+         catch (Exception e)
+         {
+            log.log(Level.SEVERE,
+                     "Could not call method " + UICommand.class.getName()
+                              + "`isEnabled(UIContext ctx)` of type [" + uiCommand + "] with Metadata ["
+                              + getMetadata(uiCommand, context) + "].", e);
+         }
+      }
+      return result;
+   }
+
+   private static String getMetadata(UICommand command, UIContext context)
+   {
+      String result = "!!! Failed to load Metadata via `" + UICommand.class.getName()
+               + ".getMetadata(UIContext ctx)` !!!";
+      try
+      {
+         UICommandMetadata metadata = command.getMetadata(context);
+         result = metadata.toString();
+      }
+      catch (Exception e)
+      {
+         // log this too maybe? not sure it's really useful here.
       }
       return result;
    }
