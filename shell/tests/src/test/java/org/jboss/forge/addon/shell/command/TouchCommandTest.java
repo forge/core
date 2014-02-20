@@ -43,7 +43,6 @@ public class TouchCommandTest
 {
    @Deployment
    @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
             @AddonDependency(name = "org.jboss.forge.addon:ui"),
             @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
             @AddonDependency(name = "org.jboss.forge.addon:resources"),
@@ -55,7 +54,6 @@ public class TouchCommandTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:resources"),
@@ -98,15 +96,15 @@ public class TouchCommandTest
       child.createNewFile();
       Assert.assertTrue(child.exists());
       long lastModified = child.getLastModified();
-      Thread.sleep(500);
+      Thread.sleep(1000);
 
       Result result = shellTest.execute("touch foo.txt", 5, TimeUnit.SECONDS);
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
       Assert.assertThat(result.getMessage(), is(not(equalTo(""))));
 
       long newLastModified = child.getLastModified();
-      Assert.assertTrue("Last modified not changed Original: " + lastModified + " New: " + newLastModified,
-               newLastModified - lastModified > 0);
+      Assert.assertNotEquals("Last modified not changed for " + child.getFullyQualifiedName(), lastModified,
+               newLastModified);
 
       Assert.assertTrue(child.exists());
       child.delete();
