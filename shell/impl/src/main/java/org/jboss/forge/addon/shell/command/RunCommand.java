@@ -113,9 +113,7 @@ public class RunCommand extends AbstractShellCommand
                                  .outputStream(new PrintStream(stdout))
                                  .outputStreamError(new PrintStream(stderr)).create());
 
-               BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getResourceInputStream()));
-
-               try
+               try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getResourceInputStream())))
                {
                   long startTime = System.currentTimeMillis();
                   while (reader.ready())
@@ -142,7 +140,6 @@ public class RunCommand extends AbstractShellCommand
                }
                finally
                {
-                  reader.close();
                   scriptShell.close();
                }
             }
