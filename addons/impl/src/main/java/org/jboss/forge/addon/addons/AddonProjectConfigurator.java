@@ -155,6 +155,7 @@ public class AddonProjectConfigurator
 
       installSelectedAddons(project, dependencyAddons, true);
       installSelectedAddons(addonProject, dependencyAddons, false);
+      installSelectedAddons(apiProject, dependencyAddons, false);
       installSelectedAddons(testsProject, dependencyAddons, false);
 
       dependencyInstaller.install(addonProject, DependencyBuilder.create(apiProjectDependency));
