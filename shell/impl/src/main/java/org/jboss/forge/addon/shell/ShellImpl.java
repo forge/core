@@ -217,11 +217,6 @@ public class ShellImpl implements Shell, UIRuntime
          Map<Object, Object> attributeMap = shellContextImpl.getAttributeMap();
          for (String variableName : exportManager.getAllNames())
          {
-            // Variable name ends with "=". Aesh Bug?
-            if (variableName.endsWith("="))
-            {
-               variableName = variableName.split("=")[0];
-            }
             String variableValue = exportManager.getValue(variableName);
             attributeMap.put(variableName, variableValue);
          }
