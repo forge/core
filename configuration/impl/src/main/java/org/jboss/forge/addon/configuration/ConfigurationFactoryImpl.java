@@ -19,6 +19,23 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
 
    private Configuration userConfiguration;
 
+   public static File setupTemporaryUserConfig()
+   {
+      File tmpFile;
+      try
+      {
+         tmpFile = File.createTempFile("user_config", ".xml");
+         System.setProperty(USER_CONFIG_PATH, tmpFile.getAbsolutePath());
+         tmpFile.deleteOnExit();
+      }
+      catch (IOException e)
+      {
+         throw new IllegalStateException("Cannot create temp file", e);
+      }
+      return tmpFile;
+
+   }
+
    @Override
    @Produces
    @ApplicationScoped
@@ -38,6 +55,7 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
          }
          if (!userConfigurationFile.exists() || userConfigurationFile.length() == 0L)
          {
+            userConfigurationFile.mkdirs();
             try (FileWriter fw = new FileWriter(userConfigurationFile))
             {
                fw.write("<configuration/>");

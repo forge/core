@@ -12,9 +12,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.IOException;
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -35,16 +32,7 @@ public class ConfigurationTest
 {
    static
    {
-      File tmpFile;
-      try
-      {
-         tmpFile = File.createTempFile("user_config", ".xml");
-         System.setProperty(ConfigurationFactoryImpl.USER_CONFIG_PATH, tmpFile.getAbsolutePath());
-      }
-      catch (IOException e)
-      {
-         e.printStackTrace();
-      }
+      ConfigurationFactoryImpl.setupTemporaryUserConfig();
    }
 
    @Deployment

@@ -8,7 +8,6 @@
 package org.jboss.forge.addon.configuration;
 
 import java.io.File;
-import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -61,16 +60,7 @@ public class ConfigurationFactoryTest
 
    static
    {
-      File tmpFile;
-      try
-      {
-         tmpFile = File.createTempFile("user_config", ".xml");
-         System.setProperty(ConfigurationFactoryImpl.USER_CONFIG_PATH, tmpFile.getAbsolutePath());
-      }
-      catch (IOException e)
-      {
-         e.printStackTrace();
-      }
+      ConfigurationFactoryImpl.setupTemporaryUserConfig();
    }
 
    @Test
