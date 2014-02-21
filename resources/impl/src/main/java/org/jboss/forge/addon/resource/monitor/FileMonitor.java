@@ -7,21 +7,14 @@
 
 package org.jboss.forge.addon.resource.monitor;
 
-import java.io.File;
-import java.util.concurrent.ThreadFactory;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.IOException;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Singleton;
 
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.IOFileFilter;
-import org.apache.commons.io.monitor.FileAlterationListener;
-import org.apache.commons.io.monitor.FileAlterationMonitor;
-import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceFilter;
 import org.jboss.forge.furnace.container.cdi.events.Local;
@@ -36,83 +29,71 @@ import org.jboss.forge.furnace.event.PreShutdown;
 @Singleton
 public class FileMonitor
 {
-   private static final long CHECK_INTERVAL = Long.getLong("resource.monitor.interval", 5000L);
-
-   private final Logger log = Logger.getLogger(getClass().getName());
-   private FileAlterationMonitor alterationMonitor;
-
-   public FileMonitor()
-   {
-      alterationMonitor = new FileAlterationMonitor(CHECK_INTERVAL);
-      alterationMonitor.setThreadFactory(new ThreadFactory()
-      {
-         @Override
-         public Thread newThread(Runnable r)
-         {
-            Thread resourceMonitorThread = new Thread(r, "Resource File Monitor");
-            resourceMonitorThread.setDaemon(true);
-            resourceMonitorThread.setContextClassLoader(null);
-            return resourceMonitorThread;
-         }
-      });
-   }
+   private FileWatcher watcher;
 
    void init(@Observes @Local PostStartup postStartup) throws Exception
    {
-      alterationMonitor.start();
+      watcher = new FileWatcher();
+      watcher.start();
    }
 
    void destroy(@Observes @Local PreShutdown preShutdown) throws Exception
    {
-      for (FileAlterationObserver observer : alterationMonitor.getObservers())
+      if (watcher != null)
       {
-         for (FileAlterationListener listener : observer.getListeners())
-         {
-            observer.removeListener(listener);
-         }
-         alterationMonitor.removeObserver(observer);
+         watcher.stop();
+         watcher = null;
       }
-      alterationMonitor.stop();
    }
 
    public ResourceMonitor registerMonitor(final ResourceFactory resourceFactory, final FileResource<?> resource,
             final ResourceFilter resourceFilter)
    {
-      final DirectoryResource dirResource;
-      IOFileFilter filter;
-      if (resource instanceof DirectoryResource)
+      if (watcher == null)
       {
-         dirResource = (DirectoryResource) resource;
-         filter = null;
+         throw new IllegalStateException("File Monitor is not started yet");
       }
-      else
+      DirectoryResource dirResource = resource.reify(DirectoryResource.class);
+      ResourceFilter filter = resourceFilter;
+      if (dirResource == null)
       {
+         // It's a file, monitor the parent and add a filter to the file
          dirResource = resource.getParent();
-         filter = FileFilterUtils.nameFileFilter(resource.getName());
-      }
-      if (resourceFilter != null)
-      {
-         FileFilterResourceAdapter adapter = new FileFilterResourceAdapter(resourceFactory, resourceFilter);
-         if (filter == null)
+         filter = new ResourceFilter()
          {
-            filter = adapter;
-         }
-         else
-         {
-            filter = FileFilterUtils.and(filter, adapter);
-         }
+            @Override
+            public boolean accept(Resource<?> type)
+            {
+               boolean isMonitoredFile = type.equals(resource);
+               if (!isMonitoredFile)
+               {
+                  return false;
+               }
+               else if (resourceFilter != null)
+               {
+                  return resourceFilter.accept(type);
+               }
+               else
+               {
+                  return true;
+               }
+            }
+         };
       }
-      File directory = dirResource.getUnderlyingResourceObject();
-      FileAlterationObserver observer = new FileAlterationObserver(directory, filter);
+      ResourceMonitorImpl resourceMonitor = new ResourceMonitorImpl(this, dirResource, resourceFactory, filter);
       try
       {
-         observer.initialize();
+         watcher.register(resourceMonitor);
       }
-      catch (Exception e)
+      catch (IOException e)
       {
-         log.log(Level.SEVERE, "Error while initializing File observer", e);
+         throw new IllegalStateException("Could not register resource monitor", e);
       }
-      alterationMonitor.addObserver(observer);
-      return new ResourceMonitorImpl(dirResource, resourceFactory, alterationMonitor, observer);
+      return resourceMonitor;
+   }
+
+   void cancel(ResourceMonitorImpl monitor)
+   {
+      watcher.unregister(monitor);
    }
 }
