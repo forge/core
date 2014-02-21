@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.configuration;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -21,7 +22,6 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -59,11 +59,18 @@ public class ConfigurationFactoryTest
    @Inject
    private Configuration userConfiguration;
 
-   @BeforeClass
-   public static void setUserConfig() throws Exception
+   static
    {
-      File tmpFile = File.createTempFile("user_config", ".xml");
-      System.setProperty(ConfigurationFactoryImpl.USER_CONFIG_PATH, tmpFile.getAbsolutePath());
+      File tmpFile;
+      try
+      {
+         tmpFile = File.createTempFile("user_config", ".xml");
+         System.setProperty(ConfigurationFactoryImpl.USER_CONFIG_PATH, tmpFile.getAbsolutePath());
+      }
+      catch (IOException e)
+      {
+         e.printStackTrace();
+      }
    }
 
    @Test
