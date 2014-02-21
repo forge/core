@@ -13,7 +13,6 @@ import java.util.Map;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.inject.Vetoed;
-
 import org.jboss.aesh.console.AeshConsole;
 import org.jboss.aesh.console.AeshConsoleBuilder;
 import org.jboss.aesh.console.Console;
@@ -22,6 +21,7 @@ import org.jboss.aesh.console.export.ExportManager;
 import org.jboss.aesh.console.helper.InterruptHook;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
+import org.jboss.aesh.edit.actions.Action;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
@@ -79,14 +79,26 @@ public class ShellImpl implements Shell, UIRuntime
                .historyFile(history)
                .aliasFile(alias)
                .exportFile(export)
-               .interruptHook(new InterruptHook()
-               {
-                  @Override
-                  public void handleInterrupt(Console console)
-                  {
-                     console.getShell().out().println("^C");
-                     console.clearBufferAndDisplayPrompt();
-                  }
+               .interruptHook(new InterruptHook() {
+                   @Override
+                   public void handleInterrupt(Console console, Action action) {
+                       if (action == Action.INTERRUPT)
+                       {
+                           console.getShell().out().println("^C");
+                           console.clearBufferAndDisplayPrompt();
+                       }
+                       else if (action == Action.IGNOREEOF)
+                       {
+                           console.getShell().out().println("Use \"exit\" to leave the shell.");
+                           console.clearBufferAndDisplayPrompt();
+                       }
+                       else
+                       {
+                           //we should quit here
+                           //console.getShell().out().println();
+                           //console.stop();
+                       }
+                   }
                }).create();
       final ForgeCommandRegistry registry = new ForgeCommandRegistry(this, commandManager, commandFactory,
                commandManager
