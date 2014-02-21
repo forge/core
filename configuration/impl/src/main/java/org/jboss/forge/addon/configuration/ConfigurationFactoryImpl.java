@@ -1,6 +1,7 @@
 package org.jboss.forge.addon.configuration;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -8,7 +9,6 @@ import javax.enterprise.inject.Produces;
 
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.commons.io.FileUtils;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
@@ -38,9 +38,9 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
          }
          if (!userConfigurationFile.exists() || userConfigurationFile.length() == 0L)
          {
-            try
+            try (FileWriter fw = new FileWriter(userConfigurationFile))
             {
-               FileUtils.writeStringToFile(userConfigurationFile, "<configuration/>");
+               fw.write("<configuration/>");
             }
             catch (IOException e)
             {
