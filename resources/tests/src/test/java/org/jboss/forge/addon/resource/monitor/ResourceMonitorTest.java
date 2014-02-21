@@ -13,7 +13,11 @@ import static org.hamcrest.CoreMatchers.is;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -39,6 +43,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Callables;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,14 +55,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ResourceMonitorTest
 {
-
-   private static final long INTERVAL = 1000L;
-
-   static
-   {
-      System.setProperty("resource.monitor.interval", String.valueOf(INTERVAL));
-   }
-
    @Deployment
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.addon:facets"),
@@ -78,10 +75,22 @@ public class ResourceMonitorTest
    @Inject
    private ResourceFactory resourceFactory;
 
+   private ResourceMonitor monitor;
+
+   @After
+   public void cancelMonitor()
+   {
+      if (monitor != null)
+      {
+         monitor.cancel();
+         monitor = null;
+      }
+   }
+
    @Test(expected = IllegalArgumentException.class)
    public void testResourceMonitorShouldThrowIllegalArgumentOnNull() throws Exception
    {
-      resourceFactory.monitor(null).cancel();
+      monitor = resourceFactory.monitor(null);
    }
 
    @Test(expected = IllegalArgumentException.class)
@@ -89,7 +98,7 @@ public class ResourceMonitorTest
    {
       URLResource resource = resourceFactory.create(URLResource.class, new URL("http://forge.jboss.org"));
       Assert.assertNotNull(resource);
-      resourceFactory.monitor(resource).cancel();
+      monitor = resourceFactory.monitor(resource);
    }
 
    @Test(expected = IllegalStateException.class)
@@ -98,7 +107,7 @@ public class ResourceMonitorTest
       File tempDir = OperatingSystemUtils.createTempDir();
       tempDir.delete();
       DirectoryResource tempDirResource = resourceFactory.create(DirectoryResource.class, tempDir);
-      resourceFactory.monitor(tempDirResource).cancel();
+      monitor = resourceFactory.monitor(tempDirResource);
    }
 
    @Test
@@ -106,8 +115,8 @@ public class ResourceMonitorTest
    {
       File tempDir = OperatingSystemUtils.createTempDir();
       DirectoryResource tempDirResource = resourceFactory.create(DirectoryResource.class, tempDir);
-      ResourceMonitor monitor = resourceFactory.monitor(tempDirResource);
-      final List<ResourceEvent> eventCollector = new ArrayList<ResourceEvent>();
+      monitor = resourceFactory.monitor(tempDirResource);
+      final List<ResourceEvent> eventCollector = new ArrayList<>();
       monitor.addResourceListener(new ResourceListener()
       {
          @Override
@@ -143,7 +152,7 @@ public class ResourceMonitorTest
          @Override
          public Void call() throws Exception
          {
-            // 2 NEW EVENTS: ResourceCreated & ResourceModified of parent dir
+            // NEW EVENT: ResourceCreated
             childFile.createNewFile();
             return null;
          }
@@ -152,7 +161,7 @@ public class ResourceMonitorTest
          @Override
          public Boolean call() throws Exception
          {
-            return eventCollector.size() == 3;
+            return eventCollector.size() == 2;
          }
       }, 5, TimeUnit.SECONDS);
 
@@ -170,27 +179,25 @@ public class ResourceMonitorTest
          @Override
          public Boolean call() throws Exception
          {
-            return eventCollector.size() == 5;
+            return eventCollector.size() == 3;
          }
       }, 5, TimeUnit.SECONDS);
 
-      Assert.assertEquals(5, eventCollector.size());
+      Assert.assertEquals(3, eventCollector.size());
       Assert.assertThat(eventCollector.get(0), is(instanceOf(ResourceCreated.class)));
-      Assert.assertThat(eventCollector.get(1), is(instanceOf(ResourceModified.class)));
-      Assert.assertThat(eventCollector.get(2), is(instanceOf(ResourceCreated.class)));
-      Assert.assertThat(eventCollector.get(3), is(instanceOf(ResourceModified.class)));
-      Assert.assertThat(eventCollector.get(4), is(instanceOf(ResourceDeleted.class)));
-      monitor.cancel();
+      Assert.assertThat(eventCollector.get(1), is(instanceOf(ResourceCreated.class)));
+      Assert.assertThat(eventCollector.get(2), is(instanceOf(ResourceDeleted.class)));
    }
 
    @Test
    @SuppressWarnings("unchecked")
    public void testResourceMonitorFile() throws Exception
    {
-      File tempFile = File.createTempFile("resource_monitor", ".tmp");
+      File tempDir = OperatingSystemUtils.createTempDir();
+      File tempFile = File.createTempFile("resource_monitor", ".tmp", tempDir);
       final FileResource<?> resource = resourceFactory.create(FileResource.class, tempFile);
-      ResourceMonitor monitor = resourceFactory.monitor(resource);
-      final List<ResourceEvent> eventCollector = new ArrayList<ResourceEvent>();
+      monitor = resource.monitor();
+      final Set<ResourceEvent> eventCollector = new LinkedHashSet<>();
       monitor.addResourceListener(new ResourceListener()
       {
          @Override
@@ -216,7 +223,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 1;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 10, TimeUnit.SECONDS);
 
       waitForMonitor(new Callable<Void>()
       {
@@ -234,12 +241,14 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 2;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 10, TimeUnit.SECONDS);
 
       Assert.assertEquals(2, eventCollector.size());
-      Assert.assertThat(eventCollector.get(0), is(instanceOf(ResourceModified.class)));
-      Assert.assertThat(eventCollector.get(1), is(instanceOf(ResourceDeleted.class)));
-      monitor.cancel();
+      Iterator<ResourceEvent> it = eventCollector.iterator();
+      Assert.assertTrue(it.hasNext());
+      Assert.assertThat(it.next(), is(instanceOf(ResourceModified.class)));
+      Assert.assertTrue(it.hasNext());
+      Assert.assertThat(it.next(), is(instanceOf(ResourceDeleted.class)));
    }
 
    @Test
@@ -247,7 +256,7 @@ public class ResourceMonitorTest
    {
       File tempDir = OperatingSystemUtils.createTempDir();
       DirectoryResource tempDirResource = resourceFactory.create(DirectoryResource.class, tempDir);
-      ResourceMonitor monitor = resourceFactory.monitor(tempDirResource, new ResourceFilter()
+      monitor = resourceFactory.monitor(tempDirResource, new ResourceFilter()
       {
          @Override
          public boolean accept(Resource<?> resource)
@@ -255,7 +264,7 @@ public class ResourceMonitorTest
             return "foo.txt".equals(resource.getName());
          }
       });
-      final List<ResourceEvent> eventCollector = new ArrayList<ResourceEvent>();
+      final List<ResourceEvent> eventCollector = new ArrayList<>();
       monitor.addResourceListener(new ResourceListener()
       {
          @Override
@@ -265,7 +274,7 @@ public class ResourceMonitorTest
          }
       });
       final FileResource<?> childFile1 = tempDirResource.getChild("child_file.txt").reify(FileResource.class);
-      // NEW EVENT: ResourceCreated + ResourceModified of parent dir
+      // NEW EVENT: ResourceCreated
       childFile1.createNewFile();
 
       final FileResource<?> childFile2 = tempDirResource.getChild("foo.txt").reify(FileResource.class);
@@ -309,16 +318,16 @@ public class ResourceMonitorTest
       Assert.assertEquals(2, eventCollector.size());
       Assert.assertThat(eventCollector.get(0), is(instanceOf(ResourceCreated.class)));
       Assert.assertThat(eventCollector.get(1), is(instanceOf(ResourceDeleted.class)));
-      monitor.cancel();
    }
 
    @Test
    @SuppressWarnings("unchecked")
    public void testResourceMonitorFileWithFilter() throws Exception
    {
-      File tempFile = File.createTempFile("resource_monitor", ".tmp");
+      File tempDir = OperatingSystemUtils.createTempDir();
+      File tempFile = File.createTempFile("resource_monitor", ".tmp", tempDir);
       final FileResource<?> resource = resourceFactory.create(FileResource.class, tempFile);
-      ResourceMonitor monitor = resourceFactory.monitor(resource, new ResourceFilter()
+      monitor = resourceFactory.monitor(resource, new ResourceFilter()
       {
          @Override
          public boolean accept(Resource<?> resource)
@@ -327,7 +336,7 @@ public class ResourceMonitorTest
          }
       });
 
-      final List<ResourceEvent> eventCollector = new ArrayList<ResourceEvent>();
+      final List<ResourceEvent> eventCollector = new ArrayList<>();
       monitor.addResourceListener(new ResourceListener()
       {
          @Override
@@ -376,7 +385,6 @@ public class ResourceMonitorTest
       Assert.assertEquals(2, eventCollector.size());
       Assert.assertThat(eventCollector.get(0), is(instanceOf(ResourceModified.class)));
       Assert.assertThat(eventCollector.get(1), is(instanceOf(ResourceDeleted.class)));
-      monitor.cancel();
    }
 
    private void waitForMonitor(Callable<Void> task, Callable<Boolean> status, int quantity, TimeUnit unit)

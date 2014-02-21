@@ -31,13 +31,6 @@
          <scope>provided</scope>
       </dependency>
 
-      <!-- Needed for resource monitoring -->
-      <dependency>
-         <groupId>commons-io</groupId>
-         <artifactId>commons-io</artifactId>
-         <version>2.4</version>
-      </dependency>
-
       <!-- Needed for resource transaction support -->
       <dependency>
          <groupId>net.java.xadisk</groupId>
