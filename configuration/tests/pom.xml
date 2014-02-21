@@ -42,5 +42,11 @@
          <artifactId>arquillian-furnace-classpath</artifactId>
          <scope>test</scope>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>shell-test-harness</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>test</scope>
+      </dependency>
    </dependencies>
 </project>
