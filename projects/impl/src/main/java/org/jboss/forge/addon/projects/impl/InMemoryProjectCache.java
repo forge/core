@@ -25,7 +25,7 @@ import org.jboss.forge.furnace.util.Assert;
 @Singleton
 public class InMemoryProjectCache implements ProjectCache
 {
-   private final Map<String, WeakReference<Project>> projects = new ConcurrentHashMap<String, WeakReference<Project>>();
+   private final Map<String, WeakReference<Project>> projects = new ConcurrentHashMap<>();
 
    @Override
    public Project get(DirectoryResource dir)

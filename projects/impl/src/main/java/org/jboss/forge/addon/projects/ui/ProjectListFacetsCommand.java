@@ -52,7 +52,7 @@ public class ProjectListFacetsCommand extends AbstractProjectCommand
    public Result execute(UIExecutionContext context) throws Exception
    {
       UIContext uiContext = context.getUIContext();
-      Project project = Projects.getSelectedProject(projectFactory, uiContext);
+      Project project = getSelectedProject(context);
       PrintStream out = uiContext.getProvider().getOutput().out();
       for (ProjectFacet facet : project.getFacets())
       {
