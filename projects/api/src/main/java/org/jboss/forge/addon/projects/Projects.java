@@ -23,11 +23,18 @@ public final class Projects
     */
    public static Project getSelectedProject(ProjectFactory projectFactory, UIContext context)
    {
+      return getSelectedProject(projectFactory, context.getInitialSelection());
+   }
+
+   /**
+    * @return the project if {@link UISelection#isEmpty()} does not return false, null otherwise
+    */
+   public static Project getSelectedProject(ProjectFactory projectFactory, UISelection<?> initialSelection)
+   {
       Project project = null;
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
       if (!initialSelection.isEmpty())
       {
-         project = projectFactory.findProject(initialSelection.get());
+         project = projectFactory.findProject((FileResource<?>) initialSelection.get());
       }
       return project;
    }

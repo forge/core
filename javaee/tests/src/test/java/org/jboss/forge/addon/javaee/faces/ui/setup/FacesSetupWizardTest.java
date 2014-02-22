@@ -18,10 +18,12 @@ import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
+import org.jboss.forge.addon.ui.util.Selections;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -68,7 +70,7 @@ public class FacesSetupWizardTest
    @Test
    public void testSetupCreatesFacesConfigXML() throws Exception
    {
-      final Project project = projectFactory.createTempProject();
+      Project project = projectFactory.createTempProject();
       facetFactory.install(project, ServletFacet_3_1.class);
       try (CommandController tester = testHarness.createCommandController(FacesSetupWizard.class,
                project.getRootDirectory()))
@@ -77,7 +79,7 @@ public class FacesSetupWizardTest
          Assert.assertTrue(tester.isValid());
 
          Result result = tester.execute();
-
+         project = Projects.getSelectedProject(projectFactory, Selections.from(project.getRootDirectory()));
          Assert.assertFalse(result instanceof Failed);
          Assert.assertTrue(project.hasFacet(FacesFacet.class));
          Assert.assertTrue(project.getFacet(FacesFacet.class).getConfigFile().exists());
