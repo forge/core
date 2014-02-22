@@ -11,9 +11,12 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.inject.Vetoed;
+
 import org.jboss.aesh.console.AeshConsole;
 import org.jboss.aesh.console.AeshConsoleBuilder;
 import org.jboss.aesh.console.Console;
@@ -66,9 +69,11 @@ public class ShellImpl implements Shell, UIRuntime
    private Resource<?> currentResource;
 
    private final AddonRegistry addonRegistry;
-   private AeshConsole console;
+   private final AeshConsole console;
    private final UIOutput output;
    private final List<CommandExecutionListener> executionListeners = new LinkedList<>();
+
+   private final static Logger log = Logger.getLogger(ShellImpl.class.getName());
 
    public ShellImpl(FileResource<?> initialResource, Settings settings,
             CommandManager commandManager, AddonRegistry addonRegistry, CommandControllerFactory commandFactory)
@@ -81,12 +86,12 @@ public class ShellImpl implements Shell, UIRuntime
       File alias = new File(forgeHome, "alias");
       File export = new File(forgeHome, "export");
       final ForgeCommandRegistry registry =
-               new ForgeCommandRegistry(this, commandManager, commandFactory, commandManager .getConverterFactory());
+               new ForgeCommandRegistry(this, commandManager, commandFactory, commandManager.getConverterFactory());
       Settings newSettings = new SettingsBuilder(settings)
                .historyFile(history)
                .aliasFile(alias)
                .exportFile(export)
-               .interruptHook(new ForgeInterruptHook(registry, this.console)).create();
+               .interruptHook(new ForgeInterruptHook(registry)).create();
       this.console = new AeshConsoleBuilder()
                .prompt(createPrompt())
                .settings(newSettings)
@@ -236,39 +241,48 @@ public class ShellImpl implements Shell, UIRuntime
       return new ShellUIPromptImpl(context, console);
    }
 
-    private static class ForgeInterruptHook implements InterruptHook {
+   /**
+    * Handles interrupts in AeshConsole
+    */
+   private class ForgeInterruptHook implements InterruptHook
+   {
 
-        private final ForgeCommandRegistry registry;
-        private final AeshConsole aeshConsole;
+      private final ForgeCommandRegistry registry;
 
-        ForgeInterruptHook(ForgeCommandRegistry registry, AeshConsole aeshConsole) {
-            this.registry = registry;
-            this.aeshConsole = aeshConsole;
-        }
-        @Override
-        public void handleInterrupt(Console console, Action action) {
-            if (action == Action.INTERRUPT)
-            {
-                console.getShell().out().println("^C");
-                console.clearBufferAndDisplayPrompt();
-            }
-            else if (action == Action.IGNOREEOF)
-            {
-                console.getShell().out().println("Use \"exit\" to leave the shell.");
-                console.clearBufferAndDisplayPrompt();
-            }
-            else
-            {
-                try {
-                    CommandContainer exitCommand = registry.getCommand("exit","");
-                    //print a new line so we exit nicely
-                    console.getShell().out().println();
-                    exitCommand.getCommand().execute(new AeshCommandInvocation(aeshConsole, ControlOperator.NONE, null));
-                }
-                catch (CommandNotFoundException | IOException ignored) {
-                }
-            }
+      ForgeInterruptHook(ForgeCommandRegistry registry)
+      {
+         this.registry = registry;
+      }
 
-        }
-    }
+      @SuppressWarnings("unchecked")
+      @Override
+      public void handleInterrupt(Console console, Action action)
+      {
+         if (action == Action.INTERRUPT)
+         {
+            console.getShell().out().println("^C");
+            console.clearBufferAndDisplayPrompt();
+         }
+         else if (action == Action.IGNOREEOF)
+         {
+            console.getShell().out().println("Use \"exit\" to leave the shell.");
+            console.clearBufferAndDisplayPrompt();
+         }
+         else
+         {
+            try
+            {
+               CommandContainer exitCommand = registry.getCommand("exit", "");
+               // print a new line so we exit nicely
+               console.getShell().out().println();
+               exitCommand.getCommand().execute(
+                        new AeshCommandInvocation(ShellImpl.this.console, ControlOperator.NONE, null));
+            }
+            catch (CommandNotFoundException | IOException e)
+            {
+               log.log(Level.WARNING, "Error while trying to run exit", e);
+            }
+         }
+      }
+   }
 }
