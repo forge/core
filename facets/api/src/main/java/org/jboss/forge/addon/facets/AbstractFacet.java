@@ -36,6 +36,8 @@ public abstract class AbstractFacet<FACETEDTYPE extends Faceted<?>> implements M
    @Override
    public boolean uninstall()
    {
+      // Uninstall should discard any reference to the Faceted it belongs to
+      setFaceted(null);
       return false;
    }
 
