@@ -55,7 +55,11 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
          }
          if (!userConfigurationFile.exists() || userConfigurationFile.length() == 0L)
          {
-            userConfigurationFile.mkdirs();
+            File parentFile = userConfigurationFile.getParentFile();
+            if (parentFile != null)
+            {
+               parentFile.mkdirs();
+            }
             try (FileWriter fw = new FileWriter(userConfigurationFile))
             {
                fw.write("<configuration/>");
