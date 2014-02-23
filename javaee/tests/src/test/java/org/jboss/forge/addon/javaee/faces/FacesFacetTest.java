@@ -160,10 +160,12 @@ public class FacesFacetTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, FacesFacet_2_2.class);
+      Assert.assertTrue("Should have FacesFacet", project.hasFacet(FacesFacet.class));
+      Assert.assertTrue("Should have FacesFacet_2_2", project.hasFacet(FacesFacet_2_2.class));
       projectFactory.invalidateCaches();
       project = projectFactory.findProject(project.getRootDirectory());
-      Assert.assertTrue(project.hasFacet(FacesFacet.class));
-      Assert.assertTrue(project.hasFacet(FacesFacet_2_2.class));
+      Assert.assertTrue("Should have FacesFacet", project.hasFacet(FacesFacet.class));
+      Assert.assertTrue("Should have FacesFacet_2_2", project.hasFacet(FacesFacet_2_2.class));
 
    }
 
