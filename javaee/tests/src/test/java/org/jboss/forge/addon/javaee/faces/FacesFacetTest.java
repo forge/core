@@ -123,7 +123,7 @@ public class FacesFacetTest
       Assert.assertEquals("2.2", facet.getSpecVersion().toString());
       Assert.assertTrue(project.hasFacet(FacesFacet.class));
    }
-   
+
    @Test
    public void testComponentLibraryConfigDescriptorCreation() throws Exception
    {
@@ -137,7 +137,7 @@ public class FacesFacetTest
       Assert.assertNotNull(faces20Facet);
       FileResource<?> configFile = faces20Facet.getConfigFile();
       Assert.assertFalse(configFile.exists());
-      
+
       // Faces 2.1
       Project faces21Project = projectFactory.createTempProject();
       Assert.assertNotNull(faces21Project);
@@ -145,7 +145,7 @@ public class FacesFacetTest
       Assert.assertNotNull(faces21Facet);
       configFile = faces21Facet.getConfigFile();
       Assert.assertFalse(configFile.exists());
-      
+
       // Faces 2.2
       Project project = projectFactory.createTempProject();
       Assert.assertNotNull(project);
@@ -153,6 +153,18 @@ public class FacesFacetTest
       Assert.assertNotNull(facet);
       configFile = facet.getConfigFile();
       Assert.assertFalse(configFile.exists());
+   }
+
+   @Test
+   public void testFacesFacetInstalledAfterProjectIsEvictedFromCache()
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, FacesFacet_2_2.class);
+      projectFactory.invalidateCaches();
+      project = projectFactory.findProject(project.getRootDirectory());
+      Assert.assertTrue(project.hasFacet(FacesFacet.class));
+      Assert.assertTrue(project.hasFacet(FacesFacet_2_2.class));
+
    }
 
 }
