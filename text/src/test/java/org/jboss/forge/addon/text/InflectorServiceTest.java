@@ -24,8 +24,7 @@ public class InflectorServiceTest
 {
    @Deployment
    @Dependencies({
-            // FIXME remove hard-coded version
-            @AddonDependency(name = "org.jboss.forge.addon:text", version = "2.0.0.CR1"),
+            @AddonDependency(name = "org.jboss.forge.addon:text"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
    public static ForgeArchive getDeployment()
    {
