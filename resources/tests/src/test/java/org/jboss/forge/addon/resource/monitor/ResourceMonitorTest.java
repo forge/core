@@ -13,7 +13,6 @@ import static org.hamcrest.CoreMatchers.is;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
