@@ -212,4 +212,10 @@ public class MavenBuildManager
    {
       return new File(container.getSettings().getLocalRepository()).getAbsoluteFile();
    }
+
+   void evictFromCache(MavenModelResource pom)
+   {
+      cache.remove(pom);
+   }
+
 }

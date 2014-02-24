@@ -119,14 +119,19 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    {
       MavenXpp3Writer writer = new MavenXpp3Writer();
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      MavenModelResource modelResource = getModelResource();
       try (Writer fw = new OutputStreamWriter(outputStream))
       {
          writer.write(fw, pom);
-         getModelResource().setContents(outputStream.toString());
+         modelResource.setContents(outputStream.toString());
       }
       catch (IOException e)
       {
-         throw new RuntimeException("Could not write POM file: " + getModelResource().getFullyQualifiedName(), e);
+         throw new RuntimeException("Could not write POM file: " + modelResource.getFullyQualifiedName(), e);
+      }
+      finally
+      {
+         buildManager.evictFromCache(modelResource);
       }
    }
 
