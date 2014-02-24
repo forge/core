@@ -53,7 +53,7 @@ case "`uname`" in
   MINGW*) mingw=true;;
   Darwin*) darwin=true
            if [ -z "$JAVA_VERSION" ] ; then
-             JAVA_VERSION="1.7"
+             JAVA_VERSION="1.7+"
            fi
            if [ -z "$JAVA_HOME" ] ; then
              JAVA_HOME="`/usr/libexec/java_home --version $JAVA_VERSION`"
