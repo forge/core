@@ -117,5 +117,6 @@ public class ResourceMonitorImpl implements ResourceMonitor
    public void cancel()
    {
       fileMonitor.cancel(this);
+      listeners.clear();
    }
 }
