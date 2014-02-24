@@ -303,7 +303,7 @@ public class FacetFactoryImpl implements FacetFactory
       {
          result = true;
       }
-      else if (FacetInspector.isConstraintSatisfied(faceted, relatedFacets))
+      else 
       {
          try
          {
