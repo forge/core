@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.resource.transaction.file;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -21,14 +20,8 @@ import javax.inject.Singleton;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.transaction.ResourceTransactionListener;
 import org.jboss.forge.furnace.container.cdi.events.Local;
-import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
-import org.jboss.forge.furnace.util.Assert;
-import org.jboss.forge.furnace.util.OperatingSystemUtils;
-import org.xadisk.bridge.proxies.interfaces.XAFileSystem;
-import org.xadisk.bridge.proxies.interfaces.XAFileSystemProxy;
-import org.xadisk.filesystem.standalone.StandaloneFileSystemConfiguration;
 
 /**
  * 
@@ -39,33 +32,16 @@ public class FileResourceTransactionManager
 {
    private final Logger logger = Logger.getLogger(getClass().getName());
 
-   private XAFileSystem fileSystem;
-
    private FileResourceTransactionImpl transaction;
 
    private final List<ResourceTransactionListener> listeners = new CopyOnWriteArrayList<>();
 
-   public void startup(@Observes @Local PostStartup startup) throws Exception
-   {
-      File xaDiskHome = OperatingSystemUtils.createTempDir();
-      StandaloneFileSystemConfiguration config = new StandaloneFileSystemConfiguration(
-               xaDiskHome.getAbsolutePath(), "furnace-instance");
-      config.setTransactionTimeout(600);
-      // XADISK-95
-      if (OperatingSystemUtils.isWindows())
-      {
-         config.setSynchronizeDirectoryChanges(Boolean.FALSE);
-      }
-      this.fileSystem = XAFileSystemProxy.bootNativeXAFileSystem(config);
-      this.fileSystem.waitForBootup(10000);
-   }
-
    public void shutdown(@Observes @Local PreShutdown shutdown)
    {
-      if (fileSystem != null)
+      if (transaction != null)
          try
          {
-            fileSystem.shutdown();
+            transaction.close();
          }
          catch (IOException e)
          {
@@ -76,10 +52,9 @@ public class FileResourceTransactionManager
    @Produces
    public FileResourceTransactionImpl getCurrentTransaction(ResourceFactory resourceFactory)
    {
-      Assert.notNull(fileSystem, "FileSystem was not yet initialized. Is the Furnace container running?");
       if (transaction == null)
       {
-         transaction = new FileResourceTransactionImpl(this, fileSystem, resourceFactory);
+         transaction = new FileResourceTransactionImpl(this, resourceFactory);
       }
       return transaction;
    }

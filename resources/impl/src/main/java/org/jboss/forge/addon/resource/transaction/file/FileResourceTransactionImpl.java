@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.resource.transaction.file;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +32,7 @@ import org.jboss.forge.addon.resource.transaction.ResourceTransaction;
 import org.jboss.forge.addon.resource.transaction.ResourceTransactionException;
 import org.jboss.forge.addon.resource.transaction.ResourceTransactionListener;
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.xadisk.additional.XAFileInputStreamWrapper;
 import org.xadisk.additional.XAFileOutputStreamWrapper;
 import org.xadisk.bridge.proxies.interfaces.Session;
@@ -38,6 +40,7 @@ import org.xadisk.bridge.proxies.interfaces.XADiskBasicIOOperations.PermissionTy
 import org.xadisk.bridge.proxies.interfaces.XAFileInputStream;
 import org.xadisk.bridge.proxies.interfaces.XAFileOutputStream;
 import org.xadisk.bridge.proxies.interfaces.XAFileSystem;
+import org.xadisk.bridge.proxies.interfaces.XAFileSystemProxy;
 import org.xadisk.filesystem.FileSystemStateChangeEvent;
 import org.xadisk.filesystem.NativeSession;
 import org.xadisk.filesystem.exceptions.DirectoryNotEmptyException;
@@ -45,6 +48,7 @@ import org.xadisk.filesystem.exceptions.FileAlreadyExistsException;
 import org.xadisk.filesystem.exceptions.FileNotExistsException;
 import org.xadisk.filesystem.exceptions.InsufficientPermissionOnFileException;
 import org.xadisk.filesystem.exceptions.NoTransactionAssociatedException;
+import org.xadisk.filesystem.standalone.StandaloneFileSystemConfiguration;
 
 /**
  * Implementation of the {@link ResourceTransaction} interface for files
@@ -52,29 +56,29 @@ import org.xadisk.filesystem.exceptions.NoTransactionAssociatedException;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class FileResourceTransactionImpl implements ResourceTransaction, FileOperations
+public class FileResourceTransactionImpl implements ResourceTransaction, FileOperations, Closeable
 {
    private static final Logger log = Logger.getLogger(FileResourceTransactionImpl.class.getName());
 
    private final FileResourceTransactionManager manager;
-   private final XAFileSystem fileSystem;
    private final ResourceFactory resourceFactory;
+
+   private XAFileSystem fileSystem;
 
    private volatile Session session;
    private int timeout = 0;
 
-   public FileResourceTransactionImpl(FileResourceTransactionManager manager, XAFileSystem fileSystem,
+   public FileResourceTransactionImpl(FileResourceTransactionManager manager,
             ResourceFactory resourceFactory)
    {
       this.manager = manager;
-      this.fileSystem = fileSystem;
       this.resourceFactory = resourceFactory;
    }
 
    @Override
    public void begin() throws ResourceTransactionException
    {
-      this.session = fileSystem.createSessionForLocalTransaction();
+      this.session = getFileSystem().createSessionForLocalTransaction();
       if (timeout > 0)
       {
          this.session.setTransactionTimeout(timeout);
@@ -464,4 +468,39 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    {
       Assert.notNull(session, "Transaction is not started");
    }
+
+   private XAFileSystem getFileSystem()
+   {
+      if (fileSystem == null)
+      {
+         File xaDiskHome = OperatingSystemUtils.createTempDir();
+         StandaloneFileSystemConfiguration config = new StandaloneFileSystemConfiguration(
+                  xaDiskHome.getAbsolutePath(), "furnace-instance");
+         config.setTransactionTimeout(600);
+         // XADISK-95
+         if (OperatingSystemUtils.isWindows())
+         {
+            config.setSynchronizeDirectoryChanges(Boolean.FALSE);
+         }
+         this.fileSystem = XAFileSystemProxy.bootNativeXAFileSystem(config);
+         try
+         {
+            this.fileSystem.waitForBootup(10000);
+         }
+         catch (InterruptedException e)
+         {
+         }
+      }
+      return fileSystem;
+   }
+
+   @Override
+   public void close() throws IOException
+   {
+      if (fileSystem != null)
+      {
+         fileSystem.shutdown();
+      }
+   }
+
 }
