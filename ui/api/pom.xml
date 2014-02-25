@@ -19,13 +19,11 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>convert-api</artifactId>
-         <version>${project.version}</version>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>facets-api</artifactId>
-         <version>${project.version}</version>
          <scope>provided</scope>
       </dependency>
       <dependency>
