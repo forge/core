@@ -44,7 +44,7 @@ import org.jboss.forge.parser.java.JavaAnnotation;
 import org.jboss.forge.parser.java.JavaSource;
 
 /**
- * Creates a new CDI Scope annotation
+ * Creates a new CDI Stereotype annotation
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
