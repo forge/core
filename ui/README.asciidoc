@@ -291,3 +291,30 @@ This object provides two methods:
 
 Any information printed to these PrintStream objects will be displayed in the configured UI out/err streams. How it is displayed is up to the UI Provider implementation.
  
+=== UICommandTransformer feature
+
+When a command needs to be transformed before execution (returning a different object than what was requested), you should implement a UICommandTransformer.
++
+[source,java]
+----
+import org.jboss.forge.addon.ui.command.UICommandTransformer;
+
+public class MyTransformer implements UICommandTransformer {
+
+   public UICommand transform(UIContext context, UICommand original) { 
+	// original is the command invoked. It should be returned if no changes are needed
+   }
+}
+----
+
+=== Use PrerequisiteCommandsProvider when you need some commands to be executed prior to your comand
+
+In some scenarios, it is important that other commands/wizards be executed before the invoked command. This is true in cases where you have the setup command that adds library dependencies 
+to the current project and the current command/wizard creates classes that use classes from these libraries.
+
+. Implement PrerequisiteCommandsProvider in your command
+. Return a list of the prerequisite commands to be executed based on the current UIContext.  
+
+NOTE: The PrerequisiteCommandsProvider feature is implemented using a UICommandTransformer
+
+
