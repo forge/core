@@ -49,7 +49,7 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
    public CommandController createController(final UIContext context, final UIRuntime runtime,
             final UICommand originalCommand)
    {
-      UICommand command = enrich(context, originalCommand);
+      UICommand command = transform(context, originalCommand);
       if (command instanceof UIWizard)
       {
          return doCreateWizardController(context, runtime, (UIWizard) command);
@@ -64,7 +64,7 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
    public SingleCommandController createSingleController(final UIContext context, final UIRuntime runtime,
             final UICommand originalCommand)
    {
-      final UICommand command = enrich(context, originalCommand);
+      final UICommand command = transform(context, originalCommand);
       return doCreateSingleController(context, runtime, command);
    }
 
@@ -72,7 +72,7 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
    public WizardCommandController createWizardController(final UIContext context, final UIRuntime runtime,
             final UIWizard wizard)
    {
-      final UICommand command = enrich(context, wizard);
+      final UICommand command = transform(context, wizard);
       if (command instanceof UIWizard)
       {
          return doCreateWizardController(context, runtime, (UIWizard) command);
@@ -83,15 +83,16 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
       }
    }
 
-   private UICommand enrich(final UIContext context, final UICommand originalCommand)
+   private UICommand transform(final UIContext context, final UICommand originalCommand)
    {
       UICommand command = originalCommand;
-      for (UICommandTransformer enricher : transformers)
+      for (UICommandTransformer transformer : transformers)
       {
-         UICommand tmpCommand = enricher.transform(context, command);
+         UICommand tmpCommand = transformer.transform(context, command);
          if (tmpCommand == null)
          {
-            log.warning("Enricher implementation " + Proxies.unwrapProxyClassName(enricher.getClass())
+            log.warning(UICommandTransformer.class.getName() + " implementation "
+                     + Proxies.unwrapProxyClassName(transformer.getClass())
                      + " should not have returned null. Ignoring.");
          }
          else
