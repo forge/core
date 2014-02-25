@@ -249,11 +249,12 @@ public class FacetFactoryImpl implements FacetFactory
    private <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean register(
             Set<Class<FACETTYPE>> seen, FACETEDTYPE origin, FACETTYPE facet)
    {
-      if (FacetInspector.hasCircularConstraints(facet.getClass()))
+      Class<? extends Facet> facetClass = facet.getClass();
+      if (FacetInspector.hasCircularConstraints(facetClass))
          throw new IllegalStateException("Circular dependencies detected in @" + FacetConstraint.class.getSimpleName()
-                  + " annotation located at [" + facet.getClass().getName() + "]");
+                  + " annotation located at [" + facetClass.getName() + "]");
 
-      seen.add((Class<FACETTYPE>) facet.getClass());
+      seen.add((Class<FACETTYPE>) facetClass);
       Faceted<FACETTYPE> faceted = (Faceted<FACETTYPE>) origin;
       Assert.isTrue(faceted instanceof MutableFaceted, "The given origin [" + origin + "] is not an instance of ["
                + MutableFaceted.class.getName() + "], and does not support " + Facet.class.getSimpleName()
@@ -268,9 +269,10 @@ public class FacetFactoryImpl implements FacetFactory
                + MutableFaceted.class.getName() + "], and does not support " + Facet.class.getSimpleName()
                + " installation.");
 
-      Set<Class<FACETTYPE>> relatedFacets = FacetInspector.getAllRelatedFacets(facet.getClass());
+      final Set<Class<FACETTYPE>> relatedFacets = FacetInspector.getAllRelatedFacets(facetClass);
+      final Set<Class<FACETTYPE>> requiredFacets = FacetInspector.getAllRequiredFacets(facetClass);
 
-      List<Class<FACETTYPE>> facetsToRegister = new ArrayList<Class<FACETTYPE>>();
+      final List<Class<FACETTYPE>> facetsToRegister = new ArrayList<Class<FACETTYPE>>();
       for (Class<FACETTYPE> relatedType : relatedFacets)
       {
          boolean isSeen = false;
@@ -299,11 +301,11 @@ public class FacetFactoryImpl implements FacetFactory
       }
 
       boolean result = false;
-      if (faceted.hasFacet((Class<? extends FACETTYPE>) facet.getClass()))
+      if (faceted.hasFacet((Class<? extends FACETTYPE>) facetClass))
       {
          result = true;
       }
-      else if (FacetInspector.isConstraintSatisfied(faceted, relatedFacets))
+      else if (FacetInspector.isConstraintSatisfied(faceted, requiredFacets))
       {
          try
          {
@@ -311,7 +313,7 @@ public class FacetFactoryImpl implements FacetFactory
          }
          catch (Exception e)
          {
-            log.log(Level.WARNING, "Could not register Facet of type [" + facet.getClass() + "], due to exception: ", e);
+            log.log(Level.WARNING, "Could not register Facet of type [" + facetClass + "], due to exception: ", e);
             result = false;
          }
       }
