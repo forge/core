@@ -497,6 +497,17 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    @Override
    public void close() throws IOException
    {
+      if (session != null)
+      {
+         try
+         {
+            session.rollback();
+         }
+         catch (NoTransactionAssociatedException e)
+         {
+            // Ignored
+         }
+      }
       if (fileSystem != null)
       {
          fileSystem.shutdown();
