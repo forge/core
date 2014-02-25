@@ -21,7 +21,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.visit.VisitContext;
-import org.jboss.forge.addon.ui.command.PreStepsUICommand;
+import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -39,7 +39,7 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 
-public class AddConstraintWizard extends AbstractJavaEECommand implements UIWizard, PreStepsUICommand
+public class AddConstraintWizard extends AbstractJavaEECommand implements UIWizard, PrerequisiteCommandsProvider
 {
    @Inject
    @WithAttributes(label = "Class", description = "The Java class containing the field", required = true, type = InputType.DROPDOWN)
@@ -124,7 +124,7 @@ public class AddConstraintWizard extends AbstractJavaEECommand implements UIWiza
    }
 
    @Override
-   public List<Class<? extends UICommand>> getPreSteps(UIContext context)
+   public List<Class<? extends UICommand>> getPrerequisiteCommands(UIContext context)
    {
       List<Class<? extends UICommand>> setup = new ArrayList<>();
       Project project = getSelectedProject(context);

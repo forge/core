@@ -36,7 +36,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.visit.VisitContext;
-import org.jboss.forge.addon.ui.command.PreStepsUICommand;
+import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -63,7 +63,7 @@ import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 
-public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, PreStepsUICommand
+public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, PrerequisiteCommandsProvider
 {
    @Inject
    @WithAttributes(label = "Target Entity", description = "The targetEntity which the field will be created", required = true, type = InputType.DROPDOWN)
@@ -419,7 +419,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
    }
 
    @Override
-   public List<Class<? extends UICommand>> getPreSteps(UIContext context)
+   public List<Class<? extends UICommand>> getPrerequisiteCommands(UIContext context)
    {
       List<Class<? extends UICommand>> setup = new ArrayList<>();
       Project project = getSelectedProject(context);

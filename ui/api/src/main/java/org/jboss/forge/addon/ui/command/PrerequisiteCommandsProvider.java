@@ -16,7 +16,7 @@ import org.jboss.forge.addon.ui.context.UIContext;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public interface PreStepsUICommand extends UICommand
+public interface PrerequisiteCommandsProvider
 {
    /**
     * Implementations should return the steps required to run before this command
@@ -24,5 +24,5 @@ public interface PreStepsUICommand extends UICommand
     * @param context the current {@link UIContext}
     * @return the pre execution steps, if any. Must return an empty {@link Collection} or null if no steps are available
     */
-   Collection<Class<? extends UICommand>> getPreSteps(UIContext context);
+   Iterable<Class<? extends UICommand>> getPrerequisiteCommands(UIContext context);
 }

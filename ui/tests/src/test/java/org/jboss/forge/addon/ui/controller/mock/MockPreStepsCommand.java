@@ -13,7 +13,7 @@ import java.util.Collections;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
-import org.jboss.forge.addon.ui.command.PreStepsUICommand;
+import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -27,7 +27,7 @@ import org.jboss.forge.addon.ui.result.Results;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class MockPreStepsCommand extends AbstractUICommand implements PreStepsUICommand
+public class MockPreStepsCommand extends AbstractUICommand implements PrerequisiteCommandsProvider
 {
    @Inject
    @WithAttributes(label = "Name", required = true)
@@ -46,7 +46,7 @@ public class MockPreStepsCommand extends AbstractUICommand implements PreStepsUI
    }
 
    @Override
-   public Collection<Class<? extends UICommand>> getPreSteps(UIContext context)
+   public Collection<Class<? extends UICommand>> getPrerequisiteCommands(UIContext context)
    {
       return Collections.<Class<? extends UICommand>> singleton(ExampleCommand.class);
    }

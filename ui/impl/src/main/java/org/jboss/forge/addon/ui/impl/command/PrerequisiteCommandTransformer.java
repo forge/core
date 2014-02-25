@@ -7,13 +7,15 @@
 
 package org.jboss.forge.addon.ui.impl.command;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.enterprise.inject.Vetoed;
 import javax.inject.Singleton;
 
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
-import org.jboss.forge.addon.ui.command.PreStepsUICommand;
+import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.command.UICommandTransformer;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -32,16 +34,17 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @Singleton
-public class PreStepsUICommandTransformer implements UICommandTransformer
+public class PrerequisiteCommandTransformer implements UICommandTransformer
 {
    @SuppressWarnings("unchecked")
    @Override
    public UICommand transform(UIContext context, UICommand original)
    {
       final UICommand result;
-      if (original instanceof PreStepsUICommand)
+      if (original instanceof PrerequisiteCommandsProvider)
       {
-         Collection<Class<? extends UICommand>> previousSteps = ((PreStepsUICommand) original).getPreSteps(context);
+         Collection<Class<? extends UICommand>> previousSteps = toCollection(((PrerequisiteCommandsProvider) original)
+                  .getPrerequisiteCommands(context));
          if (previousSteps == null || previousSteps.isEmpty())
          {
             result = original;
@@ -59,6 +62,27 @@ public class PreStepsUICommandTransformer implements UICommandTransformer
          result = original;
       }
       return result;
+   }
+
+   private <T> Collection<T> toCollection(Iterable<T> iterable)
+   {
+      if (iterable == null)
+      {
+         return null;
+      }
+      else if (iterable instanceof Collection)
+      {
+         return (Collection<T>) iterable;
+      }
+      else
+      {
+         List<T> list = new ArrayList<>();
+         for (T obj : iterable)
+         {
+            list.add(obj);
+         }
+         return list;
+      }
    }
 
    @Vetoed
