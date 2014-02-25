@@ -5,15 +5,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.javaee.ui;
+package org.jboss.forge.addon.ui.impl.command;
 
-import java.util.List;
+import java.util.Collection;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.projects.Projects;
+import org.jboss.forge.addon.ui.command.PreStepsUICommand;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.command.UICommandTransformer;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -24,20 +22,17 @@ import org.jboss.forge.addon.ui.context.UIContext;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @Singleton
-public class JavaEEUICommandTransformer implements UICommandTransformer
+public class PreStepsUICommandTransformer implements UICommandTransformer
 {
-   @Inject
-   private ProjectFactory projectFactory;
-
    @SuppressWarnings("unchecked")
    @Override
    public UICommand transform(UIContext context, UICommand original)
    {
       final UICommand result;
-      if (original instanceof AbstractJavaEECommand && Projects.containsProject(projectFactory, context))
+      if (original instanceof PreStepsUICommand)
       {
-         List<Class<? extends UICommand>> previousSteps = ((AbstractJavaEECommand) original).getSetupSteps(context);
-         if (previousSteps.isEmpty())
+         Collection<Class<? extends UICommand>> previousSteps = ((PreStepsUICommand) original).getPreSteps(context);
+         if (previousSteps == null || previousSteps.isEmpty())
          {
             result = original;
          }

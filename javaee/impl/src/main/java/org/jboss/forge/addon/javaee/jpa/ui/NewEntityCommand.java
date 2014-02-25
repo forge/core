@@ -26,6 +26,7 @@ import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.visit.VisitContext;
+import org.jboss.forge.addon.ui.command.PreStepsUICommand;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -44,7 +45,7 @@ import org.jboss.forge.parser.java.JavaSource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewEntityCommand extends AbstractJavaEECommand
+public class NewEntityCommand extends AbstractJavaEECommand implements PreStepsUICommand
 {
    @Inject
    @WithAttributes(label = "Entity name", description = "The simple name of the generated class", required = true)
@@ -174,13 +175,16 @@ public class NewEntityCommand extends AbstractJavaEECommand
    }
 
    @Override
-   public List<Class<? extends UICommand>> getSetupSteps(UIContext context)
+   public List<Class<? extends UICommand>> getPreSteps(UIContext context)
    {
       List<Class<? extends UICommand>> setup = new ArrayList<>();
       Project project = getSelectedProject(context);
-      if (!project.hasFacet(JPAFacet.class))
+      if (project != null)
       {
-         setup.add(JPASetupWizard.class);
+         if (!project.hasFacet(JPAFacet.class))
+         {
+            setup.add(JPASetupWizard.class);
+         }
       }
       return setup;
    }

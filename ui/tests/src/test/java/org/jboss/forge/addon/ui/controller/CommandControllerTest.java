@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.ui.controller;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -15,6 +17,7 @@ import org.jboss.forge.addon.ui.controller.mock.ExampleCommand;
 import org.jboss.forge.addon.ui.controller.mock.ExampleNoUICommand;
 import org.jboss.forge.addon.ui.controller.mock.FlowExampleStep;
 import org.jboss.forge.addon.ui.controller.mock.FlowExampleWizard;
+import org.jboss.forge.addon.ui.controller.mock.MockPreStepsCommand;
 import org.jboss.forge.addon.ui.impl.mock.MockUIContext;
 import org.jboss.forge.addon.ui.impl.mock.MockUIRuntime;
 import org.jboss.forge.addon.ui.result.Result;
@@ -43,7 +46,7 @@ public class CommandControllerTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addClasses(ExampleCommand.class, ExampleNoUICommand.class, FlowExampleStep.class,
-                        FlowExampleWizard.class)
+                        FlowExampleWizard.class, MockPreStepsCommand.class)
                .addPackage(MockUIRuntime.class.getPackage())
                .addBeansXML()
                .addAsAddonDependencies(
@@ -64,6 +67,9 @@ public class CommandControllerTest
 
    @Inject
    private FlowExampleWizard flowExampleWizard;
+
+   @Inject
+   private MockPreStepsCommand preStepsCommand;
 
    @Test
    public void testInjection() throws Exception
@@ -127,6 +133,26 @@ public class CommandControllerTest
          Assert.assertTrue(controller.canMoveToNextStep());
          controller.setValueFor("hasNext", Boolean.FALSE);
          Assert.assertFalse(controller.canMoveToNextStep());
+      }
+   }
+
+   @Test
+   public void testPreStepsCommand() throws Exception
+   {
+      try (CommandController controller = controllerFactory.createController(new MockUIContext(), new MockUIRuntime(),
+               preStepsCommand))
+      {
+         Assert.assertThat(controller, instanceOf(WizardCommandController.class));
+         WizardCommandController wizardController = (WizardCommandController) controller;
+         wizardController.initialize();
+         Assert.assertThat(wizardController.getCommand(), instanceOf(ExampleCommand.class));
+         wizardController.setValueFor("firstName", "George");
+         Assert.assertTrue(wizardController.canMoveToNextStep());
+         wizardController.next().initialize();
+         Assert.assertThat(wizardController.getCommand(), instanceOf(MockPreStepsCommand.class));
+         wizardController.setValueFor("name", "George Gastaldi");
+         Assert.assertFalse(wizardController.canMoveToNextStep());
+         Assert.assertTrue(wizardController.canExecute());
       }
    }
 }

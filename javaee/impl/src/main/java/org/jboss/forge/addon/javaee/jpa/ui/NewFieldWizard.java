@@ -36,6 +36,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.visit.VisitContext;
+import org.jboss.forge.addon.ui.command.PreStepsUICommand;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -62,7 +63,7 @@ import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
 
-public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
+public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, PreStepsUICommand
 {
    @Inject
    @WithAttributes(label = "Target Entity", description = "The targetEntity which the field will be created", required = true, type = InputType.DROPDOWN)
@@ -417,13 +418,16 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard
    }
 
    @Override
-   public List<Class<? extends UICommand>> getSetupSteps(UIContext context)
+   public List<Class<? extends UICommand>> getPreSteps(UIContext context)
    {
       List<Class<? extends UICommand>> setup = new ArrayList<>();
       Project project = getSelectedProject(context);
-      if (!project.hasFacet(JPAFacet.class))
+      if (project != null)
       {
-         setup.add(JPASetupWizard.class);
+         if (!project.hasFacet(JPAFacet.class))
+         {
+            setup.add(JPASetupWizard.class);
+         }
       }
       return setup;
    }

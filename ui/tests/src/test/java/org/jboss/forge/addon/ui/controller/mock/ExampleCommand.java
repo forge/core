@@ -28,6 +28,7 @@ public class ExampleCommand implements UICommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      firstName.setRequired(true);
       builder.add(firstName);
    }
 

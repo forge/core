@@ -5,7 +5,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.javaee.ui;
+package org.jboss.forge.addon.ui.impl.command;
+
+import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.command.UICommand;
@@ -20,9 +22,11 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 
 /**
+ * A {@link CompositeWizard} that allows steps to be executed before the original command
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
+@Vetoed
 public class CompositeWizard extends AbstractUICommand implements UIWizard
 {
    private final UICommand originalCmd;

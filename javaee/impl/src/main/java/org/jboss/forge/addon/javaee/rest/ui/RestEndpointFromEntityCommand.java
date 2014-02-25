@@ -31,6 +31,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.text.Inflector;
+import org.jboss.forge.addon.ui.command.PreStepsUICommand;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -54,7 +55,7 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class RestEndpointFromEntityCommand extends AbstractJavaEECommand
+public class RestEndpointFromEntityCommand extends AbstractJavaEECommand implements PreStepsUICommand
 {
    @Inject
    @WithAttributes(label = "Content Type", defaultValue = MediaType.APPLICATION_XML, required = true)
@@ -206,21 +207,24 @@ public class RestEndpointFromEntityCommand extends AbstractJavaEECommand
    }
 
    @Override
-   public List<Class<? extends UICommand>> getSetupSteps(UIContext context)
+   public List<Class<? extends UICommand>> getPreSteps(UIContext context)
    {
       List<Class<? extends UICommand>> setup = new ArrayList<>();
       Project project = getSelectedProject(context);
-      if (!project.hasFacet(RestFacet.class))
+      if (project != null)
       {
-         setup.add(RestSetupWizard.class);
-      }
-      if (!project.hasFacet(JPAFacet.class))
-      {
-         setup.add(JPASetupWizard.class);
-      }
-      if (!project.hasFacet(EJBFacet.class))
-      {
-         setup.add(EJBSetupWizard.class);
+         if (!project.hasFacet(RestFacet.class))
+         {
+            setup.add(RestSetupWizard.class);
+         }
+         if (!project.hasFacet(JPAFacet.class))
+         {
+            setup.add(JPASetupWizard.class);
+         }
+         if (!project.hasFacet(EJBFacet.class))
+         {
+            setup.add(EJBSetupWizard.class);
+         }
       }
       return setup;
    }

@@ -7,14 +7,10 @@
 
 package org.jboss.forge.addon.javaee.ui;
 
-import java.util.Collections;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
-import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.util.Categories;
@@ -35,10 +31,5 @@ public abstract class AbstractJavaEECommand extends AbstractProjectCommand
    protected ProjectFactory getProjectFactory()
    {
       return projectFactory;
-   }
-
-   public List<Class<? extends UICommand>> getSetupSteps(UIContext context)
-   {
-      return Collections.emptyList();
    }
 }
