@@ -27,7 +27,6 @@ import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -45,7 +44,7 @@ import org.jboss.forge.parser.java.JavaSource;
 public class NewQualifierCommand extends AbstractJavaSourceCommand
 {
    @Inject
-   @WithAttributes(label = "Custom Scope Annotation", type = InputType.JAVA_CLASS_PICKER)
+   @WithAttributes(label = "Inherited")
    private UIInput<Boolean> inherited;
 
    @Override
