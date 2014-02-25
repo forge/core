@@ -121,6 +121,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
       setupRelationshipType();
 
       transientField = inputFactory.createInput("transient", 't', Boolean.class);
+      transientField.setLabel("Is Transient?");
       transientField.setDescription("Creates a field with @Transient").setDefaultValue(Boolean.FALSE);
 
       final List<String> types = Arrays.asList("byte", "float", "char", "double", "int", "long", "short", "boolean",
