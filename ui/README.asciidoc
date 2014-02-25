@@ -294,7 +294,7 @@ Any information printed to these PrintStream objects will be displayed in the co
 === UICommandTransformer feature
 
 When a command needs to be transformed before execution (returning a different object than what was requested), you should implement a UICommandTransformer.
-+
+
 [source,java]
 ----
 import org.jboss.forge.addon.ui.command.UICommandTransformer;
