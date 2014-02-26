@@ -82,8 +82,8 @@ public class BeansCommandsTest
       config.getOrCreateAlternatives().clazz("org.myclazz.MyAlternative");
       cdiFacet.saveConfig(config);
 
-      shellTest.execute("cd " + project.getRootDirectory().getFullyQualifiedName(), 5, TimeUnit.SECONDS);
-      shellTest.execute("cdi-list-alternatives", 5, TimeUnit.SECONDS);
+      shellTest.execute("cd " + project.getRootDirectory().getFullyQualifiedName(), 10, TimeUnit.SECONDS);
+      shellTest.execute("cdi-list-alternatives", 10, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString("org.myclazz.MyAlternative"));
    }
 
@@ -96,8 +96,8 @@ public class BeansCommandsTest
       config.getOrCreateAlternatives().clazz("org.myclazz.MyAlternative");
       cdiFacet.saveConfig(config);
 
-      shellTest.execute("cd " + project.getRootDirectory().getFullyQualifiedName(), 5, TimeUnit.SECONDS);
-      shellTest.execute("cdi-list-alternatives", 5, TimeUnit.SECONDS);
+      shellTest.execute("cd " + project.getRootDirectory().getFullyQualifiedName(), 10, TimeUnit.SECONDS);
+      shellTest.execute("cdi-list-alternatives", 10, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString("org.myclazz.MyAlternative"));
    }
 
@@ -110,8 +110,8 @@ public class BeansCommandsTest
       config.getOrCreateDecorators().clazz("org.myclazz.MyDecorator");
       cdiFacet.saveConfig(config);
 
-      shellTest.execute("cd " + project.getRootDirectory().getFullyQualifiedName(), 5, TimeUnit.SECONDS);
-      shellTest.execute("cdi-list-decorators", 5, TimeUnit.SECONDS);
+      shellTest.execute("cd " + project.getRootDirectory().getFullyQualifiedName(), 10, TimeUnit.SECONDS);
+      shellTest.execute("cdi-list-decorators", 10, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString("org.myclazz.MyDecorator"));
    }
 
@@ -124,8 +124,8 @@ public class BeansCommandsTest
       config.getOrCreateDecorators().clazz("org.myclazz.MyDecorator");
       cdiFacet.saveConfig(config);
 
-      shellTest.execute("cd " + project.getRootDirectory().getFullyQualifiedName(), 5, TimeUnit.SECONDS);
-      shellTest.execute("cdi-list-decorators", 5, TimeUnit.SECONDS);
+      shellTest.execute("cd " + project.getRootDirectory().getFullyQualifiedName(), 10, TimeUnit.SECONDS);
+      shellTest.execute("cdi-list-decorators", 10, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString("org.myclazz.MyDecorator"));
    }
 
@@ -138,8 +138,8 @@ public class BeansCommandsTest
       config.getOrCreateInterceptors().clazz("org.myclazz.MyInterceptor");
       cdiFacet.saveConfig(config);
 
-      shellTest.execute("cd " + project.getRootDirectory().getFullyQualifiedName(), 5, TimeUnit.SECONDS);
-      shellTest.execute("cdi-list-interceptors", 5, TimeUnit.SECONDS);
+      shellTest.execute("cd " + project.getRootDirectory().getFullyQualifiedName(), 10, TimeUnit.SECONDS);
+      shellTest.execute("cdi-list-interceptors", 10, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString("org.myclazz.MyInterceptor"));
    }
 
@@ -152,8 +152,8 @@ public class BeansCommandsTest
       config.getOrCreateInterceptors().clazz("org.myclazz.MyInterceptor");
       cdiFacet.saveConfig(config);
 
-      shellTest.execute("cd " + project.getRootDirectory().getFullyQualifiedName(), 5, TimeUnit.SECONDS);
-      shellTest.execute("cdi-list-interceptors", 5, TimeUnit.SECONDS);
+      shellTest.execute("cd " + project.getRootDirectory().getFullyQualifiedName(), 10, TimeUnit.SECONDS);
+      shellTest.execute("cdi-list-interceptors", 10, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString("org.myclazz.MyInterceptor"));
    }
 
