@@ -321,9 +321,7 @@ Example:
 
 public class MyCommand extends AbstractProjectCommand implements PrerequisiteCommandsProvider
 {
-   
-   ...
-   
+  
    @Override
    public List<Class<? extends UICommand>> getPrerequisiteCommands(UIContext context)
    {
@@ -331,13 +329,15 @@ public class MyCommand extends AbstractProjectCommand implements PrerequisiteCom
       Project project = getSelectedProject(context);
       if (project != null)
       {
-         if (!project.hasFacet(JPAFacet.class))
+         if (!project.hasFacet(CDIFacet.class))
          {
-            setup.add(JPASetupWizard.class);
+            setup.add(CDISetupCommand.class);
          }
       }
       return setup;
    }
+
+   ...
 }
 ----
 
