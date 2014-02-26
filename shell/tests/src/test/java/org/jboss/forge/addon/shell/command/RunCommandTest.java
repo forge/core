@@ -117,6 +117,31 @@ public class RunCommandTest
    }
 
    @Test
+   public void testRunScriptMultiLineWithRandoWhitespace() throws Exception
+   {
+      DirectoryResource temp = (DirectoryResource) resourceFactory.create(OperatingSystemUtils.createTempDir());
+      temp.deleteOnExit();
+      shellTest.getShell().setCurrentResource(temp);
+
+      FileResource<?> script = (FileResource<?>) temp.getChild("script.fsh");
+      script.setContents("\ntouch foo.txt\n\n\n\t\n"
+               + "touch foo2.txt\r\n");
+
+      Resource<?> child = temp.getChild("foo.txt");
+      Resource<?> child2 = temp.getChild("foo2.txt");
+      Assert.assertFalse(child.exists());
+      Assert.assertFalse(child2.exists());
+
+      Result result = shellTest.execute("run script.fsh", COMMAND_TIMEOUT, TimeUnit.SECONDS);
+      Assert.assertFalse(result instanceof Failed);
+
+      Assert.assertTrue(child.exists());
+      Assert.assertTrue(child2.exists());
+      child.delete();
+      child2.delete();
+   }
+
+   @Test
    public void testRunScriptFailure() throws Exception
    {
       DirectoryResource temp = (DirectoryResource) resourceFactory.create(OperatingSystemUtils.createTempDir());

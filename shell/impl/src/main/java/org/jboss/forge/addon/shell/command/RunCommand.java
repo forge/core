@@ -123,13 +123,16 @@ public class RunCommand extends AbstractShellCommand
                         Result result = execute(scriptShell, writer, reader.readLine(), timeout.getValue(),
                                  TimeUnit.SECONDS, startTime);
 
-                        results.add(result);
+                        if (result != null)
+                        {
+                           results.add(result);
 
-                        context.getUIContext().getProvider().getOutput().out().write(stdout.toByteArray());
-                        context.getUIContext().getProvider().getOutput().err().write(stderr.toByteArray());
+                           context.getUIContext().getProvider().getOutput().out().write(stdout.toByteArray());
+                           context.getUIContext().getProvider().getOutput().err().write(stderr.toByteArray());
 
-                        if (result instanceof Failed)
-                           break ALL;
+                           if (result instanceof Failed)
+                              break ALL;
+                        }
                      }
                      catch (TimeoutException e)
                      {
@@ -159,40 +162,46 @@ public class RunCommand extends AbstractShellCommand
    {
       Assert.notNull(line, "Line to execute cannot be null.");
 
-      Result result;
-      if (!line.trim().endsWith(OperatingSystemUtils.getLineSeparator()))
-         line = line + OperatingSystemUtils.getLineSeparator();
-      ScriptCommandListener listener = new ScriptCommandListener();
-      ListenerRegistration<CommandExecutionListener> listenerRegistration = shell.addCommandExecutionListener(listener);
-      try
-      {
-         stdin.write(line);
-         stdin.flush();
-         while (!listener.isExecuted())
-         {
-            if (System.currentTimeMillis() > (startTime + TimeUnit.MILLISECONDS.convert(quantity, unit)))
-            {
-               throw new TimeoutException("Timeout expired waiting for command [" + line + "] to execute.");
-            }
+      Result result = null;
 
-            try
+      if (!line.trim().isEmpty())
+      {
+         if (!line.trim().endsWith(OperatingSystemUtils.getLineSeparator()))
+            line = line + OperatingSystemUtils.getLineSeparator();
+
+         ScriptCommandListener listener = new ScriptCommandListener();
+         ListenerRegistration<CommandExecutionListener> listenerRegistration = shell
+                  .addCommandExecutionListener(listener);
+         try
+         {
+            stdin.write(line);
+            stdin.flush();
+            while (!listener.isExecuted())
             {
-               Thread.sleep(10);
+               if (System.currentTimeMillis() > (startTime + TimeUnit.MILLISECONDS.convert(quantity, unit)))
+               {
+                  throw new TimeoutException("Timeout expired waiting for command [" + line + "] to execute.");
+               }
+
+               try
+               {
+                  Thread.sleep(10);
+               }
+               catch (InterruptedException e)
+               {
+                  throw new ContainerException("Command [" + line + "] did not respond.", e);
+               }
             }
-            catch (InterruptedException e)
-            {
-               throw new ContainerException("Command [" + line + "] did not respond.", e);
-            }
+            result = listener.getResult();
          }
-         result = listener.getResult();
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException("Failed to execute command.", e);
-      }
-      finally
-      {
-         listenerRegistration.removeListener();
+         catch (IOException e)
+         {
+            throw new RuntimeException("Failed to execute command.", e);
+         }
+         finally
+         {
+            listenerRegistration.removeListener();
+         }
       }
       return result;
    }
