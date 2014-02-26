@@ -10,7 +10,10 @@ package org.jboss.forge.addon.shell.ui;
 import java.io.PrintStream;
 
 import org.jboss.aesh.console.AeshConsole;
+import org.jboss.aesh.console.Buffer;
+import org.jboss.aesh.console.command.CommandOperation;
 import org.jboss.aesh.console.command.invocation.CommandInvocation;
+import org.jboss.aesh.terminal.Key;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.UIPrompt;
 
@@ -66,26 +69,36 @@ public class ShellUIPromptImpl implements UIPrompt
       String output;
       try
       {
-         // StringBuilder sb = new StringBuilder();
-         // PrintStream out = console.getShell().out();
-         // Key inputKey;
-         // do
-         // {
-         // CommandOperation input = commandInvocation.getInput();
-         // inputKey = input.getInputKey();
-         // char asChar = inputKey.getAsChar();
-         // if (echo)
-         // {
-         // out.print(asChar);
-         // }
-         // if (inputKey.isValidInput())
-         // {
-         // sb.append(asChar);
-         // }
-         // }
-         // while (inputKey != Key.ENTER && inputKey != Key.ENTER_2);
-         // output = (sb.length() == 0) ? null : sb.toString();
-         output = String.valueOf(commandInvocation.getInput().getInputKey().getAsChar());
+          StringBuilder sb = new StringBuilder();
+          PrintStream out = console.getShell().out();
+          Key inputKey;
+          do
+          {
+              CommandOperation input = commandInvocation.getInput();
+              inputKey = input.getInputKey();
+              if(inputKey == Key.BACKSPACE && sb.length() > 0) {
+                  sb.setLength(sb.length() - 1);
+                  if(echo) {
+                      //move cursor left
+                      out.print(Buffer.printAnsi("1D"));
+                      out.flush();
+                      //overwrite it with space
+                      out.print(" ");
+                      //move cursor back again
+                      out.print(Buffer.printAnsi("1D"));
+                      out.flush();
+                  }
+              }
+              else if(inputKey.isPrintable()) {
+                  if(echo)
+                      out.print(inputKey.getAsChar());
+
+                  sb.append(inputKey.getAsChar());
+              }
+          }
+          while (inputKey != Key.ENTER && inputKey != Key.ENTER_2);
+          output = (sb.length() == 0) ? null : sb.toString();
+         //output = String.valueOf(commandInvocation.getInput().getInputKey().getAsChar());
       }
       catch (InterruptedException e)
       {
