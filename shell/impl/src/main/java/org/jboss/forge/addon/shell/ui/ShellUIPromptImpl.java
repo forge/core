@@ -115,7 +115,7 @@ public class ShellUIPromptImpl implements UIPrompt
       {
          return true;
       }
-      return "Y".equalsIgnoreCase(prompt(message + " [y/N]"));
+      return !"N".equalsIgnoreCase(prompt(message + " [Y/n]"));
    }
 
    private boolean isAcceptDefaultsEnabled()
