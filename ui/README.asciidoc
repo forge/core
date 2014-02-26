@@ -313,7 +313,33 @@ In some scenarios, it is important that other commands/wizards be executed befor
 to the current project and the current command/wizard creates classes that use classes from these libraries.
 
 . Implement PrerequisiteCommandsProvider in your command
-. Return a list of the prerequisite commands to be executed based on the current UIContext.  
+. Return a list of the prerequisite commands to be executed based on the current UIContext in the getPrerequisiteCommands method.  
+
+Example:
+[source,java]
+----
+
+public class MyCommand extends AbstractProjectCommand implements PrerequisiteCommandsProvider
+{
+   
+   ...
+   
+   @Override
+   public List<Class<? extends UICommand>> getPrerequisiteCommands(UIContext context)
+   {
+      List<Class<? extends UICommand>> setup = new ArrayList<>();
+      Project project = getSelectedProject(context);
+      if (project != null)
+      {
+         if (!project.hasFacet(JPAFacet.class))
+         {
+            setup.add(JPASetupWizard.class);
+         }
+      }
+      return setup;
+   }
+}
+----
 
 NOTE: The PrerequisiteCommandsProvider feature is implemented using a UICommandTransformer
 
