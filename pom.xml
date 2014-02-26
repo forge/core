@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -60,7 +59,7 @@
       <forge.release.codename>Two</forge.release.codename>
       <forge.release.version>${project.version}</forge.release.version>
       <version.cdi>1.1</version.cdi>
-      <version.furnace>2.0.1-SNAPSHOT</version.furnace>
+      <version.furnace>2.1.0.Final</version.furnace>
       <version.jboss.spec>3.0.2.Final</version.jboss.spec>
       <version.junit>4.11</version.junit>
       <version.mvel>2.1.0.Final</version.mvel>
@@ -587,6 +586,14 @@
             <configuration>
                <preparationGoals>clean install</preparationGoals>
             </configuration>
+            <dependencies>
+               <dependency>
+                  <groupId>org.apache.maven.scm</groupId>
+                  <artifactId>maven-scm-provider-gitexe</artifactId>
+                  <!-- This version is necessary for use with git version 1.8.5 -->
+                  <version>1.8.1</version>
+               </dependency>
+            </dependencies>
          </plugin>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -725,7 +732,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -742,7 +749,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -759,7 +766,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                         <pluginExecution>
@@ -778,7 +785,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore/>
+                              <ignore />
                            </action>
                         </pluginExecution>
                      </pluginExecutions>
