@@ -29,7 +29,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @FacetConstraint({ DependencyFacet.class, ResourcesFacet.class })
-public class CDISetupWizard extends AbstractJavaEECommand
+public class CDISetupCommandImpl extends AbstractJavaEECommand implements CDISetupCommand
 {
    @Override
    public Metadata getMetadata(UIContext context)

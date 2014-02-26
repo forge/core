@@ -25,7 +25,7 @@ import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.FacetNotFoundException;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
-import org.jboss.forge.addon.javaee.cdi.ui.CDISetupWizard;
+import org.jboss.forge.addon.javaee.cdi.ui.CDISetupCommand;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
 import org.jboss.forge.addon.javaee.ejb.ui.EJBSetupWizard;
 import org.jboss.forge.addon.javaee.faces.FacesFacet;
@@ -48,8 +48,8 @@ import org.jboss.forge.addon.scaffold.faces.metawidget.config.ForgeConfigReader;
 import org.jboss.forge.addon.scaffold.faces.util.ScaffoldUtil;
 import org.jboss.forge.addon.scaffold.spi.AccessStrategy;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
-import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
+import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.parser.JavaParser;
@@ -113,12 +113,12 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
    private static final String ERROR_TEMPLATE = "scaffold/faces/error.xhtml";
    private static final String INDEX_TEMPLATE = "scaffold/faces/index.xhtml";
    private static final String INDEX_WELCOME_TEMPLATE = "scaffold/faces/index.html";
-   
+
    private final Dependency richfaces3UI = DependencyBuilder.create("org.richfaces.ui:richfaces-ui");
    private final Dependency richfaces3Impl = DependencyBuilder.create("org.richfaces.framework:richfaces-impl");
    private final Dependency richfaces4UI = DependencyBuilder.create("org.richfaces.ui:richfaces-components-ui");
    private final Dependency richfaces4Impl = DependencyBuilder.create("org.richfaces.core:richfaces-core-impl");
-   
+
    protected FreemarkerTemplateProcessor templateProcessor;
    protected Template backingBeanTemplate;
    protected int backingBeanTemplateQbeMetawidgetIndent;
@@ -147,7 +147,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
    protected StaticJavaMetawidget rmEntityMetawidget;
 
    private Configuration config;
-   
+
    @Inject
    public FacesScaffoldProvider(final Configuration config, final FreemarkerTemplateProcessor templateProcessor)
    {
@@ -173,9 +173,9 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
    public void validate(UIValidationContext context)
    {
       // TODO Auto-generated method stub
-      
+
    }
-   
+
    @Override
    public void setFaceted(Project origin)
    {
@@ -215,17 +215,18 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       Collection<?> resources = scaffoldContext.getResources();
       for (Object resource : resources)
       {
-         JavaClass entity  = (JavaClass) resource;
+         JavaClass entity = (JavaClass) resource;
          String targetDir = scaffoldContext.getTargetDirectory();
          targetDir = (targetDir == null) ? "" : targetDir;
          Resource<?> template = (Resource<?>) scaffoldContext.getAttribute("pageTemplate");
          boolean overwrite = scaffoldContext.isOverwrite();
-         List<Resource<?>> generatedResourcesForEntity = this.generateFromEntity(targetDir , template, entity, overwrite );
+         List<Resource<?>> generatedResourcesForEntity = this
+                  .generateFromEntity(targetDir, template, entity, overwrite);
 
          // TODO give plugins a chance to react to generated resources, use event bus?
          // if (!generatedResources.isEmpty())
          // {
-         //    generatedEvent.fire(new ScaffoldGeneratedResources(provider, prepareResources(generatedResources)));
+         // generatedEvent.fire(new ScaffoldGeneratedResources(provider, prepareResources(generatedResources)));
          // }
          generatedResources.addAll(generatedResourcesForEntity);
       }
@@ -236,30 +237,30 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
    public List<Class<? extends UICommand>> getSetupFlow()
    {
       List<Class<? extends UICommand>> setupCommands = new ArrayList<Class<? extends UICommand>>();
-      if(!origin.hasFacet(JPAFacet.class))
+      if (!origin.hasFacet(JPAFacet.class))
       {
          setupCommands.add(JPASetupWizard.class);
       }
-      if(!origin.hasFacet(CDIFacet.class))
+      if (!origin.hasFacet(CDIFacet.class))
       {
-         setupCommands.add(CDISetupWizard.class);
+         setupCommands.add(CDISetupCommand.class);
       }
-      if(!origin.hasFacet(EJBFacet.class))
+      if (!origin.hasFacet(EJBFacet.class))
       {
          setupCommands.add(EJBSetupWizard.class);
       }
-      if(!origin.hasFacet(ServletFacet.class))
+      if (!origin.hasFacet(ServletFacet.class))
       {
-         //TODO: FORGE-1296. Ensure that this wizard only sets up Servlet 3.0+
+         // TODO: FORGE-1296. Ensure that this wizard only sets up Servlet 3.0+
          setupCommands.add(ServletSetupWizard.class);
       }
-      if(!origin.hasFacet(FacesFacet.class))
+      if (!origin.hasFacet(FacesFacet.class))
       {
          setupCommands.add(FacesSetupWizard.class);
       }
       return setupCommands;
    }
-   
+
    @Override
    public List<Class<? extends UICommand>> getGenerationFlow()
    {
@@ -267,7 +268,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       generationCommands.add(ScaffoldableEntitySelectionWizard.class);
       return generationCommands;
    }
-   
+
    protected List<Resource<?>> generateIndex(String targetDir, final Resource<?> template, final boolean overwrite)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
@@ -335,13 +336,13 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
 
       return result;
    }
-   
+
    @Override
    public AccessStrategy getAccessStrategy()
    {
       return new FacesAccessStrategy(this.origin);
    }
-   
+
    public TemplateStrategy getTemplateStrategy()
    {
       return new FacesTemplateStrategy(this.origin);
@@ -367,7 +368,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
 
       return result;
    }
-   
+
    protected void loadTemplates()
    {
       if (this.backingBeanTemplate == null)
@@ -426,7 +427,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
          this.indexWelcomeTemplate = this.templateProcessor.getTemplate(INDEX_WELCOME_TEMPLATE);
       }
    }
-   
+
    protected HashMap<Object, Object> getTemplateContext(String targetDir, final Resource<?> template)
    {
       TemplateStrategy templateStrategy = getTemplateStrategy();
@@ -434,7 +435,8 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       HashMap<Object, Object> context;
       context = new HashMap<Object, Object>();
       context.put("template", template);
-      context.put("templatePath", templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate()));
+      context.put("templatePath",
+               templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate()));
       context.put("templatePath", "/resources/scaffold/pageTemplate.xhtml");
       context.put("templateStrategy", templateStrategy);
       context.put("targetDir", targetDir);
@@ -448,9 +450,9 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       if (servlet instanceof ServletFacet_3_0)
       {
          WebAppDescriptor servletConfig = (WebAppDescriptor) servlet.getConfig();
-         Node root = ((NodeDescriptor)servletConfig).getRootNode();
+         Node root = ((NodeDescriptor) servletConfig).getRootNode();
          removeConflictingErrorPages(root);
-         
+
          // (prefer /faces/error.xhtml)
 
          String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource(ERROR_XHTML)).get(1);
@@ -510,7 +512,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       for (Node errorPage : nodeList)
       {
          String errorCode = errorPage.getTextValueForPatternName("error-code");
-         if(errorCode.equals("404") || errorCode.equals("500"))
+         if (errorCode.equals("404") || errorCode.equals("500"))
          {
             // TODO: Prompt before removing? A prompt existed in Forge 1.
             root.removeChild(errorPage);
@@ -583,7 +585,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
          writer.close();
       }
    }
-   
+
    /**
     * Parses the given XML and determines what namespaces it already declares. These are later removed from the list of
     * namespaces that Metawidget introduces.
@@ -632,7 +634,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
 
       return indent;
    }
-   
+
    private void resetMetaWidgets()
    {
       ForgeConfigReader configReader = new ForgeConfigReader(this.config, this.origin);
@@ -652,12 +654,12 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       this.qbeMetawidget = new StaticJavaMetawidget();
       this.qbeMetawidget.setConfigReader(configReader);
       this.qbeMetawidget.setConfig("scaffold/faces/metawidget-qbe.xml");
-      
+
       this.rmEntityMetawidget = new StaticJavaMetawidget();
       this.rmEntityMetawidget.setConfigReader(configReader);
       this.rmEntityMetawidget.setConfig("scaffold/faces/metawidget-remove-entity.xml");
    }
-   
+
    private List<Resource<?>> generateFromEntity(String targetDir, final Resource<?> template, final JavaClass entity,
             final boolean overwrite)
    {
@@ -690,13 +692,13 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
          StringWriter stringWriter = new StringWriter();
          this.qbeMetawidget.write(stringWriter, this.backingBeanTemplateQbeMetawidgetIndent);
          context.put("qbeMetawidget", stringWriter.toString().trim());
-         
+
          // Prepare removeEntityMetawidget
          this.rmEntityMetawidget.setPath(entity.getQualifiedName());
          stringWriter = new StringWriter();
          this.rmEntityMetawidget.write(stringWriter, this.backingBeanTemplateRmEntityMetawidgetIndent);
          context.put("rmEntityMetawidget", stringWriter.toString().trim());
-         
+
          // Prepare Java imports
          Set<String> qbeMetawidgetImports = this.qbeMetawidget.getImports();
          Set<String> rmEntityMetawidgetImports = this.rmEntityMetawidget.getImports();
@@ -711,7 +713,8 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
          context.put("persistenceUnitName", jpa.getConfig().getOrCreatePersistenceUnit().getName());
 
          // Create the Backing Bean for this entity
-         JavaClass viewBean = JavaParser.parse(JavaClass.class, this.templateProcessor.processTemplate(context, this.backingBeanTemplate));
+         JavaClass viewBean = JavaParser.parse(JavaClass.class,
+                  this.templateProcessor.processTemplate(context, this.backingBeanTemplate));
          viewBean.setPackage(java.getBasePackage() + ".view");
          result.add(ScaffoldUtil.createOrOverwrite(java.getJavaResource(viewBean), viewBean.toString(),
                   overwrite));
@@ -762,7 +765,8 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
          result.add(generateNavigation(targetDir, overwrite));
 
          // Need ViewUtils and forge.taglib.xml for forgeview:asList
-         JavaClass viewUtils = JavaParser.parse(JavaClass.class, this.templateProcessor.processTemplate(context, this.viewUtilsTemplate));
+         JavaClass viewUtils = JavaParser.parse(JavaClass.class,
+                  this.templateProcessor.processTemplate(context, this.viewUtilsTemplate));
          viewUtils.setPackage(viewBean.getPackage());
          result.add(ScaffoldUtil.createOrOverwrite(java.getJavaResource(viewUtils), viewUtils.toString(),
                   true));
@@ -780,7 +784,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       }
       return result;
    }
-   
+
    /**
     * Writes the entity Metawidget and its namespaces into the given context.
     */
@@ -816,7 +820,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       namespaces.keySet().removeAll(existingNamespaces.keySet());
       context.put("metawidgetNamespaces", namespacesToString(namespaces));
    }
-   
+
    protected String namespacesToString(final Map<String, String> namespaces)
    {
       StringBuilder builder = new StringBuilder();
@@ -833,7 +837,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
 
       return builder.toString();
    }
-   
+
    protected void createInitializers(final JavaClass entity) throws FacetNotFoundException, FileNotFoundException
    {
       boolean dirtyBit = false;
@@ -876,12 +880,12 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
             }
          }
       }
-      if(dirtyBit)
+      if (dirtyBit)
       {
          this.origin.getFacet(JavaSourceFacet.class).saveJavaSource(entity);
       }
    }
-   
+
    private void setPrimaryKeyMetaData(Map<Object, Object> context, final JavaClass entity)
    {
       String pkName = "id";
@@ -937,7 +941,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
       context.put("primaryKeyType", pkType);
       context.put("nullablePrimaryKeyType", nullablePkType);
    }
-   
+
    protected void setupRichFaces()
    {
       if ((this.origin.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces3UI)
@@ -958,7 +962,7 @@ public class FacesScaffoldProvider extends AbstractFacet<Project> implements Sca
                            .getWidgetBuilder()));
       }
    }
-   
+
    /**
     * Locates a <code>ReadOnlyWidgetBuilder</code> in the list of WidgetBuilders, and inserts a
     * <code>RichFacesWidgetBuilder</code> after it (unless there's a <code>RichFacesWidgetBuilder</code> in there
