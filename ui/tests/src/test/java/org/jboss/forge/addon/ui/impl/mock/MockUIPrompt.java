@@ -34,4 +34,10 @@ public class MockUIPrompt implements UIPrompt
       return true;
    }
 
+   @Override
+   public boolean promptBoolean(String message, boolean defaultValue)
+   {
+      return defaultValue;
+   }
+
 }

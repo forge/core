@@ -25,6 +25,13 @@ public class PromptCommand
       output.out().println("You answered: " + answer);
    }
 
+   @Command(value = "prompt-boolean-false", help = "Prompts for information")
+   public void promptBooleanFalse(UIOutput output, UIPrompt prompt)
+   {
+      boolean answer = prompt.promptBoolean("Do you love Forge 2?", false);
+      output.out().println("You answered: " + answer);
+   }
+
    @Command(value = "prompt-secret", help = "Prompts for information")
    public void promptSecret(UIOutput output, UIPrompt prompt)
    {

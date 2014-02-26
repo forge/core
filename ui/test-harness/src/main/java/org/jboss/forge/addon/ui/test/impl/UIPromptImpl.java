@@ -31,8 +31,14 @@ public class UIPromptImpl implements UIPrompt
    @Override
    public boolean promptBoolean(String message)
    {
-      //TODO: Change
+      // TODO: Change
       return true;
+   }
+
+   @Override
+   public boolean promptBoolean(String message, boolean defaultValue)
+   {
+      return defaultValue;
    }
 
 }

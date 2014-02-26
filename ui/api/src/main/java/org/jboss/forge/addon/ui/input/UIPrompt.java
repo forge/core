@@ -30,4 +30,10 @@ public interface UIPrompt
     */
    boolean promptBoolean(String message);
 
+   /**
+    * Prompt for boolean user input, first printing the given message, then returning user input as a boolean. The value
+    * returned will default to <code>defaultValue</code> if an empty or whitespace-only user input is read.
+    */
+   boolean promptBoolean(String message, boolean defaultValue);
+
 }

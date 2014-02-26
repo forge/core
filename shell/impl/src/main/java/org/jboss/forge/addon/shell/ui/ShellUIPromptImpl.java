@@ -16,6 +16,7 @@ import org.jboss.aesh.console.command.invocation.CommandInvocation;
 import org.jboss.aesh.terminal.Key;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.UIPrompt;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Implementation of {@link UIPrompt}
@@ -111,11 +112,33 @@ public class ShellUIPromptImpl implements UIPrompt
    @Override
    public boolean promptBoolean(String message)
    {
+      return promptBoolean(message, true);
+   }
+
+   @Override
+   public boolean promptBoolean(String message, boolean defaultValue)
+   {
       if (isAcceptDefaultsEnabled())
       {
-         return true;
+         return defaultValue;
       }
-      return !"N".equalsIgnoreCase(prompt(message + " [Y/n]"));
+      String suffix = (defaultValue) ? " [Y/n] " : " [y/N] ";
+      String answer = prompt(message + suffix);
+      if (Strings.isNullOrEmpty(answer))
+      {
+         return defaultValue;
+      }
+      else
+      {
+         if (defaultValue)
+         {
+            return !"N".equalsIgnoreCase(answer);
+         }
+         else
+         {
+            return "Y".equalsIgnoreCase(answer);
+         }
+      }
    }
 
    private boolean isAcceptDefaultsEnabled()
