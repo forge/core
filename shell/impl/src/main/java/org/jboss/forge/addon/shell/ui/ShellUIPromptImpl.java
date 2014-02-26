@@ -45,7 +45,7 @@ public class ShellUIPromptImpl implements UIPrompt
       }
       PrintStream out = console.getShell().out();
       out.print(message);
-      String output = readInput(true);
+      String output = readInput(out, true);
       out.println();
       return output;
    }
@@ -59,18 +59,17 @@ public class ShellUIPromptImpl implements UIPrompt
       }
       PrintStream out = console.getShell().out();
       out.print(message);
-      String output = readInput(false);
+      String output = readInput(out, false);
       out.println();
       return output;
    }
 
-   private String readInput(boolean echo)
+   private String readInput(PrintStream out, boolean echo)
    {
       String output;
       try
       {
          StringBuilder sb = new StringBuilder();
-         PrintStream out = console.getShell().out();
          Key inputKey;
          do
          {
