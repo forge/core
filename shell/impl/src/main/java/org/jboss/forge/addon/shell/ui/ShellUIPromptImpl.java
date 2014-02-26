@@ -42,15 +42,7 @@ public class ShellUIPromptImpl implements UIPrompt
       }
       PrintStream out = console.getShell().out();
       out.print(message);
-      String output;
-      try
-      {
-         output = String.valueOf(commandInvocation.getInput().getInputKey().getAsChar());
-      }
-      catch (InterruptedException e)
-      {
-         output = null;
-      }
+      String output = readInput(true);
       out.println();
       return output;
    }
@@ -64,16 +56,41 @@ public class ShellUIPromptImpl implements UIPrompt
       }
       PrintStream out = console.getShell().out();
       out.print(message);
+      String output = readInput(false);
+      out.println();
+      return output;
+   }
+
+   private String readInput(boolean echo)
+   {
       String output;
       try
       {
+         // StringBuilder sb = new StringBuilder();
+         // PrintStream out = console.getShell().out();
+         // Key inputKey;
+         // do
+         // {
+         // CommandOperation input = commandInvocation.getInput();
+         // inputKey = input.getInputKey();
+         // char asChar = inputKey.getAsChar();
+         // if (echo)
+         // {
+         // out.print(asChar);
+         // }
+         // if (inputKey.isValidInput())
+         // {
+         // sb.append(asChar);
+         // }
+         // }
+         // while (inputKey != Key.ENTER && inputKey != Key.ENTER_2);
+         // output = (sb.length() == 0) ? null : sb.toString();
          output = String.valueOf(commandInvocation.getInput().getInputKey().getAsChar());
       }
       catch (InterruptedException e)
       {
          output = null;
       }
-      out.println();
       return output;
    }
 
