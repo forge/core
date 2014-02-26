@@ -2,7 +2,7 @@ package org.jboss.forge.addon.manager.impl.commands;
 
 public interface AddonCommandConstants
 {
-   String[] ADDON_MANAGER_CATEGORIES = { "Addon", "Manage" };
+   String[] ADDON_MANAGER_CATEGORIES = { "Forge", "Manage" };
    String ADDON_INSTALL_COMMAND_NAME = "Install an Addon";
    String ADDON_INSTALL_COMMAND_NAME_NO_GUI = "addon-install";
    String ADDON_BUILD_INSTALL_COMMAND_NAME = "Build and Install an Addon";

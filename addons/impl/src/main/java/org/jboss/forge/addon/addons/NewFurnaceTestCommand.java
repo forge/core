@@ -106,7 +106,7 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
    {
       return Metadata.forCommand(getClass()).name("Addon: Test New")
                .description("Generates a Furnace test case for an addon")
-               .category(Categories.create("Addon", "Generate"));
+               .category(Categories.create("Forge", "Generate"));
    }
 
    @Override

@@ -82,7 +82,7 @@ public class NewFurnaceTestSetupCommand extends AbstractProjectCommand
    {
       return Metadata.forCommand(getClass()).name("Addon: Test Setup")
                .description("Add addon test setup to this project")
-               .category(Categories.create("Addon", "Generate"));
+               .category(Categories.create("Forge", "Generate"));
    }
 
    @Inject

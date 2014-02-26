@@ -71,7 +71,7 @@ public class NewUICommandWizard extends AbstractProjectCommand
    {
       return Metadata.forCommand(NewUICommandWizard.class)
                .name("Addon: New Command").description("Generates a UICommand implementation")
-               .category(Categories.create("Addon", "Generate"));
+               .category(Categories.create("Forge", "Generate"));
    }
 
    @Override
