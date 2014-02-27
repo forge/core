@@ -54,7 +54,8 @@ public class PrerequisiteCommandTransformer implements UICommandTransformer
             Class<? extends UICommand> classes[] = new Class[previousSteps.size() + 1];
             previousSteps.toArray(classes);
             classes[classes.length - 1] = (Class<? extends UICommand>) original.getMetadata(context).getType();
-            result = new CompositeWizard(original, classes);
+            NavigationResult navigateTo = Results.navigateTo(classes);
+            result = new DelegateWizard(original, navigateTo);
          }
       }
       else
@@ -86,15 +87,15 @@ public class PrerequisiteCommandTransformer implements UICommandTransformer
    }
 
    @Vetoed
-   private static class CompositeWizard extends AbstractUICommand implements UIWizard
+   private static class DelegateWizard extends AbstractUICommand implements UIWizard
    {
       private final UICommand originalCmd;
-      private final Class<? extends UICommand>[] steps;
+      private final NavigationResult result;
 
-      CompositeWizard(UICommand originalCmd, Class<? extends UICommand>[] steps)
+      DelegateWizard(UICommand originalCmd, NavigationResult result)
       {
          this.originalCmd = originalCmd;
-         this.steps = steps;
+         this.result = result;
       }
 
       @Override
@@ -106,7 +107,7 @@ public class PrerequisiteCommandTransformer implements UICommandTransformer
       @Override
       public NavigationResult next(UINavigationContext context) throws Exception
       {
-         return Results.navigateTo(steps);
+         return result;
       }
 
       @Override
