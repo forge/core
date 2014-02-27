@@ -7,7 +7,11 @@
 
 package org.jboss.forge.addon.ui.result;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.forge.addon.ui.command.UICommand;
+import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 
 /**
  * Utilities for creating {@link Result} instances.
@@ -57,20 +61,21 @@ public final class Results
    }
 
    /**
-    * Create a failed {@link NavigationResult} using the given {@link UICommand} type as the target.
+    * Create a {@link NavigationResult} using the given {@link UICommand} type as the target.
     */
-   @SuppressWarnings("unchecked")
    public static final NavigationResult navigateTo(Class<? extends UICommand> next)
    {
       if (next == null)
       {
          return null;
       }
-      return navigateTo(next, new Class[0]);
+      NavigationResultBuilder builder = navigationBuilder();
+      builder.add(next);
+      return builder.build();
    }
 
    /**
-    * Create a failed {@link NavigationResult} using the given {@link UICommand} array as the target.
+    * Create a {@link NavigationResult} using the given {@link UICommand} array as the target.
     */
    public static final NavigationResult navigateTo(Class<? extends UICommand>[] next)
    {
@@ -78,11 +83,16 @@ public final class Results
       {
          return null;
       }
-      return new NavigationResultImpl(next);
+      NavigationResultBuilder builder = navigationBuilder();
+      for (Class<? extends UICommand> type : next)
+      {
+         builder.add(type);
+      }
+      return builder.build();
    }
 
    /**
-    * Create a failed {@link NavigationResult} using the given {@link UICommand} types as the targets.
+    * Create a {@link NavigationResult} using the given {@link UICommand} types as the targets.
     */
    @SuppressWarnings("unchecked")
    public static final NavigationResult navigateTo(Class<? extends UICommand> next,
@@ -91,10 +101,50 @@ public final class Results
       if (next == null)
          return null;
 
-      Class<? extends UICommand>[] all = new Class[1 + additional.length];
-      all[0] = next;
-      System.arraycopy(additional, 0, all, 1, additional.length);
-      return new NavigationResultImpl(all);
+      NavigationResultBuilder builder = navigationBuilder();
+      builder.add(next);
+      for (Class<? extends UICommand> type : additional)
+      {
+         builder.add(type);
+      }
+      return builder.build();
+   }
+
+   public static NavigationResultBuilder navigationBuilder()
+   {
+      NavigationResultBuilder builder = NavigationResultBuilder.create();
+      return builder;
+   }
+
+   /**
+    * Aggregates a list of results into one single {@link CompositeResult}
+    */
+   public static CompositeResult aggregate(Iterable<Result> results)
+   {
+      List<Result> resultList = toList(results);
+      return CompositeResultImpl.from(resultList);
+   }
+
+   // TODO: Move to an utils method
+   private static <T> List<T> toList(Iterable<T> iterable)
+   {
+      if (iterable == null)
+      {
+         return null;
+      }
+      else if (iterable instanceof List)
+      {
+         return (List<T>) iterable;
+      }
+      else
+      {
+         List<T> list = new ArrayList<>();
+         for (T obj : iterable)
+         {
+            list.add(obj);
+         }
+         return list;
+      }
    }
 
    private static class SuccessfulResult implements Result

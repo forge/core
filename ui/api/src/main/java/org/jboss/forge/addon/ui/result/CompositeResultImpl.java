@@ -5,22 +5,17 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.ui.impl.result;
+package org.jboss.forge.addon.ui.result;
 
 import java.util.List;
 
-import org.jboss.forge.addon.ui.result.CompositeResult;
-import org.jboss.forge.addon.ui.result.Failed;
-import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.furnace.util.Assert;
 
 /**
+ * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
- * @deprecated Use {@link Results#aggregate(Iterable)} instead
  */
-@Deprecated
-public abstract class CompositeResultImpl implements CompositeResult
+abstract class CompositeResultImpl implements CompositeResult
 {
    private final List<Result> results;
 
@@ -43,7 +38,7 @@ public abstract class CompositeResultImpl implements CompositeResult
                "getMessage() should not be called in a CompositeResult. Call getResults() instead.");
    }
 
-   public static Result from(List<Result> results)
+   public static CompositeResult from(List<Result> results)
    {
       boolean failed = false;
       Throwable throwable = null;

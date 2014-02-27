@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.ui.result;
 
-import org.jboss.forge.addon.ui.command.UICommand;
-
 /**
  * The result of a navigation
  * 
@@ -17,5 +15,8 @@ import org.jboss.forge.addon.ui.command.UICommand;
  */
 public interface NavigationResult
 {
-   Class<? extends UICommand>[] getNext();
+   /**
+    * Returns the next entries for this navigation
+    */
+   NavigationResultEntry[] getNext();
 }
