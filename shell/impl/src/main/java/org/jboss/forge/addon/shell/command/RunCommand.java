@@ -40,7 +40,6 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.hints.InputType;
-import org.jboss.forge.addon.ui.impl.result.CompositeResultImpl;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -154,7 +153,7 @@ public class RunCommand extends AbstractShellCommand
          }
       }
 
-      return CompositeResultImpl.from(results);
+      return Results.aggregate(results);
    }
 
    public Result execute(Shell shell, BufferedWriter stdin, String line, int quantity, TimeUnit unit, long startTime)

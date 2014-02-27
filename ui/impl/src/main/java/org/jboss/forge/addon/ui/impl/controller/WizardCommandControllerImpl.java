@@ -28,14 +28,15 @@ import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.impl.context.UINavigationContextImpl;
-import org.jboss.forge.addon.ui.impl.result.CompositeResultImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 import org.jboss.forge.addon.ui.result.NavigationResult;
+import org.jboss.forge.addon.ui.result.NavigationResultEntry;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.addon.ui.wizard.WizardExecutionListener;
 import org.jboss.forge.furnace.addons.AddonRegistry;
@@ -165,7 +166,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
          firePostWizardFailure(executionContext, listeners, e);
          throw e;
       }
-      Result result = (results.size() == 1) ? results.get(0) : CompositeResultImpl.from(results);
+      Result result = (results.size() == 1) ? results.get(0) : Results.aggregate(results);
       firePostWizardExecuted(executionContext, listeners, result);
       return result;
    }
@@ -279,7 +280,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       {
          return false;
       }
-      Class<? extends UICommand>[] next = getNextFrom(getCurrentController().getCommand());
+      NavigationResultEntry[] next = getNextFrom(getCurrentController().getCommand());
       return ((next != null || !subflow.isEmpty()) || usedSubflows.contains(flowPointer));
    }
 
@@ -308,7 +309,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       CommandController lastController = flow.get(flow.size() - 1).controller;
       if (lastController.isInitialized())
       {
-         Class<? extends UICommand>[] next = getNextFrom(flow.get(flow.size() - 1).controller.getCommand());
+         NavigationResultEntry[] next = getNextFrom(flow.get(flow.size() - 1).controller.getCommand());
          if (next != null || !subflow.isEmpty())
          {
             return false;
@@ -330,7 +331,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
 
       WizardStepEntry currentEntry = getCurrentEntry();
       WizardStepEntry nextEntry = getNextEntry();
-      Class<? extends UICommand>[] result = getNextFrom(currentEntry.controller.getCommand());
+      NavigationResultEntry[] result = getNextFrom(currentEntry.controller.getCommand());
       if (nextEntry == null)
       {
          currentEntry.next = result;
@@ -406,7 +407,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    /**
     * @param result
     */
-   private void addNextFlowStep(Class<? extends UICommand>[] result)
+   private void addNextFlowStep(NavigationResultEntry[] result)
    {
       final WizardStepEntry next;
       if (result == null)
@@ -475,10 +476,16 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       return getCurrentEntry().controller;
    }
 
-   private WizardStepEntry createEntry(Class<? extends UICommand> commandClass, boolean subflowHead)
+   private WizardStepEntry createEntry(NavigationResultEntry entry, boolean subflowHead)
    {
-      UICommand command = createCommand(commandClass);
+      UICommand command = createCommand(entry);
       return createEntry(command, subflowHead);
+   }
+
+   private UICommand createCommand(NavigationResultEntry entry)
+   {
+      UICommand command = entry.getCommand(addonRegistry, context);
+      return command;
    }
 
    private UICommand createCommand(Class<? extends UICommand> commandClass)
@@ -493,9 +500,9 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       return new WizardStepEntry(controller, subflowHead);
    }
 
-   private Class<? extends UICommand>[] getNextFrom(UICommand command)
+   private NavigationResultEntry[] getNextFrom(UICommand command)
    {
-      Class<? extends UICommand>[] result = null;
+      NavigationResultEntry[] result = null;
       if (command instanceof UIWizard)
       {
          NavigationResult next;
@@ -519,7 +526,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    private static class WizardStepEntry
    {
       final CommandController controller;
-      Class<? extends UICommand>[] next;
+      NavigationResultEntry[] next;
       // If this entry starts a subflow
       final boolean subflowHead;
 

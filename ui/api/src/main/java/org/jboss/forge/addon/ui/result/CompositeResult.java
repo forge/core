@@ -10,10 +10,11 @@ package org.jboss.forge.addon.ui.result;
 import java.util.List;
 
 /**
+ * A {@link CompositeResult} is composed of several {@link Result} objects
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public interface CompositeResult extends Result
 {
-   public List<Result> getResults();
+   List<Result> getResults();
 }
