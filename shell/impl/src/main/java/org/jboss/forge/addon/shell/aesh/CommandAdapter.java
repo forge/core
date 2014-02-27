@@ -8,7 +8,6 @@
 package org.jboss.forge.addon.shell.aesh;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -27,6 +26,7 @@ import org.jboss.forge.addon.ui.result.CompositeResult;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Adapts the current {@link AbstractShellInteraction} to a {@link Command}
@@ -73,33 +73,7 @@ class CommandAdapter implements Command<CommandInvocation>
             log.log(Level.SEVERE, "Failed to execute [" + interaction.getName() + "] due to exception.", e);
             commandResult = Results.fail(e.getMessage(), e);
          }
-
-         List<Result> results;
-         if (commandResult instanceof CompositeResult)
-         {
-            results = ((CompositeResult) commandResult).getResults();
-         }
-         else
-         {
-            results = Arrays.asList(commandResult);
-         }
-         for (Result result : results)
-         {
-            if (result != null && result.getMessage() != null && !result.getMessage().isEmpty())
-            {
-               if (result instanceof Failed)
-               {
-                  ShellMessages.error(shell.getConsole().getShell().err(), result.getMessage());
-                  failure = true;
-               }
-               else
-               {
-                  ShellMessages.success(shell.getConsole().getShell().out(), result.getMessage());
-                  failure = false;
-               }
-            }
-         }
-
+         failure = displayResult(commandResult);
          Object selection = interaction.getContext().getSelection();
          if (selection != null)
          {
@@ -130,5 +104,34 @@ class CommandAdapter implements Command<CommandInvocation>
          }
       }
       return failure ? CommandResult.FAILURE : CommandResult.SUCCESS;
+   }
+
+   private boolean displayResult(Result result)
+   {
+      boolean failure = false;
+      if (result instanceof CompositeResult)
+      {
+         for (Result thisResult : ((CompositeResult) result).getResults())
+         {
+            if (!displayResult(thisResult))
+            {
+               failure = true;
+            }
+         }
+      }
+      else if (result != null && !Strings.isNullOrEmpty(result.getMessage()))
+      {
+         if (result instanceof Failed)
+         {
+            ShellMessages.error(shell.getConsole().getShell().err(), result.getMessage());
+            failure = true;
+         }
+         else
+         {
+            ShellMessages.success(shell.getConsole().getShell().out(), result.getMessage());
+            failure = false;
+         }
+      }
+      return failure;
    }
 }
