@@ -7,19 +7,16 @@
 
 package org.jboss.forge.addon.ui.controller.mock;
 
-import java.util.Collection;
-import java.util.Collections;
-
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
-import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 
@@ -46,9 +43,9 @@ public class MockPreStepsCommand extends AbstractUICommand implements Prerequisi
    }
 
    @Override
-   public Collection<Class<? extends UICommand>> getPrerequisiteCommands(UIContext context)
+   public NavigationResult getPrerequisiteCommands(UIContext context)
    {
-      return Collections.<Class<? extends UICommand>> singleton(ExampleCommand.class);
+      return Results.navigateTo(ExampleCommand.class);
    }
 
 }

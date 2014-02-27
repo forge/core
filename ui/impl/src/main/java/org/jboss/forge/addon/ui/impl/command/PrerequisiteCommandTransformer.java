@@ -7,10 +7,6 @@
 
 package org.jboss.forge.addon.ui.impl.command;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import javax.enterprise.inject.Vetoed;
 import javax.inject.Singleton;
 
@@ -26,6 +22,7 @@ import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 
 /**
@@ -36,26 +33,22 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
 @Singleton
 public class PrerequisiteCommandTransformer implements UICommandTransformer
 {
-   @SuppressWarnings("unchecked")
    @Override
    public UICommand transform(UIContext context, UICommand original)
    {
       final UICommand result;
       if (original instanceof PrerequisiteCommandsProvider)
       {
-         Collection<Class<? extends UICommand>> previousSteps = toCollection(((PrerequisiteCommandsProvider) original)
-                  .getPrerequisiteCommands(context));
-         if (previousSteps == null || previousSteps.isEmpty())
+         NavigationResult navigationResult = ((PrerequisiteCommandsProvider) original).getPrerequisiteCommands(context);
+         if (navigationResult == null || navigationResult.getNext().length == 0)
          {
             result = original;
          }
          else
          {
-            Class<? extends UICommand> classes[] = new Class[previousSteps.size() + 1];
-            previousSteps.toArray(classes);
-            classes[classes.length - 1] = (Class<? extends UICommand>) original.getMetadata(context).getType();
-            NavigationResult navigateTo = Results.navigateTo(classes);
-            result = new DelegateWizard(original, navigateTo);
+            NavigationResultBuilder builder = NavigationResultBuilder.create(navigationResult);
+            builder.add(original);
+            result = new DelegateWizard(original, builder.build());
          }
       }
       else
@@ -63,27 +56,6 @@ public class PrerequisiteCommandTransformer implements UICommandTransformer
          result = original;
       }
       return result;
-   }
-
-   private <T> Collection<T> toCollection(Iterable<T> iterable)
-   {
-      if (iterable == null)
-      {
-         return null;
-      }
-      else if (iterable instanceof Collection)
-      {
-         return (Collection<T>) iterable;
-      }
-      else
-      {
-         List<T> list = new ArrayList<>();
-         for (T obj : iterable)
-         {
-            list.add(obj);
-         }
-         return list;
-      }
    }
 
    @Vetoed

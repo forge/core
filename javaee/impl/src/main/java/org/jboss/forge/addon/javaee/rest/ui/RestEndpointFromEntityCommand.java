@@ -32,7 +32,6 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.text.Inflector;
 import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
-import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -42,8 +41,10 @@ import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.parser.java.JavaClass;
@@ -207,26 +208,26 @@ public class RestEndpointFromEntityCommand extends AbstractJavaEECommand impleme
    }
 
    @Override
-   public List<Class<? extends UICommand>> getPrerequisiteCommands(UIContext context)
+   public NavigationResult getPrerequisiteCommands(UIContext context)
    {
-      List<Class<? extends UICommand>> setup = new ArrayList<>();
+      NavigationResultBuilder builder = NavigationResultBuilder.create();
       Project project = getSelectedProject(context);
       if (project != null)
       {
          if (!project.hasFacet(RestFacet.class))
          {
-            setup.add(RestSetupWizard.class);
+            builder.add(RestSetupWizard.class);
          }
          if (!project.hasFacet(JPAFacet.class))
          {
-            setup.add(JPASetupWizard.class);
+            builder.add(JPASetupWizard.class);
          }
          if (!project.hasFacet(EJBFacet.class))
          {
-            setup.add(EJBSetupWizard.class);
+            builder.add(EJBSetupWizard.class);
          }
       }
-      return setup;
+      return builder.build();
    }
 
 }

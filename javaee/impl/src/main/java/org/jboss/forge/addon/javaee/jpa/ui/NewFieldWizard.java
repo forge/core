@@ -37,7 +37,6 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
-import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -55,6 +54,7 @@ import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
@@ -419,18 +419,18 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
    }
 
    @Override
-   public List<Class<? extends UICommand>> getPrerequisiteCommands(UIContext context)
+   public NavigationResult getPrerequisiteCommands(UIContext context)
    {
-      List<Class<? extends UICommand>> setup = new ArrayList<>();
+      NavigationResultBuilder builder = NavigationResultBuilder.create();
       Project project = getSelectedProject(context);
       if (project != null)
       {
          if (!project.hasFacet(JPAFacet.class))
          {
-            setup.add(JPASetupWizard.class);
+            builder.add(JPASetupWizard.class);
          }
       }
-      return setup;
+      return builder.build();
    }
 
 }

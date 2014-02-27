@@ -313,7 +313,7 @@ In some scenarios, it is important that other commands/wizards be executed befor
 to the current project and the current command/wizard creates classes that use classes from these libraries.
 
 . Implement PrerequisiteCommandsProvider in your command
-. Return a list of the prerequisite commands to be executed based on the current UIContext in the getPrerequisiteCommands method.  
+. Return a NavigationResult with the list of the prerequisite commands to be executed based on the current UIContext in the getPrerequisiteCommands method.  
 
 Example:
 [source,java]
@@ -323,18 +323,18 @@ public class MyCommand extends AbstractProjectCommand implements PrerequisiteCom
 {
   
    @Override
-   public List<Class<? extends UICommand>> getPrerequisiteCommands(UIContext context)
+   public NavigationResult getPrerequisiteCommands(UIContext context)
    {
-      List<Class<? extends UICommand>> setup = new ArrayList<>();
+      NavigationResultBuilder builder = NavigationResultBuilder.create();
       Project project = getSelectedProject(context);
       if (project != null)
       {
          if (!project.hasFacet(CDIFacet.class))
          {
-            setup.add(CDISetupCommand.class);
+            builder.add(CDISetupCommand.class);
          }
       }
-      return setup;
+      return builder.build();
    }
 
    ...

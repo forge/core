@@ -7,9 +7,8 @@
 
 package org.jboss.forge.addon.ui.command;
 
-import java.util.Collection;
-
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.result.NavigationResult;
 
 /**
  * Provides pre-execution steps based on the current {@link UIContext}.
@@ -22,7 +21,8 @@ public interface PrerequisiteCommandsProvider
     * Implementations should return the steps required to run before this command
     * 
     * @param context the current {@link UIContext}
-    * @return the pre execution steps, if any. Must return an empty {@link Collection} or null if no steps are available
+    * @return the {@link NavigationResult} to be displayed. The command that originated it will be automatically
+    *         appended to the end of the {@link NavigationResult} returned
     */
-   Iterable<Class<? extends UICommand>> getPrerequisiteCommands(UIContext context);
+   NavigationResult getPrerequisiteCommands(UIContext context);
 }
