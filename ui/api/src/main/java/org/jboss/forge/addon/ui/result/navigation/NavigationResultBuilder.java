@@ -38,7 +38,7 @@ public final class NavigationResultBuilder
    public static NavigationResultBuilder create(NavigationResult result)
    {
       NavigationResultBuilder builder = new NavigationResultBuilder();
-      if (result != null)
+      if (result != null && result.getNext() != null)
       {
          builder.entries.addAll(Arrays.asList(result.getNext()));
       }
