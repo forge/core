@@ -103,6 +103,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
             break;
          }
       }
+      cleanSubsequentStalePages();
       this.flowPointer = currentFlowPointer;
    }
 
