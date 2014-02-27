@@ -31,6 +31,33 @@ public class NavigationResultBuilderTest
    }
 
    @Test
+   public void testBuilderCreateFromNullNavigationResult()
+   {
+      NavigationResultBuilder builder = NavigationResultBuilder.create();
+      NavigationResult result = builder.build();
+      NavigationResultBuilder builder2 = NavigationResultBuilder.create(result);
+      Assert.assertNotNull(builder2);
+      Assert.assertNotSame(builder2, builder);
+      NavigationResult result2 = builder2.build();
+      Assert.assertNull(result2);
+   }
+
+   @Test
+   public void testBuilderCreateFromExistingNavigationResult()
+   {
+      NavigationResultBuilder builder = NavigationResultBuilder.create();
+      builder.add(MockCommand.class);
+      NavigationResult result = builder.build();
+      NavigationResultBuilder builder2 = NavigationResultBuilder.create(result);
+      Assert.assertNotNull(builder2);
+      Assert.assertNotSame(builder2, builder);
+      NavigationResult result2 = builder2.build();
+      Assert.assertNotNull(result2);
+      Assert.assertNotNull(result2.getNext());
+      Assert.assertEquals(1, result2.getNext().length);
+   }
+
+   @Test
    public void testBuilderEntriesSizeMatch()
    {
       NavigationResultBuilder builder = NavigationResultBuilder.create();

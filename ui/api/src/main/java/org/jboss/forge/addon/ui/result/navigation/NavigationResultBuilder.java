@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.ui.result.navigation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,6 +33,16 @@ public final class NavigationResultBuilder
    public static NavigationResultBuilder create()
    {
       return new NavigationResultBuilder();
+   }
+
+   public static NavigationResultBuilder create(NavigationResult result)
+   {
+      NavigationResultBuilder builder = new NavigationResultBuilder();
+      if (result != null)
+      {
+         builder.entries.addAll(Arrays.asList(result.getNext()));
+      }
+      return builder;
    }
 
    public NavigationResultBuilder add(Class<? extends UICommand> type)
