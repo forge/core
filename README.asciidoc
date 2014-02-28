@@ -23,17 +23,29 @@ Forge 2 is packaged inside an Eclipse plugin and also as a standalone ZIP file. 
 It is worth mentioning that the Eclipse plugin does not support access to shell yet.
 
 - Eclipse Update Site - http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/
-- Command line tools - https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.1.1.Final&e=zip
-
+- Command line tools
 
 === Get Started with the Command line tools:
 
-- Download link:https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.1.1.Final&e=zip[JBoss Forge 2.1.1.Final]
+Getting started with the command line tools is easy:
 
+* Download a distribution
+.. Download link:https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.1.1.Final&e=zip&c=offline[JBoss Forge 2.1.1.Final - Offline (Recommended)]
+... This ZIP contains the Forge runtime + Core Addons
+.. Download link:https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.1.1.Final&e=zip[JBoss Forge 2.1.1.Final - No Addons]
+... This ZIP contains the Forge runtime only
 
-- Extract the ZIP to a directory and navigate to forge-distribution-2.1.1.Final/bin directory
+* Extract the ZIP to a directory and navigate to forge-distribution-2.1.1.Final/bin directory
+* Execute forge by running
+[source,cmd]
+----
+    forge
+----
+
 
 Forge is now ready to go. 
+
+==== Install addons (not needed if using the offline zip)
 
 Install the required addons by running the following commands:
 
