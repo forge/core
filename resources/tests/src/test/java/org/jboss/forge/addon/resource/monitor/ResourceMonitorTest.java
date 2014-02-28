@@ -115,7 +115,7 @@ public class ResourceMonitorTest
       File tempDir = OperatingSystemUtils.createTempDir();
       DirectoryResource tempDirResource = resourceFactory.create(DirectoryResource.class, tempDir);
       monitor = resourceFactory.monitor(tempDirResource);
-      final List<ResourceEvent> eventCollector = new ArrayList<>();
+      final Set<ResourceEvent> eventCollector = new LinkedHashSet<>();
       monitor.addResourceListener(new ResourceListener()
       {
          @Override
@@ -183,9 +183,13 @@ public class ResourceMonitorTest
       }, 5, TimeUnit.SECONDS);
 
       Assert.assertEquals(3, eventCollector.size());
-      Assert.assertThat(eventCollector.get(0), is(instanceOf(ResourceCreated.class)));
-      Assert.assertThat(eventCollector.get(1), is(instanceOf(ResourceCreated.class)));
-      Assert.assertThat(eventCollector.get(2), is(instanceOf(ResourceDeleted.class)));
+      Iterator<ResourceEvent> iterator = eventCollector.iterator();
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceCreated.class)));
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceCreated.class)));
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceDeleted.class)));
    }
 
    @Test
@@ -263,7 +267,7 @@ public class ResourceMonitorTest
             return "foo.txt".equals(resource.getName());
          }
       });
-      final List<ResourceEvent> eventCollector = new ArrayList<>();
+      final Set<ResourceEvent> eventCollector = new LinkedHashSet<>();
       monitor.addResourceListener(new ResourceListener()
       {
          @Override
@@ -315,8 +319,11 @@ public class ResourceMonitorTest
       }, 5, TimeUnit.SECONDS);
 
       Assert.assertEquals(2, eventCollector.size());
-      Assert.assertThat(eventCollector.get(0), is(instanceOf(ResourceCreated.class)));
-      Assert.assertThat(eventCollector.get(1), is(instanceOf(ResourceDeleted.class)));
+      Iterator<ResourceEvent> iterator = eventCollector.iterator();
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceCreated.class)));
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceDeleted.class)));
    }
 
    @Test
