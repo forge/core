@@ -12,10 +12,8 @@ import static org.hamcrest.CoreMatchers.is;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -342,7 +340,7 @@ public class ResourceMonitorTest
          }
       });
 
-      final List<ResourceEvent> eventCollector = new ArrayList<>();
+      final Set<ResourceEvent> eventCollector = new LinkedHashSet<>();
       monitor.addResourceListener(new ResourceListener()
       {
          @Override
@@ -389,8 +387,11 @@ public class ResourceMonitorTest
       }, 5, TimeUnit.SECONDS);
 
       Assert.assertEquals(2, eventCollector.size());
-      Assert.assertThat(eventCollector.get(0), is(instanceOf(ResourceModified.class)));
-      Assert.assertThat(eventCollector.get(1), is(instanceOf(ResourceDeleted.class)));
+      Iterator<ResourceEvent> iterator = eventCollector.iterator();
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceModified.class)));
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceDeleted.class)));
    }
 
    private void waitForMonitor(Callable<Void> task, Callable<Boolean> status, int quantity, TimeUnit unit)
