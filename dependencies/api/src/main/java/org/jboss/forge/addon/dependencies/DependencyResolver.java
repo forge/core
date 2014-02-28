@@ -35,7 +35,8 @@ public interface DependencyResolver
    DependencyNode resolveDependencyHierarchy(DependencyQuery query);
 
    /**
-    * Resolve the versions from a {@link Dependency} object contained in the {@link DependencyQuery} object.
+    * Resolve the versions from a {@link Dependency} object contained in the {@link DependencyQuery} object in ascending
+    * order.
     */
    List<Coordinate> resolveVersions(DependencyQuery query);
 
