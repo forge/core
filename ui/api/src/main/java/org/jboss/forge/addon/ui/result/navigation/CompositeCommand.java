@@ -35,7 +35,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
 class CompositeCommand implements UICommand
 {
    private final UICommandMetadata metadata;
-   private Iterable<UICommand> commands;
+   private final Iterable<UICommand> commands;
 
    public CompositeCommand(UICommandMetadata metadata, Iterable<UICommand> commands)
    {
