@@ -94,11 +94,6 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.forge.addon</groupId>
-      <artifactId>scaffold-faces</artifactId>
-      <classifier>forge-addon</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.forge.addon</groupId>
       <artifactId>shell</artifactId>
       <classifier>forge-addon</classifier>
     </dependency>
