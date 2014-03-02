@@ -241,7 +241,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    }
 
    @Override
-   public List<Class<? extends UICommand>> getSetupFlow()
+   public List<Class<? extends UICommand>> getSetupFlow(Project project)
    {
       List<Class<? extends UICommand>> setupCommands = new ArrayList<Class<? extends UICommand>>();
       if (!project.hasFacet(JPAFacet.class))
@@ -269,7 +269,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    }
 
    @Override
-   public List<Class<? extends UICommand>> getGenerationFlow()
+   public List<Class<? extends UICommand>> getGenerationFlow(Project project)
    {
       List<Class<? extends UICommand>> generationCommands = new ArrayList<Class<? extends UICommand>>();
       generationCommands.add(ScaffoldableEntitySelectionWizard.class);

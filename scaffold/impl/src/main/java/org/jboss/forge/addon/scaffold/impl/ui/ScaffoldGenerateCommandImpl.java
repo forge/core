@@ -105,15 +105,14 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    {
       ScaffoldProvider selectedProvider = provider.getValue();
       UIContext uiContext = context.getUIContext();
-      Project project = getSelectedProject(uiContext);
       Map<Object, Object> attributeMap = uiContext.getAttributeMap();
 
-      attributeMap.put(Project.class, project);
       attributeMap.put(ScaffoldProvider.class, selectedProvider);
       attributeMap.put(ScaffoldGenerationContext.class, populateGenerationContext(uiContext));
 
       // Get the step sequence from the selected scaffold provider
-      List<Class<? extends UICommand>> generationFlow = selectedProvider.getGenerationFlow();
+      Project project = getSelectedProject(uiContext);
+      List<Class<? extends UICommand>> generationFlow = selectedProvider.getGenerationFlow(project);
 
       // Add the execution logic step in the end so that the scaffold generation step is executed last after all other
       // steps

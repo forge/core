@@ -122,7 +122,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
       attributeMap.put(ScaffoldSetupContext.class, createSetupContext());
 
       // Get the step sequence from the selected scaffold provider
-      List<Class<? extends UICommand>> setupFlow = selectedProvider.getSetupFlow();
+      List<Class<? extends UICommand>> setupFlow = selectedProvider.getSetupFlow(getSelectedProject(uiContext));
 
       // Add the execution logic step in the end so that the scaffold setup step is executed last after all other
       // steps
