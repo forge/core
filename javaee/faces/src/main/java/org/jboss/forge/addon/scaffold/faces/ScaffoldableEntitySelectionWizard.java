@@ -8,6 +8,8 @@ import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
@@ -37,24 +39,28 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
    @Inject
    @WithAttributes(label = "Page Template")
    private UIInput<FileResource<?>> pageTemplate;
-
+    
    @Inject
    @WithAttributes(label = "Targets", required = true)
    private UISelectMany<JavaClass> targets;
 
    @Inject
-   ResourceFactory resourceFactory;
+   private ResourceFactory resourceFactory;
+
+   @Inject
+   private ProjectFactory projectFactory;
 
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
-      Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
+      UIContext uiContext = context.getUIContext();
+      Map<Object, Object> attributeMap = uiContext.getAttributeMap();
       ResourceCollection resourceCollection = new ResourceCollection();
       if (targets.getValue() != null)
       {
          for (JavaClass klass : targets.getValue())
          {
-             Project project = (Project) attributeMap.get(Project.class);
+             Project project = getSelectedProject(uiContext);
              JavaSourceFacet javaSource = project.getFacet(JavaSourceFacet.class);
              Resource resource = javaSource.getJavaResource(klass);
              if (resource != null)
@@ -86,9 +92,9 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      Map<Object, Object> attributeMap = builder.getUIContext().getAttributeMap();
+      UIContext uiContext = builder.getUIContext();
+      Project project = getSelectedProject(uiContext);
 
-      Project project = (Project) attributeMap.get(Project.class);
       JPAFacet<PersistenceCommonDescriptor> persistenceFacet = project.getFacet(JPAFacet.class);
       targets.setValueChoices(persistenceFacet.getAllEntities());
       targets.setItemLabelConverter(new Converter<JavaClass, String>()
@@ -140,6 +146,11 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
                      + "the default template (do not specify a template.)");
          }
       }
+   }
+
+   private Project getSelectedProject(UIContext uiContext)
+   {
+      return Projects.getSelectedProject(projectFactory, uiContext);
    }
 
 }

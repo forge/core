@@ -8,10 +8,10 @@ import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
 import org.jboss.forge.addon.ui.command.UICommand;
+import org.jboss.forge.addon.ui.context.UIContext;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class MockProvider implements ScaffoldProvider
@@ -64,13 +64,13 @@ public class MockProvider implements ScaffoldProvider
    }
 
    @Override
-   public List<Class<? extends UICommand>> getSetupFlow()
+   public List<Class<? extends UICommand>> getSetupFlow(Project project)
    {
       return null;
    }
 
    @Override
-   public List<Class<? extends UICommand>> getGenerationFlow()
+   public List<Class<? extends UICommand>> getGenerationFlow(Project project)
    {
       return null;
    }
