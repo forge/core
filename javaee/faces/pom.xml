@@ -13,7 +13,17 @@
 		<metawidget.version>2.4</metawidget.version>
 	</properties>
 	<dependencies>
-		<dependency>
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>javaee-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>javaee-impl</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
 			<groupId>org.jboss.forge.addon</groupId>
 			<artifactId>scaffold</artifactId>
 			<classifier>forge-addon</classifier>
@@ -38,17 +48,17 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.forge.addon</groupId>
-			<artifactId>javaee</artifactId>
-			<classifier>forge-addon</classifier>
-			<scope>provided</scope>
-		</dependency>		
-		<dependency>
 			<groupId>org.jboss.forge.furnace.container</groupId>
 			<artifactId>cdi</artifactId>
 			<classifier>forge-addon</classifier>
 			<scope>provided</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>parser-java</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
