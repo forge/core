@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -29,7 +30,6 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 
 public class ScaffoldableEntitySelectionWizard implements UIWizardStep
@@ -48,16 +48,21 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
+      Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
       ResourceCollection resourceCollection = new ResourceCollection();
       if (targets.getValue() != null)
       {
          for (JavaClass klass : targets.getValue())
          {
-             Resource<? extends JavaSource<?>> resource = resourceFactory.create(klass.getEnclosingType());
-             resourceCollection.addToCollection(resource);
+             Project project = (Project) attributeMap.get(Project.class);
+             JavaSourceFacet javaSource = project.getFacet(JavaSourceFacet.class);
+             Resource resource = javaSource.getJavaResource(klass);
+             if (resource != null)
+             {
+                resourceCollection.addToCollection(resource);
+             }
          }
       }
-      Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
 
       attributeMap.put(ResourceCollection.class, resourceCollection);
       ScaffoldGenerationContext genCtx = (ScaffoldGenerationContext) attributeMap.get(ScaffoldGenerationContext.class);

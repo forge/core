@@ -111,7 +111,6 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
       attributeMap.put(Project.class, project);
       attributeMap.put(ScaffoldProvider.class, selectedProvider);
       attributeMap.put(ScaffoldGenerationContext.class, populateGenerationContext(uiContext));
-      ((AbstractFacet) selectedProvider).setFaceted(project);
 
       // Get the step sequence from the selected scaffold provider
       List<Class<? extends UICommand>> generationFlow = selectedProvider.getGenerationFlow();

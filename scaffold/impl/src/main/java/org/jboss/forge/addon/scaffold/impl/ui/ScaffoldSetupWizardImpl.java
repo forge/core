@@ -114,11 +114,10 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
-      ScaffoldProvider selectedProvider = provider.getValue();
-      Project project = getSelectedProject(context);
-      ((AbstractFacet) selectedProvider).setFaceted(project);
       UIContext uiContext = context.getUIContext();
       Map<Object, Object> attributeMap = uiContext.getAttributeMap();
+
+      ScaffoldProvider selectedProvider = provider.getValue();
       attributeMap.put(ScaffoldProvider.class, selectedProvider);
       attributeMap.put(ScaffoldSetupContext.class, createSetupContext());
 
