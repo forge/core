@@ -36,6 +36,7 @@ import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.javaee.servlet.ui.ServletSetupWizard;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
@@ -51,11 +52,7 @@ import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.Annotation;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Member;
-import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.parser.java.*;
 import org.jboss.shrinkwrap.descriptor.api.javaee6.ParamValueType;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
@@ -207,7 +204,25 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       Collection<?> resources = generationContext.getResources();
       for (Object resource : resources)
       {
-         JavaClass entity = (JavaClass) resource;
+         JavaSource<?> javaSource = null;
+         if(resource instanceof JavaResource)
+         {
+            JavaResource javaResource = (JavaResource) resource;
+            try
+            {
+               javaSource = javaResource.getJavaSource();
+            }
+            catch (FileNotFoundException fileEx)
+            {
+               throw new IllegalStateException(fileEx);
+            }
+         }
+         else
+         {
+            continue;
+         }
+
+         JavaClass entity = (JavaClass) javaSource;
          String targetDir = generationContext.getTargetDirectory();
          targetDir = (targetDir == null) ? "" : targetDir;
          Resource<?> template = (Resource<?>) generationContext.getAttribute("pageTemplate");
