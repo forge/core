@@ -28,7 +28,7 @@ Here are the steps in detail:
 
         git checkout -b FORGE-123 upstream/master
 
-6. Contribute new code or make changes to existing files. If you're using Eclipse, be sure to format your code using the provided [Forge Code Formatter](eclipse-code-formatter-profile.xml)   )
+6. Contribute new code or make changes to existing files. If you're using Eclipse, be sure to format your code using the provided [Forge Code Formatter](eclipse-code-formatter-profile.xml)   ). If you're using IntelliJ IDEA, we recommend using [this plugin](http://plugins.jetbrains.com/plugin/6546) to use the before-mentioned Eclipse code formatter in IDEA.
 
 7. Use the `git add` command to add new or changed file contents to the staging area.
         git add .
