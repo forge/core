@@ -214,7 +214,7 @@ public class JPASetupWizardTest
 
       // Reload to refresh facets.
       project = projectFactory.findProject(project.getRootDirectory());
-      
+
       // Check SUT values
       PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
       List<PersistenceUnitCommon> allUnits = config.getAllPersistenceUnit();
