@@ -33,6 +33,7 @@ import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.services.Imported;
@@ -128,10 +129,9 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
       // steps
       setupFlow.add(ScaffoldExecuteSetupStep.class);
 
-      // Extract the first command to obtain the next step
-      Class<? extends UICommand> next = setupFlow.remove(0);
-      Class<?>[] additional = setupFlow.toArray(new Class<?>[setupFlow.size()]);
-      return context.navigateTo(next, (Class<? extends UICommand>[]) additional);
+      NavigationResultBuilder builder = NavigationResultBuilder.create();
+      builder.add(getMetadata(uiContext), setupFlow);
+      return builder.build();
    }
 
    @Override
