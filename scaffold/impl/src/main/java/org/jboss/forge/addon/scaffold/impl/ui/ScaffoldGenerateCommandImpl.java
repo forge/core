@@ -32,6 +32,7 @@ import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.services.Imported;
@@ -118,10 +119,9 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
       // steps
       generationFlow.add(ScaffoldExecuteGenerationStep.class);
 
-      // Extract the first command to obtain the next step
-      Class<? extends UICommand> next = generationFlow.remove(0);
-      Class<?>[] additional = generationFlow.toArray(new Class<?>[generationFlow.size()]);
-      return Results.navigateTo(next, (Class<? extends UICommand>[]) additional);
+      NavigationResultBuilder builder = NavigationResultBuilder.create();
+      builder.add(getMetadata(uiContext), generationFlow);
+      return builder.build();
    }
 
    @Override
