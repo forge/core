@@ -44,7 +44,9 @@ public interface ResourcesFacet extends ProjectFacet
     * file containing the given bytes.
     * 
     * @return a handle to the {@link FileResource} that was created.
+    * @deprecated use {@link ResourcesFacet#getResource(String)} and call {@link FileResource#setContents(char[])}
     */
+   @Deprecated
    FileResource<?> createResource(char[] bytes, String relativeFilename);
 
    /**
@@ -52,7 +54,9 @@ public interface ResourcesFacet extends ProjectFacet
     * create a file containing the given bytes.
     * 
     * @return a handle to the {@link FileResource} that was created.
+    * @deprecated use {@link ResourcesFacet#getTestResource(String)} and call {@link FileResource#setContents(char[])}
     */
+   @Deprecated
    FileResource<?> createTestResource(char[] bytes, String relativeFilename);
 
    /**
