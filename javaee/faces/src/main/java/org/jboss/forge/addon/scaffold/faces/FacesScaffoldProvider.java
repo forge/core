@@ -50,7 +50,11 @@ import org.jboss.forge.addon.scaffold.spi.AccessStrategy;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
+import org.jboss.forge.addon.scaffold.ui.ScaffoldSetupWizard;
 import org.jboss.forge.addon.ui.command.UICommand;
+import org.jboss.forge.addon.ui.result.NavigationResult;
+import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
+import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.*;
 import org.jboss.shrinkwrap.descriptor.api.javaee6.ParamValueType;
@@ -241,12 +245,13 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    }
 
    @Override
-   public List<Class<? extends UICommand>> getSetupFlow(Project project)
+   public NavigationResult getSetupFlow(Project project)
    {
+      NavigationResultBuilder builder = NavigationResultBuilder.create();
       List<Class<? extends UICommand>> setupCommands = new ArrayList<Class<? extends UICommand>>();
       if (!project.hasFacet(JPAFacet.class))
       {
-         setupCommands.add(JPASetupWizard.class);
+         builder.add(JPASetupWizard.class);
       }
       if (!project.hasFacet(CDIFacet.class))
       {
@@ -265,15 +270,20 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       {
          setupCommands.add(FacesSetupWizard.class);
       }
-      return setupCommands;
+
+      Metadata compositeSetupMetadata = Metadata.forCommand(ScaffoldSetupWizard.class)
+               .name("Setup Facets")
+               .description("Setup all dependent facets for the Faces scaffold.");
+      builder.add(compositeSetupMetadata, setupCommands);
+      return builder.build();
    }
 
    @Override
-   public List<Class<? extends UICommand>> getGenerationFlow(Project project)
+   public NavigationResult getGenerationFlow(Project project)
    {
-      List<Class<? extends UICommand>> generationCommands = new ArrayList<Class<? extends UICommand>>();
-      generationCommands.add(ScaffoldableEntitySelectionWizard.class);
-      return generationCommands;
+      NavigationResultBuilder builder = NavigationResultBuilder.create();
+      builder.add(ScaffoldableEntitySelectionWizard.class);
+      return builder.build();
    }
 
    protected List<Resource<?>> generateIndex(String targetDir, final Resource<?> template, final boolean overwrite)

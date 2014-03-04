@@ -14,6 +14,7 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.validate.UIValidator;
 
 /**
@@ -63,13 +64,13 @@ public interface ScaffoldProvider
     * Return the {@link List} of {@link UICommand} classes that begins the scaffold setup of this type, if any.
     * @param project The currently selected project
     */
-   List<Class<? extends UICommand>> getSetupFlow(Project project);
+   NavigationResult getSetupFlow(Project project);
 
    /**
     * Return the {@link List} of {@link UICommand} classes that begins the scaffold generation of this type, if any.
     * @param project The currently selected project
     */
-   List<Class<? extends UICommand>> getGenerationFlow(Project project);
+   NavigationResult getGenerationFlow(Project project);
 
    AccessStrategy getAccessStrategy();
 
