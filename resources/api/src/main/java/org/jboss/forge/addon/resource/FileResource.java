@@ -1,8 +1,6 @@
 package org.jboss.forge.addon.resource;
 
 import java.io.File;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 
@@ -11,7 +9,7 @@ import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface FileResource<T extends FileResource<T>> extends Resource<File>
+public interface FileResource<T extends FileResource<T>> extends Resource<File>, WriteableResource<T>
 {
    /**
     * Return true if this {@link FileResource} exists and is actually a directory, otherwise return false;
@@ -48,31 +46,6 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>
     * with care.
     */
    public void deleteOnExit();
-
-   /**
-    * Set the contents of this {@link FileResource} to the given {@link String} using UTF-8 encoding.
-    */
-   public T setContents(String data);
-
-   /**
-    * Set the contents of this {@link FileResource} to the given {@link String} using the specified encoding.
-    */
-   public T setContents(String data, Charset charset);
-
-   /**
-    * Set the contents of this {@link FileResource} to the given character array using UTF-8 encoding.
-    */
-   public T setContents(final char[] data);
-
-   /**
-    * Set the contents of this {@link FileResource} to the given character array using the specified encoding.
-    */
-   public T setContents(final char[] data, Charset charset);
-
-   /**
-    * Set the contents of this {@link FileResource} to the contents of the given {@link InputStream}.
-    */
-   public T setContents(final InputStream data);
 
    /**
     * Create the file in the underlying resource system. Necessary directory paths will be created automatically.
