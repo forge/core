@@ -113,15 +113,14 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
 
       // Get the step sequence from the selected scaffold provider
       Project project = getSelectedProject(uiContext);
-      List<Class<? extends UICommand>> generationFlow = selectedProvider.getGenerationFlow(project);
+      NavigationResult generationFlow = selectedProvider.getGenerationFlow(project);
 
       // Add the execution logic step in the end so that the scaffold generation step is executed last after all other
       // steps
-      generationFlow.add(ScaffoldExecuteGenerationStep.class);
+      NavigationResultBuilder builder = NavigationResultBuilder.create(generationFlow);
+      NavigationResult navigationResult = builder.add(ScaffoldExecuteGenerationStep.class).build();
 
-      NavigationResultBuilder builder = NavigationResultBuilder.create();
-      builder.add(getMetadata(uiContext), generationFlow);
-      return builder.build();
+      return navigationResult;
    }
 
    @Override
