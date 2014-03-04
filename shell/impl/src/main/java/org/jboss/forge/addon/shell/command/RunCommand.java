@@ -9,20 +9,20 @@ package org.jboss.forge.addon.shell.command;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
+import org.jboss.aesh.console.Prompt;
+import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
@@ -85,13 +85,13 @@ public class RunCommand extends AbstractShellCommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(arguments);
+      builder.add(timeout).add(arguments);
    }
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      List<Result> results = new ArrayList<>();
+      Result result = Results.fail("Error executing script.");
       Resource<?> currentResource = (Resource<?>) context.getUIContext().getInitialSelection().get();
 
       ALL: for (String path : arguments.getValue())
@@ -102,15 +102,21 @@ public class RunCommand extends AbstractShellCommand
             if (resource.exists())
             {
                final PipedOutputStream stdin = new PipedOutputStream();
-               final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
-               final ByteArrayOutputStream stderr = new ByteArrayOutputStream();
                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
 
+               PrintStream stdout = new UncloseablePrintStream(context.getUIContext().getProvider().getOutput().out());
+               PrintStream stderr = new UncloseablePrintStream(context.getUIContext().getProvider().getOutput().err());
+
+               Settings settings = new SettingsBuilder()
+                        .inputStream(new PipedInputStream(stdin))
+                        .outputStream(stdout)
+                        .outputStreamError(stderr)
+                        .create();
+
                Shell scriptShell = shellFactory.createShell(((FileResource<?>) context.getUIContext()
-                        .getInitialSelection().get()).getUnderlyingResourceObject(),
-                        new SettingsBuilder().inputStream(new PipedInputStream(stdin))
-                                 .outputStream(new PrintStream(stdout))
-                                 .outputStreamError(new PrintStream(stderr)).create());
+                        .getInitialSelection().get()).getUnderlyingResourceObject(), settings);
+               
+               scriptShell.getConsole().setPrompt(new Prompt(""));
 
                try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getResourceInputStream())))
                {
@@ -119,23 +125,20 @@ public class RunCommand extends AbstractShellCommand
                   {
                      try
                      {
-                        Result result = execute(scriptShell, writer, reader.readLine(), timeout.getValue(),
+                        String line = reader.readLine();
+                        Integer timeoutValue = timeout.getValue();
+                        result = execute(scriptShell, writer, line, timeoutValue,
                                  TimeUnit.SECONDS, startTime);
 
                         if (result != null)
                         {
-                           results.add(result);
-
-                           context.getUIContext().getProvider().getOutput().out().write(stdout.toByteArray());
-                           context.getUIContext().getProvider().getOutput().err().write(stderr.toByteArray());
-
                            if (result instanceof Failed)
                               break ALL;
                         }
                      }
                      catch (TimeoutException e)
                      {
-                        results.add(Results.fail(path + ": timed out.", e));
+                        result = Results.fail(path + ": timed out.");
                         break ALL;
                      }
                   }
@@ -147,13 +150,13 @@ public class RunCommand extends AbstractShellCommand
             }
             else
             {
-               results.add(Results.fail(path + ": not found."));
+               result = Results.fail(path + ": not found.");
                break ALL;
             }
          }
       }
 
-      return Results.aggregate(results);
+      return result;
    }
 
    public Result execute(Shell shell, BufferedWriter stdin, String line, int quantity, TimeUnit unit, long startTime)
@@ -212,6 +215,7 @@ public class RunCommand extends AbstractShellCommand
       @Override
       public void preCommandExecuted(UICommand command, UIExecutionContext context)
       {
+         System.out.println("before: " + command);
       }
 
       @Override
@@ -219,6 +223,7 @@ public class RunCommand extends AbstractShellCommand
       {
          synchronized (this)
          {
+            System.out.println("after: " + command);
             this.result = result;
          }
       }
@@ -228,6 +233,7 @@ public class RunCommand extends AbstractShellCommand
       {
          synchronized (this)
          {
+            System.out.println("failed: " + command);
             this.result = Results.fail("Error encountered during command execution.", failure);
          }
       }
@@ -261,5 +267,19 @@ public class RunCommand extends AbstractShellCommand
    public boolean isEnabled(ShellContext context)
    {
       return super.isEnabled(context) && context.getInitialSelection().get() instanceof DirectoryResource;
+   }
+
+   private static class UncloseablePrintStream extends PrintStream
+   {
+      public UncloseablePrintStream(PrintStream stream)
+      {
+         super(stream, true);
+      }
+
+      @Override
+      public void close()
+      {
+         // Uncloseable
+      }
    }
 }
