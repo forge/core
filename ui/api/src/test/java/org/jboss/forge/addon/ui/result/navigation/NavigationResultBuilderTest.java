@@ -7,13 +7,16 @@
 
 package org.jboss.forge.addon.ui.result.navigation;
 
+import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
-import org.jboss.forge.addon.ui.util.MockCommand;
-import org.jboss.forge.addon.ui.util.MockCommand2;
-import org.jboss.forge.addon.ui.util.MockCommand3;
+import org.jboss.forge.addon.ui.util.*;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Tests for {@link NavigationResultBuilder}
@@ -67,4 +70,13 @@ public class NavigationResultBuilderTest
       Assert.assertNotNull(result.getNext());
       Assert.assertEquals(4, result.getNext().length);
    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testBuilderAddWithWizardArgument()
+    {
+        NavigationResultBuilder builder = NavigationResultBuilder.create();
+        List<Class<? extends UICommand>> commands = new ArrayList<>();
+        commands.add(MockWizard.class);
+        builder.add(Metadata.forCommand(MockWizard.class), commands);
+    }
 }
