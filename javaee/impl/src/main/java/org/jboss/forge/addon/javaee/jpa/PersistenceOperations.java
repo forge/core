@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.javaee.jpa;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 
@@ -189,7 +190,7 @@ public class PersistenceOperations
       {
          javaClass.setPackage(entityPackage);
       }
-      Field<JavaClass> id = javaClass.addField("private Long id = null;");
+      Field<JavaClass> id = javaClass.addField("private Long id;");
       id.addAnnotation(Id.class);
       id.addAnnotation(GeneratedValue.class)
                .setEnumValue("strategy", idStrategy);
@@ -198,7 +199,7 @@ public class PersistenceOperations
                .setLiteralValue("updatable", "false")
                .setLiteralValue("nullable", "false");
 
-      Field<JavaClass> version = javaClass.addField("private int version = 0;");
+      Field<JavaClass> version = javaClass.addField("private int version;");
       version.addAnnotation(Version.class);
       version.addAnnotation(Column.class).setStringValue("name", "version");
 
@@ -213,7 +214,7 @@ public class PersistenceOperations
    {
       String path = relativePath.trim().endsWith(".java")
                ? relativePath.substring(0, relativePath.lastIndexOf(".java")) : relativePath;
-      path = path.replace(".", "/") + ".java";
+      path = path.replace(".", File.separator) + ".java";
       JavaResource target = sourceDir.getChildOfType(JavaResource.class, path);
       return target;
    }
