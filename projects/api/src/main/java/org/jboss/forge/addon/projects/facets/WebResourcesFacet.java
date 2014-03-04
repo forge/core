@@ -41,7 +41,9 @@ public interface WebResourcesFacet extends ProjectFacet
     * {@link FileResource} containing the given bytes.
     * 
     * @return a handle to the {@link FileResource} that was created.
+    * @deprecated use {@link WebResourcesFacet#getWebResource(String)} and call {@link FileResource#setContents(char[])}
     */
+   @Deprecated
    FileResource<?> createWebResource(char[] bytes, String relativeFilename);
 
    /**
@@ -49,7 +51,9 @@ public interface WebResourcesFacet extends ProjectFacet
     * {@link FileResource} containing the given String.
     * 
     * @return a handle to the {@link FileResource} that was created.
+    * @deprecated use {@link WebResourcesFacet#getWebResource(String)} and call {@link FileResource#setContents(String)}
     */
+   @Deprecated
    FileResource<?> createWebResource(String render, String relativeFilename);
 
    /**
