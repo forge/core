@@ -108,6 +108,7 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
             }
          });
       }
+      targetPackage.setDefaultValue(calculateDefaultPackage(builder.getUIContext()));
       builder.add(targetPackage).add(named);
    }
 
@@ -179,6 +180,11 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
    protected UIInput<String> getNamed()
    {
       return named;
+   }
+
+   protected String calculateDefaultPackage(UIContext context)
+   {
+      return null;
    }
 
    @Override
