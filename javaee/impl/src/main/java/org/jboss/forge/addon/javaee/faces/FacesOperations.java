@@ -102,9 +102,9 @@ public class FacesOperations
     * @param validatorPackage the package of the validator to be created
     * @return the created {@link JavaResource}
     */
-   public JavaResource newValidator(DirectoryResource target, String converterName, String converterPackage)
+   public JavaResource newValidator(DirectoryResource target, String validatorName, String validatorPackage)
    {
-      JavaClass javaClass = createValidator(converterName, converterPackage);
+      JavaClass javaClass = createValidator(validatorName, validatorPackage);
       JavaResource javaResource = getJavaResource(target, javaClass.getName());
       javaResource.setContents(javaClass);
       return javaResource;
