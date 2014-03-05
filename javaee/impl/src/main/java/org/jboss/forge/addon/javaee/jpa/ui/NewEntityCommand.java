@@ -170,7 +170,7 @@ public class NewEntityCommand extends AbstractJavaEECommand implements Prerequis
    @Override
    protected boolean isProjectRequired()
    {
-      return false;
+      return true;
    }
 
    @Override

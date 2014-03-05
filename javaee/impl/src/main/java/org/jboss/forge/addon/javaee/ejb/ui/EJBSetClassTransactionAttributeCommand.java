@@ -153,6 +153,6 @@ public class EJBSetClassTransactionAttributeCommand extends AbstractJavaEEComman
    @Override
    protected boolean isProjectRequired()
    {
-      return false;
+      return true;
    }
 }
