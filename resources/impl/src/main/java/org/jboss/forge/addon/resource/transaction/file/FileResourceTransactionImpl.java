@@ -66,6 +66,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    private XAFileSystem fileSystem;
 
    private volatile Session session;
+   private volatile boolean started;
    private int timeout = 0;
 
    public FileResourceTransactionImpl(FileResourceTransactionManager manager,
@@ -79,6 +80,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    public void begin() throws ResourceTransactionException
    {
       this.session = getFileSystem().createSessionForLocalTransaction();
+      this.started = true;
       if (timeout > 0)
       {
          this.session.setTransactionTimeout(timeout);
@@ -104,6 +106,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       assertSessionCreated();
       try
       {
+         this.started = false;
          Set<ResourceEvent> changeSet = getChangeSet();
          session.commit();
 
@@ -136,6 +139,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       assertSessionCreated();
       try
       {
+         this.started = false;
          session.rollback();
 
          for (ResourceTransactionListener listener : manager.getTransactionListeners())
@@ -164,7 +168,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    @Override
    public boolean isStarted()
    {
-      return session != null;
+      return started;
    }
 
    @SuppressWarnings("unchecked")
@@ -513,5 +517,4 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
          fileSystem.shutdown();
       }
    }
-
 }

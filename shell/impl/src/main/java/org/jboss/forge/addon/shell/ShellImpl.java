@@ -169,7 +169,13 @@ public class ShellImpl implements Shell, UIRuntime
       }
       if (temp instanceof DirectoryResource)
       {
-         console.getAeshContext().setCurrentWorkingDirectory(((DirectoryResource) temp).getUnderlyingResourceObject());
+         // Workaround to prevent "Current working directory must be a directory" exceptions when running in a
+         // transaction
+         if (((DirectoryResource) temp).getUnderlyingResourceObject().exists())
+         {
+            console.getAeshContext().setCurrentWorkingDirectory(
+                     ((DirectoryResource) temp).getUnderlyingResourceObject());
+         }
       }
       updatePrompt();
    }

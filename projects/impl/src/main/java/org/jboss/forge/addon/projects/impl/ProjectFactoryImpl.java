@@ -400,29 +400,32 @@ public class ProjectFactoryImpl implements ProjectFactory
             caches.release(cache);
          }
       }
-
-      final ResourceMonitor monitor = project.getRootDirectory().monitor();
-      ListenerRegistration<ResourceListener> registration = monitor.addResourceListener(new ResourceListener()
+      // If under a transaction, don't start monitoring
+      DirectoryResource rootDirectory = project.getRootDirectory();
+      if (rootDirectory.getUnderlyingResourceObject().exists())
       {
-         @Override
-         public void processEvent(ResourceEvent event)
+         final ResourceMonitor monitor = rootDirectory.monitor();
+         ListenerRegistration<ResourceListener> registration = monitor.addResourceListener(new ResourceListener()
          {
-            for (ProjectCache cache : caches)
+            @Override
+            public void processEvent(ResourceEvent event)
             {
-               try
+               for (ProjectCache cache : caches)
                {
-                  cache.evict(project);
+                  try
+                  {
+                     cache.evict(project);
+                  }
+                  finally
+                  {
+                     caches.release(cache);
+                  }
                }
-               finally
-               {
-                  caches.release(cache);
-               }
+               monitor.cancel();
             }
-            monitor.cancel();
-         }
-      });
-
-      this.listeners.add(registration);
+         });
+         this.listeners.add(registration);
+      }
    }
 
    private void fireProjectCreated(Project project)

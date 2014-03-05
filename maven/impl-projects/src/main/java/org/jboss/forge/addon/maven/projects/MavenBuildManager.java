@@ -76,12 +76,18 @@ public class MavenBuildManager
          request.setResolveDependencies(true);
          try
          {
+            boolean inTransaction = !pomResource.getUnderlyingResourceObject().exists();
             // FORGE-1287
-            // buildingResult = getBuilder().build(new FileResourceModelSource(pomResource), request);
-            result = getBuilder().build(pomResource.getUnderlyingResourceObject(), request);
-            // If under a transaction, don't start monitoring
-            if (pomResource.getUnderlyingResourceObject().exists())
+            if (inTransaction)
+            {
+               result = getBuilder().build(new FileResourceModelSource(pomResource), request);
+               // If under a transaction, don't start monitoring
+            }
+            else
+            {
+               result = getBuilder().build(pomResource.getUnderlyingResourceObject(), request);
                monitorResource(pomResource);
+            }
             cache.put(pomResource, result);
          }
          catch (RuntimeException full)
