@@ -476,7 +476,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
          File xaDiskHome = OperatingSystemUtils.createTempDir();
          StandaloneFileSystemConfiguration config = new StandaloneFileSystemConfiguration(
                   xaDiskHome.getAbsolutePath(), "furnace-instance");
-         config.setTransactionTimeout(600);
+         config.setTransactionTimeout(3600);
          // XADISK-95
          if (OperatingSystemUtils.isWindows())
          {
