@@ -10,7 +10,6 @@ package org.jboss.forge.addon.templates;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 
@@ -25,7 +24,7 @@ public class TemplateProcessorFactoryImpl implements TemplateProcessorFactory
    private Imported<TemplateGenerator> generators;
 
    @Override
-   public TemplateProcessor fromTemplate(Resource<?> template)
+   public TemplateProcessor fromTemplate(Template template)
    {
       Assert.notNull(template, "Template resource cannot be null");
       Assert.isTrue(template.exists(), "Template does not exist: " + template);

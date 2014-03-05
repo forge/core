@@ -19,13 +19,13 @@ import org.jboss.forge.addon.resource.Resource;
 public interface TemplateGenerator
 {
    /**
-    * Returns true if the given resource instance is handled by this {@link TemplateGenerator}
+    * Returns true if the given template can be handled by this {@link TemplateGenerator}
     */
-   public boolean handles(Resource<?> template);
+   public boolean handles(Template template);
 
    /**
-    * Processes the template specified by the {@link Resource} parameter and writes the output to the {@link Writer}
+    * Processes the template specified by the {@link Template} parameter and writes the output to the {@link Writer}
     * parameter
     */
-   public void process(Object dataModel, Resource<?> template, Writer writer) throws IOException;
+   public void process(Object dataModel, Template template, Writer writer) throws IOException;
 }

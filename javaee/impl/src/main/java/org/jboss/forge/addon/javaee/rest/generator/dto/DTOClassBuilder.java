@@ -20,6 +20,7 @@ import org.jboss.forge.addon.parser.java.beans.Property;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.templates.TemplateProcessor;
 import org.jboss.forge.addon.templates.TemplateProcessorFactory;
+import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
@@ -56,15 +57,13 @@ public class DTOClassBuilder
       this.topLevel = topLevel;
       this.copyCtorBuilder = new StringBuilder();
       this.assembleJPABuilder = new StringBuilder();
-      this.initializeJPAEntityFromId = processorFactory.fromTemplate(resourceFactory.create(getClass()
-               .getResource(
-                        "InitializeJPAEntityFromId.jv")));
-      this.assembleCollection = processorFactory.fromTemplate(resourceFactory.create(getClass().getResource(
-               "AssembleCollection.jv")));
+      this.initializeJPAEntityFromId = processorFactory.fromTemplate(new FreemarkerTemplate(resourceFactory
+               .create(getClass().getResource("InitializeJPAEntityFromId.jv"))));
+      this.assembleCollection = processorFactory.fromTemplate(new FreemarkerTemplate(resourceFactory.create(getClass()
+               .getResource("AssembleCollection.jv"))));
 
-      this.initializeNestedDTOCollection = processorFactory.fromTemplate(resourceFactory.create(getClass()
-               .getResource(
-                        "InitializeNestedDTOCollection.jv")));
+      this.initializeNestedDTOCollection = processorFactory.fromTemplate(new FreemarkerTemplate(resourceFactory
+               .create(getClass().getResource("InitializeNestedDTOCollection.jv"))));
 
       initName();
       initClassStructure();

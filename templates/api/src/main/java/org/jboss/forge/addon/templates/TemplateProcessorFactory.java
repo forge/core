@@ -6,14 +6,19 @@
  */
 package org.jboss.forge.addon.templates;
 
-import org.jboss.forge.addon.resource.Resource;
-
 /**
- * Creates a {@link TemplateProcessor} based on a {@link Resource}
+ * Creates a {@link TemplateProcessor} based on a {@link Template}
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public interface TemplateProcessorFactory
 {
-   TemplateProcessor fromTemplate(Resource<?> template);
+   /**
+    * Create a {@link TemplateProcessor} for the supplied {@link Template}. The created TemplateProcessor is associated
+    * with a template engine, and can be provided with a data model to eventually produce some output.
+    * 
+    * @param template The template for which the processor is to be created
+    * @return A {@link TemplateProcessor} instance
+    */
+   TemplateProcessor fromTemplate(Template template);
 }

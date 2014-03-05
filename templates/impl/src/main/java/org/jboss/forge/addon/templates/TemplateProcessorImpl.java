@@ -21,13 +21,13 @@ import org.jboss.forge.addon.resource.Resource;
 public class TemplateProcessorImpl implements TemplateProcessor
 {
    private final TemplateGenerator generator;
-   private final Resource<?> resource;
+   private final Template template;
 
-   TemplateProcessorImpl(TemplateGenerator generator, Resource<?> resource)
+   TemplateProcessorImpl(TemplateGenerator generator, Template template)
    {
       super();
       this.generator = generator;
-      this.resource = resource;
+      this.template = template;
    }
 
    @Override
@@ -41,6 +41,6 @@ public class TemplateProcessorImpl implements TemplateProcessor
    @Override
    public void process(Object dataModel, Writer output) throws IOException
    {
-      generator.process(dataModel, resource, output);
+      generator.process(dataModel, template, output);
    }
 }
