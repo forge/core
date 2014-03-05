@@ -145,6 +145,6 @@ public class FacesNewValidatorCommand extends AbstractJavaEECommand
    @Override
    protected boolean isProjectRequired()
    {
-      return false;
+      return true;
    }
 }

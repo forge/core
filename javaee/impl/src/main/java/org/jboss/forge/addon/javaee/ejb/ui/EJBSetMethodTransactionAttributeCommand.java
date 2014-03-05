@@ -212,6 +212,6 @@ public class EJBSetMethodTransactionAttributeCommand extends AbstractJavaEEComma
    @Override
    protected boolean isProjectRequired()
    {
-      return false;
+      return true;
    }
 }

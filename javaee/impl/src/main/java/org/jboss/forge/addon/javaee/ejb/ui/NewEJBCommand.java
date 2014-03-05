@@ -168,7 +168,7 @@ public class NewEJBCommand extends AbstractJavaEECommand implements UIWizard
    @Override
    protected boolean isProjectRequired()
    {
-      return false;
+      return true;
    }
 
    @Override

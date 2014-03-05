@@ -415,7 +415,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
    @Override
    protected boolean isProjectRequired()
    {
-      return false;
+      return true;
    }
 
    @Override
