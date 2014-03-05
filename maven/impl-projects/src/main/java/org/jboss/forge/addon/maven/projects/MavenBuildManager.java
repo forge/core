@@ -79,7 +79,9 @@ public class MavenBuildManager
             // FORGE-1287
             // buildingResult = getBuilder().build(new FileResourceModelSource(pomResource), request);
             result = getBuilder().build(pomResource.getUnderlyingResourceObject(), request);
-            monitorResource(pomResource);
+            // If under a transaction, don't start monitoring
+            if (pomResource.getUnderlyingResourceObject().exists())
+               monitorResource(pomResource);
             cache.put(pomResource, result);
          }
          catch (RuntimeException full)
