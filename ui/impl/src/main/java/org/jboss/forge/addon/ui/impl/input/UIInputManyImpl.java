@@ -110,7 +110,7 @@ public class UIInputManyImpl<VALUETYPE> extends AbstractInputComponent<UIInputMa
    @Override
    public boolean hasDefaultValue()
    {
-      return defaultValue != null;
+      return Callables.call(defaultValue) != null;
    }
 
    @Override

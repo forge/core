@@ -65,7 +65,7 @@ public class UISelectOneImpl<VALUETYPE> extends AbstractUISelectInputComponent<U
    @Override
    public boolean hasDefaultValue()
    {
-      return defaultValue != null;
+      return Callables.call(defaultValue) != null;
    }
 
    @Override

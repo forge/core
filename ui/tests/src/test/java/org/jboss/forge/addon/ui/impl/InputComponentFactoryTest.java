@@ -127,4 +127,41 @@ public class InputComponentFactoryTest
       Assert.assertTrue(input.hasFacet(HintsFacet.class));
       Assert.assertEquals('f', input.getShortName());
    }
+
+   @Test
+   public void testCreateUIInputDefaultValue() throws Exception
+   {
+      UIInput<String> input = factory.createInput("foo", 'f', String.class);
+      Assert.assertNotNull(input);
+      input.setDefaultValue((String) null);
+      Assert.assertFalse(input.hasDefaultValue());
+   }
+
+   @Test
+   public void testCreateUIInputManyDefaultValue() throws Exception
+   {
+      UIInputMany<String> input = factory.createInputMany("foo", 'f', String.class);
+      Assert.assertNotNull(input);
+      input.setDefaultValue((Iterable<String>) null);
+      Assert.assertFalse(input.hasDefaultValue());
+   }
+
+   @Test
+   public void testCreateUISelectManyDefaultValue() throws Exception
+   {
+      UISelectMany<String> input = factory.createSelectMany("foo", 'f', String.class);
+      Assert.assertNotNull(input);
+      input.setDefaultValue((Iterable<String>) null);
+      Assert.assertFalse(input.hasDefaultValue());
+   }
+
+   @Test
+   public void testCreateUISelectOneDefaultValue() throws Exception
+   {
+      UISelectOne<String> input = factory.createSelectOne("foo", 'f', String.class);
+      Assert.assertNotNull(input);
+      input.setDefaultValue((String) null);
+      Assert.assertFalse(input.hasDefaultValue());
+   }
+
 }

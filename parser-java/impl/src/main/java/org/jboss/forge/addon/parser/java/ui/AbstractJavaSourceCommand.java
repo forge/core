@@ -19,6 +19,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -184,7 +185,17 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
 
    protected String calculateDefaultPackage(UIContext context)
    {
-      return null;
+      String packageName;
+      Project project = getSelectedProject(context);
+      if (project != null)
+      {
+         packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage();
+      }
+      else
+      {
+         packageName = null;
+      }
+      return packageName;
    }
 
    @Override

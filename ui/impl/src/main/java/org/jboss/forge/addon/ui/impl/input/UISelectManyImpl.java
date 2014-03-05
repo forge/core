@@ -65,7 +65,7 @@ public class UISelectManyImpl<VALUETYPE> extends AbstractUISelectInputComponent<
    @Override
    public boolean hasDefaultValue()
    {
-      return defaultValue != null;
+      return Callables.call(defaultValue) != null;
    }
 
    @Override

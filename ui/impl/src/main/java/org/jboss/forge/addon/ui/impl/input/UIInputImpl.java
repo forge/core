@@ -109,7 +109,7 @@ public class UIInputImpl<VALUETYPE> extends AbstractInputComponent<UIInput<VALUE
    @Override
    public boolean hasDefaultValue()
    {
-      return defaultValue != null;
+      return Callables.call(defaultValue) != null;
    }
 
    @Override

@@ -14,10 +14,8 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
-import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Categories;
@@ -45,16 +43,19 @@ public class NewMappedSuperclassCommand extends AbstractJavaSourceCommand
    }
 
    @Override
-   public void initializeUI(UIBuilder builder) throws Exception
+   protected String calculateDefaultPackage(UIContext context)
    {
-      UIInput<String> targetPackage = getTargetPackage();
-      Project project = getSelectedProject(builder);
+      String packageName;
+      Project project = getSelectedProject(context);
       if (project != null)
       {
-         String packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
-         targetPackage.setDefaultValue(packageName);
+         packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
       }
-      super.initializeUI(builder);
+      else
+      {
+         packageName = super.calculateDefaultPackage(context);
+      }
+      return packageName;
    }
 
    @Override
