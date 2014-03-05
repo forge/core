@@ -50,7 +50,7 @@ public class RmCommand extends AbstractShellCommand
    private UIInput<Boolean> force;
 
    @Inject
-   @WithAttributes(label = "force", shortName = 'r', description = "remove directories and their contents recursively", type = InputType.CHECKBOX, defaultValue = "false")
+   @WithAttributes(label = "recursive", shortName = 'r', description = "remove directories and their contents recursively", type = InputType.CHECKBOX, defaultValue = "false")
    private UIInput<Boolean> recursive;
 
    @Override
