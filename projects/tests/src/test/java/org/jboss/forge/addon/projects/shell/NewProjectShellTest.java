@@ -75,7 +75,7 @@ public class NewProjectShellTest
                "--named lincoln " +
                "--topLevelPackage org.lincoln " +
                "--targetLocation " + target.getAbsolutePath() + " " +
-               "--type \"Maven - Java\" " +
+               "--type jar " +
                "--overwrite " +
                "--version 1.0.0-SNAPSHOT"), 10, TimeUnit.SECONDS);
 
@@ -95,7 +95,7 @@ public class NewProjectShellTest
       Result result = test.execute(("project-new " +
                "--named lincoln-three " +
                "--targetLocation " + target.getAbsolutePath() + " " +
-               "--type \"Maven - Resources\" " +
+               "--type jar " +
                "--version 1.0.0-SNAPSHOT"), 10, TimeUnit.SECONDS);
 
       Assert.assertFalse(result instanceof Failed);
