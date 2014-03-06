@@ -17,6 +17,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -71,7 +72,7 @@ public class TemplateTestCase
       tempFile.deleteOnExit();
       FileResource resource = resourceFactory.create(tempFile).reify(FileResource.class);
       resource.setContents(template);
-      TemplateProcessor processor = templateProcessorFactory.fromTemplate(resource);
+      TemplateProcessor processor = templateProcessorFactory.fromTemplate(new FreemarkerTemplate(resource));
       String actual = processor.process(Collections.singletonMap("name", "JBoss Forge"));
       Assert.assertEquals(expected, actual);
    }
@@ -83,7 +84,7 @@ public class TemplateTestCase
       Assert.assertNotNull(template);
       String expected = "Hello JBoss Forge!";
       Resource<?> resource = resourceFactory.create(template);
-      TemplateProcessor processor = templateProcessorFactory.fromTemplate(resource);
+      TemplateProcessor processor = templateProcessorFactory.fromTemplate(new FreemarkerTemplate(resource));
       String actual = processor.process(Collections.singletonMap("name", "JBoss Forge"));
       Assert.assertEquals(expected, actual);
    }
@@ -98,7 +99,7 @@ public class TemplateTestCase
       tempFile.deleteOnExit();
       FileResource resource = resourceFactory.create(tempFile).reify(FileResource.class);
       resource.setContents(template);
-      TemplateProcessor processor = templateProcessorFactory.fromTemplate(resource);
+      TemplateProcessor processor = templateProcessorFactory.fromTemplate(new FreemarkerTemplate(resource));
       JavaBean dataModel = new JavaBean();
       dataModel.setName("JBoss Forge");
       String actual = processor.process(dataModel);

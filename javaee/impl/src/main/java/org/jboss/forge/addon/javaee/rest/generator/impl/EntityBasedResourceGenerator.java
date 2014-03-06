@@ -24,6 +24,7 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.templates.TemplateProcessor;
 import org.jboss.forge.addon.templates.TemplateProcessorFactory;
+import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.JavaClass;
 
@@ -72,7 +73,7 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
       map.put("resourcePath", resourcePath);
 
       Resource<URL> templateResource = resourceFactory.create(getClass().getResource("Endpoint.jv"));
-      TemplateProcessor processor = processorFactory.fromTemplate(templateResource);
+      TemplateProcessor processor = processorFactory.fromTemplate(new FreemarkerTemplate(templateResource));
       String output = processor.process(map);
       JavaClass resource = JavaParser.parse(JavaClass.class, output);
       resource.addImport(entity.getQualifiedName());

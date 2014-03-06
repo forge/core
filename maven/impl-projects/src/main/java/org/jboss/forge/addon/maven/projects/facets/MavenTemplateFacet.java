@@ -37,12 +37,6 @@ public class MavenTemplateFacet extends AbstractFacet<Project> implements Templa
    }
 
    @Override
-   public DirectoryResource getTemplateDirectory(String provider)
-   {
-      return this.getRootTemplateDirectory().getChildDirectory(provider);
-   }
-
-   @Override
    public boolean isInstalled()
    {
       Project project = getFaceted();
@@ -60,9 +54,9 @@ public class MavenTemplateFacet extends AbstractFacet<Project> implements Templa
    }
 
    @Override
-   public FileResource<?> getResource(final String provider, final String relativePath)
+   public FileResource<?> getResource(final String path)
    {
-      return (FileResource<?>) getTemplateDirectory(provider).getChild(relativePath);
+      return (FileResource<?>) getRootTemplateDirectory().getChild(path);
    }
 
 }
