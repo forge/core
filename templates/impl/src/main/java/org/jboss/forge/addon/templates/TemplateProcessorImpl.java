@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import org.jboss.forge.addon.resource.Resource;
-
 /**
  * {@link TemplateProcessor} implementation
  * 

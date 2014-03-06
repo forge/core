@@ -9,8 +9,6 @@ package org.jboss.forge.addon.templates;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.jboss.forge.addon.resource.Resource;
-
 /**
  * Process a template
  * 
