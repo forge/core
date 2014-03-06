@@ -215,7 +215,6 @@ public class RunCommand extends AbstractShellCommand
       @Override
       public void preCommandExecuted(UICommand command, UIExecutionContext context)
       {
-         System.out.println("before: " + command);
       }
 
       @Override
@@ -223,7 +222,6 @@ public class RunCommand extends AbstractShellCommand
       {
          synchronized (this)
          {
-            System.out.println("after: " + command);
             this.result = result;
          }
       }
@@ -233,7 +231,6 @@ public class RunCommand extends AbstractShellCommand
       {
          synchronized (this)
          {
-            System.out.println("failed: " + command);
             this.result = Results.fail("Error encountered during command execution.", failure);
          }
       }
