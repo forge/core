@@ -18,9 +18,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.console.helper.ManProvider;
-import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
+import org.jboss.forge.addon.ui.command.CommandFactory;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -37,7 +37,7 @@ public class ForgeManProvider implements ManProvider
    private static final Logger log = Logger.getLogger(ForgeManProvider.class.getName());
 
    private final ShellImpl shell;
-   private final CommandManager manager;
+   private final CommandFactory manager;
 
    private final Comparator<? super InputComponent<?, ?>> shortNameComparator = new Comparator<InputComponent<?, ?>>()
    {
@@ -57,7 +57,7 @@ public class ForgeManProvider implements ManProvider
       }
    };
 
-   public ForgeManProvider(ShellImpl shell, CommandManager manager)
+   public ForgeManProvider(ShellImpl shell, CommandFactory manager)
    {
       this.shell = shell;
       this.manager = manager;
@@ -68,27 +68,24 @@ public class ForgeManProvider implements ManProvider
    {
       try (ShellContextImpl context = shell.createUIContext())
       {
-         for (UICommand cmd : manager.getAllCommands())
+         UICommand cmd = manager.getCommandByName(context, command);
+         if (cmd != null)
          {
-            if (command.equals(manager.getCommandName(context, cmd)))
+            URL docLocation = cmd.getMetadata(context).getDocLocation();
+            if (docLocation != null)
             {
-               URL docLocation = cmd.getMetadata(context).getDocLocation();
-               if (docLocation != null)
+               try
                {
-                  try
-                  {
-                     return docLocation.openStream();
-                  }
-                  catch (IOException e)
-                  {
-                     log.log(Level.SEVERE,
-                              "Could not open man page document stream URL [" + docLocation.toExternalForm()
-                                       + "] for command [" + cmd.getMetadata(context).getType().getName() + "].", e);
-                  }
+                  return docLocation.openStream();
                }
-
-               return buildDefaultManPage(cmd, context);
+               catch (IOException e)
+               {
+                  log.log(Level.SEVERE,
+                           "Could not open man page document stream URL [" + docLocation.toExternalForm()
+                                    + "] for command [" + cmd.getMetadata(context).getType().getName() + "].", e);
+               }
             }
+            return buildDefaultManPage(cmd, context);
          }
       }
       return null;

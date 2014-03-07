@@ -19,11 +19,11 @@ import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.aesh.terminal.TerminalSize;
 import org.jboss.aesh.terminal.TerminalString;
-import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.util.CommandControllerComparator;
 import org.jboss.forge.addon.ui.UIRuntime;
+import org.jboss.forge.addon.ui.command.CommandFactory;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -44,13 +44,13 @@ import org.jboss.forge.addon.ui.util.Metadata;
  */
 public class CommandListCommand extends AbstractShellCommand
 {
-   private final CommandManager manager;
+   private final CommandFactory commandFactory;
    private final CommandControllerFactory factory;
 
    @Inject
-   public CommandListCommand(CommandManager manager, CommandControllerFactory factory)
+   public CommandListCommand(CommandFactory commandFactory, CommandControllerFactory factory)
    {
-      this.manager = manager;
+      this.commandFactory = commandFactory;
       this.factory = factory;
    }
 
@@ -73,14 +73,14 @@ public class CommandListCommand extends AbstractShellCommand
       List<String> display = new ArrayList<>();
 
       Set<CommandController> controllers = new TreeSet<>(new CommandControllerComparator());
-      for (UICommand command : manager.getAllCommands())
+      for (UICommand command : commandFactory.getCommands())
       {
          controllers.add(getCommandController(context, command));
       }
 
       for (CommandController controller : controllers)
       {
-         String name = manager.getCommandName(context.getUIContext(), controller.getCommand());
+         String name = commandFactory.getCommandName(context.getUIContext(), controller.getCommand());
          UICommandMetadata metadata = controller.getMetadata();
          display.add(metadata.getCategory()
                   + " > "

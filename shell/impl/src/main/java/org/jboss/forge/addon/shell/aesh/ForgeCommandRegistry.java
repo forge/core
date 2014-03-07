@@ -20,17 +20,17 @@ import org.jboss.aesh.extensions.grep.Grep;
 import org.jboss.aesh.extensions.less.aesh.Less;
 import org.jboss.aesh.extensions.more.aesh.More;
 import org.jboss.forge.addon.convert.ConverterFactory;
-import org.jboss.forge.addon.shell.CommandManager;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.AeshUICommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
+import org.jboss.forge.addon.ui.command.CommandFactory;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.SingleCommandController;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
-import org.jboss.forge.addon.ui.util.Commands;
+import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
  * Forge implementation of {@link CommandRegistry}.
@@ -42,24 +42,23 @@ import org.jboss.forge.addon.ui.util.Commands;
  */
 public class ForgeCommandRegistry implements CommandRegistry
 {
-   private final CommandManager commandManager;
+   private final CommandFactory commandFactory;
    private final ShellImpl shell;
    private final CommandRegistry aeshCommandRegistry;
    private final ConverterFactory converterFactory;
 
    private CommandLineUtil commandLineUtil;
-   private final CommandControllerFactory commandFactory;
+   private final CommandControllerFactory commandControllerFactory;
 
-   public ForgeCommandRegistry(ShellImpl shell, CommandManager commandManager, CommandControllerFactory commandFactory,
-            ConverterFactory converterFactory)
+   public ForgeCommandRegistry(ShellImpl shell, AddonRegistry addonRegistry)
    {
       this.shell = shell;
-      this.commandManager = commandManager;
-      this.commandFactory = commandFactory;
-      this.converterFactory = converterFactory;
+      this.commandFactory = addonRegistry.getServices(CommandFactory.class).get();
+      this.commandControllerFactory = addonRegistry.getServices(CommandControllerFactory.class).get();
+      this.converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
 
       // Use Aesh commands
-      Man manCommand = new Man(new ForgeManProvider(shell, commandManager));
+      Man manCommand = new Man(new ForgeManProvider(shell, commandFactory));
       this.aeshCommandRegistry = new AeshCommandRegistryBuilder()
                .command(Grep.class)
                .command(Less.class)
@@ -82,7 +81,8 @@ public class ForgeCommandRegistry implements CommandRegistry
          // Not a forge command, fallback to aesh command
          CommandContainer nativeCommand = aeshCommandRegistry.getCommand(name, completeLine);
          AeshUICommand aeshCommand = new AeshUICommand(nativeCommand);
-         SingleCommandController controller = commandFactory.createSingleController(shellContext, shell, aeshCommand);
+         SingleCommandController controller = commandControllerFactory.createSingleController(shellContext, shell,
+                  aeshCommand);
          try
          {
             controller.initialize();
@@ -125,20 +125,17 @@ public class ForgeCommandRegistry implements CommandRegistry
    {
       AbstractShellInteraction result = null;
       CommandLineUtil cmdLineUtil = getCommandLineUtil();
-      for (UICommand cmd : Commands.getEnabledCommands(commandManager.getAllCommands(), shellContext))
+      UICommand cmd = commandFactory.getCommandByName(shellContext, commandName);
+      if (cmd != null)
       {
-         if (commandName.equals(commandManager.getCommandName(shellContext, cmd)))
+         CommandController controller = commandControllerFactory.createController(shellContext, shell, cmd);
+         if (controller instanceof WizardCommandController)
          {
-            CommandController controller = commandFactory.createController(shellContext, shell, cmd);
-            if (controller instanceof WizardCommandController)
-            {
-               result = new ShellWizard((WizardCommandController) controller, shellContext, cmdLineUtil, this);
-            }
-            else
-            {
-               result = new ShellSingleCommand(controller, shellContext, cmdLineUtil);
-            }
-            break;
+            result = new ShellWizard((WizardCommandController) controller, shellContext, cmdLineUtil, this);
+         }
+         else
+         {
+            result = new ShellSingleCommand(controller, shellContext, cmdLineUtil);
          }
       }
       return result;
@@ -171,7 +168,7 @@ public class ForgeCommandRegistry implements CommandRegistry
    {
       try (ShellContextImpl newShellContext = shell.createUIContext())
       {
-         return commandManager.getAllCommandNames(newShellContext);
+         return commandFactory.getCommandNames(newShellContext);
       }
    }
 

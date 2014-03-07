@@ -46,7 +46,6 @@ import org.jboss.forge.addon.ui.UIRuntime;
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIContextListener;
-import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.progress.DefaultUIProgressMonitor;
@@ -75,18 +74,18 @@ public class ShellImpl implements Shell, UIRuntime
 
    private final static Logger log = Logger.getLogger(ShellImpl.class.getName());
 
-   public ShellImpl(FileResource<?> initialResource, Settings settings,
-            CommandManager commandManager, AddonRegistry addonRegistry, CommandControllerFactory commandFactory)
+   public ShellImpl(FileResource<?> initialResource, Settings settings, AddonRegistry addonRegistry)
    {
       this.currentResource = initialResource;
       this.addonRegistry = addonRegistry;
+
       // Set the paths for the Aesh history, alias and export files.
       File forgeHome = OperatingSystemUtils.getUserForgeDir();
       File history = new File(forgeHome, "history");
       File alias = new File(forgeHome, "alias");
       File export = new File(forgeHome, "export");
       final ForgeCommandRegistry registry =
-               new ForgeCommandRegistry(this, commandManager, commandFactory, commandManager.getConverterFactory());
+               new ForgeCommandRegistry(this, addonRegistry);
       Settings newSettings = new SettingsBuilder(settings)
                .historyFile(history)
                .aliasFile(alias)
