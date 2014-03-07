@@ -88,6 +88,7 @@
             <module>maven</module>
             <module>projects</module>
             <module>parser-java</module>
+            <module>parser-json</module>
             <module>parser-xml</module>
             <module>resources</module>
             <module>ui</module>
@@ -122,6 +123,7 @@
             <module>maven/api</module>
             <module>projects/api</module>
             <module>parser-java/api</module>
+            <module>parser-json/api</module>
             <module>parser-xml/api</module>
             <module>resources/api</module>
             <module>ui/api</module>
