@@ -260,7 +260,7 @@ A service is implemented as a POJO (Plain Old Java Object):
 ----
 public class ExampleServiceImpl
 {
-   public ServiceResult doSomething() {
+   public String doSomething() {
         // Do stuff...
    }
 }
@@ -272,7 +272,7 @@ However, best practices favor creating a service interface, otherwise consumers 
 ----
 public interface ExampleService
 {
-   public ServiceResult doSomething();
+   public String doSomething();
 }
 ----
 
@@ -282,7 +282,7 @@ Then simply implement the service interface:
 ----
 public class ExampleServiceImpl implements ExampleService
 {
-   public ServiceResult doSomething() {
+   public String doSomething() {
         // Do stuff...
    }
 }
