@@ -70,6 +70,12 @@ Here are the steps in detail:
 
 12. Browse to the <topic-branch-name> branch on your forked Git repository and [open a Pull Request](http://help.github.com/send-pull-requests/). Give it a clear title and description.
 
+Choosing issues to work on
+--------------------------
+
+If you're wondering what issues would be suitable when you're just getting started, we recommend taking a look at [the issues with the 'starter' label in our JIRA](https://issues.jboss.org/browse/FORGE-1616?filter=12321213).
+
+
 License Information and Contributor Agreement
 ---------------------------------------------
 
