@@ -73,7 +73,7 @@ Here are the steps in detail:
 Choosing issues to work on
 --------------------------
 
-If you're wondering what issues would be suitable when you're just getting started, we recommend taking a look at [the issues with the 'starter' label in our JIRA](https://issues.jboss.org/browse/FORGE-1616?filter=12321213).
+If you're wondering what issues would be suitable when you're just getting started, we recommend taking a look at [the issues with the 'starter' label in our JIRA](https://issues.jboss.org/issues/?filter=12321213).
 
 
 License Information and Contributor Agreement
