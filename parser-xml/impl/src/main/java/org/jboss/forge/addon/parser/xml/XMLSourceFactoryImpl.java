@@ -10,13 +10,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 
 /**
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  */
-public class XMLSourceFactoryImpl implements XMLSourceFactory
+public class XMLSourceFactoryImpl implements XMLSourceFactory, Service
 {
    /**
     * Open the given {@link File}, parsing its contents into a new {@link Node} instance.

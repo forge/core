@@ -19,12 +19,6 @@
          <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui-spi</artifactId>
-         <classifier>forge-addon</classifier>
-         <optional>true</optional>
-      </dependency>
-      <dependency>
          <groupId>org.jboss.forge.furnace.test</groupId>
          <artifactId>furnace-test-harness</artifactId>
          <scope>test</scope>
@@ -34,17 +28,12 @@
          <artifactId>arquillian-furnace-classpath</artifactId>
          <scope>test</scope>
       </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>xml-parser</artifactId>
-      </dependency>
-
       <!-- Furnace Container -->
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>
          <artifactId>cdi</artifactId>
          <classifier>forge-addon</classifier>
-         <scope>provided</scope>
+         <scope>test</scope>
       </dependency>
    </dependencies>
 </project>

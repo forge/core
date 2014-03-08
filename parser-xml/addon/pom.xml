@@ -19,7 +19,7 @@
          <artifactId>parser-xml-impl</artifactId>
          <scope>runtime</scope>
       </dependency>
-      
+
       <!-- Addon Dependencies -->
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
@@ -27,23 +27,10 @@
          <classifier>forge-addon</classifier>
          <optional>true</optional>
       </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>projects</artifactId>
-         <classifier>forge-addon</classifier>
-         <optional>true</optional>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui-spi</artifactId>
-         <classifier>forge-addon</classifier>
-         <optional>true</optional>
-      </dependency>
-
       <!-- Furnace Container -->
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>
-         <artifactId>cdi</artifactId>
+         <artifactId>simple</artifactId>
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>

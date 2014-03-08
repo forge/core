@@ -26,6 +26,7 @@ public class XMLSourceFactoryTest
 {
    @Deployment
    @Dependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:resources"),
             @AddonDependency(name = "org.jboss.forge.addon:parser-xml")
    })
    public static ForgeArchive getDeployment()
@@ -44,7 +45,7 @@ public class XMLSourceFactoryTest
    private XMLSourceFactory factory;
 
    @Test
-   public void testJavaResourceCreation() throws Exception
+   public void testXMLSourceFactoryParse() throws Exception
    {
       Node xmlNode = factory.parse("<test/>");
       Assert.assertEquals("test", xmlNode.getName());

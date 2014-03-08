@@ -5,8 +5,9 @@ import java.io.File;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceGenerator;
+import org.jboss.forge.furnace.container.simple.Service;
 
-public class XMLResourceGenerator implements ResourceGenerator<XMLResource, File>
+public class XMLResourceGenerator implements ResourceGenerator<XMLResource, File>, Service
 {
    @Override
    public boolean handles(Class<?> type, Object resource)

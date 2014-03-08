@@ -43,12 +43,6 @@
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>ui-spi</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
             <groupId>org.jboss.forge</groupId>
             <artifactId>xml-parser</artifactId>
             <version>${version.xml-parser}</version>
