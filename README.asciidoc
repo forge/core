@@ -127,6 +127,12 @@ This plugin starts the Forge 2 Container and your installed addons, so you can u
 |link:parser-java/README.asciidoc[Parser Java]
 |yes
 
+|link:parser-json/README.asciidoc[Parser Json]
+|no
+
+|link:parser-xml/README.asciidoc[Parser XML]
+|yes
+
 |link:projects/README.asciidoc[Projects]
 |yes
 
