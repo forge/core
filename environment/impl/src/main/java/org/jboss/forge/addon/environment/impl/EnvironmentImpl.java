@@ -12,15 +12,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.inject.Singleton;
-
 import org.jboss.forge.addon.environment.Category;
 import org.jboss.forge.addon.environment.Environment;
+import org.jboss.forge.furnace.container.simple.Service;
 
-@Singleton
-public class EnvironmentImpl implements Environment
+public class EnvironmentImpl implements Environment, Service
 {
-   private Map<String, Map<Object, Object>> categorizedMap =
+   private static final Map<String, Map<Object, Object>> categorizedMap =
             Collections.synchronizedMap(
                      new HashMap<String, Map<Object, Object>>());
 

@@ -32,7 +32,7 @@ public class CDIEnvironmentTest
    {
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
-               .addPackages(true, CDIEnvironmentTest.class.getPackage())
+               .addClasses(TestCategory.class, UserInterfaceCategory.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),

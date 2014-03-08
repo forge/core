@@ -9,14 +9,14 @@
    <name>Forge - Environment Impl</name>
    <dependencies>
       <dependency>
-         <groupId>org.jboss.forge.furnace.container</groupId>
-         <artifactId>cdi-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
-      
-      <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>environment-api</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.furnace.container</groupId>
+         <artifactId>simple</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
       </dependency>
    </dependencies>
 </project>
