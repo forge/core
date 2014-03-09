@@ -153,6 +153,39 @@ public class ProjectDependencyCommandsTest
    }
 
    @Test
+   public void testAddDependencyWithDifferentScopeThenManaged() throws Exception {
+      Project project = factory.createTempProject(build);
+      try
+      {
+         installer.installManaged(project, DEPENDENCY);
+
+         Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(DEPENDENCY));
+         Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
+         Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
+
+         CommandController command = testHarness.createCommandController(AddDependenciesCommand.class,
+                  project.getRootDirectory());
+         command.initialize();
+         command.setValueFor("arguments", COORDINATES + ":test");
+         Assert.assertTrue(command.isValid());
+         Assert.assertTrue(command.canExecute());
+         command.execute();
+
+         Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectDependency(DEPENDENCY));
+         Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
+         Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
+
+         Dependency dependency = project.getFacet(DependencyFacet.class).getDirectDependency(
+               DependencyBuilder.create(COORDINATES));
+         Assert.assertEquals("test", dependency.getScopeType());
+      }
+      finally
+      {
+         project.getRootDirectory().delete(true);
+      }
+   }
+
+   @Test
    public void testAddManagedDependency() throws Exception
    {
       Project project = factory.createTempProject(build);

@@ -73,7 +73,7 @@ public class AddDependenciesCommand extends AbstractProjectCommand
                         existingDep.getCoordinate().getArtifactId(),
                         existingDep.getCoordinate().getVersion())))
                {
-                  gav = existingDep;
+                  gav = DependencyBuilder.create(existingDep).setScopeType(gav.getScopeType());
                }
             }
 
