@@ -44,8 +44,6 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
    @Inject
    private AddonRegistry registry;
 
-   private Project project;
-
    @Override
    public Metadata getMetadata(UIContext context)
    {
@@ -64,7 +62,7 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      project = getSelectedProject(builder.getUIContext());
+      Project project = getSelectedProject(builder.getUIContext());
       if (project != null)
       {
          projectRoot.setDefaultValue(project.getRootDirectory());
@@ -75,6 +73,10 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
    @Override
    public Result execute(UIExecutionContext context)
    {
+      Project project = projectFactory.findProject(projectRoot.getValue());
+      if(project == null) {
+         return Results.fail("No project found in root " + projectRoot.getValue().getFullyQualifiedName());
+      }
       Coordinate coordinate = project.getFacet(MetadataFacet.class).getOutputDependency().getCoordinate();
       try
       {
