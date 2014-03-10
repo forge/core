@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 
 /**
  * Uses {@link WatchService} to watch files
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class FileWatcher implements Runnable
@@ -160,7 +160,7 @@ public class FileWatcher implements Runnable
             ResourceMonitorImpl resourceMonitor = keys.get(key);
             if (resourceMonitor == null)
             {
-               log.severe("WatchKey not recognized " + name + " - " + key.watchable() + "> " + kind);
+               log.finest("WatchKey not recognized " + name + " - " + key.watchable() + "> " + kind);
                continue;
             }
             Path resourcePath = resourceMonitor.getResourcePath();
@@ -191,11 +191,19 @@ public class FileWatcher implements Runnable
             }
          }
 
-         // reset key and remove from set if directory no longer accessible
-         boolean valid = key.reset();
-         if (!valid)
+         if (!keys.containsKey(key))
          {
-            keys.remove(key);
+            // key is no longer available in the keys Map. Cancel it
+            key.cancel();
+         }
+         else
+         {
+            // reset key and remove from set if directory no longer accessible
+            boolean valid = key.reset();
+            if (!valid)
+            {
+               keys.remove(key);
+            }
          }
       }
    }
