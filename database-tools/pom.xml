@@ -90,7 +90,7 @@
             <artifactId>ui-test-harness</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
-         </dependency>         
+         </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dependencies-api</artifactId>
@@ -136,38 +136,6 @@
             <version>${hibernate.tools.version}</version>
          </dependency>
 
-         <!-- Furnace dependencies -->
-         <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace-api</artifactId>
-            <version>${version.furnace}</version>
-            <scope>provided</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi</artifactId>
-            <version>${version.furnace}</version>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>${version.furnace}</version>
-            <scope>provided</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>arquillian-furnace-classpath</artifactId>
-            <version>${version.furnace}</version>
-            <scope>test</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>furnace-test-harness</artifactId>
-            <version>${version.furnace}</version>
-            <scope>test</scope>
-         </dependency>
          <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
