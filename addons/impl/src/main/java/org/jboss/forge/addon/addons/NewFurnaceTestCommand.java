@@ -172,7 +172,7 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
       body.append(";");
       body.append("return archive;");
       Method<JavaClass> getDeployment = javaClass.addMethod().setName("getDeployment").setPublic().setStatic(true)
-               .setBody(body.toString());
+               .setBody(body.toString()).setReturnType("ForgeArchive");
       getDeployment.addAnnotation("Deployment");
       String annotationBody = dependenciesAnnotationBody.toString();
       if (annotationBody.length() > 0)
