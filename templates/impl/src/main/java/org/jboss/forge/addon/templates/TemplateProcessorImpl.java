@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.templates;
 
+import org.jboss.forge.addon.resource.Resource;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;

@@ -32,5 +32,6 @@ public interface TemplateProcessorFactory
     * @param template The template for which the processor is to be created
     * @return A {@link TemplateProcessor} instance
     */
+   @Deprecated
    TemplateProcessor fromTemplate(Resource template);
 }

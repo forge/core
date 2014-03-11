@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.templates;
 
+import org.jboss.forge.addon.resource.Resource;
+
 import java.io.IOException;
 import java.io.Writer;
 
@@ -26,6 +28,7 @@ public interface TemplateGenerator
     * 
     * @deprecated Deprecated after Forge 2.1.1. Use the {@link Template} accepting method instead.
     */
+   @Deprecated
    public boolean handles(Resource template);
 
    /**
@@ -40,5 +43,6 @@ public interface TemplateGenerator
     * 
     * @deprecated Deprecated after Forge 2.1.1. Use the {@link Template} accepting method instead.
     */
+   @Deprecated
    public void process(Object dataModel, Resource template, Writer writer) throws IOException;
 }
