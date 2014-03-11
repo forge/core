@@ -104,7 +104,7 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(getClass()).name("Addon: Test New")
+      return Metadata.forCommand(getClass()).name("Addon: New Test")
                .description("Generates a Furnace test case for an addon")
                .category(Categories.create("Forge", "Generate"));
    }
