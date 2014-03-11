@@ -19,13 +19,24 @@ import java.io.Writer;
 public class TemplateProcessorImpl implements TemplateProcessor
 {
    private final TemplateGenerator generator;
-   private final Template template;
+   private Template template;
+   private Resource resource;
 
    TemplateProcessorImpl(TemplateGenerator generator, Template template)
    {
       super();
       this.generator = generator;
       this.template = template;
+   }
+
+   /**
+    * @deprecated Deprecated after Forge 2.1.1. Use the {@link Template} based constructor instead.
+    */
+   TemplateProcessorImpl(TemplateGenerator generator, Resource resource)
+   {
+      super();
+      this.generator = generator;
+      this.resource = resource;
    }
 
    @Override
@@ -39,6 +50,13 @@ public class TemplateProcessorImpl implements TemplateProcessor
    @Override
    public void process(Object dataModel, Writer output) throws IOException
    {
-      generator.process(dataModel, template, output);
+      if (template != null)
+      {
+         generator.process(dataModel, template, output);
+      }
+      else if (resource != null)
+      {
+         generator.process(dataModel, resource, output);
+      }
    }
 }

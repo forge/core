@@ -13,6 +13,7 @@ import java.io.Writer;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.templates.Template;
 import org.jboss.forge.addon.templates.TemplateGenerator;
 
@@ -52,9 +53,35 @@ public class FreemarkerTemplateGenerator implements TemplateGenerator
    }
 
    @Override
+   public void process(Object dataModel, Resource template, Writer writer) throws IOException
+   {
+      String id = loader.register(template);
+      try
+      {
+         freemarker.template.Template templateFile = getFreemarkerConfig().getTemplate(id);
+         templateFile.process(dataModel, writer);
+         writer.flush();
+      }
+      catch (TemplateException e)
+      {
+         throw new RuntimeException(e);
+      }
+      finally
+      {
+         loader.dispose(id);
+      }
+   }
+
+   @Override
    public boolean handles(Template template)
    {
       return template instanceof FreemarkerTemplate;
+   }
+
+   @Override
+   public boolean handles(Resource template)
+   {
+      return true;
    }
 
    public freemarker.template.Configuration getFreemarkerConfig()

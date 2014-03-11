@@ -22,8 +22,23 @@ public interface TemplateGenerator
    public boolean handles(Template template);
 
    /**
+    * Returns true if the given template can be handled by this {@link TemplateGenerator}
+    * 
+    * @deprecated Deprecated after Forge 2.1.1. Use the {@link Template} accepting method instead.
+    */
+   public boolean handles(Resource template);
+
+   /**
     * Processes the template specified by the {@link Template} parameter and writes the output to the {@link Writer}
     * parameter
     */
    public void process(Object dataModel, Template template, Writer writer) throws IOException;
+
+   /**
+    * Processes the template specified by the {@link Resource} parameter and writes the output to the {@link Writer}
+    * parameter
+    * 
+    * @deprecated Deprecated after Forge 2.1.1. Use the {@link Template} accepting method instead.
+    */
+   public void process(Object dataModel, Resource template, Writer writer) throws IOException;
 }
