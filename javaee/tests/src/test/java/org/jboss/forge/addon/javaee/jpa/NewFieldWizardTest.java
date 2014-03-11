@@ -8,15 +8,19 @@ package org.jboss.forge.addon.javaee.jpa;
 
 import javax.inject.Inject;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.javaee.jpa.ui.NewFieldWizard;
+import org.jboss.forge.addon.javaee.jpa.ui.RelationshipType;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
+import org.jboss.forge.addon.ui.result.CompositeResult;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
@@ -32,6 +36,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.junit.Assert.fail;
 
 @RunWith(Arquillian.class)
 public class NewFieldWizardTest
@@ -158,6 +164,83 @@ public class NewFieldWizardTest
       Assert.assertTrue(field.hasAnnotation(Column.class));
       Assert.assertEquals("String", field.getType());
       Assert.assertEquals("100", field.getAnnotation(Column.class).getStringValue("length"));
+   }
+
+   @Test
+   public void testNewOneToManyField() throws Exception
+   {
+      JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
+      JavaResource otherEntity = projectHelper.createJPAEntity(project, "Account");
+      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+               project.getRootDirectory()))
+      {
+         controller.initialize();
+         Assert.assertTrue(controller.isEnabled());
+         controller.setValueFor("targetEntity", entity);
+         Assert.assertFalse(controller.canExecute());
+         controller.setValueFor("named", "accounts");
+         controller.setValueFor("type", otherEntity.getJavaSource().getCanonicalName());
+         controller.setValueFor("relationshipType", RelationshipType.ONE_TO_MANY);
+         Assert.assertTrue(controller.canMoveToNextStep());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertFalse(result instanceof Failed);
+         if (result instanceof CompositeResult)
+         {
+            CompositeResult compositeResult = (CompositeResult) result;
+            Assert.assertEquals("Relationship One-to-Many created", compositeResult.getResults().get(1).getMessage());
+         }
+         else
+         {
+            fail("Result is of type " + CompositeResult.class.getSimpleName() + " is expected.");
+         }
+      }
+      JavaClass javaClass = (JavaClass) entity.getJavaSource();
+      Assert.assertTrue(javaClass.hasField("accounts"));
+      final Field<JavaClass> field = javaClass.getField("accounts");
+      Assert.assertFalse(field.hasAnnotation(Column.class));
+      Assert.assertTrue(field.hasAnnotation(OneToMany.class));
+      Assert.assertEquals("Set", field.getType());
+   }
+
+   @Test
+   public void testNewOneToManyEagerFetchField() throws Exception
+   {
+      JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
+      JavaResource otherEntity = projectHelper.createJPAEntity(project, "Account");
+      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+               project.getRootDirectory()))
+      {
+         controller.initialize();
+         Assert.assertTrue(controller.isEnabled());
+         controller.setValueFor("targetEntity", entity);
+         Assert.assertFalse(controller.canExecute());
+         controller.setValueFor("named", "accounts");
+         controller.setValueFor("type", otherEntity.getJavaSource().getCanonicalName());
+         controller.setValueFor("relationshipType", RelationshipType.ONE_TO_MANY);
+         Assert.assertTrue(controller.canMoveToNextStep());
+         WizardCommandController next = controller.next();
+         next.setValueFor("fetchType", FetchType.EAGER);
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertFalse(result instanceof Failed);
+         if (result instanceof CompositeResult)
+         {
+            CompositeResult compositeResult = (CompositeResult) result;
+            Assert.assertEquals("Relationship One-to-Many created", compositeResult.getResults().get(1).getMessage());
+         }
+         else
+         {
+            fail("Result is of type " + CompositeResult.class.getSimpleName() + " is expected.");
+         }
+      }
+      JavaClass javaClass = (JavaClass) entity.getJavaSource();
+      Assert.assertTrue(javaClass.hasField("accounts"));
+      final Field<JavaClass> field = javaClass.getField("accounts");
+      Assert.assertFalse(field.hasAnnotation(Column.class));
+      Assert.assertTrue(field.hasAnnotation(OneToMany.class));
+      Assert.assertEquals(FetchType.EAGER, field.getAnnotation(OneToMany.class).getEnumValue(FetchType.class, "fetch"));
+      Assert.assertEquals("Set", field.getType());
    }
 
 }
