@@ -231,7 +231,7 @@ public class ShellUIPromptImpl implements UIPrompt
          {
             CommandOperation input = commandInvocation.getInput();
             inputKey = input.getInputKey();
-            if (inputKey == Key.ESC)
+            if (inputKey == Key.ESC || inputKey == Key.CTRL_C || inputKey == Key.CTRL_D)
             {
                return null;
             }
