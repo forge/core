@@ -59,7 +59,7 @@
       <!-- Build Info -->
       <forge.scm.url>http://github.com/forge/core</forge.scm.url>
       <forge.release.version>${project.version}</forge.release.version>
-      <version.furnace>2.1.1.Final</version.furnace>
+      <version.furnace>2.1.2-SNAPSHOT</version.furnace>
    </properties>
 
    <dependencyManagement>
