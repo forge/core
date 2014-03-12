@@ -9,6 +9,7 @@
    </parent>
    <groupId>org.jboss.forge.addon</groupId>
    <artifactId>parser-json-parent</artifactId>
+   <name>Forge - Json Parser Addon Parent</name>
    <packaging>pom</packaging>
    <modules>
       <module>addon</module>

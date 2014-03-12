@@ -7,6 +7,7 @@
       <version>2.1.2-SNAPSHOT</version>
    </parent>
    <artifactId>parser-json-tests</artifactId>
+   <name>Forge - Json Parser Addon Tests</name>
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>

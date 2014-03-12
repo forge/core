@@ -7,6 +7,7 @@
       <version>2.1.2-SNAPSHOT</version>
    </parent>
    <artifactId>parser-json</artifactId>
+   <name>Forge - Json Parser Addon</name>
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>
