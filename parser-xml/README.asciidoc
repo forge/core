@@ -1,0 +1,47 @@
+== parser-xml
+:idprefix: id_
+This addon provides *standalone* functionality, and *exports services* for use in other addons.
+It enables parsing of XML using the https://github.com/forge/xml-parser project
+
+=== Depends on
+[options="header"]
+|===
+|Addon |Exported |Optional
+|resources
+|yes
+|yes
+
+|simple
+|yes
+|no
+
+|===
+
+== Setup
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>parser-xml</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----
+== Features
+XMLResource for XML files::
+Allows easy manipulation of xml data
++
+[source,java]
+----
+@Inject private ResourceFactory factory;
+XMLResource resource = factory.createResource(new File("pom.xml")).reify(XMLResource.class);
+Node node = resource.getXmlSource();
+// Manipulate node
+...
+// save it
+resource.setContents(node);
+----
