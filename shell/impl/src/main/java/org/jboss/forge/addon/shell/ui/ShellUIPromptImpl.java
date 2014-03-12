@@ -175,7 +175,7 @@ public class ShellUIPromptImpl implements UIPrompt
       }
       else
       {
-         value = prompt(label + " (ESC to exit)");
+         value = prompt(label);
       }
       return value;
 
@@ -207,7 +207,7 @@ public class ShellUIPromptImpl implements UIPrompt
       int idx;
       try
       {
-         idx = Integer.parseInt(prompt(label + " [0-" + (items.size() - 1) + "] (ESC to exit)"));
+         idx = Integer.parseInt(prompt(label + " [0-" + (items.size() - 1) + "]"));
       }
       catch (NumberFormatException nfe)
       {
@@ -231,7 +231,7 @@ public class ShellUIPromptImpl implements UIPrompt
          {
             CommandOperation input = commandInvocation.getInput();
             inputKey = input.getInputKey();
-            if (inputKey == Key.ESC || inputKey == Key.CTRL_C || inputKey == Key.CTRL_D)
+            if (inputKey == Key.CTRL_C || inputKey == Key.CTRL_D)
             {
                return null;
             }
