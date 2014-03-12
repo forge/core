@@ -163,19 +163,28 @@ public class ShellUIPromptImpl implements UIPrompt
    private Object promptInputComponent(InputComponent<?, ?> input)
    {
       Object value;
-      String label = InputComponents.getLabelFor(input, true);
-      String inputType = InputComponents.getInputType(input);
-      if (InputType.SECRET.equals(inputType))
+      String label = InputComponents.getLabelFor(input, false);
+      String description = input.getDescription();
+      if (!Strings.isNullOrEmpty(description))
       {
-         value = promptSecret(label);
-      }
-      else if (input.getValueType() == Boolean.class)
-      {
-         value = promptBoolean(label);
+         description = " (" + description + "): ";
       }
       else
       {
-         value = prompt(label);
+         description = ": ";
+      }
+      String inputType = InputComponents.getInputType(input);
+      if (InputType.SECRET.equals(inputType))
+      {
+         value = promptSecret(label + description);
+      }
+      else if (input.getValueType() == Boolean.class)
+      {
+         value = promptBoolean(label + description);
+      }
+      else
+      {
+         value = prompt(label + description);
       }
       return value;
 
@@ -185,7 +194,16 @@ public class ShellUIPromptImpl implements UIPrompt
    private Object promptSelectComponent(SelectComponent select, List<Object> existingItems)
    {
       PrintStream out = console.getShell().out();
-      String label = InputComponents.getLabelFor(select, true);
+      String label = InputComponents.getLabelFor(select, false);
+      String description = select.getDescription();
+      if (!Strings.isNullOrEmpty(description))
+      {
+         description = " (" + description + "):";
+      }
+      else
+      {
+         description = ":";
+      }
       Object value = null;
       Converter<Object, String> itemLabelConverter = InputComponents.getItemLabelConverter(converterFactory,
                select);
@@ -207,7 +225,7 @@ public class ShellUIPromptImpl implements UIPrompt
       int idx;
       try
       {
-         idx = Integer.parseInt(prompt(label + " [0-" + (items.size() - 1) + "]"));
+         idx = Integer.parseInt(prompt(label + description + " [0-" + (items.size() - 1) + "]"));
       }
       catch (NumberFormatException nfe)
       {
