@@ -270,8 +270,11 @@ public class ShellUIPromptImpl implements UIPrompt
 
    private boolean isAcceptDefaultsEnabled()
    {
+      if (!context.isInteractive())
+      {
+         return true;
+      }
       Object acceptDefaultsFlag = context.getAttributeMap().get("ACCEPT_DEFAULTS");
       return acceptDefaultsFlag != null && "true".equalsIgnoreCase(acceptDefaultsFlag.toString());
    }
-
 }
