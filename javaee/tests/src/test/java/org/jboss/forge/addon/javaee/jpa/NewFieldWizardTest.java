@@ -37,7 +37,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.fail;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertThat;
 
 @RunWith(Arquillian.class)
 public class NewFieldWizardTest
@@ -185,15 +186,9 @@ public class NewFieldWizardTest
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
          Assert.assertFalse(result instanceof Failed);
-         if (result instanceof CompositeResult)
-         {
-            CompositeResult compositeResult = (CompositeResult) result;
-            Assert.assertEquals("Relationship One-to-Many created", compositeResult.getResults().get(1).getMessage());
-         }
-         else
-         {
-            fail("Result is of type " + CompositeResult.class.getSimpleName() + " is expected.");
-         }
+         assertThat("Result should be of type CompositeResult", result instanceof CompositeResult, equalTo(true));
+         CompositeResult compositeResult = (CompositeResult) result;
+         Assert.assertEquals("Relationship One-to-Many created", compositeResult.getResults().get(1).getMessage());
       }
       JavaClass javaClass = (JavaClass) entity.getJavaSource();
       Assert.assertTrue(javaClass.hasField("accounts"));
@@ -219,20 +214,14 @@ public class NewFieldWizardTest
          controller.setValueFor("type", otherEntity.getJavaSource().getCanonicalName());
          controller.setValueFor("relationshipType", RelationshipType.ONE_TO_MANY);
          Assert.assertTrue(controller.canMoveToNextStep());
-         WizardCommandController next = controller.next();
-         next.setValueFor("fetchType", FetchType.EAGER);
+         controller.next();
+         controller.setValueFor("fetchType", FetchType.EAGER);
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
          Assert.assertFalse(result instanceof Failed);
-         if (result instanceof CompositeResult)
-         {
-            CompositeResult compositeResult = (CompositeResult) result;
-            Assert.assertEquals("Relationship One-to-Many created", compositeResult.getResults().get(1).getMessage());
-         }
-         else
-         {
-            fail("Result is of type " + CompositeResult.class.getSimpleName() + " is expected.");
-         }
+         assertThat ("Result should be of type CompositeResult", result instanceof CompositeResult, equalTo(true));
+         CompositeResult compositeResult = (CompositeResult) result;
+         Assert.assertEquals("Relationship One-to-Many created", compositeResult.getResults().get(1).getMessage());
       }
       JavaClass javaClass = (JavaClass) entity.getJavaSource();
       Assert.assertTrue(javaClass.hasField("accounts"));
