@@ -38,7 +38,7 @@ public class AddonRemoveCommand extends AbstractUICommand implements AddonComman
    private AddonManager manager;
 
    @Inject
-   @WithAttributes(label = "Installed addons", description = "The installed addons in mutable addon repositories that may be removed")
+   @WithAttributes(label = "Installed addons", description = "The installed addons in mutable addon repositories that may be removed", required = true)
    private UISelectMany<AddonId> addons;
 
    @Inject
