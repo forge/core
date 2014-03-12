@@ -62,6 +62,7 @@ public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implem
       Map<Object, Object> attributeMap = context.getAttributeMap();
       RelationshipType relationship = RelationshipType.valueOf(attributeMap.get(RelationshipType.class).toString());
       cascadeType.setValueChoices(EnumSet.range(CascadeType.PERSIST, CascadeType.DETACH));
+      boolean shouldAddRequired = false;
       switch (relationship)
       {
       case MANY_TO_MANY:
@@ -71,11 +72,17 @@ public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implem
       case MANY_TO_ONE:
       case ONE_TO_ONE:
          fetchType.setDefaultValue(FetchType.EAGER);
+         shouldAddRequired = true;
          break;
       default:
          throw new UnsupportedOperationException("Relationship " + relationship + " is not supported");
       }
-      builder.add(fetchType).add(inverseFieldName).add(required).add(cascadeType);
+      builder.add(fetchType).add(inverseFieldName);
+      if (shouldAddRequired)
+      {
+         builder.add(required);
+      }
+      builder.add(cascadeType);
    }
 
    @Override
