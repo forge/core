@@ -30,7 +30,7 @@ import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Adapts the current {@link AbstractShellInteraction} to a {@link Command}
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -61,6 +61,11 @@ class CommandAdapter implements Command<CommandInvocation>
       Map<Object, Object> attributeMap = shellContext.getAttributeMap();
       attributeMap.put(CommandInvocation.class, commandInvocation);
       boolean failure = false;
+      // FORGE-1668: Prompt for required missing values
+      if (shellContext.isInteractive())
+      {
+         interaction.promptRequiredMissingValues(shell);
+      }
       if (interaction.getController().isValid())
       {
          Result commandResult = null;
@@ -100,7 +105,10 @@ class CommandAdapter implements Command<CommandInvocation>
          for (UIMessage message : messages)
          {
             if (message.getSeverity() == Severity.ERROR)
+            {
+               failure = true;
                ShellMessages.error(shell.getConsole().getShell().err(), message.getDescription());
+            }
          }
       }
       return failure ? CommandResult.FAILURE : CommandResult.SUCCESS;

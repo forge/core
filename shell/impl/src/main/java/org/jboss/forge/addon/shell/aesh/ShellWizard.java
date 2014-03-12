@@ -12,13 +12,14 @@ import java.util.Map;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.parser.CommandLineParser;
+import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.input.InputComponent;
 
 /**
  * Encapsulates the {@link WizardCommandController}.
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -59,7 +60,7 @@ public class ShellWizard extends AbstractShellInteraction
       parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
       cmdLine = parser.parse(line, true);
       populatedInputs = commandLineUtil.populateUIInputs(cmdLine, allInputs);
-      
+
       boolean inputsChanged = false;
       for (String input : pageInputs.keySet())
       {
@@ -84,5 +85,25 @@ public class ShellWizard extends AbstractShellInteraction
          parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
       }
       return parser;
+   }
+
+   @Override
+   public void promptRequiredMissingValues(ShellImpl shell)
+   {
+      WizardCommandController controller = getController();
+      promptRequiredMissingValues(shell, controller.getInputs().values());
+      while (controller.canMoveToNextStep())
+      {
+         try
+         {
+            controller.next().initialize();
+         }
+         catch (Exception e)
+         {
+            // TODO: Log this
+            break;
+         }
+         promptRequiredMissingValues(shell, controller.getInputs().values());
+      }
    }
 }

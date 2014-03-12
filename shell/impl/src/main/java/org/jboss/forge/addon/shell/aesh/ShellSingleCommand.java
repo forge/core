@@ -6,14 +6,18 @@
  */
 package org.jboss.forge.addon.shell.aesh;
 
+import java.util.Map;
+
 import org.jboss.aesh.cl.parser.CommandLineParser;
+import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.input.InputComponent;
 
 /**
  * Encapsulates a {@link UICommand} to be useful in a Shell context
- * 
+ *
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -41,6 +45,16 @@ public class ShellSingleCommand extends AbstractShellInteraction
          this.commandLineParser = commandLineUtil.generateParser(this.controller, shellContext, controller.getInputs());
       }
       return this.commandLineParser;
+   }
+
+   /**
+    * Prompts for required missing values
+    */
+   @Override
+   public void promptRequiredMissingValues(ShellImpl shell)
+   {
+      Map<String, InputComponent<?, ?>> inputs = getController().getInputs();
+      promptRequiredMissingValues(shell, inputs.values());
    }
 
 }
