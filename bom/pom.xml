@@ -55,10 +55,6 @@
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-      <!-- Build Info -->
-      <forge.scm.url>http://github.com/forge/core</forge.scm.url>
-      <forge.release.version>${project.version}</forge.release.version>
       <version.furnace>2.1.2-SNAPSHOT</version.furnace>
    </properties>
 
@@ -303,6 +299,17 @@
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>parser-java-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>parser-json</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>parser-json-api</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
