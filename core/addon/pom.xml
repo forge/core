@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <parent>
     <groupId>org.jboss.forge.addon</groupId>
     <artifactId>core-parent</artifactId>
     <version>2.1.2-SNAPSHOT</version>
   </parent>
-  
+
   <artifactId>core</artifactId>
   <name>Forge - Core Addon</name>
 
@@ -69,6 +69,11 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.forge.addon</groupId>
+      <artifactId>parser-json</artifactId>
+      <classifier>forge-addon</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.forge.addon</groupId>
       <artifactId>projects</artifactId>
       <classifier>forge-addon</classifier>
     </dependency>
@@ -108,7 +113,7 @@
       <classifier>forge-addon</classifier>
     </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
