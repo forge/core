@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.addons;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -74,6 +75,7 @@ public class NewFurnaceTestSetupCommand extends AbstractProjectCommand
          }
       }
       addonDependencies.setValueChoices(choices);
+      addonDependencies.setDefaultValue(new ArrayList<AddonId>());
       builder.add(addonDependencies);
    }
 

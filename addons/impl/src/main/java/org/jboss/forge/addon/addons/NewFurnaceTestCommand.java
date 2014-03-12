@@ -104,7 +104,7 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(getClass()).name("Addon: Test New")
+      return Metadata.forCommand(getClass()).name("Addon: New Test")
                .description("Generates a Furnace test case for an addon")
                .category(Categories.create("Forge", "Generate"));
    }
@@ -172,7 +172,7 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
       body.append(";");
       body.append("return archive;");
       Method<JavaClass> getDeployment = javaClass.addMethod().setName("getDeployment").setPublic().setStatic(true)
-               .setBody(body.toString());
+               .setBody(body.toString()).setReturnType("ForgeArchive");
       getDeployment.addAnnotation("Deployment");
       String annotationBody = dependenciesAnnotationBody.toString();
       if (annotationBody.length() > 0)

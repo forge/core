@@ -17,6 +17,8 @@ import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
+import org.jboss.forge.addon.facets.constraints.FacetConstraintType;
+import org.jboss.forge.addon.facets.constraints.FacetConstraints;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -31,8 +33,10 @@ import org.jboss.forge.parser.java.JavaClass;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@FacetConstraint({ JavaSourceFacet.class, DependencyFacet.class, FurnaceVersionFacet.class,
-         DefaultFurnaceContainerFacet.class })
+@FacetConstraints({
+         @FacetConstraint({ JavaSourceFacet.class, DependencyFacet.class, DefaultFurnaceContainerFacet.class }),
+         @FacetConstraint(value = { FurnaceVersionFacet.class }, type = FacetConstraintType.OPTIONAL)
+})
 public class AddonTestFacet extends AbstractFacet<Project> implements ProjectFacet
 {
    private static Logger log = Logger.getLogger(AddonTestFacet.class.toString());
@@ -52,10 +56,17 @@ public class AddonTestFacet extends AbstractFacet<Project> implements ProjectFac
    @Override
    public boolean install()
    {
-      installer.install(getFaceted(), DependencyBuilder.create(FURNACE_TEST_HARNESS_DEPENDENCY)
-               .setVersion(FurnaceVersionFacet.VERSION_PROPERTY));
-      installer.install(getFaceted(), DependencyBuilder.create(FURNACE_TEST_ADAPTER_DEPENDENCY)
-               .setVersion(FurnaceVersionFacet.VERSION_PROPERTY));
+      if (!isInstalled())
+      {
+         String version = null;
+         if (getFaceted().hasFacet(FurnaceVersionFacet.class))
+         {
+            version = FurnaceVersionFacet.VERSION_PROPERTY;
+         }
+
+         installer.install(getFaceted(), DependencyBuilder.create(FURNACE_TEST_HARNESS_DEPENDENCY).setVersion(version));
+         installer.install(getFaceted(), DependencyBuilder.create(FURNACE_TEST_ADAPTER_DEPENDENCY).setVersion(version));
+      }
 
       if (isInstalled())
       {

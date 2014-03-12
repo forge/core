@@ -6,11 +6,11 @@
       <artifactId>database-tools-parent</artifactId>
       <version>2.1.2-SNAPSHOT</version>
    </parent>
-   
+
    <artifactId>database-tools</artifactId>
    <name>Forge - Database Tools Addon</name>
-   
-   
+
+
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
@@ -34,6 +34,11 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>javaee</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>parser-xml</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
       <dependency>

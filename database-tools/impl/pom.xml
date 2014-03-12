@@ -6,11 +6,11 @@
       <artifactId>database-tools-parent</artifactId>
       <version>2.1.2-SNAPSHOT</version>
    </parent>
-   
+
    <artifactId>database-tools-impl</artifactId>
    <name>Forge - Database Tools Impl</name>
-   
-   
+
+
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
@@ -22,10 +22,6 @@
          <artifactId>hibernate-tools</artifactId>
       </dependency>
       <dependency>
-         <groupId>org.jboss.forge</groupId>
-         <artifactId>xml-parser</artifactId>
-      </dependency>
-      <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>
          <artifactId>cdi-api</artifactId>
          <scope>provided</scope>
@@ -33,6 +29,11 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>dependencies-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>parser-xml-api</artifactId>
          <scope>provided</scope>
       </dependency>
       <dependency>
