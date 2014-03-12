@@ -12,6 +12,7 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
@@ -37,6 +38,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -186,7 +188,7 @@ public class NewFieldWizardTest
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
          Assert.assertFalse(result instanceof Failed);
-         assertThat("Result should be of type CompositeResult", result instanceof CompositeResult, equalTo(true));
+         assertThat("Result should be of type CompositeResult", result, instanceOf(CompositeResult.class));
          CompositeResult compositeResult = (CompositeResult) result;
          Assert.assertEquals("Relationship One-to-Many created", compositeResult.getResults().get(1).getMessage());
       }
@@ -219,7 +221,7 @@ public class NewFieldWizardTest
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
          Assert.assertFalse(result instanceof Failed);
-         assertThat ("Result should be of type CompositeResult", result instanceof CompositeResult, equalTo(true));
+         assertThat ("Result should be of type CompositeResult", result, instanceOf(CompositeResult.class));
          CompositeResult compositeResult = (CompositeResult) result;
          Assert.assertEquals("Relationship One-to-Many created", compositeResult.getResults().get(1).getMessage());
       }

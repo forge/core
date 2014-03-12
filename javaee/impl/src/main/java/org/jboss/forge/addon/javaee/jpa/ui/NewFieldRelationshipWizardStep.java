@@ -94,7 +94,7 @@ public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implem
       {
       case MANY_TO_MANY:
          persistenceOperations.newManyToManyRelationship(project, entity, fieldName, fieldType,
-                  inverseFieldName.getValue(), fetchType.getValue(), required.getValue(), cascadeType.getValue());
+                  inverseFieldName.getValue(), fetchType.getValue(), cascadeType.getValue());
          break;
       case MANY_TO_ONE:
          persistenceOperations.newManyToOneRelationship(project, entity, fieldName, fieldType,
@@ -102,7 +102,7 @@ public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implem
          break;
       case ONE_TO_MANY:
          persistenceOperations.newOneToManyRelationship(project, entity, fieldName, fieldType,
-                  inverseFieldName.getValue(), fetchType.getValue(), required.getValue(), cascadeType.getValue());
+                  inverseFieldName.getValue(), fetchType.getValue(), cascadeType.getValue());
          break;
       case ONE_TO_ONE:
          persistenceOperations.newOneToOneRelationship(project, entity, fieldName, fieldType,

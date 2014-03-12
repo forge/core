@@ -123,6 +123,7 @@ public class FieldOperations
       else
       {
          fieldEntityClass = findEntity(project, fieldType);
+         entityClass.addImport(fieldEntityClass);
       }
 
       Field<JavaClass> localField = addFieldTo(entityClass, fieldEntityClass.getName(), fieldName,
@@ -146,6 +147,7 @@ public class FieldOperations
          annotation.setLiteralValue("optional", "false");
       }
       addCascade(cascadeTypes, annotation);
+      java.saveJavaSource(entityClass);
    }
 
    private void addCascade(final Iterable<CascadeType> cascadeTypes, Annotation<JavaClass> annotation)
@@ -260,7 +262,6 @@ public class FieldOperations
             final String fieldType,
             final String inverseFieldName,
             final FetchType fetchType,
-            final boolean required,
             final Iterable<CascadeType> cascadeTypes)
             throws FileNotFoundException
    {
@@ -329,7 +330,6 @@ public class FieldOperations
             final String fieldType,
             final String inverseFieldName,
             final FetchType fetchType,
-            final boolean required,
             final Iterable<CascadeType> cascadeTypes) throws FileNotFoundException
    {
 
