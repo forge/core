@@ -237,7 +237,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
 
    /**
     * @param project
-    * @param entities
+    * @param project
     */
    private List<JavaResource> getProjectEntities(Project project)
    {
