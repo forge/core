@@ -34,11 +34,13 @@ import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.aesh.terminal.TerminalColor;
+import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.aesh.ForgeCommandNotFoundHandler;
 import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIOutputImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIPromptImpl;
@@ -46,7 +48,6 @@ import org.jboss.forge.addon.ui.UIRuntime;
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIContextListener;
-import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.progress.DefaultUIProgressMonitor;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
@@ -58,7 +59,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
  * Implementation of the {@link Shell} interface.
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -241,9 +242,11 @@ public class ShellImpl implements Shell, UIRuntime
    }
 
    @Override
-   public UIPrompt createPrompt(UIContext context)
+   public ShellUIPromptImpl createPrompt(UIContext context)
    {
-      return new ShellUIPromptImpl(context, console);
+      ShellContext shellContext = (ShellContext) context;
+      ConverterFactory converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
+      return new ShellUIPromptImpl(shellContext, converterFactory);
    }
 
    /**

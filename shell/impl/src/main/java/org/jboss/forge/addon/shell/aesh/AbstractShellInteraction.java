@@ -8,10 +8,13 @@
 package org.jboss.forge.addon.shell.aesh;
 
 import org.jboss.aesh.cl.parser.CommandLineParser;
+import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.ShellContext;
+import org.jboss.forge.addon.shell.ui.ShellUIPromptImpl;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 
 /**
@@ -37,6 +40,8 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
    }
 
    public abstract CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception;
+
+   public abstract void promptRequiredMissingValues(ShellImpl impl);
 
    public UIContext getContext()
    {
@@ -85,6 +90,27 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
    public String toString()
    {
       return getName();
+   }
+
+   /**
+    * Called by {@link AbstractShellInteraction#promptRequiredMissingValues(ShellImpl)}
+    */
+   protected void promptRequiredMissingValues(ShellImpl shell, Iterable<InputComponent<?, ?>> inputs)
+   {
+      ShellUIPromptImpl prompt = shell.createPrompt(context);
+      for (InputComponent<?, ?> input : inputs)
+      {
+         if (input.isRequired() && !(input.hasDefaultValue() || input.hasValue()))
+         {
+            Object obj = prompt.promptValueFrom(input);
+            if (obj == null)
+            {
+               // No value returned. Just stop testing other inputs
+               break;
+            }
+         }
+      }
+
    }
 
 }

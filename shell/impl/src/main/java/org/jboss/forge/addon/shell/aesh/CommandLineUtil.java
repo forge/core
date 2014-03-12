@@ -21,6 +21,7 @@ import org.jboss.aesh.cl.exception.OptionParserException;
 import org.jboss.aesh.cl.internal.ProcessedCommand;
 import org.jboss.aesh.cl.internal.ProcessedOption;
 import org.jboss.aesh.cl.parser.CommandLineParser;
+import org.jboss.aesh.cl.validator.CommandValidator;
 import org.jboss.aesh.cl.validator.OptionValidator;
 import org.jboss.aesh.cl.validator.OptionValidatorException;
 import org.jboss.aesh.console.command.completer.CompleterInvocation;
@@ -43,7 +44,7 @@ import org.jboss.forge.addon.ui.util.InputComponents;
 
 /**
  * Contains utility methods to parse command lines
- * 
+ *
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
@@ -73,7 +74,7 @@ public class CommandLineUtil
       UICommandMetadata metadata = (command instanceof WizardCommandController) ? ((WizardCommandController) command)
                .getInitialMetadata() : command.getMetadata();
       ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()),
-               metadata.getDescription(), ForgeCommandValidator.INSTANCE);
+               metadata.getDescription(), (CommandValidator<?>) null);
 
       for (final InputComponent<?, ?> input : inputs.values())
       {
@@ -94,7 +95,7 @@ public class CommandLineUtil
 
             if (input.isRequired() && !input.hasDefaultValue() && !input.hasValue())
             {
-               optionBuilder.required(true).renderer(OptionRenderers.REQUIRED);
+               optionBuilder.renderer(OptionRenderers.REQUIRED);
             }
             OptionCompleter<CompleterInvocation> completer = OptionCompleterFactory.getCompletionFor(
                      input, shellContext, converterFactory);

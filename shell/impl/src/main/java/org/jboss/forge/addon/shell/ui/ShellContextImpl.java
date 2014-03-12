@@ -17,7 +17,7 @@ import org.jboss.forge.addon.ui.util.Selections;
 
 /**
  * Implementation of {@link UIContext}
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class ShellContextImpl extends AbstractUIContext implements ShellContext
@@ -64,6 +64,12 @@ public class ShellContextImpl extends AbstractUIContext implements ShellContext
       {
          listener.contextDestroyed(this);
       }
+   }
 
+   @Override
+   public boolean isInteractive()
+   {
+      Object interactiveFlag = getAttributeMap().get("INTERACTIVE");
+      return (interactiveFlag == null || "true".equalsIgnoreCase(interactiveFlag.toString()));
    }
 }

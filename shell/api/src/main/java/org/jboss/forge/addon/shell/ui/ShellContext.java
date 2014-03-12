@@ -10,11 +10,16 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
  * A {@link ShellContext} is passed to {@link UICommand} objects when a command is invoked through a shell. This object
  * is not meant to be shared across different {@link UICommand} implementations (except when it is used in a
  * {@link UIWizard} and {@link UIWizardStep})
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public interface ShellContext extends UIContext
 {
    @Override
-   public Shell getProvider();
+   Shell getProvider();
+
+   /**
+    * If it's in interactive mode
+    */
+   boolean isInteractive();
 }
