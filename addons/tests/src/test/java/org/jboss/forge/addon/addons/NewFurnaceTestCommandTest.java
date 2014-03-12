@@ -15,11 +15,14 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.addons.facets.AddonTestFacet;
+import org.jboss.forge.addon.addons.facets.FurnaceVersionFacet;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.facets.PackagingFacet;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -28,6 +31,7 @@ import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.parser.java.JavaClass;
@@ -75,12 +79,17 @@ public class NewFurnaceTestCommandTest
    @Inject
    private UITestHarness testHarness;
 
+   @Inject
+   private Furnace furnace;
+
    @SuppressWarnings("unchecked")
    @Test
    public void testCreateTestClass() throws Exception
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
+      facetFactory.install(project, FurnaceVersionFacet.class);
+      project.getFacet(FurnaceVersionFacet.class).setVersion(furnace.getVersion().toString());
       facetFactory.install(project, AddonTestFacet.class);
 
       CommandController controller = testHarness.createCommandController(NewFurnaceTestCommand.class,
@@ -99,5 +108,11 @@ public class NewFurnaceTestCommandTest
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaClass.class)));
       Assert.assertFalse(javaResource.getJavaSource().hasSyntaxErrors());
+
+      Resource<?> finalArtifact = project.getFacet(PackagingFacet.class).getFinalArtifact();
+      Assert.assertFalse(finalArtifact.exists());
+      Assert.assertTrue(project.getFacet(PackagingFacet.class).createBuilder().runTests(false).build()
+               .exists());
+      Assert.assertTrue(finalArtifact.exists());
    }
 }
