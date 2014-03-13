@@ -43,8 +43,8 @@ public class ScaffoldAddonTest
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.addon:projects"),
             @AddonDependency(name = "org.jboss.forge.addon:scaffold"),
-            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
             @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.addon:parser-java"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
    })
    public static ForgeArchive getDeployment()
@@ -57,8 +57,8 @@ public class ScaffoldAddonTest
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:scaffold"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:parser-java"),
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                );
 
