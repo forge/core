@@ -132,9 +132,12 @@ public class FurnaceAddonSetupStep extends AbstractUICommand implements UIWizard
    {
       final Project project = (Project) context.getUIContext().getAttributeMap().get(Project.class);
       Set<AddonId> dependencyAddons = new TreeSet<>();
-      for (AddonId id : addons.getValue())
+      if (addons.hasValue())
       {
-         dependencyAddons.add(id);
+         for (AddonId id : addons.getValue())
+         {
+            dependencyAddons.add(id);
+         }
       }
       dependencyAddons.add(furnaceContainer.getValue());
       if (splitProjects.getValue())
