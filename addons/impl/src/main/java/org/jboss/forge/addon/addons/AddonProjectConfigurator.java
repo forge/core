@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -57,8 +56,6 @@ import org.jboss.forge.parser.java.JavaPackageInfo;
 public class AddonProjectConfigurator
 {
    private static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
-
-   private final Logger log = Logger.getLogger(getClass().getName());
 
    @Inject
    private FacetFactory facetFactory;
@@ -107,13 +104,6 @@ public class AddonProjectConfigurator
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
       String projectName = metadata.getProjectName();
       metadata.setProjectName(projectName + "-parent");
-      DirectoryResource newRoot = project.getRootDirectory().getParent().getChildDirectory(metadata.getProjectName());
-      // FORGE-877: there's an eclipse (not m2e) limitation that says if a project is located directly in the workspace
-      // folder, then the imported project's name is always the same as the folder it is contained in.
-      if (newRoot.exists() || !project.getRootDirectory().renameTo(newRoot))
-      {
-         log.warning("Could not rename project root");
-      }
 
       facetFactory.install(project, AddonParentFacet.class);
       project.getFacet(FurnaceVersionFacet.class).setVersion(forgeVersion.toString());
