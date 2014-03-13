@@ -7,12 +7,13 @@
 package org.jboss.forge.addon.maven.projects;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.inject.Inject;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
-import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectAssociationProvider;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -55,13 +56,12 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
          projectParent.setArtifactId(parentPom.getArtifactId());
          projectParent.setVersion(parentPom.getVersion());
 
-         DirectoryResource root = project.getRootDirectory();
-         DirectoryResource parentRoot = parent.getRootDirectory();
-
          // Calculate parent relative path
-         String delta = root.getFullyQualifiedName().substring(parentRoot.getFullyQualifiedName().length());
-         String relativePath = delta.replaceAll("(/|\\\\)(\\w+)", "../") + "pom.xml";
-         projectParent.setRelativePath(relativePath);
+         Path parentPomPath = Paths.get(parentMavenFacet.getModelResource().getFullyQualifiedName());
+         Path childPath = Paths.get(project.getRootDirectory().getFullyQualifiedName());
+         Path relativePath = childPath.relativize(parentPomPath).normalize();
+
+         projectParent.setRelativePath(relativePath.toString());
 
          // Reuse GroupId and version from parent
          pom.setGroupId(null);
