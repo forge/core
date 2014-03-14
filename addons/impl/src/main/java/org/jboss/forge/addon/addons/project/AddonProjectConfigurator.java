@@ -76,8 +76,11 @@ public class AddonProjectConfigurator
       generateReadme(project);
       facetFactory.install(project, FurnaceVersionFacet.class);
       project.getFacet(FurnaceVersionFacet.class).setVersion(forgeVersion.toString());
-
-      facetFactory.install(project, ForgeBOMFacet.class);
+      // The ForgeBOMFacet is only available in 2.1.2-SNAPSHOT afterwards
+      if (forgeVersion.compareTo(ForgeBOMFacet.MINIMUM_VERSION) >= 0)
+      {
+         facetFactory.install(project, ForgeBOMFacet.class);
+      }
       facetFactory.install(project, FurnacePluginFacet.class);
       facetFactory.install(project, AddonClassifierFacet.class);
       facetFactory.install(project, JavaSourceFacet.class);
@@ -109,7 +112,11 @@ public class AddonProjectConfigurator
 
       facetFactory.install(project, AddonParentFacet.class);
       project.getFacet(FurnaceVersionFacet.class).setVersion(forgeVersion.toString());
-      facetFactory.install(project, ForgeBOMFacet.class);
+
+      if (forgeVersion.compareTo(ForgeBOMFacet.MINIMUM_VERSION) >= 0)
+      {
+         facetFactory.install(project, ForgeBOMFacet.class);
+      }
 
       Project addonProject = createSubmoduleProject(project, "addon", projectName, AddonAddonFacet.class);
       Project apiProject = createSubmoduleProject(project, "api", projectName + "-api", AddonAPIFacet.class,
