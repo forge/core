@@ -16,8 +16,6 @@ import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
-import org.jboss.forge.furnace.versions.SingleVersion;
-import org.jboss.forge.furnace.versions.Version;
 
 /**
  * Installs the BOM into the project
@@ -27,11 +25,6 @@ import org.jboss.forge.furnace.versions.Version;
 @FacetConstraint({ FurnaceVersionFacet.class })
 public class ForgeBOMFacet extends AbstractFacet<Project> implements ProjectFacet
 {
-   /**
-    * The minimum version this BOM is available
-    */
-   public static final Version MINIMUM_VERSION = new SingleVersion("2.1.2-SNAPSHOT");
-
    @Inject
    private DependencyInstaller installer;
 
