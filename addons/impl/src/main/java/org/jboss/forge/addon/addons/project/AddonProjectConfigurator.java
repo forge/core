@@ -22,6 +22,7 @@ import org.jboss.forge.addon.addons.facets.AddonParentFacet;
 import org.jboss.forge.addon.addons.facets.AddonSPIFacet;
 import org.jboss.forge.addon.addons.facets.AddonTestFacet;
 import org.jboss.forge.addon.addons.facets.DefaultFurnaceContainerFacet;
+import org.jboss.forge.addon.addons.facets.ForgeBOMFacet;
 import org.jboss.forge.addon.addons.facets.FurnacePluginFacet;
 import org.jboss.forge.addon.addons.facets.FurnaceVersionFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
@@ -76,6 +77,7 @@ public class AddonProjectConfigurator
       facetFactory.install(project, FurnaceVersionFacet.class);
       project.getFacet(FurnaceVersionFacet.class).setVersion(forgeVersion.toString());
 
+      facetFactory.install(project, ForgeBOMFacet.class);
       facetFactory.install(project, FurnacePluginFacet.class);
       facetFactory.install(project, AddonClassifierFacet.class);
       facetFactory.install(project, JavaSourceFacet.class);
@@ -107,6 +109,7 @@ public class AddonProjectConfigurator
 
       facetFactory.install(project, AddonParentFacet.class);
       project.getFacet(FurnaceVersionFacet.class).setVersion(forgeVersion.toString());
+      facetFactory.install(project, ForgeBOMFacet.class);
 
       Project addonProject = createSubmoduleProject(project, "addon", projectName, AddonAddonFacet.class);
       Project apiProject = createSubmoduleProject(project, "api", projectName + "-api", AddonAPIFacet.class,
