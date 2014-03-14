@@ -1,3 +1,5 @@
+
+ay
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
@@ -58,6 +60,8 @@
       <forge.scm.url>http://github.com/forge/core</forge.scm.url>
       <forge.release.codename>Two</forge.release.codename>
       <forge.release.version>${project.version}</forge.release.version>
+
+      <version.furnace>2.2.0.Final</version.furnace>
       <version.junit>4.11</version.junit>
       <version.jboss-logmanager>1.4.1.Final</version.jboss-logmanager>
       <version.slf4j>1.6.1</version.slf4j>
@@ -218,7 +222,7 @@
             <plugin>
                <groupId>org.jboss.forge.furnace</groupId>
                <artifactId>furnace-maven-plugin</artifactId>
-               <version>2.1.1.Final</version>
+               <version>${version.furnace}</version>
             </plugin>
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
