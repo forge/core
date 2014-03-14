@@ -48,9 +48,9 @@ import org.jboss.forge.parser.java.JavaPackageInfo;
 
 /**
  * Creates Furnace Addon projects
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 @SuppressWarnings("unchecked")
 public class AddonProjectConfigurator
@@ -93,7 +93,7 @@ public class AddonProjectConfigurator
 
    /**
     * Create a Furnace Project with the full structure (api,impl,tests,spi and addon)
-    * 
+    *
     * @throws FacetNotFoundException
     * @throws FileNotFoundException
     */
@@ -177,15 +177,12 @@ public class AddonProjectConfigurator
       child.setContents(readmeTemplate);
    }
 
-   private void installSelectedAddons(final Project project, Iterable<AddonId> addons, boolean managed)
+   public void installSelectedAddons(final Project project, Iterable<AddonId> addons, boolean managed)
    {
       if (addons != null)
          for (AddonId addon : addons)
          {
-            String[] mavenCoords = addon.getName().split(":");
-            DependencyBuilder dependency = DependencyBuilder.create().setGroupId(mavenCoords[0])
-                     .setArtifactId(mavenCoords[1])
-                     .setVersion(addon.getVersion().toString()).setClassifier(FORGE_ADDON_CLASSIFIER);
+            Dependency dependency = toDependency(addon);
             if (managed)
             {
                dependencyInstaller.installManaged(project, dependency);
@@ -195,6 +192,24 @@ public class AddonProjectConfigurator
                dependencyInstaller.install(project, dependency);
             }
          }
+   }
+
+   public Dependency toDependency(AddonId addon)
+   {
+      String[] mavenCoords = addon.getName().split(":");
+      Dependency dependency = DependencyBuilder.create().setGroupId(mavenCoords[0])
+               .setArtifactId(mavenCoords[1])
+               .setVersion(addon.getVersion().toString()).setClassifier(FORGE_ADDON_CLASSIFIER);
+      return dependency;
+   }
+
+   /**
+    * Checks if the {@link Project} depends on the provided {@link AddonId}
+    */
+   public boolean dependsOnAddon(final Project project, AddonId addonId)
+   {
+      Dependency dependency = toDependency(addonId);
+      return dependencyInstaller.isInstalled(project, dependency);
    }
 
    private Project createSubmoduleProject(final Project parent, String moduleName, String artifactId,

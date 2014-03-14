@@ -44,10 +44,10 @@ import org.jboss.forge.furnace.versions.Version;
 
 /**
  * Called when the Next button is pressed and the {@link FurnaceAddonProjectType} is selected in NewProjectWizard
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class FurnaceAddonSetupStep extends AbstractUICommand implements UIWizardStep
 {
