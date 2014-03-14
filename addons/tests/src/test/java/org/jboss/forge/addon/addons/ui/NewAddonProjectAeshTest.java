@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.addons;
+package org.jboss.forge.addon.addons.ui;
 
 import java.io.File;
 

@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.addons;
+package org.jboss.forge.addon.addons.ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,8 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.addons.project.AddonProjectConfigurator;
+import org.jboss.forge.addon.addons.project.FurnaceAddonProjectType;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.DependencyResolver;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;

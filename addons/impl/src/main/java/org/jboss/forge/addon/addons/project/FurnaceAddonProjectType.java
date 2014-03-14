@@ -4,10 +4,11 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.addons;
+package org.jboss.forge.addon.addons.project;
 
 import java.util.Arrays;
 
+import org.jboss.forge.addon.addons.ui.FurnaceAddonSetupStep;
 import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;

@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.addons;
+package org.jboss.forge.addon.addons.project;
 
 import java.io.FileNotFoundException;
 import java.util.Collections;
@@ -23,6 +23,7 @@ import org.jboss.forge.addon.addons.facets.DefaultFurnaceContainerAPIFacet;
 import org.jboss.forge.addon.addons.facets.DefaultFurnaceContainerFacet;
 import org.jboss.forge.addon.addons.facets.FurnaceAPIFacet;
 import org.jboss.forge.addon.addons.facets.FurnacePluginFacet;
+import org.jboss.forge.addon.addons.project.AddonProjectConfigurator;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetNotFoundException;

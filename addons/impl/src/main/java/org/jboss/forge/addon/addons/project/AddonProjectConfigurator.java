@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.addons;
+package org.jboss.forge.addon.addons.project;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
