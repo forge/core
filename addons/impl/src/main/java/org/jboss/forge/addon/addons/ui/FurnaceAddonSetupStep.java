@@ -6,8 +6,6 @@
  */
 package org.jboss.forge.addon.addons.ui;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -15,10 +13,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.addons.project.AddonProjectConfigurator;
 import org.jboss.forge.addon.addons.project.FurnaceAddonProjectType;
-import org.jboss.forge.addon.dependencies.Coordinate;
-import org.jboss.forge.addon.dependencies.DependencyResolver;
-import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
-import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -39,8 +33,6 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonRepository;
-import org.jboss.forge.furnace.versions.SingleVersion;
-import org.jboss.forge.furnace.versions.Version;
 
 /**
  * Called when the Next button is pressed and the {@link FurnaceAddonProjectType} is selected in NewProjectWizard
@@ -52,10 +44,6 @@ import org.jboss.forge.furnace.versions.Version;
 public class FurnaceAddonSetupStep extends AbstractUICommand implements UIWizardStep
 {
    @Inject
-   @WithAttributes(label = "Furnace Version", required = true)
-   private UISelectOne<Version> furnaceVersion;
-
-   @Inject
    @WithAttributes(label = "Furnace container", required = true, requiredMessage = "You must select one Furnace container")
    private UISelectOne<AddonId> furnaceContainer;
 
@@ -66,9 +54,6 @@ public class FurnaceAddonSetupStep extends AbstractUICommand implements UIWizard
    @Inject
    @WithAttributes(label = "Depend on these addons")
    private UISelectMany<AddonId> addons;
-
-   @Inject
-   private DependencyResolver dependencyResolver;
 
    @Inject
    private Furnace furnace;
@@ -87,10 +72,9 @@ public class FurnaceAddonSetupStep extends AbstractUICommand implements UIWizard
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      configureVersions();
       configureAddonDependencies();
 
-      builder.add(furnaceVersion).add(furnaceContainer).add(splitProjects).add(addons);
+      builder.add(furnaceContainer).add(splitProjects).add(addons);
    }
 
    private void configureAddonDependencies()
@@ -117,18 +101,6 @@ public class FurnaceAddonSetupStep extends AbstractUICommand implements UIWizard
       furnaceContainer.setValueChoices(containerChoices);
    }
 
-   private void configureVersions()
-   {
-      Coordinate c = CoordinateBuilder.create().setGroupId("org.jboss.forge.furnace").setArtifactId("furnace");
-      List<Version> versions = new ArrayList<Version>();
-      for (Coordinate versionCoord : dependencyResolver.resolveVersions(DependencyQueryBuilder.create(c)))
-      {
-         versions.add(new SingleVersion(versionCoord.getVersion()));
-      }
-      furnaceVersion.setValueChoices(versions);
-      furnaceVersion.setDefaultValue(furnace.getVersion());
-   }
-
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
@@ -144,11 +116,11 @@ public class FurnaceAddonSetupStep extends AbstractUICommand implements UIWizard
       dependencyAddons.add(furnaceContainer.getValue());
       if (splitProjects.getValue())
       {
-         addonProjectFactory.setupComplexAddonProject(project, furnaceVersion.getValue(), dependencyAddons);
+         addonProjectFactory.setupComplexAddonProject(project, furnace.getVersion(), dependencyAddons);
       }
       else
       {
-         addonProjectFactory.setupSimpleAddonProject(project, furnaceVersion.getValue(), dependencyAddons);
+         addonProjectFactory.setupSimpleAddonProject(project, furnace.getVersion(), dependencyAddons);
       }
 
       return Results.success();
