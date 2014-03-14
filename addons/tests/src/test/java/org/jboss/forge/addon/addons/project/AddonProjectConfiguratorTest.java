@@ -54,7 +54,7 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class AddonProjectConfiguratorTest
 {
-   private static final String FURNACE_VERSION = "2.1.2-SNAPSHOT";
+   private static final String FURNACE_VERSION = "2.2.0.Final";
 
    @Deployment
    @Dependencies({
