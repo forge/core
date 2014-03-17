@@ -36,7 +36,7 @@ public class CatCommand extends AbstractShellCommand
    private Highlighter highlighter;
 
    @Inject
-   @WithAttributes(required = false, label = "Color", description = "Enable color hightlight in output")
+   @WithAttributes(shortName='c', label = "Color", description = "Enable color hightlight in output")
    private UIInput<Boolean> color;
 
    @Inject
