@@ -1,5 +1,7 @@
 package org.jboss.forge.addon.facets;
 
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +21,25 @@ public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Mut
    public boolean hasFacet(Class<? extends FACETTYPE> type)
    {
       return safeGetFacet(type) != null;
+   }
+
+   @Override
+   public boolean hasAllFacets(Class<? extends FACETTYPE>... facetDependencies)
+   {
+      return hasAllFacets(Arrays.asList(facetDependencies));
+   }
+
+   @Override
+   public boolean hasAllFacets(Iterable<Class<? extends FACETTYPE>> facetDependencies)
+   {
+      for (Class<? extends FACETTYPE> facetDependency : facetDependencies)
+      {
+         if (!hasFacet(facetDependency))
+         {
+            return false;
+         }
+      }
+      return true;
    }
 
    @Override
