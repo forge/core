@@ -57,6 +57,13 @@
          </plugin>
          <plugin>
             <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+               <archive>
+                  <manifest>
+	                 <mainClass>org.jboss.forge.addon.text.highlight.Syntax</mainClass>
+	              </manifest>
+	           </archive>
+	        </configuration>
             <executions>
                <execution>
                   <id>create-forge-addon</id>

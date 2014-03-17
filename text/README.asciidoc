@@ -1,7 +1,7 @@
 == text
 :idprefix: id_ 
 This addon provides *standalone* functionality.
-The text addon provides functionality to perform text-based transformations like inflection of words.
+The text addon provides functionality to perform text-based transformations like inflection of words or syntax highlighting.
         
 === Depends on
 [options="header"]
@@ -38,6 +38,29 @@ Allows for camelcasing, capitalization, humanization, pluralization etc. of word
 String plural = inflector.pluralize("foo");
 ----
 +
+
+Highligher to color code syntax in terminal output::
+Allows for color coding of the following content types:
+* JAVA
+* JSON
+* JAVASCRIPT
+* CSS
+* HTML (with inline JavaScript/CSS)
+
+When working with files you can rely on the Highlighter to determine the syntax based on the filename.
+[source,java]
+----
+@Inject private Highlighter highlighter;
+highlighter.byFileName(resource.getName(), resource.getContents(), output.out());
+----
+
+When working with pure content you can specify the source syntax via the contentType argument.
+[source,java]
+----
+@Inject private Highlighter highlighter;
+highlighter.byType("JAVA", resource.getContents(), output.out());
+----
+
 [TIP] 
 ====
 If your addon uses a container that does not support "@Inject" annotations, services such as the `Inflector` may also be 
@@ -46,3 +69,4 @@ accessed via the `AddonRegistry`:
 Imported<Inflector> imported = addonRegistry.getServices(Inflector.class);
 Inflector inflector = imported.get();
 ----
+====
