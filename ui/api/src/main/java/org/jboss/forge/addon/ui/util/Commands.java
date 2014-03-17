@@ -12,7 +12,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
  * A utiliy class to handle commands
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -31,7 +31,7 @@ public class Commands
       {
          try
          {
-            if (uiCommand.isEnabled(context) && !(uiCommand instanceof UIWizardStep))
+            if (isEnabled(uiCommand, context))
             {
                result.add(uiCommand);
             }
@@ -44,6 +44,14 @@ public class Commands
          }
       }
       return result;
+   }
+
+   /**
+    * Returns true if this command can be invoked
+    */
+   public static boolean isEnabled(UICommand command, UIContext context)
+   {
+      return (command.isEnabled(context) && !(command instanceof UIWizardStep));
    }
 
    private static String getMetadata(UICommand command, UIContext context)

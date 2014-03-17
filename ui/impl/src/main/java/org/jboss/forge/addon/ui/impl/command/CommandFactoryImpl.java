@@ -25,7 +25,7 @@ import org.jboss.forge.furnace.services.Imported;
 
 /**
  * Creates and manages commands
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
@@ -64,9 +64,13 @@ public class CommandFactoryImpl implements CommandFactory
    public Set<String> getEnabledCommandNames(UIContext context)
    {
       Set<String> commands = new TreeSet<>();
-      for (UICommand cmd : Commands.getEnabledCommands(getCommands(), context))
+      Iterable<UICommand> allCommands = getCommands();
+      for (UICommand cmd : allCommands)
       {
-         commands.add(getCommandName(context, cmd));
+         if (Commands.isEnabled(cmd, context))
+         {
+            commands.add(getCommandName(context, cmd));
+         }
       }
       return commands;
    }
