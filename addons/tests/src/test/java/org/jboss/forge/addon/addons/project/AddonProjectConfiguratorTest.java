@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.addons.project;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Collections;
 
@@ -175,7 +176,9 @@ public class AddonProjectConfiguratorTest
       /*
        * Verify impl/ sub-module
        */
-      Assert.assertEquals("../pom.xml", implProject.getFacet(MavenFacet.class).getModel().getParent().getRelativePath());
+
+      Assert.assertEquals(".." + File.separator + "pom.xml", implProject.getFacet(MavenFacet.class).getModel()
+               .getParent().getRelativePath());
       Assert.assertTrue(implProject.hasFacet(DefaultFurnaceContainerAPIFacet.class));
       Assert.assertTrue(implProject.getFacet(JavaSourceFacet.class)
                .getJavaResource("com.acme.testproject.package-info.java").exists());
@@ -207,7 +210,7 @@ public class AddonProjectConfiguratorTest
       /*
        * Verify api/ sub-module
        */
-      Assert.assertEquals("../pom.xml", apiProject.getFacet(MavenFacet.class).getModel().getParent().getRelativePath());
+      Assert.assertEquals(".." + File.separator + "pom.xml", apiProject.getFacet(MavenFacet.class).getModel().getParent().getRelativePath());
       Assert.assertTrue(apiProject.hasFacet(DefaultFurnaceContainerAPIFacet.class));
       Assert.assertTrue(apiProject.getFacet(JavaSourceFacet.class)
                .getJavaResource("com.acme.testproject.package-info.java").exists());
@@ -233,7 +236,7 @@ public class AddonProjectConfiguratorTest
       /*
        * Verify spi/ sub-module2.0.0.Final
        */
-      Assert.assertEquals("../pom.xml", spiProject.getFacet(MavenFacet.class).getModel().getParent().getRelativePath());
+      Assert.assertEquals(".." + File.separator + "pom.xml", spiProject.getFacet(MavenFacet.class).getModel().getParent().getRelativePath());
       Assert.assertTrue(spiProject.getFacet(JavaSourceFacet.class)
                .getJavaResource("com.acme.testproject.package-info.java").exists());
 
@@ -255,7 +258,8 @@ public class AddonProjectConfiguratorTest
       /*
        * Verify addon/ sub-module
        */
-      Assert.assertEquals("../pom.xml", addonProject.getFacet(MavenFacet.class).getModel().getParent().getRelativePath());
+      Assert.assertEquals(".." + File.separator + "pom.xml", addonProject.getFacet(MavenFacet.class).getModel().getParent()
+               .getRelativePath());
       Assert.assertTrue(addonProject.getFacet(JavaSourceFacet.class)
                .getJavaResource("com.acme.testproject.package-info.java").exists());
 
@@ -296,7 +300,8 @@ public class AddonProjectConfiguratorTest
        * Verify tests/ sub-module
        */
 
-      Assert.assertEquals("../pom.xml", testsProject.getFacet(MavenFacet.class).getModel().getParent().getRelativePath());
+      Assert.assertEquals(".." + File.separator + "pom.xml", testsProject.getFacet(MavenFacet.class).getModel().getParent()
+               .getRelativePath());
 
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasDirectDependency(addonDependency));
       Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(addonDependency));
