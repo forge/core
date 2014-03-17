@@ -62,7 +62,7 @@ public class CatCommandTest {
       File target = new File(project.getRootDirectory().getFullyQualifiedName(), "test.java");
       target.createNewFile();
 
-      FileResource<?> source = project.getRootDirectory().getChildOfType(FileResource.class, target.getName());
+      FileResource<?> source = project.getRootDirectory().getChild(target.getName()).reify(FileResource.class);
       source.setContents("public void test() {}");
 
       shellTest.execute("cat " + source.getFullyQualifiedName(), 5, TimeUnit.SECONDS);
@@ -76,7 +76,7 @@ public class CatCommandTest {
       File target = new File(project.getRootDirectory().getFullyQualifiedName(), "test.java");
       target.createNewFile();
 
-      FileResource<?> source = project.getRootDirectory().getChildOfType(FileResource.class, target.getName());
+      FileResource<?> source = project.getRootDirectory().getChild(target.getName()).reify(FileResource.class);
       source.setContents("public void test() {}");
 
       shellTest.execute("cat " + source.getFullyQualifiedName() + " --color", 5, TimeUnit.SECONDS);
