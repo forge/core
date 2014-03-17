@@ -73,7 +73,7 @@ public class LsCommandTest
       shellTest.execute("cd " + projectPath, 5, TimeUnit.SECONDS);
       shellTest.execute("touch file.txt", 5, TimeUnit.SECONDS);
       shellTest.clearScreen();
-      shellTest.execute("ls *file*", 5, TimeUnit.HOURS);
+      shellTest.execute("ls *file*", 5, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString("file.txt"));
    }
 }
