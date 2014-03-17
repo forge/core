@@ -1,10 +1,10 @@
 package org.jboss.forge.addon.facets;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jboss.forge.addon.facets.Facet;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -71,6 +71,21 @@ public class FacetedTest
       Iterator<? extends Facet<?>> iterator = faceted.getFacets().iterator();
       Assert.assertEquals(facet, iterator.next());
       Assert.assertFalse(iterator.hasNext());
+   }
+
+   @Test
+   public void testHasMultipleFacet()
+   {
+      MockFaceted faceted = new MockFaceted();
+      MockFacet facet = new MockFacet(faceted);
+      MockFacet3 facet3 = new MockFacet3(faceted);
+
+      Assert.assertTrue(faceted.install(facet));
+      Assert.assertTrue(faceted.install(facet3));
+
+      Assert.assertTrue(faceted.hasAllFacets(MockFacet.class, MockFacet3.class));
+
+      Assert.assertTrue(faceted.hasAllFacets(Arrays.asList(MockFacet.class, MockFacet3.class)));
    }
 
    @Test
