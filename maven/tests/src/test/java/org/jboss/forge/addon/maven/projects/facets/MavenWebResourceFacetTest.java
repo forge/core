@@ -61,7 +61,6 @@ public class MavenWebResourceFacetTest
    private ProjectFactory projectFactory;
 
    @Before
-   @SuppressWarnings("unchecked")
    public void setUp()
    {
       project = projectFactory

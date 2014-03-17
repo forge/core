@@ -14,7 +14,6 @@ import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourceUtil;
 import org.jboss.forge.addon.scaffold.spi.ResourceCollection;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
@@ -39,13 +38,10 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
    @Inject
    @WithAttributes(label = "Page Template")
    private UIInput<FileResource<?>> pageTemplate;
-    
+
    @Inject
    @WithAttributes(label = "Targets", required = true)
    private UISelectMany<JavaClass> targets;
-
-   @Inject
-   private ResourceFactory resourceFactory;
 
    @Inject
    private ProjectFactory projectFactory;
@@ -62,7 +58,7 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
          {
              Project project = getSelectedProject(uiContext);
              JavaSourceFacet javaSource = project.getFacet(JavaSourceFacet.class);
-             Resource resource = javaSource.getJavaResource(klass);
+             Resource<?> resource = javaSource.getJavaResource(klass);
              if (resource != null)
              {
                 resourceCollection.addToCollection(resource);
@@ -90,6 +86,7 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
    }
 
    @Override
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    public void initializeUI(UIBuilder builder) throws Exception
    {
       UIContext uiContext = builder.getUIContext();

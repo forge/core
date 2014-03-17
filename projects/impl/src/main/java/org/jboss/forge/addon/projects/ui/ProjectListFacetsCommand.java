@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -27,7 +26,7 @@ import org.jboss.forge.furnace.proxy.Proxies;
 
 /**
  * List the facets associated with the current project
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class ProjectListFacetsCommand extends AbstractProjectCommand

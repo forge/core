@@ -10,30 +10,27 @@ import java.util.List;
 
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.command.UICommand;
-import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.result.NavigationResult;
-import org.jboss.forge.addon.ui.validate.UIValidator;
 
 /**
  * Provides an implementation of Scaffolding for various UI code generation operations.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface ScaffoldProvider
 {
    /**
     * Return the name for this {@link ScaffoldProvider}
-    * 
+    *
     * Ex: faces
     */
    String getName();
 
    /**
     * Return the description for this {@link ScaffoldProvider}
-    * 
+    *
     * Ex: JavaServer Faces
     */
    String getDescription();
@@ -47,7 +44,7 @@ public interface ScaffoldProvider
    /**
     * Verifies whether the provider was setup or not. This is used to determine whether the setup method should be
     * executed.
-    * 
+    *
     * @return boolean value indicating whether the provider was setup
     */
    boolean isSetup(ScaffoldSetupContext setupContext);

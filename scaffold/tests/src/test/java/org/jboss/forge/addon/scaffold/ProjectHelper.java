@@ -9,7 +9,6 @@ package org.jboss.forge.addon.scaffold;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.parser.java.projects.JavaProjectType;
 import org.jboss.forge.addon.parser.java.projects.JavaWebProjectType;
 import org.jboss.forge.addon.projects.Project;
@@ -17,16 +16,13 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 
 /**
  * Helps with the configuration of a project
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class ProjectHelper
 {
    @Inject
    private ProjectFactory projectFactory;
-
-   @Inject
-   private FacetFactory facetFactory;
 
    @Inject
    private JavaWebProjectType javaWebProjectType;
