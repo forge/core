@@ -28,7 +28,7 @@ import freemarker.cache.TemplateLoader;
 @Singleton
 public class ResourceTemplateLoader implements TemplateLoader
 {
-   private Map<String, ResourceId> resourceMap = new ConcurrentHashMap<String, ResourceTemplateLoader.ResourceId>();
+   private Map<String, ResourceId> resourceMap = new ConcurrentHashMap<String, ResourceId>();
 
    String register(Resource<?> resource)
    {
