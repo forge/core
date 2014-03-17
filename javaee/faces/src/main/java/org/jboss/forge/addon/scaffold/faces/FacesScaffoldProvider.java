@@ -45,7 +45,7 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFilter;
 import org.jboss.forge.addon.scaffold.faces.freemarker.FreemarkerTemplateProcessor;
 import org.jboss.forge.addon.scaffold.faces.metawidget.config.ForgeConfigReader;
-import org.jboss.forge.addon.scaffold.faces.util.ScaffoldUtil;
+import org.jboss.forge.addon.scaffold.util.ScaffoldUtil;
 import org.jboss.forge.addon.scaffold.spi.AccessStrategy;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
