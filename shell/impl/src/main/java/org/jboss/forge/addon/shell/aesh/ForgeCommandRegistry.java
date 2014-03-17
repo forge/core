@@ -34,9 +34,9 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
  * Forge implementation of {@link CommandRegistry}.
- * 
+ *
  * It delegates to the Aesh commands if no command is found
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -168,7 +168,7 @@ public class ForgeCommandRegistry implements CommandRegistry
    {
       try (ShellContextImpl newShellContext = shell.createUIContext())
       {
-         return commandFactory.getCommandNames(newShellContext);
+         return commandFactory.getEnabledCommandNames(newShellContext);
       }
    }
 
