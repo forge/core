@@ -32,6 +32,7 @@ import org.jboss.aesh.console.settings.SettingsBuilder;
 import org.jboss.aesh.edit.actions.Action;
 import org.jboss.aesh.terminal.CharacterType;
 import org.jboss.aesh.terminal.Color;
+import org.jboss.aesh.terminal.POSIXTerminal;
 import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.forge.addon.convert.ConverterFactory;
@@ -87,14 +88,19 @@ public class ShellImpl implements Shell, UIRuntime
       File export = new File(forgeHome, "export");
       final ForgeCommandRegistry registry =
                new ForgeCommandRegistry(this, addonRegistry);
-      Settings newSettings = new SettingsBuilder(settings)
+      SettingsBuilder newSettings = new SettingsBuilder(settings)
                .historyFile(history)
                .aliasFile(alias)
                .exportFile(export)
-               .interruptHook(new ForgeInterruptHook(registry)).create();
+               .interruptHook(new ForgeInterruptHook(registry));
+      // If system property is set, force POSIXTerminal
+      if (Boolean.getBoolean("org.jboss.forge.addon.shell.forcePOSIXTerminal"))
+      {
+         newSettings.terminal(new POSIXTerminal());
+      }
       this.console = new AeshConsoleBuilder()
                .prompt(createPrompt())
-               .settings(newSettings)
+               .settings(newSettings.create())
                .commandRegistry(registry)
                .commandNotFoundHandler(new ForgeCommandNotFoundHandler(registry))
                .create();
