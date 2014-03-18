@@ -56,7 +56,7 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
    @Override
    public boolean isEnabled(UIContext context)
    {
-      return containsProject(context);
+      return true;
    }
 
    @Override
@@ -102,17 +102,6 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
       {
          return Results.fail("Addon " + coordinate.toString() + " could not be installed.", t);
       }
-   }
-
-   protected boolean containsProject(UIContext context)
-   {
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (!initialSelection.isEmpty())
-      {
-         return projectFactory.containsProject(initialSelection.get());
-      }
-      return false;
-
    }
 
    /**
