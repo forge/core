@@ -10,6 +10,9 @@
    <artifactId>scaffold-parent</artifactId>
    <name>Forge - Scaffold Parent</name>
    <packaging>pom</packaging>
+   <properties>
+      <version.metawidget>2.4</version.metawidget>
+   </properties>
    <modules>
       <module>addon</module>
       <module>api</module>
@@ -52,6 +55,11 @@
             <artifactId>projects</artifactId>
             <version>2.3.1-SNAPSHOT</version>
             <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.metawidget.modules</groupId>
+            <artifactId>metawidget-all</artifactId>
+            <version>${version.metawidget}</version>
          </dependency>
       </dependencies>
    </dependencyManagement>

@@ -25,5 +25,20 @@
          <artifactId>projects</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>parser-java</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>javaee-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.metawidget.modules</groupId>
+         <artifactId>metawidget-all</artifactId>
+      </dependency>
    </dependencies>
 </project>
