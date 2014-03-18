@@ -1,5 +1,7 @@
 package org.jboss.forge.addon.shell.command;
 
+import static org.hamcrest.CoreMatchers.containsString;
+
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
@@ -12,6 +14,8 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.test.ShellTest;
+import org.jboss.forge.addon.ui.result.Failed;
+import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -22,7 +26,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class CatCommandTest {
+public class CatCommandTest
+{
    @Deployment
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.addon:maven"),
@@ -54,6 +59,16 @@ public class CatCommandTest {
 
    @Inject
    private ProjectFactory projectFactory;
+
+   @Test(timeout = 10000)
+   public void testCatCommandInvalidArgument() throws Exception
+   {
+      Result result = shellTest.execute("cat foo bar", 5, TimeUnit.SECONDS);
+      Assert.assertTrue(result instanceof Failed);
+      String out = shellTest.getStdOut();
+      Assert.assertThat(out, containsString("cat: foo: No such file or directory"));
+      Assert.assertThat(out, containsString("cat: bar: No such file or directory"));
+   }
 
    @Test
    public void testCatCommand() throws Exception
