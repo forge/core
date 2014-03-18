@@ -26,7 +26,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.jboss.forge.addon.convert.Converter;
-import org.jboss.forge.addon.javaee.jpa.FieldOperations;
+import org.jboss.forge.addon.javaee.jpa.JPAFieldOperations;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
@@ -98,7 +98,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
    private UIInput<String> columnName;
 
    @Inject
-   private FieldOperations fieldOperations;
+   private JPAFieldOperations fieldOperations;
 
    @Inject
    private InputComponentFactory inputFactory;

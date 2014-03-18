@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import org.jboss.forge.addon.parser.java.beans.FieldOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -31,7 +32,6 @@ import org.jboss.forge.parser.java.Annotation;
 import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.parser.java.Method;
 import org.jboss.forge.parser.java.util.Refactory;
 import org.jboss.forge.parser.java.util.Types;
 
@@ -41,58 +41,8 @@ import org.jboss.forge.parser.java.util.Types;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public class FieldOperations
+public class JPAFieldOperations extends FieldOperations
 {
-   /**
-    * Remove the field, including its getters and setters and updating toString()
-    * 
-    * @param targetEntity
-    * @param field
-    */
-   public void removeField(final JavaClass targetEntity, final Field<JavaClass> field)
-   {
-      targetEntity.removeField(field);
-      String methodNameSuffix = Strings.capitalize(field.getName());
-      // Condition to remove getField()
-      if (targetEntity.hasMethodSignature("get" + methodNameSuffix))
-      {
-         Method<JavaClass> method = targetEntity.getMethod("get" + methodNameSuffix);
-         targetEntity.removeMethod(method);
-      }
-      // Condition to remove setField()
-      if (targetEntity.hasMethodSignature("set" + methodNameSuffix, field.getQualifiedType()))
-      {
-         Method<JavaClass> method = targetEntity.getMethod("set" + methodNameSuffix, field.getQualifiedType());
-         targetEntity.removeMethod(method);
-      }
-      updateToString(targetEntity);
-   }
-
-   public Field<JavaClass> addFieldTo(final JavaClass targetEntity, final String fieldType,
-            final String fieldName, String... annotations)
-            throws FileNotFoundException
-   {
-      if (targetEntity.hasField(fieldName))
-      {
-         throw new IllegalStateException("Entity already has a field named [" + fieldName + "]");
-      }
-      Field<JavaClass> field = targetEntity.addField();
-      field.setName(fieldName).setPrivate().setType(fieldType);
-      for (String annotation : annotations)
-      {
-         field.addAnnotation(annotation);
-      }
-
-      String fieldTypeForImport = Types.stripArray(fieldType);
-      if (!fieldTypeForImport.startsWith("java.lang.") && fieldTypeForImport.contains(".")
-               && !fieldTypeForImport.equals(targetEntity.getCanonicalName()))
-      {
-         targetEntity.addImport(fieldTypeForImport);
-      }
-      Refactory.createGetterAndSetter(targetEntity, field);
-      updateToString(targetEntity);
-      return field;
-   }
 
    /**
     * Creates a One-to-One relationship
@@ -393,28 +343,6 @@ public class FieldOperations
       java.saveJavaSource(entity);
    }
 
-   private void updateToString(final JavaClass targetEntity)
-   {
-      if (targetEntity.hasMethodSignature("toString"))
-      {
-         targetEntity.removeMethod(targetEntity.getMethod("toString"));
-      }
-      List<Field<JavaClass>> fields = new ArrayList<Field<JavaClass>>();
-      for (Field<JavaClass> f : targetEntity.getFields())
-      {
-         if (!"id".equals(f.getName()) && !"version".equals(f.getName())
-                  && (f.getTypeInspector().isPrimitive() || Types.isJavaLang(f.getType()))
-                  && !f.hasAnnotation(Transient.class))
-         {
-            fields.add(f);
-         }
-      }
-      if (!fields.isEmpty())
-      {
-         Refactory.createToStringFromFields(targetEntity, fields);
-      }
-   }
-
    private JavaClass findEntity(Project project, final String entity) throws FileNotFoundException
    {
       JavaClass result = null;
@@ -462,4 +390,15 @@ public class FieldOperations
       String toCompare = to.endsWith(".java") ? to.substring(0, to.length() - 5) : to;
       return fromCompare.equals(toCompare);
    }
+
+   @Override
+   protected boolean canAddFieldToToString(Field<JavaClass> field)
+   {
+      return super.canAddFieldToToString(field)
+               && (field.getTypeInspector().isPrimitive() || Types.isJavaLang(field.getType()))
+               && !"id".equals(field.getName()) 
+               && !"version".equals(field.getName())
+               && !field.hasAnnotation(Transient.class);
+   }
+   
 }

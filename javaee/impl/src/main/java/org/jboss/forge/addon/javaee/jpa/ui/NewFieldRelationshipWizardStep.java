@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 
-import org.jboss.forge.addon.javaee.jpa.FieldOperations;
+import org.jboss.forge.addon.javaee.jpa.JPAFieldOperations;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -53,7 +53,7 @@ public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implem
    private UISelectMany<CascadeType> cascadeType;
 
    @Inject
-   private FieldOperations persistenceOperations;
+   private JPAFieldOperations persistenceOperations;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
