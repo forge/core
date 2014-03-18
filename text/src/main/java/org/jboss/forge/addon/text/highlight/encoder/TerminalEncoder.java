@@ -85,37 +85,7 @@ public class TerminalEncoder extends Encoder.AbstractEncoder implements Encoder
 
       public static int getAnsiScale(int color)
       {
-         int space = 256 / 5;
-         if (color == 0)
-         {
-            return 0;
-         }
-         if (color < space * 1)
-         {
-            return 1;
-         }
-         if (color > space * 1 && color < space * 2)
-         {
-            return 2;
-         }
-         if (color > space * 2 && color < space * 3)
-         {
-            return 3;
-         }
-         if (color > space * 3 && color < space * 4)
-         {
-            return 4;
-         }
-         if (color > space * 4)
-         {
-            return 5;
-         }
-         return 0;
-      }
-
-      public static void main(String[] args) throws Exception
-      {
-         System.out.println(from(Color.white));
+         return Math.round(color / (255/5));
       }
    }
 }
