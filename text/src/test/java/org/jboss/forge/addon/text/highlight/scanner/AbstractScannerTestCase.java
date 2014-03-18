@@ -17,7 +17,8 @@ import org.jboss.forge.addon.text.highlight.Syntax;
 import org.jboss.forge.addon.text.highlight.encoder.AssertEncoder;
 import org.junit.Assert;
 
-public abstract class AbstractScannerTestCase {
+public abstract class AbstractScannerTestCase
+{
 
    public static final String ASSERT_ENCODER = "TEST";
    {
@@ -28,25 +29,30 @@ public abstract class AbstractScannerTestCase {
    public static String BASE_URL = "https://raw.github.com/rubychan/coderay-scanner-tests/master/";
    public static Pattern MATCH_DATA = Pattern.compile("(.*)\\..*\\..*");
 
-   protected String fetch(String type, String example) throws Exception {
+   protected String fetch(String type, String example) throws Exception
+   {
       Path sourcePath = Paths.get(OUTPUT, type, example);
-      if(!Files.exists(sourcePath)) {
+      if (!Files.exists(sourcePath))
+      {
          sourcePath.getParent().toFile().mkdirs();
          URL source = new URL(BASE_URL + type + "/" + example);
          System.out.println("Fetching " + source);
-         Files.write(sourcePath, asByteArray(new BufferedInputStream(source.openStream())), StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+         Files.write(sourcePath, asByteArray(new BufferedInputStream(source.openStream())), StandardOpenOption.WRITE,
+                  StandardOpenOption.CREATE);
       }
       return new String(Files.readAllBytes(sourcePath));
    }
 
-   private String expectedName(String example) {
+   private String expectedName(String example)
+   {
       Matcher result = MATCH_DATA.matcher(example);
       result.find();
 
       return result.group(1) + ".expected.raydebug";
    }
 
-   protected void assertMatchExample(Syntax.Builder builder, String type, String exampleName) throws Exception {
+   protected void assertMatchExample(Syntax.Builder builder, String type, String exampleName) throws Exception
+   {
       ByteArrayOutputStream out = new ByteArrayOutputStream();
 
       String exampleContent = fetch(type, exampleName);
@@ -62,27 +68,31 @@ public abstract class AbstractScannerTestCase {
       String[] resultLines = result.split("\n");
       String[] expectedLines = expectedContent.split("\n");
 
-      for(int i = 0; i < resultLines.length; i++) {
+      for (int i = 0; i < resultLines.length; i++)
+      {
          String s = resultLines[i];
          String t = expectedLines[i];
 
-         if(!s.equals(t)) {
-            System.out.println("--------------------------->" + (i+1));
+         if (!s.equals(t))
+         {
+            System.out.println("--------------------------->" + (i + 1));
             System.out.println(exampleContent.split("\n")[i]);
             System.out.println("---------------------------");
             System.out.println("> " + s);
             System.out.println("< " + t);
             System.out.println("---------------------------");
-            Assert.assertEquals("verify line: " + (i+1), t, s);
+            Assert.assertEquals("verify line: " + (i + 1), t, s);
          }
       }
       Assert.assertEquals(expectedContent, result);
    }
 
-   static byte[] asByteArray(final InputStream in) throws IllegalArgumentException {
+   static byte[] asByteArray(final InputStream in) throws IllegalArgumentException
+   {
       // Precondition check
-      if (in == null) {
-          throw new IllegalArgumentException("stream must be specified");
+      if (in == null)
+      {
+         throw new IllegalArgumentException("stream must be specified");
       }
 
       // Get content as an array of bytes
@@ -90,18 +100,27 @@ public abstract class AbstractScannerTestCase {
       final int len = 4096;
       final byte[] buffer = new byte[len];
       int read = 0;
-      try {
-          while (((read = in.read(buffer)) != -1)) {
-              out.write(buffer, 0, read);
-          }
-      } catch (final IOException ioe) {
-          throw new RuntimeException("Error in obtainting bytes from " + in, ioe);
-      } finally {
-          try {
-              in.close();
-          } catch (final IOException ignore) {
-          }
-          // We don't need to close the outstream, it's a byte array out
+      try
+      {
+         while (((read = in.read(buffer)) != -1))
+         {
+            out.write(buffer, 0, read);
+         }
+      }
+      catch (final IOException ioe)
+      {
+         throw new RuntimeException("Error in obtainting bytes from " + in, ioe);
+      }
+      finally
+      {
+         try
+         {
+            in.close();
+         }
+         catch (final IOException ignore)
+         {
+         }
+         // We don't need to close the outstream, it's a byte array out
       }
 
       // Represent as byte array

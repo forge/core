@@ -7,23 +7,30 @@ import org.jboss.forge.addon.text.highlight.Encoder;
 import org.jboss.forge.addon.text.highlight.Theme;
 import org.jboss.forge.addon.text.highlight.TokenType;
 
-public class DebugEncoder extends Encoder.AbstractEncoder implements Encoder {
+public class DebugEncoder extends Encoder.AbstractEncoder implements Encoder
+{
 
-   public DebugEncoder(OutputStream out, Theme theme, Map<String, Object> options) {
+   public DebugEncoder(OutputStream out, Theme theme, Map<String, Object> options)
+   {
       super(out, theme, options);
    }
 
    @Override
-   public void textToken(String text, TokenType type) {
-      if(type == TokenType.space) {
+   public void textToken(String text, TokenType type)
+   {
+      if (type == TokenType.space)
+      {
          write(text);
       }
-      else {
+      else
+      {
          String output = text;
-         if(output.indexOf("\\") != -1) {
+         if (output.indexOf("\\") != -1)
+         {
             output = output.replaceAll("\\\\", "\\\\\\\\");
          }
-         if(output.indexOf(")") != -1) {
+         if (output.indexOf(")") != -1)
+         {
             output = output.replaceAll("\\)", "\\\\)");
          }
          write(fixTokeName(type) + "(" + output + ")");
@@ -31,29 +38,35 @@ public class DebugEncoder extends Encoder.AbstractEncoder implements Encoder {
    }
 
    @Override
-   public void beginGroup(TokenType type) {
+   public void beginGroup(TokenType type)
+   {
       write(fixTokeName(type) + "<");
    }
 
    @Override
-   public void endGroup(TokenType type) {
+   public void endGroup(TokenType type)
+   {
       write(">");
    }
 
    @Override
-   public void beginLine(TokenType type) {
+   public void beginLine(TokenType type)
+   {
       write(fixTokeName(type) + "[");
    }
 
    @Override
-   public void endLine(TokenType type) {
+   public void endLine(TokenType type)
+   {
       write("]");
    }
 
-   public String fixTokeName(TokenType type) {
+   public String fixTokeName(TokenType type)
+   {
       String name = type.name();
-      if(name.endsWith("_")) {
-         name = name.substring(0, name.length()-1);
+      if (name.endsWith("_"))
+      {
+         name = name.substring(0, name.length() - 1);
       }
       return name;
    }

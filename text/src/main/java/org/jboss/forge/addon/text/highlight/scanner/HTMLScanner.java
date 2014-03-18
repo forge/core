@@ -17,21 +17,22 @@ import org.jboss.forge.addon.text.highlight.WordList;
  * Based on https://github.com/rubychan/coderay/blob/master/lib/coderay/scanners/html.rb
  * Last update sha: 8c3c0c49a98eb8daceb69d0b233d054fbbccc49e
  */
-public class HTMLScanner implements Scanner {
+public class HTMLScanner implements Scanner
+{
 
    public static final String[] EVENT_ATTRIBUTES = new String[] {
-                             "onabort", "onafterprint", "onbeforeprint", "onbeforeunload", "onblur", "oncanplay",
-                             "oncanplaythrough", "onchange", "onclick", "oncontextmenu", "oncuechange", "ondblclick",
-                             "ondrag", "ondragdrop", "ondragend", "ondragenter", "ondragleave", "ondragover",
-                             "ondragstart", "ondrop", "ondurationchange", "onemptied", "onended", "onerror", "onfocus",
-                             "onformchange", "onforminput", "onhashchange", "oninput", "oninvalid", "onkeydown",
-                             "onkeypress", "onkeyup", "onload", "onloadeddata", "onloadedmetadata", "onloadstart",
-                             "onmessage", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup",
-                             "onmousewheel", "onmove", "onoffline", "ononline", "onpagehide", "onpageshow", "onpause",
-                             "onplay", "onplaying", "onpopstate", "onprogress", "onratechange", "onreadystatechange",
-                             "onredo", "onreset", "onresize", "onscroll", "onseeked", "onseeking", "onselect", "onshow",
-                             "onstalled", "onstorage", "onsubmit", "onsuspend", "ontimeupdate", "onundo", "onunload", 
-                             "onvolumechange", "onwaiting"};
+            "onabort", "onafterprint", "onbeforeprint", "onbeforeunload", "onblur", "oncanplay",
+            "oncanplaythrough", "onchange", "onclick", "oncontextmenu", "oncuechange", "ondblclick",
+            "ondrag", "ondragdrop", "ondragend", "ondragenter", "ondragleave", "ondragover",
+            "ondragstart", "ondrop", "ondurationchange", "onemptied", "onended", "onerror", "onfocus",
+            "onformchange", "onforminput", "onhashchange", "oninput", "oninvalid", "onkeydown",
+            "onkeypress", "onkeyup", "onload", "onloadeddata", "onloadedmetadata", "onloadstart",
+            "onmessage", "onmousedown", "onmousemove", "onmouseout", "onmouseover", "onmouseup",
+            "onmousewheel", "onmove", "onoffline", "ononline", "onpagehide", "onpageshow", "onpause",
+            "onplay", "onplaying", "onpopstate", "onprogress", "onratechange", "onreadystatechange",
+            "onredo", "onreset", "onresize", "onscroll", "onseeked", "onseeking", "onselect", "onshow",
+            "onstalled", "onstorage", "onsubmit", "onsuspend", "ontimeupdate", "onundo", "onunload",
+            "onvolumechange", "onwaiting" };
 
    public static final Pattern ATTR_NAME = Pattern.compile("[\\w.:-]+");
    public static final Pattern TAG_END = Pattern.compile("\\/?>");
@@ -64,12 +65,14 @@ public class HTMLScanner implements Scanner {
       PLAIN_STRING_CONTENT.put("\"", Pattern.compile("[^&\">\\n]+"));
    }
 
-   public enum EmbeddedType {
+   public enum EmbeddedType
+   {
       script,
       style
    }
 
-   public enum State {
+   public enum State
+   {
       innitial,
       in_special_tag,
       attribute,
@@ -79,97 +82,124 @@ public class HTMLScanner implements Scanner {
    }
 
    public static final WordList<EmbeddedType> IN_ATTRIBUTE = new WordList<EmbeddedType>(null, true)
-                                                .add(EVENT_ATTRIBUTES, EmbeddedType.script)
-                                                .add(new String[] {"style"}, EmbeddedType.style);
+            .add(EVENT_ATTRIBUTES, EmbeddedType.script)
+            .add(new String[] { "style" }, EmbeddedType.style);
 
    @Override
-   public void scan(StringScanner source, Encoder encoder, Map<String, Object> options) {
+   public void scan(StringScanner source, Encoder encoder, Map<String, Object> options)
+   {
       State state = State.innitial;
       EmbeddedType in_attribute = null;
       String in_tag = null;
       Pattern plain_string_content = null;
 
-      while(source.hasMore()) {
+      while (source.hasMore())
+      {
          MatchResult m = null;
 
-         if( state != State.in_special_tag && (m = source.scan(SPACE)) != null) {
+         if (state != State.in_special_tag && (m = source.scan(SPACE)) != null)
+         {
             encoder.textToken(m.group(), TokenType.space);
          }
-         else {
+         else
+         {
 
-            switch (state) {
+            switch (state)
+            {
             case innitial:
 
-               if( (m = source.scan(CDATA_START)) != null ) {
+               if ((m = source.scan(CDATA_START)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.inline_delimiter);
-                  if( (m = source.scan(CDATA_END)) != null) {
-                     encoder.textToken(m.group().substring(0, m.group().length()-3), TokenType.plain);
+                  if ((m = source.scan(CDATA_END)) != null)
+                  {
+                     encoder.textToken(m.group().substring(0, m.group().length() - 3), TokenType.plain);
                      encoder.textToken("]]>", TokenType.inline_delimiter);
                   }
-                  else if( (m = source.scan(CDATA_ERROR)) != null ) {
+                  else if ((m = source.scan(CDATA_ERROR)) != null)
+                  {
                      encoder.textToken(m.group(), TokenType.error);
                   }
                }
-               else if( (m = source.scan(COMMENT)) != null ) {
+               else if ((m = source.scan(COMMENT)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.comment);
                }
-               else if( (m = source.scan(DOCTYPE)) != null ) {
+               else if ((m = source.scan(DOCTYPE)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.doctype);
                }
-               else if( (m = source.scan(PRE_PROCESSOR)) != null ) {
+               else if ((m = source.scan(PRE_PROCESSOR)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.preprocessor);
                }
-               else if( (m = source.scan(COMMENT2)) != null ) {
+               else if ((m = source.scan(COMMENT2)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.comment);
                }
-               else if( (m = source.scan(TAG)) != null ) {
+               else if ((m = source.scan(TAG)) != null)
+               {
                   in_tag = null;
                   encoder.textToken(m.group(), TokenType.tag);
                }
-               else if( (m = source.scan(SPECIAL_TAG)) != null ) {
+               else if ((m = source.scan(SPECIAL_TAG)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.tag);
                   in_tag = m.group(1);
-                  if(m.group(2) != null) {
-                     if(in_tag != null) {
+                  if (m.group(2) != null)
+                  {
+                     if (in_tag != null)
+                     {
                         state = State.in_special_tag;
                      }
                   }
-                  else {
+                  else
+                  {
                      state = State.attribute;
                   }
                }
-               else if( (m = source.scan(PLAIN)) != null ) {
+               else if ((m = source.scan(PLAIN)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.plain);
                }
-               else if( (m = source.scan(ENTITY)) != null ) {
+               else if ((m = source.scan(ENTITY)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.entity);
                }
-               else if( (m = source.scan(ERROR)) != null ) {
+               else if ((m = source.scan(ERROR)) != null)
+               {
                   in_tag = null;
                   encoder.textToken(m.group(), TokenType.error);
                }
-               else {
+               else
+               {
                   throw new RuntimeException("[BUG] else-case reached with state " + state + " in " + getClass());
                }
 
                break;
             case attribute:
 
-               if( (m = source.scan(TAG_END)) != null ) {
+               if ((m = source.scan(TAG_END)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.tag);
                   in_attribute = null;
-                  if( in_tag != null) {
+                  if (in_tag != null)
+                  {
                      state = State.in_special_tag;
-                  } else {
+                  }
+                  else
+                  {
                      state = State.innitial;
                   }
                }
-               else if( (m = source.scan(ATTR_NAME)) != null ) {
+               else if ((m = source.scan(ATTR_NAME)) != null)
+               {
                   in_attribute = IN_ATTRIBUTE.lookup(m.group());
                   encoder.textToken(m.group(), TokenType.attribute_name);
                   state = State.attribute_equal;
                }
-               else {
+               else
+               {
                   in_tag = null;
                   encoder.textToken(source.next(), TokenType.error);
                }
@@ -177,84 +207,102 @@ public class HTMLScanner implements Scanner {
                break;
             case attribute_equal:
 
-               if( (m = source.scan(EQUAL)) != null ) {
+               if ((m = source.scan(EQUAL)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.operator);
                   state = State.attribute_value;
                }
-               else {
+               else
+               {
                   state = State.attribute;
                   break;
                }
 
             case attribute_value:
-               if( (m = source.scan(ATTR_NAME)) != null ) {
-                 encoder.textToken(m.group(), TokenType.attribute_value);
-                 state = State.attribute;
-               } else if( (m = source.scan(QUOTE)) != null ) {
-                  if(EmbeddedType.script == in_attribute || EmbeddedType.style == in_attribute) {
+               if ((m = source.scan(ATTR_NAME)) != null)
+               {
+                  encoder.textToken(m.group(), TokenType.attribute_value);
+                  state = State.attribute;
+               }
+               else if ((m = source.scan(QUOTE)) != null)
+               {
+                  if (EmbeddedType.script == in_attribute || EmbeddedType.style == in_attribute)
+                  {
                      encoder.beginGroup(TokenType.string);
                      encoder.textToken(m.group(), TokenType.delimiter);
                      String groupStart = m.group();
 
-                     if( (m = source.scan(JAVASCRIPT_INLINE)) != null ) {
+                     if ((m = source.scan(JAVASCRIPT_INLINE)) != null)
+                     {
                         encoder.textToken(m.group(), TokenType.comment);
                      }
                      String code = source.scanUntil(Pattern.compile("(?=" + groupStart + "|\\z)")).group();
-                     if(EmbeddedType.script == in_attribute) {
+                     if (EmbeddedType.script == in_attribute)
+                     {
                         Syntax.Builder.create()
-                           .scannerType(Scanner.Type.JAVASCRIPT)
-                           .encoder(encoder)
-                           .execute(code);
+                                 .scannerType(Scanner.Type.JAVASCRIPT)
+                                 .encoder(encoder)
+                                 .execute(code);
                      }
-                     else {
+                     else
+                     {
                         Syntax.Builder.create()
-                           .scannerType(Scanner.Type.CSS)
-                           .encoder(encoder)
-                           .scannerOptions(
-                              Options.create()
-                              .add(CSSScanner.OPTION_START_STATE, CSSScanner.State.block))
-                           .execute(code);
+                                 .scannerType(Scanner.Type.CSS)
+                                 .encoder(encoder)
+                                 .scannerOptions(
+                                          Options.create()
+                                                   .add(CSSScanner.OPTION_START_STATE, CSSScanner.State.block))
+                                 .execute(code);
                      }
                      m = source.scan(QUOTE);
-                     if(m != null) {
+                     if (m != null)
+                     {
                         encoder.textToken(m.group(), TokenType.delimiter);
                      }
                      encoder.endGroup(TokenType.string);
                      state = State.attribute;
                      in_attribute = null;
                   }
-                  else {
+                  else
+                  {
                      encoder.beginGroup(TokenType.string);
                      state = State.attribute_value_string;
                      plain_string_content = PLAIN_STRING_CONTENT.get(m.group());
                      encoder.textToken(m.group(), TokenType.delimiter);
                   }
                }
-               else if( (m = source.scan(TAG_END)) != null ) {
+               else if ((m = source.scan(TAG_END)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.tag);
                   state = State.innitial;
                }
-               else {
+               else
+               {
                   encoder.textToken(source.next(), TokenType.error);
                }
                break;
             case attribute_value_string:
 
-               if( (m = source.scan(plain_string_content)) != null ) {
+               if ((m = source.scan(plain_string_content)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.content);
                }
-               else if( (m = source.scan(QUOTE)) != null ) {
+               else if ((m = source.scan(QUOTE)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.delimiter);
                   encoder.endGroup(TokenType.string);
                   state = State.attribute;
                }
-               else if( (m = source.scan(ENTITY)) != null ) {
+               else if ((m = source.scan(ENTITY)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.entity);
                }
-               else if( (m = source.scan(AMP)) != null ) {
+               else if ((m = source.scan(AMP)) != null)
+               {
                   encoder.textToken(m.group(), TokenType.content);
                }
-               else if( (m = source.scan(END)) != null ) {
+               else if ((m = source.scan(END)) != null)
+               {
                   encoder.endGroup(TokenType.string);
                   state = State.innitial;
                   encoder.textToken(m.group(), TokenType.error);
@@ -262,46 +310,56 @@ public class HTMLScanner implements Scanner {
                break;
             case in_special_tag:
 
-               if("script".equalsIgnoreCase(in_tag) || "style".equalsIgnoreCase(in_tag)) {
+               if ("script".equalsIgnoreCase(in_tag) || "style".equalsIgnoreCase(in_tag))
+               {
                   String code = null;
                   String closing = null;
-                  if( (m = source.scan(SPECIAL_SPACE)) != null ) {
+                  if ((m = source.scan(SPECIAL_SPACE)) != null)
+                  {
                      encoder.textToken(m.group(), TokenType.space);
                   }
-                  if( (m = source.scan(SPECIAL_COMMENT)) != null ) {
+                  if ((m = source.scan(SPECIAL_COMMENT)) != null)
+                  {
                      code = m.group(2);
-                     if(code == null) {
+                     if (code == null)
+                     {
                         code = m.group(4);
                      }
                      closing = m.group(3);
                      encoder.textToken(m.group(1), TokenType.comment);
                   }
-                  else {
+                  else
+                  {
                      code = source.scanUntil("(?=(?:\\n\\s*)?<\\/" + in_tag + ">)|\\z").group();
                      closing = null;
                   }
-                  if(code != null && !code.isEmpty()) {
+                  if (code != null && !code.isEmpty())
+                  {
                      encoder.beginGroup(TokenType.inline);
-                     if("script".equalsIgnoreCase(in_tag)) {
+                     if ("script".equalsIgnoreCase(in_tag))
+                     {
                         Syntax.Builder.create()
-                           .scannerType(Scanner.Type.JAVASCRIPT)
-                           .encoder(encoder)
-                           .execute(code);
+                                 .scannerType(Scanner.Type.JAVASCRIPT)
+                                 .encoder(encoder)
+                                 .execute(code);
                      }
-                     else {
+                     else
+                     {
                         Syntax.Builder.create()
-                           .scannerType(Scanner.Type.CSS)
-                           .encoder(encoder)
-                           .execute(code);
+                                 .scannerType(Scanner.Type.CSS)
+                                 .encoder(encoder)
+                                 .execute(code);
                      }
                      encoder.endGroup(TokenType.inline);
                   }
-                  if(closing != null) {
+                  if (closing != null)
+                  {
                      encoder.textToken(closing, TokenType.comment);
                   }
                   state = State.innitial;
                }
-               else {
+               else
+               {
                   throw new RuntimeException("unknown special tag " + in_tag);
                }
                break;

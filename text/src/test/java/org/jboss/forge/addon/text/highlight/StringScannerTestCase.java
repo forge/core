@@ -8,10 +8,12 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class StringScannerTestCase {
+public class StringScannerTestCase
+{
 
    @Test
-   public void shouldTrackIndex() throws Exception {
+   public void shouldTrackIndex() throws Exception
+   {
       String test = "abcde";
 
       StringScanner scan = new StringScanner(test);
@@ -35,7 +37,8 @@ public class StringScannerTestCase {
    }
 
    @Test
-   public void shouldScanUntil() throws Exception {
+   public void shouldScanUntil() throws Exception
+   {
       String test = "aaaabc";
 
       StringScanner scan = new StringScanner(test);
@@ -49,8 +52,10 @@ public class StringScannerTestCase {
       Assert.assertFalse(scan.hasMore());
    }
 
-   @Test @Ignore
-   public void should2() throws Exception {
+   @Test
+   @Ignore
+   public void should2() throws Exception
+   {
 
       String test = "package pl.silvermedia.ws";
       StringScanner scan = new StringScanner(test);
@@ -61,12 +66,13 @@ public class StringScannerTestCase {
    }
 
    @Test
-   public void shouldMatchMatcherGroups() throws Exception {
+   public void shouldMatchMatcherGroups() throws Exception
+   {
       Pattern p = Pattern.compile("<(?:(script|style)|[-\\w.:]+)(>)?", Pattern.DOTALL);
 
       String source = "<textarea disabled>\n" +
-            "  This text area has been disabled.\n" +
-            "</textarea>";
+               "  This text area has been disabled.\n" +
+               "</textarea>";
 
       Matcher m = p.matcher(source);
       m.find();
