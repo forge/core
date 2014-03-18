@@ -42,11 +42,12 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -110,6 +111,7 @@ public class ResourceMonitorTest
    @Test
    public void testResourceMonitorDirectory() throws Exception
    {
+      Assume.assumeFalse("FORGE-1679", OperatingSystemUtils.isWindows());
       File tempDir = OperatingSystemUtils.createTempDir();
       DirectoryResource tempDirResource = resourceFactory.create(DirectoryResource.class, tempDir);
       monitor = resourceFactory.monitor(tempDirResource);
@@ -191,6 +193,94 @@ public class ResourceMonitorTest
    }
 
    @Test
+   public void testResourceMonitorDirectoryWindows() throws Exception
+   {
+      Assume.assumeTrue("FORGE-1679", OperatingSystemUtils.isWindows());
+      File tempDir = OperatingSystemUtils.createTempDir();
+      DirectoryResource tempDirResource = resourceFactory.create(DirectoryResource.class, tempDir);
+      monitor = resourceFactory.monitor(tempDirResource);
+      final Set<ResourceEvent> eventCollector = new LinkedHashSet<>();
+      monitor.addResourceListener(new ResourceListener()
+      {
+         @Override
+         public void processEvent(ResourceEvent event)
+         {
+            eventCollector.add(event);
+         }
+      });
+
+      final DirectoryResource childDir = tempDirResource.getChildDirectory("child_dir");
+
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // NEW EVENT: ResourceCreated
+            childDir.mkdir();
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 1;
+         }
+      }, 5, TimeUnit.SECONDS);
+      final FileResource<?> childFile = childDir.getChild("child_file.txt").reify(FileResource.class);
+
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // NEW EVENT: ResourceCreated
+            childFile.createNewFile();
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 2;
+         }
+      }, 5, TimeUnit.SECONDS);
+
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // NEW EVENT: ResourceDeleted
+            childFile.delete();
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 5;
+         }
+      }, 5, TimeUnit.SECONDS);
+
+      Assert.assertEquals(5, eventCollector.size());
+      Iterator<ResourceEvent> iterator = eventCollector.iterator();
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceCreated.class)));
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceCreated.class)));
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceModified.class)));
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceModified.class)));
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceDeleted.class)));
+   }
+
+   @Test
    @SuppressWarnings("unchecked")
    public void testResourceMonitorFile() throws Exception
    {
@@ -255,6 +345,7 @@ public class ResourceMonitorTest
    @Test
    public void testResourceMonitorDirectoryWithFilter() throws Exception
    {
+      Assume.assumeFalse("FORGE-1679", OperatingSystemUtils.isWindows());
       File tempDir = OperatingSystemUtils.createTempDir();
       DirectoryResource tempDirResource = resourceFactory.create(DirectoryResource.class, tempDir);
       monitor = resourceFactory.monitor(tempDirResource, new ResourceFilter()
@@ -323,11 +414,158 @@ public class ResourceMonitorTest
       Assert.assertTrue(iterator.hasNext());
       Assert.assertThat(iterator.next(), is(instanceOf(ResourceDeleted.class)));
    }
+   @Test
+   public void testResourceMonitorDirectoryWithFilterWindows() throws Exception
+   {
+      Assume.assumeTrue("FORGE-1679", OperatingSystemUtils.isWindows());
+      File tempDir = OperatingSystemUtils.createTempDir();
+      DirectoryResource tempDirResource = resourceFactory.create(DirectoryResource.class, tempDir);
+      monitor = resourceFactory.monitor(tempDirResource, new ResourceFilter()
+      {
+         @Override
+         public boolean accept(Resource<?> resource)
+         {
+            return "foo.txt".equals(resource.getName());
+         }
+      });
+      final Set<ResourceEvent> eventCollector = new LinkedHashSet<>();
+      monitor.addResourceListener(new ResourceListener()
+      {
+         @Override
+         public void processEvent(ResourceEvent event)
+         {
+            eventCollector.add(event);
+         }
+      });
+      final FileResource<?> childFile1 = tempDirResource.getChild("child_file.txt").reify(FileResource.class);
+      // NEW EVENT: ResourceCreated
+      childFile1.createNewFile();
+
+      final FileResource<?> childFile2 = tempDirResource.getChild("foo.txt").reify(FileResource.class);
+
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // NEW EVENT: ResourceCreated of parent dir
+            childFile2.createNewFile();
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 1;
+         }
+      }, 5, TimeUnit.SECONDS);
+
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            //Windows 7 adds ResourceModified
+            // NEW EVENT: ResourceDeleted
+            childFile2.delete();
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 3;
+         }
+      }, 5, TimeUnit.SECONDS);
+
+      Assert.assertEquals(3, eventCollector.size());
+      Iterator<ResourceEvent> iterator = eventCollector.iterator();
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceCreated.class)));
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceModified.class)));
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceDeleted.class)));
+   }
 
    @Test
    @SuppressWarnings("unchecked")
    public void testResourceMonitorFileWithFilter() throws Exception
    {
+      Assume.assumeFalse("FORGE-1679", OperatingSystemUtils.isWindows());
+      File tempDir = OperatingSystemUtils.createTempDir();
+      File tempFile = File.createTempFile("resource_monitor", ".tmp", tempDir);
+      final FileResource<?> resource = resourceFactory.create(FileResource.class, tempFile);
+      monitor = resourceFactory.monitor(resource, new ResourceFilter()
+      {
+         @Override
+         public boolean accept(Resource<?> resource)
+         {
+            return resource.getName().startsWith("resource_monitor");
+         }
+      });
+
+      final Set<ResourceEvent> eventCollector = new LinkedHashSet<>();
+      monitor.addResourceListener(new ResourceListener()
+      {
+         @Override
+         public void processEvent(ResourceEvent event)
+         {
+            eventCollector.add(event);
+         }
+      });
+
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // NEW EVENT: ResourceModified
+            resource.setContents("TEST");
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 1;
+         }
+      }, 5, TimeUnit.SECONDS);
+
+      waitForMonitor(new Callable<Void>()
+      {
+         @Override
+         public Void call() throws Exception
+         {
+            // NEW EVENT: ResourceDeleted
+            resource.delete();
+            return null;
+         }
+      }, new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return eventCollector.size() == 2;
+         }
+      }, 5, TimeUnit.SECONDS);
+
+      Assert.assertEquals(2, eventCollector.size());
+      Iterator<ResourceEvent> iterator = eventCollector.iterator();
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceModified.class)));
+      Assert.assertTrue(iterator.hasNext());
+      Assert.assertThat(iterator.next(), is(instanceOf(ResourceDeleted.class)));
+   }
+
+   @Test
+   @SuppressWarnings("unchecked")
+   public void testResourceMonitorFileWithFilterWindows() throws Exception
+   {
+      Assume.assumeTrue("FORGE-1679", OperatingSystemUtils.isWindows());
       File tempDir = OperatingSystemUtils.createTempDir();
       File tempFile = File.createTempFile("resource_monitor", ".tmp", tempDir);
       final FileResource<?> resource = resourceFactory.create(FileResource.class, tempFile);
