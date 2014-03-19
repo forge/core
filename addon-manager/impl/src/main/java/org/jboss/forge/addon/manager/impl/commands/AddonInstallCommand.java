@@ -7,13 +7,12 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -50,7 +49,8 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
    public Metadata getMetadata(UIContext context)
    {
       boolean gui = context.getProvider().isGUI();
-      return Metadata.from(super.getMetadata(context), getClass()).name(gui ? ADDON_INSTALL_COMMAND_NAME : ADDON_INSTALL_COMMAND_NAME_NO_GUI)
+      return Metadata.from(super.getMetadata(context), getClass())
+               .name(gui ? ADDON_INSTALL_COMMAND_NAME : ADDON_INSTALL_COMMAND_NAME_NO_GUI)
                .description(ADDON_INSTALL_COMMAND_DESCRIPTION)
                .category(Categories.create(ADDON_MANAGER_CATEGORIES));
    }
@@ -58,7 +58,7 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      Project project = getSelectedProject(builder.getUIContext());
+      Project project = Projects.getSelectedProject(projectFactory, builder.getUIContext());
       final String topLevelPackage;
       if (project != null)
       {
@@ -105,19 +105,5 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
    protected String getCoordinates()
    {
       return groupId.getValue() + ':' + name.getValue() + ',' + version.getValue();
-   }
-
-   /**
-    * Returns the selected project. null if no project is found
-    */
-   protected Project getSelectedProject(UIContext context)
-   {
-      Project project = null;
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (!initialSelection.isEmpty())
-      {
-         project = projectFactory.findProject(initialSelection.get());
-      }
-      return project;
    }
 }

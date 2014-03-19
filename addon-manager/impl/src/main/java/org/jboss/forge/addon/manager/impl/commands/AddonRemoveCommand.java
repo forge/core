@@ -9,13 +9,12 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -69,7 +68,7 @@ public class AddonRemoveCommand extends AbstractUICommand implements AddonComman
          }
       }
       addons.setValueChoices(choices);
-      Project project = getSelectedProject(builder.getUIContext());
+      Project project = Projects.getSelectedProject(projectFactory, builder.getUIContext());
       if (project != null)
       {
          MetadataFacet facet = project.getFacet(MetadataFacet.class);
@@ -102,19 +101,4 @@ public class AddonRemoveCommand extends AbstractUICommand implements AddonComman
       }
       return Results.success("Removed addons: " + builder.toString());
    }
-
-   /**
-    * Returns the selected project. null if no project is found
-    */
-   protected Project getSelectedProject(UIContext context)
-   {
-      Project project = null;
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (!initialSelection.isEmpty())
-      {
-         project = projectFactory.findProject(initialSelection.get());
-      }
-      return project;
-   }
-
 }

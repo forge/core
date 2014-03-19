@@ -5,16 +5,15 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.projects.building.BuildException;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -48,21 +47,16 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
    public Metadata getMetadata(UIContext context)
    {
       boolean gui = context.getProvider().isGUI();
-      return Metadata.from(super.getMetadata(context), getClass()).name(gui ? ADDON_BUILD_INSTALL_COMMAND_NAME : ADDON_BUILD_INSTALL_COMMAND_NAME_NO_GUI)
+      return Metadata.from(super.getMetadata(context), getClass())
+               .name(gui ? ADDON_BUILD_INSTALL_COMMAND_NAME : ADDON_BUILD_INSTALL_COMMAND_NAME_NO_GUI)
                .description(ADDON_BUILD_INSTALL_COMMAND_DESCRIPTION)
                .category(Categories.create(ADDON_MANAGER_CATEGORIES));
    }
 
    @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return true;
-   }
-
-   @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      Project project = getSelectedProject(builder.getUIContext());
+      Project project = Projects.getSelectedProject(projectFactory, builder.getUIContext());
       if (project != null)
       {
          projectRoot.setDefaultValue(project.getRootDirectory());
@@ -74,7 +68,8 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
    public Result execute(UIExecutionContext context)
    {
       Project project = projectFactory.findProject(projectRoot.getValue());
-      if(project == null) {
+      if (project == null)
+      {
          return Results.fail("No project found in root " + projectRoot.getValue().getFullyQualifiedName());
       }
       Coordinate coordinate = project.getFacet(MetadataFacet.class).getOutputDependency().getCoordinate();
@@ -102,19 +97,5 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
       {
          return Results.fail("Addon " + coordinate.toString() + " could not be installed.", t);
       }
-   }
-
-   /**
-    * Returns the selected project. null if no project is found
-    */
-   protected Project getSelectedProject(UIContext context)
-   {
-      Project project = null;
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (!initialSelection.isEmpty())
-      {
-         project = projectFactory.findProject(initialSelection.get());
-      }
-      return project;
    }
 }
