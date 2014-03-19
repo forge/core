@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.scaffold.impl.ui;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -73,7 +74,11 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
          }
       });
 
-      provider.setDefaultValue(scaffoldProviders.get());
+      Iterator<ScaffoldProvider> scaffolds = scaffoldProviders.iterator();
+      if (scaffolds.hasNext())
+      {
+         provider.setDefaultValue(scaffolds.next());
+      }
       provider.setValueChoices(scaffoldProviders);
       provider.setItemLabelConverter(new Converter<ScaffoldProvider, String>()
       {

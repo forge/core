@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.scaffold.impl.ui;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -63,7 +64,11 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      provider.setDefaultValue(scaffoldProviders.get());
+      Iterator<ScaffoldProvider> scaffolds = scaffoldProviders.iterator();
+      if (scaffolds.hasNext())
+      {
+         provider.setDefaultValue(scaffolds.next());
+      }
       provider.setValueChoices(scaffoldProviders);
       provider.setItemLabelConverter(new Converter<ScaffoldProvider, String>()
       {
