@@ -10,14 +10,15 @@ package org.jboss.forge.addon.maven.projects;
 import org.jboss.forge.addon.projects.AbstractProject;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.Resource;
 
 class MavenProject extends AbstractProject
 {
-   private final DirectoryResource projectRoot;
+   private final Resource<?> root;
 
-   public MavenProject(DirectoryResource projectRoot)
+   public MavenProject(Resource<?> projectRoot)
    {
-      this.projectRoot = projectRoot;
+      this.root = projectRoot;
    }
 
    @Override
@@ -29,13 +30,21 @@ class MavenProject extends AbstractProject
    @Override
    public DirectoryResource getRootDirectory()
    {
-      return projectRoot;
+      if (root instanceof DirectoryResource)
+         return (DirectoryResource) root;
+      throw new IllegalStateException("Project root [" + root + "] is not an instance of DirectoryResource");
+   }
+
+   @Override
+   public Resource<?> getRoot()
+   {
+      return root;
    }
 
    @Override
    public String toString()
    {
-      return projectRoot.toString();
+      return root.toString();
    }
 
 }

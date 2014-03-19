@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.parser.java.util.Assert;
 
 /**
  * Executes native system commands.
@@ -33,6 +34,9 @@ public class NativeSystemCall
    public static int execFromPath(final String command, final String[] parms, final OutputStream out,
             final DirectoryResource path) throws IOException
    {
+      Assert.notNull(command, "Command must not be null.");
+      Assert.notNull(path, "Directory path must not be null.");
+      Assert.notNull(out, "OutputStream must not be null.");
       try
       {
          String[] commandTokens = parms == null ? new String[1] : new String[parms.length + 1];

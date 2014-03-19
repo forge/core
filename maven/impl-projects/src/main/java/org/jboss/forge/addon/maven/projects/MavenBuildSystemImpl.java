@@ -19,13 +19,11 @@ import org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenWebResourcesFacet;
-import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
-import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 
 /**
@@ -45,9 +43,9 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
    }
 
    @Override
-   public Project createProject(final DirectoryResource dir)
+   public Project createProject(final Resource<?> target)
    {
-      Project project = new MavenProject(dir);
+      Project project = new MavenProject(target);
 
       try
       {
@@ -69,17 +67,17 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
       catch (RuntimeException e)
       {
          throw new IllegalStateException("Could not install Maven into Project located at ["
-                  + dir.getFullyQualifiedName() + "]", e);
+                  + target.getFullyQualifiedName() + "]", e);
       }
 
       return project;
    }
 
    @Override
-   public boolean containsProject(final DirectoryResource dir)
+   public boolean containsProject(final Resource<?> target)
    {
-      Resource<?> pom = dir.getChild("pom.xml");
-      return pom.exists() && pom instanceof FileResource;
+      Resource<?> pom = target.getChild("pom.xml");
+      return pom != null && pom.exists();
    }
 
    @Override

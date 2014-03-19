@@ -7,7 +7,7 @@
 package org.jboss.forge.addon.projects.spi;
 
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.Resource;
 
 /**
  * Responsible for caching {@link Project} instances so that they do not need to be re-built or re-generated for
@@ -20,7 +20,7 @@ public interface ProjectCache
    /**
     * Retrieve a {@link Project} from the cache, using {@link Project#getRootDirectory()} as the key.
     */
-   Project get(DirectoryResource target);
+   Project get(Resource<?> target);
 
    /**
     * Invalidate the cache, forcing all stored {@link Project} instances to be re-discovered.
