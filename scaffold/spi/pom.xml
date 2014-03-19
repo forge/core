@@ -14,16 +14,29 @@
 			<artifactId>projects</artifactId>
 			<classifier>forge-addon</classifier>
 		</dependency>
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>parser-java</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
 		<dependency>
 			<groupId>org.jboss.forge.addon</groupId>
 			<artifactId>ui</artifactId>
 			<classifier>forge-addon</classifier>
-		</dependency>		
+		</dependency>
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>javaee-api</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.jboss.forge.furnace</groupId>
 			<artifactId>furnace-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.metawidget.modules</groupId>
+            <artifactId>metawidget-all</artifactId>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>

@@ -16,18 +16,20 @@ import java.util.Map;
 
 import javax.persistence.*;
 
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.parser.java.resources.JavaResource;
+import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.ForgePropertyStyle.ForgeProperty;
 import org.jboss.forge.parser.java.EnumConstant;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.parser.java.resources.JavaResource;
-import org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.ForgePropertyStyle.ForgeProperty;
+import org.metawidget.inspector.InspectionResultConstants;
 import org.metawidget.inspector.impl.BaseObjectInspector;
 import org.metawidget.inspector.impl.propertystyle.Property;
 import org.metawidget.util.CollectionUtils;
 import org.w3c.dom.Element;
+
 
 /**
  * Inspects Forge-specific metadata.
@@ -93,7 +95,7 @@ public class ForgeInspector
 
       if (property.isAnnotationPresent(OneToOne.class))
       {
-         attributes.put(ONE_TO_ONE, TRUE);
+         attributes.put(ONE_TO_ONE, InspectionResultConstants.TRUE);
          attributes.put(JPA_REL_TYPE, JPA_ONE_TO_ONE);
          getReversePrimaryKey(property, attributes);
          if (property.isAnnotationPresent(OneToOne.class))
@@ -104,7 +106,7 @@ public class ForgeInspector
       
       if(property.isAnnotationPresent(Embedded.class) || isPropertyTypeEmbeddedable(property.getType()))
       {
-         attributes.put(EMBEDDABLE, TRUE);
+         attributes.put(EMBEDDABLE, InspectionResultConstants.TRUE);
       }
 
       // ManyToOne
@@ -112,7 +114,7 @@ public class ForgeInspector
       if (property.isAnnotationPresent(ManyToOne.class))
       {
          attributes.put(JPA_REL_TYPE, JPA_MANY_TO_ONE);
-         attributes.put(MANY_TO_ONE, TRUE);
+         attributes.put(MANY_TO_ONE, InspectionResultConstants.TRUE);
          getReversePrimaryKey(property, attributes);
          getManyToOneBidirectionalProperties(property, attributes);
       }
@@ -121,7 +123,7 @@ public class ForgeInspector
 
       if (property.isAnnotationPresent(OneToMany.class) || property.isAnnotationPresent(ManyToMany.class))
       {
-         attributes.put(N_TO_MANY, TRUE);
+         attributes.put(N_TO_MANY, InspectionResultConstants.TRUE);
          getCollectionReversePrimaryKey(property, attributes);
          if (property.isAnnotationPresent(OneToMany.class))
          {
@@ -150,7 +152,7 @@ public class ForgeInspector
                lookup.add(anEnum.getName());
             }
 
-            attributes.put(LOOKUP, CollectionUtils.toString(lookup));
+            attributes.put(InspectionResultConstants.LOOKUP, CollectionUtils.toString(lookup));
          }
       }
 
@@ -158,11 +160,11 @@ public class ForgeInspector
 
       if (property.isAnnotationPresent(Id.class))
       {
-         attributes.put(PRIMARY_KEY, TRUE);
+         attributes.put(PRIMARY_KEY, InspectionResultConstants.TRUE);
       }
       if (property.isAnnotationPresent(GeneratedValue.class))
       {
-         attributes.put(GENERATED_VALUE, TRUE);
+         attributes.put(GENERATED_VALUE, InspectionResultConstants.TRUE);
       }
 
       return attributes;

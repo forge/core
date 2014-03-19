@@ -14,10 +14,10 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.*;
-import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.metawidget.inspector.iface.InspectorException;
 import org.metawidget.inspector.impl.propertystyle.BaseProperty;
 import org.metawidget.inspector.impl.propertystyle.BasePropertyStyle;
@@ -29,7 +29,7 @@ import org.metawidget.util.simple.StringUtils;
 
 /**
  * Inspects Forge-specific <tt>JavaSource</tt> objects for properties.
- *
+ * 
  * @author Richard Kennard
  */
 
@@ -62,7 +62,7 @@ public class ForgePropertyStyle
 
    /**
     * Traverses the given Class heirarchy using properties of the given names.
-    *
+    * 
     * @return the declared type (not actual type). May be null
     */
 
@@ -215,7 +215,7 @@ public class ForgePropertyStyle
 
    /**
     * Returns whether the given method is a 'getter' method.
-    *
+    * 
     * @param method a parameterless method that returns a non-void
     * @return the property name
     */
@@ -330,7 +330,7 @@ public class ForgePropertyStyle
 
    /**
     * Returns whether the given method is a 'setter' method.
-    *
+    * 
     * @param method a single-parametered method. May return non-void (ie. for Fluent interfaces)
     * @return the property name
     */
@@ -351,7 +351,7 @@ public class ForgePropertyStyle
 
    /**
     * Gets the private field representing the given <code>propertyName</code> within the given class.
-    *
+    * 
     * @return the private Field for this propertyName, or null if no such field (should not throw NoSuchFieldException)
     */
 
@@ -379,7 +379,7 @@ public class ForgePropertyStyle
 
       // FORGE-402: support fields starting with capital letter
 
-      if (field == null && !Character.isUpperCase(propertyName.charAt( 0 )))
+      if (field == null && !Character.isUpperCase(propertyName.charAt(0)))
       {
          field = fieldHolder.getField(StringUtils.capitalize(propertyName));
       }
@@ -391,7 +391,7 @@ public class ForgePropertyStyle
    // Private methods
    //
 
-   /*package private*/
+   /* package private */
 
    static JavaSource<?> sourceForName(final Project project, final String type)
    {
@@ -508,9 +508,10 @@ public class ForgePropertyStyle
 
       public List<EnumConstant<JavaEnum>> getEnumConstants()
       {
-         JavaSource<?> source = sourceForName( this.project, getType() );
+         JavaSource<?> source = sourceForName(this.project, getType());
 
-         if ( source instanceof JavaEnum ) {
+         if (source instanceof JavaEnum)
+         {
             return ((JavaEnum) source).getEnumConstants();
          }
 

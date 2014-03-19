@@ -40,6 +40,11 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>scaffold-services</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>scaffold-spi</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>

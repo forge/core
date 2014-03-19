@@ -10,6 +10,7 @@ import org.jboss.forge.addon.facets.FacetNotFoundException;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.Resource;
 
 /**
  * A stubbed out implementation of a Project
@@ -33,6 +34,11 @@ public class StubProject implements Project
 
     @Override
     public DirectoryResource getRootDirectory() {
+        return null;
+    }
+
+    @Override
+    public Resource<?> getRoot() {
         return null;
     }
 

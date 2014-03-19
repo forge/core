@@ -10,15 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
-import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspector;
 import org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectorConfig;
 import org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.ForgePropertyStyle;
 import org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.ForgePropertyStyleConfig;
+import org.jboss.forge.parser.java.JavaClass;
 import org.metawidget.inspector.beanvalidation.BeanValidationInspector;
 import org.metawidget.inspector.composite.CompositeInspector;
 import org.metawidget.inspector.composite.CompositeInspectorConfig;
@@ -29,7 +26,7 @@ import org.metawidget.util.XmlUtils;
 import org.w3c.dom.Element;
 
 /**
- * A facade for Metawidget inspectors. This class wraps Metawidget API invocations for {@link ScaffoldProvider}
+ * A facade for Metawidget inspectors. This class provides an abstraction over Metawidget API invocations ScaffoldProvider
  * instances to invoke.
  * 
  * @author Vineet Reynolds
@@ -41,7 +38,6 @@ public class MetawidgetInspectorFacade
    private Project project;
    private CompositeInspector compositeInspector;
 
-   @Inject
    public MetawidgetInspectorFacade(Project project)
    {
       this.project = project;
