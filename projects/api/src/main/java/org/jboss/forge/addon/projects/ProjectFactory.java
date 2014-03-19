@@ -7,8 +7,6 @@
 package org.jboss.forge.addon.projects;
 
 import org.jboss.forge.addon.projects.spi.ProjectCache;
-import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Predicate;
@@ -21,25 +19,25 @@ import org.jboss.forge.furnace.util.Predicate;
 public interface ProjectFactory
 {
    /**
-    * Locate a {@link Project} in the ancestry of the given {@link FileResource}. Return <code>null</code> if no
+    * Locate a {@link Project} in the ancestry of the given {@link Resource}. Return <code>null</code> if no
     * {@link Project} could be located.
     */
    public Project findProject(final Resource<?> target);
 
    /**
-    * Locate a {@link Project} in the ancestry of the given {@link FileResource}. Filter results using the given
+    * Locate a {@link Project} in the ancestry of the given {@link Resource}. Filter results using the given
     * {@link Predicate}. Return <code>null</code> if no {@link Project} could be located.
     */
    public Project findProject(final Resource<?> target, Predicate<Project> filter);
 
    /**
-    * Locate a {@link Project} with the given {@link ProjectProvider} in the ancestry of the given {@link FileResource}.
+    * Locate a {@link Project} with the given {@link ProjectProvider} in the ancestry of the given {@link Resource}.
     * Return <code>null</code> if no {@link Project} could be located.
     */
    public Project findProject(final Resource<?> target, ProjectProvider projectProvider);
 
    /**
-    * Locate a {@link Project} using the given {@link ProjectProvider} in the ancestry of the given {@link FileResource}.
+    * Locate a {@link Project} using the given {@link ProjectProvider} in the ancestry of the given {@link Resource}.
     * Filter results using the given {@link Predicate}. Return <code>null</code> if no {@link Project} could be located.
     */
    public Project findProject(final Resource<?> target, ProjectProvider projectProvider, Predicate<Project> filter);
@@ -51,39 +49,39 @@ public interface ProjectFactory
    public void invalidateCaches();
 
    /**
-    * Create a {@link Project} in the specified {@link DirectoryResource}, using the given {@link ProjectProvider}.
+    * Create a {@link Project} in the specified {@link Resource}, using the given {@link ProjectProvider}.
     */
    public Project createProject(Resource<?> projectDir, ProjectProvider buildSystem);
 
    /**
-    * Create a {@link Project} with the given {@link ProjectFacet} types in the specified {@link DirectoryResource},
-    * using the given {@link ProjectProvider}.
+    * Create a {@link Project} with the given {@link ProjectFacet} types in the specified {@link Resource}, using the
+    * given {@link ProjectProvider}.
     */
    public Project createProject(Resource<?> targetDir, ProjectProvider projectProvider,
             Iterable<Class<? extends ProjectFacet>> facetTypes);
 
    /**
-    * Returns true if a {@link Project} exists in the ancestry of the given {@link FileResource}. false if no
+    * Returns true if a {@link Project} exists in the ancestry of the given {@link Resource}. false if no
     * {@link Project} could be located
     */
    public boolean containsProject(final Resource<?> target);
 
    /**
     * Returns true if a {@link Project} of the given {@link ProjectProvider} exists in the ancestry of the given
-    * {@link FileResource}. false if no {@link Project} could be located
+    * {@link Resource}. false if no {@link Project} could be located
     */
    public boolean containsProject(final Resource<?> target, ProjectProvider projectProvider);
 
    /**
-    * Returns true if a {@link Project} exists in the ancestry of the given {@link FileResource}. false if no
+    * Returns true if a {@link Project} exists in the ancestry of the given {@link Resource}. false if no
     * {@link Project} could be located. Throws {@link IllegalArgumentException} if target is not a child of bound
     */
-   public boolean containsProject(final Resource<?> bound, final FileResource<?> target);
+   public boolean containsProject(final Resource<?> bound, final Resource<?> target);
 
    /**
     * Returns true if a {@link Project} of the given {@link ProjectProvider} exists in the ancestry of the given
-    * {@link FileResource}. false if no {@link Project} could be located. Throws {@link IllegalArgumentException} if
-    * target is not a child of bound
+    * {@link Resource}. false if no {@link Project} could be located. Throws {@link IllegalArgumentException} if target
+    * is not a child of bound
     */
    public boolean containsProject(final Resource<?> bound, final Resource<?> target, ProjectProvider projectProvider);
 
@@ -103,8 +101,8 @@ public interface ProjectFactory
    public Project createTempProject(Iterable<Class<? extends ProjectFacet>> facetTypes) throws IllegalStateException;
 
    /**
-    * Create a {@link Project} in a temporary location, using the given {@link ProjectProvider}. This method is useful for
-    * testing purposes.
+    * Create a {@link Project} in a temporary location, using the given {@link ProjectProvider}. This method is useful
+    * for testing purposes.
     */
    public Project createTempProject(ProjectProvider projectProvider);
 
