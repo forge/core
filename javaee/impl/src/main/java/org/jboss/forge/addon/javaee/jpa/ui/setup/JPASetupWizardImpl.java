@@ -20,7 +20,7 @@ import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.PersistenceMetaModelFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JBossEAP6Container;
-import org.jboss.forge.addon.javaee.jpa.providers.JavaEEDefaultProvider;
+import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -60,7 +60,7 @@ public class JPASetupWizardImpl extends AbstractJavaEECommand implements JPASetu
    private JBossEAP6Container defaultContainer;
 
    @Inject
-   private JavaEEDefaultProvider defaultProvider;
+   private HibernateProvider defaultProvider;
 
    @Inject
    private Imported<PersistenceMetaModelFacet> metaModelFacets;
