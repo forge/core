@@ -13,7 +13,7 @@
          <artifactId>cdi-api</artifactId>
          <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>maven-api</artifactId>
@@ -84,6 +84,12 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>javaee</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>templates</artifactId>
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>

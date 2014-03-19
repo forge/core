@@ -40,7 +40,7 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>parser-xml</artifactId>
          <classifier>forge-addon</classifier>
-      </dependency>      
+      </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>dependencies</artifactId>
@@ -76,7 +76,12 @@
          <classifier>forge-addon</classifier>
          <optional>true</optional>
       </dependency>
-
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>templates</artifactId>
+         <classifier>forge-addon</classifier>
+         <optional>true</optional>
+      </dependency>
       <!-- Furnace Container -->
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>

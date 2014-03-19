@@ -14,12 +14,12 @@ import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.facets.TemplateFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.templates.facets.TemplateFacet;
 
 /**
- * An implementation of the {@link org.jboss.forge.addon.projects.facets.TemplateFacet} for Maven projects.
+ * An implementation of the {@link org.jboss.forge.addon.templates.facets.TemplateFacet} for Maven projects.
  * 
  * @author Vineet Reynolds
  */
