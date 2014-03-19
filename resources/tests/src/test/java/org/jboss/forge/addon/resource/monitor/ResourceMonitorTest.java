@@ -262,18 +262,16 @@ public class ResourceMonitorTest
          @Override
          public Boolean call() throws Exception
          {
-            return eventCollector.size() == 5;
+            return eventCollector.size() == 4;
          }
       }, 5, TimeUnit.SECONDS);
 
-      Assert.assertEquals(5, eventCollector.size());
+      Assert.assertEquals(4, eventCollector.size());
       Iterator<ResourceEvent> iterator = eventCollector.iterator();
       Assert.assertTrue(iterator.hasNext());
       Assert.assertThat(iterator.next(), is(instanceOf(ResourceCreated.class)));
       Assert.assertTrue(iterator.hasNext());
       Assert.assertThat(iterator.next(), is(instanceOf(ResourceCreated.class)));
-      Assert.assertTrue(iterator.hasNext());
-      Assert.assertThat(iterator.next(), is(instanceOf(ResourceModified.class)));
       Assert.assertTrue(iterator.hasNext());
       Assert.assertThat(iterator.next(), is(instanceOf(ResourceModified.class)));
       Assert.assertTrue(iterator.hasNext());
