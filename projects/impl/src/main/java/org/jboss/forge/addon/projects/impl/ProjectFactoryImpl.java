@@ -30,7 +30,6 @@ import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.spi.ProjectCache;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.events.ResourceEvent;
@@ -485,7 +484,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public boolean containsProject(Resource<?> bound, FileResource<?> target)
+   public boolean containsProject(Resource<?> bound, Resource<?> target)
    {
       boolean found = false;
       Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
