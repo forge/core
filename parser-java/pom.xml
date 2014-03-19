@@ -6,13 +6,13 @@
       <version>2.2.1-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
-   
+
    <groupId>org.jboss.forge.addon</groupId>
    <artifactId>parser-java-parent</artifactId>
-   
+
    <packaging>pom</packaging>
    <name>Forge - Java Parser Addon Parent</name>
-   
+
    <modules>
       <module>api</module>
       <module>impl</module>
@@ -22,6 +22,7 @@
 
    <properties>
       <version.java-parser>1.1.7.Final</version.java-parser>
+      <version.roaster>2.0.0.Final</version.roaster>
    </properties>
 
    <dependencyManagement>
@@ -45,6 +46,16 @@
             <groupId>org.jboss.forge</groupId>
             <artifactId>java-parser-impl</artifactId>
             <version>${version.java-parser}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>roaster-api</artifactId>
+            <version>${version.roaster}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge</groupId>
+            <artifactId>roaster-jdt</artifactId>
+            <version>${version.roaster}</version>
          </dependency>
       </dependencies>
    </dependencyManagement>
