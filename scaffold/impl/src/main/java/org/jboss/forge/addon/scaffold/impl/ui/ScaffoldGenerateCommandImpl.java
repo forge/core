@@ -43,7 +43,7 @@ import org.jboss.forge.furnace.services.Imported;
 public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implements ScaffoldGenerateCommand
 {
    @Inject
-   @WithAttributes(label = "Scaffold Type", required = true, enabled = false)
+   @WithAttributes(label = "Scaffold Type", required = true)
    private UISelectOne<ScaffoldProvider> provider;
 
    @Inject
