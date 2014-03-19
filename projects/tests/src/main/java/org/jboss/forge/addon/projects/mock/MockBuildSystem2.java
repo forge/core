@@ -8,11 +8,11 @@ package org.jboss.forge.addon.projects.mock;
 
 import java.util.Arrays;
 
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
-import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
-import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.Resource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -33,23 +33,23 @@ public class MockBuildSystem2 implements ProjectProvider
    }
 
    @Override
-   public Project createProject(DirectoryResource targetDir)
+   public Project createProject(Resource<?> target)
    {
       return null;
    }
 
    @Override
-   public boolean containsProject(DirectoryResource resource)
+   public boolean containsProject(Resource<?> resource)
    {
       return false;
    }
-   
+
    @Override
    public String toString()
    {
       return getType();
    }
-   
+
    @Override
    public int priority()
    {

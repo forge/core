@@ -9,7 +9,8 @@ import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface FileResource<T extends FileResource<T>> extends Resource<File>, WriteableResource<T>
+public interface FileResource<T extends FileResource<T>> extends Resource<File>,
+         WriteableResource<FileResource<T>, File>
 {
    /**
     * Return true if this {@link FileResource} exists and is actually a directory, otherwise return false;

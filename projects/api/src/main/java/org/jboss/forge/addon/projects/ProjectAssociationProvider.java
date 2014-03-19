@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.projects;
 
-import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.Resource;
 
 /**
  * @author <a href="mailto:torben@jit-central.com">Torben Jaeger</a>
@@ -16,13 +16,13 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 public interface ProjectAssociationProvider
 {
    /**
-    * Return true if this provide is capable of creating a parent-child association between the given Project and the
-    * given parent directory.
+    * Return true if this provide is capable of creating a parent-child association between the given {@link Project}
+    * and the given parent {@link Resource}.
     */
-   boolean canAssociate(Project project, DirectoryResource parent);
+   boolean canAssociate(Project project, Resource<?> parent);
 
    /**
-    * Create a parent-child association between the given Project and the given parent directory.
+    * Create a parent-child association between the given {@link Project} and the given parent {@link Resource}.
     */
-   void associate(Project project, DirectoryResource parent);
+   void associate(Project project, Resource<?> parent);
 }

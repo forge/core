@@ -98,7 +98,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    @Override
    public MavenModelResource getModelResource()
    {
-      return getFaceted().getRootDirectory().getChild("pom.xml").reify(MavenModelResource.class);
+      return getFaceted().getRoot().getChild("pom.xml").reify(MavenModelResource.class);
    }
 
    @Override
@@ -219,7 +219,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          parms = new String[] { "" };
       }
       MavenCli cli = new MavenCli();
-      int i = cli.doMain(parms, getFaceted().getRootDirectory().getFullyQualifiedName(),
+      int i = cli.doMain(parms, getFaceted().getRoot().getFullyQualifiedName(),
                out, err);
       return i == 0;
    }
@@ -240,7 +240,10 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    {
       try
       {
-         int returnValue = NativeSystemCall.execFromPath(getMvnCommand(), parms, out, getFaceted().getRootDirectory());
+         DirectoryResource directory = getFaceted().getRoot().reify(DirectoryResource.class);
+         if (directory == null)
+            throw new IllegalStateException("Cannot execute maven build on resources that are not File-based.");
+         int returnValue = NativeSystemCall.execFromPath(getMvnCommand(), parms, out, directory);
          if (returnValue == 0)
             return true;
          else

@@ -13,7 +13,7 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.spi.ProjectCache;
-import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.furnace.util.Assert;
 
 /**
@@ -27,10 +27,10 @@ public class InMemoryProjectCache implements ProjectCache
    private final Map<String, Project> projects = new WeakHashMap<>();
 
    @Override
-   public Project get(DirectoryResource dir)
+   public Project get(Resource<?> root)
    {
-      Assert.notNull(dir, "Directory Resource should not be null");
-      Project project = projects.get(dir.getFullyQualifiedName());
+      Assert.notNull(root, "Resource should not be null");
+      Project project = projects.get(root.getFullyQualifiedName());
       return project;
    }
 
@@ -44,13 +44,13 @@ public class InMemoryProjectCache implements ProjectCache
    public void store(Project project)
    {
       Assert.notNull(project, "Project should not be null");
-      this.projects.put(project.getRootDirectory().getFullyQualifiedName(), project);
+      this.projects.put(project.getRoot().getFullyQualifiedName(), project);
    }
 
    @Override
    public void evict(Project project)
    {
-      this.projects.remove(project.getRootDirectory().getFullyQualifiedName());
+      this.projects.remove(project.getRoot().getFullyQualifiedName());
    }
 
 }

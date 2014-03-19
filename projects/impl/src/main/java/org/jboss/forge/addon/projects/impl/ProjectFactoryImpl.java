@@ -31,6 +31,7 @@ import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.spi.ProjectCache;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.events.ResourceEvent;
 import org.jboss.forge.addon.resource.monitor.ResourceListener;
@@ -67,7 +68,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Inject
    private Imported<ProjectCache> caches;
 
-   private final List<ListenerRegistration<ResourceListener>> listeners = new ArrayList<ListenerRegistration<ResourceListener>>();
+   private final List<ListenerRegistration<ResourceListener>> listeners = new ArrayList<>();
 
    void shutdown(@Observes @Local PreShutdown event)
    {
@@ -87,7 +88,7 @@ public class ProjectFactoryImpl implements ProjectFactory
       }
    };
 
-   private final List<ProjectListener> projectListeners = new ArrayList<ProjectListener>();
+   private final List<ProjectListener> projectListeners = new ArrayList<>();
 
    private final Predicate<Project> acceptsAllProjects = new Predicate<Project>()
    {
@@ -99,19 +100,19 @@ public class ProjectFactoryImpl implements ProjectFactory
    };
 
    @Override
-   public Project findProject(FileResource<?> target)
+   public Project findProject(Resource<?> target)
    {
       return findProject(target, (Predicate<Project>) null);
    }
 
    @Override
-   public Project findProject(FileResource<?> target, ProjectProvider projectProvider)
+   public Project findProject(Resource<?> target, ProjectProvider projectProvider)
    {
       return findProject(target, projectProvider, acceptsAllProjects);
    }
 
    @Override
-   public Project findProject(FileResource<?> target, Predicate<Project> filter)
+   public Project findProject(Resource<?> target, Predicate<Project> filter)
    {
       if (filter == null)
       {
@@ -123,7 +124,7 @@ public class ProjectFactoryImpl implements ProjectFactory
 
       try
       {
-         for (DirectoryResource dir : allDirectoriesOnPath(fileToDir(target)))
+         for (Resource<?> dir : allDirectoriesOnPath(target))
          {
             for (ProjectProvider projectProvider : instances)
             {
@@ -146,7 +147,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public Project findProject(FileResource<?> target, ProjectProvider projectProvider, Predicate<Project> filter)
+   public Project findProject(Resource<?> target, ProjectProvider projectProvider, Predicate<Project> filter)
    {
       Assert.notNull(target, "Target cannot be null");
       if (filter == null)
@@ -156,7 +157,7 @@ public class ProjectFactoryImpl implements ProjectFactory
 
       Project result = null;
 
-      Iterator<DirectoryResource> pathIterator = allDirectoriesOnPath(fileToDir(target)).iterator();
+      Iterator<Resource<?>> pathIterator = allDirectoriesOnPath(target).iterator();
       while (pathIterator.hasNext() && result == null)
       {
          result = findProjectInDirectory(pathIterator.next(), projectProvider, filter);
@@ -168,9 +169,9 @@ public class ProjectFactoryImpl implements ProjectFactory
    /**
     * Returns all directories on path starting from given directory up to the root.
     */
-   private List<DirectoryResource> allDirectoriesOnPath(DirectoryResource startingDir)
+   private List<Resource<?>> allDirectoriesOnPath(Resource<?> startingDir)
    {
-      List<DirectoryResource> result = new ArrayList<>();
+      List<Resource<?>> result = new ArrayList<>();
 
       while (startingDir != null)
       {
@@ -184,7 +185,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    /**
     * Returns project residing in given directory, if no such is found then null is returned.
     */
-   private Project findProjectInDirectory(DirectoryResource target, ProjectProvider projectProvider,
+   private Project findProjectInDirectory(Resource<?> target, ProjectProvider projectProvider,
             Predicate<Project> filter)
    {
       Project result = null;
@@ -223,30 +224,14 @@ public class ProjectFactoryImpl implements ProjectFactory
       return result;
    }
 
-   private DirectoryResource fileToDir(FileResource<?> file)
+   @Override
+   public Project createProject(Resource<?> target, ProjectProvider projectProvider)
    {
-      DirectoryResource result = null;
-
-      if (file instanceof DirectoryResource)
-      {
-         result = (DirectoryResource) file;
-      }
-      else
-      {
-         result = file.getParent();
-      }
-
-      return result;
+      return createProject(target, projectProvider, null);
    }
 
    @Override
-   public Project createProject(DirectoryResource projectDir, ProjectProvider projectProvider)
-   {
-      return createProject(projectDir, projectProvider, null);
-   }
-
-   @Override
-   public Project createProject(DirectoryResource target, ProjectProvider projectProvider,
+   public Project createProject(Resource<?> target, ProjectProvider projectProvider,
             Iterable<Class<? extends ProjectFacet>> facetTypes)
    {
       Assert.notNull(target, "Target project directory must not be null.");
@@ -264,16 +249,16 @@ public class ProjectFactoryImpl implements ProjectFactory
       Project result = projectProvider.createProject(target);
       if (result != null)
       {
-         DirectoryResource parentDir = result.getRootDirectory().getParent().reify(DirectoryResource.class);
-         if (parentDir != null)
+         Resource<?> parent = result.getRoot().getParent();
+         if (parent != null)
          {
             Imported<ProjectAssociationProvider> buildSystemInstances = registry
                      .getServices(ProjectAssociationProvider.class);
             for (ProjectAssociationProvider provider : buildSystemInstances)
             {
-               if (provider.canAssociate(result, parentDir))
+               if (provider.canAssociate(result, parent))
                {
-                  provider.associate(result, parentDir);
+                  provider.associate(result, parent);
                }
                buildSystemInstances.release(provider);
             }
@@ -323,7 +308,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    private Iterable<Class<? extends ProvidedProjectFacet>> getMissingProvidedProjectFacets(ProjectProvider buildSystem,
             Iterable<Class<? extends ProvidedProjectFacet>> requiredFacets)
    {
-      Set<Class<? extends ProvidedProjectFacet>> result = new HashSet<Class<? extends ProvidedProjectFacet>>();
+      Set<Class<? extends ProvidedProjectFacet>> result = new HashSet<>();
       Iterable<Class<? extends ProvidedProjectFacet>> providedFacetTypes = buildSystem.getProvidedFacetTypes();
       if (requiredFacets != null && providedFacetTypes != null)
       {
@@ -361,7 +346,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    private Iterable<Class<? extends ProvidedProjectFacet>> getRequiredProvidedProjectFacets(
             Iterable<Class<? extends ProjectFacet>> facets)
    {
-      Set<Class<? extends ProvidedProjectFacet>> result = new HashSet<Class<? extends ProvidedProjectFacet>>();
+      Set<Class<? extends ProvidedProjectFacet>> result = new HashSet<>();
       for (Class<? extends ProjectFacet> facetType : facets)
       {
          if (ProvidedProjectFacet.class.isAssignableFrom(facetType))
@@ -401,8 +386,8 @@ public class ProjectFactoryImpl implements ProjectFactory
          }
       }
       // If under a transaction, don't start monitoring
-      DirectoryResource rootDirectory = project.getRootDirectory();
-      if (rootDirectory.getUnderlyingResourceObject().exists())
+      DirectoryResource rootDirectory = project.getRoot().reify(DirectoryResource.class);
+      if (rootDirectory != null && rootDirectory.getUnderlyingResourceObject().exists())
       {
          final ResourceMonitor monitor = rootDirectory.monitor();
          ListenerRegistration<ResourceListener> registration = monitor.addResourceListener(new ResourceListener()
@@ -500,7 +485,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public boolean containsProject(DirectoryResource bound, FileResource<?> target)
+   public boolean containsProject(Resource<?> bound, FileResource<?> target)
    {
       boolean found = false;
       Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
@@ -521,17 +506,16 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public boolean containsProject(DirectoryResource bound, FileResource<?> target, ProjectProvider buildSystem)
+   public boolean containsProject(Resource<?> bound, Resource<?> target, ProjectProvider buildSystem)
    {
       Assert.notNull(bound, "Boundary should not be null");
-      Assert.isTrue(isParent(bound, target), "Target should be a child of bound");
-      DirectoryResource dir = (target instanceof DirectoryResource) ? (DirectoryResource) target : target.getParent();
+      Assert.isTrue(bound.equals(target) || isParent(bound, target), "Target should be a child of bound");
       boolean found = false;
-      DirectoryResource r = bound;
+      Resource<?> r = bound;
       while (r != null && !found)
       {
          found = buildSystem.containsProject(r);
-         if (dir.equals(r))
+         if (target.equals(r))
          {
             break;
          }
@@ -540,13 +524,12 @@ public class ProjectFactoryImpl implements ProjectFactory
       return found;
    }
 
-   private boolean isParent(DirectoryResource dir, FileResource<?> child)
+   private boolean isParent(Resource<?> parent, Resource<?> child)
    {
-      DirectoryResource childDir = (child instanceof DirectoryResource) ? child.reify(DirectoryResource.class) : child
-               .getParent();
+      Resource<?> childDir = child.getParent();
       while (childDir != null)
       {
-         if (dir.equals(childDir))
+         if (parent.equals(childDir))
          {
             return true;
          }
@@ -556,7 +539,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public boolean containsProject(FileResource<?> target)
+   public boolean containsProject(Resource<?> target)
    {
       boolean found = false;
       Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
@@ -577,13 +560,12 @@ public class ProjectFactoryImpl implements ProjectFactory
    }
 
    @Override
-   public boolean containsProject(FileResource<?> target, ProjectProvider buildSystem)
+   public boolean containsProject(Resource<?> target, ProjectProvider buildSystem)
    {
       Assert.notNull(target, "Target resource must not be null.");
       Assert.notNull(buildSystem, "Project build system must not be null.");
       boolean found = false;
-      DirectoryResource dir = (target instanceof DirectoryResource) ? (DirectoryResource) target : target.getParent();
-      DirectoryResource r = dir;
+      Resource<?> r = target;
       while (r != null && !found)
       {
          found = buildSystem.containsProject(r);

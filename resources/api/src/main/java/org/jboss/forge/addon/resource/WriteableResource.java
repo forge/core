@@ -13,9 +13,12 @@ import java.nio.charset.Charset;
 /**
  * A {@link WriteableResource} allows its contents to be changed
  * 
+ * @param <T> The {@link Resource} type that implements this interface.
+ * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface WriteableResource<T extends WriteableResource<T>>
+public interface WriteableResource<T extends WriteableResource<T, R>, R> extends Resource<R>
 {
    /**
     * Set the contents of this {@link WriteableResource} to the given {@link String} using UTF-8 encoding.

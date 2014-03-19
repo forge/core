@@ -17,7 +17,7 @@ import org.apache.maven.model.Parent;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectAssociationProvider;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.Resource;
 
 /**
  * Setup parent-child relation of Maven projects.
@@ -31,17 +31,17 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
    private ProjectFactory projectFactory;
 
    @Override
-   public void associate(final Project project, final DirectoryResource parentDir)
+   public void associate(final Project project, final Resource<?> parentResource)
    {
-      if (canAssociate(project, parentDir))
+      if (canAssociate(project, parentResource))
       {
-         Project parent = projectFactory.findProject(parentDir);
+         Project parent = projectFactory.findProject(parentResource);
          MavenFacet parentMavenFacet = parent.getFacet(MavenFacet.class);
          Model parentPom = parentMavenFacet.getModel();
          parentPom.setPackaging("pom");
 
-         String moduleDir = project.getRootDirectory().getFullyQualifiedName()
-                  .substring(parent.getRootDirectory().getFullyQualifiedName().length());
+         String moduleDir = project.getRoot().getFullyQualifiedName()
+                  .substring(parent.getRoot().getFullyQualifiedName().length());
          if (moduleDir.startsWith(File.separator))
             moduleDir = moduleDir.substring(1);
 
@@ -58,7 +58,7 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
 
          // Calculate parent relative path
          Path parentPomPath = Paths.get(parentMavenFacet.getModelResource().getFullyQualifiedName());
-         Path childPath = Paths.get(project.getRootDirectory().getFullyQualifiedName());
+         Path childPath = Paths.get(project.getRoot().getFullyQualifiedName());
          Path relativePath = childPath.relativize(parentPomPath).normalize();
 
          projectParent.setRelativePath(relativePath.toString());
@@ -72,8 +72,8 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
    }
 
    @Override
-   public boolean canAssociate(final Project project, final DirectoryResource parent)
+   public boolean canAssociate(final Project project, final Resource<?> parent)
    {
-      return parent.getChild("pom.xml").exists() && project.getRootDirectory().getChild("pom.xml").exists();
+      return parent.getChild("pom.xml").exists() && project.getRoot().getChild("pom.xml").exists();
    }
 }
