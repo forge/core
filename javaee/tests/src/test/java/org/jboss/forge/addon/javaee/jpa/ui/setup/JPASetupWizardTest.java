@@ -20,7 +20,7 @@ import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.jpa.containers.CustomJTAContainer;
 import org.jboss.forge.addon.javaee.jpa.containers.JBossEAP6Container;
 import org.jboss.forge.addon.javaee.jpa.providers.HibernateMetaModelProvider;
-import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
+import org.jboss.forge.addon.javaee.jpa.providers.JavaEEDefaultProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
@@ -71,7 +71,7 @@ public class JPASetupWizardTest
    }
 
    @Inject
-   private HibernateProvider defaultProvider;
+   private JavaEEDefaultProvider defaultProvider;
 
    @Inject
    private CustomJTAContainer customJTAProvider;
