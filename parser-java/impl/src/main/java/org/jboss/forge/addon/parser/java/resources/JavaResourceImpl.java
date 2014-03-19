@@ -27,6 +27,8 @@ import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.parser.java.Member;
 import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.JavaType;
 
 /**
  * @author Mike Brock
@@ -139,6 +141,20 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    public JavaResourceImpl createFrom(final File file)
    {
       return new JavaResourceImpl(getResourceFactory(), parser, file);
+   }
+
+   @Override
+   public JavaResource setContents(org.jboss.forge.roaster.model.source.JavaSource<?> source)
+   {
+      setContents(source.toString());
+      return this;
+   }
+
+   @SuppressWarnings("unchecked")
+   @Override
+   public <T extends JavaType<?>> T getJavaType() throws FileNotFoundException
+   {
+      return (T) Roaster.parse(getResourceInputStream());
    }
 
    @Override

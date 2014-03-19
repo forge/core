@@ -38,7 +38,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -82,7 +82,7 @@ public class JavaSourceCommandTest
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
       CommandController controller = testHarness.createCommandController(JavaAnnotationCommand.class,
-               project.getRootDirectory());
+               project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "CreditCardType");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");
@@ -103,7 +103,7 @@ public class JavaSourceCommandTest
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
       CommandController controller = testHarness.createCommandController(JavaEnumCommand.class,
-               project.getRootDirectory());
+               project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "CreditCardType");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");
@@ -124,7 +124,7 @@ public class JavaSourceCommandTest
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
       CommandController controller = testHarness.createCommandController(JavaClassCommand.class,
-               project.getRootDirectory());
+               project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "CreditCardType");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");
@@ -145,7 +145,7 @@ public class JavaSourceCommandTest
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
       CommandController controller = testHarness.createCommandController(JavaInterfaceCommand.class,
-               project.getRootDirectory());
+               project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "CreditCardType");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");

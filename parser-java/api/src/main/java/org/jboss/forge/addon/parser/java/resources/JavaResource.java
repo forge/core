@@ -12,10 +12,11 @@ import java.io.FileNotFoundException;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.JavaType;
 
 /**
  * A {@link Resource} that represents a Java {@link Class}.
- * 
+ *
  * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -24,11 +25,22 @@ public interface JavaResource extends FileResource<JavaResource>
    /**
     * Set the content of this {@link Resource} to the value of the given {@link JavaSource}.
     */
-   public JavaResource setContents(final JavaSource<?> source);
+   JavaResource setContents(final JavaSource<?> source);
 
    /**
-    * Attempt to determine and return the {@link JavaSource} type of the underlying {@link Class}.
+    * Set the content of this {@link Resource} to the value of the given
+    * {@link org.jboss.forge.roaster.model.source.JavaSource}.
     */
-   public JavaSource<?> getJavaSource() throws FileNotFoundException;
+   JavaResource setContents(final org.jboss.forge.roaster.model.source.JavaSource<?> source);
+
+   /**
+    * Attempt to determine and return the {@link JavaSource} type of the underlying class.
+    */
+   JavaSource<?> getJavaSource() throws FileNotFoundException;
+
+   /**
+    * Attempt to determine and return the {@link JavaType} type of the underlying class.
+    */
+   <T extends JavaType<?>> T getJavaType() throws FileNotFoundException;
 
 }
