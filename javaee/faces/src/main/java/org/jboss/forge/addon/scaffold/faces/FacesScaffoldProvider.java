@@ -745,7 +745,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
          setPrimaryKeyMetaData(context, entity);
 
          // Prepare entityMetawidget
-         this.entityMetawidget.setValue(StaticFacesUtils.wrapExpression(beanName + "" + ccEntity));
+         this.entityMetawidget.setValue(StaticFacesUtils.wrapExpression(beanName + "." + ccEntity));
          this.entityMetawidget.setPath(entity.getQualifiedName());
          this.entityMetawidget.setReadOnly(false);
          this.entityMetawidget.setStyle(null);
