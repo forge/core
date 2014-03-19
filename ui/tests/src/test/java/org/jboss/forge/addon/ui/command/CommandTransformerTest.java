@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-public class CommandEnricherTest
+public class CommandTransformerTest
 {
 
    @Deployment
