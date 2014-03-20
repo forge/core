@@ -72,37 +72,6 @@
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
-         <!-- Dependent Addons -->
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>resources</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>2.2.1-SNAPSHOT</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>projects</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>2.2.1-SNAPSHOT</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>ui</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>2.2.1-SNAPSHOT</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>dependencies</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>2.2.1-SNAPSHOT</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>convert</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>2.2.1-SNAPSHOT</version>
-         </dependency>
       </dependencies>
    </dependencyManagement>
 </project>
