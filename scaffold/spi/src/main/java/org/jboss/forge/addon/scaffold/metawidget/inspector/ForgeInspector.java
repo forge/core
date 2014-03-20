@@ -19,6 +19,7 @@ import javax.persistence.*;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.ForgePropertyStyle.ForgeProperty;
 import org.jboss.forge.parser.java.EnumConstant;
 import org.jboss.forge.parser.java.JavaClass;
@@ -191,7 +192,13 @@ public class ForgeInspector
       }
       catch (FileNotFoundException fileEx)
       {
+         // Could not obtain the underlying File instance for the JavaResource
          // Ignore and treat as not embeddable
+      }
+      catch (ResourceException resourceEx)
+      {
+          // Could not obtain a Forge Resource instance for the JavaResource
+          // Ignore and treat as not embeddable
       }
       return isEmbeddable;
    }

@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.parser.JavaParser;
 import org.jboss.forge.parser.java.*;
 import org.metawidget.inspector.iface.InspectorException;
@@ -403,8 +404,12 @@ public class ForgePropertyStyle
       catch (FileNotFoundException e)
       {
          // Not a Forge-based type
-
          return null;
+      }
+      catch (ResourceException e)
+      {
+          // Not a Forge-based type
+          return null;
       }
    }
 
