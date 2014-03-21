@@ -2,7 +2,6 @@ package org.jboss.forge.addon.text.highlight.scanner;
 
 import static org.jboss.forge.addon.text.highlight.encoder.AssertEncoder.assertTextToken;
 
-import org.jboss.forge.addon.text.highlight.Scanner;
 import org.jboss.forge.addon.text.highlight.Syntax;
 import org.jboss.forge.addon.text.highlight.Syntax.Builder;
 import org.jboss.forge.addon.text.highlight.TokenType;
@@ -41,7 +40,7 @@ public class JSONScannerTestCase extends AbstractScannerTestCase
                "   }\n" +
                "]\n";
 
-      Syntax.Builder.create().scannerType(Scanner.Type.JSON).encoderType(ASSERT_ENCODER).execute(source);
+      Syntax.Builder.create().scannerType(JSONScanner.TYPE.getName()).encoderType(ASSERT_ENCODER).execute(source);
 
       assertTextToken(TokenType.content, "Zip", "precision");
       assertTextToken(TokenType.content, "zip", "CA", "US");
@@ -52,32 +51,24 @@ public class JSONScannerTestCase extends AbstractScannerTestCase
    @Test
    public void shoulMatchJSONExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.JSON), "json", "example.in.json");
+      assertMatchExample(Builder.create(), "json", "example.in.json");
    }
 
    @Test
    public void shoulMatchJSONLibExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.JSON), "json", "json-lib.in.json");
+      assertMatchExample(Builder.create(), "json", "json-lib.in.json");
    }
 
    @Test
    public void shoulMatchJSONBigExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.JSON), "json", "big.in.json");
+      assertMatchExample(Builder.create(), "json", "big.in.json");
    }
 
    @Test
    public void shoulMatchJSONBig2Example() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.JSON), "json", "big2.in.json");
+      assertMatchExample(Builder.create(), "json", "big2.in.json");
    }
 }

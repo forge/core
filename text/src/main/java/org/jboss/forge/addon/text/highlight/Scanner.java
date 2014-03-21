@@ -1,65 +1,55 @@
 package org.jboss.forge.addon.text.highlight;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.jboss.forge.addon.text.highlight.scanner.PlainScanner;
+
 public interface Scanner
 {
+   public Type getType();
 
-   public enum Type
+   void scan(StringScanner source, Encoder encoder, Map<String, Object> options);
+
+   public class Type
    {
-      JAVA("\\.(java)$"),
-      HTML("\\.(html|xhtml|xml)$"),
-      CSS("\\.(css)$"),
-      JAVASCRIPT("\\.(js)$"),
-      JSON("\\.(json)$"),
-      PROPERTIES("\\.(properties)$"),
-      PLAIN(null);
+      private String name;
+      private Pattern pattern;
 
-      private Pattern pattern = null;
-
-      Type(String pattern)
+      public Type(String name, String pattern)
       {
-         if (pattern != null)
-         {
-            this.pattern = Pattern.compile(pattern);
-         }
+         this(name, Pattern.compile(pattern, Pattern.CASE_INSENSITIVE));
+      }
+      public Type(String name, Pattern pattern)
+      {
+         this.name = name;
+         this.pattern = pattern;
       }
 
-      public boolean match(String fileName)
+      public String getName()
       {
-         if (pattern == null)
+         return name;
+      }
+
+      public boolean supports(String fileName) {
+         if(pattern == null)
          {
             return false;
          }
          return pattern.matcher(fileName).find();
       }
-
-      public static Type byFileName(String fileName)
-      {
-         for (Scanner.Type type : Scanner.Type.values())
-         {
-            if (type.match(fileName))
-            {
-               return type;
-            }
-         }
-         return Type.PLAIN;
-      }
    }
-
-   void scan(StringScanner source, Encoder encoder, Map<String, Object> options);
 
    public static class Factory
    {
       private static Factory factory;
 
-      private Map<String, Class<? extends Scanner>> registry;
+      private Map<String, Scanner> registry;
 
       private Factory()
       {
-         this.registry = new HashMap<String, Class<? extends Scanner>>();
+         this.registry = new LinkedHashMap<String, Scanner>();
       }
 
       private static Factory instance()
@@ -71,14 +61,38 @@ public interface Scanner
          return factory;
       }
 
-      public static void registrer(String type, Class<? extends Scanner> scanner)
+      public static void registrer(Class<? extends Scanner> scanner)
       {
-         instance().registry.put(type, scanner);
+         Scanner scannerInst = create(scanner);
+         instance().registry.put(scannerInst.getType().getName(), scannerInst);
       }
 
-      public static Scanner create(String type)
+      public static Scanner byType(String typeName)
       {
-         Class<? extends Scanner> scanner = instance().registry.get(type);
+         for (Scanner scanner : instance().registry.values())
+         {
+            if (scanner.getType().getName().equalsIgnoreCase(typeName))
+            {
+               return scanner;
+            }
+         }
+         return null;
+      }
+
+      public static Scanner byFileName(String fileName)
+      {
+         for (Scanner scanner : instance().registry.values())
+         {
+            if (scanner.getType().supports(fileName))
+            {
+               return scanner;
+            }
+         }
+         return instance().registry.get(PlainScanner.TYPE);
+      }
+
+      private static Scanner create(Class<? extends Scanner> scanner)
+      {
          if (scanner != null)
          {
             try
@@ -90,7 +104,7 @@ public interface Scanner
                throw new RuntimeException("Could not create new instance of " + scanner);
             }
          }
-         throw new RuntimeException("No scanner found for type " + type);
+         return null;
       }
    }
 }

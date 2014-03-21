@@ -47,7 +47,7 @@ Allows for color coding of the following content types:
 * CSS
 * HTML (with inline JavaScript/CSS)
 
-When working with files you can rely on the Highlighter to determine the syntax based on the filename.
+When working with files you can rely on the `Highlighter` to determine the syntax based on the filename.
 [source,java]
 ----
 @Inject private Highlighter highlighter;
@@ -60,6 +60,10 @@ When working with pure content you can specify the source syntax via the content
 @Inject private Highlighter highlighter;
 highlighter.byType("JAVA", resource.getContents(), output.out());
 ----
+
+You can provide your own resource tokenizer for the `Highlighter` to use by implementing the interface
+`org.jboss.forge.addon.text.highlight.Scanner`, and expose it either as a CDI bean or registered as a
+simple service via the `org.jboss.forge.furnace.container.simple.Service` services file.
 
 [TIP] 
 ====

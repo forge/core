@@ -112,6 +112,13 @@ public class JavaScriptScanner implements Scanner
       regexp
    }
 
+   public static final Type TYPE = new Type("JAVASCRIPT", "\\.(js)$");
+
+   @Override
+   public Type getType() {
+      return TYPE;
+   }
+
    @Override
    public void scan(StringScanner source, Encoder encoder, Map<String, Object> options)
    {
@@ -170,7 +177,7 @@ public class JavaScriptScanner implements Scanner
             else if (value_expected && (m = source.scan(HTML)) != null)
             {
                Syntax.Builder.create()
-                        .scannerType(Scanner.Type.HTML)
+                        .scannerType(HTMLScanner.TYPE.getName())
                         .encoder(encoder)
                         .execute(m.group());
                value_expected = true;

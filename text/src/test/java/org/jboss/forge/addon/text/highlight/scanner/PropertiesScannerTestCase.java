@@ -2,7 +2,6 @@ package org.jboss.forge.addon.text.highlight.scanner;
 
 import static org.jboss.forge.addon.text.highlight.encoder.AssertEncoder.assertTextToken;
 
-import org.jboss.forge.addon.text.highlight.Scanner;
 import org.jboss.forge.addon.text.highlight.Syntax;
 import org.jboss.forge.addon.text.highlight.TokenType;
 import org.junit.Test;
@@ -31,7 +30,7 @@ public class PropertiesScannerTestCase extends AbstractScannerTestCase {
             "number : 100\n" +
             "float : 100.0\n";
 
-      Syntax.Builder.create().scannerType(Scanner.Type.PROPERTIES).encoderType(ASSERT_ENCODER).execute(source);
+      Syntax.Builder.create().scannerType(PropertiesScanner.TYPE.getName()).encoderType(ASSERT_ENCODER).execute(source);
 
       assertTextToken(TokenType.comment, "# You are reading the \".properties\" entry.", "! The exclamation mark can also mark text as comments.");
       assertTextToken(TokenType.value, "English", "Welcome to \\", "Wikipedia\\!");

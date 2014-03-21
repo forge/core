@@ -96,6 +96,13 @@ public class CSSScanner implements Scanner
 
    public static final String OPTION_START_STATE = "state";
 
+   public static final Type TYPE = new Type("CSS", "\\.(css)$");
+
+   @Override
+   public Type getType() {
+      return TYPE;
+   }
+
    @Override
    public void scan(StringScanner source, Encoder encoder, Map<String, Object> options)
    {

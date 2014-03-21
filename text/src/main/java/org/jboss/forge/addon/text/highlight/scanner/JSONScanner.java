@@ -38,6 +38,13 @@ public class JSONScanner implements Scanner
       string
    }
 
+   public static final Type TYPE = new Type("JSON", "\\.(json)$");
+
+   @Override
+   public Type getType() {
+      return TYPE;
+   }
+
    @Override
    public void scan(StringScanner source, Encoder encoder, Map<String, Object> options)
    {

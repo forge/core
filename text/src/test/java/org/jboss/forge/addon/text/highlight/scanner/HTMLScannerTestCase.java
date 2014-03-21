@@ -2,7 +2,6 @@ package org.jboss.forge.addon.text.highlight.scanner;
 
 import static org.jboss.forge.addon.text.highlight.encoder.AssertEncoder.assertTextToken;
 
-import org.jboss.forge.addon.text.highlight.Scanner;
 import org.jboss.forge.addon.text.highlight.Syntax;
 import org.jboss.forge.addon.text.highlight.Syntax.Builder;
 import org.jboss.forge.addon.text.highlight.TokenType;
@@ -20,7 +19,7 @@ public class HTMLScannerTestCase extends AbstractScannerTestCase
 
       String source = "<p style=\"float:right;\">#{q.answers.size.to_i} answers</p>";
 
-      Syntax.Builder.create().scannerType(Scanner.Type.HTML).encoderType(ASSERT_ENCODER).execute(source);
+      Syntax.Builder.create().scannerType(HTMLScanner.TYPE.getName()).encoderType(ASSERT_ENCODER).execute(source);
 
       assertTextToken(TokenType.tag, "<p");
       assertTextToken(TokenType.attribute_name, "style");
@@ -35,73 +34,55 @@ public class HTMLScannerTestCase extends AbstractScannerTestCase
    @Test
    public void shoulMatchHTMLBooleanExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.HTML), "html", "boolean.in.html");
+      assertMatchExample(Builder.create(), "html", "boolean.in.html");
    }
 
    @Test
    public void shoulMatchHTMLAmpersandExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.HTML), "html", "ampersand.in.html");
+      assertMatchExample(Builder.create(), "html", "ampersand.in.html");
    }
 
    @Test
    public void shoulMatchHTMLCDataExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.HTML), "html", "cdata.in.html");
+      assertMatchExample(Builder.create(), "html", "cdata.in.html");
    }
 
    @Test
    public void shoulMatchHTMLCoderayOutputExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.HTML), "html", "coderay-output.in.html");
+      assertMatchExample(Builder.create(), "html", "coderay-output.in.html");
    }
 
    @Test
    public void shoulMatchHTMLRedmineExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.HTML), "html", "redmine.in.html");
+      assertMatchExample(Builder.create(), "html", "redmine.in.html");
    }
 
    @Test
    public void shoulMatchHTMLTagsExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.HTML), "html", "tags.in.html");
+      assertMatchExample(Builder.create(), "html", "tags.in.html");
    }
 
    @Test
    public void shoulMatchHTMLTolkienTagsExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.HTML), "html", "tolkien.in.html");
+      assertMatchExample(Builder.create(), "html", "tolkien.in.html");
    }
 
    @Test
    public void shoulMatchHTMLTPuthTagsExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.HTML), "html", "tputh.in.html");
+      assertMatchExample(Builder.create(), "html", "tputh.in.html");
    }
 
    @Test
    public void shoulMatchXMLDTDExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.HTML), "xml", "dtd.in.xml");
+      assertMatchExample(Builder.create(), "xml", "dtd.in.xml");
    }
 
    @Test
@@ -109,16 +90,12 @@ public class HTMLScannerTestCase extends AbstractScannerTestCase
    // Some issue with new_line in output, revisit
    public void shoulMatchXMLKateExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.HTML), "xml", "kate.in.xml");
+      assertMatchExample(Builder.create(), "xml", "kate.in.xml");
    }
 
    @Test
    public void shoulMatchXMLXAMLExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.HTML), "xml", "xaml.in.xml");
+      assertMatchExample(Builder.create(), "xml", "xaml.in.xml");
    }
 }

@@ -28,6 +28,13 @@ public class PropertiesScanner implements Scanner
       value
    }
 
+   public static final Type TYPE = new Type("PROPERTIES", "\\.(properties)$");
+
+   @Override
+   public Type getType() {
+      return TYPE;
+   }
+
    @Override
    public void scan(StringScanner source, Encoder encoder, Map<String, Object> options)
    {

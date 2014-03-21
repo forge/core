@@ -2,7 +2,6 @@ package org.jboss.forge.addon.text.highlight.scanner;
 
 import static org.jboss.forge.addon.text.highlight.encoder.AssertEncoder.assertTextToken;
 
-import org.jboss.forge.addon.text.highlight.Scanner;
 import org.jboss.forge.addon.text.highlight.Syntax;
 import org.jboss.forge.addon.text.highlight.Syntax.Builder;
 import org.jboss.forge.addon.text.highlight.TokenType;
@@ -49,7 +48,7 @@ public class JavaScannerTestCase extends AbstractScannerTestCase
                "}\n" +
                "";
 
-      Syntax.Builder.create().scannerType(Scanner.Type.JAVA).encoderType(ASSERT_ENCODER).execute(source);
+      Syntax.Builder.create().scannerType(JavaScanner.TYPE.getName()).encoderType(ASSERT_ENCODER).execute(source);
 
       assertTextToken(TokenType.comment, "/***** BEGIN LICENSE BLOCK ***** */");
       assertTextToken(TokenType.namespace, "pl.silvermedia.ws");
@@ -65,16 +64,12 @@ public class JavaScannerTestCase extends AbstractScannerTestCase
    @Test
    public void shoulMatchJavaExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.JAVA), "java", "example.in.java");
+      assertMatchExample(Builder.create(), "java", "example.in.java");
    }
 
    @Test
    public void shoulMatchJavaJRubyExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.JAVA), "java", "jruby.in.java");
+      assertMatchExample(Builder.create(), "java", "jruby.in.java");
    }
 }
