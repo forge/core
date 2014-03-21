@@ -16,6 +16,7 @@ import org.jboss.forge.addon.text.highlight.scanner.JSONScanner;
 import org.jboss.forge.addon.text.highlight.scanner.JavaScanner;
 import org.jboss.forge.addon.text.highlight.scanner.JavaScriptScanner;
 import org.jboss.forge.addon.text.highlight.scanner.PlainScanner;
+import org.jboss.forge.addon.text.highlight.scanner.PropertiesScanner;
 
 public class Syntax
 {
@@ -28,6 +29,7 @@ public class Syntax
       Scanner.Factory.registrer(Scanner.Type.CSS.name(), CSSScanner.class);
       Scanner.Factory.registrer(Scanner.Type.JAVASCRIPT.name(), JavaScriptScanner.class);
       Scanner.Factory.registrer(Scanner.Type.JSON.name(), JSONScanner.class);
+      Scanner.Factory.registrer(Scanner.Type.PROPERTIES.name(), PropertiesScanner.class);
 
       Encoder.Factory.registrer(Encoder.Type.TERMINAL.name(), TerminalEncoder.class);
       Encoder.Factory.registrer(Encoder.Type.DEBUG.name(), DebugEncoder.class);

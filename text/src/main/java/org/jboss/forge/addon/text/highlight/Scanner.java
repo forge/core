@@ -14,6 +14,7 @@ public interface Scanner
       CSS("\\.(css)$"),
       JAVASCRIPT("\\.(js)$"),
       JSON("\\.(json)$"),
+      PROPERTIES("\\.(properties)$"),
       PLAIN(null);
 
       private Pattern pattern = null;
