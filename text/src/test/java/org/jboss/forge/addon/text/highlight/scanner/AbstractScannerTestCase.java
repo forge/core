@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jboss.forge.addon.text.highlight.Encoder;
+import org.jboss.forge.addon.text.highlight.Scanner;
 import org.jboss.forge.addon.text.highlight.Syntax;
 import org.jboss.forge.addon.text.highlight.encoder.AssertEncoder;
 import org.junit.Assert;
@@ -22,6 +23,7 @@ public abstract class AbstractScannerTestCase
 
    public static final String ASSERT_ENCODER = "TEST";
    {
+      Syntax.builtIns();
       Encoder.Factory.registrer(ASSERT_ENCODER, AssertEncoder.class);
    }
 
@@ -60,6 +62,7 @@ public abstract class AbstractScannerTestCase
 
       builder.output(out);
       builder.encoderType(ASSERT_ENCODER);
+      builder.scanner(Scanner.Factory.byFileName(exampleName));
       builder.execute(exampleContent);
       out.flush();
 

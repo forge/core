@@ -17,57 +17,43 @@ public class JavaScriptScannerTestCase extends AbstractScannerTestCase
    @Test
    public void shoulMatchJavaScriptEtienneMassipExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.JAVASCRIPT), "javascript", "etienne-massip.in.js");
+      assertMatchExample(Builder.create(), "javascript", "etienne-massip.in.js");
    }
 
    @Test
    public void shoulMatchJavaScriptGordonExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.JAVASCRIPT), "javascript", "gordon.in.js");
+      assertMatchExample(Builder.create(), "javascript", "gordon.in.js");
    }
 
    @Test
    public void shoulMatchJavaScriptPrototypeExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.JAVASCRIPT), "javascript", "prototype.in.js");
+      assertMatchExample(Builder.create(), "javascript", "prototype.in.js");
    }
 
    @Test
    public void shoulMatchJavaScriptReadabilityExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.JAVASCRIPT), "javascript", "readability.in.js");
+      assertMatchExample(Builder.create(), "javascript", "readability.in.js");
    }
 
    @Test
    public void shoulMatchJavaScriptScriptAculoUSExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.JAVASCRIPT), "javascript", "script.aculo.us.in.js");
+      assertMatchExample(Builder.create(), "javascript", "script.aculo.us.in.js");
    }
 
    @Test
    public void shoulMatchJavaScriptSunSpiderExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.JAVASCRIPT), "javascript", "sun-spider.in.js");
+      assertMatchExample(Builder.create(), "javascript", "sun-spider.in.js");
    }
 
    @Test
    public void shoulMatchJavaScriptTraceTestExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.JAVASCRIPT), "javascript", "trace-test.in.js");
+      assertMatchExample(Builder.create(), "javascript", "trace-test.in.js");
    }
 
    @Test
@@ -76,9 +62,7 @@ public class JavaScriptScannerTestCase extends AbstractScannerTestCase
    // https://github.com/rubychan/coderay-scanner-tests/blob/master/javascript/xml.known-issue.yaml
    public void shoulMatchJavaScriptXMLExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.JAVASCRIPT), "javascript", " xml.in.js");
+      assertMatchExample(Builder.create(), "javascript", " xml.in.js");
    }
 
    /*

@@ -89,6 +89,13 @@ public class JavaScanner implements Scanner
       STRING_CONTENT_PATTERN.put("/", STRING_CONTENT_PATTERN_MULTI_LINE);
    }
 
+   public static final Type TYPE = new Type("JAVA", "\\.(java)$");
+
+   @Override
+   public Type getType() {
+      return TYPE;
+   }
+
    @Override
    public void scan(StringScanner source, Encoder encoder, Map<String, Object> options)
    {

@@ -2,7 +2,6 @@ package org.jboss.forge.addon.text.highlight.scanner;
 
 import static org.jboss.forge.addon.text.highlight.encoder.AssertEncoder.assertTextToken;
 
-import org.jboss.forge.addon.text.highlight.Scanner;
 import org.jboss.forge.addon.text.highlight.Syntax;
 import org.jboss.forge.addon.text.highlight.Syntax.Builder;
 import org.jboss.forge.addon.text.highlight.TokenType;
@@ -54,7 +53,7 @@ public class CSSScannerTestCase extends AbstractScannerTestCase
                "  content: counter(chapter) \".\" counter(section) \" \";\n" +
                "}\n";
 
-      Syntax.Builder.create().scannerType(Scanner.Type.CSS).encoderType(ASSERT_ENCODER).execute(source);
+      Syntax.Builder.create().scannerType(CSSScanner.TYPE.getName()).encoderType(ASSERT_ENCODER).execute(source);
 
       assertTextToken(TokenType.attribute_name, "href");
       assertTextToken(TokenType.directive, "@media");
@@ -69,9 +68,7 @@ public class CSSScannerTestCase extends AbstractScannerTestCase
    @Test
    public void shoulMatchCssStandardExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.CSS), "css", "standard.in.css");
+      assertMatchExample(Builder.create(), "css", "standard.in.css");
    }
 
    @Test
@@ -79,33 +76,25 @@ public class CSSScannerTestCase extends AbstractScannerTestCase
    // Some new line issue
    public void shoulMatchCssYUIExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.CSS), "css", "yui.in.css");
+      assertMatchExample(Builder.create(), "css", "yui.in.css");
    }
 
    @Test
    public void shoulMatchCssDemoExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.CSS), "css", "demo.in.css");
+      assertMatchExample(Builder.create(), "css", "demo.in.css");
    }
 
    @Test
    public void shoulMatchCssCoderayExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.CSS), "css", "coderay.in.css");
+      assertMatchExample(Builder.create(), "css", "coderay.in.css");
    }
 
    @Test
    public void shoulMatchCssRadmineExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.CSS), "css", "redmine.in.css");
+      assertMatchExample(Builder.create(), "css", "redmine.in.css");
    }
 
    @Test
@@ -113,9 +102,7 @@ public class CSSScannerTestCase extends AbstractScannerTestCase
    // Some issue hidden char in first pos?
    public void shoulMatchCssIgnosDraconisExample() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.CSS), "css", "ignos-draconis.in.css");
+      assertMatchExample(Builder.create(), "css", "ignos-draconis.in.css");
    }
 
    @Test
@@ -123,8 +110,6 @@ public class CSSScannerTestCase extends AbstractScannerTestCase
    // Some issue with new_line in output, revisit
    public void shoulMatchCssS5Example() throws Exception
    {
-      assertMatchExample(
-               Builder.create()
-                        .scannerType(Scanner.Type.CSS), "css", "S5.in.css");
+      assertMatchExample(Builder.create(), "css", "S5.in.css");
    }
 }

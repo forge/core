@@ -20,16 +20,16 @@ import org.jboss.forge.addon.text.highlight.scanner.PropertiesScanner;
 
 public class Syntax
 {
-
-   static
+   public static void builtIns()
    {
-      Scanner.Factory.registrer(Scanner.Type.PLAIN.name(), PlainScanner.class);
-      Scanner.Factory.registrer(Scanner.Type.JAVA.name(), JavaScanner.class);
-      Scanner.Factory.registrer(Scanner.Type.HTML.name(), HTMLScanner.class);
-      Scanner.Factory.registrer(Scanner.Type.CSS.name(), CSSScanner.class);
-      Scanner.Factory.registrer(Scanner.Type.JAVASCRIPT.name(), JavaScriptScanner.class);
-      Scanner.Factory.registrer(Scanner.Type.JSON.name(), JSONScanner.class);
-      Scanner.Factory.registrer(Scanner.Type.PROPERTIES.name(), PropertiesScanner.class);
+      Scanner.Factory.registrer(PlainScanner.class);
+      Scanner.Factory.registrer(JavaScanner.class);
+      Scanner.Factory.registrer(HTMLScanner.class);
+      Scanner.Factory.registrer(CSSScanner.class);
+      Scanner.Factory.registrer(JavaScriptScanner.class);
+      Scanner.Factory.registrer(JSONScanner.class);
+      Scanner.Factory.registrer(PropertiesScanner.class);
+
 
       Encoder.Factory.registrer(Encoder.Type.TERMINAL.name(), TerminalEncoder.class);
       Encoder.Factory.registrer(Encoder.Type.DEBUG.name(), DebugEncoder.class);
@@ -57,11 +57,6 @@ public class Syntax
       public static Builder create()
       {
          return new Builder();
-      }
-
-      public Builder scannerType(Scanner.Type scannerType)
-      {
-         return scannerType(scannerType.name());
       }
 
       public Builder scannerType(String scannerType)
@@ -136,7 +131,7 @@ public class Syntax
             {
                throw new IllegalArgumentException("Either input or inputType must be defined");
             }
-            in = Scanner.Factory.create(scannerType);
+            in = Scanner.Factory.byType(scannerType);
          }
          Encoder out = encoder;
          if (encoder == null)
@@ -165,6 +160,7 @@ public class Syntax
 
    public static void main(String[] args)
    {
+      Syntax.builtIns();
       if (args.length < 1)
       {
          System.out.println("Usage: java -jar forge-text-syntax.jar file-name");
@@ -176,8 +172,8 @@ public class Syntax
       {
          encoder = Encoder.Type.DEBUG;
       }
-      Scanner.Type type = Scanner.Type.byFileName(fileName);
-      if (type == null)
+      Scanner scanner = Scanner.Factory.byFileName(fileName);
+      if (scanner == null)
       {
          throw new RuntimeException("Could not determine scanner type based on filename " + fileName);
       }
@@ -194,7 +190,7 @@ public class Syntax
 
       BufferedOutputStream out = new BufferedOutputStream(System.out);
       Builder.create()
-               .scannerType(type)
+               .scanner(scanner)
                .encoderType(encoder)
                .output(out)
                .execute(content);

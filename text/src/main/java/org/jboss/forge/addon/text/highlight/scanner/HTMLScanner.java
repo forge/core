@@ -85,6 +85,13 @@ public class HTMLScanner implements Scanner
             .add(EVENT_ATTRIBUTES, EmbeddedType.script)
             .add(new String[] { "style" }, EmbeddedType.style);
 
+   public static final Type TYPE = new Type("HTML", "\\.(html|xhtml|xml)$");
+
+   @Override
+   public Type getType() {
+      return TYPE;
+   }
+
    @Override
    public void scan(StringScanner source, Encoder encoder, Map<String, Object> options)
    {
@@ -240,14 +247,14 @@ public class HTMLScanner implements Scanner
                      if (EmbeddedType.script == in_attribute)
                      {
                         Syntax.Builder.create()
-                                 .scannerType(Scanner.Type.JAVASCRIPT)
+                                 .scannerType(JavaScriptScanner.TYPE.getName())
                                  .encoder(encoder)
                                  .execute(code);
                      }
                      else
                      {
                         Syntax.Builder.create()
-                                 .scannerType(Scanner.Type.CSS)
+                                 .scannerType(CSSScanner.TYPE.getName())
                                  .encoder(encoder)
                                  .scannerOptions(
                                           Options.create()
@@ -339,14 +346,14 @@ public class HTMLScanner implements Scanner
                      if ("script".equalsIgnoreCase(in_tag))
                      {
                         Syntax.Builder.create()
-                                 .scannerType(Scanner.Type.JAVASCRIPT)
+                                 .scannerType(JavaScriptScanner.TYPE.getName())
                                  .encoder(encoder)
                                  .execute(code);
                      }
                      else
                      {
                         Syntax.Builder.create()
-                                 .scannerType(Scanner.Type.CSS)
+                                 .scannerType(CSSScanner.TYPE.getName())
                                  .encoder(encoder)
                                  .execute(code);
                      }

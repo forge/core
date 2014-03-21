@@ -11,8 +11,15 @@ import org.jboss.forge.addon.text.highlight.TokenType;
 
 public class PlainScanner implements Scanner
 {
-
    private static final Pattern ALL = Pattern.compile(".*", Pattern.DOTALL);
+
+   // Never match a File, only match by default if no one else does. Handled in Scanner.Factory
+   public static final Type TYPE = new Type("PLAIN", (Pattern)null);
+
+   @Override
+   public Type getType() {
+      return TYPE;
+   }
 
    @Override
    public void scan(StringScanner source, Encoder encoder, Map<String, Object> options)

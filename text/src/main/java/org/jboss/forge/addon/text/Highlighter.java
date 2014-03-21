@@ -5,16 +5,74 @@ import java.io.OutputStream;
 import org.jboss.forge.addon.text.highlight.Encoder;
 import org.jboss.forge.addon.text.highlight.Scanner;
 import org.jboss.forge.addon.text.highlight.Syntax;
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.services.Imported;
 
 public class Highlighter implements Service
 {
+   private Imported<Scanner> importedScanners;
+
+   public Highlighter() {
+      Syntax.builtIns();
+   }
+
+   public Highlighter(Furnace furnace) {
+      this();
+      this.importedScanners = furnace.getAddonRegistry().getServices(Scanner.class);
+   }
 
    public void byType(String contentType, String content, OutputStream out)
    {
       if (contentType == null)
       {
          throw new IllegalArgumentException("contentType must be specified");
+      }
+      Imported<Scanner> scanners = resolveScanners();
+      for(Scanner scanner : scanners) {
+         if(scanner.getType().getName().equalsIgnoreCase(contentType)) {
+            try
+            {
+               execute(scanner, content, out);;
+            }
+            finally
+            {
+               scanners.release(scanner);
+            }
+            return;
+         }
+      }
+      execute(Scanner.Factory.byType(contentType), content, out);
+   }
+
+   public void byFileName(String fileName, String content, OutputStream out)
+   {
+      if (fileName == null)
+      {
+         throw new IllegalArgumentException("contentType must be specified");
+      }
+      Imported<Scanner> scanners = resolveScanners();
+      for(Scanner scanner : scanners) {
+         if(scanner.getType().supports(fileName)) {
+            try
+            {
+               execute(scanner, content, out);;
+            }
+            finally
+            {
+               scanners.release(scanner);
+            }
+            return;
+         }
+      }
+      execute(Scanner.Factory.byFileName(fileName), content, out);
+   }
+
+   private void execute(Scanner scanner, String content, OutputStream out)
+   {
+      if (scanner == null)
+      {
+         throw new IllegalArgumentException("scanner must be specified");
       }
       if (content == null)
       {
@@ -26,14 +84,13 @@ public class Highlighter implements Service
       }
 
       Syntax.Builder.create()
-               .encoderType(Encoder.Type.TERMINAL)
-               .output(out)
-               .scannerType(contentType.toUpperCase())
-               .execute(content);
+         .encoderType(Encoder.Type.TERMINAL)
+         .output(out)
+         .scanner(scanner)
+         .execute(content);
    }
 
-   public void byFileName(String fileName, String content, OutputStream out)
-   {
-      byType(Scanner.Type.byFileName(fileName).name(), content, out);
+   private Imported<Scanner> resolveScanners() {
+      return importedScanners;
    }
 }
