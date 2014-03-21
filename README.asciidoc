@@ -22,7 +22,7 @@ See the JavaDocs link:http://docs.jboss.org/forge/javadoc/2.2.1-SNAPSHOT/[here]
 Forge 2 is packaged inside an Eclipse plugin and also as a standalone ZIP file. They are independent of each other.
 It is worth mentioning that the Eclipse plugin does not support access to shell yet.
 
-- Eclipse Update Site - http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/
+- Eclipse Update Site (for Kepler and higher versions) - http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/
 - Command line tools
 
 === Get Started with the Command line tools:
@@ -81,6 +81,11 @@ If you wish to remove any addon, you can use the following command:
 ----
 
 == Get Started with the Forge 2 Eclipse Plugin:
+
+____
+Forge 2 is known to work with Eclipse Kepler (4.3) or higher versions.
+____
+
 
 - Install the Forge 2 Eclipse Plugin from http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/ and restart Eclipse
 
