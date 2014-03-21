@@ -3,7 +3,7 @@
 The fastest way to build applications, share your software, and enjoy doing it.
 
 
-What's new and noteworthy? 
+What's new and noteworthy?
 --------------------------
 
 - *Addons*: What were previously called "Plugins" in Forge 1, are now "Addons" in Forge 2. This decision was made to clear up confusing verbiage like, "Plugin X has N Plugins" (due to the org.jboss.forge.plugins.Plugin interface.)
@@ -18,7 +18,7 @@ We are currently in the process of migrating Forge 1 to Forge 2, so expect to fi
 
 See the JavaDocs link:http://docs.jboss.org/forge/javadoc/2.2.1-SNAPSHOT/[here]
 
-== Download Forge 2:    
+== Download Forge 2:
 Forge 2 is packaged inside an Eclipse plugin and also as a standalone ZIP file. They are independent of each other.
 It is worth mentioning that the Eclipse plugin does not support access to shell yet.
 
@@ -30,12 +30,12 @@ It is worth mentioning that the Eclipse plugin does not support access to shell 
 Getting started with the command line tools is easy:
 
 * Download a distribution
-.. Download link:https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.2.0.Final&e=zip&c=offline[JBoss Forge 2.2.0.Final - Offline (Recommended)]
+.. Download link:https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.3.0.Final&e=zip&c=offline[JBoss Forge 2.3.0.Final - Offline (Recommended)]
 ... This ZIP contains the Forge runtime + Core Addons
-.. Download link:https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.2.0.Final&e=zip[JBoss Forge 2.2.0.Final - No Addons]
+.. Download link:https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=2.3.0.Final&e=zip[JBoss Forge 2.3.0.Final - No Addons]
 ... This ZIP contains the Forge runtime only
 
-* Extract the ZIP to a directory and navigate to forge-distribution-2.2.0.Final/bin directory
+* Extract the ZIP to a directory and navigate to forge-distribution-2.3.0.Final/bin directory
 * Execute forge by running
 [source,cmd]
 ----
@@ -43,7 +43,7 @@ Getting started with the command line tools is easy:
 ----
 
 
-Forge is now ready to go. 
+Forge is now ready to go.
 
 ==== Install addons (not needed if using the offline zip)
 
@@ -163,11 +163,11 @@ Forge addons are simple Maven projects with a special classifier "forge-addon". 
 One of the most important things to know about developing a Forge addon, is that the Furnace runtime container (the core of Forge),
 is actually an embeddable, modular Java container. This means that each addon has its own `ClassLoader` and that
 addons share classes from each other, in addition to supplying their own local classes. Furnace builds a graph of
-addon dependencies at runtime, and automatically calculates which addons should see classes from other addons. 
+addon dependencies at runtime, and automatically calculates which addons should see classes from other addons.
 
 For now, however, just treat your first addon as if it were any other Java project. The differences between a "modular" and
 "traditional" environment are not as great as you might think, and the Furnace development model has been created in
-a way that should make these differences seem natural, almost transparent. 
+a way that should make these differences seem natural, almost transparent.
 
 === Create a Maven project
 
@@ -222,7 +222,7 @@ Your complete POM should now look something like this:
    <groupId>com.example</groupId>
    <artifactId>example</artifactId>
    <version>0.0.1-SNAPSHOT</version>
-   
+
    <name>My First Addon</name>
 
    <dependencies>
@@ -260,7 +260,7 @@ Your complete POM should now look something like this:
 
 === Add behavior to your addon
 
-A service is implemented as a POJO (Plain Old Java Object): 
+A service is implemented as a POJO (Plain Old Java Object):
 
 [source,java]
 ----
@@ -302,7 +302,7 @@ Forge has a modular architecture that enables you to re-use functionality from o
 ----
 <project>
    ...
-   
+
    <dependencies>
       <!-- Addon Dependencies -->
       <dependency>
@@ -318,7 +318,7 @@ Forge has a modular architecture that enables you to re-use functionality from o
          <scope>provided</scope>
       </dependency>
 
-      <!-- Furnace Container -->   
+      <!-- Furnace Container -->
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>
          <artifactId>cdi</artifactId>
@@ -326,27 +326,27 @@ Forge has a modular architecture that enables you to re-use functionality from o
          <scope>provided</scope>
       </dependency>
    </dependencies>
-   
+
    ...
 </project>
 ----
 
 ==== What scope should my addon dependencies be?
 
-There is a simple rule that will make this an easy decision:  
+There is a simple rule that will make this an easy decision:
 
 ____
 "`compile` if it shows, `provided` if nobody knows."
 ____
 
-To explain, if you never publicly expose types (classes, interfaces, etc...) from another addon in the outward-facing APIs of your addon, then you should include 
+To explain, if you never publicly expose types (classes, interfaces, etc...) from another addon in the outward-facing APIs of your addon, then you should include
 that addon as `provided` scope. If you do, however, expose classes from that addon in the public APIs of your code,
 then that addon should be labeled as `compile` scope (default,) which means that this dependency will be *'exported'*
 to consumers that depend on your addon.
 
 Addon dependencies may also be made `optional` if consumers of your addon should be able to choose whether or not
 certain functionality is enabled, or if your addon behaves differently when other addons are already deployed to the
-container. 
+container.
 
 The following chart explains this in detail. Assume that our addon depends on the `resources` addon, which provides
 the `ResourceFactory` and `FileResource` classes:
@@ -400,9 +400,9 @@ dependency of the `resources` addon.
 
 The `Facet` class comes from the `facets` addon and is used in the public APIs of your addon.
 
-|===   
+|===
 
- 
+
 
 === Test your addon
 
@@ -507,7 +507,7 @@ public class ExampleFurnaceTest {
       Assert.fail("Not implemented");
    }
 }
----- 
+----
 
 NOTE: The `@Dependencies` annotation is used to specify addons that must be deployed before the Addon-Under-Test is deployed in Furnace. The `AddonDependencyEntry.create(...)` method is used to specify addons that the Addon-Under-Test depends on.
 
@@ -530,7 +530,7 @@ public class ExampleFurnaceTest {
          );
       return archive;
    }
-   
+
    @Inject
    private ExampleService service;
 
@@ -540,13 +540,13 @@ public class ExampleFurnaceTest {
       Assert.assertNotNull(service.doSomething());
    }
 }
----- 
+----
 
-This is the basic premise of using the test-harness. For detailed examples, take a 
+This is the basic premise of using the test-harness. For detailed examples, take a
 https://github.com/forge/core/tree/master/resources/tests/src/test/java/org/jboss/forge/addon/resource[look at some of the existing
 Forge test cases] in our github repository.
 
-NOTE: The `version` parameter in `@AddonDependency` and in the `AddonDependencyEntry.create(...)` method are optional. By not specifying them means that the test harness 
+NOTE: The `version` parameter in `@AddonDependency` and in the `AddonDependencyEntry.create(...)` method are optional. By not specifying them means that the test harness
 will attempt to find the version based on the tests' build descriptor (pom.xml). In this case, if the dependent addon is not present in the tests' build descriptor, the test execution should fail.
 
 === Install your addon in the local maven repository:
@@ -566,8 +566,8 @@ Run
 WARNING: This coordinate is *NOT* the same as maven's. You MUST use a comma (,) between the artifactId and the version**
 
 === Install your Addon
- 
-Depending on the Forge environment in which you are running, installation steps will differ. 
+
+Depending on the Forge environment in which you are running, installation steps will differ.
 
 For Eclipse:: Open the Forge quick-assist menu, select either "Build and install an Addon" or "Install an addon" to build and install your project, or install a pre-built maven artifact.
 
