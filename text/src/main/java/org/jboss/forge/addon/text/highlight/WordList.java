@@ -36,4 +36,13 @@ public class WordList<T>
       T found = lists.get(caseInsensitive ? value.toLowerCase() : value);
       return found != null ? found : defaultValue;
    }
+
+   public WordList<T> clone() {
+      WordList<T> clone = new WordList<T>(this.defaultValue, this.caseInsensitive);
+      clone.lists = new HashMap<String, T>();
+      for(Map.Entry<String, T> entry : this.lists.entrySet()) {
+         clone.lists.put(entry.getKey(), entry.getValue());
+      }
+      return clone;
+   }
 }

@@ -145,6 +145,11 @@ public class StringScanner
          int end = originalMatch.end(group);
          return (String) sequence.subSequence(previousIndex, start, end);
       }
+
+      @Override
+      public String toString() {
+         return group();
+      }
    }
 
    /*

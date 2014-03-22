@@ -29,6 +29,7 @@ public enum TokenType
    filename, // Diff
    float_, // most scanners
    function, // CSS, JavaScript, PHP
+   method, // groovy
    global_variable, // Ruby, YAML
    hex, // hexadecimal number; lots of scanners
    id, // CSS
@@ -72,5 +73,6 @@ public enum TokenType
    operator, // almost all scanners
 
    space, // almost all scanners
-   plain // almost all scanners
+   plain, // almost all scanners
+   unknown
 }
