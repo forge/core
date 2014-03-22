@@ -11,6 +11,7 @@ import java.util.Map;
 import org.jboss.forge.addon.text.highlight.encoder.DebugEncoder;
 import org.jboss.forge.addon.text.highlight.encoder.TerminalEncoder;
 import org.jboss.forge.addon.text.highlight.scanner.CSSScanner;
+import org.jboss.forge.addon.text.highlight.scanner.GroovyScanner;
 import org.jboss.forge.addon.text.highlight.scanner.HTMLScanner;
 import org.jboss.forge.addon.text.highlight.scanner.JSONScanner;
 import org.jboss.forge.addon.text.highlight.scanner.JavaScanner;
@@ -31,6 +32,7 @@ public class Syntax
       Scanner.Factory.registrer(JSONScanner.class);
       Scanner.Factory.registrer(PropertiesScanner.class);
       Scanner.Factory.registrer(SQLScanner.class);
+      Scanner.Factory.registrer(GroovyScanner.class);
 
 
       Encoder.Factory.registrer(Encoder.Type.TERMINAL.name(), TerminalEncoder.class);
