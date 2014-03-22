@@ -105,7 +105,7 @@ public class JavaScriptScanner implements Scanner
 
    public enum State
    {
-      innitial,
+      initial,
       open_multi_line_comment,
       key,
       string,
@@ -123,7 +123,7 @@ public class JavaScriptScanner implements Scanner
    public void scan(StringScanner source, Encoder encoder, Map<String, Object> options)
    {
 
-      State state = State.innitial;
+      State state = State.initial;
       String string_delimiter = null;
       boolean value_expected = true;
       boolean key_expected = false;
@@ -135,7 +135,7 @@ public class JavaScriptScanner implements Scanner
 
          switch (state)
          {
-         case innitial:
+         case initial:
 
             if ((m = source.scan(SPACE)) != null)
             {
@@ -278,7 +278,7 @@ public class JavaScriptScanner implements Scanner
                encoder.endGroup(TokenType.valueOf(state.name()));
                string_delimiter = null;
                key_expected = value_expected = false;
-               state = State.innitial;
+               state = State.initial;
             }
             else if (State.regexp != state && (m = source.scan(CONTENT)) != null)
             {
@@ -308,7 +308,7 @@ public class JavaScriptScanner implements Scanner
                }
                string_delimiter = null;
                key_expected = value_expected = false;
-               state = State.innitial;
+               state = State.initial;
             }
             else
             {
@@ -321,7 +321,7 @@ public class JavaScriptScanner implements Scanner
 
             if ((m = source.scan(COMMENT_MULTILINE)) != null)
             {
-               state = State.innitial;
+               state = State.initial;
             }
             else
             {
