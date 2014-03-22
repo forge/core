@@ -73,7 +73,7 @@ public class HTMLScanner implements Scanner
 
    public enum State
    {
-      innitial,
+      initial,
       in_special_tag,
       attribute,
       attribute_equal,
@@ -95,7 +95,7 @@ public class HTMLScanner implements Scanner
    @Override
    public void scan(StringScanner source, Encoder encoder, Map<String, Object> options)
    {
-      State state = State.innitial;
+      State state = State.initial;
       EmbeddedType in_attribute = null;
       String in_tag = null;
       Pattern plain_string_content = null;
@@ -113,7 +113,7 @@ public class HTMLScanner implements Scanner
 
             switch (state)
             {
-            case innitial:
+            case initial:
 
                if ((m = source.scan(CDATA_START)) != null)
                {
@@ -196,7 +196,7 @@ public class HTMLScanner implements Scanner
                   }
                   else
                   {
-                     state = State.innitial;
+                     state = State.initial;
                   }
                }
                else if ((m = source.scan(ATTR_NAME)) != null)
@@ -281,7 +281,7 @@ public class HTMLScanner implements Scanner
                else if ((m = source.scan(TAG_END)) != null)
                {
                   encoder.textToken(m.group(), TokenType.tag);
-                  state = State.innitial;
+                  state = State.initial;
                }
                else
                {
@@ -311,7 +311,7 @@ public class HTMLScanner implements Scanner
                else if ((m = source.scan(END)) != null)
                {
                   encoder.endGroup(TokenType.string);
-                  state = State.innitial;
+                  state = State.initial;
                   encoder.textToken(m.group(), TokenType.error);
                }
                break;
@@ -363,7 +363,7 @@ public class HTMLScanner implements Scanner
                   {
                      encoder.textToken(closing, TokenType.comment);
                   }
-                  state = State.innitial;
+                  state = State.initial;
                }
                else
                {
