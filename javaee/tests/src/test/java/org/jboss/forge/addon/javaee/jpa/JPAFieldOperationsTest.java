@@ -33,10 +33,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
- * Unit tests to verify the behavior of the {@link FieldOperations} class.
+ * Unit tests to verify the behavior of the {@link JPAFieldOperations} class.
  */
 @RunWith(Arquillian.class)
-public class FieldOperationsTest
+public class JPAFieldOperationsTest
 {
 
    @Deployment
@@ -68,7 +68,7 @@ public class FieldOperationsTest
    private JavaClass entityClass;
 
    @Inject
-   private FieldOperations fieldOperations;
+   private JPAFieldOperations jpaFieldOperations;
 
    @Before
    public void setUp()
@@ -86,42 +86,6 @@ public class FieldOperationsTest
       }
    }
 
-   /**
-    * Verifies that simple fields can be added to a class.
-    */
-   @Test
-   public void testAddNewSimpleField() throws Exception
-   {
-      String simpleTypeName = String.class.getSimpleName();
-      String qualifiedTypeName = String.class.getCanonicalName();
-
-      // Add a String field with a qualified type.
-      String fieldName = "firstName";
-      fieldOperations.addFieldTo(entityClass, qualifiedTypeName, fieldName);
-
-      // Is the field present? Is the name and type of the field correct?
-      assertThat(entityClass.hasField(fieldName), is(true));
-      assertThat(entityClass.getField(fieldName).getName(), equalTo(fieldName));
-      assertThat(entityClass.getField(fieldName).getType(), equalTo(simpleTypeName));
-      // Is the type from java.lang imported?
-      assertThat(entityClass.hasImport(qualifiedTypeName), is(false));
-      // Syntax errors?
-      assertThat(entityClass.hasSyntaxErrors(), is(false));
-
-      // Add a String field with a simple type.
-      fieldName = "lastName";
-      fieldOperations.addFieldTo(entityClass, simpleTypeName, fieldName);
-
-      // Is the field present? Is the name and type of the field correct?
-      assertThat(entityClass.hasField(fieldName), is(true));
-      assertThat(entityClass.getField(fieldName).getName(), equalTo(fieldName));
-      assertThat(entityClass.getField(fieldName).getType(), equalTo(simpleTypeName));
-      // Is the type from java.lang imported?
-      assertThat(entityClass.hasImport(qualifiedTypeName), is(false));
-      // Syntax errors?
-      assertThat(entityClass.hasSyntaxErrors(), is(false));
-   }
-
    @Test
    public void testAddOneToManyRel() throws Exception
    {
@@ -132,7 +96,7 @@ public class FieldOperationsTest
       String qualifiedCollectionType = Set.class.getCanonicalName();
 
       String fieldName = "accounts";
-      fieldOperations.newOneToManyRelationship(project, entity, fieldName, qualifiedRhsType, null,
+      jpaFieldOperations.newOneToManyRelationship(project, entity, fieldName, qualifiedRhsType, null,
                FetchType.LAZY, Lists.<CascadeType> newArrayList());
       entityClass = (JavaClass) entity.getJavaSource();
 
@@ -163,7 +127,7 @@ public class FieldOperationsTest
       String qualifiedCollectionType = Set.class.getCanonicalName();
 
       String fieldName = "accounts";
-      fieldOperations.newManyToManyRelationship(project, entity, fieldName, qualifiedRhsType, null,
+      jpaFieldOperations.newManyToManyRelationship(project, entity, fieldName, qualifiedRhsType, null,
                FetchType.LAZY, Lists.<CascadeType> newArrayList());
       entityClass = (JavaClass) entity.getJavaSource();
 
@@ -192,7 +156,7 @@ public class FieldOperationsTest
       String simpleRhsType = rhsClass.getJavaSource().getName();
 
       String fieldName = "store";
-      fieldOperations.newManyToOneRelationship(project, entity, fieldName, qualifiedRhsType, null,
+      jpaFieldOperations.newManyToOneRelationship(project, entity, fieldName, qualifiedRhsType, null,
                FetchType.LAZY, false, Lists.<CascadeType> newArrayList());
       entityClass = (JavaClass) entity.getJavaSource();
 
@@ -220,7 +184,7 @@ public class FieldOperationsTest
       String simpleRhsType = rhsClass.getJavaSource().getName();
 
       String fieldName = "store";
-      fieldOperations.newOneToOneRelationship(project, entity, fieldName, qualifiedRhsType, null,
+      jpaFieldOperations.newOneToOneRelationship(project, entity, fieldName, qualifiedRhsType, null,
                FetchType.LAZY, false, Lists.<CascadeType> newArrayList());
       entityClass = (JavaClass) entity.getJavaSource();
 

@@ -74,7 +74,7 @@ public class NewFieldWizardTest
    private Project project;
 
    @Inject
-   private FieldOperations fieldOperations;
+   private JPAFieldOperations fieldOperations;
 
    @Before
    public void setUp()
