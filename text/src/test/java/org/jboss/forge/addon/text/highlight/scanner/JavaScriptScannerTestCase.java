@@ -15,43 +15,43 @@ public class JavaScriptScannerTestCase extends AbstractScannerTestCase
 {
 
    @Test
-   public void shoulMatchJavaScriptEtienneMassipExample() throws Exception
+   public void shouldMatchJavaScriptEtienneMassipExample() throws Exception
    {
       assertMatchExample(Builder.create(), "javascript", "etienne-massip.in.js");
    }
 
    @Test
-   public void shoulMatchJavaScriptGordonExample() throws Exception
+   public void shouldMatchJavaScriptGordonExample() throws Exception
    {
       assertMatchExample(Builder.create(), "javascript", "gordon.in.js");
    }
 
    @Test
-   public void shoulMatchJavaScriptPrototypeExample() throws Exception
+   public void shouldMatchJavaScriptPrototypeExample() throws Exception
    {
       assertMatchExample(Builder.create(), "javascript", "prototype.in.js");
    }
 
    @Test
-   public void shoulMatchJavaScriptReadabilityExample() throws Exception
+   public void shouldMatchJavaScriptReadabilityExample() throws Exception
    {
       assertMatchExample(Builder.create(), "javascript", "readability.in.js");
    }
 
    @Test
-   public void shoulMatchJavaScriptScriptAculoUSExample() throws Exception
+   public void shouldMatchJavaScriptScriptAculoUSExample() throws Exception
    {
       assertMatchExample(Builder.create(), "javascript", "script.aculo.us.in.js");
    }
 
    @Test
-   public void shoulMatchJavaScriptSunSpiderExample() throws Exception
+   public void shouldMatchJavaScriptSunSpiderExample() throws Exception
    {
       assertMatchExample(Builder.create(), "javascript", "sun-spider.in.js");
    }
 
    @Test
-   public void shoulMatchJavaScriptTraceTestExample() throws Exception
+   public void shouldMatchJavaScriptTraceTestExample() throws Exception
    {
       assertMatchExample(Builder.create(), "javascript", "trace-test.in.js");
    }
@@ -60,7 +60,7 @@ public class JavaScriptScannerTestCase extends AbstractScannerTestCase
    @Ignore
    // known issue http://redmine.rubychan.de/issues/137
    // https://github.com/rubychan/coderay-scanner-tests/blob/master/javascript/xml.known-issue.yaml
-   public void shoulMatchJavaScriptXMLExample() throws Exception
+   public void shouldMatchJavaScriptXMLExample() throws Exception
    {
       assertMatchExample(Builder.create(), "javascript", " xml.in.js");
    }

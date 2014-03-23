@@ -7,7 +7,7 @@ import org.junit.Test;
 public class XMLScannerTestCase extends AbstractScannerTestCase
 {
    @Test
-   public void shoulMatchXMLDTDExample() throws Exception
+   public void shouldMatchXMLDTDExample() throws Exception
    {
       assertMatchExample(Builder.create(), "xml", "dtd.in.xml");
    }
@@ -15,13 +15,13 @@ public class XMLScannerTestCase extends AbstractScannerTestCase
    @Test
    @Ignore
    // Some issue with new_line in output, revisit
-   public void shoulMatchXMLKateExample() throws Exception
+   public void shouldMatchXMLKateExample() throws Exception
    {
       assertMatchExample(Builder.create(), "xml", "kate.in.xml");
    }
 
    @Test
-   public void shoulMatchXMLXAMLExample() throws Exception
+   public void shouldMatchXMLXAMLExample() throws Exception
    {
       assertMatchExample(Builder.create(), "xml", "xaml.in.xml");
    }

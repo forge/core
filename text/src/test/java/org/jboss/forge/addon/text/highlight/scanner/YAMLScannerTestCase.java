@@ -6,55 +6,55 @@ import org.junit.Test;
 public class YAMLScannerTestCase extends AbstractScannerTestCase {
 
    @Test
-   public void shoulMatchYAMLBasicExample() throws Exception
+   public void shouldMatchYAMLBasicExample() throws Exception
    {
       assertMatchExample(Builder.create(), "yaml", "basic.in.yml");
    }
 
    @Test
-   public void shoulMatchYAMLDatabaseExample() throws Exception
+   public void shouldMatchYAMLDatabaseExample() throws Exception
    {
       assertMatchExample(Builder.create(), "yaml", "database.in.yml");
    }
 
    @Test
-   public void shoulMatchYAMLFAQExample() throws Exception
+   public void shouldMatchYAMLFAQExample() throws Exception
    {
       assertMatchExample(Builder.create(), "yaml", "faq.in.yml");
    }
 
    @Test
-   public void shoulMatchYAMLGemspecExample() throws Exception
+   public void shouldMatchYAMLGemspecExample() throws Exception
    {
       assertMatchExample(Builder.create(), "yaml", "gemspec.in.yml");
    }
 
    @Test
-   public void shoulMatchYAMLLatexEntitiesExample() throws Exception
+   public void shouldMatchYAMLLatexEntitiesExample() throws Exception
    {
       assertMatchExample(Builder.create(), "yaml", "latex_entities.in.yml");
    }
 
    @Test
-   public void shoulMatchYAMLMultilineExample() throws Exception
+   public void shouldMatchYAMLMultilineExample() throws Exception
    {
       assertMatchExample(Builder.create(), "yaml", "multiline.in.yml");
    }
 
    @Test
-   public void shoulMatchYAMLProblemExample() throws Exception
+   public void shouldMatchYAMLProblemExample() throws Exception
    {
       assertMatchExample(Builder.create(), "yaml", "problem.in.yml");
    }
 
    @Test
-   public void shoulMatchYAMLThresholdExample() throws Exception
+   public void shouldMatchYAMLThresholdExample() throws Exception
    {
       assertMatchExample(Builder.create(), "yaml", "threshold.in.yml");
    }
 
    @Test
-   public void shoulMatchYAMLWebsiteExample() throws Exception
+   public void shouldMatchYAMLWebsiteExample() throws Exception
    {
       assertMatchExample(Builder.create(), "yaml", "website.in.yml");
    }

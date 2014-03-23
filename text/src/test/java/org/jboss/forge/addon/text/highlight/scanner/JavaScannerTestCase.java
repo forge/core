@@ -62,13 +62,13 @@ public class JavaScannerTestCase extends AbstractScannerTestCase
    }
 
    @Test
-   public void shoulMatchJavaExample() throws Exception
+   public void shouldMatchJavaExample() throws Exception
    {
       assertMatchExample(Builder.create(), "java", "example.in.java");
    }
 
    @Test
-   public void shoulMatchJavaJRubyExample() throws Exception
+   public void shouldMatchJavaJRubyExample() throws Exception
    {
       assertMatchExample(Builder.create(), "java", "jruby.in.java");
    }

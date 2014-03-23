@@ -32,49 +32,49 @@ public class HTMLScannerTestCase extends AbstractScannerTestCase
    }
 
    @Test
-   public void shoulMatchHTMLBooleanExample() throws Exception
+   public void shouldMatchHTMLBooleanExample() throws Exception
    {
       assertMatchExample(Builder.create(), "html", "boolean.in.html");
    }
 
    @Test
-   public void shoulMatchHTMLAmpersandExample() throws Exception
+   public void shouldMatchHTMLAmpersandExample() throws Exception
    {
       assertMatchExample(Builder.create(), "html", "ampersand.in.html");
    }
 
    @Test
-   public void shoulMatchHTMLCDataExample() throws Exception
+   public void shouldMatchHTMLCDataExample() throws Exception
    {
       assertMatchExample(Builder.create(), "html", "cdata.in.html");
    }
 
    @Test
-   public void shoulMatchHTMLCoderayOutputExample() throws Exception
+   public void shouldMatchHTMLCoderayOutputExample() throws Exception
    {
       assertMatchExample(Builder.create(), "html", "coderay-output.in.html");
    }
 
    @Test
-   public void shoulMatchHTMLRedmineExample() throws Exception
+   public void shouldMatchHTMLRedmineExample() throws Exception
    {
       assertMatchExample(Builder.create(), "html", "redmine.in.html");
    }
 
    @Test
-   public void shoulMatchHTMLTagsExample() throws Exception
+   public void shouldMatchHTMLTagsExample() throws Exception
    {
       assertMatchExample(Builder.create(), "html", "tags.in.html");
    }
 
    @Test
-   public void shoulMatchHTMLTolkienTagsExample() throws Exception
+   public void shouldMatchHTMLTolkienTagsExample() throws Exception
    {
       assertMatchExample(Builder.create(), "html", "tolkien.in.html");
    }
 
    @Test
-   public void shoulMatchHTMLTPuthTagsExample() throws Exception
+   public void shouldMatchHTMLTPuthTagsExample() throws Exception
    {
       assertMatchExample(Builder.create(), "html", "tputh.in.html");
    }
