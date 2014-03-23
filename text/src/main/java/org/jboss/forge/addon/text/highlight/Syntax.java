@@ -19,6 +19,7 @@ import org.jboss.forge.addon.text.highlight.scanner.JavaScriptScanner;
 import org.jboss.forge.addon.text.highlight.scanner.PlainScanner;
 import org.jboss.forge.addon.text.highlight.scanner.PropertiesScanner;
 import org.jboss.forge.addon.text.highlight.scanner.SQLScanner;
+import org.jboss.forge.addon.text.highlight.scanner.YAMLScanner;
 
 public class Syntax
 {
@@ -33,6 +34,7 @@ public class Syntax
       Scanner.Factory.registrer(PropertiesScanner.class);
       Scanner.Factory.registrer(SQLScanner.class);
       Scanner.Factory.registrer(GroovyScanner.class);
+      Scanner.Factory.registrer(YAMLScanner.class);
 
 
       Encoder.Factory.registrer(Encoder.Type.TERMINAL.name(), TerminalEncoder.class);

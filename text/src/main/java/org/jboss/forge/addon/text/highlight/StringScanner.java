@@ -78,6 +78,34 @@ public class StringScanner
       return sequence.peek(length);
    }
 
+   /**
+    * Find the column number of current position.
+    *
+    * (How many chars since last \n). First column is 1.
+    *
+    * @param pos start position
+    * @return
+    */
+   public int column(int pos) {
+      int currPrePos = 0;
+      while( (pos +currPrePos) > 0 && !sequence.peek(pos, currPrePos).startsWith("\n"))
+      {
+         currPrePos--;
+      }
+      return (currPrePos*-1);
+   }
+
+   public int index() {
+      return sequence.index();
+   }
+
+   public boolean isBeginningOfLine() {
+      if(sequence.index() == 0) {
+         return true;
+      }
+      return "\n".equals(sequence.peek(-1));
+   }
+
    private static class StaticMatchResult implements MatchResult
    {
 
@@ -241,7 +269,16 @@ public class StringScanner
 
       public String peek(int length)
       {
-         return source.substring(this.index, this.index + length);
+         return peek(index, length);
+      }
+
+      public String peek(int pos, int length)
+      {
+         if(length < 0)
+         {
+            return source.substring(pos+length, pos);
+         }
+         return source.substring(pos, pos + length);
       }
 
       public String pop()
