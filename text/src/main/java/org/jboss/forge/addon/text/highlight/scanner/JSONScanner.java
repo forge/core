@@ -38,7 +38,7 @@ public class JSONScanner implements Scanner
       string
    }
 
-   public static final Type TYPE = new Type("JSON", "\\.(json)$");
+   public static final Type TYPE = new Type("JSON", "\\.(json|template)$");
 
    @Override
    public Type getType() {
