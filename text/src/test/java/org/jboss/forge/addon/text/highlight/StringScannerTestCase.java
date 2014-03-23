@@ -101,4 +101,22 @@ public class StringScannerTestCase
       Assert.assertEquals(m.end(1), result.end(1));
       Assert.assertEquals(m.end(2), result.end(2));
    }
+
+   @Test
+   public void shouldPeekPreviousWithNegativeNumber() throws Exception {
+      String source = "abcd";
+
+      StringScanner scanner = new StringScanner(source);
+      scanner.next();
+      scanner.next();
+      Assert.assertEquals("b", scanner.peek(-1));
+   }
+
+   @Test
+   public void shouldGetColumnIndex() throws Exception {
+      String source = "abcd\nabcd";
+
+      StringScanner scanner = new StringScanner(source);
+      Assert.assertEquals(3, scanner.column(7));
+   }
 }

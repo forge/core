@@ -49,25 +49,25 @@ public class JSONScannerTestCase extends AbstractScannerTestCase
    }
 
    @Test
-   public void shoulMatchJSONExample() throws Exception
+   public void shouldMatchJSONExample() throws Exception
    {
       assertMatchExample(Builder.create(), "json", "example.in.json");
    }
 
    @Test
-   public void shoulMatchJSONLibExample() throws Exception
+   public void shouldMatchJSONLibExample() throws Exception
    {
       assertMatchExample(Builder.create(), "json", "json-lib.in.json");
    }
 
    @Test
-   public void shoulMatchJSONBigExample() throws Exception
+   public void shouldMatchJSONBigExample() throws Exception
    {
       assertMatchExample(Builder.create(), "json", "big.in.json");
    }
 
    @Test
-   public void shoulMatchJSONBig2Example() throws Exception
+   public void shouldMatchJSONBig2Example() throws Exception
    {
       assertMatchExample(Builder.create(), "json", "big2.in.json");
    }

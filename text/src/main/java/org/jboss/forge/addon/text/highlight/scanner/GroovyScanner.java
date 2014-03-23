@@ -88,7 +88,7 @@ public class GroovyScanner implements Scanner
 
    public static final String OPTION_START_STATE = "state";
 
-   public static final Type TYPE = new Type("GROOVY", "\\.(groovy|gradle)$");
+   public static final Type TYPE = new Type("GROOVY", "\\.(groovy|gvy|gradle)$");
 
    @Override
    public Type getType() {

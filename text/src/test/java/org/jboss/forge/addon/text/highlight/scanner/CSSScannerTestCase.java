@@ -66,7 +66,7 @@ public class CSSScannerTestCase extends AbstractScannerTestCase
    }
 
    @Test
-   public void shoulMatchCssStandardExample() throws Exception
+   public void shouldMatchCssStandardExample() throws Exception
    {
       assertMatchExample(Builder.create(), "css", "standard.in.css");
    }
@@ -74,25 +74,25 @@ public class CSSScannerTestCase extends AbstractScannerTestCase
    @Test
    @Ignore
    // Some new line issue
-   public void shoulMatchCssYUIExample() throws Exception
+   public void shouldMatchCssYUIExample() throws Exception
    {
       assertMatchExample(Builder.create(), "css", "yui.in.css");
    }
 
    @Test
-   public void shoulMatchCssDemoExample() throws Exception
+   public void shouldMatchCssDemoExample() throws Exception
    {
       assertMatchExample(Builder.create(), "css", "demo.in.css");
    }
 
    @Test
-   public void shoulMatchCssCoderayExample() throws Exception
+   public void shouldMatchCssCoderayExample() throws Exception
    {
       assertMatchExample(Builder.create(), "css", "coderay.in.css");
    }
 
    @Test
-   public void shoulMatchCssRadmineExample() throws Exception
+   public void shouldMatchCssRadmineExample() throws Exception
    {
       assertMatchExample(Builder.create(), "css", "redmine.in.css");
    }
@@ -100,7 +100,7 @@ public class CSSScannerTestCase extends AbstractScannerTestCase
    @Test
    @Ignore
    // Some issue hidden char in first pos?
-   public void shoulMatchCssIgnosDraconisExample() throws Exception
+   public void shouldMatchCssIgnosDraconisExample() throws Exception
    {
       assertMatchExample(Builder.create(), "css", "ignos-draconis.in.css");
    }
@@ -108,7 +108,7 @@ public class CSSScannerTestCase extends AbstractScannerTestCase
    @Test
    @Ignore
    // Some issue with new_line in output, revisit
-   public void shoulMatchCssS5Example() throws Exception
+   public void shouldMatchCssS5Example() throws Exception
    {
       assertMatchExample(Builder.create(), "css", "S5.in.css");
    }
