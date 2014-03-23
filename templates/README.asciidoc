@@ -1,6 +1,8 @@
 == templates
 :idprefix: id_ 
-This addon provides *standalone* functionality, and *exports services* for use in other addons. The templates addon allows a template to be processed by replacing the variables with the provided parameters   
+This addon provides *standalone* functionality, and *exports services* for use in other addons. The templates addon allows a template to be processed by replacing the variables with the provided parameters.
+
+The addon supports Freemarker as the default template engine out of the box, but other template engines can also be supported through implementing the interfaces in the templates-spi addon.
         
 === Depends on
 [options="header"]
@@ -9,11 +11,18 @@ This addon provides *standalone* functionality, and *exports services* for use i
 |resources
 |yes
 |no
+|projects
+|yes
+|no
+|templates-spi
+|yes
+|no
 |===
 
 == Setup
 This Addon requires the following installation steps.
-=== Add configuration to pom.xml 
+
+=== Add configuration to pom.xml
 To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
 (Make sure the dependency is put all the way to the left, and uses 3 spaces for indentation of GAV)
 [source,xml]
@@ -34,7 +43,8 @@ Allows a template to be processed by replacing the variables with the provided p
 @Inject private TemplateProcessorFactory factory;
 ...
 FileResource<?> resource = ...; // A file resource containing "Hello ${name}"
-TemplateProcessor processor = factory.fromTemplate(resource);
+Template template = new FreemarkerTemplate(resource); // Mark this resource as a Freemarker template
+TemplateProcessor processor = factory.fromTemplate(template);
 Map<String,Object> params = new HashMap<String,Object>(); //Could be a POJO also.
 params.put("name", "JBoss Forge");
 String output = processor.process(params); // should return "Hello JBoss Forge". 
