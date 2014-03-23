@@ -85,7 +85,7 @@ public class HTMLScanner implements Scanner
             .add(EVENT_ATTRIBUTES, EmbeddedType.script)
             .add(new String[] { "style" }, EmbeddedType.style);
 
-   public static final Type TYPE = new Type("HTML", "\\.(html|htm|xhtml|xml|cfc|cfm|tmproj|xaml)$");
+   public static final Type TYPE = new Type("HTML", "\\.(html|htm|xhtml)$");
 
    @Override
    public Type getType() {

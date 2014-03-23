@@ -78,24 +78,4 @@ public class HTMLScannerTestCase extends AbstractScannerTestCase
    {
       assertMatchExample(Builder.create(), "html", "tputh.in.html");
    }
-
-   @Test
-   public void shoulMatchXMLDTDExample() throws Exception
-   {
-      assertMatchExample(Builder.create(), "xml", "dtd.in.xml");
-   }
-
-   @Test
-   @Ignore
-   // Some issue with new_line in output, revisit
-   public void shoulMatchXMLKateExample() throws Exception
-   {
-      assertMatchExample(Builder.create(), "xml", "kate.in.xml");
-   }
-
-   @Test
-   public void shoulMatchXMLXAMLExample() throws Exception
-   {
-      assertMatchExample(Builder.create(), "xml", "xaml.in.xml");
-   }
 }
