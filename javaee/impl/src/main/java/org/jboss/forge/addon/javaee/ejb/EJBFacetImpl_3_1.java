@@ -27,7 +27,7 @@ public class EJBFacetImpl_3_1 extends AbstractEJBFacetImpl implements EJBFacet_3
 {
    private static final Dependency JBOSS_EJB_API = DependencyBuilder
             .create("org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec");
-   private static final Dependency JAVAX_EJB_API = DependencyBuilder.create("javax.ejb:ejb-api");
+   private static final Dependency GLASSFISH_EJB_API = DependencyBuilder.create("org.glassfish:javax.ejb::3.1");
 
    @Inject
    public EJBFacetImpl_3_1(final DependencyInstaller installer)
@@ -46,7 +46,7 @@ public class EJBFacetImpl_3_1 extends AbstractEJBFacetImpl implements EJBFacet_3
    {
       Map<Dependency, List<Dependency>> result = new HashMap<Dependency, List<Dependency>>();
 
-      result.put(JAVAX_EJB_API, Arrays.asList(JAVAX_EJB_API, JBOSS_EJB_API));
+      result.put(JBOSS_EJB_API, Arrays.asList(GLASSFISH_EJB_API, JBOSS_EJB_API));
 
       return result;
 
