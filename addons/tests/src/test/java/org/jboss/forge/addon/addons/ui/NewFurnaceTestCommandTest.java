@@ -41,7 +41,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -93,7 +93,7 @@ public class NewFurnaceTestCommandTest
       facetFactory.install(project, AddonTestFacet.class);
 
       CommandController controller = testHarness.createCommandController(NewFurnaceTestCommand.class,
-               project.getRootDirectory());
+               project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "MyTestCase");
       controller.setValueFor("packageName", "org.jboss.forge.test");

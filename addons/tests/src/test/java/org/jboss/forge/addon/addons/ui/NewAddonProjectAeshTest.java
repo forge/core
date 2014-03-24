@@ -93,7 +93,7 @@ public class NewAddonProjectAeshTest
 
       Assert.assertNotNull(project);
 
-      Assert.assertTrue(project.getRootDirectory().exists());
+      Assert.assertTrue(project.getRoot().exists());
 
       // TODO Wizard steps are not implemented by Aesh, so we can't actually invoke the entire wizard.
 

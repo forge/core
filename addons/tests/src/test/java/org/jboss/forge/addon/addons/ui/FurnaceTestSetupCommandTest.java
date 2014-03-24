@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -72,7 +72,7 @@ public class FurnaceTestSetupCommandTest
       Project project = projectFactory.createTempProject();
 
       CommandController controller = testHarness.createCommandController(NewFurnaceTestSetupCommand.class,
-               project.getRootDirectory());
+               project.getRoot());
       controller.initialize();
       UISelectMany<AddonId> component = (UISelectMany<AddonId>) controller.getInputs().get("addonDependencies");
       controller.setValueFor("addonDependencies", component.getValueChoices());
