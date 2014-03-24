@@ -6,103 +6,57 @@
  */
 package org.jboss.forge.addon.maven.projects.facets;
 
-import java.io.ByteArrayInputStream;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import javax.enterprise.context.Dependent;
 
-import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.Plugin;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.furnace.exception.ContainerException;
 
 /**
+ * Configures the maven-compiler-plugin
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @Dependent
 @FacetConstraint(MavenFacet.class)
 public class MavenJavaCompilerFacet extends AbstractFacet<Project> implements JavaCompilerFacet
 {
+
+   static final String MAVEN_COMPILER_SOURCE_KEY = "maven.compiler.source";
+   static final String MAVEN_COMPILER_TARGET_KEY = "maven.compiler.target";
+   static final String MAVEN_COMPILER_ENCODING_KEY = "project.build.sourceEncoding";
+
    @Override
    public boolean isInstalled()
    {
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getModel();
-      Build build = pom.getBuild();
-      if (build == null)
-      {
-         build = new Build();
-      }
-      List<Plugin> plugins = build.getPlugins();
-      Plugin javaCompilerPlugin = getJavaCompilerPlugin(plugins);
-      return javaCompilerPlugin != null;
+      Properties properties = pom.getProperties();
+      List<String> keys = Arrays.asList(MAVEN_COMPILER_SOURCE_KEY, MAVEN_COMPILER_TARGET_KEY,
+               MAVEN_COMPILER_ENCODING_KEY);
+      return properties.keySet().containsAll(keys);
    }
 
    @Override
    public boolean install()
    {
-      // FIXME WOW this needs to be simplified somehow...
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getModel();
-      Build build = pom.getBuild();
-      if (build == null)
-      {
-         build = new Build();
-      }
-      List<Plugin> plugins = build.getPlugins();
-      Plugin javaCompilerPlugin = getJavaCompilerPlugin(plugins);
-
-      if (javaCompilerPlugin == null)
-      {
-         javaCompilerPlugin = new Plugin();
-         // FIXME this should find the most recent version using DependencyResolver
-         javaCompilerPlugin.setGroupId("org.apache.maven.plugins");
-         javaCompilerPlugin.setArtifactId("maven-compiler-plugin");
-         javaCompilerPlugin.setVersion("3.1");
-
-         try
-         {
-            Xpp3Dom dom = Xpp3DomBuilder.build(
-                     new ByteArrayInputStream(
-                              ("<configuration>" +
-                                       "<source>1.7</source>" +
-                                       "<target>1.7</target>" +
-                                       "<encoding>UTF-8</encoding>" +
-                                       "</configuration>").getBytes()),
-                     "UTF-8");
-
-            javaCompilerPlugin.setConfiguration(dom);
-         }
-         catch (Exception e)
-         {
-            throw new ContainerException(e);
-         }
-      }
-
-      build.addPlugin(javaCompilerPlugin);
-      pom.setBuild(build);
+      Properties properties = pom.getProperties();
+      // TODO: Use System.getProperty("java.version") ?
+      String javaVersion = "1.7";
+      properties.setProperty(MAVEN_COMPILER_SOURCE_KEY, javaVersion);
+      properties.setProperty(MAVEN_COMPILER_TARGET_KEY, javaVersion);
+      properties.setProperty(MAVEN_COMPILER_ENCODING_KEY, "UTF-8");
       maven.setModel(pom);
       return true;
-   }
-
-   private Plugin getJavaCompilerPlugin(List<Plugin> plugins)
-   {
-      Plugin javaSourcePlugin = null;
-      for (Plugin plugin : plugins)
-      {
-         if ("org.apache.maven.plugins".equals(plugin.getGroupId())
-                  && "maven-compiler-plugin".equals(plugin.getArtifactId()))
-         {
-            javaSourcePlugin = plugin;
-         }
-      }
-      return javaSourcePlugin;
    }
 }
