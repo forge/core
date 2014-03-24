@@ -20,8 +20,10 @@ import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
-/*
- * 
+/**
+ * Java Web Application {@link ProjectType}
+ *
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class JavaWebProjectType implements ProjectType
 {
@@ -40,7 +42,7 @@ public class JavaWebProjectType implements ProjectType
    @Override
    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
    {
-      List<Class<? extends ProjectFacet>> result = new ArrayList<Class<? extends ProjectFacet>>(6);
+      List<Class<? extends ProjectFacet>> result = new ArrayList<Class<? extends ProjectFacet>>(7);
       result.add(MetadataFacet.class);
       result.add(PackagingFacet.class);
       result.add(DependencyFacet.class);
