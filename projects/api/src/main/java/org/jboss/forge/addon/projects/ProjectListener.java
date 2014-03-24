@@ -7,14 +7,13 @@
 
 package org.jboss.forge.addon.projects;
 
-
 /**
  * Listens for project actions
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public interface ProjectListener
 {
-   public void projectCreated(Project project);
+   void projectCreated(Project project);
 }

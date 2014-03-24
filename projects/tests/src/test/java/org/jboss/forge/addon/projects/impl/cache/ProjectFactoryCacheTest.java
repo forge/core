@@ -15,6 +15,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.impl.MockProjectListener;
 import org.jboss.forge.addon.projects.spi.ProjectCache;
+import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -68,11 +69,11 @@ public class ProjectFactoryCacheTest
       Project project = projectFactory.createTempProject();
 
       Assert.assertNotNull(project);
-      Project found = projectFactory.findProject(project.getRootDirectory());
+      Project found = projectFactory.findProject(project.getRoot());
       Assert.assertNotNull(found);
       Assert.assertSame(project, found);
 
-      Assert.assertNull(projectFactory.findProject(project.getRootDirectory(), new Predicate<Project>()
+      Assert.assertNull(projectFactory.findProject(project.getRoot(), new Predicate<Project>()
       {
          @Override
          public boolean accept(Project type)
@@ -81,16 +82,16 @@ public class ProjectFactoryCacheTest
          }
       }));
 
-      Project found2 = projectFactory.findProject(project.getRootDirectory().getChildDirectory("src/main/java"));
+      Project found2 = projectFactory.findProject(project.getRoot().reify(DirectoryResource.class).getChildDirectory("src/main/java"));
       Assert.assertNotNull(found2);
       Assert.assertSame(found, found2);
 
       Project project2 = projectFactory.createTempProject();
       Assert.assertNotSame(found2, project2);
-      Assert.assertNotEquals(found2.getRootDirectory().getFullyQualifiedName(), project2.getRootDirectory()
+      Assert.assertNotEquals(found2.getRoot().getFullyQualifiedName(), project2.getRoot()
                .getFullyQualifiedName());
 
-      project.getRootDirectory().delete(true);
+      project.getRoot().delete(true);
    }
 
 }

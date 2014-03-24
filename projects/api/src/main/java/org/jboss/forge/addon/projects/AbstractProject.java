@@ -14,7 +14,7 @@ import org.jboss.forge.addon.facets.AbstractFaceted;
 
 /**
  * Convenience base class for {@link Project} implementations.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public abstract class AbstractProject extends AbstractFaceted<ProjectFacet> implements Project
@@ -47,7 +47,7 @@ public abstract class AbstractProject extends AbstractFaceted<ProjectFacet> impl
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((getRootDirectory() == null) ? 0 : getRootDirectory().hashCode());
+      result = prime * result + ((getRoot() == null) ? 0 : getRoot().hashCode());
       return result;
    }
 
@@ -61,12 +61,12 @@ public abstract class AbstractProject extends AbstractFaceted<ProjectFacet> impl
       if (getClass() != obj.getClass())
          return false;
       AbstractProject other = (AbstractProject) obj;
-      if (getRootDirectory() == null)
+      if (getRoot() == null)
       {
-         if (other.getRootDirectory() != null)
+         if (other.getRoot() != null)
             return false;
       }
-      else if (!getRootDirectory().equals(other.getRootDirectory()))
+      else if (!getRoot().equals(other.getRoot()))
          return false;
       return true;
    }

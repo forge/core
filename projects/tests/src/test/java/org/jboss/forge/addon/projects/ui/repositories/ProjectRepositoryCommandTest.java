@@ -33,7 +33,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -87,7 +87,7 @@ public class ProjectRepositoryCommandTest
    public void testAddRepository() throws Exception
    {
       try (CommandController c = testHarness
-               .createCommandController(AddRepositoryCommand.class, project.getRootDirectory()))
+               .createCommandController(AddRepositoryCommand.class, project.getRoot()))
       {
          c.initialize();
          Assert.assertFalse(c.isValid());
@@ -108,7 +108,7 @@ public class ProjectRepositoryCommandTest
    {
       project.getFacet(DependencyFacet.class).addRepository("repo", "http://my-repo.com");
       try (CommandController c = testHarness
-               .createCommandController(RemoveRepositoryCommand.class, project.getRootDirectory()))
+               .createCommandController(RemoveRepositoryCommand.class, project.getRoot()))
       {
          c.initialize();
          Assert.assertFalse(c.isValid());

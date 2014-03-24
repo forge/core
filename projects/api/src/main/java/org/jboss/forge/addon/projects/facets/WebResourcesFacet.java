@@ -17,7 +17,7 @@ import org.jboss.forge.addon.resource.visit.ResourceVisitor;
 
 /**
  * A {@link Facet} containing APIs to interact with Java Web Projects
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface WebResourcesFacet extends ProjectFacet
@@ -39,7 +39,7 @@ public interface WebResourcesFacet extends ProjectFacet
    /**
     * At the given path/filename relative to the project Web Root directory: {@link #getWebRootDirectory()} - create a
     * {@link FileResource} containing the given bytes.
-    * 
+    *
     * @return a handle to the {@link FileResource} that was created.
     * @deprecated use {@link WebResourcesFacet#getWebResource(String)} and call {@link FileResource#setContents(char[])}
     */
@@ -49,7 +49,7 @@ public interface WebResourcesFacet extends ProjectFacet
    /**
     * At the given path/filename relative to the project Web Root directory: {@link #getWebRootDirectory()} - create a
     * {@link FileResource} containing the given String.
-    * 
+    *
     * @return a handle to the {@link FileResource} that was created.
     * @deprecated use {@link WebResourcesFacet#getWebResource(String)} and call {@link FileResource#setContents(String)}
     */
@@ -63,8 +63,8 @@ public interface WebResourcesFacet extends ProjectFacet
 
    /**
     * Recursively loops over all the resource directories and for each file it finds, calls the visitor.
-    * 
+    *
     * @param visitor The {@link ResourceVisitor} that processes all the found files. Cannot be null.
     */
-   public void visitWebResources(ResourceVisitor visitor);
+   void visitWebResources(ResourceVisitor visitor);
 }

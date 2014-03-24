@@ -13,7 +13,7 @@ import org.jboss.forge.addon.resource.Resource;
 
 /**
  * Describes a set of {@link Resource} instances that represent a unit of work.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface Project extends Faceted<ProjectFacet>
@@ -21,26 +21,26 @@ public interface Project extends Faceted<ProjectFacet>
    /**
     * Get a value from this project's internal attributes. If the value is not set, return <code>null</code> instead.
     */
-   public Object getAttribute(Object key);
+   Object getAttribute(Object key);
 
    /**
     * Set a value in this project's internal attributes.
     */
-   public void setAttribute(Object key, Object value);
+   void setAttribute(Object key, Object value);
 
    /**
     * Remove a value from this project's internal attributes.
     */
-   public void removeAttribute(Object key);
+   void removeAttribute(Object key);
 
    /**
     * Get the {@link DirectoryResource} representing the root directory of this {@link Project}.
     */
    @Deprecated
-   public DirectoryResource getRootDirectory();
+   DirectoryResource getRootDirectory();
 
    /**
     * Get the {@link Resource} representing the root of this {@link Project}.
     */
-   public Resource<?> getRoot();
+   Resource<?> getRoot();
 }

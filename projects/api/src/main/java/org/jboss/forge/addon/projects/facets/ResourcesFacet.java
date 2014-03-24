@@ -24,25 +24,25 @@ public interface ResourcesFacet extends ProjectFacet
     * Get a list of {@link DirectoryResource}s representing the directories this project uses to contain {@link Project}
     * non-source documents (such as configuration files.)
     */
-   public List<DirectoryResource> getResourceDirectories();
+   List<DirectoryResource> getResourceDirectories();
 
    /**
     * Get the {@link DirectoryResource} representing the folder this {@link Project} uses to store package-able,
     * non-source documents (such as configuration files.)
     */
-   public DirectoryResource getResourceDirectory();
+   DirectoryResource getResourceDirectory();
 
    /**
     * Get the {@link DirectoryResource} representing the folder this {@link Project} uses to store test-scoped
     * non-source documents (such as configuration files.) Files in this directory will never be packaged or deployed
     * except when running Unit Tests.
     */
-   public DirectoryResource getTestResourceDirectory();
+   DirectoryResource getTestResourceDirectory();
 
    /**
     * At the given path/filename relative to the project resources directory: {@link #getResourceDirectory()} - create a
     * file containing the given bytes.
-    * 
+    *
     * @return a handle to the {@link FileResource} that was created.
     * @deprecated use {@link ResourcesFacet#getResource(String)} and call {@link FileResource#setContents(char[])}
     */
@@ -52,7 +52,7 @@ public interface ResourcesFacet extends ProjectFacet
    /**
     * At the given path/filename relative to the project test resources directory: {@link #getTestResourceDirectory()} -
     * create a file containing the given bytes.
-    * 
+    *
     * @return a handle to the {@link FileResource} that was created.
     * @deprecated use {@link ResourcesFacet#getTestResource(String)} and call {@link FileResource#setContents(char[])}
     */
@@ -75,15 +75,15 @@ public interface ResourcesFacet extends ProjectFacet
 
    /**
     * Recursively loops over all the resource directories and for each file it finds, calls the visitor.
-    * 
+    *
     * @param visitor The {@link ResourceVisitor} that processes all the found files. Cannot be null.
     */
-   public void visitResources(ResourceVisitor visitor);
+   void visitResources(ResourceVisitor visitor);
 
    /**
     * Recursively loops over all the test resource directories and for each file it finds, calls the visitor.
-    * 
+    *
     * @param visitor The {@link ResourceVisitor} that processes all the found files. Cannot be null.
     */
-   public void visitTestResources(ResourceVisitor visitor);
+   void visitTestResources(ResourceVisitor visitor);
 }

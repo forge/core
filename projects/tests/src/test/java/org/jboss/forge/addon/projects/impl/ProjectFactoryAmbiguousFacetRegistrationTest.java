@@ -68,10 +68,10 @@ public class ProjectFactoryAmbiguousFacetRegistrationTest
       Project project = projectFactory.createTempProject();
 
       Assert.assertNotNull(project);
-      Project found = projectFactory.findProject(project.getRootDirectory());
+      Project found = projectFactory.findProject(project.getRoot());
       Assert.assertNotNull(found);
       Assert.assertTrue(found.hasFacet(MockAmbiguousProjectFacet.class));
 
-      project.getRootDirectory().delete(true);
+      project.getRoot().delete(true);
    }
 }

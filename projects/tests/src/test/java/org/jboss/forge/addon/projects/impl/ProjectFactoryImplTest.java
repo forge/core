@@ -14,13 +14,14 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ProjectListener;
+import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -94,8 +95,8 @@ public class ProjectFactoryImplTest
       Project project = projectFactory.createTempProject();
 
       Assert.assertNotNull(project);
-      Assert.assertNotNull(projectFactory.findProject(project.getRootDirectory()));
-      Assert.assertNull(projectFactory.findProject(project.getRootDirectory(), new Predicate<Project>()
+      Assert.assertNotNull(projectFactory.findProject(project.getRoot()));
+      Assert.assertNull(projectFactory.findProject(project.getRoot(), new Predicate<Project>()
       {
          @Override
          public boolean accept(Project type)
@@ -104,9 +105,9 @@ public class ProjectFactoryImplTest
          }
       }));
 
-      Assert.assertNotNull(projectFactory.findProject(project.getRootDirectory().getChildDirectory("src/main/java")));
+      Assert.assertNotNull(projectFactory.findProject(project.getRoot().reify(DirectoryResource.class).getChildDirectory("src/main/java")));
 
-      project.getRootDirectory().delete(true);
+      project.getRoot().delete(true);
    }
 
    @Test
@@ -163,9 +164,9 @@ public class ProjectFactoryImplTest
    {
       Project project = projectFactory.createTempProject();
       Assert.assertNotNull(project);
-      DirectoryResource projectRoot = project.getRootDirectory();
+      Resource<?> projectRoot = project.getRoot();
       Assert.assertTrue(projectFactory.containsProject(projectRoot, projectRoot));
-      Assert.assertTrue(projectFactory.containsProject(projectRoot, projectRoot.getChildDirectory("src")));
+      Assert.assertTrue(projectFactory.containsProject(projectRoot, projectRoot.getChild("src")));
 
       projectRoot.delete(true);
 
@@ -180,9 +181,9 @@ public class ProjectFactoryImplTest
       {
          Project project = projectFactory.createTempProject(buildSystem);
          Assert.assertNotNull(project);
-         DirectoryResource projectRoot = project.getRootDirectory();
+         Resource<?> projectRoot = project.getRoot();
          Assert.assertTrue(projectFactory.containsProject(projectRoot, projectRoot, buildSystem));
-         Assert.assertTrue(projectFactory.containsProject(projectRoot, projectRoot.getChildDirectory("src"),
+         Assert.assertTrue(projectFactory.containsProject(projectRoot, projectRoot.getChild("src"),
                   buildSystem));
 
          projectRoot.delete(true);

@@ -21,7 +21,7 @@ import org.jboss.forge.addon.ui.context.UISelection;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class ProjectRootCdTokenHandler implements CdTokenHandler
 {
@@ -54,7 +54,7 @@ public class ProjectRootCdTokenHandler implements CdTokenHandler
                   Project project = factory.findProject((FileResource<?>) resource);
                   if (project != null)
                   {
-                     result.add(project.getRootDirectory());
+                     result.add(project.getRoot());
                   }
                }
             }

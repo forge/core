@@ -98,7 +98,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
          CommandController command = testHarness.createCommandController(AddDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", COORDINATES);
          Assert.assertTrue(command.isValid());
@@ -114,7 +114,7 @@ public class ProjectDependencyCommandsTest
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 
@@ -132,7 +132,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
          CommandController command = testHarness.createCommandController(AddDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
          Assert.assertTrue(command.isValid());
@@ -148,12 +148,13 @@ public class ProjectDependencyCommandsTest
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 
    @Test
-   public void testAddDependencyWithDifferentScopeThenManaged() throws Exception {
+   public void testAddDependencyWithDifferentScopeThenManaged() throws Exception
+   {
       Project project = factory.createTempProject(build);
       try
       {
@@ -164,7 +165,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
 
          CommandController command = testHarness.createCommandController(AddDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", COORDINATES + ":test");
          Assert.assertTrue(command.isValid());
@@ -176,12 +177,12 @@ public class ProjectDependencyCommandsTest
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
 
          Dependency dependency = project.getFacet(DependencyFacet.class).getDirectDependency(
-               DependencyBuilder.create(COORDINATES));
+                  DependencyBuilder.create(COORDINATES));
          Assert.assertEquals("test", dependency.getScopeType());
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 
@@ -199,7 +200,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
          CommandController command = testHarness.createCommandController(AddManagedDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", COORDINATES);
          Assert.assertTrue(command.isValid());
@@ -215,7 +216,7 @@ public class ProjectDependencyCommandsTest
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 
@@ -233,7 +234,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
          CommandController command = testHarness.createCommandController(AddManagedDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
          Assert.assertTrue(command.isValid());
@@ -249,7 +250,7 @@ public class ProjectDependencyCommandsTest
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 
@@ -269,7 +270,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
          CommandController command = testHarness.createCommandController(RemoveDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", DEPENDENCY);
          command.setValueFor("removeManaged", "true");
@@ -286,7 +287,7 @@ public class ProjectDependencyCommandsTest
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 
@@ -307,7 +308,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
          CommandController command = testHarness.createCommandController(RemoveDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", Arrays.asList(DEPENDENCY, DEPENDENCY2));
          command.setValueFor("removeManaged", "false");
@@ -324,7 +325,7 @@ public class ProjectDependencyCommandsTest
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 
@@ -344,7 +345,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
          CommandController command = testHarness.createCommandController(RemoveManagedDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", DEPENDENCY);
          command.setValueFor("removeUnmanaged", "true");
@@ -361,7 +362,7 @@ public class ProjectDependencyCommandsTest
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 
@@ -382,7 +383,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
          CommandController command = testHarness.createCommandController(RemoveManagedDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", Arrays.asList(DEPENDENCY, DEPENDENCY2));
          command.setValueFor("removeUnmanaged", "false");
@@ -399,7 +400,7 @@ public class ProjectDependencyCommandsTest
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 
@@ -416,7 +417,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
 
          CommandController command = testHarness.createCommandController(HasDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", COORDINATES);
          Assert.assertTrue(command.isValid());
@@ -426,7 +427,7 @@ public class ProjectDependencyCommandsTest
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 
@@ -444,7 +445,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
          CommandController command = testHarness.createCommandController(HasDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", COORDINATES);
          Assert.assertTrue(command.isValid());
@@ -454,7 +455,7 @@ public class ProjectDependencyCommandsTest
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 
@@ -475,7 +476,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
          CommandController command = testHarness.createCommandController(HasDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
          Assert.assertTrue(command.isValid());
@@ -485,7 +486,7 @@ public class ProjectDependencyCommandsTest
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 
@@ -502,7 +503,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
 
          CommandController command = testHarness.createCommandController(HasManagedDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", COORDINATES);
          Assert.assertTrue(command.isValid());
@@ -512,7 +513,7 @@ public class ProjectDependencyCommandsTest
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 
@@ -527,7 +528,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
 
          CommandController command = testHarness.createCommandController(HasManagedDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", COORDINATES);
          Assert.assertTrue(command.isValid());
@@ -537,7 +538,7 @@ public class ProjectDependencyCommandsTest
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 
@@ -557,7 +558,7 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
          CommandController command = testHarness.createCommandController(HasManagedDependenciesCommand.class,
-                  project.getRootDirectory());
+                  project.getRoot());
          command.initialize();
          command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
          Assert.assertTrue(command.isValid());
@@ -567,7 +568,7 @@ public class ProjectDependencyCommandsTest
       }
       finally
       {
-         project.getRootDirectory().delete(true);
+         project.getRoot().delete(true);
       }
    }
 }

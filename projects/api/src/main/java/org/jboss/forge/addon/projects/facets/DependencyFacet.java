@@ -30,7 +30,7 @@ public interface DependencyFacet extends ProvidedProjectFacet
     * <p/>
     * See also: {@link DependencyBuilder}.
     */
-   public void addDirectDependency(Dependency dep);
+   void addDirectDependency(Dependency dep);
 
    /**
     * Add the given managed {@link Dependency} to this {@link Project}'s immediate list of managed dependencies. This
@@ -39,7 +39,7 @@ public interface DependencyFacet extends ProvidedProjectFacet
     * <p/>
     * See also: {@link DependencyBuilder}.
     */
-   public void addManagedDependency(Dependency managedDependency);
+   void addManagedDependency(Dependency managedDependency);
 
    /**
     * Add the given managed {@link Dependency} to this {@link Project}'s immediate list of managed dependencies. This
@@ -48,25 +48,25 @@ public interface DependencyFacet extends ProvidedProjectFacet
     * <p/>
     * See also: {@link DependencyBuilder}.
     */
-   public void addDirectManagedDependency(Dependency dep);
+   void addDirectManagedDependency(Dependency dep);
 
    /**
     * Add a repository to the project build system. This is where dependencies can be found, downloaded, and installed
     * to the project build script.
     */
-   public void addRepository(String name, String url);
+   void addRepository(String name, String url);
 
    /**
     * Return an immutable list of all direct {@link DependencyNodeUtil} contained within this project. (i.e.: all
     * dependencies for which {@link DependencyFacet#hasDirectDependency(Dependency)} returns true;
     */
-   public List<Dependency> getDependencies();
+   List<Dependency> getDependencies();
 
    /**
     * Get a list of this {@link Project}'s dependencies of the given scopes.. See also: {@link DependencyBuilder}. See
     * also: {@link #getDependency(Dependency)}.
     */
-   public List<Dependency> getDependenciesInScopes(String... scopes);
+   List<Dependency> getDependenciesInScopes(String... scopes);
 
    /**
     * Attempt to locate the given {@link Dependency}, if it exists in the {@link Project} direct dependency list, and
@@ -77,10 +77,10 @@ public interface DependencyFacet extends ProvidedProjectFacet
     * <b>Notice:</b> This method checks only the immediate project dependencies, meaning that if a dependency is
     * declared somewhere else in the hierarchy, it will not be detected by this method, even though by
     * {@link #hasDependency(Dependency)} may return true.
-    * 
+    *
     * @return
     */
-   public Dependency getDirectDependency(Dependency dependency);
+   Dependency getDirectDependency(Dependency dependency);
 
    /**
     * Return an immutable list of all {@link DependencyNodeUtil} contained anywhere within this project's dependency
@@ -93,14 +93,14 @@ public interface DependencyFacet extends ProvidedProjectFacet
     * Get a list of this {@link Project}'s dependencies of the given scopes, from anywhere in the dependency hierarchy.
     * See also: {@link DependencyBuilder}. See also: {@link #getEffectiveDependency(Dependency)}.
     */
-   public List<Dependency> getEffectiveDependenciesInScopes(String... scopes);
+   List<Dependency> getEffectiveDependenciesInScopes(String... scopes);
 
    /**
     * Attempt to locate the given {@link Dependency}, if it exists anywhere in the {@link Project} dependency hierarchy,
     * and return it.
     * <p/>
     * See also: {@link DependencyBuilder}. See also: {@link #hasEffectiveDependency(Dependency)}.
-    * 
+    *
     * @return
     */
    Dependency getEffectiveDependency(Dependency dependency);
@@ -116,27 +116,27 @@ public interface DependencyFacet extends ProvidedProjectFacet
     * {@link #getDirectManagedDependency(Dependency)} and will not be removable via
     * {@link #removeManagedDependency(Dependency)}.
     */
-   public Dependency getEffectiveManagedDependency(Dependency manDep);
+   Dependency getEffectiveManagedDependency(Dependency manDep);
 
    /**
     * Return an immutable list of all direct managed {@link DependencyNodeUtil} contained within this project. (i.e.:
     * all managed dependencies for which {@link ManagedDependencyFacet#hasManagedDependency(Dependency)} returns true;
     */
-   public List<Dependency> getManagedDependencies();
+   List<Dependency> getManagedDependencies();
 
    /**
     * Attempt to locate the given managed {@link Dependency}, if it exists in the {@link Project}, and return it.
     * <p/>
     * See also: {@link DependencyBuilder}. See also: {@link #hasEffectiveManagedDependency(Dependency)}.
-    * 
+    *
     * @return
     */
-   public Dependency getDirectManagedDependency(Dependency managedDependency);
+   Dependency getDirectManagedDependency(Dependency managedDependency);
 
    /**
     * Get the list of repositories for which this project is currently configured to use in dependency resolution.
     */
-   public List<DependencyRepository> getRepositories();
+   List<DependencyRepository> getRepositories();
 
    /**
     * Return true if this {@link Project} contains a dependency matching the given {@link Dependency}; return false
@@ -148,7 +148,7 @@ public interface DependencyFacet extends ProvidedProjectFacet
     * declared somewhere else in the hierarchy, it will not be detected by this method, even though by
     * {@link #hasDependency(Dependency)} may return true.
     */
-   public boolean hasDirectDependency(Dependency dependency);
+   boolean hasDirectDependency(Dependency dependency);
 
    /**
     * Return true if the given {@link Dependency} exists anywhere in the project dependency hierarchy. See also:
@@ -167,7 +167,7 @@ public interface DependencyFacet extends ProvidedProjectFacet
     * {@link #hasManagedDependency(Dependency)} and will not be removable via
     * {@link #removeManagedDependency(Dependency)}.
     */
-   public boolean hasEffectiveManagedDependency(Dependency managedDependency);
+   boolean hasEffectiveManagedDependency(Dependency managedDependency);
 
    /**
     * Return true if this {@link Project} contains a managed dependency matching the given {@link Dependency}; return
@@ -179,12 +179,12 @@ public interface DependencyFacet extends ProvidedProjectFacet
     * dependency is declared somewhere else in the hierarchy, it will not be detected by this method, even though
     * {@link #hasEffectiveManagedDependency(Dependency)} may return true.
     */
-   public boolean hasDirectManagedDependency(Dependency managedDependency);
+   boolean hasDirectManagedDependency(Dependency managedDependency);
 
    /**
     * Return true if the given repository URL is already registered in this project's build system.
     */
-   public boolean hasRepository(String url);
+   boolean hasRepository(String url);
 
    /**
     * Remove the given {@link Dependency} from this facet's {@link Project}. This method ignores
@@ -197,7 +197,7 @@ public interface DependencyFacet extends ProvidedProjectFacet
     * {@link #hasDirectDependency(Dependency)} first in order to check if the dependency exists in this projects
     * immediate dependencies.
     */
-   public void removeDependency(Dependency dependency);
+   void removeDependency(Dependency dependency);
 
    /**
     * Remove the given managed {@link Dependency} from this facet's {@link Project}. This method ignores
@@ -210,22 +210,22 @@ public interface DependencyFacet extends ProvidedProjectFacet
     * {@link #hasManagedDependency(Dependency)} first in order to check if the managed dependency exists in this
     * projects immediate managed dependencies.
     */
-   public void removeManagedDependency(Dependency managedDependency);
+   void removeManagedDependency(Dependency managedDependency);
 
    /**
     * Remove the given {@link DependencyRepository} from the current project. Return true if the repository was removed;
-    * return false otherwise. Return the removed repository, or  if no repository was removed.
+    * return false otherwise. Return the removed repository, or if no repository was removed.
     */
-   public DependencyRepository removeRepository(String url);
+   DependencyRepository removeRepository(String url);
 
    /**
     * Given a {@link Dependency} with a populated groupId, versionId, and version range, identify the available
     * {@link Coordinate} in all known repositories for this project. By default, SNAPSHOT versions are excluded.
-    * 
+    *
     * See {@link DependencyFacet#resolveAvailableVersions(String)}. For more comprehensive resolution features, see
     * {@link DependencyResolver}
     */
-   public List<Coordinate> resolveAvailableVersions(final Dependency dep);
+   List<Coordinate> resolveAvailableVersions(final Dependency dep);
 
    /**
     * Given a groupid:versionid:version-range, identify and resolve all matching {@link Coordinate} in all known
@@ -240,18 +240,18 @@ public interface DependencyFacet extends ProvidedProjectFacet
     * For more comprehensive resolution features, see {@link #resolveAvailableVersions(DependencyQuery)} or
     * {@link DependencyResolver}
     */
-   public List<Coordinate> resolveAvailableVersions(final String gavs);
+   List<Coordinate> resolveAvailableVersions(final String gavs);
 
    /**
     * Using the given {@link DependencyQuery}, identify and resolve all matching {@link Coordinate} results in
     * configured {@link DependencyRepository} instances for this {@link Project}. See also,
     * {@link #resolveAvailableVersions(String)} and {@link #resolveAvailableVersions(Dependency)}
     */
-   public List<Coordinate> resolveAvailableVersions(DependencyQuery query);
+   List<Coordinate> resolveAvailableVersions(DependencyQuery query);
 
    /**
     * Resolve properties in the given dependency, converting them to their actual values.
     */
-   public Dependency resolveProperties(Dependency dependency);
+   Dependency resolveProperties(Dependency dependency);
 
 }
