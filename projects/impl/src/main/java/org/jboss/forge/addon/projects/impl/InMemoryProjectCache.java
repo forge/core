@@ -7,7 +7,7 @@
 package org.jboss.forge.addon.projects.impl;
 
 import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Singleton;
 
@@ -18,13 +18,13 @@ import org.jboss.forge.furnace.util.Assert;
 
 /**
  * A simple in-memory {@link ProjectCache}.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Singleton
 public class InMemoryProjectCache implements ProjectCache
 {
-   private final Map<String, Project> projects = new WeakHashMap<>();
+   private final Map<String, Project> projects = new ConcurrentHashMap<>();
 
    @Override
    public Project get(Resource<?> root)

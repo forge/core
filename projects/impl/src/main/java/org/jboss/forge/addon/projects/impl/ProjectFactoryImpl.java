@@ -189,31 +189,40 @@ public class ProjectFactoryImpl implements ProjectFactory
    {
       Project result = null;
 
-      Iterator<ProjectCache> cacheIterator = caches.iterator();
-      while (cacheIterator.hasNext())
+      if (projectProvider.containsProject(target))
       {
-         ProjectCache cache = cacheIterator.next();
-         try
+         boolean cached = false;
+         Iterator<ProjectCache> cacheIterator = caches.iterator();
+         while (cacheIterator.hasNext())
          {
-            result = cache.get(target);
-            if (result != null && !filter.accept(result))
-               result = null;
-            if (result != null)
-               break;
+            ProjectCache cache = cacheIterator.next();
+            try
+            {
+               result = cache.get(target);
+               if (result != null && !filter.accept(result))
+               {
+                  result = null;
+               }
+               if (result != null)
+               {
+                  cached = true;
+                  break;
+               }
+            }
+            finally
+            {
+               caches.release(cache);
+            }
          }
-         finally
+         if (result == null)
          {
-            caches.release(cache);
+            result = projectProvider.createProject(target);
          }
-      }
-
-      if (result == null && projectProvider.containsProject(target))
-      {
-         result = projectProvider.createProject(target);
          if (result != null && !filter.accept(result))
+         {
             result = null;
-
-         if (result != null)
+         }
+         if (result != null && !cached)
          {
             registerAvailableFacets(result);
             cacheProject(result);
