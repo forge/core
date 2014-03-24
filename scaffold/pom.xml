@@ -24,37 +24,8 @@
       <dependencies>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>scaffold</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>scaffold-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>scaffold-impl</artifactId>
             <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>scaffold-spi</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>ui</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>projects</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.metawidget.modules</groupId>
