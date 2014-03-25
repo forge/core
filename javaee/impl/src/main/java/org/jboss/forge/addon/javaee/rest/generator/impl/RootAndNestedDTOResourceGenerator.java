@@ -35,6 +35,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.templates.TemplateProcessor;
 import org.jboss.forge.addon.templates.TemplateProcessorFactory;
@@ -267,6 +268,10 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
          }
       }
       catch (FileNotFoundException fileEx)
+      {
+         // Ignore, since the source file may not be available
+      }
+      catch (ResourceException resourceEx)
       {
          // Ignore, since the source file may not be available
       }
