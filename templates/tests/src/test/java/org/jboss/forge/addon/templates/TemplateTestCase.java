@@ -41,6 +41,7 @@ public class TemplateTestCase
                .addBeansXML()
                .addClass(JavaBean.class)
                .addAsResource(TemplateTestCase.class.getResource("template.ftl"), packagePath + "/template.ftl")
+               .addAsResource(TemplateTestCase.class.getResource("includes.ftl"), packagePath + "/includes.ftl")
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:templates"),
@@ -105,4 +106,17 @@ public class TemplateTestCase
       String actual = processor.process(dataModel);
       Assert.assertEquals(expected, actual);
    }
+
+   @Test
+   public void testIncludesTemplateProcessor() throws Exception
+   {
+      URL template = getClass().getResource("includes.ftl");
+      Assert.assertNotNull(template);
+      String expected = "Hello JBoss Forge! And Goodbye JBoss Forge!";
+      Resource<?> resource = resourceFactory.create(template);
+      TemplateProcessor processor = templateProcessorFactory.fromTemplate(new FreemarkerTemplate(resource));
+      String actual = processor.process(Collections.singletonMap("name", "JBoss Forge"));
+      Assert.assertEquals(expected, actual);
+   }
+
 }

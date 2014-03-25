@@ -17,7 +17,7 @@ import org.jboss.forge.furnace.util.Assert;
 
 /**
  * Represents a {@link URL} resource
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
@@ -93,6 +93,18 @@ public class URLResourceImpl extends VirtualResource<URL> implements URLResource
             }
          }
          catch (IOException e)
+         {
+            return false;
+         }
+      }
+      else
+      {
+         try
+         {
+            resource.openStream().close();
+            return true;
+         }
+         catch (IOException io)
          {
             return false;
          }
