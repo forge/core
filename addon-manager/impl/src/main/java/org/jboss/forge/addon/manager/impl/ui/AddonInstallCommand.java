@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.manager.impl.commands;
+package org.jboss.forge.addon.manager.impl.ui;
 
 import java.util.Set;
 import java.util.TreeSet;

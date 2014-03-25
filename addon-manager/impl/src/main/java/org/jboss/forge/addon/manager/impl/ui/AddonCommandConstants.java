@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.manager.impl.commands;
+package org.jboss.forge.addon.manager.impl.ui;
 
 public interface AddonCommandConstants
 {

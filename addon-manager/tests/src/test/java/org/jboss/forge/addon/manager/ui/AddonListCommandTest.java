@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.manager.commands;
+package org.jboss.forge.addon.manager.ui;
 
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -14,7 +14,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.manager.impl.commands.AddonCommandConstants;
+import org.jboss.forge.addon.manager.impl.ui.AddonCommandConstants;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
