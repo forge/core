@@ -13,7 +13,7 @@ import java.io.Writer;
 
 /**
  * Process a template
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public interface TemplateGenerator
@@ -25,11 +25,11 @@ public interface TemplateGenerator
 
    /**
     * Returns true if the given template can be handled by this {@link TemplateGenerator}
-    * 
+    *
     * @deprecated Deprecated after Forge 2.1.1. Use the {@link Template} accepting method instead.
     */
    @Deprecated
-   public boolean handles(Resource template);
+   public boolean handles(Resource<?> template);
 
    /**
     * Processes the template specified by the {@link Template} parameter and writes the output to the {@link Writer}
@@ -40,9 +40,9 @@ public interface TemplateGenerator
    /**
     * Processes the template specified by the {@link Resource} parameter and writes the output to the {@link Writer}
     * parameter
-    * 
+    *
     * @deprecated Deprecated after Forge 2.1.1. Use the {@link Template} accepting method instead.
     */
    @Deprecated
-   public void process(Object dataModel, Resource template, Writer writer) throws IOException;
+   public void process(Object dataModel, Resource<?> template, Writer writer) throws IOException;
 }

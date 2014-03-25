@@ -17,11 +17,13 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.templates.Template;
 import org.jboss.forge.addon.templates.TemplateGenerator;
 
+import freemarker.cache.TemplateCache;
+import freemarker.cache.TemplateLoader;
 import freemarker.template.TemplateException;
 
 /**
  * A Freemarker implementation of a {@link TemplateGenerator}
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @Singleton
@@ -53,7 +55,7 @@ public class FreemarkerTemplateGenerator implements TemplateGenerator
    }
 
    @Override
-   public void process(Object dataModel, Resource template, Writer writer) throws IOException
+   public void process(Object dataModel, Resource<?> template, Writer writer) throws IOException
    {
       String id = loader.register(template);
       try
@@ -79,7 +81,7 @@ public class FreemarkerTemplateGenerator implements TemplateGenerator
    }
 
    @Override
-   public boolean handles(Resource template)
+   public boolean handles(Resource<?> template)
    {
       return true;
    }

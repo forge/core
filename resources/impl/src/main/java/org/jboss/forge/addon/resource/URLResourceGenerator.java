@@ -7,32 +7,71 @@
 
 package org.jboss.forge.addon.resource;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
  * Generates {@link URLResource} objects
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
-public class URLResourceGenerator implements ResourceGenerator<URLResource, URL>
+public class URLResourceGenerator implements ResourceGenerator<URLResource, Object>
 {
    @Override
    public boolean handles(Class<?> type, Object resource)
    {
-      return (resource instanceof URL);
+      if (resource == null)
+      {
+         return false;
+      }
+      else if (resource instanceof URL)
+      {
+         return true;
+      }
+      else
+      {
+         try
+         {
+            new URL(resource.toString());
+            return true;
+         }
+         catch (MalformedURLException e)
+         {
+            return false;
+         }
+      }
    }
 
    @Override
    @SuppressWarnings("unchecked")
-   public <T extends Resource<URL>> T getResource(ResourceFactory factory, Class<URLResource> type, URL resource)
+   public <T extends Resource<Object>> T getResource(ResourceFactory factory, Class<URLResource> type, Object resource)
    {
-      return (T) new URLResourceImpl(factory, resource);
+      URL url;
+      if (resource instanceof URL)
+      {
+         url = (URL) resource;
+      }
+      else
+      {
+         try
+         {
+            url = new URL(resource.toString());
+         }
+         catch (MalformedURLException e)
+         {
+            // shouldn't happen
+            throw new IllegalArgumentException("Invalid URL found", e);
+         }
+      }
+
+      Resource<?> createdResource = new URLResourceImpl(factory, url);
+      return (T) createdResource;
    }
 
    @Override
-   public <T extends Resource<URL>> Class<?> getResourceType(ResourceFactory factory, Class<URLResource> type,
-            URL resource)
+   public <T extends Resource<Object>> Class<?> getResourceType(ResourceFactory factory, Class<URLResource> type,
+            Object resource)
    {
       return type;
    }

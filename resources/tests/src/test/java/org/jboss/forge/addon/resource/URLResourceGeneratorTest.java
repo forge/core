@@ -58,4 +58,14 @@ public class URLResourceGeneratorTest
       Assert.assertSame(url, resource.getUnderlyingResourceObject());
    }
 
+   @Test
+   public void testCreateURLResourceFromString() throws Exception
+   {
+      String url = "http://forge.jboss.org";
+      Resource<?> resource = factory.create(url);
+      Assert.assertNotNull(resource);
+      Assert.assertTrue(resource instanceof URLResource);
+      Assert.assertEquals(new URL(url), resource.getUnderlyingResourceObject());
+   }
+
 }
