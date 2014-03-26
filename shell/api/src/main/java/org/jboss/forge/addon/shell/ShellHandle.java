@@ -17,6 +17,7 @@ import javax.inject.Inject;
 
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
+import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 
 /**
  * Holds a shell instance (no need for proxies)
@@ -53,4 +54,11 @@ public class ShellHandle
             Logger.getLogger(getClass().getName()).log(Level.FINE, "Error while closing Shell", e);
          }
    }
+   
+   public void addCommandExecutionListener(CommandExecutionListener listener) {
+	   if (shell != null) {
+		   shell.addCommandExecutionListener(listener);
+	   }
+   }
+   
 }
