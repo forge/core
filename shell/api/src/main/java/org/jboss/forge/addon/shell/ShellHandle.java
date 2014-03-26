@@ -21,7 +21,7 @@ import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 
 /**
  * Holds a shell instance (no need for proxies)
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class ShellHandle
@@ -54,11 +54,13 @@ public class ShellHandle
             Logger.getLogger(getClass().getName()).log(Level.FINE, "Error while closing Shell", e);
          }
    }
-   
-   public void addCommandExecutionListener(CommandExecutionListener listener) {
-	   if (shell != null) {
-		   shell.addCommandExecutionListener(listener);
-	   }
+
+   public void addCommandExecutionListener(CommandExecutionListener listener)
+   {
+      if (shell != null)
+      {
+         shell.addCommandExecutionListener(listener);
+      }
    }
-   
+
 }
