@@ -36,11 +36,11 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescript
 public class ScaffoldableEntitySelectionWizard implements UIWizardStep
 {
    @Inject
-   @WithAttributes(label = "Page Template")
+   @WithAttributes(label = "Page Template", description = "The Facelets template file to be used in the generated facelets.")
    private UIInput<FileResource<?>> pageTemplate;
 
    @Inject
-   @WithAttributes(label = "Targets", required = true)
+   @WithAttributes(label = "Targets", required = true, description = "The JPA entities to use as the basis for generating the scaffold.")
    private UISelectMany<JavaClass> targets;
 
    @Inject
@@ -102,7 +102,7 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
             return source == null ? null : source.getQualifiedName();
          }
       });
-      builder.add(pageTemplate).add(targets);
+      builder.add(targets).add(pageTemplate);
    }
 
    @Override
