@@ -684,8 +684,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
       // FORGE-460: setupRichFaces during generateFromEntity, not during setup, as generally 'richfaces setup' is called
       // *after* 'scaffold setup'
-      // TODO: Decide on whether to support Richfaces via the Faces scaffold
-      // setupRichFaces();
+      setupRichFaces();
 
       // Track the list of resources generated
 
