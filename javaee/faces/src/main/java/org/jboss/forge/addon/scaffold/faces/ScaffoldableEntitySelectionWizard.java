@@ -1,6 +1,7 @@
 package org.jboss.forge.addon.scaffold.faces;
 
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -36,12 +37,16 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescript
 public class ScaffoldableEntitySelectionWizard implements UIWizardStep
 {
    @Inject
-   @WithAttributes(label = "Page Template", description = "The Facelets template file to be used in the generated facelets.")
+   @WithAttributes(label = "Facelet Template", description = "The Facelets template file to be used in the generated facelets.")
    private UIInput<FileResource<?>> pageTemplate;
 
    @Inject
    @WithAttributes(label = "Targets", required = true, description = "The JPA entities to use as the basis for generating the scaffold.")
    private UISelectMany<JavaClass> targets;
+
+   @Inject
+   @WithAttributes(label = "Use custom template when generating pages", required = false, description = "Enabling this will allow the generated scaffold to use the specified Facelet template.")
+   private UIInput<Boolean> useCustomTemplate;
 
    @Inject
    private ProjectFactory projectFactory;
@@ -56,19 +61,29 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
       {
          for (JavaClass klass : targets.getValue())
          {
-             Project project = getSelectedProject(uiContext);
-             JavaSourceFacet javaSource = project.getFacet(JavaSourceFacet.class);
-             Resource<?> resource = javaSource.getJavaResource(klass);
-             if (resource != null)
-             {
-                resourceCollection.addToCollection(resource);
-             }
+            Project project = getSelectedProject(uiContext);
+            JavaSourceFacet javaSource = project.getFacet(JavaSourceFacet.class);
+            Resource<?> resource = javaSource.getJavaResource(klass);
+            if (resource != null)
+            {
+               resourceCollection.addToCollection(resource);
+            }
          }
       }
 
       attributeMap.put(ResourceCollection.class, resourceCollection);
       ScaffoldGenerationContext genCtx = (ScaffoldGenerationContext) attributeMap.get(ScaffoldGenerationContext.class);
-      genCtx.addAttribute("pageTemplate", pageTemplate.getValue());
+      if (uiContext.getProvider().isGUI())
+      {
+         if (useCustomTemplate.getValue())
+         {
+            genCtx.addAttribute("pageTemplate", pageTemplate.getValue());
+         }
+      }
+      else
+      {
+         genCtx.addAttribute("pageTemplate", pageTemplate.getValue());
+      }
       return null;
    }
 
@@ -102,7 +117,25 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
             return source == null ? null : source.getQualifiedName();
          }
       });
-      builder.add(targets).add(pageTemplate);
+
+      builder.add(targets);
+      if (uiContext.getProvider().isGUI())
+      {
+         useCustomTemplate.setDefaultValue(false);
+         pageTemplate.setEnabled(new Callable<Boolean>()
+         {
+            @Override
+            public Boolean call() throws Exception
+            {
+               return useCustomTemplate.getValue();
+            }
+         });
+         builder.add(useCustomTemplate).add(pageTemplate);
+      }
+      else
+      {
+         builder.add(pageTemplate);
+      }
    }
 
    @Override
@@ -113,6 +146,23 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
 
    @Override
    public void validate(UIValidationContext context)
+   {
+      UIContext uiContext = context.getUIContext();
+      if (uiContext.getProvider().isGUI())
+      {
+         boolean useTemplate = useCustomTemplate.getValue();
+         if (useTemplate)
+         {
+            validateTemplate(context);
+         }
+      }
+      else
+      {
+         validateTemplate(context);
+      }
+   }
+
+   private void validateTemplate(UIValidationContext context)
    {
       Resource<?> template = pageTemplate.getValue();
       if (template != null)
@@ -139,8 +189,7 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
          else
          {
             context.addValidationError(pageTemplate, "The template [" + template.getName()
-                     + "] does not exist. You must select a template that exists, or use "
-                     + "the default template (do not specify a template.)");
+                     + "] does not exist. You must select a template that exists.");
          }
       }
    }
