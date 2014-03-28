@@ -42,9 +42,9 @@ import org.jboss.forge.addon.ui.wizard.WizardExecutionListener;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
- * 
+ *
  * Implementation for the {@link WizardCommandController} interface
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 class WizardCommandControllerImpl extends AbstractCommandController implements WizardCommandController
@@ -386,21 +386,30 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    }
 
    /**
-    * 
+    * Remove stale pages in case of navigational changes
     */
    private void cleanSubsequentStalePages()
    {
-      // Remove subsequent pages and push the subflows back to the stack
-      Iterator<WizardStepEntry> it = flow.listIterator(flowPointer + 1);
-      int subflowIdx = 0;
-      while (it.hasNext())
+      // FIXME: Workaround until FORGE-1704 is fixed
+      if (flowPointer == 0)
       {
-         WizardStepEntry entry = it.next();
-         if (entry.subflowHead && !subflow.contains(entry))
+         flow.subList(1, flow.size()).clear();
+         subflow.clear();
+      }
+      else
+      {
+         // Remove subsequent pages and push the subflows back to the stack
+         Iterator<WizardStepEntry> it = flow.listIterator(flowPointer + 1);
+         int subflowIdx = 0;
+         while (it.hasNext())
          {
-            subflow.add(subflowIdx++, entry);
+            WizardStepEntry entry = it.next();
+            if (entry.subflowHead && !subflow.contains(entry))
+            {
+               subflow.add(subflowIdx++, entry);
+            }
+            it.remove();
          }
-         it.remove();
       }
    }
 
