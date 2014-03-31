@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -74,7 +74,7 @@ public class AddConstraintWizardTest
       projectHelper.installValidation(project);
       JavaResource jpaEntity = projectHelper.createJPAEntity(project, "Customer");
 
-      WizardCommandController wizard = testHarness.createWizardController(AddConstraintWizard.class, project.getRootDirectory());
+      WizardCommandController wizard = testHarness.createWizardController(AddConstraintWizard.class, project.getRoot());
       wizard.initialize();
       // Page 1
       {
@@ -101,6 +101,44 @@ public class AddConstraintWizardTest
       Annotation<JavaClass> pattern = field.getAnnotation(Pattern.class);
       Assert.assertNotNull(pattern);
       Assert.assertEquals("[0-9]", pattern.getStringValue("regexp"));
+
+   }
+
+   @Test
+   public void testRegularExpressionField() throws Exception
+   {
+      Project project = projectHelper.createWebProject();
+      projectHelper.installJPA_2_0(project);
+      projectHelper.installValidation(project);
+      JavaResource jpaEntity = projectHelper.createJPAEntity(project, "Customer");
+
+      WizardCommandController wizard = testHarness.createWizardController(AddConstraintWizard.class, project.getRoot());
+      wizard.initialize();
+      // Page 1
+      {
+         wizard.setValueFor("javaClass", jpaEntity);
+         Assert.assertTrue(wizard.canMoveToNextStep());
+      }
+      wizard.next().initialize();
+      // Page 2
+      {
+         wizard.setValueFor("onProperty", "id");
+         wizard.setValueFor("constraint", CoreConstraints.PATTERN);
+         Assert.assertTrue(wizard.canMoveToNextStep());
+      }
+      wizard.next().initialize();
+      // Page 3
+      {
+         Assert.assertFalse(wizard.isValid());
+         wizard.setValueFor("regexp", "^\\d{9}[\\d|X]$");
+         Assert.assertTrue(wizard.isValid());
+      }
+      wizard.execute();
+      JavaClass javaClass = (JavaClass) jpaEntity.getJavaSource();
+      Field<JavaClass> field = javaClass.getField("id");
+      Annotation<JavaClass> pattern = field.getAnnotation(Pattern.class);
+      Assert.assertNotNull(pattern);
+      Assert.assertEquals("^\\d{9}[\\d|X]$", pattern.getStringValue("regexp"));
 
    }
 }

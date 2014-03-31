@@ -7,7 +7,6 @@
 package org.jboss.forge.addon.javaee.validation.ui;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -16,8 +15,6 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.javaee.validation.ConstraintOperations;
-import org.jboss.forge.addon.parser.java.beans.JavaClassIntrospector;
-import org.jboss.forge.addon.parser.java.beans.Property;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -32,13 +29,15 @@ import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.Property;
+import org.jboss.forge.roaster.model.source.PropertySource;
 
 public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWizardStep
 {
    @Inject
    @WithAttributes(label = "On Property", description = "The property on which the constraint applies", required = true, type = InputType.DROPDOWN)
-   private UISelectOne<Property> onProperty;
+   private UISelectOne<PropertySource<?>> onProperty;
 
    @Inject
    @WithAttributes(label = "Constraint", description = "The type of constraint to add", required = true, type = InputType.DROPDOWN)
@@ -60,21 +59,20 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
       builder.add(onProperty).add(constraint).add(onAccessor);
    }
 
+   @SuppressWarnings("unchecked")
    private void setupProperty(UIContext context) throws Exception
    {
       JavaResource selectedResource = (JavaResource) context.getAttributeMap().get(JavaResource.class);
-      JavaClass javaClass = (JavaClass) selectedResource.getJavaSource();
-      JavaClassIntrospector introspector = new JavaClassIntrospector(javaClass);
-      onProperty.setItemLabelConverter(new Converter<Property, String>()
+      JavaClass<?> javaClass = selectedResource.getJavaType();
+      onProperty.setItemLabelConverter(new Converter<PropertySource<?>, String>()
       {
          @Override
-         public String convert(Property source)
+         public String convert(PropertySource<?> source)
          {
             return (source == null) ? null : source.getName();
          }
       });
-      List<Property> properties = introspector.getProperties();
-      onProperty.setValueChoices(properties);
+      onProperty.setValueChoices((Iterable<PropertySource<?>>) javaClass.getProperties());
    }
 
    private void setupConstraint()
@@ -97,8 +95,8 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
          @Override
          public Boolean call() throws Exception
          {
-            Property value = onProperty.getValue();
-            return value == null ? Boolean.FALSE : value.isReadable();
+            Property<?> value = onProperty.getValue();
+            return value == null ? Boolean.FALSE : value.isAccessible();
          }
       });
    }
@@ -125,7 +123,7 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
       ConstraintType constraintType = constraint.getValue();
       UIContext uiContext = context.getUIContext();
       Map<Object, Object> attributeMap = uiContext.getAttributeMap();
-      attributeMap.put(Property.class, onProperty.getValue());
+      attributeMap.put(PropertySource.class, onProperty.getValue());
       attributeMap.put(ConstraintType.class, constraintType);
       attributeMap.put("onAccessor", onAccessor.getValue());
       if (constraintType == CoreConstraints.VALID)

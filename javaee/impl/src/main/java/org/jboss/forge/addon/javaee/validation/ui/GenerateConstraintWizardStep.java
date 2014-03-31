@@ -14,7 +14,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
-import org.jboss.forge.addon.parser.java.beans.Property;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -31,10 +30,12 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.forge.parser.java.AnnotationTarget;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.util.Assert;
-import org.jboss.forge.parser.java.util.Strings;
+import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.roaster.model.source.AnnotationSource;
+import org.jboss.forge.roaster.model.source.AnnotationTargetSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.PropertySource;
+import org.jboss.forge.roaster.model.util.Strings;
 
 @SuppressWarnings("unchecked")
 public class GenerateConstraintWizardStep extends AbstractJavaEECommand implements UIWizardStep
@@ -139,7 +140,7 @@ public class GenerateConstraintWizardStep extends AbstractJavaEECommand implemen
 
    /**
     * Converts an array to a {@link List}
-    * 
+    *
     * @param valueType
     * @param arrayObject
     * @return
@@ -179,20 +180,21 @@ public class GenerateConstraintWizardStep extends AbstractJavaEECommand implemen
    {
       UIContext uiContext = context.getUIContext();
       Map<Object, Object> attributeMap = uiContext.getAttributeMap();
-      Property property = (Property) attributeMap.get(Property.class);
+      PropertySource<JavaClassSource> property = (PropertySource<JavaClassSource>) attributeMap
+               .get(PropertySource.class);
       ConstraintType constraintType = (ConstraintType) attributeMap.get(ConstraintType.class);
       Boolean onAccessor = (Boolean) attributeMap.get("onAccessor");
-      final AnnotationTarget<JavaClass, ?> annotationTarget;
+      final AnnotationTargetSource<JavaClassSource, ?> annotationTarget;
       if (onAccessor)
       {
          annotationTarget = property.getAccessor();
       }
       else
       {
-         annotationTarget = property.getActualField();
+         annotationTarget = property.getField();
       }
       Class<? extends Annotation> constraintAnnotation = constraintType.getConstraint();
-      org.jboss.forge.parser.java.Annotation<JavaClass> annotation = annotationTarget
+      AnnotationSource<JavaClassSource> annotation = annotationTarget
                .addAnnotation(constraintAnnotation);
       populateAnnotation(constraintAnnotation, annotation);
       getSelectedProject(context).getFacet(JavaSourceFacet.class).saveJavaSource(annotation.getOrigin());
@@ -203,7 +205,7 @@ public class GenerateConstraintWizardStep extends AbstractJavaEECommand implemen
     * @param annotation
     */
    private void populateAnnotation(Class<? extends Annotation> constraint,
-            org.jboss.forge.parser.java.Annotation<JavaClass> annotation)
+            AnnotationSource<JavaClassSource> annotation)
    {
       for (Method m : constraint.getDeclaredMethods())
       {
@@ -272,7 +274,7 @@ public class GenerateConstraintWizardStep extends AbstractJavaEECommand implemen
 
    }
 
-   private void setArrayValue(org.jboss.forge.parser.java.Annotation<JavaClass> annotation, String name,
+   private void setArrayValue(AnnotationSource<JavaClassSource> annotation, String name,
             Class<?> type,
             Iterable<Object> values, boolean isClass)
    {
