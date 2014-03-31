@@ -22,7 +22,7 @@
 
    <properties>
       <version.java-parser>1.1.7.Final</version.java-parser>
-      <version.roaster>2.0.0.Final</version.roaster>
+      <version.roaster>2.0.1-SNAPSHOT</version.roaster>
    </properties>
 
    <dependencyManagement>
