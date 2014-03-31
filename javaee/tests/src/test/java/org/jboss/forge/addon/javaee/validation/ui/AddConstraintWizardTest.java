@@ -26,6 +26,7 @@ import org.jboss.forge.parser.java.Field;
 import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -104,6 +105,7 @@ public class AddConstraintWizardTest
 
    }
 
+   @Ignore("FORGE-1706")
    @Test
    public void testRegularExpressionField() throws Exception
    {
