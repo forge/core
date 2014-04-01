@@ -16,17 +16,17 @@ import javax.persistence.OneToOne;
 import org.jboss.forge.addon.javaee.rest.generation.RestGenerationContext;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.parser.java.Annotation;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Member;
-import org.jboss.forge.parser.java.Method;
-import org.jboss.forge.parser.java.util.Strings;
+import org.jboss.forge.roaster.model.Annotation;
+import org.jboss.forge.roaster.model.Field;
+import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.Member;
+import org.jboss.forge.roaster.model.Method;
+import org.jboss.forge.roaster.model.util.Strings;
 
 /**
  * A utlity class that provides information about the project or the JPA entity. This is to be used in the JAX-RS
  * Resource generators.
- * 
+ *
  */
 public class ResourceGeneratorUtil
 {
@@ -64,30 +64,30 @@ public class ResourceGeneratorUtil
       return proposedResourcePath;
    }
 
-   public static String resolveIdType(JavaClass entity)
+   public static String resolveIdType(JavaClass<?> entity)
    {
-      for (Member<JavaClass, ?> member : entity.getMembers())
+      for (Member<?> member : entity.getMembers())
       {
          if (member.hasAnnotation(Id.class))
          {
             if (member instanceof Method)
             {
-               return ((Method<?>) member).getReturnType();
+               return ((Method<?, ?>) member).getReturnType().getName();
             }
             if (member instanceof Field)
             {
-               return ((Field<?>) member).getType();
+               return ((Field<?>) member).getType().getName();
             }
          }
       }
       return "Object";
    }
 
-   public static String resolveIdGetterName(JavaClass entity)
+   public static String resolveIdGetterName(JavaClass<?> entity)
    {
       String result = null;
 
-      for (Member<JavaClass, ?> member : entity.getMembers())
+      for (Member<?> member : entity.getMembers())
       {
          if (member.hasAnnotation(Id.class))
          {
@@ -95,7 +95,7 @@ public class ResourceGeneratorUtil
             String type = null;
             if (member instanceof Method)
             {
-               type = ((Method<?>) member).getReturnType();
+               type = ((Method<?, ?>) member).getReturnType().getName();
                if (name.startsWith("get"))
                {
                   name = name.substring(2);
@@ -103,12 +103,12 @@ public class ResourceGeneratorUtil
             }
             else if (member instanceof Field)
             {
-               type = ((Field<?>) member).getType();
+               type = ((Field<?>) member).getType().getName();
             }
 
             if (type != null)
             {
-               for (Method<JavaClass> method : entity.getMethods())
+               for (Method<?, ?> method : entity.getMethods())
                {
                   // It's a getter
                   if (method.getParameters().size() == 0 && type.equals(method.getReturnType()))
@@ -150,12 +150,12 @@ public class ResourceGeneratorUtil
       return result;
    }
 
-   public static String getEntityTable(final JavaClass entity)
+   public static String getEntityTable(final JavaClass<?> entity)
    {
       String table = entity.getName();
       if (entity.hasAnnotation(Entity.class))
       {
-         Annotation<JavaClass> a = entity.getAnnotation(Entity.class);
+         Annotation<?> a = entity.getAnnotation(Entity.class);
          if (!Strings.isNullOrEmpty(a.getStringValue("name")))
          {
             table = a.getStringValue("name");
@@ -168,7 +168,7 @@ public class ResourceGeneratorUtil
       return table;
    }
 
-   public static String getSelectExpression(JavaClass entity, String entityTable)
+   public static String getSelectExpression(JavaClass<?> entity, String entityTable)
    {
       char entityVariable = getJpqlEntityVariable(entityTable);
       StringBuilder expressionBuilder = new StringBuilder();
@@ -179,7 +179,7 @@ public class ResourceGeneratorUtil
       expressionBuilder.append(" ");
       expressionBuilder.append(entityVariable);
 
-      for (Member<JavaClass, ?> member : entity.getMembers())
+      for (Member<?> member : entity.getMembers())
       {
          if (member.hasAnnotation(OneToOne.class) || member.hasAnnotation(OneToMany.class)
                   || member.hasAnnotation(ManyToMany.class) || member.hasAnnotation(ManyToOne.class))
@@ -216,9 +216,9 @@ public class ResourceGeneratorUtil
       return expressionBuilder.toString();
    }
 
-   public static String getIdClause(JavaClass entity, String entityTable)
+   public static String getIdClause(JavaClass<?> entity, String entityTable)
    {
-      for (Member<JavaClass, ?> member : entity.getMembers())
+      for (Member<?> member : entity.getMembers())
       {
          if (member.hasAnnotation(Id.class))
          {
@@ -240,12 +240,12 @@ public class ResourceGeneratorUtil
       return null;
    }
 
-   public static String getOrderClause(JavaClass entity, char entityVariable)
+   public static String getOrderClause(JavaClass<?> entity, char entityVariable)
    {
       StringBuilder expressionBuilder = new StringBuilder();
 
       // Add the ORDER BY clause
-      for (Member<JavaClass, ?> member : entity.getMembers())
+      for (Member<?> member : entity.getMembers())
       {
          if (member.hasAnnotation(Id.class))
          {

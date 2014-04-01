@@ -47,13 +47,13 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
 /**
  * Generates REST endpoints from JPA Entities
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class RestEndpointFromEntityCommand extends AbstractJavaEECommand implements PrerequisiteCommandsProvider
@@ -64,7 +64,7 @@ public class RestEndpointFromEntityCommand extends AbstractJavaEECommand impleme
 
    @Inject
    @WithAttributes(label = "Targets", required = true)
-   private UISelectMany<JavaClass> targets;
+   private UISelectMany<JavaClassSource> targets;
 
    @Inject
    @WithAttributes(label = "Generator", required = true)
@@ -105,10 +105,10 @@ public class RestEndpointFromEntityCommand extends AbstractJavaEECommand impleme
       JPAFacet<PersistenceCommonDescriptor> persistenceFacet = project.getFacet(JPAFacet.class);
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
       targets.setValueChoices(persistenceFacet.getAllEntities());
-      targets.setItemLabelConverter(new Converter<JavaClass, String>()
+      targets.setItemLabelConverter(new Converter<JavaClassSource, String>()
       {
          @Override
-         public String convert(JavaClass source)
+         public String convert(JavaClassSource source)
          {
             return source == null ? null : source.getQualifiedName();
          }
@@ -164,12 +164,12 @@ public class RestEndpointFromEntityCommand extends AbstractJavaEECommand impleme
    {
       UIContext uiContext = context.getUIContext();
       RestGenerationContextImpl generationContext = createContextFor(uiContext);
-      Set<JavaClass> endpoints = generateEndpoints(generationContext);
+      Set<JavaClassSource> endpoints = generateEndpoints(generationContext);
       Project project = generationContext.getProject();
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
       List<JavaResource> selection = new ArrayList<>();
 
-      for (JavaClass javaClass : endpoints)
+      for (JavaClassSource javaClass : endpoints)
       {
          selection.add(javaSourceFacet.saveJavaSource(javaClass));
       }
@@ -177,14 +177,14 @@ public class RestEndpointFromEntityCommand extends AbstractJavaEECommand impleme
       return Results.success("Endpoint created");
    }
 
-   private Set<JavaClass> generateEndpoints(RestGenerationContextImpl generationContext) throws Exception
+   private Set<JavaClassSource> generateEndpoints(RestGenerationContextImpl generationContext) throws Exception
    {
       RestResourceGenerator selectedGenerator = generator.getValue();
-      Set<JavaClass> classes = new HashSet<>();
-      for (JavaClass target : targets.getValue())
+      Set<JavaClassSource> classes = new HashSet<>();
+      for (JavaClassSource target : targets.getValue())
       {
          generationContext.setEntity(target);
-         List<JavaClass> artifacts = selectedGenerator.generateFrom(generationContext);
+         List<JavaClassSource> artifacts = selectedGenerator.generateFrom(generationContext);
          classes.addAll(artifacts);
       }
       return classes;

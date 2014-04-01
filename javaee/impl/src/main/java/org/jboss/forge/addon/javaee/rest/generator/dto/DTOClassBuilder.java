@@ -16,40 +16,41 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jboss.forge.addon.parser.java.beans.Property;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.templates.TemplateProcessor;
 import org.jboss.forge.addon.templates.TemplateProcessorFactory;
 import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Method;
-import org.jboss.forge.parser.java.Type;
-import org.jboss.forge.parser.java.util.Refactory;
-import org.jboss.forge.parser.java.util.Strings;
-import org.jboss.forge.parser.java.util.Types;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.Property;
+import org.jboss.forge.roaster.model.Type;
+import org.jboss.forge.roaster.model.source.FieldSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
+import org.jboss.forge.roaster.model.util.Refactory;
+import org.jboss.forge.roaster.model.util.Strings;
+import org.jboss.forge.roaster.model.util.Types;
 
 /**
  * A helper class to aid in creation of DTOs.
  */
 public class DTOClassBuilder
 {
-   private JavaClass dto;
+   private JavaClassSource dto;
    private final boolean topLevel;
    private String dtoClassName;
    private boolean isEmbeddedType;
-   private final JavaClass entity;
+   private final JavaClass<?> entity;
    private final StringBuilder copyCtorBuilder;
    private final StringBuilder assembleJPABuilder;
-   private Method<JavaClass> assembleJPA;
-   private Method<JavaClass> copyCtor;
-   private final Property idProperty;
+   private MethodSource<JavaClassSource> assembleJPA;
+   private MethodSource<JavaClassSource> copyCtor;
+   private final Property<?> idProperty;
    private final TemplateProcessor initializeJPAEntityFromId;
    private final TemplateProcessor assembleCollection;
    private final TemplateProcessor initializeNestedDTOCollection;
 
-   public DTOClassBuilder(JavaClass entity, Property idProperty, boolean topLevel,
+   public DTOClassBuilder(JavaClass<?> entity, Property<?> idProperty, boolean topLevel,
             TemplateProcessorFactory processorFactory, ResourceFactory resourceFactory)
    {
       this.entity = entity;
@@ -82,8 +83,8 @@ public class DTOClassBuilder
       return this;
    }
 
-   public DTOClassBuilder updateForCollectionProperty(Property property, JavaClass nestedDTOClass,
-            Type<?> parameterizedType, Property nestedDTOId)
+   public DTOClassBuilder updateForCollectionProperty(Property<?> property, JavaClassSource nestedDTOClass,
+            Type<?> parameterizedType, Property<?> nestedDTOId)
    {
       // Create a collection field referencing the DTO
       addCollectionProperty(property, nestedDTOClass);
@@ -94,35 +95,35 @@ public class DTOClassBuilder
       return this;
    }
 
-   public DTOClassBuilder updateForReferencedProperty(Property property, JavaClass nestedDTOClass)
+   public DTOClassBuilder updateForReferencedProperty(Property<?> property, JavaClassSource nestedDTOClass)
    {
       // Create a field referencing the DTO
       addProperty(property, nestedDTOClass);
 
       // Add an expression in the ctor to extract the field
       addInitializerFromDTO(property, nestedDTOClass);
-      if (property.isWritable())
+      if (property.isMutable())
       {
          addAssemblerForReference(property);
       }
       return this;
    }
 
-   public DTOClassBuilder updateForSimpleProperty(Property property, Type<?> type)
+   public DTOClassBuilder updateForSimpleProperty(Property<?> property, Type<?> type)
    {
       // Create a field referencing the type
       addProperty(property, property.getType());
 
       // Add an expression in the ctor to extract the field
       addInitializerFromProperty(property);
-      if (!property.equals(idProperty) && property.isWritable())
+      if (!property.equals(idProperty) && property.isMutable())
       {
          addPropertyAssembler(property);
       }
       return this;
    }
 
-   public JavaClass createDTO()
+   public JavaClassSource createDTO()
    {
       if (topLevel && !isEmbeddedType)
       {
@@ -144,7 +145,7 @@ public class DTOClassBuilder
 
    private void initClassStructure()
    {
-      dto = JavaParser.create(JavaClass.class)
+      dto = Roaster.create(JavaClassSource.class)
                .setName(dtoClassName)
                .setPublic()
                .addInterface(Serializable.class);
@@ -218,17 +219,17 @@ public class DTOClassBuilder
 
    private void createDefaultConstructor()
    {
-      Method<JavaClass> ctor = dto.addMethod();
+      MethodSource<JavaClassSource> ctor = dto.addMethod();
       ctor.setConstructor(true);
       ctor.setPublic();
       ctor.setBody("");
    }
 
-   private void addCollectionProperty(Property field, JavaClass nestedDTOClass)
+   private void addCollectionProperty(Property<?> field, JavaClassSource nestedDTOClass)
    {
       String concreteCollectionType = null;
       String qualifiedConcreteCollectionType = null;
-      String jpaCollectionType = field.getSimpleType();
+      String jpaCollectionType = field.getType().getName();
       String nestedDTOType = nestedDTOClass.getName();
       String qualifiedDTOType = nestedDTOClass.getQualifiedName();
       if (jpaCollectionType.equals("Set"))
@@ -247,9 +248,9 @@ public class DTOClassBuilder
          qualifiedConcreteCollectionType = "java.util.HashMap";
       }
 
-      Field<JavaClass> dtoField = dto.addField("private " + jpaCollectionType + "<" + nestedDTOType + "> "
+      FieldSource<JavaClassSource> dtoField = dto.addField("private " + jpaCollectionType + "<" + nestedDTOType + "> "
                + field.getName() + "= new " + concreteCollectionType + "<" + nestedDTOType + ">();");
-      dto.addImport(field.getQualifiedType());
+      dto.addImport(field.getType().getQualifiedName());
       dto.addImport(qualifiedConcreteCollectionType);
       if (!Types.isJavaLang(qualifiedDTOType))
       {
@@ -258,12 +259,12 @@ public class DTOClassBuilder
       Refactory.createGetterAndSetter(dto, dtoField);
    }
 
-   private void addProperty(Property field, Type<?> dtoFieldType)
+   private void addProperty(Property<?> field, Type<?> dtoFieldType)
    {
       String simpleName = dtoFieldType.getName();
       String qualifiedName = dtoFieldType.getQualifiedName();
-      Field<JavaClass> dtoField = dto.addField("private " + simpleName + " " + field.getName() + ";");
-      if (!(field.isPrimitive() || Types.isJavaLang(qualifiedName) || Types.isArray(qualifiedName)))
+      FieldSource<JavaClassSource> dtoField = dto.addField("private " + simpleName + " " + field.getName() + ";");
+      if (!(field.getType().isPrimitive() || Types.isJavaLang(qualifiedName) || Types.isArray(qualifiedName)))
       {
          dto.addImport(qualifiedName);
       }
@@ -278,12 +279,12 @@ public class DTOClassBuilder
       Refactory.createGetterAndSetter(dto, dtoField);
    }
 
-   private void addProperty(Property property, JavaClass dtoFieldType)
+   private void addProperty(Property<?> property, JavaClassSource dtoFieldType)
    {
       String simpleName = dtoFieldType.getName();
       String qualifiedName = dtoFieldType.getQualifiedName();
-      Field<JavaClass> dtoField = dto.addField("private " + simpleName + " " + property.getName() + ";");
-      if (!(property.isPrimitive() || Types.isJavaLang(qualifiedName) || Types.isArray(qualifiedName)))
+      FieldSource<JavaClassSource> dtoField = dto.addField("private " + simpleName + " " + property.getName() + ";");
+      if (!(property.getType().isPrimitive() || Types.isJavaLang(qualifiedName) || Types.isArray(qualifiedName)))
       {
          dto.addImport(qualifiedName);
       }
@@ -298,8 +299,8 @@ public class DTOClassBuilder
       Refactory.createGetterAndSetter(dto, dtoField);
    }
 
-   private void addCollectionAssembler(Property property, Type<?> parameterizedType,
-            JavaClass nestedDTOClass, Property nestedDtoId)
+   private void addCollectionAssembler(Property<?> property, Type<?> parameterizedType,
+            JavaClassSource nestedDTOClass, Property<?> nestedDtoId)
    {
       String fieldName = property.getName();
       String simpleParameterizedType = parameterizedType.getName();
@@ -328,7 +329,7 @@ public class DTOClassBuilder
       assembleJPABuilder.append(output);
    }
 
-   private void addAssemblerForReference(Property property)
+   private void addAssemblerForReference(Property<?> property)
    {
       String fieldName = property.getName();
       String fieldSetter = property.getMutator().getName();
@@ -339,14 +340,14 @@ public class DTOClassBuilder
       assembleJPABuilder.append("}");
    }
 
-   private void addPropertyAssembler(Property property)
+   private void addPropertyAssembler(Property<?> property)
    {
       String fieldName = property.getName();
       String fieldSetter = property.getMutator().getName();
       assembleJPABuilder.append("entity." + fieldSetter + "(this." + fieldName + ");");
    }
 
-   private void addInitializerFromCollection(Property property, JavaClass nestedDTOClass,
+   private void addInitializerFromCollection(Property<?> property, JavaClassSource nestedDTOClass,
             Type<?> parameterizedType)
    {
       dto.addImport(parameterizedType.getQualifiedName());
@@ -369,7 +370,7 @@ public class DTOClassBuilder
       copyCtorBuilder.append(output);
    }
 
-   private void addInitializerFromDTO(Property property, JavaClass dtoClass)
+   private void addInitializerFromDTO(Property<?> property, JavaClassSource dtoClass)
    {
       String fieldName = property.getName();
       String fieldGetter = property.getAccessor().getName();
@@ -377,7 +378,7 @@ public class DTOClassBuilder
       copyCtorBuilder.append("this." + fieldName + " = " + "new " + dtoType + "(entity." + fieldGetter + "());");
    }
 
-   private void addInitializerFromProperty(Property property)
+   private void addInitializerFromProperty(Property<?> property)
    {
       String fieldName = property.getName();
       String fieldGetter = property.getAccessor().getName();

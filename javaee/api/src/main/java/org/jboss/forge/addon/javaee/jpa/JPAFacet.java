@@ -14,12 +14,12 @@ import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 
 /**
  * If installed, this {@link Project} supports features from the JPA specification.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @SuppressWarnings("rawtypes")
@@ -38,8 +38,8 @@ public interface JPAFacet<DESCRIPTOR extends PersistenceCommonDescriptor> extend
 
    /**
     * Get a list of all @Entity classes in the default entity package.
-    * 
+    *
     * @see {@link #getEntityPackage()}, {@link #getEntityPackageDir()}
     */
-   List<JavaClass> getAllEntities();
+   List<JavaClassSource> getAllEntities();
 }

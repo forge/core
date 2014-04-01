@@ -9,24 +9,24 @@ package org.jboss.forge.addon.javaee.rest.generation;
 
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.text.Inflector;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * Parameters for REST resource generation
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public interface RestGenerationContext
 {
    public Project getProject();
 
-   public JavaClass getEntity();
+   public JavaClassSource getEntity();
 
    public String getTargetPackageName();
 
    public String getContentType();
 
    public String getPersistenceUnitName();
-   
+
    public Inflector getInflector();
 }

@@ -21,7 +21,10 @@ import org.jboss.forge.parser.java.Parameter;
 /**
  * Provides a Bean specific 'view' of a JPA entity. Used for obtaining access to JavaBean-like properties for further
  * inspection.
+ *
+ * @deprecated use {@link org.jboss.forge.roaster.model.Property} from Roaster
  */
+@Deprecated
 public class JavaClassIntrospector
 {
 
@@ -44,7 +47,7 @@ public class JavaClassIntrospector
 
    /**
     * Retrieves a list of property instances that correspond to JavaBean-like properties found in the Java class
-    * 
+    *
     * @return a {@link List} of {@link Property} instances found in the Java class.
     */
    public List<Property> getProperties()

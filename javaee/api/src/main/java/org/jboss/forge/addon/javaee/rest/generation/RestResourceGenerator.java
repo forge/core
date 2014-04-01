@@ -9,11 +9,11 @@ package org.jboss.forge.addon.javaee.rest.generation;
 
 import java.util.List;
 
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * Generates a REST resource based on a JPA entity
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public interface RestResourceGenerator
@@ -31,6 +31,6 @@ public interface RestResourceGenerator
    /**
     * Generate a REST endpoint based on a context
     */
-   List<JavaClass> generateFrom(RestGenerationContext context) throws Exception;
+   List<JavaClassSource> generateFrom(RestGenerationContext context) throws Exception;
 
 }

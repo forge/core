@@ -29,8 +29,6 @@ import org.jboss.forge.addon.javaee.rest.generation.RestResourceGenerator;
 import org.jboss.forge.addon.javaee.rest.generator.ResourceGeneratorUtil;
 import org.jboss.forge.addon.javaee.rest.generator.dto.DTOClassBuilder;
 import org.jboss.forge.addon.javaee.rest.generator.dto.DTOCollection;
-import org.jboss.forge.addon.parser.java.beans.JavaClassIntrospector;
-import org.jboss.forge.addon.parser.java.beans.Property;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -40,15 +38,19 @@ import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.templates.TemplateProcessor;
 import org.jboss.forge.addon.templates.TemplateProcessorFactory;
 import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.parser.java.Type;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.Field;
+import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.Member;
+import org.jboss.forge.roaster.model.Method;
+import org.jboss.forge.roaster.model.Property;
+import org.jboss.forge.roaster.model.Type;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * A JAX-RS resource generator that creates root and nested DTOs for JPA entities, and references these DTOs in the
  * created REST resources.
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
@@ -60,10 +62,10 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
    ResourceFactory resourceFactory;
 
    @Override
-   public List<JavaClass> generateFrom(RestGenerationContext context) throws Exception
+   public List<JavaClassSource> generateFrom(RestGenerationContext context) throws Exception
    {
-      List<JavaClass> result = new ArrayList<>();
-      JavaClass entity = context.getEntity();
+      List<JavaClassSource> result = new ArrayList<>();
+      JavaClassSource entity = context.getEntity();
 
       Project project = context.getProject();
       String contentType = context.getContentType();
@@ -78,7 +80,7 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
       String resourcePath = ResourceGeneratorUtil.getResourcePath(context);
 
       DTOCollection createdDtos = from(project, entity, context.getTargetPackageName() + ".dto");
-      JavaClass rootDto = createdDtos.getDTOFor(entity, true);
+      JavaClassSource rootDto = createdDtos.getDTOFor(entity, true);
 
       Map<Object, Object> map = new HashMap<>();
       map.put("entity", entity);
@@ -96,7 +98,7 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
       Resource<URL> templateResource = resourceFactory.create(getClass().getResource("EndpointWithDTO.jv"));
       TemplateProcessor processor = processorFactory.fromTemplate(new FreemarkerTemplate(templateResource));
       String output = processor.process(map);
-      JavaClass resource = JavaParser.parse(JavaClass.class, output);
+      JavaClassSource resource = Roaster.parse(JavaClassSource.class, output);
       resource.addImport(rootDto.getQualifiedName());
       resource.addImport(entity.getQualifiedName());
       resource.setPackage(context.getTargetPackageName());
@@ -108,12 +110,12 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
 
    /**
     * Creates a collection of DTOs for the provided JPA entity, and any JPA entities referenced in the JPA entity.
-    * 
+    *
     * @param entity The JPA entity for which DTOs are to be generated
     * @param dtoPackage The Java package in which the DTOs are to be created
     * @return The {@link DTOCollection} containing the DTOs created for the JPA entity.
     */
-   public DTOCollection from(Project project, JavaClass entity, String dtoPackage)
+   public DTOCollection from(Project project, JavaClass<?> entity, String dtoPackage)
    {
       DTOCollection dtoCollection = new DTOCollection();
       if (entity == null)
@@ -124,7 +126,8 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
       return dtoCollection;
    }
 
-   private JavaClass generatedDTOGraphForEntity(Project project, JavaClass entity, String dtoPackage, boolean topLevel,
+   private JavaClassSource generatedDTOGraphForEntity(Project project, JavaClass<?> entity, String dtoPackage,
+            boolean topLevel,
             boolean isEmbeddedType, DTOCollection dtoCollection)
    {
       if (dtoCollection.containsDTOFor(entity, topLevel))
@@ -132,30 +135,42 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
          return dtoCollection.getDTOFor(entity, topLevel);
       }
 
-      Property idProperty = null;
-      JavaClassIntrospector bean = new JavaClassIntrospector(entity);
-      idProperty = parseIdPropertyForJPAEntity(bean);
+      Property<?> idProperty = parseIdPropertyForJPAEntity(entity);
 
       DTOClassBuilder dtoClassBuilder = new DTOClassBuilder(entity, idProperty, topLevel, processorFactory,
                resourceFactory)
                .setPackage(dtoPackage)
                .setEmbeddedType(isEmbeddedType);
 
-      for (Property property : bean.getProperties())
+      for (Property<?> property : entity.getProperties())
       {
-         if (property.isTransient() || property.hasAnnotation(Transient.class))
+         Field<?> field = property.getField();
+         Method<?, ?> accessor = property.getAccessor();
+         if (field != null)
          {
-            // No known reason for transient fields to be present in DTOs.
-            // Revisit this if necessary for @Transient
-            continue;
+            if (field.isTransient() || field.hasAnnotation(Transient.class))
+            {
+               // No known reason for transient fields to be present in DTOs.
+               // Revisit this if necessary for @Transient
+               continue;
+            }
+         }
+         else
+         {
+            if (accessor.hasAnnotation(Transient.class))
+            {
+               // No known reason for transient fields to be present in DTOs.
+               // Revisit this if necessary for @Transient
+               continue;
+            }
          }
 
-         String qualifiedPropertyType = property.getQualifiedType();
+         String qualifiedPropertyType = property.getType().getQualifiedName();
          // Get the JavaClass for the field's type so that we can inspect it later for annotations and such
          // and recursively generate a DTO for it as well.
-         JavaClass propertyClass = tryGetJavaClass(project, qualifiedPropertyType);
+         JavaClass<?> propertyClass = tryGetJavaClass(project, qualifiedPropertyType);
 
-         boolean isReadable = property.isReadable();
+         boolean isReadable = property.isAccessible();
          boolean isCollection = property.hasAnnotation(OneToMany.class) || property.hasAnnotation(ManyToMany.class);
          Type<?> propertyTypeInspector = property.getType();
          boolean parameterized = propertyTypeInspector.isParameterized();
@@ -181,7 +196,7 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
             // if it does not exist
             Type<?> type = propertyTypeInspector.getTypeArguments().get(0);
             String qualifiedParameterizedType = type.getQualifiedName();
-            JavaClass parameterizedClass = tryGetJavaClass(project, qualifiedParameterizedType);
+            JavaClass<?> parameterizedClass = tryGetJavaClass(project, qualifiedParameterizedType);
             if (parameterizedClass == null)
             {
                // ShellMessages.warn(writer, "Omitting creation of fields and DTO for type " +
@@ -190,11 +205,10 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
                continue;
             }
 
-            JavaClass nestedDTOClass = generatedDTOGraphForEntity(project, parameterizedClass, dtoPackage, false,
+            JavaClassSource nestedDTOClass = generatedDTOGraphForEntity(project, parameterizedClass, dtoPackage, false,
                      false, dtoCollection);
             // Then update the DTO for the collection field
-            JavaClassIntrospector parameterizedClassBean = new JavaClassIntrospector(parameterizedClass);
-            Property nestedDtoId = parseIdPropertyForJPAEntity(parameterizedClassBean);
+            Property<?> nestedDtoId = parseIdPropertyForJPAEntity(parameterizedClass);
             dtoClassBuilder.updateForCollectionProperty(property, nestedDTOClass, type, nestedDtoId);
          }
          else if (hasAssociation)
@@ -207,7 +221,7 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
 
             // Create another DTO having the PK-field of the type of single-valued associations,
             // if it does not exist
-            JavaClass associatedClass = tryGetJavaClass(project, qualifiedPropertyType);
+            JavaClass<?> associatedClass = tryGetJavaClass(project, qualifiedPropertyType);
             if (associatedClass == null)
             {
                // ShellMessages.warn(writer, "Omitting creation of fields and DTO for type " + qualifiedPropertyType
@@ -215,14 +229,16 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
                continue;
             }
 
-            JavaClass nestedDTOClass = generatedDTOGraphForEntity(project, associatedClass, dtoPackage, false, false,
+            JavaClassSource nestedDTOClass = generatedDTOGraphForEntity(project, associatedClass, dtoPackage, false,
+                     false,
                      dtoCollection);
             dtoClassBuilder.updateForReferencedProperty(property, nestedDTOClass);
          }
          else if (isEmbedded)
          {
             // Create another DTO for the @Embedded type, if it does not exist
-            JavaClass dtoForEmbeddedType = generatedDTOGraphForEntity(project, propertyClass, dtoPackage, true, true,
+            JavaClassSource dtoForEmbeddedType = generatedDTOGraphForEntity(project, propertyClass, dtoPackage, true,
+                     true,
                      dtoCollection);
             dtoClassBuilder.updateForReferencedProperty(property, dtoForEmbeddedType);
          }
@@ -232,7 +248,7 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
          }
       }
 
-      JavaClass dtoClass = dtoClassBuilder.createDTO();
+      JavaClassSource dtoClass = dtoClassBuilder.createDTO();
       if (topLevel)
       {
          dtoCollection.addRootDTO(entity, dtoClass);
@@ -244,11 +260,17 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
       return dtoClass;
    }
 
-   private Property parseIdPropertyForJPAEntity(JavaClassIntrospector bean)
+   private Property<?> parseIdPropertyForJPAEntity(JavaClass<?> bean)
    {
-      for (Property property : bean.getProperties())
+      for (Property<?> property : bean.getProperties())
       {
-         if (property.hasAnnotation(Id.class))
+         Field<?> field = property.getField();
+         if (field != null && field.hasAnnotation(Id.class))
+         {
+            return property;
+         }
+         Method<?, ?> accessor = property.getAccessor();
+         if (accessor != null && accessor.hasAnnotation(Id.class))
          {
             return property;
          }
@@ -256,16 +278,17 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
       return null;
    }
 
-   private JavaClass tryGetJavaClass(Project project, String qualifiedFieldType)
+   private JavaClass<?> tryGetJavaClass(Project project, String qualifiedFieldType)
    {
       try
       {
          JavaResource javaResource = project.getFacet(JavaSourceFacet.class).getJavaResource(qualifiedFieldType);
-         JavaSource<?> javaSource = javaResource.getJavaSource();
-         if (javaSource instanceof JavaClass)
-         {
-            return (JavaClass) javaSource;
-         }
+         JavaClass<?> javaClass = javaResource.getJavaType();
+         return javaClass;
+      }
+      catch (ClassCastException fileEx)
+      {
+         // Ignore, since the source file may not be a JavaClass
       }
       catch (FileNotFoundException fileEx)
       {
