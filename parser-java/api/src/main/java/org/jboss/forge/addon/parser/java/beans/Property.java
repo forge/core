@@ -16,7 +16,10 @@ import org.jboss.forge.parser.java.Type;
 
 /**
  * Represents a single instance of a property corresponding to a field and/or a JavaBean style accessor and mutator.
+ *
+ * @deprecated use {@link org.jboss.forge.roaster.model.Property} from Roaster
  */
+@Deprecated
 public class Property
 {
 
@@ -36,7 +39,7 @@ public class Property
     * field name. If a property has a getter named <code>getX()</code> then the property name is 'X' (without quotes).
     * Boolean property getters starting with 'is' are also considered - <code>isX()</code> corresponds to a property
     * named 'X'.
-    * 
+    *
     * @return The name of the property.
     */
    public String getName()
@@ -46,7 +49,7 @@ public class Property
 
    /**
     * Returns a reference to the {@link Field} instance represented by the property.
-    * 
+    *
     * @return The backing field for this property
     */
    public Field<JavaClass> getActualField()
@@ -61,7 +64,7 @@ public class Property
 
    /**
     * Returns a reference to the accessor {@link Method} instance for this property.
-    * 
+    *
     * @return The accessor method for this property
     */
    public Method<JavaClass> getAccessor()
@@ -76,7 +79,7 @@ public class Property
 
    /**
     * Returns a reference to the mutator {@link Method} instance for this property.
-    * 
+    *
     * @return The mutator method for this property
     */
    public Method<JavaClass> getMutator()
@@ -91,7 +94,7 @@ public class Property
 
    /**
     * Indicates whether a property can be read from via a getter, or not.
-    * 
+    *
     * @return true if the property has a getter, false otherwise
     */
    public boolean isReadable()
@@ -101,7 +104,7 @@ public class Property
 
    /**
     * Indicates whether a property can be writter to via a setter, or not.
-    * 
+    *
     * @return true if the property has a setter, false otherwise
     */
    public boolean isWritable()
@@ -111,7 +114,7 @@ public class Property
 
    /**
     * Indicates whether a property is read only or not.
-    * 
+    *
     * @return true if the property has an accessor only, false otherwise. If no accessor is found, it will return false.
     */
    public boolean isReadOnly()
@@ -122,10 +125,10 @@ public class Property
       }
       return false;
    }
-   
+
    /**
     * Indicates whether a property is write only or not.
-    * 
+    *
     * @return true if the property has a mutator only, false otherwise. If no mutator is found, it will return false.
     */
    public boolean isWriteOnly()
@@ -140,7 +143,7 @@ public class Property
    /**
     * Verifies whether the provided annotation is present on the property. Only fields and accessors are considered.
     * Mutators/setter methods are ignored.
-    * 
+    *
     * @param klass The annotation class whose presence is to be verified
     * @return true if the annotation is present on the field or the accessor of the property
     */
@@ -153,7 +156,7 @@ public class Property
    /**
     * Verifies whether the provided annotation is present on the property at the level of the field or the accessor.
     * Only fields and accessors are considered. Mutators/setters are not considered valid arguments.
-    * 
+    *
     * @param klass The annotation class whose presence is to be verified
     * @param type The {@link ElementType} at which the annotation should be specified. Should be either
     *           {@link ElementType#FIELD} or {@link ElementType#METHOD}.
@@ -174,7 +177,7 @@ public class Property
 
    /**
     * Indicates whether the property is transient or not.
-    * 
+    *
     * @return true if the underlying field of the property is transient
     */
    public boolean isTransient()
@@ -184,7 +187,7 @@ public class Property
 
    /**
     * Retrieves the {@link Type} of the property.
-    * 
+    *
     * @return the {@link Type} of the property
     */
    public Type<?> getType()
@@ -202,7 +205,7 @@ public class Property
 
    /**
     * Retrieves the simple name of the {@link Type} corresponding to the property.
-    * 
+    *
     * @return the simple name of the property's {@link Type}.
     */
    public String getSimpleType()
@@ -220,7 +223,7 @@ public class Property
 
    /**
     * Retrieves the qualified name of the {@link Type} corresponding to the property.
-    * 
+    *
     * @return the qualified name of the property's {@link Type}.
     */
    public String getQualifiedType()
@@ -238,7 +241,7 @@ public class Property
 
    /**
     * Indicates whether the underlying field or the accessor returns a Java language primitive type.
-    * 
+    *
     * @return true if the type of the property is a Java language primitive.
     */
    public boolean isPrimitive()

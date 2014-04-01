@@ -10,16 +10,16 @@ package org.jboss.forge.addon.javaee.rest.generator;
 import org.jboss.forge.addon.javaee.rest.generation.RestGenerationContext;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.text.Inflector;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class RestGenerationContextImpl implements RestGenerationContext
 {
    private Project project;
-   private JavaClass entity;
+   private JavaClassSource entity;
    private String targetPackageName;
    private String contentType;
    private String persistenceUnitName;
@@ -38,7 +38,7 @@ public class RestGenerationContextImpl implements RestGenerationContext
     * @return the entity
     */
    @Override
-   public JavaClass getEntity()
+   public JavaClassSource getEntity()
    {
       return entity;
    }
@@ -69,7 +69,7 @@ public class RestGenerationContextImpl implements RestGenerationContext
    {
       return persistenceUnitName;
    }
-   
+
    @Override
    public Inflector getInflector()
    {
@@ -81,7 +81,7 @@ public class RestGenerationContextImpl implements RestGenerationContext
       this.project = project;
    }
 
-   public void setEntity(JavaClass entity)
+   public void setEntity(JavaClassSource entity)
    {
       this.entity = entity;
    }

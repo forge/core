@@ -25,8 +25,8 @@ import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.templates.TemplateProcessor;
 import org.jboss.forge.addon.templates.TemplateProcessorFactory;
 import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * A JAX-RS resource generator that uses JPA entities directly in the created REST resources.
@@ -40,9 +40,9 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
    ResourceFactory resourceFactory;
 
    @Override
-   public List<JavaClass> generateFrom(RestGenerationContext context) throws Exception
+   public List<JavaClassSource> generateFrom(RestGenerationContext context) throws Exception
    {
-      JavaClass entity = context.getEntity();
+      JavaClassSource entity = context.getEntity();
       Project project = context.getProject();
       String contentType = context.getContentType();
       if (!entity.hasAnnotation(XmlRootElement.class))
@@ -75,7 +75,7 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
       Resource<URL> templateResource = resourceFactory.create(getClass().getResource("Endpoint.jv"));
       TemplateProcessor processor = processorFactory.fromTemplate(new FreemarkerTemplate(templateResource));
       String output = processor.process(map);
-      JavaClass resource = JavaParser.parse(JavaClass.class, output);
+      JavaClassSource resource = Roaster.parse(JavaClassSource.class, output);
       resource.addImport(entity.getQualifiedName());
       resource.setPackage(context.getTargetPackageName());
       return Arrays.asList(resource);

@@ -31,7 +31,7 @@ import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 
 public class ScaffoldableEntitySelectionWizard implements UIWizardStep
@@ -42,7 +42,7 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
 
    @Inject
    @WithAttributes(label = "Targets", required = true, description = "The JPA entities to use as the basis for generating the scaffold.")
-   private UISelectMany<JavaClass> targets;
+   private UISelectMany<JavaClassSource> targets;
 
    @Inject
    @WithAttributes(label = "Use custom template when generating pages", required = false, description = "Enabling this will allow the generated scaffold to use the specified Facelet template.")
@@ -59,7 +59,7 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
       ResourceCollection resourceCollection = new ResourceCollection();
       if (targets.getValue() != null)
       {
-         for (JavaClass klass : targets.getValue())
+         for (JavaClassSource klass : targets.getValue())
          {
             Project project = getSelectedProject(uiContext);
             JavaSourceFacet javaSource = project.getFacet(JavaSourceFacet.class);
@@ -109,10 +109,10 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
 
       JPAFacet<PersistenceCommonDescriptor> persistenceFacet = project.getFacet(JPAFacet.class);
       targets.setValueChoices(persistenceFacet.getAllEntities());
-      targets.setItemLabelConverter(new Converter<JavaClass, String>()
+      targets.setItemLabelConverter(new Converter<JavaClassSource, String>()
       {
          @Override
-         public String convert(JavaClass source)
+         public String convert(JavaClassSource source)
          {
             return source == null ? null : source.getQualifiedName();
          }

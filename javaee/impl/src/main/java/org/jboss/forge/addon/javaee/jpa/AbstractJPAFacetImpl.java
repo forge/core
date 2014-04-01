@@ -23,8 +23,8 @@ import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.visit.VisitContext;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.JavaType;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 
 /**
@@ -97,9 +97,9 @@ public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonD
    }
 
    @Override
-   public List<JavaClass> getAllEntities()
+   public List<JavaClassSource> getAllEntities()
    {
-      final List<JavaClass> result = new ArrayList<>();
+      final List<JavaClassSource> result = new ArrayList<>();
       JavaSourceFacet javaSourceFacet = getFaceted().getFacet(JavaSourceFacet.class);
       javaSourceFacet.visitJavaSources(new JavaResourceVisitor()
       {
@@ -108,10 +108,10 @@ public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonD
          {
             try
             {
-               JavaSource<?> javaClass = resource.getJavaSource();
-               if (javaClass.hasAnnotation(Entity.class) && javaClass.isClass())
+               JavaType<?> type = resource.getJavaType();
+               if (type.hasAnnotation(Entity.class) && type.isClass())
                {
-                  result.add((JavaClass) javaClass);
+                  result.add((JavaClassSource) type);
                }
             }
             catch (FileNotFoundException e)
