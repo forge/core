@@ -1,7 +1,7 @@
 package org.jboss.forge.addon.templates.freemarker;
 
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.templates.Template;
+import org.jboss.forge.addon.templates.AbstractTemplate;
 
 /**
  * An abstract representation of a Freemarker template. Consumers of this class create instances of it with
@@ -10,7 +10,7 @@ import org.jboss.forge.addon.templates.Template;
  *
  * @author Vineet Reynolds
  */
-public class FreemarkerTemplate extends Template
+public class FreemarkerTemplate extends AbstractTemplate
 {
    public FreemarkerTemplate(Resource<?> resource)
    {
