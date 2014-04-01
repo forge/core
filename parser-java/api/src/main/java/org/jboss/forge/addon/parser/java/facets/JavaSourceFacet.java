@@ -120,6 +120,16 @@ public interface JavaSourceFacet extends ProjectFacet
     * @param javaClass The {@link JavaClass} to re-parse.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
+   public JavaResource getJavaResource(org.jboss.forge.roaster.model.source.JavaSource<?> source)
+            throws FileNotFoundException;
+
+   /**
+    * Attempt to locate and re-parse the given {@link JavaSource} from its location on disk, relative to
+    * {@link #getSourceDirectory()}. The given instance will not be modified, and a new instance will be returned.
+    *
+    * @param javaClass The {@link JavaClass} to re-parse.
+    * @throws FileNotFoundException if the target {@link JavaResource} does not exist
+    */
    public JavaResource getJavaResource(JavaSource<?> javaClass) throws FileNotFoundException;
 
    /**
@@ -137,6 +147,16 @@ public interface JavaSourceFacet extends ProjectFacet
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
    public JavaResource getTestJavaResource(JavaSource<?> javaClass) throws FileNotFoundException;
+
+   /**
+    * Attempt to locate and re-parse the given {@link JavaSource} from its location on disk, relative to
+    * {@link #getTestSourceDirectory()}. The given instance will not be modified, and a new instance will be returned.
+    *
+    * @param javaClass The {@link JavaClass} to re-parse.
+    * @throws FileNotFoundException if the target {@link JavaResource} does not exist
+    */
+   public JavaResource getTestJavaResource(org.jboss.forge.roaster.model.source.JavaSource<?> source)
+            throws FileNotFoundException;
 
    /**
     * Recursively loops over all the source directories and for each java file it finds, calls the visitor.

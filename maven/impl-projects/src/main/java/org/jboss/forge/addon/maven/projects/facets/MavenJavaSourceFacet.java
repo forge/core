@@ -150,10 +150,26 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    }
 
    @Override
+   public JavaResource getJavaResource(org.jboss.forge.roaster.model.source.JavaSource<?> source)
+            throws FileNotFoundException
+   {
+      String pkg = Strings.isNullOrEmpty(source.getPackage()) ? "" : source.getPackage() + ".";
+      return getJavaResource(pkg + source.getName());
+   }
+
+   @Override
    public JavaResource getTestJavaResource(final JavaSource<?> javaClass) throws FileNotFoundException
    {
       String pkg = Strings.isNullOrEmpty(javaClass.getPackage()) ? "" : javaClass.getPackage() + ".";
       return getTestJavaResource(pkg + javaClass.getName());
+   }
+
+   @Override
+   public JavaResource getTestJavaResource(org.jboss.forge.roaster.model.source.JavaSource<?> source)
+            throws FileNotFoundException
+   {
+      String pkg = Strings.isNullOrEmpty(source.getPackage()) ? "" : source.getPackage() + ".";
+      return getTestJavaResource(pkg + source.getName());
    }
 
    @Override
