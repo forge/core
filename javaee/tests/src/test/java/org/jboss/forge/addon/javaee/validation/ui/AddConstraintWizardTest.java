@@ -21,9 +21,9 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.java.Annotation;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.source.AnnotationSource;
+import org.jboss.forge.roaster.model.source.FieldSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -96,9 +96,9 @@ public class AddConstraintWizardTest
          Assert.assertTrue(wizard.isValid());
       }
       wizard.execute();
-      JavaClass javaClass = (JavaClass) jpaEntity.getJavaSource();
-      Field<JavaClass> field = javaClass.getField("id");
-      Annotation<JavaClass> pattern = field.getAnnotation(Pattern.class);
+      JavaClassSource javaClass = jpaEntity.getJavaType();
+      FieldSource<JavaClassSource> field = javaClass.getField("id");
+      AnnotationSource<JavaClassSource> pattern = field.getAnnotation(Pattern.class);
       Assert.assertNotNull(pattern);
       Assert.assertEquals("[0-9]", pattern.getStringValue("regexp"));
 
@@ -134,9 +134,9 @@ public class AddConstraintWizardTest
          Assert.assertTrue(wizard.isValid());
       }
       wizard.execute();
-      JavaClass javaClass = (JavaClass) jpaEntity.getJavaSource();
-      Field<JavaClass> field = javaClass.getField("id");
-      Annotation<JavaClass> pattern = field.getAnnotation(Pattern.class);
+      JavaClassSource javaClass = jpaEntity.getJavaType();
+      FieldSource<JavaClassSource> field = javaClass.getField("id");
+      AnnotationSource<JavaClassSource> pattern = field.getAnnotation(Pattern.class);
       Assert.assertNotNull(pattern);
       Assert.assertEquals("^\\d{9}[\\d|X]$", pattern.getStringValue("regexp"));
 
