@@ -20,6 +20,7 @@ import org.jboss.forge.addon.facets.constraints.FacetInspector;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Predicate;
@@ -33,8 +34,9 @@ public class FacetFactoryImpl implements FacetFactory, Service
 
    private final AddonRegistry registry;
 
-   public FacetFactoryImpl(Furnace furnace)
+   public FacetFactoryImpl()
    {
+      Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
       this.registry = furnace.getAddonRegistry();
    }
 

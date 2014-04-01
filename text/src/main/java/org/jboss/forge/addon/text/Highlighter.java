@@ -7,6 +7,7 @@ import org.jboss.forge.addon.text.highlight.Scanner;
 import org.jboss.forge.addon.text.highlight.Syntax;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.services.Imported;
 
 public class Highlighter implements Service
@@ -15,11 +16,6 @@ public class Highlighter implements Service
 
    public Highlighter() {
       Syntax.builtIns();
-   }
-
-   public Highlighter(Furnace furnace) {
-      this();
-      this.importedScanners = furnace.getAddonRegistry().getServices(Scanner.class);
    }
 
    public void byType(String contentType, String content, OutputStream out)
@@ -91,6 +87,12 @@ public class Highlighter implements Service
    }
 
    private Imported<Scanner> resolveScanners() {
+      if(importedScanners == null)
+      {
+         Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
+         if(furnace != null)
+            this.importedScanners = furnace.getAddonRegistry().getServices(Scanner.class);
+      }
       return importedScanners;
    }
 }
