@@ -31,8 +31,8 @@
          <artifactId>parser-xml</artifactId>
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
-      </dependency>      
-      
+      </dependency>
+
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>environment</artifactId>
@@ -52,6 +52,10 @@
             <exclusion>
                <groupId>org.jboss.forge.furnace</groupId>
                <artifactId>furnace-manager-spi</artifactId>
+            </exclusion>
+            <exclusion>
+               <groupId>org.jboss.forge</groupId>
+               <artifactId>xml-parser</artifactId>
             </exclusion>
          </exclusions>
       </dependency>
