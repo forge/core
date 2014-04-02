@@ -20,11 +20,11 @@ import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class NewMappedSuperclassCommand extends AbstractJavaSourceCommand
@@ -39,7 +39,7 @@ public class NewMappedSuperclassCommand extends AbstractJavaSourceCommand
    @Override
    protected Class<? extends JavaSource<?>> getSourceType()
    {
-      return JavaClass.class;
+      return JavaClassSource.class;
    }
 
    @Override
@@ -74,7 +74,7 @@ public class NewMappedSuperclassCommand extends AbstractJavaSourceCommand
       Project project = getSelectedProject(uiContext);
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = context.getUIContext().getSelection();
-      JavaSource<?> javaSource = javaResource.getJavaSource();
+      JavaSource<?> javaSource = javaResource.getJavaType();
       javaSource.addAnnotation(MappedSuperclass.class);
       javaResource = javaSourceFacet.saveJavaSource(javaSource);
       uiContext.setSelection(javaResource);

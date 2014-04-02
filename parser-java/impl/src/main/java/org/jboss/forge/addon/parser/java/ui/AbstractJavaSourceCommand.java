@@ -38,11 +38,11 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.validate.UIValidator;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.parser.java.SyntaxError;
-import org.jboss.forge.parser.java.util.Strings;
-import org.jboss.forge.parser.java.util.Types;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.SyntaxError;
+import org.jboss.forge.roaster.model.source.JavaSource;
+import org.jboss.forge.roaster.model.util.Strings;
+import org.jboss.forge.roaster.model.util.Types;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -137,7 +137,7 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
       UIContext uiContext = context.getUIContext();
       Project project = getSelectedProject(uiContext);
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
-      JavaSource<?> source = JavaParser.create(getSourceType()).setName(named.getValue());
+      JavaSource<?> source = Roaster.create(getSourceType()).setName(named.getValue());
       JavaResource javaResource;
       if (targetPackage.hasValue() || targetPackage.hasDefaultValue())
       {

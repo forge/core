@@ -7,11 +7,11 @@
 
 package org.jboss.forge.addon.parser.java.ui;
 
-import org.jboss.forge.parser.java.JavaEnum;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.source.JavaEnumSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class JavaEnumCommand extends AbstractJavaSourceCommand
@@ -19,7 +19,7 @@ public class JavaEnumCommand extends AbstractJavaSourceCommand
    @Override
    protected Class<? extends JavaSource<?>> getSourceType()
    {
-      return JavaEnum.class;
+      return JavaEnumSource.class;
    }
 
    @Override

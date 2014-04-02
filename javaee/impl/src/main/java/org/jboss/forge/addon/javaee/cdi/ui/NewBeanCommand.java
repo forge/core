@@ -25,12 +25,12 @@ import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * Creates a new CDI Bean with a specific scope
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class NewBeanCommand extends AbstractJavaSourceCommand
@@ -77,7 +77,7 @@ public class NewBeanCommand extends AbstractJavaSourceCommand
       {
          JavaSourceFacet javaSourceFacet = getSelectedProject(context).getFacet(JavaSourceFacet.class);
          JavaResource javaResource = context.getUIContext().getSelection();
-         JavaSource<?> javaSource = javaResource.getJavaSource();
+         JavaSource<?> javaSource = javaResource.getJavaType();
          BeanScope scopedValue = scoped.getValue();
          if (BeanScope.CUSTOM == scopedValue)
          {
@@ -107,7 +107,7 @@ public class NewBeanCommand extends AbstractJavaSourceCommand
    @Override
    protected Class<? extends JavaSource<?>> getSourceType()
    {
-      return JavaClass.class;
+      return JavaClassSource.class;
    }
 
 }

@@ -32,8 +32,8 @@ import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.parser.java.JavaAnnotation;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * Creates a new Bean Validation constraint annotation
@@ -64,7 +64,7 @@ public class NewAnnotationCommand extends AbstractJavaSourceCommand
       {
          JavaSourceFacet javaSourceFacet = getSelectedProject(context).getFacet(JavaSourceFacet.class);
          JavaResource javaResource = context.getUIContext().getSelection();
-         JavaAnnotation constraint = (JavaAnnotation) javaResource.getJavaSource();
+         JavaAnnotationSource constraint = javaResource.getJavaType();
          // Constraint annotation header
          constraint.addAnnotation(Constraint.class).setStringValue("validatedBy = {}");
          constraint.addAnnotation(ReportAsSingleViolation.class);
@@ -90,7 +90,7 @@ public class NewAnnotationCommand extends AbstractJavaSourceCommand
    @Override
    protected Class<? extends JavaSource<?>> getSourceType()
    {
-      return JavaAnnotation.class;
+      return JavaAnnotationSource.class;
    }
 
   @Override

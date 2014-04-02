@@ -33,13 +33,13 @@ import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.parser.java.Annotation;
-import org.jboss.forge.parser.java.JavaAnnotation;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.source.AnnotationSource;
+import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * Creates a new CDI Scope annotation
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class NewScopeCommand extends AbstractJavaSourceCommand
@@ -90,14 +90,14 @@ public class NewScopeCommand extends AbstractJavaSourceCommand
       {
          JavaSourceFacet javaSourceFacet = getSelectedProject(context).getFacet(JavaSourceFacet.class);
          JavaResource javaResource = context.getUIContext().getSelection();
-         JavaSource<?> scope = javaResource.getJavaSource();
+         JavaSource<?> scope = javaResource.getJavaType();
          if (pseudo.getValue())
          {
             scope.addAnnotation(Scope.class);
          }
          else
          {
-            Annotation<?> normalScope = scope.addAnnotation(NormalScope.class);
+            AnnotationSource<?> normalScope = scope.addAnnotation(NormalScope.class);
             if (passivating.getValue())
             {
                normalScope.setLiteralValue("passivating", Boolean.toString(true));
@@ -127,7 +127,7 @@ public class NewScopeCommand extends AbstractJavaSourceCommand
    @Override
    protected Class<? extends JavaSource<?>> getSourceType()
    {
-      return JavaAnnotation.class;
+      return JavaAnnotationSource.class;
    }
 
 }
