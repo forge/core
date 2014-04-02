@@ -21,6 +21,7 @@ import org.jboss.aesh.cl.parser.CommandPopulator;
 import org.jboss.aesh.cl.parser.ParsedCompleteObject;
 import org.jboss.aesh.cl.validator.OptionValidatorException;
 import org.jboss.aesh.complete.CompleteOperation;
+import org.jboss.aesh.console.AeshContext;
 import org.jboss.aesh.console.InvocationProviders;
 import org.jboss.aesh.console.command.Command;
 import org.jboss.aesh.console.command.CommandResult;
@@ -40,7 +41,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 /**
  * This class acts as an adapter for native Aesh commands to ensure that {@link CommandExecutionListener} objects are
  * fired
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @Vetoed
@@ -102,7 +103,7 @@ public class AeshUICommand implements UICommand
 
    /**
     * Returns a {@link CommandLineParser} implementation that delegates to the correct populator
-    * 
+    *
     * @author <a href="ggastald@redhat.com">George Gastaldi</a>
     */
    class DelegateCommandLineParser implements CommandLineParser
@@ -137,15 +138,18 @@ public class AeshUICommand implements UICommand
       }
 
       @Override
-      public CommandPopulator getCommandPopulator()
+      public CommandPopulator<Object> getCommandPopulator()
       {
-         return new CommandPopulator()
+         return new CommandPopulator<Object>()
          {
+            @SuppressWarnings("unchecked")
             @Override
             public void populateObject(Object instance, CommandLine line, InvocationProviders invocationProviders,
-                     boolean validate) throws CommandLineParserException, OptionValidatorException
+                     AeshContext aeshContext, boolean validate) throws CommandLineParserException,
+                     OptionValidatorException
             {
-               commandLineParser.getCommandPopulator().populateObject(command, line, invocationProviders, validate);
+               commandLineParser.getCommandPopulator().populateObject(command, line, invocationProviders, aeshContext,
+                        validate);
             }
          };
       }

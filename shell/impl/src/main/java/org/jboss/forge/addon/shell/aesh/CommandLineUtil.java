@@ -73,7 +73,7 @@ public class CommandLineUtil
    {
       UICommandMetadata metadata = (command instanceof WizardCommandController) ? ((WizardCommandController) command)
                .getInitialMetadata() : command.getMetadata();
-      ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()),
+      final ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()),
                metadata.getDescription(), (CommandValidator<?>) null);
 
       for (final InputComponent<?, ?> input : inputs.values())
@@ -107,10 +107,11 @@ public class CommandLineUtil
                {
                   return input.isEnabled();
                }
-            }).validator(new OptionValidator<ValidatorInvocation<Object>>()
+            }).validator(new OptionValidator<ValidatorInvocation<Object, Object>>()
             {
                @Override
-               public void validate(ValidatorInvocation<Object> validatorInvocation) throws OptionValidatorException
+               public void validate(ValidatorInvocation<Object, Object> validatorInvocation)
+                        throws OptionValidatorException
                {
                   Object value = validatorInvocation.getValue();
                   InputComponents.setValueFor(converterFactory, input, value);

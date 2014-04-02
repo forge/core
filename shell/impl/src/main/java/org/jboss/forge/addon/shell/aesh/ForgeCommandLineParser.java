@@ -15,12 +15,12 @@ import org.jboss.aesh.cl.parser.CommandPopulator;
 import org.jboss.forge.addon.ui.input.InputComponent;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class ForgeCommandLineParser extends AeshCommandLineParser
 {
-   private final CommandPopulator commandPopulator;
+   private final CommandPopulator<Object> commandPopulator;
 
    public ForgeCommandLineParser(ProcessedCommand command, CommandLineUtil commandLineUtil,
             Map<String, InputComponent<?, ?>> inputs)
@@ -30,7 +30,7 @@ public class ForgeCommandLineParser extends AeshCommandLineParser
    }
 
    @Override
-   public CommandPopulator getCommandPopulator()
+   public CommandPopulator<Object> getCommandPopulator()
    {
       return commandPopulator;
    }
