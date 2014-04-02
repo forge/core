@@ -69,7 +69,10 @@ public interface JavaSourceFacet extends ProjectFacet
     * @param source The java class to create
     * @return The created or updated {@link JavaResource}
     * @throws FileNotFoundException
+    *
+    * @deprecated use {@link JavaSourceFacet#saveJavaSource(org.jboss.forge.roaster.model.source.JavaSource)} instead
     */
+   @Deprecated
    public JavaResource saveJavaSource(JavaSource<?> source) throws FileNotFoundException;
 
    /**
@@ -91,7 +94,11 @@ public interface JavaSourceFacet extends ProjectFacet
     *
     * @param source The java class to create
     * @return The created or updated {@link JavaResource}
+    *
+    * @deprecated use {@link JavaSourceFacet#saveTestJavaSource(org.jboss.forge.roaster.model.source.JavaSource)}
+    *             instead
     */
+   @Deprecated
    public JavaResource saveTestJavaSource(JavaSource<?> source) throws FileNotFoundException;
 
    /**
@@ -130,6 +137,7 @@ public interface JavaSourceFacet extends ProjectFacet
     * @param javaClass The {@link JavaClass} to re-parse.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
+   @Deprecated
    public JavaResource getJavaResource(JavaSource<?> javaClass) throws FileNotFoundException;
 
    /**

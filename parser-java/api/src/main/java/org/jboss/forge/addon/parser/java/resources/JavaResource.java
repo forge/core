@@ -24,7 +24,10 @@ public interface JavaResource extends FileResource<JavaResource>
 {
    /**
     * Set the content of this {@link Resource} to the value of the given {@link JavaSource}.
+    *
+    * @deprecated use {@link JavaResource#setContents(org.jboss.forge.roaster.model.source.JavaSource)} instead
     */
+   @Deprecated
    JavaResource setContents(final JavaSource<?> source);
 
    /**
@@ -35,7 +38,10 @@ public interface JavaResource extends FileResource<JavaResource>
 
    /**
     * Attempt to determine and return the {@link JavaSource} type of the underlying class.
+    *
+    * @deprecated use {@link JavaResource#getJavaType()} instead
     */
+   @Deprecated
    JavaSource<?> getJavaSource() throws FileNotFoundException;
 
    /**
