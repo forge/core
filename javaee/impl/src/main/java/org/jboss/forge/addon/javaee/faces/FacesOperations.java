@@ -13,31 +13,27 @@ import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
-import javax.inject.Inject;
 
-import org.jboss.forge.addon.parser.java.JavaSourceFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
  * This class contains Faces specific operations
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class FacesOperations
 {
-   @Inject
-   private JavaSourceFactory javaSourceFactory;
-
    /**
     * Creates a new {@link JavaResource} in the specified project. If no project is available, use
     * {@link FacesOperations#newConverter(DirectoryResource, String, String)}
-    * 
+    *
     * @param project the current project to create the converter. Must not be null
     * @param converterName the name of the converter
     * @param converterPackage the package of the converter to be created
@@ -47,14 +43,14 @@ public class FacesOperations
             throws FileNotFoundException
    {
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      JavaClass javaClass = createConverter(converterName, converterPackage);
+      JavaClassSource javaClass = createConverter(converterName, converterPackage);
       return java.saveJavaSource(javaClass);
    }
 
    /**
     * Creates a new {@link JavaResource} in the specified target. If a project is available, use
     * {@link FacesOperations#newConverter(Project, String, String)}
-    * 
+    *
     * @param target the target directory resource to create this class
     * @param converterName the name of the converter
     * @param converterPackage the package of the converter to be created
@@ -62,15 +58,15 @@ public class FacesOperations
     */
    public JavaResource newConverter(DirectoryResource target, String converterName, String converterPackage)
    {
-      JavaClass javaClass = createConverter(converterName, converterPackage);
+      JavaClassSource javaClass = createConverter(converterName, converterPackage);
       JavaResource javaResource = getJavaResource(target, javaClass.getName());
       javaResource.setContents(javaClass);
       return javaResource;
    }
 
-   private JavaClass createConverter(String converterName, String converterPackage)
+   private JavaClassSource createConverter(String converterName, String converterPackage)
    {
-      JavaClass source = javaSourceFactory.parse(JavaClass.class, getClass().getResourceAsStream("Converter.jv"));
+      JavaClassSource source = Roaster.parse(JavaClassSource.class, getClass().getResourceAsStream("Converter.jv"));
       source.setName(converterName);
       source.setPackage(converterPackage);
       return source;
@@ -79,7 +75,7 @@ public class FacesOperations
    /**
     * Creates a new {@link JavaResource} in the specified project. If no project is available, use
     * {@link FacesOperations#newValidator(DirectoryResource, String, String)}
-    * 
+    *
     * @param project the current project to create the validator. Must not be null
     * @param validatorName the name of the validator
     * @param validatorPackage the package of the validator to be created
@@ -89,14 +85,14 @@ public class FacesOperations
             throws FileNotFoundException
    {
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      JavaClass javaClass = createValidator(validatorName, validatorPackage);
+      JavaClassSource javaClass = createValidator(validatorName, validatorPackage);
       return java.saveJavaSource(javaClass);
    }
 
    /**
     * Creates a new {@link JavaResource} in the specified target. If a project is available, use
     * {@link FacesOperations#newConverter(Project, String, String)}
-    * 
+    *
     * @param target the target directory resource to create the validator. Must not be null
     * @param validatorName the name of the validator
     * @param validatorPackage the package of the validator to be created
@@ -104,15 +100,15 @@ public class FacesOperations
     */
    public JavaResource newValidator(DirectoryResource target, String validatorName, String validatorPackage)
    {
-      JavaClass javaClass = createValidator(validatorName, validatorPackage);
+      JavaClassSource javaClass = createValidator(validatorName, validatorPackage);
       JavaResource javaResource = getJavaResource(target, javaClass.getName());
       javaResource.setContents(javaClass);
       return javaResource;
    }
 
-   private JavaClass createValidator(String converterName, String converterPackage)
+   private JavaClassSource createValidator(String converterName, String converterPackage)
    {
-      JavaClass source = javaSourceFactory.parse(JavaClass.class, getClass().getResourceAsStream("Validator.jv"));
+      JavaClassSource source = Roaster.parse(JavaClassSource.class, getClass().getResourceAsStream("Validator.jv"));
       source.setName(converterName);
       source.setPackage(converterPackage);
       return source;
@@ -127,10 +123,11 @@ public class FacesOperations
       return target;
    }
 
-   public Method<JavaClass> addValidatorMethod(JavaResource target, String name) throws FileNotFoundException
+   public MethodSource<JavaClassSource> addValidatorMethod(JavaResource target, String name)
+            throws FileNotFoundException
    {
-      JavaClass source = (JavaClass) target.getJavaSource();
-      Method<JavaClass> method = source.addMethod().setName(name)
+      JavaClassSource source = target.getJavaType();
+      MethodSource<JavaClassSource> method = source.addMethod().setName(name)
                .setParameters("final FacesContext context, final UIComponent component, final Object value")
                .setBody("throw new ValidatorException(new FacesMessage(\"Validator not yet implemented.\"));")
                .addThrows(ValidatorException.class);

@@ -31,9 +31,9 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.Field;
+import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -88,7 +88,7 @@ public class NewFieldWizardTest
    {
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
       try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
-               project.getRootDirectory()))
+               project.getRoot()))
       {
          controller.initialize();
          Assert.assertTrue(controller.isEnabled());
@@ -102,11 +102,11 @@ public class NewFieldWizardTest
          Assert.assertFalse(result instanceof Failed);
          Assert.assertEquals("Field firstName created", result.getMessage());
       }
-      JavaClass javaClass = (JavaClass) entity.getJavaSource();
+      JavaClass<?> javaClass = entity.getJavaType();
       Assert.assertTrue(javaClass.hasField("firstName"));
-      final Field<JavaClass> field = javaClass.getField("firstName");
+      final Field<?> field = javaClass.getField("firstName");
       Assert.assertTrue(field.hasAnnotation(Column.class));
-      Assert.assertEquals("String", field.getType());
+      Assert.assertEquals("String", field.getType().getName());
       Assert.assertEquals("FIRST_NAME_COLUMN", field.getAnnotation(Column.class).getStringValue("name"));
    }
 
@@ -115,7 +115,7 @@ public class NewFieldWizardTest
    {
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
       try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
-               project.getRootDirectory()))
+               project.getRoot()))
       {
          controller.initialize();
          Assert.assertTrue(controller.isEnabled());
@@ -129,23 +129,23 @@ public class NewFieldWizardTest
          Assert.assertFalse(result instanceof Failed);
          Assert.assertEquals("Transient Field firstName created", result.getMessage());
       }
-      JavaClass javaClass = (JavaClass) entity.getJavaSource();
+      JavaClass<?> javaClass = entity.getJavaType();
       Assert.assertTrue(javaClass.hasField("firstName"));
-      final Field<JavaClass> field = javaClass.getField("firstName");
+      final Field<?> field = javaClass.getField("firstName");
       Assert.assertFalse(field.hasAnnotation(Column.class));
       Assert.assertTrue(field.hasAnnotation(Transient.class));
-      Assert.assertEquals("String", field.getType());
+      Assert.assertEquals("String", field.getType().getName());
    }
 
    @Test
    public void testUpdateExistingField() throws Exception
    {
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
-      JavaSource<?> javaSource = entity.getJavaSource();
-      fieldOperations.addFieldTo((JavaClass) javaSource, "String", "firstName");
+      JavaClassSource javaSource = entity.getJavaType();
+      fieldOperations.addFieldTo(javaSource, "String", "firstName");
       entity.setContents(javaSource.toString());
       try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
-               project.getRootDirectory()))
+               project.getRoot()))
       {
          controller.initialize();
          Assert.assertTrue(controller.isEnabled());
@@ -159,11 +159,11 @@ public class NewFieldWizardTest
          Assert.assertFalse(result instanceof Failed);
          Assert.assertEquals("Field firstName updated", result.getMessage());
       }
-      JavaClass javaClass = (JavaClass) entity.getJavaSource();
+      JavaClass<?> javaClass = entity.getJavaType();
       Assert.assertTrue(javaClass.hasField("firstName"));
-      final Field<JavaClass> field = javaClass.getField("firstName");
+      final Field<?> field = javaClass.getField("firstName");
       Assert.assertTrue(field.hasAnnotation(Column.class));
-      Assert.assertEquals("String", field.getType());
+      Assert.assertEquals("String", field.getType().getName());
       Assert.assertEquals("100", field.getAnnotation(Column.class).getStringValue("length"));
    }
 
@@ -173,14 +173,14 @@ public class NewFieldWizardTest
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
       JavaResource otherEntity = projectHelper.createJPAEntity(project, "Account");
       try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
-               project.getRootDirectory()))
+               project.getRoot()))
       {
          controller.initialize();
          Assert.assertTrue(controller.isEnabled());
          controller.setValueFor("targetEntity", entity);
          Assert.assertFalse(controller.canExecute());
          controller.setValueFor("named", "accounts");
-         controller.setValueFor("type", otherEntity.getJavaSource().getCanonicalName());
+         controller.setValueFor("type", otherEntity.getJavaType().getCanonicalName());
          controller.setValueFor("relationshipType", RelationshipType.ONE_TO_MANY);
          Assert.assertTrue(controller.canMoveToNextStep());
          Assert.assertTrue(controller.canExecute());
@@ -190,12 +190,12 @@ public class NewFieldWizardTest
          CompositeResult compositeResult = (CompositeResult) result;
          Assert.assertEquals("Relationship One-to-Many created", compositeResult.getResults().get(1).getMessage());
       }
-      JavaClass javaClass = (JavaClass) entity.getJavaSource();
+      JavaClass<?> javaClass = entity.getJavaType();
       Assert.assertTrue(javaClass.hasField("accounts"));
-      final Field<JavaClass> field = javaClass.getField("accounts");
+      final Field<?> field = javaClass.getField("accounts");
       Assert.assertFalse(field.hasAnnotation(Column.class));
       Assert.assertTrue(field.hasAnnotation(OneToMany.class));
-      Assert.assertEquals("Set", field.getType());
+      Assert.assertEquals("Set", field.getType().getName());
    }
 
    @Test
@@ -204,14 +204,14 @@ public class NewFieldWizardTest
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
       JavaResource otherEntity = projectHelper.createJPAEntity(project, "Account");
       try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
-               project.getRootDirectory()))
+               project.getRoot()))
       {
          controller.initialize();
          Assert.assertTrue(controller.isEnabled());
          controller.setValueFor("targetEntity", entity);
          Assert.assertFalse(controller.canExecute());
          controller.setValueFor("named", "accounts");
-         controller.setValueFor("type", otherEntity.getJavaSource().getCanonicalName());
+         controller.setValueFor("type", otherEntity.getJavaType().getCanonicalName());
          controller.setValueFor("relationshipType", RelationshipType.ONE_TO_MANY);
          Assert.assertTrue(controller.canMoveToNextStep());
          controller.next();
@@ -219,17 +219,17 @@ public class NewFieldWizardTest
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
          Assert.assertFalse(result instanceof Failed);
-         assertThat ("Result should be of type CompositeResult", result, instanceOf(CompositeResult.class));
+         assertThat("Result should be of type CompositeResult", result, instanceOf(CompositeResult.class));
          CompositeResult compositeResult = (CompositeResult) result;
          Assert.assertEquals("Relationship One-to-Many created", compositeResult.getResults().get(1).getMessage());
       }
-      JavaClass javaClass = (JavaClass) entity.getJavaSource();
+      JavaClass<?> javaClass = entity.getJavaType();
       Assert.assertTrue(javaClass.hasField("accounts"));
-      final Field<JavaClass> field = javaClass.getField("accounts");
+      final Field<?> field = javaClass.getField("accounts");
       Assert.assertFalse(field.hasAnnotation(Column.class));
       Assert.assertTrue(field.hasAnnotation(OneToMany.class));
       Assert.assertEquals(FetchType.EAGER, field.getAnnotation(OneToMany.class).getEnumValue(FetchType.class, "fetch"));
-      Assert.assertEquals("Set", field.getType());
+      Assert.assertEquals("Set", field.getType().getName());
    }
 
 }

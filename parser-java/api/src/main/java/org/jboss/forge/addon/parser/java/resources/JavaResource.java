@@ -11,8 +11,8 @@ import java.io.FileNotFoundException;
 
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.parser.java.JavaSource;
 import org.jboss.forge.roaster.model.JavaType;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * A {@link Resource} that represents a Java {@link Class}.
@@ -23,26 +23,10 @@ import org.jboss.forge.roaster.model.JavaType;
 public interface JavaResource extends FileResource<JavaResource>
 {
    /**
-    * Set the content of this {@link Resource} to the value of the given {@link JavaSource}.
-    *
-    * @deprecated use {@link JavaResource#setContents(org.jboss.forge.roaster.model.source.JavaSource)} instead
-    */
-   @Deprecated
-   JavaResource setContents(final JavaSource<?> source);
-
-   /**
     * Set the content of this {@link Resource} to the value of the given
     * {@link org.jboss.forge.roaster.model.source.JavaSource}.
     */
-   JavaResource setContents(final org.jboss.forge.roaster.model.source.JavaSource<?> source);
-
-   /**
-    * Attempt to determine and return the {@link JavaSource} type of the underlying class.
-    *
-    * @deprecated use {@link JavaResource#getJavaType()} instead
-    */
-   @Deprecated
-   JavaSource<?> getJavaSource() throws FileNotFoundException;
+   JavaResource setContents(final JavaSource<?> source);
 
    /**
     * Attempt to determine and return the {@link JavaType} type of the underlying class.

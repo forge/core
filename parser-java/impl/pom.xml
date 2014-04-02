@@ -23,10 +23,6 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>java-parser-impl</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
          <artifactId>roaster-jdt</artifactId>
       </dependency>
 

@@ -30,10 +30,10 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.parser.java.JavaEnum;
+import org.jboss.forge.roaster.model.source.JavaEnumSource;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class JavaEnumConstantCommand extends AbstractProjectCommand
@@ -77,7 +77,7 @@ public class JavaEnumConstantCommand extends AbstractProjectCommand
       super.validate(validator);
       try
       {
-         if (enumClass.hasValue() && !(enumClass.getValue().getJavaSource() instanceof JavaEnum))
+         if (enumClass.hasValue() && !(enumClass.getValue().getJavaType() instanceof JavaEnumSource))
          {
             validator.addValidationError(enumClass, "Enum class must be a valid enum");
          }
@@ -92,7 +92,7 @@ public class JavaEnumConstantCommand extends AbstractProjectCommand
    public Result execute(UIExecutionContext context) throws Exception
    {
       JavaResource resource = enumClass.getValue();
-      JavaEnum source = (JavaEnum) resource.getJavaSource();
+      JavaEnumSource source = resource.getJavaType();
       Project project = getSelectedProject(context.getUIContext());
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       for (String enumConstant : arguments.getValue())

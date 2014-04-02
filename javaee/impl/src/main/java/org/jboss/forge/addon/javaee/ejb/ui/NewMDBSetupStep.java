@@ -26,11 +26,11 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class NewMDBSetupStep implements UIWizardStep
 {
@@ -71,7 +71,8 @@ public class NewMDBSetupStep implements UIWizardStep
    public Result execute(UIExecutionContext context) throws Exception
    {
       JavaResource ejbResource = (JavaResource) context.getUIContext().getAttributeMap().get(JavaResource.class);
-      JavaClass ejb = operations.setupMessageDrivenBean((JavaClass) ejbResource.getJavaSource(), destType.getValue(),
+      JavaClassSource ejb = operations.setupMessageDrivenBean((JavaClassSource) ejbResource.getJavaType(),
+               destType.getValue(),
                destName.getValue());
       ejbResource.setContents(ejb);
       return Results.success("Configured Message Driven EJB.");

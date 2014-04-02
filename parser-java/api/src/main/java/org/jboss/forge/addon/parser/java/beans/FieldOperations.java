@@ -10,13 +10,13 @@ package org.jboss.forge.addon.parser.java.beans;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.forge.furnace.util.Strings;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Method;
-import org.jboss.forge.parser.java.Visibility;
-import org.jboss.forge.parser.java.util.Refactory;
-import org.jboss.forge.parser.java.util.Types;
+import org.jboss.forge.roaster.model.Field;
+import org.jboss.forge.roaster.model.Visibility;
+import org.jboss.forge.roaster.model.source.FieldSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.PropertySource;
+import org.jboss.forge.roaster.model.util.Refactory;
+import org.jboss.forge.roaster.model.util.Types;
 
 /**
  * Operations for manipulating JavaBeans methods of a class
@@ -32,11 +32,11 @@ public class FieldOperations
     * @param targetClass The class, which field will be removed
     * @param field The field to be removed
     */
-   public void removeField(final JavaClass targetClass, final Field<JavaClass> field)
+   public void removeField(final JavaClassSource targetClass, final Field<JavaClassSource> field)
    {
-      targetClass.removeField(field);
-      removeAccessor(targetClass, field);
-      removeMutator(targetClass, field);
+      PropertySource<JavaClassSource> property = targetClass.getProperty(field.getName());
+      property.setMutable(false).setAccessible(false);
+      targetClass.removeProperty(property);
       updateToString(targetClass);
    }
 
@@ -49,7 +49,7 @@ public class FieldOperations
     * @param annotations An optional list of annotations that will be added to the field
     * @return The newly created field
     */
-   public Field<JavaClass> addFieldTo(final JavaClass targetClass, final String fieldType,
+   public FieldSource<JavaClassSource> addFieldTo(final JavaClassSource targetClass, final String fieldType,
             final String fieldName, String... annotations)
 
    {
@@ -68,7 +68,7 @@ public class FieldOperations
     * @param annotations An optional list of annotations that will be added to the field
     * @return The newly created field
     */
-   public Field<JavaClass> addFieldTo(final JavaClass targetClass, final String fieldType,
+   public FieldSource<JavaClassSource> addFieldTo(final JavaClassSource targetClass, final String fieldType,
             final String fieldName, Visibility visibility, boolean withGetter, boolean withSetter,
             String... annotations)
    {
@@ -76,8 +76,9 @@ public class FieldOperations
       {
          throw new IllegalStateException("Entity already has a field named [" + fieldName + "]");
       }
-      Field<JavaClass> field = targetClass.addField();
-      field.setName(fieldName).setVisibility(visibility).setType(fieldType);
+      PropertySource<JavaClassSource> property = targetClass.addProperty(fieldType, fieldName);
+      FieldSource<JavaClassSource> field = property.getField();
+      field.setVisibility(visibility);
       for (String annotation : annotations)
       {
          field.addAnnotation(annotation);
@@ -89,55 +90,27 @@ public class FieldOperations
       {
          targetClass.addImport(fieldTypeForImport);
       }
-
-      Refactory.createGetterAndSetter(targetClass, field);
-
       if (!withGetter)
       {
-         removeAccessor(targetClass, field);
+         targetClass.removeMethod(property.getAccessor());
       }
-
       if (!withSetter)
       {
-         removeMutator(targetClass, field);
+         targetClass.removeMethod(property.getMutator());
       }
 
       updateToString(targetClass);
       return field;
    }
 
-   private JavaClass removeAccessor(final JavaClass targetClass, final Field<JavaClass> field)
-   {
-      String methodNameSuffix = Strings.capitalize(field.getName());
-      if (targetClass.hasMethodSignature("get" + methodNameSuffix))
-      {
-         Method<JavaClass> method = targetClass.getMethod("get" + methodNameSuffix);
-         targetClass.removeMethod(method);
-      }
-
-      return targetClass;
-   }
-
-   private JavaClass removeMutator(final JavaClass targetClass, final Field<JavaClass> field)
-   {
-      String methodNameSuffix = Strings.capitalize(field.getName());
-      if (targetClass.hasMethodSignature("set" + methodNameSuffix, field.getQualifiedType()))
-      {
-         Method<JavaClass> method = targetClass.getMethod("set" + methodNameSuffix, field.getQualifiedType());
-         targetClass.removeMethod(method);
-      }
-
-      return targetClass;
-   }
-
-   private void updateToString(final JavaClass targetEntity)
+   private void updateToString(final JavaClassSource targetEntity)
    {
       if (targetEntity.hasMethodSignature("toString"))
       {
          targetEntity.removeMethod(targetEntity.getMethod("toString"));
       }
-      List<Field<JavaClass>> fields = new ArrayList<Field<JavaClass>>();
-      for (Field<JavaClass> f : targetEntity.getFields())
+      List<FieldSource<JavaClassSource>> fields = new ArrayList<>();
+      for (FieldSource<JavaClassSource> f : targetEntity.getFields())
       {
          if (canAddFieldToToString(f))
          {
@@ -150,7 +123,7 @@ public class FieldOperations
       }
    }
 
-   protected boolean canAddFieldToToString(Field<JavaClass> field)
+   protected boolean canAddFieldToToString(Field<JavaClassSource> field)
    {
       return !field.isStatic();
    }

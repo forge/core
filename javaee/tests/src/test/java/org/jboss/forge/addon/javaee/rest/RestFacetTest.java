@@ -25,16 +25,16 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.JavaClass;
 import org.jboss.forge.parser.xml.Node;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -75,7 +75,7 @@ public class RestFacetTest
       Project project = projectFactory.createTempProject();
       Assert.assertFalse(project.hasFacet(JavaSourceFacet.class));
       String path = "/rest";
-      JavaClass javaClass = JavaParser.create(JavaClass.class).setName("ApplicationRestConfig")
+      JavaClassSource javaClass = Roaster.create(JavaClassSource.class).setName("ApplicationRestConfig")
                .setPackage("com.test.foo");
 
       RestFacet_1_1 facet = facetFactory.install(project, RestFacet_1_1.class);

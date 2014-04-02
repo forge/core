@@ -10,32 +10,29 @@ package org.jboss.forge.addon.parser.java.resources;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.forge.addon.parser.java.resources.JavaFieldResource;
-import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFacet;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.FieldHolder;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.Field;
+import org.jboss.forge.roaster.model.source.FieldHolderSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaFieldResourceImpl extends AbstractJavaMemberResource<Field<? extends JavaSource<?>>> implements
+public class JavaFieldResourceImpl extends AbstractJavaMemberResource<Field<?>> implements
          JavaFieldResource
 {
-   private final Field<? extends JavaSource<?>> field;
+   private final Field<?> field;
 
    public JavaFieldResourceImpl(final ResourceFactory factory, final Resource<?> parent,
-            final Field<? extends JavaSource<?>> field)
+            final Field<?> field)
    {
       super(factory, parent, field);
       this.field = field;
    }
 
    @Override
-   public Resource<Field<? extends JavaSource<?>>> createFrom(final Field<? extends JavaSource<?>> file)
+   public Resource<Field<?>> createFrom(final Field<?> file)
    {
       throw new RuntimeException("not implemented");
    }
@@ -47,7 +44,7 @@ public class JavaFieldResourceImpl extends AbstractJavaMemberResource<Field<? ex
    }
 
    @Override
-   public Field<? extends JavaSource<?>> getUnderlyingResourceObject()
+   public Field<?> getUnderlyingResourceObject()
    {
       return field;
    }
@@ -68,11 +65,11 @@ public class JavaFieldResourceImpl extends AbstractJavaMemberResource<Field<? ex
    @SuppressWarnings({ "unchecked", "rawtypes" })
    public boolean delete() throws UnsupportedOperationException
    {
-      JavaSource<?> origin = field.getOrigin();
-      if (origin instanceof FieldHolder)
+      Object origin = field.getOrigin();
+      if (origin instanceof FieldHolderSource)
       {
-         ((FieldHolder) origin).removeField(field);
-         if (!((FieldHolder) origin).hasField(field))
+         ((FieldHolderSource) origin).removeField(field);
+         if (!((FieldHolderSource) origin).hasField(field))
          {
             ((JavaResource) this.getParent()).setContents(origin.toString());
             return true;

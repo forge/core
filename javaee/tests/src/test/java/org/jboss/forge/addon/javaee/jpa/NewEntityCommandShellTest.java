@@ -27,7 +27,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Tests the {@link NewEntityCommand} behavior
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
@@ -76,7 +76,7 @@ public class NewEntityCommandShellTest
    public void testContainerInjection() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
-      test.getShell().setCurrentResource(project.getRootDirectory());
+      test.getShell().setCurrentResource(project.getRoot());
       projectHelper.installJPA_2_0(project);
       Result result = test
                .execute(("jpa-new-entity --named Customer --targetPackage org.lincoln --idStrategy AUTO --tableName CUSTOMER_TABLE"),
@@ -84,9 +84,9 @@ public class NewEntityCommandShellTest
 
       Assert.assertThat(result, not(instanceOf(Failed.class)));
       Assert.assertTrue(project.hasFacet(JPAFacet.class));
-      List<JavaClass> allEntities = project.getFacet(JPAFacet.class).getAllEntities();
+      List<JavaClass<?>> allEntities = project.getFacet(JPAFacet.class).getAllEntities();
       Assert.assertEquals(1, allEntities.size());
-      JavaClass customerEntity = allEntities.get(0);
+      JavaClass<?> customerEntity = allEntities.get(0);
       Assert.assertTrue(customerEntity.hasAnnotation(Table.class));
       Assert.assertEquals("CUSTOMER_TABLE", customerEntity.getAnnotation(Table.class).getStringValue("name"));
    }

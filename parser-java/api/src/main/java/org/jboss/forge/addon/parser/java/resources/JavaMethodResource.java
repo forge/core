@@ -8,11 +8,11 @@
 package org.jboss.forge.addon.parser.java.resources;
 
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.roaster.model.Method;
 
 /**
  * A {@link Resource} that represents a Java {@link java.lang.reflect.Method}
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @SuppressWarnings("rawtypes")

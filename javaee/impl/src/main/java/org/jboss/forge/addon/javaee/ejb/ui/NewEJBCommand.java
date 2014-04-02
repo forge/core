@@ -40,7 +40,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -119,7 +119,7 @@ public class NewEJBCommand extends AbstractJavaEECommand implements UIWizard
          {
             try
             {
-               JavaSource<?> javaSource = javaResource.getJavaSource();
+               JavaSource<?> javaSource = javaResource.getJavaType();
                if (javaSource.hasAnnotation(Stateless.class) || javaSource.hasAnnotation(Stateful.class)
                         || javaSource.hasAnnotation(MessageDriven.class) || javaSource.hasAnnotation(Singleton.class))
                {

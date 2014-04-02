@@ -6,31 +6,47 @@
  */
 package org.jboss.forge.addon.scaffold.metawidget.inspector;
 
-import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.*;
-import static org.metawidget.inspector.InspectionResultConstants.LOOKUP;
-import static org.metawidget.inspector.InspectionResultConstants.TRUE;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.EMBEDDABLE;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.GENERATED_VALUE;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.INVERSE_FIELD;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.JPA_MANY_TO_MANY;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.JPA_MANY_TO_ONE;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.JPA_ONE_TO_MANY;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.JPA_ONE_TO_ONE;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.JPA_REL_TYPE;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.MANY_TO_ONE;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.N_TO_MANY;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.ONE_TO_ONE;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.OWNING_FIELD;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.PRIMARY_KEY;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.REVERSE_PRIMARY_KEY;
 
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.*;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.ForgePropertyStyle.ForgeProperty;
-import org.jboss.forge.parser.java.EnumConstant;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaEnum;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.EnumConstant;
+import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaSource;
 import org.metawidget.inspector.InspectionResultConstants;
 import org.metawidget.inspector.impl.BaseObjectInspector;
 import org.metawidget.inspector.impl.propertystyle.Property;
 import org.metawidget.util.CollectionUtils;
 import org.w3c.dom.Element;
-
 
 /**
  * Inspects Forge-specific metadata.
@@ -40,10 +56,9 @@ import org.w3c.dom.Element;
 public class ForgeInspector
          extends BaseObjectInspector
 {
-   
    private Project project;
    private JavaSourceFacet java;
-   
+
    //
    // Constructor
    //
@@ -57,19 +72,19 @@ public class ForgeInspector
    {
       super(config);
       this.project = config.getProject();
-      if(this.project != null)
+      if (this.project != null)
       {
          this.java = project.getFacet(JavaSourceFacet.class);
       }
    }
-   
+
    @Override
    public Element inspectAsDom(Object toInspect, String type, String... names)
    {
       this.setTypeUnderInspection(type);
       return super.inspectAsDom(toInspect, type, names);
    }
-   
+
    private String typeUnderInspection;
 
    public String getTypeUnderInspection()
@@ -104,8 +119,8 @@ public class ForgeInspector
             getOneToOneBidirectionalProperties(property, attributes);
          }
       }
-      
-      if(property.isAnnotationPresent(Embedded.class) || isPropertyTypeEmbeddedable(property.getType()))
+
+      if (property.isAnnotationPresent(Embedded.class) || isPropertyTypeEmbeddedable(property.getType()))
       {
          attributes.put(EMBEDDABLE, InspectionResultConstants.TRUE);
       }
@@ -142,13 +157,13 @@ public class ForgeInspector
 
       if (property instanceof ForgeProperty)
       {
-         List<EnumConstant<JavaEnum>> enumConstants = ((ForgeProperty) property).getEnumConstants();
+         List<EnumConstant<?>> enumConstants = ((ForgeProperty) property).getEnumConstants();
 
          if (enumConstants != null)
          {
             List<String> lookup = CollectionUtils.newArrayList();
 
-            for (EnumConstant<JavaEnum> anEnum : enumConstants)
+            for (EnumConstant<?> anEnum : enumConstants)
             {
                lookup.add(anEnum.getName());
             }
@@ -170,7 +185,7 @@ public class ForgeInspector
 
       return attributes;
    }
-   
+
    private boolean isPropertyTypeEmbeddedable(String type)
    {
       boolean isEmbeddable = false;
@@ -179,10 +194,10 @@ public class ForgeInspector
          if (this.java != null)
          {
             JavaResource javaResource = java.getJavaResource(type);
-            JavaSource<?> javaSource = javaResource.getJavaSource();
+            JavaSource<?> javaSource = javaResource.getJavaType();
             if (javaSource instanceof JavaClass)
             {
-               JavaClass klass = (JavaClass) javaSource;
+               JavaClass<?> klass = (JavaClass<?>) javaSource;
                if (klass.hasAnnotation(Embeddable.class))
                {
                   isEmbeddable = true;
@@ -197,8 +212,8 @@ public class ForgeInspector
       }
       catch (ResourceException resourceEx)
       {
-          // Could not obtain a Forge Resource instance for the JavaResource
-          // Ignore and treat as not embeddable
+         // Could not obtain a Forge Resource instance for the JavaResource
+         // Ignore and treat as not embeddable
       }
       return isEmbeddable;
    }
@@ -216,7 +231,7 @@ public class ForgeInspector
          }
       }
    }
-   
+
    private void getCollectionReversePrimaryKey(Property property, Map<String, String> attributes)
    {
       // Reverse primary key
@@ -230,7 +245,7 @@ public class ForgeInspector
          }
       }
    }
-   
+
    private void getOneToOneBidirectionalProperties(Property property, Map<String, String> attributes)
    {
       String owningProperty = property.getAnnotation(OneToOne.class).mappedBy();

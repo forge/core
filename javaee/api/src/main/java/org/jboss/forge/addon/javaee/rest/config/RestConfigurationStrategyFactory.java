@@ -16,11 +16,11 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.visit.VisitContext;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class RestConfigurationStrategyFactory
@@ -39,10 +39,10 @@ public class RestConfigurationStrategyFactory
             {
                try
                {
-                  JavaSource<?> javaSource = javaResource.getJavaSource();
-                  if (javaSource.hasAnnotation(ApplicationPath.class))
+                  JavaSource<?> javaSource = javaResource.getJavaType();
+                  if (javaSource.hasAnnotation(ApplicationPath.class) && javaSource.isClass())
                   {
-                     configurationStrategy[0] = createUsingJavaClass((JavaClass) javaSource);
+                     configurationStrategy[0] = createUsingJavaClass((JavaClassSource) javaSource);
                   }
                }
                catch (FileNotFoundException e)
@@ -68,12 +68,12 @@ public class RestConfigurationStrategyFactory
       return new RestWebXmlConfigurationStrategy(path);
    }
 
-   public static RestConfigurationStrategy createUsingJavaClass(String path, JavaClass javaClass)
+   public static RestConfigurationStrategy createUsingJavaClass(String path, JavaClassSource javaClass)
    {
       return new RestApplicationClassConfigurationStrategy(path, javaClass);
    }
 
-   public static RestConfigurationStrategy createUsingJavaClass(JavaClass javaClass)
+   public static RestConfigurationStrategy createUsingJavaClass(JavaClassSource javaClass)
    {
       return new RestApplicationClassConfigurationStrategy(javaClass);
    }

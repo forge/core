@@ -31,17 +31,17 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.EnumConstant;
-import org.jboss.forge.parser.java.JavaEnum;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.JavaEnum;
+import org.jboss.forge.roaster.model.source.EnumConstantSource;
+import org.jboss.forge.roaster.model.source.JavaEnumSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -85,12 +85,13 @@ public class JavaEnumConstCommandTest
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      JavaSource<?> javaEnum = JavaParser.parse("package org.jboss.forge.test; public enum CreditCardType{}");
+      JavaEnumSource javaEnum = Roaster.parse(JavaEnumSource.class,
+               "package org.jboss.forge.test; public enum CreditCardType{}");
       facet.saveJavaSource(javaEnum);
 
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
       Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaEnum.class)));
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaEnum.class)));
 
       CommandController controller = testHarness.createCommandController(JavaEnumConstantCommand.class,
                javaResource);
@@ -102,8 +103,8 @@ public class JavaEnumConstCommandTest
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
 
       javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
-      JavaEnum enumClass = (JavaEnum) javaResource.getJavaSource();
-      List<EnumConstant<JavaEnum>> enumConstants = enumClass.getEnumConstants();
+      JavaEnumSource enumClass = javaResource.getJavaType();
+      List<EnumConstantSource> enumConstants = enumClass.getEnumConstants();
       Assert.assertEquals(3, enumConstants.size());
 
       Assert.assertEquals("VISA", enumConstants.get(0).getName());

@@ -26,8 +26,8 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -70,13 +70,14 @@ public class FacesNewValidatorMethodCommand extends AbstractJavaEECommand
    {
       try
       {
-         JavaClass source = (JavaClass) targetClass.getValue().reify(JavaResource.class).getJavaSource();
-         Method<JavaClass> method = source.getMethod(named.getValue(), FacesContext.class, UIComponent.class,
+         JavaClassSource source = targetClass.getValue().reify(JavaResource.class).getJavaType();
+         MethodSource<JavaClassSource> method = source.getMethod(named.getValue(), FacesContext.class,
+                  UIComponent.class,
                   Object.class);
 
          if (method != null)
             validator.addValidationError(named, "A validator with that name already exists in '"
-                     + targetClass.getValue().getJavaSource().getQualifiedName() + "'");
+                     + source.getQualifiedName() + "'");
 
          super.validate(validator);
       }
@@ -89,7 +90,8 @@ public class FacesNewValidatorMethodCommand extends AbstractJavaEECommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      Method<JavaClass> method = operations.addValidatorMethod(targetClass.getValue().reify(JavaResource.class),
+      MethodSource<JavaClassSource> method = operations.addValidatorMethod(
+               targetClass.getValue().reify(JavaResource.class),
                named.getValue());
       return Results.success("Validator method '" + method.toSignature() + "' created");
    }

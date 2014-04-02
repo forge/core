@@ -75,7 +75,7 @@ public class AddConstraintWizard extends AbstractJavaEECommand implements UIWiza
             {
                try
                {
-                  if (resource.getJavaSource().isClass())
+                  if (resource.getJavaType().isClass())
                   {
                      classes.add(resource);
                   }

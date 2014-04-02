@@ -36,8 +36,8 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
-import org.jboss.forge.parser.java.InterfaceCapable;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.InterfaceCapable;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -91,10 +91,10 @@ public class RegisterAsServiceCommand extends AbstractProjectCommand
             {
                try
                {
-                  JavaSource<?> source = type.getValue().getJavaSource();
+                  JavaSource<?> source = type.getValue().getJavaType();
                   if (source instanceof InterfaceCapable)
                   {
-                     List<String> interfaces = ((InterfaceCapable<?>) source).getInterfaces();
+                     List<String> interfaces = ((InterfaceCapable) source).getInterfaces();
                      for (String type : interfaces)
                      {
                         if (type.startsWith(value))
@@ -117,7 +117,7 @@ public class RegisterAsServiceCommand extends AbstractProjectCommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      String implName = type.getValue().reify(JavaResource.class).getJavaSource().getQualifiedName();
+      String implName = type.getValue().reify(JavaResource.class).getJavaType().getQualifiedName();
       String interfaceName = serviceType.getValue();
 
       FileResource<?> registryFile = getSelectedProject(context).getFacet(ResourcesFacet.class).getResource(

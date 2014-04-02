@@ -1,6 +1,8 @@
 package org.jboss.forge.addon.parser.java.ui;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 
@@ -18,9 +20,9 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Visibility;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.Visibility;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,7 +66,7 @@ public class JavaFieldCommandTest
 
    private Project project;
 
-   private JavaClass targetClass;
+   private JavaClassSource targetClass;
 
    private CommandController commandController;
 
@@ -104,7 +106,7 @@ public class JavaFieldCommandTest
       assertNotNull(targetClass.getMethod("getAge"));
       assertNotNull(targetClass.getMethod("setAge", int.class));
    }
-   
+
    @Test
    public void testGenerateFieldWithDifferentAccessType() throws Exception
    {
@@ -125,7 +127,7 @@ public class JavaFieldCommandTest
       assertNotNull(targetClass.getField(firstName));
       assertEquals(visibility, targetClass.getField(firstName).getVisibility());
    }
-   
+
    @Test
    public void testGenerateFieldWithoutGetterOrSetter() throws Exception
    {
@@ -157,7 +159,7 @@ public class JavaFieldCommandTest
 
    private void createTargetClass() throws FileNotFoundException
    {
-      targetClass = (JavaClass) JavaParser.parse("public class Test{}");
+      targetClass = Roaster.parse(JavaClassSource.class, "public class Test{}");
       project.getFacet(JavaSourceFacet.class).saveJavaSource(targetClass);
    }
 
@@ -169,30 +171,31 @@ public class JavaFieldCommandTest
 
    private void reloadTargetClass() throws FileNotFoundException
    {
-      targetClass = (JavaClass) JavaParser.parse(project.getFacet(JavaSourceFacet.class).getJavaResource(targetClass)
-               .getUnderlyingResourceObject());
+      targetClass = Roaster.parse(JavaClassSource.class,
+               project.getFacet(JavaSourceFacet.class).getJavaResource(targetClass)
+                        .getUnderlyingResourceObject());
    }
-   
+
    private void setName(String name)
    {
       commandController.setValueFor("named", name);
    }
-   
+
    private void setType(String type)
    {
       commandController.setValueFor("type", type);
    }
-   
+
    private void setAccessType(Visibility accessType)
    {
       commandController.setValueFor("accessType", accessType);
    }
-   
+
    private void setWithGetter(boolean withGetter)
    {
       commandController.setValueFor("generateGetter", withGetter);
    }
-   
+
    private void setWithSetter(boolean withSetter)
    {
       commandController.setValueFor("generateSetter", withSetter);

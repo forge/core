@@ -21,10 +21,10 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.spi.Streams;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
@@ -77,7 +77,7 @@ public class JavaResourceTest
       Assert.assertNotNull(resource);
 
       // Testing java-parser
-      JavaSource<?> javaSource = resource.getJavaSource();
+      JavaSource<?> javaSource = resource.getJavaType();
       Assert.assertThat(javaSource, instanceOf(JavaClass.class));
 
       // Testing roaster

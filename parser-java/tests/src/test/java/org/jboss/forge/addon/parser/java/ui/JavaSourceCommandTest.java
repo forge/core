@@ -28,10 +28,10 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.java.JavaAnnotation;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaEnum;
-import org.jboss.forge.parser.java.JavaInterface;
+import org.jboss.forge.roaster.model.JavaAnnotation;
+import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.JavaEnum;
+import org.jboss.forge.roaster.model.JavaInterface;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -94,7 +94,7 @@ public class JavaSourceCommandTest
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
       Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaAnnotation.class)));
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaAnnotation.class)));
    }
 
    @Test
@@ -115,7 +115,7 @@ public class JavaSourceCommandTest
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
       Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaEnum.class)));
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaEnum.class)));
    }
 
    @Test
@@ -136,7 +136,7 @@ public class JavaSourceCommandTest
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
       Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaClass.class)));
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
    }
 
    @Test
@@ -157,7 +157,7 @@ public class JavaSourceCommandTest
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
       Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaInterface.class)));
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaInterface.class)));
    }
 
 }

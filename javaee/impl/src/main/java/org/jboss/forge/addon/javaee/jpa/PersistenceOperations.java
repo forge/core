@@ -21,23 +21,24 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.parser.java.JavaSourceFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.util.Refactory;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.source.FieldSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.util.Refactory;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
 /**
  * This class contains JPA specific operations
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class PersistenceOperations
 {
@@ -47,12 +48,9 @@ public class PersistenceOperations
    @Inject
    private FacetFactory facetFactory;
 
-   @Inject
-   private JavaSourceFactory javaSourceFactory;
-
    /**
     * Setups JPA in the project
-    * 
+    *
     * @param project
     * @param dataSource
     * @param configureMetadata
@@ -101,7 +99,7 @@ public class PersistenceOperations
    /**
     * Creates a new {@link JavaResource} in the specified project. If no project is available, use
     * {@link PersistenceOperations#newEntity(DirectoryResource, String, String, GenerationType)}
-    * 
+    *
     * @param project the current project to create the entity. Must not be null
     * @param entityName the name of the entity
     * @param entityPackage the package of the entity to be created
@@ -114,14 +112,14 @@ public class PersistenceOperations
             throws FileNotFoundException
    {
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      JavaClass javaClass = createJavaClass(entityName, entityPackage, idStrategy, tableName);
+      JavaClassSource javaClass = createJavaClass(entityName, entityPackage, idStrategy, tableName);
       return java.saveJavaSource(javaClass);
    }
 
    /**
     * Creates a new {@link JavaResource} in the specified target. If a project is available, use
     * {@link PersistenceOperations#newEntity(Project, String, String, GenerationType)}
-    * 
+    *
     * @param target the target directory resource to create this class
     * @param entityName the name of the entity
     * @param entityPackage the package of the entity to be created
@@ -133,7 +131,7 @@ public class PersistenceOperations
    public JavaResource newEntity(DirectoryResource target, String entityName, String entityPackage,
             GenerationType idStrategy, String tableName)
    {
-      JavaClass javaClass = createJavaClass(entityName, entityPackage, idStrategy, tableName);
+      JavaClassSource javaClass = createJavaClass(entityName, entityPackage, idStrategy, tableName);
       JavaResource javaResource = getJavaResource(target, javaClass.getName());
       javaResource.setContents(javaClass);
       return javaResource;
@@ -142,7 +140,7 @@ public class PersistenceOperations
    /**
     * Creates a new {@link JavaResource} in the specified project. If no project is available, use
     * {@link PersistenceOperations#newEntity(DirectoryResource, String, String, GenerationType)}
-    * 
+    *
     * @param project the current project to create the entity. Must not be null
     * @param entityName the name of the entity
     * @param entityPackage the package of the entity to be created
@@ -159,7 +157,7 @@ public class PersistenceOperations
    /**
     * Creates a new {@link JavaResource} in the specified target. If a project is available, use
     * {@link PersistenceOperations#newEntity(Project, String, String, GenerationType)}
-    * 
+    *
     * @param target the target directory resource to create this class
     * @param entityName the name of the entity
     * @param entityPackage the package of the entity to be created
@@ -174,10 +172,10 @@ public class PersistenceOperations
    }
 
    @SuppressWarnings("unchecked")
-   private JavaClass createJavaClass(String entityName, String entityPackage, GenerationType idStrategy,
+   private JavaClassSource createJavaClass(String entityName, String entityPackage, GenerationType idStrategy,
             String tableName)
    {
-      JavaClass javaClass = javaSourceFactory.create(JavaClass.class)
+      JavaClassSource javaClass = Roaster.create(JavaClassSource.class)
                .setName(entityName)
                .setPublic()
                .addAnnotation(Entity.class).getOrigin()
@@ -190,7 +188,7 @@ public class PersistenceOperations
       {
          javaClass.setPackage(entityPackage);
       }
-      Field<JavaClass> id = javaClass.addField("private Long id;");
+      FieldSource<JavaClassSource> id = javaClass.addField("private Long id;");
       id.addAnnotation(Id.class);
       id.addAnnotation(GeneratedValue.class)
                .setEnumValue("strategy", idStrategy);
@@ -199,7 +197,7 @@ public class PersistenceOperations
                .setLiteralValue("updatable", "false")
                .setLiteralValue("nullable", "false");
 
-      Field<JavaClass> version = javaClass.addField("private int version;");
+      FieldSource<JavaClassSource> version = javaClass.addField("private int version;");
       version.addAnnotation(Version.class);
       version.addAnnotation(Column.class).setStringValue("name", "version");
 

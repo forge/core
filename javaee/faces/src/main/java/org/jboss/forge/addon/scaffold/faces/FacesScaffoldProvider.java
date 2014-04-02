@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.jboss.forge.addon.scaffold.faces;
 
@@ -45,18 +45,24 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFilter;
 import org.jboss.forge.addon.scaffold.faces.freemarker.FreemarkerTemplateProcessor;
 import org.jboss.forge.addon.scaffold.faces.metawidget.config.ForgeConfigReader;
-import org.jboss.forge.addon.scaffold.util.ScaffoldUtil;
 import org.jboss.forge.addon.scaffold.spi.AccessStrategy;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
 import org.jboss.forge.addon.scaffold.ui.ScaffoldSetupWizard;
+import org.jboss.forge.addon.scaffold.util.ScaffoldUtil;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.*;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.Field;
+import org.jboss.forge.roaster.model.source.AnnotationSource;
+import org.jboss.forge.roaster.model.source.FieldSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
+import org.jboss.forge.roaster.model.source.MemberSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.shrinkwrap.descriptor.api.javaee6.ParamValueType;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
@@ -209,12 +215,12 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       for (Object resource : resources)
       {
          JavaSource<?> javaSource = null;
-         if(resource instanceof JavaResource)
+         if (resource instanceof JavaResource)
          {
             JavaResource javaResource = (JavaResource) resource;
             try
             {
-               javaSource = javaResource.getJavaSource();
+               javaSource = javaResource.getJavaType();
             }
             catch (FileNotFoundException fileEx)
             {
@@ -226,7 +232,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
             continue;
          }
 
-         JavaClass entity = (JavaClass) javaSource;
+         JavaClassSource entity = (JavaClassSource) javaSource;
          String targetDir = generationContext.getTargetDirectory();
          targetDir = (targetDir == null) ? "" : targetDir;
          Resource<?> template = (Resource<?>) generationContext.getAttribute("pageTemplate");
@@ -677,7 +683,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       this.rmEntityMetawidget.setConfig("scaffold/faces/metawidget-remove-entity.xml");
    }
 
-   private List<Resource<?>> generateFromEntity(String targetDir, final Resource<?> template, final JavaClass entity,
+   private List<Resource<?>> generateFromEntity(String targetDir, final Resource<?> template, final JavaClassSource entity,
             final boolean overwrite)
    {
       resetMetaWidgets();
@@ -730,7 +736,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
          context.put("persistenceUnitName", jpa.getConfig().getOrCreatePersistenceUnit().getName());
 
          // Create the Backing Bean for this entity
-         JavaClass viewBean = JavaParser.parse(JavaClass.class,
+         JavaClassSource viewBean = Roaster.parse(JavaClassSource.class,
                   this.templateProcessor.processTemplate(context, this.backingBeanTemplate));
          viewBean.setPackage(java.getBasePackage() + ".view");
          result.add(ScaffoldUtil.createOrOverwrite(java.getJavaResource(viewBean), viewBean.toString(),
@@ -782,7 +788,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
          result.add(generateNavigation(targetDir, overwrite));
 
          // Need ViewUtils and forge.taglib.xml for forgeview:asList
-         JavaClass viewUtils = JavaParser.parse(JavaClass.class,
+         JavaClassSource viewUtils = Roaster.parse(JavaClassSource.class,
                   this.templateProcessor.processTemplate(context, this.viewUtilsTemplate));
          viewUtils.setPackage(viewBean.getPackage());
          result.add(ScaffoldUtil.createOrOverwrite(java.getJavaResource(viewUtils), viewUtils.toString(),
@@ -855,14 +861,14 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       return builder.toString();
    }
 
-   protected void createInitializers(final JavaClass entity) throws FacetNotFoundException, FileNotFoundException
+   protected void createInitializers(final JavaClassSource entity) throws FacetNotFoundException, FileNotFoundException
    {
       boolean dirtyBit = false;
-      for (Field<JavaClass> field : entity.getFields())
+      for (FieldSource<JavaClassSource> field : entity.getFields())
       {
          if (field.hasAnnotation(OneToOne.class))
          {
-            Annotation<JavaClass> oneToOne = field.getAnnotation(OneToOne.class);
+            AnnotationSource<JavaClassSource> oneToOne = field.getAnnotation(OneToOne.class);
             if (oneToOne.getStringValue("mappedBy") == null && oneToOne.getStringValue("cascade") == null)
             {
                oneToOne.setEnumValue("cascade", CascadeType.ALL);
@@ -877,11 +883,11 @@ public class FacesScaffoldProvider implements ScaffoldProvider
             }
          }
       }
-      for (Method<JavaClass> method : entity.getMethods())
+      for (MethodSource<JavaClassSource> method : entity.getMethods())
       {
          if (method.hasAnnotation(OneToOne.class))
          {
-            Annotation<JavaClass> oneToOne = method.getAnnotation(OneToOne.class);
+            AnnotationSource<JavaClassSource> oneToOne = method.getAnnotation(OneToOne.class);
             if (oneToOne.getStringValue("mappedBy") == null && oneToOne.getStringValue("cascade") == null)
             {
                oneToOne.setEnumValue("cascade", CascadeType.ALL);
@@ -903,12 +909,12 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       }
    }
 
-   private void setPrimaryKeyMetaData(Map<Object, Object> context, final JavaClass entity)
+   private void setPrimaryKeyMetaData(Map<Object, Object> context, final JavaClassSource entity)
    {
       String pkName = "id";
       String pkType = "Long";
       String nullablePkType = "Long";
-      for (Member<JavaClass, ?> m : entity.getMembers())
+      for (MemberSource<JavaClassSource, ?> m : entity.getMembers())
       {
          if (m.hasAnnotation(Id.class))
          {
@@ -916,20 +922,20 @@ public class FacesScaffoldProvider implements ScaffoldProvider
             {
                Field<?> field = (Field<?>) m;
                pkName = field.getName();
-               pkType = field.getType();
+               pkType = field.getType().getQualifiedName();
                nullablePkType = pkType;
                break;
             }
 
-            Method<?> method = (Method<?>) m;
+            MethodSource<?> method = (MethodSource<?>) m;
             pkName = method.getName().substring(3);
             if (method.getName().startsWith("get"))
             {
-               pkType = method.getReturnType();
+               pkType = method.getReturnType().getQualifiedName();
             }
             else
             {
-               pkType = method.getParameters().get(0).getType();
+               pkType = method.getParameters().get(0).getType().getQualifiedName();
             }
             nullablePkType = pkType;
             break;

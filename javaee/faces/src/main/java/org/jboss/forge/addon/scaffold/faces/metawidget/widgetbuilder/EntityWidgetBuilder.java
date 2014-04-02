@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.forge.addon.configuration.Configuration;
-import org.jboss.forge.parser.java.util.Strings;
 import org.jboss.forge.addon.scaffold.faces.FacesScaffoldProvider;
+import org.jboss.forge.furnace.util.Strings;
 import org.metawidget.statically.BaseStaticXmlWidget;
 import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.StaticXmlMetawidget;
@@ -84,14 +84,14 @@ public class EntityWidgetBuilder
     */
 
    private static final String TOP_LEVEL_PARAMETERIZED_TYPE = "top-level-parameterized-type";
-   
+
    /**
     * When expanding OneToOne or Embedded types in the data table rows, we must also generate the right EL expressions,
     * containing references to the instance being expanded instead of the top level element.
     */
-   
+
    private static final String PARAMETERIZED_TYPE_PATH = "parameterized-type-path";
-   
+
    private static final String SELECT_ITEM = "_item";
 
    /**
@@ -199,10 +199,10 @@ public class EntityWidgetBuilder
 
                return outputText;
             }
-            
+
          }
       }
-      
+
       // Change the labels of the f:selectItems in the h:select widget (when FACES_LOOKUP is present)
       String facesLookup = attributes.get( FACES_LOOKUP );
 
@@ -603,7 +603,7 @@ public class EntityWidgetBuilder
             String valueExpression = dataTable.getAttribute("var") + StringUtils.SEPARATOR_DOT_CHAR
                      + tableAttributes.get(PARAMETERIZED_TYPE_PATH) + StringUtils.SEPARATOR_DOT_CHAR
                      + StringUtils.decapitalize(columnAttributes.get(NAME));
-            
+
             StaticHtmlMetawidget output = (StaticHtmlMetawidget) link.getChildren().get(1);
             output.setValue(StaticFacesUtils.wrapExpression(valueExpression));
          }
@@ -650,7 +650,7 @@ public class EntityWidgetBuilder
          }
       }
    }
-   
+
    /**
     * Overrriden to enhance the default f:selectItem widget with more suitable item labels
     */
@@ -706,7 +706,7 @@ public class EntityWidgetBuilder
 
       return target;
    }
-   
+
    private void addSelectItem( HtmlSelectOneMenu select, String value, String label ) {
 
       SelectItem selectItem = new SelectItem();

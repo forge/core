@@ -31,12 +31,12 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * Setups JAX-RS in a project
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class RestSetupWizard extends AbstractJavaEECommand
@@ -127,7 +127,7 @@ public class RestSetupWizard extends AbstractJavaEECommand
          }
          else
          {
-            JavaClass javaClass = JavaParser.create(JavaClass.class).setPackage(targetPackage.getValue())
+            JavaClassSource javaClass = Roaster.create(JavaClassSource.class).setPackage(targetPackage.getValue())
                      .setName(className.getValue());
             strategy = RestConfigurationStrategyFactory.createUsingJavaClass(path, javaClass);
          }

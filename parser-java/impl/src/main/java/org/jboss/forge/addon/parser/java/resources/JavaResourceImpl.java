@@ -14,21 +14,21 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jboss.forge.addon.parser.java.JavaSourceFactory;
 import org.jboss.forge.addon.resource.AbstractFileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.ResourceFacet;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.parser.ParserException;
-import org.jboss.forge.parser.java.EnumConstant;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.JavaEnum;
-import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.parser.java.Member;
-import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.roaster.ParserException;
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.EnumConstant;
+import org.jboss.forge.roaster.model.Field;
+import org.jboss.forge.roaster.model.JavaEnum;
 import org.jboss.forge.roaster.model.JavaType;
+import org.jboss.forge.roaster.model.Member;
+import org.jboss.forge.roaster.model.MemberHolder;
+import org.jboss.forge.roaster.model.Method;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * @author Mike Brock
@@ -36,12 +36,9 @@ import org.jboss.forge.roaster.model.JavaType;
  */
 public class JavaResourceImpl extends AbstractFileResource<JavaResource> implements JavaResource
 {
-   private final JavaSourceFactory parser;
-
-   public JavaResourceImpl(final ResourceFactory factory, JavaSourceFactory parser, final File file)
+   public JavaResourceImpl(final ResourceFactory factory, final File file)
    {
       super(factory, file);
-      this.parser = parser;
    }
 
    @Override
@@ -55,7 +52,7 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
          if ((name != null) && (child instanceof AbstractJavaMemberResource<?>))
          {
             String childName = child.getName();
-            if (((Member<?, ?>) child.getUnderlyingResourceObject()).getName().equals(name.trim())
+            if (((Member<?>) child.getUnderlyingResourceObject()).getName().equals(name.trim())
                      || childName.equals(name))
             {
                subset.add(child);
@@ -78,22 +75,22 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    }
 
    @Override
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    protected synchronized List<Resource<?>> doListResources()
    {
       try
       {
          List<Resource<?>> list = new LinkedList<>();
-
-         for (Member<?, ?> member : getJavaSource().getMembers())
+         MemberHolder<?> memberHolder = getJavaType();
+         for (Member<?> member : memberHolder.getMembers())
          {
             if (member instanceof Field)
             {
-               list.add(new JavaFieldResourceImpl(getResourceFactory(), this, (Field<? extends JavaSource<?>>) member));
+               list.add(new JavaFieldResourceImpl(getResourceFactory(), this, (Field<?>) member));
             }
             else if (member instanceof Method)
             {
-               list.add(new JavaMethodResourceImpl(getResourceFactory(), this, (Method<? extends JavaSource<?>>) member));
+               list.add(new JavaMethodResourceImpl(getResourceFactory(), this, (Method<?, ?>) member));
             }
             else
             {
@@ -101,9 +98,10 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
             }
          }
 
-         if (getJavaSource() instanceof JavaEnum)
+         if (memberHolder instanceof JavaEnum)
          {
-            for (EnumConstant<JavaEnum> e : ((JavaEnum) getJavaSource()).getEnumConstants())
+            List<EnumConstant<?>> enumConstants = ((JavaEnum) memberHolder).getEnumConstants();
+            for (EnumConstant<?> e : enumConstants)
             {
                list.add(new EnumConstantResourceImpl(getResourceFactory(), this, e));
             }
@@ -128,26 +126,10 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
       return this;
    }
 
-   /**
-    * Attempts to perform cast automatically. This can lead to problems.
-    */
-   @Override
-   public JavaSource<?> getJavaSource() throws FileNotFoundException
-   {
-      return parser.parse(getResourceInputStream());
-   }
-
    @Override
    public JavaResourceImpl createFrom(final File file)
    {
-      return new JavaResourceImpl(getResourceFactory(), parser, file);
-   }
-
-   @Override
-   public JavaResource setContents(org.jboss.forge.roaster.model.source.JavaSource<?> source)
-   {
-      setContents(source.toString());
-      return this;
+      return new JavaResourceImpl(getResourceFactory(), file);
    }
 
    @SuppressWarnings("unchecked")
@@ -162,7 +144,7 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    {
       try
       {
-         return getJavaSource().getQualifiedName();
+         return getJavaType().getQualifiedName();
       }
       catch (FileNotFoundException e)
       {

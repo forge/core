@@ -18,10 +18,6 @@
 
       <dependency>
          <groupId>org.jboss.forge</groupId>
-         <artifactId>java-parser-api</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge</groupId>
          <artifactId>roaster-api</artifactId>
       </dependency>
 

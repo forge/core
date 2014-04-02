@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.maven.projects;
 
 
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ import org.jboss.forge.addon.maven.plugins.MavenPlugin;
 import org.jboss.forge.addon.maven.plugins.MavenPluginAdapter;
 import org.jboss.forge.addon.maven.projects.facets.exceptions.PluginNotFoundException;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.parser.java.util.Strings;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>

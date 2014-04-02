@@ -6,11 +6,11 @@
  */
 package org.jboss.forge.addon.javaee.jpa;
 
-import org.jboss.forge.parser.java.util.Strings;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Represents a complete JPA data-source configuration.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class JPADataSource

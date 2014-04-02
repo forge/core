@@ -10,27 +10,26 @@ package org.jboss.forge.addon.parser.java.resources;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.forge.addon.parser.java.resources.EnumConstantResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFacet;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.VirtualResource;
-import org.jboss.forge.parser.java.EnumConstant;
-import org.jboss.forge.parser.java.JavaEnum;
+import org.jboss.forge.roaster.model.EnumConstant;
 
-public class EnumConstantResourceImpl extends VirtualResource<EnumConstant<JavaEnum>> implements EnumConstantResource
+public class EnumConstantResourceImpl extends VirtualResource<EnumConstant<?>> implements
+         EnumConstantResource
 {
-   private final EnumConstant<JavaEnum> enumConstant;
+   private final EnumConstant<?> enumConstant;
 
    public EnumConstantResourceImpl(final ResourceFactory factory, final Resource<?> parent,
-            final EnumConstant<JavaEnum> enumConstant)
+            final EnumConstant<?> enumConstant)
    {
       super(factory, parent);
       this.enumConstant = enumConstant;
    }
 
    @Override
-   public Resource<EnumConstant<JavaEnum>> createFrom(final EnumConstant<JavaEnum> file)
+   public Resource<EnumConstant<?>> createFrom(final EnumConstant<?> file)
    {
       throw new RuntimeException("not implemented");
    }
@@ -42,7 +41,7 @@ public class EnumConstantResourceImpl extends VirtualResource<EnumConstant<JavaE
    }
 
    @Override
-   public EnumConstant<JavaEnum> getUnderlyingResourceObject()
+   public EnumConstant<?> getUnderlyingResourceObject()
    {
       return enumConstant;
    }

@@ -15,15 +15,14 @@ import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface JavaSourceFacet extends ProjectFacet
 {
-
    /**
     * Return the class name for the given {@link JavaResource} whether it exists or not.
     */
@@ -64,19 +63,6 @@ public interface JavaSourceFacet extends ProjectFacet
 
    /**
     * Create or update a Java file in the primary source directory: {@link #getSourceDirectory()} - use information in
-    * the given {@link JavaSource} to determine the appropriate package; packages will be created if necessary.
-    *
-    * @param source The java class to create
-    * @return The created or updated {@link JavaResource}
-    * @throws FileNotFoundException
-    *
-    * @deprecated use {@link JavaSourceFacet#saveJavaSource(org.jboss.forge.roaster.model.source.JavaSource)} instead
-    */
-   @Deprecated
-   public JavaResource saveJavaSource(JavaSource<?> source) throws FileNotFoundException;
-
-   /**
-    * Create or update a Java file in the primary source directory: {@link #getSourceDirectory()} - use information in
     * the given {@link org.jboss.forge.roaster.model.source.JavaSource} to determine the appropriate package; packages
     * will be created if necessary.
     *
@@ -84,22 +70,8 @@ public interface JavaSourceFacet extends ProjectFacet
     * @return The created or updated {@link JavaResource}
     * @throws FileNotFoundException
     */
-   public JavaResource saveJavaSource(org.jboss.forge.roaster.model.source.JavaSource<?> source)
+   public JavaResource saveJavaSource(JavaSource<?> source)
             throws FileNotFoundException;
-
-   /**
-    * Create or update a Java file in the primary test source directory: {@link #getTestSourceDirectory()} - use
-    * information in the given {@link JavaSource} to determine the appropriate package; packages will be created if
-    * necessary.
-    *
-    * @param source The java class to create
-    * @return The created or updated {@link JavaResource}
-    *
-    * @deprecated use {@link JavaSourceFacet#saveTestJavaSource(org.jboss.forge.roaster.model.source.JavaSource)}
-    *             instead
-    */
-   @Deprecated
-   public JavaResource saveTestJavaSource(JavaSource<?> source) throws FileNotFoundException;
 
    /**
     * Create or update a Java file in the primary test source directory: {@link #getTestSourceDirectory()} - use
@@ -109,7 +81,7 @@ public interface JavaSourceFacet extends ProjectFacet
     * @param source The java class to create
     * @return The created or updated {@link JavaResource}
     */
-   public JavaResource saveTestJavaSource(org.jboss.forge.roaster.model.source.JavaSource<?> source)
+   public JavaResource saveTestJavaSource(JavaSource<?> source)
             throws FileNotFoundException;
 
    /**
@@ -121,23 +93,12 @@ public interface JavaSourceFacet extends ProjectFacet
    public JavaResource getJavaResource(String relativePath) throws FileNotFoundException;
 
    /**
-    * Attempt to locate and re-parse the given {@link JavaClass} from its location on disk, relative to
-    * {@link #getSourceDirectory()}. The given instance will not be modified, and a new instance will be returned.
-    *
-    * @param javaClass The {@link JavaClass} to re-parse.
-    * @throws FileNotFoundException if the target {@link JavaResource} does not exist
-    */
-   public JavaResource getJavaResource(org.jboss.forge.roaster.model.source.JavaSource<?> source)
-            throws FileNotFoundException;
-
-   /**
     * Attempt to locate and re-parse the given {@link JavaSource} from its location on disk, relative to
     * {@link #getSourceDirectory()}. The given instance will not be modified, and a new instance will be returned.
     *
     * @param javaClass The {@link JavaClass} to re-parse.
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
-   @Deprecated
    public JavaResource getJavaResource(JavaSource<?> javaClass) throws FileNotFoundException;
 
    /**
@@ -155,16 +116,6 @@ public interface JavaSourceFacet extends ProjectFacet
     * @throws FileNotFoundException if the target {@link JavaResource} does not exist
     */
    public JavaResource getTestJavaResource(JavaSource<?> javaClass) throws FileNotFoundException;
-
-   /**
-    * Attempt to locate and re-parse the given {@link JavaSource} from its location on disk, relative to
-    * {@link #getTestSourceDirectory()}. The given instance will not be modified, and a new instance will be returned.
-    *
-    * @param javaClass The {@link JavaClass} to re-parse.
-    * @throws FileNotFoundException if the target {@link JavaResource} does not exist
-    */
-   public JavaResource getTestJavaResource(org.jboss.forge.roaster.model.source.JavaSource<?> source)
-            throws FileNotFoundException;
 
    /**
     * Recursively loops over all the source directories and for each java file it finds, calls the visitor.

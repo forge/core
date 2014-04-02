@@ -19,6 +19,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
+import javax.resource.spi.IllegalStateException;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
@@ -42,10 +43,13 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.parser.java.Annotation;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.roaster.model.Annotation;
+import org.jboss.forge.roaster.model.JavaType;
+import org.jboss.forge.roaster.model.Method;
+import org.jboss.forge.roaster.model.source.AnnotationSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
 
 public class EJBSetMethodTransactionAttributeCommand extends AbstractJavaEECommand
 {
@@ -134,13 +138,13 @@ public class EJBSetMethodTransactionAttributeCommand extends AbstractJavaEEComma
             {
                try
                {
-                  JavaSource<?> source = resource.getJavaSource();
-                  if (source instanceof JavaClass)
+                  JavaSource<?> source = resource.getJavaType();
+                  if (source instanceof JavaClassSource)
                   {
                      if (source.hasAnnotation(Stateless.class) || source.hasAnnotation(Stateful.class) ||
                               source.hasAnnotation(Singleton.class) || source.hasAnnotation(MessageDriven.class))
                      {
-                        if (!((JavaClass) source).getMethods().isEmpty())
+                        if (!((JavaClassSource) source).getMethods().isEmpty())
                            entities.add(resource);
                      }
                   }
@@ -172,25 +176,35 @@ public class EJBSetMethodTransactionAttributeCommand extends AbstractJavaEEComma
    {
       JavaMethodResource resource = method.getValue();
 
-      @SuppressWarnings("unchecked")
-      Method<? extends JavaSource<?>> m = resource.getUnderlyingResourceObject();
+      Method<?, ?> m = resource.getUnderlyingResourceObject();
 
-      Annotation<? extends JavaSource<?>> annotation;
+      Annotation<?> annotation;
       if (m.hasAnnotation(TransactionAttribute.class))
       {
          annotation = m.getAnnotation(TransactionAttribute.class);
       }
       else
       {
-         annotation = m.addAnnotation(TransactionAttribute.class);
+         if (m instanceof MethodSource)
+         {
+            annotation = ((MethodSource<?>) m).addAnnotation(TransactionAttribute.class);
+         }
+         else
+         {
+            throw new IllegalStateException("Cannot add an annotation on a binary class");
+         }
       }
-      annotation.setEnumValue(type.getValue());
+      if (annotation instanceof AnnotationSource)
+      {
+         ((AnnotationSource<?>) annotation).setEnumValue(type.getValue());
+      }
 
-      JavaSource<?> source = m.getOrigin();
-
+      JavaType<?> source = m.getOrigin();
       Resource<?> parent = resource.getParent();
-      if (parent instanceof JavaResource)
-         ((JavaResource) parent).setContents(source);
+      if (parent instanceof JavaResource && source instanceof JavaSource)
+      {
+         ((JavaResource) parent).setContents((JavaSource<?>) source);
+      }
 
       return Results.success("Transaction attribute set to [" + type.getValue() + "]");
    }
@@ -201,7 +215,7 @@ public class EJBSetMethodTransactionAttributeCommand extends AbstractJavaEEComma
       super.validate(validator);
       try
       {
-         targetEjb.getValue().getJavaSource();
+         targetEjb.getValue().getJavaType();
       }
       catch (FileNotFoundException | NullPointerException e)
       {

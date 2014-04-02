@@ -15,19 +15,19 @@ import javax.ws.rs.core.Application;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.furnace.util.Assert;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * Configures the Rest facet through the web.xml
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class RestApplicationClassConfigurationStrategy implements RestConfigurationStrategy
 {
    private final String path;
-   private final JavaClass applicationClass;
+   private final JavaClassSource applicationClass;
 
-   public RestApplicationClassConfigurationStrategy(JavaClass javaClass)
+   public RestApplicationClassConfigurationStrategy(JavaClassSource javaClass)
    {
       Assert.notNull(javaClass, "JavaClass cannot be null");
       Assert.isTrue(javaClass.hasAnnotation(ApplicationPath.class),
@@ -36,7 +36,7 @@ public class RestApplicationClassConfigurationStrategy implements RestConfigurat
       this.path = javaClass.getAnnotation(ApplicationPath.class).getStringValue();
    }
 
-   public RestApplicationClassConfigurationStrategy(String path, JavaClass javaClass)
+   public RestApplicationClassConfigurationStrategy(String path, JavaClassSource javaClass)
    {
       Assert.notNull(path, "Path cannot be null");
       Assert.notNull(javaClass, "JavaClass cannot be null");
@@ -50,7 +50,7 @@ public class RestApplicationClassConfigurationStrategy implements RestConfigurat
       return path;
    }
 
-   public JavaClass getResource()
+   public JavaClassSource getResource()
    {
       return applicationClass;
    }

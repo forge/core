@@ -7,6 +7,12 @@
 
 package org.jboss.forge.addon.javaee.validation.ui;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+
+import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
@@ -22,15 +28,11 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.java.JavaInterface;
+import org.jboss.forge.roaster.model.JavaInterface;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-
-import static org.hamcrest.CoreMatchers.*;
 
 /**
  * Creates a new Bean Validation group
@@ -38,71 +40,73 @@ import static org.hamcrest.CoreMatchers.*;
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
 @RunWith(Arquillian.class)
-public class NewGroupCommandTest {
+public class NewGroupCommandTest
+{
 
-  @Deployment
-  @Dependencies({
-          @AddonDependency(name = "org.jboss.forge.addon:ui"),
-          @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-          @AddonDependency(name = "org.jboss.forge.addon:javaee"),
-          @AddonDependency(name = "org.jboss.forge.addon:maven")
-  })
-  public static ForgeArchive getDeployment() {
-    return ShrinkWrap
-            .create(ForgeArchive.class)
-            .addBeansXML()
-            .addClass(ProjectHelper.class)
-            .addAsAddonDependencies(
-                    AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                    AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                    AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
-                    AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                    AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                    AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-            );
-  }
+   @Deployment
+   @Dependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:ui"),
+            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven")
+   })
+   public static ForgeArchive getDeployment()
+   {
+      return ShrinkWrap
+               .create(ForgeArchive.class)
+               .addBeansXML()
+               .addClass(ProjectHelper.class)
+               .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
+               );
+   }
 
-  @Inject
-  private UITestHarness testHarness;
+   @Inject
+   private UITestHarness testHarness;
 
-  @Inject
-  private ProjectHelper projectHelper;
+   @Inject
+   private ProjectHelper projectHelper;
 
-  @Test
-  public void testCreateNewGroup() throws Exception {
-    Project project = projectHelper.createJavaLibraryProject();
-    CommandController controller = testHarness.createCommandController(NewGroupCommand.class,
-            project.getRootDirectory());
-    controller.initialize();
-    controller.setValueFor("named", "MyBeanValidationGroup");
-    Assert.assertTrue(controller.isValid());
-    Assert.assertTrue(controller.canExecute());
-    Result result = controller.execute();
-    Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+   @Test
+   public void testCreateNewGroup() throws Exception
+   {
+      Project project = projectHelper.createJavaLibraryProject();
+      CommandController controller = testHarness.createCommandController(NewGroupCommand.class, project.getRoot());
+      controller.initialize();
+      controller.setValueFor("named", "MyBeanValidationGroup");
+      Assert.assertTrue(controller.isValid());
+      Assert.assertTrue(controller.canExecute());
+      Result result = controller.execute();
+      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
 
-    JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-    String path = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".constraints";
-    JavaResource javaResource = facet.getJavaResource(path + ".MyBeanValidationGroup");
-    Assert.assertNotNull(javaResource);
-    Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaInterface.class)));
-  }
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      String path = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".constraints";
+      JavaResource javaResource = facet.getJavaResource(path + ".MyBeanValidationGroup");
+      Assert.assertNotNull(javaResource);
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaInterface.class)));
+   }
 
-  @Test
-  public void testCreateNewGroupWithTargetPackage() throws Exception {
-    Project project = projectHelper.createJavaLibraryProject();
-    CommandController controller = testHarness.createCommandController(NewGroupCommand.class,
-            project.getRootDirectory());
-    controller.initialize();
-    controller.setValueFor("named", "MyBeanValidationGroup");
-    controller.setValueFor("targetPackage", "org.jboss.forge.test");
-    Assert.assertTrue(controller.isValid());
-    Assert.assertTrue(controller.canExecute());
-    Result result = controller.execute();
-    Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+   @Test
+   public void testCreateNewGroupWithTargetPackage() throws Exception
+   {
+      Project project = projectHelper.createJavaLibraryProject();
+      CommandController controller = testHarness.createCommandController(NewGroupCommand.class, project.getRoot());
+      controller.initialize();
+      controller.setValueFor("named", "MyBeanValidationGroup");
+      controller.setValueFor("targetPackage", "org.jboss.forge.test");
+      Assert.assertTrue(controller.isValid());
+      Assert.assertTrue(controller.canExecute());
+      Result result = controller.execute();
+      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
 
-    JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-    JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyBeanValidationGroup");
-    Assert.assertNotNull(javaResource);
-    Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaInterface.class)));
-  }
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyBeanValidationGroup");
+      Assert.assertNotNull(javaResource);
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaInterface.class)));
+   }
 }

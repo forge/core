@@ -25,12 +25,12 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * Configures the project as an Addon Test project
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @FacetConstraints({
@@ -72,7 +72,7 @@ public class AddonTestFacet extends AbstractFacet<Project> implements ProjectFac
       {
          Project project = getFaceted();
          String topLevelPackage = project.getFacet(MetadataFacet.class).getTopLevelPackage();
-         JavaClass testClass = JavaParser.create(JavaClass.class).setPackage(topLevelPackage);
+         JavaClassSource testClass = Roaster.create(JavaClassSource.class).setPackage(topLevelPackage);
          testClass.setName("AbstractTestCase").setAbstract(true);
          JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
          try

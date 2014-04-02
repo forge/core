@@ -10,13 +10,13 @@ import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeIns
 import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.INVERSE_FIELD;
 import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_MANY_TO_MANY;
 import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_MANY_TO_ONE;
-import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_ONE_TO_ONE;
-import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.N_TO_MANY;
 import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_ONE_TO_MANY;
+import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_ONE_TO_ONE;
+import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_REL_TYPE;
+import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.N_TO_MANY;
 import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.ONE_TO_ONE;
 import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.OWNING_FIELD;
 import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.PRIMARY_KEY;
-import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.JPA_REL_TYPE;
 import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.REVERSE_PRIMARY_KEY;
 import static org.metawidget.inspector.InspectionResultConstants.LOOKUP;
 import static org.metawidget.inspector.InspectionResultConstants.TRUE;
@@ -34,9 +34,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import org.jboss.forge.parser.java.EnumConstant;
-import org.jboss.forge.parser.java.JavaEnum;
 import org.jboss.forge.addon.scaffold.faces.metawidget.inspector.propertystyle.ForgePropertyStyle.ForgeProperty;
+import org.jboss.forge.roaster.model.EnumConstant;
 import org.metawidget.inspector.impl.BaseObjectInspector;
 import org.metawidget.inspector.impl.BaseObjectInspectorConfig;
 import org.metawidget.inspector.impl.propertystyle.Property;
@@ -48,7 +47,7 @@ import org.w3c.dom.Element;
 
 /**
  * Inspects Forge-specific metadata.
- * 
+ *
  * @author Richard Kennard
  */
 public class ForgeInspector
@@ -154,13 +153,13 @@ public class ForgeInspector
 
       if (property instanceof ForgeProperty)
       {
-         List<EnumConstant<JavaEnum>> enumConstants = ((ForgeProperty) property).getEnumConstants();
+         List<EnumConstant<?>> enumConstants = ((ForgeProperty) property).getEnumConstants();
 
          if (enumConstants != null)
          {
             List<String> lookup = CollectionUtils.newArrayList();
 
-            for (EnumConstant<JavaEnum> anEnum : enumConstants)
+            for (EnumConstant<?> anEnum : enumConstants)
             {
                lookup.add(anEnum.getName());
             }

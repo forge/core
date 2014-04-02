@@ -41,7 +41,6 @@ import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Field;
 import org.jboss.forge.roaster.model.JavaClass;
-import org.jboss.forge.roaster.model.Member;
 import org.jboss.forge.roaster.model.Method;
 import org.jboss.forge.roaster.model.Property;
 import org.jboss.forge.roaster.model.Type;

@@ -30,10 +30,11 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.parser.java.Visibility;
+import org.jboss.forge.roaster.model.Field;
+import org.jboss.forge.roaster.model.Visibility;
+import org.jboss.forge.roaster.model.source.FieldSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 public class JavaFieldCommand extends AbstractProjectCommand
 {
@@ -45,11 +46,11 @@ public class JavaFieldCommand extends AbstractProjectCommand
    @Inject
    @WithAttributes(label = "Field Name", description = "The field name to be created in this class", required = true)
    private UIInput<String> named;
-   
+
    @Inject
    @WithAttributes(label = "Field Type", description = "The type intended to be used for this field", type = InputType.JAVA_CLASS_PICKER, required = true, defaultValue = "String")
    private UIInput<String> type;
-   
+
    @Inject
    @WithAttributes(label = "Access Type", description = "The access type", type = InputType.RADIO)
    private UISelectOne<Visibility> accessType;
@@ -86,8 +87,8 @@ public class JavaFieldCommand extends AbstractProjectCommand
    {
       JavaResource javaResource = targetClass.getValue();
       String fieldNameStr = named.getValue();
-      JavaClass targetClass = (JavaClass) javaResource.getJavaSource();
-      Field<JavaClass> field = targetClass.getField(fieldNameStr);
+      JavaClassSource targetClass = javaResource.getJavaType();
+      FieldSource<JavaClassSource> field = targetClass.getField(fieldNameStr);
       String action = (field == null) ? "created" : "updated";
       if (field != null)
       {
@@ -109,7 +110,7 @@ public class JavaFieldCommand extends AbstractProjectCommand
       return Results.success("Field " + named.getValue() + " " + action);
 
    }
-   
+
    private void setupTargetClass(UIContext context)
    {
       UISelection<FileResource<?>> selection = context.getInitialSelection();
@@ -126,7 +127,7 @@ public class JavaFieldCommand extends AbstractProjectCommand
          targetClass.setDefaultValue(entities.get(idx));
       }
    }
-   
+
    private List<JavaResource> getProjectClasses(Project project)
    {
       final List<JavaResource> classes = new ArrayList<>();
@@ -140,8 +141,9 @@ public class JavaFieldCommand extends AbstractProjectCommand
             {
                try
                {
-                  JavaSource<?> javaSource = resource.getJavaSource();
-                  if (javaSource.isClass())                  {
+                  JavaSource<?> javaType = resource.getJavaType();
+                  if (javaType.isClass())
+                  {
                      classes.add(resource);
                   }
                }
@@ -175,7 +177,8 @@ public class JavaFieldCommand extends AbstractProjectCommand
       accessType.setDefaultValue(Visibility.PRIVATE);
    }
 
-   private void setCurrentWorkingResource(UIExecutionContext context, JavaResource javaResource, Field<JavaClass> field)
+   private void setCurrentWorkingResource(UIExecutionContext context, JavaResource javaResource,
+            Field<JavaClassSource> field)
             throws FileNotFoundException
    {
       Project selectedProject = getSelectedProject(context);
@@ -195,7 +198,7 @@ public class JavaFieldCommand extends AbstractProjectCommand
 
    @Inject
    private ProjectFactory projectFactory;
-   
+
    @Override
    protected ProjectFactory getProjectFactory()
    {

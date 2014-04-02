@@ -37,7 +37,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -86,8 +86,7 @@ public class NewEJBCommandTest
    {
       Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      WizardCommandController controller = testHarness.createWizardController(NewEJBCommand.class,
-               project.getRootDirectory());
+      WizardCommandController controller = testHarness.createWizardController(NewEJBCommand.class, project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "TestEJB");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");
@@ -101,9 +100,9 @@ public class NewEJBCommandTest
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.TestEJB");
       Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaClass.class)));
-      Assert.assertTrue(javaResource.getJavaSource().hasAnnotation(Stateless.class));
-      Assert.assertTrue(((JavaClass) javaResource.getJavaSource()).hasField("serialVersionUID"));
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      Assert.assertTrue(javaResource.getJavaType().hasAnnotation(Stateless.class));
+      Assert.assertTrue(((JavaClass<?>) javaResource.getJavaType()).hasField("serialVersionUID"));
    }
 
    @Test
@@ -112,7 +111,7 @@ public class NewEJBCommandTest
       Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
       WizardCommandController controller = testHarness.createWizardController(NewEJBCommand.class,
-               project.getRootDirectory());
+               project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "TestEJB");
       controller.setValueFor("type", EJBType.MESSAGEDRIVEN);
@@ -136,10 +135,10 @@ public class NewEJBCommandTest
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.TestEJB");
       Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaClass.class)));
-      Assert.assertTrue(javaResource.getJavaSource().hasAnnotation(MessageDriven.class));
-      Assert.assertFalse(((JavaClass) javaResource.getJavaSource()).hasField("serialVersionUID"));
-      Assert.assertNotNull(((JavaClass) javaResource.getJavaSource()).getMethod("onMessage", Message.class));
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      Assert.assertTrue(javaResource.getJavaType().hasAnnotation(MessageDriven.class));
+      Assert.assertFalse(((JavaClass<?>) javaResource.getJavaType()).hasField("serialVersionUID"));
+      Assert.assertNotNull(((JavaClass<?>) javaResource.getJavaType()).getMethod("onMessage", Message.class));
    }
 
    @Test
@@ -147,8 +146,7 @@ public class NewEJBCommandTest
    {
       Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      WizardCommandController controller = testHarness.createWizardController(NewEJBCommand.class,
-               project.getRootDirectory());
+      WizardCommandController controller = testHarness.createWizardController(NewEJBCommand.class, project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "TestEJB");
       controller.setValueFor("type", EJBType.MESSAGEDRIVEN);
@@ -172,13 +170,13 @@ public class NewEJBCommandTest
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.TestEJB");
       Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaClass.class)));
-      Assert.assertTrue(javaResource.getJavaSource().hasAnnotation(MessageDriven.class));
-      Assert.assertTrue(((JavaClass) javaResource.getJavaSource()).hasField("serialVersionUID"));
-      Assert.assertNotNull(((JavaClass) javaResource.getJavaSource()).getMethod("onMessage", Message.class));
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      Assert.assertTrue(javaResource.getJavaType().hasAnnotation(MessageDriven.class));
+      Assert.assertTrue(((JavaClass<?>) javaResource.getJavaType()).hasField("serialVersionUID"));
+      Assert.assertNotNull(((JavaClass<?>) javaResource.getJavaType()).getMethod("onMessage", Message.class));
 
       CommandController controller2 = testHarness.createCommandController(EJBSetClassTransactionAttributeCommand.class,
-               project.getRootDirectory());
+               project.getRoot());
 
       controller2.initialize();
       Assert.assertFalse(controller2.canExecute());
@@ -186,31 +184,32 @@ public class NewEJBCommandTest
       controller2.setValueFor("type", TransactionAttributeType.NOT_SUPPORTED);
       Assert.assertTrue(controller2.canExecute());
 
-      Assert.assertFalse(((JavaClass) javaResource.getJavaSource()).hasAnnotation(TransactionAttribute.class));
+      Assert.assertFalse(((JavaClass<?>) javaResource.getJavaType()).hasAnnotation(TransactionAttribute.class));
       controller2.execute();
-      Assert.assertTrue(((JavaClass) javaResource.getJavaSource()).hasAnnotation(TransactionAttribute.class));
+      Assert.assertTrue(((JavaClass<?>) javaResource.getJavaType()).hasAnnotation(TransactionAttribute.class));
       Assert.assertEquals(TransactionAttributeType.NOT_SUPPORTED,
-               ((JavaClass) javaResource.getJavaSource()).getAnnotation(TransactionAttribute.class).getEnumValue(
+               ((JavaClass<?>) javaResource.getJavaType()).getAnnotation(TransactionAttribute.class).getEnumValue(
                         TransactionAttributeType.class));
 
       CommandController controller3 = testHarness.createCommandController(
                EJBSetMethodTransactionAttributeCommand.class,
-               project.getRootDirectory());
+               project.getRoot());
 
       controller3.initialize();
       Assert.assertFalse(controller3.canExecute());
       controller3.setValueFor("targetEjb", "org.jboss.forge.test.TestEJB");
-      controller3.setValueFor("method", "onMessage(Message)::void");
+      controller3.setValueFor("method", "onMessage(javax.jms.Message)::void");
       controller3.setValueFor("type", TransactionAttributeType.NEVER);
       Assert.assertTrue(controller3.canExecute());
 
-      Assert.assertFalse(((JavaClass) javaResource.getJavaSource()).getMethod("onMessage", Message.class)
+      Assert.assertFalse(((JavaClass<?>) javaResource.getJavaType()).getMethod("onMessage", Message.class)
                .hasAnnotation(TransactionAttribute.class));
       controller3.execute();
-      Assert.assertTrue(((JavaClass) javaResource.getJavaSource()).getMethod("onMessage", Message.class).hasAnnotation(
-               TransactionAttribute.class));
+      Assert.assertTrue(((JavaClass<?>) javaResource.getJavaType()).getMethod("onMessage", Message.class)
+               .hasAnnotation(
+                        TransactionAttribute.class));
       Assert.assertEquals(TransactionAttributeType.NEVER,
-               ((JavaClass) javaResource.getJavaSource()).getMethod("onMessage", Message.class)
+               ((JavaClass<?>) javaResource.getJavaType()).getMethod("onMessage", Message.class)
                         .getAnnotation(TransactionAttribute.class).getEnumValue(TransactionAttributeType.class));
 
    }
