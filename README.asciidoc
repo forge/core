@@ -409,36 +409,6 @@ The `Facet` class comes from the `facets` addon and is used in the public APIs o
 
 
 
-
-
-=== Install your addon in the local maven repository:
-
-Depending on the Forge environment in which you are running, installation steps will differ.
-
-For Eclipse:: Open the Forge quick-assist menu, select either "Build and install an Addon" or "Install an addon" to build and install your project, or install a pre-built maven artifact.
-
-For the Shell::
-
-
-[source,cmd]
-----
-    mvn clean install
-----
-
-Run
-
-[source,cmd]
-----
-    ./forge --install yourgroupId:artifactId,version
-----
-
-WARNING: This coordinate is *NOT* the same as Maven's. You MUST use a comma (,) between the `artifactId` and the version.
-
-
-
-
-
-
 === Test your addon
 
 One of the most important concepts of writing a Forge addon is writing tests using the Furnace test harness. This
@@ -583,3 +553,28 @@ Forge test cases] in our github repository.
 
 NOTE: The `version` parameter in `@AddonDependency` and in the `AddonDependencyEntry.create(...)` method are optional. By not specifying them means that the test harness
 will attempt to find the version based on the tests' build descriptor (pom.xml). In this case, if the dependent addon is not present in the tests' build descriptor, the test execution should fail.
+
+
+=== Install your addon in the local maven repository:
+
+Depending on the Forge environment in which you are running, installation steps will differ.
+
+For Eclipse:: Open the Forge quick-assist menu, select either "Build and install an Addon" or "Install an addon" to build and install your project, or install a pre-built maven artifact.
+
+For the Shell::
+
+
+[source,cmd]
+----
+    mvn clean install
+----
+
+Run
+
+[source,cmd]
+----
+    ./forge --install yourgroupId:artifactId,version
+----
+
+WARNING: This coordinate is *NOT* the same as Maven's. You MUST use a comma (,) between the `artifactId` and the version.
+
