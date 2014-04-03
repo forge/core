@@ -21,7 +21,7 @@
    </modules>
 
    <properties>
-      <version.roaster>2.0.1-SNAPSHOT</version.roaster>
+      <version.roaster>2.1.0.Final</version.roaster>
    </properties>
 
    <dependencyManagement>
@@ -37,12 +37,12 @@
             <version>${project.version}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.roaster</groupId>
             <artifactId>roaster-api</artifactId>
             <version>${version.roaster}</version>
          </dependency>
          <dependency>
-            <groupId>org.jboss.forge</groupId>
+            <groupId>org.jboss.forge.roaster</groupId>
             <artifactId>roaster-jdt</artifactId>
             <version>${version.roaster}</version>
          </dependency>
