@@ -1,0 +1,181 @@
+== git-tools
+:idprefix: id_
+
+This addon provides both *standalone* functionality to be used in other addons as well as commands. 
+
+The git-tools addon enables creating and cloning GIT repositories, working with branches, commits and other Git objects.
+
+It has some useful commands for setting up .gitIgnore files.
+
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|ui
+|no
+|no
+
+|configuration
+|no
+|no
+
+|resource
+|no
+|no
+
+|projects
+|no
+|no
+
+|facets
+|no
+|no
+
+|org.jboss.forge.furnace.container:cdi
+|no
+|no
+
+|===
+
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add git-tools to pom.xml 
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>git-tools</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----
+
+== Features
+
+Obtaining GIT utilities::
+    Allows for programatically manipulating GIT repositories. Works as a wrapper over the JGit library.
++
+[source,java]
+----
+@Inject
+private GitUtils gitUtils;
+----
++
+
+[TIP] 
+====
+If your addon uses a container that does not support "@Inject" annotations, services such as the `GitUtils` may also be 
+accessed via the `AddonRegistry`:
++
+[source,java]
+----
+Imported<GitUtils> imported = addonRegistry.getServices(GitUtils.class);
+GitUtils gitUtils = imported.get();
+----
++
+==== 
+
+Cloning a GIT repository::
+    Once you have access to the `GitUtils` object, you can use it to clone an existing GIT repository. Most of the other git utilities work with the Git object returned from this operation, so it is a good idea to cache it.
++
+[source,java]
+----
+import org.eclipse.jgit.api.Git;
+
+// ...
+
+private Git gitHandle;
+
+private void cloneRepository(String remoteUri, DirectoryResource localDirectory)
+{
+   this.gitHandle = gitUtils.clone(localDirectory, remoteUri); 
+}
+----
++
+
+    You can obtain the gitHandle object of an existing local repository by simply calling the `git` method of gitUtils:
++
+[source,java]
+----
+private Git getGitRepository(DirectoryResource localDirectory)
+{
+   return gitUtils.git(localDirectory); 
+}
+----
++
+    
+Working with branches::
+    The GIT utilities provide handy methods for listing, checking out and creating branches. For all of them you will need the gitHandle object, obtained when cloning or getting a GIT repository.
++
+[source,java]
+----
+// List all the local branches
+List<Ref> localBranches = gitUtils.getLocalBranches(gitHandle);
+
+// Create a branch
+gitUtils.createBranch(gitHandle, "FORGE-123");
+
+// Get current branch name
+String currentBranch = gitUtils.getCurrentBranchName(gitHandle);
+
+// Checkout 'master' branch
+gitUtils.checkout(gitHandle, "master", false, null, false);
+----
++
+    
+Staging files to index::
+    You can use the GIT utilities to perform adding new, modified and deleted files from the GIT working tree to the staging area.
++
+[source,java]
+----
+// Stage files with a certain pattern
+gitUtils.add(gitHandle, "src\");
+
+// Stage all the files in the working tree
+gitUtils.addAll(gitHandle);
+----
++
+
+Working with commits::
+    GIT utilities allow for creating, stashing and cherry picking commits. There is also functionality for reseting the HEAD to a previous state. At the moment there is only hard reset, i.e. reset the HEAD, the index and the working tree.
++
+[source,java]
+----
+// Commit the staged files along with a message
+gitUtils.commit(gitHandle, "This is a test commit message");
+
+// Stage all the files in the working tree and then commit them along with a message
+gitUtils.commitAll(gitHandle, "This is a test commit message");
+
+// Stash the content of the working tree and the index into separate commits
+gitUtils.stashCreate(gitHandle);
+
+// Reset to the previous commit
+gitUtils.resetHard(gitHandle, "f414f31");
+----
++
+
+== UI commands
+
+The git-tools addon provides a few handy UI commands for working with GIT repositories as well as 
+for setting up and manipulating the .gitignore file
+
+Working with GIT repositories::
+    You can init a GIT repository in an existing project by running the +git-setup+ command. 
+    You may use the +git-clone+ command to clone a remote repository to a local directory.
+    The +git-checkout+ command may be used for creating or checking out existing branches.
+    
+Working with .gitignore::
+    There are some UI commands for working with .gitignore. You can set everything up by running 
+    gitignore-setup inside an existing project. It will download from a remote repository a list 
+    of .gitignore template files for almost all the programs that create artefacts that should be 
+    ignored by GIT. The +git-create+ command will create the .gitignore file in the root of the 
+    current project and will add there all the patterns from a list of templates, provided by the 
+    user. There are commands for adding, deleting and listing the patterns in the .gitignore file.    
+         

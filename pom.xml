@@ -95,6 +95,7 @@
             <module>shell</module>
             <module>templates</module>
             <module>text</module>
+            <module>git</module>
 
             <module>core</module>
             <module>bootstrap</module>
@@ -118,6 +119,7 @@
             <module>dependencies/api</module>
             <module>environment/api</module>
             <module>facets/api</module>
+            <module>git/api</module>
             <module>javaee/api</module>
             <module>maven/api</module>
             <module>projects/api</module>

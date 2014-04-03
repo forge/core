@@ -442,6 +442,17 @@
             <version>${version.furnace}</version>
             <classifier>forge-addon</classifier>
          </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>git</artifactId>
+            <version>${version.furnace}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>git-api</artifactId>
+            <version>${version.furnace}</version>
+         </dependency>
       </dependencies>
    </dependencyManagement>
 

@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <parent>
+      <groupId>org.jboss.forge</groupId>
+      <artifactId>forge-parent</artifactId>
+      <version>2.3.1-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
+   </parent>
+
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>git-parent</artifactId>
+   <packaging>pom</packaging>
+   <name>Forge - Git Addon Parent</name>
+
+   <modules>
+      <module>addon</module>
+      <module>api</module>
+      <module>impl</module>
+      <module>tests</module>
+   </modules>
+
+   <properties>
+      <version.jgit>3.3.0.201403021825-r</version.jgit>
+   </properties>
+
+   <dependencyManagement>
+      <dependencies>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>git</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>git-api</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>git-impl</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>${version.jgit}</version>
+         </dependency>
+      </dependencies>
+   </dependencyManagement>
+</project>

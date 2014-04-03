@@ -1,0 +1,40 @@
+package org.jboss.forge.addon.git.ui;
+
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
+import org.jboss.forge.addon.git.facet.GitFacet;
+import org.jboss.forge.addon.git.facet.GitIgnoreFacet;
+import org.jboss.forge.addon.git.gitignore.resources.GitIgnoreResource;
+import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.util.Metadata;
+
+@FacetConstraint({ GitFacet.class, GitIgnoreFacet.class })
+public class GitIgnoreEditCommand extends AbstractGitCommand
+{
+
+   @Override
+   public UICommandMetadata getMetadata(UIContext context)
+   {
+      return Metadata.from(super.getMetadata(context), this.getClass()).name("GITIGNORE: Edit")
+               .description("Open .gitignore and edit it");
+   }
+
+   @Override
+   public void initializeUI(UIBuilder builder) throws Exception
+   {
+   }
+
+   @Override
+   public Result execute(UIExecutionContext context) throws Exception
+   {
+      UIContext uiContext = context.getUIContext();
+      GitIgnoreResource resource = gitIgnoreResource(uiContext);
+      uiContext.setSelection(resource);
+      return Results.success();
+   }
+
+}

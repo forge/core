@@ -1,0 +1,66 @@
+GIT-CHECKOUT(1)
+===========
+:doctype: manpage
+
+
+NAME
+----
+git-checkout - checks out a local Git branch
+
+
+SYNOPSIS
+--------
+*git-checkout* ['OPTIONS']
+
+
+DESCRIPTION
+-----------
+The git-checkout(1) command switches to a given local branch 'BRANCH-NAME'. If 
+specified by the 'CREATE' option, the command will try to create the branch 
+by also configuring the 'TRACKING-MODE'. This should be run in the context of
+an existing project, where GIT was set up (either by git-setup(1) or by 
+git-clone(1)).
+
+
+OPTIONS
+-------
+*-branchName*=['BRANCH-NAME']::
+    The name of the branch which will be checked out. The default value is 
+    'master'.
+*-create*=['CREATE']::
+    If set to 'true' the command will try to create a branch with name 
+    'BRANCH-NAME'. It will fail if a branch with the given name exists or if 
+    it is not valid name.
+*-trackingMode*=['TRACKING-MODE']::
+    In case of a newly created branch, this option specifies how it will track
+    its upstream. The possible options are 'TRACK', 'NOTRACK' and 
+    'SET_UPSTREAM'. The default value is 'SET_UPSTREAM'.
+*-force*=['FORCE']::
+    If set to 'true' and the 'BRANCH-NAME' already exists, the start-point of 
+    an existing branch will be set to a new start-point. If 'false', the 
+    existing branch will not be changed. In case of creating a new brach, the
+    'true' value will force the create, no matter if the branch exists. The
+    default value is 'false'.
+
+
+BUGS
+----
+Probably a lot
+
+
+AUTHOR
+------
+The Forge team
+
+
+RESOURCES
+---------
+forge: <http://forge.jboss.org/>
+asciidoc: <http://asciidoc.org/>
+
+
+COPYING
+-------
+Copyright 2014 Red Hat, Inc. and/or its affiliates.
+Licensed under the Eclipse Public License version 1.0, available at
+http://www.eclipse.org/legal/epl-v10.html

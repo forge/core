@@ -1,0 +1,52 @@
+GIT-CLONE(1)
+===========
+:doctype: manpage
+
+
+NAME
+----
+git-clone - clones a remote repository
+
+
+SYNOPSIS
+--------
+*git-clone* ['OPTIONS']
+
+
+DESCRIPTION
+-----------
+The git-clone(1) command clones a remote Git repository from the 'URI' to the
+'TARGET-DIRECTORY' directory. This can be run outside of a project context.
+
+
+OPTIONS
+-------
+*-uri*='URI'::
+    A URI (being a remote URL or a local path) to the repository that will be
+    cloned. This option is required.
+*-targetDirectory*='TARGET-DIRECTORY'::
+    The local directory, where the Git repository will be cloned to. It should
+    either not exist or be an empty directory. This option is required.
+
+
+BUGS
+----
+Probably a lot
+
+
+AUTHOR
+------
+The Forge team
+
+
+RESOURCES
+---------
+forge: <http://forge.jboss.org/>
+asciidoc: <http://asciidoc.org/>
+
+
+COPYING
+-------
+Copyright 2014 Red Hat, Inc. and/or its affiliates.
+Licensed under the Eclipse Public License version 1.0, available at
+http://www.eclipse.org/legal/epl-v10.html

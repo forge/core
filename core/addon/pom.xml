@@ -107,6 +107,11 @@
       <artifactId>database-tools</artifactId>
       <classifier>forge-addon</classifier>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.forge.addon</groupId>
+      <artifactId>git</artifactId>
+      <classifier>forge-addon</classifier>
+    </dependency>
   </dependencies>
 
   <build>

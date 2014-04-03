@@ -1,0 +1,48 @@
+GIT-SETUP(1)
+===========
+:doctype: manpage
+
+
+NAME
+----
+*git-setup* - sets up a git repository
+
+
+SYNOPSIS
+--------
+*git-setup*
+
+
+DESCRIPTION
+-----------
+The git-setup(1) command creates a Git repository in the root of the current 
+project by running the init action. If a Git repository already exists, the 
+command will do nothing. This should be run in the context of an existing 
+project.
+
+
+OPTIONS
+-------
+None yet
+  
+
+BUGS
+----
+Probably a lot
+
+
+AUTHOR
+------
+The Forge team
+
+
+RESOURCES
+---------
+forge: <http://forge.jboss.org/>
+
+
+COPYING
+-------
+Copyright 2014 Red Hat, Inc. and/or its affiliates.
+Licensed under the Eclipse Public License version 1.0, available at
+http://www.eclipse.org/legal/epl-v10.html
