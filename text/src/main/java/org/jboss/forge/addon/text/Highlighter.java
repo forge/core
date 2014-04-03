@@ -2,9 +2,9 @@ package org.jboss.forge.addon.text;
 
 import java.io.OutputStream;
 
-import org.jboss.forge.addon.text.highlight.Encoder;
-import org.jboss.forge.addon.text.highlight.Scanner;
-import org.jboss.forge.addon.text.highlight.Syntax;
+import org.jboss.aesh.extensions.text.highlight.Encoder;
+import org.jboss.aesh.extensions.text.highlight.Scanner;
+import org.jboss.aesh.extensions.text.highlight.Syntax;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
