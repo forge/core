@@ -22,6 +22,7 @@ import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.PathResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -30,6 +31,7 @@ import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.SingleValued;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -75,8 +77,8 @@ public class NewProjectWizard implements UIWizard
    private UIInput<String> finalName;
 
    @Inject
-   @WithAttributes(label = "Project location")
-   private UIInput<DirectoryResource> targetLocation;
+   @WithAttributes(label = "Project location", type = InputType.DIRECTORY_PICKER)
+   private UIInput<Resource> targetLocation;
 
    @Inject
    @WithAttributes(label = "Overwrite existing project location")
@@ -362,10 +364,12 @@ public class NewProjectWizard implements UIWizard
    public Result execute(UIExecutionContext context) throws Exception
    {
       Result result = Results.success("Project named '" + named.getValue() + "' has been created.");
-      DirectoryResource directory = targetLocation.getValue();
-      DirectoryResource targetDir = directory.getChildDirectory(named.getValue());
+      Resource directory = targetLocation.getValue();
+      Resource targetDir = directory.getChild(named.getValue());
 
-      if (targetDir.mkdirs() || overwrite.getValue())
+      if ((DirectoryResource.class.isInstance(targetDir) && ((DirectoryResource)targetDir).mkdirs()) ||
+          (PathResource.class.isInstance(targetDir) && ((PathResource)targetDir).mkdirs()) ||
+           overwrite.getValue())
       {
          ProjectType value = type.getValue();
 
@@ -410,7 +414,7 @@ public class NewProjectWizard implements UIWizard
       return named;
    }
 
-   public UIInput<DirectoryResource> getTargetLocation()
+   public UIInput<Resource> getTargetLocation()
    {
       return targetLocation;
    }
