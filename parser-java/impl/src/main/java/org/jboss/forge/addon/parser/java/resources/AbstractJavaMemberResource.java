@@ -13,7 +13,7 @@ import java.util.List;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.VirtualResource;
-import org.jboss.forge.parser.java.Member;
+import org.jboss.forge.roaster.model.Member;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

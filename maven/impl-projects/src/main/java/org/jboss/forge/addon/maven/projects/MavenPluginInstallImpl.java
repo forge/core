@@ -24,11 +24,11 @@ import org.jboss.forge.addon.maven.plugins.MavenPluginInstaller;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.forge.parser.java.util.Strings;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Responsible for installing a given {@link MavenPlugin} into the current project..
- * 
+ *
  * @author <a href="mailto:salmon_charles@gmail.com">Charles-Edouard Salmon</a>
  */
 public class MavenPluginInstallImpl implements MavenPluginInstaller
@@ -131,7 +131,7 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
       else
       {
          if (existing != null
-                  && Strings.areEqual(versionToInstall, existing.getCoordinate().getVersion()))
+                  && Strings.compare(versionToInstall, existing.getCoordinate().getVersion()))
          {
             // Same version in the hierarchy, no need to specify the version
             pluginToInstall.setVersion(null);
@@ -220,7 +220,7 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
       if (Dependencies.areEquivalent(dominant.getCoordinate(), recessive.getCoordinate()))
       {
          // Version
-         if (Strings.areEqual(dominant.getCoordinate().getVersion(), recessive.getCoordinate().getVersion()))
+         if (Strings.compare(dominant.getCoordinate().getVersion(), recessive.getCoordinate().getVersion()))
          {
             // Remove version as dominant and recessive have the same one
             merged.setVersion(null);
@@ -246,7 +246,7 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
             {
                if (cfgElmtsRefMap.containsKey(e.getName()))
                {
-                  if (Strings.areEqual(cfgElmtsRefMap.get(e.getName()), e.toString()))
+                  if (Strings.compare(cfgElmtsRefMap.get(e.getName()), e.toString()))
                   {
                      // Remove the configuration element as dominant and recessive have the same element
                      mergedConfiguration.removeConfigurationElement(e.getName());
@@ -269,7 +269,7 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
                {
                   PluginExecution pluginExecutionMerged = mergedExec.get(entry.getKey());
                   // Phase
-                  if (Strings.areEqual(pluginExecutionRecessive.getPhase(), pluginExecutionDominant.getPhase()))
+                  if (Strings.compare(pluginExecutionRecessive.getPhase(), pluginExecutionDominant.getPhase()))
                   {
                      // Remove the phase as dominant and recessive are identical
                      pluginExecutionMerged.setPhase(null);
@@ -309,7 +309,7 @@ public class MavenPluginInstallImpl implements MavenPluginInstaller
                      {
                         if (cfgExecElmtsRefMap.containsKey(e.getName()))
                         {
-                           if (Strings.areEqual(cfgExecElmtsRefMap.get(e.getName()), e.toString()))
+                           if (Strings.compare(cfgExecElmtsRefMap.get(e.getName()), e.toString()))
                            {
                               // Remove the execution configuration element as dominant and recessive have the same
                               // element

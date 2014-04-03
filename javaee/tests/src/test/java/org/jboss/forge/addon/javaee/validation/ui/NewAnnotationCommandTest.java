@@ -7,6 +7,14 @@
 
 package org.jboss.forge.addon.javaee.validation.ui;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+
+import javax.inject.Inject;
+import javax.validation.Constraint;
+import javax.validation.ReportAsSingleViolation;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
@@ -21,17 +29,11 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.java.JavaAnnotation;
+import org.jboss.forge.roaster.model.JavaAnnotation;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import javax.validation.Constraint;
-import javax.validation.ReportAsSingleViolation;
-
-import static org.hamcrest.CoreMatchers.*;
 
 /**
  *
@@ -73,7 +75,7 @@ public class NewAnnotationCommandTest
    public void testCreateNewAnnotation() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
-      CommandController controller = testHarness.createCommandController(NewAnnotationCommand.class, project.getRootDirectory());
+      CommandController controller = testHarness.createCommandController(NewAnnotationCommand.class, project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "MyConstraint");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");
@@ -85,8 +87,8 @@ public class NewAnnotationCommandTest
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyConstraint");
       Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaAnnotation.class)));
-      JavaAnnotation ann = (JavaAnnotation) javaResource.getJavaSource();
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaAnnotation.class)));
+      JavaAnnotation<?> ann = javaResource.getJavaType();
       Assert.assertTrue(ann.hasAnnotation(Constraint.class));
       Assert.assertTrue(ann.hasAnnotation(ReportAsSingleViolation.class));
    }

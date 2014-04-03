@@ -12,7 +12,6 @@ import java.util.Iterator;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.maven.projects.util.Packages;
-import org.jboss.forge.addon.parser.java.JavaSourceFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -35,20 +34,18 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class NewUICommandWizard extends AbstractProjectCommand
 {
    @Inject
    private ProjectFactory projectFactory;
-
-   @Inject
-   private JavaSourceFactory javaSourceFactory;
 
    @Inject
    @WithAttributes(label = "Command name", required = true)
@@ -109,24 +106,24 @@ public class NewUICommandWizard extends AbstractProjectCommand
       Project project = getSelectedProject(context);
       if (project == null)
       {
-         JavaClass javaClass = createCommand(named.getValue(), targetPackage.getValue(), categories.getValue());
+         JavaClassSource javaClass = createCommand(named.getValue(), targetPackage.getValue(), categories.getValue());
          javaResource = getJavaResource(targetLocation.getValue(), javaClass.getName());
          javaResource.setContents(javaClass);
       }
       else
       {
          final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-         JavaClass javaClass = createCommand(named.getValue(), targetPackage.getValue(), categories.getValue());
+         JavaClassSource javaClass = createCommand(named.getValue(), targetPackage.getValue(), categories.getValue());
          javaResource = java.saveJavaSource(javaClass);
       }
       context.getUIContext().setSelection(javaResource);
       return Results.success("Command " + javaResource + " created");
    }
 
-   private JavaClass createCommand(String commandName, String targetPackage, Iterable<String> categories)
+   private JavaClassSource createCommand(String commandName, String targetPackage, Iterable<String> categories)
    {
       // TODO Replace with Templates addon?
-      JavaClass command = javaSourceFactory.create(JavaClass.class)
+      JavaClassSource command = Roaster.create(JavaClassSource.class)
                .setName(commandName)
                .setPublic();
 
@@ -143,7 +140,7 @@ public class NewUICommandWizard extends AbstractProjectCommand
       command.addImport(Result.class);
       command.addImport(Results.class);
 
-      Method<JavaClass> getMetadataMethod = command.addMethod()
+      MethodSource<JavaClassSource> getMetadataMethod = command.addMethod()
                .setPublic()
                .setName("getMetadata")
                .setReturnType(UICommandMetadata.class)

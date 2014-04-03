@@ -26,8 +26,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.jboss.forge.addon.convert.Converter;
-import org.jboss.forge.addon.javaee.jpa.JPAFieldOperations;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
+import org.jboss.forge.addon.javaee.jpa.JPAFieldOperations;
 import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -59,9 +59,10 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.util.Strings;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.Field;
+import org.jboss.forge.roaster.model.source.FieldSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, PrerequisiteCommandsProvider
 {
@@ -146,7 +147,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
                {
                   try
                   {
-                     JavaSource<?> javaSource = resource.getJavaSource();
+                     JavaSource<?> javaSource = resource.getJavaType();
                      String qualifiedName = javaSource.getQualifiedName();
                      if (Strings.isNullOrEmpty(value) || qualifiedName.startsWith(value))
                      {
@@ -252,7 +253,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
             {
                try
                {
-                  JavaSource<?> javaSource = resource.getJavaSource();
+                  JavaSource<?> javaSource = resource.getJavaType();
                   if (javaSource.hasAnnotation(Entity.class) || javaSource.hasAnnotation(MappedSuperclass.class))
                   {
                      entities.add(resource);
@@ -286,8 +287,8 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
    {
       JavaResource javaResource = targetEntity.getValue();
       String fieldNameStr = named.getValue();
-      JavaClass targetEntity = (JavaClass) javaResource.getJavaSource();
-      Field<JavaClass> field = targetEntity.getField(fieldNameStr);
+      JavaClassSource targetEntity = javaResource.getJavaType();
+      FieldSource<JavaClassSource> field = targetEntity.getField(fieldNameStr);
       String action = (field == null) ? "created" : "updated";
       if (field != null)
       {
@@ -352,7 +353,8 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
     * @param field
     * @throws FileNotFoundException
     */
-   private void setCurrentWorkingResource(UIExecutionContext context, JavaResource javaResource, Field<JavaClass> field)
+   private void setCurrentWorkingResource(UIExecutionContext context, JavaResource javaResource,
+            Field<JavaClassSource> field)
             throws FileNotFoundException
    {
       Project selectedProject = getSelectedProject(context);
@@ -373,7 +375,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
          JavaResource javaResource = targetEntity.getValue();
          if (javaResource != null)
          {
-            JavaClass javaClass = (JavaClass) javaResource.getJavaSource();
+            JavaClassSource javaClass = javaResource.getJavaType();
             if (javaClass.hasField(named.getValue()))
             {
                validator.addValidationWarning(targetEntity, "Field '" + named.getValue() + "' already exists");

@@ -32,7 +32,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -103,7 +103,7 @@ public class FacesNewValidatorCommand extends AbstractJavaEECommand
          {
             try
             {
-               JavaSource<?> javaSource = javaResource.getJavaSource();
+               JavaSource<?> javaSource = javaResource.getJavaType();
                if (javaSource.hasAnnotation(FacesValidator.class))
                {
                   value[0] = javaSource.getPackage();

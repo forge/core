@@ -30,14 +30,14 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.java.JavaAnnotation;
+import org.jboss.forge.roaster.model.JavaAnnotation;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -77,7 +77,7 @@ public class NewQualifierCommandTest
    {
       Project project = projectHelper.createJavaLibraryProject();
       CommandController controller = testHarness.createCommandController(NewQualifierCommand.class,
-               project.getRootDirectory());
+               project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "MyQualifier");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");
@@ -89,8 +89,8 @@ public class NewQualifierCommandTest
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyQualifier");
       Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaAnnotation.class)));
-      JavaAnnotation ann = (JavaAnnotation) javaResource.getJavaSource();
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaAnnotation.class)));
+      JavaAnnotation<?> ann = javaResource.getJavaType();
       Assert.assertTrue(ann.hasAnnotation(Qualifier.class));
       Assert.assertFalse(ann.hasAnnotation(Inherited.class));
    }
@@ -100,7 +100,7 @@ public class NewQualifierCommandTest
    {
       Project project = projectHelper.createJavaLibraryProject();
       CommandController controller = testHarness.createCommandController(NewQualifierCommand.class,
-               project.getRootDirectory());
+               project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "MyInheritedQualifier");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");
@@ -113,8 +113,8 @@ public class NewQualifierCommandTest
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyInheritedQualifier");
       Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaAnnotation.class)));
-      JavaAnnotation ann = (JavaAnnotation) javaResource.getJavaSource();
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaAnnotation.class)));
+      JavaAnnotation<?> ann = javaResource.getJavaType();
       Assert.assertTrue(ann.hasAnnotation(Qualifier.class));
       Assert.assertTrue(ann.hasAnnotation(Inherited.class));
    }

@@ -16,7 +16,6 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.addons.facets.AddonTestFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
-import org.jboss.forge.addon.parser.java.JavaSourceFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -40,19 +39,17 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Method;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
  * Creates a Furnace Test case
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class NewFurnaceTestCommand extends AbstractProjectCommand
 {
-
-   @Inject
-   private JavaSourceFactory javaSourceFactory;
 
    @Inject
    private ProjectFactory projectFactory;
@@ -98,7 +95,7 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
 
    /*
     * (non-Javadoc)
-    * 
+    *
     * @see org.jboss.forge.addon.ui.AbstractUICommand#getMetadata(org.jboss.forge.addon.ui.context.UIContext)
     */
    @Override
@@ -114,7 +111,7 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
    {
       UIContext uiContext = context.getUIContext();
       Project project = getSelectedProject(uiContext);
-      JavaClass javaClass = javaSourceFactory.create(JavaClass.class).setName(named.getValue())
+      JavaClassSource javaClass = Roaster.create(JavaClassSource.class).setName(named.getValue())
                .setPackage(packageName.getValue());
 
       // Add imports
@@ -171,7 +168,8 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
       }
       body.append(";");
       body.append("return archive;");
-      Method<JavaClass> getDeployment = javaClass.addMethod().setName("getDeployment").setPublic().setStatic(true)
+      MethodSource<JavaClassSource> getDeployment = javaClass.addMethod().setName("getDeployment").setPublic()
+               .setStatic(true)
                .setBody(body.toString()).setReturnType("ForgeArchive");
       getDeployment.addAnnotation("Deployment");
       String annotationBody = dependenciesAnnotationBody.toString();

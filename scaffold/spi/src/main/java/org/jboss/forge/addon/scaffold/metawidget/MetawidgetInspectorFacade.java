@@ -15,7 +15,7 @@ import org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspector;
 import org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectorConfig;
 import org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.ForgePropertyStyle;
 import org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.ForgePropertyStyleConfig;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.metawidget.inspector.beanvalidation.BeanValidationInspector;
 import org.metawidget.inspector.composite.CompositeInspector;
 import org.metawidget.inspector.composite.CompositeInspectorConfig;
@@ -28,9 +28,9 @@ import org.w3c.dom.Element;
 /**
  * A facade for Metawidget inspectors. This class provides an abstraction over Metawidget API invocations ScaffoldProvider
  * instances to invoke.
- * 
+ *
  * @author Vineet Reynolds
- * 
+ *
  */
 public class MetawidgetInspectorFacade
 {
@@ -45,12 +45,12 @@ public class MetawidgetInspectorFacade
 
    /**
     * Inspects a {@link JavaClass} instance and provides inspection results in return.
-    * 
+    *
     * @param klass The {@link JavaClass} to inspect.
     * @return A list representing inspection results for the {@link JavaClass}. Each list item corresponds to the
     *         inspection result for every property of the provided {@link JavaClass}.
     */
-   public List<Map<String, String>> inspect(JavaClass klass)
+   public List<Map<String, String>> inspect(JavaClassSource klass)
    {
       setupCompositeInspector();
       Element inspectionResult = compositeInspector.inspectAsDom(null, klass.getQualifiedName(), (String[]) null);

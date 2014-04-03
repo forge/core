@@ -30,14 +30,14 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -81,7 +81,7 @@ public class NewMappedSuperclassCommandTest
       Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
       try (CommandController controller = testHarness.createCommandController(NewMappedSuperclassCommand.class,
-               project.getRootDirectory()))
+               project.getRoot()))
       {
          controller.initialize();
          controller.setValueFor("named", "CreditCardType");
@@ -94,8 +94,8 @@ public class NewMappedSuperclassCommandTest
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
       Assert.assertTrue(javaResource.exists());
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaClass.class)));
-      Assert.assertTrue(javaResource.getJavaSource().hasAnnotation(MappedSuperclass.class));
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      Assert.assertTrue(javaResource.getJavaType().hasAnnotation(MappedSuperclass.class));
    }
 
    @Test
@@ -104,7 +104,7 @@ public class NewMappedSuperclassCommandTest
       Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
       try (CommandController controller = testHarness.createCommandController(NewMappedSuperclassCommand.class,
-               project.getRootDirectory()))
+               project.getRoot()))
       {
          controller.initialize();
          controller.setValueFor("named", "CreditCardType");
@@ -117,7 +117,7 @@ public class NewMappedSuperclassCommandTest
       String packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
       JavaResource javaResource = facet.getJavaResource(packageName + ".CreditCardType");
       Assert.assertTrue(javaResource.exists());
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaClass.class)));
-      Assert.assertTrue(javaResource.getJavaSource().hasAnnotation(MappedSuperclass.class));
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      Assert.assertTrue(javaResource.getJavaType().hasAnnotation(MappedSuperclass.class));
    }
 }

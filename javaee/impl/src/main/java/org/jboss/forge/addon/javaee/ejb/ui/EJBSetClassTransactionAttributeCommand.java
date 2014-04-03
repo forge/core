@@ -38,8 +38,9 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.parser.java.Annotation;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.JavaType;
+import org.jboss.forge.roaster.model.source.AnnotationSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 public class EJBSetClassTransactionAttributeCommand extends AbstractJavaEECommand
 {
@@ -80,11 +81,12 @@ public class EJBSetClassTransactionAttributeCommand extends AbstractJavaEEComman
             {
                try
                {
+                  JavaType<?> javaType = resource.getJavaType();
                   if (
-                  resource.getJavaSource().hasAnnotation(Stateless.class) ||
-                           resource.getJavaSource().hasAnnotation(Stateful.class) ||
-                           resource.getJavaSource().hasAnnotation(Singleton.class) ||
-                           resource.getJavaSource().hasAnnotation(MessageDriven.class)
+                  javaType.hasAnnotation(Stateless.class) ||
+                           javaType.hasAnnotation(Stateful.class) ||
+                           javaType.hasAnnotation(Singleton.class) ||
+                           javaType.hasAnnotation(MessageDriven.class)
                   )
                   {
                      entities.add(resource);
@@ -118,8 +120,8 @@ public class EJBSetClassTransactionAttributeCommand extends AbstractJavaEEComman
    {
       JavaResource resource = targetEjb.getValue();
 
-      Annotation<JavaClass> annotation;
-      JavaClass ejb = (JavaClass) resource.getJavaSource();
+      AnnotationSource<JavaClassSource> annotation;
+      JavaClassSource ejb = resource.getJavaType();
 
       if (ejb.hasAnnotation(TransactionAttribute.class))
       {
@@ -130,7 +132,7 @@ public class EJBSetClassTransactionAttributeCommand extends AbstractJavaEEComman
          annotation = ejb.addAnnotation(TransactionAttribute.class);
       }
       annotation.setEnumValue(type.getValue());
-      
+
       resource.setContents(ejb);
 
       return Results.success("Transaction attribute set to [" + type.getValue() + "]");
@@ -142,7 +144,7 @@ public class EJBSetClassTransactionAttributeCommand extends AbstractJavaEEComman
       super.validate(validator);
       try
       {
-         targetEjb.getValue().getJavaSource();
+         targetEjb.getValue().getJavaType();
       }
       catch (FileNotFoundException | NullPointerException e)
       {

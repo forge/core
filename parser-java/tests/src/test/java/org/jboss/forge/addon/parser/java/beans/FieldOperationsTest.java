@@ -2,11 +2,11 @@ package org.jboss.forge.addon.parser.java.beans;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Visibility;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.Visibility;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,15 +15,15 @@ public class FieldOperationsTest
 
    private FieldOperations fieldOperations;
 
-   private JavaClass targetClass;
-   
+   private JavaClassSource targetClass;
+
    @Before
    public void setUp()
    {
       fieldOperations = new FieldOperations();
-      targetClass = (JavaClass) JavaParser.parse("public class Test{}");
+      targetClass = Roaster.parse(JavaClassSource.class, "public class Test{}");
    }
-   
+
    /**
     * Verifies that simple fields can be added to a class.
     */
@@ -40,7 +40,7 @@ public class FieldOperationsTest
       // Is the field present? Is the name and type of the field correct?
       assertThat(targetClass.hasField(fieldName), is(true));
       assertThat(targetClass.getField(fieldName).getName(), equalTo(fieldName));
-      assertThat(targetClass.getField(fieldName).getType(), equalTo(simpleTypeName));
+      assertThat(targetClass.getField(fieldName).getType().getName(), equalTo(simpleTypeName));
       // Is the type from java.lang imported?
       assertThat(targetClass.hasImport(qualifiedTypeName), is(false));
       // Syntax errors?
@@ -53,7 +53,7 @@ public class FieldOperationsTest
       // Is the field present? Is the name and type of the field correct?
       assertThat(targetClass.hasField(fieldName), is(true));
       assertThat(targetClass.getField(fieldName).getName(), equalTo(fieldName));
-      assertThat(targetClass.getField(fieldName).getType(), equalTo(simpleTypeName));
+      assertThat(targetClass.getField(fieldName).getType().getName(), equalTo(simpleTypeName));
       // Is the type from java.lang imported?
       assertThat(targetClass.hasImport(qualifiedTypeName), is(false));
       // Syntax errors?
@@ -64,11 +64,11 @@ public class FieldOperationsTest
    public void testGetterAndSetterAreAdded() throws Exception
    {
       fieldOperations.addFieldTo(targetClass, "int", "age");
-      
+
       assertThat(targetClass.hasMethodSignature("getAge"), is(true));
       assertThat(targetClass.hasMethodSignature("setAge", "int"), is(true));
    }
-   
+
    @Test
    public void testAddFieldsWithAnnotations() throws Exception
    {
@@ -77,7 +77,7 @@ public class FieldOperationsTest
       assertThat(targetClass.hasImport(annotationName), is(true));
       assertThat(targetClass.getField("firstName").hasAnnotation(annotationName), is(true));
    }
-   
+
    @Test
    public void testAddFieldsWithoutGetterOrSetter() throws Exception
    {
@@ -96,7 +96,7 @@ public class FieldOperationsTest
       assertThat(targetClass.hasMethodSignature("getAge"), is(true));
       assertThat(targetClass.hasMethodSignature("setAge", "int"), is(false));
    }
-   
+
    @Test
    public void testAddFieldWithDifferentVisibility() throws Exception
    {

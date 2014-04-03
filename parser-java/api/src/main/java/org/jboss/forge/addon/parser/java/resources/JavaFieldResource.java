@@ -8,14 +8,13 @@
 package org.jboss.forge.addon.parser.java.resources;
 
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.Field;
 
 /**
  * A {@link Resource} representing a Java {@link java.lang.reflect.Field}
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface JavaFieldResource extends Resource<Field<? extends JavaSource<?>>>
+public interface JavaFieldResource extends Resource<Field<?>>
 {
 }

@@ -14,20 +14,21 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.EnumConstant;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.FieldHolder;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaEnum;
-import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.parser.java.Method;
-import org.jboss.forge.parser.java.MethodHolder;
-import org.jboss.forge.parser.java.Parameter;
-import org.jboss.forge.parser.java.Type;
-import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.ResourceException;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.EnumConstant;
+import org.jboss.forge.roaster.model.Field;
+import org.jboss.forge.roaster.model.FieldHolder;
+import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.JavaEnum;
+import org.jboss.forge.roaster.model.Method;
+import org.jboss.forge.roaster.model.MethodHolder;
+import org.jboss.forge.roaster.model.Parameter;
+import org.jboss.forge.roaster.model.Type;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 import org.metawidget.inspector.iface.InspectorException;
 import org.metawidget.inspector.impl.propertystyle.BaseProperty;
 import org.metawidget.inspector.impl.propertystyle.BasePropertyStyle;
@@ -158,7 +159,7 @@ public class ForgePropertyStyle
 
          if (clazz instanceof JavaClass)
          {
-            JavaClass source = JavaParser.parse(JavaClass.class,
+            JavaClassSource source = Roaster.parse(JavaClassSource.class,
                      clazz.toString());
             if (!source.getSuperType().equals("java.lang.Object"))
             {
@@ -178,7 +179,7 @@ public class ForgePropertyStyle
    {
       // Hack until https://issues.jboss.org/browse/FORGE-368
 
-      for (Method<?> method : clazz.getMethods())
+      for (Method<?, ?> method : clazz.getMethods())
       {
          // Exclude static methods
 
@@ -186,7 +187,7 @@ public class ForgePropertyStyle
          {
             continue;
          }
-         
+
          // Exclude non-public methods. Section 8.3.1 of the JavaBean specification requires that getters be public.
          if (!method.isPublic())
          {
@@ -200,7 +201,7 @@ public class ForgePropertyStyle
             continue;
          }
 
-         String returnType = method.getQualifiedReturnType();
+         String returnType = method.getReturnType().getQualifiedName();
 
          if (returnType == null)
          {
@@ -236,7 +237,7 @@ public class ForgePropertyStyle
     * @return the property name
     */
 
-   protected String isGetter(final Method<?> method)
+   protected String isGetter(final Method<?, ?> method)
    {
 
       String methodName = method.getName();
@@ -248,7 +249,7 @@ public class ForgePropertyStyle
 
       }
       else if (methodName.startsWith(ClassUtils.JAVABEAN_IS_PREFIX)
-               && boolean.class.equals(method.getQualifiedReturnType()))
+               && boolean.class.equals(method.getReturnType().getQualifiedName()))
       {
 
          // As per section 8.3.2 (Boolean properties) of The JavaBeans API specification, 'is'
@@ -270,10 +271,10 @@ public class ForgePropertyStyle
     * This method will be called after <code>lookupFields</code> and <code>lookupGetters</code>.
     */
 
-   protected <O extends JavaSource<O>> void lookupSetters(final Map<String, Property> properties,
-            final MethodHolder<O> clazz)
+   protected void lookupSetters(final Map<String, Property> properties,
+            final MethodHolder<?> clazz)
    {
-      for (Method<O> method : clazz.getMethods())
+      for (Method<?, ?> method : clazz.getMethods())
       {
          // Exclude static methods
 
@@ -281,7 +282,7 @@ public class ForgePropertyStyle
          {
             continue;
          }
-         
+
          // Exclude non-public methods. Section 8.3.1 of the JavaBean specification requires that setters be public.
          if (!method.isPublic())
          {
@@ -290,7 +291,7 @@ public class ForgePropertyStyle
 
          // Get type
 
-         List<Parameter<O>> parameters = method.getParameters();
+         List<? extends Parameter<?>> parameters = method.getParameters();
 
          if (parameters.size() != 1)
          {
@@ -310,7 +311,7 @@ public class ForgePropertyStyle
          //
          // (explicitly set to null in case we encountered an imbalanced field/getter)
 
-         String type = parameters.get(0).getType();
+         String type = parameters.get(0).getType().getQualifiedName();
 
          Field<?> privateField = getPrivateField((FieldHolder<?>) clazz, propertyName);
 
@@ -357,7 +358,7 @@ public class ForgePropertyStyle
     * @return the property name
     */
 
-   protected String isSetter(final Method<?> method)
+   protected String isSetter(final Method<?, ?> method)
    {
       String methodName = method.getName();
 
@@ -401,7 +402,7 @@ public class ForgePropertyStyle
 
       // FORGE-402: support fields starting with capital letter
 
-      if (field == null && !Character.isUpperCase(propertyName.charAt( 0 )))
+      if (field == null && !Character.isUpperCase(propertyName.charAt(0)))
       {
          field = fieldHolder.getField(StringUtils.capitalize(propertyName));
       }
@@ -413,14 +414,14 @@ public class ForgePropertyStyle
    // Private methods
    //
 
-   /*package private*/
+   /* package private */
 
    static JavaSource<?> sourceForName(final Project project, final String type)
    {
       try
       {
          JavaSourceFacet javaSourceFact = project.getFacet(JavaSourceFacet.class);
-         return javaSourceFact.getJavaResource(type).getJavaSource();
+         return javaSourceFact.getJavaResource(type).getJavaType();
       }
       catch (FileNotFoundException e)
       {
@@ -447,9 +448,9 @@ public class ForgePropertyStyle
       // Private methods
       //
 
-      private final Method<?> readMethod;
+      private final Method<?, ?> readMethod;
 
-      private final Method<?> writeMethod;
+      private final Method<?, ?> writeMethod;
 
       private final Field<?> privateField;
 
@@ -459,8 +460,8 @@ public class ForgePropertyStyle
       // Constructor
       //
 
-      public ForgeProperty(final String name, final String type, final Method<?> readMethod,
-               final Method<?> writeMethod,
+      public ForgeProperty(final String name, final String type, final Method<?, ?> readMethod,
+               final Method<?, ?> writeMethod,
                final Field<?> privateField,
                final Project project)
       {
@@ -511,7 +512,7 @@ public class ForgePropertyStyle
       @Override
       public <T extends Annotation> T getAnnotation(final Class<T> annotationClass)
       {
-         org.jboss.forge.parser.java.Annotation<?> annotation = null;
+         org.jboss.forge.roaster.model.Annotation<?> annotation = null;
 
          // https://issues.jboss.org/browse/FORGE-439: support annotations on readMethod
 
@@ -534,11 +535,13 @@ public class ForgePropertyStyle
          return null;
       }
 
-      public List<EnumConstant<JavaEnum>> getEnumConstants()
+      @SuppressWarnings({ "rawtypes", "unchecked" })
+      public List<EnumConstant<?>> getEnumConstants()
       {
-         JavaSource<?> source = sourceForName( this.project, getType() );
+         JavaSource<?> source = sourceForName(this.project, getType());
 
-         if ( source instanceof JavaEnum ) {
+         if (source instanceof JavaEnum)
+         {
             return ((JavaEnum) source).getEnumConstants();
          }
 
@@ -551,7 +554,7 @@ public class ForgePropertyStyle
          if (this.readMethod != null)
          {
             @SuppressWarnings({ "unchecked", "rawtypes" })
-            List<Type<?>> typeArguments = (List) this.readMethod.getReturnTypeInspector().getTypeArguments();
+            List<Type<?>> typeArguments = (List) this.readMethod.getReturnType().getTypeArguments();
 
             if (!typeArguments.isEmpty())
             {
@@ -562,7 +565,7 @@ public class ForgePropertyStyle
          if (this.privateField != null)
          {
             @SuppressWarnings({ "unchecked", "rawtypes" })
-            List<Type<?>> typeArguments = (List) this.privateField.getTypeInspector().getTypeArguments();
+            List<Type<?>> typeArguments = (List) this.privateField.getType().getTypeArguments();
 
             if (!typeArguments.isEmpty())
             {
@@ -573,12 +576,12 @@ public class ForgePropertyStyle
          return null;
       }
 
-      public Method<?> getReadMethod()
+      public Method<?, ?> getReadMethod()
       {
          return this.readMethod;
       }
 
-      public Method<?> getWriteMethod()
+      public Method<?, ?> getWriteMethod()
       {
          return this.writeMethod;
       }
@@ -594,7 +597,7 @@ public class ForgePropertyStyle
       // Private statics
       //
 
-      private final org.jboss.forge.parser.java.Annotation<?> annotationSource;
+      private final org.jboss.forge.roaster.model.Annotation<?> annotationSource;
 
       private final Class<T> annotationClass;
 
@@ -604,7 +607,7 @@ public class ForgePropertyStyle
 
       @SuppressWarnings("unchecked")
       public static <T extends Annotation> T newInstance(
-               final org.jboss.forge.parser.java.Annotation<?> annotationSource)
+               final org.jboss.forge.roaster.model.Annotation<?> annotationSource)
       {
          try
          {
@@ -628,7 +631,7 @@ public class ForgePropertyStyle
       //
 
       private AnnotationProxy(final Class<T> annotationClass,
-               final org.jboss.forge.parser.java.Annotation<?> annotationSource)
+               final org.jboss.forge.roaster.model.Annotation<?> annotationSource)
       {
          this.annotationSource = annotationSource;
          this.annotationClass = annotationClass;

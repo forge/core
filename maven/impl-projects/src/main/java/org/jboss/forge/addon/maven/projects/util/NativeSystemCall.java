@@ -11,24 +11,24 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.parser.java.util.Assert;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * Executes native system commands.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class NativeSystemCall
 {
    /**
     * Execute a native system command as if it were run from the given path.
-    * 
+    *
     * @param command the system command to execute
     * @param parms the command parameters
     * @param out a print writer to which command output will be streamed
     * @param path the path from which to execute the command
-    * 
+    *
     * @return 0 on successful completion, any other return code denotes failure
     */
    public static int execFromPath(final String command, final String[] parms, final OutputStream out,
@@ -70,7 +70,7 @@ public class NativeSystemCall
 
    /**
     * Execute the given system command
-    * 
+    *
     * @return 0 on successful completion, any other return code denotes failure
     */
    public static void exec(final boolean wait, final String command, final String... parms)

@@ -28,12 +28,13 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.util.Strings;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.Method;
-import org.jboss.forge.parser.java.SyntaxError;
+import org.jboss.forge.roaster.model.JavaType;
+import org.jboss.forge.roaster.model.SyntaxError;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class NewConversationCommand extends AbstractUICommand
@@ -74,7 +75,7 @@ public class NewConversationCommand extends AbstractUICommand
    {
       boolean overwriteValue = overwrite.getValue() != null && overwrite.getValue();
       JavaResource resource = (JavaResource) validator.getUIContext().getInitialSelection().get();
-      JavaClass javaClass;
+      JavaClassSource javaClass;
       if (!overwriteValue)
       {
          try
@@ -82,8 +83,8 @@ public class NewConversationCommand extends AbstractUICommand
             String fieldName = conversationFieldName.getValue();
             String beginName = beginMethodName.getValue();
             String endName = endMethodName.getValue();
-            javaClass = (JavaClass) resource.getJavaSource();
-            if (javaClass.hasField(fieldName) && !javaClass.getField(fieldName).isType(Conversation.class))
+            javaClass = resource.getJavaType();
+            if (javaClass.hasField(fieldName) && !javaClass.getField(fieldName).getType().isType(Conversation.class))
             {
                validator.addValidationError(conversationFieldName, "Field [" + fieldName + "] already exists.");
             }
@@ -117,11 +118,12 @@ public class NewConversationCommand extends AbstractUICommand
       UIOutput output = uiContext.getProvider().getOutput();
       if (resource.exists())
       {
-         if (resource.getJavaSource().isClass())
+         JavaType<?> javaType = resource.getJavaType();
+         if (javaType.isClass())
          {
-            JavaClass javaClass = (JavaClass) resource.getJavaSource();
+            JavaClassSource javaClass = (JavaClassSource) javaType;
 
-            if (javaClass.hasField(fieldName) && !javaClass.getField(fieldName).isType(Conversation.class))
+            if (javaClass.hasField(fieldName) && !javaClass.getField(fieldName).getType().isType(Conversation.class))
             {
                if (overwriteValue)
                {
@@ -159,7 +161,8 @@ public class NewConversationCommand extends AbstractUICommand
             javaClass.addField().setPrivate().setName(fieldName).setType(Conversation.class)
                      .addAnnotation(Inject.class);
 
-            Method<JavaClass> beginMethod = javaClass.addMethod().setName(beginName).setReturnTypeVoid().setPublic();
+            MethodSource<JavaClassSource> beginMethod = javaClass.addMethod().setName(beginName).setReturnTypeVoid()
+                     .setPublic();
             if (Strings.isNullOrEmpty(name))
             {
                beginMethod.setBody(fieldName + ".begin();");
@@ -190,8 +193,7 @@ public class NewConversationCommand extends AbstractUICommand
          }
          else
          {
-            return Results.fail("Must operate on a Java Class file, not an ["
-                     + resource.getJavaSource().getSourceType() + "]");
+            return Results.fail("Must operate on a Java Class file");
          }
       }
       return Results.success("Conversation block created");
@@ -224,7 +226,7 @@ public class NewConversationCommand extends AbstractUICommand
          {
             try
             {
-               result = ((JavaResource) selection).getJavaSource().isClass();
+               result = ((JavaResource) selection).getJavaType().isClass();
             }
             catch (FileNotFoundException e)
             {

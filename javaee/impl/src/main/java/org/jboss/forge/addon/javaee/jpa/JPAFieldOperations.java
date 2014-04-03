@@ -28,25 +28,26 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.furnace.util.Strings;
-import org.jboss.forge.parser.java.Annotation;
-import org.jboss.forge.parser.java.Field;
-import org.jboss.forge.parser.java.JavaClass;
-import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.parser.java.util.Refactory;
-import org.jboss.forge.parser.java.util.Types;
+import org.jboss.forge.roaster.model.Field;
+import org.jboss.forge.roaster.model.source.AnnotationSource;
+import org.jboss.forge.roaster.model.source.FieldSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
+import org.jboss.forge.roaster.model.util.Refactory;
+import org.jboss.forge.roaster.model.util.Types;
 
 /**
  * Operations in the New Field wizard
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class JPAFieldOperations extends FieldOperations
 {
 
    /**
     * Creates a One-to-One relationship
-    * 
+    *
     * @param project
     * @param resource
     * @param fieldName
@@ -64,8 +65,8 @@ public class JPAFieldOperations extends FieldOperations
             final Iterable<CascadeType> cascadeTypes) throws FileNotFoundException
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      JavaClass entityClass = getJavaClassFrom(resource);
-      JavaClass fieldEntityClass;
+      JavaClassSource entityClass = getJavaClassFrom(resource);
+      JavaClassSource fieldEntityClass;
       if (areTypesSame(fieldType, entityClass.getCanonicalName()))
       {
          fieldEntityClass = entityClass;
@@ -76,12 +77,13 @@ public class JPAFieldOperations extends FieldOperations
          entityClass.addImport(fieldEntityClass);
       }
 
-      Field<JavaClass> localField = addFieldTo(entityClass, fieldEntityClass.getName(), fieldName,
+      FieldSource<JavaClassSource> localField = addFieldTo(entityClass, fieldEntityClass.getName(), fieldName,
                OneToOne.class.getName());
-      Annotation<JavaClass> annotation = localField.getAnnotation(OneToOne.class);
+      AnnotationSource<JavaClassSource> annotation = localField.getAnnotation(OneToOne.class);
       if ((inverseFieldName != null) && !inverseFieldName.isEmpty())
       {
-         Field<JavaClass> inverseField = addFieldTo(fieldEntityClass, entityClass.getName(), inverseFieldName,
+         FieldSource<JavaClassSource> inverseField = addFieldTo(fieldEntityClass, entityClass.getName(),
+                  inverseFieldName,
                   OneToOne.class.getName());
          inverseField.getAnnotation(OneToOne.class).setStringValue("mappedBy", localField.getName());
          java.saveJavaSource(fieldEntityClass);
@@ -100,7 +102,7 @@ public class JPAFieldOperations extends FieldOperations
       java.saveJavaSource(entityClass);
    }
 
-   private void addCascade(final Iterable<CascadeType> cascadeTypes, Annotation<JavaClass> annotation)
+   private void addCascade(final Iterable<CascadeType> cascadeTypes, AnnotationSource<JavaClassSource> annotation)
    {
       if (cascadeTypes != null)
       {
@@ -124,7 +126,7 @@ public class JPAFieldOperations extends FieldOperations
 
    /**
     * Creates a Many-To-One relationship
-    * 
+    *
     * @param project
     * @param resource
     * @param fieldName
@@ -146,8 +148,8 @@ public class JPAFieldOperations extends FieldOperations
             final Iterable<CascadeType> cascadeTypes) throws FileNotFoundException
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      JavaClass many = getJavaClassFrom(resource);
-      JavaClass one;
+      JavaClassSource many = getJavaClassFrom(resource);
+      JavaClassSource one;
       if (areTypesSame(fieldType, many.getCanonicalName()))
       {
          one = many;
@@ -168,8 +170,8 @@ public class JPAFieldOperations extends FieldOperations
                   + inverseFieldName + "]");
       }
 
-      Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + fieldName + ";");
-      Annotation<JavaClass> manyAnnotation = manyField.addAnnotation(ManyToOne.class);
+      FieldSource<JavaClassSource> manyField = many.addField("private " + one.getName() + " " + fieldName + ";");
+      AnnotationSource<JavaClassSource> manyAnnotation = manyField.addAnnotation(ManyToOne.class);
       Refactory.createGetterAndSetter(many, manyField);
 
       if (!Strings.isNullOrEmpty(inverseFieldName))
@@ -180,10 +182,11 @@ public class JPAFieldOperations extends FieldOperations
          {
             one.addImport(many.getQualifiedName());
          }
-         Field<JavaClass> oneField = one.addField("private Set<" + many.getName() + "> " + inverseFieldName
+         FieldSource<JavaClassSource> oneField = one.addField("private Set<" + many.getName() + "> " + inverseFieldName
                   + "= new HashSet<"
                   + many.getName() + ">();");
-         Annotation<JavaClass> oneAnnotation = oneField.addAnnotation(OneToMany.class).setStringValue("mappedBy",
+         AnnotationSource<JavaClassSource> oneAnnotation = oneField.addAnnotation(OneToMany.class).setStringValue(
+                  "mappedBy",
                   fieldName);
          oneAnnotation.setLiteralValue("cascade", "CascadeType.ALL");
          oneAnnotation.getOrigin().addImport(CascadeType.class);
@@ -216,9 +219,9 @@ public class JPAFieldOperations extends FieldOperations
             throws FileNotFoundException
    {
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      JavaClass one = getJavaClassFrom(resource);
+      JavaClassSource one = getJavaClassFrom(resource);
 
-      JavaClass many;
+      JavaClassSource many;
       // Field type may end with .java
       if (areTypesSame(fieldType, one.getCanonicalName()))
       {
@@ -244,9 +247,10 @@ public class JPAFieldOperations extends FieldOperations
       one.addImport(Set.class);
       one.addImport(HashSet.class);
 
-      Field<JavaClass> oneField = one.addField("private Set<" + many.getName() + "> " + fieldName + "= new HashSet<"
+      FieldSource<JavaClassSource> oneField = one.addField("private Set<" + many.getName() + "> " + fieldName
+               + "= new HashSet<"
                + many.getName() + ">();");
-      Annotation<JavaClass> annotation = oneField.addAnnotation(OneToMany.class);
+      AnnotationSource<JavaClassSource> annotation = oneField.addAnnotation(OneToMany.class);
       Refactory.createGetterAndSetter(one, oneField);
 
       if (!Strings.isNullOrEmpty(inverseFieldName))
@@ -259,7 +263,8 @@ public class JPAFieldOperations extends FieldOperations
          {
             many.addImport(one);
          }
-         Field<JavaClass> manyField = many.addField("private " + one.getName() + " " + inverseFieldName + ";");
+         FieldSource<JavaClassSource> manyField = many.addField("private " + one.getName() + " " + inverseFieldName
+                  + ";");
          manyField.addAnnotation(ManyToOne.class);
          Refactory.createGetterAndSetter(many, manyField);
          java.saveJavaSource(many);
@@ -284,8 +289,8 @@ public class JPAFieldOperations extends FieldOperations
    {
 
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      JavaClass entity = getJavaClassFrom(resource);
-      JavaClass otherEntity;
+      JavaClassSource entity = getJavaClassFrom(resource);
+      JavaClassSource otherEntity;
       if (areTypesSame(fieldType, entity.getCanonicalName()))
       {
          otherEntity = entity;
@@ -310,10 +315,10 @@ public class JPAFieldOperations extends FieldOperations
 
       entity.addImport(Set.class);
       entity.addImport(HashSet.class);
-      Field<JavaClass> field = entity.addField("private Set<" + otherEntity.getName() + "> " + fieldName
+      FieldSource<JavaClassSource> field = entity.addField("private Set<" + otherEntity.getName() + "> " + fieldName
                + "= new HashSet<"
                + otherEntity.getName() + ">();");
-      Annotation<JavaClass> annotation = field.addAnnotation(ManyToMany.class);
+      AnnotationSource<JavaClassSource> annotation = field.addAnnotation(ManyToMany.class);
       Refactory.createGetterAndSetter(entity, field);
 
       if (!Strings.isNullOrEmpty(inverseFieldName))
@@ -326,7 +331,7 @@ public class JPAFieldOperations extends FieldOperations
          {
             otherEntity.addImport(entity.getQualifiedName());
          }
-         Field<JavaClass> otherField = otherEntity.addField("private Set<" + entity.getName() + "> "
+         FieldSource<JavaClassSource> otherField = otherEntity.addField("private Set<" + entity.getName() + "> "
                   + inverseFieldName
                   + "= new HashSet<" + entity.getName() + ">();");
          otherField.addAnnotation(ManyToMany.class);
@@ -343,9 +348,9 @@ public class JPAFieldOperations extends FieldOperations
       java.saveJavaSource(entity);
    }
 
-   private JavaClass findEntity(Project project, final String entity) throws FileNotFoundException
+   private JavaClassSource findEntity(Project project, final String entity) throws FileNotFoundException
    {
-      JavaClass result = null;
+      JavaClassSource result = null;
 
       JPAFacet<?> persistence = project.getFacet(JPAFacet.class);
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
@@ -367,19 +372,19 @@ public class JPAFieldOperations extends FieldOperations
       return result;
    }
 
-   private JavaClass getJavaClassFrom(final Resource<?> resource) throws FileNotFoundException
+   private JavaClassSource getJavaClassFrom(final Resource<?> resource) throws FileNotFoundException
    {
-      JavaSource<?> source = ((JavaResource) resource).getJavaSource();
-      if (!source.isClass())
+      JavaSource<?> source = ((JavaResource) resource).getJavaType();
+      if (!(source instanceof JavaClassSource))
       {
          throw new IllegalStateException("Current resource is not a JavaClass!");
       }
-      return (JavaClass) source;
+      return (JavaClassSource) source;
    }
 
    /**
     * Checks if the types are the same, removing the ".java" in the end of the string in case it exists
-    * 
+    *
     * @param from
     * @param to
     * @return
@@ -392,13 +397,13 @@ public class JPAFieldOperations extends FieldOperations
    }
 
    @Override
-   protected boolean canAddFieldToToString(Field<JavaClass> field)
+   protected boolean canAddFieldToToString(Field<JavaClassSource> field)
    {
       return super.canAddFieldToToString(field)
-               && (field.getTypeInspector().isPrimitive() || Types.isJavaLang(field.getType()))
-               && !"id".equals(field.getName()) 
+               && (field.getType().isPrimitive() || Types.isJavaLang(field.getType().getQualifiedName()))
+               && !"id".equals(field.getName())
                && !"version".equals(field.getName())
                && !field.hasAnnotation(Transient.class);
    }
-   
+
 }

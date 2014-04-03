@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.parser.java.projects;
 
+
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -26,11 +27,11 @@ import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class JavaProjectTypeStep extends AbstractUICommand implements UIWizardStep
@@ -70,8 +71,8 @@ public class JavaProjectTypeStep extends AbstractUICommand implements UIWizardSt
          MetadataFacet metadata = project.getFacet(MetadataFacet.class);
          if (createMain.getValue())
          {
-            JavaClass javaClass = JavaParser
-                     .create(JavaClass.class)
+            JavaClassSource javaClass = Roaster
+                     .create(JavaClassSource.class)
                      .setPackage(facet.getBasePackage())
                      .setName("Main")
                      .addMethod("public static void main(String[] args) {}")

@@ -27,7 +27,7 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFilter;
 import org.jboss.forge.addon.resource.visit.ResourceVisit;
 import org.jboss.forge.furnace.util.Strings;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -150,26 +150,10 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    }
 
    @Override
-   public JavaResource getJavaResource(org.jboss.forge.roaster.model.source.JavaSource<?> source)
-            throws FileNotFoundException
-   {
-      String pkg = Strings.isNullOrEmpty(source.getPackage()) ? "" : source.getPackage() + ".";
-      return getJavaResource(pkg + source.getName());
-   }
-
-   @Override
    public JavaResource getTestJavaResource(final JavaSource<?> javaClass) throws FileNotFoundException
    {
       String pkg = Strings.isNullOrEmpty(javaClass.getPackage()) ? "" : javaClass.getPackage() + ".";
       return getTestJavaResource(pkg + javaClass.getName());
-   }
-
-   @Override
-   public JavaResource getTestJavaResource(org.jboss.forge.roaster.model.source.JavaSource<?> source)
-            throws FileNotFoundException
-   {
-      String pkg = Strings.isNullOrEmpty(source.getPackage()) ? "" : source.getPackage() + ".";
-      return getTestJavaResource(pkg + source.getName());
    }
 
    @Override
@@ -201,21 +185,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    }
 
    @Override
-   public JavaResource saveJavaSource(org.jboss.forge.roaster.model.source.JavaSource<?> source)
-            throws FileNotFoundException
-   {
-      return getJavaResource(source.getQualifiedName()).setContents(source);
-   }
-
-   @Override
    public JavaResource saveTestJavaSource(final JavaSource<?> source) throws FileNotFoundException
-   {
-      return getTestJavaResource(source.getQualifiedName()).setContents(source);
-   }
-
-   @Override
-   public JavaResource saveTestJavaSource(org.jboss.forge.roaster.model.source.JavaSource<?> source)
-            throws FileNotFoundException
    {
       return getTestJavaResource(source.getQualifiedName()).setContents(source);
    }

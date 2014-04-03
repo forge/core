@@ -1,8 +1,8 @@
 == parser-java
-:idprefix: id_ 
+:idprefix: id_
 
 This addon *exports services* for use in other addons. The Java parser addon provides APIs and services for parsing Java
-types including classes, enums, interfaces, annotations, and package-info types. 
+types including classes, enums, interfaces, annotations, and package-info types.
 
 === Depends on
 
@@ -37,7 +37,7 @@ types including classes, enums, interfaces, annotations, and package-info types.
 
 This Addon requires the following installation steps.
 
-=== Add configuration to pom.xml 
+=== Add configuration to pom.xml
 
 To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
 
@@ -53,30 +53,16 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 
 == Features
 
-JavaSourceFactory for java source parsing and generation:: 
-The JavaSourceFactory allows for parsing and generation of Java sources via a type-safe and fluent API.
+Roaster for java source parsing and generation::
+Roaster allows for parsing and generation of Java sources via a type-safe and fluent API.
 +
 [source,java]
 ----
-@Inject 
-private JavaSourceFactory factory;
-...
-JavaClass myClass = factory.parse(JavaClass.class, "public class MyClass{}");
+JavaClassSource<?> myClass = Roaster.parse(JavaClassSource.class, "public class MyClass{}");
 ----
-+
-[TIP] 
 ====
-If your addon uses a container that does not support "@Inject" annotations, services such as the `JavaSourceFactory` may also be 
-accessed via the `AddonRegistry`:
 
-----
-AddonRegistry registry = ...
-Imported<JavaSourceFactory> imported = registry.getServices(JavaSourceFactory.class);
-JavaSourceFactory factory = imported.get();
-----
-==== 
-
-(Optional) projects addon integration:: 
+(Optional) projects addon integration::
 When the projects addon is installed, several `ProjectFacet` implementations will be retrievable from appropriately configured projects that include java source code.
 +
 * *JavaCompilerFacet* - used to control the project Java compiler version.
@@ -88,8 +74,8 @@ Project project = ...
 JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
 ----
 
-(Optional) resources addon integration:: 
-When the resources addon is installed, additional resources types for dealing with java types, methods and fields will be 
+(Optional) resources addon integration::
+When the resources addon is installed, additional resources types for dealing with java types, methods and fields will be
 available for use via the `ResourceFactory`.
 +
 [source,java]
@@ -100,6 +86,6 @@ JavaResource resource = (JavaResource) factory.create(new File(".../MyJavaClass.
 +
 `JavaResource` types also expose `JavaFieldResource` and `JavaMethodResource` via `JavaResource.listResources()`.
 
-(Optional) ui-spi addon integration:: 
+(Optional) ui-spi addon integration::
 When the ui-spi addon is installed, the _InputType.JAVA_CLASS_PICKER_ input type hint will be registered for UIInput<JavaResource>
 instances.

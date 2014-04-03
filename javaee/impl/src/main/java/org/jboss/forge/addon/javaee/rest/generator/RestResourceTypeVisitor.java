@@ -11,7 +11,7 @@ import java.io.FileNotFoundException;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.resource.visit.VisitContext;
-import org.jboss.forge.parser.java.JavaSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 
 class RestResourceTypeVisitor extends JavaResourceVisitor
 {
@@ -50,14 +50,15 @@ class RestResourceTypeVisitor extends JavaResourceVisitor
       {
          try
          {
-            if (javaResource.getJavaSource().getAnnotation("javax.ws.rs.Path") != null)
+            JavaSource<?> javaType = javaResource.getJavaType();
+            if (javaType.getAnnotation("javax.ws.rs.Path") != null)
             {
-               String path = javaResource.getJavaSource().getAnnotation("javax.ws.rs.Path")
+               String path = javaType.getAnnotation("javax.ws.rs.Path")
                         .getStringValue();
                String absolutePath = path.endsWith("/") ? path.substring(0, path.lastIndexOf('/')) : path;
                if (absolutePath.equals(proposedPath))
                {
-                  javaSource = javaResource.getJavaSource();
+                  javaSource = javaType;
                   found = true;
                }
             }

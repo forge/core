@@ -11,16 +11,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.forge.addon.parser.java.resources.JavaMethodResource;
-import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFacet;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.parser.java.JavaSource;
-import org.jboss.forge.parser.java.Method;
-import org.jboss.forge.parser.java.MethodHolder;
-import org.jboss.forge.parser.java.Parameter;
-import org.jboss.forge.parser.java.util.Strings;
+import org.jboss.forge.roaster.model.Method;
+import org.jboss.forge.roaster.model.Parameter;
+import org.jboss.forge.roaster.model.Type;
+import org.jboss.forge.roaster.model.source.MethodHolderSource;
+import org.jboss.forge.roaster.model.util.Strings;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -28,10 +26,10 @@ import org.jboss.forge.parser.java.util.Strings;
 @SuppressWarnings("rawtypes")
 public class JavaMethodResourceImpl extends AbstractJavaMemberResource<Method> implements JavaMethodResource
 {
-   private final Method<? extends JavaSource<?>> method;
+   private final Method<?, ?> method;
 
    public JavaMethodResourceImpl(final ResourceFactory factory, final Resource<?> parent,
-            final Method<? extends JavaSource<?>> method)
+            final Method<?, ?> method)
    {
       super(factory, parent, method);
       this.method = method;
@@ -50,7 +48,7 @@ public class JavaMethodResourceImpl extends AbstractJavaMemberResource<Method> i
    }
 
    @Override
-   public Method<? extends JavaSource<?>> getUnderlyingResourceObject()
+   public Method<?, ?> getUnderlyingResourceObject()
    {
       return method;
    }
@@ -61,10 +59,12 @@ public class JavaMethodResourceImpl extends AbstractJavaMemberResource<Method> i
       List<String> parameterTypes = new ArrayList<String>();
       for (Parameter<?> p : method.getParameters())
       {
-         parameterTypes.add(p.getType());
+         parameterTypes.add(p.getType().getQualifiedName());
       }
 
-      String returnType = method.getReturnType() == null ? "void" : method.getReturnType();
+      Type<?> methodReturnType = method.getReturnType();
+      String returnType = (method.isReturnTypeVoid() || methodReturnType == null) ? "void" : methodReturnType
+               .getQualifiedName();
       return String.format("%s(%s)::%s", method.getName(), Strings.join(parameterTypes, ","), returnType);
    }
 
@@ -78,11 +78,11 @@ public class JavaMethodResourceImpl extends AbstractJavaMemberResource<Method> i
    @SuppressWarnings({ "unchecked" })
    public boolean delete() throws UnsupportedOperationException
    {
-      JavaSource<?> origin = method.getOrigin();
-      if (origin instanceof MethodHolder)
+      Object origin = method.getOrigin();
+      if (origin instanceof MethodHolderSource)
       {
-         ((MethodHolder) origin).removeMethod(method);
-         if (!((MethodHolder) origin).hasMethodSignature(method))
+         ((MethodHolderSource) origin).removeMethod(method);
+         if (!((MethodHolderSource) origin).hasMethodSignature(method))
          {
             ((JavaResource) this.getParent()).setContents(origin.toString());
             return true;

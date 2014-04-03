@@ -44,8 +44,8 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.util.Streams;
 import org.jboss.forge.furnace.versions.Version;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.JavaPackageInfo;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaPackageInfoSource;
 
 /**
  * Creates Furnace Addon projects
@@ -88,7 +88,7 @@ public class AddonProjectConfigurator
       facetFactory.install(project, AddonTestFacet.class);
 
       JavaSourceFacet javaSource = project.getFacet(JavaSourceFacet.class);
-      javaSource.saveJavaSource(JavaParser.create(JavaPackageInfo.class).setPackage(javaSource.getBasePackage()));
+      javaSource.saveJavaSource(Roaster.create(JavaPackageInfoSource.class).setPackage(javaSource.getBasePackage()));
 
       installSelectedAddons(project, dependencyAddons, false);
    }
@@ -142,7 +142,7 @@ public class AddonProjectConfigurator
       for (Project p : Arrays.asList(addonProject, apiProject, implProject, spiProject))
       {
          JavaSourceFacet javaSource = p.getFacet(JavaSourceFacet.class);
-         javaSource.saveJavaSource(JavaParser.create(JavaPackageInfo.class).setPackage(
+         javaSource.saveJavaSource(Roaster.create(JavaPackageInfoSource.class).setPackage(
                   project.getFacet(MetadataFacet.class).getTopLevelPackage()));
       }
 

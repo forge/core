@@ -11,34 +11,31 @@ import java.io.FileNotFoundException;
 import java.io.Serializable;
 
 import javax.ejb.ActivationConfigProperty;
-import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.persistence.GenerationType;
 
-import org.jboss.forge.addon.parser.java.JavaSourceFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.furnace.util.Assert;
-import org.jboss.forge.parser.java.Annotation;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.source.AnnotationSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * This class contains EJB specific operations
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class EJBOperations
 {
-   @Inject
-   private JavaSourceFactory javaSourceFactory;
-
    /**
     * Creates a new {@link JavaResource} in the specified project. If no project is available, use
     * {@link EJBOperations#newEntity(DirectoryResource, String, String, GenerationType)}
-    * 
+    *
     * @param project the current project in which to create the bean. Must not be null
     * @param ejbName the name of the bean
     * @param targetPackage the package of the bean to be created
@@ -57,14 +54,14 @@ public class EJBOperations
             ) throws FileNotFoundException
    {
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      JavaClass javaClass = createJavaClass(ejbName, targetPackage, ejbType, serializable);
+      JavaClassSource javaClass = createJavaClass(ejbName, targetPackage, ejbType, serializable);
       return java.saveJavaSource(javaClass);
    }
 
    /**
     * Creates a new {@link JavaResource} in the specified target. If a project is available, use
     * {@link EJBOperations#newEntity(Project, String, String, GenerationType)}
-    * 
+    *
     * @param target the target directory resource to create this class
     * @param ejbName the name of the class
     * @param ejbPackage the package of the class to be created
@@ -81,19 +78,19 @@ public class EJBOperations
             final boolean serializable
             )
    {
-      JavaClass javaClass = createJavaClass(ejbName, ejbPackage, ejbType, serializable);
+      JavaClassSource javaClass = createJavaClass(ejbName, ejbPackage, ejbType, serializable);
       JavaResource javaResource = getJavaResource(target, javaClass.getName());
       javaResource.setContents(javaClass);
       return javaResource;
    }
 
-   private JavaClass createJavaClass(
+   private JavaClassSource createJavaClass(
             final String className,
             final String classPackage,
             final EJBType type,
             boolean serializable)
    {
-      JavaClass ejb = javaSourceFactory.create(JavaClass.class)
+      JavaClassSource ejb = Roaster.create(JavaClassSource.class)
                .setName(className)
                .setPublic()
                .getOrigin();
@@ -117,7 +114,7 @@ public class EJBOperations
       return ejb;
    }
 
-   public JavaClass setupMessageDrivenBean(JavaClass ejb, JMSDestinationType destType, String destName)
+   public JavaClassSource setupMessageDrivenBean(JavaClassSource ejb, JMSDestinationType destType, String destName)
    {
       Assert.notNull(destType, "JMS Destination type must not be null when bean is Message Driven");
       Assert.notNull(destName, "JMS Destination name must not be null when bean is Message Driven");
@@ -127,7 +124,7 @@ public class EJBOperations
       ejb.addInterface(MessageListener.class);
       ejb.addMethod("public void onMessage(Message message) {}");
 
-      Annotation<JavaClass> annotation = ejb.getAnnotation(EJBType.MESSAGEDRIVEN.getAnnotation());
+      AnnotationSource<JavaClassSource> annotation = ejb.getAnnotation(EJBType.MESSAGEDRIVEN.getAnnotation());
       if (annotation == null)
       {
          annotation = ejb.addAnnotation(EJBType.MESSAGEDRIVEN.getAnnotation());

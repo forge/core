@@ -34,7 +34,7 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -106,8 +106,8 @@ public class NewFurnaceTestCommandTest
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getTestJavaResource("org.jboss.forge.test.MyTestCase");
       Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaSource(), is(instanceOf(JavaClass.class)));
-      Assert.assertFalse(javaResource.getJavaSource().hasSyntaxErrors());
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      Assert.assertFalse(javaResource.getJavaType().hasSyntaxErrors());
 
       Resource<?> finalArtifact = project.getFacet(PackagingFacet.class).getFinalArtifact();
       Assert.assertFalse(finalArtifact.exists());

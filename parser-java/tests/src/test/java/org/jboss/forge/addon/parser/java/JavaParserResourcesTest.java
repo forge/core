@@ -23,8 +23,8 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.parser.JavaParser;
-import org.jboss.forge.parser.java.JavaClass;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -59,19 +59,21 @@ public class JavaParserResourcesTest
    @Test
    public void testJavaResourceCreation() throws Exception
    {
-      JavaClass javaClass = JavaParser.create(JavaClass.class).setPackage("org.jboss.forge.test").setName("Example");
+      JavaClassSource javaClass = Roaster.create(JavaClassSource.class).setPackage("org.jboss.forge.test")
+               .setName("Example");
       JavaResource resource = factory.create(JavaResource.class, File.createTempFile("forge", ".java"));
       resource.createNewFile();
       resource.setContents(javaClass);
 
-      Assert.assertEquals("Example", resource.getJavaSource().getName());
-      Assert.assertEquals("org.jboss.forge.test", resource.getJavaSource().getPackage());
+      Assert.assertEquals("Example", resource.getJavaType().getName());
+      Assert.assertEquals("org.jboss.forge.test", resource.getJavaType().getPackage());
    }
 
    @Test
    public void testJavaResourceCreationSpecialized() throws Exception
    {
-      JavaClass javaClass = JavaParser.create(JavaClass.class).setPackage("org.jboss.forge.test").setName("Example");
+      JavaClassSource javaClass = Roaster.create(JavaClassSource.class).setPackage("org.jboss.forge.test")
+               .setName("Example");
       JavaResource resource = factory.create(JavaResource.class, File.createTempFile("forge", ".java"));
       resource.createNewFile();
       resource.setContents(javaClass);
