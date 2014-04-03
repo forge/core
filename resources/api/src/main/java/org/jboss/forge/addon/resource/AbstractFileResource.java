@@ -87,13 +87,13 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public boolean exists()
    {
-      return getFileOperations().fileExists(file);
+      return getFileOperations().resourceExists(file);
    }
 
    @Override
    public boolean isDirectory()
    {
-      return getFileOperations().fileExistsAndIsDirectory(file);
+      return getFileOperations().resourceExistsAndIsDirectory(file);
    }
 
    @Override
@@ -138,7 +138,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          return false;
       }
 
-      File[] listFiles = getFileOperations().listFiles(file);
+      File[] listFiles = getFileOperations().listResources(file);
       if ((listFiles != null) && (listFiles.length != 0))
       {
          throw new RuntimeException("directory not empty");
@@ -149,7 +149,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          System.gc(); // ensure no lingering handles that would prevent deletion
       }
 
-      if (getFileOperations().deleteFile(file))
+      if (getFileOperations().deleteResource(file))
       {
          return true;
       }
@@ -159,7 +159,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public void deleteOnExit()
    {
-      getFileOperations().deleteFileOnExit(file);
+      getFileOperations().deleteResourceOnExit(file);
    }
 
    private boolean _deleteRecursive(final File file, final boolean collect)
@@ -174,18 +174,18 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          return false;
       }
 
-      File[] children = getFileOperations().listFiles(file);
+      File[] children = getFileOperations().listResources(file);
       if (children != null)
       {
          for (File sf : children)
          {
-            if (getFileOperations().fileExistsAndIsDirectory(sf))
+            if (getFileOperations().resourceExistsAndIsDirectory(sf))
             {
                _deleteRecursive(sf, false);
             }
             else
             {
-               if (!getFileOperations().deleteFile(sf))
+               if (!getFileOperations().deleteResource(sf))
                {
                   throw new RuntimeException("failed to delete: " + sf.getAbsolutePath());
                }
@@ -193,7 +193,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          }
       }
 
-      return getFileOperations().deleteFile(file);
+      return getFileOperations().deleteResource(file);
    }
 
    @Override
@@ -274,7 +274,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       try
       {
          getParent().mkdirs();
-         if (getFileOperations().createNewFile(file))
+         if (getFileOperations().createNewResource(file))
          {
             return true;
          }
@@ -315,7 +315,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
 
    private boolean renameTo(final File target)
    {
-      if (getFileOperations().renameFile(file, target))
+      if (getFileOperations().renameResource(file, target))
       {
          file = target;
          return true;
@@ -326,25 +326,25 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public long getSize()
    {
-      return getFileOperations().getFileLength(file);
+      return getFileOperations().getResourceLength(file);
    }
 
    @Override
    public boolean isExecutable()
    {
-      return (this.file.canExecute() && !getFileOperations().fileExistsAndIsDirectory(file));
+      return (this.file.canExecute() && !getFileOperations().resourceExistsAndIsDirectory(file));
    }
 
    @Override
    public boolean isReadable()
    {
-      return (this.file.canRead() && !getFileOperations().fileExistsAndIsDirectory(file));
+      return (this.file.canRead() && !getFileOperations().resourceExistsAndIsDirectory(file));
    }
 
    @Override
    public boolean isWritable()
    {
-      return (this.file.canWrite() && !getFileOperations().fileExistsAndIsDirectory(file));
+      return (this.file.canWrite() && !getFileOperations().resourceExistsAndIsDirectory(file));
    }
 
    @Override
@@ -365,9 +365,9 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       return getResourceFactory().monitor(this, filter);
    }
 
-   protected FileOperations getFileOperations()
+   protected ResourceOperations<File> getFileOperations()
    {
-      return getResourceFactory().getFileOperations();
+      return getResourceFactory().<File>getResourceOperations(File.class);
    }
 
    @Override

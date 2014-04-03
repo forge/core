@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.resource;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeMap;
@@ -107,14 +109,25 @@ public class ResourceFactoryImpl implements ResourceFactory
    public ResourceMonitor monitor(Resource<?> resource, ResourceFilter resourceFilter)
    {
       Assert.notNull(resource, "Resource cannot be null");
-      Assert.isTrue(resource instanceof FileResource, "Resource must be a FileResource, was "
-               + resource.getClass().getName());
+
       if (!resource.exists())
       {
          throw new IllegalStateException("Resource must exist to be monitored");
       }
-      FileResource<?> fileResource = (FileResource<?>) resource;
-      return fileMonitor.registerMonitor(this, fileResource, resourceFilter);
+
+      if (resource instanceof FileResource)
+      {
+         return fileMonitor.registerMonitor(this, (FileResource<?>) resource, resourceFilter);
+      }
+      else if (resource instanceof PathResource)
+      {
+         return fileMonitor.registerMonitor(this, (PathResource<?>) resource, resourceFilter);
+      }
+      else
+      {
+         throw new IllegalArgumentException("Resource must be a FileResource or PathResource, was "
+                  + resource.getClass().getName());
+      }
    }
 
    @Override
@@ -123,17 +136,29 @@ public class ResourceFactoryImpl implements ResourceFactory
       return transactionManager.getCurrentTransaction(this);
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   public FileOperations getFileOperations()
+   public <T> ResourceOperations<T> getResourceOperations(Class<T> type)
    {
-      FileResourceTransactionImpl transaction = getTransaction();
-      if (transaction.isStarted())
+      if (File.class.equals(type))
       {
-         return transaction;
+         FileResourceTransactionImpl transaction = getTransaction();
+         if (transaction.isStarted())
+         {
+            return (ResourceOperations<T>) transaction;
+         }
+         else
+         {
+            return (ResourceOperations<T>) DefaultFileOperations.INSTANCE;
+         }
+      }
+      else if (Path.class.equals(type))
+      {
+         return (ResourceOperations<T>) DefaultPathOperations.INSTANCE;
       }
       else
       {
-         return DefaultFileOperations.INSTANCE;
+         throw new IllegalArgumentException("Unsupport resource type [" + type.getName() + "]");
       }
    }
 

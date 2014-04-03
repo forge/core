@@ -46,7 +46,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
          refresh();
          listCache = new LinkedList<>();
 
-         File[] files = getFileOperations().listFiles(getUnderlyingResourceObject());
+         File[] files = getFileOperations().listResources(getUnderlyingResourceObject());
          if (files != null)
          {
             for (File f : files)
@@ -150,11 +150,11 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    @Override
    public DirectoryResourceImpl createFrom(final File file)
    {
-      if (getFileOperations().fileExists(file) && !getFileOperations().fileExistsAndIsDirectory(file))
+      if (getFileOperations().resourceExists(file) && !getFileOperations().resourceExistsAndIsDirectory(file))
       {
          throw new ResourceException("File reference is not a directory: " + file.getAbsolutePath());
       }
-      else if (!getFileOperations().fileExists(file))
+      else if (!getFileOperations().resourceExists(file))
       {
          getFileOperations().mkdirs(file);
       }

@@ -21,9 +21,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.forge.addon.resource.FileOperations;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.resource.ResourceOperations;
 import org.jboss.forge.addon.resource.events.ResourceCreated;
 import org.jboss.forge.addon.resource.events.ResourceDeleted;
 import org.jboss.forge.addon.resource.events.ResourceEvent;
@@ -35,8 +35,8 @@ import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.xadisk.additional.XAFileInputStreamWrapper;
 import org.xadisk.additional.XAFileOutputStreamWrapper;
-import org.xadisk.bridge.proxies.interfaces.Session;
 import org.xadisk.bridge.proxies.interfaces.XADiskBasicIOOperations.PermissionType;
+import org.xadisk.bridge.proxies.interfaces.Session;
 import org.xadisk.bridge.proxies.interfaces.XAFileInputStream;
 import org.xadisk.bridge.proxies.interfaces.XAFileOutputStream;
 import org.xadisk.bridge.proxies.interfaces.XAFileSystem;
@@ -51,12 +51,13 @@ import org.xadisk.filesystem.exceptions.NoTransactionAssociatedException;
 import org.xadisk.filesystem.standalone.StandaloneFileSystemConfiguration;
 
 /**
- * Implementation of the {@link ResourceTransaction} interface for files
- * 
+ * Implementation of the {@link ResourceTransaction} and {@link ResourceOperations} interfaces for files
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author Shane Bryzak
  */
-public class FileResourceTransactionImpl implements ResourceTransaction, FileOperations, Closeable
+public class FileResourceTransactionImpl implements ResourceTransaction, Closeable, ResourceOperations<File>
 {
    private static final Logger log = Logger.getLogger(FileResourceTransactionImpl.class.getName());
 
@@ -209,7 +210,73 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    }
 
    @Override
-   public boolean fileExists(File f)
+   public void setTransactionTimeout(int seconds)
+   {
+      if (seconds < 0)
+      {
+         throw new ResourceTransactionException("Timeout cannot be a negative value");
+      }
+      this.timeout = seconds;
+   }
+
+   @Override
+   public int getTransactionTimeout()
+   {
+      return this.session == null ? timeout : this.session.getTransactionTimeout();
+   }
+
+   protected void assertSessionCreated()
+   {
+      Assert.notNull(session, "Transaction is not started");
+   }
+
+   private XAFileSystem getFileSystem()
+   {
+      if (fileSystem == null)
+      {
+         File xaDiskHome = OperatingSystemUtils.createTempDir();
+         StandaloneFileSystemConfiguration config = new StandaloneFileSystemConfiguration(
+                  xaDiskHome.getAbsolutePath(), "furnace-instance");
+         config.setTransactionTimeout(3600);
+         // XADISK-95
+         if (OperatingSystemUtils.isWindows())
+         {
+            config.setSynchronizeDirectoryChanges(Boolean.FALSE);
+         }
+         this.fileSystem = XAFileSystemProxy.bootNativeXAFileSystem(config);
+         try
+         {
+            this.fileSystem.waitForBootup(10000);
+         }
+         catch (InterruptedException e)
+         {
+         }
+      }
+      return fileSystem;
+   }
+
+   @Override
+   public void close() throws IOException
+   {
+      if (session != null)
+      {
+         try
+         {
+            session.rollback();
+         }
+         catch (NoTransactionAssociatedException e)
+         {
+            // Ignored
+         }
+      }
+      if (fileSystem != null)
+      {
+         fileSystem.shutdown();
+      }
+   }
+
+   @Override
+   public boolean resourceExists(File f)
    {
       assertSessionCreated();
       try
@@ -232,7 +299,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    }
 
    @Override
-   public boolean fileExistsAndIsDirectory(File f)
+   public boolean resourceExistsAndIsDirectory(File f)
    {
       assertSessionCreated();
       try
@@ -255,7 +322,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    }
 
    @Override
-   public File[] listFiles(File file)
+   public File[] listResources(File file)
    {
       assertSessionCreated();
       try
@@ -279,7 +346,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    }
 
    @Override
-   public long getFileLength(File f)
+   public long getResourceLength(File f)
    {
       assertSessionCreated();
       try
@@ -293,7 +360,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    }
 
    @Override
-   public boolean renameFile(File src, File dest)
+   public boolean renameResource(File src, File dest)
    {
       assertSessionCreated();
       try
@@ -312,7 +379,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    }
 
    @Override
-   public void copyFile(File src, File dest) throws IOException
+   public void copyResource(File src, File dest) throws IOException
    {
       assertSessionCreated();
       try
@@ -326,7 +393,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    }
 
    @Override
-   public boolean deleteFile(File f)
+   public boolean deleteResource(File f)
    {
       assertSessionCreated();
       try
@@ -349,7 +416,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    }
 
    @Override
-   public boolean createNewFile(File file) throws IOException
+   public boolean createNewResource(File file) throws IOException
    {
       assertSessionCreated();
       try
@@ -395,7 +462,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
          // Must create the whole structure
          LinkedList<File> stack = new LinkedList<>();
          File parent = file;
-         while (parent != null && !fileExistsAndIsDirectory(parent))
+         while (parent != null && !resourceExistsAndIsDirectory(parent))
          {
             stack.push(parent);
             parent = parent.getParentFile();
@@ -447,74 +514,10 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    }
 
    @Override
-   public void setTransactionTimeout(int seconds)
-   {
-      if (seconds < 0)
-      {
-         throw new ResourceTransactionException("Timeout cannot be a negative value");
-      }
-      this.timeout = seconds;
-   }
-
-   @Override
-   public int getTransactionTimeout()
-   {
-      return this.session == null ? timeout : this.session.getTransactionTimeout();
-   }
-
-   @Override
-   public void deleteFileOnExit(File file)
+   public void deleteResourceOnExit(File file)
    {
       file.deleteOnExit();
    }
 
-   private void assertSessionCreated()
-   {
-      Assert.notNull(session, "Transaction is not started");
-   }
 
-   private XAFileSystem getFileSystem()
-   {
-      if (fileSystem == null)
-      {
-         File xaDiskHome = OperatingSystemUtils.createTempDir();
-         StandaloneFileSystemConfiguration config = new StandaloneFileSystemConfiguration(
-                  xaDiskHome.getAbsolutePath(), "furnace-instance");
-         config.setTransactionTimeout(3600);
-         // XADISK-95
-         if (OperatingSystemUtils.isWindows())
-         {
-            config.setSynchronizeDirectoryChanges(Boolean.FALSE);
-         }
-         this.fileSystem = XAFileSystemProxy.bootNativeXAFileSystem(config);
-         try
-         {
-            this.fileSystem.waitForBootup(10000);
-         }
-         catch (InterruptedException e)
-         {
-         }
-      }
-      return fileSystem;
-   }
-
-   @Override
-   public void close() throws IOException
-   {
-      if (session != null)
-      {
-         try
-         {
-            session.rollback();
-         }
-         catch (NoTransactionAssociatedException e)
-         {
-            // Ignored
-         }
-      }
-      if (fileSystem != null)
-      {
-         fileSystem.shutdown();
-      }
-   }
 }

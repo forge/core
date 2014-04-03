@@ -14,7 +14,7 @@ import javax.enterprise.inject.Vetoed;
 
 import org.jboss.forge.addon.resource.AbstractFileResource;
 import org.jboss.forge.addon.resource.DefaultFileOperations;
-import org.jboss.forge.addon.resource.FileOperations;
+import org.jboss.forge.addon.resource.ResourceOperations;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceFilter;
@@ -85,9 +85,9 @@ public class FileResourceFactory implements ResourceFactory
    }
 
    @Override
-   public FileOperations getFileOperations()
+   public <T> ResourceOperations<T> getResourceOperations(Class<T> type)
    {
-      return DefaultFileOperations.INSTANCE;
+       return (ResourceOperations<T>) DefaultFileOperations.INSTANCE;
    }
 
    @Override
