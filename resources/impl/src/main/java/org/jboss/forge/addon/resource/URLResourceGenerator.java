@@ -10,11 +10,13 @@ package org.jboss.forge.addon.resource;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.jboss.forge.furnace.util.Strings;
+
 /**
  * Generates {@link URLResource} objects
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class URLResourceGenerator implements ResourceGenerator<URLResource, Object>
 {
@@ -29,7 +31,7 @@ public class URLResourceGenerator implements ResourceGenerator<URLResource, Obje
       {
          return true;
       }
-      else
+      else if (Strings.isURL(resource.toString()))
       {
          try
          {
@@ -38,21 +40,21 @@ public class URLResourceGenerator implements ResourceGenerator<URLResource, Obje
          }
          catch (MalformedURLException e)
          {
-            return false;
          }
       }
+      return false;
    }
 
    @Override
    @SuppressWarnings("unchecked")
    public <T extends Resource<Object>> T getResource(ResourceFactory factory, Class<URLResource> type, Object resource)
    {
-      URL url;
+      URL url = null;
       if (resource instanceof URL)
       {
          url = (URL) resource;
       }
-      else
+      else if (Strings.isURL(resource.toString()))
       {
          try
          {

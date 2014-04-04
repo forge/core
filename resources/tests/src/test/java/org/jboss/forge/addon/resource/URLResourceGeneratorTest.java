@@ -12,9 +12,6 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.URLResource;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -66,6 +63,14 @@ public class URLResourceGeneratorTest
       Assert.assertNotNull(resource);
       Assert.assertTrue(resource instanceof URLResource);
       Assert.assertEquals(new URL(url), resource.getUnderlyingResourceObject());
+   }
+
+   @Test
+   public void testCreateURLResourceFromInvalidString() throws Exception
+   {
+      String url = "adsfadsfsadfsdfads";
+      Resource<?> resource = factory.create(url);
+      Assert.assertNull(resource);
    }
 
 }
