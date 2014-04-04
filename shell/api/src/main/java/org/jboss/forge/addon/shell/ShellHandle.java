@@ -10,13 +10,7 @@ package org.jboss.forge.addon.shell;
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.inject.Inject;
-
-import org.jboss.aesh.console.settings.Settings;
-import org.jboss.aesh.console.settings.SettingsBuilder;
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 
 /**
@@ -24,43 +18,12 @@ import org.jboss.forge.addon.ui.command.CommandExecutionListener;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class ShellHandle
+public interface ShellHandle
 {
-   @Inject
-   private ShellFactory shellFactory;
+   public void initialize(File currentResource, InputStream stdIn, PrintStream stdOut, PrintStream stdErr);
 
-   private Shell shell;
+   public void destroy();
 
-   public void initialize(File currentResource, InputStream stdIn, PrintStream stdOut, PrintStream stdErr)
-   {
-      Settings settings = new SettingsBuilder()
-               .inputStream(stdIn)
-               .outputStream(stdOut)
-               .outputStreamError(stdErr)
-               .enableMan(true)
-               .create();
-      this.shell = shellFactory.createShell(currentResource, settings);
-   }
-
-   public void destroy()
-   {
-      if (this.shell != null)
-         try
-         {
-            this.shell.close();
-         }
-         catch (Exception e)
-         {
-            Logger.getLogger(getClass().getName()).log(Level.FINE, "Error while closing Shell", e);
-         }
-   }
-
-   public void addCommandExecutionListener(CommandExecutionListener listener)
-   {
-      if (shell != null)
-      {
-         shell.addCommandExecutionListener(listener);
-      }
-   }
+   public void addCommandExecutionListener(CommandExecutionListener listener);
 
 }
