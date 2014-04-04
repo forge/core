@@ -31,6 +31,12 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>git</artifactId>
+         <classifier>forge-addon</classifier>
+         <optional>true</optional>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>projects</artifactId>
          <classifier>forge-addon</classifier>
          <optional>true</optional>

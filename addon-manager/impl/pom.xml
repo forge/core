@@ -24,6 +24,12 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>git-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>addon-manager-spi</artifactId>
          <classifier>forge-addon</classifier>
          <scope>provided</scope>

@@ -123,4 +123,10 @@ public class URLResourceImpl extends VirtualResource<URL> implements URLResource
    {
       return false;
    }
+
+   @Override
+   public String toString()
+   {
+      return getFullyQualifiedName();
+   }
 }
