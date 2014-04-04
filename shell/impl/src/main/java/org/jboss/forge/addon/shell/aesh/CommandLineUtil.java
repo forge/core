@@ -76,8 +76,9 @@ public class CommandLineUtil
       final ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()),
                metadata.getDescription(), (CommandValidator<?>) null);
 
-      for (final InputComponent<?, ?> input : inputs.values())
-      {
+      for (Entry<String,InputComponent<?, ?>> entry: inputs.entrySet()) {
+         final String inputName = entry.getKey();
+         final InputComponent<?, ?> input = entry.getValue();
          final Object defaultValue = InputComponents.getValueFor(input);
          final boolean isMultiple = input instanceof ManyValued;
          final boolean hasValue = (!InputType.CHECKBOX.equals(InputComponents.getInputType(input)) && !Boolean.class
@@ -86,7 +87,7 @@ public class CommandLineUtil
          {
             OptionBuilder optionBuilder = new OptionBuilder();
 
-            optionBuilder.name(input.getName())
+            optionBuilder.name(inputName)
                      .addDefaultValue(defaultValue == null ? null : defaultValue.toString())
                      .description(input.getLabel())
                      .hasMultipleValues(isMultiple)
@@ -172,12 +173,12 @@ public class CommandLineUtil
          {
             if (input instanceof ManyValued)
             {
-               InputComponents.setValueFor(converterFactory, input, commandLine.getOptionValues(input.getName()));
+               InputComponents.setValueFor(converterFactory, input, commandLine.getOptionValues(name));
                populatedInputs.put(name, input);
             }
             else if (input instanceof SingleValued)
             {
-               InputComponents.setValueFor(converterFactory, input, commandLine.getOptionValue(input.getName()));
+               InputComponents.setValueFor(converterFactory, input, commandLine.getOptionValue(name));
                populatedInputs.put(name, input);
             }
          }
