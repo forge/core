@@ -1,5 +1,10 @@
 package org.jboss.forge.addon.text.highlight;
 
+import org.jboss.aesh.extensions.text.highlight.Encoder;
+import org.jboss.aesh.extensions.text.highlight.Scanner;
+import org.jboss.aesh.extensions.text.highlight.StringScanner;
+import org.jboss.aesh.extensions.text.highlight.TokenType;
+
 import java.util.Map;
 import java.util.UUID;
 
