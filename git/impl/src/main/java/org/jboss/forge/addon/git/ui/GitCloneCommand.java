@@ -26,7 +26,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:jevgeni.zelenkov@gmail.com">Jevgeni Zelenkov</a>
- * 
+ *
  */
 public class GitCloneCommand extends AbstractGitCommand
 {
@@ -63,8 +63,15 @@ public class GitCloneCommand extends AbstractGitCommand
       {
          cloneFolder.mkdirs();
       }
-      Git clone = gitUtils.clone(cloneFolder, uri.getValue());
-      gitUtils.close(clone);
+      Git clone = null;
+      try
+      {
+         clone = gitUtils.clone(cloneFolder, uri.getValue());
+      }
+      finally
+      {
+         gitUtils.close(clone);
+      }
       context.getUIContext().setSelection(cloneFolder);
       return Results.success();
    }
@@ -73,9 +80,10 @@ public class GitCloneCommand extends AbstractGitCommand
    public void validate(UIValidationContext validator)
    {
       DirectoryResource folder = targetDirectory.getValue();
-      if (folder.exists() && (!folder.isDirectory() || !folder.listResources().isEmpty()))
+      if (folder == null || (folder.exists() && (!folder.isDirectory() || !folder.listResources().isEmpty())))
       {
-         validator.addValidationError(targetDirectory, "The specified target directory should not exist or should be empty directory");
+         validator.addValidationError(targetDirectory,
+                  "The specified target directory should not exist or should be empty directory");
       }
    }
 

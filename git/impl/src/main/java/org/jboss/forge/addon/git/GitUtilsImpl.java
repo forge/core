@@ -58,7 +58,7 @@ import org.jboss.forge.furnace.util.Strings;
  */
 public class GitUtilsImpl implements GitUtils
 {
-   
+
    @Override
    public Git clone(final DirectoryResource dir, final String repoUri) throws GitAPIException
    {
@@ -89,7 +89,7 @@ public class GitUtilsImpl implements GitUtils
    }
 
    @Override
-   public Ref checkout(final Git git, final Ref localRef, final SetupUpstreamMode mode, 
+   public Ref checkout(final Git git, final Ref localRef, final SetupUpstreamMode mode,
             final boolean force) throws GitAPIException
    {
       CheckoutCommand checkout = git.checkout();
@@ -390,6 +390,9 @@ public class GitUtilsImpl implements GitUtils
    @Override
    public void close(final Git repo)
    {
-      repo.getRepository().close();
+      if (repo != null)
+      {
+         repo.getRepository().close();
+      }
    }
 }
