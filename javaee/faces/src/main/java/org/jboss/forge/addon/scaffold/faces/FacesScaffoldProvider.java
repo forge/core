@@ -878,7 +878,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
             if (!entity.hasMethodSignature(methodName))
             {
                entity.addMethod().setName(methodName).setReturnTypeVoid().setPublic()
-                        .setBody("this." + field.getName() + " = new " + field.getType() + "();");
+                        .setBody("this." + field.getName() + " = new " + field.getType().getName() + "();");
                dirtyBit = true;
             }
          }
@@ -898,7 +898,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
             if (!entity.hasMethodSignature(methodName))
             {
                entity.addMethod().setName(methodName).setReturnTypeVoid().setPublic()
-                        .setBody("this." + fieldName + " = new " + method.getReturnType() + "();");
+                        .setBody("this." + fieldName + " = new " + method.getReturnType().getName() + "();");
                dirtyBit = true;
             }
          }
