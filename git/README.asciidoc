@@ -159,7 +159,7 @@ gitUtils.stashCreate(gitHandle);
 // Reset to the previous commit
 gitUtils.resetHard(gitHandle, "f414f31");
 ----
-+
+
 
 == UI commands
 
