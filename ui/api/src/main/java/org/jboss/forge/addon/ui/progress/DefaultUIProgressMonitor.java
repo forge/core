@@ -7,10 +7,9 @@
 
 package org.jboss.forge.addon.ui.progress;
 
-
 /**
  * Default implementation for {@link UIProgressMonitor}
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class DefaultUIProgressMonitor implements UIProgressMonitor
@@ -18,6 +17,7 @@ public class DefaultUIProgressMonitor implements UIProgressMonitor
    private String taskName;
    private int currentWork;
    private int totalWork;
+   private String subtask;
    private volatile boolean cancelled;
 
    @Override
@@ -54,7 +54,7 @@ public class DefaultUIProgressMonitor implements UIProgressMonitor
    @Override
    public void subTask(String name)
    {
-
+      this.subtask = name;
    }
 
    @Override
@@ -78,4 +78,8 @@ public class DefaultUIProgressMonitor implements UIProgressMonitor
       return currentWork;
    }
 
+   public String getSubtask()
+   {
+      return subtask;
+   }
 }
