@@ -15,12 +15,8 @@
 	<dependencies>
         <dependency>
             <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>javaee-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>javaee-impl</artifactId>
+            <artifactId>javaee</artifactId>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -72,4 +68,23 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
+   <build>
+      <plugins>
+         <plugin>
+            <artifactId>maven-jar-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>create-forge-addon</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+                  <configuration>
+                     <classifier>forge-addon</classifier>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+   </build>
 </project>
