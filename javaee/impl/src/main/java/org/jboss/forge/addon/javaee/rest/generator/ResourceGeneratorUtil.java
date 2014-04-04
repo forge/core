@@ -95,7 +95,7 @@ public class ResourceGeneratorUtil
             String type = null;
             if (member instanceof Method)
             {
-               type = ((Method<?, ?>) member).getReturnType().getName();
+               type = ((Method<?, ?>) member).getReturnType().getQualifiedName();
                if (name.startsWith("get"))
                {
                   name = name.substring(2);
@@ -103,7 +103,7 @@ public class ResourceGeneratorUtil
             }
             else if (member instanceof Field)
             {
-               type = ((Field<?>) member).getType().getName();
+               type = ((Field<?>) member).getType().getQualifiedName();
             }
 
             if (type != null)
@@ -111,7 +111,7 @@ public class ResourceGeneratorUtil
                for (Method<?, ?> method : entity.getMethods())
                {
                   // It's a getter
-                  if (method.getParameters().size() == 0 && type.equals(method.getReturnType()))
+                  if (method.getParameters().size() == 0 && type.equals(method.getReturnType().getQualifiedName()))
                   {
                      if (method.getName().toLowerCase().contains(name.toLowerCase()))
                      {
