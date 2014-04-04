@@ -44,13 +44,13 @@ import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIOutputImpl;
+import org.jboss.forge.addon.shell.ui.ShellUIProgressMonitor;
 import org.jboss.forge.addon.shell.ui.ShellUIPromptImpl;
 import org.jboss.forge.addon.ui.UIRuntime;
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIContextListener;
 import org.jboss.forge.addon.ui.output.UIOutput;
-import org.jboss.forge.addon.ui.progress.DefaultUIProgressMonitor;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
@@ -244,7 +244,7 @@ public class ShellImpl implements Shell, UIRuntime
    @Override
    public UIProgressMonitor createProgressMonitor(UIContext context)
    {
-      return new DefaultUIProgressMonitor();
+      return new ShellUIProgressMonitor(console.getShell().out());
    }
 
    @Override
