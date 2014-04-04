@@ -14,35 +14,29 @@ import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Generates {@link URLResource} objects
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class URLResourceGenerator implements ResourceGenerator<URLResource, Object>
 {
    @Override
    public boolean handles(Class<?> type, Object resource)
    {
+      boolean result;
       if (resource == null)
       {
-         return false;
+         result = false;
       }
       else if (resource instanceof URL)
       {
-         return true;
+         result = true;
       }
-      else if (Strings.isURL(resource.toString()))
+      else
       {
-         try
-         {
-            new URL(resource.toString());
-            return true;
-         }
-         catch (MalformedURLException e)
-         {
-         }
+         result = Strings.isURL(resource.toString());
       }
-      return false;
+      return result;
    }
 
    @Override
