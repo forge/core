@@ -55,7 +55,7 @@
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <version.furnace>2.3.1-SNAPSHOT</version.furnace>
+      <version.furnace>2.4.0.Final</version.furnace>
    </properties>
 
    <dependencyManagement>
@@ -162,296 +162,296 @@
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>addon-manager</artifactId>
             <classifier>forge-addon</classifier>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>addon-manager-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>addon-manager-impl</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>addon-manager-spi</artifactId>
             <classifier>forge-addon</classifier>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>addons</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>addons-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>configuration</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>configuration-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>convert</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>convert-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>database-tools</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dependencies</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dependencies-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dependencies-impl</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dev-tools-java</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>environment</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>environment-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>facets</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>facets-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>javaee</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>javaee-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>maven</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>maven-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>maven-impl</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>parser-java</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>parser-java-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>parser-json</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>parser-json-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>parser-xml</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>parser-xml-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>projects</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>projects-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>resources</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>resources-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>resources-impl</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>scaffold</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>scaffold-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>scaffold-spi</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>scaffold-faces</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>shell</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>shell-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>shell-spi</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>templates</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>templates-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>templates-spi</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>text</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>shell-test-harness</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui-test-harness</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui-spi</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>git</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>git-api</artifactId>
-            <version>${version.furnace}</version>
+            <version>${project.version}</version>
          </dependency>
       </dependencies>
    </dependencyManagement>
