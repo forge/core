@@ -55,7 +55,7 @@
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <version.furnace>2.4.1.Final</version.furnace>
+      <version.furnace>${project.version}</version.furnace>
    </properties>
 
    <dependencyManagement>
