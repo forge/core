@@ -51,12 +51,63 @@ public class MavenJavaCompilerFacet extends AbstractFacet<Project> implements Ja
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getModel();
       Properties properties = pom.getProperties();
-      // TODO: Use System.getProperty("java.version") ?
-      String javaVersion = "1.7";
-      properties.setProperty(MAVEN_COMPILER_SOURCE_KEY, javaVersion);
-      properties.setProperty(MAVEN_COMPILER_TARGET_KEY, javaVersion);
+
+      setMavenCompilerSource(properties, DEFAULT_COMPILER_VERSION.toString());
+      setMavenCompilerTarget(properties, DEFAULT_COMPILER_VERSION.toString());
       properties.setProperty(MAVEN_COMPILER_ENCODING_KEY, "UTF-8");
       maven.setModel(pom);
       return true;
    }
+
+   @Override
+   public void setSourceCompilerVersion(CompilerVersion version)
+   {
+      if (version != null)
+      {
+         MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
+         Model pom = maven.getModel();
+         setMavenCompilerSource(pom.getProperties(), version.toString());
+         maven.setModel(pom);
+      }
+   }
+
+   @Override
+   public void setTargetCompilerVersion(CompilerVersion version)
+   {
+      if (version != null)
+      {
+         MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
+         Model pom = maven.getModel();
+         setMavenCompilerTarget(pom.getProperties(), version.toString());
+         maven.setModel(pom);
+      }
+   }
+
+   @Override public CompilerVersion getSourceCompilerVersion()
+   {
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
+      Model pom = maven.getModel();
+      String sourceVersion = pom.getProperties().getProperty(MAVEN_COMPILER_SOURCE_KEY);
+      return sourceVersion != null ? CompilerVersion.getValue(sourceVersion) : DEFAULT_COMPILER_VERSION;
+   }
+
+   @Override public CompilerVersion getTargetCompilerVersion()
+   {
+      MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
+      Model pom = maven.getModel();
+      String targetVersion = pom.getProperties().getProperty(MAVEN_COMPILER_TARGET_KEY);
+      return targetVersion != null ? CompilerVersion.getValue(targetVersion) : DEFAULT_COMPILER_VERSION;
+   }
+
+   private Properties setMavenCompilerSource(Properties mavenProps, String sourceCompilerVersion)
+   {
+      mavenProps.setProperty(MAVEN_COMPILER_SOURCE_KEY, sourceCompilerVersion);
+      return mavenProps;
+   }
+
+   private void setMavenCompilerTarget(Properties mavenProps, String targetCompilerVersion)
+   {
+      mavenProps.setProperty(MAVEN_COMPILER_TARGET_KEY, targetCompilerVersion);
+   }
+
 }
