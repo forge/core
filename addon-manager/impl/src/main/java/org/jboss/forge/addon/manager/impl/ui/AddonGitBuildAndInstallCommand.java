@@ -23,6 +23,7 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
@@ -94,6 +95,7 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       File tempDir = OperatingSystemUtils.createTempDir();
       DirectoryResource projectRoot = resourceFactory.create(DirectoryResource.class, tempDir);
       UIProgressMonitor progressMonitor = context.getProgressMonitor();
+      UIOutput output = context.getUIContext().getProvider().getOutput();
       progressMonitor.beginTask("Installing git addon", 4);
 
       progressMonitor.subTask("Cloning repository in " + tempDir);
@@ -113,16 +115,16 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       try
       {
          project.getFacet(PackagingFacet.class).createBuilder().addArguments("clean", "install").runTests(false)
-                  .build();
+                  .build(output.out(), output.err()   );
       }
       catch (BuildException e)
       {
          return Results.fail("Unable to execute project build", e);
       }
       progressMonitor.worked(1);
+      AddonId id = null;
       try
       {
-         AddonId id;
          if (coordinate.hasValue())
          {
             id = AddonId.fromCoordinates(coordinate.getValue());
@@ -142,11 +144,11 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
          InstallRequest installRequest = addonManager.install(id);
          installRequest.perform();
          progressMonitor.done();
-         return Results.success("Addon " + buildCoordinate.toString() + " was installed successfully.");
+         return Results.success("Addon " + id + " was installed successfully.");
       }
       catch (Throwable t)
       {
-         return Results.fail("Addon " + buildCoordinate.toString() + " could not be installed.", t);
+         return Results.fail("Addon " + id + " could not be installed.", t);
       }
    }
 
