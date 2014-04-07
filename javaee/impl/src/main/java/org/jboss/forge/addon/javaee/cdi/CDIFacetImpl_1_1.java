@@ -89,11 +89,11 @@ public class CDIFacetImpl_1_1 extends AbstractCDIFacetImpl<BeansDescriptor> impl
    {
       Map<Dependency, List<Dependency>> result = new LinkedHashMap<>();
 
-      result.put(CDI_API, Arrays.asList(CDI_API));
+      result.put(CDI_API, Arrays.asList(CDI_API, JAVAEE7));
       result.put(JAVAX_ANNOTATION_API,
-               Arrays.asList(JAVAX_ANNOTATION_API, JBOSS_ANNOTATION_API_1_1, JBOSS_ANNOTATION_API_1_2));
-      result.put(JAVAX_INJECT, Arrays.asList(JAVAX_INJECT));
-      result.put(JAVAX_INTERCEPTOR_API, Arrays.asList(JAVAX_INTERCEPTOR_API));
+               Arrays.asList(JAVAX_ANNOTATION_API, JBOSS_ANNOTATION_API_1_1, JBOSS_ANNOTATION_API_1_2, JAVAEE7));
+      result.put(JAVAX_INJECT, Arrays.asList(JAVAX_INJECT, JAVAEE7));
+      result.put(JAVAX_INTERCEPTOR_API, Arrays.asList(JAVAX_INTERCEPTOR_API, JAVAEE7));
 
       return result;
    }

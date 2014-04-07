@@ -22,7 +22,7 @@ import org.jboss.forge.furnace.versions.Version;
 
 /**
  * Implementation for JAX-RS 2.0
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class RestFacetImpl_2_0 extends AbstractRestFacet implements RestFacet_2_0
@@ -40,7 +40,7 @@ public class RestFacetImpl_2_0 extends AbstractRestFacet implements RestFacet_2_
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
       Map<Dependency, List<Dependency>> result = new LinkedHashMap<>();
-      result.put(JAX_RS_2_0, Arrays.asList(JAX_RS_2_0));
+      result.put(JAX_RS_2_0, Arrays.asList(JAX_RS_2_0, JAVAEE7));
       return result;
    }
 

@@ -25,7 +25,7 @@ import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.persistence21.PersistenceDescriptor;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class JPAFacetImpl_2_1 extends AbstractJPAFacetImpl<PersistenceDescriptor> implements JPAFacet_2_1
@@ -48,7 +48,7 @@ public class JPAFacetImpl_2_1 extends AbstractJPAFacetImpl<PersistenceDescriptor
    @Override
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
-      return Collections.singletonMap(JAVAX_PERSISTENCE, Arrays.asList(JAVAX_PERSISTENCE));
+      return Collections.singletonMap(JAVAX_PERSISTENCE, Arrays.asList(JAVAX_PERSISTENCE, JAVAEE7));
    }
 
    @Override

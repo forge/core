@@ -44,7 +44,7 @@ public class EJBFacetImpl_3_2 extends AbstractEJBFacetImpl implements EJBFacet_3
    {
       Map<Dependency, List<Dependency>> result = new HashMap<Dependency, List<Dependency>>();
 
-      result.put(JAVAX_EJB_API, Arrays.asList(JAVAX_EJB_API));
+      result.put(JAVAX_EJB_API, Arrays.asList(JAVAX_EJB_API, JAVAEE7));
 
       return result;
 

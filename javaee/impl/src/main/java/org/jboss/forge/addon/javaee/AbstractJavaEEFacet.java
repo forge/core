@@ -24,10 +24,10 @@ import org.jboss.forge.furnace.versions.Version;
 
 /**
  * A base facet implementation for Facets which require Java EE library APIs to be installed.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> implements ProjectFacet
 {
@@ -35,6 +35,10 @@ public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> impleme
    protected static final Dependency JAVAEE6 =
             DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0").setScopeType("import")
                      .setPackaging("pom").setVersion("3.0.2.Final");
+
+   protected static final Dependency JAVAEE7 =
+            DependencyBuilder.create().setGroupId("javax").setArtifactId("javaee-api").setVersion("7.0")
+                     .setScopeType("provided");
 
    private final DependencyInstaller installer;
 
