@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,6 +20,7 @@ import org.jboss.forge.addon.ui.command.CommandFactory;
 import org.jboss.forge.addon.ui.command.CommandProvider;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.addons.AddonRegistry;
@@ -34,6 +37,8 @@ public class CommandFactoryImpl implements CommandFactory
 {
    @Inject
    private AddonRegistry registry;
+
+   private static final Logger log = Logger.getLogger(CommandFactoryImpl.class.getName());
 
    @Override
    public Iterable<UICommand> getCommands()
@@ -67,9 +72,16 @@ public class CommandFactoryImpl implements CommandFactory
       Iterable<UICommand> allCommands = getCommands();
       for (UICommand cmd : allCommands)
       {
-         if (Commands.isEnabled(cmd, context))
+         try
          {
-            commands.add(getCommandName(context, cmd));
+            if (Commands.isEnabled(cmd, context))
+            {
+               commands.add(getCommandName(context, cmd));
+            }
+         }
+         catch (Exception e)
+         {
+            log.log(Level.SEVERE, "Error while checking if command " + cmd + " isEnabled", e);
          }
       }
       return commands;
@@ -78,10 +90,19 @@ public class CommandFactoryImpl implements CommandFactory
    @Override
    public String getCommandName(UIContext context, UICommand cmd)
    {
-      String name = cmd.getMetadata(context).getName();
-      if (!context.getProvider().isGUI())
+      String name = null;
+      try
       {
-         name = shellifyName(name);
+         UICommandMetadata metadata = cmd.getMetadata(context);
+         name = metadata.getName();
+         if (!context.getProvider().isGUI())
+         {
+            name = shellifyName(name);
+         }
+      }
+      catch (Exception e)
+      {
+         log.log(Level.SEVERE, "Error while getting command name for " + cmd.getClass(), e);
       }
       return name;
    }
@@ -92,7 +113,11 @@ public class CommandFactoryImpl implements CommandFactory
       Set<String> commands = new TreeSet<>();
       for (UICommand cmd : getCommands())
       {
-         commands.add(getCommandName(context, cmd));
+         String commandName = getCommandName(context, cmd);
+         if (commandName != null)
+         {
+            commands.add(commandName);
+         }
       }
       return commands;
    }
@@ -102,7 +127,8 @@ public class CommandFactoryImpl implements CommandFactory
    {
       for (UICommand cmd : getCommands())
       {
-         if (name.equals(getCommandName(context, cmd)))
+         String commandName = getCommandName(context, cmd);
+         if (name.equals(commandName))
          {
             return cmd;
          }
