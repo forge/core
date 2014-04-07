@@ -26,7 +26,7 @@ import org.jboss.shrinkwrap.descriptor.api.beans11.BeansDescriptor;
 
 /**
  * Implementation of {@link CDIFacet} for spec version 1.1
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class CDIFacetImpl_1_1 extends AbstractCDIFacetImpl<BeansDescriptor> implements CDIFacet_1_1
@@ -39,7 +39,7 @@ public class CDIFacetImpl_1_1 extends AbstractCDIFacetImpl<BeansDescriptor> impl
             .create("org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec");
    private static final Dependency JAVAX_INJECT = DependencyBuilder.create("javax.inject:javax.inject:1");
    private static final Dependency JAVAX_ANNOTATION_API = DependencyBuilder.create("javax.annotation:jsr250-api:1.0");
-   private static final Dependency CDI_API = DependencyBuilder.create("javax.enterprise:cdi-api:[1.1,1.2)");
+   private static final Dependency CDI_API = DependencyBuilder.create("javax.enterprise:cdi-api:1.1");
 
    @Inject
    public CDIFacetImpl_1_1(DependencyInstaller installer)
