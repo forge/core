@@ -6,10 +6,12 @@ import java.io.IOException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 @ApplicationScoped
@@ -19,28 +21,17 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
 
    private Configuration userConfiguration;
 
-   public static File setupTemporaryUserConfig()
-   {
-      File tmpFile;
-      try
-      {
-         tmpFile = File.createTempFile("user_config", ".xml");
-         System.setProperty(USER_CONFIG_PATH, tmpFile.getAbsolutePath());
-         tmpFile.deleteOnExit();
-      }
-      catch (IOException e)
-      {
-         throw new IllegalStateException("Cannot create temp file", e);
-      }
-      return tmpFile;
-
-   }
+   @Inject
+   private Furnace furnace;
 
    @Override
    @Produces
    @ApplicationScoped
    public Configuration getUserConfiguration() throws ConfigurationException
    {
+      if (furnace.isTestMode())
+         setupTemporaryUserConfig();
+
       if (userConfiguration == null)
       {
          String property = System.getProperty(USER_CONFIG_PATH);
@@ -93,6 +84,24 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
       catch (org.apache.commons.configuration.ConfigurationException e)
       {
          throw new ConfigurationException(e);
+      }
+   }
+
+   private void setupTemporaryUserConfig()
+   {
+      if (System.getProperty(USER_CONFIG_PATH) == null)
+      {
+         File tmpFile;
+         try
+         {
+            tmpFile = File.createTempFile("user_config", ".xml");
+            System.setProperty(USER_CONFIG_PATH, tmpFile.getAbsolutePath());
+            tmpFile.deleteOnExit();
+         }
+         catch (IOException e)
+         {
+            throw new IllegalStateException("Cannot create temp file", e);
+         }
       }
    }
 }

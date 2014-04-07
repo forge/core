@@ -9,7 +9,6 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.configuration.Configuration;
-import org.jboss.forge.addon.configuration.ConfigurationFactoryImpl;
 import org.jboss.forge.addon.configuration.facets.ConfigurationFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -62,11 +61,6 @@ public class ConfigListCommandTest
    private ProjectFactory projectFactory;
 
 
-   static
-   {
-      ConfigurationFactoryImpl.setupTemporaryUserConfig();
-   }
-   
    @Before
    public void setUp() throws Exception
    {

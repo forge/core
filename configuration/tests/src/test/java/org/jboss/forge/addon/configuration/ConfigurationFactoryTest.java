@@ -58,11 +58,6 @@ public class ConfigurationFactoryTest
    @Inject
    private Configuration userConfiguration;
 
-   static
-   {
-      ConfigurationFactoryImpl.setupTemporaryUserConfig();
-   }
-
    @Test
    public void testUserConfiguration()
    {

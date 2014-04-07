@@ -30,11 +30,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ConfigurationTest
 {
-   static
-   {
-      ConfigurationFactoryImpl.setupTemporaryUserConfig();
-   }
-
    @Deployment
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
