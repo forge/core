@@ -15,6 +15,7 @@ import java.util.EnumSet;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.environment.Environment;
@@ -41,6 +42,7 @@ import org.jboss.forge.furnace.services.Imported;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
+@Singleton
 public class InputComponentProducer implements InputComponentFactory
 {
    private final AddonRegistry addonRegistry;
