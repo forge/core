@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.resource;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.inject.Inject;
@@ -18,7 +20,6 @@ import org.jboss.forge.addon.resource.transaction.file.FileResourceTransactionIm
 import org.jboss.forge.addon.resource.transaction.file.FileResourceTransactionManager;
 import org.jboss.forge.addon.resource.util.RelatedClassComparator;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
 
@@ -41,6 +42,10 @@ public class ResourceFactoryImpl implements ResourceFactory
    @Inject
    private FileResourceTransactionManager transactionManager;
 
+   @SuppressWarnings("rawtypes")
+   private final Set<ResourceGenerator> generators = new HashSet<>();
+   private long version = -1;
+
    @Override
    @SuppressWarnings({ "unchecked", "rawtypes" })
    public <E, T extends Resource<E>> T create(final Class<T> type, final E underlyingResource)
@@ -51,9 +56,7 @@ public class ResourceFactoryImpl implements ResourceFactory
          TreeMap<Class<?>, ResourceGenerator> generated = new TreeMap<>(
                   new RelatedClassComparator());
 
-         Imported<ResourceGenerator> instances = registry.getServices(ResourceGenerator.class);
-
-         for (ResourceGenerator generator : instances)
+         for (ResourceGenerator generator : getGenerators())
          {
             if (generator.handles(type, underlyingResource))
             {
@@ -63,7 +66,6 @@ public class ResourceFactoryImpl implements ResourceFactory
                   generated.put(resourceType, generator);
                }
             }
-            instances.release(generator);
          }
          if (generated.size() > 0)
          {
@@ -71,6 +73,21 @@ public class ResourceFactoryImpl implements ResourceFactory
          }
       }
       return result;
+   }
+
+   @SuppressWarnings("rawtypes")
+   private Iterable<ResourceGenerator> getGenerators()
+   {
+      if (registry.getVersion() != version)
+      {
+         version = registry.getVersion();
+         generators.clear();
+         for (ResourceGenerator generator : registry.getServices(ResourceGenerator.class))
+         {
+            generators.add(generator);
+         }
+      }
+      return generators;
    }
 
    @Override
