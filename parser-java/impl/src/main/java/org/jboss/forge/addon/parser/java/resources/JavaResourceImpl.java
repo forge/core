@@ -36,6 +36,8 @@ import org.jboss.forge.roaster.model.source.JavaSource;
  */
 public class JavaResourceImpl extends AbstractFileResource<JavaResource> implements JavaResource
 {
+   private JavaType<?> javaType;
+
    public JavaResourceImpl(final ResourceFactory factory, final File file)
    {
       super(factory, file);
@@ -136,7 +138,12 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    @Override
    public <T extends JavaType<?>> T getJavaType() throws FileNotFoundException
    {
-      return (T) Roaster.parse(getResourceInputStream());
+      if (isStale() || javaType == null)
+      {
+         refresh();
+         javaType = Roaster.parse(getResourceInputStream());
+      }
+      return (T) javaType;
    }
 
    @Override
