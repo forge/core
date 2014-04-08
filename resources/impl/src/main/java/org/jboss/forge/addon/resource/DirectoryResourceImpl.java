@@ -40,9 +40,10 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
 
       if (listCache == null)
       {
+         refresh();
          listCache = new LinkedList<>();
 
-         File[] files = getFileOperations().listFiles(file);
+         File[] files = getFileOperations().listFiles(getUnderlyingResourceObject());
          if (files != null)
          {
             for (File f : files)
@@ -61,7 +62,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    @Override
    public Resource<?> getChild(final String name)
    {
-      return getResourceFactory().create(new File(file.getAbsolutePath(), name));
+      return getResourceFactory().create(new File(getUnderlyingResourceObject().getAbsolutePath(), name));
    }
 
    /**
@@ -83,7 +84,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
 
       if (!(result instanceof DirectoryResourceImpl))
       {
-         result = new DirectoryResourceImpl(getResourceFactory(), new File(file.getAbsoluteFile(), name));
+         result = new DirectoryResourceImpl(getResourceFactory(), new File(getUnderlyingResourceObject().getAbsoluteFile(), name));
       }
       return (DirectoryResourceImpl) result;
    }
@@ -162,7 +163,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    {
       if (super.getParent() == null)
       {
-         File parentFile = file.getParentFile();
+         File parentFile = getUnderlyingResourceObject().getParentFile();
          if (parentFile == null)
          {
             return null;
@@ -176,15 +177,15 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    @Override
    public String getName()
    {
-      String fileName = file.getName();
+      String fileName = getUnderlyingResourceObject().getName();
       // Windows: drive letter is needed. If filename is empty, we are on a root folder
-      return (OperatingSystemUtils.isWindows() && fileName.length() == 0) ? file.getPath() : fileName;
+      return (OperatingSystemUtils.isWindows() && fileName.length() == 0) ? getUnderlyingResourceObject().getPath() : fileName;
    }
 
    @Override
    public boolean equals(final Object obj)
    {
-      return (obj instanceof DirectoryResourceImpl) && ((DirectoryResourceImpl) obj).file.equals(file);
+      return (obj instanceof DirectoryResourceImpl) && ((DirectoryResourceImpl) obj).getUnderlyingResourceObject().equals(getUnderlyingResourceObject());
    }
 
    @Override

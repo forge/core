@@ -112,11 +112,11 @@ public class JsonResourceImpl extends AbstractFileResource<JsonResource> impleme
             getParent().mkdirs();
             if (!createNewFile())
             {
-               throw new IOException("Failed to create file: " + file);
+               throw new IOException("Failed to create file: " + getUnderlyingResourceObject());
             }
          }
 
-         try (OutputStream out = getFileOperations().createOutputStream(file);
+         try (OutputStream out = getFileOperations().createOutputStream(getUnderlyingResourceObject());
                   JsonWriter writer = Json.createWriter(out))
          {
             writer.write(structure);

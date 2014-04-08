@@ -21,17 +21,13 @@ import org.jboss.forge.furnace.util.Streams;
 public abstract class AbstractFileResource<T extends FileResource<T>> extends AbstractResource<File> implements
          FileResource<T>
 {
-   protected File file;
-   protected long lastModification;
+   private File file;
+   private long lastModification = -1;
 
    protected AbstractFileResource(final ResourceFactory factory, final File file)
    {
       super(factory, null);
-
-      if ((this.file = file) != null)
-      {
-         this.lastModification = file.lastModified();
-      }
+      this.file = file;
    }
 
    @Override
