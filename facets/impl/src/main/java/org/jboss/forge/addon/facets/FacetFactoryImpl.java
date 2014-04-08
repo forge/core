@@ -32,13 +32,7 @@ public class FacetFactoryImpl implements FacetFactory, Service
 {
    private static final Logger log = Logger.getLogger(FacetFactoryImpl.class.getName());
 
-   private final AddonRegistry registry;
-
-   public FacetFactoryImpl()
-   {
-      Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
-      this.registry = furnace.getAddonRegistry();
-   }
+   private AddonRegistry registry;
 
    @Override
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> FACETTYPE create(
@@ -56,7 +50,7 @@ public class FacetFactoryImpl implements FacetFactory, Service
             Class<FACETTYPE> type)
    {
       Assert.notNull(type, "Facet type must not be null.");
-      Imported<FACETTYPE> instance = registry.getServices(type);
+      Imported<FACETTYPE> instance = getAddonRegistry().getServices(type);
 
       if (instance.isAmbiguous())
       {
@@ -95,8 +89,8 @@ public class FacetFactoryImpl implements FacetFactory, Service
             Class<FACETTYPE> type)
    {
       Assert.notNull(type, "Facet type must not be null.");
-      Imported<FACETTYPE> instances = registry.getServices(type);
-      Set<FACETTYPE> facets = new HashSet<FACETTYPE>();
+      Imported<FACETTYPE> instances = getAddonRegistry().getServices(type);
+      Set<FACETTYPE> facets = new HashSet<>();
       for (FACETTYPE instance : instances)
       {
          facets.add(instance);
@@ -141,7 +135,7 @@ public class FacetFactoryImpl implements FacetFactory, Service
       Assert.notNull(origin, "Origin instance must not be null.");
       Assert.notNull(facet, "Facet instance must not be null.");
 
-      Set<Class<FACETTYPE>> seen = new LinkedHashSet<Class<FACETTYPE>>();
+      Set<Class<FACETTYPE>> seen = new LinkedHashSet<>();
       return install(seen, origin, facet, filter);
    }
 
@@ -184,7 +178,7 @@ public class FacetFactoryImpl implements FacetFactory, Service
       register(origin, facet);
 
       Set<Class<FACETTYPE>> requiredFacets = FacetInspector.getRequiredFacets(facet.getClass());
-      List<Class<FACETTYPE>> facetsToInstall = new ArrayList<Class<FACETTYPE>>();
+      List<Class<FACETTYPE>> facetsToInstall = new ArrayList<>();
       for (Class<FACETTYPE> requirementType : requiredFacets)
       {
          boolean isSeen = false;
@@ -247,7 +241,7 @@ public class FacetFactoryImpl implements FacetFactory, Service
       Assert.notNull(origin, "Origin instance must not be null.");
       Assert.notNull(facet, "Facet instance must not be null.");
 
-      Set<Class<FACETTYPE>> seen = new LinkedHashSet<Class<FACETTYPE>>();
+      Set<Class<FACETTYPE>> seen = new LinkedHashSet<>();
       return register(seen, origin, facet);
    }
 
@@ -278,7 +272,7 @@ public class FacetFactoryImpl implements FacetFactory, Service
       final Set<Class<FACETTYPE>> relatedFacets = FacetInspector.getAllRelatedFacets(facetClass);
       final Set<Class<FACETTYPE>> requiredFacets = FacetInspector.getAllRequiredFacets(facetClass);
 
-      final List<Class<FACETTYPE>> facetsToRegister = new ArrayList<Class<FACETTYPE>>();
+      final List<Class<FACETTYPE>> facetsToRegister = new ArrayList<>();
       for (Class<FACETTYPE> relatedType : relatedFacets)
       {
          boolean isSeen = false;
@@ -324,5 +318,15 @@ public class FacetFactoryImpl implements FacetFactory, Service
          }
       }
       return result;
+   }
+
+   private AddonRegistry getAddonRegistry()
+   {
+      if (registry == null)
+      {
+         Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
+         this.registry = furnace.getAddonRegistry();
+      }
+      return registry;
    }
 }

@@ -98,6 +98,9 @@ public class ProjectFactoryImpl implements ProjectFactory
       }
    };
 
+   private final Set<ProjectProvider> providers = new HashSet<>();
+   private long version = -1;
+
    @Override
    public Project findProject(Resource<?> target)
    {
@@ -119,30 +122,33 @@ public class ProjectFactoryImpl implements ProjectFactory
       }
 
       Project result = null;
-      Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
 
-      try
+      for (Resource<?> dir : allDirectoriesOnPath(target))
       {
-         for (Resource<?> dir : allDirectoriesOnPath(target))
+         for (ProjectProvider projectProvider : getProviders())
          {
-            for (ProjectProvider projectProvider : instances)
-            {
-               result = findProjectInDirectory(dir, projectProvider, filter);
-            }
+            result = findProjectInDirectory(dir, projectProvider, filter);
+         }
 
-            if (result != null)
-               break;
-         }
-      }
-      finally
-      {
-         for (ProjectProvider projectProvider : instances)
-         {
-            instances.release(projectProvider);
-         }
+         if (result != null)
+            break;
       }
 
       return result;
+   }
+
+   private Iterable<ProjectProvider> getProviders()
+   {
+      if (registry.getVersion() != version)
+      {
+         version = registry.getVersion();
+         providers.clear();
+         for (ProjectProvider provider : registry.getServices(ProjectProvider.class))
+         {
+            providers.add(provider);
+         }
+      }
+      return providers;
    }
 
    @Override
@@ -496,19 +502,11 @@ public class ProjectFactoryImpl implements ProjectFactory
    public boolean containsProject(Resource<?> bound, Resource<?> target)
    {
       boolean found = false;
-      Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
-      for (ProjectProvider buildSystem : instances)
+      for (ProjectProvider buildSystem : getProviders())
       {
-         try
-         {
-            found = containsProject(bound, target, buildSystem);
-            if (found)
-               break;
-         }
-         finally
-         {
-            instances.release(buildSystem);
-         }
+         found = containsProject(bound, target, buildSystem);
+         if (found)
+            break;
       }
       return found;
    }
@@ -550,19 +548,11 @@ public class ProjectFactoryImpl implements ProjectFactory
    public boolean containsProject(Resource<?> target)
    {
       boolean found = false;
-      Imported<ProjectProvider> instances = registry.getServices(ProjectProvider.class);
-      for (ProjectProvider buildSystem : instances)
+      for (ProjectProvider buildSystem : getProviders())
       {
-         try
-         {
-            found = containsProject(target, buildSystem);
-            if (found)
-               break;
-         }
-         finally
-         {
-            instances.release(buildSystem);
-         }
+         found = containsProject(target, buildSystem);
+         if (found)
+            break;
       }
       return found;
    }
