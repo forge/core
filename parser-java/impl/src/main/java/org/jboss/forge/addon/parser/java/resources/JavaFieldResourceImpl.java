@@ -52,7 +52,7 @@ public class JavaFieldResourceImpl extends AbstractJavaMemberResource<Field<?>> 
    @Override
    public String getName()
    {
-      return field.getName() + "::" + field.getType();
+      return field.getName() + "::" + field.getType().getQualifiedName();
    }
 
    @Override
