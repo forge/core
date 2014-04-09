@@ -61,8 +61,8 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    @Override
    public boolean isStale()
    {
-      byte[] digest = ResourceUtil.getDigest(this);
-      if (javaType == null || super.isStale() || (lastDigest != null && !Arrays.equals(lastDigest, digest)))
+      if (javaType == null || super.isStale()
+               || (lastDigest != null && !Arrays.equals(lastDigest, ResourceUtil.getDigest(this))))
       {
          return true;
       }
