@@ -60,16 +60,19 @@ public abstract class AbstractProjectCommand extends AbstractUICommand
    }
 
    /**
-    * Returns the selected project. null if no project is found
+    * Returns the selected {@link Project}. <code>null</code> if no {@link Project} is found.
+    */
+   protected Project getSelectedProject(UIContextProvider contextProvider)
+   {
+      return getSelectedProject(contextProvider.getUIContext());
+   }
+
+   /**
+    * Returns the selected {@link Project}. <code>null</code> if no {@link Project} is found.
     */
    protected Project getSelectedProject(UIContext context)
    {
       return Projects.getSelectedProject(getProjectFactory(), context);
-   }
-
-   protected Project getSelectedProject(UIContextProvider contextProvider)
-   {
-      return Projects.getSelectedProject(getProjectFactory(), contextProvider.getUIContext());
    }
 
    /**
