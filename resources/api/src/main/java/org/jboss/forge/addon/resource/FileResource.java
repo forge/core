@@ -13,12 +13,13 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>,
          WriteableResource<FileResource<T>, File>
 {
    /**
-    * Return true if this {@link FileResource} exists and is actually a directory, otherwise return false;
+    * Return <code>true</code> if this {@link FileResource} exists and is actually a directory, otherwise return false;
     */
    public boolean isDirectory();
 
    /**
-    * Returns true if the underlying resource has been modified on the file system since it was initially loaded.
+    * Returns <code>true</code> if the underlying resource has been modified on the file system since it was initially
+    * loaded.
     * 
     * @return boolean true if resource is changed.
     */

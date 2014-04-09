@@ -103,12 +103,12 @@ public interface Resource<T> extends Faceted<ResourceFacet>
    /**
     * Get the entire contents of this {@link Resource}, returned as a {@link String} using UTF-8 encoding.
     */
-   public String getContents();
+   String getContents();
 
    /**
     * Get the entire contents of this {@link Resource}, returned as a {@link String} using the specified encoding.
     */
-   public String getContents(Charset charset);
+   String getContents(Charset charset);
 
    /**
     * Get a child of this resource. Returns <code>null</code> if no child by the given name can be found.
