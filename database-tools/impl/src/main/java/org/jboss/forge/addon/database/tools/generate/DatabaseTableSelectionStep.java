@@ -68,13 +68,13 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    {
       return true;
    }
-   
+
    @Inject
    private GenerateEntitiesCommandDescriptor descriptor;
-   
+
    @Inject
    private HibernateToolsHelper helper;
-   
+
    private JDBCMetaDataConfiguration jmdc;
 
    @SuppressWarnings("unchecked")
@@ -87,10 +87,12 @@ public class DatabaseTableSelectionStep implements UIWizardStep
       helper.buildMappings(descriptor.urls, descriptor.driverClass, jmdc);
       Iterator<Object> iterator = jmdc.getTableMappings();
       ArrayList<String> tables = new ArrayList<String>();
-      while (iterator.hasNext()) {
+      while (iterator.hasNext())
+      {
          Object mapping = iterator.next();
-         if (mapping instanceof Table) {
-            Table table = (Table)mapping;
+         if (mapping instanceof Table)
+         {
+            Table table = (Table) mapping;
             tables.add(table.getName());
          }
       }
@@ -101,70 +103,86 @@ public class DatabaseTableSelectionStep implements UIWizardStep
 
    @Override
    public Result execute(UIExecutionContext context)
-   { 
-      exportSelectedEntities();
-      return Results.success();
+   {
+      Collection<String> entities = exportSelectedEntities();
+      return Results.success(entities.size() + " entities were generated");
    }
 
    @Override
    public void validate(UIValidationContext context)
    {
    }
-   
-   private boolean isSelected(Collection<String> selection, POJOClass element) {
+
+   private boolean isSelected(Collection<String> selection, POJOClass element)
+   {
       boolean result = false;
-      if (element.isComponent()) {
-         if (element instanceof ComponentPOJOClass) {
-            ComponentPOJOClass cpc = (ComponentPOJOClass)element;
+      if (element.isComponent())
+      {
+         if (element instanceof ComponentPOJOClass)
+         {
+            ComponentPOJOClass cpc = (ComponentPOJOClass) element;
             Iterator<?> iterator = cpc.getAllPropertiesIterator();
             result = true;
-            while (iterator.hasNext()) {
+            while (iterator.hasNext())
+            {
                Object object = iterator.next();
-               if (object instanceof Property) {
-                  Property property = (Property)object;
+               if (object instanceof Property)
+               {
+                  Property property = (Property) object;
                   String tableName = property.getValue().getTable().getName();
-                  if (!selection.contains(tableName)) {
+                  if (!selection.contains(tableName))
+                  {
                      result = false;
                      break;
                   }
                }
             }
          }
-      } else {
-         if (element instanceof EntityPOJOClass) {
-            EntityPOJOClass epc = (EntityPOJOClass)element;
+      }
+      else
+      {
+         if (element instanceof EntityPOJOClass)
+         {
+            EntityPOJOClass epc = (EntityPOJOClass) element;
             Object object = epc.getDecoratedObject();
-            if (object instanceof PersistentClass) {
-               PersistentClass pc = (PersistentClass)object;
+            if (object instanceof PersistentClass)
+            {
+               PersistentClass pc = (PersistentClass) object;
                Table table = pc.getTable();
-               if (selection.contains(table.getName())) {
+               if (selection.contains(table.getName()))
+               {
                   result = true;
-               }               
+               }
             }
          }
       }
       return result;
    }
-   
-   private Collection<String> getSelectedTableNames() {
+
+   private Collection<String> getSelectedTableNames()
+   {
       ArrayList<String> result = new ArrayList<String>();
       Iterator<String> iterator = databaseTables.getValue().iterator();
-      while (iterator.hasNext()) {
+      while (iterator.hasNext())
+      {
          result.add(iterator.next());
       }
       return result;
    }
-   
-   private void exportSelectedEntities()
-   {     
-      final Collection<String> selectedTableNames = getSelectedTableNames();     
+
+   private Collection<String> exportSelectedEntities()
+   {
+      final Collection<String> selectedTableNames = getSelectedTableNames();
       JavaSourceFacet java = descriptor.selectedProject.getFacet(JavaSourceFacet.class);
       POJOExporter pj = new POJOExporter(jmdc, java.getSourceDirectory()
-               .getUnderlyingResourceObject()) {
+               .getUnderlyingResourceObject())
+      {
          @Override
          @SuppressWarnings("rawtypes")
-         protected void exportPOJO(Map additionalContext, POJOClass element) {
-            if (isSelected(selectedTableNames, element)) {
+         protected void exportPOJO(Map additionalContext, POJOClass element)
+         {
+            if (isSelected(selectedTableNames, element))
+            {
                super.exportPOJO(additionalContext, element);
             }
          }
@@ -175,6 +193,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
       pj.setProperties(pojoProperties);
       pj.setArtifactCollector(new ArtifactCollector());
       pj.start();
+      return selectedTableNames;
    }
 
    private ReverseEngineeringStrategy createReverseEngineeringStrategy()
