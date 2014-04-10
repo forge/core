@@ -98,7 +98,7 @@ public class ResourceGeneratorUtil
                type = ((Method<?, ?>) member).getReturnType().getQualifiedName();
                if (name.startsWith("get"))
                {
-                  name = name.substring(2);
+                  name = name.substring(3);
                }
             }
             else if (member instanceof Field)
@@ -254,7 +254,7 @@ public class ResourceGeneratorUtil
             if (member instanceof Method)
             {
                // Getters are expected to obey JavaBean conventions
-               id = Strings.uncapitalize(memberName.substring(2));
+               id = Strings.uncapitalize(memberName.substring(3));
             }
             if (member instanceof Field)
             {
