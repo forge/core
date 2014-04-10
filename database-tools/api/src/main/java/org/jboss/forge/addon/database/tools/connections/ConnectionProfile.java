@@ -75,4 +75,11 @@ public class ConnectionProfile {
 		this.savePassword = savePassword;
 	}
 
+   @Override
+   public String toString()
+   {
+      return "ConnectionProfile [name=" + name + ", dialect=" + dialect + ", driver=" + driver + ", path=" + path
+               + ", url=" + url + ", user=" + user + ", password=" + password + ", savePassword=" + savePassword + "]";
+   }
+
 }
