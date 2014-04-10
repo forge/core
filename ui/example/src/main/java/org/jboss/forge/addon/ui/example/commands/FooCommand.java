@@ -17,6 +17,7 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -50,7 +51,7 @@ public class FooCommand implements UICommand
    private UIInput<String> bar;
 
    @Inject
-   @WithAttributes(label = "bar2")
+   @WithAttributes(label = "bar2", type = InputType.TEXTAREA)
    private UIInput<String> bar2;
 
    @Inject
