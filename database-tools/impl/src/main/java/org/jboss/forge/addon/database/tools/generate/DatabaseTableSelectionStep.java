@@ -105,7 +105,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    public Result execute(UIExecutionContext context)
    {
       Collection<String> entities = exportSelectedEntities();
-      return Results.success(entities.size() + " entities were generated");
+      return Results.success(entities.size() + " entities were generated in " + descriptor.targetPackage);
    }
 
    @Override
