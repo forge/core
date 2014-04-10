@@ -63,7 +63,7 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
    private UIInput<String> username;
 
    @Inject
-   @WithAttributes(label = "Password", required = true, type = InputType.SECRET)
+   @WithAttributes(label = "Password", type = InputType.SECRET)
    private UIInput<String> password;
 
    @Inject
