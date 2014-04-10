@@ -227,7 +227,7 @@ public class ResourceGeneratorUtil
             if (member instanceof Method)
             {
                // Getters are expected to obey JavaBean conventions
-               id = Strings.uncapitalize(memberName.substring(2));
+               id = Strings.uncapitalize(memberName.substring(3));
             }
             if (member instanceof Field)
             {
