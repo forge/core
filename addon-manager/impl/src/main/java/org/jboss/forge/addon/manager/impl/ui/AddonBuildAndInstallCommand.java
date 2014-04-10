@@ -76,7 +76,7 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
       try
       {
          // TODO Project builder should support clean and install in the native API.
-         project.getFacet(PackagingFacet.class).createBuilder().addArguments("clean", "install").build();
+         project.getFacet(PackagingFacet.class).createBuilder().runTests(false).addArguments("clean", "install").build();
       }
       catch (BuildException e)
       {

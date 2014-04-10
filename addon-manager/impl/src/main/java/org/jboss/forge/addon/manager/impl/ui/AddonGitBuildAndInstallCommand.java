@@ -39,7 +39,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
  * Installs the addon via Git (needs the git addon installed)
- *
+ * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements AddonCommandConstants
@@ -115,7 +115,7 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       try
       {
          project.getFacet(PackagingFacet.class).createBuilder().addArguments("clean", "install").runTests(false)
-                  .build(output.out(), output.err()   );
+                  .build(output.out(), output.err());
       }
       catch (BuildException e)
       {
