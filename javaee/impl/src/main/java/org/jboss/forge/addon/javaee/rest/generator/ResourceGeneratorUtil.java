@@ -111,7 +111,7 @@ public class ResourceGeneratorUtil
                for (Method<?, ?> method : entity.getMethods())
                {
                   // It's a getter
-                  if (method.getParameters().size() == 0 && type.equals(method.getReturnType().getQualifiedName()))
+                  if (method.getParameters().size() == 0 &&  (method.getReturnType() != null && type.equals(method.getReturnType().getQualifiedName())))
                   {
                      if (method.getName().toLowerCase().contains(name.toLowerCase()))
                      {
