@@ -21,14 +21,14 @@ import org.jboss.forge.furnace.versions.Version;
 
 /**
  * Implementation of {@link JTAFacet}
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 public class JTAFacetImpl_1_2 extends AbstractJTAFacetImpl implements JTAFacet_1_2
 {
    private static final Dependency JTA_API = DependencyBuilder
-            .create("javax.transaction:javax.transaction-api:1.2");
+            .create("javax.transaction:javax.transaction-api:1.2").setScopeType("provided");
 
    @Inject
    public JTAFacetImpl_1_2(DependencyInstaller installer)

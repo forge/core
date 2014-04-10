@@ -26,8 +26,9 @@ import org.jboss.forge.furnace.versions.Version;
 public class EJBFacetImpl_3_1 extends AbstractEJBFacetImpl implements EJBFacet_3_1
 {
    private static final Dependency JBOSS_EJB_API = DependencyBuilder
-            .create("org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec");
-   private static final Dependency GLASSFISH_EJB_API = DependencyBuilder.create("org.glassfish:javax.ejb::3.1");
+            .create("org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec").setScopeType("provided");
+   private static final Dependency GLASSFISH_EJB_API = DependencyBuilder.create("org.glassfish:javax.ejb::3.1")
+            .setScopeType("provided");
 
    @Inject
    public EJBFacetImpl_3_1(final DependencyInstaller installer)

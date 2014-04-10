@@ -22,13 +22,13 @@ import org.jboss.forge.furnace.versions.Version;
 
 /**
  * Implementation for JAX-RS 1.1
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class RestFacetImpl_1_1 extends AbstractRestFacet implements RestFacet_1_1
 {
    private static final Dependency JAX_RS_1_1 = DependencyBuilder
-            .create("org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec");
+            .create("org.jboss.spec.javax.ws.rs:jboss-jaxrs-api_1.1_spec").setScopeType("provided");
 
    @Inject
    public RestFacetImpl_1_1(DependencyInstaller installer)

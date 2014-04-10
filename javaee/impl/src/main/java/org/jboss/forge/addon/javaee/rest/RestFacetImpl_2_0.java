@@ -28,7 +28,7 @@ import org.jboss.forge.furnace.versions.Version;
 public class RestFacetImpl_2_0 extends AbstractRestFacet implements RestFacet_2_0
 {
    private static final Dependency JAX_RS_2_0 = DependencyBuilder
-            .create("javax.ws.rs:javax.ws.rs-api:2.0");
+            .create("javax.ws.rs:javax.ws.rs-api:2.0").setScopeType("provided");
 
    @Inject
    public RestFacetImpl_2_0(DependencyInstaller installer)

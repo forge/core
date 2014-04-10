@@ -32,7 +32,7 @@ import org.jboss.shrinkwrap.descriptor.api.validationConfiguration11.ValidationC
 public class ValidationFacetImpl extends AbstractJavaEEFacet implements ValidationFacet
 {
    private final Dependency JAVAX_VALIDATION_API = DependencyBuilder
-            .create("javax.validation:validation-api");
+            .create("javax.validation:validation-api").setScopeType("provided");
 
    @Inject
    public ValidationFacetImpl(final DependencyInstaller installer)

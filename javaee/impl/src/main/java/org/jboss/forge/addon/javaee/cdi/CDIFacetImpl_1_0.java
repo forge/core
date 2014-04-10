@@ -26,22 +26,25 @@ import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
 
 /**
  * Implementation of {@link CDIFacet} for spec version 1.0
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class CDIFacetImpl_1_0 extends AbstractCDIFacetImpl<BeansDescriptor> implements CDIFacet_1_0
 {
    private static final Dependency JBOSS_ANNOTATION_API_1_1 = DependencyBuilder
-            .create("org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec");
+            .create("org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec").setScopeType("provided");
    private static final Dependency JBOSS_ANNOTATION_API_1_2 = DependencyBuilder
-            .create("org.jboss.spec.javax.annotation:jboss-annotations-api_1.2_spec");
+            .create("org.jboss.spec.javax.annotation:jboss-annotations-api_1.2_spec").setScopeType("provided");
    private static final Dependency JAVAX_INTERCEPTOR_API = DependencyBuilder
-            .create("org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec");
-   private static final Dependency JAVAX_INJECT = DependencyBuilder.create("javax.inject:javax.inject:1");
-   private static final Dependency JAVAX_ANNOTATION_API = DependencyBuilder.create("javax.annotation:jsr250-api:1.0");
-   private static final Dependency CDI_API = DependencyBuilder.create("javax.enterprise:cdi-api:[1.0,1.1)");
+            .create("org.jboss.spec.javax.interceptor:jboss-interceptors-api_1.1_spec").setScopeType("provided");
+   private static final Dependency JAVAX_INJECT = DependencyBuilder.create("javax.inject:javax.inject:1").setScopeType(
+            "provided");
+   private static final Dependency JAVAX_ANNOTATION_API = DependencyBuilder.create("javax.annotation:jsr250-api:1.0")
+            .setScopeType("provided");
+   private static final Dependency CDI_API = DependencyBuilder.create("javax.enterprise:cdi-api:1.0-SP4").setScopeType(
+            "provided");
 
    @Inject
    public CDIFacetImpl_1_0(DependencyInstaller installer)

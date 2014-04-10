@@ -25,7 +25,8 @@ import org.jboss.forge.furnace.versions.Version;
  */
 public class EJBFacetImpl_3_2 extends AbstractEJBFacetImpl implements EJBFacet_3_2
 {
-   private static final Dependency JAVAX_EJB_API = DependencyBuilder.create("javax.ejb:javax.ejb-api:3.2");
+   private static final Dependency JAVAX_EJB_API = DependencyBuilder.create("javax.ejb:javax.ejb-api:3.2")
+            .setScopeType("provided");
 
    @Inject
    public EJBFacetImpl_3_2(final DependencyInstaller installer)
