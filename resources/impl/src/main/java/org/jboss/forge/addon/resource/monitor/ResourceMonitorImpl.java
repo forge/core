@@ -28,11 +28,9 @@ import org.jboss.forge.furnace.util.Assert;
 
 /**
  * Implementation of the {@link ResourceMonitor} interface
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-
-@SuppressWarnings("unchecked")
 public class ResourceMonitorImpl implements ResourceMonitor
 {
    private static final Logger log = Logger.getLogger(ResourceMonitorImpl.class.getName());
@@ -127,7 +125,7 @@ public class ResourceMonitorImpl implements ResourceMonitor
       }
       else if (resource instanceof PathResource)
       {
-         return (Path) ((PathResource<?>) resource).getUnderlyingResourceObject();
+         return (Path) ((PathResource) resource).getUnderlyingResourceObject();
       }
       else
       {

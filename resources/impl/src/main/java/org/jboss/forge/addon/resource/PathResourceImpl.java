@@ -23,11 +23,11 @@ import org.jboss.forge.furnace.util.Streams;
 
 /**
  * PathResource implementation
- * 
+ *
  * @author Shane Bryzak
- * 
+ *
  */
-public class PathResourceImpl<T extends PathResource<T>> extends AbstractResource<Path> implements PathResource<T>
+public class PathResourceImpl extends AbstractResource<Path> implements PathResource
 {
    private volatile List<Resource<?>> listCache;
    protected Path path;
@@ -82,7 +82,7 @@ public class PathResourceImpl<T extends PathResource<T>> extends AbstractResourc
    }
 
    @Override
-   public PathResource<?> getParent()
+   public PathResource getParent()
    {
       return path.getParent() != null ? getResourceFactory().create(PathResource.class, path.getParent()) : null;
    }
@@ -200,7 +200,7 @@ public class PathResourceImpl<T extends PathResource<T>> extends AbstractResourc
    }
 
    @Override
-   public T setContents(String data)
+   public PathResource setContents(String data)
    {
       if (data == null)
       {
@@ -210,7 +210,7 @@ public class PathResourceImpl<T extends PathResource<T>> extends AbstractResourc
    }
 
    @Override
-   public T setContents(String data, Charset charset)
+   public PathResource setContents(String data, Charset charset)
    {
       if (data == null)
       {
@@ -220,20 +220,19 @@ public class PathResourceImpl<T extends PathResource<T>> extends AbstractResourc
    }
 
    @Override
-   public T setContents(char[] data, Charset charset)
+   public PathResource setContents(char[] data, Charset charset)
    {
       return setContents(new ByteArrayInputStream(new String(data).getBytes(charset)));
    }
 
    @Override
-   public T setContents(final char[] data)
+   public PathResource setContents(final char[] data)
    {
       return setContents(new ByteArrayInputStream(new String(data).getBytes()));
    }
 
    @Override
-   @SuppressWarnings("unchecked")
-   public T setContents(final InputStream data)
+   public PathResource setContents(final InputStream data)
    {
       Assert.notNull(data, "InputStream must not be null.");
 
@@ -268,7 +267,7 @@ public class PathResourceImpl<T extends PathResource<T>> extends AbstractResourc
       {
          throw new ResourceException(e);
       }
-      return (T) this;
+      return this;
    }
 
    @Override
@@ -290,12 +289,11 @@ public class PathResourceImpl<T extends PathResource<T>> extends AbstractResourc
    }
 
    @Override
-   @SuppressWarnings("unchecked")
-   public T createTempResource()
+   public PathResource createTempResource()
    {
       try
       {
-         T result = (T) createFrom(Files.createTempFile("forgetemp", ""));
+         PathResource result = createFrom(Files.createTempFile("forgetemp", ""));
          return result;
       }
       catch (IOException e)
@@ -311,7 +309,7 @@ public class PathResourceImpl<T extends PathResource<T>> extends AbstractResourc
    }
 
    @Override
-   public boolean renameTo(final PathResource<?> target)
+   public boolean renameTo(final PathResource target)
    {
       if (getPathOperations().renameResource(path, target.getUnderlyingResourceObject()))
       {
@@ -397,9 +395,8 @@ public class PathResourceImpl<T extends PathResource<T>> extends AbstractResourc
       }
    }
 
-
    @Override
-   public Resource<Path> createFrom(Path path)
+   public PathResource createFrom(Path path)
    {
       try
       {

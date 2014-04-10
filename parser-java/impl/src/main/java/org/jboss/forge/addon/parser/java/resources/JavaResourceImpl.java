@@ -10,6 +10,7 @@ package org.jboss.forge.addon.parser.java.resources;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.ResourceFacet;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.resource.util.ResourceUtil;
 import org.jboss.forge.roaster.ParserException;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.EnumConstant;
@@ -37,10 +39,42 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 public class JavaResourceImpl extends AbstractFileResource<JavaResource> implements JavaResource
 {
    private JavaType<?> javaType;
+   private byte[] lastDigest;
 
    public JavaResourceImpl(final ResourceFactory factory, final File file)
    {
       super(factory, file);
+   }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   public <T extends JavaType<?>> T getJavaType() throws FileNotFoundException
+   {
+      if (isStale())
+      {
+         refresh();
+      }
+
+      return (T) javaType;
+   }
+
+   @Override
+   public boolean isStale()
+   {
+      if (javaType == null || super.isStale()
+               || (lastDigest != null && !Arrays.equals(lastDigest, ResourceUtil.getDigest(this))))
+      {
+         return true;
+      }
+      return false;
+   }
+
+   @Override
+   public void refresh()
+   {
+      super.refresh();
+      lastDigest = ResourceUtil.getDigest(this);
+      javaType = Roaster.parse(getResourceInputStream());
    }
 
    @Override
@@ -132,18 +166,6 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    public JavaResourceImpl createFrom(final File file)
    {
       return new JavaResourceImpl(getResourceFactory(), file);
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public <T extends JavaType<?>> T getJavaType() throws FileNotFoundException
-   {
-      if (isStale() || javaType == null)
-      {
-         refresh();
-         javaType = Roaster.parse(getResourceInputStream());
-      }
-      return (T) javaType;
    }
 
    @Override

@@ -27,7 +27,7 @@ import org.jboss.forge.furnace.util.Assert;
 
 /**
  * Implementation of {@link ResourceFactory}
- * 
+ *
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  * @author Mike Brock <cbrock@redhat.com>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
@@ -121,7 +121,7 @@ public class ResourceFactoryImpl implements ResourceFactory
       }
       else if (resource instanceof PathResource)
       {
-         return fileMonitor.registerMonitor(this, (PathResource<?>) resource, resourceFilter);
+         return fileMonitor.registerMonitor(this, (PathResource) resource, resourceFilter);
       }
       else
       {

@@ -7,6 +7,11 @@
 package org.jboss.forge.addon.resource.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,6 +30,47 @@ import org.jboss.forge.furnace.util.Assert;
  */
 public class ResourceUtil
 {
+
+   /**
+    * Returns the {@link Byte} array message digest of {@link #getResourceInputStream()} using the default MD5
+    * {@link MessageDigest}.
+    */
+   public static byte[] getDigest(Resource<?> resource)
+   {
+      try
+      {
+         return getDigest(resource, MessageDigest.getInstance("MD5"));
+      }
+      catch (NoSuchAlgorithmException e)
+      {
+         throw new IllegalStateException("Error calculating digest for resource [" + resource.getFullyQualifiedName()
+                  + "]", e);
+      }
+   }
+
+   /**
+    * Returns the {@link Byte} array message digest of {@link #getResourceInputStream()} using the given
+    * {@link MessageDigest}.
+    */
+   public static byte[] getDigest(Resource<?> resource, MessageDigest digest)
+   {
+      try (InputStream stream = resource.getResourceInputStream())
+      {
+         DigestInputStream digestStream = new DigestInputStream(stream, digest);
+
+         byte[] buffer = new byte[16384];
+         while (digestStream.read(buffer, 0, buffer.length) != -1)
+         {
+         }
+      }
+      catch (IOException e)
+      {
+         throw new IllegalStateException("Error calculating digest for resource [" + resource.getFullyQualifiedName()
+                  + "]", e);
+      }
+      return digest.digest();
+   }
+
    /**
     * A simple utility method to locate the outermost contextual File reference for the specified resource.
     * 
