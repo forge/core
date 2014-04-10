@@ -25,9 +25,9 @@ import org.junit.runner.RunWith;
 
 /**
  * Refactor of FileResourceGeneratorTest but for {@link Path}s
- * 
+ *
  * @author Shane Bryzak
- * 
+ *
  */
 @RunWith(Arquillian.class)
 public class PathResourceGeneratorTest
@@ -56,7 +56,7 @@ public class PathResourceGeneratorTest
       Path tempFile = FileSystems.getDefault().getPath(UUID.randomUUID().toString());
       tempFile = Files.createFile(tempFile);
       tempFile.toFile().deleteOnExit();
-      PathResource<?> resource = factory.create(tempFile).reify(PathResource.class);
+      PathResource resource = factory.create(tempFile).reify(PathResource.class);
       Assert.assertNotNull(resource);
       Assert.assertEquals(PathResourceImpl.class, resource.getClass());
    }
@@ -66,7 +66,7 @@ public class PathResourceGeneratorTest
    {
       Path file = Files.createTempFile("forge", "testCreateFileResource");
       file.toFile().deleteOnExit();
-      PathResource<?> resource = factory.create(file).reify(PathResource.class);
+      PathResource resource = factory.create(file).reify(PathResource.class);
       Assert.assertNotNull(resource);
       Assert.assertEquals(PathResourceImpl.class, resource.getClass());
    }
@@ -97,11 +97,11 @@ public class PathResourceGeneratorTest
       Files.createDirectory(child);
       child.toFile().deleteOnExit();
 
-      PathResource<?> resource = factory.create(dir).reify(PathResource.class);
+      PathResource resource = factory.create(dir).reify(PathResource.class);
       Assert.assertNotNull(resource);
       Assert.assertTrue(resource.exists());
 
-      PathResource<?> childResource = resource.getChild("child").reify(PathResource.class);
+      PathResource childResource = resource.getChild("child").reify(PathResource.class);
       Assert.assertNotNull(childResource);
       Assert.assertTrue(childResource.exists());
    }
@@ -116,7 +116,7 @@ public class PathResourceGeneratorTest
       Streams.write(new ByteArrayInputStream("Test".getBytes()), fos);
       fos.close();
 
-      PathResource<?> fileResource = factory.create(file).reify(PathResource.class);
+      PathResource fileResource = factory.create(file).reify(PathResource.class);
 
       Assert.assertEquals(Files.size(file), fileResource.getSize());
       Files.delete(file);
@@ -137,7 +137,7 @@ public class PathResourceGeneratorTest
    {
       Path tempFile = Files.createTempFile("forge", "testFileFlags");
       tempFile.toFile().deleteOnExit();
-      PathResource<?> resource = factory.create(tempFile).reify(PathResource.class);
+      PathResource resource = factory.create(tempFile).reify(PathResource.class);
 
       if (OperatingSystemUtils.isWindows())
          Assert.assertTrue(resource.isExecutable());
@@ -152,12 +152,12 @@ public class PathResourceGeneratorTest
    public void testRenameResource() throws Exception
    {
       Path tempFile = OperatingSystemUtils.createTempDir().toPath();
-      PathResource<?> tempDir = factory.create(tempFile).reify(PathResource.class);
+      PathResource tempDir = factory.create(tempFile).reify(PathResource.class);
       tempDir.deleteOnExit();
 
       Assert.assertNotNull(tempDir);
-      PathResource<?> child = tempDir.getChild("testFile").reify(PathResource.class);
-      PathResource<?> child2 = tempDir.getChild("testFile2").reify(PathResource.class);
+      PathResource child = tempDir.getChild("testFile").reify(PathResource.class);
+      PathResource child2 = tempDir.getChild("testFile2").reify(PathResource.class);
       Assert.assertTrue(child.createNewPath());
       Assert.assertTrue(child.renameTo(child2));
       Assert.assertEquals(child.getFullyQualifiedName(), child2.getFullyQualifiedName());
@@ -173,7 +173,7 @@ public class PathResourceGeneratorTest
       Streams.write(new ByteArrayInputStream("READ".getBytes()), fos);
       fos.close();
 
-      PathResource<?> fileResource = factory.create(file).reify(PathResource.class);
+      PathResource fileResource = factory.create(file).reify(PathResource.class);
 
       Assert.assertEquals("READ", fileResource.getContents());
       fileResource.setContents("WRITE");
@@ -192,7 +192,7 @@ public class PathResourceGeneratorTest
       Streams.write(new ByteArrayInputStream("READ".getBytes(charset)), fos);
       fos.close();
 
-      PathResource<?> fileResource = factory.create(file).reify(PathResource.class);
+      PathResource fileResource = factory.create(file).reify(PathResource.class);
 
       Assert.assertEquals("READ", fileResource.getContents(charset));
       fileResource.setContents("WRITE", charset);

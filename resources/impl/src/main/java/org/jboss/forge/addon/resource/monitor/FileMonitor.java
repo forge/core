@@ -24,7 +24,7 @@ import org.jboss.forge.furnace.event.PreShutdown;
 
 /**
  * This {@link FileMonitor} uses commons-io to listen for changes in files
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @Singleton
@@ -93,20 +93,20 @@ public class FileMonitor
       return resourceMonitor;
    }
 
-   public ResourceMonitor registerMonitor(final ResourceFactory resourceFactory, final PathResource<?> resource,
+   public ResourceMonitor registerMonitor(final ResourceFactory resourceFactory, final PathResource resource,
             final ResourceFilter resourceFilter)
    {
       if (watcher == null)
       {
          throw new IllegalStateException("File Monitor is not started yet");
       }
-
+      PathResource thisResource = resource;
       ResourceFilter filter = resourceFilter;
 
       if (!resource.isDirectory())
       {
          // It's a file, monitor the parent and add a filter to the file
-         PathResource<?> dirResource = resource.getParent();
+         thisResource = resource.getParent();
          filter = new ResourceFilter()
          {
             @Override
@@ -128,7 +128,7 @@ public class FileMonitor
             }
          };
       }
-      ResourceMonitorImpl resourceMonitor = new ResourceMonitorImpl(this, resource, resourceFactory, filter);
+      ResourceMonitorImpl resourceMonitor = new ResourceMonitorImpl(this, thisResource, resourceFactory, filter);
       try
       {
          watcher.register(resourceMonitor);
