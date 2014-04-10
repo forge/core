@@ -79,7 +79,7 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
          commonsConfig.setEncoding("UTF-8");
          commonsConfig.setReloadingStrategy(new FileChangedReloadingStrategy());
          commonsConfig.setAutoSave(true);
-         return new ConfigurationAdapter(commonsConfig);
+         return new ConfigurationAdapter().setDelegate(commonsConfig);
       }
       catch (org.apache.commons.configuration.ConfigurationException e)
       {

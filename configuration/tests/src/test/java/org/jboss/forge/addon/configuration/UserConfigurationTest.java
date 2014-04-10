@@ -7,14 +7,10 @@
 
 package org.jboss.forge.addon.configuration;
 
-import java.io.File;
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -25,14 +21,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class ConfigurationFactoryTest
+public class UserConfigurationTest
 {
-
    @Deployment
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.addon:projects"),
             @AddonDependency(name = "org.jboss.forge.addon:configuration")
    })
    public static ForgeArchive getDeployment()
@@ -42,31 +35,26 @@ public class ConfigurationFactoryTest
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:configuration")
                );
       return archive;
    }
 
    @Inject
-   private ConfigurationFactory configurationFactory;
-
-   @Inject
-   private ResourceFactory resourceFactory;
+   private Configuration userConfiguration;
 
    @Test
-   public void testConfigurationFactory() throws Exception
+   public void testUserConfiguration()
    {
-      File file = File.createTempFile("configfactorytest", ".tmp");
-      file.delete();
-      file.deleteOnExit();
-      FileResource<?> resource = resourceFactory.create(file).reify(FileResource.class);
-      Assert.assertFalse(resource.exists());
-      Configuration config = configurationFactory.getConfiguration(resource);
-      config.setProperty("key", "value");
-      Assert.assertEquals("value", config.getString("key"));
-      // Check if the file was written
-      Assert.assertTrue(resource.getSize() > 0L);
+      userConfiguration.setProperty("key", "value");
+      Assert.assertEquals("value", userConfiguration.getString("key"));
+   }
+
+   @Test
+   public void testUserConfigurationSubset()
+   {
+      Configuration subset = userConfiguration.subset("subset-1");
+      subset.setProperty("key", "value");
+      Assert.assertEquals("value", userConfiguration.subset("subset-1").getString("key"));
    }
 }

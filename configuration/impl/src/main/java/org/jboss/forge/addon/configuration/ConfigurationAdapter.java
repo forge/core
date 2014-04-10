@@ -14,6 +14,8 @@ import java.util.Properties;
 
 import javax.enterprise.inject.Vetoed;
 
+import org.apache.commons.configuration.HierarchicalConfiguration;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
@@ -21,263 +23,267 @@ import javax.enterprise.inject.Vetoed;
 @Vetoed
 public class ConfigurationAdapter implements Configuration
 {
-   private org.apache.commons.configuration.Configuration delegate;
+   private org.apache.commons.configuration.HierarchicalConfiguration delegate;
 
-   public ConfigurationAdapter(final org.apache.commons.configuration.Configuration delegate)
-   {
-      this.delegate = delegate;
-   }
-
-   public org.apache.commons.configuration.Configuration getDelegate()
+   public HierarchicalConfiguration getDelegate()
    {
       return delegate;
    }
 
+   public Configuration setDelegate(final org.apache.commons.configuration.HierarchicalConfiguration delegate)
+   {
+      this.delegate = delegate;
+      return this;
+   }
+
+   /*
+    * Configuration methods.
+    */
+
    @Override
    public Configuration subset(final String prefix)
    {
-      return new ConfigurationAdapter(delegate.subset(prefix));
+      return new ConfigurationAdapterSubset(getDelegate(), prefix);
    }
 
    @Override
    public boolean isEmpty()
    {
-      return delegate.isEmpty();
+      return getDelegate().isEmpty();
    }
 
    @Override
    public boolean containsKey(final String key)
    {
-      return delegate.containsKey(key);
+      return getDelegate().containsKey(key);
    }
 
    @Override
    public void addProperty(final String key, final Object value)
    {
-      delegate.addProperty(key, value);
+      getDelegate().addProperty(key, value);
    }
 
    @Override
    public void setProperty(final String key, final Object value)
    {
-      delegate.setProperty(key, value);
+      getDelegate().setProperty(key, value);
    }
 
    @Override
    public void clearProperty(final String key)
    {
-      delegate.clearProperty(key);
+      getDelegate().clearProperty(key);
    }
 
    @Override
    public void clear()
    {
-      delegate.clear();
+      getDelegate().clear();
    }
 
    @Override
    public Object getProperty(final String key)
    {
-      return delegate.getProperty(key);
+      return getDelegate().getProperty(key);
    }
 
    @Override
    public Iterator<?> getKeys(final String prefix)
    {
-      return delegate.getKeys(prefix);
+      return getDelegate().getKeys(prefix);
    }
 
    @Override
    public Iterator<?> getKeys()
    {
-      return delegate.getKeys();
+      return getDelegate().getKeys();
    }
 
    @Override
    public Properties getProperties(final String key)
    {
-      return delegate.getProperties(key);
+      return getDelegate().getProperties(key);
    }
 
    @Override
    public boolean getBoolean(final String key)
    {
-      return delegate.getBoolean(key);
+      return getDelegate().getBoolean(key);
    }
 
    @Override
    public boolean getBoolean(final String key, final boolean defaultValue)
    {
-      return delegate.getBoolean(key, defaultValue);
+      return getDelegate().getBoolean(key, defaultValue);
    }
 
    @Override
    public Boolean getBoolean(final String key, final Boolean defaultValue)
    {
-      return delegate.getBoolean(key, defaultValue);
+      return getDelegate().getBoolean(key, defaultValue);
    }
 
    @Override
    public byte getByte(final String key)
    {
-      return delegate.getByte(key);
+      return getDelegate().getByte(key);
    }
 
    @Override
    public byte getByte(final String key, final byte defaultValue)
    {
-      return delegate.getByte(key, defaultValue);
+      return getDelegate().getByte(key, defaultValue);
    }
 
    @Override
    public Byte getByte(final String key, final Byte defaultValue)
    {
-      return delegate.getByte(key, defaultValue);
+      return getDelegate().getByte(key, defaultValue);
    }
 
    @Override
    public double getDouble(final String key)
    {
-      return delegate.getDouble(key);
+      return getDelegate().getDouble(key);
    }
 
    @Override
    public double getDouble(final String key, final double defaultValue)
    {
-      return delegate.getDouble(key, defaultValue);
+      return getDelegate().getDouble(key, defaultValue);
    }
 
    @Override
    public Double getDouble(final String key, final Double defaultValue)
    {
-      return delegate.getDouble(key, defaultValue);
+      return getDelegate().getDouble(key, defaultValue);
    }
 
    @Override
    public float getFloat(final String key)
    {
-      return delegate.getFloat(key);
+      return getDelegate().getFloat(key);
    }
 
    @Override
    public float getFloat(final String key, final float defaultValue)
    {
-      return delegate.getFloat(key, defaultValue);
+      return getDelegate().getFloat(key, defaultValue);
    }
 
    @Override
    public Float getFloat(final String key, final Float defaultValue)
    {
-      return delegate.getFloat(key, defaultValue);
+      return getDelegate().getFloat(key, defaultValue);
    }
 
    @Override
    public int getInt(final String key)
    {
-      return delegate.getInt(key);
+      return getDelegate().getInt(key);
    }
 
    @Override
    public int getInt(final String key, final int defaultValue)
    {
-      return delegate.getInt(key, defaultValue);
+      return getDelegate().getInt(key, defaultValue);
    }
 
    @Override
    public Integer getInteger(final String key, final Integer defaultValue)
    {
-      return delegate.getInteger(key, defaultValue);
+      return getDelegate().getInteger(key, defaultValue);
    }
 
    @Override
    public long getLong(final String key)
    {
-      return delegate.getLong(key);
+      return getDelegate().getLong(key);
    }
 
    @Override
    public long getLong(final String key, final long defaultValue)
    {
-      return delegate.getLong(key, defaultValue);
+      return getDelegate().getLong(key, defaultValue);
    }
 
    @Override
    public Long getLong(final String key, final Long defaultValue)
    {
-      return delegate.getLong(key, defaultValue);
+      return getDelegate().getLong(key, defaultValue);
    }
 
    @Override
    public short getShort(final String key)
    {
-      return delegate.getShort(key);
+      return getDelegate().getShort(key);
    }
 
    @Override
    public short getShort(final String key, final short defaultValue)
    {
-      return delegate.getShort(key, defaultValue);
+      return getDelegate().getShort(key, defaultValue);
    }
 
    @Override
    public Short getShort(final String key, final Short defaultValue)
    {
-      return delegate.getShort(key, defaultValue);
+      return getDelegate().getShort(key, defaultValue);
    }
 
    @Override
    public BigDecimal getBigDecimal(final String key)
    {
-      return delegate.getBigDecimal(key);
+      return getDelegate().getBigDecimal(key);
    }
 
    @Override
    public BigDecimal getBigDecimal(final String key, final BigDecimal defaultValue)
    {
-      return delegate.getBigDecimal(key, defaultValue);
+      return getDelegate().getBigDecimal(key, defaultValue);
    }
 
    @Override
    public BigInteger getBigInteger(final String key)
    {
-      return delegate.getBigInteger(key);
+      return getDelegate().getBigInteger(key);
    }
 
    @Override
    public BigInteger getBigInteger(final String key, final BigInteger defaultValue)
    {
-      return delegate.getBigInteger(key, defaultValue);
+      return getDelegate().getBigInteger(key, defaultValue);
    }
 
    @Override
    public String getString(final String key)
    {
-      return delegate.getString(key);
+      return getDelegate().getString(key);
    }
 
    @Override
    public String getString(final String key, final String defaultValue)
    {
-      return delegate.getString(key, defaultValue);
+      return getDelegate().getString(key, defaultValue);
    }
 
    @Override
    public String[] getStringArray(final String key)
    {
-      return delegate.getStringArray(key);
+      return getDelegate().getStringArray(key);
    }
 
    @Override
    public List<?> getList(final String key)
    {
-      return delegate.getList(key);
+      return getDelegate().getList(key);
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public List<?> getList(final String key, final List<?> defaultValue)
    {
-      return delegate.getList(key, (List<Object>) defaultValue);
+      return getDelegate().getList(key, defaultValue);
    }
 
 }
