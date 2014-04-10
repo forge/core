@@ -190,7 +190,7 @@ public class ResourceGeneratorUtil
             {
                if (name.startsWith("get"))
                {
-                  associationField = Strings.uncapitalize(name.substring(2));
+                  associationField = Strings.uncapitalize(name.substring(3));
                }
             }
             else if (member instanceof Field)
