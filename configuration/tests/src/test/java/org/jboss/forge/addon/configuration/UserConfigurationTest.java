@@ -56,5 +56,7 @@ public class UserConfigurationTest
       Configuration subset = userConfiguration.subset("subset-1");
       subset.setProperty("key", "value");
       Assert.assertEquals("value", userConfiguration.subset("subset-1").getString("key"));
+      subset.setProperty("another-key", 123L);
+      Assert.assertEquals(123L, userConfiguration.subset("subset-1").getLong("another-key"));
    }
 }
