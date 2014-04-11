@@ -35,11 +35,10 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonRepository;
-import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 
 /**
  * Creates a Furnace Test case
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class NewFurnaceTestSetupCommand extends AbstractProjectCommand
@@ -64,14 +63,10 @@ public class NewFurnaceTestSetupCommand extends AbstractProjectCommand
       Set<AddonId> choices = new TreeSet<>();
       for (AddonRepository repository : furnace.getRepositories())
       {
-         // Avoid immutable repositories
-         if (repository instanceof MutableAddonRepository)
+         for (AddonId id : repository.listEnabled())
          {
-            for (AddonId id : repository.listEnabled())
-            {
-               if (id.getName().contains(":"))
-                  choices.add(id);
-            }
+            if (id.getName().contains(":"))
+               choices.add(id);
          }
       }
       addonDependencies.setValueChoices(choices);
