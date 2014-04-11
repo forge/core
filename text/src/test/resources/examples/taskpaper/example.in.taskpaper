@@ -1,0 +1,12 @@
+Household chores:
+    - Pick up the milk @due(today)
+      Bargain day!
+    - Do the laundry @done
+Programming:
+    CodeRay:
+        - Fork coderay @done(2012-10-21)
+        - Write a taskpaper scanner @done
+          probably just write scanners/taskppaer.rb
+        - Send pull request @done(2012-10-22)
+    Others:
+        - ...

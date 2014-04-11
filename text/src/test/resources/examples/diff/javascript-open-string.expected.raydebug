@@ -1,0 +1,3 @@
+head[head(+++ )filename(foo.js)]
+insert[insert(+)string<delimiter(")>error(\\)]
+insert[insert(+)string<delimiter(")>]

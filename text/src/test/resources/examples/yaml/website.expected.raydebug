@@ -1,0 +1,70 @@
+doctype(%YAML 1.2)
+head<head(---)>
+key(YAML)operator(:) string<content(YAML Ain't Markup Language)>
+
+key(What It Is)operator(:) string<content(YAML is a human friendly data serialization)content(
+  standard for all programming languages.)>
+
+key(YAML Resources)operator(:)
+  key(YAML 1.2 Specification)operator(:) string<content(http://yaml.org/spec/1.2/)>
+  key(YAML 1.1 Specification)operator(:) string<content(http://yaml.org/spec/1.1/)>
+  key(YAML Trac Wiki)operator(:) string<content(http://trac.yaml.org/)>
+  key(YAML Mailing List)operator(:) string<content(yaml-core@lists.sourceforge.net)>
+  key(YAML IRC Channel)operator(:) string<delimiter(")content(#yaml on irc.freenode.net)delimiter(")>
+  key(YAML Cookbook (Ruby\))operator(:) string<content(http://yaml4r.sourceforge.net/cookbook/)>
+
+key(Projects)operator(:)
+  operator(-) string<content(YAML C Libraries:)>
+    operator(-) string<content(libyaml)>       comment(# New Fast YAML (1.1\))
+    operator(-) string<content(Syck)>          comment(# Old Fast YAML (1.0\))
+  operator(-) string<content(PyYaml)>        comment(# YAML 1.1 Implementation)
+  operator(-) string<content(JsYaml)>        comment(# JavaScript PyYaml port)
+  operator(-) string<content(RbYaml)>        comment(# Ruby port of PyYaml)
+  operator(-) string<content(JvYaml)>        comment(# Java port of PyYaml)
+  operator(-) string<content(ocaml-syck)>    comment(# Syck bindings for OCaml)
+  operator(-) string<content(Perl Modules:)>
+    operator(-) string<content(YAML)>          comment(# Pure Perl YAML Module)
+    operator(-) string<content(YAML::XS)>      comment(# Binding to libyaml)
+    operator(-) string<content(YAML::Syck)>    comment(# Binding to libsyck)
+    operator(-) string<content(YAML::Tiny)>    comment(# A small YAML subset module)
+    operator(-) string<content(PlYaml)>        comment(# Perl port of PyYaml)
+  operator(-) string<content(YamlReference)> comment(# Haskell 1.2 reference parser)
+  operator(-) string<content(YPaste)>        comment(# Play with the Haskell 1.2 parser)
+  operator(-) string<content(YamlBeans)>     comment(# De/serialize Java objects to/from YAML)
+  operator(-) string<content(Rx)>            comment(# Simple, Extensible Schemata)
+
+key(News)operator(:)
+  operator(-) string<content(11-MAY-2008 -- Oren Ben-Kiki has released a new YAML 1.2 spec draft.)>
+  operator(-) string<content(29-NOV-2007 -- Alexey Zakhlestin has updated his Syck (YAML 1.0\) binding for PHP)>
+  operator(-) string<content(23-NOV-2007 -- Derek Wischusen has release Action Script 3 YAML 1.1)>
+  operator(-) string<content(01-AUG-2006 -- Kirill Simonov has released libyaml, a parser and emitter in "C")>
+  operator(-) string<content(06-JUN-2006 -- Ola Bini is at it again, this time with a Java implementation)>
+  operator(-) string<content(03-JUN-2006 -- Christophe Lambrechts and Jonathan Slenders announced a .NET parser)>
+  operator(-) string<content(07-MAY-2006 -- Ola Bini released a pure-ruby YAML 1.1 parser and emitter)>
+  operator(-) string<content(12-APR-2006 -- Kirill's YAML 1.1 parser for Python is now at PyYaml)>
+  operator(-) string<content(05-FEB-2006 -- Spyc YAML for PHP is now at version 0.3)>
+  operator(-) string<content(17-DEC-2005 -- Makoto Kuwata has released Kwalify 0.5, YAML/JSON schema validator)>
+  operator(-) string<content(14-DEC-2005 -- Toby Ho has released Jyaml, a Java library for YAML based on Rolf Veen's work)>
+  operator(-) string<content(30-AUG-2005 -- Kirill Simonov has produce a wonderful Python binding for Syck)>
+  operator(-) string<content(08-APR-2005 -- As it turns out, YAML is a superset of the JSON serialization language)>
+  operator(-) string<content(18-MAY-2005 -- Why has released version 0.55 of Syck)>
+  operator(-) string<content(28-DEC-2004 -- Announcing YAML 1.1 Working Draft)>
+  operator(-) string<content(01-OCT-2004 -- YAML for Cocoa was released by Will Thimbley)>
+  operator(-) string<content(08-FEB-2004 -- Slaven Rezic announced a new version of his Javascript binding)>
+  operator(-) string<content(29-JAN-2004 -- Ingy, Oren, and Clark spent 4 days hacking on the spec in Portland.)>
+  operator(-) string<content(10-OCT-2003 -- The Syck implementation with bindings for Ruby, Python,)content(
+                   and PHP is now at version .41)>
+  operator(-) string<content(26-APR-2003 -- Mike Orr has taken over the Pure Python development.)>
+  operator(-) string<content(26-APR-2003 -- Brian Ingerson has created a FIT platform for Wiki-like testing.)>
+  operator(-) string<content(24-JAN-2003 -- Updates to specification.)>
+  operator(-) string<content(25-JUL-2002 -- Both the Ruby and Python parsers have made significant progress.)content(
+                   There is an article about YAML by Kendall Grant Clark at xml.com.
+                   There is also a draft XML binding.)>
+  operator(-) string<content(02-JUL-2002 -- Brian Ingerson will be giving a 45 minute presentation on YAML at the)content(
+                   O'Reilly Open Source Conference in San Diego on July 24th 2002.)>
+  operator(-) string<content(01-FEB-2002 -- Brian's Perl implementation YAML.pm, has been updated with new documentation.)content(
+                   Included in this release is YSH, a test shell for learning how YAML works.)>
+  operator(-) string<content(03-JAN-2002 -- YAML(tm\) starts the new year with a new name YAML Ain't Markup Language.)>
+  operator(-) string<content(17-MAY-2001 -- YAML now has a mailing list at SourceForge.)>
+  operator(-) string<content(15-MAY-2001 -- YAML is started with a first pass specification.)>
+head<head(...)>

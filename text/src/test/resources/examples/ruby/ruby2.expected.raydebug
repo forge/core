@@ -1,0 +1,102 @@
+comment(# encoding: utf-8)
+
+comment(# lazy enumerations)
+ident(e) operator(=) string<delimiter(%w{)content(this is a test)delimiter(})>operator(.)ident(to_enum)operator(.)ident(with_index)
+ident(loop) operator({) ident(print) ident(e)operator(.)ident(next) operator(})
+ident(puts)
+
+ident(e) operator(=) operator(()integer(1)operator(..)constant(Float)operator(::)constant(INFINITY)operator(\))operator(.)ident(lazy)operator(.)ident(select) operator({) operator(|)ident(num)operator(|) ident(num) operator(%) integer(5) operator(==) integer(0) operator(&&) ident(num) operator(%) integer(3) operator(==) integer(0)operator(})
+ident(puts) ident(e)operator(.)ident(take)operator(()integer(10)operator(\))operator(.)ident(force)
+
+ident(puts) operator([)integer(1)operator(,)integer(2)operator(,)integer(3)operator(])operator(.)ident(to_enum)operator(()symbol(:each)operator(\)) operator({) integer(10) operator(})operator(.)ident(size)
+
+comment(# keyword arguments)
+keyword(def) method(pretend_default_arguments)operator(()ident(options) operator(=) operator({)operator(})operator(\))
+  ident(defaults) operator(=) operator({)key(y)operator(:) integer(4)operator(})
+  ident(options) operator(=) ident(defaults)operator(.)ident(merge)operator(()ident(options)operator(\))
+  ident(p) ident(options)
+keyword(end)
+ident(pretend_default_arguments)operator(()symbol(:x) operator(=)operator(>) integer(10)operator(\))
+ident(pretend_default_arguments)operator(()key(x)operator(:)  integer(10)operator(,) key(y)operator(:) integer(100)operator(\))
+
+keyword(def) method(default_args)operator(()key(x)operator(:) integer(10)operator(,) key(y)operator(:) integer(20)operator(\))
+  ident(p) ident(x)operator(,) ident(y)
+keyword(end)
+ident(default_args)operator(()operator(\))
+ident(default_args)operator(()key(x)operator(:) integer(1)operator(\))
+
+keyword(def) method(greedy_star)operator(()key(x)operator(:)predefined_constant(nil)operator(,) key(y)operator(:)predefined_constant(nil)operator(,) operator(**)ident(args)operator(\))
+  ident(p) ident(x)operator(,) ident(y)
+  ident(p) ident(args)
+keyword(end)
+ident(greedy_star) key(c)operator(:)string<delimiter(')content(test)delimiter(')>operator(,) key(x)operator(:)integer(1)operator(,) key(y)operator(:)integer(2)
+
+comment(# Module#prepend)
+keyword(module) class(Foo)
+  keyword(def) method(method_name)
+    string<delimiter(")content(inside the module)delimiter(")>
+  keyword(end)
+keyword(end)
+
+keyword(class) class(Bar)
+  ident(prepend) constant(Foo)
+  keyword(def) method(method_name)
+    string<delimiter(")content(inside the class)delimiter(")>
+  keyword(end)
+keyword(end)
+
+keyword(class) class(Baz)
+  ident(extend) constant(Foo)
+  keyword(def) method(method_name)
+    string<delimiter(")content(inside the class)delimiter(")>
+  keyword(end)
+keyword(end)
+
+
+ident(x) operator(=) constant(Bar)operator(.)ident(new)
+ident(p) ident(x)operator(.)ident(method_name)
+
+ident(x) operator(=) constant(Baz)operator(.)ident(new)
+ident(p) ident(x)operator(.)ident(method_name)
+
+comment(# Refinements)
+keyword(module) class(FloatDivision)
+  ident(refine) constant(Fixnum) keyword(do)
+    keyword(def) method(/)operator(()ident(other)operator(\))
+      predefined_constant(self)operator(.)ident(to_f) operator(/) ident(other)
+    keyword(end)
+  keyword(end)
+keyword(end)
+
+keyword(class) class(MathFun)
+  ident(using) constant(FloatDivision)
+  keyword(def) predefined_constant(self)operator(.)method(ratio)operator(()ident(a)operator(,) ident(b)operator(\))
+    ident(a)operator(/)ident(b)
+  keyword(end)
+keyword(end)
+
+ident(p) constant(MathFun)operator(.)ident(ratio)operator(()integer(6)operator(,) integer(8)operator(\))
+
+comment(# Misc)
+ident(p) predefined_constant(nil)operator(.)ident(to_h)
+ident(p) ident(Hash)operator(()operator([)operator(])operator(\))
+
+ident(days) operator(=) symbol<delimiter(%i{)content(sun mon tue wed thu fri sat)delimiter(})>
+ident(p) ident(days)
+ident(p) symbol<delimiter(%I{)content( )inline<inline_delimiter(#{)integer(1)operator(*)integer(3)inline_delimiter(})>content( )delimiter(})>operator(,) string<delimiter(%w{)content(jan feb mar)delimiter(})>
+
+ident(puts) ident(__dir__)
+ident(puts) constant(File)operator(.)ident(dirname)operator(()constant(File)operator(.)ident(realpath)operator(()predefined_constant(__FILE__)operator(\))operator(\))
+
+ident(warn) string<delimiter(")content(debug)delimiter(")>
+
+ident(define_method)operator(()string<delimiter(")content(new_method)delimiter(")>operator(\)) keyword(do)
+  ident(puts) string<delimiter(")content(hello)delimiter(")>
+keyword(end)
+ident(new_method)operator(()operator(\))
+
+ident(p) constant(Object)operator(.)ident(const_get)operator(()string<delimiter(")content(Math::PI)delimiter(")>operator(\))
+
+
+
+

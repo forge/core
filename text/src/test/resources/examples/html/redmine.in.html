@@ -1,0 +1,687 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>CodeRay - Feature #46: Integrate JavaScript and CSS Scanners into HTML Scanner - Odd-Eyed Code</title>
+<meta name="description" content="Redmine" />
+<meta name="keywords" content="issue,bug,tracker" />
+<link rel='shortcut icon' href='/favicon.ico?1289779318' />
+<link href="/stylesheets/application.css?1289779318" media="all" rel="stylesheet" type="text/css" />
+
+<script src="/javascripts/prototype.js?1289775775" type="text/javascript"></script>
+<script src="/javascripts/effects.js?1289775776" type="text/javascript"></script>
+<script src="/javascripts/dragdrop.js?1289775776" type="text/javascript"></script>
+
+<script src="/javascripts/controls.js?1289775776" type="text/javascript"></script>
+<script src="/javascripts/application.js?1289779318" type="text/javascript"></script>
+<link href="/stylesheets/jstoolbar.css?1289775773" media="screen" rel="stylesheet" type="text/css" />
+<!--[if IE]>
+    <style type="text/css">
+      * html body{ width: expression( document.documentElement.clientWidth < 900 ? '900px' : '100%' ); }
+      body {behavior: url(/stylesheets/csshover.htc?1289775773);}
+    </style>
+<![endif]-->
+
+<!-- page specific tags -->
+<script src="/javascripts/calendar/calendar.js?1289779318" type="text/javascript"></script><script src="/javascripts/calendar/lang/calendar-en.js?1289775776" type="text/javascript"></script><script type="text/javascript">
+//<![CDATA[
+
+//]]>
+</script><script src="/javascripts/calendar/calendar-setup.js?1289775776" type="text/javascript"></script><link href="/stylesheets/calendar.css?1289779318" media="screen" rel="stylesheet" type="text/css" />
+    <link href="http://code.licenser.net/issues/46.atom?key=bYFIUrZK4uFZ7Wqwa3YoRPKr2FqXimgFsHdfzSux" rel="alternate" title="CodeRay - Feature #46: Integrate JavaScript and CSS Scanners into HTML Scanner" type="application/atom+xml" />
+    <link href="/stylesheets/scm.css?1289779318" media="screen" rel="stylesheet" type="text/css" />
+
+    <script src="/javascripts/context_menu.js?1289779318" type="text/javascript"></script>
+    <link href="/stylesheets/context_menu.css?1289779318" media="screen" rel="stylesheet" type="text/css" />
+    
+</head>
+<body class="controller-issues action-show">
+<div id="wrapper">
+<div id="wrapper2">
+<div id="top-menu">
+    <div id="account">
+        <ul><li><a href="/my/account" class="my-account">My account</a></li>
+<li><a href="/logout" class="logout">Sign out</a></li></ul>    </div>
+
+    <div id="loggedas">Logged in as <a href="/users/12">murphy</a></div>
+    <ul><li><a href="/" class="home">Home</a></li>
+<li><a href="/my/page" class="my-page">My page</a></li>
+<li><a href="/projects" class="projects">Projects</a></li>
+<li><a href="/admin" class="administration">Administration</a></li>
+<li><a href="http://www.redmine.org/guide" class="help">Help</a></li></ul></div>
+      
+<div id="header">
+
+    <div id="quick-search">
+        <form action="/search/index/coderay" method="get">
+        <input name="issues" type="hidden" value="1" />
+        <a href="/search/index/coderay" accesskey="4">Search</a>:
+        <input accesskey="f" class="small" id="q" name="q" size="20" type="text" />
+        </form>
+        <select onchange="if (this.value != '') { window.location = this.value; }"><option value=''>Jump to a project...</option><option value="" disabled="disabled">---</option><option value="/projects/rvm?jump=issues">Amber VM</option><option value="/projects/blokk?jump=issues">blokk</option><option selected="selected" value="/projects/coderay?jump=issues">CodeRay</option><option value="/projects/spacebg?jump=issues">DividedSpace</option><option value="/projects/istudy?jump=issues">iStudy</option><option value="/projects/mugen?jump=issues">Mugen</option><option value="/projects/ngn?jump=issues">napo-G-net</option><option value="/projects/rubybenchmark?jump=issues">RubyBenchmark</option><option value="/projects/schatten?jump=issues">Schatten</option><option value="/projects/server?jump=issues">Server</option><option value="/projects/webgl?jump=issues">Wikipedia 3D</option></select>
+
+    </div>
+    
+    <h1>CodeRay</h1>
+    
+    
+    <div id="main-menu">
+        <ul><li><a href="/projects/coderay" class="overview">Overview</a></li>
+<li><a href="/projects/coderay/activity" class="activity">Activity</a></li>
+<li><a href="/projects/coderay/roadmap" class="roadmap">Roadmap</a></li>
+<li><a href="/projects/coderay/issues" class="issues selected">Issues</a></li>
+<li><a href="/projects/coderay/issues/new" accesskey="7" class="new-issue">New issue</a></li>
+
+<li><a href="/projects/coderay/news" class="news">News</a></li>
+<li><a href="/projects/coderay/wiki" class="wiki">Wiki</a></li>
+<li><a href="/projects/coderay/boards" class="boards">Forums</a></li>
+<li><a href="/projects/coderay/repository" class="repository">Repository</a></li>
+<li><a href="/projects/coderay/settings" class="settings">Settings</a></li></ul>
+    </div>
+    
+</div>
+
+<div class="" id="main">
+    <div id="sidebar">        
+        
+  <h3>Issues</h3>
+
+<a href="/projects/coderay/issues?set_filter=1">View all issues</a><br />
+
+<a href="/projects/coderay/issues/report">Summary</a><br />
+
+
+
+
+
+
+
+<h3>Custom queries</h3>
+
+<a href="/projects/coderay/issues?query_id=3">All Scanner Requests</a><br />
+
+<a href="/projects/coderay/issues?query_id=6">Übersicht nach Zielversionen</a><br />
+<a href="/projects/coderay/issues?query_id=5">Closed Scanner Bugs</a><br />
+<a href="/projects/coderay/issues?query_id=2">my tickets</a><br />
+<a href="/projects/coderay/issues?query_id=4">Open Scanner bugs</a><br />
+<a href="/projects/coderay/issues?query_id=1">Open Scanner requests</a><br />
+
+
+
+  
+    <div id="watchers">
+      <div class="contextual">
+
+<a href="#" onclick="new Ajax.Request('/watchers/new?object_id=46&amp;object_type=issue', {asynchronous:true, evalScripts:true, parameters:'authenticity_token=' + encodeURIComponent('IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=')}); return false;">Add</a>
+</div>
+
+<h3>Watchers (0)</h3>
+
+
+
+
+
+    </div>
+  
+
+        
+    </div>
+    
+    <div id="content">
+
+				
+        <div class="contextual">
+<a href="/issues/46/edit" accesskey="e" class="icon icon-edit" onclick="showAndScrollTo(&quot;update&quot;, &quot;notes&quot;); return false;">Update</a>
+
+
+<span id="watcher"><a class="icon icon-fav-off" href="/watchers/watch?object_id=46&amp;object_type=issue&amp;replace%5B%5D=watcher&amp;replace%5B%5D=watcher2" onclick="new Ajax.Request('/watchers/watch?object_id=46&amp;object_type=issue&amp;replace%5B%5D=watcher&amp;replace%5B%5D=watcher2', {asynchronous:true, evalScripts:true, parameters:'authenticity_token=' + encodeURIComponent('IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=')}); return false;">Watch</a></span>
+<a href="/projects/coderay/issues/46/copy" class="icon icon-duplicate">Duplicate</a>
+<a href="/issue_moves/new/46?copy_options%5Bcopy%5D=t" class="icon icon-copy">Copy</a>
+<a href="/issue_moves/new/46" class="icon icon-move">Move</a>
+<a href="/issues/46/destroy" class="icon icon-del" onclick="if (confirm('Are you sure ?')) { var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;var s = document.createElement('input'); s.setAttribute('type', 'hidden'); s.setAttribute('name', 'authenticity_token'); s.setAttribute('value', 'IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk='); f.appendChild(s);f.submit(); };return false;">Delete</a>
+</div>
+
+
+<h2>Feature #46</h2>
+
+<div class="issue status-1 priority-2 created-by-me assigned-to-me details">
+        <img class="gravatar" alt="" width="50" height="50" src="http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG&amp;size=50&amp;default=" />
+      
+<div class="subject">      
+<div><h3>Integrate JavaScript and CSS Scanners into HTML Scanner</h3></div>
+</div>
+        <p class="author">
+        Added by <a href="/users/12">Kornelius Kalnbach</a> <a href="/projects/coderay/activity?from=2008-09-18" title="09/18/2008 03:04 am">over 2 years</a> ago.
+        
+        Updated <a href="/projects/coderay/activity?from=2011-03-08" title="03/08/2011 12:02 am">about 1 month</a> ago.
+        
+        </p>
+
+<table class="attributes">
+<tr>
+    <th class="status">Status:</th><td class="status">New</td>
+    <th class="start-date">Start Date:</th><td class="start-date">09/18/2008</td>
+</tr>
+<tr>
+    <th class="priority">Priority:</th><td class="priority">Normal</td>
+
+    <th class="due-date">Due date:</th><td class="due-date"></td>
+</tr>
+<tr>
+    <th class="assigned-to">Assigned to:</th><td class="assigned-to"><img class="gravatar" alt="" width="14" height="14" src="http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG&amp;size=14&amp;default=" /><a href="/users/12">Kornelius Kalnbach</a></td>
+    <th class="progress">% Done:</th><td class="progress"><table class="progress" style="width: 80px;"><tr><td class="closed" style="width: 40%;"></td><td class="todo" style="width: 60%;"></td></tr></table><p class="pourcent">40%</p></td>
+</tr>
+<tr>
+    <th class="category">Category:</th><td class="category">Scanner improvements</td>
+
+    
+</tr>
+<tr>
+    <th class="fixed-version">Target version:</th><td class="fixed-version"><a href="/versions/show/11">1.0 RC1</a></td>
+    
+</tr>
+
+
+</table>
+<hr />
+
+<div class="contextual">
+
+</div>
+
+                              
+<p><strong>Description</strong></p>
+<div class="wiki">
+<p>HTML can contain CSS and JavaScript. CodeRay should highlight them using nested scanners.</p>
+</div>
+
+
+
+
+
+
+<hr />
+<div id="issue_tree">
+<div class="contextual">
+  <a href="/projects/coderay/issues/new?issue%5Bparent_issue_id%5D=46">Add</a>
+
+</div>
+<p><strong>Subtasks</strong></p>
+
+</div>
+
+
+
+<hr />
+<div id="relations">
+<div class="contextual">
+
+  <a href="#" onclick="Element.toggle('new-relation-form'); Form.Element.focus('relation_issue_to_id'); return false;">Add</a>
+
+</div>
+
+<p><strong>Related issues</strong></p>
+
+
+
+<form action="/issues/46/relations/46" id="new-relation-form" method="post" onsubmit="new Ajax.Request('/issues/46/relations/46', {asynchronous:true, evalScripts:true, method:'post', onComplete:function(request){Form.Element.focus('relation_issue_to_id');}, parameters:Form.serialize(this)}); return false;" style="display: none;"><div style="margin:0;padding:0;display:inline"><input name="authenticity_token" type="hidden" value="IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=" /></div>
+
+
+<p><select id="relation_relation_type" name="relation[relation_type]" onchange="setPredecessorFieldsVisibility();"><option value="relates">related to</option>
+<option value="duplicates">duplicates</option>
+<option value="duplicated">duplicated by</option>
+<option value="blocks">blocks</option>
+
+<option value="blocked">blocked by</option>
+<option value="precedes">precedes</option>
+<option value="follows">follows</option></select>
+Issue #<input id="relation_issue_to_id" name="relation[issue_to_id]" size="6" type="text" />
+<span id="predecessor_fields" style="display:none;">
+Delay: <input id="relation_delay" name="relation[delay]" size="3" type="text" /> days
+</span>
+<input name="commit" type="submit" value="Add" />
+<a href="#" onclick="Element.toggle('new-relation-form'); this.blur(); return false;">Cancel</a>
+</p>
+
+<script type="text/javascript">
+//<![CDATA[
+setPredecessorFieldsVisibility();
+//]]>
+</script>
+
+</form>
+
+</div>
+
+
+</div>
+
+
+
+
+<div id="history">
+<h3>History</h3>
+
+  <div id="change-63" class="journal has-details">
+    <h4><div class="journal-link"><a href="/issues/46#note-1">#1</a></div>
+    <img class="gravatar" alt="" width="24" height="24" src="http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG&amp;size=24&amp;default=" />
+    <a name="note-1"></a>
+		Updated by <a href="/users/12">Kornelius Kalnbach</a> <a href="/projects/coderay/activity?from=2008-09-25" title="09/25/2008 06:08 am">over 2 years</a> ago</h4>
+
+    
+    
+    <ul class="details">
+      
+       <li><strong>Target version</strong> changed from <i>0.8</i> to <i>1.0 RC1</i></li>
+      
+    </ul>
+    
+    
+  </div>
+  
+
+  <div id="change-64" class="journal has-notes">
+
+    <h4><div class="journal-link"><a href="/issues/46#note-2">#2</a></div>
+    <img class="gravatar" alt="" width="24" height="24" src="http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG&amp;size=24&amp;default=" />
+    <a name="note-2"></a>
+		Updated by <a href="/users/12">Kornelius Kalnbach</a> <a href="/projects/coderay/activity?from=2008-09-25" title="09/25/2008 06:08 am">over 2 years</a> ago</h4>
+    
+    
+    <div class="wiki editable" id="journal-64-notes"><div class="contextual"><a href="#" onclick="new Ajax.Request('/issues/46/quoted?journal_id=64', {asynchronous:true, evalScripts:true, parameters:'authenticity_token=' + encodeURIComponent('IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=')}); return false;" title="Quote"><img alt="Comment" src="/images/comment.png?1289779286" /></a> <a href="#" onclick="new Ajax.Request('/journals/edit/64', {asynchronous:true, evalScripts:true, method:'get'}); return false;" title="Edit"><img alt="Edit" src="/images/edit.png?1289779286" /></a></div><p>I move this to 1.0 because it's not crucial currently. Comment if you think different.</p></div>
+
+  </div>
+  
+
+  <div id="change-340" class="journal has-details">
+    <h4><div class="journal-link"><a href="/issues/46#note-3">#3</a></div>
+    <img class="gravatar" alt="" width="24" height="24" src="http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG&amp;size=24&amp;default=" />
+    <a name="note-3"></a>
+		Updated by <a href="/users/12">Kornelius Kalnbach</a> <a href="/projects/coderay/activity?from=2010-01-11" title="01/11/2010 01:00 am">over 1 year</a> ago</h4>
+
+    
+    
+    <ul class="details">
+      
+       <li><strong>Target version</strong> changed from <i>1.0 RC1</i> to <i>1.1</i></li>
+      
+    </ul>
+    
+    
+  </div>
+  
+
+  <div id="change-350" class="journal has-details">
+
+    <h4><div class="journal-link"><a href="/issues/46#note-4">#4</a></div>
+    <img class="gravatar" alt="" width="24" height="24" src="http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG&amp;size=24&amp;default=" />
+    <a name="note-4"></a>
+		Updated by <a href="/users/12">Kornelius Kalnbach</a> <a href="/projects/coderay/activity?from=2010-01-11" title="01/11/2010 01:05 am">over 1 year</a> ago</h4>
+    
+    
+    <ul class="details">
+
+      
+       <li><strong>Category</strong> changed from <i>Scanner requests</i> to <i>Scanner improvements</i></li>
+      
+    </ul>
+    
+    
+  </div>
+  
+
+  <div id="change-605" class="journal has-notes">
+    <h4><div class="journal-link"><a href="/issues/46#note-5">#5</a></div>
+
+    <img class="gravatar" alt="" width="24" height="24" src="http://www.gravatar.com/avatar/8e03e09add01bff630afc44c5b92b5b9?rating=PG&amp;size=24&amp;default=" />
+    <a name="note-5"></a>
+		Updated by <a href="/users/58">Troex Nevelin</a> <a href="/projects/coderay/activity?from=2010-04-19" title="04/19/2010 03:12 pm">about 1 year</a> ago</h4>
+    
+    
+    <div class="wiki editable" id="journal-605-notes"><div class="contextual"><a href="#" onclick="new Ajax.Request('/issues/46/quoted?journal_id=605', {asynchronous:true, evalScripts:true, parameters:'authenticity_token=' + encodeURIComponent('IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=')}); return false;" title="Quote"><img alt="Comment" src="/images/comment.png?1289779286" /></a> <a href="#" onclick="new Ajax.Request('/journals/edit/605', {asynchronous:true, evalScripts:true, method:'get'}); return false;" title="Edit"><img alt="Edit" src="/images/edit.png?1289779286" /></a></div><p>There is kinda dirty trick, but line-numbers will become mad, maybe allow code inside code taq to temporary switch highlighter?</p></div>
+  </div>
+
+  
+
+  <div id="change-639" class="journal has-notes has-details">
+    <h4><div class="journal-link"><a href="/issues/46#note-6">#6</a></div>
+    <img class="gravatar" alt="" width="24" height="24" src="http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG&amp;size=24&amp;default=" />
+    <a name="note-6"></a>
+		Updated by <a href="/users/12">Kornelius Kalnbach</a> <a href="/projects/coderay/activity?from=2010-05-19" title="05/19/2010 03:25 am">11 months</a> ago</h4>
+
+    
+    
+    <ul class="details">
+      
+       <li><strong>Target version</strong> changed from <i>1.1</i> to <i>1.0 RC1</i></li>
+      
+    </ul>
+    
+    <div class="wiki editable" id="journal-639-notes"><div class="contextual"><a href="#" onclick="new Ajax.Request('/issues/46/quoted?journal_id=639', {asynchronous:true, evalScripts:true, parameters:'authenticity_token=' + encodeURIComponent('IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=')}); return false;" title="Quote"><img alt="Comment" src="/images/comment.png?1289779286" /></a> <a href="#" onclick="new Ajax.Request('/journals/edit/639', {asynchronous:true, evalScripts:true, method:'get'}); return false;" title="Edit"><img alt="Edit" src="/images/edit.png?1289779286" /></a></div><p>Actually, I'd like to have this feature in 1.0.</p>
+
+
+CSS should be highlighted in:
+	<ul>
+	<li><code>style</code> tags</li>
+		<li><code>style="…"</code> attribute values</li>
+	</ul>
+
+JavaScript should be highlighted in:
+	<ul>
+	<li><code>script</code> tags</li>
+		<li><code>onclick="…"</code> attribute values (and other <code>on*</code> friends)</li>
+		<li><code>href="javascript:…"</code> attribute values</li>
+
+	</ul>
+
+
+	<p>Shouldn't be that hard.</p></div>
+  </div>
+  
+
+  <div id="change-804" class="journal has-notes">
+    <h4><div class="journal-link"><a href="/issues/46#note-7">#7</a></div>
+    <img class="gravatar" alt="" width="24" height="24" src="http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG&amp;size=24&amp;default=" />
+    <a name="note-7"></a>
+
+		Updated by <a href="/users/12">Kornelius Kalnbach</a> <a href="/projects/coderay/activity?from=2011-03-08" title="03/08/2011 12:02 am">about 1 month</a> ago</h4>
+    
+    
+    <div class="wiki editable" id="journal-804-notes"><div class="contextual"><a href="#" onclick="new Ajax.Request('/issues/46/quoted?journal_id=804', {asynchronous:true, evalScripts:true, parameters:'authenticity_token=' + encodeURIComponent('IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=')}); return false;" title="Quote"><img alt="Comment" src="/images/comment.png?1289779286" /></a> <a href="#" onclick="new Ajax.Request('/journals/edit/804', {asynchronous:true, evalScripts:true, method:'get'}); return false;" title="Edit"><img alt="Edit" src="/images/edit.png?1289779286" /></a></div><p>JavaScript is now integrated. Needs lots of testing.</p>
+
+
+	<p>Not satisfied with the style yet. Highlight JS like Ruby in ERb?</p></div>
+
+  </div>
+  
+
+  <div id="change-806" class="journal has-details">
+    <h4><div class="journal-link"><a href="/issues/46#note-8">#8</a></div>
+    <img class="gravatar" alt="" width="24" height="24" src="http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG&amp;size=24&amp;default=" />
+    <a name="note-8"></a>
+		Updated by <a href="/users/12">Kornelius Kalnbach</a> <a href="/projects/coderay/activity?from=2011-03-08" title="03/08/2011 12:02 am">about 1 month</a> ago</h4>
+
+    
+    
+    <ul class="details">
+      
+       <li><strong>% Done</strong> changed from <i>0</i> to <i>40</i></li>
+      
+    </ul>
+    
+    
+  </div>
+  
+
+
+</div>
+
+
+
+<div style="clear: both;"></div>
+<div class="contextual">
+<a href="/issues/46/edit" accesskey="e" class="icon icon-edit" onclick="showAndScrollTo(&quot;update&quot;, &quot;notes&quot;); return false;">Update</a>
+
+
+<span id="watcher2"><a class="icon icon-fav-off" href="/watchers/watch?object_id=46&amp;object_type=issue&amp;replace%5B%5D=watcher&amp;replace%5B%5D=watcher2" onclick="new Ajax.Request('/watchers/watch?object_id=46&amp;object_type=issue&amp;replace%5B%5D=watcher&amp;replace%5B%5D=watcher2', {asynchronous:true, evalScripts:true, parameters:'authenticity_token=' + encodeURIComponent('IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=')}); return false;">Watch</a></span>
+<a href="/projects/coderay/issues/46/copy" class="icon icon-duplicate">Duplicate</a>
+<a href="/issue_moves/new/46?copy_options%5Bcopy%5D=t" class="icon icon-copy">Copy</a>
+<a href="/issue_moves/new/46" class="icon icon-move">Move</a>
+
+<a href="/issues/46/destroy" class="icon icon-del" onclick="if (confirm('Are you sure ?')) { var f = document.createElement('form'); f.style.display = 'none'; this.parentNode.appendChild(f); f.method = 'POST'; f.action = this.href;var s = document.createElement('input'); s.setAttribute('type', 'hidden'); s.setAttribute('name', 'authenticity_token'); s.setAttribute('value', 'IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk='); f.appendChild(s);f.submit(); };return false;">Delete</a>
+</div>
+
+
+<div style="clear: both;"></div>
+
+  <div id="update" style="display:none;">
+  <h3>Update</h3>
+  <form action="/issues/46/edit" enctype="multipart/form-data" id="issue-form" method="post"><div style="margin:0;padding:0;display:inline"><input name="_method" type="hidden" value="put" /><input name="authenticity_token" type="hidden" value="IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=" /></div>
+    
+    <div class="box">
+    
+        <fieldset class="tabular"><legend>Change properties
+        
+        <small>(<a href="/issues/46" onclick="Effect.toggle(&quot;issue_descr_fields&quot;, &quot;appear&quot;, {duration:0.3}); return false;">More</a>)</small>
+
+        
+        </legend>
+        
+
+<div id="issue_descr_fields" style="display:none">
+<p><label for="issue_tracker_id">Tracker<span class="required"> *</span></label><select id="issue_tracker_id" name="issue[tracker_id]"><option value="1">Bug</option>
+<option value="2" selected="selected">Feature</option>
+<option value="3">Support</option>
+<option value="4">Task</option></select></p>
+<script type="text/javascript">
+//<![CDATA[
+new Form.Element.EventObserver('issue_tracker_id', function(element, value) {new Ajax.Updater('attributes', '/projects/coderay/issues/new?id=46', {asynchronous:true, evalScripts:true, parameters:Form.serialize('issue-form') + '&authenticity_token=' + encodeURIComponent('IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=')})})
+//]]>
+</script>
+
+<p><label for="issue_subject">Subject<span class="required"> *</span></label><input id="issue_subject" name="issue[subject]" size="80" type="text" value="Integrate JavaScript and CSS Scanners into HTML Scanner" /></p>
+                                     
+
+<p id="parent_issue"><label for="issue_parent_issue_id">Parent task</label><input id="issue_parent_issue_id" name="issue[parent_issue_id]" size="10" type="text" /></p>
+<div id="parent_issue_candidates" class="autocomplete"></div>
+<script type="text/javascript">
+//<![CDATA[
+observeParentIssueField('/issues/auto_complete?id=46&amp;project_id=coderay')
+//]]>
+</script>
+
+
+<p><label for="issue_description">Description</label><textarea accesskey="e" class="wiki-edit" cols="60" id="issue_description" name="issue[description]" rows="10">HTML can contain CSS and JavaScript. CodeRay should highlight them using nested scanners.</textarea></p>
+</div>
+
+<div id="attributes" class="attributes">
+	
+
+<div class="splitcontentleft">
+
+<p><label for="issue_status_id">Status<span class="required"> *</span></label><select id="issue_status_id" name="issue[status_id]"><option value="1" selected="selected">New</option>
+<option value="2">Assigned</option>
+<option value="3">Resolved</option>
+<option value="4">Feedback</option>
+<option value="5">Closed</option>
+
+<option value="6">Rejected</option></select></p>
+
+
+<p><label for="issue_priority_id">Priority<span class="required"> *</span></label><select id="issue_priority_id" name="issue[priority_id]"><option value="3">Low</option>
+<option value="4" selected="selected">Normal</option>
+<option value="5">High</option>
+<option value="6">Urgent</option>
+<option value="7">Immediate</option></select></p>
+
+<p><label for="issue_assigned_to_id">Assigned to</label><select id="issue_assigned_to_id" name="issue[assigned_to_id]"><option value=""></option>
+<option value="13">Daniel Bovensiepen</option>
+<option value="3">Heinz Gies</option>
+<option value="12" selected="selected">Kornelius Kalnbach</option></select></p>
+
+<p><label for="issue_category_id">Category</label><select id="issue_category_id" name="issue[category_id]"><option value=""></option>
+<option value="48">Browser Support</option>
+<option value="14">Command line interface</option>
+<option value="47">Competition</option>
+
+<option value="50">Core</option>
+<option value="23">Documentation</option>
+<option value="27">Encoder bugs</option>
+<option value="42">Encoder improvements</option>
+<option value="26">Encoder options</option>
+<option value="12">Encoder requests</option>
+<option value="11">FileType</option>
+<option value="46">Filters</option>
+<option value="37">for_redcloth</option>
+
+<option value="29">Helpers</option>
+<option value="25">Integration</option>
+<option value="41">Performance</option>
+<option value="24">Plugin system</option>
+<option value="39">Repository</option>
+<option value="49">Ruby Engine Support</option>
+<option value="15">Scanner bugs</option>
+<option value="38" selected="selected">Scanner improvements</option>
+<option value="10">Scanner requests</option>
+
+<option value="44">Styles</option>
+<option value="40">Tests</option>
+<option value="13">Token classes</option>
+<option value="28">Token Streaming</option>
+<option value="45">Tokens</option>
+<option value="19">Website</option></select>
+<a href="/issues/46" onclick="promptToRemote('New category', 'category[name]', '/projects/coderay/issue_categories/new'); return false;" tabindex="199" title="New category"><img alt="Add" src="/images/add.png?1289779286" style="vertical-align: middle;" /></a></p>
+
+
+<p><label for="issue_fixed_version_id">Target version</label><select id="issue_fixed_version_id" name="issue[fixed_version_id]"><option value=""></option>
+
+<option value="8">0.8</option>
+<option value="12">0.8.1</option>
+<option value="14">0.8.2</option>
+<option value="16">0.8.3</option>
+<option value="13">0.9 RC1</option>
+<option value="24">0.8.4</option>
+<option value="18">0.9 RC2</option>
+<option value="25">0.9 RC3</option>
+<option value="27">0.9.1</option>
+
+<option value="28">0.9.2</option>
+<option value="34">0.9.3</option>
+<option value="35">0.9.4</option>
+<option value="36">0.9.5</option>
+<option value="37">0.9.6</option>
+<option value="38">0.9.7</option>
+<option value="44">1.0</option>
+<option value="11" selected="selected">1.0 RC1</option>
+<option value="15">1.1</option>
+
+<option value="26">Future</option></select>
+<a href="/issues/46" onclick="promptToRemote('New version', 'version[name]', '/projects/coderay/versions'); return false;" tabindex="200" title="New version"><img alt="Add" src="/images/add.png?1289779286" style="vertical-align: middle;" /></a>
+</p>
+
+</div>
+
+<div class="splitcontentright">
+<p><label for="issue_start_date">Start Date</label><input id="issue_start_date" name="issue[start_date]" size="10" type="text" value="2008-09-18" /><img alt="Calendar" class="calendar-trigger" id="issue_start_date_trigger" src="/images/calendar.png?1289779286" /><script type="text/javascript">
+//<![CDATA[
+Calendar.setup({inputField : 'issue_start_date', ifFormat : '%Y-%m-%d', button : 'issue_start_date_trigger' });
+//]]>
+</script></p>
+<p><label for="issue_due_date">Due date</label><input id="issue_due_date" name="issue[due_date]" size="10" type="text" /><img alt="Calendar" class="calendar-trigger" id="issue_due_date_trigger" src="/images/calendar.png?1289779286" /><script type="text/javascript">
+//<![CDATA[
+Calendar.setup({inputField : 'issue_due_date', ifFormat : '%Y-%m-%d', button : 'issue_due_date_trigger' });
+//]]>
+</script></p>
+<p><label for="issue_estimated_hours">Estimated time</label><input id="issue_estimated_hours" name="issue[estimated_hours]" size="3" type="text" /> Hours</p>
+
+<p><label for="issue_done_ratio">% Done</label><select id="issue_done_ratio" name="issue[done_ratio]"><option value="0">0 %</option>
+<option value="10">10 %</option>
+<option value="20">20 %</option>
+<option value="30">30 %</option>
+<option value="40" selected="selected">40 %</option>
+<option value="50">50 %</option>
+<option value="60">60 %</option>
+<option value="70">70 %</option>
+
+<option value="80">80 %</option>
+<option value="90">90 %</option>
+<option value="100">100 %</option></select></p>
+
+</div>
+
+<div style="clear:both;"> </div>
+<div class="splitcontentleft">
+
+
+</div>
+<div style="clear:both;"> </div>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<script src="/javascripts/jstoolbar/jstoolbar.js?1289775776" type="text/javascript"></script><script src="/javascripts/jstoolbar/textile.js?1289775776" type="text/javascript"></script><script src="/javascripts/jstoolbar/lang/jstoolbar-en.js?1289775776" type="text/javascript"></script><script type="text/javascript">
+//<![CDATA[
+var wikiToolbar = new jsToolBar($('issue_description')); wikiToolbar.setHelpLink('Text formatting: <a href="/help/wiki_syntax.html" onclick="window.open(&quot;/help/wiki_syntax.html&quot;, &quot;&quot;, &quot;resizable=yes, location=no, width=300, height=640, menubar=no, status=no, scrollbars=yes&quot;); return false;">Help</a>'); wikiToolbar.draw();
+//]]>
+</script>
+
+        </fieldset>
+    
+    
+    
+    <fieldset><legend>Notes</legend>
+    <textarea class="wiki-edit" cols="60" id="notes" name="notes" rows="10"></textarea>
+    <script src="/javascripts/jstoolbar/jstoolbar.js?1289775776" type="text/javascript"></script><script src="/javascripts/jstoolbar/textile.js?1289775776" type="text/javascript"></script><script src="/javascripts/jstoolbar/lang/jstoolbar-en.js?1289775776" type="text/javascript"></script><script type="text/javascript">
+//<![CDATA[
+var wikiToolbar = new jsToolBar($('notes')); wikiToolbar.setHelpLink('Text formatting: <a href="/help/wiki_syntax.html" onclick="window.open(&quot;/help/wiki_syntax.html&quot;, &quot;&quot;, &quot;resizable=yes, location=no, width=300, height=640, menubar=no, status=no, scrollbars=yes&quot;); return false;">Help</a>'); wikiToolbar.draw();
+//]]>
+</script>
+    
+    
+    <p>Files<br /><span id="attachments_fields">
+
+<input name="attachments[1][file]" size="30" type="file" /><label class="inline"><span id="attachment_description_label_content">Optional description</span><input name="attachments[1][description]" size="60" type="text" value="" />
+</label>
+</span>
+<br />
+<small><a href="#" onclick="addFileField(); return false;">Add another file</a>
+(Maximum size: 10 MB)
+</small>
+</p>
+    </fieldset>
+    </div>
+    
+    <input id="issue_lock_version" name="issue[lock_version]" type="hidden" value="11" />
+    <input name="commit" type="submit" value="Submit" />
+
+    <a accesskey="r" href="#" onclick="new Ajax.Updater('preview', '/issues/preview/46?project_id=coderay', {asynchronous:true, evalScripts:true, method:'post', onComplete:function(request){Element.scrollTo('preview')}, parameters:Form.serialize(&quot;issue-form&quot;) + '&amp;authenticity_token=' + encodeURIComponent('IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=')}); return false;">Preview</a>
+</form>
+
+<div id="preview" class="wiki"></div>
+
+  </div>
+
+
+<p class="other-formats">Also available in:
+	<span><a href="/issues/46.atom?key=bYFIUrZK4uFZ7Wqwa3YoRPKr2FqXimgFsHdfzSux" class="atom" rel="nofollow">Atom</a></span>
+	<span><a href="/issues/46.pdf" class="pdf" rel="nofollow">PDF</a></span>
+
+</p>
+
+
+
+
+
+
+<div id="context-menu" style="display: none;"></div>
+<script type="text/javascript">
+//<![CDATA[
+new ContextMenu('/issues/context_menu')
+//]]>
+</script>
+
+        
+				<div style="clear:both;"></div>
+    </div>
+</div>
+
+<div id="ajax-indicator" style="display:none;"><span>Loading...</span></div>
+	
+<div id="footer">
+  <div class="bgl"><div class="bgr">
+    Powered by <a href="http://www.redmine.org/">Redmine</a> &copy; 2006-2010 Jean-Philippe Lang
+  </div></div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

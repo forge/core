@@ -1,0 +1,13 @@
+comment[plain(diff --git a/etc/todo/scanners/coderay_lua_lexar.patch b/etc/todo/scanners/coderay_lua_lexar.patch)]
+comment[plain(index f7e3c8d..0c59559 100644)]
+head[head(--- )filename(a/etc/todo/scanners/coderay_lua_lexar.patch)]
+head[head(+++ )filename(b/etc/todo/scanners/coderay_lua_lexar.patch)]
+change<change(@@)plain( -117,7 +117,7 )change(@@)>plain( Index: vendor/plugins/coderay-0.7.6.227/lib/coderay/scanners/lua.rb)
+plain( +            kind = :hex)
+plain( +)
+plain( +          elsif scan(/(?:0[0-7]+\)(?![89.eEfF]\)/\))
+delete[delete(-)plain(+            kind = :oct)]
+insert[insert(+)plain(+            kind = :oct)eyecatcher<plain(al)>]
+plain( +)
+plain( +          elsif scan(/(?:\\d+\)(?![.eEfF]\)/\))
+plain( +            kind = :integer)

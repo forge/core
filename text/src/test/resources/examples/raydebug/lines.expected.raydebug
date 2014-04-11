@@ -1,0 +1,27 @@
+class(head)head<operator([)class(head)operator(()head(===================================================================)operator(\))operator(])>
+class(head)head<operator([)class(head)operator(()head(--- )operator(\))class(plain)operator(()plain(/Users/jgoebel/rails/pastie/app/controllers/pastes_controller.rb  (revision 1431\\\))operator(\))operator(])>
+class(head)head<operator([)class(head)operator(()head(+++ )operator(\))class(plain)operator(()plain(/Users/jgoebel/rails/pastie/app/controllers/pastes_controller.rb  (revision 1437\\\))operator(\))operator(])>
+class(change)change<operator([)class(change)operator(()change(@@)operator(\))class(plain)operator(()plain( -1,6 +1,10 )operator(\))class(change)operator(()change(@@)operator(\))operator(])>
+class(insert)insert<operator([)class(insert)operator(()insert(+)operator(\))class(plain)operator(()plain(require 'login_system')operator(\))operator(])>
+class(comment)operator(()comment( require 'coderay')operator(\))
+class(comment)operator(()comment( )operator(\))
+class(comment)operator(()comment( class PastesController < ApplicationController)operator(\))
+class(insert)insert<operator([)class(insert)operator(()insert(+)operator(\))class(plain)operator(()plain(  include LoginSystem)operator(\))operator(])>
+class(insert)insert<operator([)class(insert)operator(()insert(+)operator(\))operator(])>
+class(insert)insert<operator([)class(insert)operator(()insert(+)operator(\))class(plain)operator(()plain(  before_filter :attempt_cookie_login)operator(\))operator(])>
+class(comment)operator(()comment( )operator(\))
+class(comment)operator(()comment( #  caches_action :recent)operator(\))
+class(comment)operator(()comment( )operator(\))
+class(change)change<operator([)class(change)operator(()change(@@)operator(\))class(plain)operator(()plain( -10,11 +14,7 )operator(\))class(change)operator(()change(@@)operator(\))operator(])>
+class(comment)operator(()comment( )operator(\))
+class(comment)operator(()comment(   def show)operator(\))
+class(comment)operator(()comment(     @paste = Paste.find(params[:id]\\\))operator(\))
+class(delete)delete<operator([)class(delete)operator(()delete(-)operator(\))class(plain)operator(()plain(    if params[:key] and params[:key]==User.new(@paste.nick\\\).magic_mojo)operator(\))operator(])>
+class(delete)delete<operator([)class(delete)operator(()delete(-)operator(\))class(plain)operator(()plain(        session[:login]=@paste.nick)operator(\))operator(])>
+class(delete)delete<operator([)class(delete)operator(()delete(-)operator(\))class(plain)operator(()plain(        return redirect_to(:action => 'show', :id => @paste.id\\\))operator(\))operator(])>
+class(delete)delete<operator([)class(delete)operator(()delete(-)operator(\))class(plain)operator(()plain(    end)operator(\))operator(])>
+class(delete)delete<operator([)class(delete)operator(()delete(-)operator(\))class(plain)operator(()plain(    )operator(\))operator(])>
+class(insert)insert<operator([)class(insert)operator(()insert(+)operator(\))class(plain)operator(()plain(    attempt_key_login if not logged_in?)operator(\))operator(])>
+class(comment)operator(()comment(     unless @paste.asset or not @paste.body.blank?)operator(\))
+class(comment)operator(()comment(       render :action => "edit")operator(\))
+class(comment)operator(()comment(     end)operator(\))

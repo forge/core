@@ -1,0 +1,72 @@
+- source: http://rubygems.org
+
+- package: rails
+  path: .
+
+- package: arel
+  git: git://github.com/rails/arel.git
+
+- package: rake 0.8.7+
+
+- package: mocha 0.9.8+
+
+- package: system_timer
+  engine : mri <1.9
+
+- package: ruby-debug 0.10.3+
+  engine : mri <1.9
+
+- package: json
+  engine : [mri, rbx]
+
+- package: yajl-ruby
+  engine : [mri, rbx]
+
+- package: nokogiri 1.4.0+
+  engine : [mri, rbx]
+
+- package: ruby-debug
+  engine : jruby
+
+- package: jruby-openssl
+  engine : jruby
+
+# AR
+- package: sqlite3-ruby 1.3.0.beta.2
+  engine : [mri, rbx]
+
+- package: pg 0.9.0+
+  enigne : [mri, rbx]
+  group  : db
+
+- package: mysql 2.8.1+
+  enigne : [mri, rbx]
+  group  : db
+
+- package: activerecord-jdbcsqlite3-adapter
+  engine : jruby
+
+- package: activerecord-jdbcmysql-adapter
+  engine : jruby
+  group  : db
+
+- package: activerecord-jdbcpostgresql-adapter
+  engine : jruby
+  group  : db
+
+# AP
+- package: rack-test 0.5.3
+
+- package: RedCloth 4.2.2+
+
+- package: rdoc 2.1
+  group  : documentation
+
+- package: nokogiri 1.4.0+
+  group  : ci
+  optional: true
+
+- package: fcgi 0.8.7+
+  engine : mri <1.9   # fcgi gem doesn't compile on 1.9
+  group  : ci
+  optional: true

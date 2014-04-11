@@ -1,0 +1,1144 @@
+keyword(var) function(dbg) operator(=) keyword(function)operator(()ident(s)operator(\)) operator({)
+    keyword(if)operator(()keyword(typeof) ident(console) operator(!==) string<delimiter(')content(undefined)delimiter(')>operator(\)) operator({)
+        ident(console)operator(.)ident(log)operator(()string<delimiter(")content(Readability: )delimiter(")> operator(+) ident(s)operator(\))operator(;)
+    operator(})
+operator(})operator(;)
+
+comment(/*
+ * Readability. An Arc90 Lab Experiment. 
+ * Website: http://lab.arc90.com/experiments/readability
+ * Source:  http://code.google.com/p/arc90labs-readability
+ *
+ * Copyright (c\) 2009 Arc90 Inc
+ * Readability is licensed under the Apache License, Version 2.0.
+**/)
+keyword(var) ident(readability) operator(=) operator({)
+    key(version)operator(:)     string<delimiter(')content(1.6.0)delimiter(')>operator(,)
+    key(emailSrc)operator(:)    string<delimiter(')content(http://lab.arc90.com/experiments/readability/email.php)delimiter(')>operator(,)
+    key(iframeLoads)operator(:) integer(0)operator(,)
+        key(convertLinksToFootnotes)operator(:) predefined_constant(false)operator(,)
+    key(frameHack)operator(:)   predefined_constant(false)operator(,) comment(/**
+                         * The frame hack is to workaround a firefox bug where if you
+                         * pull content out of a frame and stick it into the parent element, the scrollbar won't appear.
+                         * So we fake a scrollbar in the wrapping div.
+                        **/)
+    key(bodyCache)operator(:)  predefined_constant(null)operator(,)   comment(/* Cache the body HTML in case we need to re-use it later */)
+    key(flags)operator(:) hex(0x1) operator(|) hex(0x2)operator(,)   comment(/* Start with both flags set. */)
+    
+    comment(/* constants */)
+    key(FLAG_STRIP_UNLIKELYS)operator(:) hex(0x1)operator(,)
+    key(FLAG_WEIGHT_CLASSES)operator(:)  hex(0x2)operator(,)
+    
+    comment(/**
+     * All of the regular expressions in use within readability.
+     * Defined up here so we don't instantiate them repeatedly in loops.
+     **/)
+    key(regexps)operator(:) operator({)
+        key(unlikelyCandidatesRe)operator(:)   regexp<delimiter(/)content(combx|comment|disqus|foot|header|menu|rss|shoutbox|sidebar|sponsor)delimiter(/)modifier(i)>operator(,)
+        key(okMaybeItsACandidateRe)operator(:) regexp<delimiter(/)content(and|article|body|column|main)delimiter(/)modifier(i)>operator(,)
+        key(positiveRe)operator(:)             regexp<delimiter(/)content(article|body|content|entry|hentry|page|pagination|post|text)delimiter(/)modifier(i)>operator(,)
+        key(negativeRe)operator(:)             regexp<delimiter(/)content(combx|comment|contact|foot|footer|footnote|link|masthead|media|meta|promo|related|scroll|shoutbox|sponsor|tags|widget)delimiter(/)modifier(i)>operator(,)
+        key(divToPElementsRe)operator(:)       regexp<delimiter(/)content(<(a|blockquote|dl|div|img|ol|p|pre|table|ul\))delimiter(/)modifier(i)>operator(,)
+        key(replaceBrsRe)operator(:)           regexp<delimiter(/)content((<br[^>]*>[ )char(\\n)char(\\r)char(\\t)content(]*\){2,})delimiter(/)modifier(gi)>operator(,)
+        key(replaceFontsRe)operator(:)         regexp<delimiter(/)content(<()content(\\/)content(?\)font[^>]*>)delimiter(/)modifier(gi)>operator(,)
+        key(trimRe)operator(:)                 regexp<delimiter(/)content(^)char(\\s)content(+|)char(\\s)content(+$)delimiter(/)modifier(g)>operator(,)
+        key(normalizeRe)operator(:)            regexp<delimiter(/)char(\\s)content({2,})delimiter(/)modifier(g)>operator(,)
+        key(killBreaksRe)operator(:)           regexp<delimiter(/)content((<br)char(\\s)content(*)content(\\/)content(?>()char(\\s)content(|&nbsp;?\)*\){1,})delimiter(/)modifier(g)>operator(,)
+        key(videoRe)operator(:)                regexp<delimiter(/)content(http:)content(\\/)content(\\/)content((www)content(\\.)content(\)?(youtube|vimeo\))content(\\.)content(com)delimiter(/)modifier(i)>operator(,)
+                key(skipFootnoteLinkRe)operator(:)     regexp<delimiter(/)content(^)char(\\s)content(*()content(\\[)content(?[a-z0-9]{1,2})content(\\])content(?|^|edit|citation needed\))char(\\s)content(*$)delimiter(/)modifier(i)>
+    operator(})operator(,)
+
+    comment(/**
+     * Runs readability.
+     * 
+     * Workflow:
+     *  1. Prep the document by removing script tags, css, etc.
+     *  2. Build readability's DOM tree.
+     *  3. Grab the article content from the current dom tree.
+     *  4. Replace the current DOM tree with the new one.
+     *  5. Read peacefully.
+     *
+     * @return void
+     **/)
+    function(init)operator(:) keyword(function)operator(()operator(\)) operator({)
+        keyword(if)operator(()ident(document)operator(.)ident(body) operator(&&) operator(!)ident(readability)operator(.)ident(bodyCache)operator(\)) operator({)
+            ident(readability)operator(.)ident(bodyCache) operator(=) ident(document)operator(.)ident(body)operator(.)ident(innerHTML)operator(;) operator(})
+        
+        ident(readability)operator(.)ident(prepDocument)operator(()operator(\))operator(;)
+
+        comment(/* Build readability's DOM tree */)
+        keyword(var) ident(overlay)        operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(")content(DIV)delimiter(")>operator(\))operator(;)
+        keyword(var) ident(innerDiv)       operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(")content(DIV)delimiter(")>operator(\))operator(;)
+        keyword(var) ident(articleTools)   operator(=) ident(readability)operator(.)ident(getArticleTools)operator(()operator(\))operator(;)
+        keyword(var) ident(articleTitle)   operator(=) ident(readability)operator(.)ident(getArticleTitle)operator(()operator(\))operator(;)
+        keyword(var) ident(articleContent) operator(=) ident(readability)operator(.)ident(grabArticle)operator(()operator(\))operator(;)
+        keyword(var) ident(articleFooter)  operator(=) ident(readability)operator(.)ident(getArticleFooter)operator(()operator(\))operator(;)
+
+        comment(/**
+         * If we attempted to strip unlikely candidates on the first run through, and we ended up with no content,
+         * that may mean we stripped out the actual content so we couldn't parse it. So re-run init while preserving
+         * unlikely candidates to have a better shot at getting our content out properly.
+        **/)
+        keyword(if)operator(()ident(readability)operator(.)ident(getInnerText)operator(()ident(articleContent)operator(,) predefined_constant(false)operator(\))operator(.)ident(length) operator(<) integer(250)operator(\))
+        operator({)
+            keyword(if) operator(()ident(readability)operator(.)ident(flagIsActive)operator(()ident(readability)operator(.)ident(FLAG_STRIP_UNLIKELYS)operator(\)\)) operator({)
+                ident(readability)operator(.)ident(removeFlag)operator(()ident(readability)operator(.)ident(FLAG_STRIP_UNLIKELYS)operator(\))operator(;)
+                ident(document)operator(.)ident(body)operator(.)ident(innerHTML) operator(=) ident(readability)operator(.)ident(bodyCache)operator(;)
+                keyword(return) ident(readability)operator(.)ident(init)operator(()operator(\))operator(;)
+            operator(})
+            keyword(else) keyword(if) operator(()ident(readability)operator(.)ident(flagIsActive)operator(()ident(readability)operator(.)ident(FLAG_WEIGHT_CLASSES)operator(\)\)) operator({)
+                ident(readability)operator(.)ident(removeFlag)operator(()ident(readability)operator(.)ident(FLAG_WEIGHT_CLASSES)operator(\))operator(;)
+                ident(document)operator(.)ident(body)operator(.)ident(innerHTML) operator(=) ident(readability)operator(.)ident(bodyCache)operator(;)
+                keyword(return) ident(readability)operator(.)ident(init)operator(()operator(\))operator(;)              
+            operator(})
+            keyword(else) operator({)
+                ident(articleContent)operator(.)ident(innerHTML) operator(=) string<delimiter(")content(<p>Sorry, readability was unable to parse this page for content. If you feel like it should have been able to, please <a href='http://code.google.com/p/arc90labs-readability/issues/entry'>let us know by submitting an issue.</a></p><p>Also, please note that Readability does not play very nicely with front pages. Readability is intended to work on articles with a sizable chunk of text that you'd like to read comfortably. If you're using Readability on a landing page (like nytimes.com for example\), please click into an article first before using Readability.</p>)delimiter(")>operator(;)
+            operator(})
+        operator(})
+
+        ident(overlay)operator(.)ident(id)              operator(=) string<delimiter(")content(readOverlay)delimiter(")>operator(;)
+        ident(innerDiv)operator(.)ident(id)             operator(=) string<delimiter(")content(readInner)delimiter(")>operator(;)
+
+        comment(/* Apply user-selected styling */)
+        ident(document)operator(.)ident(body)operator(.)ident(className) operator(=) ident(readStyle)operator(;)
+        keyword(if) operator(()ident(readStyle) operator(==) string<delimiter(")content(style-athelas)delimiter(")> operator(||) ident(readStyle) operator(==) string<delimiter(")content(style-apertura)delimiter(")>operator(\))operator({)
+            ident(overlay)operator(.)ident(className) operator(=) ident(readStyle) operator(+) string<delimiter(")content( rdbTypekit)delimiter(")>operator(;)
+        operator(})
+        keyword(else) operator({)
+            ident(overlay)operator(.)ident(className) operator(=) ident(readStyle)operator(;)
+        operator(})
+        ident(innerDiv)operator(.)ident(className)    operator(=) ident(readMargin) operator(+) string<delimiter(")content( )delimiter(")> operator(+) ident(readSize)operator(;)
+
+                keyword(if)operator(()keyword(typeof)operator(()ident(readConvertLinksToFootnotes)operator(\)) operator(!==) string<delimiter(')content(undefined)delimiter(')> operator(&&) ident(readConvertLinksToFootnotes) operator(==) predefined_constant(true)operator(\)) operator({)
+                        ident(readability)operator(.)ident(convertLinksToFootnotes) operator(=) predefined_constant(true)operator(;)
+                operator(})
+
+        comment(/* Glue the structure of our document together. */)
+        comment(// articleContent.appendChild( articleFooter  \);)
+              ident(innerDiv)operator(.)ident(appendChild)operator(() ident(articleTitle)   operator(\))operator(;)
+              ident(innerDiv)operator(.)ident(appendChild)operator(() ident(articleContent) operator(\))operator(;)
+              ident(innerDiv)operator(.)ident(appendChild)operator(() ident(articleFooter)  operator(\))operator(;)
+               ident(overlay)operator(.)ident(appendChild)operator(() ident(articleTools)   operator(\))operator(;)
+               ident(overlay)operator(.)ident(appendChild)operator(() ident(innerDiv)       operator(\))operator(;)
+
+        comment(/* Clear the old HTML, insert the new content. */)
+        ident(document)operator(.)ident(body)operator(.)ident(innerHTML) operator(=) string<delimiter(")delimiter(")>operator(;)
+        ident(document)operator(.)ident(body)operator(.)ident(insertBefore)operator(()ident(overlay)operator(,) ident(document)operator(.)ident(body)operator(.)ident(firstChild)operator(\))operator(;)
+
+        keyword(if)operator(()ident(readability)operator(.)ident(frameHack)operator(\))
+        operator({)
+            keyword(var) ident(readOverlay) operator(=) ident(document)operator(.)ident(getElementById)operator(()string<delimiter(')content(readOverlay)delimiter(')>operator(\))operator(;)
+            ident(readOverlay)operator(.)ident(style)operator(.)ident(height) operator(=) string<delimiter(')content(100%)delimiter(')>operator(;)
+            ident(readOverlay)operator(.)ident(style)operator(.)ident(overflow) operator(=) string<delimiter(')content(auto)delimiter(')>operator(;)
+        operator(})
+
+        comment(/**
+         * If someone tries to use Readability on a site's root page, give them a warning about usage.
+        **/)
+        keyword(if)operator((()ident(window)operator(.)ident(location)operator(.)ident(protocol) operator(+) string<delimiter(")content(//)delimiter(")> operator(+) ident(window)operator(.)ident(location)operator(.)ident(host) operator(+) string<delimiter(")content(/)delimiter(")>operator(\)) operator(==) ident(window)operator(.)ident(location)operator(.)ident(href)operator(\))
+        operator({)
+            ident(articleContent)operator(.)ident(style)operator(.)ident(display) operator(=) string<delimiter(")content(none)delimiter(")>operator(;)
+            keyword(var) ident(rootWarning) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(p)delimiter(')>operator(\))operator(;)
+                ident(rootWarning)operator(.)ident(id) operator(=) string<delimiter(")content(readability-warning)delimiter(")>operator(;)
+                ident(rootWarning)operator(.)ident(innerHTML) operator(=) string<delimiter(")content(<em>Readability</em> was intended for use on individual articles and not home pages. )delimiter(")> operator(+)
+                    string<delimiter(")content(If you'd like to try rendering this page anyways, <a onClick='javascript:document.getElementById()char(\\")content(readability-warning)char(\\")content(\).style.display=)char(\\")content(none)char(\\")content(;document.getElementById()char(\\")content(readability-content)char(\\")content(\).style.display=)char(\\")content(block)char(\\")content(;'>click here</a> to continue.)delimiter(")>operator(;)
+
+            ident(innerDiv)operator(.)ident(insertBefore)operator(() ident(rootWarning)operator(,) ident(articleContent) operator(\))operator(;)
+        operator(})
+comment(//        document.body.style.display = "block";)
+
+                keyword(if)operator(()ident(readability)operator(.)ident(convertLinksToFootnotes) operator(&&) operator(!)ident(window)operator(.)ident(location)operator(.)ident(href)operator(.)ident(match)operator(()regexp<delimiter(/)content(wikipedia)content(\\.)content(org)delimiter(/)modifier(g)>operator(\)\)) operator({)
+                        ident(readability)operator(.)ident(addFootnotes)operator(()ident(articleContent)operator(\))operator(;)
+                operator(})
+
+        ident(window)operator(.)ident(scrollTo)operator(()integer(0)operator(,) integer(0)operator(\))operator(;)
+
+        comment(/* If we're using the Typekit library, select the font */)
+        keyword(if) operator(()ident(readStyle) operator(==) string<delimiter(")content(style-athelas)delimiter(")> operator(||) ident(readStyle) operator(==) string<delimiter(")content(style-apertura)delimiter(")>operator(\)) operator({)
+            ident(readability)operator(.)ident(useRdbTypekit)operator(()operator(\))operator(;)
+        operator(})
+    operator(})operator(,)
+
+    comment(/**
+     * Get the article tools Element that has buttons like reload, print, email.
+     *
+     * @return void
+     **/)
+    function(getArticleTools)operator(:) keyword(function) operator(()operator(\)) operator({)
+        keyword(var) ident(articleTools) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(")content(DIV)delimiter(")>operator(\))operator(;)
+
+        ident(articleTools)operator(.)ident(id)        operator(=) string<delimiter(")content(readTools)delimiter(")>operator(;)
+        ident(articleTools)operator(.)ident(innerHTML) operator(=) 
+            string<delimiter(")content(<a href='#' onclick='return window.location.reload(\)' title='Reload original page' id='reload-page'>Reload Original Page</a>)delimiter(")> operator(+)
+            string<delimiter(")content(<a href='#' onclick='javascript:window.print(\);' title='Print page' id='print-page'>Print Page</a>)delimiter(")> operator(+)
+            string<delimiter(")content(<a href='#' onclick='readability.emailBox(\); return false;' title='Email page' id='email-page'>Email Page</a>)delimiter(")>operator(;)
+
+        keyword(return) ident(articleTools)operator(;)
+    operator(})operator(,)
+    
+        comment(/**
+         * Get the article title as an H1.
+         *
+         * @return void
+         **/)
+        function(getArticleTitle)operator(:) keyword(function) operator(()operator(\)) operator({)
+                keyword(var) ident(curTitle) operator(=) string<delimiter(")delimiter(")>operator(,)
+                    ident(origTitle) operator(=) string<delimiter(")delimiter(")>operator(;)
+
+                keyword(try) operator({)
+                        ident(curTitle) operator(=) ident(origTitle) operator(=) ident(document)operator(.)ident(title)operator(;)
+                        
+                        keyword(if)operator(()keyword(typeof) ident(curTitle) operator(!=) string<delimiter(")content(string)delimiter(")>operator(\)) operator({) comment(/* If they had an element with id "title" in their HTML */)
+                                ident(curTitle) operator(=) ident(origTitle) operator(=) ident(readability)operator(.)ident(getInnerText)operator(()ident(document)operator(.)ident(getElementsByTagName)operator(()string<delimiter(')content(title)delimiter(')>operator(\))operator([)integer(0)operator(]\))operator(;)                             
+                        operator(})
+                operator(})
+                keyword(catch)operator(()ident(e)operator(\)) operator({)operator(})
+                
+                keyword(if)operator(()ident(curTitle)operator(.)ident(match)operator(()regexp<delimiter(/)content( [)content(\\|)content(\\-)content(] )delimiter(/)>operator(\)\))
+                operator({)
+                        ident(curTitle) operator(=) ident(origTitle)operator(.)ident(replace)operator(()regexp<delimiter(/)content((.*\)[)content(\\|)content(\\-)content(] .*)delimiter(/)modifier(gi)>operator(,)string<delimiter(')content($1)delimiter(')>operator(\))operator(;)
+                        
+                        keyword(if)operator(()ident(curTitle)operator(.)ident(split)operator(()string<delimiter(')content( )delimiter(')>operator(\))operator(.)ident(length) operator(<) integer(3)operator(\)) operator({)
+                                ident(curTitle) operator(=) ident(origTitle)operator(.)ident(replace)operator(()regexp<delimiter(/)content([^)content(\\|)content(\\-)content(]*[)content(\\|)content(\\-)content(](.*\))delimiter(/)modifier(gi)>operator(,)string<delimiter(')content($1)delimiter(')>operator(\))operator(;)
+                        operator(})
+                operator(})
+                keyword(else) keyword(if)operator(()ident(curTitle)operator(.)ident(indexOf)operator(()string<delimiter(')content(: )delimiter(')>operator(\)) operator(!==) operator(-)integer(1)operator(\))
+                operator({)
+                        ident(curTitle) operator(=) ident(origTitle)operator(.)ident(replace)operator(()regexp<delimiter(/)content(.*:(.*\))delimiter(/)modifier(gi)>operator(,) string<delimiter(')content($1)delimiter(')>operator(\))operator(;)
+
+                        keyword(if)operator(()ident(curTitle)operator(.)ident(split)operator(()string<delimiter(')content( )delimiter(')>operator(\))operator(.)ident(length) operator(<) integer(3)operator(\)) operator({)
+                                ident(curTitle) operator(=) ident(origTitle)operator(.)ident(replace)operator(()regexp<delimiter(/)content([^:]*[:](.*\))delimiter(/)modifier(gi)>operator(,)string<delimiter(')content($1)delimiter(')>operator(\))operator(;)
+                        operator(})
+                operator(})
+                keyword(else) keyword(if)operator(()ident(curTitle)operator(.)ident(length) operator(>) integer(150) operator(||) ident(curTitle)operator(.)ident(length) operator(<) integer(15)operator(\))
+                operator({)
+                        keyword(var) ident(hOnes) operator(=) ident(document)operator(.)ident(getElementsByTagName)operator(()string<delimiter(')content(h1)delimiter(')>operator(\))operator(;)
+                        keyword(if)operator(()ident(hOnes)operator(.)ident(length) operator(==) integer(1)operator(\))
+                        operator({)
+                                ident(curTitle) operator(=) ident(readability)operator(.)ident(getInnerText)operator(()ident(hOnes)operator([)integer(0)operator(]\))operator(;)
+                        operator(})
+                operator(})
+
+                ident(curTitle) operator(=) ident(curTitle)operator(.)ident(replace)operator(() ident(readability)operator(.)ident(regexps)operator(.)ident(trimRe)operator(,) string<delimiter(")delimiter(")> operator(\))operator(;)
+
+                keyword(if)operator(()ident(curTitle)operator(.)ident(split)operator(()string<delimiter(')content( )delimiter(')>operator(\))operator(.)ident(length) operator(<=) integer(4)operator(\)) operator({)
+                        ident(curTitle) operator(=) ident(origTitle)operator(;)
+                operator(})
+                
+                keyword(var) ident(articleTitle) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(")content(H1)delimiter(")>operator(\))operator(;)
+                ident(articleTitle)operator(.)ident(innerHTML) operator(=) ident(curTitle)operator(;)
+                
+                keyword(return) ident(articleTitle)operator(;)
+        operator(})operator(,)
+
+    comment(/**
+     * Get the footer with the readability mark etc.
+     *
+     * @return void
+     **/)
+    function(getArticleFooter)operator(:) keyword(function) operator(()operator(\)) operator({)
+        keyword(var) ident(articleFooter) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(")content(DIV)delimiter(")>operator(\))operator(;)
+
+                comment(/**
+                 * For research purposes, generate an img src that contains the chosen readstyle etc,
+                 * so we can generate aggregate stats and change styles based on them in the future
+                 **/)
+        comment(// var statsQueryParams = "?readStyle=" + encodeURIComponent(readStyle\) + "&readMargin=" + encodeURIComponent(readMargin\) + "&readSize=" + encodeURIComponent(readSize\);)
+                comment(/* TODO: attach this to an image */)
+
+        keyword(var) ident(twitterLink) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(a)delimiter(')>operator(\))operator(;)
+            ident(twitterLink)operator(.)ident(setAttribute)operator(()string<delimiter(')content(href)delimiter(')>operator(,)string<delimiter(')content(http://lab.arc90.com/experiments/readability)delimiter(')>operator(\))operator(;)
+            ident(twitterLink)operator(.)ident(setAttribute)operator(()string<delimiter(')content(id)delimiter(')>operator(,)string<delimiter(')content(footer-twitterLink)delimiter(')>operator(\))operator(;)
+            ident(twitterLink)operator(.)ident(setAttribute)operator(()string<delimiter(')content(title)delimiter(')>operator(,)string<delimiter(')content(Follow Arc90 on Twitter)delimiter(')>operator(\))operator(;)
+            ident(twitterLink)operator(.)ident(innerHTML) operator(=) string<delimiter(")content(Follow us on Twitter &raquo;)delimiter(")>operator(;)
+
+        ident(articleFooter)operator(.)ident(id) operator(=) string<delimiter(")content(readFooter)delimiter(")>operator(;)
+        ident(articleFooter)operator(.)ident(innerHTML) operator(=) 
+            string<delimiter(")content(<div id='rdb-footer-left'>)delimiter(")> operator(+)
+                string<delimiter(")content(<a href='http://lab.arc90.com/experiments/readability' id='readability-logo'>Readability &mdash; </a>)delimiter(")> operator(+)
+                string<delimiter(")content(<a href='http://www.arc90.com/' id='arc90-logo'>An Arc90 Laboratory Experiment</a>)delimiter(")> operator(+)
+                                string<delimiter(")content(<span id='readability-url'> &mdash; http://lab.arc90.com/experiments/readability</span>)delimiter(")> operator(+)
+                string<delimiter(")content(<a href='http://www.twitter.com/arc90' class='footer-twitterLink'>Follow us on Twitter &raquo;</a>)delimiter(")> operator(+)
+            string<delimiter(")content(</div>)delimiter(")> operator(+)
+            string<delimiter(")content(<div id='rdb-footer-right'>)delimiter(")> operator(+)
+                string<delimiter(")content(<a href='http://www.twitter.com/arc90' class='footer-twitterLink'>Follow us on Twitter &raquo;</a>)delimiter(")> operator(+)
+                string<delimiter(")content(<span class='version'>Readability version )delimiter(")> operator(+) ident(readability)operator(.)ident(version) operator(+) string<delimiter(")content(</span>)delimiter(")> operator(+)
+            string<delimiter(")content(</div>)delimiter(")>operator(;)
+
+        keyword(return) ident(articleFooter)operator(;)
+    operator(})operator(,)
+    
+    comment(/**
+     * Prepare the HTML document for readability to scrape it.
+     * This includes things like stripping javascript, CSS, and handling terrible markup.
+     * 
+     * @return void
+     **/)
+    function(prepDocument)operator(:) keyword(function) operator(()operator(\)) operator({)
+        comment(/**
+         * In some cases a body element can't be found (if the HTML is totally hosed for example\)
+         * so we create a new body node and append it to the document.
+         */)
+        keyword(if)operator(()ident(document)operator(.)ident(body) operator(===) predefined_constant(null)operator(\))
+        operator({)
+            keyword(var) ident(body) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(")content(body)delimiter(")>operator(\))operator(;)
+            keyword(try) operator({)
+                ident(document)operator(.)ident(body) operator(=) ident(body)operator(;)       
+            operator(})
+            keyword(catch)operator(()ident(e)operator(\)) operator({)
+                ident(document)operator(.)ident(documentElement)operator(.)ident(appendChild)operator(()ident(body)operator(\))operator(;)
+                ident(dbg)operator(()ident(e)operator(\))operator(;)
+            operator(})
+        operator(})
+
+        keyword(var) ident(frames) operator(=) ident(document)operator(.)ident(getElementsByTagName)operator(()string<delimiter(')content(frame)delimiter(')>operator(\))operator(;)
+        keyword(if)operator(()ident(frames)operator(.)ident(length) operator(>) integer(0)operator(\))
+        operator({)
+            keyword(var) ident(bestFrame) operator(=) predefined_constant(null)operator(;)
+            keyword(var) ident(bestFrameSize) operator(=) integer(0)operator(;)
+            keyword(for)operator(()keyword(var) ident(frameIndex) operator(=) integer(0)operator(;) ident(frameIndex) operator(<) ident(frames)operator(.)ident(length)operator(;) ident(frameIndex)operator(++)operator(\))
+            operator({)
+                keyword(var) ident(frameSize) operator(=) ident(frames)operator([)ident(frameIndex)operator(])operator(.)ident(offsetWidth) operator(+) ident(frames)operator([)ident(frameIndex)operator(])operator(.)ident(offsetHeight)operator(;)
+                keyword(var) ident(canAccessFrame) operator(=) predefined_constant(false)operator(;)
+                keyword(try) operator({)
+                    ident(frames)operator([)ident(frameIndex)operator(])operator(.)ident(contentWindow)operator(.)ident(document)operator(.)ident(body)operator(;)
+                    ident(canAccessFrame) operator(=) predefined_constant(true)operator(;)
+                operator(})
+                keyword(catch)operator(()ident(eFrames)operator(\)) operator({)
+                    ident(dbg)operator(()ident(eFrames)operator(\))operator(;)
+                operator(})
+                
+                keyword(if)operator(()ident(canAccessFrame) operator(&&) ident(frameSize) operator(>) ident(bestFrameSize)operator(\))
+                operator({)
+                    ident(bestFrame) operator(=) ident(frames)operator([)ident(frameIndex)operator(])operator(;)
+                    ident(bestFrameSize) operator(=) ident(frameSize)operator(;)
+                operator(})
+            operator(})
+
+            keyword(if)operator(()ident(bestFrame)operator(\))
+            operator({)
+                keyword(var) ident(newBody) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(body)delimiter(')>operator(\))operator(;)
+                ident(newBody)operator(.)ident(innerHTML) operator(=) ident(bestFrame)operator(.)ident(contentWindow)operator(.)ident(document)operator(.)ident(body)operator(.)ident(innerHTML)operator(;)
+                ident(newBody)operator(.)ident(style)operator(.)ident(overflow) operator(=) string<delimiter(')content(scroll)delimiter(')>operator(;)
+                ident(document)operator(.)ident(body) operator(=) ident(newBody)operator(;)
+                
+                keyword(var) ident(frameset) operator(=) ident(document)operator(.)ident(getElementsByTagName)operator(()string<delimiter(')content(frameset)delimiter(')>operator(\))operator([)integer(0)operator(])operator(;)
+                keyword(if)operator(()ident(frameset)operator(\)) operator({)
+                    ident(frameset)operator(.)ident(parentNode)operator(.)ident(removeChild)operator(()ident(frameset)operator(\))operator(;) operator(})
+                    
+                ident(readability)operator(.)ident(frameHack) operator(=) predefined_constant(true)operator(;)
+            operator(})
+        operator(})
+
+        comment(/* remove all scripts that are not readability */)
+        keyword(var) ident(scripts) operator(=) ident(document)operator(.)ident(getElementsByTagName)operator(()string<delimiter(')content(script)delimiter(')>operator(\))operator(;)
+        keyword(for)operator(()keyword(var) ident(i) operator(=) ident(scripts)operator(.)ident(length)operator(-)integer(1)operator(;) ident(i) operator(>=) integer(0)operator(;) ident(i)operator(--)operator(\))
+        operator({)
+            keyword(if)operator(()keyword(typeof)operator(()ident(scripts)operator([)ident(i)operator(])operator(.)ident(src)operator(\)) operator(==) string<delimiter(")content(undefined)delimiter(")> operator(||) operator(()ident(scripts)operator([)ident(i)operator(])operator(.)ident(src)operator(.)ident(indexOf)operator(()string<delimiter(')content(readability)delimiter(')>operator(\)) operator(==) operator(-)integer(1) operator(&&) ident(scripts)operator([)ident(i)operator(])operator(.)ident(src)operator(.)ident(indexOf)operator(()string<delimiter(')content(typekit)delimiter(')>operator(\)) operator(==) operator(-)integer(1)operator(\)\))
+            operator({)
+                ident(scripts)operator([)ident(i)operator(])operator(.)ident(parentNode)operator(.)ident(removeChild)operator(()ident(scripts)operator([)ident(i)operator(]\))operator(;)          
+            operator(})
+        operator(})
+
+        comment(/* remove all stylesheets */)
+        keyword(for) operator(()keyword(var) ident(k)operator(=)integer(0)operator(;)ident(k) operator(<) ident(document)operator(.)ident(styleSheets)operator(.)ident(length)operator(;) ident(k)operator(++)operator(\)) operator({)
+            keyword(if) operator(()ident(document)operator(.)ident(styleSheets)operator([)ident(k)operator(])operator(.)ident(href) operator(!==) predefined_constant(null) operator(&&) ident(document)operator(.)ident(styleSheets)operator([)ident(k)operator(])operator(.)ident(href)operator(.)ident(lastIndexOf)operator(()string<delimiter(")content(readability)delimiter(")>operator(\)) operator(==) operator(-)integer(1)operator(\)) operator({)
+                ident(document)operator(.)ident(styleSheets)operator([)ident(k)operator(])operator(.)ident(disabled) operator(=) predefined_constant(true)operator(;)
+            operator(})
+        operator(})
+
+        comment(/* Remove all style tags in head (not doing this on IE\) - TODO: Why not? */)
+        keyword(var) ident(styleTags) operator(=) ident(document)operator(.)ident(getElementsByTagName)operator(()string<delimiter(")content(style)delimiter(")>operator(\))operator(;)
+        keyword(for) operator(()keyword(var) ident(st)operator(=)integer(0)operator(;)ident(st) operator(<) ident(styleTags)operator(.)ident(length)operator(;) ident(st)operator(++)operator(\)) operator({)
+            keyword(if) operator(()ident(navigator)operator(.)ident(appName) operator(!=) string<delimiter(")content(Microsoft Internet Explorer)delimiter(")>operator(\)) operator({)
+                ident(styleTags)operator([)ident(st)operator(])operator(.)ident(textContent) operator(=) string<delimiter(")delimiter(")>operator(;) operator(})
+        operator(})
+
+        comment(/* Turn all double br's into p's */)
+        comment(/* Note, this is pretty costly as far as processing goes. Maybe optimize later. */)
+        ident(document)operator(.)ident(body)operator(.)ident(innerHTML) operator(=) ident(document)operator(.)ident(body)operator(.)ident(innerHTML)operator(.)ident(replace)operator(()ident(readability)operator(.)ident(regexps)operator(.)ident(replaceBrsRe)operator(,) string<delimiter(')content(</p><p>)delimiter(')>operator(\))operator(.)ident(replace)operator(()ident(readability)operator(.)ident(regexps)operator(.)ident(replaceFontsRe)operator(,) string<delimiter(')content(<$1span>)delimiter(')>operator(\))operator(;)
+    operator(})operator(,)
+
+        comment(/**
+         * For easier reading, convert this document to have footnotes at the bottom rather than inline links.
+         * @see http://www.roughtype.com/archives/2010/05/experiments_in.php
+         *
+         * @return void
+        **/)
+        function(addFootnotes)operator(:) keyword(function)operator(()ident(articleContent)operator(\)) operator({)
+                keyword(var) ident(footnotesWrapper) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(div)delimiter(')>operator(\))operator(;)
+                ident(footnotesWrapper)operator(.)ident(innerHTML) operator(=) string<delimiter(")content(<h3>References</h3>)delimiter(")>operator(;)
+                
+                keyword(var) ident(articleFootnotes) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(ol)delimiter(')>operator(\))operator(;)
+                ident(footnotesWrapper)operator(.)ident(appendChild)operator(()ident(articleFootnotes)operator(\))operator(;)
+                
+                keyword(var) ident(articleLinks) operator(=) ident(articleContent)operator(.)ident(getElementsByTagName)operator(()string<delimiter(')content(a)delimiter(')>operator(\))operator(;)
+                
+                keyword(var) ident(linkCount) operator(=) integer(0)operator(;)
+                keyword(for) operator(()keyword(var) ident(i) operator(=) integer(0)operator(;) ident(i) operator(<) ident(articleLinks)operator(.)ident(length)operator(;) ident(i)operator(++)operator(\))
+                operator({)
+                        keyword(var) ident(articleLink)  operator(=) ident(articleLinks)operator([)ident(i)operator(])operator(,)
+                                ident(footnoteLink) operator(=) ident(articleLink)operator(.)ident(cloneNode)operator(()predefined_constant(true)operator(\))operator(,)
+                                ident(refLink)      operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(a)delimiter(')>operator(\))operator(,)
+                            ident(footnote)     operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(li)delimiter(')>operator(\))operator(,)
+                                ident(linkDomain)   operator(=) ident(footnoteLink)operator(.)ident(host) operator(?) ident(footnoteLink)operator(.)ident(host) operator(:) ident(document)operator(.)ident(location)operator(.)ident(host)operator(,)
+                                ident(linkText)     operator(=) ident(readability)operator(.)ident(getInnerText)operator(()ident(articleLink)operator(\))operator(;)
+                        
+                        keyword(if)operator(()ident(articleLink)operator(.)ident(className) operator(&&) ident(articleLink)operator(.)ident(className)operator(.)ident(indexOf)operator(()string<delimiter(')content(readability-DoNotFootnote)delimiter(')>operator(\)) operator(!==) operator(-)integer(1) operator(||) ident(linkText)operator(.)ident(match)operator(()ident(readability)operator(.)ident(regexps)operator(.)ident(skipFootnoteLinkRe)operator(\)\)) operator({)
+                                keyword(continue)operator(;)
+                        operator(})
+                        
+                        ident(linkCount)operator(++;)
+
+                        comment(/** Add a superscript reference after the article link */)
+                        ident(refLink)operator(.)ident(href)      operator(=) string<delimiter(')content(#readabilityFootnoteLink-)delimiter(')> operator(+) ident(linkCount)operator(;)
+                        ident(refLink)operator(.)ident(innerHTML) operator(=) string<delimiter(')content(<small><sup>[)delimiter(')> operator(+) ident(linkCount) operator(+) string<delimiter(')content(]</sup></small>)delimiter(')>
+                        ident(refLink)operator(.)ident(className) operator(=) string<delimiter(')content(readability-DoNotFootnote)delimiter(')>operator(;)
+                        ident(refLink)operator(.)ident(style)operator(.)ident(color) operator(=) string<delimiter(')content(inherit)delimiter(')>operator(;)
+                        
+                        keyword(if)operator(()ident(articleLink)operator(.)ident(parentNode)operator(.)ident(lastChild) operator(==) ident(articleLink)operator(\)) operator({)
+                                ident(articleLink)operator(.)ident(parentNode)operator(.)ident(appendChild)operator(()ident(refLink)operator(\))operator(;)
+                        operator(}) keyword(else) operator({)
+                                ident(articleLink)operator(.)ident(parentNode)operator(.)ident(insertBefore)operator(()ident(refLink)operator(,) ident(articleLink)operator(.)ident(nextSibling)operator(\))operator(;)
+                        operator(})
+
+                        ident(articleLink)operator(.)ident(style)operator(.)ident(color) operator(=) string<delimiter(')content(inherit)delimiter(')>operator(;)
+                        ident(articleLink)operator(.)ident(name)        operator(=) string<delimiter(')content(readabilityLink-)delimiter(')> operator(+) ident(linkCount)operator(;)
+
+                        ident(footnote)operator(.)ident(innerHTML)      operator(=) string<delimiter(")content(<small><sup><a href='#readabilityLink-)delimiter(")> operator(+) ident(linkCount) operator(+) string<delimiter(")content(' title='Jump to Link in Article'>^</a></sup></small> )delimiter(")>operator(;)
+
+                        ident(footnoteLink)operator(.)ident(innerHTML)  operator(=) operator(()ident(footnoteLink)operator(.)ident(title) operator(?) ident(footnoteLink)operator(.)ident(title) operator(:) ident(linkText)operator(\))operator(;)
+                        ident(footnoteLink)operator(.)ident(name)       operator(=) string<delimiter(')content(readabilityFootnoteLink-)delimiter(')> operator(+) ident(linkCount)operator(;)
+                        
+                        ident(footnote)operator(.)ident(appendChild)operator(()ident(footnoteLink)operator(\))operator(;)
+                        ident(footnote)operator(.)ident(innerHTML) operator(=) ident(footnote)operator(.)ident(innerHTML) operator(+) string<delimiter(")content(<small> ()delimiter(")> operator(+) ident(linkDomain) operator(+) string<delimiter(")content(\)</small>)delimiter(")>operator(;)
+                        
+                        ident(articleFootnotes)operator(.)ident(appendChild)operator(()ident(footnote)operator(\))operator(;)
+                operator(})
+
+                keyword(if)operator(()ident(linkCount) operator(>) integer(0)operator(\)) operator({)
+                        ident(articleContent)operator(.)ident(appendChild)operator(()ident(footnotesWrapper)operator(\))operator(;)                   
+                operator(})
+        operator(})operator(,)
+
+    function(useRdbTypekit)operator(:) keyword(function) operator(()operator(\)) operator({)
+        keyword(var) ident(rdbHead)      operator(=) ident(document)operator(.)ident(getElementsByTagName)operator(()string<delimiter(')content(head)delimiter(')>operator(\))operator([)integer(0)operator(])operator(;)
+        keyword(var) ident(rdbTKScript)  operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(script)delimiter(')>operator(\))operator(;)
+        keyword(var) ident(rdbTKCode)    operator(=) predefined_constant(null)operator(;)
+
+        keyword(var) ident(rdbTKLink)    operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(a)delimiter(')>operator(\))operator(;)
+            ident(rdbTKLink)operator(.)ident(setAttribute)operator(()string<delimiter(')content(class)delimiter(')>operator(,)string<delimiter(')content(rdbTK-powered)delimiter(')>operator(\))operator(;)
+            ident(rdbTKLink)operator(.)ident(setAttribute)operator(()string<delimiter(')content(title)delimiter(')>operator(,)string<delimiter(')content(Fonts by Typekit)delimiter(')>operator(\))operator(;)
+            ident(rdbTKLink)operator(.)ident(innerHTML) operator(=) string<delimiter(")content(Fonts by <span class='rdbTK'>Typekit</span>)delimiter(")>operator(;)
+
+        keyword(if) operator(()ident(readStyle) operator(==) string<delimiter(")content(style-athelas)delimiter(")>operator(\)) operator({)
+            ident(rdbTKCode) operator(=) string<delimiter(")content(sxt6vzy)delimiter(")>operator(;)
+            ident(dbg)operator(()string<delimiter(")content(Using Athelas Theme)delimiter(")>operator(\))operator(;)
+
+            ident(rdbTKLink)operator(.)ident(setAttribute)operator(()string<delimiter(')content(href)delimiter(')>operator(,)string<delimiter(')content(http://typekit.com/?utm_source=readability&utm_medium=affiliate&utm_campaign=athelas)delimiter(')>operator(\))operator(;)
+            ident(rdbTKLink)operator(.)ident(setAttribute)operator(()string<delimiter(')content(id)delimiter(')>operator(,)string<delimiter(')content(rdb-athelas)delimiter(')>operator(\))operator(;)
+            ident(document)operator(.)ident(getElementById)operator(()string<delimiter(")content(rdb-footer-right)delimiter(")>operator(\))operator(.)ident(appendChild)operator(()ident(rdbTKLink)operator(\))operator(;)
+        operator(})
+        keyword(if) operator(()ident(readStyle) operator(==) string<delimiter(")content(style-apertura)delimiter(")>operator(\)) operator({)
+            ident(rdbTKCode) operator(=) string<delimiter(")content(bae8ybu)delimiter(")>operator(;)
+            ident(dbg)operator(()string<delimiter(")content(Using Inverse Theme)delimiter(")>operator(\))operator(;)
+
+            ident(rdbTKLink)operator(.)ident(setAttribute)operator(()string<delimiter(')content(href)delimiter(')>operator(,)string<delimiter(')content(http://typekit.com/?utm_source=readability&utm_medium=affiliate&utm_campaign=inverse)delimiter(')>operator(\))operator(;)
+            ident(rdbTKLink)operator(.)ident(setAttribute)operator(()string<delimiter(')content(id)delimiter(')>operator(,)string<delimiter(')content(rdb-inverse)delimiter(')>operator(\))operator(;)
+            ident(document)operator(.)ident(getElementById)operator(()string<delimiter(")content(rdb-footer-right)delimiter(")>operator(\))operator(.)ident(appendChild)operator(()ident(rdbTKLink)operator(\))operator(;)
+        operator(})
+
+        comment(/**
+         * Setting new script tag attributes to pull Typekits libraries
+        **/)
+        ident(rdbTKScript)operator(.)ident(setAttribute)operator(()string<delimiter(')content(type)delimiter(')>operator(,)string<delimiter(')content(text/javascript)delimiter(')>operator(\))operator(;)
+        ident(rdbTKScript)operator(.)ident(setAttribute)operator(()string<delimiter(')content(src)delimiter(')>operator(,)string<delimiter(")content(http://use.typekit.com/)delimiter(")> operator(+) ident(rdbTKCode) operator(+) string<delimiter(")content(.js)delimiter(")>operator(\))operator(;)
+                ident(rdbTKScript)operator(.)ident(setAttribute)operator(()string<delimiter(')content(charset)delimiter(')>operator(,)string<delimiter(')content(UTF-8)delimiter(')>operator(\))operator(;)
+        ident(rdbHead)operator(.)ident(appendChild)operator(()ident(rdbTKScript)operator(\))operator(;)
+
+        comment(/**
+         * In the future, maybe try using the following experimental Callback function?:
+         * http://gist.github.com/192350
+         * &
+         * http://getsatisfaction.com/typekit/topics/support_a_pre_and_post_load_callback_function
+        **/)
+                keyword(var) function(typekitLoader) operator(=) keyword(function)operator(()operator(\)) operator({)
+                    ident(dbg)operator(()string<delimiter(")content(Looking for Typekit.)delimiter(")>operator(\))operator(;)
+                        keyword(if)operator(()keyword(typeof) ident(Typekit) operator(!=) string<delimiter(")content(undefined)delimiter(")>operator(\)) operator({)
+                                keyword(try) operator({)
+                                        ident(dbg)operator(()string<delimiter(")content(Caught typekit)delimiter(")>operator(\))operator(;)
+                                        ident(Typekit)operator(.)ident(load)operator(()operator(\))operator(;)
+                                        ident(clearInterval)operator(()ident(window)operator(.)ident(typekitInterval)operator(\))operator(;)
+                                operator(}) keyword(catch)operator(()ident(e)operator(\)) operator({)
+                                        ident(dbg)operator(()string<delimiter(")content(Typekit error: )delimiter(")> operator(+) ident(e)operator(\))operator(;)
+                                operator(})
+                        operator(})
+                operator(})operator(;)
+
+                ident(window)operator(.)ident(typekitInterval) operator(=) ident(window)operator(.)ident(setInterval)operator(()ident(typekitLoader)operator(,) integer(100)operator(\))operator(;)
+    operator(})operator(,)
+
+    comment(/**
+     * Prepare the article node for display. Clean out any inline styles,
+     * iframes, forms, strip extraneous <p> tags, etc.
+     *
+     * @param Element
+     * @return void
+     **/)
+    function(prepArticle)operator(:) keyword(function) operator(()ident(articleContent)operator(\)) operator({)
+        ident(readability)operator(.)ident(cleanStyles)operator(()ident(articleContent)operator(\))operator(;)
+        ident(readability)operator(.)ident(killBreaks)operator(()ident(articleContent)operator(\))operator(;)
+
+        comment(/* Clean out junk from the article content */)
+        ident(readability)operator(.)ident(clean)operator(()ident(articleContent)operator(,) string<delimiter(")content(form)delimiter(")>operator(\))operator(;)
+        ident(readability)operator(.)ident(clean)operator(()ident(articleContent)operator(,) string<delimiter(")content(object)delimiter(")>operator(\))operator(;)
+        ident(readability)operator(.)ident(clean)operator(()ident(articleContent)operator(,) string<delimiter(")content(h1)delimiter(")>operator(\))operator(;)
+        comment(/**
+         * If there is only one h2, they are probably using it
+         * as a header and not a subheader, so remove it since we already have a header.
+        ***/)
+        keyword(if)operator(()ident(articleContent)operator(.)ident(getElementsByTagName)operator(()string<delimiter(')content(h2)delimiter(')>operator(\))operator(.)ident(length) operator(==) integer(1)operator(\)) operator({)
+            ident(readability)operator(.)ident(clean)operator(()ident(articleContent)operator(,) string<delimiter(")content(h2)delimiter(")>operator(\))operator(;) operator(})
+        ident(readability)operator(.)ident(clean)operator(()ident(articleContent)operator(,) string<delimiter(")content(iframe)delimiter(")>operator(\))operator(;)
+
+        ident(readability)operator(.)ident(cleanHeaders)operator(()ident(articleContent)operator(\))operator(;)
+
+        comment(/* Do these last as the previous stuff may have removed junk that will affect these */)
+        ident(readability)operator(.)ident(cleanConditionally)operator(()ident(articleContent)operator(,) string<delimiter(")content(table)delimiter(")>operator(\))operator(;)
+        ident(readability)operator(.)ident(cleanConditionally)operator(()ident(articleContent)operator(,) string<delimiter(")content(ul)delimiter(")>operator(\))operator(;)
+        ident(readability)operator(.)ident(cleanConditionally)operator(()ident(articleContent)operator(,) string<delimiter(")content(div)delimiter(")>operator(\))operator(;)
+
+        comment(/* Remove extra paragraphs */)
+        keyword(var) ident(articleParagraphs) operator(=) ident(articleContent)operator(.)ident(getElementsByTagName)operator(()string<delimiter(')content(p)delimiter(')>operator(\))operator(;)
+        keyword(for)operator(()keyword(var) ident(i) operator(=) ident(articleParagraphs)operator(.)ident(length)operator(-)integer(1)operator(;) ident(i) operator(>=) integer(0)operator(;) ident(i)operator(--)operator(\))
+        operator({)
+            keyword(var) ident(imgCount)    operator(=) ident(articleParagraphs)operator([)ident(i)operator(])operator(.)ident(getElementsByTagName)operator(()string<delimiter(')content(img)delimiter(')>operator(\))operator(.)ident(length)operator(;)
+            keyword(var) ident(embedCount)  operator(=) ident(articleParagraphs)operator([)ident(i)operator(])operator(.)ident(getElementsByTagName)operator(()string<delimiter(')content(embed)delimiter(')>operator(\))operator(.)ident(length)operator(;)
+            keyword(var) ident(objectCount) operator(=) ident(articleParagraphs)operator([)ident(i)operator(])operator(.)ident(getElementsByTagName)operator(()string<delimiter(')content(object)delimiter(')>operator(\))operator(.)ident(length)operator(;)
+            
+            keyword(if)operator(()ident(imgCount) operator(===) integer(0) operator(&&) ident(embedCount) operator(===) integer(0) operator(&&) ident(objectCount) operator(===) integer(0) operator(&&) ident(readability)operator(.)ident(getInnerText)operator(()ident(articleParagraphs)operator([)ident(i)operator(])operator(,) predefined_constant(false)operator(\)) operator(==) string<delimiter(')delimiter(')>operator(\))
+            operator({)
+                ident(articleParagraphs)operator([)ident(i)operator(])operator(.)ident(parentNode)operator(.)ident(removeChild)operator(()ident(articleParagraphs)operator([)ident(i)operator(]\))operator(;)
+            operator(})
+        operator(})
+
+        keyword(try) operator({)
+            ident(articleContent)operator(.)ident(innerHTML) operator(=) ident(articleContent)operator(.)ident(innerHTML)operator(.)ident(replace)operator(()regexp<delimiter(/)content(<br[^>]*>)char(\\s)content(*<p)delimiter(/)modifier(gi)>operator(,) string<delimiter(')content(<p)delimiter(')>operator(\))operator(;)      
+        operator(})
+        keyword(catch) operator(()ident(e)operator(\)) operator({)
+            ident(dbg)operator(()string<delimiter(")content(Cleaning innerHTML of breaks failed. This is an IE strict-block-elements bug. Ignoring.: )delimiter(")> operator(+) ident(e)operator(\))operator(;)
+        operator(})
+    operator(})operator(,)
+    
+    comment(/**
+     * Initialize a node with the readability object. Also checks the
+     * className/id for special names to add to its score.
+     *
+     * @param Element
+     * @return void
+    **/)
+    function(initializeNode)operator(:) keyword(function) operator(()ident(node)operator(\)) operator({)
+        ident(node)operator(.)ident(readability) operator(=) operator({)key<delimiter(")content(contentScore)delimiter(")>operator(:) integer(0)operator(})operator(;)         
+
+        keyword(switch)operator(()ident(node)operator(.)ident(tagName)operator(\)) operator({)
+            keyword(case) string<delimiter(')content(DIV)delimiter(')>operator(:)
+                ident(node)operator(.)ident(readability)operator(.)ident(contentScore) operator(+=) integer(5)operator(;)
+                keyword(break)operator(;)
+
+            keyword(case) string<delimiter(')content(PRE)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(TD)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(BLOCKQUOTE)delimiter(')>operator(:)
+                ident(node)operator(.)ident(readability)operator(.)ident(contentScore) operator(+=) integer(3)operator(;)
+                keyword(break)operator(;)
+                
+            keyword(case) string<delimiter(')content(ADDRESS)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(OL)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(UL)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(DL)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(DD)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(DT)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(LI)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(FORM)delimiter(')>operator(:)
+                ident(node)operator(.)ident(readability)operator(.)ident(contentScore) operator(-=) integer(3)operator(;)
+                keyword(break)operator(;)
+
+            keyword(case) string<delimiter(')content(H1)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(H2)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(H3)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(H4)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(H5)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(H6)delimiter(')>operator(:)
+            keyword(case) string<delimiter(')content(TH)delimiter(')>operator(:)
+                ident(node)operator(.)ident(readability)operator(.)ident(contentScore) operator(-=) integer(5)operator(;)
+                keyword(break)operator(;)
+        operator(})
+
+        ident(node)operator(.)ident(readability)operator(.)ident(contentScore) operator(+=) ident(readability)operator(.)ident(getClassWeight)operator(()ident(node)operator(\))operator(;)
+    operator(})operator(,)
+    
+    comment(/***
+     * grabArticle - Using a variety of metrics (content score, classname, element types\), find the content that is
+     *               most likely to be the stuff a user wants to read. Then return it wrapped up in a div.
+     *
+     * @return Element
+    **/)
+    function(grabArticle)operator(:) keyword(function) operator(()operator(\)) operator({)
+        keyword(var) ident(stripUnlikelyCandidates) operator(=) ident(readability)operator(.)ident(flagIsActive)operator(()ident(readability)operator(.)ident(FLAG_STRIP_UNLIKELYS)operator(\))operator(;)
+
+        comment(/**
+         * First, node prepping. Trash nodes that look cruddy (like ones with the class name "comment", etc\), and turn divs
+         * into P tags where they have been used inappropriately (as in, where they contain no other block level elements.\)
+         *
+         * Note: Assignment from index for performance. See http://www.peachpit.com/articles/article.aspx?p=31567&seqNum=5
+         * TODO: Shouldn't this be a reverse traversal?
+        **/)
+        keyword(var) ident(node) operator(=) predefined_constant(null)operator(;)
+                keyword(var) ident(nodesToScore) operator(=) operator([)operator(])operator(;)
+        keyword(for)operator(()keyword(var) ident(nodeIndex) operator(=) integer(0)operator(;) operator(()ident(node) operator(=) ident(document)operator(.)ident(getElementsByTagName)operator(()string<delimiter(')content(*)delimiter(')>operator(\))operator([)ident(nodeIndex)operator(]\))operator(;) ident(nodeIndex)operator(++)operator(\))
+        operator({)
+            comment(/* Remove unlikely candidates */)
+            keyword(if) operator(()ident(stripUnlikelyCandidates)operator(\)) operator({)
+                keyword(var) ident(unlikelyMatchString) operator(=) ident(node)operator(.)ident(className) operator(+) ident(node)operator(.)ident(id)operator(;)
+                keyword(if) operator(()ident(unlikelyMatchString)operator(.)ident(search)operator(()ident(readability)operator(.)ident(regexps)operator(.)ident(unlikelyCandidatesRe)operator(\)) operator(!==) operator(-)integer(1) operator(&&)
+                    ident(unlikelyMatchString)operator(.)ident(search)operator(()ident(readability)operator(.)ident(regexps)operator(.)ident(okMaybeItsACandidateRe)operator(\)) operator(==) operator(-)integer(1) operator(&&)
+                    ident(node)operator(.)ident(tagName) operator(!==) string<delimiter(")content(BODY)delimiter(")>operator(\))
+                operator({)
+                    ident(dbg)operator(()string<delimiter(")content(Removing unlikely candidate - )delimiter(")> operator(+) ident(unlikelyMatchString)operator(\))operator(;)
+                    ident(node)operator(.)ident(parentNode)operator(.)ident(removeChild)operator(()ident(node)operator(\))operator(;)
+                    ident(nodeIndex)operator(--;)
+                    keyword(continue)operator(;)
+                operator(})               
+            operator(})
+
+                        keyword(if) operator(()ident(node)operator(.)ident(tagName) operator(===) string<delimiter(")content(P)delimiter(")> operator(||) ident(node)operator(.)ident(tagName) operator(===) string<delimiter(")content(TD)delimiter(")>operator(\)) operator({)
+                                ident(nodesToScore)operator([)ident(nodesToScore)operator(.)ident(length)operator(]) operator(=) ident(node)operator(;)
+                        operator(})
+
+            comment(/* Turn all divs that don't have children block level elements into p's */)
+            keyword(if) operator(()ident(node)operator(.)ident(tagName) operator(===) string<delimiter(")content(DIV)delimiter(")>operator(\)) operator({)
+                keyword(if) operator(()ident(node)operator(.)ident(innerHTML)operator(.)ident(search)operator(()ident(readability)operator(.)ident(regexps)operator(.)ident(divToPElementsRe)operator(\)) operator(===) operator(-)integer(1)operator(\)) operator({)
+                    ident(dbg)operator(()string<delimiter(")content(Altering div to p)delimiter(")>operator(\))operator(;)
+                    keyword(var) ident(newNode) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(p)delimiter(')>operator(\))operator(;)
+                    keyword(try) operator({)
+                        ident(newNode)operator(.)ident(innerHTML) operator(=) ident(node)operator(.)ident(innerHTML)operator(;)             
+                        ident(node)operator(.)ident(parentNode)operator(.)ident(replaceChild)operator(()ident(newNode)operator(,) ident(node)operator(\))operator(;)
+                        ident(nodeIndex)operator(--;)
+                    operator(})
+                    keyword(catch)operator(()ident(e)operator(\)) operator({)
+                        ident(dbg)operator(()string<delimiter(")content(Could not alter div to p, probably an IE restriction, reverting back to div.: )delimiter(")> operator(+) ident(e)operator(\))operator(;)
+                    operator(})
+                operator(})
+                keyword(else)
+                operator({)
+                    comment(/* EXPERIMENTAL */)
+                    keyword(for)operator(()keyword(var) ident(i) operator(=) integer(0)operator(,) ident(il) operator(=) ident(node)operator(.)ident(childNodes)operator(.)ident(length)operator(;) ident(i) operator(<) ident(il)operator(;) ident(i)operator(++)operator(\)) operator({)
+                        keyword(var) ident(childNode) operator(=) ident(node)operator(.)ident(childNodes)operator([)ident(i)operator(])operator(;)
+                        keyword(if)operator(()ident(childNode)operator(.)ident(nodeType) operator(==) integer(3)operator(\)) operator({) comment(// Node.TEXT_NODE)
+                            ident(dbg)operator(()string<delimiter(")content(replacing text node with a p tag with the same content.)delimiter(")>operator(\))operator(;)
+                            keyword(var) ident(p) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(p)delimiter(')>operator(\))operator(;)
+                            ident(p)operator(.)ident(innerHTML) operator(=) ident(childNode)operator(.)ident(nodeValue)operator(;)
+                            ident(p)operator(.)ident(style)operator(.)ident(display) operator(=) string<delimiter(')content(inline)delimiter(')>operator(;)
+                            ident(p)operator(.)ident(className) operator(=) string<delimiter(')content(readability-styled)delimiter(')>operator(;)
+                            ident(childNode)operator(.)ident(parentNode)operator(.)ident(replaceChild)operator(()ident(p)operator(,) ident(childNode)operator(\))operator(;)
+                        operator(})
+                    operator(})
+                operator(})
+            operator(}) 
+        operator(})
+
+        comment(/**
+         * Loop through all paragraphs, and assign a score to them based on how content-y they look.
+         * Then add their score to their parent node.
+         *
+         * A score is determined by things like number of commas, class names, etc. Maybe eventually link density.
+        **/)
+                keyword(var) ident(candidates) operator(=) operator([)operator(])operator(;)
+        keyword(for) operator(()keyword(var) ident(pt)operator(=)integer(0)operator(;) ident(pt) operator(<) ident(nodesToScore)operator(.)ident(length)operator(;) ident(pt)operator(++)operator(\)) operator({)
+            keyword(var) ident(parentNode)      operator(=) ident(nodesToScore)operator([)ident(pt)operator(])operator(.)ident(parentNode)operator(;)
+            keyword(var) ident(grandParentNode) operator(=) ident(parentNode)operator(.)ident(parentNode)operator(;)
+            keyword(var) ident(innerText)       operator(=) ident(readability)operator(.)ident(getInnerText)operator(()ident(nodesToScore)operator([)ident(pt)operator(]\))operator(;)
+
+            comment(/* If this paragraph is less than 25 characters, don't even count it. */)
+            keyword(if)operator(()ident(innerText)operator(.)ident(length) operator(<) integer(25)operator(\)) operator({)
+                keyword(continue)operator(;) operator(})
+
+            comment(/* Initialize readability data for the parent. */)
+            keyword(if)operator(()keyword(typeof) ident(parentNode)operator(.)ident(readability) operator(==) string<delimiter(')content(undefined)delimiter(')>operator(\))
+            operator({)
+                ident(readability)operator(.)ident(initializeNode)operator(()ident(parentNode)operator(\))operator(;)
+                ident(candidates)operator(.)ident(push)operator(()ident(parentNode)operator(\))operator(;)
+            operator(})
+
+            comment(/* Initialize readability data for the grandparent. */)
+            keyword(if)operator(()keyword(typeof) ident(grandParentNode)operator(.)ident(readability) operator(==) string<delimiter(')content(undefined)delimiter(')>operator(\))
+            operator({)
+                ident(readability)operator(.)ident(initializeNode)operator(()ident(grandParentNode)operator(\))operator(;)
+                ident(candidates)operator(.)ident(push)operator(()ident(grandParentNode)operator(\))operator(;)
+            operator(})
+
+            keyword(var) ident(contentScore) operator(=) integer(0)operator(;)
+
+            comment(/* Add a point for the paragraph itself as a base. */)
+            ident(contentScore)operator(++;)
+
+            comment(/* Add points for any commas within this paragraph */)
+            ident(contentScore) operator(+=) ident(innerText)operator(.)ident(split)operator(()string<delimiter(')content(,)delimiter(')>operator(\))operator(.)ident(length)operator(;)
+            
+            comment(/* For every 100 characters in this paragraph, add another point. Up to 3 points. */)
+            ident(contentScore) operator(+=) ident(Math)operator(.)ident(min)operator(()ident(Math)operator(.)ident(floor)operator(()ident(innerText)operator(.)ident(length) operator(/) integer(100)operator(\))operator(,) integer(3)operator(\))operator(;)
+            
+            comment(/* Add the score to the parent. The grandparent gets half. */)
+            ident(parentNode)operator(.)ident(readability)operator(.)ident(contentScore) operator(+=) ident(contentScore)operator(;)
+            ident(grandParentNode)operator(.)ident(readability)operator(.)ident(contentScore) operator(+=) ident(contentScore)operator(/)integer(2)operator(;)
+        operator(})
+
+        comment(/**
+         * After we've calculated scores, loop through all of the possible candidate nodes we found
+         * and find the one with the highest score.
+        **/)
+        keyword(var) ident(topCandidate) operator(=) predefined_constant(null)operator(;)
+        keyword(for)operator(()keyword(var) ident(c)operator(=)integer(0)operator(,) ident(cl)operator(=)ident(candidates)operator(.)ident(length)operator(;) ident(c) operator(<) ident(cl)operator(;) ident(c)operator(++)operator(\))
+        operator({)
+            comment(/**
+             * Scale the final candidates score based on link density. Good content should have a
+             * relatively small link density (5% or less\) and be mostly unaffected by this operation.
+            **/)
+            ident(candidates)operator([)ident(c)operator(])operator(.)ident(readability)operator(.)ident(contentScore) operator(=) ident(candidates)operator([)ident(c)operator(])operator(.)ident(readability)operator(.)ident(contentScore) operator(*) operator(()integer(1)operator(-)ident(readability)operator(.)ident(getLinkDensity)operator(()ident(candidates)operator([)ident(c)operator(]\)\))operator(;)
+
+            ident(dbg)operator(()string<delimiter(')content(Candidate: )delimiter(')> operator(+) ident(candidates)operator([)ident(c)operator(]) operator(+) string<delimiter(")content( ()delimiter(")> operator(+) ident(candidates)operator([)ident(c)operator(])operator(.)ident(className) operator(+) string<delimiter(")content(:)delimiter(")> operator(+) ident(candidates)operator([)ident(c)operator(])operator(.)ident(id) operator(+) string<delimiter(")content(\) with score )delimiter(")> operator(+) ident(candidates)operator([)ident(c)operator(])operator(.)ident(readability)operator(.)ident(contentScore)operator(\))operator(;)
+
+            keyword(if)operator((!)ident(topCandidate) operator(||) ident(candidates)operator([)ident(c)operator(])operator(.)ident(readability)operator(.)ident(contentScore) operator(>) ident(topCandidate)operator(.)ident(readability)operator(.)ident(contentScore)operator(\)) operator({)
+                ident(topCandidate) operator(=) ident(candidates)operator([)ident(c)operator(])operator(;) operator(})
+        operator(})
+
+        comment(/**
+         * If we still have no top candidate, just use the body as a last resort.
+         * We also have to copy the body node so it is something we can modify.
+         **/)
+        keyword(if) operator(()ident(topCandidate) operator(===) predefined_constant(null) operator(||) ident(topCandidate)operator(.)ident(tagName) operator(==) string<delimiter(")content(BODY)delimiter(")>operator(\))
+        operator({)
+            ident(topCandidate) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(")content(DIV)delimiter(")>operator(\))operator(;)
+            ident(topCandidate)operator(.)ident(innerHTML) operator(=) ident(document)operator(.)ident(body)operator(.)ident(innerHTML)operator(;)
+            ident(document)operator(.)ident(body)operator(.)ident(innerHTML) operator(=) string<delimiter(")delimiter(")>operator(;)
+            ident(document)operator(.)ident(body)operator(.)ident(appendChild)operator(()ident(topCandidate)operator(\))operator(;)
+            ident(readability)operator(.)ident(initializeNode)operator(()ident(topCandidate)operator(\))operator(;)
+        operator(})
+
+
+        comment(/**
+         * Now that we have the top candidate, look through its siblings for content that might also be related.
+         * Things like preambles, content split by ads that we removed, etc.
+        **/)
+        keyword(var) ident(articleContent)        operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(")content(DIV)delimiter(")>operator(\))operator(;)
+            ident(articleContent)operator(.)ident(id)     operator(=) string<delimiter(")content(readability-content)delimiter(")>operator(;)
+        keyword(var) ident(siblingScoreThreshold) operator(=) ident(Math)operator(.)ident(max)operator(()integer(10)operator(,) ident(topCandidate)operator(.)ident(readability)operator(.)ident(contentScore) operator(*) float(0.2)operator(\))operator(;)
+        keyword(var) ident(siblingNodes)          operator(=) ident(topCandidate)operator(.)ident(parentNode)operator(.)ident(childNodes)operator(;)
+        keyword(for)operator(()keyword(var) ident(s)operator(=)integer(0)operator(,) ident(sl)operator(=)ident(siblingNodes)operator(.)ident(length)operator(;) ident(s) operator(<) ident(sl)operator(;) ident(s)operator(++)operator(\))
+        operator({)
+            keyword(var) ident(siblingNode) operator(=) ident(siblingNodes)operator([)ident(s)operator(])operator(;)
+            keyword(var) ident(append)      operator(=) predefined_constant(false)operator(;)
+
+            ident(dbg)operator(()string<delimiter(")content(Looking at sibling node: )delimiter(")> operator(+) ident(siblingNode) operator(+) string<delimiter(")content( ()delimiter(")> operator(+) ident(siblingNode)operator(.)ident(className) operator(+) string<delimiter(")content(:)delimiter(")> operator(+) ident(siblingNode)operator(.)ident(id) operator(+) string<delimiter(")content(\))delimiter(")> operator(+) operator((()keyword(typeof) ident(siblingNode)operator(.)ident(readability) operator(!=) string<delimiter(')content(undefined)delimiter(')>operator(\)) operator(?) operator(()string<delimiter(")content( with score )delimiter(")> operator(+) ident(siblingNode)operator(.)ident(readability)operator(.)ident(contentScore)operator(\)) operator(:) string<delimiter(')delimiter(')>operator(\)\))operator(;)
+            ident(dbg)operator(()string<delimiter(")content(Sibling has score )delimiter(")> operator(+) operator(()ident(siblingNode)operator(.)ident(readability) operator(?) ident(siblingNode)operator(.)ident(readability)operator(.)ident(contentScore) operator(:) string<delimiter(')content(Unknown)delimiter(')>operator(\)\))operator(;)
+
+            keyword(if)operator(()ident(siblingNode) operator(===) ident(topCandidate)operator(\))
+            operator({)
+                ident(append) operator(=) predefined_constant(true)operator(;)
+            operator(})
+
+                        keyword(var) ident(contentBonus) operator(=) integer(0)operator(;)
+                        comment(/* Give a bonus if sibling nodes and top candidates have the example same classname */)
+                        keyword(if)operator(()ident(siblingNode)operator(.)ident(className) operator(==) ident(topCandidate)operator(.)ident(className) operator(&&) ident(topCandidate)operator(.)ident(className) operator(!=) string<delimiter(")delimiter(")>operator(\)) operator({)
+                                ident(contentBonus) operator(+=) ident(topCandidate)operator(.)ident(readability)operator(.)ident(contentScore) operator(*) float(0.2)operator(;)
+                        operator(})
+
+            keyword(if)operator(()keyword(typeof) ident(siblingNode)operator(.)ident(readability) operator(!=) string<delimiter(')content(undefined)delimiter(')> operator(&&) operator(()ident(siblingNode)operator(.)ident(readability)operator(.)ident(contentScore)operator(+)ident(contentBonus)operator(\)) operator(>=) ident(siblingScoreThreshold)operator(\))
+            operator({)
+                ident(append) operator(=) predefined_constant(true)operator(;)
+            operator(})
+            
+            keyword(if)operator(()ident(siblingNode)operator(.)ident(nodeName) operator(==) string<delimiter(")content(P)delimiter(")>operator(\)) operator({)
+                keyword(var) ident(linkDensity) operator(=) ident(readability)operator(.)ident(getLinkDensity)operator(()ident(siblingNode)operator(\))operator(;)
+                keyword(var) ident(nodeContent) operator(=) ident(readability)operator(.)ident(getInnerText)operator(()ident(siblingNode)operator(\))operator(;)
+                keyword(var) ident(nodeLength)  operator(=) ident(nodeContent)operator(.)ident(length)operator(;)
+                
+                keyword(if)operator(()ident(nodeLength) operator(>) integer(80) operator(&&) ident(linkDensity) operator(<) float(0.25)operator(\))
+                operator({)
+                    ident(append) operator(=) predefined_constant(true)operator(;)
+                operator(})
+                keyword(else) keyword(if)operator(()ident(nodeLength) operator(<) integer(80) operator(&&) ident(linkDensity) operator(===) integer(0) operator(&&) ident(nodeContent)operator(.)ident(search)operator(()regexp<delimiter(/)content(\\.)content(( |$\))delimiter(/)>operator(\)) operator(!==) operator(-)integer(1)operator(\))
+                operator({)
+                    ident(append) operator(=) predefined_constant(true)operator(;)
+                operator(})
+            operator(})
+
+            keyword(if)operator(()ident(append)operator(\))
+            operator({)
+                ident(dbg)operator(()string<delimiter(")content(Appending node: )delimiter(")> operator(+) ident(siblingNode)operator(\))operator(;)
+
+                                keyword(var) ident(nodeToAppend) operator(=) predefined_constant(null)operator(;)
+                                keyword(if)operator(()ident(siblingNode)operator(.)ident(nodeName) operator(!=) string<delimiter(")content(DIV)delimiter(")> operator(&&) ident(siblingNode)operator(.)ident(nodeName) operator(!=) string<delimiter(")content(P)delimiter(")>operator(\)) operator({)
+                                        comment(/* We have a node that isn't a common block level element, like a form or td tag. Turn it into a div so it doesn't get filtered out later by accident. */)
+                                        
+                    ident(dbg)operator(()string<delimiter(")content(Altering siblingNode of )delimiter(")> operator(+) ident(siblingNode)operator(.)ident(nodeName) operator(+) string<delimiter(')content( to div.)delimiter(')>operator(\))operator(;)
+                    ident(nodeToAppend) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(div)delimiter(')>operator(\))operator(;)
+                    keyword(try) operator({)
+                                                ident(nodeToAppend)operator(.)ident(id) operator(=) ident(siblingNode)operator(.)ident(id)operator(;)
+                        ident(nodeToAppend)operator(.)ident(innerHTML) operator(=) ident(siblingNode)operator(.)ident(innerHTML)operator(;)
+                    operator(})
+                    keyword(catch)operator(()ident(e)operator(\))
+                    operator({)
+                        ident(dbg)operator(()string<delimiter(")content(Could not alter siblingNode to div, probably an IE restriction, reverting back to original.)delimiter(")>operator(\))operator(;)
+                                                ident(nodeToAppend) operator(=) ident(siblingNode)operator(;)
+                                ident(s)operator(--;)
+                                ident(sl)operator(--;)
+                    operator(})
+                                operator(}) keyword(else) operator({)
+                                        ident(nodeToAppend) operator(=) ident(siblingNode)operator(;)
+                        ident(s)operator(--;)
+                        ident(sl)operator(--;)
+                                operator(})
+                                
+                                comment(/* To ensure a node does not interfere with readability styles, remove its classnames */)
+                                ident(nodeToAppend)operator(.)ident(className) operator(=) string<delimiter(")delimiter(")>operator(;)
+
+                comment(/* Append sibling and subtract from our list because it removes the node when you append to another node */)
+                ident(articleContent)operator(.)ident(appendChild)operator(()ident(nodeToAppend)operator(\))operator(;)
+            operator(})
+        operator(})
+
+        comment(/**
+         * So we have all of the content that we need. Now we clean it up for presentation.
+        **/)
+        ident(readability)operator(.)ident(prepArticle)operator(()ident(articleContent)operator(\))operator(;)
+        
+        keyword(return) ident(articleContent)operator(;)
+    operator(})operator(,)
+    
+    comment(/**
+     * Get the inner text of a node - cross browser compatibly.
+     * This also strips out any excess whitespace to be found.
+     *
+     * @param Element
+     * @return string
+    **/)
+    function(getInnerText)operator(:) keyword(function) operator(()ident(e)operator(,) ident(normalizeSpaces)operator(\)) operator({)
+        keyword(var) ident(textContent)    operator(=) string<delimiter(")delimiter(")>operator(;)
+
+        ident(normalizeSpaces) operator(=) operator(()keyword(typeof) ident(normalizeSpaces) operator(==) string<delimiter(')content(undefined)delimiter(')>operator(\)) operator(?) predefined_constant(true) operator(:) ident(normalizeSpaces)operator(;)
+
+        keyword(if) operator(()ident(navigator)operator(.)ident(appName) operator(==) string<delimiter(")content(Microsoft Internet Explorer)delimiter(")>operator(\)) operator({)
+            ident(textContent) operator(=) ident(e)operator(.)ident(innerText)operator(.)ident(replace)operator(() ident(readability)operator(.)ident(regexps)operator(.)ident(trimRe)operator(,) string<delimiter(")delimiter(")> operator(\))operator(;) operator(})
+        keyword(else) operator({)
+            ident(textContent) operator(=) ident(e)operator(.)ident(textContent)operator(.)ident(replace)operator(() ident(readability)operator(.)ident(regexps)operator(.)ident(trimRe)operator(,) string<delimiter(")delimiter(")> operator(\))operator(;) operator(})
+
+        keyword(if)operator(()ident(normalizeSpaces)operator(\)) operator({)
+            keyword(return) ident(textContent)operator(.)ident(replace)operator(() ident(readability)operator(.)ident(regexps)operator(.)ident(normalizeRe)operator(,) string<delimiter(")content( )delimiter(")>operator(\))operator(;) operator(})
+        keyword(else) operator({)
+            keyword(return) ident(textContent)operator(;) operator(})
+    operator(})operator(,)
+
+    comment(/**
+     * Get the number of times a string s appears in the node e.
+     *
+     * @param Element
+     * @param string - what to split on. Default is ","
+     * @return number (integer\)
+    **/)
+    function(getCharCount)operator(:) keyword(function) operator(()ident(e)operator(,)ident(s)operator(\)) operator({)
+        ident(s) operator(=) ident(s) operator(||) string<delimiter(")content(,)delimiter(")>operator(;)
+        keyword(return) ident(readability)operator(.)ident(getInnerText)operator(()ident(e)operator(\))operator(.)ident(split)operator(()ident(s)operator(\))operator(.)ident(length)operator(-)integer(1)operator(;)
+    operator(})operator(,)
+
+    comment(/**
+     * Remove the style attribute on every e and under.
+     * TODO: Test if getElementsByTagName(*\) is faster.
+     *
+     * @param Element
+     * @return void
+    **/)
+    function(cleanStyles)operator(:) keyword(function) operator(()ident(e)operator(\)) operator({)
+        ident(e) operator(=) ident(e) operator(||) ident(document)operator(;)
+        keyword(var) ident(cur) operator(=) ident(e)operator(.)ident(firstChild)operator(;)
+
+        keyword(if)operator((!)ident(e)operator(\)) operator({)
+            keyword(return)operator(;) operator(})
+
+        comment(// Remove any root styles, if we're able.)
+        keyword(if)operator(()keyword(typeof) ident(e)operator(.)ident(removeAttribute) operator(==) string<delimiter(')content(function)delimiter(')> operator(&&) ident(e)operator(.)ident(className) operator(!=) string<delimiter(')content(readability-styled)delimiter(')>operator(\)) operator({)
+            ident(e)operator(.)ident(removeAttribute)operator(()string<delimiter(')content(style)delimiter(')>operator(\))operator(;) operator(})
+
+        comment(// Go until there are no more child nodes)
+        keyword(while) operator(() ident(cur) operator(!==) predefined_constant(null) operator(\)) operator({)
+            keyword(if) operator(() ident(cur)operator(.)ident(nodeType) operator(==) integer(1) operator(\)) operator({)
+                comment(// Remove style attribute(s\) :)
+                keyword(if)operator(()ident(cur)operator(.)ident(className) operator(!=) string<delimiter(")content(readability-styled)delimiter(")>operator(\)) operator({)
+                    ident(cur)operator(.)ident(removeAttribute)operator(()string<delimiter(")content(style)delimiter(")>operator(\))operator(;)                   
+                operator(})
+                ident(readability)operator(.)ident(cleanStyles)operator(() ident(cur) operator(\))operator(;)
+            operator(})
+            ident(cur) operator(=) ident(cur)operator(.)ident(nextSibling)operator(;)
+        operator(})           
+    operator(})operator(,)
+    
+    comment(/**
+     * Get the density of links as a percentage of the content
+     * This is the amount of text that is inside a link divided by the total text in the node.
+     * 
+     * @param Element
+     * @return number (float\)
+    **/)
+    function(getLinkDensity)operator(:) keyword(function) operator(()ident(e)operator(\)) operator({)
+        keyword(var) ident(links)      operator(=) ident(e)operator(.)ident(getElementsByTagName)operator(()string<delimiter(")content(a)delimiter(")>operator(\))operator(;)
+        keyword(var) ident(textLength) operator(=) ident(readability)operator(.)ident(getInnerText)operator(()ident(e)operator(\))operator(.)ident(length)operator(;)
+        keyword(var) ident(linkLength) operator(=) integer(0)operator(;)
+        keyword(for)operator(()keyword(var) ident(i)operator(=)integer(0)operator(,) ident(il)operator(=)ident(links)operator(.)ident(length)operator(;) ident(i)operator(<)ident(il)operator(;)ident(i)operator(++)operator(\))
+        operator({)
+            ident(linkLength) operator(+=) ident(readability)operator(.)ident(getInnerText)operator(()ident(links)operator([)ident(i)operator(]\))operator(.)ident(length)operator(;)
+        operator(})       
+
+        keyword(return) ident(linkLength) operator(/) ident(textLength)operator(;)
+    operator(})operator(,)
+    
+    comment(/**
+     * Get an elements class/id weight. Uses regular expressions to tell if this 
+     * element looks good or bad.
+     *
+     * @param Element
+     * @return number (Integer\)
+    **/)
+    function(getClassWeight)operator(:) keyword(function) operator(()ident(e)operator(\)) operator({)
+        keyword(if)operator((!)ident(readability)operator(.)ident(flagIsActive)operator(()ident(readability)operator(.)ident(FLAG_WEIGHT_CLASSES)operator(\)\)) operator({)
+            keyword(return) integer(0)operator(;)
+        operator(})
+
+        keyword(var) ident(weight) operator(=) integer(0)operator(;)
+
+        comment(/* Look for a special classname */)
+        keyword(if) operator(()ident(e)operator(.)ident(className) operator(!=) string<delimiter(")delimiter(")>operator(\))
+        operator({)
+            keyword(if)operator(()ident(e)operator(.)ident(className)operator(.)ident(search)operator(()ident(readability)operator(.)ident(regexps)operator(.)ident(negativeRe)operator(\)) operator(!==) operator(-)integer(1)operator(\)) operator({)
+                ident(weight) operator(-=) integer(25)operator(;) operator(})
+
+            keyword(if)operator(()ident(e)operator(.)ident(className)operator(.)ident(search)operator(()ident(readability)operator(.)ident(regexps)operator(.)ident(positiveRe)operator(\)) operator(!==) operator(-)integer(1)operator(\)) operator({)
+                ident(weight) operator(+=) integer(25)operator(;) operator(})
+        operator(})
+
+        comment(/* Look for a special ID */)
+        keyword(if) operator(()keyword(typeof)operator(()ident(e)operator(.)ident(id)operator(\)) operator(==) string<delimiter(')content(string)delimiter(')> operator(&&) ident(e)operator(.)ident(id) operator(!=) string<delimiter(")delimiter(")>operator(\))
+        operator({)
+            keyword(if)operator(()ident(e)operator(.)ident(id)operator(.)ident(search)operator(()ident(readability)operator(.)ident(regexps)operator(.)ident(negativeRe)operator(\)) operator(!==) operator(-)integer(1)operator(\)) operator({)
+                ident(weight) operator(-=) integer(25)operator(;) operator(})
+
+            keyword(if)operator(()ident(e)operator(.)ident(id)operator(.)ident(search)operator(()ident(readability)operator(.)ident(regexps)operator(.)ident(positiveRe)operator(\)) operator(!==) operator(-)integer(1)operator(\)) operator({)
+                ident(weight) operator(+=) integer(25)operator(;) operator(})
+        operator(})
+
+        keyword(return) ident(weight)operator(;)
+    operator(})operator(,)
+
+    comment(/**
+     * Remove extraneous break tags from a node.
+     *
+     * @param Element
+     * @return void
+     **/)
+    function(killBreaks)operator(:) keyword(function) operator(()ident(e)operator(\)) operator({)
+        keyword(try) operator({)
+            ident(e)operator(.)ident(innerHTML) operator(=) ident(e)operator(.)ident(innerHTML)operator(.)ident(replace)operator(()ident(readability)operator(.)ident(regexps)operator(.)ident(killBreaksRe)operator(,)string<delimiter(')content(<br />)delimiter(')>operator(\))operator(;)       
+        operator(})
+        keyword(catch) operator(()ident(eBreaks)operator(\)) operator({)
+            ident(dbg)operator(()string<delimiter(")content(KillBreaks failed - this is an IE bug. Ignoring.: )delimiter(")> operator(+) ident(eBreaks)operator(\))operator(;)
+        operator(})
+    operator(})operator(,)
+
+    comment(/**
+     * Clean a node of all elements of type "tag".
+     * (Unless it's a youtube/vimeo video. People love movies.\)
+     *
+     * @param Element
+     * @param string tag to clean
+     * @return void
+     **/)
+    function(clean)operator(:) keyword(function) operator(()ident(e)operator(,) ident(tag)operator(\)) operator({)
+        keyword(var) ident(targetList) operator(=) ident(e)operator(.)ident(getElementsByTagName)operator(() ident(tag) operator(\))operator(;)
+        keyword(var) ident(isEmbed)    operator(=) operator(()ident(tag) operator(==) string<delimiter(')content(object)delimiter(')> operator(||) ident(tag) operator(==) string<delimiter(')content(embed)delimiter(')>operator(\))operator(;)
+        
+        keyword(for) operator(()keyword(var) ident(y)operator(=)ident(targetList)operator(.)ident(length)operator(-)integer(1)operator(;) ident(y) operator(>=) integer(0)operator(;) ident(y)operator(--)operator(\)) operator({)
+            comment(/* Allow youtube and vimeo videos through as people usually want to see those. */)
+            keyword(if)operator(()ident(isEmbed)operator(\)) operator({)
+                keyword(var) ident(attributeValues) operator(=) string<delimiter(")delimiter(")>operator(;)
+                keyword(for) operator(()keyword(var) ident(i)operator(=)integer(0)operator(,) ident(il)operator(=)ident(targetList)operator([)ident(y)operator(])operator(.)ident(attributes)operator(.)ident(length)operator(;) ident(i) operator(<) ident(il)operator(;) ident(i)operator(++)operator(\)) operator({)
+                    ident(attributeValues) operator(+=) ident(targetList)operator([)ident(y)operator(])operator(.)ident(attributes)operator([)ident(i)operator(])operator(.)ident(value) operator(+) string<delimiter(')content(|)delimiter(')>operator(;)
+                operator(})
+                
+                comment(/* First, check the elements attributes to see if any of them contain youtube or vimeo */)
+                keyword(if) operator(()ident(attributeValues)operator(.)ident(search)operator(()ident(readability)operator(.)ident(regexps)operator(.)ident(videoRe)operator(\)) operator(!==) operator(-)integer(1)operator(\)) operator({)
+                    keyword(continue)operator(;)
+                operator(})
+
+                comment(/* Then check the elements inside this element for the same. */)
+                keyword(if) operator(()ident(targetList)operator([)ident(y)operator(])operator(.)ident(innerHTML)operator(.)ident(search)operator(()ident(readability)operator(.)ident(regexps)operator(.)ident(videoRe)operator(\)) operator(!==) operator(-)integer(1)operator(\)) operator({)
+                    keyword(continue)operator(;)
+                operator(})
+                
+            operator(})
+
+            ident(targetList)operator([)ident(y)operator(])operator(.)ident(parentNode)operator(.)ident(removeChild)operator(()ident(targetList)operator([)ident(y)operator(]\))operator(;)
+        operator(})
+    operator(})operator(,)
+    
+    comment(/**
+     * Clean an element of all tags of type "tag" if they look fishy.
+     * "Fishy" is an algorithm based on content length, classnames, link density, number of images & embeds, etc.
+     *
+     * @return void
+     **/)
+    function(cleanConditionally)operator(:) keyword(function) operator(()ident(e)operator(,) ident(tag)operator(\)) operator({)
+        keyword(var) ident(tagsList)      operator(=) ident(e)operator(.)ident(getElementsByTagName)operator(()ident(tag)operator(\))operator(;)
+        keyword(var) ident(curTagsLength) operator(=) ident(tagsList)operator(.)ident(length)operator(;)
+
+        comment(/**
+         * Gather counts for other typical elements embedded within.
+         * Traverse backwards so we can remove nodes at the same time without effecting the traversal.
+         *
+         * TODO: Consider taking into account original contentScore here.
+        **/)
+        keyword(for) operator(()keyword(var) ident(i)operator(=)ident(curTagsLength)operator(-)integer(1)operator(;) ident(i) operator(>=) integer(0)operator(;) ident(i)operator(--)operator(\)) operator({)
+            keyword(var) ident(weight) operator(=) ident(readability)operator(.)ident(getClassWeight)operator(()ident(tagsList)operator([)ident(i)operator(]\))operator(;)
+            keyword(var) ident(contentScore) operator(=) operator(()keyword(typeof) ident(tagsList)operator([)ident(i)operator(])operator(.)ident(readability) operator(!=) string<delimiter(')content(undefined)delimiter(')>operator(\)) operator(?) ident(tagsList)operator([)ident(i)operator(])operator(.)ident(readability)operator(.)ident(contentScore) operator(:) integer(0)operator(;)
+            
+            ident(dbg)operator(()string<delimiter(")content(Cleaning Conditionally )delimiter(")> operator(+) ident(tagsList)operator([)ident(i)operator(]) operator(+) string<delimiter(")content( ()delimiter(")> operator(+) ident(tagsList)operator([)ident(i)operator(])operator(.)ident(className) operator(+) string<delimiter(")content(:)delimiter(")> operator(+) ident(tagsList)operator([)ident(i)operator(])operator(.)ident(id) operator(+) string<delimiter(")content(\))delimiter(")> operator(+) operator((()keyword(typeof) ident(tagsList)operator([)ident(i)operator(])operator(.)ident(readability) operator(!=) string<delimiter(')content(undefined)delimiter(')>operator(\)) operator(?) operator(()string<delimiter(")content( with score )delimiter(")> operator(+) ident(tagsList)operator([)ident(i)operator(])operator(.)ident(readability)operator(.)ident(contentScore)operator(\)) operator(:) string<delimiter(')delimiter(')>operator(\)\))operator(;)
+
+            keyword(if)operator(()ident(weight)operator(+)ident(contentScore) operator(<) integer(0)operator(\))
+            operator({)
+                ident(tagsList)operator([)ident(i)operator(])operator(.)ident(parentNode)operator(.)ident(removeChild)operator(()ident(tagsList)operator([)ident(i)operator(]\))operator(;)
+            operator(})
+            keyword(else) keyword(if) operator(() ident(readability)operator(.)ident(getCharCount)operator(()ident(tagsList)operator([)ident(i)operator(])operator(,)string<delimiter(')content(,)delimiter(')>operator(\)) operator(<) integer(10)operator(\)) operator({)
+                comment(/**
+                 * If there are not very many commas, and the number of
+                 * non-paragraph elements is more than paragraphs or other ominous signs, remove the element.
+                **/)
+                keyword(var) ident(p)      operator(=) ident(tagsList)operator([)ident(i)operator(])operator(.)ident(getElementsByTagName)operator(()string<delimiter(")content(p)delimiter(")>operator(\))operator(.)ident(length)operator(;)
+                keyword(var) ident(img)    operator(=) ident(tagsList)operator([)ident(i)operator(])operator(.)ident(getElementsByTagName)operator(()string<delimiter(")content(img)delimiter(")>operator(\))operator(.)ident(length)operator(;)
+                keyword(var) ident(li)     operator(=) ident(tagsList)operator([)ident(i)operator(])operator(.)ident(getElementsByTagName)operator(()string<delimiter(")content(li)delimiter(")>operator(\))operator(.)ident(length)operator(-)integer(100)operator(;)
+                keyword(var) ident(input)  operator(=) ident(tagsList)operator([)ident(i)operator(])operator(.)ident(getElementsByTagName)operator(()string<delimiter(")content(input)delimiter(")>operator(\))operator(.)ident(length)operator(;)
+
+                keyword(var) ident(embedCount) operator(=) integer(0)operator(;)
+                keyword(var) ident(embeds)     operator(=) ident(tagsList)operator([)ident(i)operator(])operator(.)ident(getElementsByTagName)operator(()string<delimiter(")content(embed)delimiter(")>operator(\))operator(;)
+                keyword(for)operator(()keyword(var) ident(ei)operator(=)integer(0)operator(,)ident(il)operator(=)ident(embeds)operator(.)ident(length)operator(;) ident(ei) operator(<) ident(il)operator(;) ident(ei)operator(++)operator(\)) operator({)
+                    keyword(if) operator(()ident(embeds)operator([)ident(ei)operator(])operator(.)ident(src)operator(.)ident(search)operator(()ident(readability)operator(.)ident(regexps)operator(.)ident(videoRe)operator(\)) operator(==) operator(-)integer(1)operator(\)) operator({)
+                      ident(embedCount)operator(++;) 
+                    operator(})
+                operator(})
+
+                keyword(var) ident(linkDensity)   operator(=) ident(readability)operator(.)ident(getLinkDensity)operator(()ident(tagsList)operator([)ident(i)operator(]\))operator(;)
+                keyword(var) ident(contentLength) operator(=) ident(readability)operator(.)ident(getInnerText)operator(()ident(tagsList)operator([)ident(i)operator(]\))operator(.)ident(length)operator(;)
+                keyword(var) ident(toRemove)      operator(=) predefined_constant(false)operator(;)
+
+                keyword(if) operator(() ident(img) operator(>) ident(p) operator(\)) operator({)
+                    ident(toRemove) operator(=) predefined_constant(true)operator(;)
+                operator(}) keyword(else) keyword(if)operator(()ident(li) operator(>) ident(p) operator(&&) ident(tag) operator(!=) string<delimiter(")content(ul)delimiter(")> operator(&&) ident(tag) operator(!=) string<delimiter(")content(ol)delimiter(")>operator(\)) operator({)
+                    ident(toRemove) operator(=) predefined_constant(true)operator(;)
+                operator(}) keyword(else) keyword(if)operator(() ident(input) operator(>) ident(Math)operator(.)ident(floor)operator(()ident(p)operator(/)integer(3)operator(\)) operator(\)) operator({)
+                    ident(toRemove) operator(=) predefined_constant(true)operator(;) 
+                operator(}) keyword(else) keyword(if)operator(()ident(contentLength) operator(<) integer(25) operator(&&) operator(()ident(img) operator(===) integer(0) operator(||) ident(img) operator(>) integer(2)operator(\)) operator(\)) operator({)
+                    ident(toRemove) operator(=) predefined_constant(true)operator(;)
+                operator(}) keyword(else) keyword(if)operator(()ident(weight) operator(<) integer(25) operator(&&) ident(linkDensity) operator(>) float(0.2)operator(\)) operator({)
+                    ident(toRemove) operator(=) predefined_constant(true)operator(;)
+                operator(}) keyword(else) keyword(if)operator(()ident(weight) operator(>=) integer(25) operator(&&) ident(linkDensity) operator(>) float(0.5)operator(\)) operator({)
+                    ident(toRemove) operator(=) predefined_constant(true)operator(;)
+                operator(}) keyword(else) keyword(if)operator((()ident(embedCount) operator(==) integer(1) operator(&&) ident(contentLength) operator(<) integer(75)operator(\)) operator(||) ident(embedCount) operator(>) integer(1)operator(\)) operator({)
+                    ident(toRemove) operator(=) predefined_constant(true)operator(;)
+                operator(})
+
+                keyword(if)operator(()ident(toRemove)operator(\)) operator({)
+                    ident(tagsList)operator([)ident(i)operator(])operator(.)ident(parentNode)operator(.)ident(removeChild)operator(()ident(tagsList)operator([)ident(i)operator(]\))operator(;)
+                operator(})
+            operator(})
+        operator(})
+    operator(})operator(,)
+
+    comment(/**
+     * Clean out spurious headers from an Element. Checks things like classnames and link density.
+     *
+     * @param Element
+     * @return void
+    **/)
+    function(cleanHeaders)operator(:) keyword(function) operator(()ident(e)operator(\)) operator({)
+        keyword(for) operator(()keyword(var) ident(headerIndex) operator(=) integer(1)operator(;) ident(headerIndex) operator(<) integer(7)operator(;) ident(headerIndex)operator(++)operator(\)) operator({)
+            keyword(var) ident(headers) operator(=) ident(e)operator(.)ident(getElementsByTagName)operator(()string<delimiter(')content(h)delimiter(')> operator(+) ident(headerIndex)operator(\))operator(;)
+            keyword(for) operator(()keyword(var) ident(i)operator(=)ident(headers)operator(.)ident(length)operator(-)integer(1)operator(;) ident(i) operator(>=)integer(0)operator(;) ident(i)operator(--)operator(\)) operator({)
+                keyword(if) operator(()ident(readability)operator(.)ident(getClassWeight)operator(()ident(headers)operator([)ident(i)operator(]\)) operator(<) integer(0) operator(||) ident(readability)operator(.)ident(getLinkDensity)operator(()ident(headers)operator([)ident(i)operator(]\)) operator(>) float(0.33)operator(\)) operator({)
+                    ident(headers)operator([)ident(i)operator(])operator(.)ident(parentNode)operator(.)ident(removeChild)operator(()ident(headers)operator([)ident(i)operator(]\))operator(;)
+                operator(})
+            operator(})
+        operator(})
+    operator(})operator(,)
+    
+    comment(/**
+     * Show the email popup.
+     *
+     * @return void
+     **/)
+    function(emailBox)operator(:) keyword(function) operator(()operator(\)) operator({)
+        keyword(var) ident(emailContainerExists) operator(=) ident(document)operator(.)ident(getElementById)operator(()string<delimiter(')content(email-container)delimiter(')>operator(\))operator(;)
+        keyword(if)operator(()predefined_constant(null) operator(!==) ident(emailContainerExists)operator(\))
+        operator({)
+            keyword(return)operator(;)
+        operator(})
+
+        keyword(var) ident(emailContainer) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(div)delimiter(')>operator(\))operator(;)
+        ident(emailContainer)operator(.)ident(setAttribute)operator(()string<delimiter(')content(id)delimiter(')>operator(,) string<delimiter(')content(email-container)delimiter(')>operator(\))operator(;)
+        ident(emailContainer)operator(.)ident(innerHTML) operator(=) string<delimiter(')content(<iframe src=")delimiter(')>operator(+)ident(readability)operator(.)ident(emailSrc) operator(+) string<delimiter(')content(?pageUrl=)delimiter(')>operator(+)ident(escape)operator(()ident(window)operator(.)ident(location)operator(\))operator(+)string<delimiter(')content(&pageTitle=)delimiter(')>operator(+)ident(escape)operator(()ident(document)operator(.)ident(title)operator(\))operator(+)string<delimiter(')content(" scrolling="no" onload="readability.removeFrame(\)" style="width:500px; height: 490px; border: 0;"></iframe>)delimiter(')>operator(;)
+
+        ident(document)operator(.)ident(body)operator(.)ident(appendChild)operator(()ident(emailContainer)operator(\))operator(;)          
+    operator(})operator(,)
+    
+    comment(/**
+     * Close the email popup. This is a hacktackular way to check if we're in a "close loop".
+     * Since we don't have crossdomain access to the frame, we can only know when it has
+     * loaded again. If it's loaded over 3 times, we know to close the frame.
+     *
+     * @return void
+     **/)
+    function(removeFrame)operator(:) keyword(function) operator(()operator(\)) operator({)
+        ident(readability)operator(.)ident(iframeLoads)operator(++;)
+        keyword(if) operator(()ident(readability)operator(.)ident(iframeLoads) operator(>) integer(3)operator(\))
+        operator({)
+            keyword(var) ident(emailContainer) operator(=) ident(document)operator(.)ident(getElementById)operator(()string<delimiter(')content(email-container)delimiter(')>operator(\))operator(;)
+            keyword(if) operator(()predefined_constant(null) operator(!==) ident(emailContainer)operator(\)) operator({)
+                ident(emailContainer)operator(.)ident(parentNode)operator(.)ident(removeChild)operator(()ident(emailContainer)operator(\))operator(;)
+            operator(})
+
+            ident(readability)operator(.)ident(iframeLoads) operator(=) integer(0)operator(;)
+        operator(})           
+    operator(})operator(,)
+    
+    function(htmlspecialchars)operator(:) keyword(function) operator(()ident(s)operator(\)) operator({)
+        keyword(if) operator(()keyword(typeof)operator(()ident(s)operator(\)) operator(==) string<delimiter(")content(string)delimiter(")>operator(\)) operator({)
+            ident(s) operator(=) ident(s)operator(.)ident(replace)operator(()regexp<delimiter(/)content(&)delimiter(/)modifier(g)>operator(,) string<delimiter(")content(&amp;)delimiter(")>operator(\))operator(;)
+            ident(s) operator(=) ident(s)operator(.)ident(replace)operator(()regexp<delimiter(/)content(")delimiter(/)modifier(g)>operator(,) string<delimiter(")content(&quot;)delimiter(")>operator(\))operator(;)
+            ident(s) operator(=) ident(s)operator(.)ident(replace)operator(()regexp<delimiter(/)content(')delimiter(/)modifier(g)>operator(,) string<delimiter(")content(&#039;)delimiter(")>operator(\))operator(;)
+            ident(s) operator(=) ident(s)operator(.)ident(replace)operator(()regexp<delimiter(/)content(<)delimiter(/)modifier(g)>operator(,) string<delimiter(")content(&lt;)delimiter(")>operator(\))operator(;)
+            ident(s) operator(=) ident(s)operator(.)ident(replace)operator(()regexp<delimiter(/)content(>)delimiter(/)modifier(g)>operator(,) string<delimiter(")content(&gt;)delimiter(")>operator(\))operator(;)
+        operator(})
+    
+        keyword(return) ident(s)operator(;)
+    operator(})operator(,)
+
+    function(flagIsActive)operator(:) keyword(function)operator(()ident(flag)operator(\)) operator({)
+        keyword(return) operator(()ident(readability)operator(.)ident(flags) operator(&) ident(flag)operator(\)) operator(>) integer(0)operator(;)
+    operator(})operator(,)
+    
+    function(addFlag)operator(:) keyword(function)operator(()ident(flag)operator(\)) operator({)
+        ident(readability)operator(.)ident(flags) operator(=) ident(readability)operator(.)ident(flags) operator(|) ident(flag)operator(;)
+    operator(})operator(,)
+    
+    function(removeFlag)operator(:) keyword(function)operator(()ident(flag)operator(\)) operator({)
+        ident(readability)operator(.)ident(flags) operator(=) ident(readability)operator(.)ident(flags) operator(&) operator(~)ident(flag)operator(;)
+    operator(})
+    
+operator(})operator(;)
+
+ident(readability)operator(.)ident(init)operator(()operator(\))operator(;)

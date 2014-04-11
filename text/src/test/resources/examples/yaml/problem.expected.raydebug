@@ -1,0 +1,72 @@
+operator(-) string<content(source: http://rubygems.org)>
+
+operator(-) string<content(package: rails)>
+  key(path)operator(:) string<content(.)>
+
+operator(-) string<content(package: arel)>
+  key(git)operator(:) string<content(git://github.com/rails/arel.git)>
+
+operator(-) string<content(package: rake 0.8.7+)>
+
+operator(-) string<content(package: mocha 0.9.8+)>
+
+operator(-) string<content(package: system_timer)>
+  key(engine) operator(:) string<content(mri <1.9)>
+
+operator(-) string<content(package: ruby-debug 0.10.3+)>
+  key(engine) operator(:) string<content(mri <1.9)>
+
+operator(-) string<content(package: json)>
+  key(engine) operator(:) string<content([mri, rbx])>
+
+operator(-) string<content(package: yajl-ruby)>
+  key(engine) operator(:) string<content([mri, rbx])>
+
+operator(-) string<content(package: nokogiri 1.4.0+)>
+  key(engine) operator(:) string<content([mri, rbx])>
+
+operator(-) string<content(package: ruby-debug)>
+  key(engine) operator(:) string<content(jruby)>
+
+operator(-) string<content(package: jruby-openssl)>
+  key(engine) operator(:) string<content(jruby)>
+
+comment(# AR)
+operator(-) string<content(package: sqlite3-ruby 1.3.0.beta.2)>
+  key(engine) operator(:) string<content([mri, rbx])>
+
+operator(-) string<content(package: pg 0.9.0+)>
+  key(enigne) operator(:) string<content([mri, rbx])>
+  key(group)  operator(:) string<content(db)>
+
+operator(-) string<content(package: mysql 2.8.1+)>
+  key(enigne) operator(:) string<content([mri, rbx])>
+  key(group)  operator(:) string<content(db)>
+
+operator(-) string<content(package: activerecord-jdbcsqlite3-adapter)>
+  key(engine) operator(:) string<content(jruby)>
+
+operator(-) string<content(package: activerecord-jdbcmysql-adapter)>
+  key(engine) operator(:) string<content(jruby)>
+  key(group)  operator(:) string<content(db)>
+
+operator(-) string<content(package: activerecord-jdbcpostgresql-adapter)>
+  key(engine) operator(:) string<content(jruby)>
+  key(group)  operator(:) string<content(db)>
+
+comment(# AP)
+operator(-) string<content(package: rack-test 0.5.3)>
+
+operator(-) string<content(package: RedCloth 4.2.2+)>
+
+operator(-) string<content(package: rdoc 2.1)>
+  key(group)  operator(:) string<content(documentation)>
+
+operator(-) string<content(package: nokogiri 1.4.0+)>
+  key(group)  operator(:) string<content(ci)>
+  key(optional)operator(:) string<content(true)>
+
+operator(-) string<content(package: fcgi 0.8.7+)>
+  key(engine) operator(:) string<content(mri <1.9)>   comment(# fcgi gem doesn't compile on 1.9)
+  key(group)  operator(:) string<content(ci)>
+  key(optional)operator(:) string<content(true)>

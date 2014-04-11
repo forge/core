@@ -1,0 +1,8 @@
+directive(#!/bin/sh)
+
+ident(perl) operator(-)ident(e)string('s/to=5/to=10/') plain(/)method(test)plain(/)ident(file)
+method(echo) string<delimiter(")content(Parsed at <%= Time.now %>)delimiter(")>
+method(echo) string<delimiter(")content(Executed at `Date`)delimiter(")>
+method(command) string('open quote
+other_command
+)

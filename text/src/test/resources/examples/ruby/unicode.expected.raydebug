@@ -1,0 +1,32 @@
+ident(ä) operator(=) integer(42)
+ident(print) ident(ä)
+
+keyword(def) method(straße)operator(()ident(frühstück)operator(\))
+  ident(höhle)operator(()ident(frühstück)operator(\))
+keyword(end)
+
+keyword(alias) method(λ) method(lambda)
+ident(×) operator(=) ident(λ)operator({) operator(|)ident(x)operator(,)ident(y)operator(|) ident(x)operator(*)ident(y)operator(})
+ident(×)operator([)integer(2)operator(,)integer(3)operator(])  comment(# => 6)
+
+comment(# Summe der ersten 10 Quadratzahlen)
+keyword(def) method(∑) ident(enum)
+  ident(enum)operator(.)ident(inject)operator(()integer(0)operator(\)) operator({) operator(|)ident(sum)operator(,) ident(x)operator(|) ident(sum) operator(+) keyword(yield)operator(()ident(x)operator(\)) operator(})
+keyword(end)
+
+ident(∑)operator(()integer(1)operator(..)integer(10)operator(\)) operator({) operator(|)ident(x)operator(|) ident(x)operator(**)integer(2) operator(})  comment(# => 385)
+
+comment(# mehr Mathematische Zeichen)
+keyword(def) method(∞)operator(;) float(1.0) operator(/) float(0.0)operator(;) keyword(end)
+keyword(def) method(π)operator(;) constant(Math)operator(::)constant(PI)operator(;) keyword(end)
+
+operator(-)ident(∞) operator(..) integer(2)operator(*)ident(π)  comment(# => -Infinity..6.28318530717959)
+
+comment(# Azumanga Daioh Insider)
+keyword(class) operator(<<) class(Osaka) operator(=) constant(Object)operator(.)ident(new)
+  keyword(def) method(ぁ!)
+    ident(sleep) ident(∞)
+  keyword(end)
+keyword(end)
+
+integer(?×) operator(!=) symbol(:∑∞∑)

@@ -1,0 +1,22 @@
+plain(From )tag(<a) attribute_name(href)operator(=)string<delimiter(")content(https://en.wikipedia.org/wiki/CDATA)delimiter(")>tag(>)plain(Wikipedia)tag(</a>)plain(:
+
+…as in this JavaScript example:
+
+)tag(<script) attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)
+inline<comment(//<![CDATA[)
+ident(document)operator(.)ident(write)operator(()string<delimiter(")content(<)delimiter(")>operator(\))operator(;)
+comment(//]]>)>
+tag(</script>)
+
+plain(or this CSS example:
+
+)tag(<style) attribute_name(type)operator(=)string<delimiter(")content(text/css)delimiter(")>tag(>)
+inline<comment(/*<![CDATA[*/)
+tag(body) operator({) key(background-image)operator(:) function<delimiter(url()content("marble.png?width=300&height=300")delimiter(\))> operator(})
+comment(/*]]>*/)>
+tag(</style>)
+
+tag(<foo>)plain(bar)tag(</foo>)
+tag(<foo>)inline_delimiter(<![CDATA[)plain(bar)inline_delimiter(]]>)tag(</foo>)
+
+plain(surprise ending: )inline_delimiter(<![CDATA[)

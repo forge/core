@@ -1,0 +1,2681 @@
+diff --git a/.gitignore b/.gitignore
+index 8938c07..80d9aa1 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -11,13 +11,12 @@ spec/reports
+ test/tmp
+ test/version_tmp
+ tmp
+-
+ doc
+ Gemfile.lock
+ .rvmrc
+-
+ test/executable/source.rb.html
+ test/executable/source.rb.json
+ test/scanners
+ bench/test.div.html
+ diff.html
++etc/CodeRay.tmproj
+diff --git a/.travis.yml b/.travis.yml
+index 9771285..14001c4 100644
+--- a/.travis.yml
++++ b/.travis.yml
+@@ -1,5 +1,4 @@
+ rvm:
+-  - 1.8.6  # doesn't work on Travis CI? http://travis-ci.org/#!/rubychan/coderay/builds/88416
+   - 1.8.7
+   - 1.9.2
+   - ruby-head
+diff --git a/Changes-1.0.textile b/Changes-1.0.textile
+deleted file mode 100644
+index 9f8126c..0000000
+--- a/Changes-1.0.textile
++++ /dev/null
+@@ -1,344 +0,0 @@
+-h1=. CodeRay Version History
+-
+-p=. _This files lists all changes in the CodeRay library since the 0.9.8 release._
+-
+-{{toc}}
+-
+-h2. Changes in 1.0
+- 
+-CodeRay 1.0 is a major rewrite of the library, and incompatible to earlier versions.
+- 
+-The command line and programmer interfaces are similar to 0.9, but the internals have completely changed.
+-
+-h3. General changes
+- 
+-* *NEW*: The new Diff scanner colorizes code inside of the diff, and highlights inline changes.
+-* *NEW*: Extended support and usage of HTML5 and CSS 3 features.
+-* *NEW*: Direct Streaming
+-* *NEW* scanners: Clojure and HAML
+-* *CHANGED*: Token classes (used as CSS classes) are readable names; breaks you stylesheet!
+-* *IMPROVED* documentation
+-* *IMPROVED* speed: faster startup (using @autoload@), scanning, and encoding
+-* *IMPROVED* Ruby 1.9 encodings support
+-* *IMPROVED* Tests: There are more of them now!
+-
+-h3. Direct Streaming
+- 
+-CodeRay 1.0 introduces _Direct Streaming_ as a faster and simpler alternative to Tokens. It means that all Scanners,
+-Encoders and Filters had to be rewritten, and that older scanners using the Tokens API are no longer compatible with
+-this version.
+- 
+-The main benefits of this change are:
+- 
+-* more speed (benchmarks show 10% to 50% more tokens per second compared to CodeRay 0.9)
+-* the ability to stream output into a pipe on the command line
+-* a simpler API
+-* less code
+- 
+-Changes related to the new tokens handling include:
+-* *CHANGED*: The Scanners now call Encoders directly; tokens are not added to a Tokens array, but are send to the
+-  Encoder as a method call. The Tokens representation (which can be seen as a cache now) is still present, but as a
+-  special case; Tokens just encodes the given tokens into an Array for later use.
+-* *CHANGED*: The token actions (@text_token@, @begin_group@ etc.) are now public methods of @Encoder@ and @Tokens@.
+-* *REWRITE* of all Scanners, Encoders, Filters, and Tokens.
+-* *RENAMED* @:open@ and @:close@ actions to @:begin_group@ and @:end_group@.
+-* *RENAMED* @open_token@ and @close_token@ methods to @begin_group@ and @end_group@.
+-* *NEW* method @#tokens@ allows to add several tokens to the stream. @Tokens@ and @Encoders::Encoder@ define this
+-  method.
+-* *CHANGED* The above name changes also affect the JSON, XML, and YAML encoders. CodeRay 1.0 output will be incompatible
+-  with earlier versions.
+-* *REMOVED* @TokenStream@ and the @Streamable@ API and all related features like @NotStreamableError@ are now obsolete
+-  and have been removed.
+-
+-h3. Command Line
+- 
+-The @coderay@ executable was rewritten and has a few new features:
+- 
+-* *NEW* Ability to stream into a pipe; try @coderay file | more -r@
+-* *NEW* help
+-* *IMPROVED*: more consistent parameter handling
+-* *REMOVED* @coderay_stylesheet@ executable; use @coderay stylesheet [name]@.
+-
+-h3. @Tokens@
+- 
+-* *NEW* methods @encode_with@, @count@, @begin_group@, @end_group@, @begin_line@, and @end_line@.
+-* *REMOVED* methods @#stream?@, @#each_text_token@.
+-* *REMOVED* @#text@ and @#text_size@ methods. Use the @Text@ encoder instead.
+-* *REMOVED* special implementation of @#each@ taking a filter parameter. Use @TokenKindFilter@ instead.
+-
+-h3. *RENAMED*: @TokenKinds@
+- 
+-Renamed from @Tokens::ClassOfKind@ (was also @Tokens::AbbreviationForKind@ for a while).
+-The term "token class" is no longer used in CodeRay. Instead, tokens have _kinds_.
+-See "#122":http://redmine.rubychan.de/issues/122.
+- 
+-* *CHANGED* all token CSS classes to readable names.
+-* *ADDED* token kinds @:filename@, @:namespace@, and @:eyecatcher@.
+-* *RENAMED* @:pre_constant@ and @:pre_type@ to @:predefined_constant@ and @predefined_type@.
+-* *RENAMED* @:oct@ and @:bin@ to @:octal@ and @binary@.
+-* *REMOVED* token kinds @:attribute_name_fat@, @:attribute_value_fat@, @:operator_fat@, @interpreted@,
+-  @:tag_fat@, @tag_special@, @:xml_text@, @:nesting_delimiter@, @:open@, and @:close@.
+-* *CHANGED*: Don't raise error for unknown token kinds unless in @$CODERAY_DEBUG@ mode.
+-* *CHANGED* the value for a token kind that is not highlighted from
+-  @:NO_HIGHLIGHT@ to @false@.
+-
+-h3. @Duo@
+- 
+-* *NEW* method @call@ for allowing code like @CodeRay::Duo[:python => :yaml].(code)@ in Ruby 1.9.
+-
+-h3. @Encoders::CommentFilter@
+- 
+-* *NEW* alias @:remove_comments@
+-
+-h3. @Encoders::Filter@
+- 
+-* *NEW* option @tokens@.
+-* *CHANGED*: Now it simply delegates to the output.
+-* *REMOVED* @include_text_token?@ and @include_block_token?@ methods.
+-
+-h3. @Encoders::HTML@
+- 
+-The HTML encoder was cleaned up and simplified.
+- 
+-* *NEW*: HTML5 and CSS 3 compatible.
+-  See "#215":http://redmine.rubychan.de/issues/215.
+-* *ADDED* support for @:line_number_anchors@.
+-  See "#208":http://redmine.rubychan.de/issues/208.
+-* *CHANGED* the default style to @:alpha@.
+-* *CHANGED*: Use double click to toggle line numbers in table mode (as single
+-  click jumps to an anchor.)
+-* *REMOVED* support for @:line_numbers => :list@.
+-* *FIXED* splitting of lines for @:line_numbers => :inline@, so that the line
+-  numbers don't get colored, too.
+-* *RENAMED* @Output#numerize@ to @#number@, which is an actual English word.
+-
+-h3. @Encoders::LinesOfCode@
+- 
+-* *CHANGED*: @compile@ and @finish@ methods are now protected.
+-
+-h3. *Renamed*: @Encoders::Terminal@ (was @Encoders::Term@)
+- 
+-* *RENAMED* from @Encoders::Term@, added @:term@ alias.
+-* *CLEANUP*: Use @#setup@'s @super@, don't use @:procedure@ token class.
+-* *CHANGED*: @#token@'s second parameter is no longer optional.
+-* *REMOVED* colors for obsolete token kinds.
+-* *FIXED* handling of line tokens.
+-
+-h3. @Encoders::Text@
+- 
+-* *FIXED* default behavior of stripping the trailing newline.
+-
+-h3. *RENAMED*: @Encoders::TokenKindFilter@ (was @Encoders::TokenClassFilter@)
+- 
+-* *NEW*: Handles token groups.
+-  See "#223":http://redmine.rubychan.de/issues/223.
+-* *RENAMED* @include_block_token?@ to @include_group?@.
+-
+-h3. @Encoders::Statistic@
+- 
+-* *CHANGED*: Tokens actions are counted separately.
+-
+-h3. @Scanners::Scanner@
+- 
+-* *NEW* methods @#file_extension@ and @#encoding@.
+-* *NEW*: The @#tokenize@ method also takes an Array of Strings as source. The
+-  code is highlighted as one and split into parts of the input lengths
+-  after that using @Tokens#split_into_parts@.
+-* *NEW* method @#binary_string@
+-* *REMOVED* helper method @String#to_unix@.
+-* *REMOVED* method @#streamable?@.
+-* *REMOVED* @#marshal_load@ and @#marshal_dump@.
+-* *RENAMED* class method @normify@ to @normalize@; it also deals with encoding now.
+-* *CHANGED*: @#column@ starts counting with 1 instead of 0
+-
+-h3. *NEW*: @Scanners::Clojure@
+- 
+-Thanks to Licenser, CodeRay now supports the Clojure language.
+-
+-h3. @Scanners::CSS@
+- 
+-* *NEW*: Rudimentary support for the @attr@, @counter@, and @counters@ functions.
+-  See "#224":http://redmine.rubychan.de/issues/224.
+-* *NEW*: Rudimentary support for CSS 3 colors.
+-* *CHANGED*: Attribute selectors are highlighted as @:attribute_name@ instead of @:string@.
+-* *CHANGED*: Comments are scanned as one token instead of three.
+-
+-h3. @Scanners::Debug@
+- 
+-* *NEW*: Support for line tokens (@begin_line@ and @end_line@ represented by @[@ and @]@.)
+-* *FIXED*: Don't send @:error@ and @nil@ tokens for buggy input any more.
+-* *FIXED*: Closes unclosed tokens at the end of @scan_tokens@.
+-* *IMPROVED*: Highlight unknown tokens as @:error@.
+-* *CHANGED*: Raises an error when trying to end an invalid token group.
+-
+-h3. @Scanners::Delphi@
+- 
+-* *FIXED*: Closes open string groups.
+-
+-h3. @Scanners::Diff@
+- 
+-* *NEW*: Highlighting of code based on file names.
+-  See ticket "#52":http://redmine.rubychan.de/issues/52.
+-  
+-  Use the @:highlight_code@ option to turn this feature off. It's enabled
+-  by default.
+-  
+-  This is a very original feature. It enables multi-language highlighting for
+-  diff files, which is especially helpful for CodeRay development itself. The
+-  updated version of the scanner test suite generated .debug.diff.html files
+-  using this.
+-  
+-  Note: This is still experimental. Tokens spanning more than one line
+-  may get highlighted incorrectly. CodeRay tries to keep scanner states
+-  between the lines and changes, but the quality of the results depend on
+-  the scanner.
+-* *NEW*: Inline change highlighting, as suggested by Eric Thomas.
+-  See ticket "#227":http://redmine.rubychan.de/issues/227 for details.
+-  
+-  Use the @:inline_diff@ option to turn this feature off. It's enabled by
+-  default.
+-  
+-  For single-line changes (that is, a single deleted line followed by a single
+-  inserted line), this feature surrounds the changed parts with an
+-  @:eyecatcher@ group which appears in a more saturated background color.
+-  The implementation is quite complex, and highly experimental. The problem
+-  with multi-layer tokenizing is that the tokens have to be split into parts.
+-  If the inline change starts, say, in the middle of a string, then additional
+-  @:end_group@ and @:begin_group@ tokens must be inserted to keep the group
+-  nesting intact. The extended @Scanner#tokenize@ method and the new
+-  @Tokens#split_into_parts@ method take care of this.
+-* *NEW*: Highlight the file name in the change headers as @:filename@.
+-* *CHANGED*: Highlight unknown lines as @:comment@ instead of @:head@.
+-* *IMPROVED*: Background colors for Diff output have been optimized.
+-
+-h3. *RENAMED*: @Scanners::ERB@ (was @Scanners::RHTML@)
+-
+-h3. *NEW*: @Scanners::HAML@
+- 
+-It uses the new :state options of the HTML and Ruby scanners.
+- 
+-Some rare cases are not considered (like @#{...}@ snippets inside of :javascript blocks),
+-but it highlights pretty well.
+-
+-h3. @Scanners::HTML@
+- 
+-* *FIXED*: Closes open string groups.
+-
+-h3. @Scanners::JavaScript@
+- 
+-* *IMPROVED*: Added @NaN@ and @Infinity@ to list of predefined constants.
+-* *IMPROVED* recognition of RegExp literals with leading spaces.
+-
+-h3. @Scanners::Java@
+- 
+-* *NEW*: Package names are highlighted as @:namespace@.
+-  See "#210":http://redmine.rubychan.de/issues/210.
+-
+-h3. *REMOVED*: @Scanners::NitroXHTML@
+- 
+-Nitro is "dead":http://www.nitrohq.com/.
+-
+-h3. *RENAMED*: @Scanners::Text@ (was @Scanners::Plaintext@)
+- 
+-* *IMPROVED*: Just returns the string without scanning (faster).
+- 
+- This is much faster than scanning until @/\z/@ in Ruby 1.8.
+-
+-h3. @Scanners::Python@
+- 
+-* *CHANGED*: Docstrings are highlighted as @:comment@.
+-  See "#190":http://redmine.rubychan.de/issues/190.
+-
+-h3. *NEW*: @Scanners::Raydebug@
+-
+-Copied from @Scanners::Debug@, highlights the token dump instead of importing it. It also reacts to the @.raydebug@ file
+-name suffix now.
+-
+-h3. @Scanners::Ruby@
+- 
+-* *ADDED* more predefined keywords (see http://murfy.de/ruby-constants).
+-* *IMPROVED* support for singleton method definitions.
+-  See "#147":http://redmine.rubychan.de/issues/147.
+-* *FIXED*: Don't highlight methods with a capital letter as constants
+-  (eg. @GL.PushMatrix@).
+-* *NEW*: Highlight buggy floats (like .5) as @:error@.
+-* *CLEANUP* of documentation, names of constants and variables, state handling.
+-  
+-  Moved @StringState@ class from @patterns.rb@ into a separate file.
+-* *NEW*: Complicated rule for recognition of @foo=@ style method names.
+-* *NEW*: Handles @:keep_state@ option (a bit; experimental).
+-  
+-  Actually, Ruby checks if there is @[~>=]@, but not @=>@ following the name.
+-  
+-* *REMOVED* @EncodingError@
+-
+-h3. *REMOVED* @Scanners::Scheme@
+- 
+-* It is too buggy, and nobody was using it. To be added again when it's fixed.
+-  See "#59":http://redmine.rubychan.de/issues/59.
+-
+-h3. @Scanners::SQL@
+- 
+-* *IMPROVED*: Extended list of keywords and functions (thanks to
+-  Joshua Galvez, Etienne Massip, and others).
+- 
+-  See "#221":http://redmine.rubychan.de/issues/221.
+-* *FIXED*: Closes open string groups.
+-* *FIXED*: Words after @.@ are always recognized as @:ident@.
+-
+-h3. @Scanners::YAML@
+- 
+-* *FIXED*: Allow spaces before colon in mappings.
+- 
+-  See "#231":http://redmine.rubychan.de/issues/231.
+-
+-h3. *NEW*: @Styles::Alpha@
+-
+-A style that uses transparent HSLA colors as defined in CSS 3. See "#199":http://redmine.rubychan.de/issues/199.
+- 
+-It also uses the CSS 3 property @user-select: none@ to keep the user from selecting the line numbers. This is especially
+-nice for @:inline@ line numbers. See "#226":http://redmine.rubychan.de/issues/226.
+-
+-h3. @WordList@
+- 
+-Stripped down to 19 LOC.
+-
+-* *RENAMED* @CaseIgnoringWordList@ to @WordList::CaseIgnoring@.
+-* *REMOVED* caching option because it creates memory leaks.
+-* *REMOVED* block option.
+-
+-h3. @FileType@
+- 
+-* *NEW*: Recognizes @.gemspec@, @.rjs@, @.rpdf@ extensions, @Gemfile@, and @Capfile@ as Ruby.
+-  
+-  Thanks to the authors of the TextMate Ruby bundle!
+-* *REMOVED* @FileType#shebang@ is a protected method now.
+-
+-h3. @Plugin@
+- 
+-* *IMPROVED*: @register_for@ sets the @plugin_id@; it can now be a @Symbol@.
+-* *ADDED* @PluginHost#const_missing@ method: Plugins are loaded automatically.
+-  Using @Scanners::JavaScript@ in your code loads @scanners/java_script.rb@.
+-* *ADDED* @#all_plugins@ method to simplify getting 
+-  information about all available plugins (suggested by bnhymn).
+-* *CHANGED* the default plugin key from @nil@ to @:default@.
+-
+-h3. @GZip@
+- 
+-* *MOVED* into @CodeRay@ namespace.
+-* *MOVED* file from @gzip_simple.rb@ to @gzip.rb@.
+-* *REMOVED* @String@ extensions.
+-
+-h3. More API changes
+- 
+-* *FIXED* @Encoders::HTML#token@'s second parameter is no longer optional.
+-* *CHANGED* @Encoders::HTML::Output@'s API.
+-* *REMOVED* lots of unused methods.
+- 
+-The helper classes were cleaned up; see above for details.
+- 
+-* *CHANGED* @Plugin@ API was simplified and stripped of all unnecessary features.
+-* *CHANGED* Moved @GZip@ and @FileType@ libraries into @CodeRay@; cleaned them up.
+-
+-
+-
+diff --git a/Changes-pre-1.0.textile b/Changes-pre-1.0.textile
+new file mode 100644
+index 0000000..d094ff3
+--- /dev/null
++++ b/Changes-pre-1.0.textile
+@@ -0,0 +1,421 @@
++h1=. CodeRay Version History
++ 
++p=. _This files lists all changes in the CodeRay library since the 0.8.4 release._
++ 
++{{toc}}
++ 
++h2. Changes in 0.9.8 "banister" [2011-05-01]
++ 
++Fixes for JRuby's 1.9 mode and minor issues.
++ 
++h3. Rake tasks
++ 
++* *REMOVED* obsolete @has_rdoc@ gem specification, fixing a warning.
++
++h3. @Scanners::Scanner@
++ 
++* *NEW* method @#scan_rest@ replaces @scan_until(/\z/)@, which is broken in JRuby 1.6 --1.9 mode.
++  See "#297":http://odd-eyed-code.org/issues/297.
++
++h3. @Scanners::CSS@
++ 
++* *FIXED* LOC counting (should be 0).
++  See "#296":http://odd-eyed-code.org/issues/296.
++
++h3. @Scanners::Ruby@
++ 
++* *FIXED* the @IDENT@ pattern not to use character properties, which are broken in JRuby 1.6 --1.9 mode.
++  See "#297":http://odd-eyed-code.org/issues/297, thanks to banister for reporting!
++
++h3. @Scanners::SQL@
++ 
++* *ADDED* more keywords: @between@, @databases@, @distinct@, @fields@, @full@, @having@, @is@, @prompt@, @tables@.
++  See "#221":http://odd-eyed-code.org/issues/221, thanks to Etienne Massip again.
++
++h3. @FileType@
++ 
++* *NEW* regonizes ColdFusion file type extensions @.cfm@ and @.cfc@ as XML.
++  See "#298":http://odd-eyed-code.org/issues/298, thanks to Emidio Stani.
++
++
++h2. Changes in 0.9.7 "Etienne" [2011-01-14]
++ 
++Fixes a dangerous JavaScript scanner bug, and a testing problem with Ruby 1.9.1.
++ 
++h3. Tests
++ 
++* *FIXED* The functional tests now load the lib directory (instead of the gem) in Ruby 1.9.1.
++
++h3. @Scanners::JavaScript@
++ 
++* *FIXED* @KEY_CHECK_PATTERN@ regexp
++  See "#264":http://odd-eyed-code.org/issues/264, thanks to Etienne Massip!
++
++
++h2. Changes in 0.9.6 "WoNáDo" [2010-11-25]
++ 
++Minor improvements to the Ruby scanner and a fix for Ruby 1.9.
++ 
++h3. @Scanners::Ruby@
++ 
++* *IMPROVED* handling of new hash syntax (keys are marked as @:key@ now,
++  colon is a separate @:operator@ token, all idents can be used as keys)
++  See "#257":http://code.licenser.net/issues/257, thanks to WoNáDo!
++* *ADDED* @__ENCODING__@ magic constant (Ruby 1.9)
++* *FIXED*: Scanner no longer tries to modify the input string on Ruby 1.9.
++  See "#260":http://code.licenser.net/issues/260, thanks to Jan Lelis!
++
++
++h2. Changes in 0.9.5 "Germany.rb" [2010-09-28]
++ 
++Support for Rubinius ("#251":http://odd-eyed-code.org/issues/251), improved mutlibyte handling, Ruby 1.9 syntax, and valid HTML.
++ 
++h3. @Encoders::HTML@
++ 
++* *FIXED*: Line tokens use @span@ with @display: block@ instead of @div@, which was invalid HTML ("#255":http://odd-eyed-code.org/issues/255).
++
++h3. @Scanner::Scanner@
++ 
++* *IMPROVED* handling of encodings in Ruby 1.9: UTF-8 and Windows-1252 are checked.
++* *NEW*: Invalid chars will be converted to @?@ in Ruby 1.9.
++* *FIXED* @string=@ method for Rubinius. See "issue 481":http://github.com/evanphx/rubinius/issues/481 on their site.
++
++h3. @Scanners::CSS@
++ 
++* *FIXED*: Don't use non-ASCII regexps.
++
++h3. @Scanners::Diff@
++ 
++* *FIXED*: Highlight unexpected lines as @:comment@.
++
++h3. @Scanners::PHP@
++ 
++* *FIXED*: Use @ASCII-8BIT@ encoding for now.
++
++h3. @Scanners::Ruby@
++ 
++* *ADDED* support for some Ruby 1.9 syntax ("#254":http://odd-eyed-code.org/issues/254):
++** the @->@ lambda shortcut
++** new Hash syntax using colons (@{ a: b }@)
++* *FIXED*: Use @UTF-8@ encoding.
++* *IMPROVED* unicode support on Ruby 1.8 ("#253":http://odd-eyed-code.org/issues/253).
++* *FIXED* recognition of non-ASCII identifiers in Ruby 1.9, JRuby, and Rubinius ("#253":http://odd-eyed-code.org/issues/253).
++* *CHANGED* heredoc recognition to ignore delimiters starting with a digit. This is incorrect, but causes less false positives.
++
++h3. @Scanners::SQL@
++ 
++* *FIXED* scanning of comments; nice catch, Rubinius!
++  ("#252":http://odd-eyed-code.org/issues/252)
++
++
++h2. Changes in 0.9.4 "Ramadan" [2010-08-31]
++ 
++Updated command line interface and minor scanner fixes for the Diff, HTML, and RHTML scanners.
++ 
++h3. @coderay@ executable
++ 
++* *FIXED*: Partly rewritten, simplified, fixed.
++  ("#244":http://odd-eyed-code.org/issues/244)
++
++h3. @Scanners::Diff@
++ 
++* *FIXED* handling of change headers with code on the same line as the @@ marker.
++  ("#247":http://odd-eyed-code.org/issues/242)
++
++h3. @Scanners::HTML@
++ 
++* *FIXED* a missing regexp modifier that slowed down the scanning.
++  ("#245":http://odd-eyed-code.org/issues/245)
++
++h3. @Scanners::RHTML@
++ 
++* *FIXED* highlighting of ERB comment blocks.
++  ("#246":http://odd-eyed-code.org/issues/246)
++
++
++h2. Changes in 0.9.3 "Eyjafjallajökull" [2010-04-18]
++ 
++* *FIXED*: Documentation of Tokens.
++  ("#218":http://odd-eyed-code.org/issues/218)
++ 
++h3. @coderay@ executable
++ 
++* *NEW*: automatic TTY detection (uses @Term@ encoder)
++* *NEW*: optional 3rd parameter for the filename
++* *FIXED*: Converted to UNIX format.
++* *FIXED*: Warn about generated files.
++* *FIXED*: Ensure line break after the output (especially for LoC counter).
++
++h3. @Scanners::JavaScript@
++ 
++* *FIXED*: Don't keep state of XML scanner between calls for E4X literals.
++
++h3. @Scanners::Java@, @Scanners::JSON@
++ 
++* *FIXED*: Close unfinished strings with the correct token kind.
++
++
++h2. Changes in 0.9.2 "Flameeyes" [2010-03-14]
++ 
++* *NEW* Basic tests and a _Rakefile_ are now included in the Gem. [Flameeyes]
++  A @doc@ task is also included.
++* *FIXED* Use @$CODERAY_DEBUG@ for debugging instead of @$DEBUG@. [Trans]
++  ("#192":http://odd-eyed-code.org/issues/192)
++* *REMOVED* @Term::Ansicolor@ was bundled under _lib/_, but not used. [Flameeyes]
++  ("#205":http://odd-eyed-code.org/issues/205)
++* *WORKAROUND* for Ruby bug 
++  "#2745":http://redmine.ruby-lang.org/issues/show/2745
++ 
++h3. @Encoders::Term@
++ 
++* *FIXED* strings are closed correctly
++  ("#138":http://odd-eyed-code.org/issues/138)
++* *FIXED* several token kinds had no associated color
++  ("#139":http://odd-eyed-code.org/issues/139)
++* *NEW* alias @terminal@
++  
++  *NOTE:* This encoder will be renamed to @Encoders::Terminal@ in the next release.
++
++h3. @Scanners::Debug@
++ 
++* *FIXED* Don't close tokens that are not open. Send @:error@ token instead.
++
++h3. @Scanners::Groovy@
++ 
++* *FIXED* token kind of closing brackets is @:operator@ instead of @nil@
++  ("#148":http://odd-eyed-code.org/issues/148)
++
++h3. @Scanners::PHP@
++ 
++* *FIXED* allow @\@ operator (namespace separator)
++  ("#209":http://odd-eyed-code.org/issues/209)
++
++h3. @Scanners::YAML@
++ 
++* *FIXED* doesn't send debug tokens when @$DEBUG@ is true [Trans]
++  ("#149":http://odd-eyed-code.org/issues/149)
++
++
++h2. Changes in 0.9.1 [2009-12-31]
++ 
++h3. Token classes
++ 
++* *NEW* token classes @:complex@, @:decorator@, @:imaginary@
++  (all for Python)
++* *REMOVED* token class @:procedure@
++  – use @:function@ or @:method@ instead.
++
++h3. @Tokens@
++ 
++* *NEW* method @#scanner@
++  
++  Stores the scanner.
++* *REMOVED* methods @.write_token@, @.read_token@, @.escape@, @.unescape@
++  
++  They were only used by the @Tokens@ encoder, which was removed also.
++
++h3. @Encoders::Encoder@
++ 
++* *REMOVED* Don't require the _stringio_ library.
++* *NEW* public methods @#open_token@, @#close_token@, @#begin_line@, @#end_line@
++  These methods are called automatically, like @#text_token@.
++* *NEW* proteced method @#append_encoded_token_to_output@
++
++h3. @Encoders::Tokens@
++ 
++* *REMOVED* – use @Tokens#dump@ and @Tokens.load@.
++
++h3. @Encoders::Filter@
++ 
++* *NEW*
++  A @Filter@ encoder has another @Tokens@ instance as output.
++
++h3. @Encoders::TokenClassFilter@
++ 
++* *NEW*
++  
++  It takes 2 options, @:exclude@ and @:include@, that specify which token classes
++  to include or exclude for the output. They can be a single token class,
++  an @Array@ of classes, or the value @:all@.
++
++h3. @Encoders::CommentFilter@
++ 
++* *NEW*
++  
++  Removes tokens of the @:comment@ class.
++
++h3. @Encoders::LinesOfCode@
++ 
++* *NEW*
++  
++  Counts the lines of code according to the @KINDS_NOT_LOC@ token class list
++  defined by the scanner. It uses the new @TokenClassFilter@.
++  
++  Alias: @:loc@, as in @tokens.loc@.
++
++h3. @Encoders::JSON@
++ 
++* *NEW*
++  
++  Outputs tokens in a simple JSON format.
++
++h3. @Encoders::Term@
++ 
++* *NEW* (beta, by Rob Aldred)
++  
++  Outputs code highlighted for a color terminal.
++
++h3. @Encoders::HTML@
++ 
++* *NEW* option @:title@ (default value is _CodeRay output_)
++  
++  Setting this changes the title of the HTML page.
++* *NEW* option @:highlight_lines@ (default: @nil@)
++  
++  Highlights the given set of line numbers.
++- *REMOVED* option @:level@
++  
++  It didn't do anything. CodeRay always outputs XHTML.
++
++h3. @Encoders::Text@
++ 
++* Uses @Encoder@ interface with @super@ and @#text_token@.
++
++h3. @Encoders::XML@
++ 
++* @FIXED@ ("#94":http://odd-eyed-code.org/issues/94)
++  
++  It didn't work at all.
++
++h3. Scanners
++ 
++* *NEW* Mapped @:h@ to @:c@, @:cplusplus@ and @:'c++'@ to @:cpp@,
++  @:ecma@, @:ecmascript@, @:ecma_script@ to @:java_script@,
++  @:pascal@ to @:delphi@, and @:plain@ to @:plaintext@.
++
++h3. @Scanners::Scanner@
++ 
++* *NEW* constant @KINDS_NOT_LOC@
++  
++  A list of all token classes not considered in LOC count.
++  Added appropriate values for scanners.
++* *NEW* method @#lang@ returns the scanner's lang, which is its @plugin_id@.
++* *FIXED* automatic, safe UTF-8 detection _[Ruby 1.9]_
++* *FIXED* column takes care of multibyte encodings _[Ruby 1.9]_
++* *FIXED* is dumpable (@Tokens@ store their scanner in an @@scanner@ variable)
++
++h3. @Scanners::Cpp@
++ 
++* *NEW* (C++)
++
++h3. @Scanners::Groovy@
++ 
++* *NEW* (beta)
++
++h3. @Scanners::Python@
++ 
++* *NEW*
++
++h3. @Scanners::PHP@
++ 
++* *NEW* (based on Stefan Walk's work)
++
++h3. @Scanners::SQL@
++ 
++* *NEW* (based on code by Josh Goebel)
++
++h3. @Scanners::C@
++ 
++* *IMPROVED* added a list of @:directive@ tokens that were @:reserved@ before
++* *IMPROVED* detection of labels
++* *IMPROVED* allow @1L@ and @1LL@ style literals
++
++h3. @Scanners::CSS@
++ 
++* *IMPROVED* element selectors are highlighted as @:type@ instead of @:keyword@
++
++h3. @Scanners::Delphi@
++ 
++* *IMPROVED* Don't cache tokens in CaseIgnoringWordList.
++
++h3. @Scanners::Java@
++ 
++* *IMPROVED* @assert@ is highlighted as a @:keyword@ now
++* *IMPROVED* @const@ and @goto@ are highlighted as @:reserved@
++* *IMPROVED* @false@, @true@, and @null@ are highlighted as @:pre_constant@
++* *IMPROVED* @threadsafe@ is no longer a @:directive@
++* *IMPROVED* @String@ is highlighted as a @:pre_type@
++* *IMPROVED* built-in classes ending with _Error_ or _Exception_ are
++  highlighted as a @:exception@ instead of @:pre_type@
++
++h3. @Scanners::JavaScript@
++ 
++* *NEW* a list of @PREDEFINED_CONSTANTS@ to be highlighted as @:pre_constant@
++* *NEW* XML literals are recognized and highlighted
++* *NEW* function name highlighting
++* *IMPROVED* @.1@ is highlighted a number
++* *FIXED* strings close with the correct kind when terminated unexpectedly
++
++h3. @Scanners::JSON@
++ 
++* *IMPROVED* constants (@true@, @false@, @nil@) are highlighted as @:value@
++
++h3. @Scanners::Ruby@
++ 
++* *IMPROVED* @Patterns::KEYWORDS_EXPECTING_VALUE@ for more accurate
++  @value_expected@ detection
++* *IMPROVED* handling of @\@ as a string delimiter
++* *IMPROVED* handling of unicode strings; automatic switching to unicode
++* *IMPROVED* highlighting of @self.method@ definitions
++* *REMOVED* @Patterns::FANCY_START_SAVE@ (obsolete)
++* *FIXED* encoding issues _[Ruby 1.9]_
++* *FIXED* a problem in early Ruby 1.8.6 patch versions with @Regexp.escape@
++
++h3. @Scanners::YAML@
++ 
++* *IMPROVED* indentation detection
++
++h3. @Styles::Cycnus@
++ 
++* changed a few colors (exceptions, inline strings, predefined types)
++
++h3. @Plugin@
++ 
++* *NEW* method @#title@
++  
++  Set and get the plugin's title. Titles can be arbitrary strings.
++* *NEW* method @#helper@ loads helpers from different plugins
++  
++  Use this syntax: @helper 'other_plugin/helper_name'@
++
++h3. @FileType@
++ 
++* *NEW* @FileType[]@ takes @Pathname@ instances
++* *NEW* regonizes @.cc@, @.cpp@, @.cp@, @.cxx@, @.c++@, @.C@, @.hh@, @.hpp@, @.h++@, @.cu@ extensions (C++)
++  
++  Thanks to Sander Cox and the TextMate C bundle.
++* *NEW* regonizes @.pas@, @.dpr@ extensions (Delphi)
++* *NEW* regonizes @.gvy@, @.groovy@ extensions (Groovy)
++* *NEW* regonizes @.php@, @.php3@, @.php4@, @.php5@ extensions (PHP)
++* *NEW* regonizes @.py@, @.py3@, @.pyw@ extensions (Python)
++* *NEW* regonizes @.rxml@ extension (Ruby)
++* *NEW* regonizes @.sql@ extension (SQL)
++* File types list was sorted alphabetically.
++
++h3. @CaseIgnoringWordList@
++ 
++* *FIXED* ("#97":http://odd-eyed-code.org/issues/97)
++  
++  The default value is no longer ignored.
++
++h3. @ForRedCloth@
++ 
++* *FIXED* for RedCloth versions 4.2.0+ ("#119":http://odd-eyed-code.org/issues/119)
++
++h3. Cleanups
++ 
++* warnings about character classes _[Ruby 1.9]_
++* encoding issues _[Ruby 1.9]_
++* documentation, code
++
++
+diff --git a/Changes.textile b/Changes.textile
+index cdbfdd9..9135f67 100644
+--- a/Changes.textile
++++ b/Changes.textile
+@@ -1,421 +1,367 @@
+ h1=. CodeRay Version History
+  
+-p=. _This files lists all changes in the CodeRay library since the 0.8.4 release._
++p=. _This files lists all changes in the CodeRay library since the 0.9.8 release._
+  
+ {{toc}}
+  
+-h2. Changes in 0.9.8 "banister" [2011-05-01]
++h2. Changes in 1.0.2
+  
+-Fixes for JRuby's 1.9 mode and minor issues.
++Fixes:
+  
+-h3. Rake tasks
+- 
+-* *REMOVED* obsolete @has_rdoc@ gem specification, fixing a warning.
+-
+-h3. @Scanners::Scanner@
+- 
+-* *NEW* method @#scan_rest@ replaces @scan_until(/\z/)@, which is broken in JRuby 1.6 --1.9 mode.
+-  See "#297":http://redmine.rubychan.de/issues/297.
++* .erb files are recognized as ERB.
+ 
+-h3. @Scanners::CSS@
++h2. Changes in 1.0.1
+  
+-* *FIXED* LOC counting (should be 0).
+-  See "#296":http://redmine.rubychan.de/issues/296.
+-
+-h3. @Scanners::Ruby@
++New:
+  
+-* *FIXED* the @IDENT@ pattern not to use character properties, which are broken in JRuby 1.6 --1.9 mode.
+-  See "#297":http://redmine.rubychan.de/issues/297, thanks to banister for reporting!
+-
+-h3. @Scanners::SQL@
+- 
+-* *ADDED* more keywords: @between@, @databases@, @distinct@, @fields@, @full@, @having@, @is@, @prompt@, @tables@.
+-  See "#221":http://redmine.rubychan.de/issues/221, thanks to Etienne Massip again.
+-
+-h3. @FileType@
+- 
+-* *NEW* regonizes ColdFusion file type extensions @.cfm@ and @.cfc@ as XML.
+-  See "#298":http://redmine.rubychan.de/issues/298, thanks to Emidio Stani.
+-
+-
+-h2. Changes in 0.9.7 "Etienne" [2011-01-14]
++* YAML scanner allows "-" and "/" in key names
+  
+-Fixes a dangerous JavaScript scanner bug, and a testing problem with Ruby 1.9.1.
++Changes:
+  
+-h3. Tests
++* HTML page output has no white border anymore (alpha style)
+  
+-* *FIXED* The functional tests now load the lib directory (instead of the gem) in Ruby 1.9.1.
+-
+-h3. @Scanners::JavaScript@
++Fixes:
+  
+-* *FIXED* @KEY_CHECK_PATTERN@ regexp
+-  See "#264":http://redmine.rubychan.de/issues/264, thanks to Etienne Massip!
++* fixed warning in the output of "coderay stylesheet"
++* fixed additional scrollbar in code when last line contains an eyecatcher
++* minor fixes in the tests (issue github-#4)
+ 
+-
+-h2. Changes in 0.9.6 "WoNáDo" [2010-11-25]
+- 
+-Minor improvements to the Ruby scanner and a fix for Ruby 1.9.
++h2. Changes in 1.0
+  
+-h3. @Scanners::Ruby@
++CodeRay 1.0 is a major rewrite of the library, and incompatible to earlier versions.
+  
+-* *IMPROVED* handling of new hash syntax (keys are marked as @:key@ now,
+-  colon is a separate @:operator@ token, all idents can be used as keys)
+-  See "#257":http://code.licenser.net/issues/257, thanks to WoNáDo!
+-* *ADDED* @__ENCODING__@ magic constant (Ruby 1.9)
+-* *FIXED*: Scanner no longer tries to modify the input string on Ruby 1.9.
+-  See "#260":http://code.licenser.net/issues/260, thanks to Jan Lelis!
+-
++The command line and programmer interfaces are similar to 0.9, but the internals have completely changed.
+ 
+-h2. Changes in 0.9.5 "Germany.rb" [2010-09-28]
++h3. General changes
+  
+-Support for Rubinius ("#251":http://redmine.rubychan.de/issues/251), improved mutlibyte handling, Ruby 1.9 syntax, and valid HTML.
+- 
+-h3. @Encoders::HTML@
+- 
+-* *FIXED*: Line tokens use @span@ with @display: block@ instead of @div@, which was invalid HTML ("#255":http://redmine.rubychan.de/issues/255).
++* *NEW*: The new Diff scanner colorizes code inside of the diff, and highlights inline changes.
++* *NEW*: Extended support and usage of HTML5 and CSS 3 features.
++* *NEW*: Direct Streaming
++* *NEW* scanners: Clojure and HAML
++* *CHANGED*: Token classes (used as CSS classes) are readable names; breaks you stylesheet!
++* *IMPROVED* documentation
++* *IMPROVED* speed: faster startup (using @autoload@), scanning, and encoding
++* *IMPROVED* Ruby 1.9 encodings support
++* *IMPROVED* Tests: There are more of them now!
+ 
+-h3. @Scanner::Scanner@
++h3. Direct Streaming
+  
+-* *IMPROVED* handling of encodings in Ruby 1.9: UTF-8 and Windows-1252 are checked.
+-* *NEW*: Invalid chars will be converted to @?@ in Ruby 1.9.
+-* *FIXED* @string=@ method for Rubinius. See "issue 481":http://github.com/evanphx/rubinius/issues/481 on their site.
+-
+-h3. @Scanners::CSS@
++CodeRay 1.0 introduces _Direct Streaming_ as a faster and simpler alternative to Tokens. It means that all Scanners,
++Encoders and Filters had to be rewritten, and that older scanners using the Tokens API are no longer compatible with
++this version.
+  
+-* *FIXED*: Don't use non-ASCII regexps.
+-
+-h3. @Scanners::Diff@
++The main benefits of this change are:
+  
+-* *FIXED*: Highlight unexpected lines as @:comment@.
+-
+-h3. @Scanners::PHP@
++* more speed (benchmarks show 10% to 50% more tokens per second compared to CodeRay 0.9)
++* the ability to stream output into a pipe on the command line
++* a simpler API
++* less code
+  
+-* *FIXED*: Use @ASCII-8BIT@ encoding for now.
++Changes related to the new tokens handling include:
++* *CHANGED*: The Scanners now call Encoders directly; tokens are not added to a Tokens array, but are send to the
++  Encoder as a method call. The Tokens representation (which can be seen as a cache now) is still present, but as a
++  special case; Tokens just encodes the given tokens into an Array for later use.
++* *CHANGED*: The token actions (@text_token@, @begin_group@ etc.) are now public methods of @Encoder@ and @Tokens@.
++* *REWRITE* of all Scanners, Encoders, Filters, and Tokens.
++* *RENAMED* @:open@ and @:close@ actions to @:begin_group@ and @:end_group@.
++* *RENAMED* @open_token@ and @close_token@ methods to @begin_group@ and @end_group@.
++* *NEW* method @#tokens@ allows to add several tokens to the stream. @Tokens@ and @Encoders::Encoder@ define this
++  method.
++* *CHANGED* The above name changes also affect the JSON, XML, and YAML encoders. CodeRay 1.0 output will be incompatible
++  with earlier versions.
++* *REMOVED* @TokenStream@ and the @Streamable@ API and all related features like @NotStreamableError@ are now obsolete
++  and have been removed.
+ 
+-h3. @Scanners::Ruby@
++h3. Command Line
+  
+-* *ADDED* support for some Ruby 1.9 syntax ("#254":http://redmine.rubychan.de/issues/254):
+-** the @->@ lambda shortcut
+-** new Hash syntax using colons (@{ a: b }@)
+-* *FIXED*: Use @UTF-8@ encoding.
+-* *IMPROVED* unicode support on Ruby 1.8 ("#253":http://redmine.rubychan.de/issues/253).
+-* *FIXED* recognition of non-ASCII identifiers in Ruby 1.9, JRuby, and Rubinius ("#253":http://redmine.rubychan.de/issues/253).
+-* *CHANGED* heredoc recognition to ignore delimiters starting with a digit. This is incorrect, but causes less false positives.
+-
+-h3. @Scanners::SQL@
+- 
+-* *FIXED* scanning of comments; nice catch, Rubinius!
+-  ("#252":http://redmine.rubychan.de/issues/252)
+-
+-
+-h2. Changes in 0.9.4 "Ramadan" [2010-08-31]
+- 
+-Updated command line interface and minor scanner fixes for the Diff, HTML, and RHTML scanners.
++The @coderay@ executable was rewritten and has a few new features:
+  
+-h3. @coderay@ executable
+- 
+-* *FIXED*: Partly rewritten, simplified, fixed.
+-  ("#244":http://redmine.rubychan.de/issues/244)
++* *NEW* Ability to stream into a pipe; try @coderay file | more -r@
++* *NEW* help
++* *IMPROVED*: more consistent parameter handling
++* *REMOVED* @coderay_stylesheet@ executable; use @coderay stylesheet [name]@.
+ 
+-h3. @Scanners::Diff@
++h3. @Tokens@
+  
+-* *FIXED* handling of change headers with code on the same line as the @@ marker.
+-  ("#247":http://redmine.rubychan.de/issues/242)
++* *NEW* methods @count@, @begin_group@, @end_group@, @begin_line@, and @end_line@.
++* *REMOVED* methods @#stream?@, @#each_text_token@.
++* *REMOVED* methods @#optimize@, @#fix@, @#split_into_lines@ along with their bang! variants.
++* *REMOVED* @#text@ and @#text_size@ methods. Use the @Text@ encoder instead.
++* *REMOVED* special implementation of @#each@ taking a filter parameter. Use @TokenKindFilter@ instead.
+ 
+-h3. @Scanners::HTML@
++h3. *RENAMED*: @TokenKinds@
+  
+-* *FIXED* a missing regexp modifier that slowed down the scanning.
+-  ("#245":http://redmine.rubychan.de/issues/245)
+-
+-h3. @Scanners::RHTML@
++Renamed from @Tokens::ClassOfKind@ (was also @Tokens::AbbreviationForKind@ for a while).
++The term "token class" is no longer used in CodeRay. Instead, tokens have _kinds_.
++See "#122":http://odd-eyed-code.org/issues/122.
+  
+-* *FIXED* highlighting of ERB comment blocks.
+-  ("#246":http://redmine.rubychan.de/issues/246)
+-
++* *CHANGED* all token CSS classes to readable names.
++* *ADDED* token kinds @:filename@, @:namespace@, and @:eyecatcher@.
++* *RENAMED* @:pre_constant@ and @:pre_type@ to @:predefined_constant@ and @predefined_type@.
++* *RENAMED* @:oct@ and @:bin@ to @:octal@ and @binary@.
++* *REMOVED* token kinds @:attribute_name_fat@, @:attribute_value_fat@, @:operator_fat@, @interpreted@,
++  @:tag_fat@, @tag_special@, @:xml_text@, @:nesting_delimiter@, @:open@, and @:close@.
++* *CHANGED*: Don't raise error for unknown token kinds unless in @$CODERAY_DEBUG@ mode.
++* *CHANGED* the value for a token kind that is not highlighted from
++  @:NO_HIGHLIGHT@ to @false@.
+ 
+-h2. Changes in 0.9.3 "Eyjafjallajökull" [2010-04-18]
++h3. @Duo@
+  
+-* *FIXED*: Documentation of Tokens.
+-  ("#218":http://redmine.rubychan.de/issues/218)
+- 
+-h3. @coderay@ executable
+- 
+-* *NEW*: automatic TTY detection (uses @Term@ encoder)
+-* *NEW*: optional 3rd parameter for the filename
+-* *FIXED*: Converted to UNIX format.
+-* *FIXED*: Warn about generated files.
+-* *FIXED*: Ensure line break after the output (especially for LoC counter).
++* *NEW* method @call@ for allowing code like @CodeRay::Duo[:python => :yaml].(code)@ in Ruby 1.9.
+ 
+-h3. @Scanners::JavaScript@
++h3. @Encoders::CommentFilter@
+  
+-* *FIXED*: Don't keep state of XML scanner between calls for E4X literals.
++* *NEW* alias @:remove_comments@
+ 
+-h3. @Scanners::Java@, @Scanners::JSON@
++h3. @Encoders::Filter@
+  
+-* *FIXED*: Close unfinished strings with the correct token kind.
++* *NEW* option @tokens@.
++* *CHANGED*: Now it simply delegates to the output.
++* *REMOVED* @include_text_token?@ and @include_block_token?@ methods.
+ 
+-
+-h2. Changes in 0.9.2 "Flameeyes" [2010-03-14]
+- 
+-* *NEW* Basic tests and a _Rakefile_ are now included in the Gem. [Flameeyes]
+-  A @doc@ task is also included.
+-* *FIXED* Use @$CODERAY_DEBUG@ for debugging instead of @$DEBUG@. [Trans]
+-  ("#192":http://redmine.rubychan.de/issues/192)
+-* *REMOVED* @Term::Ansicolor@ was bundled under _lib/_, but not used. [Flameeyes]
+-  ("#205":http://redmine.rubychan.de/issues/205)
+-* *WORKAROUND* for Ruby bug 
+-  "#2745":http://redmine.ruby-lang.org/issues/show/2745
++h3. @Encoders::HTML@
+  
+-h3. @Encoders::Term@
++The HTML encoder was cleaned up and simplified.
+  
+-* *FIXED* strings are closed correctly
+-  ("#138":http://redmine.rubychan.de/issues/138)
+-* *FIXED* several token kinds had no associated color
+-  ("#139":http://redmine.rubychan.de/issues/139)
+-* *NEW* alias @terminal@
+-  
+-  *NOTE:* This encoder will be renamed to @Encoders::Terminal@ in the next release.
++* *NEW*: HTML5 and CSS 3 compatible.
++  See "#215":http://odd-eyed-code.org/issues/215.
++* *ADDED* support for @:line_number_anchors@.
++  See "#208":http://odd-eyed-code.org/issues/208.
++* *CHANGED* the default style to @:alpha@.
++* *CHANGED*: Use double click to toggle line numbers in table mode (as single
++  click jumps to an anchor.)
++* *REMOVED* support for @:line_numbers => :list@.
++* *FIXED* splitting of lines for @:line_numbers => :inline@, so that the line
++  numbers don't get colored, too.
++* *RENAMED* @Output#numerize@ to @#number@, which is an actual English word.
+ 
+-h3. @Scanners::Debug@
++h3. @Encoders::LinesOfCode@
+  
+-* *FIXED* Don't close tokens that are not open. Send @:error@ token instead.
++* *CHANGED*: @compile@ and @finish@ methods are now protected.
+ 
+-h3. @Scanners::Groovy@
++h3. *Renamed*: @Encoders::Terminal@ (was @Encoders::Term@)
+  
+-* *FIXED* token kind of closing brackets is @:operator@ instead of @nil@
+-  ("#148":http://redmine.rubychan.de/issues/148)
++* *RENAMED* from @Encoders::Term@, added @:term@ alias.
++* *CLEANUP*: Use @#setup@'s @super@, don't use @:procedure@ token class.
++* *CHANGED*: @#token@'s second parameter is no longer optional.
++* *REMOVED* colors for obsolete token kinds.
++* *FIXED* handling of line tokens.
+ 
+-h3. @Scanners::PHP@
++h3. @Encoders::Text@
+  
+-* *FIXED* allow @\@ operator (namespace separator)
+-  ("#209":http://redmine.rubychan.de/issues/209)
++* *FIXED* default behavior of stripping the trailing newline.
+ 
+-h3. @Scanners::YAML@
++h3. *RENAMED*: @Encoders::TokenKindFilter@ (was @Encoders::TokenClassFilter@)
+  
+-* *FIXED* doesn't send debug tokens when @$DEBUG@ is true [Trans]
+-  ("#149":http://redmine.rubychan.de/issues/149)
+-
++* *NEW*: Handles token groups.
++  See "#223":http://odd-eyed-code.org/issues/223.
++* *RENAMED* @include_block_token?@ to @include_group?@.
+ 
+-h2. Changes in 0.9.1 [2009-12-31]
++h3. @Encoders::Statistic@
+  
+-h3. Token classes
+- 
+-* *NEW* token classes @:complex@, @:decorator@, @:imaginary@
+-  (all for Python)
+-* *REMOVED* token class @:procedure@
+-  – use @:function@ or @:method@ instead.
++* *CHANGED*: Tokens actions are counted separately.
+ 
+-h3. @Tokens@
++h3. @Scanners::Scanner@
+  
+-* *NEW* method @#scanner@
+-  
+-  Stores the scanner.
+-* *REMOVED* methods @.write_token@, @.read_token@, @.escape@, @.unescape@
+-  
+-  They were only used by the @Tokens@ encoder, which was removed also.
++* *NEW* methods @#file_extension@ and @#encoding@.
++* *NEW*: The @#tokenize@ method also takes an Array of Strings as source. The
++  code is highlighted as one and split into parts of the input lengths
++  after that using @Tokens#split_into_parts@.
++* *NEW* method @#binary_string@
++* *REMOVED* helper method @String#to_unix@.
++* *REMOVED* method @#streamable?@.
++* *REMOVED* @#marshal_load@ and @#marshal_dump@.
++* *RENAMED* class method @normify@ to @normalize@; it also deals with encoding now.
++* *CHANGED*: @#column@ starts counting with 1 instead of 0
+ 
+-h3. @Encoders::Encoder@
++h3. *NEW*: @Scanners::Clojure@
+  
+-* *REMOVED* Don't require the _stringio_ library.
+-* *NEW* public methods @#open_token@, @#close_token@, @#begin_line@, @#end_line@
+-  These methods are called automatically, like @#text_token@.
+-* *NEW* proteced method @#append_encoded_token_to_output@
++Thanks to Licenser, CodeRay now supports the Clojure language.
+ 
+-h3. @Encoders::Tokens@
++h3. @Scanners::CSS@
+  
+-* *REMOVED* – use @Tokens#dump@ and @Tokens.load@.
++* *NEW*: Rudimentary support for the @attr@, @counter@, and @counters@ functions.
++  See "#224":http://odd-eyed-code.org/issues/224.
++* *NEW*: Rudimentary support for CSS 3 colors.
++* *CHANGED*: Attribute selectors are highlighted as @:attribute_name@ instead of @:string@.
++* *CHANGED*: Comments are scanned as one token instead of three.
+ 
+-h3. @Encoders::Filter@
++h3. @Scanners::Debug@
+  
+-* *NEW*
+-  A @Filter@ encoder has another @Tokens@ instance as output.
++* *NEW*: Support for line tokens (@begin_line@ and @end_line@ represented by @[@ and @]@.)
++* *FIXED*: Don't send @:error@ and @nil@ tokens for buggy input any more.
++* *FIXED*: Closes unclosed tokens at the end of @scan_tokens@.
++* *IMPROVED*: Highlight unknown tokens as @:error@.
++* *CHANGED*: Raises an error when trying to end an invalid token group.
+ 
+-h3. @Encoders::TokenClassFilter@
++h3. @Scanners::Delphi@
+  
+-* *NEW*
+-  
+-  It takes 2 options, @:exclude@ and @:include@, that specify which token classes
+-  to include or exclude for the output. They can be a single token class,
+-  an @Array@ of classes, or the value @:all@.
++* *FIXED*: Closes open string groups.
+ 
+-h3. @Encoders::CommentFilter@
++h3. @Scanners::Diff@
+  
+-* *NEW*
++* *NEW*: Highlighting of code based on file names.
++  See ticket "#52":http://odd-eyed-code.org/issues/52.
+   
+-  Removes tokens of the @:comment@ class.
+-
+-h3. @Encoders::LinesOfCode@
+- 
+-* *NEW*
++  Use the @:highlight_code@ option to turn this feature off. It's enabled
++  by default.
+   
+-  Counts the lines of code according to the @KINDS_NOT_LOC@ token class list
+-  defined by the scanner. It uses the new @TokenClassFilter@.
++  This is a very original feature. It enables multi-language highlighting for
++  diff files, which is especially helpful for CodeRay development itself. The
++  updated version of the scanner test suite generated .debug.diff.html files
++  using this.
+   
+-  Alias: @:loc@, as in @tokens.loc@.
+-
+-h3. @Encoders::JSON@
+- 
+-* *NEW*
++  Note: This is still experimental. Tokens spanning more than one line
++  may get highlighted incorrectly. CodeRay tries to keep scanner states
++  between the lines and changes, but the quality of the results depend on
++  the scanner.
++* *NEW*: Inline change highlighting, as suggested by Eric Thomas.
++  See ticket "#227":http://odd-eyed-code.org/issues/227 for details.
+   
+-  Outputs tokens in a simple JSON format.
+-
+-h3. @Encoders::Term@
+- 
+-* *NEW* (beta, by Rob Aldred)
++  Use the @:inline_diff@ option to turn this feature off. It's enabled by
++  default.
+   
+-  Outputs code highlighted for a color terminal.
++  For single-line changes (that is, a single deleted line followed by a single
++  inserted line), this feature surrounds the changed parts with an
++  @:eyecatcher@ group which appears in a more saturated background color.
++  The implementation is quite complex, and highly experimental. The problem
++  with multi-layer tokenizing is that the tokens have to be split into parts.
++  If the inline change starts, say, in the middle of a string, then additional
++  @:end_group@ and @:begin_group@ tokens must be inserted to keep the group
++  nesting intact. The extended @Scanner#tokenize@ method and the new
++  @Tokens#split_into_parts@ method take care of this.
++* *NEW*: Highlight the file name in the change headers as @:filename@.
++* *CHANGED*: Highlight unknown lines as @:comment@ instead of @:head@.
++* *IMPROVED*: Background colors for Diff output have been optimized.
+ 
+-h3. @Encoders::HTML@
+- 
+-* *NEW* option @:title@ (default value is _CodeRay output_)
+-  
+-  Setting this changes the title of the HTML page.
+-* *NEW* option @:highlight_lines@ (default: @nil@)
+-  
+-  Highlights the given set of line numbers.
+-- *REMOVED* option @:level@
+-  
+-  It didn't do anything. CodeRay always outputs XHTML.
++h3. *RENAMED*: @Scanners::ERB@ (was @Scanners::RHTML@)
+ 
+-h3. @Encoders::Text@
++h3. *NEW*: @Scanners::HAML@
++ 
++It uses the new :state options of the HTML and Ruby scanners.
+  
+-* Uses @Encoder@ interface with @super@ and @#text_token@.
++Some rare cases are not considered (like @#{...}@ snippets inside of :javascript blocks),
++but it highlights pretty well.
+ 
+-h3. @Encoders::XML@
++h3. @Scanners::HTML@
+  
+-* @FIXED@ ("#94":http://redmine.rubychan.de/issues/94)
+-  
+-  It didn't work at all.
++* *FIXED*: Closes open string groups.
+ 
+-h3. Scanners
++h3. @Scanners::JavaScript@
+  
+-* *NEW* Mapped @:h@ to @:c@, @:cplusplus@ and @:'c++'@ to @:cpp@,
+-  @:ecma@, @:ecmascript@, @:ecma_script@ to @:java_script@,
+-  @:pascal@ to @:delphi@, and @:plain@ to @:plaintext@.
++* *IMPROVED*: Added @NaN@ and @Infinity@ to list of predefined constants.
++* *IMPROVED* recognition of RegExp literals with leading spaces.
+ 
+-h3. @Scanners::Scanner@
++h3. @Scanners::Java@
+  
+-* *NEW* constant @KINDS_NOT_LOC@
+-  
+-  A list of all token classes not considered in LOC count.
+-  Added appropriate values for scanners.
+-* *NEW* method @#lang@ returns the scanner's lang, which is its @plugin_id@.
+-* *FIXED* automatic, safe UTF-8 detection _[Ruby 1.9]_
+-* *FIXED* column takes care of multibyte encodings _[Ruby 1.9]_
+-* *FIXED* is dumpable (@Tokens@ store their scanner in an @@scanner@ variable)
++* *NEW*: Package names are highlighted as @:namespace@.
++  See "#210":http://odd-eyed-code.org/issues/210.
+ 
+-h3. @Scanners::Cpp@
++h3. *REMOVED*: @Scanners::NitroXHTML@
+  
+-* *NEW* (C++)
++Nitro is "dead":http://www.nitrohq.com/.
+ 
+-h3. @Scanners::Groovy@
++h3. *RENAMED*: @Scanners::Text@ (was @Scanners::Plaintext@)
++ 
++* *IMPROVED*: Just returns the string without scanning (faster).
+  
+-* *NEW* (beta)
++ This is much faster than scanning until @/\z/@ in Ruby 1.8.
+ 
+ h3. @Scanners::Python@
+  
+-* *NEW*
++* *CHANGED*: Docstrings are highlighted as @:comment@.
++  See "#190":http://odd-eyed-code.org/issues/190.
+ 
+-h3. @Scanners::PHP@
+- 
+-* *NEW* (based on Stefan Walk's work)
++h3. *NEW*: @Scanners::Raydebug@
+ 
+-h3. @Scanners::SQL@
+- 
+-* *NEW* (based on code by Josh Goebel)
++Copied from @Scanners::Debug@, highlights the token dump instead of importing it. It also reacts to the @.raydebug@ file
++name suffix now.
+ 
+-h3. @Scanners::C@
++h3. @Scanners::Ruby@
+  
+-* *IMPROVED* added a list of @:directive@ tokens that were @:reserved@ before
+-* *IMPROVED* detection of labels
+-* *IMPROVED* allow @1L@ and @1LL@ style literals
++* *ADDED* more predefined keywords (see http://murfy.de/ruby-constants).
++* *IMPROVED* support for singleton method definitions.
++  See "#147":http://odd-eyed-code.org/issues/147.
++* *FIXED*: Don't highlight methods with a capital letter as constants
++  (eg. @GL.PushMatrix@).
++* *NEW*: Highlight buggy floats (like .5) as @:error@.
++* *CLEANUP* of documentation, names of constants and variables, state handling.
++  
++  Moved @StringState@ class from @patterns.rb@ into a separate file.
++* *NEW*: Complicated rule for recognition of @foo=@ style method names.
++* *NEW*: Handles @:keep_state@ option (a bit; experimental).
++  
++  Actually, Ruby checks if there is @[~>=]@, but not @=>@ following the name.
++  
++* *REMOVED* @EncodingError@
+ 
+-h3. @Scanners::CSS@
++h3. *REMOVED* @Scanners::Scheme@
+  
+-* *IMPROVED* element selectors are highlighted as @:type@ instead of @:keyword@
++* It is too buggy, and nobody was using it. To be added again when it's fixed.
++  See "#59":http://odd-eyed-code.org/issues/59.
+ 
+-h3. @Scanners::Delphi@
++h3. @Scanners::SQL@
+  
+-* *IMPROVED* Don't cache tokens in CaseIgnoringWordList.
+-
+-h3. @Scanners::Java@
++* *IMPROVED*: Extended list of keywords and functions (thanks to
++  Joshua Galvez, Etienne Massip, and others).
+  
+-* *IMPROVED* @assert@ is highlighted as a @:keyword@ now
+-* *IMPROVED* @const@ and @goto@ are highlighted as @:reserved@
+-* *IMPROVED* @false@, @true@, and @null@ are highlighted as @:pre_constant@
+-* *IMPROVED* @threadsafe@ is no longer a @:directive@
+-* *IMPROVED* @String@ is highlighted as a @:pre_type@
+-* *IMPROVED* built-in classes ending with _Error_ or _Exception_ are
+-  highlighted as a @:exception@ instead of @:pre_type@
++  See "#221":http://odd-eyed-code.org/issues/221.
++* *FIXED*: Closes open string groups.
++* *FIXED*: Words after @.@ are always recognized as @:ident@.
+ 
+-h3. @Scanners::JavaScript@
++h3. @Scanners::YAML@
+  
+-* *NEW* a list of @PREDEFINED_CONSTANTS@ to be highlighted as @:pre_constant@
+-* *NEW* XML literals are recognized and highlighted
+-* *NEW* function name highlighting
+-* *IMPROVED* @.1@ is highlighted a number
+-* *FIXED* strings close with the correct kind when terminated unexpectedly
+-
+-h3. @Scanners::JSON@
++* *FIXED*: Allow spaces before colon in mappings.
+  
+-* *IMPROVED* constants (@true@, @false@, @nil@) are highlighted as @:value@
++  See "#231":http://odd-eyed-code.org/issues/231.
+ 
+-h3. @Scanners::Ruby@
+- 
+-* *IMPROVED* @Patterns::KEYWORDS_EXPECTING_VALUE@ for more accurate
+-  @value_expected@ detection
+-* *IMPROVED* handling of @\@ as a string delimiter
+-* *IMPROVED* handling of unicode strings; automatic switching to unicode
+-* *IMPROVED* highlighting of @self.method@ definitions
+-* *REMOVED* @Patterns::FANCY_START_SAVE@ (obsolete)
+-* *FIXED* encoding issues _[Ruby 1.9]_
+-* *FIXED* a problem in early Ruby 1.8.6 patch versions with @Regexp.escape@
++h3. *NEW*: @Styles::Alpha@
+ 
+-h3. @Scanners::YAML@
++A style that uses transparent HSLA colors as defined in CSS 3. See "#199":http://odd-eyed-code.org/issues/199.
+  
+-* *IMPROVED* indentation detection
++It also uses the CSS 3 property @user-select: none@ to keep the user from selecting the line numbers. This is especially
++nice for @:inline@ line numbers. See "#226":http://odd-eyed-code.org/issues/226.
+ 
+-h3. @Styles::Cycnus@
++h3. @WordList@
+  
+-* changed a few colors (exceptions, inline strings, predefined types)
++Stripped down to 19 LOC.
+ 
+-h3. @Plugin@
+- 
+-* *NEW* method @#title@
+-  
+-  Set and get the plugin's title. Titles can be arbitrary strings.
+-* *NEW* method @#helper@ loads helpers from different plugins
+-  
+-  Use this syntax: @helper 'other_plugin/helper_name'@
++* *RENAMED* @CaseIgnoringWordList@ to @WordList::CaseIgnoring@.
++* *REMOVED* caching option because it creates memory leaks.
++* *REMOVED* block option.
+ 
+ h3. @FileType@
+  
+-* *NEW* @FileType[]@ takes @Pathname@ instances
+-* *NEW* regonizes @.cc@, @.cpp@, @.cp@, @.cxx@, @.c++@, @.C@, @.hh@, @.hpp@, @.h++@, @.cu@ extensions (C++)
++* *NEW*: Recognizes @.gemspec@, @.rjs@, @.rpdf@ extensions, @Gemfile@, and @Capfile@ as Ruby.
+   
+-  Thanks to Sander Cox and the TextMate C bundle.
+-* *NEW* regonizes @.pas@, @.dpr@ extensions (Delphi)
+-* *NEW* regonizes @.gvy@, @.groovy@ extensions (Groovy)
+-* *NEW* regonizes @.php@, @.php3@, @.php4@, @.php5@ extensions (PHP)
+-* *NEW* regonizes @.py@, @.py3@, @.pyw@ extensions (Python)
+-* *NEW* regonizes @.rxml@ extension (Ruby)
+-* *NEW* regonizes @.sql@ extension (SQL)
+-* File types list was sorted alphabetically.
+-
+-h3. @CaseIgnoringWordList@
+- 
+-* *FIXED* ("#97":http://redmine.rubychan.de/issues/97)
+-  
+-  The default value is no longer ignored.
++  Thanks to the authors of the TextMate Ruby bundle!
++* *REMOVED* @FileType#shebang@ is a protected method now.
++
++h3. @Plugin@
++ 
++* *IMPROVED*: @register_for@ sets the @plugin_id@; it can now be a @Symbol@.
++* *ADDED* @PluginHost#const_missing@ method: Plugins are loaded automatically.
++  Using @Scanners::JavaScript@ in your code loads @scanners/java_script.rb@.
++* *ADDED* @#all_plugins@ method to simplify getting 
++  information about all available plugins (suggested by bnhymn).
++* *CHANGED* the default plugin key from @nil@ to @:default@.
+ 
+-h3. @ForRedCloth@
++h3. @GZip@
+  
+-* *FIXED* for RedCloth versions 4.2.0+ ("#119":http://redmine.rubychan.de/issues/119)
++* *MOVED* into @CodeRay@ namespace.
++* *MOVED* file from @gzip_simple.rb@ to @gzip.rb@.
++* *REMOVED* @String@ extensions.
+ 
+-h3. Cleanups
++h3. More API changes
+  
+-* warnings about character classes _[Ruby 1.9]_
+-* encoding issues _[Ruby 1.9]_
+-* documentation, code
++* *FIXED* @Encoders::HTML#token@'s second parameter is no longer optional.
++* *CHANGED* @Encoders::HTML::Output@'s API.
++* *REMOVED* lots of unused methods.
++ 
++The helper classes were cleaned up; see above for details.
++ 
++* *CHANGED* @Plugin@ API was simplified and stripped of all unnecessary features.
++* *CHANGED* Moved @GZip@ and @FileType@ libraries into @CodeRay@; cleaned them up.
++
+ 
+ 
+diff --git a/bin/coderay b/bin/coderay
+index 0dc42b7..d78cd57 100755
+--- a/bin/coderay
++++ b/bin/coderay
+@@ -54,17 +54,35 @@ end
+ def commands
+   puts <<-COMMANDS
+   general:
+-    highlight   code highlighting (default command)
+-    stylesheet  print the CSS stylesheet with the given name
++    highlight   code highlighting (default command, optional)
++    stylesheet  print the CSS stylesheet with the given name (aliases: style, css)
+   
+   about:
+-    list [of]   list all available plugins (or just the scanners|encoders)
++    list [of]   list all available plugins (or just the scanners|encoders|styles|filetypes)
+     commands    print this list
+     help        show some help
+     version     print CodeRay version
+   COMMANDS
+ end
+ 
++def print_list_of plugin_host
++  plugins = plugin_host.all_plugins.map do |plugin|
++    info = "  #{plugin.plugin_id}: #{plugin.title}"
++    
++    aliases = (plugin.aliases - [:default]).map { |key| "-#{key}" }.sort_by { |key| key.size }
++    if plugin.respond_to?(:file_extension) || !aliases.empty?
++      additional_info = []
++      additional_info << aliases.join(', ') unless aliases.empty?
++      info << " (#{additional_info.join('; ')})"
++    end
++    
++    info << '  <-- default' if plugin.aliases.include? :default
++    
++    info
++  end
++  puts plugins.sort
++end
++
+ if option? '-v', '--version'
+   version
+ end
+@@ -87,28 +105,32 @@ when 'highlight', nil
+     when /^ff?$/
+       input_file, output_file, = *names
+     when /^f-f?$/
+-      input_file, output_filetype, output_file, = *names
++      input_file, output_format, output_file, = *names
+     when /^-ff?$/
+-      input_filetype, input_file, output_file, = *names
++      input_lang, input_file, output_file, = *names
+     when /^-f-f?$/
+-      input_filetype, input_file, output_filetype, output_file, = *names
++      input_lang, input_file, output_format, output_file, = *names
+     when /^--?f?$/
+-      input_filetype, output_filetype, output_file, = *names
++      input_lang, output_format, output_file, = *names
+     else
+-      raise signature
++      $stdout = $stderr
++      help
++      puts
++      puts "Unknown parameter order: #{args.join ' '}, expected: [-language] [input] [-format] [output]"
++      exit 1
+     end
+     
+     if input_file
+-      input_filetype ||= CodeRay::FileType.fetch input_file, :text, true
++      input_lang ||= CodeRay::FileType.fetch input_file, :text, true
+     end
+     
+     if output_file
+-      output_filetype ||= CodeRay::FileType[output_file]
++      output_format ||= CodeRay::FileType[output_file]
+     else
+-      output_filetype ||= :terminal
++      output_format ||= :terminal
+     end
+     
+-    output_filetype = :page if output_filetype.to_s == 'html'
++    output_format = :page if output_format.to_s == 'html'
+     
+     if input_file
+       input = File.read input_file
+@@ -124,9 +146,10 @@ when 'highlight', nil
+           $stdout.sync = true
+           $stdout
+         end
+-      CodeRay.encode(input, input_filetype, output_filetype, :out => file)
++      CodeRay.encode(input, input_lang, output_format, :out => file)
+       file.puts
+     rescue CodeRay::PluginHost::PluginNotFound => boom
++      $stdout = $stderr
+       if boom.message[/CodeRay::(\w+)s could not load plugin :?(.*?): /]
+         puts "I don't know the #$1 \"#$2\"."
+       else
+@@ -134,33 +157,47 @@ when 'highlight', nil
+       end
+       # puts "I don't know this plugin: #{boom.message[/Could not load plugin (.*?): /, 1]}."
+     rescue CodeRay::Scanners::Scanner::ScanError  # FIXME: rescue Errno::EPIPE
+-      # ignore
++      # this is sometimes raised by pagers; ignore [TODO: wtf?]
+     ensure
+-      file.close
++      file.close if output_file
+     end
+   end
+-when 'list'
++when 'li', 'list'
+   arg = args.first && args.first.downcase
+   if [nil, 's', 'sc', 'scanner', 'scanners'].include? arg
+     puts 'input languages (Scanners):'
+-    scanners = CodeRay::Scanners.all_plugins.map do |plugin|
+-      aliases = (plugin.aliases - [nil]).map { |key| "-#{key}" }.sort_by { |key| key.size }
+-      "  #{plugin.lang}: #{plugin.title}#{" (.#{plugin.file_extension}; #{aliases.join(', ')})" unless aliases.empty?}"
+-    end
+-    puts scanners.sort
+-    puts
++    print_list_of CodeRay::Scanners
+   end
+   
+   if [nil, 'e', 'en', 'enc', 'encoder', 'encoders'].include? arg
+     puts 'output formats (Encoders):'
+-    encoders = CodeRay::Encoders.all_plugins.map do |plugin|
+-      aliases = (plugin.aliases - [nil]).map { |key| "-#{key}" }.sort_by { |key| key.size }
+-      "  #{plugin.plugin_id}: #{plugin.title}#{" (.#{plugin.file_extension}; #{aliases.join(', ')})" unless aliases.empty?}"
++    print_list_of CodeRay::Encoders
++  end
++  
++  if [nil, 'st', 'style', 'styles'].include? arg
++    puts 'CSS themes for HTML output (Styles):'
++    print_list_of CodeRay::Styles
++  end
++  
++  if [nil, 'f', 'ft', 'file', 'filetype', 'filetypes'].include? arg
++    puts 'recognized file types:'
++    
++    filetypes = Hash.new { |h, k| h[k] = [] }
++    CodeRay::FileType::TypeFromExt.inject filetypes do |types, (ext, type)|
++      types[type.to_s] << ".#{ext}"
++      types
++    end
++    CodeRay::FileType::TypeFromName.inject filetypes do |types, (name, type)|
++      types[type.to_s] << name
++      types
++    end
++    
++    filetypes.sort.each do |type, exts|
++      puts "  #{type}: #{exts.sort_by { |ext| ext.size }.join(', ')}"
+     end
+-    puts encoders.sort
+   end
+-when 'stylesheet'
+-  puts CodeRay::Encoders[:html]::CSS.new(args.first).stylesheet
++when 'stylesheet', 'style', 'css'
++  puts CodeRay::Encoders[:html]::CSS.new(args.first || :default).stylesheet
+ when 'commands'
+   commands
+ when 'help'
+diff --git a/coderay.gemspec b/coderay.gemspec
+index d62bf4b..0eabd66 100644
+--- a/coderay.gemspec
++++ b/coderay.gemspec
+@@ -5,11 +5,13 @@ require 'coderay/version'
+ Gem::Specification.new do |s|
+   s.name = 'coderay'
+   
+-  # thanks to @Argorak for this solution
+-  revision = 134 + (`git log --oneline | wc -l`.to_i)
+-  s.version = "#{CodeRay::VERSION}.#{revision}rc2"
+-  
+-  # s.version = CodeRay::VERSION
++  if ENV['RELEASE']
++    s.version = CodeRay::VERSION
++  else
++    # thanks to @Argorak for this solution
++    revision = 134 + (`git log --oneline | wc -l`.to_i)
++    s.version = "#{CodeRay::VERSION}.#{revision}rc3"
++  end
+   
+   s.authors     = ['Kornelius Kalnbach']
+   s.email       = ['murphy@rubychan.de']
+@@ -18,19 +20,13 @@ Gem::Specification.new do |s|
+   s.description = 'Fast and easy syntax highlighting for selected languages, written in Ruby. Comes with RedCloth integration and LOC counter.'
+   
+   s.platform              = Gem::Platform::RUBY
+-  s.required_ruby_version = '>= 1.8.7'
+-  
+-  # s.add_dependency "paint", '~> 0.8.2'
++  s.required_ruby_version = '>= 1.8.6'
+   
+-  # s.files         = `git ls-files`.split("\n")
+-  # s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+-  # s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
+-  # s.require_paths = ["lib"]
+   readme_file = 'README_INDEX.rdoc'
+   
+-  s.files         = Dir['lib/**/*.rb'] + %W(Rakefile #{readme_file} LICENSE) + Dir['test/functional/*.rb']
+-  s.test_files    = Dir['test/functional/*.rb']
+-  s.executables   = ['coderay']
++  s.files         = `git ls-files -- lib/* test/functional/* Rakefile #{readme_file} LICENSE`.split("\n")
++  s.test_files    = `git ls-files --       test/functional/*`.split("\n")
++  s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
+   s.require_paths = ['lib']
+   
+   s.rubyforge_project = s.name
+diff --git a/etc/CodeRay.tmproj b/etc/CodeRay.tmproj
+deleted file mode 100644
+index b63f332..0000000
+--- a/etc/CodeRay.tmproj
++++ /dev/null
+@@ -1,184 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+-<plist version="1.0">
+-<dict>
+-	<key>documents</key>
+-	<array>
+-		<dict>
+-			<key>expanded</key>
+-			<true/>
+-			<key>name</key>
+-			<string>lib</string>
+-			<key>regexFolderFilter</key>
+-			<string>!.*/(\.[^/]*|CVS|_darcs|\{arch\}|blib|.*~\.nib|.*\.(framework|app|pbproj|pbxproj|xcode(proj)?|bundle))$</string>
+-			<key>sourceDirectory</key>
+-			<string>../lib</string>
+-		</dict>
+-		<dict>
+-			<key>name</key>
+-			<string>bin</string>
+-			<key>regexFolderFilter</key>
+-			<string>!.*/(\.[^/]*|CVS|_darcs|\{arch\}|blib|.*~\.nib|.*\.(framework|app|pbproj|pbxproj|xcode(proj)?|bundle))$</string>
+-			<key>sourceDirectory</key>
+-			<string>../bin</string>
+-		</dict>
+-		<dict>
+-			<key>filename</key>
+-			<string>../coderay.gemspec</string>
+-			<key>lastUsed</key>
+-			<date>2011-08-23T02:18:44Z</date>
+-		</dict>
+-		<dict>
+-			<key>filename</key>
+-			<string>../Changes-1.0.textile</string>
+-			<key>lastUsed</key>
+-			<date>2011-09-08T23:01:08Z</date>
+-		</dict>
+-		<dict>
+-			<key>filename</key>
+-			<string>../README_INDEX.rdoc</string>
+-			<key>lastUsed</key>
+-			<date>2011-08-19T02:40:24Z</date>
+-		</dict>
+-		<dict>
+-			<key>filename</key>
+-			<string>../README.textile</string>
+-			<key>lastUsed</key>
+-			<date>2011-08-19T02:38:26Z</date>
+-		</dict>
+-		<dict>
+-			<key>filename</key>
+-			<string>../.travis.yml</string>
+-			<key>lastUsed</key>
+-			<date>2011-08-19T02:21:33Z</date>
+-		</dict>
+-		<dict>
+-			<key>filename</key>
+-			<string>../Changes.textile</string>
+-			<key>lastUsed</key>
+-			<date>2011-08-19T01:04:06Z</date>
+-		</dict>
+-		<dict>
+-			<key>filename</key>
+-			<string>../FOLDERS</string>
+-			<key>lastUsed</key>
+-			<date>2010-05-12T09:03:46Z</date>
+-		</dict>
+-		<dict>
+-			<key>filename</key>
+-			<string>../TODO</string>
+-			<key>lastUsed</key>
+-			<date>2010-06-27T05:41:28Z</date>
+-		</dict>
+-		<dict>
+-			<key>name</key>
+-			<string>etc</string>
+-			<key>regexFolderFilter</key>
+-			<string>!.*/(\.[^/]*|CVS|_darcs|_MTN|\{arch\}|blib|.*~\.nib|.*\.(framework|app|pbproj|pbxproj|xcode(proj)?|bundle|log|aux))$</string>
+-			<key>sourceDirectory</key>
+-			<string></string>
+-		</dict>
+-		<dict>
+-			<key>filename</key>
+-			<string>../IDEA</string>
+-			<key>lastUsed</key>
+-			<date>2010-03-31T03:59:05Z</date>
+-		</dict>
+-		<dict>
+-			<key>filename</key>
+-			<string>../LICENSE</string>
+-			<key>lastUsed</key>
+-			<date>2010-09-19T16:21:59Z</date>
+-		</dict>
+-		<dict>
+-			<key>name</key>
+-			<string>rake_helpers</string>
+-			<key>regexFolderFilter</key>
+-			<string>!.*/(\.[^/]*|CVS|_darcs|\{arch\}|blib|.*~\.nib|.*\.(framework|app|pbproj|pbxproj|xcode(proj)?|bundle))$</string>
+-			<key>sourceDirectory</key>
+-			<string>../rake_helpers</string>
+-		</dict>
+-		<dict>
+-			<key>name</key>
+-			<string>rake_tasks</string>
+-			<key>regexFolderFilter</key>
+-			<string>!.*/(\.[^/]*|CVS|_darcs|\{arch\}|blib|.*~\.nib|.*\.(framework|app|pbproj|pbxproj|xcode(proj)?|bundle))$</string>
+-			<key>sourceDirectory</key>
+-			<string>../rake_tasks</string>
+-		</dict>
+-		<dict>
+-			<key>filename</key>
+-			<string>../Gemfile</string>
+-			<key>lastUsed</key>
+-			<date>2011-08-19T01:16:24Z</date>
+-		</dict>
+-		<dict>
+-			<key>filename</key>
+-			<string>../Gemfile.lock</string>
+-		</dict>
+-		<dict>
+-			<key>filename</key>
+-			<string>../Rakefile</string>
+-			<key>lastUsed</key>
+-			<date>2011-08-23T02:18:45Z</date>
+-		</dict>
+-		<dict>
+-			<key>name</key>
+-			<string>executable</string>
+-			<key>regexFolderFilter</key>
+-			<string>!.*/(\.[^/]*|CVS|vendor/plugins|index|doc|public/images|_darcs|_MTN|\{arch\}|blib|coverage|.*~\.nib|.*\.(framework|app|pbproj|pbxproj|xcode(proj)?|bundle|log|aux|gem))$</string>
+-			<key>sourceDirectory</key>
+-			<string>../test/executable</string>
+-		</dict>
+-		<dict>
+-			<key>name</key>
+-			<string>functional</string>
+-			<key>regexFolderFilter</key>
+-			<string>!.*/(\.[^/]*|CVS|_darcs|\{arch\}|blib|.*~\.nib|.*\.(framework|app|pbproj|pbxproj|xcode(proj)?|bundle))$</string>
+-			<key>sourceDirectory</key>
+-			<string>../test/functional</string>
+-		</dict>
+-		<dict>
+-			<key>children</key>
+-			<array>
+-				<dict>
+-					<key>filename</key>
+-					<string>../test/scanners/coderay_suite.rb</string>
+-					<key>lastUsed</key>
+-					<date>2011-08-19T03:16:08Z</date>
+-				</dict>
+-				<dict>
+-					<key>filename</key>
+-					<string>../test/scanners/suite.rb</string>
+-					<key>lastUsed</key>
+-					<date>2011-08-19T00:50:31Z</date>
+-				</dict>
+-			</array>
+-			<key>name</key>
+-			<string>scanners</string>
+-		</dict>
+-		<dict>
+-			<key>name</key>
+-			<string>unit</string>
+-			<key>regexFolderFilter</key>
+-			<string>!.*/(\.[^/]*|CVS|vendor/plugins|index|doc|public/images|_darcs|_MTN|\{arch\}|blib|coverage|.*~\.nib|.*\.(framework|app|pbproj|pbxproj|xcode(proj)?|bundle|log|aux|gem))$</string>
+-			<key>sourceDirectory</key>
+-			<string>../test/unit</string>
+-		</dict>
+-		<dict>
+-			<key>filename</key>
+-			<string>../bench/bench.rb</string>
+-			<key>lastUsed</key>
+-			<date>2011-08-18T23:38:33Z</date>
+-		</dict>
+-	</array>
+-	<key>fileHierarchyDrawerWidth</key>
+-	<integer>204</integer>
+-	<key>metaData</key>
+-	<dict/>
+-	<key>showFileHierarchyDrawer</key>
+-	<true/>
+-	<key>windowFrame</key>
+-	<string>{{0, 4}, {1066, 774}}</string>
+-</dict>
+-</plist>
+diff --git a/etc/grafix/pie_graph.rb b/etc/grafix/pie_graph.rb
+index 0463bb8..f34a68f 100644
+--- a/etc/grafix/pie_graph.rb
++++ b/etc/grafix/pie_graph.rb
+@@ -125,7 +125,7 @@ script.aculo.us  225.6K: incremental, shuffled, complete, identity, highlighting
+      trace-test  151.1K: incremental, shuffled, complete, identity, highlighting, finished in  0.41s ( 133 Ktok/s).
+             xml    0.1K: incremental, shuffled, ticket ?, identity, highlighting, finished in  0.00s.
+             KNOWN ISSUE: JavaScript scanner is confused by nested XML literals.
+-                         No ticket yet. Visit http://redmine.rubychan.de/projects/coderay/issues/new.
++                         No ticket yet. Visit http://odd-eyed-code.org/projects/coderay/issues/new.
+ Finished in 10.07s.
+ .
+     >> Testing JSON scanner <<
+diff --git a/lib/coderay.rb b/lib/coderay.rb
+index 2ae58d8..c897220 100644
+--- a/lib/coderay.rb
++++ b/lib/coderay.rb
+@@ -134,6 +134,7 @@ module CodeRay
+   
+   # Tokens
+   autoload :Tokens, 'coderay/tokens'
++  autoload :TokensProxy, 'coderay/tokens_proxy'
+   autoload :TokenKinds, 'coderay/token_kinds'
+   
+   # Plugin system
+@@ -159,7 +160,7 @@ module CodeRay
+     # See also demo/demo_simple.
+     def scan code, lang, options = {}, &block
+       # FIXME: return a proxy for direct-stream encoding
+-      scanner(lang, options, &block).tokenize code
++      TokensProxy.new code, lang, options, block
+     end
+     
+     # Scans +filename+ (a path to a code file) with the Scanner for +lang+.
+@@ -176,7 +177,7 @@ module CodeRay
+     def scan_file filename, lang = :auto, options = {}, &block
+       lang = FileType.fetch filename, :text, true if lang == :auto
+       code = File.read filename
+-      scan code, lang, options = {}, &block
++      scan code, lang, options, &block
+     end
+     
+     # Encode a string.
+diff --git a/lib/coderay/encoder.rb b/lib/coderay/encoder.rb
+index cc331d1..d2d6c7e 100644
+--- a/lib/coderay/encoder.rb
++++ b/lib/coderay/encoder.rb
+@@ -34,7 +34,7 @@ module CodeRay
+         # downcase class name instead.
+         def const_missing sym
+           if sym == :FILE_EXTENSION
+-            (@plugin_id || name[/\w+$/].downcase).to_s
++            (defined?(@plugin_id) && @plugin_id || name[/\w+$/].downcase).to_s
+           else
+             super
+           end
+diff --git a/lib/coderay/encoders/html/output.rb b/lib/coderay/encoders/html/output.rb
+index 298921e..9132d94 100644
+--- a/lib/coderay/encoders/html/output.rb
++++ b/lib/coderay/encoders/html/output.rb
+@@ -140,10 +140,18 @@ module Encoders
+   text-decoration: inherit;
+   color: inherit;
+ }
++body {
++  background-color: white;
++  padding: 0;
++  margin: 0;
++}
+ <%CSS%>
++.CodeRay {
++  border: none;
++}
+   </style>
+ </head>
+-<body style="background-color: white;">
++<body>
+ 
+ <%CONTENT%>
+ </body>
+diff --git a/lib/coderay/encoders/json.rb b/lib/coderay/encoders/json.rb
+index 0a95397..a9e40dc 100644
+--- a/lib/coderay/encoders/json.rb
++++ b/lib/coderay/encoders/json.rb
+@@ -21,8 +21,8 @@ module Encoders
+       require 'json'
+     rescue LoadError
+       begin
+-        require 'rubygems'
+-        gem "json"
++        require 'rubygems' unless defined? Gem
++        gem 'json'
+         require 'json'
+       rescue LoadError
+         $stderr.puts "The JSON encoder needs the JSON library.\n" \
+diff --git a/lib/coderay/helpers/file_type.rb b/lib/coderay/helpers/file_type.rb
+index 7b9939c..cbe0bfc 100644
+--- a/lib/coderay/helpers/file_type.rb
++++ b/lib/coderay/helpers/file_type.rb
+@@ -84,6 +84,7 @@ module CodeRay
+       'css'      => :css,
+       'diff'     => :diff,
+       'dpr'      => :delphi,
++      'erb'      => :erb,
+       'gemspec'  => :ruby,
+       'groovy'   => :groovy,
+       'gvy'      => :groovy,
+diff --git a/lib/coderay/scanners/java/builtin_types.rb b/lib/coderay/scanners/java/builtin_types.rb
+index 8087edd..d1b8b73 100644
+--- a/lib/coderay/scanners/java/builtin_types.rb
++++ b/lib/coderay/scanners/java/builtin_types.rb
+@@ -3,6 +3,7 @@ module Scanners
+   
+   module Java::BuiltinTypes  # :nodoc:
+     
++    #:nocov:
+     List = %w[
+       AbstractAction AbstractBorder AbstractButton AbstractCellEditor AbstractCollection
+       AbstractColorChooserPanel AbstractDocument AbstractExecutorService AbstractInterruptibleChannel
+@@ -412,6 +413,7 @@ module Scanners
+       XPathFactoryConfigurationException XPathFunction XPathFunctionException XPathFunctionResolver
+       XPathVariableResolver ZipEntry ZipException ZipFile ZipInputStream ZipOutputStream ZoneView
+     ]
++    #:nocov:
+     
+   end
+   
+diff --git a/lib/coderay/scanners/yaml.rb b/lib/coderay/scanners/yaml.rb
+index 5e74f2f..96f4e93 100644
+--- a/lib/coderay/scanners/yaml.rb
++++ b/lib/coderay/scanners/yaml.rb
+@@ -76,7 +76,7 @@ module Scanners
+           when match = scan(/[,{}\[\]]/)
+             encoder.text_token match, :operator
+             next
+-          when state == :initial && match = scan(/[\w.() ]*\S(?= *:(?: |$))/)
++          when state == :initial && match = scan(/[-\w.()\/ ]*\S(?= *:(?: |$))/)
+             encoder.text_token match, :key
+             key_indent = column(pos - match.size) - 1
+             state = :colon
+diff --git a/lib/coderay/styles/alpha.rb b/lib/coderay/styles/alpha.rb
+index 130906b..8506d10 100644
+--- a/lib/coderay/styles/alpha.rb
++++ b/lib/coderay/styles/alpha.rb
+@@ -45,7 +45,6 @@ table.CodeRay td { padding: 2px 4px; vertical-align: top; }
+ .CodeRay span.line-numbers { padding: 0px 4px; }
+ .CodeRay .line { display: block; float: left; width: 100%; }
+ .CodeRay .code { width: 100%; }
+-.CodeRay .code pre { overflow: auto; }
+     MAIN
+ 
+     TOKEN_COLORS = <<-'TOKENS'
+@@ -61,7 +60,7 @@ table.CodeRay td { padding: 2px 4px; vertical-align: top; }
+ .class { color:#B06; font-weight:bold }
+ .class-variable { color:#369 }
+ .color { color:#0A0 }
+-.comment { color:#888 }
++.comment { color:#777 }
+ .comment .char { color:#444 }
+ .comment .delimiter { color:#444 }
+ .complex { color:#A08 }
+@@ -83,7 +82,7 @@ table.CodeRay td { padding: 2px 4px; vertical-align: top; }
+ .hex { color:#02b }
+ .imaginary { color:#f00 }
+ .include { color:#B44; font-weight:bold }
+-.inline { background-color: hsla(0,0%,0%,0.1); color: black }
++.inline { background-color: hsla(0,0%,0%,0.07); color: black }
+ .inline-delimiter { font-weight: bold; color: #666 }
+ .instance-variable { color:#33B }
+ .integer  { color:#00D }
+@@ -104,16 +103,16 @@ table.CodeRay td { padding: 2px 4px; vertical-align: top; }
+ .regexp .content { color:#808 }
+ .regexp .delimiter { color:#404 }
+ .regexp .modifier { color:#C2C }
+-.regexp { background-color:hsla(300,100%,50%,0.09); }
++.regexp { background-color:hsla(300,100%,50%,0.06); }
+ .reserved { color:#080; font-weight:bold }
+ .shell .content { color:#2B2 }
+ .shell .delimiter { color:#161 }
+-.shell { background-color:hsla(120,100%,50%,0.09); }
++.shell { background-color:hsla(120,100%,50%,0.06); }
+ .string .char { color: #b0b }
+ .string .content { color: #D20 }
+ .string .delimiter { color: #710 }
+ .string .modifier { color: #E40 }
+-.string { background-color:hsla(0,100%,50%,0.08); }
++.string { background-color:hsla(0,100%,50%,0.05); }
+ .symbol .content { color:#A60 }
+ .symbol .delimiter { color:#630 }
+ .symbol { color:#A60 }
+@@ -122,8 +121,8 @@ table.CodeRay td { padding: 2px 4px; vertical-align: top; }
+ .value { color: #088; }
+ .variable  { color:#037 }
+ 
+-.insert { background: hsla(120,100%,50%,0.1) }
+-.delete { background: hsla(0,100%,50%,0.1) }
++.insert { background: hsla(120,100%,50%,0.12) }
++.delete { background: hsla(0,100%,50%,0.12) }
+ .change { color: #bbf; background: #007; }
+ .head { color: #f8f; background: #505 }
+ .head .filename { color: white; }
+diff --git a/lib/coderay/tokens.rb b/lib/coderay/tokens.rb
+index b357199..045cf4a 100644
+--- a/lib/coderay/tokens.rb
++++ b/lib/coderay/tokens.rb
+@@ -64,12 +64,7 @@ module CodeRay
+     #
+     # options are passed to the encoder.
+     def encode encoder, options = {}
+-      unless encoder.is_a? Encoders::Encoder
+-        if encoder.respond_to? :to_sym
+-          encoder_class = Encoders[encoder]
+-        end
+-        encoder = encoder_class.new options
+-      end
++      encoder = Encoders[encoder].new options if encoder.respond_to? :to_sym
+       encoder.encode_tokens self, options
+     end
+     
+@@ -83,106 +78,11 @@ module CodeRay
+     # For example, if you call +tokens.html+, the HTML encoder
+     # is used to highlight the tokens.
+     def method_missing meth, options = {}
+-      encode_with meth, options
++      encode meth, options
+     rescue PluginHost::PluginNotFound
+       super
+     end
+     
+-    def encode_with encoder, options = {}
+-      Encoders[encoder].new(options).encode_tokens self
+-    end
+-    
+-    # Returns the tokens compressed by joining consecutive
+-    # tokens of the same kind.
+-    #
+-    # This can not be undone, but should yield the same output
+-    # in most Encoders.  It basically makes the output smaller.
+-    #
+-    # Combined with dump, it saves space for the cost of time.
+-    #
+-    # If the scanner is written carefully, this is not required -
+-    # for example, consecutive //-comment lines could already be
+-    # joined in one comment token by the Scanner.
+-    def optimize
+-      raise NotImplementedError, 'Tokens#optimize needs to be rewritten.'
+-      # last_kind = last_text = nil
+-      # new = self.class.new
+-      # for text, kind in self
+-      #   if text.is_a? String
+-      #     if kind == last_kind
+-      #       last_text << text
+-      #     else
+-      #       new << [last_text, last_kind] if last_kind
+-      #       last_text = text
+-      #       last_kind = kind
+-      #     end
+-      #   else
+-      #     new << [last_text, last_kind] if last_kind
+-      #     last_kind = last_text = nil
+-      #     new << [text, kind]
+-      #   end
+-      # end
+-      # new << [last_text, last_kind] if last_kind
+-      # new
+-    end
+-    
+-    # Compact the object itself; see optimize.
+-    def optimize!
+-      replace optimize
+-    end
+-    
+-    # Ensure that all begin_group tokens have a correspondent end_group.
+-    #
+-    # TODO: Test this!
+-    def fix
+-      raise NotImplementedError, 'Tokens#fix needs to be rewritten.'
+-      # tokens = self.class.new
+-      # # Check token nesting using a stack of kinds.
+-      # opened = []
+-      # for type, kind in self
+-      #   case type
+-      #   when :begin_group
+-      #     opened.push [:begin_group, kind]
+-      #   when :begin_line
+-      #     opened.push [:end_line, kind]
+-      #   when :end_group, :end_line
+-      #     expected = opened.pop
+-      #     if [type, kind] != expected
+-      #       # Unexpected end; decide what to do based on the kind:
+-      #       # - token was never opened: delete the end (just skip it)
+-      #       next unless opened.rindex expected
+-      #       # - token was opened earlier: also close tokens in between
+-      #       tokens << token until (token = opened.pop) == expected
+-      #     end
+-      #   end
+-      #   tokens << [type, kind]
+-      # end
+-      # # Close remaining opened tokens
+-      # tokens << token while token = opened.pop
+-      # tokens
+-    end
+-    
+-    def fix!
+-      replace fix
+-    end
+-    
+-    # TODO: Scanner#split_into_lines
+-    # 
+-    # Makes sure that:
+-    # - newlines are single tokens
+-    #   (which means all other token are single-line)
+-    # - there are no open tokens at the end the line
+-    #
+-    # This makes it simple for encoders that work line-oriented,
+-    # like HTML with list-style numeration.
+-    def split_into_lines
+-      raise NotImplementedError
+-    end
+-    
+-    def split_into_lines!
+-      replace split_into_lines
+-    end
+-    
+     # Split the tokens into parts of the given +sizes+.
+     # 
+     # The result will be an Array of Tokens objects. The parts have
+diff --git a/lib/coderay/tokens_proxy.rb b/lib/coderay/tokens_proxy.rb
+new file mode 100644
+index 0000000..31ff39b
+--- /dev/null
++++ b/lib/coderay/tokens_proxy.rb
+@@ -0,0 +1,55 @@
++module CodeRay
++  
++  # The result of a scan operation is a TokensProxy, but should act like Tokens.
++  # 
++  # This proxy makes it possible to use the classic CodeRay.scan.encode API
++  # while still providing the benefits of direct streaming.
++  class TokensProxy
++    
++    attr_accessor :input, :lang, :options, :block
++    
++    # Create a new TokensProxy with the arguments of CodeRay.scan.
++    def initialize input, lang, options = {}, block = nil
++      @input   = input
++      @lang    = lang
++      @options = options
++      @block   = block
++    end
++    
++    # Call CodeRay.encode if +encoder+ is a Symbol;
++    # otherwise, convert the receiver to tokens and call encoder.encode_tokens.
++    def encode encoder, options = {}
++      if encoder.respond_to? :to_sym
++        CodeRay.encode(input, lang, encoder, options)
++      else
++        encoder.encode_tokens tokens, options
++      end
++    end
++    
++    # Tries to call encode;
++    # delegates to tokens otherwise.
++    def method_missing method, *args, &blk
++      encode method.to_sym, *args
++    rescue PluginHost::PluginNotFound
++      tokens.send(method, *args, &blk)
++    end
++    
++    # The (cached) result of the tokenized input; a Tokens instance.
++    def tokens
++      @tokens ||= scanner.tokenize(input)
++    end
++    
++    # A (cached) scanner instance to use for the scan task.
++    def scanner
++      @scanner ||= CodeRay.scanner(lang, options, &block)
++    end
++    
++    # Overwrite Struct#each.
++    def each *args, &blk
++      tokens.each(*args, &blk)
++      self
++    end
++    
++  end
++  
++end
+diff --git a/lib/coderay/version.rb b/lib/coderay/version.rb
+index 8bed603..e6b8386 100644
+--- a/lib/coderay/version.rb
++++ b/lib/coderay/version.rb
+@@ -1,3 +1,3 @@
+ module CodeRay
+-  VERSION = '1.0.0'
++  VERSION = '1.0.2'
+ end
+diff --git a/rake_helpers/html_coderay_generator.rb b/rake_helpers/html_coderay_generator.rb
+index 4216865..3c77705 100644
+--- a/rake_helpers/html_coderay_generator.rb
++++ b/rake_helpers/html_coderay_generator.rb
+@@ -1087,13 +1087,12 @@ module Generators
+     def markup_code(tokens)
+       code = tokens.map { |t| t.text }.join
+       options = {
+-              :css => :class,
+-              :line_numbers_start => code[/\A.*?, line (\d+)/,1].to_i - 1,
+-              :bold_every => :no_bolding,
++        :css => :class,
++        :line_numbers_start => code[/\A.*?, line (\d+)/,1].to_i - 1,
++        :bold_every => :no_bolding,
+       }
+       options[:line_numbers] = nil unless Options.instance.include_line_numbers
+-      out = CodeRay.scan(code, :ruby).div(options)
+-      out.wrap! :div
++      CodeRay.scan(code, :ruby).div(options)
+     end
+ 
+     # we rely on the fact that the first line of a source code
+diff --git a/test/functional/basic.rb b/test/functional/basic.rb
+index 2654359..bf289b3 100755
+--- a/test/functional/basic.rb
++++ b/test/functional/basic.rb
+@@ -26,7 +26,7 @@ class BasicTest < Test::Unit::TestCase
+   ].flatten
+   def test_simple_scan
+     assert_nothing_raised do
+-      assert_equal RUBY_TEST_TOKENS, CodeRay.scan(RUBY_TEST_CODE, :ruby).to_ary
++      assert_equal RUBY_TEST_TOKENS, CodeRay.scan(RUBY_TEST_CODE, :ruby).tokens
+     end
+   end
+   
+@@ -148,7 +148,9 @@ more code  # and another comment, in-line.
+       end
+     end
+     assert_equal 'reserved', CodeRay::TokenKinds[:reserved]
+-    assert_equal false, CodeRay::TokenKinds[:shibboleet]
++    assert_warning 'Undefined Token kind: :shibboleet' do
++      assert_equal false, CodeRay::TokenKinds[:shibboleet]
++    end
+   end
+   
+   class Milk < CodeRay::Encoders::Encoder
+diff --git a/test/functional/examples.rb b/test/functional/examples.rb
+index b13cb55..8540ac9 100755
+--- a/test/functional/examples.rb
++++ b/test/functional/examples.rb
+@@ -10,7 +10,7 @@ class ExamplesTest < Test::Unit::TestCase
+     div = CodeRay.scan('puts "Hello, world!"', :ruby).div
+     assert_equal <<-DIV, div
+ <div class="CodeRay">
+-  <div class="code"><pre>puts <span style="background-color:hsla(0,100%,50%,0.08)"><span style="color:#710">&quot;</span><span style="color:#D20">Hello, world!</span><span style="color:#710">&quot;</span></span></pre></div>
++  <div class="code"><pre>puts <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Hello, world!</span><span style="color:#710">&quot;</span></span></pre></div>
+ </div>
+     DIV
+     
+@@ -27,15 +27,15 @@ end
+ <a href="#n3" name="n3">3</a>
+ </pre></td>
+   <td class="code"><pre><span style="color:#00D">5</span>.times <span style="color:#080;font-weight:bold">do</span>
+-  puts <span style="background-color:hsla(0,100%,50%,0.08)"><span style="color:#710">'</span><span style="color:#D20">Hello, world!</span><span style="color:#710">'</span></span>
++  puts <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">'</span><span style="color:#D20">Hello, world!</span><span style="color:#710">'</span></span>
+ <span style="color:#080;font-weight:bold">end</span></pre></td>
+ </tr></table>
+     DIV
+     
+     # output as standalone HTML page (using CSS classes)
+     page = CodeRay.scan('puts "Hello, world!"', :ruby).page
+-    assert page[<<-PAGE]
+-<body style="background-color: white;">
++    assert_match <<-PAGE, page
++<body>
+ 
+ <table class="CodeRay"><tr>
+   <td class="line-numbers" title="double click to toggle" ondblclick="with (this.firstChild.style) { display = (display == '') ? 'none' : '' }"><pre>
+@@ -48,6 +48,8 @@ end
+     
+     # keep scanned tokens for later use
+     tokens = CodeRay.scan('{ "just": "an", "example": 42 }', :json)
++    assert_kind_of CodeRay::TokensProxy, tokens
++    
+     assert_equal ["{", :operator, " ", :space, :begin_group, :key,
+       "\"", :delimiter, "just", :content, "\"", :delimiter,
+       :end_group, :key, ":", :operator, " ", :space,
+@@ -56,8 +58,8 @@ end
+       " ", :space, :begin_group, :key, "\"", :delimiter,
+       "example", :content, "\"", :delimiter, :end_group, :key,
+       ":", :operator, " ", :space, "42", :integer,
+-      " ", :space, "}", :operator], tokens
+-
++      " ", :space, "}", :operator], tokens.tokens
++    
+     # produce a token statistic
+     assert_equal <<-STATISTIC, tokens.statistic
+ 
+@@ -84,7 +86,7 @@ Token Types (7):
+     STATISTIC
+     
+     # count the tokens
+-    assert_equal 26, tokens.count  # => 26
++    assert_equal 26, tokens.count
+     
+     # produce a HTML div, but with CSS classes
+     div = tokens.div(:css => :class)
+@@ -120,7 +122,7 @@ Token Types (7):
+     div = ruby_highlighter.encode('puts "Hello, world!"')
+     assert_equal <<-DIV, div
+ <div class="CodeRay">
+-  <div class="code"><pre>puts <span style="background-color:hsla(0,100%,50%,0.08)"><span style="color:#710">&quot;</span><span style="color:#D20">Hello, world!</span><span style="color:#710">&quot;</span></span></pre></div>
++  <div class="code"><pre>puts <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Hello, world!</span><span style="color:#710">&quot;</span></span></pre></div>
+ </div>
+     DIV
+   end
+diff --git a/test/functional/for_redcloth.rb b/test/functional/for_redcloth.rb
+index 3c45eec..e980667 100644
+--- a/test/functional/for_redcloth.rb
++++ b/test/functional/for_redcloth.rb
+@@ -17,11 +17,11 @@ class BasicTest < Test::Unit::TestCase
+   
+   def test_for_redcloth
+     require 'coderay/for_redcloth'
+-    assert_equal "<p><span lang=\"ruby\" class=\"CodeRay\">puts <span style=\"background-color:hsla(0,100%,50%,0.08)\"><span style=\"color:#710\">&quot;</span><span style=\"color:#D20\">Hello, World!</span><span style=\"color:#710\">&quot;</span></span></span></p>",
++    assert_equal "<p><span lang=\"ruby\" class=\"CodeRay\">puts <span style=\"background-color:hsla(0,100%,50%,0.05)\"><span style=\"color:#710\">&quot;</span><span style=\"color:#D20\">Hello, World!</span><span style=\"color:#710\">&quot;</span></span></span></p>",
+       RedCloth.new('@[ruby]puts "Hello, World!"@').to_html
+     assert_equal <<-BLOCKCODE.chomp,
+ <div lang="ruby" class="CodeRay">
+-  <div class="code"><pre>puts <span style="background-color:hsla(0,100%,50%,0.08)"><span style="color:#710">&quot;</span><span style="color:#D20">Hello, World!</span><span style="color:#710">&quot;</span></span></pre></div>
++  <div class="code"><pre>puts <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Hello, World!</span><span style="color:#710">&quot;</span></span></pre></div>
+ </div>
+       BLOCKCODE
+       RedCloth.new('bc[ruby]. puts "Hello, World!"').to_html
+diff --git a/test/functional/suite.rb b/test/functional/suite.rb
+index 5490f98..ec23eec 100755
+--- a/test/functional/suite.rb
++++ b/test/functional/suite.rb
+@@ -1,5 +1,6 @@
+ require 'test/unit'
+ 
++$VERBOSE = $CODERAY_DEBUG = true
+ $:.unshift File.expand_path('../../../lib', __FILE__)
+ require 'coderay'
+ 
+diff --git a/test/unit/count.rb b/test/unit/count.rb
+index ad61291..448e8f1 100644
+--- a/test/unit/count.rb
++++ b/test/unit/count.rb
+@@ -9,7 +9,7 @@ class CountTest < Test::Unit::TestCase
+ # a minimal Ruby program
+ puts "Hello world!"
+     RUBY
+-    assert_equal 11, tokens.encode_with(:count)
++    assert_equal 11, tokens.encode(:count)
+   end
+   
+ end
+\ No newline at end of file
+diff --git a/test/unit/debug.rb b/test/unit/debug.rb
+index 8bafcf5..f2b80bd 100644
+--- a/test/unit/debug.rb
++++ b/test/unit/debug.rb
+@@ -70,7 +70,8 @@ method([])]
+   
+   def test_filtering_text_tokens
+     assert_equal TEST_OUTPUT, CodeRay::Scanners::Debug.new.tokenize(TEST_INPUT)
+-    assert_equal TEST_OUTPUT, CodeRay.scan(TEST_INPUT, :debug)
++    assert_kind_of CodeRay::TokensProxy, CodeRay.scan(TEST_INPUT, :debug)
++    assert_equal TEST_OUTPUT, CodeRay.scan(TEST_INPUT, :debug).tokens
+   end
+   
+ end
+diff --git a/test/unit/file_type.rb b/test/unit/file_type.rb
+index 1dc1ba0..607e30a 100644
+--- a/test/unit/file_type.rb
++++ b/test/unit/file_type.rb
+@@ -1,4 +1,6 @@
+ require 'test/unit'
++require File.expand_path('../../lib/assert_warning', __FILE__)
++
+ require 'coderay/helpers/file_type'
+ 
+ class FileTypeTests < Test::Unit::TestCase
+@@ -9,31 +11,22 @@ class FileTypeTests < Test::Unit::TestCase
+     assert_raise FileType::UnknownFileType do
+       FileType.fetch ''
+     end
+-
++    
+     assert_throws :not_found do
+       FileType.fetch '.' do
+         throw :not_found
+       end
+     end
+-
++    
+     assert_equal :default, FileType.fetch('c', :default)
+   end
+   
+   def test_block_supersedes_default_warning
+-    stderr, fake_stderr = $stderr, Object.new
+-    begin
+-      $err = ''
+-      def fake_stderr.write x
+-        $err << x
+-      end
+-      $stderr = fake_stderr
++    assert_warning 'Block supersedes default value argument; use either.' do
+       FileType.fetch('c', :default) { }
+-      assert_equal "Block supersedes default value argument; use either.\n", $err
+-    ensure
+-      $stderr = stderr
+     end
+   end
+-
++  
+   def test_ruby
+     assert_equal :ruby, FileType[__FILE__]
+     assert_equal :ruby, FileType['test.rb']
+@@ -48,7 +41,7 @@ class FileTypeTests < Test::Unit::TestCase
+     assert_not_equal :ruby, FileType['set.rb/set']
+     assert_not_equal :ruby, FileType['~/projects/blabla/rb']
+   end
+-
++  
+   def test_c
+     assert_equal :c, FileType['test.c']
+     assert_equal :c, FileType['C:\\Program Files\\x\\y\\c\\test.h']
+@@ -57,7 +50,7 @@ class FileTypeTests < Test::Unit::TestCase
+     assert_not_equal :c, FileType['set.h/set']
+     assert_not_equal :c, FileType['~/projects/blabla/c']
+   end
+-
++  
+   def test_cpp
+     assert_equal :cpp, FileType['test.c++']
+     assert_equal :cpp, FileType['test.cxx']
+@@ -68,7 +61,7 @@ class FileTypeTests < Test::Unit::TestCase
+     assert_not_equal :cpp, FileType['test.c']
+     assert_not_equal :cpp, FileType['test.h']
+   end
+-
++  
+   def test_html
+     assert_equal :page, FileType['test.htm']
+     assert_equal :page, FileType['test.xhtml']
+@@ -76,14 +69,14 @@ class FileTypeTests < Test::Unit::TestCase
+     assert_equal :erb, FileType['_form.rhtml']
+     assert_equal :erb, FileType['_form.html.erb']
+   end
+-
++  
+   def test_yaml
+     assert_equal :yaml, FileType['test.yml']
+     assert_equal :yaml, FileType['test.yaml']
+     assert_equal :yaml, FileType['my.html.yaml']
+     assert_not_equal :yaml, FileType['YAML']
+   end
+-
++  
+   def test_pathname
+     require 'pathname'
+     pn = Pathname.new 'test.rb'
+@@ -92,7 +85,7 @@ class FileTypeTests < Test::Unit::TestCase
+     assert_equal :ruby, FileType[dir + pn]
+     assert_equal :cpp, FileType[dir + 'test.cpp']
+   end
+-
++  
+   def test_no_shebang
+     dir = './test'
+     if File.directory? dir
+@@ -119,5 +112,5 @@ class FileTypeTests < Test::Unit::TestCase
+     File.open(tmpfile, 'w') { |f| f.puts '#!/usr/bin/env ruby' }
+     assert_equal :ruby, FileType[tmpfile, true]
+   end
+-
++  
+ end
+diff --git a/test/unit/lines_of_code.rb b/test/unit/lines_of_code.rb
+index 4231d5a..e2c0caf 100644
+--- a/test/unit/lines_of_code.rb
++++ b/test/unit/lines_of_code.rb
+@@ -2,6 +2,8 @@ require 'test/unit'
+ require 'coderay'
+ $VERBOSE = true
+ 
++require File.expand_path('../../lib/assert_warning', __FILE__)
++
+ class LinesOfCodeTest < Test::Unit::TestCase
+   
+   def test_creation
+@@ -39,17 +41,8 @@ puts "Hello world!"
+     tokens.concat ["\n", :space]
+     tokens.concat ["Hello\n", :comment]
+     
+-    stderr, fake_stderr = $stderr, Object.new
+-    begin
+-      $err = ''
+-      def fake_stderr.write x
+-        $err << x
+-      end
+-      $stderr = fake_stderr
++    assert_warning 'Tokens have no associated scanner, counting all nonempty lines.' do
+       assert_equal 1, tokens.lines_of_code
+-      assert_equal "Tokens have no associated scanner, counting all nonempty lines.\n", $err
+-    ensure
+-      $stderr = stderr
+     end
+     
+     tokens.scanner = ScannerMockup.new
+diff --git a/test/unit/null.rb b/test/unit/null.rb
+index ea516d8..d3a9b0d 100644
+--- a/test/unit/null.rb
++++ b/test/unit/null.rb
+@@ -8,7 +8,7 @@ class NullTest < Test::Unit::TestCase
+ puts "Hello world!"
+     RUBY
+     tokens = CodeRay.scan ruby, :ruby
+-    assert_equal '', tokens.encode_with(:null)
++    assert_equal '', tokens.encode(:null)
+   end
+   
+ end
+\ No newline at end of file
+diff --git a/test/unit/plugin.rb b/test/unit/plugin.rb
+index 2231c75..a1d06e1 100755
+--- a/test/unit/plugin.rb
++++ b/test/unit/plugin.rb
+@@ -1,4 +1,5 @@
+ require 'test/unit'
++require 'pathname'
+ require File.expand_path('../../lib/assert_warning', __FILE__)
+ 
+ $:.unshift File.expand_path('../../../lib', __FILE__)
+diff --git a/test/unit/suite.rb b/test/unit/suite.rb
+index ee568e7..417dfed 100755
+--- a/test/unit/suite.rb
++++ b/test/unit/suite.rb
+@@ -1,5 +1,7 @@
+ require 'test/unit'
+ require 'rubygems'
++
++$VERBOSE = $CODERAY_DEBUG = true
+ $:.unshift 'lib'
+ 
+ mydir = File.dirname(__FILE__)
+diff --git a/test/unit/text.rb b/test/unit/text.rb
+index 025881e..db086f5 100644
+--- a/test/unit/text.rb
++++ b/test/unit/text.rb
+@@ -8,7 +8,7 @@ class TextTest < Test::Unit::TestCase
+ puts "Hello world!"
+     RUBY
+     tokens = CodeRay.scan ruby, :ruby
+-    assert_equal ruby, tokens.encode_with(:text)
++    assert_equal ruby, tokens.encode(:text)
+   end
+   
+ end
+\ No newline at end of file
+diff --git a/test/unit/tokens.rb b/test/unit/tokens.rb
+index 4fc9833..86dc632 100644
+--- a/test/unit/tokens.rb
++++ b/test/unit/tokens.rb
+@@ -37,33 +37,6 @@ class TokensTest < Test::Unit::TestCase
+     end
+   end
+   
+-  def test_optimize
+-    assert_raise NotImplementedError do
+-      make_tokens.optimize
+-    end
+-    assert_raise NotImplementedError do
+-      make_tokens.optimize!
+-    end
+-  end
+-  
+-  def test_fix
+-    assert_raise NotImplementedError do
+-      make_tokens.fix
+-    end
+-    assert_raise NotImplementedError do
+-      make_tokens.fix!
+-    end
+-  end
+-  
+-  def test_split_into_lines
+-    assert_raise NotImplementedError do
+-      make_tokens.split_into_lines
+-    end
+-    assert_raise NotImplementedError do
+-      make_tokens.split_into_lines!
+-    end
+-  end
+-  
+   def test_split_into_parts
+     parts_4_3 = [
+       ["stri", :type],

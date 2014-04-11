@@ -1,0 +1,1 @@
+class(SELECT) keyword(RIGHT)operator(() ident(SUSER_NAME)operator(()operator(\))operator(,)ident(LEN)operator(() ident(SUSER_NAME)operator(()operator(\))operator(\))operator(-)ident(CHARINDEX)operator(()string<delimiter(')char(\\')content(, SUSER_NAME(\)\)\))>

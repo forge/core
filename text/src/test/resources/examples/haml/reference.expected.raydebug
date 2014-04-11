@@ -1,0 +1,266 @@
+doctype(!!! XML)
+doctype(!!! XML iso-8859-1)
+doctype(!!!)
+tag(%html)
+  tag(%head)
+    tag(%title) plain(Myspace)
+  tag(%body)
+    tag(%h1) plain(I am the international space station)
+    tag(%p) plain(Sign my guestbook)
+
+plain(-)comment(# file: app/views/movies/index.haml)
+
+constant(#content)
+ class(.title)
+   tag(%h1)plain(= )instance_variable(@title)
+   plain(= )ident(link_to) string<delimiter(')content(Home)delimiter(')>operator(,) ident(home_url)
+
+tag(%gee)
+  tag(%whiz)
+    plain(Wow this is cool!)
+
+tag(%p)
+  tag(<div) attribute_name(id)operator(=)string<delimiter(")content(blah)delimiter(")>tag(>)plain(Blah!)tag(</div>)
+
+tag(<gee>)
+  tag(<whiz>)
+    plain(Wow this is cool!)
+  tag(</whiz>)
+tag(</gee>)
+
+tag(%title)
+  plain(= )instance_variable(@title)
+  plain(\\)plain(= @title)
+
+tag(%one)
+  tag(%two)
+    tag(%three) plain(Hey there)
+
+tag(%html)plain({)symbol(:xmlns) operator(=)operator(>) string<delimiter(")content(http://www.w3.org/1999/xhtml)delimiter(")>operator(,) string<delimiter(")content(xml:lang)delimiter(")> operator(=)operator(>) string<delimiter(")content(en)delimiter(")>operator(,) symbol(:lang) operator(=)operator(>) string<delimiter(")content(en)delimiter(")>plain(})
+
+tag(%script)plain({)symbol(:type) operator(=)operator(>) string<delimiter(")content(text/javascript)delimiter(")>operator(,)
+        symbol(:src)  operator(=)operator(>) string<delimiter(")content(javascripts/script_)inline<inline_delimiter(#{)integer(2) operator(+) integer(7)inline_delimiter(})>delimiter(")>plain(})
+
+tag(%div)plain({)symbol(:id) operator(=)operator(>) operator([)instance_variable(@item)operator(.)ident(type)operator(,) instance_variable(@item)operator(.)ident(number)operator(])operator(,) symbol(:class) operator(=)operator(>) operator([)instance_variable(@item)operator(.)ident(type)operator(,) instance_variable(@item)operator(.)ident(urgency)operator(])plain(})
+tag(%div)plain({)symbol(:id) operator(=)operator(>) string<delimiter(")inline<inline_delimiter(#{)instance_variable(@item)operator(.)ident(type)inline_delimiter(})>content(_)inline<inline_delimiter(#{)instance_variable(@item)operator(.)ident(number)inline_delimiter(})>delimiter(")>operator(,) symbol(:class) operator(=)operator(>) string<delimiter(")inline<inline_delimiter(#{)instance_variable(@item)operator(.)ident(type)inline_delimiter(})>content( )inline<inline_delimiter(#{)instance_variable(@item)operator(.)ident(urgency)inline_delimiter(})>delimiter(")>plain(})
+
+tag(%div)plain({)symbol(:class) operator(=)operator(>) operator([)instance_variable(@item)operator(.)ident(type)operator(,) instance_variable(@item) operator(==) instance_variable(@sortcol) operator(&&) operator([)symbol(:sort)operator(,) instance_variable(@sortdir)operator(])operator(]) plain(}) plain(Contents)
+
+class(.item)plain({)symbol(:class) operator(=)operator(>) instance_variable(@item)operator(.)ident(is_empty?) operator(&&) string<delimiter(")content(empty)delimiter(")>plain(})
+
+tag(%html)plain(()attribute_name(xmlns)operator(=)string<delimiter(")content(http://www.w3.org/1999/xhtml)delimiter(")> attribute_name(xml:lang)operator(=)string<delimiter(")content(en)delimiter(")> attribute_name(lang)operator(=)string<delimiter(")content(en)delimiter(")>plain(\))
+
+tag(%a)plain(()attribute_name(title)operator(=)error(@)attribute_value(title) attribute_name(href)operator(=)attribute_value(href)plain(\)) plain(Stuff)
+tag(%a)plain({)symbol(:title) operator(=)operator(>) instance_variable(@title)operator(,) symbol(:href) operator(=)operator(>) ident(href)plain(}) plain(Stuff)
+tag(%a)plain(()attribute_name(title)operator(=)error(@)attribute_value(title)plain(\))plain({)symbol(:href) operator(=)operator(>) instance_variable(@link)operator(.)ident(href)plain(}) plain(Stuff)
+tag(%span)plain(()attribute_name(class)operator(=)string<delimiter(")content(widget_#{@widget.number})delimiter(")>plain(\))
+tag(%script)plain(()attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>
+        attribute_name(src)operator(=)string<delimiter(")content(javascripts/script_#{2 + 7})delimiter(")>plain(\))
+
+tag(%html)plain({)ident(html_attrs)operator(()string<delimiter(')content(fr-fr)delimiter(')>operator(\))plain(})
+
+tag(%sandwich)plain({)ident(hash1)operator(,) ident(hash2)operator(,) symbol(:delicious) operator(=)operator(>) predefined_constant(true)plain(})tag(/)
+
+tag(%input)plain({)symbol(:selected) operator(=)operator(>) predefined_constant(true)plain(})
+tag(%input)plain({)symbol(:selected) operator(=)operator(>) predefined_constant(false)plain(})
+
+tag(%input)plain(()attribute_name(selected)plain(\))
+tag(%input)plain(()attribute_name(selected)operator(=)attribute_value(true)plain(\))
+
+tag(%a)plain({)symbol(:href)operator(=)operator(>)string<delimiter(")content(/posts)delimiter(")>operator(,) symbol(:data) operator(=)operator(>) operator({)symbol(:author_id) operator(=)operator(>) integer(123)operator(})plain(}) plain(Posts By Author)
+
+tag(%div)constant(#things)
+  tag(%span)constant(#rice) plain(Chicken Fried)
+  tag(%p)class(.beans)plain({) symbol(:food) operator(=)operator(>) string<delimiter(')content(true)delimiter(')> plain(}) plain(The magical fruit)
+  tag(%h1)class(.class)class(.otherclass)constant(#id) plain(La La La)
+
+tag(%div)constant(#content)
+  tag(%div)class(.articles)
+    tag(%div)class(.article)class(.title) plain(Doogie Howser Comes Out)
+    tag(%div)class(.article)class(.date) plain(2006-11-05)
+    tag(%div)class(.article)class(.entry)
+      plain(Neil Patrick Harris would like to dispel any rumors that he is straight)
+
+tag(%div)constant(#Article)class(.article)class(.entry)plain({)symbol(:id) operator(=)operator(>) instance_variable(@article)operator(.)ident(number)operator(,) symbol(:class) operator(=)operator(>) instance_variable(@article)operator(.)ident(visibility)plain(})
+tag(%div)plain({)symbol(:id) operator(=)operator(>) operator([)string<delimiter(')content(Article)delimiter(')>operator(,) instance_variable(@article)operator(.)ident(number)operator(])operator(,) symbol(:class) operator(=)operator(>) operator([)string<delimiter(')content(article)delimiter(')>operator(,) string<delimiter(')content(entry)delimiter(')>operator(,) instance_variable(@article)operator(.)ident(visibility)operator(])plain(}) plain(Gabba Hey)
+
+constant(#collection)
+  class(.item)
+    class(.description) plain(What a cool item!)
+tag(%div)constant(#collection)
+  tag(%div)class(.item)
+    tag(%div)class(.description) plain(What a cool item!)
+
+tag(%br/)
+tag(%meta)plain({)string<delimiter(')content(http-equiv)delimiter(')> operator(=)operator(>) string<delimiter(')content(Content-Type)delimiter(')>operator(,) symbol(:content) operator(=)operator(>) string<delimiter(')content(text/html)delimiter(')>plain(})tag(/)
+
+tag(%br)
+tag(%meta)plain({)string<delimiter(')content(http-equiv)delimiter(')> operator(=)operator(>) string<delimiter(')content(Content-Type)delimiter(')>operator(,) symbol(:content) operator(=)operator(>) string<delimiter(')content(text/html)delimiter(')>plain(})
+
+tag(%blockquote)plain(<)
+  tag(%div)
+    plain(Foo!)
+
+tag(%img)
+tag(%img)plain(>)
+tag(%img)
+
+tag(%p)plain(<= )string<delimiter(")content(Foo)char(\\n)content(Bar)delimiter(")>
+
+tag(%img)
+tag(%pre)plain(><)
+  plain(foo)
+  plain(bar)
+tag(%img)
+
+plain(-)comment(# file: app/views/users/show.haml)
+
+tag(%div)plain([)instance_variable(@user)operator(,) symbol(:greeting)plain(])
+  tag(%bar)plain([)integer(290)plain(])tag(/)
+  plain(Hello!)
+
+plain(-)comment(# file: app/views/users/show.haml)
+
+tag(%div)plain([)instance_variable(@user)plain(])
+  plain(Hello!)
+
+tag(%peanutbutterjelly)
+  comment(/ This is the peanutbutterjelly element)
+  plain(I like sandwiches!)
+
+comment(/)comment(
+  %p This doesn't render...
+  %div
+    %h1 Because it's commented out!)
+
+comment(/[if IE])
+  tag(%a)plain({) symbol(:href) operator(=)operator(>) string<delimiter(')content(http://www.mozilla.com/en-US/firefox/)delimiter(')> plain(})
+    tag(%h1) plain(Get Firefox)
+
+tag(%p) plain(foo)
+plain(-)comment(# This is a comment)
+tag(%p) plain(bar)
+
+tag(%p) plain(foo)
+comment(-#)comment(
+  This won't be displayed
+    Nor will this)
+tag(%p) plain(bar)
+
+tag(%p)
+  plain(= )operator([)string<delimiter(')content(hi)delimiter(')>operator(,) string<delimiter(')content(there)delimiter(')>operator(,) string<delimiter(')content(reader!)delimiter(')>operator(])operator(.)ident(join) string<delimiter(")content( )delimiter(")>
+  plain(= )string<delimiter(")content(yo)delimiter(")>
+
+plain(= )string<delimiter(')content(<script>alert("I)char(\\')content(m evil!"\);</script>)delimiter(')>
+
+tag(%p)plain(= )string<delimiter(")content(hello)delimiter(")>
+
+plain(= )ident(link_to_remote) string<delimiter(")content(Add to cart)delimiter(")>operator(,)
+    symbol(:url) operator(=)operator(>) operator({) symbol(:action) operator(=)operator(>) string<delimiter(")content(add)delimiter(")>operator(,) symbol(:id) operator(=)operator(>) ident(product)operator(.)ident(id) operator(})operator(,)
+    symbol(:update) operator(=)operator(>) operator({) symbol(:success) operator(=)operator(>) string<delimiter(")content(cart)delimiter(")>operator(,) symbol(:failure) operator(=)operator(>) string<delimiter(")content(error)delimiter(")> operator(})
+
+plain(- )ident(foo) operator(=) string<delimiter(")content(hello)delimiter(")>
+plain(- )ident(foo) operator(<<) string<delimiter(")content( there)delimiter(")>
+plain(- )ident(foo) operator(<<) string<delimiter(")content( you!)delimiter(")>
+tag(%p)plain(= )ident(foo)
+
+plain(- )ident(links) operator(=) operator({)symbol(:home) operator(=)operator(>) string<delimiter(")content(/)delimiter(")>operator(,)
+    symbol(:docs) operator(=)operator(>) string<delimiter(")content(/docs)delimiter(")>operator(,)
+    symbol(:about) operator(=)operator(>) string<delimiter(")content(/about)delimiter(")>operator(})
+
+plain(- )operator(()integer(42)operator(...)integer(47)operator(\))operator(.)ident(each) keyword(do) operator(|)ident(i)plain(|)
+  tag(%p)plain(= )ident(i)
+tag(%p) plain(See, I can count!)
+
+tag(%p)
+  plain(- )keyword(case) integer(2)
+  plain(- )keyword(when) integer(1)
+    plain(= )string<delimiter(")content(1!)delimiter(")>
+  plain(- )keyword(when) integer(2)
+    plain(= )string<delimiter(")content(2?)delimiter(")>
+  plain(- )keyword(when) integer(3)
+    plain(= )string<delimiter(")content(3.)delimiter(")>
+
+plain(~ )string<delimiter(")content(Foo)char(\\n)content(<pre>Bar)char(\\n)content(Baz</pre>)delimiter(")>
+
+plain(= )ident(find_and_preserve)operator(()string<delimiter(")content(Foo)char(\\n)content(<pre>Bar)char(\\n)content(Baz</pre>)delimiter(")>operator(\))
+
+tag(%p) plain(This is #{h quality} cake!)
+
+tag(%p)plain(= )string<delimiter(")content(This is the )inline<inline_delimiter(#{)ident(h) ident(quality)inline_delimiter(})>content( cake!)delimiter(")>
+
+tag(%p)
+  plain(Look at \\\\#{h word} lack of backslash: \\#{foo})
+  plain(And yon presence thereof: \\{foo})
+
+comment(:javascript)
+  predefined($)operator(()ident(document)operator(\))operator(.)ident(ready)operator(()keyword(function)operator(()operator(\)) operator({)
+    ident(alert)operator(()error(#)operator({)error(@)ident(message)operator(.)ident(to_json)operator(}\))operator(;)
+  operator(}\))operator(;)
+
+plain(&= )string<delimiter(")content(I like cheese & crackers)delimiter(")>
+
+plain(& )string<content(I like )inline<inline_delimiter(#{)string<delimiter(")content(cheese & crackers)delimiter(")>inline_delimiter(})>>
+
+plain(= )string<delimiter(")content(I feel <strong>!)delimiter(")>
+plain(!= )string<delimiter(")content(I feel <strong>!)delimiter(")>
+
+plain(! )string<content(I feel )inline<inline_delimiter(#{)string<delimiter(")content(<strong>)delimiter(")>inline_delimiter(})>content(!)>
+
+tag(%p)
+comment(  :markdown)comment(
+    Textile
+    =======
+    
+    Hello, *World*)
+
+plain(- )ident(flavor) operator(=) string<delimiter(")content(raspberry)delimiter(")>
+constant(#content)
+comment(  :textile)comment(
+    I *really* prefer _#{h flavor}_ jam.)
+
+comment(:plain)comment(
+  Does not parse the filtered text. This is useful for large blocks of text without HTML tags, when you don’t want lines starting with . or - to be parsed.)
+
+comment(:javascript)
+  ident(Surrounds) ident(the) ident(filtered) ident(text) keyword(with) operator(<)ident(script)operator(>) ident(and) ident(CDATA) ident(tags)operator(.) ident(Useful) keyword(for) ident(including) ident(inline) ident(Javascript)operator(.)
+
+comment(:css)comment(
+  Surrounds the filtered text with <style> and CDATA tags. Useful for including inline CSS.)
+
+comment(:cdata)comment(
+  Surrounds the filtered text with CDATA tags.)
+
+comment(:escaped)comment(
+  Works the same as plain, but HTML-escapes the text before placing it in the document.)
+
+comment(:ruby)
+  constant(Parses) ident(the) ident(filtered) ident(text) ident(with) ident(the) ident(normal) constant(Ruby) ident(interpreter)operator(.) ident(All) ident(output) ident(sent) ident(to) global_variable($stdout)operator(,) ident(like) ident(with) ident(puts)operator(,) ident(is) ident(output) ident(into) ident(the) constant(Haml) ident(document)operator(.) ident(Not) ident(available) keyword(if) ident(the) symbol(:suppress_eval) ident(option) ident(is) ident(set) ident(to) predefined_constant(true)operator(.) ident(The) constant(Ruby) ident(code) ident(is) ident(evaluated) keyword(in) ident(the) ident(same) ident(context) ident(as) ident(the) constant(Haml) ident(template)operator(.)
+
+comment(:preserve)comment(
+  Inserts the filtered text into the template with whitespace preserved. preserved blocks of text aren’t indented, and newlines are replaced with the HTML escape code for newlines, to preserve nice-looking output. See also Whitespace Preservation.)
+
+comment(:erb)comment(
+  Parses the filtered text with ERb, like an RHTML template. Not available if the :suppress_eval option is set to true. Embedded Ruby code is evaluated in the same context as the Haml template.)
+
+comment(:sass)comment(
+  Parses the filtered text with Sass to produce CSS output.)
+
+comment(:textile)comment(
+  Parses the filtered text with Textile. Only works if RedCloth is installed.)
+
+comment(:markdown)comment(
+  Parses the filtered text with Markdown. Only works if RDiscount, RPeg-Markdown, Maruku, or BlueCloth are installed.)
+
+comment(:maruku)comment(
+  Parses the filtered text with Maruku, which has some non-standard extensions to Markdown.)
+
+tag(%whoo)
+  tag(%hoo)plain(= )ident(h)operator(()                       operator(|)
+    string<delimiter(")content(I think this might get )delimiter(")> operator(+)  operator(|)
+    string<delimiter(")content(pretty long so I should )delimiter(")> operator(+) operator(|)
+    string<delimiter(")content(probably make it )delimiter(")> operator(+)        operator(|)
+    string<delimiter(")content(multiline so it doesn't )delimiter(")> operator(+) operator(|)
+    string<delimiter(")content(look awful.)delimiter(")>operator(\))               plain(|)
+  tag(%p) plain(This is short.)
+

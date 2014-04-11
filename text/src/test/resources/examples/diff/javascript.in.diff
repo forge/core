@@ -1,0 +1,10 @@
++++ foo.js
++/*
++ * multiline
++ * comment
++ */
++
++"
++multiline
++string
++"

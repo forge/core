@@ -1,0 +1,687 @@
+doctype(<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">)
+tag(<html) attribute_name(xmlns)operator(=)string<delimiter(")content(http://www.w3.org/1999/xhtml)delimiter(")> attribute_name(xml:lang)operator(=)string<delimiter(")content(en)delimiter(")>tag(>)
+tag(<head>)
+tag(<meta) attribute_name(http-equiv)operator(=)string<delimiter(")content(content-type)delimiter(")> attribute_name(content)operator(=)string<delimiter(")content(text/html; charset=utf-8)delimiter(")> tag(/>)
+tag(<title>)plain(CodeRay - Feature #46: Integrate JavaScript and CSS Scanners into HTML Scanner - Odd-Eyed Code)tag(</title>)
+tag(<meta) attribute_name(name)operator(=)string<delimiter(")content(description)delimiter(")> attribute_name(content)operator(=)string<delimiter(")content(Redmine)delimiter(")> tag(/>)
+tag(<meta) attribute_name(name)operator(=)string<delimiter(")content(keywords)delimiter(")> attribute_name(content)operator(=)string<delimiter(")content(issue,bug,tracker)delimiter(")> tag(/>)
+tag(<link) attribute_name(rel)operator(=)string<delimiter(')content(shortcut icon)delimiter(')> attribute_name(href)operator(=)string<delimiter(')content(/favicon.ico?1289779318)delimiter(')> tag(/>)
+tag(<link) attribute_name(href)operator(=)string<delimiter(")content(/stylesheets/application.css?1289779318)delimiter(")> attribute_name(media)operator(=)string<delimiter(")content(all)delimiter(")> attribute_name(rel)operator(=)string<delimiter(")content(stylesheet)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/css)delimiter(")> tag(/>)
+
+tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/prototype.js?1289775775)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)
+tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/effects.js?1289775776)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)
+tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/dragdrop.js?1289775776)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)
+
+tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/controls.js?1289775776)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)
+tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/application.js?1289779318)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)
+tag(<link) attribute_name(href)operator(=)string<delimiter(")content(/stylesheets/jstoolbar.css?1289775773)delimiter(")> attribute_name(media)operator(=)string<delimiter(")content(screen)delimiter(")> attribute_name(rel)operator(=)string<delimiter(")content(stylesheet)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/css)delimiter(")> tag(/>)
+comment(<!--[if IE]>
+    <style type="text/css">
+      * html body{ width: expression( document.documentElement.clientWidth < 900 ? '900px' : '100%' \); }
+      body {behavior: url(/stylesheets/csshover.htc?1289775773\);}
+    </style>
+<![endif]-->)
+
+comment(<!-- page specific tags -->)
+tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/calendar/calendar.js?1289779318)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/calendar/lang/calendar-en.js?1289775776)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)tag(<script) attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)
+inline<comment(//<![CDATA[)
+
+comment(//]]>)>
+tag(</script>)tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/calendar/calendar-setup.js?1289775776)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)tag(<link) attribute_name(href)operator(=)string<delimiter(")content(/stylesheets/calendar.css?1289779318)delimiter(")> attribute_name(media)operator(=)string<delimiter(")content(screen)delimiter(")> attribute_name(rel)operator(=)string<delimiter(")content(stylesheet)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/css)delimiter(")> tag(/>)
+    tag(<link) attribute_name(href)operator(=)string<delimiter(")content(http://code.licenser.net/issues/46.atom?key=bYFIUrZK4uFZ7Wqwa3YoRPKr2FqXimgFsHdfzSux)delimiter(")> attribute_name(rel)operator(=)string<delimiter(")content(alternate)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(CodeRay - Feature #46: Integrate JavaScript and CSS Scanners into HTML Scanner)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(application/atom+xml)delimiter(")> tag(/>)
+    tag(<link) attribute_name(href)operator(=)string<delimiter(")content(/stylesheets/scm.css?1289779318)delimiter(")> attribute_name(media)operator(=)string<delimiter(")content(screen)delimiter(")> attribute_name(rel)operator(=)string<delimiter(")content(stylesheet)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/css)delimiter(")> tag(/>)
+
+    tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/context_menu.js?1289779318)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)
+    tag(<link) attribute_name(href)operator(=)string<delimiter(")content(/stylesheets/context_menu.css?1289779318)delimiter(")> attribute_name(media)operator(=)string<delimiter(")content(screen)delimiter(")> attribute_name(rel)operator(=)string<delimiter(")content(stylesheet)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/css)delimiter(")> tag(/>)
+    
+tag(</head>)
+tag(<body) attribute_name(class)operator(=)string<delimiter(")content(controller-issues action-show)delimiter(")>tag(>)
+tag(<div) attribute_name(id)operator(=)string<delimiter(")content(wrapper)delimiter(")>tag(>)
+tag(<div) attribute_name(id)operator(=)string<delimiter(")content(wrapper2)delimiter(")>tag(>)
+tag(<div) attribute_name(id)operator(=)string<delimiter(")content(top-menu)delimiter(")>tag(>)
+    tag(<div) attribute_name(id)operator(=)string<delimiter(")content(account)delimiter(")>tag(>)
+        tag(<ul>)tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/my/account)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(my-account)delimiter(")>tag(>)plain(My account)tag(</a>)tag(</li>)
+tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/logout)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(logout)delimiter(")>tag(>)plain(Sign out)tag(</a>)tag(</li>)tag(</ul>)    tag(</div>)
+
+    tag(<div) attribute_name(id)operator(=)string<delimiter(")content(loggedas)delimiter(")>tag(>)plain(Logged in as )tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/users/12)delimiter(")>tag(>)plain(murphy)tag(</a>)tag(</div>)
+    tag(<ul>)tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(home)delimiter(")>tag(>)plain(Home)tag(</a>)tag(</li>)
+tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/my/page)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(my-page)delimiter(")>tag(>)plain(My page)tag(</a>)tag(</li>)
+tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(projects)delimiter(")>tag(>)plain(Projects)tag(</a>)tag(</li>)
+tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/admin)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(administration)delimiter(")>tag(>)plain(Administration)tag(</a>)tag(</li>)
+tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(http://www.redmine.org/guide)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(help)delimiter(")>tag(>)plain(Help)tag(</a>)tag(</li>)tag(</ul>)tag(</div>)
+      
+tag(<div) attribute_name(id)operator(=)string<delimiter(")content(header)delimiter(")>tag(>)
+
+    tag(<div) attribute_name(id)operator(=)string<delimiter(")content(quick-search)delimiter(")>tag(>)
+        tag(<form) attribute_name(action)operator(=)string<delimiter(")content(/search/index/coderay)delimiter(")> attribute_name(method)operator(=)string<delimiter(")content(get)delimiter(")>tag(>)
+        tag(<input) attribute_name(name)operator(=)string<delimiter(")content(issues)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(hidden)delimiter(")> attribute_name(value)operator(=)string<delimiter(")content(1)delimiter(")> tag(/>)
+        tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/search/index/coderay)delimiter(")> attribute_name(accesskey)operator(=)string<delimiter(")content(4)delimiter(")>tag(>)plain(Search)tag(</a>)plain(:
+        )tag(<input) attribute_name(accesskey)operator(=)string<delimiter(")content(f)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(small)delimiter(")> attribute_name(id)operator(=)string<delimiter(")content(q)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(q)delimiter(")> attribute_name(size)operator(=)string<delimiter(")content(20)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text)delimiter(")> tag(/>)
+        tag(</form>)
+        tag(<select) attribute_name(onchange)operator(=)string<delimiter(")keyword(if) operator(()local_variable(this)operator(.)ident(value) operator(!=) string<delimiter(')delimiter(')>operator(\)) operator({) ident(window)operator(.)ident(location) operator(=) local_variable(this)operator(.)ident(value)operator(;) operator(})delimiter(")>tag(>)tag(<option) attribute_name(value)operator(=)string<delimiter(')delimiter(')>tag(>)plain(Jump to a project...)tag(</option>)tag(<option) attribute_name(value)operator(=)string<delimiter(")delimiter(")> attribute_name(disabled)operator(=)string<delimiter(")content(disabled)delimiter(")>tag(>)plain(---)tag(</option>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(/projects/rvm?jump=issues)delimiter(")>tag(>)plain(Amber VM)tag(</option>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(/projects/blokk?jump=issues)delimiter(")>tag(>)plain(blokk)tag(</option>)tag(<option) attribute_name(selected)operator(=)string<delimiter(")content(selected)delimiter(")> attribute_name(value)operator(=)string<delimiter(")content(/projects/coderay?jump=issues)delimiter(")>tag(>)plain(CodeRay)tag(</option>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(/projects/spacebg?jump=issues)delimiter(")>tag(>)plain(DividedSpace)tag(</option>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(/projects/istudy?jump=issues)delimiter(")>tag(>)plain(iStudy)tag(</option>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(/projects/mugen?jump=issues)delimiter(")>tag(>)plain(Mugen)tag(</option>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(/projects/ngn?jump=issues)delimiter(")>tag(>)plain(napo-G-net)tag(</option>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(/projects/rubybenchmark?jump=issues)delimiter(")>tag(>)plain(RubyBenchmark)tag(</option>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(/projects/schatten?jump=issues)delimiter(")>tag(>)plain(Schatten)tag(</option>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(/projects/server?jump=issues)delimiter(")>tag(>)plain(Server)tag(</option>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(/projects/webgl?jump=issues)delimiter(")>tag(>)plain(Wikipedia 3D)tag(</option>)tag(</select>)
+
+    tag(</div>)
+    
+    tag(<h1>)plain(CodeRay)tag(</h1>)
+    
+    
+    tag(<div) attribute_name(id)operator(=)string<delimiter(")content(main-menu)delimiter(")>tag(>)
+        tag(<ul>)tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(overview)delimiter(")>tag(>)plain(Overview)tag(</a>)tag(</li>)
+tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/activity)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(activity)delimiter(")>tag(>)plain(Activity)tag(</a>)tag(</li>)
+tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/roadmap)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(roadmap)delimiter(")>tag(>)plain(Roadmap)tag(</a>)tag(</li>)
+tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/issues)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(issues selected)delimiter(")>tag(>)plain(Issues)tag(</a>)tag(</li>)
+tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/issues/new)delimiter(")> attribute_name(accesskey)operator(=)string<delimiter(")content(7)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(new-issue)delimiter(")>tag(>)plain(New issue)tag(</a>)tag(</li>)
+
+tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/news)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(news)delimiter(")>tag(>)plain(News)tag(</a>)tag(</li>)
+tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/wiki)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(wiki)delimiter(")>tag(>)plain(Wiki)tag(</a>)tag(</li>)
+tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/boards)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(boards)delimiter(")>tag(>)plain(Forums)tag(</a>)tag(</li>)
+tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/repository)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(repository)delimiter(")>tag(>)plain(Repository)tag(</a>)tag(</li>)
+tag(<li>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/settings)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(settings)delimiter(")>tag(>)plain(Settings)tag(</a>)tag(</li>)tag(</ul>)
+    tag(</div>)
+    
+tag(</div>)
+
+tag(<div) attribute_name(class)operator(=)string<delimiter(")delimiter(")> attribute_name(id)operator(=)string<delimiter(")content(main)delimiter(")>tag(>)
+    tag(<div) attribute_name(id)operator(=)string<delimiter(")content(sidebar)delimiter(")>tag(>)        
+        
+  tag(<h3>)plain(Issues)tag(</h3>)
+
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/issues?set_filter=1)delimiter(")>tag(>)plain(View all issues)tag(</a>)tag(<br) tag(/>)
+
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/issues/report)delimiter(")>tag(>)plain(Summary)tag(</a>)tag(<br) tag(/>)
+
+
+
+
+
+
+
+tag(<h3>)plain(Custom queries)tag(</h3>)
+
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/issues?query_id=3)delimiter(")>tag(>)plain(All Scanner Requests)tag(</a>)tag(<br) tag(/>)
+
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/issues?query_id=6)delimiter(")>tag(>)plain(Übersicht nach Zielversionen)tag(</a>)tag(<br) tag(/>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/issues?query_id=5)delimiter(")>tag(>)plain(Closed Scanner Bugs)tag(</a>)tag(<br) tag(/>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/issues?query_id=2)delimiter(")>tag(>)plain(my tickets)tag(</a>)tag(<br) tag(/>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/issues?query_id=4)delimiter(")>tag(>)plain(Open Scanner bugs)tag(</a>)tag(<br) tag(/>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/issues?query_id=1)delimiter(")>tag(>)plain(Open Scanner requests)tag(</a>)tag(<br) tag(/>)
+
+
+
+  
+    tag(<div) attribute_name(id)operator(=)string<delimiter(")content(watchers)delimiter(")>tag(>)
+      tag(<div) attribute_name(class)operator(=)string<delimiter(")content(contextual)delimiter(")>tag(>)
+
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(#)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")keyword(new) ident(Ajax)operator(.)ident(Request)operator(()string<delimiter(')content(/watchers/new?object_id=46&amp;object_type=issue)delimiter(')>operator(,) operator({)key(asynchronous)operator(:)predefined_constant(true)operator(,) key(evalScripts)operator(:)predefined_constant(true)operator(,) key(parameters)operator(:)string<delimiter(')content(authenticity_token=)delimiter(')> operator(+) ident(encodeURIComponent)operator(()string<delimiter(')content(IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=)delimiter(')>operator(\)}\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")>tag(>)plain(Add)tag(</a>)
+tag(</div>)
+
+tag(<h3>)plain(Watchers (0\))tag(</h3>)
+
+
+
+
+
+    tag(</div>)
+  
+
+        
+    tag(</div>)
+    
+    tag(<div) attribute_name(id)operator(=)string<delimiter(")content(content)delimiter(")>tag(>)
+
+				
+        tag(<div) attribute_name(class)operator(=)string<delimiter(")content(contextual)delimiter(")>tag(>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46/edit)delimiter(")> attribute_name(accesskey)operator(=)string<delimiter(")content(e)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(icon icon-edit)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")ident(showAndScrollTo)operator((&)ident(quot)operator(;)ident(update)operator(&)ident(quot)operator(;,) operator(&)ident(quot)operator(;)ident(notes)operator(&)ident(quot)operator(;)operator(\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")>tag(>)plain(Update)tag(</a>)
+
+
+tag(<span) attribute_name(id)operator(=)string<delimiter(")content(watcher)delimiter(")>tag(>)tag(<a) attribute_name(class)operator(=)string<delimiter(")content(icon icon-fav-off)delimiter(")> attribute_name(href)operator(=)string<delimiter(")content(/watchers/watch?object_id=46)entity(&amp;)content(object_type=issue)entity(&amp;)content(replace%5B%5D=watcher)entity(&amp;)content(replace%5B%5D=watcher2)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")keyword(new) ident(Ajax)operator(.)ident(Request)operator(()string<delimiter(')content(/watchers/watch?object_id=46&amp;object_type=issue&amp;replace%5B%5D=watcher&amp;replace%5B%5D=watcher2)delimiter(')>operator(,) operator({)key(asynchronous)operator(:)predefined_constant(true)operator(,) key(evalScripts)operator(:)predefined_constant(true)operator(,) key(parameters)operator(:)string<delimiter(')content(authenticity_token=)delimiter(')> operator(+) ident(encodeURIComponent)operator(()string<delimiter(')content(IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=)delimiter(')>operator(\)}\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")>tag(>)plain(Watch)tag(</a>)tag(</span>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/issues/46/copy)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(icon icon-duplicate)delimiter(")>tag(>)plain(Duplicate)tag(</a>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issue_moves/new/46?copy_options%5Bcopy%5D=t)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(icon icon-copy)delimiter(")>tag(>)plain(Copy)tag(</a>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issue_moves/new/46)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(icon icon-move)delimiter(")>tag(>)plain(Move)tag(</a>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46/destroy)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(icon icon-del)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")keyword(if) operator(()ident(confirm)operator(()string<delimiter(')content(Are you sure ?)delimiter(')>operator(\)\)) operator({) keyword(var) ident(f) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(form)delimiter(')>operator(\))operator(;) ident(f)operator(.)ident(style)operator(.)ident(display) operator(=) string<delimiter(')content(none)delimiter(')>operator(;) local_variable(this)operator(.)ident(parentNode)operator(.)ident(appendChild)operator(()ident(f)operator(\))operator(;) ident(f)operator(.)ident(method) operator(=) string<delimiter(')content(POST)delimiter(')>operator(;) ident(f)operator(.)ident(action) operator(=) local_variable(this)operator(.)ident(href)operator(;)keyword(var) ident(s) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(input)delimiter(')>operator(\))operator(;) ident(s)operator(.)ident(setAttribute)operator(()string<delimiter(')content(type)delimiter(')>operator(,) string<delimiter(')content(hidden)delimiter(')>operator(\))operator(;) ident(s)operator(.)ident(setAttribute)operator(()string<delimiter(')content(name)delimiter(')>operator(,) string<delimiter(')content(authenticity_token)delimiter(')>operator(\))operator(;) ident(s)operator(.)ident(setAttribute)operator(()string<delimiter(')content(value)delimiter(')>operator(,) string<delimiter(')content(IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=)delimiter(')>operator(\))operator(;) ident(f)operator(.)ident(appendChild)operator(()ident(s)operator(\))operator(;)ident(f)operator(.)ident(submit)operator(()operator(\))operator(;) operator(})operator(;)keyword(return) predefined_constant(false)operator(;)delimiter(")>tag(>)plain(Delete)tag(</a>)
+tag(</div>)
+
+
+tag(<h2>)plain(Feature #46)tag(</h2>)
+
+tag(<div) attribute_name(class)operator(=)string<delimiter(")content(issue status-1 priority-2 created-by-me assigned-to-me details)delimiter(")>tag(>)
+        tag(<img) attribute_name(class)operator(=)string<delimiter(")content(gravatar)delimiter(")> attribute_name(alt)operator(=)string<delimiter(")delimiter(")> attribute_name(width)operator(=)string<delimiter(")content(50)delimiter(")> attribute_name(height)operator(=)string<delimiter(")content(50)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG)entity(&amp;)content(size=50)entity(&amp;)content(default=)delimiter(")> tag(/>)
+      
+tag(<div) attribute_name(class)operator(=)string<delimiter(")content(subject)delimiter(")>tag(>)      
+tag(<div>)tag(<h3>)plain(Integrate JavaScript and CSS Scanners into HTML Scanner)tag(</h3>)tag(</div>)
+tag(</div>)
+        tag(<p) attribute_name(class)operator(=)string<delimiter(")content(author)delimiter(")>tag(>)
+        plain(Added by )tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/users/12)delimiter(")>tag(>)plain(Kornelius Kalnbach)tag(</a>) tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/activity?from=2008-09-18)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(09/18/2008 03:04 am)delimiter(")>tag(>)plain(over 2 years)tag(</a>) plain(ago.
+        
+        Updated )tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/activity?from=2011-03-08)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(03/08/2011 12:02 am)delimiter(")>tag(>)plain(about 1 month)tag(</a>) plain(ago.
+        
+        )tag(</p>)
+
+tag(<table) attribute_name(class)operator(=)string<delimiter(")content(attributes)delimiter(")>tag(>)
+tag(<tr>)
+    tag(<th) attribute_name(class)operator(=)string<delimiter(")content(status)delimiter(")>tag(>)plain(Status:)tag(</th>)tag(<td) attribute_name(class)operator(=)string<delimiter(")content(status)delimiter(")>tag(>)plain(New)tag(</td>)
+    tag(<th) attribute_name(class)operator(=)string<delimiter(")content(start-date)delimiter(")>tag(>)plain(Start Date:)tag(</th>)tag(<td) attribute_name(class)operator(=)string<delimiter(")content(start-date)delimiter(")>tag(>)plain(09/18/2008)tag(</td>)
+tag(</tr>)
+tag(<tr>)
+    tag(<th) attribute_name(class)operator(=)string<delimiter(")content(priority)delimiter(")>tag(>)plain(Priority:)tag(</th>)tag(<td) attribute_name(class)operator(=)string<delimiter(")content(priority)delimiter(")>tag(>)plain(Normal)tag(</td>)
+
+    tag(<th) attribute_name(class)operator(=)string<delimiter(")content(due-date)delimiter(")>tag(>)plain(Due date:)tag(</th>)tag(<td) attribute_name(class)operator(=)string<delimiter(")content(due-date)delimiter(")>tag(>)tag(</td>)
+tag(</tr>)
+tag(<tr>)
+    tag(<th) attribute_name(class)operator(=)string<delimiter(")content(assigned-to)delimiter(")>tag(>)plain(Assigned to:)tag(</th>)tag(<td) attribute_name(class)operator(=)string<delimiter(")content(assigned-to)delimiter(")>tag(>)tag(<img) attribute_name(class)operator(=)string<delimiter(")content(gravatar)delimiter(")> attribute_name(alt)operator(=)string<delimiter(")delimiter(")> attribute_name(width)operator(=)string<delimiter(")content(14)delimiter(")> attribute_name(height)operator(=)string<delimiter(")content(14)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG)entity(&amp;)content(size=14)entity(&amp;)content(default=)delimiter(")> tag(/>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/users/12)delimiter(")>tag(>)plain(Kornelius Kalnbach)tag(</a>)tag(</td>)
+    tag(<th) attribute_name(class)operator(=)string<delimiter(")content(progress)delimiter(")>tag(>)plain(% Done:)tag(</th>)tag(<td) attribute_name(class)operator(=)string<delimiter(")content(progress)delimiter(")>tag(>)tag(<table) attribute_name(class)operator(=)string<delimiter(")content(progress)delimiter(")> attribute_name(style)operator(=)string<delimiter(")key(width)operator(:) float(80px)operator(;)delimiter(")>tag(>)tag(<tr>)tag(<td) attribute_name(class)operator(=)string<delimiter(")content(closed)delimiter(")> attribute_name(style)operator(=)string<delimiter(")key(width)operator(:) float(40%)operator(;)delimiter(")>tag(>)tag(</td>)tag(<td) attribute_name(class)operator(=)string<delimiter(")content(todo)delimiter(")> attribute_name(style)operator(=)string<delimiter(")key(width)operator(:) float(60%)operator(;)delimiter(")>tag(>)tag(</td>)tag(</tr>)tag(</table>)tag(<p) attribute_name(class)operator(=)string<delimiter(")content(pourcent)delimiter(")>tag(>)plain(40%)tag(</p>)tag(</td>)
+tag(</tr>)
+tag(<tr>)
+    tag(<th) attribute_name(class)operator(=)string<delimiter(")content(category)delimiter(")>tag(>)plain(Category:)tag(</th>)tag(<td) attribute_name(class)operator(=)string<delimiter(")content(category)delimiter(")>tag(>)plain(Scanner improvements)tag(</td>)
+
+    
+tag(</tr>)
+tag(<tr>)
+    tag(<th) attribute_name(class)operator(=)string<delimiter(")content(fixed-version)delimiter(")>tag(>)plain(Target version:)tag(</th>)tag(<td) attribute_name(class)operator(=)string<delimiter(")content(fixed-version)delimiter(")>tag(>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/versions/show/11)delimiter(")>tag(>)plain(1.0 RC1)tag(</a>)tag(</td>)
+    
+tag(</tr>)
+
+
+tag(</table>)
+tag(<hr) tag(/>)
+
+tag(<div) attribute_name(class)operator(=)string<delimiter(")content(contextual)delimiter(")>tag(>)
+
+tag(</div>)
+
+                              
+tag(<p>)tag(<strong>)plain(Description)tag(</strong>)tag(</p>)
+tag(<div) attribute_name(class)operator(=)string<delimiter(")content(wiki)delimiter(")>tag(>)
+tag(<p>)plain(HTML can contain CSS and JavaScript. CodeRay should highlight them using nested scanners.)tag(</p>)
+tag(</div>)
+
+
+
+
+
+
+tag(<hr) tag(/>)
+tag(<div) attribute_name(id)operator(=)string<delimiter(")content(issue_tree)delimiter(")>tag(>)
+tag(<div) attribute_name(class)operator(=)string<delimiter(")content(contextual)delimiter(")>tag(>)
+  tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/issues/new?issue%5Bparent_issue_id%5D=46)delimiter(")>tag(>)plain(Add)tag(</a>)
+
+tag(</div>)
+tag(<p>)tag(<strong>)plain(Subtasks)tag(</strong>)tag(</p>)
+
+tag(</div>)
+
+
+
+tag(<hr) tag(/>)
+tag(<div) attribute_name(id)operator(=)string<delimiter(")content(relations)delimiter(")>tag(>)
+tag(<div) attribute_name(class)operator(=)string<delimiter(")content(contextual)delimiter(")>tag(>)
+
+  tag(<a) attribute_name(href)operator(=)string<delimiter(")content(#)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")ident(Element)operator(.)ident(toggle)operator(()string<delimiter(')content(new-relation-form)delimiter(')>operator(\))operator(;) ident(Form)operator(.)ident(Element)operator(.)ident(focus)operator(()string<delimiter(')content(relation_issue_to_id)delimiter(')>operator(\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")>tag(>)plain(Add)tag(</a>)
+
+tag(</div>)
+
+tag(<p>)tag(<strong>)plain(Related issues)tag(</strong>)tag(</p>)
+
+
+
+tag(<form) attribute_name(action)operator(=)string<delimiter(")content(/issues/46/relations/46)delimiter(")> attribute_name(id)operator(=)string<delimiter(")content(new-relation-form)delimiter(")> attribute_name(method)operator(=)string<delimiter(")content(post)delimiter(")> attribute_name(onsubmit)operator(=)string<delimiter(")keyword(new) ident(Ajax)operator(.)ident(Request)operator(()string<delimiter(')content(/issues/46/relations/46)delimiter(')>operator(,) operator({)key(asynchronous)operator(:)predefined_constant(true)operator(,) key(evalScripts)operator(:)predefined_constant(true)operator(,) key(method)operator(:)string<delimiter(')content(post)delimiter(')>operator(,) function(onComplete)operator(:)keyword(function)operator(()ident(request)operator(\))operator({)ident(Form)operator(.)ident(Element)operator(.)ident(focus)operator(()string<delimiter(')content(relation_issue_to_id)delimiter(')>operator(\))operator(;)operator(})operator(,) key(parameters)operator(:)ident(Form)operator(.)ident(serialize)operator(()local_variable(this)operator(\)}\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")> attribute_name(style)operator(=)string<delimiter(")key(display)operator(:) value(none)operator(;)delimiter(")>tag(>)tag(<div) attribute_name(style)operator(=)string<delimiter(")key(margin)operator(:)float(0)operator(;)key(padding)operator(:)float(0)operator(;)key(display)operator(:)value(inline)delimiter(")>tag(>)tag(<input) attribute_name(name)operator(=)string<delimiter(")content(authenticity_token)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(hidden)delimiter(")> attribute_name(value)operator(=)string<delimiter(")content(IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=)delimiter(")> tag(/>)tag(</div>)
+
+
+tag(<p>)tag(<select) attribute_name(id)operator(=)string<delimiter(")content(relation_relation_type)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(relation[relation_type])delimiter(")> attribute_name(onchange)operator(=)string<delimiter(")ident(setPredecessorFieldsVisibility)operator(()operator(\))operator(;)delimiter(")>tag(>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(relates)delimiter(")>tag(>)plain(related to)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(duplicates)delimiter(")>tag(>)plain(duplicates)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(duplicated)delimiter(")>tag(>)plain(duplicated by)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(blocks)delimiter(")>tag(>)plain(blocks)tag(</option>)
+
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(blocked)delimiter(")>tag(>)plain(blocked by)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(precedes)delimiter(")>tag(>)plain(precedes)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(follows)delimiter(")>tag(>)plain(follows)tag(</option>)tag(</select>)
+plain(Issue #)tag(<input) attribute_name(id)operator(=)string<delimiter(")content(relation_issue_to_id)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(relation[issue_to_id])delimiter(")> attribute_name(size)operator(=)string<delimiter(")content(6)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text)delimiter(")> tag(/>)
+tag(<span) attribute_name(id)operator(=)string<delimiter(")content(predecessor_fields)delimiter(")> attribute_name(style)operator(=)string<delimiter(")key(display)operator(:)value(none)operator(;)delimiter(")>tag(>)
+plain(Delay: )tag(<input) attribute_name(id)operator(=)string<delimiter(")content(relation_delay)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(relation[delay])delimiter(")> attribute_name(size)operator(=)string<delimiter(")content(3)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text)delimiter(")> tag(/>) plain(days
+)tag(</span>)
+tag(<input) attribute_name(name)operator(=)string<delimiter(")content(commit)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(submit)delimiter(")> attribute_name(value)operator(=)string<delimiter(")content(Add)delimiter(")> tag(/>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(#)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")ident(Element)operator(.)ident(toggle)operator(()string<delimiter(')content(new-relation-form)delimiter(')>operator(\))operator(;) local_variable(this)operator(.)ident(blur)operator(()operator(\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")>tag(>)plain(Cancel)tag(</a>)
+tag(</p>)
+
+tag(<script) attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)
+inline<comment(//<![CDATA[)
+ident(setPredecessorFieldsVisibility)operator(()operator(\))operator(;)
+comment(//]]>)>
+tag(</script>)
+
+tag(</form>)
+
+tag(</div>)
+
+
+tag(</div>)
+
+
+
+
+tag(<div) attribute_name(id)operator(=)string<delimiter(")content(history)delimiter(")>tag(>)
+tag(<h3>)plain(History)tag(</h3>)
+
+  tag(<div) attribute_name(id)operator(=)string<delimiter(")content(change-63)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(journal has-details)delimiter(")>tag(>)
+    tag(<h4>)tag(<div) attribute_name(class)operator(=)string<delimiter(")content(journal-link)delimiter(")>tag(>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46#note-1)delimiter(")>tag(>)plain(#1)tag(</a>)tag(</div>)
+    tag(<img) attribute_name(class)operator(=)string<delimiter(")content(gravatar)delimiter(")> attribute_name(alt)operator(=)string<delimiter(")delimiter(")> attribute_name(width)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(height)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG)entity(&amp;)content(size=24)entity(&amp;)content(default=)delimiter(")> tag(/>)
+    tag(<a) attribute_name(name)operator(=)string<delimiter(")content(note-1)delimiter(")>tag(>)tag(</a>)
+		plain(Updated by )tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/users/12)delimiter(")>tag(>)plain(Kornelius Kalnbach)tag(</a>) tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/activity?from=2008-09-25)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(09/25/2008 06:08 am)delimiter(")>tag(>)plain(over 2 years)tag(</a>) plain(ago)tag(</h4>)
+
+    
+    
+    tag(<ul) attribute_name(class)operator(=)string<delimiter(")content(details)delimiter(")>tag(>)
+      
+       tag(<li>)tag(<strong>)plain(Target version)tag(</strong>) plain(changed from )tag(<i>)plain(0.8)tag(</i>) plain(to )tag(<i>)plain(1.0 RC1)tag(</i>)tag(</li>)
+      
+    tag(</ul>)
+    
+    
+  tag(</div>)
+  
+
+  tag(<div) attribute_name(id)operator(=)string<delimiter(")content(change-64)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(journal has-notes)delimiter(")>tag(>)
+
+    tag(<h4>)tag(<div) attribute_name(class)operator(=)string<delimiter(")content(journal-link)delimiter(")>tag(>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46#note-2)delimiter(")>tag(>)plain(#2)tag(</a>)tag(</div>)
+    tag(<img) attribute_name(class)operator(=)string<delimiter(")content(gravatar)delimiter(")> attribute_name(alt)operator(=)string<delimiter(")delimiter(")> attribute_name(width)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(height)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG)entity(&amp;)content(size=24)entity(&amp;)content(default=)delimiter(")> tag(/>)
+    tag(<a) attribute_name(name)operator(=)string<delimiter(")content(note-2)delimiter(")>tag(>)tag(</a>)
+		plain(Updated by )tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/users/12)delimiter(")>tag(>)plain(Kornelius Kalnbach)tag(</a>) tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/activity?from=2008-09-25)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(09/25/2008 06:08 am)delimiter(")>tag(>)plain(over 2 years)tag(</a>) plain(ago)tag(</h4>)
+    
+    
+    tag(<div) attribute_name(class)operator(=)string<delimiter(")content(wiki editable)delimiter(")> attribute_name(id)operator(=)string<delimiter(")content(journal-64-notes)delimiter(")>tag(>)tag(<div) attribute_name(class)operator(=)string<delimiter(")content(contextual)delimiter(")>tag(>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(#)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")keyword(new) ident(Ajax)operator(.)ident(Request)operator(()string<delimiter(')content(/issues/46/quoted?journal_id=64)delimiter(')>operator(,) operator({)key(asynchronous)operator(:)predefined_constant(true)operator(,) key(evalScripts)operator(:)predefined_constant(true)operator(,) key(parameters)operator(:)string<delimiter(')content(authenticity_token=)delimiter(')> operator(+) ident(encodeURIComponent)operator(()string<delimiter(')content(IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=)delimiter(')>operator(\)}\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(Quote)delimiter(")>tag(>)tag(<img) attribute_name(alt)operator(=)string<delimiter(")content(Comment)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(/images/comment.png?1289779286)delimiter(")> tag(/>)tag(</a>) tag(<a) attribute_name(href)operator(=)string<delimiter(")content(#)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")keyword(new) ident(Ajax)operator(.)ident(Request)operator(()string<delimiter(')content(/journals/edit/64)delimiter(')>operator(,) operator({)key(asynchronous)operator(:)predefined_constant(true)operator(,) key(evalScripts)operator(:)predefined_constant(true)operator(,) key(method)operator(:)string<delimiter(')content(get)delimiter(')>operator(}\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(Edit)delimiter(")>tag(>)tag(<img) attribute_name(alt)operator(=)string<delimiter(")content(Edit)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(/images/edit.png?1289779286)delimiter(")> tag(/>)tag(</a>)tag(</div>)tag(<p>)plain(I move this to 1.0 because it's not crucial currently. Comment if you think different.)tag(</p>)tag(</div>)
+
+  tag(</div>)
+  
+
+  tag(<div) attribute_name(id)operator(=)string<delimiter(")content(change-340)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(journal has-details)delimiter(")>tag(>)
+    tag(<h4>)tag(<div) attribute_name(class)operator(=)string<delimiter(")content(journal-link)delimiter(")>tag(>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46#note-3)delimiter(")>tag(>)plain(#3)tag(</a>)tag(</div>)
+    tag(<img) attribute_name(class)operator(=)string<delimiter(")content(gravatar)delimiter(")> attribute_name(alt)operator(=)string<delimiter(")delimiter(")> attribute_name(width)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(height)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG)entity(&amp;)content(size=24)entity(&amp;)content(default=)delimiter(")> tag(/>)
+    tag(<a) attribute_name(name)operator(=)string<delimiter(")content(note-3)delimiter(")>tag(>)tag(</a>)
+		plain(Updated by )tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/users/12)delimiter(")>tag(>)plain(Kornelius Kalnbach)tag(</a>) tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/activity?from=2010-01-11)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(01/11/2010 01:00 am)delimiter(")>tag(>)plain(over 1 year)tag(</a>) plain(ago)tag(</h4>)
+
+    
+    
+    tag(<ul) attribute_name(class)operator(=)string<delimiter(")content(details)delimiter(")>tag(>)
+      
+       tag(<li>)tag(<strong>)plain(Target version)tag(</strong>) plain(changed from )tag(<i>)plain(1.0 RC1)tag(</i>) plain(to )tag(<i>)plain(1.1)tag(</i>)tag(</li>)
+      
+    tag(</ul>)
+    
+    
+  tag(</div>)
+  
+
+  tag(<div) attribute_name(id)operator(=)string<delimiter(")content(change-350)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(journal has-details)delimiter(")>tag(>)
+
+    tag(<h4>)tag(<div) attribute_name(class)operator(=)string<delimiter(")content(journal-link)delimiter(")>tag(>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46#note-4)delimiter(")>tag(>)plain(#4)tag(</a>)tag(</div>)
+    tag(<img) attribute_name(class)operator(=)string<delimiter(")content(gravatar)delimiter(")> attribute_name(alt)operator(=)string<delimiter(")delimiter(")> attribute_name(width)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(height)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG)entity(&amp;)content(size=24)entity(&amp;)content(default=)delimiter(")> tag(/>)
+    tag(<a) attribute_name(name)operator(=)string<delimiter(")content(note-4)delimiter(")>tag(>)tag(</a>)
+		plain(Updated by )tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/users/12)delimiter(")>tag(>)plain(Kornelius Kalnbach)tag(</a>) tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/activity?from=2010-01-11)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(01/11/2010 01:05 am)delimiter(")>tag(>)plain(over 1 year)tag(</a>) plain(ago)tag(</h4>)
+    
+    
+    tag(<ul) attribute_name(class)operator(=)string<delimiter(")content(details)delimiter(")>tag(>)
+
+      
+       tag(<li>)tag(<strong>)plain(Category)tag(</strong>) plain(changed from )tag(<i>)plain(Scanner requests)tag(</i>) plain(to )tag(<i>)plain(Scanner improvements)tag(</i>)tag(</li>)
+      
+    tag(</ul>)
+    
+    
+  tag(</div>)
+  
+
+  tag(<div) attribute_name(id)operator(=)string<delimiter(")content(change-605)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(journal has-notes)delimiter(")>tag(>)
+    tag(<h4>)tag(<div) attribute_name(class)operator(=)string<delimiter(")content(journal-link)delimiter(")>tag(>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46#note-5)delimiter(")>tag(>)plain(#5)tag(</a>)tag(</div>)
+
+    tag(<img) attribute_name(class)operator(=)string<delimiter(")content(gravatar)delimiter(")> attribute_name(alt)operator(=)string<delimiter(")delimiter(")> attribute_name(width)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(height)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(http://www.gravatar.com/avatar/8e03e09add01bff630afc44c5b92b5b9?rating=PG)entity(&amp;)content(size=24)entity(&amp;)content(default=)delimiter(")> tag(/>)
+    tag(<a) attribute_name(name)operator(=)string<delimiter(")content(note-5)delimiter(")>tag(>)tag(</a>)
+		plain(Updated by )tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/users/58)delimiter(")>tag(>)plain(Troex Nevelin)tag(</a>) tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/activity?from=2010-04-19)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(04/19/2010 03:12 pm)delimiter(")>tag(>)plain(about 1 year)tag(</a>) plain(ago)tag(</h4>)
+    
+    
+    tag(<div) attribute_name(class)operator(=)string<delimiter(")content(wiki editable)delimiter(")> attribute_name(id)operator(=)string<delimiter(")content(journal-605-notes)delimiter(")>tag(>)tag(<div) attribute_name(class)operator(=)string<delimiter(")content(contextual)delimiter(")>tag(>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(#)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")keyword(new) ident(Ajax)operator(.)ident(Request)operator(()string<delimiter(')content(/issues/46/quoted?journal_id=605)delimiter(')>operator(,) operator({)key(asynchronous)operator(:)predefined_constant(true)operator(,) key(evalScripts)operator(:)predefined_constant(true)operator(,) key(parameters)operator(:)string<delimiter(')content(authenticity_token=)delimiter(')> operator(+) ident(encodeURIComponent)operator(()string<delimiter(')content(IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=)delimiter(')>operator(\)}\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(Quote)delimiter(")>tag(>)tag(<img) attribute_name(alt)operator(=)string<delimiter(")content(Comment)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(/images/comment.png?1289779286)delimiter(")> tag(/>)tag(</a>) tag(<a) attribute_name(href)operator(=)string<delimiter(")content(#)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")keyword(new) ident(Ajax)operator(.)ident(Request)operator(()string<delimiter(')content(/journals/edit/605)delimiter(')>operator(,) operator({)key(asynchronous)operator(:)predefined_constant(true)operator(,) key(evalScripts)operator(:)predefined_constant(true)operator(,) key(method)operator(:)string<delimiter(')content(get)delimiter(')>operator(}\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(Edit)delimiter(")>tag(>)tag(<img) attribute_name(alt)operator(=)string<delimiter(")content(Edit)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(/images/edit.png?1289779286)delimiter(")> tag(/>)tag(</a>)tag(</div>)tag(<p>)plain(There is kinda dirty trick, but line-numbers will become mad, maybe allow code inside code taq to temporary switch highlighter?)tag(</p>)tag(</div>)
+  tag(</div>)
+
+  
+
+  tag(<div) attribute_name(id)operator(=)string<delimiter(")content(change-639)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(journal has-notes has-details)delimiter(")>tag(>)
+    tag(<h4>)tag(<div) attribute_name(class)operator(=)string<delimiter(")content(journal-link)delimiter(")>tag(>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46#note-6)delimiter(")>tag(>)plain(#6)tag(</a>)tag(</div>)
+    tag(<img) attribute_name(class)operator(=)string<delimiter(")content(gravatar)delimiter(")> attribute_name(alt)operator(=)string<delimiter(")delimiter(")> attribute_name(width)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(height)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG)entity(&amp;)content(size=24)entity(&amp;)content(default=)delimiter(")> tag(/>)
+    tag(<a) attribute_name(name)operator(=)string<delimiter(")content(note-6)delimiter(")>tag(>)tag(</a>)
+		plain(Updated by )tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/users/12)delimiter(")>tag(>)plain(Kornelius Kalnbach)tag(</a>) tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/activity?from=2010-05-19)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(05/19/2010 03:25 am)delimiter(")>tag(>)plain(11 months)tag(</a>) plain(ago)tag(</h4>)
+
+    
+    
+    tag(<ul) attribute_name(class)operator(=)string<delimiter(")content(details)delimiter(")>tag(>)
+      
+       tag(<li>)tag(<strong>)plain(Target version)tag(</strong>) plain(changed from )tag(<i>)plain(1.1)tag(</i>) plain(to )tag(<i>)plain(1.0 RC1)tag(</i>)tag(</li>)
+      
+    tag(</ul>)
+    
+    tag(<div) attribute_name(class)operator(=)string<delimiter(")content(wiki editable)delimiter(")> attribute_name(id)operator(=)string<delimiter(")content(journal-639-notes)delimiter(")>tag(>)tag(<div) attribute_name(class)operator(=)string<delimiter(")content(contextual)delimiter(")>tag(>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(#)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")keyword(new) ident(Ajax)operator(.)ident(Request)operator(()string<delimiter(')content(/issues/46/quoted?journal_id=639)delimiter(')>operator(,) operator({)key(asynchronous)operator(:)predefined_constant(true)operator(,) key(evalScripts)operator(:)predefined_constant(true)operator(,) key(parameters)operator(:)string<delimiter(')content(authenticity_token=)delimiter(')> operator(+) ident(encodeURIComponent)operator(()string<delimiter(')content(IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=)delimiter(')>operator(\)}\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(Quote)delimiter(")>tag(>)tag(<img) attribute_name(alt)operator(=)string<delimiter(")content(Comment)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(/images/comment.png?1289779286)delimiter(")> tag(/>)tag(</a>) tag(<a) attribute_name(href)operator(=)string<delimiter(")content(#)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")keyword(new) ident(Ajax)operator(.)ident(Request)operator(()string<delimiter(')content(/journals/edit/639)delimiter(')>operator(,) operator({)key(asynchronous)operator(:)predefined_constant(true)operator(,) key(evalScripts)operator(:)predefined_constant(true)operator(,) key(method)operator(:)string<delimiter(')content(get)delimiter(')>operator(}\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(Edit)delimiter(")>tag(>)tag(<img) attribute_name(alt)operator(=)string<delimiter(")content(Edit)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(/images/edit.png?1289779286)delimiter(")> tag(/>)tag(</a>)tag(</div>)tag(<p>)plain(Actually, I'd like to have this feature in 1.0.)tag(</p>)
+
+
+plain(CSS should be highlighted in:
+	)tag(<ul>)
+	tag(<li>)tag(<code>)plain(style)tag(</code>) plain(tags)tag(</li>)
+		tag(<li>)tag(<code>)plain(style="…")tag(</code>) plain(attribute values)tag(</li>)
+	tag(</ul>)
+
+plain(JavaScript should be highlighted in:
+	)tag(<ul>)
+	tag(<li>)tag(<code>)plain(script)tag(</code>) plain(tags)tag(</li>)
+		tag(<li>)tag(<code>)plain(onclick="…")tag(</code>) plain(attribute values (and other )tag(<code>)plain(on*)tag(</code>) plain(friends\))tag(</li>)
+		tag(<li>)tag(<code>)plain(href="javascript:…")tag(</code>) plain(attribute values)tag(</li>)
+
+	tag(</ul>)
+
+
+	tag(<p>)plain(Shouldn't be that hard.)tag(</p>)tag(</div>)
+  tag(</div>)
+  
+
+  tag(<div) attribute_name(id)operator(=)string<delimiter(")content(change-804)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(journal has-notes)delimiter(")>tag(>)
+    tag(<h4>)tag(<div) attribute_name(class)operator(=)string<delimiter(")content(journal-link)delimiter(")>tag(>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46#note-7)delimiter(")>tag(>)plain(#7)tag(</a>)tag(</div>)
+    tag(<img) attribute_name(class)operator(=)string<delimiter(")content(gravatar)delimiter(")> attribute_name(alt)operator(=)string<delimiter(")delimiter(")> attribute_name(width)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(height)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG)entity(&amp;)content(size=24)entity(&amp;)content(default=)delimiter(")> tag(/>)
+    tag(<a) attribute_name(name)operator(=)string<delimiter(")content(note-7)delimiter(")>tag(>)tag(</a>)
+
+		plain(Updated by )tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/users/12)delimiter(")>tag(>)plain(Kornelius Kalnbach)tag(</a>) tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/activity?from=2011-03-08)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(03/08/2011 12:02 am)delimiter(")>tag(>)plain(about 1 month)tag(</a>) plain(ago)tag(</h4>)
+    
+    
+    tag(<div) attribute_name(class)operator(=)string<delimiter(")content(wiki editable)delimiter(")> attribute_name(id)operator(=)string<delimiter(")content(journal-804-notes)delimiter(")>tag(>)tag(<div) attribute_name(class)operator(=)string<delimiter(")content(contextual)delimiter(")>tag(>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(#)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")keyword(new) ident(Ajax)operator(.)ident(Request)operator(()string<delimiter(')content(/issues/46/quoted?journal_id=804)delimiter(')>operator(,) operator({)key(asynchronous)operator(:)predefined_constant(true)operator(,) key(evalScripts)operator(:)predefined_constant(true)operator(,) key(parameters)operator(:)string<delimiter(')content(authenticity_token=)delimiter(')> operator(+) ident(encodeURIComponent)operator(()string<delimiter(')content(IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=)delimiter(')>operator(\)}\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(Quote)delimiter(")>tag(>)tag(<img) attribute_name(alt)operator(=)string<delimiter(")content(Comment)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(/images/comment.png?1289779286)delimiter(")> tag(/>)tag(</a>) tag(<a) attribute_name(href)operator(=)string<delimiter(")content(#)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")keyword(new) ident(Ajax)operator(.)ident(Request)operator(()string<delimiter(')content(/journals/edit/804)delimiter(')>operator(,) operator({)key(asynchronous)operator(:)predefined_constant(true)operator(,) key(evalScripts)operator(:)predefined_constant(true)operator(,) key(method)operator(:)string<delimiter(')content(get)delimiter(')>operator(}\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(Edit)delimiter(")>tag(>)tag(<img) attribute_name(alt)operator(=)string<delimiter(")content(Edit)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(/images/edit.png?1289779286)delimiter(")> tag(/>)tag(</a>)tag(</div>)tag(<p>)plain(JavaScript is now integrated. Needs lots of testing.)tag(</p>)
+
+
+	tag(<p>)plain(Not satisfied with the style yet. Highlight JS like Ruby in ERb?)tag(</p>)tag(</div>)
+
+  tag(</div>)
+  
+
+  tag(<div) attribute_name(id)operator(=)string<delimiter(")content(change-806)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(journal has-details)delimiter(")>tag(>)
+    tag(<h4>)tag(<div) attribute_name(class)operator(=)string<delimiter(")content(journal-link)delimiter(")>tag(>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46#note-8)delimiter(")>tag(>)plain(#8)tag(</a>)tag(</div>)
+    tag(<img) attribute_name(class)operator(=)string<delimiter(")content(gravatar)delimiter(")> attribute_name(alt)operator(=)string<delimiter(")delimiter(")> attribute_name(width)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(height)operator(=)string<delimiter(")content(24)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(http://www.gravatar.com/avatar/4995c7ce9523ce00dea01362cb976196?rating=PG)entity(&amp;)content(size=24)entity(&amp;)content(default=)delimiter(")> tag(/>)
+    tag(<a) attribute_name(name)operator(=)string<delimiter(")content(note-8)delimiter(")>tag(>)tag(</a>)
+		plain(Updated by )tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/users/12)delimiter(")>tag(>)plain(Kornelius Kalnbach)tag(</a>) tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/activity?from=2011-03-08)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(03/08/2011 12:02 am)delimiter(")>tag(>)plain(about 1 month)tag(</a>) plain(ago)tag(</h4>)
+
+    
+    
+    tag(<ul) attribute_name(class)operator(=)string<delimiter(")content(details)delimiter(")>tag(>)
+      
+       tag(<li>)tag(<strong>)plain(% Done)tag(</strong>) plain(changed from )tag(<i>)plain(0)tag(</i>) plain(to )tag(<i>)plain(40)tag(</i>)tag(</li>)
+      
+    tag(</ul>)
+    
+    
+  tag(</div>)
+  
+
+
+tag(</div>)
+
+
+
+tag(<div) attribute_name(style)operator(=)string<delimiter(")key(clear)operator(:) value(both)operator(;)delimiter(")>tag(>)tag(</div>)
+tag(<div) attribute_name(class)operator(=)string<delimiter(")content(contextual)delimiter(")>tag(>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46/edit)delimiter(")> attribute_name(accesskey)operator(=)string<delimiter(")content(e)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(icon icon-edit)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")ident(showAndScrollTo)operator((&)ident(quot)operator(;)ident(update)operator(&)ident(quot)operator(;,) operator(&)ident(quot)operator(;)ident(notes)operator(&)ident(quot)operator(;)operator(\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")>tag(>)plain(Update)tag(</a>)
+
+
+tag(<span) attribute_name(id)operator(=)string<delimiter(")content(watcher2)delimiter(")>tag(>)tag(<a) attribute_name(class)operator(=)string<delimiter(")content(icon icon-fav-off)delimiter(")> attribute_name(href)operator(=)string<delimiter(")content(/watchers/watch?object_id=46)entity(&amp;)content(object_type=issue)entity(&amp;)content(replace%5B%5D=watcher)entity(&amp;)content(replace%5B%5D=watcher2)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")keyword(new) ident(Ajax)operator(.)ident(Request)operator(()string<delimiter(')content(/watchers/watch?object_id=46&amp;object_type=issue&amp;replace%5B%5D=watcher&amp;replace%5B%5D=watcher2)delimiter(')>operator(,) operator({)key(asynchronous)operator(:)predefined_constant(true)operator(,) key(evalScripts)operator(:)predefined_constant(true)operator(,) key(parameters)operator(:)string<delimiter(')content(authenticity_token=)delimiter(')> operator(+) ident(encodeURIComponent)operator(()string<delimiter(')content(IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=)delimiter(')>operator(\)}\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")>tag(>)plain(Watch)tag(</a>)tag(</span>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/projects/coderay/issues/46/copy)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(icon icon-duplicate)delimiter(")>tag(>)plain(Duplicate)tag(</a>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issue_moves/new/46?copy_options%5Bcopy%5D=t)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(icon icon-copy)delimiter(")>tag(>)plain(Copy)tag(</a>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issue_moves/new/46)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(icon icon-move)delimiter(")>tag(>)plain(Move)tag(</a>)
+
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46/destroy)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(icon icon-del)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")keyword(if) operator(()ident(confirm)operator(()string<delimiter(')content(Are you sure ?)delimiter(')>operator(\)\)) operator({) keyword(var) ident(f) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(form)delimiter(')>operator(\))operator(;) ident(f)operator(.)ident(style)operator(.)ident(display) operator(=) string<delimiter(')content(none)delimiter(')>operator(;) local_variable(this)operator(.)ident(parentNode)operator(.)ident(appendChild)operator(()ident(f)operator(\))operator(;) ident(f)operator(.)ident(method) operator(=) string<delimiter(')content(POST)delimiter(')>operator(;) ident(f)operator(.)ident(action) operator(=) local_variable(this)operator(.)ident(href)operator(;)keyword(var) ident(s) operator(=) ident(document)operator(.)ident(createElement)operator(()string<delimiter(')content(input)delimiter(')>operator(\))operator(;) ident(s)operator(.)ident(setAttribute)operator(()string<delimiter(')content(type)delimiter(')>operator(,) string<delimiter(')content(hidden)delimiter(')>operator(\))operator(;) ident(s)operator(.)ident(setAttribute)operator(()string<delimiter(')content(name)delimiter(')>operator(,) string<delimiter(')content(authenticity_token)delimiter(')>operator(\))operator(;) ident(s)operator(.)ident(setAttribute)operator(()string<delimiter(')content(value)delimiter(')>operator(,) string<delimiter(')content(IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=)delimiter(')>operator(\))operator(;) ident(f)operator(.)ident(appendChild)operator(()ident(s)operator(\))operator(;)ident(f)operator(.)ident(submit)operator(()operator(\))operator(;) operator(})operator(;)keyword(return) predefined_constant(false)operator(;)delimiter(")>tag(>)plain(Delete)tag(</a>)
+tag(</div>)
+
+
+tag(<div) attribute_name(style)operator(=)string<delimiter(")key(clear)operator(:) value(both)operator(;)delimiter(")>tag(>)tag(</div>)
+
+  tag(<div) attribute_name(id)operator(=)string<delimiter(")content(update)delimiter(")> attribute_name(style)operator(=)string<delimiter(")key(display)operator(:)value(none)operator(;)delimiter(")>tag(>)
+  tag(<h3>)plain(Update)tag(</h3>)
+  tag(<form) attribute_name(action)operator(=)string<delimiter(")content(/issues/46/edit)delimiter(")> attribute_name(enctype)operator(=)string<delimiter(")content(multipart/form-data)delimiter(")> attribute_name(id)operator(=)string<delimiter(")content(issue-form)delimiter(")> attribute_name(method)operator(=)string<delimiter(")content(post)delimiter(")>tag(>)tag(<div) attribute_name(style)operator(=)string<delimiter(")key(margin)operator(:)float(0)operator(;)key(padding)operator(:)float(0)operator(;)key(display)operator(:)value(inline)delimiter(")>tag(>)tag(<input) attribute_name(name)operator(=)string<delimiter(")content(_method)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(hidden)delimiter(")> attribute_name(value)operator(=)string<delimiter(")content(put)delimiter(")> tag(/>)tag(<input) attribute_name(name)operator(=)string<delimiter(")content(authenticity_token)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(hidden)delimiter(")> attribute_name(value)operator(=)string<delimiter(")content(IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=)delimiter(")> tag(/>)tag(</div>)
+    
+    tag(<div) attribute_name(class)operator(=)string<delimiter(")content(box)delimiter(")>tag(>)
+    
+        tag(<fieldset) attribute_name(class)operator(=)string<delimiter(")content(tabular)delimiter(")>tag(>)tag(<legend>)plain(Change properties
+        
+        )tag(<small>)plain(()tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")ident(Effect)operator(.)ident(toggle)operator((&)ident(quot)operator(;)ident(issue_descr_fields)operator(&)ident(quot)operator(;,) operator(&)ident(quot)operator(;)ident(appear)operator(&)ident(quot)operator(;,) operator({)key(duration)operator(:)float(0.3)operator(}\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")>tag(>)plain(More)tag(</a>)plain(\))tag(</small>)
+
+        
+        tag(</legend>)
+        
+
+tag(<div) attribute_name(id)operator(=)string<delimiter(")content(issue_descr_fields)delimiter(")> attribute_name(style)operator(=)string<delimiter(")key(display)operator(:)value(none)delimiter(")>tag(>)
+tag(<p>)tag(<label) attribute_name(for)operator(=)string<delimiter(")content(issue_tracker_id)delimiter(")>tag(>)plain(Tracker)tag(<span) attribute_name(class)operator(=)string<delimiter(")content(required)delimiter(")>tag(>) plain(*)tag(</span>)tag(</label>)tag(<select) attribute_name(id)operator(=)string<delimiter(")content(issue_tracker_id)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(issue[tracker_id])delimiter(")>tag(>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(1)delimiter(")>tag(>)plain(Bug)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(2)delimiter(")> attribute_name(selected)operator(=)string<delimiter(")content(selected)delimiter(")>tag(>)plain(Feature)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(3)delimiter(")>tag(>)plain(Support)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(4)delimiter(")>tag(>)plain(Task)tag(</option>)tag(</select>)tag(</p>)
+tag(<script) attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)
+inline<comment(//<![CDATA[)
+keyword(new) ident(Form)operator(.)ident(Element)operator(.)ident(EventObserver)operator(()string<delimiter(')content(issue_tracker_id)delimiter(')>operator(,) keyword(function)operator(()ident(element)operator(,) ident(value)operator(\)) operator({)keyword(new) ident(Ajax)operator(.)ident(Updater)operator(()string<delimiter(')content(attributes)delimiter(')>operator(,) string<delimiter(')content(/projects/coderay/issues/new?id=46)delimiter(')>operator(,) operator({)key(asynchronous)operator(:)predefined_constant(true)operator(,) key(evalScripts)operator(:)predefined_constant(true)operator(,) key(parameters)operator(:)ident(Form)operator(.)ident(serialize)operator(()string<delimiter(')content(issue-form)delimiter(')>operator(\)) operator(+) string<delimiter(')content(&authenticity_token=)delimiter(')> operator(+) ident(encodeURIComponent)operator(()string<delimiter(')content(IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=)delimiter(')>operator(\)}\)}\))
+comment(//]]>)>
+tag(</script>)
+
+tag(<p>)tag(<label) attribute_name(for)operator(=)string<delimiter(")content(issue_subject)delimiter(")>tag(>)plain(Subject)tag(<span) attribute_name(class)operator(=)string<delimiter(")content(required)delimiter(")>tag(>) plain(*)tag(</span>)tag(</label>)tag(<input) attribute_name(id)operator(=)string<delimiter(")content(issue_subject)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(issue[subject])delimiter(")> attribute_name(size)operator(=)string<delimiter(")content(80)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text)delimiter(")> attribute_name(value)operator(=)string<delimiter(")content(Integrate JavaScript and CSS Scanners into HTML Scanner)delimiter(")> tag(/>)tag(</p>)
+                                     
+
+tag(<p) attribute_name(id)operator(=)string<delimiter(")content(parent_issue)delimiter(")>tag(>)tag(<label) attribute_name(for)operator(=)string<delimiter(")content(issue_parent_issue_id)delimiter(")>tag(>)plain(Parent task)tag(</label>)tag(<input) attribute_name(id)operator(=)string<delimiter(")content(issue_parent_issue_id)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(issue[parent_issue_id])delimiter(")> attribute_name(size)operator(=)string<delimiter(")content(10)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text)delimiter(")> tag(/>)tag(</p>)
+tag(<div) attribute_name(id)operator(=)string<delimiter(")content(parent_issue_candidates)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(autocomplete)delimiter(")>tag(>)tag(</div>)
+tag(<script) attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)
+inline<comment(//<![CDATA[)
+ident(observeParentIssueField)operator(()string<delimiter(')content(/issues/auto_complete?id=46&amp;project_id=coderay)delimiter(')>operator(\))
+comment(//]]>)>
+tag(</script>)
+
+
+tag(<p>)tag(<label) attribute_name(for)operator(=)string<delimiter(")content(issue_description)delimiter(")>tag(>)plain(Description)tag(</label>)tag(<textarea) attribute_name(accesskey)operator(=)string<delimiter(")content(e)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(wiki-edit)delimiter(")> attribute_name(cols)operator(=)string<delimiter(")content(60)delimiter(")> attribute_name(id)operator(=)string<delimiter(")content(issue_description)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(issue[description])delimiter(")> attribute_name(rows)operator(=)string<delimiter(")content(10)delimiter(")>tag(>)plain(HTML can contain CSS and JavaScript. CodeRay should highlight them using nested scanners.)tag(</textarea>)tag(</p>)
+tag(</div>)
+
+tag(<div) attribute_name(id)operator(=)string<delimiter(")content(attributes)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(attributes)delimiter(")>tag(>)
+	
+
+tag(<div) attribute_name(class)operator(=)string<delimiter(")content(splitcontentleft)delimiter(")>tag(>)
+
+tag(<p>)tag(<label) attribute_name(for)operator(=)string<delimiter(")content(issue_status_id)delimiter(")>tag(>)plain(Status)tag(<span) attribute_name(class)operator(=)string<delimiter(")content(required)delimiter(")>tag(>) plain(*)tag(</span>)tag(</label>)tag(<select) attribute_name(id)operator(=)string<delimiter(")content(issue_status_id)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(issue[status_id])delimiter(")>tag(>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(1)delimiter(")> attribute_name(selected)operator(=)string<delimiter(")content(selected)delimiter(")>tag(>)plain(New)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(2)delimiter(")>tag(>)plain(Assigned)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(3)delimiter(")>tag(>)plain(Resolved)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(4)delimiter(")>tag(>)plain(Feedback)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(5)delimiter(")>tag(>)plain(Closed)tag(</option>)
+
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(6)delimiter(")>tag(>)plain(Rejected)tag(</option>)tag(</select>)tag(</p>)
+
+
+tag(<p>)tag(<label) attribute_name(for)operator(=)string<delimiter(")content(issue_priority_id)delimiter(")>tag(>)plain(Priority)tag(<span) attribute_name(class)operator(=)string<delimiter(")content(required)delimiter(")>tag(>) plain(*)tag(</span>)tag(</label>)tag(<select) attribute_name(id)operator(=)string<delimiter(")content(issue_priority_id)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(issue[priority_id])delimiter(")>tag(>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(3)delimiter(")>tag(>)plain(Low)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(4)delimiter(")> attribute_name(selected)operator(=)string<delimiter(")content(selected)delimiter(")>tag(>)plain(Normal)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(5)delimiter(")>tag(>)plain(High)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(6)delimiter(")>tag(>)plain(Urgent)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(7)delimiter(")>tag(>)plain(Immediate)tag(</option>)tag(</select>)tag(</p>)
+
+tag(<p>)tag(<label) attribute_name(for)operator(=)string<delimiter(")content(issue_assigned_to_id)delimiter(")>tag(>)plain(Assigned to)tag(</label>)tag(<select) attribute_name(id)operator(=)string<delimiter(")content(issue_assigned_to_id)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(issue[assigned_to_id])delimiter(")>tag(>)tag(<option) attribute_name(value)operator(=)string<delimiter(")delimiter(")>tag(>)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(13)delimiter(")>tag(>)plain(Daniel Bovensiepen)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(3)delimiter(")>tag(>)plain(Heinz Gies)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(12)delimiter(")> attribute_name(selected)operator(=)string<delimiter(")content(selected)delimiter(")>tag(>)plain(Kornelius Kalnbach)tag(</option>)tag(</select>)tag(</p>)
+
+tag(<p>)tag(<label) attribute_name(for)operator(=)string<delimiter(")content(issue_category_id)delimiter(")>tag(>)plain(Category)tag(</label>)tag(<select) attribute_name(id)operator(=)string<delimiter(")content(issue_category_id)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(issue[category_id])delimiter(")>tag(>)tag(<option) attribute_name(value)operator(=)string<delimiter(")delimiter(")>tag(>)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(48)delimiter(")>tag(>)plain(Browser Support)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(14)delimiter(")>tag(>)plain(Command line interface)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(47)delimiter(")>tag(>)plain(Competition)tag(</option>)
+
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(50)delimiter(")>tag(>)plain(Core)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(23)delimiter(")>tag(>)plain(Documentation)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(27)delimiter(")>tag(>)plain(Encoder bugs)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(42)delimiter(")>tag(>)plain(Encoder improvements)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(26)delimiter(")>tag(>)plain(Encoder options)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(12)delimiter(")>tag(>)plain(Encoder requests)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(11)delimiter(")>tag(>)plain(FileType)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(46)delimiter(")>tag(>)plain(Filters)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(37)delimiter(")>tag(>)plain(for_redcloth)tag(</option>)
+
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(29)delimiter(")>tag(>)plain(Helpers)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(25)delimiter(")>tag(>)plain(Integration)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(41)delimiter(")>tag(>)plain(Performance)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(24)delimiter(")>tag(>)plain(Plugin system)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(39)delimiter(")>tag(>)plain(Repository)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(49)delimiter(")>tag(>)plain(Ruby Engine Support)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(15)delimiter(")>tag(>)plain(Scanner bugs)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(38)delimiter(")> attribute_name(selected)operator(=)string<delimiter(")content(selected)delimiter(")>tag(>)plain(Scanner improvements)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(10)delimiter(")>tag(>)plain(Scanner requests)tag(</option>)
+
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(44)delimiter(")>tag(>)plain(Styles)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(40)delimiter(")>tag(>)plain(Tests)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(13)delimiter(")>tag(>)plain(Token classes)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(28)delimiter(")>tag(>)plain(Token Streaming)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(45)delimiter(")>tag(>)plain(Tokens)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(19)delimiter(")>tag(>)plain(Website)tag(</option>)tag(</select>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")ident(promptToRemote)operator(()string<delimiter(')content(New category)delimiter(')>operator(,) string<delimiter(')content(category[name])delimiter(')>operator(,) string<delimiter(')content(/projects/coderay/issue_categories/new)delimiter(')>operator(\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")> attribute_name(tabindex)operator(=)string<delimiter(")content(199)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(New category)delimiter(")>tag(>)tag(<img) attribute_name(alt)operator(=)string<delimiter(")content(Add)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(/images/add.png?1289779286)delimiter(")> attribute_name(style)operator(=)string<delimiter(")key(vertical-align)operator(:) value(middle)operator(;)delimiter(")> tag(/>)tag(</a>)tag(</p>)
+
+
+tag(<p>)tag(<label) attribute_name(for)operator(=)string<delimiter(")content(issue_fixed_version_id)delimiter(")>tag(>)plain(Target version)tag(</label>)tag(<select) attribute_name(id)operator(=)string<delimiter(")content(issue_fixed_version_id)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(issue[fixed_version_id])delimiter(")>tag(>)tag(<option) attribute_name(value)operator(=)string<delimiter(")delimiter(")>tag(>)tag(</option>)
+
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(8)delimiter(")>tag(>)plain(0.8)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(12)delimiter(")>tag(>)plain(0.8.1)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(14)delimiter(")>tag(>)plain(0.8.2)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(16)delimiter(")>tag(>)plain(0.8.3)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(13)delimiter(")>tag(>)plain(0.9 RC1)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(24)delimiter(")>tag(>)plain(0.8.4)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(18)delimiter(")>tag(>)plain(0.9 RC2)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(25)delimiter(")>tag(>)plain(0.9 RC3)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(27)delimiter(")>tag(>)plain(0.9.1)tag(</option>)
+
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(28)delimiter(")>tag(>)plain(0.9.2)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(34)delimiter(")>tag(>)plain(0.9.3)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(35)delimiter(")>tag(>)plain(0.9.4)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(36)delimiter(")>tag(>)plain(0.9.5)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(37)delimiter(")>tag(>)plain(0.9.6)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(38)delimiter(")>tag(>)plain(0.9.7)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(44)delimiter(")>tag(>)plain(1.0)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(11)delimiter(")> attribute_name(selected)operator(=)string<delimiter(")content(selected)delimiter(")>tag(>)plain(1.0 RC1)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(15)delimiter(")>tag(>)plain(1.1)tag(</option>)
+
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(26)delimiter(")>tag(>)plain(Future)tag(</option>)tag(</select>)
+tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")ident(promptToRemote)operator(()string<delimiter(')content(New version)delimiter(')>operator(,) string<delimiter(')content(version[name])delimiter(')>operator(,) string<delimiter(')content(/projects/coderay/versions)delimiter(')>operator(\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")> attribute_name(tabindex)operator(=)string<delimiter(")content(200)delimiter(")> attribute_name(title)operator(=)string<delimiter(")content(New version)delimiter(")>tag(>)tag(<img) attribute_name(alt)operator(=)string<delimiter(")content(Add)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(/images/add.png?1289779286)delimiter(")> attribute_name(style)operator(=)string<delimiter(")key(vertical-align)operator(:) value(middle)operator(;)delimiter(")> tag(/>)tag(</a>)
+tag(</p>)
+
+tag(</div>)
+
+tag(<div) attribute_name(class)operator(=)string<delimiter(")content(splitcontentright)delimiter(")>tag(>)
+tag(<p>)tag(<label) attribute_name(for)operator(=)string<delimiter(")content(issue_start_date)delimiter(")>tag(>)plain(Start Date)tag(</label>)tag(<input) attribute_name(id)operator(=)string<delimiter(")content(issue_start_date)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(issue[start_date])delimiter(")> attribute_name(size)operator(=)string<delimiter(")content(10)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text)delimiter(")> attribute_name(value)operator(=)string<delimiter(")content(2008-09-18)delimiter(")> tag(/>)tag(<img) attribute_name(alt)operator(=)string<delimiter(")content(Calendar)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(calendar-trigger)delimiter(")> attribute_name(id)operator(=)string<delimiter(")content(issue_start_date_trigger)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(/images/calendar.png?1289779286)delimiter(")> tag(/>)tag(<script) attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)
+inline<comment(//<![CDATA[)
+ident(Calendar)operator(.)ident(setup)operator(({)key(inputField) operator(:) string<delimiter(')content(issue_start_date)delimiter(')>operator(,) key(ifFormat) operator(:) string<delimiter(')content(%Y-%m-%d)delimiter(')>operator(,) key(button) operator(:) string<delimiter(')content(issue_start_date_trigger)delimiter(')> operator(}\))operator(;)
+comment(//]]>)>
+tag(</script>)tag(</p>)
+tag(<p>)tag(<label) attribute_name(for)operator(=)string<delimiter(")content(issue_due_date)delimiter(")>tag(>)plain(Due date)tag(</label>)tag(<input) attribute_name(id)operator(=)string<delimiter(")content(issue_due_date)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(issue[due_date])delimiter(")> attribute_name(size)operator(=)string<delimiter(")content(10)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text)delimiter(")> tag(/>)tag(<img) attribute_name(alt)operator(=)string<delimiter(")content(Calendar)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(calendar-trigger)delimiter(")> attribute_name(id)operator(=)string<delimiter(")content(issue_due_date_trigger)delimiter(")> attribute_name(src)operator(=)string<delimiter(")content(/images/calendar.png?1289779286)delimiter(")> tag(/>)tag(<script) attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)
+inline<comment(//<![CDATA[)
+ident(Calendar)operator(.)ident(setup)operator(({)key(inputField) operator(:) string<delimiter(')content(issue_due_date)delimiter(')>operator(,) key(ifFormat) operator(:) string<delimiter(')content(%Y-%m-%d)delimiter(')>operator(,) key(button) operator(:) string<delimiter(')content(issue_due_date_trigger)delimiter(')> operator(}\))operator(;)
+comment(//]]>)>
+tag(</script>)tag(</p>)
+tag(<p>)tag(<label) attribute_name(for)operator(=)string<delimiter(")content(issue_estimated_hours)delimiter(")>tag(>)plain(Estimated time)tag(</label>)tag(<input) attribute_name(id)operator(=)string<delimiter(")content(issue_estimated_hours)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(issue[estimated_hours])delimiter(")> attribute_name(size)operator(=)string<delimiter(")content(3)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text)delimiter(")> tag(/>) plain(Hours)tag(</p>)
+
+tag(<p>)tag(<label) attribute_name(for)operator(=)string<delimiter(")content(issue_done_ratio)delimiter(")>tag(>)plain(% Done)tag(</label>)tag(<select) attribute_name(id)operator(=)string<delimiter(")content(issue_done_ratio)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(issue[done_ratio])delimiter(")>tag(>)tag(<option) attribute_name(value)operator(=)string<delimiter(")content(0)delimiter(")>tag(>)plain(0 %)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(10)delimiter(")>tag(>)plain(10 %)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(20)delimiter(")>tag(>)plain(20 %)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(30)delimiter(")>tag(>)plain(30 %)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(40)delimiter(")> attribute_name(selected)operator(=)string<delimiter(")content(selected)delimiter(")>tag(>)plain(40 %)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(50)delimiter(")>tag(>)plain(50 %)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(60)delimiter(")>tag(>)plain(60 %)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(70)delimiter(")>tag(>)plain(70 %)tag(</option>)
+
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(80)delimiter(")>tag(>)plain(80 %)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(90)delimiter(")>tag(>)plain(90 %)tag(</option>)
+tag(<option) attribute_name(value)operator(=)string<delimiter(")content(100)delimiter(")>tag(>)plain(100 %)tag(</option>)tag(</select>)tag(</p>)
+
+tag(</div>)
+
+tag(<div) attribute_name(style)operator(=)string<delimiter(")key(clear)operator(:)value(both)operator(;)delimiter(")>tag(>) tag(</div>)
+tag(<div) attribute_name(class)operator(=)string<delimiter(")content(splitcontentleft)delimiter(")>tag(>)
+
+
+tag(</div>)
+tag(<div) attribute_name(style)operator(=)string<delimiter(")key(clear)operator(:)value(both)operator(;)delimiter(")>tag(>) tag(</div>)
+
+
+
+
+tag(</div>)
+
+
+
+
+
+
+
+tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/jstoolbar/jstoolbar.js?1289775776)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/jstoolbar/textile.js?1289775776)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/jstoolbar/lang/jstoolbar-en.js?1289775776)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)tag(<script) attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)
+inline<comment(//<![CDATA[)
+keyword(var) ident(wikiToolbar) operator(=) keyword(new) ident(jsToolBar)operator(()predefined($)operator(()string<delimiter(')content(issue_description)delimiter(')>operator(\)\))operator(;) ident(wikiToolbar)operator(.)ident(setHelpLink)operator(()string<delimiter(')content(Text formatting: <a href="/help/wiki_syntax.html" onclick="window.open(&quot;/help/wiki_syntax.html&quot;, &quot;&quot;, &quot;resizable=yes, location=no, width=300, height=640, menubar=no, status=no, scrollbars=yes&quot;\); return false;">Help</a>)delimiter(')>operator(\))operator(;) ident(wikiToolbar)operator(.)ident(draw)operator(()operator(\))operator(;)
+comment(//]]>)>
+tag(</script>)
+
+        tag(</fieldset>)
+    
+    
+    
+    tag(<fieldset>)tag(<legend>)plain(Notes)tag(</legend>)
+    tag(<textarea) attribute_name(class)operator(=)string<delimiter(")content(wiki-edit)delimiter(")> attribute_name(cols)operator(=)string<delimiter(")content(60)delimiter(")> attribute_name(id)operator(=)string<delimiter(")content(notes)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(notes)delimiter(")> attribute_name(rows)operator(=)string<delimiter(")content(10)delimiter(")>tag(>)tag(</textarea>)
+    tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/jstoolbar/jstoolbar.js?1289775776)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/jstoolbar/textile.js?1289775776)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)tag(<script) attribute_name(src)operator(=)string<delimiter(")content(/javascripts/jstoolbar/lang/jstoolbar-en.js?1289775776)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)tag(</script>)tag(<script) attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)
+inline<comment(//<![CDATA[)
+keyword(var) ident(wikiToolbar) operator(=) keyword(new) ident(jsToolBar)operator(()predefined($)operator(()string<delimiter(')content(notes)delimiter(')>operator(\)\))operator(;) ident(wikiToolbar)operator(.)ident(setHelpLink)operator(()string<delimiter(')content(Text formatting: <a href="/help/wiki_syntax.html" onclick="window.open(&quot;/help/wiki_syntax.html&quot;, &quot;&quot;, &quot;resizable=yes, location=no, width=300, height=640, menubar=no, status=no, scrollbars=yes&quot;\); return false;">Help</a>)delimiter(')>operator(\))operator(;) ident(wikiToolbar)operator(.)ident(draw)operator(()operator(\))operator(;)
+comment(//]]>)>
+tag(</script>)
+    
+    
+    tag(<p>)plain(Files)tag(<br) tag(/>)tag(<span) attribute_name(id)operator(=)string<delimiter(")content(attachments_fields)delimiter(")>tag(>)
+
+tag(<input) attribute_name(name)operator(=)string<delimiter(")content(attachments[1][file])delimiter(")> attribute_name(size)operator(=)string<delimiter(")content(30)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(file)delimiter(")> tag(/>)tag(<label) attribute_name(class)operator(=)string<delimiter(")content(inline)delimiter(")>tag(>)tag(<span) attribute_name(id)operator(=)string<delimiter(")content(attachment_description_label_content)delimiter(")>tag(>)plain(Optional description)tag(</span>)tag(<input) attribute_name(name)operator(=)string<delimiter(")content(attachments[1][description])delimiter(")> attribute_name(size)operator(=)string<delimiter(")content(60)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(text)delimiter(")> attribute_name(value)operator(=)string<delimiter(")delimiter(")> tag(/>)
+tag(</label>)
+tag(</span>)
+tag(<br) tag(/>)
+tag(<small>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(#)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")ident(addFileField)operator(()operator(\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")>tag(>)plain(Add another file)tag(</a>)
+plain((Maximum size: 10 MB\)
+)tag(</small>)
+tag(</p>)
+    tag(</fieldset>)
+    tag(</div>)
+    
+    tag(<input) attribute_name(id)operator(=)string<delimiter(")content(issue_lock_version)delimiter(")> attribute_name(name)operator(=)string<delimiter(")content(issue[lock_version])delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(hidden)delimiter(")> attribute_name(value)operator(=)string<delimiter(")content(11)delimiter(")> tag(/>)
+    tag(<input) attribute_name(name)operator(=)string<delimiter(")content(commit)delimiter(")> attribute_name(type)operator(=)string<delimiter(")content(submit)delimiter(")> attribute_name(value)operator(=)string<delimiter(")content(Submit)delimiter(")> tag(/>)
+
+    tag(<a) attribute_name(accesskey)operator(=)string<delimiter(")content(r)delimiter(")> attribute_name(href)operator(=)string<delimiter(")content(#)delimiter(")> attribute_name(onclick)operator(=)string<delimiter(")keyword(new) ident(Ajax)operator(.)ident(Updater)operator(()string<delimiter(')content(preview)delimiter(')>operator(,) string<delimiter(')content(/issues/preview/46?project_id=coderay)delimiter(')>operator(,) operator({)key(asynchronous)operator(:)predefined_constant(true)operator(,) key(evalScripts)operator(:)predefined_constant(true)operator(,) key(method)operator(:)string<delimiter(')content(post)delimiter(')>operator(,) function(onComplete)operator(:)keyword(function)operator(()ident(request)operator(\))operator({)ident(Element)operator(.)ident(scrollTo)operator(()string<delimiter(')content(preview)delimiter(')>operator(\)})operator(,) key(parameters)operator(:)ident(Form)operator(.)ident(serialize)operator((&)ident(quot)operator(;)ident(issue)operator(-)ident(form)operator(&)ident(quot)operator(;)operator(\)) operator(+) string<delimiter(')content(&amp;authenticity_token=)delimiter(')> operator(+) ident(encodeURIComponent)operator(()string<delimiter(')content(IqqleGV+5EkfghkwPICwOUvCnmhG+NGw9Me5yBEdcGk=)delimiter(')>operator(\)}\))operator(;) keyword(return) predefined_constant(false)operator(;)delimiter(")>tag(>)plain(Preview)tag(</a>)
+tag(</form>)
+
+tag(<div) attribute_name(id)operator(=)string<delimiter(")content(preview)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(wiki)delimiter(")>tag(>)tag(</div>)
+
+  tag(</div>)
+
+
+tag(<p) attribute_name(class)operator(=)string<delimiter(")content(other-formats)delimiter(")>tag(>)plain(Also available in:
+	)tag(<span>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46.atom?key=bYFIUrZK4uFZ7Wqwa3YoRPKr2FqXimgFsHdfzSux)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(atom)delimiter(")> attribute_name(rel)operator(=)string<delimiter(")content(nofollow)delimiter(")>tag(>)plain(Atom)tag(</a>)tag(</span>)
+	tag(<span>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/issues/46.pdf)delimiter(")> attribute_name(class)operator(=)string<delimiter(")content(pdf)delimiter(")> attribute_name(rel)operator(=)string<delimiter(")content(nofollow)delimiter(")>tag(>)plain(PDF)tag(</a>)tag(</span>)
+
+tag(</p>)
+
+
+
+
+
+
+tag(<div) attribute_name(id)operator(=)string<delimiter(")content(context-menu)delimiter(")> attribute_name(style)operator(=)string<delimiter(")key(display)operator(:) value(none)operator(;)delimiter(")>tag(>)tag(</div>)
+tag(<script) attribute_name(type)operator(=)string<delimiter(")content(text/javascript)delimiter(")>tag(>)
+inline<comment(//<![CDATA[)
+keyword(new) ident(ContextMenu)operator(()string<delimiter(')content(/issues/context_menu)delimiter(')>operator(\))
+comment(//]]>)>
+tag(</script>)
+
+        
+				tag(<div) attribute_name(style)operator(=)string<delimiter(")key(clear)operator(:)value(both)operator(;)delimiter(")>tag(>)tag(</div>)
+    tag(</div>)
+tag(</div>)
+
+tag(<div) attribute_name(id)operator(=)string<delimiter(")content(ajax-indicator)delimiter(")> attribute_name(style)operator(=)string<delimiter(")key(display)operator(:)value(none)operator(;)delimiter(")>tag(>)tag(<span>)plain(Loading...)tag(</span>)tag(</div>)
+	
+tag(<div) attribute_name(id)operator(=)string<delimiter(")content(footer)delimiter(")>tag(>)
+  tag(<div) attribute_name(class)operator(=)string<delimiter(")content(bgl)delimiter(")>tag(>)tag(<div) attribute_name(class)operator(=)string<delimiter(")content(bgr)delimiter(")>tag(>)
+    plain(Powered by )tag(<a) attribute_name(href)operator(=)string<delimiter(")content(http://www.redmine.org/)delimiter(")>tag(>)plain(Redmine)tag(</a>) entity(&copy;) plain(2006-2010 Jean-Philippe Lang
+  )tag(</div>)tag(</div>)
+tag(</div>)
+tag(</div>)
+tag(</div>)
+
+tag(</body>)
+tag(</html>)

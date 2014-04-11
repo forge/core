@@ -1,14 +1,12 @@
 package org.jboss.forge.addon.text.highlight.scanner;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,28 +19,21 @@ import org.junit.Assert;
 public abstract class AbstractScannerTestCase
 {
 
+   private static final Charset DEFAULT_CHARSET = Charset.forName("ISO-8859-1");
+
    public static final String ASSERT_ENCODER = "TEST";
    {
       Syntax.builtIns();
       Encoder.Factory.registrer(ASSERT_ENCODER, AssertEncoder.class);
    }
 
-   public static String OUTPUT = "target/examples";
-   public static String BASE_URL = "https://raw.github.com/rubychan/coderay-scanner-tests/master/";
+   public static String OUTPUT = "src/test/resources/examples";
    public static Pattern MATCH_DATA = Pattern.compile("(.*)\\..*\\..*");
 
    protected String fetch(String type, String example) throws Exception
    {
       Path sourcePath = Paths.get(OUTPUT, type, example);
-      if (!Files.exists(sourcePath))
-      {
-         sourcePath.getParent().toFile().mkdirs();
-         URL source = new URL(BASE_URL + type + "/" + example);
-         System.out.println("Fetching " + source);
-         Files.write(sourcePath, asByteArray(new BufferedInputStream(source.openStream())), StandardOpenOption.WRITE,
-                  StandardOpenOption.CREATE);
-      }
-      return new String(Files.readAllBytes(sourcePath));
+      return new String(Files.readAllBytes(sourcePath), DEFAULT_CHARSET);
    }
 
    private String expectedName(String example)

@@ -1,0 +1,4 @@
+keyword(function) function(php中文)operator(()operator(\)) operator({)
+    comment(// Even in comment! russina comment here: Руский комментарий тут )
+    local_variable($issue) operator(=) string<delimiter(')content(there is a ëncøding ißue in πhp highlighting)delimiter(')>operator(;)
+operator(})

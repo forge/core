@@ -1,0 +1,5 @@
+tag(<textarea) attribute_name(disabled)tag(>)
+  plain(This text area has been disabled.
+)tag(</textarea>)
+
+tag(<Input) attribute_name(Type)operator(=)string<delimiter(")content(checkbox)delimiter(")> attribute_name(CHECKED)tag(>)

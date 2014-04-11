@@ -1,0 +1,3 @@
+head[head(+++ )filename(a.html)]
+insert[insert(+) tag(<script>)]
+insert[insert(+)inline< >tag(</script>)]

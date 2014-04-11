@@ -1,0 +1,502 @@
+comment(/*
+ * apns.go
+ * go-apns
+ *
+ * Created by Jim Dovey on 16/08/2011.
+ *
+ * Copyright (c\) 2011 Jim Dovey
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ *
+ * Neither the name of the project's author nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION\) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE\) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */)
+
+keyword(package) ident(apns)
+
+keyword(import) operator(()
+    string<delimiter(")content(bytes)delimiter(")>
+    string<delimiter(")content(crypto/tls)delimiter(")>
+    string<delimiter(")content(encoding/binary)delimiter(")>
+    string<delimiter(")content(encoding/gob)delimiter(")>
+    string<delimiter(")content(encoding/json)delimiter(")>
+    string<delimiter(")content(errors)delimiter(")>
+    string<delimiter(")content(io)delimiter(")>
+    string<delimiter(")content(log)delimiter(")>
+    string<delimiter(")content(os)delimiter(")>
+    string<delimiter(")content(syscall)delimiter(")>
+    string<delimiter(")content(time)delimiter(")>
+operator(\))
+
+keyword(const) operator(()
+    ident(ReleasePushGateway) operator(=) string<delimiter(")content(gateway.push.apple.com:2195)delimiter(")>
+    ident(SandboxPushGateway) operator(=) string<delimiter(")content(gateway.sandbox.push.apple.com:2195)delimiter(")>
+operator(\))
+
+keyword(type) ident(Error) keyword(struct) operator({)
+    ident(status) predefined_type(int)
+operator(})
+
+keyword(var) ident(errorStrings) operator([])predefined_type(string) operator(=) operator([])predefined_type(string)operator({)
+    string<delimiter(")content(No error)delimiter(")>operator(,)
+    string<delimiter(")content(Processing error)delimiter(")>operator(,)
+    string<delimiter(")content(Missing device token)delimiter(")>operator(,)
+    string<delimiter(")content(Missing topic)delimiter(")>operator(,)
+    string<delimiter(")content(Missing payload)delimiter(")>operator(,)
+    string<delimiter(")content(Invalid token size)delimiter(")>operator(,)
+    string<delimiter(")content(Invalid topic size)delimiter(")>operator(,)
+    string<delimiter(")content(Invalid payload size)delimiter(")>operator(,)
+    string<delimiter(")content(Invalid token)delimiter(")>operator(,)
+operator(})
+
+keyword(func) operator(()ident(e) operator(*)ident(Error)operator(\)) ident(String)operator((\)) predefined_type(string) operator({)
+    keyword(switch) operator({)
+    keyword(case) ident(e)operator(.)ident(status) operator(<=) predefined(len)operator(()ident(errorStrings)operator(\):)
+        keyword(return) ident(errorStrings)operator([)ident(e)operator(.)ident(status)operator(])
+    keyword(default)operator(:)
+        keyword(return) string<delimiter(")content(Unknown error)delimiter(")>
+    operator(})
+operator(})
+
+keyword(type) ident(result) keyword(struct) operator({)
+    ident(status)     predefined_type(byte)
+    ident(identifier) predefined_type(uint32)
+operator(})
+
+keyword(type) ident(DeviceToken) operator([)integer(32)operator(])predefined_type(byte)
+
+keyword(var) ident(revocationList) operator([])ident(DeviceToken)
+keyword(var) ident(saver) keyword(chan) ident(DeviceToken) operator(=) predefined(make)operator(()keyword(chan) ident(DeviceToken)operator(,) integer(100)operator(\))
+
+keyword(type) ident(Apns) keyword(struct) operator({)
+    ident(conn)        operator(*)ident(tls)operator(.)ident(Conn)
+    ident(waitReplies) keyword(map)operator([)predefined_type(uint32)operator(])keyword(chan) ident(result)
+operator(})
+
+keyword(func) ident(replyServer)operator(()ident(apns) operator(*)ident(Apns)operator(\)) operator({)
+    ident(buf) operator(:=) predefined(make)operator(([])predefined_type(byte)operator(,) integer(25)operator(\))
+    keyword(for) operator({)
+        ident(n)operator(,) ident(err) operator(:=) ident(apns)operator(.)ident(conn)operator(.)ident(Read)operator(()ident(buf)operator(\))
+        keyword(if) ident(err) operator(!=) predefined_constant(nil) operator(&&) ident(err) operator(!=) ident(syscall)operator(.)ident(EAGAIN) operator({)
+            ident(log)operator(.)ident(Fatal)operator(()string<delimiter(")content(replyServer:)delimiter(")>operator(,) ident(err)operator(\))
+        operator(})
+        keyword(if) ident(n) operator(>=) integer(6) operator({)
+            keyword(var) ident(r) ident(result)
+            ident(r)operator(.)ident(status) operator(=) ident(buf)operator([)integer(0)operator(])
+            ident(r)operator(.)ident(identifier) operator(=) ident(wire)operator(.)ident(Uint32)operator(()ident(buf)operator([)integer(1)operator(:]\))
+
+            comment(// send the reply to anyone waiting for a response)
+            ident(ch) operator(:=) ident(apns)operator(.)ident(waitReplies)operator([)ident(r)operator(.)ident(identifier)operator(])
+            keyword(if) ident(ch) operator(!=) predefined_constant(nil) operator({)
+                ident(ch) operator(<-) ident(r)
+            operator(})
+        operator(})
+    operator(})
+operator(})
+
+keyword(func) ident(NewConnection)operator(()ident(addr) predefined_type(string)operator(\)) operator((*)ident(Apns)operator(,) predefined_type(error)operator(\)) operator({)
+    ident(conn)operator(,) ident(err) operator(:=) ident(newConnection)operator(()ident(addr)operator(,) string<delimiter(")content(cert.pem)delimiter(")>operator(,) string<delimiter(")content(pkey.pem)delimiter(")>operator(\))
+    keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+        keyword(return) predefined_constant(nil)operator(,) ident(err)
+    operator(})
+
+    ident(apns) operator(:=) operator(&)ident(Apns)operator({)ident(conn)operator(:) ident(conn)operator(})
+    ident(err) operator(=) ident(apns)operator(.)ident(loadRevocationList)operator((\))
+    keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+        keyword(return) predefined_constant(nil)operator(,) ident(err)
+    operator(})
+    keyword(return) ident(apns)operator(,) predefined_constant(nil)
+operator(})
+
+keyword(func) operator(()ident(a) operator(*)ident(Apns)operator(\)) ident(loadRevocationList)operator((\)) predefined_type(error) operator({)
+    ident(f)operator(,) ident(err) operator(:=) ident(os)operator(.)ident(OpenFile)operator(()string<delimiter(")content(revocationList)delimiter(")>operator(,) ident(os)operator(.)ident(O_WRONLY)operator(|)ident(os)operator(.)ident(O_CREATE)operator(|)ident(os)operator(.)ident(O_APPEND)operator(,) octal(0544)operator(\))
+    keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+        ident(log)operator(.)ident(Fatal)operator(()string<delimiter(")content(apns.loadRecovationList:)delimiter(")>operator(,) ident(err)operator(\))
+    operator(})
+    keyword(defer) ident(f)operator(.)ident(Close)operator((\))
+
+    keyword(if) ident(revocationList) operator(==) predefined_constant(nil) operator({)
+        ident(revocationList) operator(=) predefined(make)operator(([])ident(DeviceToken)operator(,) integer(5)operator(\))
+    operator(})
+
+    ident(d) operator(:=) ident(gob)operator(.)ident(NewDecoder)operator(()ident(f)operator(\))
+    keyword(for) ident(err) operator(==) predefined_constant(nil) operator({)
+        keyword(var) ident(t) ident(DeviceToken)
+        keyword(if) ident(err) operator(=) ident(d)operator(.)ident(Decode)operator((&)ident(t)operator(\);) ident(err) operator(==) predefined_constant(nil) operator({)
+            ident(revocationList) operator(=) predefined(append)operator(()ident(revocationList)operator(,) ident(t)operator(\))
+        operator(})
+    operator(})
+    keyword(if) ident(err) operator(==) ident(io)operator(.)ident(EOF) operator({)
+        keyword(return) predefined_constant(nil)
+        keyword(go) ident(saveLoop)operator((\))
+    operator(})
+    keyword(return) ident(err)
+operator(})
+
+keyword(func) operator(()ident(a) operator(*)ident(Apns)operator(\)) ident(SendMessage)operator(()ident(identifier)operator(,) ident(expiry) predefined_type(uint32)operator(,) ident(token) operator([])predefined_type(byte)operator(,) ident(payload) keyword(interface)operator({}\)) operator((<)operator(-)keyword(chan) operator(*)ident(Error)operator(,) predefined_type(error)operator(\)) operator({)
+    ident(buf) operator(:=) predefined(make)operator(()ident(buffer)operator(,) integer(256)operator(\))
+
+    keyword(if) ident(identifier) operator(==) integer(0) operator(&&) ident(expiry) operator(==) integer(0) operator({)
+        comment(// use simple format)
+        ident(buf)operator(.)ident(writeByte)operator(()integer(0)operator(\))
+    operator(}) keyword(else) operator({)
+        comment(// use extended format)
+        ident(buf)operator(.)ident(writeByte)operator(()integer(1)operator(\))
+        ident(buf)operator(.)ident(writeUint32)operator(()ident(identifier)operator(\))
+        ident(buf)operator(.)ident(writeUint32)operator(()ident(expiry)operator(\))
+    operator(})
+
+    comment(// append the token)
+    ident(buf)operator(.)ident(writeUint16)operator(()predefined_type(uint16)operator(()predefined(len)operator(()ident(token)operator(\)\)\))
+    ident(buf)operator(.)ident(writeBytes)operator(()ident(token)operator(\))
+
+    comment(// build the JSON data)
+    ident(rawJson)operator(,) ident(err) operator(:=) ident(json)operator(.)ident(Marshal)operator(()ident(payload)operator(\))
+    keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+        keyword(return) predefined_constant(nil)operator(,) ident(err)
+    operator(})
+
+    comment(// compact it (requires a bytes.Buffer to store the compacted version\))
+    ident(jbuf) operator(:=) operator(&)ident(bytes)operator(.)ident(Buffer)operator({})
+    ident(err) operator(=) ident(json)operator(.)ident(Compact)operator(()ident(jbuf)operator(,) ident(rawJson)operator(\))
+    keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+        keyword(return) predefined_constant(nil)operator(,) ident(err)
+    operator(})
+
+    comment(// write the JSOB payload into the command buffer)
+    ident(buf)operator(.)ident(writeUint32)operator(()predefined_type(uint32)operator(()ident(jbuf)operator(.)ident(Len)operator((\)\)\))
+    ident(buf)operator(.)ident(writeBytes)operator(()ident(jbuf)operator(.)ident(Bytes)operator((\)\))
+
+    comment(// all done-- now send it!)
+    keyword(var) ident(sent) predefined_type(int) operator(=) integer(0)
+    ident(l) operator(:=) predefined(len)operator(()ident(buf)operator(\))
+    keyword(for) ident(sent) operator(<) ident(l) operator({)
+        ident(n)operator(,) ident(err) operator(:=) ident(a)operator(.)ident(conn)operator(.)ident(Write)operator(()ident(buf)operator([)ident(sent)operator(:)ident(l)operator(]\))
+        keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+            keyword(return) predefined_constant(nil)operator(,) ident(err)
+        operator(})
+        ident(sent) operator(+=) ident(n)
+    operator(})
+
+    comment(// sent successfully, return a channel which will funnel the result back asynchronously)
+    ident(errchan) operator(:=) predefined(make)operator(()keyword(chan) operator(*)ident(Error)operator(\))
+
+    keyword(if) ident(identifier) operator(!=) integer(0) operator({)
+        keyword(if) ident(a)operator(.)ident(waitReplies) operator(==) predefined_constant(nil) operator({)
+            ident(a)operator(.)ident(waitReplies) operator(=) predefined(make)operator(()keyword(map)operator([)predefined_type(uint32)operator(])keyword(chan) ident(result)operator(\))
+        operator(})
+        ident(a)operator(.)ident(waitReplies)operator([)ident(identifier)operator(]) operator(=) predefined(make)operator(()keyword(chan) ident(result)operator(,) integer(1)operator(\))
+
+        keyword(go) keyword(func)operator((\)) operator({)
+            keyword(var) ident(r) ident(result)
+            keyword(select) operator({)
+            keyword(case) ident(r) operator(=) operator(<-)ident(a)operator(.)ident(waitReplies)operator([)ident(identifier)operator(]:)
+                keyword(if) ident(r)operator(.)ident(status) operator(!=) integer(0) operator({)
+                    comment(// send an error)
+                    ident(errchan) operator(<-) operator(&)ident(Error)operator({)predefined_type(int)operator(()ident(r)operator(.)ident(status)operator(\)})
+                operator(}) keyword(else) operator({)
+                    ident(errchan) operator(<-) predefined_constant(nil)
+                operator(})
+            operator(})
+        operator(}(\))
+    operator(})
+
+    keyword(return) ident(errchan)operator(,) predefined_constant(nil)
+operator(})
+
+keyword(func) ident(revokeDeviceToken)operator(()ident(token) ident(DeviceToken)operator(\)) operator({)
+    keyword(if) ident(saver) operator(!=) predefined_constant(nil) operator({)
+        ident(saver) operator(<-) ident(token)
+    operator(})
+operator(})
+
+keyword(func) ident(saveLoop)operator((\)) operator({)
+    ident(filename) operator(:=) string<delimiter(")content(somefile.txt)delimiter(")>
+    ident(f)operator(,) ident(err) operator(:=) ident(os)operator(.)ident(OpenFile)operator(()ident(filename)operator(,) ident(os)operator(.)ident(O_WRONLY)operator(|)ident(os)operator(.)ident(O_CREATE)operator(|)ident(os)operator(.)ident(O_APPEND)operator(,) octal(0664)operator(\))
+    keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+        ident(log)operator(.)ident(Fatal)operator(()string<delimiter(")content(Failed to open revocationList file:)delimiter(")>operator(,) ident(err)operator(\))
+    operator(})
+    keyword(defer) ident(f)operator(.)ident(Close)operator((\))
+
+    ident(e) operator(:=) ident(gob)operator(.)ident(NewEncoder)operator(()ident(f)operator(\))
+    keyword(for) operator({)
+        ident(r) operator(:=) operator(<-)ident(saver)
+        keyword(if) ident(err) operator(:=) ident(e)operator(.)ident(Encode)operator(()ident(r)operator(\);) ident(err) operator(!=) predefined_constant(nil) operator({)
+            ident(log)operator(.)ident(Println)operator(()string<delimiter(")content(Failed to encode device token for revocation list:)delimiter(")>operator(,) ident(err)operator(\))
+        operator(})
+    operator(})
+operator(})
+
+comment(/*
+ * buffer.go
+ * go-apns
+ *
+ * Created by Jim Dovey on 16/08/2011.
+ *
+ * Copyright (c\) 2011 Jim Dovey
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ *
+ * Neither the name of the project's author nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION\) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE\) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */)
+
+keyword(var) ident(wire) operator(=) ident(binary)operator(.)ident(BigEndian)
+
+keyword(type) ident(buffer) operator([])predefined_type(byte)
+
+keyword(func) operator(()ident(b) operator(*)ident(buffer)operator(\)) ident(next)operator(()ident(n) predefined_type(int)operator(\)) operator([])predefined_type(byte) operator({)
+    ident(begin) operator(:=) predefined(len)operator((*)ident(b)operator(\))
+    ident(end) operator(:=) ident(begin) operator(+) ident(n)
+    keyword(if) ident(end) operator(>) predefined(cap)operator((*)ident(b)operator(\)) operator({)
+        ident(noob) operator(:=) predefined(make)operator(([])predefined_type(byte)operator(,) ident(begin)operator(,) integer(2)operator(*)predefined(cap)operator((*)ident(b)operator(\)+)ident(n)operator(\))
+        predefined(copy)operator(()ident(noob)operator(,) operator(*)ident(b)operator(\))
+        operator(*)ident(b) operator(=) ident(noob)
+    operator(})
+    operator(*)ident(b) operator(=) operator((*)ident(b)operator(\)[:)ident(end)operator(])
+    keyword(return) operator((*)ident(b)operator(\)[)ident(begin)operator(:)ident(end)operator(])
+operator(})
+
+keyword(func) operator(()ident(b) operator(*)ident(buffer)operator(\)) ident(writeString)operator(()ident(s) predefined_type(string)operator(\)) operator({)
+    ident(wire)operator(.)ident(PutUint32)operator(()ident(b)operator(.)ident(next)operator(()integer(4)operator(\),) predefined_type(uint32)operator(()predefined(len)operator(()ident(s)operator(\)\)\))
+    predefined(copy)operator(()ident(b)operator(.)ident(next)operator(()predefined(len)operator(()ident(s)operator(\)\),) ident(s)operator(\))
+operator(})
+
+keyword(func) operator(()ident(b) operator(*)ident(buffer)operator(\)) ident(writeBytes)operator(()ident(p) operator([])predefined_type(byte)operator(\)) operator({)
+    predefined(copy)operator(()ident(b)operator(.)ident(next)operator(()predefined(len)operator(()ident(p)operator(\)\),) ident(p)operator(\))
+operator(})
+
+keyword(func) operator(()ident(b) operator(*)ident(buffer)operator(\)) ident(writeByte)operator(()ident(v) predefined_type(byte)operator(\)) operator({)
+    ident(b)operator(.)ident(next)operator(()integer(1)operator(\)[)integer(0)operator(]) operator(=) ident(v)
+operator(})
+
+keyword(func) operator(()ident(b) operator(*)ident(buffer)operator(\)) ident(writeUint16)operator(()ident(v) predefined_type(uint16)operator(\)) operator({)
+    ident(wire)operator(.)ident(PutUint16)operator(()ident(b)operator(.)ident(next)operator(()integer(2)operator(\),) ident(v)operator(\))
+operator(})
+
+keyword(func) operator(()ident(b) operator(*)ident(buffer)operator(\)) ident(writeUint32)operator(()ident(v) predefined_type(uint32)operator(\)) operator({)
+    ident(wire)operator(.)ident(PutUint32)operator(()ident(b)operator(.)ident(next)operator(()integer(4)operator(\),) ident(v)operator(\))
+operator(})
+
+keyword(func) operator(()ident(b) operator(*)ident(buffer)operator(\)) ident(writeUint64)operator(()ident(v) predefined_type(uint64)operator(\)) operator({)
+    ident(wire)operator(.)ident(PutUint64)operator(()ident(b)operator(.)ident(next)operator(()integer(8)operator(\),) ident(v)operator(\))
+operator(})
+
+comment(/*
+ * connection.go
+ * go-apns
+ *
+ * Created by Jim Dovey on 16/08/2011.
+ *
+ * Copyright (c\) 2011 Jim Dovey
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ *
+ * Neither the name of the project's author nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION\) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE\) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */)
+
+keyword(func) ident(newConnection)operator(()ident(addr)operator(,) ident(certPath)operator(,) ident(keyPath) predefined_type(string)operator(\)) operator(()ident(conn) operator(*)ident(tls)operator(.)ident(Conn)operator(,) ident(err) predefined_type(error)operator(\)) operator({)
+    keyword(if) ident(addr) operator(==) string<delimiter(")delimiter(")> operator({)
+        keyword(return) predefined_constant(nil)operator(,) ident(errors)operator(.)ident(New)operator(()string<delimiter(")content(apns.newConnection: nil address specified)delimiter(")>operator(\))
+    operator(})
+    keyword(if) ident(certPath) operator(==) string<delimiter(")delimiter(")> operator({)
+        keyword(return) predefined_constant(nil)operator(,) ident(errors)operator(.)ident(New)operator(()string<delimiter(")content(apns.newConnection: nil certificate path specified)delimiter(")>operator(\))
+    operator(})
+    keyword(if) ident(keyPath) operator(==) string<delimiter(")delimiter(")> operator({)
+        keyword(return) predefined_constant(nil)operator(,) ident(errors)operator(.)ident(New)operator(()string<delimiter(")content(apns.newConnection: nil key path specified)delimiter(")>operator(\))
+    operator(})
+
+    keyword(var) ident(cert) ident(tls)operator(.)ident(Certificate)
+    ident(cert)operator(,) ident(err) operator(=) ident(tls)operator(.)ident(LoadX509KeyPair)operator(()ident(certPath)operator(,) ident(keyPath)operator(\))
+    keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+        keyword(return)
+    operator(})
+
+    ident(cfg) operator(:=) operator(&)ident(tls)operator(.)ident(Config)operator({})
+    ident(cfg)operator(.)ident(Certificates) operator(=) predefined(make)operator(([])ident(tls)operator(.)ident(Certificate)operator(,) integer(1)operator(\))
+    ident(cfg)operator(.)ident(Certificates)operator([)integer(0)operator(]) operator(=) ident(cert)
+
+    keyword(return) ident(tls)operator(.)ident(Dial)operator(()string<delimiter(")content(tcp)delimiter(")>operator(,) ident(addr)operator(,) ident(cfg)operator(\))
+operator(})
+
+comment(/*
+ * feedback.go
+ * go-apns
+ *
+ * Created by Jim Dovey on 16/08/2011.
+ *
+ * Copyright (c\) 2011 Jim Dovey
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ *
+ * Neither the name of the project's author nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION\) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE\) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */)
+
+keyword(var) ident(quitChan) keyword(chan) keyword(chan) predefined_type(bool) operator(=) predefined(make)operator(()keyword(chan) keyword(chan) predefined_type(bool)operator(,) integer(1)operator(\))
+keyword(var) ident(addresses) operator(=) keyword(map)operator([)predefined_type(bool)operator(])predefined_type(string)operator({)
+    predefined_constant(true)operator(:)  string<delimiter(")content(feedback.sandbox.push.apple.com)delimiter(")>operator(,)
+    predefined_constant(false)operator(:) string<delimiter(")content(feedback.push.apple.com)delimiter(")>operator(,)
+operator(})
+
+keyword(func) ident(feedbackMonitor)operator(()ident(config) operator(*)ident(tls)operator(.)ident(Config)operator(,) ident(useSandbox) predefined_type(bool)operator(\)) operator({)
+    keyword(for) operator({)
+        ident(timer) operator(:=) ident(time)operator(.)ident(NewTimer)operator(()integer(5) operator(*) integer(60) operator(*) integer(1000000000)operator(\)) comment(// five minutes)
+        keyword(select) operator({)
+        keyword(case) ident(ch) operator(:=) operator(<-)ident(quitChan)operator(:)
+            comment(// been told to quit)
+            ident(ch) operator(<-) predefined_constant(true)
+            keyword(return)
+        keyword(case) operator(<-)ident(timer)operator(.)ident(C)operator(:)
+            comment(// timer fired, talk to the feedback server)
+            ident(conn)operator(,) ident(err) operator(:=) ident(tls)operator(.)ident(Dial)operator(()string<delimiter(")content(tcp)delimiter(")>operator(,) ident(addresses)operator([)ident(useSandbox)operator(],) ident(config)operator(\))
+            keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+                ident(log)operator(.)ident(Println)operator(()string<delimiter(")content(Failed to dial feedback server:)delimiter(")>operator(,) ident(err)operator(\))
+                keyword(break)
+            operator(})
+
+            comment(// once connected, the server immediately sends us our data)
+            keyword(var) ident(buf) operator([)integer(38)operator(])predefined_type(byte)
+            keyword(for) operator({)
+                ident(_)operator(,) ident(err) operator(:=) ident(conn)operator(.)ident(Read)operator(()ident(buf)operator([:]\))
+                keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+                    keyword(if) ident(err) operator(!=) ident(io)operator(.)ident(EOF) operator({)
+                        ident(log)operator(.)ident(Println)operator(()string<delimiter(")content(Failed to read feedback message:)delimiter(")>operator(,) ident(err)operator(\))
+                    operator(})
+                    keyword(break)
+                operator(})
+
+                comment(// four-byte time, in seconds)
+                ident(time_unused) operator(:=) ident(wire)operator(.)ident(Uint32)operator(()ident(buf)operator([)integer(0)operator(:]\))
+                comment(// two byte token size (always 32\))
+                ident(size_unused) operator(:=) ident(wire)operator(.)ident(Uint16)operator(()ident(buf)operator([)integer(4)operator(:]\))
+                ident(_)operator(,) ident(_) operator(=) ident(time_unused)operator(,) ident(size_unused)
+
+                comment(// get the device token itself)
+                keyword(var) ident(token) ident(DeviceToken)
+                predefined(copy)operator(()ident(token)operator([:],) ident(buf)operator([)integer(6)operator(:]\))
+
+                comment(// store the token in the revocation list)
+                ident(revokeDeviceToken)operator(()ident(token)operator(\))
+            operator(})
+
+            ident(conn)operator(.)ident(Close)operator((\))
+        operator(})
+    operator(})
+operator(})
+
+keyword(func) ident(startFeedbackMonitor)operator(()ident(certPath)operator(,) ident(keyPath) predefined_type(string)operator(,) ident(useSandbox) predefined_type(bool)operator(\)) predefined_type(error) operator({)
+    ident(cert)operator(,) ident(err) operator(:=) ident(tls)operator(.)ident(LoadX509KeyPair)operator(()ident(certPath)operator(,) ident(keyPath)operator(\))
+    keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+        keyword(return) ident(err)
+    operator(})
+
+    ident(config) operator(:=) operator(&)ident(tls)operator(.)ident(Config)operator({)ident(Certificates)operator(:) operator([])ident(tls)operator(.)ident(Certificate)operator({)ident(cert)operator(}})
+    keyword(go) ident(feedbackMonitor)operator(()ident(config)operator(,) ident(useSandbox)operator(\))
+    keyword(return) predefined_constant(nil)
+operator(})
+
+keyword(func) ident(stopFeedbackMonitor)operator((\)) operator({)
+    ident(ch) operator(:=) predefined(make)operator(()keyword(chan) predefined_type(bool)operator(,) integer(1)operator(\))
+    comment(// tell the goroutine to stop)
+    ident(quitChan) operator(<-) ident(ch)
+    comment(// wait for it to do so)
+    operator(<-)ident(ch)
+operator(})

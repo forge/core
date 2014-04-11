@@ -1,0 +1,2681 @@
+comment[plain(diff --git a/.gitignore b/.gitignore)]
+comment[plain(index 8938c07..80d9aa1 100644)]
+head[head(--- )filename(a/.gitignore)]
+head[head(+++ )filename(b/.gitignore)]
+change<change(@@)plain( -11,13 +11,12 )change(@@)>plain( spec/reports)
+plain( test/tmp)
+plain( test/version_tmp)
+plain( tmp)
+delete[delete(-)]
+plain( doc)
+plain( Gemfile.lock)
+plain( .rvmrc)
+delete[delete(-)]
+plain( test/executable/source.rb.html)
+plain( test/executable/source.rb.json)
+plain( test/scanners)
+plain( bench/test.div.html)
+plain( diff.html)
+insert[insert(+)plain(etc/CodeRay.tmproj)]
+comment[plain(diff --git a/.travis.yml b/.travis.yml)]
+comment[plain(index 9771285..14001c4 100644)]
+head[head(--- )filename(a/.travis.yml)]
+head[head(+++ )filename(b/.travis.yml)]
+change[change(@@)plain( -1,5 +1,4 )change(@@)]
+ key(rvm)operator(:)
+delete[delete(-)  operator(-) string<content(1.8.6)>  comment(# doesn't work on Travis CI? http://travis-ci.org/#!/rubychan/coderay/builds/88416)]
+   operator(-) string<content(1.8.7)>
+   operator(-) string<content(1.9.2)>
+   operator(-) string<content(ruby-head)>
+comment[plain(diff --git a/Changes-1.0.textile b/Changes-1.0.textile)]
+comment[plain(deleted file mode 100644)]
+comment[plain(index 9f8126c..0000000)]
+head[head(--- )filename(a/Changes-1.0.textile)]
+head[head(+++ )filename(/dev/null)]
+change[change(@@)plain( -1,344 +0,0 )change(@@)]
+delete[delete(-)plain(h1=. CodeRay Version History)]
+delete[delete(-)]
+delete[delete(-)plain(p=. _This files lists all changes in the CodeRay library since the 0.9.8 release._)]
+delete[delete(-)]
+delete[delete(-)plain({{toc}})]
+delete[delete(-)]
+delete[delete(-)plain(h2. Changes in 1.0)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(CodeRay 1.0 is a major rewrite of the library, and incompatible to earlier versions.)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(The command line and programmer interfaces are similar to 0.9, but the internals have completely changed.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. General changes)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW*: The new Diff scanner colorizes code inside of the diff, and highlights inline changes.)]
+delete[delete(-)plain(* *NEW*: Extended support and usage of HTML5 and CSS 3 features.)]
+delete[delete(-)plain(* *NEW*: Direct Streaming)]
+delete[delete(-)plain(* *NEW* scanners: Clojure and HAML)]
+delete[delete(-)plain(* *CHANGED*: Token classes (used as CSS classes\) are readable names; breaks you stylesheet!)]
+delete[delete(-)plain(* *IMPROVED* documentation)]
+delete[delete(-)plain(* *IMPROVED* speed: faster startup (using @autoload@\), scanning, and encoding)]
+delete[delete(-)plain(* *IMPROVED* Ruby 1.9 encodings support)]
+delete[delete(-)plain(* *IMPROVED* Tests: There are more of them now!)]
+delete[delete(-)]
+delete[delete(-)plain(h3. Direct Streaming)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(CodeRay 1.0 introduces _Direct Streaming_ as a faster and simpler alternative to Tokens. It means that all Scanners,)]
+delete[delete(-)plain(Encoders and Filters had to be rewritten, and that older scanners using the Tokens API are no longer compatible with)]
+delete[delete(-)plain(this version.)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(The main benefits of this change are:)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* more speed (benchmarks show 10% to 50% more tokens per second compared to CodeRay 0.9\))]
+delete[delete(-)plain(* the ability to stream output into a pipe on the command line)]
+delete[delete(-)plain(* a simpler API)]
+delete[delete(-)plain(* less code)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(Changes related to the new tokens handling include:)]
+delete[delete(-)plain(* *CHANGED*: The Scanners now call Encoders directly; tokens are not added to a Tokens array, but are send to the)]
+delete[delete(-)plain(  Encoder as a method call. The Tokens representation (which can be seen as a cache now\) is still present, but as a)]
+delete[delete(-)plain(  special case; Tokens just encodes the given tokens into an Array for later use.)]
+delete[delete(-)plain(* *CHANGED*: The token actions (@text_token@, @begin_group@ etc.\) are now public methods of @Encoder@ and @Tokens@.)]
+delete[delete(-)plain(* *REWRITE* of all Scanners, Encoders, Filters, and Tokens.)]
+delete[delete(-)plain(* *RENAMED* @:open@ and @:close@ actions to @:begin_group@ and @:end_group@.)]
+delete[delete(-)plain(* *RENAMED* @open_token@ and @close_token@ methods to @begin_group@ and @end_group@.)]
+delete[delete(-)plain(* *NEW* method @#tokens@ allows to add several tokens to the stream. @Tokens@ and @Encoders::Encoder@ define this)]
+delete[delete(-)plain(  method.)]
+delete[delete(-)plain(* *CHANGED* The above name changes also affect the JSON, XML, and YAML encoders. CodeRay 1.0 output will be incompatible)]
+delete[delete(-)plain(  with earlier versions.)]
+delete[delete(-)plain(* *REMOVED* @TokenStream@ and the @Streamable@ API and all related features like @NotStreamableError@ are now obsolete)]
+delete[delete(-)plain(  and have been removed.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. Command Line)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(The @coderay@ executable was rewritten and has a few new features:)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* Ability to stream into a pipe; try @coderay file | more -r@)]
+delete[delete(-)plain(* *NEW* help)]
+delete[delete(-)plain(* *IMPROVED*: more consistent parameter handling)]
+delete[delete(-)plain(* *REMOVED* @coderay_stylesheet@ executable; use @coderay stylesheet [name]@.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Tokens@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* methods @encode_with@, @count@, @begin_group@, @end_group@, @begin_line@, and @end_line@.)]
+delete[delete(-)plain(* *REMOVED* methods @#stream?@, @#each_text_token@.)]
+delete[delete(-)plain(* *REMOVED* @#text@ and @#text_size@ methods. Use the @Text@ encoder instead.)]
+delete[delete(-)plain(* *REMOVED* special implementation of @#each@ taking a filter parameter. Use @TokenKindFilter@ instead.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. *RENAMED*: @TokenKinds@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(Renamed from @Tokens::ClassOfKind@ (was also @Tokens::AbbreviationForKind@ for a while\).)]
+delete[delete(-)plain(The term "token class" is no longer used in CodeRay. Instead, tokens have _kinds_.)]
+delete[delete(-)plain(See "#122":http://redmine.rubychan.de/issues/122.)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *CHANGED* all token CSS classes to readable names.)]
+delete[delete(-)plain(* *ADDED* token kinds @:filename@, @:namespace@, and @:eyecatcher@.)]
+delete[delete(-)plain(* *RENAMED* @:pre_constant@ and @:pre_type@ to @:predefined_constant@ and @predefined_type@.)]
+delete[delete(-)plain(* *RENAMED* @:oct@ and @:bin@ to @:octal@ and @binary@.)]
+delete[delete(-)plain(* *REMOVED* token kinds @:attribute_name_fat@, @:attribute_value_fat@, @:operator_fat@, @interpreted@,)]
+delete[delete(-)plain(  @:tag_fat@, @tag_special@, @:xml_text@, @:nesting_delimiter@, @:open@, and @:close@.)]
+delete[delete(-)plain(* *CHANGED*: Don't raise error for unknown token kinds unless in @$CODERAY_DEBUG@ mode.)]
+delete[delete(-)plain(* *CHANGED* the value for a token kind that is not highlighted from)]
+delete[delete(-)plain(  @:NO_HIGHLIGHT@ to @false@.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Duo@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* method @call@ for allowing code like @CodeRay::Duo[:python => :yaml].(code\)@ in Ruby 1.9.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Encoders::CommentFilter@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* alias @:remove_comments@)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Encoders::Filter@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* option @tokens@.)]
+delete[delete(-)plain(* *CHANGED*: Now it simply delegates to the output.)]
+delete[delete(-)plain(* *REMOVED* @include_text_token?@ and @include_block_token?@ methods.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Encoders::HTML@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(The HTML encoder was cleaned up and simplified.)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW*: HTML5 and CSS 3 compatible.)]
+delete[delete(-)plain(  See "#215":http://redmine.rubychan.de/issues/215.)]
+delete[delete(-)plain(* *ADDED* support for @:line_number_anchors@.)]
+delete[delete(-)plain(  See "#208":http://redmine.rubychan.de/issues/208.)]
+delete[delete(-)plain(* *CHANGED* the default style to @:alpha@.)]
+delete[delete(-)plain(* *CHANGED*: Use double click to toggle line numbers in table mode (as single)]
+delete[delete(-)plain(  click jumps to an anchor.\))]
+delete[delete(-)plain(* *REMOVED* support for @:line_numbers => :list@.)]
+delete[delete(-)plain(* *FIXED* splitting of lines for @:line_numbers => :inline@, so that the line)]
+delete[delete(-)plain(  numbers don't get colored, too.)]
+delete[delete(-)plain(* *RENAMED* @Output#numerize@ to @#number@, which is an actual English word.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Encoders::LinesOfCode@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *CHANGED*: @compile@ and @finish@ methods are now protected.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. *Renamed*: @Encoders::Terminal@ (was @Encoders::Term@\))]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *RENAMED* from @Encoders::Term@, added @:term@ alias.)]
+delete[delete(-)plain(* *CLEANUP*: Use @#setup@'s @super@, don't use @:procedure@ token class.)]
+delete[delete(-)plain(* *CHANGED*: @#token@'s second parameter is no longer optional.)]
+delete[delete(-)plain(* *REMOVED* colors for obsolete token kinds.)]
+delete[delete(-)plain(* *FIXED* handling of line tokens.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Encoders::Text@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *FIXED* default behavior of stripping the trailing newline.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. *RENAMED*: @Encoders::TokenKindFilter@ (was @Encoders::TokenClassFilter@\))]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW*: Handles token groups.)]
+delete[delete(-)plain(  See "#223":http://redmine.rubychan.de/issues/223.)]
+delete[delete(-)plain(* *RENAMED* @include_block_token?@ to @include_group?@.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Encoders::Statistic@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *CHANGED*: Tokens actions are counted separately.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::Scanner@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* methods @#file_extension@ and @#encoding@.)]
+delete[delete(-)plain(* *NEW*: The @#tokenize@ method also takes an Array of Strings as source. The)]
+delete[delete(-)plain(  code is highlighted as one and split into parts of the input lengths)]
+delete[delete(-)plain(  after that using @Tokens#split_into_parts@.)]
+delete[delete(-)plain(* *NEW* method @#binary_string@)]
+delete[delete(-)plain(* *REMOVED* helper method @String#to_unix@.)]
+delete[delete(-)plain(* *REMOVED* method @#streamable?@.)]
+delete[delete(-)plain(* *REMOVED* @#marshal_load@ and @#marshal_dump@.)]
+delete[delete(-)plain(* *RENAMED* class method @normify@ to @normalize@; it also deals with encoding now.)]
+delete[delete(-)plain(* *CHANGED*: @#column@ starts counting with 1 instead of 0)]
+delete[delete(-)]
+delete[delete(-)plain(h3. *NEW*: @Scanners::Clojure@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(Thanks to Licenser, CodeRay now supports the Clojure language.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::CSS@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW*: Rudimentary support for the @attr@, @counter@, and @counters@ functions.)]
+delete[delete(-)plain(  See "#224":http://redmine.rubychan.de/issues/224.)]
+delete[delete(-)plain(* *NEW*: Rudimentary support for CSS 3 colors.)]
+delete[delete(-)plain(* *CHANGED*: Attribute selectors are highlighted as @:attribute_name@ instead of @:string@.)]
+delete[delete(-)plain(* *CHANGED*: Comments are scanned as one token instead of three.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::Debug@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW*: Support for line tokens (@begin_line@ and @end_line@ represented by @[@ and @]@.\))]
+delete[delete(-)plain(* *FIXED*: Don't send @:error@ and @nil@ tokens for buggy input any more.)]
+delete[delete(-)plain(* *FIXED*: Closes unclosed tokens at the end of @scan_tokens@.)]
+delete[delete(-)plain(* *IMPROVED*: Highlight unknown tokens as @:error@.)]
+delete[delete(-)plain(* *CHANGED*: Raises an error when trying to end an invalid token group.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::Delphi@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *FIXED*: Closes open string groups.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::Diff@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW*: Highlighting of code based on file names.)]
+delete[delete(-)plain(  See ticket "#52":http://redmine.rubychan.de/issues/52.)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  Use the @:highlight_code@ option to turn this feature off. It's enabled)]
+delete[delete(-)plain(  by default.)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  This is a very original feature. It enables multi-language highlighting for)]
+delete[delete(-)plain(  diff files, which is especially helpful for CodeRay development itself. The)]
+delete[delete(-)plain(  updated version of the scanner test suite generated .debug.diff.html files)]
+delete[delete(-)plain(  using this.)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  Note: This is still experimental. Tokens spanning more than one line)]
+delete[delete(-)plain(  may get highlighted incorrectly. CodeRay tries to keep scanner states)]
+delete[delete(-)plain(  between the lines and changes, but the quality of the results depend on)]
+delete[delete(-)plain(  the scanner.)]
+delete[delete(-)plain(* *NEW*: Inline change highlighting, as suggested by Eric Thomas.)]
+delete[delete(-)plain(  See ticket "#227":http://redmine.rubychan.de/issues/227 for details.)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  Use the @:inline_diff@ option to turn this feature off. It's enabled by)]
+delete[delete(-)plain(  default.)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  For single-line changes (that is, a single deleted line followed by a single)]
+delete[delete(-)plain(  inserted line\), this feature surrounds the changed parts with an)]
+delete[delete(-)plain(  @:eyecatcher@ group which appears in a more saturated background color.)]
+delete[delete(-)plain(  The implementation is quite complex, and highly experimental. The problem)]
+delete[delete(-)plain(  with multi-layer tokenizing is that the tokens have to be split into parts.)]
+delete[delete(-)plain(  If the inline change starts, say, in the middle of a string, then additional)]
+delete[delete(-)plain(  @:end_group@ and @:begin_group@ tokens must be inserted to keep the group)]
+delete[delete(-)plain(  nesting intact. The extended @Scanner#tokenize@ method and the new)]
+delete[delete(-)plain(  @Tokens#split_into_parts@ method take care of this.)]
+delete[delete(-)plain(* *NEW*: Highlight the file name in the change headers as @:filename@.)]
+delete[delete(-)plain(* *CHANGED*: Highlight unknown lines as @:comment@ instead of @:head@.)]
+delete[delete(-)plain(* *IMPROVED*: Background colors for Diff output have been optimized.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. *RENAMED*: @Scanners::ERB@ (was @Scanners::RHTML@\))]
+delete[delete(-)]
+delete[delete(-)plain(h3. *NEW*: @Scanners::HAML@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(It uses the new :state options of the HTML and Ruby scanners.)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(Some rare cases are not considered (like @#{...}@ snippets inside of :javascript blocks\),)]
+delete[delete(-)plain(but it highlights pretty well.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::HTML@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *FIXED*: Closes open string groups.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::JavaScript@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *IMPROVED*: Added @NaN@ and @Infinity@ to list of predefined constants.)]
+delete[delete(-)plain(* *IMPROVED* recognition of RegExp literals with leading spaces.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::Java@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW*: Package names are highlighted as @:namespace@.)]
+delete[delete(-)plain(  See "#210":http://redmine.rubychan.de/issues/210.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. *REMOVED*: @Scanners::NitroXHTML@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(Nitro is "dead":http://www.nitrohq.com/.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. *RENAMED*: @Scanners::Text@ (was @Scanners::Plaintext@\))]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *IMPROVED*: Just returns the string without scanning (faster\).)]
+delete[delete(-)plain( )]
+delete[delete(-)plain( This is much faster than scanning until @/\\z/@ in Ruby 1.8.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::Python@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *CHANGED*: Docstrings are highlighted as @:comment@.)]
+delete[delete(-)plain(  See "#190":http://redmine.rubychan.de/issues/190.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. *NEW*: @Scanners::Raydebug@)]
+delete[delete(-)]
+delete[delete(-)plain(Copied from @Scanners::Debug@, highlights the token dump instead of importing it. It also reacts to the @.raydebug@ file)]
+delete[delete(-)plain(name suffix now.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::Ruby@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *ADDED* more predefined keywords (see http://murfy.de/ruby-constants\).)]
+delete[delete(-)plain(* *IMPROVED* support for singleton method definitions.)]
+delete[delete(-)plain(  See "#147":http://redmine.rubychan.de/issues/147.)]
+delete[delete(-)plain(* *FIXED*: Don't highlight methods with a capital letter as constants)]
+delete[delete(-)plain(  (eg. @GL.PushMatrix@\).)]
+delete[delete(-)plain(* *NEW*: Highlight buggy floats (like .5\) as @:error@.)]
+delete[delete(-)plain(* *CLEANUP* of documentation, names of constants and variables, state handling.)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  Moved @StringState@ class from @patterns.rb@ into a separate file.)]
+delete[delete(-)plain(* *NEW*: Complicated rule for recognition of @foo=@ style method names.)]
+delete[delete(-)plain(* *NEW*: Handles @:keep_state@ option (a bit; experimental\).)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  Actually, Ruby checks if there is @[~>=]@, but not @=>@ following the name.)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(* *REMOVED* @EncodingError@)]
+delete[delete(-)]
+delete[delete(-)plain(h3. *REMOVED* @Scanners::Scheme@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* It is too buggy, and nobody was using it. To be added again when it's fixed.)]
+delete[delete(-)plain(  See "#59":http://redmine.rubychan.de/issues/59.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::SQL@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *IMPROVED*: Extended list of keywords and functions (thanks to)]
+delete[delete(-)plain(  Joshua Galvez, Etienne Massip, and others\).)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(  See "#221":http://redmine.rubychan.de/issues/221.)]
+delete[delete(-)plain(* *FIXED*: Closes open string groups.)]
+delete[delete(-)plain(* *FIXED*: Words after @.@ are always recognized as @:ident@.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::YAML@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *FIXED*: Allow spaces before colon in mappings.)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(  See "#231":http://redmine.rubychan.de/issues/231.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. *NEW*: @Styles::Alpha@)]
+delete[delete(-)]
+delete[delete(-)plain(A style that uses transparent HSLA colors as defined in CSS 3. See "#199":http://redmine.rubychan.de/issues/199.)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(It also uses the CSS 3 property @user-select: none@ to keep the user from selecting the line numbers. This is especially)]
+delete[delete(-)plain(nice for @:inline@ line numbers. See "#226":http://redmine.rubychan.de/issues/226.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @WordList@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(Stripped down to 19 LOC.)]
+delete[delete(-)]
+delete[delete(-)plain(* *RENAMED* @CaseIgnoringWordList@ to @WordList::CaseIgnoring@.)]
+delete[delete(-)plain(* *REMOVED* caching option because it creates memory leaks.)]
+delete[delete(-)plain(* *REMOVED* block option.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @FileType@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW*: Recognizes @.gemspec@, @.rjs@, @.rpdf@ extensions, @Gemfile@, and @Capfile@ as Ruby.)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  Thanks to the authors of the TextMate Ruby bundle!)]
+delete[delete(-)plain(* *REMOVED* @FileType#shebang@ is a protected method now.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Plugin@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *IMPROVED*: @register_for@ sets the @plugin_id@; it can now be a @Symbol@.)]
+delete[delete(-)plain(* *ADDED* @PluginHost#const_missing@ method: Plugins are loaded automatically.)]
+delete[delete(-)plain(  Using @Scanners::JavaScript@ in your code loads @scanners/java_script.rb@.)]
+delete[delete(-)plain(* *ADDED* @#all_plugins@ method to simplify getting )]
+delete[delete(-)plain(  information about all available plugins (suggested by bnhymn\).)]
+delete[delete(-)plain(* *CHANGED* the default plugin key from @nil@ to @:default@.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @GZip@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *MOVED* into @CodeRay@ namespace.)]
+delete[delete(-)plain(* *MOVED* file from @gzip_simple.rb@ to @gzip.rb@.)]
+delete[delete(-)plain(* *REMOVED* @String@ extensions.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. More API changes)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *FIXED* @Encoders::HTML#token@'s second parameter is no longer optional.)]
+delete[delete(-)plain(* *CHANGED* @Encoders::HTML::Output@'s API.)]
+delete[delete(-)plain(* *REMOVED* lots of unused methods.)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(The helper classes were cleaned up; see above for details.)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *CHANGED* @Plugin@ API was simplified and stripped of all unnecessary features.)]
+delete[delete(-)plain(* *CHANGED* Moved @GZip@ and @FileType@ libraries into @CodeRay@; cleaned them up.)]
+delete[delete(-)]
+delete[delete(-)]
+delete[delete(-)]
+comment[plain(diff --git a/Changes-pre-1.0.textile b/Changes-pre-1.0.textile)]
+comment[plain(new file mode 100644)]
+comment[plain(index 0000000..d094ff3)]
+head[head(--- )filename(/dev/null)]
+head[head(+++ )filename(b/Changes-pre-1.0.textile)]
+change[change(@@)plain( -0,0 +1,421 )change(@@)]
+insert[insert(+)plain(h1=. CodeRay Version History)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(p=. _This files lists all changes in the CodeRay library since the 0.8.4 release._)]
+insert[insert(+)plain( )]
+insert[insert(+)plain({{toc}})]
+insert[insert(+)plain( )]
+insert[insert(+)plain(h2. Changes in 0.9.8 "banister" [2011-05-01])]
+insert[insert(+)plain( )]
+insert[insert(+)plain(Fixes for JRuby's 1.9 mode and minor issues.)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(h3. Rake tasks)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *REMOVED* obsolete @has_rdoc@ gem specification, fixing a warning.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Scanner@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* method @#scan_rest@ replaces @scan_until(/\\z/\)@, which is broken in JRuby 1.6 --1.9 mode.)]
+insert[insert(+)plain(  See "#297":http://odd-eyed-code.org/issues/297.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::CSS@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* LOC counting (should be 0\).)]
+insert[insert(+)plain(  See "#296":http://odd-eyed-code.org/issues/296.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Ruby@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* the @IDENT@ pattern not to use character properties, which are broken in JRuby 1.6 --1.9 mode.)]
+insert[insert(+)plain(  See "#297":http://odd-eyed-code.org/issues/297, thanks to banister for reporting!)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::SQL@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *ADDED* more keywords: @between@, @databases@, @distinct@, @fields@, @full@, @having@, @is@, @prompt@, @tables@.)]
+insert[insert(+)plain(  See "#221":http://odd-eyed-code.org/issues/221, thanks to Etienne Massip again.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @FileType@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* regonizes ColdFusion file type extensions @.cfm@ and @.cfc@ as XML.)]
+insert[insert(+)plain(  See "#298":http://odd-eyed-code.org/issues/298, thanks to Emidio Stani.)]
+insert[insert(+)]
+insert[insert(+)]
+insert[insert(+)plain(h2. Changes in 0.9.7 "Etienne" [2011-01-14])]
+insert[insert(+)plain( )]
+insert[insert(+)plain(Fixes a dangerous JavaScript scanner bug, and a testing problem with Ruby 1.9.1.)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(h3. Tests)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* The functional tests now load the lib directory (instead of the gem\) in Ruby 1.9.1.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::JavaScript@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* @KEY_CHECK_PATTERN@ regexp)]
+insert[insert(+)plain(  See "#264":http://odd-eyed-code.org/issues/264, thanks to Etienne Massip!)]
+insert[insert(+)]
+insert[insert(+)]
+insert[insert(+)plain(h2. Changes in 0.9.6 "WoNáDo" [2010-11-25])]
+insert[insert(+)plain( )]
+insert[insert(+)plain(Minor improvements to the Ruby scanner and a fix for Ruby 1.9.)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(h3. @Scanners::Ruby@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *IMPROVED* handling of new hash syntax (keys are marked as @:key@ now,)]
+insert[insert(+)plain(  colon is a separate @:operator@ token, all idents can be used as keys\))]
+insert[insert(+)plain(  See "#257":http://code.licenser.net/issues/257, thanks to WoNáDo!)]
+insert[insert(+)plain(* *ADDED* @__ENCODING__@ magic constant (Ruby 1.9\))]
+insert[insert(+)plain(* *FIXED*: Scanner no longer tries to modify the input string on Ruby 1.9.)]
+insert[insert(+)plain(  See "#260":http://code.licenser.net/issues/260, thanks to Jan Lelis!)]
+insert[insert(+)]
+insert[insert(+)]
+insert[insert(+)plain(h2. Changes in 0.9.5 "Germany.rb" [2010-09-28])]
+insert[insert(+)plain( )]
+insert[insert(+)plain(Support for Rubinius ("#251":http://odd-eyed-code.org/issues/251\), improved mutlibyte handling, Ruby 1.9 syntax, and valid HTML.)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(h3. @Encoders::HTML@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED*: Line tokens use @span@ with @display: block@ instead of @div@, which was invalid HTML ("#255":http://odd-eyed-code.org/issues/255\).)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanner::Scanner@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *IMPROVED* handling of encodings in Ruby 1.9: UTF-8 and Windows-1252 are checked.)]
+insert[insert(+)plain(* *NEW*: Invalid chars will be converted to @?@ in Ruby 1.9.)]
+insert[insert(+)plain(* *FIXED* @string=@ method for Rubinius. See "issue 481":http://github.com/evanphx/rubinius/issues/481 on their site.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::CSS@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED*: Don't use non-ASCII regexps.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Diff@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED*: Highlight unexpected lines as @:comment@.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::PHP@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED*: Use @ASCII-8BIT@ encoding for now.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Ruby@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *ADDED* support for some Ruby 1.9 syntax ("#254":http://odd-eyed-code.org/issues/254\):)]
+insert[insert(+)plain(** the @->@ lambda shortcut)]
+insert[insert(+)plain(** new Hash syntax using colons (@{ a: b }@\))]
+insert[insert(+)plain(* *FIXED*: Use @UTF-8@ encoding.)]
+insert[insert(+)plain(* *IMPROVED* unicode support on Ruby 1.8 ("#253":http://odd-eyed-code.org/issues/253\).)]
+insert[insert(+)plain(* *FIXED* recognition of non-ASCII identifiers in Ruby 1.9, JRuby, and Rubinius ("#253":http://odd-eyed-code.org/issues/253\).)]
+insert[insert(+)plain(* *CHANGED* heredoc recognition to ignore delimiters starting with a digit. This is incorrect, but causes less false positives.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::SQL@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* scanning of comments; nice catch, Rubinius!)]
+insert[insert(+)plain(  ("#252":http://odd-eyed-code.org/issues/252\))]
+insert[insert(+)]
+insert[insert(+)]
+insert[insert(+)plain(h2. Changes in 0.9.4 "Ramadan" [2010-08-31])]
+insert[insert(+)plain( )]
+insert[insert(+)plain(Updated command line interface and minor scanner fixes for the Diff, HTML, and RHTML scanners.)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(h3. @coderay@ executable)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED*: Partly rewritten, simplified, fixed.)]
+insert[insert(+)plain(  ("#244":http://odd-eyed-code.org/issues/244\))]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Diff@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* handling of change headers with code on the same line as the @@ marker.)]
+insert[insert(+)plain(  ("#247":http://odd-eyed-code.org/issues/242\))]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::HTML@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* a missing regexp modifier that slowed down the scanning.)]
+insert[insert(+)plain(  ("#245":http://odd-eyed-code.org/issues/245\))]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::RHTML@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* highlighting of ERB comment blocks.)]
+insert[insert(+)plain(  ("#246":http://odd-eyed-code.org/issues/246\))]
+insert[insert(+)]
+insert[insert(+)]
+insert[insert(+)plain(h2. Changes in 0.9.3 "Eyjafjallajökull" [2010-04-18])]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED*: Documentation of Tokens.)]
+insert[insert(+)plain(  ("#218":http://odd-eyed-code.org/issues/218\))]
+insert[insert(+)plain( )]
+insert[insert(+)plain(h3. @coderay@ executable)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW*: automatic TTY detection (uses @Term@ encoder\))]
+insert[insert(+)plain(* *NEW*: optional 3rd parameter for the filename)]
+insert[insert(+)plain(* *FIXED*: Converted to UNIX format.)]
+insert[insert(+)plain(* *FIXED*: Warn about generated files.)]
+insert[insert(+)plain(* *FIXED*: Ensure line break after the output (especially for LoC counter\).)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::JavaScript@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED*: Don't keep state of XML scanner between calls for E4X literals.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Java@, @Scanners::JSON@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED*: Close unfinished strings with the correct token kind.)]
+insert[insert(+)]
+insert[insert(+)]
+insert[insert(+)plain(h2. Changes in 0.9.2 "Flameeyes" [2010-03-14])]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* Basic tests and a _Rakefile_ are now included in the Gem. [Flameeyes])]
+insert[insert(+)plain(  A @doc@ task is also included.)]
+insert[insert(+)plain(* *FIXED* Use @$CODERAY_DEBUG@ for debugging instead of @$DEBUG@. [Trans])]
+insert[insert(+)plain(  ("#192":http://odd-eyed-code.org/issues/192\))]
+insert[insert(+)plain(* *REMOVED* @Term::Ansicolor@ was bundled under _lib/_, but not used. [Flameeyes])]
+insert[insert(+)plain(  ("#205":http://odd-eyed-code.org/issues/205\))]
+insert[insert(+)plain(* *WORKAROUND* for Ruby bug )]
+insert[insert(+)plain(  "#2745":http://redmine.ruby-lang.org/issues/show/2745)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(h3. @Encoders::Term@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* strings are closed correctly)]
+insert[insert(+)plain(  ("#138":http://odd-eyed-code.org/issues/138\))]
+insert[insert(+)plain(* *FIXED* several token kinds had no associated color)]
+insert[insert(+)plain(  ("#139":http://odd-eyed-code.org/issues/139\))]
+insert[insert(+)plain(* *NEW* alias @terminal@)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  *NOTE:* This encoder will be renamed to @Encoders::Terminal@ in the next release.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Debug@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* Don't close tokens that are not open. Send @:error@ token instead.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Groovy@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* token kind of closing brackets is @:operator@ instead of @nil@)]
+insert[insert(+)plain(  ("#148":http://odd-eyed-code.org/issues/148\))]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::PHP@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* allow @\\@ operator (namespace separator\))]
+insert[insert(+)plain(  ("#209":http://odd-eyed-code.org/issues/209\))]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::YAML@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* doesn't send debug tokens when @$DEBUG@ is true [Trans])]
+insert[insert(+)plain(  ("#149":http://odd-eyed-code.org/issues/149\))]
+insert[insert(+)]
+insert[insert(+)]
+insert[insert(+)plain(h2. Changes in 0.9.1 [2009-12-31])]
+insert[insert(+)plain( )]
+insert[insert(+)plain(h3. Token classes)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* token classes @:complex@, @:decorator@, @:imaginary@)]
+insert[insert(+)plain(  (all for Python\))]
+insert[insert(+)plain(* *REMOVED* token class @:procedure@)]
+insert[insert(+)plain(  – use @:function@ or @:method@ instead.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Tokens@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* method @#scanner@)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  Stores the scanner.)]
+insert[insert(+)plain(* *REMOVED* methods @.write_token@, @.read_token@, @.escape@, @.unescape@)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  They were only used by the @Tokens@ encoder, which was removed also.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Encoders::Encoder@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *REMOVED* Don't require the _stringio_ library.)]
+insert[insert(+)plain(* *NEW* public methods @#open_token@, @#close_token@, @#begin_line@, @#end_line@)]
+insert[insert(+)plain(  These methods are called automatically, like @#text_token@.)]
+insert[insert(+)plain(* *NEW* proteced method @#append_encoded_token_to_output@)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Encoders::Tokens@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *REMOVED* – use @Tokens#dump@ and @Tokens.load@.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Encoders::Filter@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW*)]
+insert[insert(+)plain(  A @Filter@ encoder has another @Tokens@ instance as output.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Encoders::TokenClassFilter@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW*)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  It takes 2 options, @:exclude@ and @:include@, that specify which token classes)]
+insert[insert(+)plain(  to include or exclude for the output. They can be a single token class,)]
+insert[insert(+)plain(  an @Array@ of classes, or the value @:all@.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Encoders::CommentFilter@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW*)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  Removes tokens of the @:comment@ class.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Encoders::LinesOfCode@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW*)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  Counts the lines of code according to the @KINDS_NOT_LOC@ token class list)]
+insert[insert(+)plain(  defined by the scanner. It uses the new @TokenClassFilter@.)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  Alias: @:loc@, as in @tokens.loc@.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Encoders::JSON@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW*)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  Outputs tokens in a simple JSON format.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Encoders::Term@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* (beta, by Rob Aldred\))]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  Outputs code highlighted for a color terminal.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Encoders::HTML@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* option @:title@ (default value is _CodeRay output_\))]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  Setting this changes the title of the HTML page.)]
+insert[insert(+)plain(* *NEW* option @:highlight_lines@ (default: @nil@\))]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  Highlights the given set of line numbers.)]
+insert[insert(+)plain(- *REMOVED* option @:level@)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  It didn't do anything. CodeRay always outputs XHTML.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Encoders::Text@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* Uses @Encoder@ interface with @super@ and @#text_token@.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Encoders::XML@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* @FIXED@ ("#94":http://odd-eyed-code.org/issues/94\))]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  It didn't work at all.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. Scanners)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* Mapped @:h@ to @:c@, @:cplusplus@ and @:'c++'@ to @:cpp@,)]
+insert[insert(+)plain(  @:ecma@, @:ecmascript@, @:ecma_script@ to @:java_script@,)]
+insert[insert(+)plain(  @:pascal@ to @:delphi@, and @:plain@ to @:plaintext@.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Scanner@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* constant @KINDS_NOT_LOC@)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  A list of all token classes not considered in LOC count.)]
+insert[insert(+)plain(  Added appropriate values for scanners.)]
+insert[insert(+)plain(* *NEW* method @#lang@ returns the scanner's lang, which is its @plugin_id@.)]
+insert[insert(+)plain(* *FIXED* automatic, safe UTF-8 detection _[Ruby 1.9]_)]
+insert[insert(+)plain(* *FIXED* column takes care of multibyte encodings _[Ruby 1.9]_)]
+insert[insert(+)plain(* *FIXED* is dumpable (@Tokens@ store their scanner in an @@scanner@ variable\))]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Cpp@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* (C++\))]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Groovy@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* (beta\))]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Python@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW*)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::PHP@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* (based on Stefan Walk's work\))]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::SQL@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* (based on code by Josh Goebel\))]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::C@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *IMPROVED* added a list of @:directive@ tokens that were @:reserved@ before)]
+insert[insert(+)plain(* *IMPROVED* detection of labels)]
+insert[insert(+)plain(* *IMPROVED* allow @1L@ and @1LL@ style literals)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::CSS@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *IMPROVED* element selectors are highlighted as @:type@ instead of @:keyword@)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Delphi@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *IMPROVED* Don't cache tokens in CaseIgnoringWordList.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Java@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *IMPROVED* @assert@ is highlighted as a @:keyword@ now)]
+insert[insert(+)plain(* *IMPROVED* @const@ and @goto@ are highlighted as @:reserved@)]
+insert[insert(+)plain(* *IMPROVED* @false@, @true@, and @null@ are highlighted as @:pre_constant@)]
+insert[insert(+)plain(* *IMPROVED* @threadsafe@ is no longer a @:directive@)]
+insert[insert(+)plain(* *IMPROVED* @String@ is highlighted as a @:pre_type@)]
+insert[insert(+)plain(* *IMPROVED* built-in classes ending with _Error_ or _Exception_ are)]
+insert[insert(+)plain(  highlighted as a @:exception@ instead of @:pre_type@)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::JavaScript@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* a list of @PREDEFINED_CONSTANTS@ to be highlighted as @:pre_constant@)]
+insert[insert(+)plain(* *NEW* XML literals are recognized and highlighted)]
+insert[insert(+)plain(* *NEW* function name highlighting)]
+insert[insert(+)plain(* *IMPROVED* @.1@ is highlighted a number)]
+insert[insert(+)plain(* *FIXED* strings close with the correct kind when terminated unexpectedly)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::JSON@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *IMPROVED* constants (@true@, @false@, @nil@\) are highlighted as @:value@)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::Ruby@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *IMPROVED* @Patterns::KEYWORDS_EXPECTING_VALUE@ for more accurate)]
+insert[insert(+)plain(  @value_expected@ detection)]
+insert[insert(+)plain(* *IMPROVED* handling of @\\@ as a string delimiter)]
+insert[insert(+)plain(* *IMPROVED* handling of unicode strings; automatic switching to unicode)]
+insert[insert(+)plain(* *IMPROVED* highlighting of @self.method@ definitions)]
+insert[insert(+)plain(* *REMOVED* @Patterns::FANCY_START_SAVE@ (obsolete\))]
+insert[insert(+)plain(* *FIXED* encoding issues _[Ruby 1.9]_)]
+insert[insert(+)plain(* *FIXED* a problem in early Ruby 1.8.6 patch versions with @Regexp.escape@)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Scanners::YAML@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *IMPROVED* indentation detection)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Styles::Cycnus@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* changed a few colors (exceptions, inline strings, predefined types\))]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Plugin@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* method @#title@)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  Set and get the plugin's title. Titles can be arbitrary strings.)]
+insert[insert(+)plain(* *NEW* method @#helper@ loads helpers from different plugins)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  Use this syntax: @helper 'other_plugin/helper_name'@)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @FileType@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *NEW* @FileType[]@ takes @Pathname@ instances)]
+insert[insert(+)plain(* *NEW* regonizes @.cc@, @.cpp@, @.cp@, @.cxx@, @.c++@, @.C@, @.hh@, @.hpp@, @.h++@, @.cu@ extensions (C++\))]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  Thanks to Sander Cox and the TextMate C bundle.)]
+insert[insert(+)plain(* *NEW* regonizes @.pas@, @.dpr@ extensions (Delphi\))]
+insert[insert(+)plain(* *NEW* regonizes @.gvy@, @.groovy@ extensions (Groovy\))]
+insert[insert(+)plain(* *NEW* regonizes @.php@, @.php3@, @.php4@, @.php5@ extensions (PHP\))]
+insert[insert(+)plain(* *NEW* regonizes @.py@, @.py3@, @.pyw@ extensions (Python\))]
+insert[insert(+)plain(* *NEW* regonizes @.rxml@ extension (Ruby\))]
+insert[insert(+)plain(* *NEW* regonizes @.sql@ extension (SQL\))]
+insert[insert(+)plain(* File types list was sorted alphabetically.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @CaseIgnoringWordList@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* ("#97":http://odd-eyed-code.org/issues/97\))]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  The default value is no longer ignored.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @ForRedCloth@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *FIXED* for RedCloth versions 4.2.0+ ("#119":http://odd-eyed-code.org/issues/119\))]
+insert[insert(+)]
+insert[insert(+)plain(h3. Cleanups)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* warnings about character classes _[Ruby 1.9]_)]
+insert[insert(+)plain(* encoding issues _[Ruby 1.9]_)]
+insert[insert(+)plain(* documentation, code)]
+insert[insert(+)]
+insert[insert(+)]
+comment[plain(diff --git a/Changes.textile b/Changes.textile)]
+comment[plain(index cdbfdd9..9135f67 100644)]
+head[head(--- )filename(a/Changes.textile)]
+head[head(+++ )filename(b/Changes.textile)]
+change[change(@@)plain( -1,421 +1,367 )change(@@)]
+plain( h1=. CodeRay Version History)
+plain(  )
+delete[delete(-)plain(p=. _This files lists all changes in the CodeRay library since the 0.)eyecatcher<plain(8.4)>plain( release._)]
+insert[insert(+)plain(p=. _This files lists all changes in the CodeRay library since the 0.)eyecatcher<plain(9.8)>plain( release._)]
+plain(  )
+plain( {{toc}})
+plain(  )
+delete[delete(-)plain(h2. Changes in )eyecatcher<plain(0.9.8 "banister" [2011-05-01])>]
+insert[insert(+)plain(h2. Changes in )eyecatcher<plain(1.0.2)>]
+plain(  )
+delete[delete(-)plain(Fixes)eyecatcher<plain( for JRuby's 1.9 mode and minor issues.)>]
+insert[insert(+)plain(Fixes)eyecatcher<plain(:)>]
+plain(  )
+delete[delete(-)plain(h3. Rake tasks)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *REMOVED* obsolete @has_rdoc@ gem specification, fixing a warning.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::Scanner@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* method @#scan_rest@ replaces @scan_until(/\\z/\)@, which is broken in JRuby 1.6 --1.9 mode.)]
+delete[delete(-)plain(  See "#297":http://redmine.rubychan.de/issues/297.)]
+insert[insert(+)plain(* .erb files are recognized as ERB.)]
+plain( )
+delete[delete(-)plain(h)eyecatcher<plain(3. @Scanners::CSS@)>]
+insert[insert(+)plain(h)eyecatcher<plain(2. Changes in 1.0.1)>]
+plain(  )
+delete[delete(-)plain(* *FIXED* LOC counting (should be 0\).)]
+delete[delete(-)plain(  See "#296":http://redmine.rubychan.de/issues/296.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::Ruby@)]
+insert[insert(+)plain(New:)]
+plain(  )
+delete[delete(-)plain(* *FIXED* the @IDENT@ pattern not to use character properties, which are broken in JRuby 1.6 --1.9 mode.)]
+delete[delete(-)plain(  See "#297":http://redmine.rubychan.de/issues/297, thanks to banister for reporting!)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::SQL@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *ADDED* more keywords: @between@, @databases@, @distinct@, @fields@, @full@, @having@, @is@, @prompt@, @tables@.)]
+delete[delete(-)plain(  See "#221":http://redmine.rubychan.de/issues/221, thanks to Etienne Massip again.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @FileType@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* regonizes ColdFusion file type extensions @.cfm@ and @.cfc@ as XML.)]
+delete[delete(-)plain(  See "#298":http://redmine.rubychan.de/issues/298, thanks to Emidio Stani.)]
+delete[delete(-)]
+delete[delete(-)]
+delete[delete(-)plain(h2. Changes in 0.9.7 "Etienne" [2011-01-14])]
+insert[insert(+)plain(* YAML scanner allows "-" and "/" in key names)]
+plain(  )
+delete[delete(-)eyecatcher<plain(Fixes a dangerous JavaScript scanner bug, and a testing problem with Ruby 1.9.1.)>]
+insert[insert(+)eyecatcher<plain(Changes:)>]
+plain(  )
+delete[delete(-)eyecatcher<plain(h3. Tests)>]
+insert[insert(+)eyecatcher<plain(* HTML page output has no white border anymore (alpha style\))>]
+plain(  )
+delete[delete(-)plain(* *FIXED* The functional tests now load the lib directory (instead of the gem\) in Ruby 1.9.1.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::JavaScript@)]
+insert[insert(+)plain(Fixes:)]
+plain(  )
+delete[delete(-)plain(* *FIXED* @KEY_CHECK_PATTERN@ regexp)]
+delete[delete(-)plain(  See "#264":http://redmine.rubychan.de/issues/264, thanks to Etienne Massip!)]
+insert[insert(+)plain(* fixed warning in the output of "coderay stylesheet")]
+insert[insert(+)plain(* fixed additional scrollbar in code when last line contains an eyecatcher)]
+insert[insert(+)plain(* minor fixes in the tests (issue github-#4\))]
+plain( )
+delete[delete(-)]
+delete[delete(-)plain(h2. Changes in 0.9.6 "WoNáDo" [2010-11-25])]
+delete[delete(-)plain( )]
+delete[delete(-)plain(Minor improvements to the Ruby scanner and a fix for Ruby 1.9.)]
+insert[insert(+)plain(h2. Changes in 1.0)]
+plain(  )
+delete[delete(-)eyecatcher<plain(h3. @Scanners::Ruby@)>]
+insert[insert(+)eyecatcher<plain(CodeRay 1.0 is a major rewrite of the library, and incompatible to earlier versions.)>]
+plain(  )
+delete[delete(-)plain(* *IMPROVED* handling of new hash syntax (keys are marked as @:key@ now,)]
+delete[delete(-)plain(  colon is a separate @:operator@ token, all idents can be used as keys\))]
+delete[delete(-)plain(  See "#257":http://code.licenser.net/issues/257, thanks to WoNáDo!)]
+delete[delete(-)plain(* *ADDED* @__ENCODING__@ magic constant (Ruby 1.9\))]
+delete[delete(-)plain(* *FIXED*: Scanner no longer tries to modify the input string on Ruby 1.9.)]
+delete[delete(-)plain(  See "#260":http://code.licenser.net/issues/260, thanks to Jan Lelis!)]
+delete[delete(-)]
+insert[insert(+)plain(The command line and programmer interfaces are similar to 0.9, but the internals have completely changed.)]
+plain( )
+delete[delete(-)plain(h)eyecatcher<plain(2. Changes in 0.9.5 "Germany.rb" [2010-09-28])>]
+insert[insert(+)plain(h)eyecatcher<plain(3. General changes)>]
+plain(  )
+delete[delete(-)plain(Support for Rubinius ("#251":http://redmine.rubychan.de/issues/251\), improved mutlibyte handling, Ruby 1.9 syntax, and valid HTML.)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(h3. @Encoders::HTML@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *FIXED*: Line tokens use @span@ with @display: block@ instead of @div@, which was invalid HTML ("#255":http://redmine.rubychan.de/issues/255\).)]
+insert[insert(+)plain(* *NEW*: The new Diff scanner colorizes code inside of the diff, and highlights inline changes.)]
+insert[insert(+)plain(* *NEW*: Extended support and usage of HTML5 and CSS 3 features.)]
+insert[insert(+)plain(* *NEW*: Direct Streaming)]
+insert[insert(+)plain(* *NEW* scanners: Clojure and HAML)]
+insert[insert(+)plain(* *CHANGED*: Token classes (used as CSS classes\) are readable names; breaks you stylesheet!)]
+insert[insert(+)plain(* *IMPROVED* documentation)]
+insert[insert(+)plain(* *IMPROVED* speed: faster startup (using @autoload@\), scanning, and encoding)]
+insert[insert(+)plain(* *IMPROVED* Ruby 1.9 encodings support)]
+insert[insert(+)plain(* *IMPROVED* Tests: There are more of them now!)]
+plain( )
+delete[delete(-)plain(h3. )eyecatcher<plain(@Scanner::Scanner@)>]
+insert[insert(+)plain(h3. )eyecatcher<plain(Direct Streaming)>]
+plain(  )
+delete[delete(-)plain(* *IMPROVED* handling of encodings in Ruby 1.9: UTF-8 and Windows-1252 are checked.)]
+delete[delete(-)plain(* *NEW*: Invalid chars will be converted to @?@ in Ruby 1.9.)]
+delete[delete(-)plain(* *FIXED* @string=@ method for Rubinius. See "issue 481":http://github.com/evanphx/rubinius/issues/481 on their site.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::CSS@)]
+insert[insert(+)plain(CodeRay 1.0 introduces _Direct Streaming_ as a faster and simpler alternative to Tokens. It means that all Scanners,)]
+insert[insert(+)plain(Encoders and Filters had to be rewritten, and that older scanners using the Tokens API are no longer compatible with)]
+insert[insert(+)plain(this version.)]
+plain(  )
+delete[delete(-)plain(* *FIXED*: Don't use non-ASCII regexps.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::Diff@)]
+insert[insert(+)plain(The main benefits of this change are:)]
+plain(  )
+delete[delete(-)plain(* *FIXED*: Highlight unexpected lines as @:comment@.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::PHP@)]
+insert[insert(+)plain(* more speed (benchmarks show 10% to 50% more tokens per second compared to CodeRay 0.9\))]
+insert[insert(+)plain(* the ability to stream output into a pipe on the command line)]
+insert[insert(+)plain(* a simpler API)]
+insert[insert(+)plain(* less code)]
+plain(  )
+delete[delete(-)plain(* *FIXED*: Use @ASCII-8BIT@ encoding for now.)]
+insert[insert(+)plain(Changes related to the new tokens handling include:)]
+insert[insert(+)plain(* *CHANGED*: The Scanners now call Encoders directly; tokens are not added to a Tokens array, but are send to the)]
+insert[insert(+)plain(  Encoder as a method call. The Tokens representation (which can be seen as a cache now\) is still present, but as a)]
+insert[insert(+)plain(  special case; Tokens just encodes the given tokens into an Array for later use.)]
+insert[insert(+)plain(* *CHANGED*: The token actions (@text_token@, @begin_group@ etc.\) are now public methods of @Encoder@ and @Tokens@.)]
+insert[insert(+)plain(* *REWRITE* of all Scanners, Encoders, Filters, and Tokens.)]
+insert[insert(+)plain(* *RENAMED* @:open@ and @:close@ actions to @:begin_group@ and @:end_group@.)]
+insert[insert(+)plain(* *RENAMED* @open_token@ and @close_token@ methods to @begin_group@ and @end_group@.)]
+insert[insert(+)plain(* *NEW* method @#tokens@ allows to add several tokens to the stream. @Tokens@ and @Encoders::Encoder@ define this)]
+insert[insert(+)plain(  method.)]
+insert[insert(+)plain(* *CHANGED* The above name changes also affect the JSON, XML, and YAML encoders. CodeRay 1.0 output will be incompatible)]
+insert[insert(+)plain(  with earlier versions.)]
+insert[insert(+)plain(* *REMOVED* @TokenStream@ and the @Streamable@ API and all related features like @NotStreamableError@ are now obsolete)]
+insert[insert(+)plain(  and have been removed.)]
+plain( )
+delete[delete(-)plain(h3. )eyecatcher<plain(@Scanners::Ruby@)>]
+insert[insert(+)plain(h3. )eyecatcher<plain(Command Line)>]
+plain(  )
+delete[delete(-)plain(* *ADDED* support for some Ruby 1.9 syntax ("#254":http://redmine.rubychan.de/issues/254\):)]
+delete[delete(-)plain(** the @->@ lambda shortcut)]
+delete[delete(-)plain(** new Hash syntax using colons (@{ a: b }@\))]
+delete[delete(-)plain(* *FIXED*: Use @UTF-8@ encoding.)]
+delete[delete(-)plain(* *IMPROVED* unicode support on Ruby 1.8 ("#253":http://redmine.rubychan.de/issues/253\).)]
+delete[delete(-)plain(* *FIXED* recognition of non-ASCII identifiers in Ruby 1.9, JRuby, and Rubinius ("#253":http://redmine.rubychan.de/issues/253\).)]
+delete[delete(-)plain(* *CHANGED* heredoc recognition to ignore delimiters starting with a digit. This is incorrect, but causes less false positives.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::SQL@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *FIXED* scanning of comments; nice catch, Rubinius!)]
+delete[delete(-)plain(  ("#252":http://redmine.rubychan.de/issues/252\))]
+delete[delete(-)]
+delete[delete(-)]
+delete[delete(-)plain(h2. Changes in 0.9.4 "Ramadan" [2010-08-31])]
+delete[delete(-)plain( )]
+delete[delete(-)plain(Updated command line interface and minor scanner fixes for the Diff, HTML, and RHTML scanners.)]
+insert[insert(+)plain(The @coderay@ executable was rewritten and has a few new features:)]
+plain(  )
+delete[delete(-)eyecatcher<plain(h3. @coderay@ executable)>]
+delete[delete(-)eyecatcher<plain( )>]
+delete[delete(-)plain(* *)eyecatcher<plain(FIXED*: Partly rewritten, simplified, fixed.)>]
+delete[delete(-)eyecatcher<plain(  ("#244":http://redmine.rubychan.de/issues/244\))>]
+insert[insert(+)eyecatcher<plain(* *NEW* Ability to stream into a pipe; try @coderay file | more -r@)>]
+insert[insert(+)eyecatcher<plain(* *NEW* help)>]
+insert[insert(+)plain(* *)eyecatcher<plain(IMPROVED*: more consistent parameter handling)>]
+insert[insert(+)eyecatcher<plain(* *REMOVED* @coderay_stylesheet@ executable; use @coderay stylesheet [name]@.)>]
+plain( )
+delete[delete(-)plain(h3. @)eyecatcher<plain(Scanners::Diff)>plain(@)]
+insert[insert(+)plain(h3. @)eyecatcher<plain(Tokens)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *FIXED* handling of change headers with code on the same line as the @@ marker.)]
+delete[delete(-)plain(  ("#247":http://redmine.rubychan.de/issues/242\))]
+insert[insert(+)plain(* *NEW* methods @count@, @begin_group@, @end_group@, @begin_line@, and @end_line@.)]
+insert[insert(+)plain(* *REMOVED* methods @#stream?@, @#each_text_token@.)]
+insert[insert(+)plain(* *REMOVED* methods @#optimize@, @#fix@, @#split_into_lines@ along with their bang! variants.)]
+insert[insert(+)plain(* *REMOVED* @#text@ and @#text_size@ methods. Use the @Text@ encoder instead.)]
+insert[insert(+)plain(* *REMOVED* special implementation of @#each@ taking a filter parameter. Use @TokenKindFilter@ instead.)]
+plain( )
+delete[delete(-)plain(h3. )eyecatcher<plain(@Scanners::HTML)>plain(@)]
+insert[insert(+)plain(h3. )eyecatcher<plain(*RENAMED*: @TokenKinds)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *FIXED* a missing regexp modifier that slowed down the scanning.)]
+delete[delete(-)plain(  ("#245":http://redmine.rubychan.de/issues/245\))]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::RHTML@)]
+insert[insert(+)plain(Renamed from @Tokens::ClassOfKind@ (was also @Tokens::AbbreviationForKind@ for a while\).)]
+insert[insert(+)plain(The term "token class" is no longer used in CodeRay. Instead, tokens have _kinds_.)]
+insert[insert(+)plain(See "#122":http://odd-eyed-code.org/issues/122.)]
+plain(  )
+delete[delete(-)plain(* *FIXED* highlighting of ERB comment blocks.)]
+delete[delete(-)plain(  ("#246":http://redmine.rubychan.de/issues/246\))]
+delete[delete(-)]
+insert[insert(+)plain(* *CHANGED* all token CSS classes to readable names.)]
+insert[insert(+)plain(* *ADDED* token kinds @:filename@, @:namespace@, and @:eyecatcher@.)]
+insert[insert(+)plain(* *RENAMED* @:pre_constant@ and @:pre_type@ to @:predefined_constant@ and @predefined_type@.)]
+insert[insert(+)plain(* *RENAMED* @:oct@ and @:bin@ to @:octal@ and @binary@.)]
+insert[insert(+)plain(* *REMOVED* token kinds @:attribute_name_fat@, @:attribute_value_fat@, @:operator_fat@, @interpreted@,)]
+insert[insert(+)plain(  @:tag_fat@, @tag_special@, @:xml_text@, @:nesting_delimiter@, @:open@, and @:close@.)]
+insert[insert(+)plain(* *CHANGED*: Don't raise error for unknown token kinds unless in @$CODERAY_DEBUG@ mode.)]
+insert[insert(+)plain(* *CHANGED* the value for a token kind that is not highlighted from)]
+insert[insert(+)plain(  @:NO_HIGHLIGHT@ to @false@.)]
+plain( )
+delete[delete(-)plain(h)eyecatcher<plain(2. Changes in 0.9.3 "Eyjafjallajökull" [2010-04-18])>]
+insert[insert(+)plain(h)eyecatcher<plain(3. @Duo@)>]
+plain(  )
+delete[delete(-)plain(* *FIXED*: Documentation of Tokens.)]
+delete[delete(-)plain(  ("#218":http://redmine.rubychan.de/issues/218\))]
+delete[delete(-)plain( )]
+delete[delete(-)plain(h3. @coderay@ executable)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW*: automatic TTY detection (uses @Term@ encoder\))]
+delete[delete(-)plain(* *NEW*: optional 3rd parameter for the filename)]
+delete[delete(-)plain(* *FIXED*: Converted to UNIX format.)]
+delete[delete(-)plain(* *FIXED*: Warn about generated files.)]
+delete[delete(-)plain(* *FIXED*: Ensure line break after the output (especially for LoC counter\).)]
+insert[insert(+)plain(* *NEW* method @call@ for allowing code like @CodeRay::Duo[:python => :yaml].(code\)@ in Ruby 1.9.)]
+plain( )
+delete[delete(-)plain(h3. @)eyecatcher<plain(Scanners::JavaScript)>plain(@)]
+insert[insert(+)plain(h3. @)eyecatcher<plain(Encoders::CommentFilter)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *)eyecatcher<plain(FIXED*: Don't keep state of XML scanner between calls for E4X literals.)>]
+insert[insert(+)plain(* *)eyecatcher<plain(NEW* alias @:remove_comments@)>]
+plain( )
+delete[delete(-)plain(h3. @)eyecatcher<plain(Scanners::Java@, @Scanners::JSON)>plain(@)]
+insert[insert(+)plain(h3. @)eyecatcher<plain(Encoders::Filter)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *FIXED*: Close unfinished strings with the correct token kind.)]
+insert[insert(+)plain(* *NEW* option @tokens@.)]
+insert[insert(+)plain(* *CHANGED*: Now it simply delegates to the output.)]
+insert[insert(+)plain(* *REMOVED* @include_text_token?@ and @include_block_token?@ methods.)]
+plain( )
+delete[delete(-)]
+delete[delete(-)plain(h2. Changes in 0.9.2 "Flameeyes" [2010-03-14])]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* Basic tests and a _Rakefile_ are now included in the Gem. [Flameeyes])]
+delete[delete(-)plain(  A @doc@ task is also included.)]
+delete[delete(-)plain(* *FIXED* Use @$CODERAY_DEBUG@ for debugging instead of @$DEBUG@. [Trans])]
+delete[delete(-)plain(  ("#192":http://redmine.rubychan.de/issues/192\))]
+delete[delete(-)plain(* *REMOVED* @Term::Ansicolor@ was bundled under _lib/_, but not used. [Flameeyes])]
+delete[delete(-)plain(  ("#205":http://redmine.rubychan.de/issues/205\))]
+delete[delete(-)plain(* *WORKAROUND* for Ruby bug )]
+delete[delete(-)plain(  "#2745":http://redmine.ruby-lang.org/issues/show/2745)]
+insert[insert(+)plain(h3. @Encoders::HTML@)]
+plain(  )
+delete[delete(-)eyecatcher<plain(h3. @Encoders::Term@)>]
+insert[insert(+)eyecatcher<plain(The HTML encoder was cleaned up and simplified.)>]
+plain(  )
+delete[delete(-)plain(* *FIXED* strings are closed correctly)]
+delete[delete(-)plain(  ("#138":http://redmine.rubychan.de/issues/138\))]
+delete[delete(-)plain(* *FIXED* several token kinds had no associated color)]
+delete[delete(-)plain(  ("#139":http://redmine.rubychan.de/issues/139\))]
+delete[delete(-)plain(* *NEW* alias @terminal@)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  *NOTE:* This encoder will be renamed to @Encoders::Terminal@ in the next release.)]
+insert[insert(+)plain(* *NEW*: HTML5 and CSS 3 compatible.)]
+insert[insert(+)plain(  See "#215":http://odd-eyed-code.org/issues/215.)]
+insert[insert(+)plain(* *ADDED* support for @:line_number_anchors@.)]
+insert[insert(+)plain(  See "#208":http://odd-eyed-code.org/issues/208.)]
+insert[insert(+)plain(* *CHANGED* the default style to @:alpha@.)]
+insert[insert(+)plain(* *CHANGED*: Use double click to toggle line numbers in table mode (as single)]
+insert[insert(+)plain(  click jumps to an anchor.\))]
+insert[insert(+)plain(* *REMOVED* support for @:line_numbers => :list@.)]
+insert[insert(+)plain(* *FIXED* splitting of lines for @:line_numbers => :inline@, so that the line)]
+insert[insert(+)plain(  numbers don't get colored, too.)]
+insert[insert(+)plain(* *RENAMED* @Output#numerize@ to @#number@, which is an actual English word.)]
+plain( )
+delete[delete(-)plain(h3. @)eyecatcher<plain(Scanners::Debug)>plain(@)]
+insert[insert(+)plain(h3. @)eyecatcher<plain(Encoders::LinesOfCode)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *)eyecatcher<plain(FIXED* Don't close tokens that are not open. Send @:error@ token instea)>plain(d.)]
+insert[insert(+)plain(* *)eyecatcher<plain(CHANGED*: @compile@ and @finish@ methods are now protecte)>plain(d.)]
+plain( )
+delete[delete(-)plain(h3. )eyecatcher<plain(@Scanners::Groovy@)>]
+insert[insert(+)plain(h3. )eyecatcher<plain(*Renamed*: @Encoders::Terminal@ (was @Encoders::Term@\))>]
+plain(  )
+delete[delete(-)plain(* *FIXED* token kind of closing brackets is @:operator@ instead of @nil@)]
+delete[delete(-)plain(  ("#148":http://redmine.rubychan.de/issues/148\))]
+insert[insert(+)plain(* *RENAMED* from @Encoders::Term@, added @:term@ alias.)]
+insert[insert(+)plain(* *CLEANUP*: Use @#setup@'s @super@, don't use @:procedure@ token class.)]
+insert[insert(+)plain(* *CHANGED*: @#token@'s second parameter is no longer optional.)]
+insert[insert(+)plain(* *REMOVED* colors for obsolete token kinds.)]
+insert[insert(+)plain(* *FIXED* handling of line tokens.)]
+plain( )
+delete[delete(-)plain(h3. @)eyecatcher<plain(Scanners::PHP)>plain(@)]
+insert[insert(+)plain(h3. @)eyecatcher<plain(Encoders::Text)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *FIXED* allow @\\@ operator (namespace separator\))]
+delete[delete(-)plain(  ("#209":http://redmine.rubychan.de/issues/209\))]
+insert[insert(+)plain(* *FIXED* default behavior of stripping the trailing newline.)]
+plain( )
+delete[delete(-)plain(h3. )eyecatcher<plain(@Scanners::YAML@)>]
+insert[insert(+)plain(h3. )eyecatcher<plain(*RENAMED*: @Encoders::TokenKindFilter@ (was @Encoders::TokenClassFilter@\))>]
+plain(  )
+delete[delete(-)plain(* *)eyecatcher<plain(FIXED* doesn't send debug tokens when @$DEBUG@ is true [Trans])>]
+delete[delete(-)plain(  )eyecatcher<plain(("#149":http://redmine.rubychan.de/issues/149\))>]
+delete[delete(-)]
+insert[insert(+)plain(* *)eyecatcher<plain(NEW*: Handles token groups.)>]
+insert[insert(+)plain(  )eyecatcher<plain(See "#223":http://odd-eyed-code.org/issues/223.)>]
+insert[insert(+)eyecatcher<plain(* *RENAMED* @include_block_token?@ to @include_group?@.)>]
+plain( )
+delete[delete(-)plain(h)eyecatcher<plain(2. Changes in 0.9.1 [2009-12-31])>]
+insert[insert(+)plain(h)eyecatcher<plain(3. @Encoders::Statistic@)>]
+plain(  )
+delete[delete(-)plain(h3. Token classes)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* token classes @:complex@, @:decorator@, @:imaginary@)]
+delete[delete(-)plain(  (all for Python\))]
+delete[delete(-)plain(* *REMOVED* token class @:procedure@)]
+delete[delete(-)plain(  – use @:function@ or @:method@ instead.)]
+insert[insert(+)plain(* *CHANGED*: Tokens actions are counted separately.)]
+plain( )
+delete[delete(-)plain(h3. @)eyecatcher<plain(Tokens)>plain(@)]
+insert[insert(+)plain(h3. @)eyecatcher<plain(Scanners::Scanner)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *NEW* method @#scanner@)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  Stores the scanner.)]
+delete[delete(-)plain(* *REMOVED* methods @.write_token@, @.read_token@, @.escape@, @.unescape@)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  They were only used by the @Tokens@ encoder, which was removed also.)]
+insert[insert(+)plain(* *NEW* methods @#file_extension@ and @#encoding@.)]
+insert[insert(+)plain(* *NEW*: The @#tokenize@ method also takes an Array of Strings as source. The)]
+insert[insert(+)plain(  code is highlighted as one and split into parts of the input lengths)]
+insert[insert(+)plain(  after that using @Tokens#split_into_parts@.)]
+insert[insert(+)plain(* *NEW* method @#binary_string@)]
+insert[insert(+)plain(* *REMOVED* helper method @String#to_unix@.)]
+insert[insert(+)plain(* *REMOVED* method @#streamable?@.)]
+insert[insert(+)plain(* *REMOVED* @#marshal_load@ and @#marshal_dump@.)]
+insert[insert(+)plain(* *RENAMED* class method @normify@ to @normalize@; it also deals with encoding now.)]
+insert[insert(+)plain(* *CHANGED*: @#column@ starts counting with 1 instead of 0)]
+plain( )
+delete[delete(-)plain(h3. )eyecatcher<plain(@Encoders::Encoder)>plain(@)]
+insert[insert(+)plain(h3. )eyecatcher<plain(*NEW*: @Scanners::Clojure)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *REMOVED* Don't require the _stringio_ library.)]
+delete[delete(-)plain(* *NEW* public methods @#open_token@, @#close_token@, @#begin_line@, @#end_line@)]
+delete[delete(-)plain(  These methods are called automatically, like @#text_token@.)]
+delete[delete(-)plain(* *NEW* proteced method @#append_encoded_token_to_output@)]
+insert[insert(+)plain(Thanks to Licenser, CodeRay now supports the Clojure language.)]
+plain( )
+delete[delete(-)plain(h3. @)eyecatcher<plain(Encoders::Tokens)>plain(@)]
+insert[insert(+)plain(h3. @)eyecatcher<plain(Scanners::CSS)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *REMOVED* – use @Tokens#dump@ and @Tokens.load@.)]
+insert[insert(+)plain(* *NEW*: Rudimentary support for the @attr@, @counter@, and @counters@ functions.)]
+insert[insert(+)plain(  See "#224":http://odd-eyed-code.org/issues/224.)]
+insert[insert(+)plain(* *NEW*: Rudimentary support for CSS 3 colors.)]
+insert[insert(+)plain(* *CHANGED*: Attribute selectors are highlighted as @:attribute_name@ instead of @:string@.)]
+insert[insert(+)plain(* *CHANGED*: Comments are scanned as one token instead of three.)]
+plain( )
+delete[delete(-)plain(h3. @)eyecatcher<plain(Encoders::Filter)>plain(@)]
+insert[insert(+)plain(h3. @)eyecatcher<plain(Scanners::Debug)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *NEW*)]
+delete[delete(-)plain(  A @Filter@ encoder has another @Tokens@ instance as output.)]
+insert[insert(+)plain(* *NEW*: Support for line tokens (@begin_line@ and @end_line@ represented by @[@ and @]@.\))]
+insert[insert(+)plain(* *FIXED*: Don't send @:error@ and @nil@ tokens for buggy input any more.)]
+insert[insert(+)plain(* *FIXED*: Closes unclosed tokens at the end of @scan_tokens@.)]
+insert[insert(+)plain(* *IMPROVED*: Highlight unknown tokens as @:error@.)]
+insert[insert(+)plain(* *CHANGED*: Raises an error when trying to end an invalid token group.)]
+plain( )
+delete[delete(-)plain(h3. @)eyecatcher<plain(Encoders::TokenClassFilter)>plain(@)]
+insert[insert(+)plain(h3. @)eyecatcher<plain(Scanners::Delphi)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *NEW*)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  It takes 2 options, @:exclude@ and @:include@, that specify which token classes)]
+delete[delete(-)plain(  to include or exclude for the output. They can be a single token class,)]
+delete[delete(-)plain(  an @Array@ of classes, or the value @:all@.)]
+insert[insert(+)plain(* *FIXED*: Closes open string groups.)]
+plain( )
+delete[delete(-)plain(h3. @)eyecatcher<plain(Encoders::CommentFilter)>plain(@)]
+insert[insert(+)plain(h3. @)eyecatcher<plain(Scanners::Diff)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *NEW*)]
+insert[insert(+)plain(* *NEW*: Highlighting of code based on file names.)]
+insert[insert(+)plain(  See ticket "#52":http://odd-eyed-code.org/issues/52.)]
+plain(   )
+delete[delete(-)plain(  Removes tokens of the @:comment@ class.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Encoders::LinesOfCode@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW*)]
+insert[insert(+)plain(  Use the @:highlight_code@ option to turn this feature off. It's enabled)]
+insert[insert(+)plain(  by default.)]
+plain(   )
+delete[delete(-)plain(  Counts the lines of code according to the @KINDS_NOT_LOC@ token class list)]
+delete[delete(-)plain(  defined by the scanner. It uses the new @TokenClassFilter@.)]
+insert[insert(+)plain(  This is a very original feature. It enables multi-language highlighting for)]
+insert[insert(+)plain(  diff files, which is especially helpful for CodeRay development itself. The)]
+insert[insert(+)plain(  updated version of the scanner test suite generated .debug.diff.html files)]
+insert[insert(+)plain(  using this.)]
+plain(   )
+delete[delete(-)plain(  Alias: @:loc@, as in @tokens.loc@.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Encoders::JSON@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW*)]
+insert[insert(+)plain(  Note: This is still experimental. Tokens spanning more than one line)]
+insert[insert(+)plain(  may get highlighted incorrectly. CodeRay tries to keep scanner states)]
+insert[insert(+)plain(  between the lines and changes, but the quality of the results depend on)]
+insert[insert(+)plain(  the scanner.)]
+insert[insert(+)plain(* *NEW*: Inline change highlighting, as suggested by Eric Thomas.)]
+insert[insert(+)plain(  See ticket "#227":http://odd-eyed-code.org/issues/227 for details.)]
+plain(   )
+delete[delete(-)plain(  Outputs tokens in a simple JSON format.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Encoders::Term@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* (beta, by Rob Aldred\))]
+insert[insert(+)plain(  Use the @:inline_diff@ option to turn this feature off. It's enabled by)]
+insert[insert(+)plain(  default.)]
+plain(   )
+delete[delete(-)plain(  Outputs code highlighted for a color terminal.)]
+insert[insert(+)plain(  For single-line changes (that is, a single deleted line followed by a single)]
+insert[insert(+)plain(  inserted line\), this feature surrounds the changed parts with an)]
+insert[insert(+)plain(  @:eyecatcher@ group which appears in a more saturated background color.)]
+insert[insert(+)plain(  The implementation is quite complex, and highly experimental. The problem)]
+insert[insert(+)plain(  with multi-layer tokenizing is that the tokens have to be split into parts.)]
+insert[insert(+)plain(  If the inline change starts, say, in the middle of a string, then additional)]
+insert[insert(+)plain(  @:end_group@ and @:begin_group@ tokens must be inserted to keep the group)]
+insert[insert(+)plain(  nesting intact. The extended @Scanner#tokenize@ method and the new)]
+insert[insert(+)plain(  @Tokens#split_into_parts@ method take care of this.)]
+insert[insert(+)plain(* *NEW*: Highlight the file name in the change headers as @:filename@.)]
+insert[insert(+)plain(* *CHANGED*: Highlight unknown lines as @:comment@ instead of @:head@.)]
+insert[insert(+)plain(* *IMPROVED*: Background colors for Diff output have been optimized.)]
+plain( )
+delete[delete(-)plain(h3. @Encoders::HTML@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* option @:title@ (default value is _CodeRay output_\))]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  Setting this changes the title of the HTML page.)]
+delete[delete(-)plain(* *NEW* option @:highlight_lines@ (default: @nil@\))]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  Highlights the given set of line numbers.)]
+delete[delete(-)plain(- *REMOVED* option @:level@)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  It didn't do anything. CodeRay always outputs XHTML.)]
+insert[insert(+)plain(h3. *RENAMED*: @Scanners::ERB@ (was @Scanners::RHTML@\))]
+plain( )
+delete[delete(-)plain(h3. @Encoders::Text@)]
+insert[insert(+)plain(h3. *NEW*: @Scanners::HAML@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(It uses the new :state options of the HTML and Ruby scanners.)]
+plain(  )
+delete[delete(-)plain(* Uses @Encoder@ interface with @super@ and @#text_token@.)]
+insert[insert(+)plain(Some rare cases are not considered (like @#{...}@ snippets inside of :javascript blocks\),)]
+insert[insert(+)plain(but it highlights pretty well.)]
+plain( )
+delete[delete(-)plain(h3. @)eyecatcher<plain(Encoders::X)>plain(ML@)]
+insert[insert(+)plain(h3. @)eyecatcher<plain(Scanners::HT)>plain(ML@)]
+plain(  )
+delete[delete(-)plain(* @FIXED@ ("#94":http://redmine.rubychan.de/issues/94\))]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  It didn't work at all.)]
+insert[insert(+)plain(* *FIXED*: Closes open string groups.)]
+plain( )
+delete[delete(-)plain(h3. )eyecatcher<plain(Scanners)>]
+insert[insert(+)plain(h3. )eyecatcher<plain(@Scanners::JavaScript@)>]
+plain(  )
+delete[delete(-)plain(* *NEW* Mapped @:h@ to @:c@, @:cplusplus@ and @:'c++'@ to @:cpp@,)]
+delete[delete(-)plain(  @:ecma@, @:ecmascript@, @:ecma_script@ to @:java_script@,)]
+delete[delete(-)plain(  @:pascal@ to @:delphi@, and @:plain@ to @:plaintext@.)]
+insert[insert(+)plain(* *IMPROVED*: Added @NaN@ and @Infinity@ to list of predefined constants.)]
+insert[insert(+)plain(* *IMPROVED* recognition of RegExp literals with leading spaces.)]
+plain( )
+delete[delete(-)plain(h3. @Scanners::)eyecatcher<plain(Scanner)>plain(@)]
+insert[insert(+)plain(h3. @Scanners::)eyecatcher<plain(Java)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *NEW* constant @KINDS_NOT_LOC@)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  A list of all token classes not considered in LOC count.)]
+delete[delete(-)plain(  Added appropriate values for scanners.)]
+delete[delete(-)plain(* *NEW* method @#lang@ returns the scanner's lang, which is its @plugin_id@.)]
+delete[delete(-)plain(* *FIXED* automatic, safe UTF-8 detection _[Ruby 1.9]_)]
+delete[delete(-)plain(* *FIXED* column takes care of multibyte encodings _[Ruby 1.9]_)]
+delete[delete(-)plain(* *FIXED* is dumpable (@Tokens@ store their scanner in an @@scanner@ variable\))]
+insert[insert(+)plain(* *NEW*: Package names are highlighted as @:namespace@.)]
+insert[insert(+)plain(  See "#210":http://odd-eyed-code.org/issues/210.)]
+plain( )
+delete[delete(-)plain(h3. )eyecatcher<plain(@Scanners::Cpp)>plain(@)]
+insert[insert(+)plain(h3. )eyecatcher<plain(*REMOVED*: @Scanners::NitroXHTML)>plain(@)]
+plain(  )
+delete[delete(-)eyecatcher<plain(* *NEW* (C++\))>]
+insert[insert(+)eyecatcher<plain(Nitro is "dead":http://www.nitrohq.com/.)>]
+plain( )
+delete[delete(-)plain(h3. @Scanners::Groovy@)]
+insert[insert(+)plain(h3. *RENAMED*: @Scanners::Text@ (was @Scanners::Plaintext@\))]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *IMPROVED*: Just returns the string without scanning (faster\).)]
+plain(  )
+delete[delete(-)eyecatcher<plain(* *NEW* (beta\))>]
+insert[insert(+)eyecatcher<plain( This is much faster than scanning until @/\\z/@ in Ruby 1.8.)>]
+plain( )
+plain( h3. @Scanners::Python@)
+plain(  )
+delete[delete(-)plain(* *NEW*)]
+insert[insert(+)plain(* *CHANGED*: Docstrings are highlighted as @:comment@.)]
+insert[insert(+)plain(  See "#190":http://odd-eyed-code.org/issues/190.)]
+plain( )
+delete[delete(-)plain(h3. @Scanners::PHP@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* (based on Stefan Walk's work\))]
+insert[insert(+)plain(h3. *NEW*: @Scanners::Raydebug@)]
+plain( )
+delete[delete(-)plain(h3. @Scanners::SQL@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* (based on code by Josh Goebel\))]
+insert[insert(+)plain(Copied from @Scanners::Debug@, highlights the token dump instead of importing it. It also reacts to the @.raydebug@ file)]
+insert[insert(+)plain(name suffix now.)]
+plain( )
+delete[delete(-)plain(h3. @Scanners::)eyecatcher<plain(C)>plain(@)]
+insert[insert(+)plain(h3. @Scanners::)eyecatcher<plain(Ruby)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *IMPROVED* added a list of @:directive@ tokens that were @:reserved@ before)]
+delete[delete(-)plain(* *IMPROVED* detection of labels)]
+delete[delete(-)plain(* *IMPROVED* allow @1L@ and @1LL@ style literals)]
+insert[insert(+)plain(* *ADDED* more predefined keywords (see http://murfy.de/ruby-constants\).)]
+insert[insert(+)plain(* *IMPROVED* support for singleton method definitions.)]
+insert[insert(+)plain(  See "#147":http://odd-eyed-code.org/issues/147.)]
+insert[insert(+)plain(* *FIXED*: Don't highlight methods with a capital letter as constants)]
+insert[insert(+)plain(  (eg. @GL.PushMatrix@\).)]
+insert[insert(+)plain(* *NEW*: Highlight buggy floats (like .5\) as @:error@.)]
+insert[insert(+)plain(* *CLEANUP* of documentation, names of constants and variables, state handling.)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  Moved @StringState@ class from @patterns.rb@ into a separate file.)]
+insert[insert(+)plain(* *NEW*: Complicated rule for recognition of @foo=@ style method names.)]
+insert[insert(+)plain(* *NEW*: Handles @:keep_state@ option (a bit; experimental\).)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  Actually, Ruby checks if there is @[~>=]@, but not @=>@ following the name.)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(* *REMOVED* @EncodingError@)]
+plain( )
+delete[delete(-)plain(h3. )eyecatcher<plain(@Scanners::CSS)>plain(@)]
+insert[insert(+)plain(h3. )eyecatcher<plain(*REMOVED* @Scanners::Scheme)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *IMPROVED* element selectors are highlighted as @:type@ instead of @:keyword@)]
+insert[insert(+)plain(* It is too buggy, and nobody was using it. To be added again when it's fixed.)]
+insert[insert(+)plain(  See "#59":http://odd-eyed-code.org/issues/59.)]
+plain( )
+delete[delete(-)plain(h3. @Scanners::)eyecatcher<plain(Delphi)>plain(@)]
+insert[insert(+)plain(h3. @Scanners::)eyecatcher<plain(SQL)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *IMPROVED* Don't cache tokens in CaseIgnoringWordList.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::Java@)]
+insert[insert(+)plain(* *IMPROVED*: Extended list of keywords and functions (thanks to)]
+insert[insert(+)plain(  Joshua Galvez, Etienne Massip, and others\).)]
+plain(  )
+delete[delete(-)plain(* *IMPROVED* @assert@ is highlighted as a @:keyword@ now)]
+delete[delete(-)plain(* *IMPROVED* @const@ and @goto@ are highlighted as @:reserved@)]
+delete[delete(-)plain(* *IMPROVED* @false@, @true@, and @null@ are highlighted as @:pre_constant@)]
+delete[delete(-)plain(* *IMPROVED* @threadsafe@ is no longer a @:directive@)]
+delete[delete(-)plain(* *IMPROVED* @String@ is highlighted as a @:pre_type@)]
+delete[delete(-)plain(* *IMPROVED* built-in classes ending with _Error_ or _Exception_ are)]
+delete[delete(-)plain(  highlighted as a @:exception@ instead of @:pre_type@)]
+insert[insert(+)plain(  See "#221":http://odd-eyed-code.org/issues/221.)]
+insert[insert(+)plain(* *FIXED*: Closes open string groups.)]
+insert[insert(+)plain(* *FIXED*: Words after @.@ are always recognized as @:ident@.)]
+plain( )
+delete[delete(-)plain(h3. @Scanners::)eyecatcher<plain(JavaScript)>plain(@)]
+insert[insert(+)plain(h3. @Scanners::)eyecatcher<plain(YAML)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *NEW* a list of @PREDEFINED_CONSTANTS@ to be highlighted as @:pre_constant@)]
+delete[delete(-)plain(* *NEW* XML literals are recognized and highlighted)]
+delete[delete(-)plain(* *NEW* function name highlighting)]
+delete[delete(-)plain(* *IMPROVED* @.1@ is highlighted a number)]
+delete[delete(-)plain(* *FIXED* strings close with the correct kind when terminated unexpectedly)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @Scanners::JSON@)]
+insert[insert(+)plain(* *FIXED*: Allow spaces before colon in mappings.)]
+plain(  )
+delete[delete(-)eyecatcher<plain(* *IMPROVED* constants (@true@, @false@, @nil@\) are highlighted as @:value@)>]
+insert[insert(+)eyecatcher<plain(  See "#231":http://odd-eyed-code.org/issues/231.)>]
+plain( )
+delete[delete(-)plain(h3. @Scanners::Ruby@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *IMPROVED* @Patterns::KEYWORDS_EXPECTING_VALUE@ for more accurate)]
+delete[delete(-)plain(  @value_expected@ detection)]
+delete[delete(-)plain(* *IMPROVED* handling of @\\@ as a string delimiter)]
+delete[delete(-)plain(* *IMPROVED* handling of unicode strings; automatic switching to unicode)]
+delete[delete(-)plain(* *IMPROVED* highlighting of @self.method@ definitions)]
+delete[delete(-)plain(* *REMOVED* @Patterns::FANCY_START_SAVE@ (obsolete\))]
+delete[delete(-)plain(* *FIXED* encoding issues _[Ruby 1.9]_)]
+delete[delete(-)plain(* *FIXED* a problem in early Ruby 1.8.6 patch versions with @Regexp.escape@)]
+insert[insert(+)plain(h3. *NEW*: @Styles::Alpha@)]
+plain( )
+delete[delete(-)eyecatcher<plain(h3. @Scanners::YAML@)>]
+insert[insert(+)eyecatcher<plain(A style that uses transparent HSLA colors as defined in CSS 3. See "#199":http://odd-eyed-code.org/issues/199.)>]
+plain(  )
+delete[delete(-)plain(* *IMPROVED* indentation detection)]
+insert[insert(+)plain(It also uses the CSS 3 property @user-select: none@ to keep the user from selecting the line numbers. This is especially)]
+insert[insert(+)plain(nice for @:inline@ line numbers. See "#226":http://odd-eyed-code.org/issues/226.)]
+plain( )
+delete[delete(-)plain(h3. @)eyecatcher<plain(Styles::Cycnus)>plain(@)]
+insert[insert(+)plain(h3. @)eyecatcher<plain(WordList)>plain(@)]
+plain(  )
+delete[delete(-)eyecatcher<plain(* changed a few colors (exceptions, inline strings, predefined types\))>]
+insert[insert(+)eyecatcher<plain(Stripped down to 19 LOC.)>]
+plain( )
+delete[delete(-)plain(h3. @Plugin@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *NEW* method @#title@)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  Set and get the plugin's title. Titles can be arbitrary strings.)]
+delete[delete(-)plain(* *NEW* method @#helper@ loads helpers from different plugins)]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  Use this syntax: @helper 'other_plugin/helper_name'@)]
+insert[insert(+)plain(* *RENAMED* @CaseIgnoringWordList@ to @WordList::CaseIgnoring@.)]
+insert[insert(+)plain(* *REMOVED* caching option because it creates memory leaks.)]
+insert[insert(+)plain(* *REMOVED* block option.)]
+plain( )
+plain( h3. @FileType@)
+plain(  )
+delete[delete(-)plain(* *NEW* @FileType[]@ takes @Pathname@ instances)]
+delete[delete(-)plain(* *NEW* regonizes @.cc@, @.cpp@, @.cp@, @.cxx@, @.c++@, @.C@, @.hh@, @.hpp@, @.h++@, @.cu@ extensions (C++\))]
+insert[insert(+)plain(* *NEW*: Recognizes @.gemspec@, @.rjs@, @.rpdf@ extensions, @Gemfile@, and @Capfile@ as Ruby.)]
+plain(   )
+delete[delete(-)plain(  Thanks to Sander Cox and the TextMate C bundle.)]
+delete[delete(-)plain(* *NEW* regonizes @.pas@, @.dpr@ extensions (Delphi\))]
+delete[delete(-)plain(* *NEW* regonizes @.gvy@, @.groovy@ extensions (Groovy\))]
+delete[delete(-)plain(* *NEW* regonizes @.php@, @.php3@, @.php4@, @.php5@ extensions (PHP\))]
+delete[delete(-)plain(* *NEW* regonizes @.py@, @.py3@, @.pyw@ extensions (Python\))]
+delete[delete(-)plain(* *NEW* regonizes @.rxml@ extension (Ruby\))]
+delete[delete(-)plain(* *NEW* regonizes @.sql@ extension (SQL\))]
+delete[delete(-)plain(* File types list was sorted alphabetically.)]
+delete[delete(-)]
+delete[delete(-)plain(h3. @CaseIgnoringWordList@)]
+delete[delete(-)plain( )]
+delete[delete(-)plain(* *FIXED* ("#97":http://redmine.rubychan.de/issues/97\))]
+delete[delete(-)plain(  )]
+delete[delete(-)plain(  The default value is no longer ignored.)]
+insert[insert(+)plain(  Thanks to the authors of the TextMate Ruby bundle!)]
+insert[insert(+)plain(* *REMOVED* @FileType#shebang@ is a protected method now.)]
+insert[insert(+)]
+insert[insert(+)plain(h3. @Plugin@)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *IMPROVED*: @register_for@ sets the @plugin_id@; it can now be a @Symbol@.)]
+insert[insert(+)plain(* *ADDED* @PluginHost#const_missing@ method: Plugins are loaded automatically.)]
+insert[insert(+)plain(  Using @Scanners::JavaScript@ in your code loads @scanners/java_script.rb@.)]
+insert[insert(+)plain(* *ADDED* @#all_plugins@ method to simplify getting )]
+insert[insert(+)plain(  information about all available plugins (suggested by bnhymn\).)]
+insert[insert(+)plain(* *CHANGED* the default plugin key from @nil@ to @:default@.)]
+plain( )
+delete[delete(-)plain(h3. @)eyecatcher<plain(ForRedCloth)>plain(@)]
+insert[insert(+)plain(h3. @)eyecatcher<plain(GZip)>plain(@)]
+plain(  )
+delete[delete(-)plain(* *FIXED* for RedCloth versions 4.2.0+ ("#119":http://redmine.rubychan.de/issues/119\))]
+insert[insert(+)plain(* *MOVED* into @CodeRay@ namespace.)]
+insert[insert(+)plain(* *MOVED* file from @gzip_simple.rb@ to @gzip.rb@.)]
+insert[insert(+)plain(* *REMOVED* @String@ extensions.)]
+plain( )
+delete[delete(-)plain(h3. )eyecatcher<plain(Cleanup)>plain(s)]
+insert[insert(+)plain(h3. )eyecatcher<plain(More API change)>plain(s)]
+plain(  )
+delete[delete(-)plain(* warnings about character classes _[Ruby 1.9]_)]
+delete[delete(-)plain(* encoding issues _[Ruby 1.9]_)]
+delete[delete(-)plain(* documentation, code)]
+insert[insert(+)plain(* *FIXED* @Encoders::HTML#token@'s second parameter is no longer optional.)]
+insert[insert(+)plain(* *CHANGED* @Encoders::HTML::Output@'s API.)]
+insert[insert(+)plain(* *REMOVED* lots of unused methods.)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(The helper classes were cleaned up; see above for details.)]
+insert[insert(+)plain( )]
+insert[insert(+)plain(* *CHANGED* @Plugin@ API was simplified and stripped of all unnecessary features.)]
+insert[insert(+)plain(* *CHANGED* Moved @GZip@ and @FileType@ libraries into @CodeRay@; cleaned them up.)]
+insert[insert(+)]
+plain( )
+plain( )
+comment[plain(diff --git a/bin/coderay b/bin/coderay)]
+comment[plain(index 0dc42b7..d78cd57 100755)]
+head[head(--- )filename(a/bin/coderay)]
+head[head(+++ )filename(b/bin/coderay)]
+change<change(@@)plain( -54,17 +54,35 )change(@@)>plain( end)
+plain( def commands)
+plain(   puts <<-COMMANDS)
+plain(   general:)
+delete[delete(-)plain(    highlight   code highlighting (default command)plain(\))]
+delete[delete(-)plain(    stylesheet  print the CSS stylesheet with the given name)]
+insert[insert(+)plain(    highlight   code highlighting (default command)eyecatcher<plain(, optional)>plain(\))]
+insert[insert(+)plain(    stylesheet  print the CSS stylesheet with the given name)eyecatcher<plain( (aliases: style, css\))>]
+plain(   )
+plain(   about:)
+delete[delete(-)plain(    list [of]   list all available plugins (or just the scanners|encoders)plain(\))]
+insert[insert(+)plain(    list [of]   list all available plugins (or just the scanners|encoders)eyecatcher<plain(|styles|filetypes)>plain(\))]
+plain(     commands    print this list)
+plain(     help        show some help)
+plain(     version     print CodeRay version)
+plain(   COMMANDS)
+plain( end)
+plain( )
+insert[insert(+)plain(def print_list_of plugin_host)]
+insert[insert(+)plain(  plugins = plugin_host.all_plugins.map do |plugin|)]
+insert[insert(+)plain(    info = "  #{plugin.plugin_id}: #{plugin.title}")]
+insert[insert(+)plain(    )]
+insert[insert(+)plain(    aliases = (plugin.aliases - [:default]\).map { |key| "-#{key}" }.sort_by { |key| key.size })]
+insert[insert(+)plain(    if plugin.respond_to?(:file_extension\) || !aliases.empty?)]
+insert[insert(+)plain(      additional_info = [])]
+insert[insert(+)plain(      additional_info << aliases.join(', '\) unless aliases.empty?)]
+insert[insert(+)plain(      info << " (#{additional_info.join('; '\)}\)")]
+insert[insert(+)plain(    end)]
+insert[insert(+)plain(    )]
+insert[insert(+)plain(    info << '  <-- default' if plugin.aliases.include? :default)]
+insert[insert(+)plain(    )]
+insert[insert(+)plain(    info)]
+insert[insert(+)plain(  end)]
+insert[insert(+)plain(  puts plugins.sort)]
+insert[insert(+)plain(end)]
+insert[insert(+)]
+plain( if option? '-v', '--version')
+plain(   version)
+plain( end)
+change<change(@@)plain( -87,28 +105,32 )change(@@)>plain( when 'highlight', nil)
+plain(     when /^ff?$/)
+plain(       input_file, output_file, = *names)
+plain(     when /^f-f?$/)
+delete[delete(-)plain(      input_file, output_f)eyecatcher<plain(iletype)>plain(, output_file, = *names)]
+insert[insert(+)plain(      input_file, output_f)eyecatcher<plain(ormat)>plain(, output_file, = *names)]
+plain(     when /^-ff?$/)
+delete[delete(-)plain(      input_)eyecatcher<plain(filetype)>plain(, input_file, output_file, = *names)]
+insert[insert(+)plain(      input_)eyecatcher<plain(lang)>plain(, input_file, output_file, = *names)]
+plain(     when /^-f-f?$/)
+delete[delete(-)plain(      input_)eyecatcher<plain(filetype, input_file, output_filetype)>plain(, output_file, = *names)]
+insert[insert(+)plain(      input_)eyecatcher<plain(lang, input_file, output_format)>plain(, output_file, = *names)]
+plain(     when /^--?f?$/)
+delete[delete(-)plain(      input_)eyecatcher<plain(filetype, output_filetype)>plain(, output_file, = *names)]
+insert[insert(+)plain(      input_)eyecatcher<plain(lang, output_format)>plain(, output_file, = *names)]
+plain(     else)
+delete[delete(-)plain(      raise signature)]
+insert[insert(+)plain(      $stdout = $stderr)]
+insert[insert(+)plain(      help)]
+insert[insert(+)plain(      puts)]
+insert[insert(+)plain(      puts "Unknown parameter order: #{args.join ' '}, expected: [-language] [input] [-format] [output]")]
+insert[insert(+)plain(      exit 1)]
+plain(     end)
+plain(     )
+plain(     if input_file)
+delete[delete(-)plain(      input_)eyecatcher<plain(filetype)>plain( ||= CodeRay::FileType.fetch input_file, :text, true)]
+insert[insert(+)plain(      input_)eyecatcher<plain(lang)>plain( ||= CodeRay::FileType.fetch input_file, :text, true)]
+plain(     end)
+plain(     )
+plain(     if output_file)
+delete[delete(-)plain(      output_f)eyecatcher<plain(iletype)>plain( ||= CodeRay::FileType[output_file])]
+insert[insert(+)plain(      output_f)eyecatcher<plain(ormat)>plain( ||= CodeRay::FileType[output_file])]
+plain(     else)
+delete[delete(-)plain(      output_f)eyecatcher<plain(iletype)>plain( ||= :terminal)]
+insert[insert(+)plain(      output_f)eyecatcher<plain(ormat)>plain( ||= :terminal)]
+plain(     end)
+plain(     )
+delete[delete(-)plain(    output_f)eyecatcher<plain(iletype = :page if output_filetype)>plain(.to_s == 'html')]
+insert[insert(+)plain(    output_f)eyecatcher<plain(ormat = :page if output_format)>plain(.to_s == 'html')]
+plain(     )
+plain(     if input_file)
+plain(       input = File.read input_file)
+change<change(@@)plain( -124,9 +146,10 )change(@@)>plain( when 'highlight', nil)
+plain(           $stdout.sync = true)
+plain(           $stdout)
+plain(         end)
+delete[delete(-)plain(      CodeRay.encode(input, input_)eyecatcher<plain(filetype, output_filetype)>plain(, :out => file\))]
+insert[insert(+)plain(      CodeRay.encode(input, input_)eyecatcher<plain(lang, output_format)>plain(, :out => file\))]
+plain(       file.puts)
+plain(     rescue CodeRay::PluginHost::PluginNotFound => boom)
+insert[insert(+)plain(      $stdout = $stderr)]
+plain(       if boom.message[/CodeRay::(\\w+\)s could not load plugin :?(.*?\): /])
+plain(         puts "I don't know the #$1 \\"#$2\\".")
+plain(       else)
+change<change(@@)plain( -134,33 +157,47 )change(@@)>plain( when 'highlight', nil)
+plain(       end)
+plain(       # puts "I don't know this plugin: #{boom.message[/Could not load plugin (.*?\): /, 1]}.")
+plain(     rescue CodeRay::Scanners::Scanner::ScanError  # FIXME: rescue Errno::EPIPE)
+delete[delete(-)plain(      # )eyecatcher<plain(ignore)>]
+insert[insert(+)plain(      # )eyecatcher<plain(this is sometimes raised by pagers; ignore [TODO: wtf?])>]
+plain(     ensure)
+delete[delete(-)plain(      file.close)]
+insert[insert(+)plain(      file.close)eyecatcher<plain( if output_file)>]
+plain(     end)
+plain(   end)
+delete[delete(-)plain(when 'li)plain(st')]
+insert[insert(+)plain(when 'li)eyecatcher<plain(', 'li)>plain(st')]
+plain(   arg = args.first && args.first.downcase)
+plain(   if [nil, 's', 'sc', 'scanner', 'scanners'].include? arg)
+plain(     puts 'input languages (Scanners\):')
+delete[delete(-)plain(    scanners = CodeRay::Scanners.all_plugins.map do |plugin|)]
+delete[delete(-)plain(      aliases = (plugin.aliases - [nil]\).map { |key| "-#{key}" }.sort_by { |key| key.size })]
+delete[delete(-)plain(      "  #{plugin.lang}: #{plugin.title}#{" (.#{plugin.file_extension}; #{aliases.join(', '\)}\)" unless aliases.empty?}")]
+delete[delete(-)plain(    end)]
+delete[delete(-)plain(    puts scanners.sort)]
+delete[delete(-)plain(    puts)]
+insert[insert(+)plain(    print_list_of CodeRay::Scanners)]
+plain(   end)
+plain(   )
+plain(   if [nil, 'e', 'en', 'enc', 'encoder', 'encoders'].include? arg)
+plain(     puts 'output formats (Encoders\):')
+delete[delete(-)plain(    encoders = CodeRay::Encoders.all_plugins.map do |plugin|)]
+delete[delete(-)plain(      aliases = (plugin.aliases - [nil]\).map { |key| "-#{key}" }.sort_by { |key| key.size })]
+delete[delete(-)plain(      "  #{plugin.plugin_id}: #{plugin.title}#{" (.#{plugin.file_extension}; #{aliases.join(', '\)}\)" unless aliases.empty?}")]
+insert[insert(+)plain(    print_list_of CodeRay::Encoders)]
+insert[insert(+)plain(  end)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  if [nil, 'st', 'style', 'styles'].include? arg)]
+insert[insert(+)plain(    puts 'CSS themes for HTML output (Styles\):')]
+insert[insert(+)plain(    print_list_of CodeRay::Styles)]
+insert[insert(+)plain(  end)]
+insert[insert(+)plain(  )]
+insert[insert(+)plain(  if [nil, 'f', 'ft', 'file', 'filetype', 'filetypes'].include? arg)]
+insert[insert(+)plain(    puts 'recognized file types:')]
+insert[insert(+)plain(    )]
+insert[insert(+)plain(    filetypes = Hash.new { |h, k| h[k] = [] })]
+insert[insert(+)plain(    CodeRay::FileType::TypeFromExt.inject filetypes do |types, (ext, type\)|)]
+insert[insert(+)plain(      types[type.to_s] << ".#{ext}")]
+insert[insert(+)plain(      types)]
+insert[insert(+)plain(    end)]
+insert[insert(+)plain(    CodeRay::FileType::TypeFromName.inject filetypes do |types, (name, type\)|)]
+insert[insert(+)plain(      types[type.to_s] << name)]
+insert[insert(+)plain(      types)]
+insert[insert(+)plain(    end)]
+insert[insert(+)plain(    )]
+insert[insert(+)plain(    filetypes.sort.each do |type, exts|)]
+insert[insert(+)plain(      puts "  #{type}: #{exts.sort_by { |ext| ext.size }.join(', '\)}")]
+plain(     end)
+delete[delete(-)plain(    puts encoders.sort)]
+plain(   end)
+delete[delete(-)plain(when 'stylesheet')]
+delete[delete(-)plain(  puts CodeRay::Encoders[:html]::CSS.new(args.first)plain(\).stylesheet)]
+insert[insert(+)plain(when 'stylesheet')eyecatcher<plain(, 'style', 'css')>]
+insert[insert(+)plain(  puts CodeRay::Encoders[:html]::CSS.new(args.first)eyecatcher<plain( || :default)>plain(\).stylesheet)]
+plain( when 'commands')
+plain(   commands)
+plain( when 'help')
+comment[plain(diff --git a/coderay.gemspec b/coderay.gemspec)]
+comment[plain(index d62bf4b..0eabd66 100644)]
+head[head(--- )filename(a/coderay.gemspec)]
+head[head(+++ )filename(b/coderay.gemspec)]
+change<change(@@)plain( -5,11 +5,13 )change(@@)> ident(require) string<delimiter(')content(coderay/version)delimiter(')>
+ constant(Gem)operator(::)constant(Specification)operator(.)ident(new) keyword(do) operator(|)ident(s)operator(|)
+   ident(s)operator(.)ident(name) operator(=) string<delimiter(')content(coderay)delimiter(')>
+   
+delete[delete(-)  comment(# thanks to @Argorak for this solution)]
+delete[delete(-)  ident(revision) operator(=) integer(134) operator(+) operator(()shell<delimiter(`)content(git log --oneline | wc -l)delimiter(`)>operator(.)ident(to_i)operator(\))]
+delete[delete(-)  ident(s)operator(.)ident(version) operator(=) string<delimiter(")inline<inline_delimiter(#{)constant(CodeRay)operator(::)constant(VERSION)inline_delimiter(})>content(.)inline<inline_delimiter(#{)ident(revision)inline_delimiter(})>content(rc2)delimiter(")>]
+delete[delete(-)  ]
+delete[delete(-)  comment(# s.version = CodeRay::VERSION)]
+insert[insert(+)  keyword(if) predefined_constant(ENV)operator([)string<delimiter(')content(RELEASE)delimiter(')>operator(])]
+insert[insert(+)    ident(s)operator(.)ident(version) operator(=) constant(CodeRay)operator(::)constant(VERSION)]
+insert[insert(+)  keyword(else)]
+insert[insert(+)    comment(# thanks to @Argorak for this solution)]
+insert[insert(+)    ident(revision) operator(=) integer(134) operator(+) operator(()shell<delimiter(`)content(git log --oneline | wc -l)delimiter(`)>operator(.)ident(to_i)operator(\))]
+insert[insert(+)    ident(s)operator(.)ident(version) operator(=) string<delimiter(")inline<inline_delimiter(#{)constant(CodeRay)operator(::)constant(VERSION)inline_delimiter(})>content(.)inline<inline_delimiter(#{)ident(revision)inline_delimiter(})>content(rc3)delimiter(")>]
+insert[insert(+)  keyword(end)]
+   
+   ident(s)operator(.)ident(authors)     operator(=) operator([)string<delimiter(')content(Kornelius Kalnbach)delimiter(')>operator(])
+   ident(s)operator(.)ident(email)       operator(=) operator([)string<delimiter(')content(murphy@rubychan.de)delimiter(')>operator(])
+change<change(@@)plain( -18,19 +20,13 )change(@@)> constant(Gem)operator(::)constant(Specification)operator(.)ident(new) keyword(do) operator(|)ident(s)operator(|)
+   ident(s)operator(.)ident(description) operator(=) string<delimiter(')content(Fast and easy syntax highlighting for selected languages, written in Ruby. Comes with RedCloth integration and LOC counter.)delimiter(')>
+   
+   ident(s)operator(.)ident(platform)              operator(=) constant(Gem)operator(::)constant(Platform)operator(::)constant(RUBY)
+delete[delete(-)  ident(s)operator(.)ident(required_ruby_version) operator(=) string<delimiter(')content(>= 1.8.7)delimiter(')>]
+delete[delete(-)  ]
+delete[delete(-)  comment(# s.add_dependency "paint", '~> 0.8.2')]
+insert[insert(+)  ident(s)operator(.)ident(required_ruby_version) operator(=) string<delimiter(')content(>= 1.8.6)delimiter(')>]
+   
+delete[delete(-)  comment(# s.files         = `git ls-files`.split("\\n"\))]
+delete[delete(-)  comment(# s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\\n"\))]
+delete[delete(-)  comment(# s.executables   = `git ls-files -- bin/*`.split("\\n"\).map { |f| File.basename(f\) })]
+delete[delete(-)  comment(# s.require_paths = ["lib"])]
+   ident(readme_file) operator(=) string<delimiter(')content(README_INDEX.rdoc)delimiter(')>
+   
+delete[delete(-)  ident(s)operator(.)ident(files)         operator(=) eyecatcher<constant(Dir)operator([)string<delimiter(')content(lib/**/*.rb)delimiter(')>operator(]) operator(+) string<delimiter(%W()content(Rakefile )inline<inline_delimiter(#{)ident(readme_file)inline_delimiter(})>content( LICENSE)delimiter(\))> operator(+) constant(Dir)operator([)string<delimiter(')content(test/functional/*.rb)delimiter(')>operator(])>]
+delete[delete(-)  ident(s)operator(.)ident(test_files)    operator(=) eyecatcher<constant(Dir)operator([)string<delimiter(')content(test/functional/*.rb)delimiter(')>operator(])>]
+delete[delete(-)  ident(s)operator(.)ident(executables)   operator(=) eyecatcher<operator([)string<delimiter(')content(coderay)delimiter(')>operator(])>]
+insert[insert(+)  ident(s)operator(.)ident(files)         operator(=) shell<>eyecatcher<shell<delimiter(`)content(git ls-files -- lib/* test/functional/* Rakefile )inline<inline_delimiter(#{)ident(readme_file)inline_delimiter(})>content( LICENSE)delimiter(`)>operator(.)ident(split)operator(()string<delimiter(")char(\\n)delimiter(")>operator(\))>]
+insert[insert(+)  ident(s)operator(.)ident(test_files)    operator(=) shell<>eyecatcher<shell<delimiter(`)content(git ls-files --       test/functional/*)delimiter(`)>operator(.)ident(split)operator(()string<delimiter(")char(\\n)delimiter(")>operator(\))>]
+insert[insert(+)  ident(s)operator(.)ident(executables)   operator(=) shell<>eyecatcher<shell<delimiter(`)content(git ls-files -- bin/*)delimiter(`)>operator(.)ident(split)operator(()string<delimiter(")char(\\n)delimiter(")>operator(\))operator(.)ident(map) operator({) operator(|)ident(f)operator(|) constant(File)operator(.)ident(basename)operator(()ident(f)operator(\)) operator(})>]
+   ident(s)operator(.)ident(require_paths) operator(=) operator([)string<delimiter(')content(lib)delimiter(')>operator(])
+   
+   ident(s)operator(.)ident(rubyforge_project) operator(=) ident(s)operator(.)ident(name)
+comment[plain(diff --git a/etc/CodeRay.tmproj b/etc/CodeRay.tmproj)]
+comment[plain(deleted file mode 100644)]
+comment[plain(index b63f332..0000000)]
+head[head(--- )filename(a/etc/CodeRay.tmproj)]
+head[head(+++ )filename(/dev/null)]
+change[change(@@)plain( -1,184 +0,0 )change(@@)]
+delete[delete(-)preprocessor(<?xml version="1.0" encoding="UTF-8"?>)]
+delete[delete(-)doctype(<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">)]
+delete[delete(-)tag(<plist) attribute_name(version)operator(=)string<delimiter(")content(1.0)delimiter(")>tag(>)]
+delete[delete(-)tag(<dict>)]
+delete[delete(-)	tag(<key>)plain(documents)tag(</key>)]
+delete[delete(-)	tag(<array>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(expanded)tag(</key>)]
+delete[delete(-)			tag(<true)tag(/>)]
+delete[delete(-)			tag(<key>)plain(name)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(lib)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(regexFolderFilter)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(!.*/(\\.[^/]*|CVS|_darcs|\\{arch\\}|blib|.*~\\.nib|.*\\.(framework|app|pbproj|pbxproj|xcode(proj\)?|bundle\)\)$)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(sourceDirectory)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../lib)tag(</string>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(name)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(bin)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(regexFolderFilter)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(!.*/(\\.[^/]*|CVS|_darcs|\\{arch\\}|blib|.*~\\.nib|.*\\.(framework|app|pbproj|pbxproj|xcode(proj\)?|bundle\)\)$)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(sourceDirectory)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../bin)tag(</string>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../coderay.gemspec)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)			tag(<date>)plain(2011-08-23T02:18:44Z)tag(</date>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../Changes-1.0.textile)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)			tag(<date>)plain(2011-09-08T23:01:08Z)tag(</date>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../README_INDEX.rdoc)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)			tag(<date>)plain(2011-08-19T02:40:24Z)tag(</date>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../README.textile)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)			tag(<date>)plain(2011-08-19T02:38:26Z)tag(</date>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../.travis.yml)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)			tag(<date>)plain(2011-08-19T02:21:33Z)tag(</date>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../Changes.textile)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)			tag(<date>)plain(2011-08-19T01:04:06Z)tag(</date>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../FOLDERS)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)			tag(<date>)plain(2010-05-12T09:03:46Z)tag(</date>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../TODO)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)			tag(<date>)plain(2010-06-27T05:41:28Z)tag(</date>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(name)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(etc)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(regexFolderFilter)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(!.*/(\\.[^/]*|CVS|_darcs|_MTN|\\{arch\\}|blib|.*~\\.nib|.*\\.(framework|app|pbproj|pbxproj|xcode(proj\)?|bundle|log|aux\)\)$)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(sourceDirectory)tag(</key>)]
+delete[delete(-)			tag(<string>)tag(</string>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../IDEA)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)			tag(<date>)plain(2010-03-31T03:59:05Z)tag(</date>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../LICENSE)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)			tag(<date>)plain(2010-09-19T16:21:59Z)tag(</date>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(name)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(rake_helpers)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(regexFolderFilter)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(!.*/(\\.[^/]*|CVS|_darcs|\\{arch\\}|blib|.*~\\.nib|.*\\.(framework|app|pbproj|pbxproj|xcode(proj\)?|bundle\)\)$)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(sourceDirectory)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../rake_helpers)tag(</string>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(name)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(rake_tasks)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(regexFolderFilter)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(!.*/(\\.[^/]*|CVS|_darcs|\\{arch\\}|blib|.*~\\.nib|.*\\.(framework|app|pbproj|pbxproj|xcode(proj\)?|bundle\)\)$)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(sourceDirectory)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../rake_tasks)tag(</string>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../Gemfile)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)			tag(<date>)plain(2011-08-19T01:16:24Z)tag(</date>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../Gemfile.lock)tag(</string>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../Rakefile)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)			tag(<date>)plain(2011-08-23T02:18:45Z)tag(</date>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(name)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(executable)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(regexFolderFilter)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(!.*/(\\.[^/]*|CVS|vendor/plugins|index|doc|public/images|_darcs|_MTN|\\{arch\\}|blib|coverage|.*~\\.nib|.*\\.(framework|app|pbproj|pbxproj|xcode(proj\)?|bundle|log|aux|gem\)\)$)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(sourceDirectory)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../test/executable)tag(</string>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(name)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(functional)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(regexFolderFilter)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(!.*/(\\.[^/]*|CVS|_darcs|\\{arch\\}|blib|.*~\\.nib|.*\\.(framework|app|pbproj|pbxproj|xcode(proj\)?|bundle\)\)$)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(sourceDirectory)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../test/functional)tag(</string>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(children)tag(</key>)]
+delete[delete(-)			tag(<array>)]
+delete[delete(-)				tag(<dict>)]
+delete[delete(-)					tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)					tag(<string>)plain(../test/scanners/coderay_suite.rb)tag(</string>)]
+delete[delete(-)					tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)					tag(<date>)plain(2011-08-19T03:16:08Z)tag(</date>)]
+delete[delete(-)				tag(</dict>)]
+delete[delete(-)				tag(<dict>)]
+delete[delete(-)					tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)					tag(<string>)plain(../test/scanners/suite.rb)tag(</string>)]
+delete[delete(-)					tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)					tag(<date>)plain(2011-08-19T00:50:31Z)tag(</date>)]
+delete[delete(-)				tag(</dict>)]
+delete[delete(-)			tag(</array>)]
+delete[delete(-)			tag(<key>)plain(name)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(scanners)tag(</string>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(name)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(unit)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(regexFolderFilter)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(!.*/(\\.[^/]*|CVS|vendor/plugins|index|doc|public/images|_darcs|_MTN|\\{arch\\}|blib|coverage|.*~\\.nib|.*\\.(framework|app|pbproj|pbxproj|xcode(proj\)?|bundle|log|aux|gem\)\)$)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(sourceDirectory)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../test/unit)tag(</string>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)		tag(<dict>)]
+delete[delete(-)			tag(<key>)plain(filename)tag(</key>)]
+delete[delete(-)			tag(<string>)plain(../bench/bench.rb)tag(</string>)]
+delete[delete(-)			tag(<key>)plain(lastUsed)tag(</key>)]
+delete[delete(-)			tag(<date>)plain(2011-08-18T23:38:33Z)tag(</date>)]
+delete[delete(-)		tag(</dict>)]
+delete[delete(-)	tag(</array>)]
+delete[delete(-)	tag(<key>)plain(fileHierarchyDrawerWidth)tag(</key>)]
+delete[delete(-)	tag(<integer>)plain(204)tag(</integer>)]
+delete[delete(-)	tag(<key>)plain(metaData)tag(</key>)]
+delete[delete(-)	tag(<dict)tag(/>)]
+delete[delete(-)	tag(<key>)plain(showFileHierarchyDrawer)tag(</key>)]
+delete[delete(-)	tag(<true)tag(/>)]
+delete[delete(-)	tag(<key>)plain(windowFrame)tag(</key>)]
+delete[delete(-)	tag(<string>)plain({{0, 4}, {1066, 774}})tag(</string>)]
+delete[delete(-)tag(</dict>)]
+delete[delete(-)tag(</plist>)]
+comment[plain(diff --git a/etc/grafix/pie_graph.rb b/etc/grafix/pie_graph.rb)]
+comment[plain(index 0463bb8..f34a68f 100644)]
+head[head(--- )filename(a/etc/grafix/pie_graph.rb)]
+head[head(+++ )filename(b/etc/grafix/pie_graph.rb)]
+change<change(@@)plain( -125,7 +125,7 )change(@@)> ident(script)operator(.)ident(aculo)operator(.)ident(us)  float(225.6)key(K)operator(:) ident(incremental)operator(,) ident(shuffled)operator(,) ident(complete)operator(,) ident(identity)operator(,) ident(highlighting)
+      ident(trace)operator(-)ident(test)  float(151.1)key(K)operator(:) ident(incremental)operator(,) ident(shuffled)operator(,) ident(complete)operator(,) ident(identity)operator(,) ident(highlighting)operator(,) ident(finished) keyword(in)  float(0.41)ident(s) operator(() integer(133) constant(Ktok)operator(/)ident(s)operator(\))operator(.)
+             ident(xml)    float(0.1)key(K)operator(:) ident(incremental)operator(,) ident(shuffled)operator(,) ident(ticket) integer(?,) ident(identity)operator(,) ident(highlighting)operator(,) ident(finished) keyword(in)  float(0.00)ident(s)operator(.)
+             constant(KNOWN) key(ISSUE)operator(:) constant(JavaScript) ident(scanner) ident(is) ident(confused) ident(by) ident(nested) constant(XML) ident(literals)operator(.)
+delete[delete(-)                         constant(No) ident(ticket) ident(yet)operator(.) ident(Visit) key(http)operator(:)regexp<delimiter(/)delimiter(/)>eyecatcher<ident(redmine)operator(.)ident(rubychan)operator(.)ident(de)>operator(/)ident(projects)operator(/)ident(coderay)operator(/)ident(issues)operator(/)ident(new)operator(.)]
+insert[insert(+)                         constant(No) ident(ticket) ident(yet)operator(.) ident(Visit) key(http)operator(:)regexp<delimiter(/)delimiter(/)>eyecatcher<regexp<modifier(o)>ident(dd)operator(-)ident(eyed)operator(-)ident(code)operator(.)ident(org)>operator(/)ident(projects)operator(/)ident(coderay)operator(/)ident(issues)operator(/)ident(new)operator(.)]
+ constant(Finished) keyword(in) float(10.07)ident(s)operator(.)
+ operator(.)
+     operator(>>) constant(Testing) constant(JSON) ident(scanner) operator(<<)
+comment[plain(diff --git a/lib/coderay.rb b/lib/coderay.rb)]
+comment[plain(index 2ae58d8..c897220 100644)]
+head[head(--- )filename(a/lib/coderay.rb)]
+head[head(+++ )filename(b/lib/coderay.rb)]
+change<change(@@)plain( -134,6 +134,7 )change(@@)> keyword(module) class(CodeRay)
+   
+   comment(# Tokens)
+   ident(autoload) symbol(:Tokens)operator(,) string<delimiter(')content(coderay/tokens)delimiter(')>
+insert[insert(+)  ident(autoload) symbol(:TokensProxy)operator(,) string<delimiter(')content(coderay/tokens_proxy)delimiter(')>]
+   ident(autoload) symbol(:TokenKinds)operator(,) string<delimiter(')content(coderay/token_kinds)delimiter(')>
+   
+   comment(# Plugin system)
+change<change(@@)plain( -159,7 +160,7 )change(@@)> keyword(module) class(CodeRay)
+     comment(# See also demo/demo_simple.)
+     keyword(def) method(scan) ident(code)operator(,) ident(lang)operator(,) ident(options) operator(=) operator({)operator(})operator(,) operator(&)ident(block)
+       comment(# FIXME: return a proxy for direct-stream encoding)
+delete[delete(-)      eyecatcher<ident(scanner)operator(()ident(lang)operator(,) ident(options)operator(,) operator(&)ident(block)operator(\))operator(.)ident(tokenize) ident(code)>]
+insert[insert(+)      eyecatcher<constant(TokensProxy)operator(.)ident(new) ident(code)operator(,) ident(lang)operator(,) ident(options)operator(,) ident(block)>]
+     keyword(end)
+     
+     comment(# Scans +filename+ (a path to a code file\) with the Scanner for +lang+.)
+change<change(@@)plain( -176,7 +177,7 )change(@@)> keyword(module) class(CodeRay)
+     keyword(def) method(scan_file) ident(filename)operator(,) ident(lang) operator(=) symbol(:auto)operator(,) ident(options) operator(=) operator({)operator(})operator(,) operator(&)ident(block)
+       ident(lang) operator(=) constant(FileType)operator(.)ident(fetch) ident(filename)operator(,) symbol(:text)operator(,) predefined_constant(true) keyword(if) ident(lang) operator(==) symbol(:auto)
+       ident(code) operator(=) constant(File)operator(.)ident(read) ident(filename)
+delete[delete(-)      ident(scan) ident(code)operator(,) ident(lang)operator(,) ident(options)eyecatcher< operator(=) operator({)operator(})>operator(,) operator(&)ident(block)]
+insert[insert(+)      ident(scan) ident(code)operator(,) ident(lang)operator(,) ident(options)operator(,) operator(&)ident(block)]
+     keyword(end)
+     
+     comment(# Encode a string.)
+comment[plain(diff --git a/lib/coderay/encoder.rb b/lib/coderay/encoder.rb)]
+comment[plain(index cc331d1..d2d6c7e 100644)]
+head[head(--- )filename(a/lib/coderay/encoder.rb)]
+head[head(+++ )filename(b/lib/coderay/encoder.rb)]
+change<change(@@)plain( -34,7 +34,7 )change(@@)> keyword(module) class(CodeRay)
+         comment(# downcase class name instead.)
+         keyword(def) method(const_missing) ident(sym)
+           keyword(if) ident(sym) operator(==) symbol(:FILE_EXTENSION)
+delete[delete(-)            operator(()instance_variable(@plugin_id) operator(||) ident(name)operator([)regexp<delimiter(/)char(\\w)content(+$)delimiter(/)>operator(])operator(.)ident(downcase)operator(\))operator(.)ident(to_s)]
+insert[insert(+)            operator(()eyecatcher<keyword(defined?)operator(()instance_variable(@plugin_id)operator(\)) operator(&&) >instance_variable(@plugin_id) operator(||) ident(name)operator([)regexp<delimiter(/)char(\\w)content(+$)delimiter(/)>operator(])operator(.)ident(downcase)operator(\))operator(.)ident(to_s)]
+           keyword(else)
+             keyword(super)
+           keyword(end)
+comment[plain(diff --git a/lib/coderay/encoders/html/output.rb b/lib/coderay/encoders/html/output.rb)]
+comment[plain(index 298921e..9132d94 100644)]
+head[head(--- )filename(a/lib/coderay/encoders/html/output.rb)]
+head[head(+++ )filename(b/lib/coderay/encoders/html/output.rb)]
+change<change(@@)plain( -140,10 +140,18 )change(@@)> keyword(module) class(Encoders)
+   ident(text)operator(-)key(decoration)operator(:) ident(inherit)operator(;)
+   key(color)operator(:) ident(inherit)operator(;)
+ operator(})
+insert[insert(+)ident(body) operator({)]
+insert[insert(+)  ident(background)operator(-)key(color)operator(:) ident(white)operator(;)]
+insert[insert(+)  key(padding)operator(:) integer(0)operator(;)]
+insert[insert(+)  key(margin)operator(:) integer(0)operator(;)]
+insert[insert(+)operator(})]
+ operator(<)operator(%)constant(CSS)operator(%)operator(>)
+insert[insert(+)operator(.)ident(CodeRay) operator({)]
+insert[insert(+)  key(border)operator(:) ident(none)operator(;)]
+insert[insert(+)operator(})]
+   operator(<)regexp<delimiter(/)content(style>)>
+regexp<content( <)delimiter(/)>ident(head)operator(>)
+delete[delete(-)operator(<)ident(body)eyecatcher< ident(style)operator(=)string<delimiter(")content(background-color: white;)delimiter(")>>operator(>)]
+insert[insert(+)operator(<)ident(body)operator(>)]
+ 
+ operator(<)operator(%)constant(CONTENT)operator(%)operator(>)
+ operator(<)regexp<delimiter(/)content(body>)>
+comment[plain(diff --git a/lib/coderay/encoders/json.rb b/lib/coderay/encoders/json.rb)]
+comment[plain(index 0a95397..a9e40dc 100644)]
+head[head(--- )filename(a/lib/coderay/encoders/json.rb)]
+head[head(+++ )filename(b/lib/coderay/encoders/json.rb)]
+change<change(@@)plain( -21,8 +21,8 )change(@@)> keyword(module) class(Encoders)
+       ident(require) string<delimiter(')content(json)delimiter(')>
+     keyword(rescue) constant(LoadError)
+       keyword(begin)
+delete[delete(-)        ident(require) string<delimiter(')content(rubygems)delimiter(')>]
+delete[delete(-)        ident(gem) string<>eyecatcher<string<delimiter(")content(json)delimiter(")>>]
+insert[insert(+)        ident(require) string<delimiter(')content(rubygems)delimiter(')>eyecatcher< keyword(unless) keyword(defined?) constant(Gem)>]
+insert[insert(+)        ident(gem) string<>eyecatcher<string<delimiter(')content(json)delimiter(')>>]
+         ident(require) string<delimiter(')content(json)delimiter(')>
+       keyword(rescue) constant(LoadError)
+         global_variable($stderr)operator(.)ident(puts) string<delimiter(")content(The JSON encoder needs the JSON library.)char(\\n)delimiter(")> \
+comment[plain(diff --git a/lib/coderay/helpers/file_type.rb b/lib/coderay/helpers/file_type.rb)]
+comment[plain(index 7b9939c..cbe0bfc 100644)]
+head[head(--- )filename(a/lib/coderay/helpers/file_type.rb)]
+head[head(+++ )filename(b/lib/coderay/helpers/file_type.rb)]
+change<change(@@)plain( -84,6 +84,7 )change(@@)> keyword(module) class(CodeRay)
+       string<delimiter(')content(css)delimiter(')>      operator(=)operator(>) symbol(:css)operator(,)
+       string<delimiter(')content(diff)delimiter(')>     operator(=)operator(>) symbol(:diff)operator(,)
+       string<delimiter(')content(dpr)delimiter(')>      operator(=)operator(>) symbol(:delphi)operator(,)
+insert[insert(+)      string<delimiter(')content(erb)delimiter(')>      operator(=)operator(>) symbol(:erb)operator(,)]
+       string<delimiter(')content(gemspec)delimiter(')>  operator(=)operator(>) symbol(:ruby)operator(,)
+       string<delimiter(')content(groovy)delimiter(')>   operator(=)operator(>) symbol(:groovy)operator(,)
+       string<delimiter(')content(gvy)delimiter(')>      operator(=)operator(>) symbol(:groovy)operator(,)
+comment[plain(diff --git a/lib/coderay/scanners/java/builtin_types.rb b/lib/coderay/scanners/java/builtin_types.rb)]
+comment[plain(index 8087edd..d1b8b73 100644)]
+head[head(--- )filename(a/lib/coderay/scanners/java/builtin_types.rb)]
+head[head(+++ )filename(b/lib/coderay/scanners/java/builtin_types.rb)]
+change<change(@@)plain( -3,6 +3,7 )change(@@)> keyword(module) class(Scanners)
+   
+   keyword(module) class(Java::BuiltinTypes)  comment(# :nodoc:)
+     
+insert[insert(+)    comment(#:nocov:)]
+     constant(List) operator(=) string<delimiter(%w[)>
+string<content(       AbstractAction AbstractBorder AbstractButton AbstractCellEditor AbstractCollection)>
+string<content(       AbstractColorChooserPanel AbstractDocument AbstractExecutorService AbstractInterruptibleChannel)>
+change<change(@@)plain( -412,6 +413,7 )change(@@)> keyword(module) class(Scanners)
+       constant(XPathFactoryConfigurationException) constant(XPathFunction) constant(XPathFunctionException) constant(XPathFunctionResolver)
+       constant(XPathVariableResolver) constant(ZipEntry) constant(ZipException) constant(ZipFile) constant(ZipInputStream) constant(ZipOutputStream) constant(ZoneView)
+     operator(])
+insert[insert(+)    comment(#:nocov:)]
+     
+   keyword(end)
+   
+comment[plain(diff --git a/lib/coderay/scanners/yaml.rb b/lib/coderay/scanners/yaml.rb)]
+comment[plain(index 5e74f2f..96f4e93 100644)]
+head[head(--- )filename(a/lib/coderay/scanners/yaml.rb)]
+head[head(+++ )filename(b/lib/coderay/scanners/yaml.rb)]
+change<change(@@)plain( -76,7 +76,7 )change(@@)> keyword(module) class(Scanners)
+           keyword(when) ident(match) operator(=) ident(scan)operator(()regexp<delimiter(/)content([,{})char(\\[)char(\\])content(])delimiter(/)>operator(\))
+             ident(encoder)operator(.)ident(text_token) ident(match)operator(,) symbol(:operator)
+             keyword(next)
+delete[delete(-)          keyword(when) ident(state) operator(==) symbol(:initial) operator(&&) ident(match) operator(=) ident(scan)operator(()regexp<delimiter(/)content([)>eyecatcher<regexp<char(\\w)content(.(\))>>regexp<content( ]*)char(\\S)content((?= *:(?: |$\)\))delimiter(/)>operator(\))]
+insert[insert(+)          keyword(when) ident(state) operator(==) symbol(:initial) operator(&&) ident(match) operator(=) ident(scan)operator(()regexp<delimiter(/)content([)>eyecatcher<regexp<content(-)char(\\w)content(.(\))char(\\/)>>regexp<content( ]*)char(\\S)content((?= *:(?: |$\)\))delimiter(/)>operator(\))]
+             ident(encoder)operator(.)ident(text_token) ident(match)operator(,) symbol(:key)
+             ident(key_indent) operator(=) ident(column)operator(()ident(pos) operator(-) ident(match)operator(.)ident(size)operator(\)) operator(-) integer(1)
+             ident(state) operator(=) symbol(:colon)
+comment[plain(diff --git a/lib/coderay/styles/alpha.rb b/lib/coderay/styles/alpha.rb)]
+comment[plain(index 130906b..8506d10 100644)]
+head[head(--- )filename(a/lib/coderay/styles/alpha.rb)]
+head[head(+++ )filename(b/lib/coderay/styles/alpha.rb)]
+change<change(@@)plain( -45,7 +45,6 )change(@@)> ident(table)operator(.)ident(CodeRay) ident(td) operator({) key(padding)operator(:) integer(2)ident(px) integer(4)ident(px)operator(;) ident(vertical)operator(-)key(align)operator(:) ident(top)operator(;) operator(})
+ operator(.)ident(CodeRay) ident(span)operator(.)ident(line)operator(-)ident(numbers) operator({) key(padding)operator(:) integer(0)ident(px) integer(4)ident(px)operator(;) operator(})
+ operator(.)ident(CodeRay) operator(.)ident(line) operator({) key(display)operator(:) ident(block)operator(;) key(float)operator(:) ident(left)operator(;) key(width)operator(:) integer(100)operator(%)operator(;) operator(})
+ operator(.)ident(CodeRay) operator(.)ident(code) operator({) key(width)operator(:) integer(100)operator(%)operator(;) operator(})
+delete[delete(-)operator(.)ident(CodeRay) operator(.)ident(code) ident(pre) operator({) key(overflow)operator(:) ident(auto)operator(;) operator(})]
+     constant(MAIN)
+ 
+     constant(TOKEN_COLORS) operator(=) string<delimiter(<<-'TOKENS')>
+change<change(@@)plain( -61,7 +60,7 )change(@@)> ident(table)operator(.)ident(CodeRay) ident(td) operator({) key(padding)operator(:) integer(2)ident(px) integer(4)ident(px)operator(;) ident(vertical)operator(-)key(align)operator(:) ident(top)operator(;) operator(})
+ operator(.)ident(class) operator({) key(color)operator(:)comment(#B06; font-weight:bold })
+ operator(.)ident(class)operator(-)ident(variable) operator({) key(color)operator(:)comment(#369 })
+ operator(.)ident(color) operator({) key(color)operator(:)comment(#0A0 })
+delete[delete(-)operator(.)ident(comment) operator({) key(color)operator(:)comment(#)eyecatcher<comment(888)>comment( })]
+insert[insert(+)operator(.)ident(comment) operator({) key(color)operator(:)comment(#)eyecatcher<comment(777)>comment( })]
+ operator(.)ident(comment) operator(.)ident(char) operator({) key(color)operator(:)comment(#444 })
+ operator(.)ident(comment) operator(.)ident(delimiter) operator({) key(color)operator(:)comment(#444 })
+ operator(.)ident(complex) operator({) key(color)operator(:)comment(#A08 })
+change<change(@@)plain( -83,7 +82,7 )change(@@)> ident(table)operator(.)ident(CodeRay) ident(td) operator({) key(padding)operator(:) integer(2)ident(px) integer(4)ident(px)operator(;) ident(vertical)operator(-)key(align)operator(:) ident(top)operator(;) operator(})
+ operator(.)ident(hex) operator({) key(color)operator(:)comment(#02b })
+ operator(.)ident(imaginary) operator({) key(color)operator(:)comment(#f00 })
+ operator(.)ident(include) operator({) key(color)operator(:)comment(#B44; font-weight:bold })
+delete[delete(-)operator(.)ident(inline) operator({) ident(background)operator(-)key(color)operator(:) ident(hsla)operator(()integer(0)operator(,)integer(0)operator(%)operator(,)integer(0)operator(%)operator(,)float(0.)eyecatcher<float(1)>operator(\))operator(;) key(color)operator(:) ident(black) operator(})]
+insert[insert(+)operator(.)ident(inline) operator({) ident(background)operator(-)key(color)operator(:) ident(hsla)operator(()integer(0)operator(,)integer(0)operator(%)operator(,)integer(0)operator(%)operator(,)float(0.)eyecatcher<float(07)>operator(\))operator(;) key(color)operator(:) ident(black) operator(})]
+ operator(.)ident(inline)operator(-)ident(delimiter) operator({) ident(font)operator(-)key(weight)operator(:) ident(bold)operator(;) key(color)operator(:) comment(#666 })
+ operator(.)ident(instance)operator(-)ident(variable) operator({) key(color)operator(:)comment(#33B })
+ operator(.)ident(integer)  operator({) key(color)operator(:)comment(#00D })
+change<change(@@)plain( -104,16 +103,16 )change(@@)> ident(table)operator(.)ident(CodeRay) ident(td) operator({) key(padding)operator(:) integer(2)ident(px) integer(4)ident(px)operator(;) ident(vertical)operator(-)key(align)operator(:) ident(top)operator(;) operator(})
+ operator(.)ident(regexp) operator(.)ident(content) operator({) key(color)operator(:)comment(#808 })
+ operator(.)ident(regexp) operator(.)ident(delimiter) operator({) key(color)operator(:)comment(#404 })
+ operator(.)ident(regexp) operator(.)ident(modifier) operator({) key(color)operator(:)comment(#C2C })
+delete[delete(-)operator(.)ident(regexp) operator({) ident(background)operator(-)key(color)operator(:)ident(hsla)operator(()integer(300)operator(,)integer(100)operator(%)operator(,)integer(50)operator(%)operator(,)float(0.0)eyecatcher<float(9)>operator(\))operator(;) operator(})]
+insert[insert(+)operator(.)ident(regexp) operator({) ident(background)operator(-)key(color)operator(:)ident(hsla)operator(()integer(300)operator(,)integer(100)operator(%)operator(,)integer(50)operator(%)operator(,)float(0.0)eyecatcher<float(6)>operator(\))operator(;) operator(})]
+ operator(.)ident(reserved) operator({) key(color)operator(:)comment(#080; font-weight:bold })
+ operator(.)ident(shell) operator(.)ident(content) operator({) key(color)operator(:)comment(#2B2 })
+ operator(.)ident(shell) operator(.)ident(delimiter) operator({) key(color)operator(:)comment(#161 })
+delete[delete(-)operator(.)ident(shell) operator({) ident(background)operator(-)key(color)operator(:)ident(hsla)operator(()integer(120)operator(,)integer(100)operator(%)operator(,)integer(50)operator(%)operator(,)float(0.0)eyecatcher<float(9)>operator(\))operator(;) operator(})]
+insert[insert(+)operator(.)ident(shell) operator({) ident(background)operator(-)key(color)operator(:)ident(hsla)operator(()integer(120)operator(,)integer(100)operator(%)operator(,)integer(50)operator(%)operator(,)float(0.0)eyecatcher<float(6)>operator(\))operator(;) operator(})]
+ operator(.)ident(string) operator(.)ident(char) operator({) key(color)operator(:) comment(#b0b })
+ operator(.)ident(string) operator(.)ident(content) operator({) key(color)operator(:) comment(#D20 })
+ operator(.)ident(string) operator(.)ident(delimiter) operator({) key(color)operator(:) comment(#710 })
+ operator(.)ident(string) operator(.)ident(modifier) operator({) key(color)operator(:) comment(#E40 })
+delete[delete(-)operator(.)ident(string) operator({) ident(background)operator(-)key(color)operator(:)ident(hsla)operator(()integer(0)operator(,)integer(100)operator(%)operator(,)integer(50)operator(%)operator(,)float(0.0)eyecatcher<float(8)>operator(\))operator(;) operator(})]
+insert[insert(+)operator(.)ident(string) operator({) ident(background)operator(-)key(color)operator(:)ident(hsla)operator(()integer(0)operator(,)integer(100)operator(%)operator(,)integer(50)operator(%)operator(,)float(0.0)eyecatcher<float(5)>operator(\))operator(;) operator(})]
+ operator(.)ident(symbol) operator(.)ident(content) operator({) key(color)operator(:)comment(#A60 })
+ operator(.)ident(symbol) operator(.)ident(delimiter) operator({) key(color)operator(:)comment(#630 })
+ operator(.)ident(symbol) operator({) key(color)operator(:)comment(#A60 })
+change<change(@@)plain( -122,8 +121,8 )change(@@)> ident(table)operator(.)ident(CodeRay) ident(td) operator({) key(padding)operator(:) integer(2)ident(px) integer(4)ident(px)operator(;) ident(vertical)operator(-)key(align)operator(:) ident(top)operator(;) operator(})
+ operator(.)ident(value) operator({) key(color)operator(:) comment(#088; })
+ operator(.)ident(variable)  operator({) key(color)operator(:)comment(#037 })
+ 
+delete[delete(-)operator(.)ident(insert) operator({) key(background)operator(:) ident(hsla)operator(()integer(120)operator(,)integer(100)operator(%)operator(,)integer(50)operator(%)operator(,)float(0.1)operator(\)) operator(})]
+delete[delete(-)operator(.)ident(delete) operator({) key(background)operator(:) ident(hsla)operator(()integer(0)operator(,)integer(100)operator(%)operator(,)integer(50)operator(%)operator(,)float(0.1)operator(\)) operator(})]
+insert[insert(+)operator(.)ident(insert) operator({) key(background)operator(:) ident(hsla)operator(()integer(120)operator(,)integer(100)operator(%)operator(,)integer(50)operator(%)operator(,)float(0.1)eyecatcher<float(2)>operator(\)) operator(})]
+insert[insert(+)operator(.)ident(delete) operator({) key(background)operator(:) ident(hsla)operator(()integer(0)operator(,)integer(100)operator(%)operator(,)integer(50)operator(%)operator(,)float(0.1)eyecatcher<float(2)>operator(\)) operator(})]
+ operator(.)ident(change) operator({) key(color)operator(:) comment(#bbf; background: #007; })
+ operator(.)ident(head) operator({) key(color)operator(:) comment(#f8f; background: #505 })
+ operator(.)ident(head) operator(.)ident(filename) operator({) key(color)operator(:) ident(white)operator(;) operator(})
+comment[plain(diff --git a/lib/coderay/tokens.rb b/lib/coderay/tokens.rb)]
+comment[plain(index b357199..045cf4a 100644)]
+head[head(--- )filename(a/lib/coderay/tokens.rb)]
+head[head(+++ )filename(b/lib/coderay/tokens.rb)]
+change<change(@@)plain( -64,12 +64,7 )change(@@)> keyword(module) class(CodeRay)
+     comment(#)
+     comment(# options are passed to the encoder.)
+     keyword(def) method(encode) ident(encoder)operator(,) ident(options) operator(=) operator({)operator(})
+delete[delete(-)      keyword(unless) ident(encoder)operator(.)ident(is_a?) constant(Encoders)operator(::)constant(Encoder)]
+delete[delete(-)        keyword(if) ident(encoder)operator(.)ident(respond_to?) symbol(:to_sym)]
+delete[delete(-)          ident(encoder_class) operator(=) constant(Encoders)operator([)ident(encoder)operator(])]
+delete[delete(-)        keyword(end)]
+delete[delete(-)        ident(encoder) operator(=) ident(encoder_class)operator(.)ident(new) ident(options)]
+delete[delete(-)      keyword(end)]
+insert[insert(+)      ident(encoder) operator(=) constant(Encoders)operator([)ident(encoder)operator(])operator(.)ident(new) ident(options) keyword(if) ident(encoder)operator(.)ident(respond_to?) symbol(:to_sym)]
+       ident(encoder)operator(.)ident(encode_tokens) predefined_constant(self)operator(,) ident(options)
+     keyword(end)
+     
+change<change(@@)plain( -83,106 +78,11 )change(@@)> keyword(module) class(CodeRay)
+     comment(# For example, if you call +tokens.html+, the HTML encoder)
+     comment(# is used to highlight the tokens.)
+     keyword(def) method(method_missing) ident(meth)operator(,) ident(options) operator(=) operator({)operator(})
+delete[delete(-)      ident(encode)eyecatcher<ident(_with)> ident(meth)operator(,) ident(options)]
+insert[insert(+)      ident(encode) ident(meth)operator(,) ident(options)]
+     keyword(rescue) constant(PluginHost)operator(::)constant(PluginNotFound)
+       keyword(super)
+     keyword(end)
+     
+delete[delete(-)    keyword(def) method(encode_with) ident(encoder)operator(,) ident(options) operator(=) operator({)operator(})]
+delete[delete(-)      constant(Encoders)operator([)ident(encoder)operator(])operator(.)ident(new)operator(()ident(options)operator(\))operator(.)ident(encode_tokens) predefined_constant(self)]
+delete[delete(-)    keyword(end)]
+delete[delete(-)    ]
+delete[delete(-)    comment(# Returns the tokens compressed by joining consecutive)]
+delete[delete(-)    comment(# tokens of the same kind.)]
+delete[delete(-)    comment(#)]
+delete[delete(-)    comment(# This can not be undone, but should yield the same output)]
+delete[delete(-)    comment(# in most Encoders.  It basically makes the output smaller.)]
+delete[delete(-)    comment(#)]
+delete[delete(-)    comment(# Combined with dump, it saves space for the cost of time.)]
+delete[delete(-)    comment(#)]
+delete[delete(-)    comment(# If the scanner is written carefully, this is not required -)]
+delete[delete(-)    comment(# for example, consecutive //-comment lines could already be)]
+delete[delete(-)    comment(# joined in one comment token by the Scanner.)]
+delete[delete(-)    keyword(def) method(optimize)]
+delete[delete(-)      ident(raise) constant(NotImplementedError)operator(,) string<delimiter(')content(Tokens#optimize needs to be rewritten.)delimiter(')>]
+delete[delete(-)      comment(# last_kind = last_text = nil)]
+delete[delete(-)      comment(# new = self.class.new)]
+delete[delete(-)      comment(# for text, kind in self)]
+delete[delete(-)      comment(#   if text.is_a? String)]
+delete[delete(-)      comment(#     if kind == last_kind)]
+delete[delete(-)      comment(#       last_text << text)]
+delete[delete(-)      comment(#     else)]
+delete[delete(-)      comment(#       new << [last_text, last_kind] if last_kind)]
+delete[delete(-)      comment(#       last_text = text)]
+delete[delete(-)      comment(#       last_kind = kind)]
+delete[delete(-)      comment(#     end)]
+delete[delete(-)      comment(#   else)]
+delete[delete(-)      comment(#     new << [last_text, last_kind] if last_kind)]
+delete[delete(-)      comment(#     last_kind = last_text = nil)]
+delete[delete(-)      comment(#     new << [text, kind])]
+delete[delete(-)      comment(#   end)]
+delete[delete(-)      comment(# end)]
+delete[delete(-)      comment(# new << [last_text, last_kind] if last_kind)]
+delete[delete(-)      comment(# new)]
+delete[delete(-)    keyword(end)]
+delete[delete(-)    ]
+delete[delete(-)    comment(# Compact the object itself; see optimize.)]
+delete[delete(-)    keyword(def) method(optimize!)]
+delete[delete(-)      ident(replace) ident(optimize)]
+delete[delete(-)    keyword(end)]
+delete[delete(-)    ]
+delete[delete(-)    comment(# Ensure that all begin_group tokens have a correspondent end_group.)]
+delete[delete(-)    comment(#)]
+delete[delete(-)    comment(# TODO: Test this!)]
+delete[delete(-)    keyword(def) method(fix)]
+delete[delete(-)      ident(raise) constant(NotImplementedError)operator(,) string<delimiter(')content(Tokens#fix needs to be rewritten.)delimiter(')>]
+delete[delete(-)      comment(# tokens = self.class.new)]
+delete[delete(-)      comment(# # Check token nesting using a stack of kinds.)]
+delete[delete(-)      comment(# opened = [])]
+delete[delete(-)      comment(# for type, kind in self)]
+delete[delete(-)      comment(#   case type)]
+delete[delete(-)      comment(#   when :begin_group)]
+delete[delete(-)      comment(#     opened.push [:begin_group, kind])]
+delete[delete(-)      comment(#   when :begin_line)]
+delete[delete(-)      comment(#     opened.push [:end_line, kind])]
+delete[delete(-)      comment(#   when :end_group, :end_line)]
+delete[delete(-)      comment(#     expected = opened.pop)]
+delete[delete(-)      comment(#     if [type, kind] != expected)]
+delete[delete(-)      comment(#       # Unexpected end; decide what to do based on the kind:)]
+delete[delete(-)      comment(#       # - token was never opened: delete the end (just skip it\))]
+delete[delete(-)      comment(#       next unless opened.rindex expected)]
+delete[delete(-)      comment(#       # - token was opened earlier: also close tokens in between)]
+delete[delete(-)      comment(#       tokens << token until (token = opened.pop\) == expected)]
+delete[delete(-)      comment(#     end)]
+delete[delete(-)      comment(#   end)]
+delete[delete(-)      comment(#   tokens << [type, kind])]
+delete[delete(-)      comment(# end)]
+delete[delete(-)      comment(# # Close remaining opened tokens)]
+delete[delete(-)      comment(# tokens << token while token = opened.pop)]
+delete[delete(-)      comment(# tokens)]
+delete[delete(-)    keyword(end)]
+delete[delete(-)    ]
+delete[delete(-)    keyword(def) method(fix!)]
+delete[delete(-)      ident(replace) ident(fix)]
+delete[delete(-)    keyword(end)]
+delete[delete(-)    ]
+delete[delete(-)    comment(# TODO: Scanner#split_into_lines)]
+delete[delete(-)    comment(# )]
+delete[delete(-)    comment(# Makes sure that:)]
+delete[delete(-)    comment(# - newlines are single tokens)]
+delete[delete(-)    comment(#   (which means all other token are single-line\))]
+delete[delete(-)    comment(# - there are no open tokens at the end the line)]
+delete[delete(-)    comment(#)]
+delete[delete(-)    comment(# This makes it simple for encoders that work line-oriented,)]
+delete[delete(-)    comment(# like HTML with list-style numeration.)]
+delete[delete(-)    keyword(def) method(split_into_lines)]
+delete[delete(-)      ident(raise) constant(NotImplementedError)]
+delete[delete(-)    keyword(end)]
+delete[delete(-)    ]
+delete[delete(-)    keyword(def) method(split_into_lines!)]
+delete[delete(-)      ident(replace) ident(split_into_lines)]
+delete[delete(-)    keyword(end)]
+delete[delete(-)    ]
+     comment(# Split the tokens into parts of the given +sizes+.)
+     comment(# )
+     comment(# The result will be an Array of Tokens objects. The parts have)
+comment[plain(diff --git a/lib/coderay/tokens_proxy.rb b/lib/coderay/tokens_proxy.rb)]
+comment[plain(new file mode 100644)]
+comment[plain(index 0000000..31ff39b)]
+head[head(--- )filename(/dev/null)]
+head[head(+++ )filename(b/lib/coderay/tokens_proxy.rb)]
+change[change(@@)plain( -0,0 +1,55 )change(@@)]
+insert[insert(+)keyword(module) class(CodeRay)]
+insert[insert(+)  ]
+insert[insert(+)  comment(# The result of a scan operation is a TokensProxy, but should act like Tokens.)]
+insert[insert(+)  comment(# )]
+insert[insert(+)  comment(# This proxy makes it possible to use the classic CodeRay.scan.encode API)]
+insert[insert(+)  comment(# while still providing the benefits of direct streaming.)]
+insert[insert(+)  keyword(class) class(TokensProxy)]
+insert[insert(+)    ]
+insert[insert(+)    ident(attr_accessor) symbol(:input)operator(,) symbol(:lang)operator(,) symbol(:options)operator(,) symbol(:block)]
+insert[insert(+)    ]
+insert[insert(+)    comment(# Create a new TokensProxy with the arguments of CodeRay.scan.)]
+insert[insert(+)    keyword(def) method(initialize) ident(input)operator(,) ident(lang)operator(,) ident(options) operator(=) operator({)operator(})operator(,) ident(block) operator(=) predefined_constant(nil)]
+insert[insert(+)      instance_variable(@input)   operator(=) ident(input)]
+insert[insert(+)      instance_variable(@lang)    operator(=) ident(lang)]
+insert[insert(+)      instance_variable(@options) operator(=) ident(options)]
+insert[insert(+)      instance_variable(@block)   operator(=) ident(block)]
+insert[insert(+)    keyword(end)]
+insert[insert(+)    ]
+insert[insert(+)    comment(# Call CodeRay.encode if +encoder+ is a Symbol;)]
+insert[insert(+)    comment(# otherwise, convert the receiver to tokens and call encoder.encode_tokens.)]
+insert[insert(+)    keyword(def) method(encode) ident(encoder)operator(,) ident(options) operator(=) operator({)operator(})]
+insert[insert(+)      keyword(if) ident(encoder)operator(.)ident(respond_to?) symbol(:to_sym)]
+insert[insert(+)        constant(CodeRay)operator(.)ident(encode)operator(()ident(input)operator(,) ident(lang)operator(,) ident(encoder)operator(,) ident(options)operator(\))]
+insert[insert(+)      keyword(else)]
+insert[insert(+)        ident(encoder)operator(.)ident(encode_tokens) ident(tokens)operator(,) ident(options)]
+insert[insert(+)      keyword(end)]
+insert[insert(+)    keyword(end)]
+insert[insert(+)    ]
+insert[insert(+)    comment(# Tries to call encode;)]
+insert[insert(+)    comment(# delegates to tokens otherwise.)]
+insert[insert(+)    keyword(def) method(method_missing) ident(method)operator(,) operator(*)ident(args)operator(,) operator(&)ident(blk)]
+insert[insert(+)      ident(encode) ident(method)operator(.)ident(to_sym)operator(,) operator(*)ident(args)]
+insert[insert(+)    keyword(rescue) constant(PluginHost)operator(::)constant(PluginNotFound)]
+insert[insert(+)      ident(tokens)operator(.)ident(send)operator(()ident(method)operator(,) operator(*)ident(args)operator(,) operator(&)ident(blk)operator(\))]
+insert[insert(+)    keyword(end)]
+insert[insert(+)    ]
+insert[insert(+)    comment(# The (cached\) result of the tokenized input; a Tokens instance.)]
+insert[insert(+)    keyword(def) method(tokens)]
+insert[insert(+)      instance_variable(@tokens) operator(||=) ident(scanner)operator(.)ident(tokenize)operator(()ident(input)operator(\))]
+insert[insert(+)    keyword(end)]
+insert[insert(+)    ]
+insert[insert(+)    comment(# A (cached\) scanner instance to use for the scan task.)]
+insert[insert(+)    keyword(def) method(scanner)]
+insert[insert(+)      instance_variable(@scanner) operator(||=) constant(CodeRay)operator(.)ident(scanner)operator(()ident(lang)operator(,) ident(options)operator(,) operator(&)ident(block)operator(\))]
+insert[insert(+)    keyword(end)]
+insert[insert(+)    ]
+insert[insert(+)    comment(# Overwrite Struct#each.)]
+insert[insert(+)    keyword(def) method(each) operator(*)ident(args)operator(,) operator(&)ident(blk)]
+insert[insert(+)      ident(tokens)operator(.)ident(each)operator(()operator(*)ident(args)operator(,) operator(&)ident(blk)operator(\))]
+insert[insert(+)      predefined_constant(self)]
+insert[insert(+)    keyword(end)]
+insert[insert(+)    ]
+insert[insert(+)  keyword(end)]
+insert[insert(+)  ]
+insert[insert(+)keyword(end)]
+comment[plain(diff --git a/lib/coderay/version.rb b/lib/coderay/version.rb)]
+comment[plain(index 8bed603..e6b8386 100644)]
+head[head(--- )filename(a/lib/coderay/version.rb)]
+head[head(+++ )filename(b/lib/coderay/version.rb)]
+change[change(@@)plain( -1,3 +1,3 )change(@@)]
+ keyword(module) class(CodeRay)
+delete[delete(-)  constant(VERSION) operator(=) string<delimiter(')content(1.0.)>eyecatcher<string<content(0)>>string<delimiter(')>]
+insert[insert(+)  constant(VERSION) operator(=) string<delimiter(')content(1.0.)>eyecatcher<string<content(2)>>string<delimiter(')>]
+ keyword(end)
+comment[plain(diff --git a/rake_helpers/html_coderay_generator.rb b/rake_helpers/html_coderay_generator.rb)]
+comment[plain(index 4216865..3c77705 100644)]
+head[head(--- )filename(a/rake_helpers/html_coderay_generator.rb)]
+head[head(+++ )filename(b/rake_helpers/html_coderay_generator.rb)]
+change<change(@@)plain( -1087,13 +1087,12 )change(@@)> keyword(module) class(Generators)
+     keyword(def) method(markup_code)operator(()ident(tokens)operator(\))
+       ident(code) operator(=) ident(tokens)operator(.)ident(map) operator({) operator(|)ident(t)operator(|) ident(t)operator(.)ident(text) operator(})operator(.)ident(join)
+       ident(options) operator(=) operator({)
+delete[delete(-)        eyecatcher<      >symbol(:css) operator(=)operator(>) symbol(:class)operator(,)]
+delete[delete(-)        eyecatcher<      >symbol(:line_numbers_start) operator(=)operator(>) ident(code)operator([)regexp<delimiter(/)char(\\A)content(.*?, line ()char(\\d)content(+\))delimiter(/)>operator(,)integer(1)operator(])operator(.)ident(to_i) operator(-) integer(1)operator(,)]
+delete[delete(-)        eyecatcher<      >symbol(:bold_every) operator(=)operator(>) symbol(:no_bolding)operator(,)]
+insert[insert(+)        symbol(:css) operator(=)operator(>) symbol(:class)operator(,)]
+insert[insert(+)        symbol(:line_numbers_start) operator(=)operator(>) ident(code)operator([)regexp<delimiter(/)char(\\A)content(.*?, line ()char(\\d)content(+\))delimiter(/)>operator(,)integer(1)operator(])operator(.)ident(to_i) operator(-) integer(1)operator(,)]
+insert[insert(+)        symbol(:bold_every) operator(=)operator(>) symbol(:no_bolding)operator(,)]
+       operator(})
+       ident(options)operator([)symbol(:line_numbers)operator(]) operator(=) predefined_constant(nil) keyword(unless) constant(Options)operator(.)ident(instance)operator(.)ident(include_line_numbers)
+delete[delete(-)      ident(out) operator(=) constant(CodeRay)operator(.)ident(scan)operator(()ident(code)operator(,) symbol(:ruby)operator(\))operator(.)ident(div)operator(()ident(options)operator(\))]
+delete[delete(-)      ident(out)operator(.)ident(wrap!) symbol(:div)]
+insert[insert(+)      constant(CodeRay)operator(.)ident(scan)operator(()ident(code)operator(,) symbol(:ruby)operator(\))operator(.)ident(div)operator(()ident(options)operator(\))]
+     keyword(end)
+ 
+     comment(# we rely on the fact that the first line of a source code)
+comment[plain(diff --git a/test/functional/basic.rb b/test/functional/basic.rb)]
+comment[plain(index 2654359..bf289b3 100755)]
+head[head(--- )filename(a/test/functional/basic.rb)]
+head[head(+++ )filename(b/test/functional/basic.rb)]
+change<change(@@)plain( -26,7 +26,7 )change(@@)> keyword(class) class(BasicTest) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+   operator(])operator(.)ident(flatten)
+   keyword(def) method(test_simple_scan)
+     ident(assert_nothing_raised) keyword(do)
+delete[delete(-)      ident(assert_equal) constant(RUBY_TEST_TOKENS)operator(,) constant(CodeRay)operator(.)ident(scan)operator(()constant(RUBY_TEST_CODE)operator(,) symbol(:ruby)operator(\))operator(.)ident(to)eyecatcher<ident(_ary)>]
+insert[insert(+)      ident(assert_equal) constant(RUBY_TEST_TOKENS)operator(,) constant(CodeRay)operator(.)ident(scan)operator(()constant(RUBY_TEST_CODE)operator(,) symbol(:ruby)operator(\))operator(.)ident(to)eyecatcher<ident(kens)>]
+     keyword(end)
+   keyword(end)
+   
+change<change(@@)plain( -148,7 +148,9 )change(@@)> ident(more) ident(code)  comment(# and another comment, in-line.)
+       keyword(end)
+     keyword(end)
+     ident(assert_equal) string<delimiter(')content(reserved)delimiter(')>operator(,) constant(CodeRay)operator(::)constant(TokenKinds)operator([)symbol(:reserved)operator(])
+delete[delete(-)    ident(assert_equal) predefined_constant(false)operator(,) constant(CodeRay)operator(::)constant(TokenKinds)operator([)symbol(:shibboleet)operator(])]
+insert[insert(+)    ident(assert_warning) string<delimiter(')content(Undefined Token kind: :shibboleet)delimiter(')> keyword(do)]
+insert[insert(+)      ident(assert_equal) predefined_constant(false)operator(,) constant(CodeRay)operator(::)constant(TokenKinds)operator([)symbol(:shibboleet)operator(])]
+insert[insert(+)    keyword(end)]
+   keyword(end)
+   
+   keyword(class) class(Milk) operator(<) constant(CodeRay)operator(::)constant(Encoders)operator(::)constant(Encoder)
+comment[plain(diff --git a/test/functional/examples.rb b/test/functional/examples.rb)]
+comment[plain(index b13cb55..8540ac9 100755)]
+head[head(--- )filename(a/test/functional/examples.rb)]
+head[head(+++ )filename(b/test/functional/examples.rb)]
+change<change(@@)plain( -10,7 +10,7 )change(@@)> keyword(class) class(ExamplesTest) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+     ident(div) operator(=) constant(CodeRay)operator(.)ident(scan)operator(()string<delimiter(')content(puts "Hello, world!")delimiter(')>operator(,) symbol(:ruby)operator(\))operator(.)ident(div)
+     ident(assert_equal) string<delimiter(<<-DIV)>operator(,) ident(div)
+string<content( <div class="CodeRay">)>
+delete[delete(-)string<content(  <div class="code"><pre>puts <span style="background-color:hsla(0,100%,50%,0.0)>eyecatcher<string<content(8)>>string<content(\)"><span style="color:#710">&quot;</span><span style="color:#D20">Hello, world!</span><span style="color:#710">&quot;</span></span></pre></div>)>]
+insert[insert(+)string<content(  <div class="code"><pre>puts <span style="background-color:hsla(0,100%,50%,0.0)>eyecatcher<string<content(5)>>string<content(\)"><span style="color:#710">&quot;</span><span style="color:#D20">Hello, world!</span><span style="color:#710">&quot;</span></span></pre></div>)>]
+string<content( </div>)>
+string<delimiter(     DIV)>
+     
+change<change(@@)plain( -27,15 +27,15 )change(@@)> keyword(end)
+ operator(<)ident(a) ident(href)operator(=)string<delimiter(")content(#n3)delimiter(")> ident(name)operator(=)string<delimiter(")content(n3)delimiter(")>operator(>)integer(3)operator(<)regexp<delimiter(/)content(a>)>
+regexp<content( <)delimiter(/)>ident(pre)operator(>)operator(<)regexp<delimiter(/)content(td>)>
+regexp<content(   <td class="code"><pre><span style="color:#00D">5<)delimiter(/)modifier(s)>ident(pan)operator(>)operator(.)ident(times) operator(<)ident(span) ident(style)operator(=)string<delimiter(")content(color:#080;font-weight:bold)delimiter(")>operator(>)keyword(do)operator(<)regexp<delimiter(/)content(span>)>
+delete[delete(-)regexp<content(  puts <span style="background-color:hsla(0,100%,50%,0.0)>eyecatcher<regexp<content(8)>>regexp<content(\)"><span style="color:#710">'<)delimiter(/)modifier(s)>ident(pan)operator(>)operator(<)ident(span) ident(style)operator(=)string<delimiter(")content(color:#D20)delimiter(")>operator(>)constant(Hello)operator(,) ident(world!)operator(<)regexp<delimiter(/)content(span><span style="color:#710">'<)delimiter(/)modifier(s)>ident(pan)operator(>)operator(<)regexp<delimiter(/)content(span>)>]
+insert[insert(+)regexp<content(  puts <span style="background-color:hsla(0,100%,50%,0.0)>eyecatcher<regexp<content(5)>>regexp<content(\)"><span style="color:#710">'<)delimiter(/)modifier(s)>ident(pan)operator(>)operator(<)ident(span) ident(style)operator(=)string<delimiter(")content(color:#D20)delimiter(")>operator(>)constant(Hello)operator(,) ident(world!)operator(<)regexp<delimiter(/)content(span><span style="color:#710">'<)delimiter(/)modifier(s)>ident(pan)operator(>)operator(<)regexp<delimiter(/)content(span>)>]
+regexp<content( <span style="color:#080;font-weight:bold">end<)delimiter(/)modifier(s)>ident(pan)operator(>)operator(<)regexp<delimiter(/)content(pre><)delimiter(/)>ident(td)operator(>)
+ operator(<)regexp<delimiter(/)content(tr><)delimiter(/)>ident(table)operator(>)
+     constant(DIV)
+     
+     comment(# output as standalone HTML page (using CSS classes\))
+     ident(page) operator(=) constant(CodeRay)operator(.)ident(scan)operator(()string<delimiter(')content(puts "Hello, world!")delimiter(')>operator(,) symbol(:ruby)operator(\))operator(.)ident(page)
+delete[delete(-)    ident(assert)eyecatcher< ident(page)operator([)string<delimiter(<<-PAGE)>operator(])>]
+delete[delete(-)string<content(<body)>eyecatcher<string<content( style="background-color: white;")>>string<content(>)>]
+insert[insert(+)    ident(assert)eyecatcher<ident(_match) string<delimiter(<<-PAGE)>operator(,) ident(page)>]
+insert[insert(+)string<content(<body)>string<content(>)>]
+string<content( )>
+string<content( <table class="CodeRay"><tr>)>
+string<content(   <td class="line-numbers" title="double click to toggle" ondblclick="with (this.firstChild.style\) { display = (display == ''\) ? 'none' : '' }"><pre>)>
+change<change(@@)plain( -48,6 +48,8 )change(@@)> keyword(end)
+     
+     comment(# keep scanned tokens for later use)
+     ident(tokens) operator(=) constant(CodeRay)operator(.)ident(scan)operator(()string<delimiter(')content({ "just": "an", "example": 42 })delimiter(')>operator(,) symbol(:json)operator(\))
+insert[insert(+)    ident(assert_kind_of) constant(CodeRay)operator(::)constant(TokensProxy)operator(,) ident(tokens)]
+insert[insert(+)    ]
+     ident(assert_equal) operator([)string<delimiter(")content({)delimiter(")>operator(,) symbol(:operator)operator(,) string<delimiter(")content( )delimiter(")>operator(,) symbol(:space)operator(,) symbol(:begin_group)operator(,) symbol(:key)operator(,)
+       string<delimiter(")char(\\")delimiter(")>operator(,) symbol(:delimiter)operator(,) string<delimiter(")content(just)delimiter(")>operator(,) symbol(:content)operator(,) string<delimiter(")char(\\")delimiter(")>operator(,) symbol(:delimiter)operator(,)
+       symbol(:end_group)operator(,) symbol(:key)operator(,) string<delimiter(")content(:)delimiter(")>operator(,) symbol(:operator)operator(,) string<delimiter(")content( )delimiter(")>operator(,) symbol(:space)operator(,)
+change<change(@@)plain( -56,8 +58,8 )change(@@)> keyword(end)
+       string<delimiter(")content( )delimiter(")>operator(,) symbol(:space)operator(,) symbol(:begin_group)operator(,) symbol(:key)operator(,) string<delimiter(")char(\\")delimiter(")>operator(,) symbol(:delimiter)operator(,)
+       string<delimiter(")content(example)delimiter(")>operator(,) symbol(:content)operator(,) string<delimiter(")char(\\")delimiter(")>operator(,) symbol(:delimiter)operator(,) symbol(:end_group)operator(,) symbol(:key)operator(,)
+       string<delimiter(")content(:)delimiter(")>operator(,) symbol(:operator)operator(,) string<delimiter(")content( )delimiter(")>operator(,) symbol(:space)operator(,) string<delimiter(")content(42)delimiter(")>operator(,) symbol(:integer)operator(,)
+delete[delete(-)      string<delimiter(")content( )delimiter(")>operator(,) symbol(:space)operator(,) string<delimiter(")content(})delimiter(")>operator(,) symbol(:operator)operator(])operator(,) ident(tokens)]
+delete[delete(-)]
+insert[insert(+)      string<delimiter(")content( )delimiter(")>operator(,) symbol(:space)operator(,) string<delimiter(")content(})delimiter(")>operator(,) symbol(:operator)operator(])operator(,) ident(tokens)eyecatcher<operator(.)ident(tokens)>]
+insert[insert(+)eyecatcher<    >]
+     comment(# produce a token statistic)
+     ident(assert_equal) string<delimiter(<<-STATISTIC)>operator(,) ident(tokens)operator(.)ident(statistic)
+string<content( )>
+change<change(@@)plain( -84,7 +86,7 )change(@@)> constant(Token) constant(Types) operator(()integer(7)operator(\))operator(:)
+     constant(STATISTIC)
+     
+     comment(# count the tokens)
+delete[delete(-)    ident(assert_equal) integer(26)operator(,) ident(tokens)operator(.)ident(count)eyecatcher<  comment(# => 26)>]
+insert[insert(+)    ident(assert_equal) integer(26)operator(,) ident(tokens)operator(.)ident(count)]
+     
+     comment(# produce a HTML div, but with CSS classes)
+     ident(div) operator(=) ident(tokens)operator(.)ident(div)operator(()symbol(:css) operator(=)operator(>) symbol(:class)operator(\))
+change<change(@@)plain( -120,7 +122,7 )change(@@)> constant(Token) constant(Types) operator(()integer(7)operator(\))operator(:)
+     ident(div) operator(=) ident(ruby_highlighter)operator(.)ident(encode)operator(()string<delimiter(')content(puts "Hello, world!")delimiter(')>operator(\))
+     ident(assert_equal) string<delimiter(<<-DIV)>operator(,) ident(div)
+string<content( <div class="CodeRay">)>
+delete[delete(-)string<content(  <div class="code"><pre>puts <span style="background-color:hsla(0,100%,50%,0.0)>eyecatcher<string<content(8)>>string<content(\)"><span style="color:#710">&quot;</span><span style="color:#D20">Hello, world!</span><span style="color:#710">&quot;</span></span></pre></div>)>]
+insert[insert(+)string<content(  <div class="code"><pre>puts <span style="background-color:hsla(0,100%,50%,0.0)>eyecatcher<string<content(5)>>string<content(\)"><span style="color:#710">&quot;</span><span style="color:#D20">Hello, world!</span><span style="color:#710">&quot;</span></span></pre></div>)>]
+string<content( </div>)>
+string<delimiter(     DIV)>
+   keyword(end)
+comment[plain(diff --git a/test/functional/for_redcloth.rb b/test/functional/for_redcloth.rb)]
+comment[plain(index 3c45eec..e980667 100644)]
+head[head(--- )filename(a/test/functional/for_redcloth.rb)]
+head[head(+++ )filename(b/test/functional/for_redcloth.rb)]
+change<change(@@)plain( -17,11 +17,11 )change(@@)> keyword(class) class(BasicTest) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+   
+   keyword(def) method(test_for_redcloth)
+     ident(require) string<delimiter(')content(coderay/for_redcloth)delimiter(')>
+delete[delete(-)    ident(assert_equal) string<delimiter(")content(<p><span lang=)char(\\")content(ruby)char(\\")content( class=)char(\\")content(CodeRay)char(\\")content(>puts <span style=)char(\\")content(background-color:hsla(0,100%,50%,0.0)>eyecatcher<string<content(8)>>string<content(\))char(\\")content(><span style=)char(\\")content(color:#710)char(\\")content(>&quot;</span><span style=)char(\\")content(color:#D20)char(\\")content(>Hello, World!</span><span style=)char(\\")content(color:#710)char(\\")content(>&quot;</span></span></span></p>)delimiter(")>operator(,)]
+insert[insert(+)    ident(assert_equal) string<delimiter(")content(<p><span lang=)char(\\")content(ruby)char(\\")content( class=)char(\\")content(CodeRay)char(\\")content(>puts <span style=)char(\\")content(background-color:hsla(0,100%,50%,0.0)>eyecatcher<string<content(5)>>string<content(\))char(\\")content(><span style=)char(\\")content(color:#710)char(\\")content(>&quot;</span><span style=)char(\\")content(color:#D20)char(\\")content(>Hello, World!</span><span style=)char(\\")content(color:#710)char(\\")content(>&quot;</span></span></span></p>)delimiter(")>operator(,)]
+       constant(RedCloth)operator(.)ident(new)operator(()string<delimiter(')content(@[ruby]puts "Hello, World!"@)delimiter(')>operator(\))operator(.)ident(to_html)
+     ident(assert_equal) string<delimiter(<<-BLOCKCODE)>operator(.)ident(chomp)operator(,)
+string<content( <div lang="ruby" class="CodeRay">)>
+delete[delete(-)string<content(  <div class="code"><pre>puts <span style="background-color:hsla(0,100%,50%,0.0)>eyecatcher<string<content(8)>>string<content(\)"><span style="color:#710">&quot;</span><span style="color:#D20">Hello, World!</span><span style="color:#710">&quot;</span></span></pre></div>)>]
+insert[insert(+)string<content(  <div class="code"><pre>puts <span style="background-color:hsla(0,100%,50%,0.0)>eyecatcher<string<content(5)>>string<content(\)"><span style="color:#710">&quot;</span><span style="color:#D20">Hello, World!</span><span style="color:#710">&quot;</span></span></pre></div>)>]
+string<content( </div>)>
+string<delimiter(       BLOCKCODE)>
+       constant(RedCloth)operator(.)ident(new)operator(()string<delimiter(')content(bc[ruby]. puts "Hello, World!")delimiter(')>operator(\))operator(.)ident(to_html)
+comment[plain(diff --git a/test/functional/suite.rb b/test/functional/suite.rb)]
+comment[plain(index 5490f98..ec23eec 100755)]
+head[head(--- )filename(a/test/functional/suite.rb)]
+head[head(+++ )filename(b/test/functional/suite.rb)]
+change[change(@@)plain( -1,5 +1,6 )change(@@)]
+ ident(require) string<delimiter(')content(test/unit)delimiter(')>
+ 
+insert[insert(+)global_variable($VERBOSE) operator(=) global_variable($CODERAY_DEBUG) operator(=) predefined_constant(true)]
+ global_variable($:)operator(.)ident(unshift) constant(File)operator(.)ident(expand_path)operator(()string<delimiter(')content(../../../lib)delimiter(')>operator(,) predefined_constant(__FILE__)operator(\))
+ ident(require) string<delimiter(')content(coderay)delimiter(')>
+ 
+comment[plain(diff --git a/test/unit/count.rb b/test/unit/count.rb)]
+comment[plain(index ad61291..448e8f1 100644)]
+head[head(--- )filename(a/test/unit/count.rb)]
+head[head(+++ )filename(b/test/unit/count.rb)]
+change<change(@@)plain( -9,7 +9,7 )change(@@)> keyword(class) class(CountTest) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+ comment(# a minimal Ruby program)
+ ident(puts) string<delimiter(")content(Hello world!)delimiter(")>
+     constant(RUBY)
+delete[delete(-)    ident(assert_equal) integer(11)operator(,) ident(tokens)operator(.)ident(encode)eyecatcher<ident(_with)>operator(()symbol(:count)operator(\))]
+insert[insert(+)    ident(assert_equal) integer(11)operator(,) ident(tokens)operator(.)ident(encode)operator(()symbol(:count)operator(\))]
+   keyword(end)
+   
+ keyword(end)
+comment(\\ No newline at end of file)
+comment[plain(diff --git a/test/unit/debug.rb b/test/unit/debug.rb)]
+comment[plain(index 8bafcf5..f2b80bd 100644)]
+head[head(--- )filename(a/test/unit/debug.rb)]
+head[head(+++ )filename(b/test/unit/debug.rb)]
+change<change(@@)plain( -70,7 +70,8 )change(@@)> ident(method)operator(()operator([)operator(])operator(\))operator(])
+   
+   keyword(def) method(test_filtering_text_tokens)
+     ident(assert_equal) constant(TEST_OUTPUT)operator(,) constant(CodeRay)operator(::)constant(Scanners)operator(::)constant(Debug)operator(.)ident(new)operator(.)ident(tokenize)operator(()constant(TEST_INPUT)operator(\))
+delete[delete(-)    ident(assert_equal) constant(TEST_OUTPUT)operator(,) constant(CodeRay)operator(.)ident(scan)operator(()constant(TEST_INPUT)operator(,) symbol(:debug)operator(\))]
+insert[insert(+)    ident(assert_kind_of) constant(CodeRay)operator(::)constant(TokensProxy)operator(,) constant(CodeRay)operator(.)ident(scan)operator(()constant(TEST_INPUT)operator(,) symbol(:debug)operator(\))]
+insert[insert(+)    ident(assert_equal) constant(TEST_OUTPUT)operator(,) constant(CodeRay)operator(.)ident(scan)operator(()constant(TEST_INPUT)operator(,) symbol(:debug)operator(\))operator(.)ident(tokens)]
+   keyword(end)
+   
+ keyword(end)
+comment[plain(diff --git a/test/unit/file_type.rb b/test/unit/file_type.rb)]
+comment[plain(index 1dc1ba0..607e30a 100644)]
+head[head(--- )filename(a/test/unit/file_type.rb)]
+head[head(+++ )filename(b/test/unit/file_type.rb)]
+change[change(@@)plain( -1,4 +1,6 )change(@@)]
+ ident(require) string<delimiter(')content(test/unit)delimiter(')>
+insert[insert(+)ident(require) constant(File)operator(.)ident(expand_path)operator(()string<delimiter(')content(../../lib/assert_warning)delimiter(')>operator(,) predefined_constant(__FILE__)operator(\))]
+insert[insert(+)]
+ ident(require) string<delimiter(')content(coderay/helpers/file_type)delimiter(')>
+ 
+ keyword(class) class(FileTypeTests) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+change<change(@@)plain( -9,31 +11,22 )change(@@)> keyword(class) class(FileTypeTests) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+     ident(assert_raise) constant(FileType)operator(::)constant(UnknownFileType) keyword(do)
+       constant(FileType)operator(.)ident(fetch) string<delimiter(')delimiter(')>
+     keyword(end)
+delete[delete(-)]
+insert[insert(+)eyecatcher<    >]
+     ident(assert_throws) symbol(:not_found) keyword(do)
+       constant(FileType)operator(.)ident(fetch) string<delimiter(')content(.)delimiter(')> keyword(do)
+         ident(throw) symbol(:not_found)
+       keyword(end)
+     keyword(end)
+delete[delete(-)]
+insert[insert(+)eyecatcher<    >]
+     ident(assert_equal) symbol(:default)operator(,) constant(FileType)operator(.)ident(fetch)operator(()string<delimiter(')content(c)delimiter(')>operator(,) symbol(:default)operator(\))
+   keyword(end)
+   
+   keyword(def) method(test_block_supersedes_default_warning)
+delete[delete(-)    ident(stderr)operator(,) ident(fake_stderr) operator(=) global_variable($stderr)operator(,) constant(Object)operator(.)ident(new)]
+delete[delete(-)    keyword(begin)]
+delete[delete(-)      global_variable($err) operator(=) string<delimiter(')delimiter(')>]
+delete[delete(-)      keyword(def) ident(fake_stderr)operator(.)method(write) ident(x)]
+delete[delete(-)        global_variable($err) operator(<<) ident(x)]
+delete[delete(-)      keyword(end)]
+delete[delete(-)      global_variable($stderr) operator(=) ident(fake_stderr)]
+insert[insert(+)    ident(assert_warning) string<delimiter(')content(Block supersedes default value argument; use either.)delimiter(')> keyword(do)]
+       constant(FileType)operator(.)ident(fetch)operator(()string<delimiter(')content(c)delimiter(')>operator(,) symbol(:default)operator(\)) operator({) operator(})
+delete[delete(-)      ident(assert_equal) string<delimiter(")content(Block supersedes default value argument; use either.)char(\\n)delimiter(")>operator(,) global_variable($err)]
+delete[delete(-)    keyword(ensure)]
+delete[delete(-)      global_variable($stderr) operator(=) ident(stderr)]
+     keyword(end)
+   keyword(end)
+delete[delete(-)]
+insert[insert(+)eyecatcher<  >]
+   keyword(def) method(test_ruby)
+     ident(assert_equal) symbol(:ruby)operator(,) constant(FileType)operator([)predefined_constant(__FILE__)operator(])
+     ident(assert_equal) symbol(:ruby)operator(,) constant(FileType)operator([)string<delimiter(')content(test.rb)delimiter(')>operator(])
+change<change(@@)plain( -48,7 +41,7 )change(@@)> keyword(class) class(FileTypeTests) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+     ident(assert_not_equal) symbol(:ruby)operator(,) constant(FileType)operator([)string<delimiter(')content(set.rb/set)delimiter(')>operator(])
+     ident(assert_not_equal) symbol(:ruby)operator(,) constant(FileType)operator([)string<delimiter(')content(~/projects/blabla/rb)delimiter(')>operator(])
+   keyword(end)
+delete[delete(-)]
+insert[insert(+)eyecatcher<  >]
+   keyword(def) method(test_c)
+     ident(assert_equal) symbol(:c)operator(,) constant(FileType)operator([)string<delimiter(')content(test.c)delimiter(')>operator(])
+     ident(assert_equal) symbol(:c)operator(,) constant(FileType)operator([)string<delimiter(')content(C:)char(\\\\)content(Program Files)char(\\\\)content(x)char(\\\\)content(y)char(\\\\)content(c)char(\\\\)content(test.h)delimiter(')>operator(])
+change<change(@@)plain( -57,7 +50,7 )change(@@)> keyword(class) class(FileTypeTests) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+     ident(assert_not_equal) symbol(:c)operator(,) constant(FileType)operator([)string<delimiter(')content(set.h/set)delimiter(')>operator(])
+     ident(assert_not_equal) symbol(:c)operator(,) constant(FileType)operator([)string<delimiter(')content(~/projects/blabla/c)delimiter(')>operator(])
+   keyword(end)
+delete[delete(-)]
+insert[insert(+)eyecatcher<  >]
+   keyword(def) method(test_cpp)
+     ident(assert_equal) symbol(:cpp)operator(,) constant(FileType)operator([)string<delimiter(')content(test.c++)delimiter(')>operator(])
+     ident(assert_equal) symbol(:cpp)operator(,) constant(FileType)operator([)string<delimiter(')content(test.cxx)delimiter(')>operator(])
+change<change(@@)plain( -68,7 +61,7 )change(@@)> keyword(class) class(FileTypeTests) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+     ident(assert_not_equal) symbol(:cpp)operator(,) constant(FileType)operator([)string<delimiter(')content(test.c)delimiter(')>operator(])
+     ident(assert_not_equal) symbol(:cpp)operator(,) constant(FileType)operator([)string<delimiter(')content(test.h)delimiter(')>operator(])
+   keyword(end)
+delete[delete(-)]
+insert[insert(+)eyecatcher<  >]
+   keyword(def) method(test_html)
+     ident(assert_equal) symbol(:page)operator(,) constant(FileType)operator([)string<delimiter(')content(test.htm)delimiter(')>operator(])
+     ident(assert_equal) symbol(:page)operator(,) constant(FileType)operator([)string<delimiter(')content(test.xhtml)delimiter(')>operator(])
+change<change(@@)plain( -76,14 +69,14 )change(@@)> keyword(class) class(FileTypeTests) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+     ident(assert_equal) symbol(:erb)operator(,) constant(FileType)operator([)string<delimiter(')content(_form.rhtml)delimiter(')>operator(])
+     ident(assert_equal) symbol(:erb)operator(,) constant(FileType)operator([)string<delimiter(')content(_form.html.erb)delimiter(')>operator(])
+   keyword(end)
+delete[delete(-)]
+insert[insert(+)eyecatcher<  >]
+   keyword(def) method(test_yaml)
+     ident(assert_equal) symbol(:yaml)operator(,) constant(FileType)operator([)string<delimiter(')content(test.yml)delimiter(')>operator(])
+     ident(assert_equal) symbol(:yaml)operator(,) constant(FileType)operator([)string<delimiter(')content(test.yaml)delimiter(')>operator(])
+     ident(assert_equal) symbol(:yaml)operator(,) constant(FileType)operator([)string<delimiter(')content(my.html.yaml)delimiter(')>operator(])
+     ident(assert_not_equal) symbol(:yaml)operator(,) constant(FileType)operator([)string<delimiter(')content(YAML)delimiter(')>operator(])
+   keyword(end)
+delete[delete(-)]
+insert[insert(+)eyecatcher<  >]
+   keyword(def) method(test_pathname)
+     ident(require) string<delimiter(')content(pathname)delimiter(')>
+     ident(pn) operator(=) constant(Pathname)operator(.)ident(new) string<delimiter(')content(test.rb)delimiter(')>
+change<change(@@)plain( -92,7 +85,7 )change(@@)> keyword(class) class(FileTypeTests) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+     ident(assert_equal) symbol(:ruby)operator(,) constant(FileType)operator([)ident(dir) operator(+) ident(pn)operator(])
+     ident(assert_equal) symbol(:cpp)operator(,) constant(FileType)operator([)ident(dir) operator(+) string<delimiter(')content(test.cpp)delimiter(')>operator(])
+   keyword(end)
+delete[delete(-)]
+insert[insert(+)eyecatcher<  >]
+   keyword(def) method(test_no_shebang)
+     ident(dir) operator(=) string<delimiter(')content(./test)delimiter(')>
+     keyword(if) constant(File)operator(.)ident(directory?) ident(dir)
+change<change(@@)plain( -119,5 +112,5 )change(@@)> keyword(class) class(FileTypeTests) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+     constant(File)operator(.)ident(open)operator(()ident(tmpfile)operator(,) string<delimiter(')content(w)delimiter(')>operator(\)) operator({) operator(|)ident(f)operator(|) ident(f)operator(.)ident(puts) string<delimiter(')content(#!/usr/bin/env ruby)delimiter(')> operator(})
+     ident(assert_equal) symbol(:ruby)operator(,) constant(FileType)operator([)ident(tmpfile)operator(,) predefined_constant(true)operator(])
+   keyword(end)
+delete[delete(-)]
+insert[insert(+)eyecatcher<  >]
+ keyword(end)
+comment[plain(diff --git a/test/unit/lines_of_code.rb b/test/unit/lines_of_code.rb)]
+comment[plain(index 4231d5a..e2c0caf 100644)]
+head[head(--- )filename(a/test/unit/lines_of_code.rb)]
+head[head(+++ )filename(b/test/unit/lines_of_code.rb)]
+change<change(@@)plain( -2,6 +2,8 )change(@@)> ident(require) string<delimiter(')content(test/unit)delimiter(')>
+ ident(require) string<delimiter(')content(coderay)delimiter(')>
+ global_variable($VERBOSE) operator(=) predefined_constant(true)
+ 
+insert[insert(+)ident(require) constant(File)operator(.)ident(expand_path)operator(()string<delimiter(')content(../../lib/assert_warning)delimiter(')>operator(,) predefined_constant(__FILE__)operator(\))]
+insert[insert(+)]
+ keyword(class) class(LinesOfCodeTest) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+   
+   keyword(def) method(test_creation)
+change<change(@@)plain( -39,17 +41,8 )change(@@)> ident(puts) string<delimiter(")content(Hello world!)delimiter(")>
+     ident(tokens)operator(.)ident(concat) operator([)string<delimiter(")char(\\n)delimiter(")>operator(,) symbol(:space)operator(])
+     ident(tokens)operator(.)ident(concat) operator([)string<delimiter(")content(Hello)char(\\n)delimiter(")>operator(,) symbol(:comment)operator(])
+     
+delete[delete(-)    ident(stderr)operator(,) ident(fake_stderr) operator(=) global_variable($stderr)operator(,) constant(Object)operator(.)ident(new)]
+delete[delete(-)    keyword(begin)]
+delete[delete(-)      global_variable($err) operator(=) string<delimiter(')delimiter(')>]
+delete[delete(-)      keyword(def) ident(fake_stderr)operator(.)method(write) ident(x)]
+delete[delete(-)        global_variable($err) operator(<<) ident(x)]
+delete[delete(-)      keyword(end)]
+delete[delete(-)      global_variable($stderr) operator(=) ident(fake_stderr)]
+insert[insert(+)    ident(assert_warning) string<delimiter(')content(Tokens have no associated scanner, counting all nonempty lines.)delimiter(')> keyword(do)]
+       ident(assert_equal) integer(1)operator(,) ident(tokens)operator(.)ident(lines_of_code)
+delete[delete(-)      ident(assert_equal) string<delimiter(")content(Tokens have no associated scanner, counting all nonempty lines.)char(\\n)delimiter(")>operator(,) global_variable($err)]
+delete[delete(-)    keyword(ensure)]
+delete[delete(-)      global_variable($stderr) operator(=) ident(stderr)]
+     keyword(end)
+     
+     ident(tokens)operator(.)ident(scanner) operator(=) constant(ScannerMockup)operator(.)ident(new)
+comment[plain(diff --git a/test/unit/null.rb b/test/unit/null.rb)]
+comment[plain(index ea516d8..d3a9b0d 100644)]
+head[head(--- )filename(a/test/unit/null.rb)]
+head[head(+++ )filename(b/test/unit/null.rb)]
+change<change(@@)plain( -8,7 +8,7 )change(@@)> keyword(class) class(NullTest) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+ ident(puts) string<delimiter(")content(Hello world!)delimiter(")>
+     constant(RUBY)
+     ident(tokens) operator(=) constant(CodeRay)operator(.)ident(scan) ident(ruby)operator(,) symbol(:ruby)
+delete[delete(-)    ident(assert_equal) string<delimiter(')delimiter(')>operator(,) ident(tokens)operator(.)ident(encode)eyecatcher<ident(_with)>operator(()symbol(:null)operator(\))]
+insert[insert(+)    ident(assert_equal) string<delimiter(')delimiter(')>operator(,) ident(tokens)operator(.)ident(encode)operator(()symbol(:null)operator(\))]
+   keyword(end)
+   
+ keyword(end)
+comment(\\ No newline at end of file)
+comment[plain(diff --git a/test/unit/plugin.rb b/test/unit/plugin.rb)]
+comment[plain(index 2231c75..a1d06e1 100755)]
+head[head(--- )filename(a/test/unit/plugin.rb)]
+head[head(+++ )filename(b/test/unit/plugin.rb)]
+change[change(@@)plain( -1,4 +1,5 )change(@@)]
+ ident(require) string<delimiter(')content(test/unit)delimiter(')>
+insert[insert(+)ident(require) string<delimiter(')content(pathname)delimiter(')>]
+ ident(require) constant(File)operator(.)ident(expand_path)operator(()string<delimiter(')content(../../lib/assert_warning)delimiter(')>operator(,) predefined_constant(__FILE__)operator(\))
+ 
+ global_variable($:)operator(.)ident(unshift) constant(File)operator(.)ident(expand_path)operator(()string<delimiter(')content(../../../lib)delimiter(')>operator(,) predefined_constant(__FILE__)operator(\))
+comment[plain(diff --git a/test/unit/suite.rb b/test/unit/suite.rb)]
+comment[plain(index ee568e7..417dfed 100755)]
+head[head(--- )filename(a/test/unit/suite.rb)]
+head[head(+++ )filename(b/test/unit/suite.rb)]
+change[change(@@)plain( -1,5 +1,7 )change(@@)]
+ ident(require) string<delimiter(')content(test/unit)delimiter(')>
+ ident(require) string<delimiter(')content(rubygems)delimiter(')>
+insert[insert(+)]
+insert[insert(+)global_variable($VERBOSE) operator(=) global_variable($CODERAY_DEBUG) operator(=) predefined_constant(true)]
+ global_variable($:)operator(.)ident(unshift) string<delimiter(')content(lib)delimiter(')>
+ 
+ ident(mydir) operator(=) constant(File)operator(.)ident(dirname)operator(()predefined_constant(__FILE__)operator(\))
+comment[plain(diff --git a/test/unit/text.rb b/test/unit/text.rb)]
+comment[plain(index 025881e..db086f5 100644)]
+head[head(--- )filename(a/test/unit/text.rb)]
+head[head(+++ )filename(b/test/unit/text.rb)]
+change<change(@@)plain( -8,7 +8,7 )change(@@)> keyword(class) class(TextTest) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+ ident(puts) string<delimiter(")content(Hello world!)delimiter(")>
+     constant(RUBY)
+     ident(tokens) operator(=) constant(CodeRay)operator(.)ident(scan) ident(ruby)operator(,) symbol(:ruby)
+delete[delete(-)    ident(assert_equal) ident(ruby)operator(,) ident(tokens)operator(.)ident(encode)eyecatcher<ident(_with)>operator(()symbol(:text)operator(\))]
+insert[insert(+)    ident(assert_equal) ident(ruby)operator(,) ident(tokens)operator(.)ident(encode)operator(()symbol(:text)operator(\))]
+   keyword(end)
+   
+ keyword(end)
+comment(\\ No newline at end of file)
+comment[plain(diff --git a/test/unit/tokens.rb b/test/unit/tokens.rb)]
+comment[plain(index 4fc9833..86dc632 100644)]
+head[head(--- )filename(a/test/unit/tokens.rb)]
+head[head(+++ )filename(b/test/unit/tokens.rb)]
+change<change(@@)plain( -37,33 +37,6 )change(@@)> keyword(class) class(TokensTest) operator(<) constant(Test)operator(::)constant(Unit)operator(::)constant(TestCase)
+     keyword(end)
+   keyword(end)
+   
+delete[delete(-)  keyword(def) method(test_optimize)]
+delete[delete(-)    ident(assert_raise) constant(NotImplementedError) keyword(do)]
+delete[delete(-)      ident(make_tokens)operator(.)ident(optimize)]
+delete[delete(-)    keyword(end)]
+delete[delete(-)    ident(assert_raise) constant(NotImplementedError) keyword(do)]
+delete[delete(-)      ident(make_tokens)operator(.)ident(optimize!)]
+delete[delete(-)    keyword(end)]
+delete[delete(-)  keyword(end)]
+delete[delete(-)  ]
+delete[delete(-)  keyword(def) method(test_fix)]
+delete[delete(-)    ident(assert_raise) constant(NotImplementedError) keyword(do)]
+delete[delete(-)      ident(make_tokens)operator(.)ident(fix)]
+delete[delete(-)    keyword(end)]
+delete[delete(-)    ident(assert_raise) constant(NotImplementedError) keyword(do)]
+delete[delete(-)      ident(make_tokens)operator(.)ident(fix!)]
+delete[delete(-)    keyword(end)]
+delete[delete(-)  keyword(end)]
+delete[delete(-)  ]
+delete[delete(-)  keyword(def) method(test_split_into_lines)]
+delete[delete(-)    ident(assert_raise) constant(NotImplementedError) keyword(do)]
+delete[delete(-)      ident(make_tokens)operator(.)ident(split_into_lines)]
+delete[delete(-)    keyword(end)]
+delete[delete(-)    ident(assert_raise) constant(NotImplementedError) keyword(do)]
+delete[delete(-)      ident(make_tokens)operator(.)ident(split_into_lines!)]
+delete[delete(-)    keyword(end)]
+delete[delete(-)  keyword(end)]
+delete[delete(-)  ]
+   keyword(def) method(test_split_into_parts)
+     ident(parts_4_3) operator(=) operator([)
+       operator([)string<delimiter(")content(stri)delimiter(")>operator(,) symbol(:type)operator(])operator(,)

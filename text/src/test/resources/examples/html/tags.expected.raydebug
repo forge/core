@@ -1,0 +1,87 @@
+tag(<Page) attribute_name(title)operator(=)string<delimiter(")content(Questions and Tips by Tags)delimiter(")>tag(>)
+  tag(<div) attribute_name(id)operator(=)string<delimiter(")content(left)delimiter(")>tag(>)
+    comment(<?r if @tags ?>)
+    tag(<h1>)plain(Questions with Tags: #{@tags.join(" "\)})tag(</h1>)
+
+    comment(<?r if @questions && @questions.size > 0 ?>)
+      comment(<?r if @qtags ?>)
+        plain(Too many results for that Tag, please reduce the number by using one of the following Tags:
+        #{cloud_of(@qtags\)}
+      )comment(<?r end ?>)
+    tag(<div) attribute_name(class)operator(=)string<delimiter(")content(results)delimiter(")>tag(>)
+      comment(<?r @questions.each do |q| ?>)
+        tag(<h2>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/question/#{q.oid})delimiter(")>tag(>)plain(#{q.question})tag(</a>)tag(</h2>)
+        tag(<p>)
+          comment(<?r excerpt = excerpt_with_words(q.text, @tags\) ?>)
+          plain(#{excerpt}
+        )tag(</p>)
+        tag(<p) attribute_name(style)operator(=)string<delimiter(")key(float)operator(:)value(right)operator(;)delimiter(")>tag(>)plain(#{q.answers.size.to_i} answers)tag(</p>)
+      comment(<?r end ?>)
+    tag(</div>)
+    tag(<div) attribute_name(class)operator(=)string<delimiter(")content(pager)delimiter(")>tag(>)
+      plain(#{@qpager.navigation}
+    )tag(</div>)
+    comment(<?r else ?>)
+    tag(<div) attribute_name(class)operator(=)string<delimiter(")content(results_none)delimiter(")>tag(>)
+      tag(<h2>)plain(no question with this/these tag(s\) found)tag(</h2>)
+      tag(<p>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/ask)delimiter(")>tag(>)plain(Ask a question here.)tag(</a>)tag(</p>)
+    tag(</div>)
+    comment(<?r end ?>)
+    
+    comment(<?r if @tips && @tips.size > 0 ?>)
+    tag(<h1>)plain(Tips with Tags: #{@tags.join(" "\)})tag(</h1>)
+    comment(<?r if @ttags ?>)
+      plain(Too many results for that Tag, please reduce the number by using one of the following Tags:
+      #{cloud_of(@ttags\)}
+    )comment(<?r end ?>)
+    tag(<div) attribute_name(class)operator(=)string<delimiter(")content(results)delimiter(")>tag(>)
+      comment(<?r @tips.each do |t| ?>)
+        tag(<h2>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/tip/#{t.oid})delimiter(")>tag(>)plain(#{t.title})tag(</a>)tag(</h2>)
+        tag(<p>)
+          comment(<?r excerpt = excerpt_with_words(t.text, @tags\) ?>)
+          plain(#{excerpt}
+        )tag(</p>)
+      comment(<?r end ?>)
+    tag(</div>)
+    tag(<div) attribute_name(class)operator(=)string<delimiter(")content(pager)delimiter(")>tag(>)
+      plain(#{@tpager.navigation}
+    )tag(</div>)
+    comment(<?r end ?>)
+    
+    comment(<?r if @tutorials && @tutorials.size > 0 ?>)
+    tag(<h1>)plain(Tutorials with Tags: #{@tags.join(" "\)})tag(</h1>)
+    comment(<?r if @tuttags ?>)
+      plain(Too many results for that Tag, please reduce the number by using one of the following Tags:
+      #{cloud_of(@tuttags\)}
+    )comment(<?r end ?>)
+    tag(<div) attribute_name(class)operator(=)string<delimiter(")content(results)delimiter(")>tag(>)
+      comment(<?r @tutorials.each do |t| ?>)
+        tag(<h2>)tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/tutorial/#{t.oid})delimiter(")>tag(>)plain(#{t.title})tag(</a>)tag(</h2>)
+        tag(<p>)
+          comment(<?r excerpt = excerpt_with_words(t.text, @tags\) ?>)
+          plain(#{excerpt}
+        )tag(</p>)
+      comment(<?r end ?>)
+    tag(</div>)
+    tag(<div) attribute_name(class)operator(=)string<delimiter(")content(pager)delimiter(")>tag(>)
+      plain(#{@tpager.navigation}
+    )tag(</div>)
+    comment(<?r end ?>)
+    
+    
+    comment(<?r else ?>)
+      tag(<div) attribute_name(class)operator(=)string<delimiter(")content(cloud)delimiter(")>tag(>)
+        comment(<?r
+          sum = all_tags.inject(0\) { |sum, t| sum + t.popularity.to_i }
+        ?>)
+        comment(<?r all_tags.each do |t| ?>)
+          tag(<a) attribute_name(href)operator(=)string<delimiter(")content(/tags/#{t.name})delimiter(")> attribute_name(style)operator(=)string<delimiter(")key(font-size)operator(:)error(#)operator({)operator(()float(1)operator(+)operator(()operator(()key(t)operator(.)key(popularity)operator(.)key(to_i)operator(/)key(sum)operator(.)key(to_f)operator(\))error(*)float(2)operator(\))operator(\))operator(.)key(to_s)error([)float(0)operator(.)float(.3)error(])operator(})key(em)operator(;)delimiter(")>tag(>)plain(#{t.name})tag(</a>)
+        comment(<?r end ?>)
+      tag(</div>) comment(<!-- #cloud -->)
+    comment(<?r end ?>)
+  tag(</div>) comment(<!-- #left -->)
+  
+  tag(<render) attribute_name(href)operator(=)string<delimiter(")content(/right)delimiter(")> tag(/>)
+tag(</Page>)
+
+comment(<!-- Copyright © 2006 Kashia Buch (kashia@vfemail.net\), Fabian Buch (fabian@fabian-buch.de\). All rights reserved. -->)

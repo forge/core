@@ -1,0 +1,26 @@
+doctype(<!DOCTYPE TVSCHEDULE [ 
+
+<!ELEMENT TVSCHEDULE (CHANNEL+\)>)
+doctype(<!ELEMENT CHANNEL (BANNER, DAY+\)>)
+doctype(<!ELEMENT BANNER (#PCDATA\)>)
+doctype(<!ELEMENT DAY ((DATE, HOLIDAY\) | (DATE, PROGRAMSLOT+\)\)+>)
+doctype(<!ELEMENT HOLIDAY (#PCDATA\)>)
+doctype(<!ELEMENT DATE (#PCDATA\)>)
+doctype(<!ELEMENT PROGRAMSLOT (TIME, TITLE, DESCRIPTION?\)>)
+doctype(<!ELEMENT TIME (#PCDATA\)>)
+doctype(<!ELEMENT TITLE (#PCDATA\)>) 
+doctype(<!ELEMENT DESCRIPTION (#PCDATA\)>)
+
+doctype(<!ATTLIST TVSCHEDULE NAME CDATA #REQUIRED>)
+doctype(<!ATTLIST CHANNEL CHAN CDATA #REQUIRED>)
+doctype(<!ATTLIST PROGRAMSLOT VTR CDATA #IMPLIED>)
+doctype(<!ATTLIST TITLE RATING CDATA #IMPLIED>)
+doctype(<!ATTLIST TITLE LANGUAGE CDATA #IMPLIED>)
+doctype(]>) 
+
+tag(<root) attribute_name(test)operator(=)string<delimiter(")content(blah)delimiter(")>tag(>)
+ tag(<level1>)
+    tag(<value>)plain(1)tag(</value>)
+    tag(<name>)plain(String)tag(</name>)
+  tag(</level1>)
+tag(</root>)

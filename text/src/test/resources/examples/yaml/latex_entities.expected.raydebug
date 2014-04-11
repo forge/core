@@ -1,0 +1,2414 @@
+comment(# based on "SGML/XML character entity reference" at http://www.bitjungle.com/isoent/)
+comment(#)
+head<head(---)>
+comment(#EM SPACE)
+key(emsp)operator(:) string<content(\\hspace{1em})>
+comment(#EM SPACE)
+key<delimiter(")content(8195)delimiter(")>operator(:) string<content(\\hspace{1em})>
+comment(#EN SPACE)
+key(ensp)operator(:) string<content(\\hspace{0.5em})>
+comment(#EN SPACE)
+key<delimiter(")content(8194)delimiter(")>operator(:) string<content(\\hspace{0.5em})>
+comment(#THREE-PER-EM SPACE)
+key<delimiter(")content(8196)delimiter(")>operator(:) string<content(\\hspace{0.33em})>
+comment(#FOUR-PER-EM SPACE)
+key<delimiter(")content(8197)delimiter(")>operator(:) string<content(\\hspace{0.25em})>
+comment(#FIGURE SPACE)
+key<delimiter(")content(8199)delimiter(")>operator(:) string<content(\\hphantom{0})>
+comment(#PUNCTUATION SPACE)
+key<delimiter(")content(8200)delimiter(")>operator(:) string<content(\\hphantom{,})>
+comment(#THIN SPACE)
+key(thinsp)operator(:) string<content(\\hspace{0.167em})>
+comment(#THIN SPACE)
+key<delimiter(")content(8201)delimiter(")>operator(:) string<content(\\hspace{0.167em})>
+comment(#HAIR SPACE)
+key<delimiter(")content(8202)delimiter(")>operator(:) string<content(\\hspace{1pt})>
+comment(#EM DASH)
+key(mdash)operator(:) string<content(---)>
+comment(#EM DASH)
+key<delimiter(")content(8212)delimiter(")>operator(:) string<content(---)>
+comment(#EN DASH)
+key(ndash)operator(:) string<content(--)>
+comment(#EN DASH)
+key<delimiter(")content(8211)delimiter(")>operator(:) string<content(--)>
+comment(#HYPHEN)
+key<delimiter(")content(8208)delimiter(")>operator(:) string<delimiter(")content(-)delimiter(")>
+comment(#OPEN BOX)
+key<delimiter(")content(9251)delimiter(")>operator(:) string<content(\\textvisiblespace{})>
+comment(#HORIZONTAL ELLIPSIS)
+key(hellip)operator(:) string<content(\\ldots{})>
+comment(#HORIZONTAL ELLIPSIS)
+key<delimiter(")content(8230)delimiter(")>operator(:) string<content(\\ldots{})>
+comment(#TWO DOT LEADER)
+key<delimiter(")content(8229)delimiter(")>operator(:) string<content(\\nldr{})>
+comment(#VULGAR FRACTION ONE THIRD)
+key<delimiter(")content(8531)delimiter(")>operator(:) string<content(\\sfrac{1}{3})>
+comment(#VULGAR FRACTION TWO THIRDS)
+key<delimiter(")content(8532)delimiter(")>operator(:) string<content(\\sfrac{2}{3})>
+comment(#VULGAR FRACTION ONE FIFTH)
+key<delimiter(")content(8533)delimiter(")>operator(:) string<content(\\sfrac{1}{5})>
+comment(#VULGAR FRACTION TWO FIFTHS)
+key<delimiter(")content(8534)delimiter(")>operator(:) string<content(\\sfrac{2}{5})>
+comment(#VULGAR FRACTION THREE FIFTHS)
+key<delimiter(")content(8535)delimiter(")>operator(:) string<content(\\sfrac{3}{5})>
+comment(#VULGAR FRACTION FOUR FIFTHS)
+key<delimiter(")content(8536)delimiter(")>operator(:) string<content(\\sfrac{4}{5})>
+comment(#VULGAR FRACTION ONE SIXTH)
+key<delimiter(")content(8537)delimiter(")>operator(:) string<content(\\sfrac{1}{6})>
+comment(#VULGAR FRACTION FIVE SIXTHS)
+key<delimiter(")content(8538)delimiter(")>operator(:) string<content(\\sfrac{5}{6})>
+comment(#CARE OF)
+key<delimiter(")content(8453)delimiter(")>operator(:) string<delimiter(")content({^c\\\\!/\\\\!_o})delimiter(")>
+comment(#FULL BLOCK)
+key<delimiter(")content(9608)delimiter(")>operator(:) string<content(\\block{})>
+comment(#UPPER HALF BLOCK)
+key<delimiter(")content(9600)delimiter(")>operator(:) string<content(\\uhblk{})>
+comment(#LOWER HALF BLOCK)
+key<delimiter(")content(9604)delimiter(")>operator(:) string<content(\\lhblk{})>
+comment(#LIGHT SHADE)
+comment(#requires color)
+key<delimiter(")content(9617)delimiter(")>operator(:) string<content(\\textcolor[gray]{.75}{\\block})>
+comment(#MEDIUM SHADE)
+comment(#requires color)
+key<delimiter(")content(9618)delimiter(")>operator(:) string<content(\\textcolor[gray]{.5}{\\block})>
+comment(#DARK SHADE)
+comment(#requires color)
+key<delimiter(")content(9619)delimiter(")>operator(:) string<content(\\textcolor[gray]{.25}{\\block})>
+comment(#BLACK VERTICAL RECTANGLE)
+key<delimiter(")content(9646)delimiter(")>operator(:) string<content(\\marker{})>
+comment(#WHITE CIRCLE)
+key<delimiter(")content(9675)delimiter(")>operator(:) string<content(\\circ{})>
+comment(#WHITE SQUARE)
+comment(#requires amssymb)
+key<delimiter(")content(9633)delimiter(")>operator(:) string<content(\\square{})>
+comment(#WHITE RECTANGLE)
+key<delimiter(")content(9645)delimiter(")>operator(:) string<content(\\fbox{~~})>
+comment(#WHITE UP-POINTING TRIANGLE)
+comment(#requires amssymb)
+key<delimiter(")content(9653)delimiter(")>operator(:) string<content(\\vartriangle{})>
+comment(#WHITE DOWN-POINTING TRIANGLE)
+comment(#requires amssymb)
+key<delimiter(")content(9663)delimiter(")>operator(:) string<content(\\triangledown{})>
+comment(#WHITE STAR)
+comment(#requires pifont)
+key<delimiter(")content(9734)delimiter(")>operator(:) string<content(\\ding{73})>
+comment(#BULLET)
+key(bull)operator(:) string<content(\\textbullet{})>
+comment(#BULLET)
+key<delimiter(")content(8226)delimiter(")>operator(:) string<content(\\textbullet{})>
+comment(#BLACK SMALL SQUARE)
+comment(#requires amssymb)
+key<delimiter(")content(9642)delimiter(")>operator(:) string<content(\\blacksquare{})>
+comment(#BLACK UP-POINTING TRIANGLE)
+comment(#requires amssymb)
+key<delimiter(")content(9652)delimiter(")>operator(:) string<content(\\blacktriangle{})>
+comment(#BLACK DOWN-POINTING TRIANGLE)
+comment(#requires amssymb)
+key<delimiter(")content(9662)delimiter(")>operator(:) string<content(\\blacktriangledown{})>
+comment(#BLACK LEFT-POINTING TRIANGLE)
+comment(#requires amssymb)
+key<delimiter(")content(9666)delimiter(")>operator(:) string<content(\\blacktriangleleft{})>
+comment(#BLACK RIGHT-POINTING TRIANGLE)
+comment(#requires amssymb)
+key<delimiter(")content(9656)delimiter(")>operator(:) string<content(\\blacktriangleright{})>
+comment(#BLACK CLUB SUIT)
+comment(#requires pifont)
+key(clubs)operator(:) string<content(\\ding{168})>
+comment(#BLACK CLUB SUIT)
+comment(#requires pifont)
+key<delimiter(")content(9827)delimiter(")>operator(:) string<content(\\ding{168})>
+comment(#BLACK DIAMOND SUIT)
+comment(#requires pifont)
+key(diams)operator(:) string<content(\\ding{169})>
+comment(#BLACK DIAMOND SUIT)
+comment(#requires pifont)
+key<delimiter(")content(9830)delimiter(")>operator(:) string<content(\\ding{169})>
+comment(#BLACK HEART SUIT)
+comment(#requires pifont)
+key(hearts)operator(:) string<content(\\ding{170})>
+comment(#BLACK HEART SUIT)
+key<delimiter(")content(9829)delimiter(")>operator(:) string<content(\\ding{170})>
+comment(#BLACK SPADE SUIT)
+comment(#requires pifont)
+key(spades)operator(:) string<content(\\ding{171})>
+comment(#BLACK SPADE SUIT)
+comment(#requires pifont)
+key<delimiter(")content(9824)delimiter(")>operator(:) string<content(\\ding{171})>
+comment(#MALTESE CROSS)
+comment(#requires pifont)
+key<delimiter(")content(10016)delimiter(")>operator(:) string<content(\\maltese{})>
+comment(#DAGGER)
+key(dagger)operator(:) string<content(\\dag{})>
+comment(#DAGGER)
+key<delimiter(")content(8224)delimiter(")>operator(:) string<content(\\dag{})>
+comment(#DOUBLE DAGGER)
+key(Dagger)operator(:) string<content(\\ddag{})>
+comment(#DOUBLE DAGGER)
+key<delimiter(")content(8225)delimiter(")>operator(:) string<content(\\ddag{})>
+comment(#CHECK MARK)
+comment(#requires pifont)
+key<delimiter(")content(10003)delimiter(")>operator(:) string<content(\\checkmark{})>
+comment(#BALLOT X)
+comment(#requires pifont)
+key<delimiter(")content(10007)delimiter(")>operator(:) string<content(\\ding{55})>
+comment(#MUSIC SHARP SIGN)
+key<delimiter(")content(9839)delimiter(")>operator(:) string<content(\\sharp{})>
+comment(#MUSIC FLAT SIGN)
+key<delimiter(")content(9837)delimiter(")>operator(:) string<content(\\flat{})>
+comment(#MALE SIGN)
+comment(#requires wasysym)
+key<delimiter(")content(9794)delimiter(")>operator(:) string<content(\\male{})>
+comment(#FEMALE SIGN)
+comment(#requires wasysym)
+key<delimiter(")content(9792)delimiter(")>operator(:) string<content(\\female{})>
+comment(#TELEPHONE SIGN)
+comment(#requires pifont)
+key<delimiter(")content(9742)delimiter(")>operator(:) string<content(\\phone{})>
+comment(#TELEPHONE RECORDER)
+comment(#requires wasysym)
+key<delimiter(")content(8981)delimiter(")>operator(:) string<content(\\recorder{})>
+comment(#SOUND RECORDING COPYRIGHT)
+comment(#requires textcomp)
+key<delimiter(")content(8471)delimiter(")>operator(:) string<content(\\textcircledP{})>
+comment(#CARET)
+key<delimiter(")content(8257)delimiter(")>operator(:) string<content(\\mathchar"1356)>
+comment(#SINGLE LOW-9 QUOTATION MARK)
+comment(#requires fontenc:T1)
+key(lsquor)operator(:) string<delimiter(")content(,)delimiter(")>
+comment(#SINGLE LOW-9 QUOTATION MARK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(8218)delimiter(")>operator(:) string<delimiter(")content(,)delimiter(")>
+comment(#DOUBLE LOW-9 QUOTATION MARK)
+comment(#requires fontenc:T1)
+key(ldquor)operator(:) string<content(,,)>
+comment(#DOUBLE LOW-9 QUOTATION MARK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(8222)delimiter(")>operator(:) string<content(,,)>
+comment(#LATIN SMALL LIGATURE FF)
+key<delimiter(")content(64256)delimiter(")>operator(:) string<content(ff)>
+comment(#LATIN SMALL LIGATURE FI)
+key<delimiter(")content(64257)delimiter(")>operator(:) string<content(fi)>
+comment(#SMALL FJ LIGATURE)
+key<delimiter(")content(58290)delimiter(")>operator(:) string<content(fj)>
+comment(#LATIN SMALL LIGATURE FFI)
+key<delimiter(")content(64259)delimiter(")>operator(:) string<content(ffi)>
+comment(#LATIN SMALL LIGATURE FFL)
+key<delimiter(")content(64260)delimiter(")>operator(:) string<content(ffl)>
+comment(#LATIN SMALL LIGATURE FL)
+key<delimiter(")content(64258)delimiter(")>operator(:) string<content(fl)>
+comment(#DOUBLE HIGH-REVERSED-9 QUOTATION MARK)
+key<delimiter(")content(8223)delimiter(")>operator(:) string<content(``)>
+comment(#SINGLE HIGH-REVERSED-9 QUOTATION MARK)
+key<delimiter(")content(8219)delimiter(")>operator(:) string<content(`)>
+comment(#VERTICAL ELLIPSIS)
+key<delimiter(")content(8942)delimiter(")>operator(:) string<content(\\vdots{})>
+comment(#HYPHEN BULLET)
+key<delimiter(")content(8259)delimiter(")>operator(:) string<content(\\hybull{})>
+comment(#LOZENGE)
+comment(#requires amssymb)
+key(loz)operator(:) string<content(\\lozenge{})>
+comment(#LOZENGE)
+comment(#requires amssymb)
+key<delimiter(")content(9674)delimiter(")>operator(:) string<content(\\lozenge{})>
+comment(#LOZENGE, FILLED)
+comment(#requires amssymb)
+key<delimiter(")content(59403)delimiter(")>operator(:) string<content(\\blacklozenge{})>
+comment(#WHITE LEFT-POINTING TRIANGLE)
+key<delimiter(")content(9667)delimiter(")>operator(:) string<content(\\triangleleft{})>
+comment(#WHITE RIGHT-POINTING TRIANGLE)
+key<delimiter(")content(9657)delimiter(")>operator(:) string<content(\\triangleright{})>
+comment(#BLACK STAR)
+comment(#requires amssymb)
+key<delimiter(")content(9733)delimiter(")>operator(:) string<content(\\bigstar{})>
+comment(#MUSIC NATURAL SIGN)
+key<delimiter(")content(9838)delimiter(")>operator(:) string<content(\\natural{})>
+comment(#PRESCRIPTION TAKE)
+comment(#requires textcomp)
+key<delimiter(")content(8478)delimiter(")>operator(:) string<content(\\textrecipe{})>
+comment(#SIX POINTED BLACK STAR)
+comment(#requires pifont)
+key<delimiter(")content(10038)delimiter(")>operator(:) string<content(\\ding{86})>
+comment(#POSITION INDICATOR)
+key<delimiter(")content(8982)delimiter(")>operator(:) string<content(\\mathchar"2208)>
+comment(#BOTTOM LEFT CROP)
+key<delimiter(")content(8973)delimiter(")>operator(:) string<content(\\dlcrop{})>
+comment(#BOTTOM RIGHT CROP)
+key<delimiter(")content(8972)delimiter(")>operator(:) string<content(\\drcrop{})>
+comment(#TOP LEFT CROP)
+key<delimiter(")content(8975)delimiter(")>operator(:) string<content(\\ulcrop{})>
+comment(#TOP RIGHT CROP)
+key<delimiter(")content(8974)delimiter(")>operator(:) string<content(\\urcrop{})>
+comment(#VULGAR FRACTION ONE HALF)
+key(frac12)operator(:) string<content(\\sfrac{1}{2})>
+comment(#VULGAR FRACTION ONE HALF)
+key<delimiter(")content(189)delimiter(")>operator(:) string<content(\\sfrac{1}{2})>
+comment(#VULGAR FRACTION ONE QUARTER)
+key(frac14)operator(:) string<content(\\sfrac{1}{4})>
+comment(#VULGAR FRACTION ONE QUARTER)
+key<delimiter(")content(188)delimiter(")>operator(:) string<content(\\sfrac{1}{4})>
+comment(#VULGAR FRACTION THREE QUARTERS)
+key(frac34)operator(:) string<content(\\sfrac{3}{4})>
+comment(#VULGAR FRACTION THREE QUARTERS)
+key<delimiter(")content(190)delimiter(")>operator(:) string<content(\\sfrac{3}{4})>
+comment(#VULGAR FRACTION ONE EIGHTH)
+key<delimiter(")content(8539)delimiter(")>operator(:) string<content(\\sfrac{1}{8})>
+comment(#VULGAR FRACTION THREE EIGHTHS)
+key<delimiter(")content(8540)delimiter(")>operator(:) string<content(\\sfrac{3}{8})>
+comment(#VULGAR FRACTION FIVE EIGHTHS)
+key<delimiter(")content(8541)delimiter(")>operator(:) string<content(\\sfrac{5}{8})>
+comment(#VULGAR FRACTION SEVEN EIGHTHS)
+key<delimiter(")content(8542)delimiter(")>operator(:) string<content(\\sfrac{7}{8})>
+comment(#SUPERSCRIPT ONE)
+key(sup1)operator(:) string<content(^1)>
+comment(#SUPERSCRIPT ONE)
+key<delimiter(")content(185)delimiter(")>operator(:) string<content(^1)>
+comment(#SUPERSCRIPT TWO)
+key(sup2)operator(:) string<content(^2)>
+comment(#SUPERSCRIPT TWO)
+key<delimiter(")content(178)delimiter(")>operator(:) string<content(^2)>
+comment(#SUPERSCRIPT THREE)
+key(sup3)operator(:) string<content(^3)>
+comment(#SUPERSCRIPT THREE)
+key<delimiter(")content(179)delimiter(")>operator(:) string<content(^3)>
+comment(#PLUS SIGN)
+key<delimiter(")content(43)delimiter(")>operator(:) string<content(+)>
+comment(#PLUS-MINUS SIGN)
+comment(#requires textcomp)
+key(plusmn)operator(:) string<content(\\textpm{})>
+comment(#PLUS-MINUS SIGN)
+comment(#requires textcomp)
+key<delimiter(")content(177)delimiter(")>operator(:) string<content(\\textpm{})>
+comment(#LESS-THAN SIGN)
+key(lt)operator(:) string<content(\\textless{})>
+comment(#LESS-THAN SIGN)
+key<delimiter(")content(60)delimiter(")>operator(:) string<content(\\textless{})>
+comment(#EQUALS SIGN)
+key<delimiter(")content(61)delimiter(")>operator(:) string<delimiter(")content(=)delimiter(")>
+comment(#GREATER-THAN SIGN)
+key(gt)operator(:) string<content(\\textgreater{})>
+comment(#GREATER-THAN SIGN)
+key<delimiter(")content(62)delimiter(")>operator(:) string<content(\\textgreater{})>
+comment(#DIVISION SIGN)
+comment(#requires textcomp)
+key(divide)operator(:) string<content(\\textdiv{})>
+comment(#DIVISION SIGN)
+comment(#requires textcomp)
+key<delimiter(")content(247)delimiter(")>operator(:) string<content(\\textdiv{})>
+comment(#MULTIPLICATION SIGN)
+comment(#requires textcomp)
+key(times)operator(:) string<content(\\texttimes{})>
+comment(#MULTIPLICATION SIGN)
+comment(#requires textcomp)
+key<delimiter(")content(215)delimiter(")>operator(:) string<content(\\texttimes{})>
+comment(#CURRENCY SIGN)
+comment(#requires wasysym)
+key(curren)operator(:) string<content(\\textcurrency{})>
+comment(#CURRENCY SIGN)
+comment(#requires wasysym)
+key<delimiter(")content(164)delimiter(")>operator(:) string<content(\\textcurrency{})>
+comment(#POUND SIGN)
+key(pound)operator(:) string<content(\\pounds{})>
+comment(#POUND SIGN)
+key<delimiter(")content(163)delimiter(")>operator(:) string<content(\\pounds{})>
+comment(#DOLLAR SIGN)
+key<delimiter(")content(36)delimiter(")>operator(:) string<content(\\$)>
+comment(#CENT SIGN)
+comment(#requires wasysym)
+key(cent)operator(:) string<content(\\textcent{})>
+comment(#CENT SIGN)
+comment(#requires wasysym)
+key<delimiter(")content(162)delimiter(")>operator(:) string<content(\\textcent{})>
+comment(#YEN SIGN)
+comment(#requires amsfonts)
+key(yen)operator(:) string<content(\\textyen{})>
+comment(#YEN SIGN)
+comment(#requires amsfonts)
+key<delimiter(")content(165)delimiter(")>operator(:) string<content(\\textyen{})>
+comment(#NUMBER SIGN)
+key<delimiter(")content(35)delimiter(")>operator(:) string<content(\\#)>
+comment(#PERCENT SIGN)
+key<delimiter(")content(37)delimiter(")>operator(:) string<content(\\%)>
+comment(#AMPERSAND)
+key(amp)operator(:) string<content(\\&)>
+comment(#AMPERSAND)
+key<delimiter(")content(38)delimiter(")>operator(:) string<content(\\&)>
+comment(#ASTERISK)
+key<delimiter(")content(42)delimiter(")>operator(:) string<content(\\ast{})>
+comment(#COMMERCIAL AT)
+key<delimiter(")content(64)delimiter(")>operator(:) string<delimiter(")content(@)delimiter(")>
+comment(#LEFT SQUARE BRACKET)
+key<delimiter(")content(91)delimiter(")>operator(:) string<delimiter(")content([)delimiter(")>
+comment(#REVERSE SOLIDUS)
+key<delimiter(")content(92)delimiter(")>operator(:) string<content(\\textbackslash{})>
+comment(#RIGHT SQUARE BRACKET)
+key<delimiter(")content(93)delimiter(")>operator(:) string<delimiter(")content(])delimiter(")>
+comment(#LEFT CURLY BRACKET)
+key<delimiter(")content(123)delimiter(")>operator(:) string<content(\\{)>
+comment(#HORIZONTAL BAR)
+key<delimiter(")content(8213)delimiter(")>operator(:) string<content(---)>
+comment(#VERTICAL LINE)
+key<delimiter(")content(124)delimiter(")>operator(:) string<content(\\textbar{})>
+comment(#RIGHT CURLY BRACKET)
+key<delimiter(")content(125)delimiter(")>operator(:) string<content(\\})>
+comment(#MICRO SIGN)
+comment(#requires textcomp)
+key(micro)operator(:) string<content(\\textmu{})>
+comment(#MICRO SIGN)
+comment(#requires textcomp)
+key<delimiter(")content(181)delimiter(")>operator(:) string<content(\\textmu{})>
+comment(#OHM SIGN)
+comment(#requires textcomp)
+key<delimiter(")content(8486)delimiter(")>operator(:) string<content(\\textohm{})>
+comment(#DEGREE SIGN)
+comment(#requires textcomp)
+key(deg)operator(:) string<content(\\textdegree{})>
+comment(#DEGREE SIGN)
+comment(#requires textcomp)
+key<delimiter(")content(176)delimiter(")>operator(:) string<content(\\textdegree{})>
+comment(#MASCULINE ORDINAL INDICATOR)
+comment(#requires textcomp)
+key(ordm)operator(:) string<content(\\textordmasculine{})>
+comment(#MASCULINE ORDINAL INDICATOR)
+comment(#requires textcomp)
+key<delimiter(")content(186)delimiter(")>operator(:) string<content(\\textordmasculine{})>
+comment(#FEMININE ORDINAL INDICATOR)
+comment(#requires textcomp)
+key(ordf)operator(:) string<content(\\textordfeminine{})>
+comment(#FEMININE ORDINAL INDICATOR)
+comment(#requires textcomp)
+key<delimiter(")content(170)delimiter(")>operator(:) string<content(\\textordfeminine{})>
+comment(#SECTION SIGN)
+comment(#requires textcomp)
+key(sect)operator(:) string<content(\\S{})>
+comment(#SECTION SIGN)
+comment(#requires textcomp)
+key<delimiter(")content(167)delimiter(")>operator(:) string<content(\\S{})>
+comment(#PILCROW SIGN)
+comment(#requires textcomp)
+key(para)operator(:) string<content(\\P{})>
+comment(#PILCROW SIGN)
+comment(#requires textcomp)
+key<delimiter(")content(182)delimiter(")>operator(:) string<content(\\P{})>
+comment(#MIDDLE DOT)
+comment(#requires amssymb)
+key(middot)operator(:) string<content(\\textperiodcentered{})>
+comment(#MIDDLE DOT)
+comment(#requires amssymb)
+key<delimiter(")content(183)delimiter(")>operator(:) string<content(\\textperiodcentered{})>
+comment(#LEFTWARDS ARROW)
+comment(#requires textcomp)
+key(larr)operator(:) string<content(\\textleftarrow{})>
+comment(#LEFTWARDS ARROW)
+comment(#requires textcomp)
+key<delimiter(")content(8592)delimiter(")>operator(:) string<content(\\textleftarrow{})>
+comment(#RIGHTWARDS ARROW)
+comment(#requires textcomp)
+key(rarr)operator(:) string<content(\\textrightarrow{})>
+comment(#RIGHTWARDS ARROW)
+comment(#requires textcomp)
+key<delimiter(")content(8594)delimiter(")>operator(:) string<content(\\textrightarrow{})>
+comment(#UPWARDS ARROW)
+comment(#requires textcomp)
+key(uarr)operator(:) string<content(\\textuparrow{})>
+comment(#UPWARDS ARROW)
+comment(#requires textcomp)
+key<delimiter(")content(8593)delimiter(")>operator(:) string<content(\\textuparrow{})>
+comment(#DOWNWARDS ARROW)
+comment(#requires textcomp)
+key(darr)operator(:) string<content(\\textdownarrow{})>
+comment(#DOWNWARDS ARROW)
+comment(#requires textcomp)
+key<delimiter(")content(8595)delimiter(")>operator(:) string<content(\\textdownarrow{})>
+comment(#COPYRIGHT SIGN)
+comment(#requires textcomp)
+key(copy)operator(:) string<content(\\copyright{})>
+comment(#COPYRIGHT SIGN)
+comment(#requires textcomp)
+key<delimiter(")content(169)delimiter(")>operator(:) string<content(\\copyright{})>
+comment(#REGISTERED SIGN)
+comment(#requires amssymb)
+key(reg)operator(:) string<content(\\textregistered{})>
+comment(#REGISTERED SIGN)
+comment(#requires amssymb)
+key<delimiter(")content(174)delimiter(")>operator(:) string<content(\\textregistered{})>
+comment(#TRADE MARK SIGN)
+key(trade)operator(:) string<content(\\texttrademark{})>
+comment(#TRADE MARK SIGN)
+key<delimiter(")content(8482)delimiter(")>operator(:) string<content(\\texttrademark{})>
+comment(#BROKEN BAR)
+comment(#requires wasysym)
+key(brvbar)operator(:) string<content(\\textbrokenbar{})>
+comment(#BROKEN BAR)
+comment(#requires wasysym)
+key<delimiter(")content(166)delimiter(")>operator(:) string<content(\\textbrokenbar{})>
+comment(#NOT SIGN)
+comment(#requires textcomp)
+key(not)operator(:) string<content(\\textlnot{})>
+comment(#NOT SIGN)
+comment(#requires textcomp)
+key<delimiter(")content(172)delimiter(")>operator(:) string<content(\\textlnot{})>
+comment(#EIGHTH NOTE)
+comment(#requires wasysym)
+key<delimiter(")content(9834)delimiter(")>operator(:) string<content(\\textmusicalnote{})>
+comment(#EXCLAMATION MARK)
+key<delimiter(")content(33)delimiter(")>operator(:) string<delimiter(")content(!)delimiter(")>
+comment(#INVERTED EXCLAMATION MARK)
+key(iexcl)operator(:) string<delimiter(")content(!`)delimiter(")>
+comment(#INVERTED EXCLAMATION MARK)
+key<delimiter(")content(161)delimiter(")>operator(:) string<delimiter(")content(!`)delimiter(")>
+comment(#QUOTATION MARK)
+comment(#requires fontenc:T1)
+key(quot)operator(:) string<delimiter(")content(\\")delimiter(")>
+comment(#QUOTATION MARK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(34)delimiter(")>operator(:) string<delimiter(")content(\\")delimiter(")>
+comment(#APOSTROPHE)
+comment(#requires textcomp)
+key<delimiter(")content(39)delimiter(")>operator(:) string<delimiter(")content(')delimiter(")>
+comment(#LEFT PARENTHESIS)
+key<delimiter(")content(40)delimiter(")>operator(:) string<content(()>
+comment(#RIGHT PARENTHESIS)
+key<delimiter(")content(41)delimiter(")>operator(:) string<content(\))>
+comment(#COMMA)
+key<delimiter(")content(44)delimiter(")>operator(:) string<delimiter(")content(,)delimiter(")>
+comment(#LOW LINE)
+key<delimiter(")content(95)delimiter(")>operator(:) string<content(\\_)>
+comment(#HYPHEN-MINUS)
+key<delimiter(")content(45)delimiter(")>operator(:) string<delimiter(")content(-)delimiter(")>
+comment(#FULL STOP)
+key<delimiter(")content(46)delimiter(")>operator(:) string<content(.)>
+comment(#SOLIDUS)
+key<delimiter(")content(47)delimiter(")>operator(:) string<content(/)>
+comment(#COLON)
+key<delimiter(")content(58)delimiter(")>operator(:) string<delimiter(")content(:)delimiter(")>
+comment(#SEMICOLON)
+key<delimiter(")content(59)delimiter(")>operator(:) string<content(;)>
+comment(#QUESTION MARK)
+key<delimiter(")content(63)delimiter(")>operator(:) string<delimiter(")content(?)delimiter(")>
+comment(#INVERTED QUESTION MARK)
+key(iquest)operator(:) string<content(?`)>
+comment(#INVERTED QUESTION MARK)
+key<delimiter(")content(191)delimiter(")>operator(:) string<content(?`)>
+comment(#LEFT-POINTING DOUBLE ANGLE QUOTATION MARK)
+comment(#requires fontenc:T1)
+key(laquo)operator(:) string<content(\\guillemotleft{})>
+comment(#LEFT-POINTING DOUBLE ANGLE QUOTATION MARK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(171)delimiter(")>operator(:) string<content(\\guillemotleft{})>
+comment(#RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK)
+comment(#requires fontenc:T1)
+key(raquo)operator(:) string<content(\\guillemotright{})>
+comment(#RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(187)delimiter(")>operator(:) string<content(\\guillemotright{})>
+comment(#LEFT SINGLE QUOTATION MARK)
+key(lsquo)operator(:) string<content(`)>
+comment(#LEFT SINGLE QUOTATION MARK)
+key<delimiter(")content(8216)delimiter(")>operator(:) string<content(`)>
+comment(#RIGHT SINGLE QUOTATION MARK)
+key(rsquo)operator(:) string<delimiter(")content(')delimiter(")>
+comment(#RIGHT SINGLE QUOTATION MARK)
+key<delimiter(")content(8217)delimiter(")>operator(:) string<delimiter(")content(')delimiter(")>
+comment(#LEFT DOUBLE QUOTATION MARK)
+key(ldquo)operator(:) string<content(``)>
+comment(#LEFT DOUBLE QUOTATION MARK)
+key<delimiter(")content(8220)delimiter(")>operator(:) string<content(``)>
+comment(#RIGHT DOUBLE QUOTATION MARK)
+key(rdquo)operator(:) string<delimiter(")content('')delimiter(")>
+comment(#RIGHT DOUBLE QUOTATION MARK)
+key<delimiter(")content(8221)delimiter(")>operator(:) string<delimiter(")content('')delimiter(")>
+comment(#NO-BREAK SPACE)
+key(nbsp)operator(:) string<delimiter(")content(~)delimiter(")>
+comment(#NO-BREAK SPACE)
+key<delimiter(")content(160)delimiter(")>operator(:) string<delimiter(")content(~)delimiter(")>
+comment(#SOFT HYPHEN)
+key(shy)operator(:) string<content(\\-)>
+comment(#SOFT HYPHEN)
+key<delimiter(")content(173)delimiter(")>operator(:) string<content(\\-)>
+comment(#BOX DRAWINGS LIGHT HORIZONTAL)
+key<delimiter(")content(9472)delimiter(")>operator(:) string<content(\\boxh{})>
+comment(#BOX DRAWINGS LIGHT VERTICAL)
+key<delimiter(")content(9474)delimiter(")>operator(:) string<content(\\boxv{})>
+comment(#BOX DRAWINGS LIGHT UP AND RIGHT)
+key<delimiter(")content(9492)delimiter(")>operator(:) string<content(\\boxur{})>
+comment(#BOX DRAWINGS LIGHT UP AND LEFT)
+key<delimiter(")content(9496)delimiter(")>operator(:) string<content(\\boxul{})>
+comment(#BOX DRAWINGS LIGHT DOWN AND LEFT)
+key<delimiter(")content(9488)delimiter(")>operator(:) string<content(\\boxdl{})>
+comment(#BOX DRAWINGS LIGHT DOWN AND RIGHT)
+key<delimiter(")content(9484)delimiter(")>operator(:) string<content(\\boxdr{})>
+comment(#BOX DRAWINGS LIGHT VERTICAL AND RIGHT)
+key<delimiter(")content(9500)delimiter(")>operator(:) string<content(\\boxvr{})>
+comment(#BOX DRAWINGS LIGHT UP AND HORIZONTAL)
+key<delimiter(")content(9524)delimiter(")>operator(:) string<content(\\boxhu{})>
+comment(#BOX DRAWINGS LIGHT VERTICAL AND LEFT)
+key<delimiter(")content(9508)delimiter(")>operator(:) string<content(\\boxvl{})>
+comment(#BOX DRAWINGS LIGHT DOWN AND HORIZONTAL)
+key<delimiter(")content(9516)delimiter(")>operator(:) string<content(\\boxhd{})>
+comment(#BOX DRAWINGS LIGHT VERTICAL AND HORIZONTAL)
+key<delimiter(")content(9532)delimiter(")>operator(:) string<content(\\boxvh{})>
+comment(#BOX DRAWINGS VERTICAL SINGLE AND RIGHT DOUBLE)
+key<delimiter(")content(9566)delimiter(")>operator(:) string<content(\\boxvR{})>
+comment(#BOX DRAWINGS UP DOUBLE AND HORIZONTAL SINGLE)
+key<delimiter(")content(9576)delimiter(")>operator(:) string<content(\\boxhU{})>
+comment(#BOX DRAWINGS VERTICAL SINGLE AND LEFT DOUBLE)
+key<delimiter(")content(9569)delimiter(")>operator(:) string<content(\\boxvL{})>
+comment(#BOX DRAWINGS DOWN DOUBLE AND HORIZONTAL SINGLE)
+key<delimiter(")content(9573)delimiter(")>operator(:) string<content(\\boxhD{})>
+comment(#BOX DRAWINGS VERTICAL SINGLE AND HORIZONTAL DOUBLE)
+key<delimiter(")content(9578)delimiter(")>operator(:) string<content(\\boxvH{})>
+comment(#BOX DRAWINGS DOUBLE HORIZONTAL)
+key<delimiter(")content(9552)delimiter(")>operator(:) string<content(\\boxH{})>
+comment(#BOX DRAWINGS DOUBLE VERTICAL)
+key<delimiter(")content(9553)delimiter(")>operator(:) string<content(\\boxV{})>
+comment(#BOX DRAWINGS DOUBLE UP AND RIGHT)
+key<delimiter(")content(9562)delimiter(")>operator(:) string<content(\\boxUR{})>
+comment(#BOX DRAWINGS DOUBLE UP AND LEFT)
+key<delimiter(")content(9565)delimiter(")>operator(:) string<content(\\boxUL{})>
+comment(#BOX DRAWINGS DOUBLE DOWN AND LEFT)
+key<delimiter(")content(9559)delimiter(")>operator(:) string<content(\\boxDL{})>
+comment(#BOX DRAWINGS DOUBLE DOWN AND RIGHT)
+key<delimiter(")content(9556)delimiter(")>operator(:) string<content(\\boxDR{})>
+comment(#BOX DRAWINGS DOUBLE VERTICAL AND RIGHT)
+key<delimiter(")content(9568)delimiter(")>operator(:) string<content(\\boxVR{})>
+comment(#BOX DRAWINGS DOUBLE UP AND HORIZONTAL)
+key<delimiter(")content(9577)delimiter(")>operator(:) string<content(\\boxHU{})>
+comment(#BOX DRAWINGS DOUBLE VERTICAL AND LEFT)
+key<delimiter(")content(9571)delimiter(")>operator(:) string<content(\\boxVL{})>
+comment(#BOX DRAWINGS DOUBLE DOWN AND HORIZONTAL)
+key<delimiter(")content(9574)delimiter(")>operator(:) string<content(\\boxHD{})>
+comment(#BOX DRAWINGS DOUBLE VERTICAL AND HORIZONTAL)
+key<delimiter(")content(9580)delimiter(")>operator(:) string<content(\\boxVH{})>
+comment(#BOX DRAWINGS VERTICAL DOUBLE AND RIGHT SINGLE)
+key<delimiter(")content(9567)delimiter(")>operator(:) string<content(\\boxVr{})>
+comment(#BOX DRAWINGS UP SINGLE AND HORIZONTAL DOUBLE)
+key<delimiter(")content(9575)delimiter(")>operator(:) string<content(\\boxHu{})>
+comment(#BOX DRAWINGS VERTICAL DOUBLE AND LEFT SINGLE)
+key<delimiter(")content(9570)delimiter(")>operator(:) string<content(\\boxVl{})>
+comment(#BOX DRAWINGS DOWN SINGLE AND HORIZONTAL DOUBLE)
+key<delimiter(")content(9572)delimiter(")>operator(:) string<content(\\boxHd{})>
+comment(#BOX DRAWINGS VERTICAL DOUBLE AND HORIZONTAL SINGLE)
+key<delimiter(")content(9579)delimiter(")>operator(:) string<content(\\boxVh{})>
+comment(#BOX DRAWINGS UP SINGLE AND RIGHT DOUBLE)
+key<delimiter(")content(9560)delimiter(")>operator(:) string<content(\\boxuR{})>
+comment(#BOX DRAWINGS UP DOUBLE AND LEFT SINGLE)
+key<delimiter(")content(9564)delimiter(")>operator(:) string<content(\\boxUl{})>
+comment(#BOX DRAWINGS DOWN SINGLE AND LEFT DOUBLE)
+key<delimiter(")content(9557)delimiter(")>operator(:) string<content(\\boxdL{})>
+comment(#BOX DRAWINGS DOWN DOUBLE AND RIGHT SINGLE)
+key<delimiter(")content(9555)delimiter(")>operator(:) string<content(\\boxDr{})>
+comment(#BOX DRAWINGS UP DOUBLE AND RIGHT SINGLE)
+key<delimiter(")content(9561)delimiter(")>operator(:) string<content(\\boxUr{})>
+comment(#BOX DRAWINGS UP SINGLE AND LEFT DOUBLE)
+key<delimiter(")content(9563)delimiter(")>operator(:) string<content(\\boxuL{})>
+comment(#BOX DRAWINGS DOWN DOUBLE AND LEFT SINGLE)
+key<delimiter(")content(9558)delimiter(")>operator(:) string<content(\\boxDl{})>
+comment(#BOX DRAWINGS DOWN SINGLE AND RIGHT DOUBLE)
+key<delimiter(")content(9554)delimiter(")>operator(:) string<content(\\boxdR{})>
+comment(#ALEF SYMBOL)
+key(alefsym)operator(:) string<content(\\aleph{})>
+comment(#ALEF SYMBOL)
+key<delimiter(")content(8501)delimiter(")>operator(:) string<content(\\aleph{})>
+comment(#LOGICAL AND)
+key(and)operator(:) string<content(\\wedge{})>
+comment(#LOGICAL AND)
+key<delimiter(")content(8743)delimiter(")>operator(:) string<content(\\wedge{})>
+comment(#RIGHT ANGLE)
+key<delimiter(")content(8735)delimiter(")>operator(:) string<content(\\sqangle{})>
+comment(#SPHERICAL ANGLE)
+comment(#requires amssymb)
+key<delimiter(")content(8738)delimiter(")>operator(:) string<content(\\sphericalangle{})>
+comment(#ALMOST EQUAL TO)
+key<delimiter(")content(8776)delimiter(")>operator(:) string<content(\\approx{})>
+comment(#BECAUSE)
+comment(#requires amssymb)
+key<delimiter(")content(8757)delimiter(")>operator(:) string<content(\\because{})>
+comment(#UP TACK)
+key<delimiter(")content(8869)delimiter(")>operator(:) string<content(\\bot{})>
+comment(#INTERSECTION)
+key(cap)operator(:) string<content(\\cap{})>
+comment(#INTERSECTION)
+key<delimiter(")content(8745)delimiter(")>operator(:) string<content(\\cap{})>
+comment(#APPROXIMATELY EQUAL TO)
+key(cong)operator(:) string<content(\\cong{})>
+comment(#APPROXIMATELY EQUAL TO)
+key<delimiter(")content(8773)delimiter(")>operator(:) string<content(\\cong{})>
+comment(#CONTOUR INTEGRAL)
+key<delimiter(")content(8750)delimiter(")>operator(:) string<content(\\oint{})>
+comment(#UNION)
+key(cup)operator(:) string<content(\\cup{})>
+comment(#UNION)
+key<delimiter(")content(8746)delimiter(")>operator(:) string<content(\\cup{})>
+comment(#IDENTICAL TO)
+key(equiv)operator(:) string<content(\\equiv{})>
+comment(#IDENTICAL TO)
+key<delimiter(")content(8801)delimiter(")>operator(:) string<content(\\equiv{})>
+comment(#THERE EXISTS)
+key(exist)operator(:) string<content(\\exists{})>
+comment(#THERE EXISTS)
+key<delimiter(")content(8707)delimiter(")>operator(:) string<content(\\exists{})>
+comment(#FOR ALL)
+key(forall)operator(:) string<content(\\forall{})>
+comment(#FOR ALL)
+key<delimiter(")content(8704)delimiter(")>operator(:) string<content(\\forall{})>
+comment(#LATIN SMALL LETTER F WITH HOOK)
+key(fnof)operator(:) string<content(f)>
+comment(#LATIN SMALL LETTER F WITH HOOK)
+key<delimiter(")content(402)delimiter(")>operator(:) string<content(f)>
+comment(#GREATER-THAN OR EQUAL TO)
+key(ge)operator(:) string<content(\\geq{})>
+comment(#GREATER-THAN OR EQUAL TO)
+key<delimiter(")content(8805)delimiter(")>operator(:) string<content(\\geq{})>
+comment(#LEFT RIGHT DOUBLE ARROW)
+key<delimiter(")content(8660)delimiter(")>operator(:) string<content(\\iff{})>
+comment(#INFINITY)
+key(infin)operator(:) string<content(\\infty{})>
+comment(#INFINITY)
+key<delimiter(")content(8734)delimiter(")>operator(:) string<content(\\infty{})>
+comment(#INTEGRAL)
+key(int)operator(:) string<content(\\int{})>
+comment(#INTEGRAL)
+key<delimiter(")content(8747)delimiter(")>operator(:) string<content(\\int{})>
+comment(#ELEMENT OF)
+key(isin)operator(:) string<content(\\in{})>
+comment(#ELEMENT OF)
+key<delimiter(")content(8712)delimiter(")>operator(:) string<content(\\in{})>
+comment(#LEFT ANGLE BRACKET)
+comment(#requires textcomp)
+key(lang)operator(:) string<content(\\textlangle{})>
+comment(#LEFT ANGLE BRACKET)
+comment(#requires textcomp)
+key<delimiter(")content(12296)delimiter(")>operator(:) string<content(\\textlangle{})>
+comment(#LEFTWARDS DOUBLE ARROW)
+key(lArr)operator(:) string<content(\\Leftarrow{})>
+comment(#LEFTWARDS DOUBLE ARROW)
+key<delimiter(")content(8656)delimiter(")>operator(:) string<content(\\Leftarrow{})>
+comment(#LESS-THAN OR EQUAL TO)
+key(le)operator(:) string<content(\\leq{})>
+comment(#LESS-THAN OR EQUAL TO)
+key<delimiter(")content(8804)delimiter(")>operator(:) string<content(\\leq{})>
+comment(#MINUS SIGN)
+comment(#requires textcomp)
+key(minus)operator(:) string<content(\\textminus{})>
+comment(#MINUS SIGN)
+comment(#requires textcomp)
+key<delimiter(")content(8722)delimiter(")>operator(:) string<content(\\textminus{})>
+comment(#MINUS-OR-PLUS SIGN)
+key<delimiter(")content(8723)delimiter(")>operator(:) string<content(\\mp{})>
+comment(#NABLA)
+key(nabla)operator(:) string<content(\\nabla{})>
+comment(#NABLA)
+key<delimiter(")content(8711)delimiter(")>operator(:) string<content(\\nabla{})>
+comment(#NOT EQUAL TO)
+key(ne)operator(:) string<content(\\not=)>
+comment(#NOT EQUAL TO)
+key<delimiter(")content(8800)delimiter(")>operator(:) string<content(\\not=)>
+comment(#CONTAINS AS MEMBER)
+key(ni)operator(:) string<content(\\ni{})>
+comment(#CONTAINS AS MEMBER)
+key<delimiter(")content(8715)delimiter(")>operator(:) string<content(\\ni{})>
+comment(#LOGICAL OR)
+key(or)operator(:) string<content(\\vee{})>
+comment(#LOGICAL OR)
+key<delimiter(")content(8744)delimiter(")>operator(:) string<content(\\vee{})>
+comment(#PARALLEL TO)
+key<delimiter(")content(8741)delimiter(")>operator(:) string<content(\\parallel{})>
+comment(#PARTIAL DIFFERENTIAL)
+key(part)operator(:) string<content(\\partial{})>
+comment(#PARTIAL DIFFERENTIAL)
+key<delimiter(")content(8706)delimiter(")>operator(:) string<content(\\partial{})>
+comment(#PER MILLE SIGN)
+comment(#requires wasysym)
+key(permil)operator(:) string<content(\\textperthousand{})>
+comment(#PER MILLE SIGN)
+comment(#requires wasysym)
+key<delimiter(")content(8240)delimiter(")>operator(:) string<content(\\textperthousand{})>
+comment(#UP TACK)
+key(perp)operator(:) string<content(\\perp{})>
+comment(#UP TACK)
+key<delimiter(")content(8869)delimiter(")>operator(:) string<content(\\perp{})>
+comment(#PRIME)
+key(prime)operator(:) string<content(^\\prime)>
+comment(#PRIME)
+key<delimiter(")content(8242)delimiter(")>operator(:) string<content(^\\prime)>
+comment(#DOUBLE PRIME)
+key(Prime)operator(:) string<delimiter(")content({''})delimiter(")>
+comment(#DOUBLE PRIME)
+key<delimiter(")content(8243)delimiter(")>operator(:) string<delimiter(")content({''})delimiter(")>
+comment(#PROPORTIONAL TO)
+key(prop)operator(:) string<content(\\propto{})>
+comment(#PROPORTIONAL TO)
+key<delimiter(")content(8733)delimiter(")>operator(:) string<content(\\propto{})>
+comment(#FOURTH ROOT)
+comment(#requires textcomp)
+key(radic)operator(:) string<content(\\textsurd{})>
+comment(#FOURTH ROOT)
+comment(#requires textcomp)
+key<delimiter(")content(8730)delimiter(")>operator(:) string<content(\\textsurd{})>
+comment(#RIGHT ANGLE BRACKET)
+comment(#requires textcomp)
+key(rang)operator(:) string<content(\\textrangle{})>
+comment(#RIGHT ANGLE BRACKET)
+comment(#requires textcomp)
+key<delimiter(")content(12297)delimiter(")>operator(:) string<content(\\textrangle{})>
+comment(#RIGHTWARDS DOUBLE ARROW)
+key(rArr)operator(:) string<content(\\Rightarrow{})>
+comment(#RIGHTWARDS DOUBLE ARROW)
+key<delimiter(")content(8658)delimiter(")>operator(:) string<content(\\Rightarrow{})>
+comment(#TILDE OPERATOR)
+key(sim)operator(:) string<content(\\sim{})>
+comment(#TILDE OPERATOR)
+key<delimiter(")content(8764)delimiter(")>operator(:) string<content(\\sim{})>
+comment(#APPROXIMATELY EQUAL TO)
+key<delimiter(")content(8771)delimiter(")>operator(:) string<content(\\simeq{})>
+comment(#BLACK SQUARE)
+comment(#requires amssymb)
+key<delimiter(")content(9632)delimiter(")>operator(:) string<content(\\square{})>
+comment(#SUBSET OF)
+key(sub)operator(:) string<content(\\subset{})>
+comment(#SUBSET OF)
+key<delimiter(")content(8834)delimiter(")>operator(:) string<content(\\subset{})>
+comment(#SUBSET OF OR EQUAL TO)
+key(sube)operator(:) string<content(\\subseteq{})>
+comment(#SUBSET OF OR EQUAL TO)
+key<delimiter(")content(8838)delimiter(")>operator(:) string<content(\\subseteq{})>
+comment(#SUPERSET OF)
+key(sup)operator(:) string<content(\\supset{})>
+comment(#SUPERSET OF)
+key<delimiter(")content(8835)delimiter(")>operator(:) string<content(\\supset{})>
+comment(#SUPERSET OF OR EQUAL TO)
+key(supe)operator(:) string<content(\\supseteq{})>
+comment(#SUPERSET OF OR EQUAL TO)
+key<delimiter(")content(8839)delimiter(")>operator(:) string<content(\\supseteq{})>
+comment(#THEREFORE)
+comment(#requires amssymb)
+key(there4)operator(:) string<content(\\therefore{})>
+comment(#THEREFORE)
+comment(#requires amssymb)
+key<delimiter(")content(8756)delimiter(")>operator(:) string<content(\\therefore{})>
+comment(#DOUBLE VERTICAL LINE)
+comment(#requires textcomp)
+key<delimiter(")content(8214)delimiter(")>operator(:) string<content(\\textbardbl{})>
+comment(#ANGSTROM SIGN)
+key<delimiter(")content(8491)delimiter(")>operator(:) string<content(\\AA{})>
+comment(#SCRIPT CAPITAL B)
+comment(#requires mathrsfs)
+key<delimiter(")content(8492)delimiter(")>operator(:) string<content(B)>
+comment(#RING OPERATOR)
+key<delimiter(")content(8728)delimiter(")>operator(:) string<content(\\circ{})>
+comment(#DIAERESIS)
+key<delimiter(")content(168)delimiter(")>operator(:) string<content(\\ddot{})>
+comment(#COMBINING FOUR DOTS ABOVE)
+key<delimiter(")content(8412)delimiter(")>operator(:) string<content(\\ddot{}\\kern4.5pt\\ddot{ })>
+comment(#SCRIPT CAPITAL H)
+comment(#requires mathrsfs)
+key<delimiter(")content(8459)delimiter(")>operator(:) string<content(H)>
+comment(#SCRIPT CAPITAL L)
+comment(#requires mathrsfs)
+key<delimiter(")content(8466)delimiter(")>operator(:) string<content(L)>
+comment(#ASTERISK OPERATOR)
+key(lowast)operator(:) string<content(_\\ast)>
+comment(#ASTERISK OPERATOR)
+key<delimiter(")content(8727)delimiter(")>operator(:) string<content(_\\ast)>
+comment(#NOT AN ELEMENT OF)
+key(notin)operator(:) string<content(\\not\\in{})>
+comment(#NOT AN ELEMENT OF)
+key<delimiter(")content(8713)delimiter(")>operator(:) string<content(\\not\\in{})>
+comment(#SCRIPT SMALL O)
+key<delimiter(")content(8500)delimiter(")>operator(:) string<content(\\mathit{o})>
+comment(#SCRIPT CAPITAL M)
+comment(#requires mathrsfs)
+key<delimiter(")content(8499)delimiter(")>operator(:) string<content(M)>
+comment(#COMBINING THREE DOTS ABOVE)
+key<delimiter(")content(8411)delimiter(")>operator(:) string<content(\\ddot{}\\kern 3pt\\dot{ })>
+comment(#TRIPLE PRIME)
+key<delimiter(")content(8244)delimiter(")>operator(:) string<delimiter(")content({'''})delimiter(")>
+comment(#ESTIMATES)
+key<delimiter(")content(8793)delimiter(")>operator(:) string<content(\\stackrel{\\wedge}{=})>
+comment(#GREEK SMALL LETTER ALPHA)
+key(alpha)operator(:) string<content(\\alpha{})>
+comment(#GREEK SMALL LETTER ALPHA)
+key<delimiter(")content(945)delimiter(")>operator(:) string<content(\\alpha{})>
+comment(#GREEK SMALL LETTER BETA)
+key(beta)operator(:) string<content(\\beta{})>
+comment(#GREEK SMALL LETTER BETA)
+key<delimiter(")content(946)delimiter(")>operator(:) string<content(\\beta{})>
+comment(#GREEK SMALL LETTER GAMMA)
+key(gamma)operator(:) string<content(\\gamma{})>
+comment(#GREEK SMALL LETTER GAMMA)
+key<delimiter(")content(947)delimiter(")>operator(:) string<content(\\gamma{})>
+comment(#GREEK CAPITAL LETTER GAMMA)
+key(Gamma)operator(:) string<content(\\Gamma{})>
+comment(#GREEK CAPITAL LETTER GAMMA)
+key<delimiter(")content(915)delimiter(")>operator(:) string<content(\\Gamma{})>
+comment(#GREEK LETTER DIGAMMA)
+comment(#requires amssymb)
+key<delimiter(")content(988)delimiter(")>operator(:) string<content(\\digamma{})>
+comment(#GREEK SMALL LETTER DELTA)
+key(delta)operator(:) string<content(\\delta{})>
+comment(#GREEK SMALL LETTER DELTA)
+key<delimiter(")content(948)delimiter(")>operator(:) string<content(\\delta{})>
+comment(#GREEK CAPITAL LETTER DELTA)
+key(Delta)operator(:) string<content(\\Delta{})>
+comment(#GREEK CAPITAL LETTER DELTA)
+key<delimiter(")content(916)delimiter(")>operator(:) string<content(\\Delta{})>
+comment(#GREEK SMALL LETTER EPSILON)
+key(epsilon)operator(:) string<content(\\epsilon{})>
+comment(#GREEK SMALL LETTER EPSILON)
+key<delimiter(")content(949)delimiter(")>operator(:) string<content(\\epsilon{})>
+comment(#SMALL ELEMENT OF)
+key<delimiter(")content(8714)delimiter(")>operator(:) string<content(\\epsilon{})>
+comment(#GREEK SMALL LETTER ZETA)
+key(zeta)operator(:) string<content(\\zeta{})>
+comment(#GREEK SMALL LETTER ZETA)
+key<delimiter(")content(950)delimiter(")>operator(:) string<content(\\zeta{})>
+comment(#GREEK SMALL LETTER ETA)
+key(eta)operator(:) string<content(\\eta{})>
+comment(#GREEK SMALL LETTER ETA)
+key<delimiter(")content(951)delimiter(")>operator(:) string<content(\\eta{})>
+comment(#GREEK SMALL LETTER THETA)
+key(theta)operator(:) string<content(\\theta{})>
+comment(#GREEK SMALL LETTER THETA)
+key<delimiter(")content(952)delimiter(")>operator(:) string<content(\\theta{})>
+comment(#GREEK CAPITAL LETTER THETA)
+key(Theta)operator(:) string<content(\\Theta{})>
+comment(#GREEK CAPITAL LETTER THETA)
+key<delimiter(")content(920)delimiter(")>operator(:) string<content(\\Theta{})>
+comment(#GREEK THETA SYMBOL)
+key(thetasym)operator(:) string<content(\\vartheta{})>
+comment(#GREEK THETA SYMBOL)
+key<delimiter(")content(977)delimiter(")>operator(:) string<content(\\vartheta{})>
+comment(#GREEK SMALL LETTER IOTA)
+key(iota)operator(:) string<content(\\iota{})>
+comment(#GREEK SMALL LETTER IOTA)
+key<delimiter(")content(953)delimiter(")>operator(:) string<content(\\iota{})>
+comment(#GREEK SMALL LETTER KAPPA)
+key(kappa)operator(:) string<content(\\kappa{})>
+comment(#GREEK SMALL LETTER KAPPA)
+key<delimiter(")content(954)delimiter(")>operator(:) string<content(\\kappa{})>
+comment(#GREEK KAPPA SYMBOL)
+comment(#requires amssymb)
+key<delimiter(")content(1008)delimiter(")>operator(:) string<content(\\varkappa{})>
+comment(#GREEK SMALL LETTER LAMDA)
+key(lambda)operator(:) string<content(\\lambda{})>
+comment(#GREEK SMALL LETTER LAMDA)
+key<delimiter(")content(955)delimiter(")>operator(:) string<content(\\lambda{})>
+comment(#GREEK CAPITAL LETTER LAMDA)
+key(Lambda)operator(:) string<content(\\Lambda{})>
+comment(#GREEK CAPITAL LETTER LAMDA)
+key<delimiter(")content(923)delimiter(")>operator(:) string<content(\\Lambda{})>
+comment(#GREEK SMALL LETTER MU)
+key(mu)operator(:) string<content(\\mu{})>
+comment(#GREEK SMALL LETTER MU)
+key<delimiter(")content(956)delimiter(")>operator(:) string<content(\\mu{})>
+comment(#GREEK SMALL LETTER NU)
+key(nu)operator(:) string<content(\\nu{})>
+comment(#GREEK SMALL LETTER NU)
+key<delimiter(")content(957)delimiter(")>operator(:) string<content(\\nu{})>
+comment(#GREEK SMALL LETTER XI)
+key(xi)operator(:) string<content(\\xi{})>
+comment(#GREEK SMALL LETTER XI)
+key<delimiter(")content(958)delimiter(")>operator(:) string<content(\\xi{})>
+comment(#GREEK CAPITAL LETTER XI)
+key(Xi)operator(:) string<content(\\Xi{})>
+comment(#GREEK CAPITAL LETTER XI)
+key<delimiter(")content(926)delimiter(")>operator(:) string<content(\\Xi{})>
+comment(#GREEK SMALL LETTER PI)
+key(pi)operator(:) string<content(\\pi{})>
+comment(#GREEK SMALL LETTER PI)
+key<delimiter(")content(960)delimiter(")>operator(:) string<content(\\pi{})>
+comment(#GREEK PI SYMBOL)
+key(piv)operator(:) string<content(\\varpi{})>
+comment(#GREEK PI SYMBOL)
+key<delimiter(")content(982)delimiter(")>operator(:) string<content(\\varpi{})>
+comment(#GREEK CAPITAL LETTER PI)
+key(Pi)operator(:) string<content(\\Pi{})>
+comment(#GREEK CAPITAL LETTER PI)
+key<delimiter(")content(928)delimiter(")>operator(:) string<content(\\Pi{})>
+comment(#GREEK SMALL LETTER RHO)
+key(rho)operator(:) string<content(\\rho{})>
+comment(#GREEK SMALL LETTER RHO)
+key<delimiter(")content(961)delimiter(")>operator(:) string<content(\\rho{})>
+comment(#GREEK RHO SYMBOL)
+key<delimiter(")content(1009)delimiter(")>operator(:) string<content(\\varrho{})>
+comment(#GREEK SMALL LETTER SIGMA)
+key(sigma)operator(:) string<content(\\sigma{})>
+comment(#GREEK SMALL LETTER SIGMA)
+key<delimiter(")content(963)delimiter(")>operator(:) string<content(\\sigma{})>
+comment(#GREEK CAPITAL LETTER SIGMA)
+key(Sigma)operator(:) string<content(\\Sigma{})>
+comment(#GREEK CAPITAL LETTER SIGMA)
+key<delimiter(")content(931)delimiter(")>operator(:) string<content(\\Sigma{})>
+comment(#GREEK SMALL LETTER FINAL SIGMA)
+key(sigmaf)operator(:) string<content(\\varsigma{})>
+comment(#GREEK SMALL LETTER FINAL SIGMA)
+key<delimiter(")content(962)delimiter(")>operator(:) string<content(\\varsigma{})>
+comment(#GREEK SMALL LETTER TAU)
+key(tau)operator(:) string<content(\\tau{})>
+comment(#GREEK SMALL LETTER TAU)
+key<delimiter(")content(964)delimiter(")>operator(:) string<content(\\tau{})>
+comment(#GREEK SMALL LETTER UPSILON)
+key(upsi)operator(:) string<content(\\upsilon{})>
+comment(#GREEK SMALL LETTER UPSILON)
+key<delimiter(")content(965)delimiter(")>operator(:) string<content(\\upsilon{})>
+comment(#GREEK UPSILON WITH HOOK SYMBOL)
+key(upsih)operator(:) string<content(\\Upsilon{})>
+comment(#GREEK UPSILON WITH HOOK SYMBOL)
+key<delimiter(")content(978)delimiter(")>operator(:) string<content(\\Upsilon{})>
+comment(#GREEK SMALL LETTER PHI)
+key(phis)operator(:) string<content(\\phi{})>
+comment(#GREEK SMALL LETTER PHI)
+key<delimiter(")content(966)delimiter(")>operator(:) string<content(\\phi{})>
+comment(#GREEK CAPITAL LETTER PHI)
+key(Phi)operator(:) string<content(\\Phi{})>
+comment(#GREEK CAPITAL LETTER PHI)
+key<delimiter(")content(934)delimiter(")>operator(:) string<content(\\Phi{})>
+comment(#GREEK PHI SYMBOL)
+key<delimiter(")content(981)delimiter(")>operator(:) string<content(\\varphi{})>
+comment(#GREEK SMALL LETTER CHI)
+key(chi)operator(:) string<content(\\chi{})>
+comment(#GREEK SMALL LETTER CHI)
+key<delimiter(")content(967)delimiter(")>operator(:) string<content(\\chi{})>
+comment(#GREEK SMALL LETTER PSI)
+key(psi)operator(:) string<content(\\psi{})>
+comment(#GREEK SMALL LETTER PSI)
+key<delimiter(")content(968)delimiter(")>operator(:) string<content(\\psi{})>
+comment(#GREEK CAPITAL LETTER PSI)
+key(Psi)operator(:) string<content(\\Psi{})>
+comment(#GREEK CAPITAL LETTER PSI)
+key<delimiter(")content(936)delimiter(")>operator(:) string<content(\\Psi{})>
+comment(#GREEK SMALL LETTER OMEGA)
+key(omega)operator(:) string<content(\\omega{})>
+comment(#GREEK SMALL LETTER OMEGA)
+key<delimiter(")content(969)delimiter(")>operator(:) string<content(\\omega{})>
+comment(#GREEK CAPITAL LETTER OMEGA)
+key(Omega)operator(:) string<content(\\Omega{})>
+comment(#GREEK CAPITAL LETTER OMEGA)
+key<delimiter(")content(937)delimiter(")>operator(:) string<content(\\Omega{})>
+comment(#GREEK SMALL LETTER ALPHA)
+comment(#requires amsbsy)
+key<delimiter(")content(945)delimiter(")>operator(:) string<content(\\alpha{})>
+comment(#GREEK SMALL LETTER BETA)
+comment(#requires amsbsy)
+key<delimiter(")content(946)delimiter(")>operator(:) string<content(\\beta{})>
+comment(#GREEK SMALL LETTER GAMMA)
+comment(#requires amsbsy)
+key<delimiter(")content(947)delimiter(")>operator(:) string<content(\\gamma{})>
+comment(#GREEK CAPITAL LETTER GAMMA)
+comment(#requires amsbsy)
+key<delimiter(")content(915)delimiter(")>operator(:) string<content(\\Gamma{})>
+comment(#GREEK LETTER DIGAMMA)
+comment(#requires amsbsy,amssymb)
+key<delimiter(")content(988)delimiter(")>operator(:) string<content(\\digamma{})>
+comment(#GREEK SMALL LETTER DELTA)
+comment(#requires amsbsy)
+key<delimiter(")content(948)delimiter(")>operator(:) string<content(\\delta{})>
+comment(#GREEK CAPITAL LETTER DELTA)
+comment(#requires amsbsy)
+key<delimiter(")content(916)delimiter(")>operator(:) string<content(\\Delta{})>
+comment(#GREEK SMALL LETTER EPSILON)
+comment(#requires amsbsy)
+key<delimiter(")content(949)delimiter(")>operator(:) string<content(\\epsilon{})>
+comment(#GREEK SMALL LETTER EPSILON)
+comment(#requires amsbsy)
+key<delimiter(")content(949)delimiter(")>operator(:) string<content(\\varepsilon{})>
+comment(#GREEK SMALL LETTER EPSILON)
+comment(#requires amsbsy)
+key<delimiter(")content(949)delimiter(")>operator(:) string<content(\\epsilon{})>
+comment(#GREEK SMALL LETTER ZETA)
+comment(#requires amsbsy)
+key<delimiter(")content(950)delimiter(")>operator(:) string<content(\\zeta{})>
+comment(#GREEK SMALL LETTER ETA)
+comment(#requires amsbsy)
+key<delimiter(")content(951)delimiter(")>operator(:) string<content(\\eta{})>
+comment(#GREEK SMALL LETTER THETA)
+comment(#requires amsbsy)
+key<delimiter(")content(952)delimiter(")>operator(:) string<content(\\theta{})>
+comment(#GREEK CAPITAL LETTER THETA)
+comment(#requires amsbsy)
+key<delimiter(")content(920)delimiter(")>operator(:) string<content(\\Theta{})>
+comment(#GREEK THETA SYMBOL)
+comment(#requires amsbsy)
+key<delimiter(")content(977)delimiter(")>operator(:) string<content(\\vartheta{})>
+comment(#GREEK SMALL LETTER IOTA)
+comment(#requires amsbsy)
+key<delimiter(")content(953)delimiter(")>operator(:) string<content(\\iota{})>
+comment(#GREEK SMALL LETTER KAPPA)
+comment(#requires amsbsy)
+key<delimiter(")content(954)delimiter(")>operator(:) string<content(\\kappa{})>
+comment(#GREEK KAPPA SYMBOL)
+comment(#requires amsbsy,amssymb)
+key<delimiter(")content(1008)delimiter(")>operator(:) string<content(\\varkappa{})>
+comment(#GREEK SMALL LETTER LAMDA)
+comment(#requires amsbsy)
+key<delimiter(")content(955)delimiter(")>operator(:) string<content(\\lambda{})>
+comment(#GREEK CAPITAL LETTER LAMDA)
+comment(#requires amsbsy)
+key<delimiter(")content(923)delimiter(")>operator(:) string<content(\\Lambda{})>
+comment(#GREEK SMALL LETTER MU)
+comment(#requires amsbsy)
+key<delimiter(")content(956)delimiter(")>operator(:) string<content(\\mu{})>
+comment(#GREEK SMALL LETTER NU)
+comment(#requires amsbsy)
+key<delimiter(")content(957)delimiter(")>operator(:) string<content(\\nu{})>
+comment(#GREEK SMALL LETTER XI)
+comment(#requires amsbsy)
+key<delimiter(")content(958)delimiter(")>operator(:) string<content(\\xi{})>
+comment(#GREEK CAPITAL LETTER XI)
+comment(#requires amsbsy)
+key<delimiter(")content(926)delimiter(")>operator(:) string<content(\\Xi{})>
+comment(#GREEK SMALL LETTER PI)
+comment(#requires amsbsy)
+key<delimiter(")content(960)delimiter(")>operator(:) string<content(\\pi{})>
+comment(#GREEK CAPITAL LETTER PI)
+comment(#requires amsbsy)
+key<delimiter(")content(928)delimiter(")>operator(:) string<content(\\Pi{})>
+comment(#GREEK PI SYMBOL)
+comment(#requires amsbsy)
+key<delimiter(")content(982)delimiter(")>operator(:) string<content(\\varpi{})>
+comment(#GREEK SMALL LETTER RHO)
+comment(#requires amsbsy)
+key<delimiter(")content(961)delimiter(")>operator(:) string<content(\\rho{})>
+comment(#GREEK RHO SYMBOL)
+comment(#requires amsbsy)
+key<delimiter(")content(1009)delimiter(")>operator(:) string<content(\\varrho{})>
+comment(#GREEK SMALL LETTER SIGMA)
+comment(#requires amsbsy)
+key<delimiter(")content(963)delimiter(")>operator(:) string<content(\\sigma{})>
+comment(#GREEK CAPITAL LETTER SIGMA)
+comment(#requires amsbsy)
+key<delimiter(")content(931)delimiter(")>operator(:) string<content(\\Sigma{})>
+comment(#GREEK SMALL LETTER FINAL SIGMA)
+comment(#requires amsbsy)
+key<delimiter(")content(962)delimiter(")>operator(:) string<content(\\varsigma{})>
+comment(#GREEK SMALL LETTER TAU)
+comment(#requires amsbsy)
+key<delimiter(")content(964)delimiter(")>operator(:) string<content(\\tau{})>
+comment(#GREEK SMALL LETTER UPSILON)
+comment(#requires amsbsy)
+key<delimiter(")content(965)delimiter(")>operator(:) string<content(\\upsilon{})>
+comment(#GREEK CAPITAL LETTER UPSILON)
+comment(#requires amsbsy)
+key<delimiter(")content(978)delimiter(")>operator(:) string<content(\\Upsilon{})>
+comment(#GREEK SMALL LETTER PHI)
+comment(#requires amsbsy)
+key<delimiter(")content(966)delimiter(")>operator(:) string<content(\\phi{})>
+comment(#GREEK CAPITAL LETTER PHI)
+comment(#requires amsbsy)
+key<delimiter(")content(934)delimiter(")>operator(:) string<content(\\Phi{})>
+comment(#GREEK PHI SYMBOL)
+comment(#requires amsbsy)
+key<delimiter(")content(981)delimiter(")>operator(:) string<content(\\varphi{})>
+comment(#GREEK SMALL LETTER CHI)
+comment(#requires amsbsy)
+key<delimiter(")content(967)delimiter(")>operator(:) string<content(\\chi{})>
+comment(#GREEK SMALL LETTER PSI)
+comment(#requires amsbsy)
+key<delimiter(")content(968)delimiter(")>operator(:) string<content(\\psi{})>
+comment(#GREEK CAPITAL LETTER PSI)
+comment(#requires amsbsy)
+key<delimiter(")content(936)delimiter(")>operator(:) string<content(\\Psi{})>
+comment(#GREEK SMALL LETTER OMEGA)
+comment(#requires amsbsy)
+key<delimiter(")content(969)delimiter(")>operator(:) string<content(\\omega{})>
+comment(#GREEK CAPITAL LETTER OMEGA)
+comment(#requires amsbsy)
+key<delimiter(")content(937)delimiter(")>operator(:) string<content(\\Omega{})>
+comment(#ANGLE)
+key(ang)operator(:) string<content(\\angle{})>
+comment(#ANGLE)
+key<delimiter(")content(8736)delimiter(")>operator(:) string<content(\\angle{})>
+comment(#MEASURED ANGLE)
+comment(#requires amssymb)
+key<delimiter(")content(8737)delimiter(")>operator(:) string<content(\\measuredangle{})>
+comment(#BET SYMBOL)
+comment(#requires amssymb)
+key<delimiter(")content(8502)delimiter(")>operator(:) string<content(\\beth{})>
+comment(#REVERSED PRIME)
+comment(#requires amssymb)
+key<delimiter(")content(8245)delimiter(")>operator(:) string<content(^\\backprime)>
+comment(#COMPLEMENT)
+comment(#requires amssymb)
+key<delimiter(")content(8705)delimiter(")>operator(:) string<content(\\complement{})>
+comment(#DALET SYMBOL)
+comment(#requires amssymb)
+key<delimiter(")content(8504)delimiter(")>operator(:) string<content(\\daleth{})>
+comment(#SCRIPT SMALL L)
+key<delimiter(")content(8467)delimiter(")>operator(:) string<content(\\ell{})>
+comment(#EMPTY SET)
+key(empty)operator(:) string<content(\\emptyset{})>
+comment(#EMPTY SET)
+key<delimiter(")content(8709)delimiter(")>operator(:) string<content(\\emptyset{})>
+comment(#GIMEL SYMBOL)
+comment(#requires amssymb)
+key<delimiter(")content(8503)delimiter(")>operator(:) string<content(\\gimel{})>
+comment(#BLACK-LETTER CAPITAL I)
+key(image)operator(:) string<content(\\Im{})>
+comment(#BLACK-LETTER CAPITAL I)
+key<delimiter(")content(8465)delimiter(")>operator(:) string<content(\\Im{})>
+comment(#THERE DOES NOT EXIST)
+comment(#requires amssymb)
+key<delimiter(")content(8708)delimiter(")>operator(:) string<content(\\nexists{})>
+comment(#CIRCLED LATIN CAPITAL LETTER S)
+comment(#requires amssymb)
+key<delimiter(")content(9416)delimiter(")>operator(:) string<content(\\textcircled{S})>
+comment(#PLANCK CONSTANT OVER TWO PI)
+key<delimiter(")content(8463)delimiter(")>operator(:) string<content(\\hbar{})>
+comment(#BLACK-LETTER CAPITAL R)
+key(real)operator(:) string<content(\\Re{})>
+comment(#BLACK-LETTER CAPITAL R)
+key<delimiter(")content(8476)delimiter(")>operator(:) string<content(\\Re{})>
+comment(#SMALL REVERSE SOLIDUS)
+comment(#requires amssymb)
+key<delimiter(")content(65128)delimiter(")>operator(:) string<content(\\smallsetminus{})>
+comment(#SCRIPT CAPITAL P)
+key(weierp)operator(:) string<content(\\wp{})>
+comment(#SCRIPT CAPITAL P)
+key<delimiter(")content(8472)delimiter(")>operator(:) string<content(\\wp{})>
+comment(#N-ARY COPRODUCT)
+key<delimiter(")content(8720)delimiter(")>operator(:) string<content(\\amalg{})>
+comment(#PERSPECTIVE)
+comment(#requires amssymb)
+key<delimiter(")content(8966)delimiter(")>operator(:) string<content(\\doublebarwedge{})>
+comment(#NAND)
+comment(#requires amssymb)
+key<delimiter(")content(8892)delimiter(")>operator(:) string<content(\\barwedge{})>
+comment(#DOUBLE INTERSECTION)
+comment(#requires amssymb)
+key<delimiter(")content(8914)delimiter(")>operator(:) string<content(\\Cap{})>
+comment(#DOUBLE UNION)
+comment(#requires amssymb)
+key<delimiter(")content(8915)delimiter(")>operator(:) string<content(\\Cup{})>
+comment(#CURLY LOGICAL OR)
+comment(#requires amssymb)
+key<delimiter(")content(8910)delimiter(")>operator(:) string<content(\\curlyvee{})>
+comment(#CURLY LOGICAL AND)
+comment(#requires amssymb)
+key<delimiter(")content(8911)delimiter(")>operator(:) string<content(\\curlywedge{})>
+comment(#DIAMOND OPERATOR)
+key<delimiter(")content(8900)delimiter(")>operator(:) string<content(\\diamond{})>
+comment(#DIVISION TIMES)
+comment(#requires amssymb)
+key<delimiter(")content(8903)delimiter(")>operator(:) string<content(\\divideontimes{})>
+comment(#INTERCALATE)
+comment(#requires amssymb)
+key<delimiter(")content(8890)delimiter(")>operator(:) string<content(\\intercal{})>
+comment(#LEFT SEMIDIRECT PRODUCT)
+comment(#requires amssymb)
+key<delimiter(")content(8907)delimiter(")>operator(:) string<content(\\leftthreetimes{})>
+comment(#LEFT NORMAL FACTOR SEMIDIRECT PRODUCT)
+comment(#requires amssymb)
+key<delimiter(")content(8905)delimiter(")>operator(:) string<content(\\ltimes{})>
+comment(#SQUARED MINUS)
+comment(#requires amssymb)
+key<delimiter(")content(8863)delimiter(")>operator(:) string<content(\\boxminus{})>
+comment(#CIRCLED ASTERISK OPERATOR)
+comment(#requires amssymb)
+key<delimiter(")content(8859)delimiter(")>operator(:) string<content(\\circledast{})>
+comment(#CIRCLED RING OPERATOR)
+comment(#requires amssymb)
+key<delimiter(")content(8858)delimiter(")>operator(:) string<content(\\circledcirc{})>
+comment(#CIRCLED DASH)
+comment(#requires amssymb)
+key<delimiter(")content(8861)delimiter(")>operator(:) string<content(\\circleddash{})>
+comment(#CIRCLED DOT OPERATOR)
+key<delimiter(")content(8857)delimiter(")>operator(:) string<content(\\odot{})>
+comment(#CIRCLED MINUS)
+key<delimiter(")content(8854)delimiter(")>operator(:) string<content(\\ominus{})>
+comment(#CIRCLED PLUS)
+key(oplus)operator(:) string<content(\\oplus{})>
+comment(#CIRCLED PLUS)
+key<delimiter(")content(8853)delimiter(")>operator(:) string<content(\\oplus{})>
+comment(#CIRCLED DIVISION SLASH)
+key<delimiter(")content(8856)delimiter(")>operator(:) string<content(\\oslash{})>
+comment(#CIRCLED TIMES)
+key(otimes)operator(:) string<content(\\otimes{})>
+comment(#CIRCLED TIMES)
+key<delimiter(")content(8855)delimiter(")>operator(:) string<content(\\otimes{})>
+comment(#SQUARED PLUS)
+comment(#requires amssymb)
+key<delimiter(")content(8862)delimiter(")>operator(:) string<content(\\boxplus{})>
+comment(#DOT PLUS)
+comment(#requires amssymb)
+key<delimiter(")content(8724)delimiter(")>operator(:) string<content(\\dotplus{})>
+comment(#RIGHT SEMIDIRECT PRODUCT)
+comment(#requires amssymb)
+key<delimiter(")content(8908)delimiter(")>operator(:) string<content(\\rightthreetimes{})>
+comment(#RIGHT NORMAL FACTOR SEMIDIRECT PRODUCT)
+comment(#requires amssymb)
+key<delimiter(")content(8906)delimiter(")>operator(:) string<content(\\rtimes{})>
+comment(#DOT OPERATOR)
+key(sdot)operator(:) string<content(\\cdot{})>
+comment(#DOT OPERATOR)
+key<delimiter(")content(8901)delimiter(")>operator(:) string<content(\\cdot{})>
+comment(#SQUARED DOT OPERATOR)
+comment(#requires amssymb)
+key<delimiter(")content(8865)delimiter(")>operator(:) string<content(\\boxdot{})>
+comment(#SET MINUS)
+key<delimiter(")content(8726)delimiter(")>operator(:) string<content(\\setminus{})>
+comment(#SQUARE CAP)
+key<delimiter(")content(8851)delimiter(")>operator(:) string<content(\\sqcap{})>
+comment(#SQUARE CUP)
+key<delimiter(")content(8852)delimiter(")>operator(:) string<content(\\sqcup{})>
+comment(#STAR OPERATOR)
+key<delimiter(")content(8902)delimiter(")>operator(:) string<content(\\star{})>
+comment(#SQUARED TIMES)
+comment(#requires amssymb)
+key<delimiter(")content(8864)delimiter(")>operator(:) string<content(\\boxtimes{})>
+comment(#DOWN TACK)
+key<delimiter(")content(8868)delimiter(")>operator(:) string<content(\\top{})>
+comment(#MULTISET UNION)
+key<delimiter(")content(8846)delimiter(")>operator(:) string<content(\\uplus{})>
+comment(#WREATH PRODUCT)
+key<delimiter(")content(8768)delimiter(")>operator(:) string<content(\\wr{})>
+comment(#LARGE CIRCLE)
+comment(#requires textcomp)
+key<delimiter(")content(9711)delimiter(")>operator(:) string<content(\\textbigcircle{})>
+comment(#WHITE DOWN-POINTING TRIANGLE)
+key<delimiter(")content(9661)delimiter(")>operator(:) string<content(\\bigtriangledown{})>
+comment(#WHITE UP-POINTING TRIANGLE)
+key<delimiter(")content(9651)delimiter(")>operator(:) string<content(\\bigtriangleup{})>
+comment(#N-ARY COPRODUCT)
+key<delimiter(")content(8720)delimiter(")>operator(:) string<content(\\coprod{})>
+comment(#N-ARY PRODUCT)
+key(prod)operator(:) string<content(\\prod{})>
+comment(#N-ARY PRODUCT)
+key<delimiter(")content(8719)delimiter(")>operator(:) string<content(\\prod{})>
+comment(#N-ARY SUMMATION)
+key(sum)operator(:) string<content(\\sum{})>
+comment(#N-ARY SUMMATION)
+key<delimiter(")content(8721)delimiter(")>operator(:) string<content(\\sum{})>
+comment(#ALMOST EQUAL OR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8778)delimiter(")>operator(:) string<content(\\approxeq{})>
+comment(#EQUIVALENT TO)
+key(asymp)operator(:) string<content(\\asymp{})>
+comment(#EQUIVALENT TO)
+key<delimiter(")content(8781)delimiter(")>operator(:) string<content(\\asymp{})>
+comment(#ALL EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8780)delimiter(")>operator(:) string<content(\\backcong{})>
+comment(#SMALL CONTAINS AS MEMBER)
+comment(#requires amssymb)
+key<delimiter(")content(8717)delimiter(")>operator(:) string<content(\\backepsilon{})>
+comment(#BOWTIE)
+key<delimiter(")content(8904)delimiter(")>operator(:) string<content(\\bowtie{})>
+comment(#REVERSED TILDE)
+comment(#requires amssymb)
+key<delimiter(")content(8765)delimiter(")>operator(:) string<content(\\backsim{})>
+comment(#REVERSED TILDE EQUALS)
+comment(#requires amssymb)
+key<delimiter(")content(8909)delimiter(")>operator(:) string<content(\\backsimeq{})>
+comment(#GEOMETRICALLY EQUIVALENT TO)
+comment(#requires amssymb)
+key<delimiter(")content(8782)delimiter(")>operator(:) string<content(\\Bumpeq{})>
+comment(#DIFFERENCE BETWEEN)
+comment(#requires amssymb)
+key<delimiter(")content(8783)delimiter(")>operator(:) string<content(\\bumpeq{})>
+comment(#RING EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8791)delimiter(")>operator(:) string<content(\\circeq{})>
+comment(#COLON EQUALS)
+key<delimiter(")content(8788)delimiter(")>operator(:) string<delimiter(")content(:=)delimiter(")>
+comment(#EQUAL TO OR PRECEDES)
+comment(#requires amssymb)
+key<delimiter(")content(8926)delimiter(")>operator(:) string<content(\\curlyeqprec{})>
+comment(#EQUAL TO OR SUCCEEDS)
+comment(#requires amssymb)
+key<delimiter(")content(8927)delimiter(")>operator(:) string<content(\\curlyeqsucc{})>
+comment(#PRECEDES OR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8828)delimiter(")>operator(:) string<content(\\preccurlyeq{})>
+comment(#LEFT TACK)
+key<delimiter(")content(8867)delimiter(")>operator(:) string<content(\\dashv{})>
+comment(#RING IN EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8790)delimiter(")>operator(:) string<content(\\eqcirc{})>
+comment(#EQUALS COLON)
+key<delimiter(")content(8789)delimiter(")>operator(:) string<delimiter(")content(=:)delimiter(")>
+comment(#GEOMETRICALLY EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8785)delimiter(")>operator(:) string<content(\\doteqdot{})>
+comment(#APPROACHES THE LIMIT)
+key<delimiter(")content(8784)delimiter(")>operator(:) string<content(\\doteq{})>
+comment(#APPROXIMATELY EQUAL TO OR THE IMAGE OF)
+comment(#requires amssymb)
+key<delimiter(")content(8786)delimiter(")>operator(:) string<content(\\fallingdotseq{})>
+comment(#EQUAL TO OR GREATER-THAN)
+comment(#requires amssymb)
+key<delimiter(")content(8925)delimiter(")>operator(:) string<content(\\eqslantgtr{})>
+comment(#EQUAL TO OR LESS-THAN)
+comment(#requires amssymb)
+key<delimiter(")content(8924)delimiter(")>operator(:) string<content(\\eqslantless{})>
+comment(#IMAGE OF OR APPROXIMATELY EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8787)delimiter(")>operator(:) string<content(\\risingdotseq{})>
+comment(#PITCHFORK)
+comment(#requires amssymb)
+key<delimiter(")content(8916)delimiter(")>operator(:) string<content(\\pitchfork{})>
+comment(#FROWN)
+key<delimiter(")content(8994)delimiter(")>operator(:) string<content(\\frown{})>
+comment(#GREATER-THAN WITH DOT)
+comment(#requires amssymb)
+key<delimiter(")content(8919)delimiter(")>operator(:) string<content(\\gtrdot{})>
+comment(#GREATER-THAN OVER EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8807)delimiter(")>operator(:) string<content(\\geqq{})>
+comment(#GREATER-THAN EQUAL TO OR LESS-THAN)
+comment(#requires amssymb)
+key<delimiter(")content(8923)delimiter(")>operator(:) string<content(\\gtreqless{})>
+comment(#GREATER-THAN EQUAL TO OR LESS-THAN)
+comment(#requires amssymb)
+key<delimiter(")content(8923)delimiter(")>operator(:) string<content(\\gtreqqless{})>
+comment(#VERY MUCH GREATER-THAN)
+comment(#requires amssymb)
+key<delimiter(")content(8921)delimiter(")>operator(:) string<content(\\ggg{})>
+comment(#GREATER-THAN OR LESS-THAN)
+comment(#requires amssymb)
+key<delimiter(")content(8823)delimiter(")>operator(:) string<content(\\gtrless{})>
+comment(#GREATER-THAN OR EQUIVALENT TO)
+comment(#requires amssymb)
+key<delimiter(")content(8819)delimiter(")>operator(:) string<content(\\gtrsim{})>
+comment(#MUCH GREATER-THAN)
+key<delimiter(")content(8811)delimiter(")>operator(:) string<content(\\gg{})>
+comment(#LESS-THAN WITH DOT)
+comment(#requires amssymb)
+key<delimiter(")content(8918)delimiter(")>operator(:) string<content(\\lessdot{})>
+comment(#LESS-THAN OVER EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8806)delimiter(")>operator(:) string<content(\\leqq{})>
+comment(#LESS-THAN EQUAL TO OR GREATER-THAN)
+comment(#requires amssymb)
+key<delimiter(")content(8922)delimiter(")>operator(:) string<content(\\lesseqqgtr{})>
+comment(#LESS-THAN EQUAL TO OR GREATER-THAN)
+comment(#requires amssymb)
+key<delimiter(")content(8922)delimiter(")>operator(:) string<content(\\lesseqgtr{})>
+comment(#LESS-THAN OR GREATER-THAN)
+comment(#requires amssymb)
+key<delimiter(")content(8822)delimiter(")>operator(:) string<content(\\lessgtr{})>
+comment(#VERY MUCH LESS-THAN)
+comment(#requires amssymb)
+key<delimiter(")content(8920)delimiter(")>operator(:) string<content(\\lll{})>
+comment(#LESS-THAN OR EQUIVALENT TO)
+comment(#requires amssymb)
+key<delimiter(")content(8818)delimiter(")>operator(:) string<content(\\lesssim{})>
+comment(#MUCH LESS-THAN)
+key<delimiter(")content(8810)delimiter(")>operator(:) string<content(\\ll{})>
+comment(#NORMAL SUBGROUP OF OR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8884)delimiter(")>operator(:) string<content(\\trianglelefteq{})>
+comment(#DIVIDES)
+key<delimiter(")content(8739)delimiter(")>operator(:) string<content(\\mid{})>
+comment(#MODELS)
+key<delimiter(")content(8871)delimiter(")>operator(:) string<content(\\models{})>
+comment(#PRECEDES)
+key<delimiter(")content(8826)delimiter(")>operator(:) string<content(\\prec{})>
+comment(#PRECEDES OR EQUAL TO)
+key<delimiter(")content(8828)delimiter(")>operator(:) string<content(\\preceq{})>
+comment(#PRECEDES OR EQUIVALENT TO)
+comment(#requires amssymb)
+key<delimiter(")content(8830)delimiter(")>operator(:) string<content(\\precsim{})>
+comment(#CONTAINS AS NORMAL SUBGROUP OR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8885)delimiter(")>operator(:) string<content(\\trianglerighteq{})>
+comment(#SUCCEEDS)
+key<delimiter(")content(8827)delimiter(")>operator(:) string<content(\\succ{})>
+comment(#SUCCEEDS OR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8829)delimiter(")>operator(:) string<content(\\succcurlyeq{})>
+comment(#SUCCEEDS OR EQUAL TO)
+key<delimiter(")content(8829)delimiter(")>operator(:) string<content(\\succeq{})>
+comment(#SUCCEEDS OR EQUIVALENT TO)
+comment(#requires amssymb)
+key<delimiter(")content(8831)delimiter(")>operator(:) string<content(\\succsim{})>
+comment(#SMILE)
+key<delimiter(")content(8995)delimiter(")>operator(:) string<content(\\smile{})>
+comment(#SQUARE IMAGE OF)
+comment(#requires amssymb)
+key<delimiter(")content(8847)delimiter(")>operator(:) string<content(\\sqsubset{})>
+comment(#SQUARE IMAGE OF OR EQUAL TO)
+key<delimiter(")content(8849)delimiter(")>operator(:) string<content(\\sqsubseteq{})>
+comment(#SQUARE ORIGINAL OF)
+comment(#requires amssymb)
+key<delimiter(")content(8848)delimiter(")>operator(:) string<content(\\sqsupset{})>
+comment(#SQUARE ORIGINAL OF OR EQUAL TO)
+key<delimiter(")content(8850)delimiter(")>operator(:) string<content(\\sqsupseteq{})>
+comment(#DOUBLE SUBSET)
+comment(#requires amssymb)
+key<delimiter(")content(8912)delimiter(")>operator(:) string<content(\\Subset{})>
+comment(#SUBSET OF OR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8838)delimiter(")>operator(:) string<content(\\subseteqq{})>
+comment(#DOUBLE SUPERSET)
+comment(#requires amssymb)
+key<delimiter(")content(8913)delimiter(")>operator(:) string<content(\\Supset{})>
+comment(#SUPERSET OF OR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8839)delimiter(")>operator(:) string<content(\\supseteqq{})>
+comment(#DELTA EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8796)delimiter(")>operator(:) string<content(\\triangleq{})>
+comment(#BETWEEN)
+comment(#requires amssymb)
+key<delimiter(")content(8812)delimiter(")>operator(:) string<content(\\between{})>
+comment(#RIGHT TACK)
+key<delimiter(")content(8866)delimiter(")>operator(:) string<content(\\vdash{})>
+comment(#FORCES)
+comment(#requires amssymb)
+key<delimiter(")content(8873)delimiter(")>operator(:) string<content(\\Vdash{})>
+comment(#TRUE)
+comment(#requires amssymb)
+key<delimiter(")content(8872)delimiter(")>operator(:) string<content(\\vDash{})>
+comment(#XOR)
+comment(#requires amssymb)
+key<delimiter(")content(8891)delimiter(")>operator(:) string<content(\\veebar{})>
+comment(#NORMAL SUBGROUP OF)
+comment(#requires amssymb)
+key<delimiter(")content(8882)delimiter(")>operator(:) string<content(\\vartriangleleft{})>
+comment(#PROPORTIONAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8733)delimiter(")>operator(:) string<content(\\varpropto{})>
+comment(#CONTAINS AS NORMAL SUBGROUP)
+comment(#requires amssymb)
+key<delimiter(")content(8883)delimiter(")>operator(:) string<content(\\vartriangleright{})>
+comment(#TRIPLE VERTICAL BAR RIGHT TURNSTILE)
+comment(#requires amssymb)
+key<delimiter(")content(8874)delimiter(")>operator(:) string<content(\\Vvdash{})>
+comment(#GREATER-THAN BUT NOT EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8809)delimiter(")>operator(:) string<content(\\gneq{})>
+comment(#GREATER-THAN BUT NOT EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8809)delimiter(")>operator(:) string<content(\\gneqq{})>
+comment(#GREATER-THAN BUT NOT EQUIVALENT TO)
+comment(#requires amssymb)
+key<delimiter(")content(8935)delimiter(")>operator(:) string<content(\\gnsim{})>
+comment(#GREATER-THAN BUT NOT EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8809)delimiter(")>operator(:) string<content(\\gvertneqq{})>
+comment(#LESS-THAN BUT NOT EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8808)delimiter(")>operator(:) string<content(\\lneqq{})>
+comment(#LESS-THAN BUT NOT EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8808)delimiter(")>operator(:) string<content(\\lneq{})>
+comment(#LESS-THAN BUT NOT EQUIVALENT TO)
+comment(#requires amssymb)
+key<delimiter(")content(8934)delimiter(")>operator(:) string<content(\\lnsim{})>
+comment(#LESS-THAN BUT NOT EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8808)delimiter(")>operator(:) string<content(\\lvertneqq{})>
+comment(#NOT ALMOST EQUAL TO)
+key<delimiter(")content(8777)delimiter(")>operator(:) string<content(\\not\\approx{})>
+comment(#NEITHER APPROXIMATELY NOR ACTUALLY EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8775)delimiter(")>operator(:) string<content(\\not\\cong{})>
+comment(#NOT IDENTICAL TO)
+key<delimiter(")content(8802)delimiter(")>operator(:) string<content(\\not\\equiv{})>
+comment(#NEITHER GREATER-THAN NOR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8817)delimiter(")>operator(:) string<content(\\not\\geq{})>
+comment(#NEITHER GREATER-THAN NOR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8817)delimiter(")>operator(:) string<content(\\ngeqslant{})>
+comment(#NOT GREATER-THAN)
+comment(#requires amssymb)
+key<delimiter(")content(8815)delimiter(")>operator(:) string<content(\\not>)>
+comment(#NEITHER LESS-THAN NOR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8816)delimiter(")>operator(:) string<content(\\not\\leq{})>
+comment(#NEITHER LESS-THAN NOR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8816)delimiter(")>operator(:) string<content(\\nleqslant{})>
+comment(#NOT LESS-THAN)
+comment(#requires amssymb)
+key<delimiter(")content(8814)delimiter(")>operator(:) string<content(\\not<)>
+comment(#NOT NORMAL SUBGROUP OF)
+comment(#requires amssymb)
+key<delimiter(")content(8938)delimiter(")>operator(:) string<content(\\ntriangleleft{})>
+comment(#NOT NORMAL SUBGROUP OF OR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8940)delimiter(")>operator(:) string<content(\\ntrianglelefteq{})>
+comment(#DOES NOT DIVIDE)
+comment(#requires amssymb)
+key<delimiter(")content(8740)delimiter(")>operator(:) string<content(\\nmid{})>
+comment(#NOT PARALLEL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8742)delimiter(")>operator(:) string<content(\\nparallel{})>
+comment(#DOES NOT PRECEDE)
+comment(#requires amssymb)
+key<delimiter(")content(8832)delimiter(")>operator(:) string<content(\\not\\prec{})>
+comment(#DOES NOT PRECEDE OR EQUAL)
+comment(#requires amssymb)
+key<delimiter(")content(8928)delimiter(")>operator(:) string<content(\\not\\preceq{})>
+comment(#DOES NOT CONTAIN AS NORMAL SUBGROUP)
+comment(#requires amssymb)
+key<delimiter(")content(8939)delimiter(")>operator(:) string<content(\\ntriangleright{})>
+comment(#DOES NOT CONTAIN AS NORMAL SUBGROUP OR EQUAL)
+comment(#requires amssymb)
+key<delimiter(")content(8941)delimiter(")>operator(:) string<content(\\ntrianglerighteq{})>
+comment(#DOES NOT SUCCEED)
+comment(#requires amssymb)
+key<delimiter(")content(8833)delimiter(")>operator(:) string<content(\\not\\succ{})>
+comment(#DOES NOT SUCCEED OR EQUAL)
+comment(#requires amssymb)
+key<delimiter(")content(8929)delimiter(")>operator(:) string<content(\\not\\succeq{})>
+comment(#NOT TILDE)
+comment(#requires amssymb)
+key<delimiter(")content(8769)delimiter(")>operator(:) string<content(\\not\\sim{})>
+comment(#NOT ASYMPTOTICALLY EQUAL TO)
+key<delimiter(")content(8772)delimiter(")>operator(:) string<content(\\not\\simeq{})>
+comment(#NOT A SUBSET OF)
+key(nsub)operator(:) string<content(\\not\\subset{})>
+comment(#NOT A SUBSET OF)
+key<delimiter(")content(8836)delimiter(")>operator(:) string<content(\\not\\subset{})>
+comment(#NEITHER A SUBSET OF NOR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8840)delimiter(")>operator(:) string<content(\\not\\subseteq{})>
+comment(#NEITHER A SUBSET OF NOR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8840)delimiter(")>operator(:) string<content(\\nsubseteqq{})>
+comment(#NOT A SUPERSET OF)
+key<delimiter(")content(8837)delimiter(")>operator(:) string<content(\\not\\supset{})>
+comment(#NEITHER A SUPERSET OF NOR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8841)delimiter(")>operator(:) string<content(\\nsupseteqq{})>
+comment(#NEITHER A SUPERSET OF NOR EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8841)delimiter(")>operator(:) string<content(\\not\\supseteq{})>
+comment(#DOES NOT PROVE)
+comment(#requires amssymb)
+key<delimiter(")content(8876)delimiter(")>operator(:) string<content(\\nvdash{})>
+comment(#NOT TRUE)
+comment(#requires amssymb)
+key<delimiter(")content(8877)delimiter(")>operator(:) string<content(\\nvDash{})>
+comment(#NEGATED DOUBLE VERTICAL BAR DOUBLE RIGHT TURNSTILE)
+comment(#requires amssymb)
+key<delimiter(")content(8879)delimiter(")>operator(:) string<content(\\nVDash{})>
+comment(#DOES NOT FORCE)
+comment(#requires amssymb)
+key<delimiter(")content(8878)delimiter(")>operator(:) string<content(\\nVdash{})>
+comment(#PRECEDES BUT NOT EQUIVALENT TO)
+comment(#requires amssymb)
+key<delimiter(")content(8936)delimiter(")>operator(:) string<content(\\precnsim{})>
+comment(#SUCCEEDS BUT NOT EQUIVALENT TO)
+comment(#requires amssymb)
+key<delimiter(")content(8937)delimiter(")>operator(:) string<content(\\succnsim{})>
+comment(#TRUE)
+comment(#requires amssymb)
+key<delimiter(")content(8842)delimiter(")>operator(:) string<content(\\subsetneq{})>
+comment(#TRUE)
+comment(#requires amssymb)
+key<delimiter(")content(8842)delimiter(")>operator(:) string<content(\\subsetneqq{})>
+comment(#SUPERSET OF WITH NOT EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8843)delimiter(")>operator(:) string<content(\\supsetneq{})>
+comment(#SUPERSET OF WITH NOT EQUAL TO)
+comment(#requires amssymb)
+key<delimiter(")content(8843)delimiter(")>operator(:) string<content(\\supsetneqq{})>
+comment(#ANTICLOCKWISE TOP SEMICIRCLE ARROW)
+comment(#requires amssymb)
+key<delimiter(")content(8630)delimiter(")>operator(:) string<content(\\curvearrowleft{})>
+comment(#CLOCKWISE TOP SEMICIRCLE ARROW)
+comment(#requires amssymb)
+key<delimiter(")content(8631)delimiter(")>operator(:) string<content(\\curvearrowright{})>
+comment(#DOWNWARDS DOUBLE ARROW)
+key(dArr)operator(:) string<content(\\Downarrow{})>
+comment(#DOWNWARDS DOUBLE ARROW)
+key<delimiter(")content(8659)delimiter(")>operator(:) string<content(\\Downarrow{})>
+comment(#DOWNWARDS PAIRED ARROWS)
+comment(#requires amssymb)
+key<delimiter(")content(8650)delimiter(")>operator(:) string<content(\\downdownarrows{})>
+comment(#DOWNWARDS HARPOON WITH BARB LEFTWARDS)
+comment(#requires amssymb)
+key<delimiter(")content(8643)delimiter(")>operator(:) string<content(\\downharpoonleft{})>
+comment(#DOWNWARDS HARPOON WITH BARB RIGHTWARDS)
+comment(#requires amssymb)
+key<delimiter(")content(8642)delimiter(")>operator(:) string<content(\\downharpoonright{})>
+comment(#LEFTWARDS TRIPLE ARROW)
+comment(#requires amssymb)
+key<delimiter(")content(8666)delimiter(")>operator(:) string<content(\\Lleftarrow{})>
+comment(#LEFTWARDS TWO HEADED ARROW)
+comment(#requires amssymb)
+key<delimiter(")content(8606)delimiter(")>operator(:) string<content(\\twoheadleftarrow{})>
+comment(#LEFTWARDS PAIRED ARROWS)
+comment(#requires amssymb)
+key<delimiter(")content(8647)delimiter(")>operator(:) string<content(\\leftleftarrows{})>
+comment(#LEFTWARDS ARROW WITH HOOK)
+key<delimiter(")content(8617)delimiter(")>operator(:) string<content(\\hookleftarrow{})>
+comment(#LEFTWARDS ARROW WITH LOOP)
+comment(#requires amssymb)
+key<delimiter(")content(8619)delimiter(")>operator(:) string<content(\\looparrowleft{})>
+comment(#LEFTWARDS ARROW WITH TAIL)
+comment(#requires amssymb)
+key<delimiter(")content(8610)delimiter(")>operator(:) string<content(\\leftarrowtail{})>
+comment(#LEFTWARDS HARPOON WITH BARB DOWNWARDS)
+key<delimiter(")content(8637)delimiter(")>operator(:) string<content(\\leftharpoondown{})>
+comment(#LEFTWARDS HARPOON WITH BARB UPWARDS)
+key<delimiter(")content(8636)delimiter(")>operator(:) string<content(\\leftharpoonup{})>
+comment(#LEFT RIGHT DOUBLE ARROW)
+key(hArr)operator(:) string<content(\\Leftrightarrow{})>
+comment(#LEFT RIGHT DOUBLE ARROW)
+key<delimiter(")content(8660)delimiter(")>operator(:) string<content(\\Leftrightarrow{})>
+comment(#LEFT RIGHT ARROW)
+key(harr)operator(:) string<content(\\leftrightarrow{})>
+comment(#LEFT RIGHT ARROW)
+key<delimiter(")content(8596)delimiter(")>operator(:) string<content(\\leftrightarrow{})>
+comment(#LEFTWARDS ARROW OVER RIGHTWARDS ARROW)
+comment(#requires amssymb)
+key<delimiter(")content(8646)delimiter(")>operator(:) string<content(\\leftrightarrows{})>
+comment(#RIGHTWARDS ARROW OVER LEFTWARDS ARROW)
+comment(#requires amssymb)
+key<delimiter(")content(8644)delimiter(")>operator(:) string<content(\\rightleftarrows{})>
+comment(#LEFT RIGHT WAVE ARROW)
+comment(#requires amssymb)
+key<delimiter(")content(8621)delimiter(")>operator(:) string<content(\\leftrightsquigarrow{})>
+comment(#RIGHTWARDS HARPOON OVER LEFTWARDS HARPOON)
+key<delimiter(")content(8652)delimiter(")>operator(:) string<content(\\rightleftharpoons{})>
+comment(#LEFTWARDS HARPOON OVER RIGHTWARDS HARPOON)
+comment(#requires amssymb)
+key<delimiter(")content(8651)delimiter(")>operator(:) string<content(\\leftrightharpoons{})>
+comment(#UPWARDS ARROW WITH TIP LEFTWARDS)
+comment(#requires amssymb)
+key<delimiter(")content(8624)delimiter(")>operator(:) string<content(\\Lsh{})>
+comment(#RIGHTWARDS ARROW FROM BAR)
+key<delimiter(")content(8614)delimiter(")>operator(:) string<content(\\mapsto{})>
+comment(#MULTIMAP)
+comment(#requires amssymb)
+key<delimiter(")content(8888)delimiter(")>operator(:) string<content(\\multimap{})>
+comment(#NORTH EAST ARROW)
+key<delimiter(")content(8599)delimiter(")>operator(:) string<content(\\nearrow{})>
+comment(#LEFTWARDS DOUBLE ARROW WITH STROKE)
+comment(#requires amssymb)
+key<delimiter(")content(8653)delimiter(")>operator(:) string<content(\\nLeftarrow{})>
+comment(#LEFTWARDS ARROW WITH STROKE)
+comment(#requires amssymb)
+key<delimiter(")content(8602)delimiter(")>operator(:) string<content(\\nleftarrow{})>
+comment(#LEFT RIGHT DOUBLE ARROW WITH STROKE)
+comment(#requires amssymb)
+key<delimiter(")content(8654)delimiter(")>operator(:) string<content(\\nLeftrightarrow{})>
+comment(#LEFT RIGHT ARROW WITH STROKE)
+comment(#requires amssymb)
+key<delimiter(")content(8622)delimiter(")>operator(:) string<content(\\nleftrightarrow{})>
+comment(#RIGHTWARDS ARROW WITH STROKE)
+comment(#requires amssymb)
+key<delimiter(")content(8603)delimiter(")>operator(:) string<content(\\nrightarrow{})>
+comment(#RIGHTWARDS DOUBLE ARROW WITH STROKE)
+comment(#requires amssymb)
+key<delimiter(")content(8655)delimiter(")>operator(:) string<content(\\nRightarrow{})>
+comment(#NORTH WEST ARROW)
+key<delimiter(")content(8598)delimiter(")>operator(:) string<content(\\nwarrow{})>
+comment(#ANTICLOCKWISE OPEN CIRCLE ARROW)
+comment(#requires amssymb)
+key<delimiter(")content(8634)delimiter(")>operator(:) string<content(\\circlearrowleft{})>
+comment(#CLOCKWISE OPEN CIRCLE ARROW)
+comment(#requires amssymb)
+key<delimiter(")content(8635)delimiter(")>operator(:) string<content(\\circlearrowright{})>
+comment(#RIGHTWARDS TRIPLE ARROW)
+comment(#requires amssymb)
+key<delimiter(")content(8667)delimiter(")>operator(:) string<content(\\Rrightarrow{})>
+comment(#RIGHTWARDS TWO HEADED ARROW)
+comment(#requires amssymb)
+key<delimiter(")content(8608)delimiter(")>operator(:) string<content(\\twoheadrightarrow{})>
+comment(#RIGHTWARDS PAIRED ARROWS)
+comment(#requires amssymb)
+key<delimiter(")content(8649)delimiter(")>operator(:) string<content(\\rightrightarrows{})>
+comment(#RIGHTWARDS ARROW WITH HOOK)
+key<delimiter(")content(8618)delimiter(")>operator(:) string<content(\\hookrightarrow{})>
+comment(#RIGHTWARDS ARROW WITH LOOP)
+comment(#requires amssymb)
+key<delimiter(")content(8620)delimiter(")>operator(:) string<content(\\looparrowright{})>
+comment(#RIGHTWARDS ARROW WITH TAIL)
+comment(#requires amssymb)
+key<delimiter(")content(8611)delimiter(")>operator(:) string<content(\\rightarrowtail{})>
+comment(#RIGHTWARDS SQUIGGLE ARROW)
+comment(#requires amssymb)
+key<delimiter(")content(8669)delimiter(")>operator(:) string<content(\\rightsquigarrow{})>
+comment(#RIGHTWARDS HARPOON WITH BARB DOWNWARDS)
+key<delimiter(")content(8641)delimiter(")>operator(:) string<content(\\rightharpoondown{})>
+comment(#RIGHTWARDS HARPOON WITH BARB UPWARDS)
+key<delimiter(")content(8640)delimiter(")>operator(:) string<content(\\rightharpoonup{})>
+comment(#UPWARDS ARROW WITH TIP RIGHTWARDS)
+comment(#requires amssymb)
+key<delimiter(")content(8625)delimiter(")>operator(:) string<content(\\Rsh{})>
+comment(#SOUTH EAST ARROW)
+key<delimiter(")content(8600)delimiter(")>operator(:) string<content(\\searrow{})>
+comment(#SOUTH WEST ARROW)
+key<delimiter(")content(8601)delimiter(")>operator(:) string<content(\\swarrow{})>
+comment(#UPWARDS DOUBLE ARROW)
+key(uArr)operator(:) string<content(\\Uparrow{})>
+comment(#UPWARDS DOUBLE ARROW)
+key<delimiter(")content(8657)delimiter(")>operator(:) string<content(\\Uparrow{})>
+comment(#UPWARDS PAIRED ARROWS)
+comment(#requires amssymb)
+key<delimiter(")content(8648)delimiter(")>operator(:) string<content(\\upuparrows{})>
+comment(#UP DOWN DOUBLE ARROW)
+key<delimiter(")content(8661)delimiter(")>operator(:) string<content(\\Updownarrow{})>
+comment(#UP DOWN ARROW)
+key<delimiter(")content(8597)delimiter(")>operator(:) string<content(\\updownarrow{})>
+comment(#UPWARDS HARPOON WITH BARB LEFTWARDS)
+comment(#requires amssymb)
+key<delimiter(")content(8639)delimiter(")>operator(:) string<content(\\upharpoonleft{})>
+comment(#UPWARDS HARPOON WITH BARB RIGHTWARDS)
+comment(#requires amssymb)
+key<delimiter(")content(8638)delimiter(")>operator(:) string<content(\\upharpoonright{})>
+comment(#RIGHT CEILING)
+key(rceil)operator(:) string<content(\\rceil{})>
+comment(#RIGHT CEILING)
+key<delimiter(")content(8969)delimiter(")>operator(:) string<content(\\rceil{})>
+comment(#RIGHT FLOOR)
+key(rfloor)operator(:) string<content(\\rfloor{})>
+comment(#RIGHT FLOOR)
+key<delimiter(")content(8971)delimiter(")>operator(:) string<content(\\rfloor{})>
+comment(#TOP RIGHT CORNER)
+comment(#requires amsfonts)
+key<delimiter(")content(8989)delimiter(")>operator(:) string<content(\\urcorner{})>
+comment(#BOTTOM RIGHT CORNER)
+comment(#requires amsfonts)
+key<delimiter(")content(8991)delimiter(")>operator(:) string<content(\\lrcorner{})>
+comment(#LEFT CEILING)
+key(lceil)operator(:) string<content(\\lceil{})>
+comment(#LEFT CEILING)
+key<delimiter(")content(8968)delimiter(")>operator(:) string<content(\\lceil{})>
+comment(#LEFT FLOOR)
+key(lfloor)operator(:) string<content(\\lfloor{})>
+comment(#LEFT FLOOR)
+key<delimiter(")content(8970)delimiter(")>operator(:) string<content(\\lfloor{})>
+comment(#TOP LEFT CORNER)
+comment(#requires amsfonts)
+key<delimiter(")content(8988)delimiter(")>operator(:) string<content(\\ulcorner{})>
+comment(#BOTTOM LEFT CORNER)
+comment(#requires amsfonts)
+key<delimiter(")content(8990)delimiter(")>operator(:) string<content(\\llcorner{})>
+comment(#LATIN SMALL LETTER A WITH ACUTE)
+key(aacute)operator(:) string<content(\\'{a})>
+comment(#LATIN SMALL LETTER A WITH ACUTE)
+key<delimiter(")content(225)delimiter(")>operator(:) string<content(\\'{a})>
+comment(#LATIN CAPITAL LETTER A WITH ACUTE)
+key(Aacute)operator(:) string<content(\\'{A})>
+comment(#LATIN CAPITAL LETTER A WITH ACUTE)
+key<delimiter(")content(193)delimiter(")>operator(:) string<content(\\'{A})>
+comment(#LATIN SMALL LETTER A WITH CIRCUMFLEX)
+key(acirc)operator(:) string<content(\\^{a})>
+comment(#LATIN SMALL LETTER A WITH CIRCUMFLEX)
+key<delimiter(")content(226)delimiter(")>operator(:) string<content(\\^{a})>
+comment(#LATIN CAPITAL LETTER A WITH CIRCUMFLEX)
+key(Acirc)operator(:) string<content(\\^{A})>
+comment(#LATIN CAPITAL LETTER A WITH CIRCUMFLEX)
+key<delimiter(")content(194)delimiter(")>operator(:) string<content(\\^{A})>
+comment(#LATIN SMALL LETTER A WITH GRAVE)
+key(agrave)operator(:) string<content(\\`{a})>
+comment(#LATIN SMALL LETTER A WITH GRAVE)
+key<delimiter(")content(224)delimiter(")>operator(:) string<content(\\`{a})>
+comment(#LATIN CAPITAL LETTER A WITH GRAVE)
+key(Agrave)operator(:) string<content(\\`{A})>
+comment(#LATIN CAPITAL LETTER A WITH GRAVE)
+key<delimiter(")content(192)delimiter(")>operator(:) string<content(\\`{A})>
+comment(#LATIN SMALL LETTER A WITH RING ABOVE)
+key(aring)operator(:) string<content(\\aa{})>
+comment(#LATIN SMALL LETTER A WITH RING ABOVE)
+key<delimiter(")content(229)delimiter(")>operator(:) string<content(\\aa{})>
+comment(#LATIN CAPITAL LETTER A WITH RING ABOVE)
+key(Aring)operator(:) string<content(\\AA{})>
+comment(#LATIN CAPITAL LETTER A WITH RING ABOVE)
+key<delimiter(")content(197)delimiter(")>operator(:) string<content(\\AA{})>
+comment(#LATIN SMALL LETTER A WITH TILDE)
+key(atilde)operator(:) string<content(\\~{a})>
+comment(#LATIN SMALL LETTER A WITH TILDE)
+key<delimiter(")content(227)delimiter(")>operator(:) string<content(\\~{a})>
+comment(#LATIN CAPITAL LETTER A WITH TILDE)
+key(Atilde)operator(:) string<content(\\~{A})>
+comment(#LATIN CAPITAL LETTER A WITH TILDE)
+key<delimiter(")content(195)delimiter(")>operator(:) string<content(\\~{A})>
+comment(#LATIN SMALL LETTER A WITH DIAERESIS)
+key(auml)operator(:) string<content(\\"{a})>
+comment(#LATIN SMALL LETTER A WITH DIAERESIS)
+key<delimiter(")content(228)delimiter(")>operator(:) string<content(\\"{a})>
+comment(#LATIN CAPITAL LETTER A WITH DIAERESIS)
+key(Auml)operator(:) string<content(\\"{A})>
+comment(#LATIN CAPITAL LETTER A WITH DIAERESIS)
+key<delimiter(")content(196)delimiter(")>operator(:) string<content(\\"{A})>
+comment(#LATIN SMALL LETTER AE)
+key(aelig)operator(:) string<content(\\ae{})>
+comment(#LATIN SMALL LETTER AE)
+key<delimiter(")content(230)delimiter(")>operator(:) string<content(\\ae{})>
+comment(#LATIN CAPITAL LETTER AE)
+key(AElig)operator(:) string<content(\\AE{})>
+comment(#LATIN CAPITAL LETTER AE)
+key<delimiter(")content(198)delimiter(")>operator(:) string<content(\\AE{})>
+comment(#LATIN SMALL LETTER C WITH CEDILLA)
+key(ccedil)operator(:) string<content(\\c{c})>
+comment(#LATIN SMALL LETTER C WITH CEDILLA)
+key<delimiter(")content(231)delimiter(")>operator(:) string<content(\\c{c})>
+comment(#LATIN CAPITAL LETTER C WITH CEDILLA)
+key(Ccedil)operator(:) string<content(\\c{C})>
+comment(#LATIN CAPITAL LETTER C WITH CEDILLA)
+key<delimiter(")content(199)delimiter(")>operator(:) string<content(\\c{C})>
+comment(#LATIN SMALL LETTER ETH)
+comment(#requires amssymb)
+key(eth)operator(:) string<content(\\dh{})>
+comment(#LATIN SMALL LETTER ETH)
+comment(#requires amssymb)
+key<delimiter(")content(240)delimiter(")>operator(:) string<content(\\dh{})>
+comment(#LATIN CAPITAL LETTER ETH)
+comment(#requires wasysym)
+key(ETH)operator(:) string<content(\\DH{})>
+comment(#LATIN CAPITAL LETTER ETH)
+comment(#requires wasysym)
+key<delimiter(")content(208)delimiter(")>operator(:) string<content(\\DH{})>
+comment(#LATIN SMALL LETTER E WITH ACUTE)
+key(eacute)operator(:) string<content(\\'{e})>
+comment(#LATIN SMALL LETTER E WITH ACUTE)
+key<delimiter(")content(233)delimiter(")>operator(:) string<content(\\'{e})>
+comment(#LATIN CAPITAL LETTER E WITH ACUTE)
+key(Eacute)operator(:) string<content(\\'{E})>
+comment(#LATIN CAPITAL LETTER E WITH ACUTE)
+key<delimiter(")content(201)delimiter(")>operator(:) string<content(\\'{E})>
+comment(#LATIN SMALL LETTER E WITH CIRCUMFLEX)
+key(ecirc)operator(:) string<content(\\^{e})>
+comment(#LATIN SMALL LETTER E WITH CIRCUMFLEX)
+key<delimiter(")content(234)delimiter(")>operator(:) string<content(\\^{e})>
+comment(#LATIN CAPITAL LETTER E WITH CIRCUMFLEX)
+key(Ecirc)operator(:) string<content(\\^{E})>
+comment(#LATIN CAPITAL LETTER E WITH CIRCUMFLEX)
+key<delimiter(")content(202)delimiter(")>operator(:) string<content(\\^{E})>
+comment(#LATIN SMALL LETTER E WITH GRAVE)
+key(egrave)operator(:) string<content(\\`{e})>
+comment(#LATIN SMALL LETTER E WITH GRAVE)
+key<delimiter(")content(232)delimiter(")>operator(:) string<content(\\`{e})>
+comment(#LATIN CAPITAL LETTER E WITH GRAVE)
+key(Egrave)operator(:) string<content(\\`{E})>
+comment(#LATIN CAPITAL LETTER E WITH GRAVE)
+key<delimiter(")content(200)delimiter(")>operator(:) string<content(\\`{E})>
+comment(#LATIN SMALL LETTER E WITH DIAERESIS)
+key(euml)operator(:) string<content(\\"{e})>
+comment(#LATIN SMALL LETTER E WITH DIAERESIS)
+key<delimiter(")content(235)delimiter(")>operator(:) string<content(\\"{e})>
+comment(#LATIN CAPITAL LETTER E WITH DIAERESIS)
+key(Euml)operator(:) string<content(\\"{E})>
+comment(#LATIN CAPITAL LETTER E WITH DIAERESIS)
+key<delimiter(")content(203)delimiter(")>operator(:) string<content(\\"{E})>
+comment(#LATIN SMALL LETTER I WITH ACUTE)
+key(iacute)operator(:) string<content(\\'{\\i})>
+comment(#LATIN SMALL LETTER I WITH ACUTE)
+key<delimiter(")content(237)delimiter(")>operator(:) string<content(\\'{\\i})>
+comment(#LATIN CAPITAL LETTER I WITH ACUTE)
+key(Iacute)operator(:) string<content(\\'{I})>
+comment(#LATIN CAPITAL LETTER I WITH ACUTE)
+key<delimiter(")content(205)delimiter(")>operator(:) string<content(\\'{I})>
+comment(#LATIN SMALL LETTER I WITH CIRCUMFLEX)
+key(icirc)operator(:) string<content(\\^{\\i})>
+comment(#LATIN SMALL LETTER I WITH CIRCUMFLEX)
+key<delimiter(")content(238)delimiter(")>operator(:) string<content(\\^{\\i})>
+comment(#LATIN CAPITAL LETTER I WITH CIRCUMFLEX)
+key(Icirc)operator(:) string<content(\\^{I})>
+comment(#LATIN CAPITAL LETTER I WITH CIRCUMFLEX)
+key<delimiter(")content(206)delimiter(")>operator(:) string<content(\\^{I})>
+comment(#LATIN SMALL LETTER I WITH GRAVE)
+key(igrave)operator(:) string<content(\\`{\\i})>
+comment(#LATIN SMALL LETTER I WITH GRAVE)
+key<delimiter(")content(236)delimiter(")>operator(:) string<content(\\`{\\i})>
+comment(#LATIN CAPITAL LETTER I WITH GRAVE)
+key(Igrave)operator(:) string<content(\\`{I})>
+comment(#LATIN CAPITAL LETTER I WITH GRAVE)
+key<delimiter(")content(204)delimiter(")>operator(:) string<content(\\`{I})>
+comment(#LATIN SMALL LETTER I WITH DIAERESIS)
+key(iuml)operator(:) string<content(\\"{\\i})>
+comment(#LATIN SMALL LETTER I WITH DIAERESIS)
+key<delimiter(")content(239)delimiter(")>operator(:) string<content(\\"{\\i})>
+comment(#LATIN CAPITAL LETTER I WITH DIAERESIS)
+key(Iuml)operator(:) string<content(\\"{I})>
+comment(#LATIN CAPITAL LETTER I WITH DIAERESIS)
+key<delimiter(")content(207)delimiter(")>operator(:) string<content(\\"{I})>
+comment(#LATIN SMALL LETTER N WITH TILDE)
+key(ntilde)operator(:) string<content(\\~{n})>
+comment(#LATIN SMALL LETTER N WITH TILDE)
+key<delimiter(")content(241)delimiter(")>operator(:) string<content(\\~{n})>
+comment(#LATIN CAPITAL LETTER N WITH TILDE)
+key(Ntilde)operator(:) string<content(\\~{N})>
+comment(#LATIN CAPITAL LETTER N WITH TILDE)
+key<delimiter(")content(209)delimiter(")>operator(:) string<content(\\~{N})>
+comment(#LATIN SMALL LETTER O WITH ACUTE)
+key(oacute)operator(:) string<content(\\'{o})>
+comment(#LATIN SMALL LETTER O WITH ACUTE)
+key<delimiter(")content(243)delimiter(")>operator(:) string<content(\\'{o})>
+comment(#LATIN CAPITAL LETTER O WITH ACUTE)
+key(Oacute)operator(:) string<content(\\'{O})>
+comment(#LATIN CAPITAL LETTER O WITH ACUTE)
+key<delimiter(")content(211)delimiter(")>operator(:) string<content(\\'{O})>
+comment(#LATIN SMALL LETTER O WITH CIRCUMFLEX)
+key(ocirc)operator(:) string<content(\\^{o})>
+comment(#LATIN SMALL LETTER O WITH CIRCUMFLEX)
+key<delimiter(")content(244)delimiter(")>operator(:) string<content(\\^{o})>
+comment(#LATIN CAPITAL LETTER O WITH CIRCUMFLEX)
+key(Ocirc)operator(:) string<content(\\^{O})>
+comment(#LATIN CAPITAL LETTER O WITH CIRCUMFLEX)
+key<delimiter(")content(212)delimiter(")>operator(:) string<content(\\^{O})>
+comment(#LATIN SMALL LETTER O WITH GRAVE)
+key(ograve)operator(:) string<content(\\`{o})>
+comment(#LATIN SMALL LETTER O WITH GRAVE)
+key<delimiter(")content(242)delimiter(")>operator(:) string<content(\\`{o})>
+comment(#LATIN CAPITAL LETTER O WITH GRAVE)
+key(Ograve)operator(:) string<content(\\`{O})>
+comment(#LATIN CAPITAL LETTER O WITH GRAVE)
+key<delimiter(")content(210)delimiter(")>operator(:) string<content(\\`{O})>
+comment(#LATIN SMALL LETTER O WITH STROKE)
+key(oslash)operator(:) string<content(\\o{})>
+comment(#LATIN SMALL LETTER O WITH STROKE)
+key<delimiter(")content(248)delimiter(")>operator(:) string<content(\\o{})>
+comment(#LATIN CAPITAL LETTER O WITH STROKE)
+key(Oslash)operator(:) string<content(\\O{})>
+comment(#LATIN CAPITAL LETTER O WITH STROKE)
+key<delimiter(")content(216)delimiter(")>operator(:) string<content(\\O{})>
+comment(#LATIN SMALL LETTER O WITH TILDE)
+key(otilde)operator(:) string<content(\\~{o})>
+comment(#LATIN SMALL LETTER O WITH TILDE)
+key<delimiter(")content(245)delimiter(")>operator(:) string<content(\\~{o})>
+comment(#LATIN CAPITAL LETTER O WITH TILDE)
+key(Otilde)operator(:) string<content(\\~{O})>
+comment(#LATIN CAPITAL LETTER O WITH TILDE)
+key<delimiter(")content(213)delimiter(")>operator(:) string<content(\\~{O})>
+comment(#LATIN SMALL LETTER O WITH DIAERESIS)
+key(ouml)operator(:) string<content(\\"{o})>
+comment(#LATIN SMALL LETTER O WITH DIAERESIS)
+key<delimiter(")content(246)delimiter(")>operator(:) string<content(\\"{o})>
+comment(#LATIN CAPITAL LETTER O WITH DIAERESIS)
+key(Ouml)operator(:) string<content(\\"{O})>
+comment(#LATIN CAPITAL LETTER O WITH DIAERESIS)
+key<delimiter(")content(214)delimiter(")>operator(:) string<content(\\"{O})>
+comment(#LATIN SMALL LETTER SHARP S)
+key(szlig)operator(:) string<content(\\ss{})>
+comment(#LATIN SMALL LETTER SHARP S)
+key<delimiter(")content(223)delimiter(")>operator(:) string<content(\\ss{})>
+comment(#LATIN SMALL LETTER THORN)
+comment(#requires wasysym)
+key(thorn)operator(:) string<content(\\th{})>
+comment(#LATIN SMALL LETTER THORN)
+comment(#requires wasysym)
+key<delimiter(")content(254)delimiter(")>operator(:) string<content(\\th{})>
+comment(#LATIN CAPITAL LETTER THORN)
+comment(#requires wasysym)
+key(THORN)operator(:) string<content(\\TH{})>
+comment(#LATIN CAPITAL LETTER THORN)
+comment(#requires wasysym)
+key<delimiter(")content(222)delimiter(")>operator(:) string<content(\\TH{})>
+comment(#LATIN SMALL LETTER U WITH ACUTE)
+key(uacute)operator(:) string<content(\\'{u})>
+comment(#LATIN SMALL LETTER U WITH ACUTE)
+key<delimiter(")content(250)delimiter(")>operator(:) string<content(\\'{u})>
+comment(#LATIN CAPITAL LETTER U WITH ACUTE)
+key(Uacute)operator(:) string<content(\\'{U})>
+comment(#LATIN CAPITAL LETTER U WITH ACUTE)
+key<delimiter(")content(218)delimiter(")>operator(:) string<content(\\'{U})>
+comment(#LATIN SMALL LETTER U WITH CIRCUMFLEX)
+key(ucirc)operator(:) string<content(\\^{u})>
+comment(#LATIN SMALL LETTER U WITH CIRCUMFLEX)
+key<delimiter(")content(251)delimiter(")>operator(:) string<content(\\^{u})>
+comment(#LATIN CAPITAL LETTER U WITH CIRCUMFLEX)
+key(Ucirc)operator(:) string<content(\\^{U})>
+comment(#LATIN CAPITAL LETTER U WITH CIRCUMFLEX)
+key<delimiter(")content(219)delimiter(")>operator(:) string<content(\\^{U})>
+comment(#LATIN SMALL LETTER U WITH GRAVE)
+key(ugrave)operator(:) string<content(\\`{u})>
+comment(#LATIN SMALL LETTER U WITH GRAVE)
+key<delimiter(")content(249)delimiter(")>operator(:) string<content(\\`{u})>
+comment(#LATIN CAPITAL LETTER U WITH GRAVE)
+key(Ugrave)operator(:) string<content(\\`{U})>
+comment(#LATIN CAPITAL LETTER U WITH GRAVE)
+key<delimiter(")content(217)delimiter(")>operator(:) string<content(\\`{U})>
+comment(#LATIN SMALL LETTER U WITH DIAERESIS)
+key(uuml)operator(:) string<content(\\"{u})>
+comment(#LATIN SMALL LETTER U WITH DIAERESIS)
+key<delimiter(")content(252)delimiter(")>operator(:) string<content(\\"{u})>
+comment(#LATIN CAPITAL LETTER U WITH DIAERESIS)
+key(Uuml)operator(:) string<content(\\"{U})>
+comment(#LATIN CAPITAL LETTER U WITH DIAERESIS)
+key<delimiter(")content(220)delimiter(")>operator(:) string<content(\\"{U})>
+comment(#LATIN SMALL LETTER Y WITH ACUTE)
+key(yacute)operator(:) string<content(\\'{y})>
+comment(#LATIN SMALL LETTER Y WITH ACUTE)
+key<delimiter(")content(253)delimiter(")>operator(:) string<content(\\'{y})>
+comment(#LATIN CAPITAL LETTER Y WITH ACUTE)
+key(Yacute)operator(:) string<content(\\'{Y})>
+comment(#LATIN CAPITAL LETTER Y WITH ACUTE)
+key<delimiter(")content(221)delimiter(")>operator(:) string<content(\\'{Y})>
+comment(#LATIN SMALL LETTER Y WITH DIAERESIS)
+key(yuml)operator(:) string<content(\\"{y})>
+comment(#LATIN SMALL LETTER Y WITH DIAERESIS)
+key<delimiter(")content(255)delimiter(")>operator(:) string<content(\\"{y})>
+comment(#LATIN SMALL LETTER A WITH BREVE)
+key<delimiter(")content(259)delimiter(")>operator(:) string<content(\\u{a})>
+comment(#LATIN CAPITAL LETTER A WITH BREVE)
+key<delimiter(")content(258)delimiter(")>operator(:) string<content(\\u{A})>
+comment(#LATIN SMALL LETTER A WITH MACRON)
+key<delimiter(")content(257)delimiter(")>operator(:) string<content(\\={a})>
+comment(#LATIN CAPITAL LETTER A WITH MACRON)
+key<delimiter(")content(256)delimiter(")>operator(:) string<content(\\={A})>
+comment(#LATIN SMALL LETTER A WITH OGONEK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(261)delimiter(")>operator(:) string<content(\\k{a})>
+comment(#LATIN CAPITAL LETTER A WITH OGONEK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(260)delimiter(")>operator(:) string<content(\\k{A})>
+comment(#LATIN SMALL LETTER C WITH ACUTE)
+key<delimiter(")content(263)delimiter(")>operator(:) string<content(\\'{c})>
+comment(#LATIN CAPITAL LETTER C WITH ACUTE)
+key<delimiter(")content(262)delimiter(")>operator(:) string<content(\\'{C})>
+comment(#LATIN SMALL LETTER C WITH CARON)
+key<delimiter(")content(269)delimiter(")>operator(:) string<content(\\v{c})>
+comment(#LATIN CAPITAL LETTER C WITH CARON)
+key<delimiter(")content(268)delimiter(")>operator(:) string<content(\\v{C})>
+comment(#LATIN SMALL LETTER C WITH CIRCUMFLEX)
+key<delimiter(")content(265)delimiter(")>operator(:) string<content(\\^{c})>
+comment(#LATIN CAPITAL LETTER C WITH CIRCUMFLEX)
+key<delimiter(")content(264)delimiter(")>operator(:) string<content(\\^{C})>
+comment(#LATIN SMALL LETTER C WITH DOT ABOVE)
+key<delimiter(")content(267)delimiter(")>operator(:) string<content(\\.{c})>
+comment(#LATIN CAPITAL LETTER C WITH DOT ABOVE)
+key<delimiter(")content(266)delimiter(")>operator(:) string<content(\\.{C})>
+comment(#LATIN SMALL LETTER D WITH CARON)
+key<delimiter(")content(271)delimiter(")>operator(:) string<content(\\v{d})>
+comment(#LATIN CAPITAL LETTER D WITH CARON)
+key<delimiter(")content(270)delimiter(")>operator(:) string<content(\\v{D})>
+comment(#LATIN SMALL LETTER D WITH STROKE)
+comment(#requires fontenc:T1)
+key<delimiter(")content(273)delimiter(")>operator(:) string<content(\\dj{})>
+comment(#LATIN CAPITAL LETTER D WITH STROKE)
+comment(#requires fontenc:T1)
+key<delimiter(")content(272)delimiter(")>operator(:) string<content(\\DJ{})>
+comment(#LATIN SMALL LETTER E WITH CARON)
+key<delimiter(")content(283)delimiter(")>operator(:) string<content(\\v{e})>
+comment(#LATIN CAPITAL LETTER E WITH CARON)
+key<delimiter(")content(282)delimiter(")>operator(:) string<content(\\v{E})>
+comment(#LATIN SMALL LETTER E WITH DOT ABOVE)
+key<delimiter(")content(279)delimiter(")>operator(:) string<content(\\.{e})>
+comment(#LATIN CAPITAL LETTER E WITH DOT ABOVE)
+key<delimiter(")content(278)delimiter(")>operator(:) string<content(\\.{E})>
+comment(#LATIN SMALL LETTER E WITH MACRON)
+key<delimiter(")content(275)delimiter(")>operator(:) string<content(\\={e})>
+comment(#LATIN CAPITAL LETTER E WITH MACRON)
+key<delimiter(")content(274)delimiter(")>operator(:) string<content(\\={E})>
+comment(#LATIN SMALL LETTER E WITH OGONEK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(281)delimiter(")>operator(:) string<content(\\k{e})>
+comment(#LATIN CAPITAL LETTER E WITH OGONEK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(280)delimiter(")>operator(:) string<content(\\k{E})>
+comment(#LATIN SMALL LETTER G WITH ACUTE)
+key<delimiter(")content(501)delimiter(")>operator(:) string<content(\\'{g})>
+comment(#LATIN SMALL LETTER G WITH BREVE)
+key<delimiter(")content(287)delimiter(")>operator(:) string<content(\\u{g})>
+comment(#LATIN CAPITAL LETTER G WITH BREVE)
+key<delimiter(")content(286)delimiter(")>operator(:) string<content(\\u{G})>
+comment(#LATIN CAPITAL LETTER G WITH CEDILLA)
+key<delimiter(")content(290)delimiter(")>operator(:) string<content(\\c{G})>
+comment(#LATIN SMALL LETTER G WITH CIRCUMFLEX)
+key<delimiter(")content(285)delimiter(")>operator(:) string<content(\\^{g})>
+comment(#LATIN CAPITAL LETTER G WITH CIRCUMFLEX)
+key<delimiter(")content(284)delimiter(")>operator(:) string<content(\\^{G})>
+comment(#LATIN SMALL LETTER G WITH DOT ABOVE)
+key<delimiter(")content(289)delimiter(")>operator(:) string<content(\\.{g})>
+comment(#LATIN CAPITAL LETTER G WITH DOT ABOVE)
+key<delimiter(")content(288)delimiter(")>operator(:) string<content(\\.{G})>
+comment(#LATIN SMALL LETTER H WITH CIRCUMFLEX)
+key<delimiter(")content(293)delimiter(")>operator(:) string<content(\\^{h})>
+comment(#LATIN CAPITAL LETTER H WITH CIRCUMFLEX)
+key<delimiter(")content(292)delimiter(")>operator(:) string<content(\\^{H})>
+comment(#LATIN SMALL LETTER H WITH STROKE)
+key<delimiter(")content(295)delimiter(")>operator(:) string<content(\\hstrok{})>
+comment(#LATIN CAPITAL LETTER H WITH STROKE)
+key<delimiter(")content(294)delimiter(")>operator(:) string<content(\\Hstrok{})>
+comment(#LATIN CAPITAL LETTER I WITH DOT ABOVE)
+key<delimiter(")content(304)delimiter(")>operator(:) string<content(\\.{I})>
+comment(#LATIN CAPITAL LETTER I WITH MACRON)
+key<delimiter(")content(298)delimiter(")>operator(:) string<content(\\={I})>
+comment(#LATIN SMALL LETTER I WITH MACRON)
+key<delimiter(")content(299)delimiter(")>operator(:) string<content(\\={\\i})>
+comment(#LATIN SMALL LIGATURE IJ)
+key<delimiter(")content(307)delimiter(")>operator(:) string<content(i\\kern -.15em j)>
+comment(#LATIN CAPITAL LIGATURE IJ)
+key<delimiter(")content(306)delimiter(")>operator(:) string<content(I\\kern -.15em J)>
+comment(#LATIN SMALL LETTER DOTLESS I)
+key<delimiter(")content(305)delimiter(")>operator(:) string<content(\\i{})>
+comment(#LATIN SMALL LETTER I WITH OGONEK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(303)delimiter(")>operator(:) string<content(\\k{i})>
+comment(#LATIN CAPITAL LETTER I WITH OGONEK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(302)delimiter(")>operator(:) string<content(\\k{I})>
+comment(#LATIN SMALL LETTER I WITH TILDE)
+key<delimiter(")content(297)delimiter(")>operator(:) string<content(\\~{\\i})>
+comment(#LATIN CAPITAL LETTER I WITH TILDE)
+key<delimiter(")content(296)delimiter(")>operator(:) string<content(\\~{I})>
+comment(#LATIN SMALL LETTER J WITH CIRCUMFLEX)
+key<delimiter(")content(309)delimiter(")>operator(:) string<content(\\^{\\j})>
+comment(#LATIN CAPITAL LETTER J WITH CIRCUMFLEX)
+key<delimiter(")content(308)delimiter(")>operator(:) string<content(\\^{J})>
+comment(#LATIN SMALL LETTER K WITH CEDILLA)
+key<delimiter(")content(311)delimiter(")>operator(:) string<content(\\c{k})>
+comment(#LATIN CAPITAL LETTER K WITH CEDILLA)
+key<delimiter(")content(310)delimiter(")>operator(:) string<content(\\c{K})>
+comment(#LATIN SMALL LETTER KRA)
+key<delimiter(")content(312)delimiter(")>operator(:) string<content(\\textsc{k})>
+comment(#LATIN SMALL LETTER L WITH ACUTE)
+key<delimiter(")content(314)delimiter(")>operator(:) string<content(\\'{l})>
+comment(#LATIN CAPITAL LETTER L WITH ACUTE)
+key<delimiter(")content(313)delimiter(")>operator(:) string<content(\\'{L})>
+comment(#LATIN SMALL LETTER L WITH CARON)
+key<delimiter(")content(318)delimiter(")>operator(:) string<content(\\v{l})>
+comment(#LATIN CAPITAL LETTER L WITH CARON)
+key<delimiter(")content(317)delimiter(")>operator(:) string<content(\\v{L})>
+comment(#LATIN SMALL LETTER L WITH CEDILLA)
+key<delimiter(")content(316)delimiter(")>operator(:) string<content(\\c{l})>
+comment(#LATIN CAPITAL LETTER L WITH CEDILLA)
+key<delimiter(")content(315)delimiter(")>operator(:) string<content(\\c{L})>
+comment(#LATIN SMALL LETTER L WITH MIDDLE DOT)
+key<delimiter(")content(320)delimiter(")>operator(:) string<content(\\lmidot{})>
+comment(#LATIN CAPITAL LETTER L WITH MIDDLE DOT)
+key<delimiter(")content(319)delimiter(")>operator(:) string<content(\\Lmidot{})>
+comment(#LATIN SMALL LETTER L WITH STROKE)
+key<delimiter(")content(322)delimiter(")>operator(:) string<content(\\l{})>
+comment(#LATIN CAPITAL LETTER L WITH STROKE)
+key<delimiter(")content(321)delimiter(")>operator(:) string<content(\\L{})>
+comment(#LATIN SMALL LETTER N WITH ACUTE)
+key<delimiter(")content(324)delimiter(")>operator(:) string<content(\\'{n})>
+comment(#LATIN CAPITAL LETTER N WITH ACUTE)
+key<delimiter(")content(323)delimiter(")>operator(:) string<content(\\'{N})>
+comment(#LATIN SMALL LETTER ENG)
+comment(#requires fontenc:T1)
+key<delimiter(")content(331)delimiter(")>operator(:) string<content(\\ng{})>
+comment(#LATIN CAPITAL LETTER ENG)
+comment(#requires fontenc:T1)
+key<delimiter(")content(330)delimiter(")>operator(:) string<content(\\NG{})>
+comment(#LATIN SMALL LETTER N PRECEDED BY APOSTROPHE)
+key<delimiter(")content(329)delimiter(")>operator(:) string<content(n\\kern-.2em\\textsf{'})>
+comment(#LATIN SMALL LETTER N WITH CARON)
+key<delimiter(")content(328)delimiter(")>operator(:) string<content(\\v{n})>
+comment(#LATIN CAPITAL LETTER N WITH CARON)
+key<delimiter(")content(327)delimiter(")>operator(:) string<content(\\v{N})>
+comment(#LATIN SMALL LETTER N WITH CEDILLA)
+key<delimiter(")content(326)delimiter(")>operator(:) string<content(\\c{n})>
+comment(#LATIN CAPITAL LETTER N WITH CEDILLA)
+key<delimiter(")content(325)delimiter(")>operator(:) string<content(\\c{N})>
+comment(#LATIN SMALL LETTER O WITH DOUBLE ACUTE)
+key<delimiter(")content(337)delimiter(")>operator(:) string<content(\\H{o})>
+comment(#LATIN CAPITAL LETTER O WITH DOUBLE ACUTE)
+key<delimiter(")content(336)delimiter(")>operator(:) string<content(\\H{O})>
+comment(#LATIN CAPITAL LETTER O WITH MACRON)
+key<delimiter(")content(332)delimiter(")>operator(:) string<content(\\={O})>
+comment(#LATIN SMALL LETTER O WITH MACRON)
+key<delimiter(")content(333)delimiter(")>operator(:) string<content(\\={o})>
+comment(#LATIN SMALL LIGATURE OE)
+key(oelig)operator(:) string<content(\\oe{})>
+comment(#LATIN SMALL LIGATURE OE)
+key<delimiter(")content(339)delimiter(")>operator(:) string<content(\\oe{})>
+comment(#LATIN CAPITAL LIGATURE OE)
+key(OElig)operator(:) string<content(\\OE{})>
+comment(#LATIN CAPITAL LIGATURE OE)
+key<delimiter(")content(338)delimiter(")>operator(:) string<content(\\OE{})>
+comment(#LATIN SMALL LETTER R WITH ACUTE)
+key<delimiter(")content(341)delimiter(")>operator(:) string<content(\\'{r})>
+comment(#LATIN CAPITAL LETTER R WITH ACUTE)
+key<delimiter(")content(340)delimiter(")>operator(:) string<content(\\'{R})>
+comment(#LATIN SMALL LETTER R WITH CARON)
+key<delimiter(")content(345)delimiter(")>operator(:) string<content(\\v{r})>
+comment(#LATIN CAPITAL LETTER R WITH CARON)
+key<delimiter(")content(344)delimiter(")>operator(:) string<content(\\v{R})>
+comment(#LATIN SMALL LETTER R WITH CEDILLA)
+key<delimiter(")content(343)delimiter(")>operator(:) string<content(\\c{r})>
+comment(#LATIN CAPITAL LETTER R WITH CEDILLA)
+key<delimiter(")content(342)delimiter(")>operator(:) string<content(\\c{R})>
+comment(#LATIN SMALL LETTER S WITH ACUTE)
+key<delimiter(")content(347)delimiter(")>operator(:) string<content(\\'{s})>
+comment(#LATIN CAPITAL LETTER S WITH ACUTE)
+key<delimiter(")content(346)delimiter(")>operator(:) string<content(\\'{S})>
+comment(#LATIN SMALL LETTER S WITH CARON)
+key(scaron)operator(:) string<content(\\v{s})>
+comment(#LATIN SMALL LETTER S WITH CARON)
+key<delimiter(")content(353)delimiter(")>operator(:) string<content(\\v{s})>
+comment(#LATIN CAPITAL LETTER S WITH CARON)
+key(Scaron)operator(:) string<content(\\v{S})>
+comment(#LATIN CAPITAL LETTER S WITH CARON)
+key<delimiter(")content(352)delimiter(")>operator(:) string<content(\\v{S})>
+comment(#LATIN SMALL LETTER S WITH CEDILLA)
+key<delimiter(")content(351)delimiter(")>operator(:) string<content(\\c{s})>
+comment(#LATIN CAPITAL LETTER S WITH CEDILLA)
+key<delimiter(")content(350)delimiter(")>operator(:) string<content(\\c{S})>
+comment(#LATIN SMALL LETTER S WITH CIRCUMFLEX)
+key<delimiter(")content(349)delimiter(")>operator(:) string<content(\\^{s})>
+comment(#LATIN CAPITAL LETTER S WITH CIRCUMFLEX)
+key<delimiter(")content(348)delimiter(")>operator(:) string<content(\\^{S})>
+comment(#LATIN SMALL LETTER T WITH CARON)
+key<delimiter(")content(357)delimiter(")>operator(:) string<content(\\v{t})>
+comment(#LATIN CAPITAL LETTER T WITH CARON)
+key<delimiter(")content(356)delimiter(")>operator(:) string<content(\\v{T})>
+comment(#LATIN SMALL LETTER T WITH CEDILLA)
+key<delimiter(")content(355)delimiter(")>operator(:) string<content(\\c{t})>
+comment(#LATIN CAPITAL LETTER T WITH CEDILLA)
+key<delimiter(")content(354)delimiter(")>operator(:) string<content(\\c{T})>
+comment(#LATIN SMALL LETTER T WITH STROKE)
+key<delimiter(")content(359)delimiter(")>operator(:) string<content(\\tstrok{})>
+comment(#LATIN CAPITAL LETTER T WITH STROKE)
+key<delimiter(")content(358)delimiter(")>operator(:) string<content(\\Tstrok{})>
+comment(#LATIN SMALL LETTER U WITH BREVE)
+key<delimiter(")content(365)delimiter(")>operator(:) string<content(\\u{u})>
+comment(#LATIN CAPITAL LETTER U WITH BREVE)
+key<delimiter(")content(364)delimiter(")>operator(:) string<content(\\u{U})>
+comment(#LATIN SMALL LETTER U WITH DOUBLE ACUTE)
+key<delimiter(")content(369)delimiter(")>operator(:) string<content(\\H{u})>
+comment(#LATIN CAPITAL LETTER U WITH DOUBLE ACUTE)
+key<delimiter(")content(368)delimiter(")>operator(:) string<content(\\H{U})>
+comment(#LATIN SMALL LETTER U WITH MACRON)
+key<delimiter(")content(363)delimiter(")>operator(:) string<content(\\={u})>
+comment(#LATIN CAPITAL LETTER U WITH MACRON)
+key<delimiter(")content(362)delimiter(")>operator(:) string<content(\\={U})>
+comment(#LATIN SMALL LETTER U WITH OGONEK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(371)delimiter(")>operator(:) string<content(\\k{u})>
+comment(#LATIN CAPITAL LETTER U WITH OGONEK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(370)delimiter(")>operator(:) string<content(\\k{U})>
+comment(#LATIN SMALL LETTER U WITH RING ABOVE)
+key<delimiter(")content(367)delimiter(")>operator(:) string<content(\\r{u})>
+comment(#LATIN CAPITAL LETTER U WITH RING ABOVE)
+key<delimiter(")content(366)delimiter(")>operator(:) string<content(\\r{U})>
+comment(#LATIN SMALL LETTER U WITH TILDE)
+key<delimiter(")content(361)delimiter(")>operator(:) string<content(\\~{u})>
+comment(#LATIN CAPITAL LETTER U WITH TILDE)
+key<delimiter(")content(360)delimiter(")>operator(:) string<content(\\~{U})>
+comment(#LATIN SMALL LETTER W WITH CIRCUMFLEX)
+key<delimiter(")content(373)delimiter(")>operator(:) string<content(\\^{w})>
+comment(#LATIN CAPITAL LETTER W WITH CIRCUMFLEX)
+key<delimiter(")content(372)delimiter(")>operator(:) string<content(\\^{W})>
+comment(#LATIN SMALL LETTER Y WITH CIRCUMFLEX)
+key<delimiter(")content(375)delimiter(")>operator(:) string<content(\\^{y})>
+comment(#LATIN CAPITAL LETTER Y WITH CIRCUMFLEX)
+key<delimiter(")content(374)delimiter(")>operator(:) string<content(\\^{Y})>
+comment(#LATIN CAPITAL LETTER Y WITH DIAERESIS)
+key(Yuml)operator(:) string<content(\\"{Y})>
+comment(#LATIN CAPITAL LETTER Y WITH DIAERESIS)
+key<delimiter(")content(376)delimiter(")>operator(:) string<content(\\"{Y})>
+comment(#LATIN SMALL LETTER Z WITH ACUTE)
+key<delimiter(")content(378)delimiter(")>operator(:) string<content(\\'{z})>
+comment(#LATIN CAPITAL LETTER Z WITH ACUTE)
+key<delimiter(")content(377)delimiter(")>operator(:) string<content(\\'{Z})>
+comment(#LATIN SMALL LETTER Z WITH CARON)
+key<delimiter(")content(382)delimiter(")>operator(:) string<content(\\v{z})>
+comment(#LATIN CAPITAL LETTER Z WITH CARON)
+key<delimiter(")content(381)delimiter(")>operator(:) string<content(\\v{Z})>
+comment(#LATIN SMALL LETTER Z WITH DOT ABOVE)
+key<delimiter(")content(380)delimiter(")>operator(:) string<content(\\.{z})>
+comment(#LATIN CAPITAL LETTER Z WITH DOT ABOVE)
+key<delimiter(")content(379)delimiter(")>operator(:) string<content(\\.{Z})>
+comment(#ACUTE ACCENT)
+comment(#requires textcomp)
+key(acute)operator(:) string<content(\\'{})>
+comment(#ACUTE ACCENT)
+comment(#requires textcomp)
+key<delimiter(")content(180)delimiter(")>operator(:) string<content(\\'{})>
+comment(#BREVE)
+comment(#requires textcomp)
+key<delimiter(")content(728)delimiter(")>operator(:) string<content(\\u{})>
+comment(#CARON)
+comment(#requires textcomp)
+key<delimiter(")content(711)delimiter(")>operator(:) string<content(\\v{})>
+comment(#CEDILLA)
+key(cedil)operator(:) string<content(\\c{})>
+comment(#CEDILLA)
+key<delimiter(")content(184)delimiter(")>operator(:) string<content(\\c{})>
+comment(#CIRCUMFLEX ACCENT)
+key(circ)operator(:) string<content(\\^{})>
+comment(#CIRCUMFLEX ACCENT)
+key<delimiter(")content(94)delimiter(")>operator(:) string<content(\\^{})>
+comment(#DOUBLE ACUTE ACCENT)
+comment(#requires textcomp)
+key<delimiter(")content(733)delimiter(")>operator(:) string<content(\\H{})>
+comment(#DIAERESIS)
+comment(#requires textcomp)
+key(uml)operator(:) string<content(\\"{})>
+comment(#DIAERESIS)
+comment(#requires textcomp)
+key<delimiter(")content(168)delimiter(")>operator(:) string<content(\\"{})>
+comment(#DOT ABOVE)
+key<delimiter(")content(729)delimiter(")>operator(:) string<content(\\.{})>
+comment(#GRAVE ACCENT)
+comment(#requires textcomp)
+key<delimiter(")content(96)delimiter(")>operator(:) string<content(\\`{})>
+comment(#MACRON)
+comment(#requires textcomp)
+key(macr)operator(:) string<content(\\={})>
+comment(#MACRON)
+comment(#requires textcomp)
+key<delimiter(")content(175)delimiter(")>operator(:) string<content(\\={})>
+comment(#OGONEK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(731)delimiter(")>operator(:) string<content(\\k{})>
+comment(#RING ABOVE)
+key<delimiter(")content(730)delimiter(")>operator(:) string<content(\\r{})>
+comment(#TILDE)
+comment(#requires textcomp)
+key(tilde)operator(:) string<content(\\~{})>
+comment(#TILDE)
+comment(#requires textcomp)
+key<delimiter(")content(126)delimiter(")>operator(:) string<content(\\~{})>
+comment(#HORIZONTAL TABULATION)
+key<delimiter(")content(9)delimiter(")>operator(:) string<content(\\>,\\=)>
+comment(#LINE FEED)
+key<delimiter(")content(10)delimiter(")>operator(:) string<content(\\\\)>
+comment(#SINGLE LEFT-POINTING ANGLE QUOTATION MARK)
+comment(#requires fontenc:T1)
+key(lsaquo)operator(:) string<content(\\guilsinglleft{})>
+comment(#SINGLE LEFT-POINTING ANGLE QUOTATION MARK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(8249)delimiter(")>operator(:) string<content(\\guilsinglleft{})>
+comment(#SINGLE RIGHT-POINTING ANGLE QUOTATION MARK)
+comment(#requires fontenc:T1)
+key(rsaquo)operator(:) string<content(\\guilsinglright{})>
+comment(#SINGLE RIGHT-POINTING ANGLE QUOTATION MARK)
+comment(#requires fontenc:T1)
+key<delimiter(")content(8250)delimiter(")>operator(:) string<content(\\guilsinglright{})>
+comment(#OVERLINE)
+key(oline)operator(:) string<content(\\={})>
+comment(#OVERLINE)
+key<delimiter(")content(8254)delimiter(")>operator(:) string<content(\\={})>
+comment(#FRACTION SLASH)
+comment(#requires textcomp)
+key(frasl)operator(:) string<content(\\textfractionsolidus{})>
+comment(#FRACTION SLASH)
+comment(#requires textcomp)
+key<delimiter(")content(8260)delimiter(")>operator(:) string<content(\\textfractionsolidus{})>
+comment(#EURO SIGN)
+comment(#requires textcomp)
+key(euro)operator(:) string<content(\\texteuro{})>
+comment(#EURO SIGN)
+comment(#requires textcomp)
+key<delimiter(")content(8364)delimiter(")>operator(:) string<content(\\texteuro{})>
+comment(#LEFTWARDS DASHED ARROW)
+comment(#requires amssymb)
+key<delimiter(")content(8672)delimiter(")>operator(:) string<content(\\dashleftarrow{})>
+comment(#RIGHTWARDS DASHED ARROW)
+comment(#requires amssymb)
+key<delimiter(")content(8674)delimiter(")>operator(:) string<content(\\dashrightarrow{})>
+comment(#INVERTED OHM SIGN)
+comment(#requires amssymb)
+key<delimiter(")content(8487)delimiter(")>operator(:) string<content(\\textmho{})>
+comment(#PROPORTION)
+key<delimiter(")content(8759)delimiter(")>operator(:) string<delimiter(")content(::)delimiter(")>
+comment(#LEFT WHITE SQUARE BRACKET)
+comment(#requires stmaryrd)
+key<delimiter(")content(12314)delimiter(")>operator(:) string<content(\\textlbrackdbl{})>
+comment(#PER TEN THOUSAND SIGN)
+comment(#requires textcomp)
+key<delimiter(")content(8241)delimiter(")>operator(:) string<content(\\textpertenthousand{})>
+comment(#RIGHT WHITE SQUARE BRACKET)
+comment(#requires stmaryrd)
+key<delimiter(")content(12315)delimiter(")>operator(:) string<content(\\textrbrackdbl{})>
+comment(#MODIFIER LETTER LOW MACRON)
+key<delimiter(")content(717)delimiter(")>operator(:) string<content(\\b{})>
+comment(#COMBINING DOT BELOW)
+key<delimiter(")content(803)delimiter(")>operator(:) string<content(\\d{})>
+comment(#COMBINING DOUBLE INVERTED BREVE)
+key<delimiter(")content(865)delimiter(")>operator(:) string<content(\\t{})>
+comment(#REFERENCE MARK)
+comment(#requires textcomp)
+key<delimiter(")content(8251)delimiter(")>operator(:) string<content(\\textreferencemark{})>

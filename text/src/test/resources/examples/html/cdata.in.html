@@ -1,0 +1,22 @@
+From <a href="https://en.wikipedia.org/wiki/CDATA">Wikipedia</a>:
+
+…as in this JavaScript example:
+
+<script type="text/javascript">
+//<![CDATA[
+document.write("<");
+//]]>
+</script>
+
+or this CSS example:
+
+<style type="text/css">
+/*<![CDATA[*/
+body { background-image: url("marble.png?width=300&height=300") }
+/*]]>*/
+</style>
+
+<foo>bar</foo>
+<foo><![CDATA[bar]]></foo>
+
+surprise ending: <![CDATA[

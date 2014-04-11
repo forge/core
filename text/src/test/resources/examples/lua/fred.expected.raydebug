@@ -1,0 +1,25 @@
+comment(-- Fred, tiny wimp program using error dialogue)
+ident(require) string<delimiter(")content(wimp.task)delimiter(")>
+keyword(do)
+ keyword(local) local_variable(dim)operator(,)error(!) local_variable(in) local_variable(riscos)
+ keyword(local) local_variable(buffer)operator(,) local_variable(wimp_msgs) operator(=) ident(dim)operator(()integer(256)operator(\))operator(,) ident(dim)operator(()integer(4)operator(\))
+ keyword(local) local_variable(title)error($) operator(=) ident(dim) string<delimiter(")content(Fred)char(\\r)delimiter(")>
+ keyword(local) local_variable(ask) operator(=) string<delimiter(")content(Count is %d. CANCEL to stop now?)delimiter(")>
+ keyword(local) local_variable(goodbye) operator(=) string<delimiter(")content(You reached %d. Goodbye.)delimiter(")>
+ keyword(local) local_variable(flags) operator(=) integer(23)  comment(-- for dialogue window)
+ error(!)operator([)ident(wimp_msgs)operator(]) operator(=) integer(0)  comment(-- no wimp messages)
+ ident(fred) operator(=) ident(task)operator(.)ident(new)operator(()ident(title)error($)operator(,)ident(wimp_msgs)operator(,)ident(buffer)operator(\))   comment(-- create task "fred")
+ keyword(in) ident(fred) keyword(do)
+  ident(count) operator(=) integer(0)                      comment(-- give it a counter)
+  ident(handler)operator([)integer(0)operator(]) operator(=) error(\\) operator(()ident(self)operator(\))      comment(-- give it a null-event handler)
+    ident(count) operator(=) ident(count) operator(+) integer(1)
+    keyword(local) local_variable(click) operator(=) ident(self)operator(:)ident(report)operator(()ident(ask)operator(:)ident(format)operator(()ident(count)operator(\))operator(,)ident(flags)operator(\))
+    operator(=)operator(>) operator(()ident(click) operator(~)operator(=) integer(1)operator(\))          comment(-- OK button to continue)
+  keyword(end) comment(-- handler)
+  ident(preclosedown) operator(=) error(\\) operator(()ident(self)operator(\))     comment(-- give it a farewell action)
+     ident(self)operator(:)ident(report)operator(()ident(goodbye)operator(:)ident(format)operator(()ident(count)operator(\))operator(\))
+  keyword(end) comment(-- preclosedown)
+ keyword(end) comment(-- do)
+ ident(fred)operator(:)ident(init)operator(()operator(\))                   comment(-- register it)
+ ident(fred)operator(:)ident(run)operator(()operator(\))                    comment(-- run it)
+keyword(end) comment(-- do)

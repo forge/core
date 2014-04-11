@@ -1,0 +1,181 @@
+comment(// A line comment.)
+
+comment(/*
+A general comment.
+*/)
+
+comment(// Keywords)
+
+    keyword(break)        keyword(default)      keyword(func)         keyword(interface)    keyword(select)
+    keyword(case)         keyword(defer)        keyword(go)           keyword(map)          keyword(struct)
+    keyword(chan)         keyword(else)         keyword(goto)         keyword(package)      keyword(switch)
+    keyword(const)        keyword(fallthrough)  keyword(if)           keyword(range)        keyword(type)
+    keyword(continue)     keyword(for)          keyword(import)       keyword(return)       keyword(var)
+
+comment(// Operators, delimiters and special tokens)
+
+    operator(+)    operator(&)     operator(+=)    operator(&=)     operator(&&)    operator(==)    operator(!=)    operator(()    operator(\))
+    operator(-)    operator(|)     operator(-)operator(=)    operator(|=)     operator(||)    operator(<)     operator(<=)    operator([)    operator(])
+    operator(*)    operator(^)     operator(*=)    operator(^=)     operator(<-)    operator(>)     operator(>=)    operator({)    operator(})
+    operator(/)    operator(<<)    operator(/=)    operator(<<=)    operator(++)    operator(=)     operator(:=)    operator(,)    operator(;)
+    operator(%)    operator(>>)    operator(%=)    operator(>>=)    operator(-)operator(-)    operator(!)     operator(.)operator(.)operator(.)   operator(.)    operator(:)
+         operator(&^)          operator(&^=)
+
+comment(// Integer literals)
+
+    integer(42)
+    octal(0600)
+    hex(0xBadFace)
+    integer(170141183460469231731687303715884105727)
+
+comment(// Floating-point literals)
+
+    float(0.)
+    float(72.40)
+    octal(07)float(2.40)
+    float(2.71828)
+    float(1.e+0)
+    float(6.67428e-11)
+    float(1E6)
+    float(.25)
+    float(.12345E+5)
+
+comment(// Imaginary literals)
+
+    imaginary(0i)
+    imaginary(011i)
+    imaginary(0.i)
+    imaginary(2.71828i)
+    imaginary(1.e+0i)
+    imaginary(6.67428e-11i)
+    imaginary(1E6i)
+    imaginary(.25i)
+    imaginary(.12345E+5i)
+
+comment(// Character literals)
+
+    char('a')
+    char('ä')
+    char('本')
+    char('\\t')
+    char('\\000')
+    char('\\007')
+    char('\\377')
+    char('\\x07')
+    char('\\xff')
+    char('\\u12e4')
+    char('\\U00101234')
+
+comment(// String literals)
+
+    shell<delimiter(`)content(abc)delimiter(`)>
+    shell<delimiter(`)content(\\n
+    \\n)delimiter(`)>
+    string<delimiter(")char(\\n)delimiter(")>
+    string<delimiter(")delimiter(")>
+    string<delimiter(")content(Hello, world!)char(\\n)delimiter(")>
+    string<delimiter(")content(日本語)delimiter(")>
+    string<delimiter(")char(\\u65e5)content(本)char(\\U00008a9e)delimiter(")>
+    string<delimiter(")char(\\xff)char(\\u00FF)delimiter(")>
+    string<delimiter(")char(\\uD800)delimiter(")>       comment(// illegal: surrogate half)
+    string<delimiter(")char(\\U00110000)delimiter(")>   comment(// illegal: invalid Unicode code point)
+    string<delimiter(")error(\\)content(z)delimiter(")>           comment(// illegal)
+
+comment(// Predeclared identifiers)
+
+    comment(// Types:)
+    predefined_type(bool) predefined_type(byte) predefined_type(complex64) predefined_type(complex128) predefined_type(error) predefined_type(float32) predefined_type(float64)
+    predefined_type(int) predefined_type(int8) predefined_type(int16) predefined_type(int32) predefined_type(int64) predefined_type(rune) predefined_type(string)
+    predefined_type(uint) predefined_type(uint8) predefined_type(uint16) predefined_type(uint32) predefined_type(uint64) predefined_type(uintptr)
+
+    comment(// Constants:)
+    predefined_constant(true) predefined_constant(false) predefined_constant(iota)
+
+    comment(// Zero value:)
+    predefined_constant(nil)
+
+    comment(// Functions:)
+    predefined(append) predefined(cap) predefined(close) predefined(complex) predefined(copy) predefined(delete) predefined(imag) predefined(len)
+    predefined(make) predefined(new) predefined(panic) predefined(print) predefined(println) predefined(real) predefined(recover)
+
+comment(// Types)
+
+    keyword(type) ident(T1) predefined_type(string)
+    keyword(type) ident(T2) ident(T1)
+    keyword(type) ident(T3) operator([])ident(T1)
+    keyword(type) ident(T4) ident(T3)
+
+comment(// Array types)
+
+    operator([)integer(32)operator(])predefined_type(byte)
+    operator([)integer(2)operator(*)ident(N)operator(]) keyword(struct) operator({) ident(x)operator(,) ident(y) predefined_type(int32) operator(})
+    operator([)integer(1000)operator(]*)predefined_type(float64)
+    operator([)integer(3)operator(][)integer(5)operator(])predefined_type(int)
+    operator([)integer(2)operator(][)integer(2)operator(][)integer(2)operator(])predefined_type(float64)
+
+comment(// Struct types)
+
+    keyword(struct) operator({})
+
+    keyword(struct) operator({)
+        ident(x)operator(,) ident(y) predefined_type(int)
+        ident(u) predefined_type(float32)
+        ident(_) predefined_type(float32)
+        ident(A) operator(*[])predefined_type(int)
+        ident(F) keyword(func)operator((\))
+    operator(})
+
+    keyword(struct) operator({)
+        ident(T1)
+        operator(*)ident(T2)
+        ident(P)operator(.)ident(T3)
+        operator(*)ident(P)operator(.)ident(T4)
+        ident(x)operator(,) ident(y) predefined_type(int)
+    operator(})
+
+    keyword(struct) operator({)
+        ident(T)
+        operator(*)ident(T)
+        operator(*)ident(P)operator(.)ident(T)
+    operator(})
+
+    keyword(struct) operator({)
+        ident(microsec)  predefined_type(uint64) string<delimiter(")content(field 1)delimiter(")>
+        ident(serverIP6) predefined_type(uint64) string<delimiter(")content(field 2)delimiter(")>
+        ident(process)   predefined_type(string) string<delimiter(")content(field 3)delimiter(")>
+    operator(})
+
+comment(// Function types)
+
+    keyword(func)operator((\))
+    keyword(func)operator(()ident(x) predefined_type(int)operator(\)) predefined_type(int)
+    keyword(func)operator(()ident(a)operator(,) ident(_) predefined_type(int)operator(,) ident(z) predefined_type(float32)operator(\)) predefined_type(bool)
+    keyword(func)operator(()ident(a)operator(,) ident(b) predefined_type(int)operator(,) ident(z) predefined_type(float32)operator(\)) operator(()predefined_type(bool)operator(\))
+    keyword(func)operator(()ident(prefix) predefined_type(string)operator(,) ident(values) operator(.)operator(.)operator(.)predefined_type(int)operator(\))
+    keyword(func)operator(()ident(a)operator(,) ident(b) predefined_type(int)operator(,) ident(z) predefined_type(float64)operator(,) ident(opt) operator(.)operator(.)operator(.)keyword(interface)operator({}\)) operator(()ident(success) predefined_type(bool)operator(\))
+    keyword(func)operator(()predefined_type(int)operator(,) predefined_type(int)operator(,) predefined_type(float64)operator(\)) operator(()predefined_type(float64)operator(,) operator(*[])predefined_type(int)operator(\))
+    keyword(func)operator(()ident(n) predefined_type(int)operator(\)) keyword(func)operator(()ident(p) operator(*)ident(T)operator(\))
+
+comment(// Interface types)
+
+    keyword(interface) operator({)
+        ident(Read)operator(()ident(b) ident(Buffer)operator(\)) predefined_type(bool)
+        ident(Write)operator(()ident(b) ident(Buffer)operator(\)) predefined_type(bool)
+        ident(Close)operator((\))
+    operator(})
+
+    keyword(type) ident(Lock) keyword(interface) operator({)
+        ident(Lock)operator((\))
+        ident(Unlock)operator((\))
+    operator(})
+
+comment(// Channel types)
+
+    keyword(chan) ident(T)
+    keyword(chan)operator(<-) predefined_type(float64)
+    operator(<-)keyword(chan) predefined_type(int)
+
+    keyword(chan)operator(<-) keyword(chan) predefined_type(int)
+    keyword(chan)operator(<-) operator(<-)keyword(chan) predefined_type(int)
+    operator(<-)keyword(chan) operator(<-)keyword(chan) predefined_type(int)
+    keyword(chan) operator((<)operator(-)keyword(chan) predefined_type(int)operator(\))

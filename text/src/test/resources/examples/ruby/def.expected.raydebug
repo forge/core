@@ -1,0 +1,92 @@
+comment(# simple method definitions)
+
+keyword(def) method(method) ident(param1)operator(,) ident(param2)
+  comment(# code)
+keyword(end)
+
+keyword(def) method(method)operator(()ident(args)operator(,) operator(*)ident(rest)operator(,) operator(&)ident(block)operator(\))
+  comment(# code)
+keyword(end)
+
+keyword(def)
+method(method)operator(()ident(param1)operator(,) ident(param2)operator(\))
+  comment(# code)
+keyword(end)
+
+keyword(def) \
+method(method)operator(()ident(param1)operator(,) ident(param2)operator(\))
+  comment(# code)
+keyword(end)
+
+keyword(def) comment(# comment)
+method(method)operator(()ident(param1)operator(,) ident(param2)operator(\))
+  comment(# code)
+keyword(end)
+
+keyword(def) method([])operator(;)keyword(end)
+keyword(def) method(def)operator(;)keyword(end)
+keyword(def) method(end?)operator(;)keyword(end)
+keyword(def) method(a)operator(()operator(*)operator(\)) keyword(end)
+keyword(def) method(!)operator(;) keyword(end)  comment(# Ruby 1.9)
+
+
+comment(# singleton methods)
+
+keyword(def) constant(Class)operator(.)method(method)
+keyword(end)
+
+keyword(def) predefined_constant(self)operator(.)method(method)
+keyword(end)
+
+keyword(def) ident(object)operator(.)method(method)
+keyword(end)
+
+keyword(def) ident(object)operator(.)method(Method)
+keyword(end)
+
+keyword(def) global_variable($~)operator(.)method(method)
+keyword(end)
+
+keyword(def) predefined_constant(nil)operator(.)method(method)
+keyword(end)
+keyword(def) predefined_constant(true)operator(.)method(method)
+keyword(end)
+keyword(def) predefined_constant(false)operator(.)method(method)
+keyword(end)
+keyword(def) predefined_constant(__FILE__)operator(.)method(method)
+keyword(end)
+keyword(def) predefined_constant(__LINE__)operator(.)method(method)
+keyword(end)
+keyword(def) predefined_constant(__ENCODING__)operator(.)method(method)
+keyword(end)
+keyword(def) predefined_constant(__ENCODING__)operator(.)method(method)
+keyword(end)
+
+keyword(def) instance_variable(@instance_variable)operator(.)method(method)
+keyword(end)
+
+keyword(def) instance_variable(@class_variable)operator(.)method(method)
+keyword(end)
+
+keyword(def) operator(()constant(Module)operator(::)constant(Class)operator(\))operator(.)method(method)
+keyword(end)
+
+keyword(def) operator(()ident(complex)operator(.)ident(expression)operator(\))operator(.)method(method)
+keyword(end)
+
+keyword(def) operator(()ident(complex)operator(.)ident(expression) operator(+) ident(another)operator(()ident(complex)operator(()ident(expression)operator(\))operator(\))operator(\))operator(.)method(method)
+keyword(end)
+
+
+comment(# crazy)
+
+keyword(def) operator(()keyword(class) class(Foo)
+  keyword(def) method(initialize)operator(()ident(args)operator(\))
+    keyword(def) method(yet_another_method)operator(;) keyword(end)
+  keyword(end)
+keyword(end)operator(\))operator(.)method(method)operator(()ident(args)operator(,) operator(*)ident(rest)operator(,) operator(&)ident(block)operator(\))
+keyword(end)
+
+comment(# wrong)
+keyword(def) ident(foo)operator(.)ident(bar)error(.)ident(quux)
+keyword(end)

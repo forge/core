@@ -1,0 +1,24 @@
+ident(block)operator(.)operator(()operator(*)ident(arguments)operator(\))  comment(# bovi's example)
+
+ident(new) operator(=) operator({) key(hash)operator(:) symbol(:syntax) operator(})
+ident(call)operator(()ident(with)operator(,) key(hash)operator(:) symbol(:syntax)operator(\))
+ident(this_crazy)operator(()key(hash)operator(:) symbol(:syntax)operator(\))
+ident(test) key(hash)operator(:) symbol(:syntax)
+ident(test) \
+  key(hash)operator(:) symbol(:syntax)operator(,)
+  key(multi)operator(:) symbol(:line)
+
+ident(more) ident(hash)operator(::)ident(tests)
+ident(more) key(hash)operator(:)ident(new)
+ident(more) key(hash)operator(:)string<delimiter(")content(tests)delimiter(")>
+ident(more) key(hash)operator(:)integer(42)
+ident(more) key(hash)operator(:)integer(??)
+ident(more) key(hash)operator(:)operator({)operator(})
+ident(more) key(hash)operator(:)predefined_constant(nil)
+ident(more) key(hash)operator(:)ident(foo)
+ident(more) key(hash)operator(:)regexp<delimiter(/)delimiter(/)>
+ident(_) key(_)operator(:)ident(_)
+
+ident(keywords) key(for)operator(:)ident(keys)
+ident(predefined_constants) key(nil)operator(:)ident(keys)
+key(alias)operator(:)key(void)operator(:)ident(goto)

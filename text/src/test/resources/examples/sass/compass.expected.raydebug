@@ -1,0 +1,1203 @@
+comment<delimiter(//)content( ./doc-src/content/examples/blueprint/grid/pull/stylesheet.sass)>
+variable($blueprint_grid_columns) operator(:) float(3)
+
+directive(@import) include(blueprint/grid.scss)
+
+id(#one)
+  include(+column)operator(()float(2)operator(,) value(true)operator(\))
+  include(+prepend)operator(()float(1)operator(\))
+  key(background-color)operator(:) color(#11770E)
+id(#two)
+  include(+column)operator(()float(1)operator(\))
+  include(+pull)operator(()float(3)operator(,) value(true)operator(\))
+  key(background-color)operator(:) color(#242677)
+
+comment<delimiter(//)content( ./doc-src/content/examples/blueprint/grid/two_cols/stylesheet.sass)>
+variable($blueprint_grid_columns) operator(:) float(8)
+variable($blueprint_grid_width) operator(:) float(40px)
+
+directive(@import) include(blueprint)
+
+class(.two-col)
+  include(+container)
+  key(background-color)operator(:) color(#ccc)
+  id(#header)operator(,) id(#footer)
+    include(+column)operator(()float(8)operator(\))
+  id(#sidebar)
+    include(+column)operator(()float(3)operator(\))
+  id(#content)
+    include(+column)operator(()float(5)operator(,) value(true)operator(\))
+  
+ 
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/background-clip/stylesheet.sass)>
+directive(@import) include(compass/css3.scss)
+class(.example)
+  key(padding)operator(:) float(2em)
+  tag(div)
+    key(background-color)operator(:) value(blue)
+    key(border)operator(:) float(10px) value(solid) predefined(rgba)operator(()float(255)operator(,) float(0)operator(,) float(0)operator(,) float(0.5)operator(\))
+    key(color)operator(:) value(white)
+    include(+text-shadow)operator(()predefined(darken)operator(()color(#00f)operator(,) float(50%)operator(\)) float(2px) float(2px)operator(\))
+    key(padding)operator(:) float(3px)
+    key(text-align)operator(:) value(center)
+    key(margin-bottom)operator(:) float(2em)
+  id(#padding-box)
+    include(+background-clip)operator(()value(padding-box)operator(\))
+  id(#border-box)
+    include(+background-clip)operator(()value(border-box)operator(\))
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/background-origin/stylesheet.sass)>
+directive(@import) include(compass/css3)
+
+class(.example)
+  key(padding)operator(:) float(2em)
+  tag(div)
+    key(background)operator(:)
+      key(image)operator(:) predefined(image-url)operator(()string<delimiter(")content(examples/css3/bg-origin/bg.png)delimiter(")>operator(\))
+      key(repeat)operator(:) value(repeat)
+      key(position)operator(:) value(top) value(left)
+    key(border)operator(:) float(10px) value(solid) predefined(rgba)operator(()float(255)operator(,) float(0)operator(,) float(0)operator(,) float(0.5)operator(\))
+    key(color)operator(:) value(white)
+    include(+text-shadow)operator(()predefined(darken)operator(()color(#00f)operator(,) float(50%)operator(\)) float(2px) float(2px)operator(\))
+    key(padding)operator(:) float(1em)
+    key(text-align)operator(:) value(center)
+    key(margin-bottom)operator(:) float(2em)
+  id(#padding-box)
+    include(+background-origin)operator(()value(padding-box)operator(\))
+  id(#border-box)
+    include(+background-origin)operator(()value(border-box)operator(\))
+  id(#content-box)
+    include(+background-origin)operator(()value(content-box)operator(\))
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/background-size/stylesheet.sass)>
+directive(@import) include(compass/css3)
+
+class(.example)
+  key(padding)operator(:) float(2em)
+  tag(div)
+    key(background)operator(:)
+      key(image)operator(:) predefined(image-url)operator(()string<delimiter(")content(examples/css3/bg-origin/bg.png)delimiter(")>operator(\))
+      key(repeat)operator(:) value(no-repeat)
+      key(position)operator(:) value(top) value(left)
+    key(border)operator(:) float(10px) value(solid) predefined(rgba)operator(()float(255)operator(,) float(0)operator(,) float(0)operator(,) float(0.5)operator(\))
+    key(color)operator(:) value(black)
+    include(+text-shadow)operator(()color(#fff) float(1px) float(1px) float(4px)operator(\))
+    key(padding)operator(:) float(1em)
+    key(text-align)operator(:) value(center)
+    key(margin-bottom)operator(:) float(2em)
+  id(#auto)
+    include(+background-size)operator(()value(auto)operator(\))
+  id(#contain)
+    include(+background-size)operator(()value(contain)operator(\))
+  id(#cover)
+    include(+background-size)operator(()value(cover)operator(\))
+  id(#percent)
+    include(+background-size)operator(()float(50%) float(50%)operator(\))
+  id(#absolute)
+    include(+background-size)operator(()float(100px) float(25px)operator(\))
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/border_radius/stylesheet.sass)>
+directive(@import) include(compass/css3)operator(,) include(compass/utilities)
+
+id(#demo)
+  include(+clearfix)
+
+class(.border-radius-example)
+  key(width)operator(:) float(125px)
+  key(height)operator(:) float(125px)
+  key(background)operator(:) value(red)
+  key(margin)operator(:) float(20px)
+  key(float)operator(:) value(left)
+  key(padding)operator(:) float(5px)
+
+id(#border-radius)
+  include(+border-radius)operator(()float(25px)operator(\))
+
+id(#border-radius-top-left)
+  include(+border-top-left-radius)operator(()float(25px)operator(\))
+
+id(#border-radius-top-right)
+  include(+border-top-right-radius)operator(()float(25px)operator(\))
+
+id(#border-radius-bottom-left)
+  include(+border-bottom-left-radius)operator(()float(25px)operator(\))
+
+id(#border-radius-bottom-right)
+  include(+border-bottom-right-radius)operator(()float(25px)operator(\))
+
+id(#border-radius-top)
+  include(+border-top-radius)operator(()float(25px)operator(\))
+
+id(#border-radius-bottom)
+  include(+border-bottom-radius)operator(()float(25px)operator(\))
+
+id(#border-radius-left)
+  include(+border-left-radius)operator(()float(25px)operator(\))
+
+id(#border-radius-right)
+  include(+border-right-radius)operator(()float(25px)operator(\))
+
+id(#border-radius-combo)
+  include(+border-corner-radius)operator(()value(top)operator(,) value(left)operator(,) float(40px)operator(\))
+  include(+border-corner-radius)operator(()value(top)operator(,) value(right)operator(,) float(5px)operator(\))
+  include(+border-corner-radius)operator(()value(bottom)operator(,) value(left)operator(,) float(15px)operator(\))
+  include(+border-corner-radius)operator(()value(bottom)operator(,) value(right)operator(,) float(30px)operator(\))
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/box/stylesheet.sass)>
+directive(@import) include(compass/css3)
+
+class(.example)
+  include(+display-box)
+  include(+box-orient)operator(()value(horizontal)operator(\))
+  include(+box-align)operator(()value(stretch)operator(\))
+  include(+box-direction)operator(()value(reverse)operator(\))
+  key(height)operator(:) float(200px)
+  key(width)operator(:) float(100%)
+  class(.content)operator(,) class(.sidebar)
+    key(padding)operator(:) float(20px)
+  class(.content)
+    include(+box-flex)operator(()float(4)operator(\))
+    key(background-color)operator(:) color(#C5C1B4)
+  class(.sidebar)
+    include(+box-flex)operator(()float(1)operator(\))
+    key(background-color)operator(:) color(#375F99)
+    key(margin-right)operator(:) float(1px)
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/box_shadow/stylesheet.sass)>
+directive(@import) include(compass/css3)
+
+class(.box-shadow-example) tag(div)
+  key(width)operator(:) float(40px)
+  key(height)operator(:) float(40px)
+  key(background)operator(:) color(#EEE)
+  key(margin)operator(:) float(20px)
+  key(float)operator(:) value(left)
+
+comment<delimiter(//)content( Default single box shadow)>
+id(#box-shadow-default)
+  include(+single-box-shadow)
+
+comment<delimiter(//)content( Box shadow with custom settings)>
+id(#box-shadow-custom)
+  include(+box-shadow)operator(()value(red) float(2px) float(2px) float(10px)operator(\))
+
+id(#box-shadow-custom-multiple)
+  include(+box-shadow)operator(()predefined(rgba)operator(()value(blue)operator(,) class(.4)operator(\)) float(0) float(0) float(25px)operator(,) predefined(rgba)operator(()value(green)operator(,) class(.2)operator(\)) float(0) float(0) float(3px) float(1px) value(inset)operator(\))
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/box_sizing/stylesheet.sass)>
+directive(@import) include(compass/css3)
+
+class(.box-sizing-example)
+  key(background)operator(:) value(red)
+  key(padding)operator(:) float(20px)
+  key(border)operator(:) float(10px) value(solid) value(green)
+  key(margin)operator(:) float(20px)
+  key(width)operator(:) float(200px)
+
+id(#content-box)
+  include(+box-sizing)operator(()value(content-box)operator(\))
+
+id(#border-box)
+  include(+box-sizing)operator(()value(border-box)operator(\))
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/columns/stylesheet.sass)>
+directive(@import) include(compass/css3)
+
+id(#two-column)
+  include(+column-count)operator(()float(2)operator(\))
+  key(width)operator(:) float(300px)
+  key(margin-bottom)operator(:) float(20px)
+
+id(#three-column)
+  include(+column-count)operator(()float(3)operator(\))
+  key(width)operator(:) float(300px)
+  key(margin-bottom)operator(:) float(20px)
+
+id(#four-column-with-rule)
+  include(+column-count)operator(()float(4)operator(\))
+  include(+column-rule)operator(()float(1px)operator(,) value(solid)operator(,) value(red)operator(\))
+  key(width)operator(:) float(300px)
+  key(margin-bottom)operator(:) float(20px)
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/font-face/stylesheet.sass)>
+directive(@import) include(compass/css3)
+
+include(+font-face)operator(()string<delimiter(")content(Blooming Grove)delimiter(")>operator(,) predefined(font-files)operator(()string<delimiter(")content(examples/bgrove.ttf)delimiter(")>operator(,) string<delimiter(")content(examples/bgrove.otf)delimiter(")>operator(\))operator(\))
+
+class(.example)
+  key(font-family)operator(:) string<delimiter(")content(Blooming Grove)delimiter(")>
+  key(font-size)operator(:) float(1.5em)
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/gradient/stylesheet.sass)>
+directive(@import) include(compass)
+class(.ex)
+  key(width)operator(:) float(48%)
+  key(margin-right)operator(:) float(2%)
+  key(float)operator(:) value(left)
+  include(+clearfix)
+
+class(.gradient-example)
+  key(width)operator(:) float(80px)
+  key(height)operator(:) float(80px)
+  key(background)operator(:) value(red)
+  key(float)operator(:) value(left)
+  key(margin)operator(:) float(1em) float(1em) float(0) float(0)
+
+comment<delimiter(//)content( This will yield a radial gradient with an apparent specular highlight  )>
+id(#radial-gradient)
+  include(+background-image)operator(()predefined(radial-gradient)operator(()float(45px) float(45px)operator(,) color(#0ff) float(10px)operator(,) color(#1e90ff) float(30px)operator(\))operator(\))
+
+comment<delimiter(//)content( This yields a linear gradient spanning from the upper left corner to the lower right corner)>
+id(#linear-gradient)
+  include(+background-image)operator(()predefined(linear-gradient)operator(()value(left) value(top)operator(,) color(#fff)operator(,) color(#ddd)operator(\))operator(\))
+
+comment<delimiter(//)content( This yields a gradient starting at the top with #fff, ending in #aaa  )>
+id(#v-gradient)
+  include(+background-image)operator(()predefined(linear-gradient)operator(()color(#fff)operator(,) color(#aaa)operator(\))operator(\))
+
+comment<delimiter(//)content( Same as above but with a #ccc at the halfway point  )>
+id(#v-gradient-2)
+  include(+background-image)operator(()predefined(linear-gradient)operator(()color(#fff)operator(,) color(#ccc)operator(,) color(#aaa)operator(\))operator(\))
+
+comment<delimiter(//)content( Same as the first example but with #ccc at the 30% from the top, and #bbb at 70% from the top  )>
+id(#v-gradient-3)
+  include(+background-image)operator(()predefined(linear-gradient)operator(()color(#fff)operator(,) color(#ccc) float(30%)operator(,) color(#bbb) float(70%)operator(,) color(#aaa)operator(\))operator(\))
+
+comment<delimiter(//)content( This yields a horizontal linear gradient spanning from left to right.)>
+id(#h-gradient)
+  include(+background-image)operator(()predefined(linear-gradient)operator(()value(left)operator(,) color(#fff)operator(,) color(#ddd)operator(\))operator(\))
+
+id(#svg-gradient)
+  variable($experimental-support-for-svg)operator(:) value(true)
+  include(+background-image)operator(()predefined(linear-gradient)operator(()value(left)operator(,) color(#2ac363)operator(,) color(#cd8c14)operator(,) color(#9c4cc2)operator(\))operator(\))
+  key(width)operator(:) float(80px)
+  key(height)operator(:) float(80px)
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/inline_block/stylesheet.sass)>
+directive(@import) include(compass/css3)
+
+id(#inline-block)
+  include(+inline-block)
+  key(padding)operator(:) float(4px) float(10px)
+  key(background)operator(:) value(red)
+  key(color)operator(:) value(white)
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/opacity/stylesheet.sass)>
+directive(@import) include(compass/css3)
+
+class(.opacity-example)
+  key(background)operator(:) value(red)
+  key(width)operator(:) float(40px)
+  key(height)operator(:) float(40px)
+  key(float)operator(:) value(left)
+
+id(#opacity-10)
+  include(+opacity)operator(()float(0.1)operator(\))
+
+id(#opacity-20)
+  include(+opacity)operator(()float(0.2)operator(\))
+
+id(#opacity-50)
+  include(+opacity)operator(()float(0.5)operator(\))
+
+id(#opaque)
+  include(+opaque)
+
+id(#transparent)
+  include(+transparent)
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/regions/stylesheet.sass)>
+directive(@import) include(compass/css3)
+
+class(.source)   
+  include(+flow-into)operator(()value(target)operator(\))
+  key(border)operator(:) float(10px) value(solid) value(green)
+  key(margin)operator(:) float(20px)
+  key(width)operator(:) float(200px)
+
+class(.new-container) 
+  include(+flow-from)operator(()value(target)operator(\))
+  key(border)operator(:) float(10px) value(solid) value(red)
+  key(margin)operator(:) float(20px)
+  key(width)operator(:) float(200px)
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/text_shadow/stylesheet.sass)>
+variable($default-text-shadow-color)operator(:) predefined(rgba)operator(()value(red)operator(,) class(.6)operator(\))
+variable($default-text-shadow-blur)operator(:) float(3px)
+variable($default-text-shadow-v-offset)operator(:) float(1px)
+
+directive(@import) include(compass/css3)
+
+comment<delimiter(//)content( Uses defaults set before the import above)>
+class(.has-single-shadow)
+  include(+single-text-shadow)
+
+comment<delimiter(//)content( Can output up to ten text shadows)>
+class(.has-custom-shadow)
+  include(+text-shadow)operator(()predefined(rgba)operator(()value(blue)operator(,) class(.2)operator(\)) float(1px) float(1px) float(0)operator(,) predefined(rgba)operator(()value(blue)operator(,) class(.2)operator(\)) float(2px) float(2px) float(0)operator(,) predefined(rgba)operator(()value(blue)operator(,) class(.2)operator(\)) float(3px) float(3px) float(0)operator(\))
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/transform/stylesheet.sass)>
+directive(@import) include(compass/css3)operator(,) include(compass/css3/transform-legacy)
+
+class(.transform-example)
+  key(width)operator(:) float(40px)
+  key(height)operator(:) float(40px)
+  key(background)operator(:) value(red)
+  key(margin)operator(:) float(20px)
+
+id(#scale)
+  include(+scale)operator(()float(1)operator(\))
+
+id(#scale)pseudo_class(:hover)
+  include(+scale)operator(()float(2)operator(\))
+
+id(#rotate)
+  include(+rotate)operator(()float(0deg)operator(\))
+
+id(#rotate)pseudo_class(:hover)
+  include(+rotate)operator(()float(45deg)operator(\))
+
+id(#translate)
+  include(+translate)operator(()float(0)operator(,) float(0)operator(\))
+
+id(#translate)pseudo_class(:hover)
+  include(+translate)operator(()float(20px)operator(,) float(20px)operator(\))
+
+id(#skew)
+  include(+skew)operator(()float(0deg)operator(,) float(0deg)operator(\))
+
+id(#skew)pseudo_class(:hover)
+  include(+skew)operator(()float(20deg)operator(,) float(20deg)operator(\))
+
+id(#combo)
+  include(+transform)operator(()float(1)operator(,) float(0deg)operator(,) float(0)operator(,) float(0)operator(,) float(0deg)operator(,) float(0deg)operator(\))
+
+id(#combo)pseudo_class(:hover)
+  include(+transform)operator(()float(1)operator(,) float(45deg)operator(,) float(20px)operator(,) float(20px)operator(,) float(20deg)operator(,) float(20deg)operator(\))
+comment<delimiter(//)content( ./doc-src/content/examples/compass/css3/transition/stylesheet.sass)>
+directive(@import) include(compass/css3)
+
+class(.transition-example)
+  key(width)operator(:) float(40px)
+  key(height)operator(:) float(40px)
+  key(background)operator(:) value(red)
+  key(margin)operator(:) float(20px)
+
+id(#width)
+  include(+transition-property)operator(()value(width)operator(\))
+
+id(#width)pseudo_class(:hover)
+  key(width)operator(:) float(80px)
+
+id(#width-duration)
+  include(+transition-property)operator(()value(width)operator(\))
+  include(+transition-duration)operator(()float(2s)operator(\))
+
+id(#width-duration)pseudo_class(:hover)
+  key(width)operator(:) float(80px)
+
+id(#width-duration-easein)
+  include(+transition-property)operator(()value(width)operator(\))
+  include(+transition-duration)operator(()float(2s)operator(\))
+  include(+transition-timing-function)operator(()value(ease-in)operator(\))
+
+id(#width-duration-easein)pseudo_class(:hover)
+  key(width)operator(:) float(80px)
+
+id(#width-delay)
+  include(+transition-property)operator(()value(width)operator(\))
+  include(+transition-delay)operator(()float(2s)operator(\))
+
+id(#width-delay)pseudo_class(:hover)
+  key(width)operator(:) float(80px)
+comment<delimiter(//)content( ./doc-src/content/examples/compass/helpers/elements-of-type/stylesheet.sass)>
+class(.example)
+  inline<inline_delimiter(#{)predefined(elements-of-type)operator(()tag(block)operator(\))inline_delimiter(})>
+    key(border)operator(:) float(1px) value(solid) color(#777)
+    key(margin)operator(:) float(1em) float(3em)
+  inline<inline_delimiter(#{)predefined(elements-of-type)operator(()tag(inline)operator(\))inline_delimiter(})>
+    key(color)operator(:) color(#c00)
+  
+comment<delimiter(//)content( ./doc-src/content/examples/compass/helpers/enumerate/stylesheet.sass)>
+class(.example)
+  inline<inline_delimiter(#{)predefined(enumerate)operator(()string<delimiter(")content(.class)delimiter(")>operator(,) float(2)operator(,) float(4)operator(\))inline_delimiter(})>
+    key(background-color)operator(:) color(#aaa)
+    key(border)operator(:) float(2px) value(solid) color(#777)
+    key(margin)operator(:) float(1em)
+  directive(@for) variable($i) value(from) float(2) value(through) float(4)
+    class(.class-)inline<inline_delimiter(#{)variable($i)inline_delimiter(})>
+      key(margin-left)operator(:) float(1em) operator(*) operator(()variable($i) operator(-) float(1)operator(\))
+comment<delimiter(//)content( ./doc-src/content/examples/compass/helpers/using-extend-in-place-of-enumerate/stylesheet.sass)>
+class(.example)
+  class(.base-class)
+    key(background-color)operator(:) color(#aaa)
+    key(border)operator(:) float(2px) value(solid) color(#777)
+    key(margin)operator(:) float(1em)
+  directive(@for) variable($i) value(from) float(2) value(through) float(4)
+    class(.class-)inline<inline_delimiter(#{)variable($i)inline_delimiter(})>
+      directive(@extend) class(.base-class)
+      key(margin-left)operator(:) float(1em) operator(*) operator(()variable($i) operator(-) float(1)operator(\))
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/layout/sticky-footer/stylesheet.sass)>
+directive(@import) include(compass/reset.scss)
+directive(@import) include(compass/layout.scss)
+
+include(+sticky-footer)operator(()float(72px)operator(,) string<delimiter(")content(#layout)delimiter(")>operator(,) string<delimiter(")content(#layout_footer)delimiter(")>operator(,) string<delimiter(")content(#footer)delimiter(")>operator(\))
+
+id(#header)
+  pseudo_class(:background) color(#999)
+  pseudo_class(:height) float(72px)
+
+id(#footer)
+  pseudo_class(:background) color(#ccc)
+
+class(.example)
+  key(height)operator(:) float(500px)
+  key(border)operator(:) float(3px) value(solid) value(red)
+  
+  tag(p)
+    key(margin)operator(:) float(1em) float(0.5em)
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/layout/stretching/stylesheet.sass)>
+directive(@import) string<delimiter(")content(compass/layout/stretching)delimiter(")>
+directive(@import) string<delimiter(")content(compass/utilities)delimiter(")>
+directive(@import) string<delimiter(")content(compass/css3)delimiter(")>
+
+class(.stretch-container)
+  key(border)operator(:) float(1px) value(solid) color(#999)
+  key(width)operator(:) float(200px)
+  key(height)operator(:) float(200px)
+  key(position)operator(:) value(relative)
+  include(+inline-block)
+class(.stretched)
+  variable($stretch-color)operator(:) color(#4C6B99)
+  key(border)operator(:) float(3px) value(solid) variable($stretch-color)
+  include(+border-radius)operator(()float(8px)operator(\))
+  key(display)operator(:) value(block)
+  key(background-color)operator(:) predefined(darken)operator(()variable($stretch-color)operator(,) float(30%)operator(\))
+  key(color)operator(:) value(white)
+  key(text-align)operator(:) value(center)
+  key(vertical-align)operator(:) value(middle)
+  key(padding)operator(:) float(0.5em)
+id(#stretch-full)
+  directive(@extend) class(.stretched)
+  include(+stretch)
+id(#stretch-offset)
+  directive(@extend) class(.stretched)
+  include(+stretch)operator(()float(1em)operator(,) float(1em)operator(,) float(1em)operator(,) float(1em)operator(\))
+id(#stretch-x)
+  directive(@extend) class(.stretched)
+  include(+stretch-x)
+id(#stretch-y)
+  directive(@extend) class(.stretched)
+  include(+stretch-y)
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/tables/all/stylesheet.sass)>
+directive(@import) string<delimiter(")content(compass/utilities/tables)delimiter(")>
+class(.example)
+  tag(table)
+    variable($table-color) operator(:) color(#7a98c6)
+    include(+table-scaffolding)
+    include(+inner-table-borders)operator(()float(1px)operator(,) predefined(darken)operator(()variable($table-color)operator(,) float(40%)operator(\))operator(\))
+    include(+outer-table-borders)operator(()float(2px)operator(\))
+    include(+alternating-rows-and-columns)operator(()variable($table-color)operator(,) predefined(adjust-hue)operator(()variable($table-color)operator(,) float(-120deg)operator(\))operator(,) color(#222)operator(\))
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/tables/borders/stylesheet.sass)>
+directive(@import) string<delimiter(")content(compass/utilities/tables/borders)delimiter(")>
+class(.example)
+  tag(table)
+    include(+inner-table-borders)operator(()float(1px)operator(,) color(#7a98c6)operator(\))
+    include(+outer-table-borders)operator(()float(2px)operator(\))
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/tables/scaffolding/stylesheet.sass)>
+directive(@import) string<delimiter(")content(compass/utilities/tables/scaffolding)delimiter(")>
+class(.example)
+  tag(table)
+    include(+table-scaffolding)
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/tables/striping/stylesheet.sass)>
+directive(@import) string<delimiter(")content(compass/utilities/tables/alternating-rows-and-columns)delimiter(")>
+class(.example)
+  tag(table)
+    variable($table-color) operator(:) color(#7a98c6)
+    include(+alternating-rows-and-columns)operator(()variable($table-color)operator(,) predefined(adjust-hue)operator(()variable($table-color)operator(,) float(-120deg)operator(\))operator(,) color(#222)operator(\))
+
+comment<delimiter(//)content( ./doc-src/content/examples/compass/utilities/contrast/stylesheet.sass)>
+variable($contrasted-dark-default)operator(:)  color(#333)
+variable($contrasted-light-default)operator(:) color(#e7e7e7)
+
+directive(@import) string<delimiter(")content(compass/utilities/color/contrast)delimiter(")>
+
+class(.example)
+  tag(p)class(.dark)
+    include(+contrasted)operator(()color(#5F1210)operator(\))
+  tag(p)class(.light)
+    include(+contrasted)operator(()color(#C82523)operator(\))
+
+
+comment<delimiter(//)content( ./examples/css3/extensions/fancy-fonts/templates/project/fancy-fonts.sass)>
+directive(@import) include(compass/css3)
+
+include(+font-face)operator(()string<delimiter(")content(Blooming Grove)delimiter(")>operator(,) predefined(font-files)operator(()string<delimiter(")content(bgrove.ttf)delimiter(")>operator(,) value(truetype)operator(,) string<delimiter(")content(bgrove.otf)delimiter(")>operator(,) value(opentype)operator(\))operator(\))
+include(+font-face)operator(()string<delimiter(")content(Prociono)delimiter(")>operator(,) predefined(font-files)operator(()string<delimiter(")content(Prociono.otf)delimiter(")>operator(,) value(opentype)operator(\))operator(\))
+tag(h1)
+  key(font-family)operator(:) string<delimiter(")content(Blooming Grove)delimiter(")>
+  key(font-size)operator(:) float(3em)
+tag(h2)
+  key(font-family)operator(:) string<delimiter(")content(Prociono)delimiter(")>
+  key(font-size)operator(:) float(2em)
+
+comment<delimiter(//)content( ./frameworks/blueprint/templates/basic/ie.sass)>
+directive(@import) include(blueprint)
+
+comment<delimiter(//)content( Generate the blueprint IE-specific customizations:)>
+include(+blueprint-ie)
+
+comment<delimiter(//)content( ./frameworks/blueprint/templates/basic/partials/_base.sass)>
+comment<delimiter(//)content( Here is where you can define your constants for your application and to configure the blueprint framework.)>
+comment<delimiter(//)content( Feel free to delete these if you want keep the defaults:)>
+
+variable($blueprint-grid-columns) operator(:) float(24)
+variable($blueprint-grid-width)   operator(:) float(30px)
+variable($blueprint-grid-margin)  operator(:) float(10px)
+
+comment<delimiter(//)content( If you change your grid column dimensions)>
+comment<delimiter(//)content( you can make a new grid background image from the command line like this:)>
+comment<delimiter(//)content( compass grid-img 30+10x16)>
+
+comment<delimiter(//)content( ./frameworks/blueprint/templates/basic/print.sass)>
+directive(@import) include(blueprint)
+
+comment<delimiter(//)content( Generate the blueprint print styles:)>
+include(+blueprint-print)
+
+comment<delimiter(//)content( ./frameworks/blueprint/templates/basic/screen.sass)>
+comment<delimiter(//)content( This import applies a global reset to any page that imports this stylesheet.)>
+directive(@import) include(blueprint/reset)
+comment<delimiter(//)content( To configure blueprint, edit the partials/_base.sass file.)>
+directive(@import) include(partials/base)
+comment<delimiter(//)content( Import all the default blueprint modules so that we can access their mixins.)>
+directive(@import) include(blueprint)
+comment<delimiter(//)content( Import the non-default scaffolding module.)>
+directive(@import) include(blueprint/scaffolding)
+
+comment<delimiter(//)content( Generate the blueprint framework according to your configuration:)>
+include(+blueprint)
+include(+blueprint-scaffolding)
+
+comment<delimiter(//)content( ./frameworks/blueprint/templates/buttons/buttons.sass)>
+directive(@import) include(compass/utilities/general/float)
+directive(@import) include(blueprint/buttons)
+
+comment<delimiter(//)content(
+  Use the following HTML code to place the buttons on your site:
+  
+  <button type="submit" class="button positive">
+    <img src="css/blueprint/plugins/buttons/icons/tick.png" alt=""/> Save
+  </button>
+  
+  <a class="button" href="/password/reset/">
+    <img src="css/blueprint/plugins/buttons/icons/key.png" alt=""/> Change Password
+  </a>
+  
+  <a href="#" class="button negative">
+    <img src="css/blueprint/plugins/buttons/icons/cross.png" alt=""/> Cancel
+  </a>)>
+
+tag(a)class(.button)
+  comment<delimiter(//)content( you can pass "left" or "right" to +anchor-button to float it in that direction)>
+  comment<delimiter(//)content( or you can pass no argument to leave it inline-block (cross browser safe!\) within)>
+  comment<delimiter(//)content( the flow of your page.)>
+  include(+anchor-button)operator(()value(left)operator(\))
+  comment<delimiter(//)content( All the button color mixins take 4 optional arguments:)>
+  comment<delimiter(//)content( font color, background color, border color, border highlight color)>
+  comment<delimiter(//)content( the first three default to constants set in blueprint/buttons.sass)>
+  comment<delimiter(//)content( the last one defaults to a shade lighter than the border color.)>
+  include(+button-colors)
+  include(+button-hover-colors)
+  include(+button-active-colors)
+
+tag(button)
+  comment<delimiter(//)content( The +button-button mixin is just like the +anchor-button mixin, but for <button> elements.)>
+  include(+button-button)operator(()value(left)operator(\))
+  include(+button-colors)
+  include(+button-hover-colors)
+  include(+button-active-colors)
+
+comment<delimiter(//)content( We can change the colors for buttons of certain classes, etc.)>
+tag(a)class(.positive)operator(,) tag(button)class(.positive)
+  key(color)operator(:) color(#529214)
+  include(+button-hover-colors)operator(()color(#529214)operator(,) color(#E6EFC2)operator(,) color(#C6D880)operator(\))
+  include(+button-active-colors)operator(()color(#FFF)operator(,) color(#529214)operator(,) color(#529214)operator(\))
+
+tag(a)class(.negative)operator(,) tag(button)class(.negative)
+  key(color)operator(:) color(#D12F19)
+  include(+button-hover-colors)operator(()color(#D12F19)operator(,) color(#FBE3E4)operator(,) color(#FBC2C4)operator(\))
+  include(+button-active-colors)operator(()color(#FFF)operator(,) color(#D12F19)operator(,) color(#D12F19)operator(\))
+
+
+comment<delimiter(//)content( ./frameworks/blueprint/templates/link_icons/link_icons.sass)>
+directive(@import) include(blueprint/link-icons)
+
+comment<delimiter(//)content( This turns link icons on for all links. You can change the scoping selector from)>
+comment<delimiter(//)content( body to something more specific if you prefer.)>
+tag(body)
+  include(+link-icons)
+  comment<delimiter(//)content( Use this class if a link gets an icon when it shouldn't.)>
+  tag(a)class(.noicon)
+    include(+no-link-icon)
+  comment<delimiter(//)content( Not all links have a url structure that can be detected,)>
+  comment<delimiter(//)content( So you can set them explicitly yourself like so:)>
+  tag(a)id(#this-is-a-pdf-link)
+    include(+link-icon)operator(()string<delimiter(")content(pdf.png)delimiter(")>operator(\))
+
+comment<delimiter(//)content( ./frameworks/blueprint/templates/project/ie.sass)>
+directive(@import) include(blueprint)
+
+comment<delimiter(//)content( To generate css equivalent to the blueprint css but with your configuration applied, uncomment:)>
+comment<delimiter(//)content( @include blueprint-ie)>
+
+comment<delimiter(//)content(Recommended Blueprint configuration with scoping and semantic layout:)>
+tag(body)class(.bp)
+  include(+blueprint-ie)operator(()value(true)operator(\))
+  comment<delimiter(//)content( Note: Blueprint centers text to fix IE6 container centering.)>
+  comment<delimiter(//)content( This means all your texts will be centered under all version of IE by default.)>
+  comment<delimiter(//)content( If your container does not have the .container class, don't forget to restore)>
+  comment<delimiter(//)content( the correct behavior to your main container (but not the body tag!\))>
+  comment<delimiter(//)content( Example:)>
+  comment<delimiter(//)content( .my-container)>
+  comment<delimiter(//)content(   text-align: left)>
+
+
+comment<delimiter(//)content( ./frameworks/blueprint/templates/project/partials/_base.sass)>
+comment<delimiter(//)content( Here is where you can define your constants for your application and to configure the blueprint framework.)>
+comment<delimiter(//)content( Feel free to delete these if you want keep the defaults:)>
+
+variable($blueprint-grid-columns)   operator(:) float(24)
+variable($blueprint-container-size) operator(:) float(950px)
+variable($blueprint-grid-margin)    operator(:) float(10px)
+
+comment<delimiter(//)content( Use this to calculate the width based on the total width.)>
+comment<delimiter(//)content( Or you can set $blueprint-grid-width to a fixed value and unset $blueprint-container-size -- it will be calculated for you.)>
+variable($blueprint-grid-width)operator(:) operator(()variable($blueprint-container-size) operator(+) variable($blueprint-grid-margin)operator(\)) operator(/) variable($blueprint-grid-columns) operator(-) variable($blueprint-grid-margin)
+
+
+comment<delimiter(//)content( ./frameworks/blueprint/templates/project/print.sass)>
+directive(@import) include(blueprint)
+
+comment<delimiter(//)content( To generate css equivalent to the blueprint css but with your configuration applied, uncomment:)>
+comment<delimiter(//)content( @include blueprint-print)>
+
+comment<delimiter(//)content(Recommended Blueprint configuration with scoping and semantic layout:)>
+tag(body)class(.bp)
+  include(+blueprint-print)operator(()value(true)operator(\))
+comment<delimiter(//)content( ./frameworks/blueprint/templates/project/screen.sass)>
+comment<delimiter(//)content( This import applies a global reset to any page that imports this stylesheet.)>
+directive(@import) include(blueprint/reset)
+comment<delimiter(//)content( To configure blueprint, edit the partials/base.sass file.)>
+directive(@import) include(partials/base)
+comment<delimiter(//)content( Import all the default blueprint modules so that we can access their mixins.)>
+directive(@import) include(blueprint)
+comment<delimiter(//)content( Import the non-default scaffolding module.)>
+directive(@import) include(blueprint/scaffolding)
+
+comment<delimiter(//)content( To generate css equivalent to the blueprint css but with your)>
+comment<delimiter(//)content( configuration applied, uncomment:)>
+comment<delimiter(//)content( @include blueprint)>
+
+comment<delimiter(//)content( If you are doing a lot of stylesheet concatenation, it is suggested)>
+comment<delimiter(//)content( that you scope your blueprint styles, so that you can better control)>
+comment<delimiter(//)content( what pages use blueprint when stylesheets are concatenated together.)>
+tag(body)class(.bp)
+  include(+blueprint-typography)operator(()value(true)operator(\))
+  include(+blueprint-utilities)
+  include(+blueprint-debug)
+  include(+blueprint-interaction)
+  comment<delimiter(//)content( Remove the scaffolding when you're ready to start doing visual design.)>
+  comment<delimiter(//)content( Or leave it in if you're happy with how blueprint looks out-of-the-box)>
+tag(form)class(.bp)
+  include(+blueprint-form)
+  comment<delimiter(//)content( You'll probably want to remove the scaffolding once you start styling your site.)>
+  include(+blueprint-scaffolding)
+
+comment<delimiter(//)content( Page layout can be done using mixins applied to your semantic classes and IDs:)>
+tag(body)class(.two-col)
+  id(#container)
+    include(+container)
+  id(#header)operator(,) id(#footer)
+    include(+column)operator(()variable($blueprint-grid-columns)operator(\))
+  id(#sidebar)
+    comment<delimiter(//)content( One third of the grid columns, rounding down. With 24 cols, this is 8.)>
+    variable($sidebar-columns)operator(:) predefined(floor)operator(()variable($blueprint-grid-columns) operator(/) float(3)operator(\))
+    include(+column)operator(()variable($sidebar-columns)operator(\))
+  id(#content)
+    comment<delimiter(//)content( Two thirds of the grid columns, rounding up.)>
+    comment<delimiter(//)content( With 24 cols, this is 16.)>
+    variable($content-columns)operator(:) predefined(ceil)operator(()float(2) operator(*) variable($blueprint-grid-columns) operator(/) float(3)operator(\))
+    comment<delimiter(//)content( true means it's the last column in the row)>
+    include(+column)operator(()variable($content-columns)operator(,) value(true)operator(\))
+
+
+
+comment<delimiter(//)content( ./frameworks/blueprint/templates/semantic/ie.sass)>
+directive(@import) include(blueprint)
+
+comment<delimiter(//)content( To generate css equivalent to the blueprint css but with your configuration applied, uncomment:)>
+comment<delimiter(//)content( +blueprint-ie)>
+
+comment<delimiter(//)content(Recommended Blueprint configuration with scoping and semantic layout:)>
+tag(body)class(.bp)
+  include(+blueprint-ie)operator(()value(true)operator(\))
+  comment<delimiter(//)content( Note: Blueprint centers text to fix IE6 container centering.)>
+  comment<delimiter(//)content( This means all your texts will be centered under all version of IE by default.)>
+  comment<delimiter(//)content( If your container does not have the .container class, don't forget to restore)>
+  comment<delimiter(//)content( the correct behavior to your main container (but not the body tag!\))>
+  comment<delimiter(//)content( Example:)>
+  comment<delimiter(//)content( .my-container)>
+  comment<delimiter(//)content(   text-align: left)>
+
+
+comment<delimiter(//)content( ./frameworks/blueprint/templates/semantic/partials/_base.sass)>
+comment<delimiter(//)content( Here is where you can define your constants for your application and to configure the blueprint framework.)>
+comment<delimiter(//)content( Feel free to delete these if you want keep the defaults:)>
+
+variable($blueprint-grid-columns)   operator(:) float(24)
+variable($blueprint-container-size) operator(:) float(950px)
+variable($blueprint-grid-margin)    operator(:) float(10px)
+
+comment<delimiter(//)content( Use this to calculate the width based on the total width.)>
+comment<delimiter(//)content( Or you can set $blueprint-grid-width to a fixed value and unset $blueprint-container-size -- it will be calculated for you.)>
+variable($blueprint-grid-width)operator(:) operator(()variable($blueprint-container-size) operator(+) variable($blueprint-grid-margin)operator(\)) operator(/) variable($blueprint-grid-columns) operator(-) variable($blueprint-grid-margin)
+
+comment<delimiter(//)content( ./frameworks/blueprint/templates/semantic/partials/_form.sass)>
+comment<delimiter(//)content( Only apply the blueprint form styles to forms with)>
+comment<delimiter(//)content( a class of "bp". This makes it easier to style)>
+comment<delimiter(//)content( forms from scratch if you need to.)>
+
+tag(form)class(.bp)
+  include(+blueprint-form)
+comment<delimiter(//)content( ./frameworks/blueprint/templates/semantic/partials/_page.sass)>
+comment<delimiter(//)content( Import the non-default scaffolding module to help us get started.)>
+directive(@import) include(blueprint/scaffolding)
+
+comment<delimiter(//)content( This configuration will only apply the)>
+comment<delimiter(//)content( blueprint styles to pages with a body class of "bp")>
+comment<delimiter(//)content( This makes it easier to have pages without blueprint styles)>
+comment<delimiter(//)content( when you're using a single/combined stylesheet.)>
+
+tag(body)class(.bp)
+  include(+blueprint-typography)operator(()value(true)operator(\))
+  include(+blueprint-utilities)
+  include(+blueprint-debug)
+  include(+blueprint-interaction)
+  comment<delimiter(//)content( Remove the scaffolding when you're ready to start doing visual design.)>
+  comment<delimiter(//)content( Or leave it in if you're happy with how blueprint looks out-of-the-box)>
+  include(+blueprint-scaffolding)
+
+
+comment<delimiter(//)content( ./frameworks/blueprint/templates/semantic/partials/_two_col.sass)>
+comment<delimiter(//)content( Page layout can be done using mixins applied to your semantic classes and IDs)>
+comment<delimiter(//)content( For instance this layout defines a two column layout on pages with)>
+comment<delimiter(//)content( a body class of "two-col".)>
+comment<delimiter(//)>
+comment<delimiter(//)content( The markup would look like:)>
+comment<delimiter(//)content(    <div id="container">)>
+comment<delimiter(//)content(      <div id="header"></div>)>
+comment<delimiter(//)content(      <div id="sidebar"></div>)>
+comment<delimiter(//)content(      <div id="content"></div>)>
+comment<delimiter(//)content(      <div id="footer"></div>)>
+comment<delimiter(//)content(    </div>)>
+comment<delimiter(//)>
+comment<delimiter(//)content( and the layout would look like:)>
+comment<delimiter(//)content(    +------------------------+)>
+comment<delimiter(//)content(    |        #header         |)>
+comment<delimiter(//)content(    +--------+---------------+)>
+comment<delimiter(//)content(    |        |               |)>
+comment<delimiter(//)content(    |#sidebar|    #content   |)>
+comment<delimiter(//)content(    |        |               |)>
+comment<delimiter(//)content(    +------------------------+)>
+comment<delimiter(//)content(    |        #footer         |)>
+comment<delimiter(//)content(    +--------+---------------+)>
+
+tag(body)class(.two-col)
+  id(#container)
+    include(+container)
+  id(#header)operator(,) id(#footer)
+    include(+column)operator(()variable($blueprint-grid-columns)operator(\))
+  id(#sidebar)
+    comment<delimiter(//)content( One third of the grid columns, rounding down. With 24 cols, this is 8.)>
+    variable($sidebar-columns)operator(:) predefined(floor)operator(()variable($blueprint-grid-columns) operator(/) float(3)operator(\))
+    include(+column)operator(()variable($sidebar-columns)operator(\))
+  id(#content)
+    comment<delimiter(//)content( Two thirds of the grid columns, rounding up.)>
+    comment<delimiter(//)content( With 24 cols, this is 16.)>
+    variable($content-columns)operator(:) predefined(ceil)operator(()float(2) operator(*) variable($blueprint-grid-columns) operator(/) float(3)operator(\))
+    comment<delimiter(//)content( true means it's the last column in the row)>
+    include(+column)operator(()variable($content-columns)operator(,) value(true)operator(\))
+
+comment<delimiter(//)content( ./frameworks/blueprint/templates/semantic/print.sass)>
+directive(@import) include(blueprint)
+
+comment<delimiter(//)content(Recommended Blueprint configuration with scoping and semantic layout:)>
+tag(body)class(.bp)
+  include(+blueprint-print)operator(()value(true)operator(\))
+comment<delimiter(//)content( ./frameworks/blueprint/templates/semantic/screen.sass)>
+comment<delimiter(//)content( This import applies a global reset to any page that imports this stylesheet.)>
+directive(@import) include(blueprint/reset)
+
+comment<delimiter(//)content( To configure blueprint, edit the partials/base.sass file.)>
+directive(@import) include(partials/base)
+
+comment<delimiter(//)content( Import all the default blueprint modules so that we can access their mixins.)>
+directive(@import) include(blueprint)
+
+comment<delimiter(//)content( Combine the partials into a single screen stylesheet.)>
+directive(@import) include(partials/page)
+directive(@import) include(partials/form)
+directive(@import) include(partials/two_col)
+
+
+comment<delimiter(//)content( ./frameworks/compass/templates/ellipsis/ellipsis.sass)>
+comment<delimiter(//)content( Since you've installed the xml file, you should set)>
+comment<delimiter(//)content( $use-mozilla-ellipsis-binding to true before importing.)>
+variable($use-mozilla-ellipsis-binding)operator(:) value(true)
+directive(@import) include(compass/typography/text/ellipsis)
+
+comment<delimiter(//)content( You can delete this sass file if you want, it's just an example of how to use the ellipsis mixin.)>
+comment<delimiter(//)content( By default, ellipsis text is no-wrap. Pass false as the first argument if you don't want that.)>
+class(.ellipsis)
+  include(+ellipsis)
+comment<delimiter(//)content( ./frameworks/compass/templates/extension/stylesheets/main.sass)>
+comment<delimiter(//)content( This is your framework's main stylesheet. Use it to import all default modules.)>
+
+comment<delimiter(//)content( ./frameworks/compass/templates/extension/templates/project/screen.sass)>
+comment<delimiter(//)content( This is where you put the contents of the main stylesheet for the user's project.)>
+comment<delimiter(//)content( It should import your sass stylesheets and demonstrate how to use them.)>
+comment<delimiter(//)content( ./frameworks/compass/templates/project/ie.sass)>
+comment<delimiter(/*)content(
+  Welcome to Compass. Use this file to write IE specific override styles.
+  Import this file using the following HTML or equivalent:
+  <!--[if IE]>
+    <link href="/stylesheets/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <![endif]-->)>
+
+comment<delimiter(//)content( ./frameworks/compass/templates/project/print.sass)>
+comment<delimiter(/*)content(
+  Welcome to Compass. Use this file to define print styles.
+  Import this file using the following HTML or equivalent:
+  <link href="/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" />
+  )>
+
+
+comment<delimiter(//)content( ./frameworks/compass/templates/project/screen.sass)>
+comment<delimiter(/*)content(
+  Welcome to Compass.
+  In this file you should write your main styles. (or centralize your imports\)
+  Import this file using the following HTML or equivalent:
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />)>
+
+directive(@import) include(compass/reset)
+
+comment<delimiter(//)content( ./test/fixtures/stylesheets/blueprint/sass/ie.sass)>
+directive(@import) include(blueprint/ie)
+
+include(+blueprint-ie)
+
+comment<delimiter(//)content( ./test/fixtures/stylesheets/blueprint/sass/print.sass)>
+directive(@import) include(blueprint/print)
+
+include(+blueprint-print)
+
+comment<delimiter(//)content( ./test/fixtures/stylesheets/blueprint/sass/screen.sass)>
+directive(@import) include(blueprint)
+directive(@import) include(compass/reset)
+
+include(+blueprint)
+
+id(#main)class(.container)
+  id(#top)
+    include(+column)operator(()float(24)operator(,) value(true)operator(\))
+  id(#middle)
+    include(+column)operator(()float(24)operator(,) value(true)operator(\))
+    id(#left)
+      include(+column)operator(()float(6)operator(\))
+    id(#content)
+      include(+column)operator(()float(12)operator(\))
+    id(#right)
+      include(+column)operator(()float(6)operator(,) value(true)operator(\))
+  id(#bottom)
+    include(+column)operator(()float(24)operator(,) value(true)operator(\))
+
+comment<delimiter(//)content( ./test/fixtures/stylesheets/busted_image_urls/sass/screen.sass)>
+class(.showgrid)
+  key(background-image)operator(:) predefined(image-url)operator(()string<delimiter(")content(grid.png)delimiter(")>operator(\))
+
+class(.inlinegrid)
+  key(background-image)operator(:) predefined(inline-image)operator(()string<delimiter(")content(grid.png)delimiter(")>operator(\))
+
+class(.no-buster)
+  key(background-image)operator(:) predefined(image-url)operator(()string<delimiter(")content(grid.png)delimiter(")>operator(,) variable($only-path)operator(:) value(false)operator(,) variable($cache-buster)operator(:) value(false)operator(\))
+
+class(.feed)
+  key(background-image)operator(:) predefined(image-url)operator(()string<delimiter(")content(feed.png)delimiter(")>operator(\))
+
+class(.dk)
+  key(background-image)operator(:) predefined(image-url)operator(()string<delimiter(")content(flags/dk.png)delimiter(")>operator(\))
+comment<delimiter(//)content( ./test/fixtures/stylesheets/compass/sass/box.sass)>
+directive(@import) include(compass/css3/box)
+
+class(.hbox)
+  include(+display-box)
+  include(+box-orient)
+  include(+box-align)
+  
+  local_variable(&) operator(>) tag(*)
+    include(+box-flex)
+
+class(.vbox)
+  include(+display-box)
+  include(+box-orient)operator(()value(vertical)operator(\))
+  include(+box-align)
+  
+  local_variable(&) operator(>) tag(*)
+    include(+box-flex)
+
+class(.spacer)
+  include(+box-flex)operator(()float(1)operator(\))
+
+class(.reverse)
+  include(+box-direction)operator(()value(reverse)operator(\))
+
+class(.box-flex-0)
+  include(+box-flex)operator(()float(0)operator(\))
+
+class(.box-flex-1)
+  include(+box-flex)operator(()float(1)operator(\))
+
+class(.box-flex-2)
+  include(+box-flex)operator(()float(2)operator(\))
+
+class(.box-flex-group-0)
+  include(+box-flex-group)operator(()float(0)operator(\))
+
+class(.box-flex-group-1)
+  include(+box-flex-group)operator(()float(1)operator(\))
+
+class(.box-flex-group-2)
+  include(+box-flex-group)operator(()float(2)operator(\))
+
+class(.start)
+  include(+box-pack)operator(()value(start)operator(\))
+
+class(.end)
+  include(+box-pack)operator(()value(end)operator(\))
+
+class(.center)
+  include(+box-pack)operator(()value(center)operator(\))
+comment<delimiter(//)content( ./test/fixtures/stylesheets/compass/sass/fonts.sass)>
+directive(@import) include(compass/css3/font-face)
+
+include(+font-face)operator(()string<delimiter(")content(font1)delimiter(")>operator(,) predefined(font-files)operator(()string<delimiter(")content(font1.woff)delimiter(")>operator(,) value(woff)operator(\))operator(,) string<delimiter(")content(font1.eot)delimiter(")>operator(\))
+comment<delimiter(//)content( ./test/fixtures/stylesheets/compass/sass/gradients.sass)>
+directive(@import) include(compass/css3/images)
+
+variable($experimental-support-for-svg)operator(:) value(true)
+class(.bg-shortcut-simple-image)
+  include(+background)operator(()color(#fff) function<delimiter(url()content('foo.png')delimiter(\))>operator(\))
+
+class(.bg-shortcut-linear-gradient)
+  include(+background)operator(()color(#fff) predefined(linear-gradient)operator(()value(top) value(left)operator(,) color(#ddd)operator(,) color(#aaa)operator(\))operator(\))
+
+class(.bg-shortcut-radial-gradient)
+  include(+background)operator(()color(#fff) predefined(radial-gradient)operator(()value(center) value(center)operator(,) color(#ddd)operator(,) color(#aaa) float(100px)operator(\))operator(\))
+
+class(.bg-linear-gradient-angle-svg)
+  include(+background-image)operator(()predefined(linear-gradient)operator(()float(-45deg)operator(,) value(blue)operator(,) value(black)operator(\))operator(\))
+
+class(.bg-linear-gradient-angle2-svg)
+  include(+background-image)operator(()predefined(linear-gradient)operator(()value(top) value(left)operator(,) value(blue)operator(,) value(black)operator(\))operator(\))
+
+class(.bg-all-gradient-types-with-simplification)
+  include(+background-with-css2-fallback)operator(()predefined(image-url)operator(()string<delimiter(")content(4x6.png)delimiter(")>operator(\))operator(,) predefined(linear-gradient)operator(()value(top) value(left)operator(,) color(#ddd)operator(,) color(#aaa)operator(\))operator(,) predefined(radial-gradient)operator(()value(center) value(center)operator(,) color(#ddd)operator(,) color(#aaa) float(100px)operator(\))operator(,) color(#ffcc00)operator(\))
+
+class(.bg-simple-image)
+  include(+background-image)operator(()function<delimiter(url()content('foo.png')delimiter(\))>operator(\))
+
+class(.bg-linear-gradient)
+  include(+background-image)operator(()predefined(linear-gradient)operator(()value(top) value(left)operator(,) color(#ddd)operator(,) color(#aaa)operator(\))operator(\))
+
+class(.bg-linear-gradient-pixel-stop-from-top)
+  include(+background-image)operator(()predefined(linear-gradient)operator(()value(top)operator(,) color(#ddd) float(10px)operator(,) color(#aaa) float(40px)operator(\))operator(\))
+
+class(.bg-linear-gradient-pixel-stop-from-left)
+  include(+background-image)operator(()predefined(linear-gradient)operator(()value(left)operator(,) color(#ddd) float(10px)operator(,) color(#aaa) float(40px)operator(\))operator(\))
+
+class(.transparent-in-linear-gradient)
+  include(+background-image)operator(()color(#fff) predefined(linear-gradient)operator(()value(top) value(left)operator(,) value(transparent)operator(,) color(#aaa)operator(\))operator(\))
+
+class(.bg-radial-gradient)
+  include(+background-image)operator(()predefined(radial-gradient)operator(()value(center) value(center)operator(,) color(#ddd)operator(,) value(transparent) float(100px)operator(\))operator(\))
+
+class(.bg-linear-gradient-with-angle)
+  include(+background-image)operator(()predefined(linear-gradient)operator(()float(-45deg)operator(,) color(#ddd)operator(,) color(#aaa)operator(\))operator(\))
+
+class(.bg-radial-gradient-with-angle-and-shape)
+  include(+background-image)operator(()predefined(radial-gradient)operator(()value(ellipse) value(cover)operator(,) color(#ddd)operator(,) color(#aaa) float(100px)operator(\))operator(\))
+
+class(.bg-all-gradient-types)
+  include(+background-image)operator(()predefined(image-url)operator(()string<delimiter(")content(4x6.png)delimiter(")>operator(\))operator(,) predefined(linear-gradient)operator(()value(top) value(left)operator(,) color(#ddd)operator(,) color(#aaa)operator(\))operator(,) predefined(radial-gradient)operator(()value(center) value(center)operator(,) color(#ddd)operator(,) color(#aaa) float(100px)operator(\))operator(\))
+
+class(.border-image-gradient)
+  include(+border-image)operator(()predefined(radial-gradient)operator(()color(#0f0)operator(,)color(#f00) float(100px)operator(\)) float(100) value(stretch)operator(\))
+
+class(.direct-list-image-plain)
+  include(+list-style-image)operator(()predefined(image-url)operator(()string<delimiter(")content(4x6.png)delimiter(")>operator(\))operator(\))
+
+class(.shorthand-list-image-plain)
+  include(+list-style)operator(()value(outside) predefined(image-url)operator(()string<delimiter(")content(4x6.png)delimiter(")>operator(\))operator(\))
+
+class(.direct-list-image-with-gradient)
+  include(+list-style-image)operator(()predefined(radial-gradient)operator(()value(lime)operator(,) value(red) float(10px)operator(\))operator(\))
+
+class(.shorthand-list-image-with-gradient)
+  comment<delimiter(//)content( Note: I haven't seen a browser render this correctly, but they should eventually.)>
+  include(+list-style)operator(()value(outside) predefined(radial-gradient)operator(()value(lime)operator(,) value(red) float(10px)operator(\))operator(\))
+
+class(.content-plain)
+  include(+content)operator(()string<delimiter(")content(asdf)delimiter(")>operator(\))
+
+class(.content-with-gradient)
+  include(+content)operator(()predefined(radial-gradient)operator(()value(lime)operator(,) value(red) float(10px)operator(\))operator(\))
+
+variable($experimental-support-for-svg)operator(:) value(false)
+
+class(.bg-linear-gradient-no-position)
+  include(+background-image)operator(()predefined(linear-gradient)operator(()color(#ddd)operator(,) color(#aaa)operator(\))operator(\))
+
+class(.bg-radial-gradient-no-position)
+  include(+background-image)operator(()predefined(radial-gradient)operator(()color(#ddd)operator(,) color(#aaa) float(100px)operator(\))operator(\))
+
+class(.image-fallback)
+  include(+background-image)operator(()predefined(image)operator(()predefined(radial-gradient)operator(()color(#ddd)operator(,) color(#aaa) float(100px)operator(\))operator(,) predefined(image-url)operator(()string<delimiter(")content(4x6.png)delimiter(")>operator(\))operator(,) color(#c00)operator(\))operator(\))
+
+class(.cross-fade)
+  include(+background-image)operator(()predefined(cross-fade)operator(()predefined(radial-gradient)operator(()color(#ddd)operator(,) color(#aaa) float(100px)operator(\))operator(,) predefined(image-url)operator(()string<delimiter(")content(4x6.png)delimiter(")>operator(\))operator(\))operator(\))
+
+class(.unknown-function-wrapper)
+  include(+background)operator(()predefined(foo)operator(()predefined(radial-gradient)operator(()color(#ddd)operator(,) color(#aaa) float(100px)operator(\))operator(\))operator(\))
+
+class(.ie-horizontal-filter)
+  include(+filter-gradient)operator(()value(white)operator(,) value(black)operator(,) value(horizontal)operator(\))
+
+class(.ie-vertical-filter)
+  include(+filter-gradient)operator(()value(white)operator(,) value(black)operator(,) value(vertical)operator(\))
+
+class(.ie-alpha-filter)
+  include(+filter-gradient)operator(()predefined(rgba)operator(()color(#fff)operator(,) float(1)operator(\))operator(,) predefined(rgba)operator(()color(#fff)operator(,) float(0)operator(\))operator(\))
+
+
+comment<delimiter(//)content( ./test/fixtures/stylesheets/compass/sass/image_size.sass)>
+class(.png)
+  key(width)operator(:) predefined(image_width)operator(()predefined(unquote)operator(()string<delimiter(")content(100x150.png)delimiter(")>operator(\))operator(\))
+  key(height)operator(:) predefined(image_height)operator(()predefined(unquote)operator(()string<delimiter(")content(100x150.png)delimiter(")>operator(\))operator(\))
+
+class(.jpg)
+  key(width)operator(:) predefined(image_width)operator(()predefined(unquote)operator(()string<delimiter(")content(100x150.jpg)delimiter(")>operator(\))operator(\))
+  key(height)operator(:) predefined(image_height)operator(()predefined(unquote)operator(()string<delimiter(")content(100x150.jpg)delimiter(")>operator(\))operator(\))
+
+class(.jpeg)
+  key(width)operator(:) predefined(image_width)operator(()predefined(unquote)operator(()string<delimiter(")content(100x150.jpeg)delimiter(")>operator(\))operator(\))
+  key(height)operator(:) predefined(image_height)operator(()predefined(unquote)operator(()string<delimiter(")content(100x150.jpeg)delimiter(")>operator(\))operator(\))
+
+class(.gif)
+  key(width)operator(:) predefined(image_width)operator(()predefined(unquote)operator(()string<delimiter(")content(100x150.gif)delimiter(")>operator(\))operator(\))
+  key(height)operator(:) predefined(image_height)operator(()predefined(unquote)operator(()string<delimiter(")content(100x150.gif)delimiter(")>operator(\))operator(\))
+
+comment<delimiter(//)content( ./test/fixtures/stylesheets/compass/sass/layout.sass)>
+directive(@import) include(compass/layout)
+
+include(+sticky-footer)operator(()float(72px)operator(,) predefined(unquote)operator(()string<delimiter(")content(#layout)delimiter(")>operator(\))operator(,) predefined(unquote)operator(()string<delimiter(")content(#layout_footer)delimiter(")>operator(\))operator(,) predefined(unquote)operator(()string<delimiter(")content(#footer)delimiter(")>operator(\))operator(\))
+
+comment<delimiter(//)content( ./test/fixtures/stylesheets/compass/sass/print.sass)>
+directive(@import) include(compass/utilities/print)
+
+include(+print-utilities)
+
+include(+print-utilities)operator(()value(screen)operator(\))
+
+comment<delimiter(//)content( ./test/fixtures/stylesheets/compass/sass/reset.sass)>
+directive(@import) include(compass/reset)
+
+comment<delimiter(//)content( Turn off the display for both of these classes)>
+class(.unregistered-only)operator(,) class(.registered-only)
+  key(display)operator(:) value(none)
+
+comment<delimiter(//)content( Now turn only one of them back on depending on some other context.)>
+tag(body)class(.registered)
+  include(+reset-display)operator(()predefined(unquote)operator(()string<delimiter(")content(.registered-only)delimiter(")>operator(\))operator(\))
+
+tag(body)class(.unregistered)
+  include(+reset-display)operator(()predefined(unquote)operator(()string<delimiter(")content(.unregistered-only)delimiter(")>operator(\))operator(\))
+
+comment<delimiter(//)content( ./test/fixtures/stylesheets/compass/sass/stretching.sass)>
+directive(@import) string<delimiter(")content(compass/layout/stretching)delimiter(")>
+
+class(.stretched-completely)
+  include(+stretch)
+
+class(.stretched-horizontally)
+  include(+stretch-x)
+
+class(.stretched-right)
+  include(+stretch-x)operator(()float(0)operator(,) float(50%)operator(\))
+
+class(.left-pane)
+  include(+stretch)operator(()float(0)operator(,) float(50%)operator(,) float(0)operator(,) float(0)operator(\))
+
+class(.stretched-left)
+  include(+stretch-x)operator(()float(50%)operator(,) float(0)operator(\))
+
+class(.right-pane)
+  include(+stretch)operator(()float(0)operator(,) float(0)operator(,) float(0)operator(,) float(50%)operator(\))
+
+class(.stretched-down)
+  include(+stretch-y)operator(()float(0)operator(,) float(50%)operator(\))
+
+class(.top-pane)
+  include(+stretch)operator(()float(0)operator(,) float(0)operator(,) float(50%)operator(,) float(0)operator(\))
+
+class(.stretched-up)
+  include(+stretch-y)operator(()float(50%)operator(,) float(0)operator(\))
+
+class(.bottom-pane)
+  include(+stretch)operator(()float(50%)operator(,) float(0)operator(,) float(0)operator(,) float(0)operator(\))
+
+class(.viewport)
+  include(+stretch)operator(()float(10px)operator(,) float(20px)operator(,) float(30px)operator(,) float(40px)operator(\))
+comment<delimiter(//)content( ./test/fixtures/stylesheets/error/sass/screen.sass)>
+tag(test)
+  key(background)operator(:) predefined(image_url)operator(()string<delimiter(")content(testing.png)delimiter(")>operator(\))
+
+comment<delimiter(//)content( ./test/fixtures/stylesheets/image_urls/sass/screen.sass)>
+class(.showgrid)
+  key(background-image)operator(:) predefined(image-url)operator(()predefined(unquote)operator(()string<delimiter(")content(grid.png)delimiter(")>operator(\))operator(\))
+
+class(.inlinegrid)
+  key(background-image)operator(:) predefined(inline-image)operator(()predefined(unquote)operator(()string<delimiter(")content(grid.png)delimiter(")>operator(\))operator(\))
+
+class(.no-buster)
+  key(background-image)operator(:) predefined(image-url)operator(()string<delimiter(")content(grid.png)delimiter(")>operator(,) variable($only-path)operator(:) value(false)operator(,) variable($cache-buster)operator(:) value(false)operator(\))
+
+comment<delimiter(//)content( ./test/fixtures/stylesheets/relative/sass/ie.sass)>
+comment<delimiter(/*)content( Welcome to Compass. Use this file to write IE specific override styles.)content(
+   Import this file using the following HTML or equivalent:
+   <!--[if IE]>
+     <link href="/stylesheets/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
+   <![endif]-->)>
+
+comment<delimiter(//)content( ./test/fixtures/stylesheets/relative/sass/print.sass)>
+comment<delimiter(/*)content( Welcome to Compass. Use this file to define print styles.)content(
+   Import this file using the following HTML or equivalent:
+   <link href="/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" />)>
+
+comment<delimiter(//)content( ./test/fixtures/stylesheets/relative/sass/screen.sass)>
+tag(test)
+  key(background)operator(:) predefined(image_url)operator(()predefined(unquote)operator(()string<delimiter(")content(testing.png)delimiter(")>operator(\))operator(\))
+
+comment<delimiter(//)content( ./test/fixtures/stylesheets/valid/sass/simple.sass)>
+tag(div)
+  key(color)operator(:) value(red)

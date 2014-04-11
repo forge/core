@@ -1,0 +1,7 @@
+ident(require) string<delimiter(')content(os)delimiter(')>
+keyword(local) local_variable(c) operator(=) ident(os)operator(.)ident(clock)
+keyword(function) function(r1)operator(()ident(i)operator(,)ident(n)operator(\)) keyword(return) ident(math)operator(.)ident(floor)operator(()ident(i)operator(/)ident(n)operator(+)float(0.5)operator(\))operator(*)ident(n)      keyword(end)
+keyword(function) function(r2)operator(()ident(i)operator(,)ident(n)operator(\)) keyword(local) local_variable(m)operator(=)ident(n)operator(/)integer(2)operator(;) keyword(return) ident(i)operator(+)ident(m) operator(-) operator(()ident(i)operator(+)ident(m)operator(\))operator(%)ident(n) keyword(end)
+
+keyword(local) local_variable(t)operator(=)ident(c)operator(()operator(\))operator(;) keyword(for) ident(i)operator(=)integer(1)operator(,)integer(12345678) keyword(do) ident(r1)operator(()ident(i)operator(,)integer(20)operator(\)) keyword(end)operator(;) predefined(print)operator(()ident(c)operator(()operator(\))operator(-)ident(t)operator(\)) comment(--> 2.007)
+keyword(local) local_variable(t)operator(=)ident(c)operator(()operator(\))operator(;) keyword(for) ident(i)operator(=)integer(1)operator(,)integer(12345678) keyword(do) ident(r2)operator(()ident(i)operator(,)integer(20)operator(\)) keyword(end)operator(;) predefined(print)operator(()ident(c)operator(()operator(\))operator(-)ident(t)operator(\)) comment(--> 1.45)

@@ -1,0 +1,38 @@
+keyword(package) ident(main)
+
+keyword(import) operator(()
+  string<delimiter(")content(fmt)delimiter(")>
+  string<delimiter(")content(labix.org/v2/mgo)delimiter(")>
+  string<delimiter(")content(labix.org/v2/mgo/bson)delimiter(")>
+operator(\))
+
+keyword(type) ident(Person) keyword(struct) operator({)
+  ident(Name)  predefined_type(string)
+  ident(Phone) predefined_type(string)
+operator(})
+
+keyword(func) ident(main)operator((\)) operator({)
+  ident(session)operator(,) ident(err) operator(:=) ident(mgo)operator(.)ident(Dial)operator(()string<delimiter(")content(localhost)delimiter(")>operator(\))
+  keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+    predefined(panic)operator(()ident(err)operator(\))
+  operator(})
+  keyword(defer) ident(session)operator(.)ident(Close)operator((\))
+
+  ident(session)operator(.)ident(SetMode)operator(()ident(mgo)operator(.)ident(Monotonic)operator(,) predefined_constant(true)operator(\))
+
+  ident(c) operator(:=) ident(session)operator(.)ident(DB)operator(()string<delimiter(")content(test)delimiter(")>operator(\))operator(.)ident(C)operator(()string<delimiter(")content(people)delimiter(")>operator(\))
+  ident(err) operator(=) ident(c)operator(.)ident(Insert)operator(()
+    operator(&)ident(Person)operator({)string<delimiter(")content(Ale)delimiter(")>operator(,) string<delimiter(")content(+55 53 8116 9639)delimiter(")>operator(},)
+    operator(&)ident(Person)operator({)string<delimiter(")content(Cla)delimiter(")>operator(,) string<delimiter(")content(+55 53 8402 8510)delimiter(")>operator(}\))
+  keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+    predefined(panic)operator(()ident(err)operator(\))
+  operator(})
+
+  ident(result) operator(:=) ident(Person)operator({})
+  ident(err) operator(=) ident(c)operator(.)ident(Find)operator(()ident(bson)operator(.)ident(M)operator({)string<delimiter(")content(name)delimiter(")>operator(:) string<delimiter(")content(Ale)delimiter(")>operator(}\))operator(.)ident(One)operator((&)ident(result)operator(\))
+  keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+    predefined(panic)operator(()ident(err)operator(\))
+  operator(})
+
+  ident(fmt)operator(.)ident(Println)operator(()string<delimiter(")content(Phone:)delimiter(")>operator(,) ident(result)operator(.)ident(Phone)operator(\))
+operator(})

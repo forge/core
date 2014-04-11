@@ -1,0 +1,85 @@
+operator(()keyword(ns) namespace(clj-swing.frame)
+  operator(()symbol(:use) operator([)ident(clj-swing.core) symbol(:only) operator([)ident(group-container-args) ident(icon-setters) ident(auto-setters)operator(])operator(])
+	operator([)ident(clojure.contrib.swing-utils) symbol(:only) operator([)ident(do-swing)operator(])operator(])operator(\))
+  operator(()symbol(:import) operator(()ident(javax.swing) ident(JFrame) ident(ImageIcon)operator(\))operator(\))
+  operator(()symbol(:require) operator([)ident(clojure.contrib.java-utils) symbol(:as) ident(java)operator(])operator(\))operator(\))
+
+
+operator(()keyword(defmacro) function(set-constraint!) operator([)ident(constraints) ident(field) ident(value)operator(])
+  operator(`)operator(()ident(set!) operator(()keyword(.) operator(~)ident(constraints) operator(~)operator(()keyword(symbol) operator(()keyword(name) ident(field)operator(\))operator(\))operator(\))
+         operator(~)operator(()keyword(if) operator(()keyword(keyword?) ident(value)operator(\))
+	    operator(`)operator(()ident(java/wall-hack-field)  operator(()keyword(class) operator(~)ident(constraints)operator(\)) operator(')operator(~)operator(()keyword(symbol) operator(()keyword(name) ident(value)operator(\))operator(\))  operator(()keyword(class) operator(~)ident(constraints)operator(\))operator(\))
+            ident(value)operator(\))operator(\))operator(\))
+
+operator(()keyword(def) function(*frame-on-close-actions*)
+  operator({)symbol(:do-nothing) operator(()ident(JFrame/DO_NOTHING_ON_CLOSE)operator(\))
+   symbol(:exit) operator(()ident(JFrame/EXIT_ON_CLOSE)operator(\))
+   symbol(:hide) operator(()ident(JFrame/HIDE_ON_CLOSE)operator(\))
+   symbol(:dispose) operator(()ident(JFrame/DISPOSE_ON_CLOSE)operator(\))operator(})operator(\))
+
+
+operator(()keyword(def) function(*frame-known-keys*)
+     operator([)symbol(:name) symbol(:icon) symbol(:title) symbol(:layout) symbol(:constrains) symbol(:on-close) symbol(:size) symbol(:bounds) symbol(:location) symbol(:pack) symbol(:show) symbol(:centered)operator(])operator(\))
+
+operator(()keyword(defmacro) function(frame) operator([)ident(&) ident(args)operator(])
+  string<delimiter(")content(options are:
+:name - internal name of the frame.
+:icon - icon, will be passed to javax.swing.ImageIcon.
+:title - title for the frame.
+:layout - layout manager.
+:constrains - constrains object for the layout manager.
+:on-close - one of :do-nothing, :exit, :hide, :dispose, 
+  sets the default on close action for the frame.
+:size - [w, h]
+:bounds - [x, y, w, h]
+:location - [x y]
+
+:pack - shall the frame autopack at the end?
+:show - shall the frame autoshow at the end?
+)delimiter(")>
+    operator(()keyword(let) operator([)ident(default-opts) operator({)operator(})
+	  operator({)ident(forms) symbol(:forms) ident(opts) symbol(:options) ident(bindings) symbol(:bindings)operator(}) operator(()ident(group-container-args) ident(args)operator(\))
+	  ident(opts) operator(()keyword(merge) ident(default-opts) ident(opts)operator(\))
+	  ident(frame) operator(()keyword(or) operator(()symbol(:name) ident(opts)operator(\)) operator(()keyword(gensym) string<delimiter(")content(frame)delimiter(")>operator(\))operator(\))
+	  ident(constrains) operator(()keyword(gensym) string<delimiter(")content(constrains)delimiter(")>operator(\))
+	  ident(manager) operator(()keyword(gensym) string<delimiter(")content(manager)delimiter(")>operator(\))operator(])
+      operator(`)operator(()ident(do-swing) 
+	operator(()keyword(let) operator([)operator(~)ident(frame)  operator(~)operator(()keyword(if) operator(()symbol(:title) ident(opts)operator(\))
+			 operator(`)operator(()ident(JFrame.) operator(~)operator(()symbol(:title) ident(opts)operator(\))operator(\))
+			 operator(`)operator(()ident(JFrame.)operator(\))operator(\))
+	      operator(~@)operator(()keyword(if) operator(()symbol(:layout) ident(opts)operator(\))
+		  operator([)operator(')ident(_) operator(`)operator(()keyword(.)ident(setLayout) operator(~)ident(frame) operator(~)operator(()symbol(:layout) ident(opts)operator(\))operator(\))operator(])operator(\))
+	      operator(~@)operator(()keyword(if) operator(()symbol(:constrains) ident(opts)operator(\))
+		  operator(`)operator(()operator(~)ident(constrains) operator(~)operator(()symbol(:constrains) ident(opts)operator(\))operator(\))operator(\))
+	      operator(~@)operator(()keyword(if) operator(()symbol(:constrains) ident(opts)operator(\))
+		  operator(()keyword(reverse) 
+		   operator(()keyword(reduce)
+		    operator(()keyword(fn) operator([)ident(l) operator([)ident(f) ident(s)operator(])operator(])
+		      operator(()keyword(if) operator(()keyword(keyword?) ident(f)operator(\))
+			operator(()keyword(conj) operator(()keyword(conj) ident(l) operator(')ident(_)operator(\)) operator(`)operator(()ident(set-constraint!) operator(~)ident(constrains) operator(~)ident(f) operator(~)ident(s)operator(\))operator(\))
+			operator(()keyword(conj) operator(()keyword(conj) operator(()keyword(conj) operator(()keyword(conj) ident(l) ident(f)operator(\)) ident(s)operator(\)) operator(')ident(_)operator(\)) operator(`)operator(()keyword(.)ident(add) operator(~)ident(frame) operator(~)ident(f) operator(~)ident(constrains)operator(\))operator(\))operator(\))operator(\))
+		    operator(')operator(()operator(\)) operator(()keyword(partition) integer(2) ident(bindings)operator(\))operator(\))operator(\))
+		  operator(()keyword(reverse) 
+		   operator(()keyword(reduce)
+		    operator(()keyword(fn) operator([)ident(l) operator([)ident(f) ident(s)operator(])operator(])
+		      operator(()keyword(conj) operator(()keyword(conj) operator(()keyword(conj) operator(()keyword(conj) ident(l) ident(f)operator(\)) ident(s)operator(\)) operator(')ident(_)operator(\)) operator(`)operator(()keyword(.)ident(add) operator(~)ident(frame) operator(~)ident(f)operator(\))operator(\))operator(\))
+		    operator(')operator(()operator(\)) operator(()keyword(partition) integer(2) ident(bindings)operator(\))operator(\))operator(\))operator(\))operator(])
+	  operator(()keyword(doto) operator(~)ident(frame)
+	    operator(~@)operator(()ident(icon-setters) operator([)symbol(:icon)operator(])  ident(opts)operator(\))
+	    operator(~@)operator(()ident(auto-setters) ident(JFrame) ident(*frame-known-keys*) ident(opts)operator(\))
+	    operator(~@)operator(()keyword(when-let) operator([)ident(on-close) operator(()ident(*frame-on-close-actions*) operator(()symbol(:on-close) ident(opts)operator(\))operator(\))operator(])
+		operator([)operator(`)operator(()keyword(.)ident(setDefaultCloseOperation) operator(~)ident(on-close)operator(\))operator(])operator(\))
+	    operator(~@)operator(()keyword(when-let) operator([)operator([)ident(w) ident(h)operator(]) operator(()symbol(:size) ident(opts)operator(\))operator(])
+		operator([)operator(`)operator(()keyword(.)ident(setSize) operator(~)ident(w) operator(~)ident(h)operator(\))operator(])operator(\))
+	    operator(~@)operator(()keyword(when-let) operator([)operator([)ident(x) ident(y) ident(w) ident(h)operator(]) operator(()symbol(:bounds) ident(opts)operator(\))operator(])
+		operator([)operator(`)operator(()keyword(.)ident(setBounds) operator(~)ident(x) operator(~)ident(y) operator(~)ident(w) operator(~)ident(h)operator(\))operator(])operator(\))
+	    operator(~@)operator(()keyword(when-let) operator([)operator([)ident(x) ident(y)operator(]) operator(()symbol(:location) ident(opts)operator(\))operator(])
+		operator([)operator(`)operator(()keyword(.)ident(setLocation) operator(~)ident(x) operator(~)ident(y)operator(\))operator(])operator(\))
+	    operator(~@)operator(()keyword(if) operator(()keyword(contains?) ident(opts) symbol(:centered)operator(\))
+		operator([)operator(`)operator(()keyword(.)ident(setLocationRelativeTo) operator(~)operator(()symbol(:centered) ident(opts)operator(\))operator(\))operator(])operator(\))operator(\))
+	    operator(~@)ident(forms)
+	    operator(()keyword(doto) operator(~)ident(frame)
+	      operator(~@)operator(()keyword(if) operator(()symbol(:pack) ident(opts)operator(\))
+		  operator([)operator(`)operator(()keyword(.)ident(pack)operator(\))operator(])operator(\))
+	      operator(~@)operator(()keyword(if) operator(()symbol(:show) ident(opts)operator(\))
+		  operator([)operator(`)operator(()keyword(.)ident(setVisible) predefined_constant(true)operator(\))operator(])operator(\))operator(\))operator(\))operator(\))operator(\))operator(\))

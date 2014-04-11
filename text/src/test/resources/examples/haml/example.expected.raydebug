@@ -1,0 +1,51 @@
+doctype(!!!)
+constant(#main)
+  class(.note)
+    tag(%h2) plain(Quick Notes)
+    tag(%ul)
+      tag(%li)
+        plain(Haml is usually indented with two spaces,)
+        plain(although more than two is allowed.)
+        plain(You have to be consistent, though.)
+      tag(%li)
+        plain(The first character of any line is called )
+        plain(the "control character" - it says "make a tag")
+        plain(or "run Ruby code" or all sorts of things.)
+      tag(%li)
+        plain(Haml takes care of nicely indenting your HTML.)
+      tag(%li) 
+        plain(Haml allows Ruby code and blocks.)
+        plain(But not in this example.)
+        plain(We turned it off for security.)
+
+  class(.note)
+    plain(You can get more information by reading the)
+    tag(%a)plain({)symbol(:href) operator(=)operator(>) string<delimiter(")content(/docs/yardoc/file.HAML_REFERENCE.html)delimiter(")>plain(})
+      plain(Official Haml Reference)
+
+  class(.note)
+    tag(%p)
+      plain(This example doesn't allow Ruby to be executed,)
+      plain(but real Haml does.)
+    tag(%p)
+      plain(Ruby code is included by using = at the)
+      plain(beginning of a line.)
+    tag(%p)
+      plain(Read the tutorial for more information.)
+
+tag(%strong)plain(= )ident(item)operator(.)ident(title)
+
+tag(%strong)plain({)symbol(:class) operator(=)operator(>) string<delimiter(")content(code)delimiter(")>operator(,) symbol(:id) operator(=)operator(>) string<delimiter(")content(message)delimiter(")>plain(}) plain(Hello, World!)
+
+tag(%strong)class(.code)constant(#message) plain(Hello, World!)
+
+class(.content) plain(Hello, World!)
+
+class(.item)plain({)symbol(:id) operator(=)operator(>) string<delimiter(")content(item)inline<inline_delimiter(#{)ident(item)operator(.)ident(id)inline_delimiter(})>delimiter(")>plain(})plain(= )ident(item)operator(.)ident(body)
+
+constant(#content)
+  class(.left)class(.column)
+    tag(%h2) plain(Welcome to our site!)
+    tag(%p)plain(= )ident(print_information)
+  class(.right)class(.column)
+    plain(= )ident(render) symbol(:partial) operator(=)operator(>) string<delimiter(")content(sidebar)delimiter(")>

@@ -1,0 +1,104 @@
+comment(/**
+  * author: nevill@163.com
+  * weibo / twitter: @nevill
+  */)
+
+keyword(package) ident(main)
+
+keyword(import) operator(() string<delimiter(")content(container/list)delimiter(")>
+         string<delimiter(")content(encoding/base64)delimiter(")>
+         string<delimiter(")content(fmt)delimiter(")>
+         string<delimiter(")content(io/ioutil)delimiter(")>
+         string<delimiter(")content(net/http)delimiter(")>
+         string<delimiter(")content(os)delimiter(")>
+         string<delimiter(")content(regexp)delimiter(")>
+         string<delimiter(")content(strings)delimiter(")>
+         operator(\))
+
+keyword(const) ident(BaseUrl) operator(=) string<delimiter(")content(http://baike.baidu.com/view)delimiter(")>
+keyword(const) ident(RootDir) operator(=) string<delimiter(")content(/tmp/baike.baidu)delimiter(")>
+keyword(const) ident(MaxTasks) operator(=) integer(1000)
+
+keyword(type) ident(UrlList) keyword(struct) operator({)
+    ident(urls) ident(list)operator(.)ident(List)
+    ident(Count) predefined_type(int)
+operator(}) 
+
+keyword(func) ident(GetFileName)operator(()ident(url) predefined_type(string)operator(\)) predefined_type(string) operator({)
+    ident(pos) operator(:=) ident(strings)operator(.)ident(Index)operator(()ident(url)operator(,) ident(BaseUrl)operator(\))
+    keyword(if) ident(pos) operator(==) integer(-1) operator({)
+        keyword(return) string<delimiter(")delimiter(")>
+    operator(})
+    keyword(return) ident(url)operator([)predefined(len)operator(()ident(BaseUrl)operator(\):])
+operator(})
+
+comment(// Return the content of the given url)
+keyword(func) ident(FetchAndSave)operator(()ident(url) predefined_type(string)operator(\)) operator(()predefined_type(string)operator(,) predefined_type(bool)operator(\)) operator({)
+    ident(fileName) operator(:=) ident(RootDir) operator(+) string<delimiter(")content(/)delimiter(")> operator(+) ident(base64)operator(.)ident(StdEncoding)operator(.)ident(EncodeToString)operator(([])predefined_type(byte)operator(()ident(GetFileName)operator(()ident(url)operator(\)\)\))
+    comment(//file, ferr := os.Open(fileName\))
+    ident(content)operator(,) ident(ferr) operator(:=) ident(ioutil)operator(.)ident(ReadFile)operator(()ident(fileName)operator(\))
+    keyword(if) ident(ferr) operator(==) predefined_constant(nil) operator({)
+        keyword(return) predefined_type(string)operator(()ident(content)operator(\),) predefined_constant(true)
+    operator(})
+
+    ident(fmt)operator(.)ident(Print)operator(()string<delimiter(")content(File Not exists: )delimiter(")> operator(+) ident(fileName)operator(\))
+
+    ident(resp)operator(,) ident(err) operator(:=) ident(http)operator(.)ident(Get)operator(()ident(url)operator(\))
+    keyword(if) ident(err) operator(!=) predefined_constant(nil) operator({)
+        keyword(return) string<delimiter(")delimiter(")>operator(,) predefined_constant(true)
+    operator(})
+
+    ident(responseBody)operator(,) ident(_) operator(:=) ident(ioutil)operator(.)ident(ReadAll)operator(()ident(resp)operator(.)ident(Body)operator(\))
+    ident(ioutil)operator(.)ident(WriteFile)operator(()ident(fileName)operator(,) ident(responseBody)operator(,) octal(0644)operator(\))
+    keyword(defer) ident(resp)operator(.)ident(Body)operator(.)ident(Close)operator((\))
+    ident(fmt)operator(.)ident(Println)operator(()string<delimiter(")content(, created !)delimiter(")>operator(\))
+    keyword(return) predefined_type(string)operator(()ident(responseBody)operator(\),) predefined_constant(false)
+operator(})
+
+comment(// Strip out all the related URLs to fetch)
+keyword(func) ident(ExtractUrls)operator(()ident(content) predefined_type(string)operator(\)) operator([])predefined_type(string) operator({)
+    keyword(return) ident(regexp)operator(.)ident(MustCompile)operator(()shell<delimiter(`)content(http://baike.baidu.com/view/[/\\w\\.-]+)delimiter(`)>operator(\))operator(.)ident(FindAllString)operator(()ident(content)operator(,) integer(-1)operator(\))
+operator(})
+
+keyword(func) operator(()ident(l) operator(*)ident(UrlList)operator(\)) ident(AddUrls)operator(()ident(links) operator([])predefined_type(string)operator(\)) operator({)
+    keyword(for) ident(_)operator(,) ident(link) operator(:=) keyword(range) ident(links) operator({)
+        ident(l)operator(.)ident(urls)operator(.)ident(PushBack)operator(()ident(link)operator(\))
+    operator(})
+operator(})
+
+keyword(func) operator(()ident(l) operator(*)ident(UrlList)operator(\)) ident(FetchOne)operator((\)) predefined_type(string) operator({)
+    keyword(if) ident(l)operator(.)ident(urls)operator(.)ident(Len)operator((\)) operator(>) integer(0) operator({)
+        ident(l)operator(.)ident(Count) operator(++)
+        ident(ele) operator(:=) ident(l)operator(.)ident(urls)operator(.)ident(Remove)operator(()ident(l)operator(.)ident(urls)operator(.)ident(Front)operator((\)\))
+        keyword(return) ident(ele)operator(.)operator(()predefined_type(string)operator(\))
+    operator(})
+    keyword(return) string<delimiter(")delimiter(")>
+operator(})
+
+comment(// usage:)
+comment(//        go run fetcher.go "http://baike.baidu.com/view/1089203.htm")
+keyword(func) ident(main)operator((\)) operator({)
+    comment(//url := "http://baike.baidu.com/view/1089203.htm")
+    ident(url) operator(:=) ident(os)operator(.)ident(Args)operator([)integer(1)operator(])
+
+    ident(lst) operator(:=) ident(UrlList)operator({})
+    ident(lst)operator(.)ident(AddUrls)operator(([])predefined_type(string)operator({) ident(url) operator(}\))
+    ident(c) operator(:=) predefined(make)operator(()keyword(chan) predefined_type(int)operator(\))
+
+    ident(count) operator(:=) integer(0)
+
+    keyword(for) ident(link) operator(:=) ident(lst)operator(.)ident(FetchOne)operator((\);) ident(count) operator(<=) ident(MaxTasks) operator(&&) ident(link) operator(!=) string<delimiter(")delimiter(")>operator(;) operator({)
+        keyword(go) keyword(func)operator((\)) operator({)
+            comment(//fmt.Println("Fetching ... " + link\))
+            ident(text)operator(,) ident(existed) operator(:=) ident(FetchAndSave)operator(()ident(link)operator(\))
+            keyword(if) operator(!)ident(existed) operator({)
+                ident(lst)operator(.)ident(AddUrls)operator(()ident(ExtractUrls)operator(()ident(text)operator(\)\))
+                ident(count) operator(++)
+                ident(fmt)operator(.)ident(Println)operator(()ident(count)operator(\))
+            operator(})
+            ident(c) operator(<-) integer(1)
+        operator(}(\))
+        operator(<-) ident(c)
+        ident(link) operator(=) ident(lst)operator(.)ident(FetchOne)operator((\))
+    operator(})
+operator(})

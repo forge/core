@@ -1,0 +1,266 @@
+!!! XML
+!!! XML iso-8859-1
+!!!
+%html
+  %head
+    %title Myspace
+  %body
+    %h1 I am the international space station
+    %p Sign my guestbook
+
+-# file: app/views/movies/index.haml
+
+#content
+ .title
+   %h1= @title
+   = link_to 'Home', home_url
+
+%gee
+  %whiz
+    Wow this is cool!
+
+%p
+  <div id="blah">Blah!</div>
+
+<gee>
+  <whiz>
+    Wow this is cool!
+  </whiz>
+</gee>
+
+%title
+  = @title
+  \= @title
+
+%one
+  %two
+    %three Hey there
+
+%html{:xmlns => "http://www.w3.org/1999/xhtml", "xml:lang" => "en", :lang => "en"}
+
+%script{:type => "text/javascript",
+        :src  => "javascripts/script_#{2 + 7}"}
+
+%div{:id => [@item.type, @item.number], :class => [@item.type, @item.urgency]}
+%div{:id => "#{@item.type}_#{@item.number}", :class => "#{@item.type} #{@item.urgency}"}
+
+%div{:class => [@item.type, @item == @sortcol && [:sort, @sortdir]] } Contents
+
+.item{:class => @item.is_empty? && "empty"}
+
+%html(xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en")
+
+%a(title=@title href=href) Stuff
+%a{:title => @title, :href => href} Stuff
+%a(title=@title){:href => @link.href} Stuff
+%span(class="widget_#{@widget.number}")
+%script(type="text/javascript"
+        src="javascripts/script_#{2 + 7}")
+
+%html{html_attrs('fr-fr')}
+
+%sandwich{hash1, hash2, :delicious => true}/
+
+%input{:selected => true}
+%input{:selected => false}
+
+%input(selected)
+%input(selected=true)
+
+%a{:href=>"/posts", :data => {:author_id => 123}} Posts By Author
+
+%div#things
+  %span#rice Chicken Fried
+  %p.beans{ :food => 'true' } The magical fruit
+  %h1.class.otherclass#id La La La
+
+%div#content
+  %div.articles
+    %div.article.title Doogie Howser Comes Out
+    %div.article.date 2006-11-05
+    %div.article.entry
+      Neil Patrick Harris would like to dispel any rumors that he is straight
+
+%div#Article.article.entry{:id => @article.number, :class => @article.visibility}
+%div{:id => ['Article', @article.number], :class => ['article', 'entry', @article.visibility]} Gabba Hey
+
+#collection
+  .item
+    .description What a cool item!
+%div#collection
+  %div.item
+    %div.description What a cool item!
+
+%br/
+%meta{'http-equiv' => 'Content-Type', :content => 'text/html'}/
+
+%br
+%meta{'http-equiv' => 'Content-Type', :content => 'text/html'}
+
+%blockquote<
+  %div
+    Foo!
+
+%img
+%img>
+%img
+
+%p<= "Foo\nBar"
+
+%img
+%pre><
+  foo
+  bar
+%img
+
+-# file: app/views/users/show.haml
+
+%div[@user, :greeting]
+  %bar[290]/
+  Hello!
+
+-# file: app/views/users/show.haml
+
+%div[@user]
+  Hello!
+
+%peanutbutterjelly
+  / This is the peanutbutterjelly element
+  I like sandwiches!
+
+/
+  %p This doesn't render...
+  %div
+    %h1 Because it's commented out!
+
+/[if IE]
+  %a{ :href => 'http://www.mozilla.com/en-US/firefox/' }
+    %h1 Get Firefox
+
+%p foo
+-# This is a comment
+%p bar
+
+%p foo
+-#
+  This won't be displayed
+    Nor will this
+%p bar
+
+%p
+  = ['hi', 'there', 'reader!'].join " "
+  = "yo"
+
+= '<script>alert("I\'m evil!");</script>'
+
+%p= "hello"
+
+= link_to_remote "Add to cart",
+    :url => { :action => "add", :id => product.id },
+    :update => { :success => "cart", :failure => "error" }
+
+- foo = "hello"
+- foo << " there"
+- foo << " you!"
+%p= foo
+
+- links = {:home => "/",
+    :docs => "/docs",
+    :about => "/about"}
+
+- (42...47).each do |i|
+  %p= i
+%p See, I can count!
+
+%p
+  - case 2
+  - when 1
+    = "1!"
+  - when 2
+    = "2?"
+  - when 3
+    = "3."
+
+~ "Foo\n<pre>Bar\nBaz</pre>"
+
+= find_and_preserve("Foo\n<pre>Bar\nBaz</pre>")
+
+%p This is #{h quality} cake!
+
+%p= "This is the #{h quality} cake!"
+
+%p
+  Look at \\#{h word} lack of backslash: \#{foo}
+  And yon presence thereof: \{foo}
+
+:javascript
+  $(document).ready(function() {
+    alert(#{@message.to_json});
+  });
+
+&= "I like cheese & crackers"
+
+& I like #{"cheese & crackers"}
+
+= "I feel <strong>!"
+!= "I feel <strong>!"
+
+! I feel #{"<strong>"}!
+
+%p
+  :markdown
+    Textile
+    =======
+    
+    Hello, *World*
+
+- flavor = "raspberry"
+#content
+  :textile
+    I *really* prefer _#{h flavor}_ jam.
+
+:plain
+  Does not parse the filtered text. This is useful for large blocks of text without HTML tags, when you don’t want lines starting with . or - to be parsed.
+
+:javascript
+  Surrounds the filtered text with <script> and CDATA tags. Useful for including inline Javascript.
+
+:css
+  Surrounds the filtered text with <style> and CDATA tags. Useful for including inline CSS.
+
+:cdata
+  Surrounds the filtered text with CDATA tags.
+
+:escaped
+  Works the same as plain, but HTML-escapes the text before placing it in the document.
+
+:ruby
+  Parses the filtered text with the normal Ruby interpreter. All output sent to $stdout, like with puts, is output into the Haml document. Not available if the :suppress_eval option is set to true. The Ruby code is evaluated in the same context as the Haml template.
+
+:preserve
+  Inserts the filtered text into the template with whitespace preserved. preserved blocks of text aren’t indented, and newlines are replaced with the HTML escape code for newlines, to preserve nice-looking output. See also Whitespace Preservation.
+
+:erb
+  Parses the filtered text with ERb, like an RHTML template. Not available if the :suppress_eval option is set to true. Embedded Ruby code is evaluated in the same context as the Haml template.
+
+:sass
+  Parses the filtered text with Sass to produce CSS output.
+
+:textile
+  Parses the filtered text with Textile. Only works if RedCloth is installed.
+
+:markdown
+  Parses the filtered text with Markdown. Only works if RDiscount, RPeg-Markdown, Maruku, or BlueCloth are installed.
+
+:maruku
+  Parses the filtered text with Maruku, which has some non-standard extensions to Markdown.
+
+%whoo
+  %hoo= h(                       |
+    "I think this might get " +  |
+    "pretty long so I should " + |
+    "probably make it " +        |
+    "multiline so it doesn't " + |
+    "look awful.")               |
+  %p This is short.
+

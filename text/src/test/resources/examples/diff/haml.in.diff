@@ -1,0 +1,10 @@
+--- /dev/null
++++ b/app/views/pages/_images.html.haml
+@@ -0,0 +1,7 @@
++.images
++  - for image in page.images.has_picture
++    .image
++      = image_tag image.picture(:thumb)
++
++:coffee
++  $ -> dragAndDropFielUploadTo #{page_images_path(page).to_json}

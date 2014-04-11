@@ -1,0 +1,9 @@
+--- a/app/models/video.rb
++++ b/app/models/video.rb
++  def foo
++    <<"DATA"
++Das #{name} unter #{bla}
++
++#{description.strip}
++DATA
++  end

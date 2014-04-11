@@ -1,0 +1,5 @@
+--- a/foo.sass
++++ b/foo.sass
+-  
+-  @import "something"
+   @import "something else"

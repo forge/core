@@ -1,0 +1,5 @@
+head[head(--- )filename(a/foo.sass)]
+head[head(+++ )filename(b/foo.sass)]
+delete[delete(-)  ]
+delete[delete(-)  directive(@import) string<delimiter(")content(something)delimiter(")>]
+   directive(@import) string<delimiter(")content(something else)delimiter(")>

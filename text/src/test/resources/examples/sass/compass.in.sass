@@ -1,0 +1,1203 @@
+// ./doc-src/content/examples/blueprint/grid/pull/stylesheet.sass
+$blueprint_grid_columns : 3
+
+@import blueprint/grid.scss
+
+#one
+  +column(2, true)
+  +prepend(1)
+  background-color: #11770E
+#two
+  +column(1)
+  +pull(3, true)
+  background-color: #242677
+
+// ./doc-src/content/examples/blueprint/grid/two_cols/stylesheet.sass
+$blueprint_grid_columns : 8
+$blueprint_grid_width : 40px
+
+@import blueprint
+
+.two-col
+  +container
+  background-color: #ccc
+  #header, #footer
+    +column(8)
+  #sidebar
+    +column(3)
+  #content
+    +column(5, true)
+  
+ 
+// ./doc-src/content/examples/compass/css3/background-clip/stylesheet.sass
+@import compass/css3.scss
+.example
+  padding: 2em
+  div
+    background-color: blue
+    border: 10px solid rgba(255, 0, 0, 0.5)
+    color: white
+    +text-shadow(darken(#00f, 50%) 2px 2px)
+    padding: 3px
+    text-align: center
+    margin-bottom: 2em
+  #padding-box
+    +background-clip(padding-box)
+  #border-box
+    +background-clip(border-box)
+
+// ./doc-src/content/examples/compass/css3/background-origin/stylesheet.sass
+@import compass/css3
+
+.example
+  padding: 2em
+  div
+    background:
+      image: image-url("examples/css3/bg-origin/bg.png")
+      repeat: repeat
+      position: top left
+    border: 10px solid rgba(255, 0, 0, 0.5)
+    color: white
+    +text-shadow(darken(#00f, 50%) 2px 2px)
+    padding: 1em
+    text-align: center
+    margin-bottom: 2em
+  #padding-box
+    +background-origin(padding-box)
+  #border-box
+    +background-origin(border-box)
+  #content-box
+    +background-origin(content-box)
+
+// ./doc-src/content/examples/compass/css3/background-size/stylesheet.sass
+@import compass/css3
+
+.example
+  padding: 2em
+  div
+    background:
+      image: image-url("examples/css3/bg-origin/bg.png")
+      repeat: no-repeat
+      position: top left
+    border: 10px solid rgba(255, 0, 0, 0.5)
+    color: black
+    +text-shadow(#fff 1px 1px 4px)
+    padding: 1em
+    text-align: center
+    margin-bottom: 2em
+  #auto
+    +background-size(auto)
+  #contain
+    +background-size(contain)
+  #cover
+    +background-size(cover)
+  #percent
+    +background-size(50% 50%)
+  #absolute
+    +background-size(100px 25px)
+
+// ./doc-src/content/examples/compass/css3/border_radius/stylesheet.sass
+@import compass/css3, compass/utilities
+
+#demo
+  +clearfix
+
+.border-radius-example
+  width: 125px
+  height: 125px
+  background: red
+  margin: 20px
+  float: left
+  padding: 5px
+
+#border-radius
+  +border-radius(25px)
+
+#border-radius-top-left
+  +border-top-left-radius(25px)
+
+#border-radius-top-right
+  +border-top-right-radius(25px)
+
+#border-radius-bottom-left
+  +border-bottom-left-radius(25px)
+
+#border-radius-bottom-right
+  +border-bottom-right-radius(25px)
+
+#border-radius-top
+  +border-top-radius(25px)
+
+#border-radius-bottom
+  +border-bottom-radius(25px)
+
+#border-radius-left
+  +border-left-radius(25px)
+
+#border-radius-right
+  +border-right-radius(25px)
+
+#border-radius-combo
+  +border-corner-radius(top, left, 40px)
+  +border-corner-radius(top, right, 5px)
+  +border-corner-radius(bottom, left, 15px)
+  +border-corner-radius(bottom, right, 30px)
+// ./doc-src/content/examples/compass/css3/box/stylesheet.sass
+@import compass/css3
+
+.example
+  +display-box
+  +box-orient(horizontal)
+  +box-align(stretch)
+  +box-direction(reverse)
+  height: 200px
+  width: 100%
+  .content, .sidebar
+    padding: 20px
+  .content
+    +box-flex(4)
+    background-color: #C5C1B4
+  .sidebar
+    +box-flex(1)
+    background-color: #375F99
+    margin-right: 1px
+// ./doc-src/content/examples/compass/css3/box_shadow/stylesheet.sass
+@import compass/css3
+
+.box-shadow-example div
+  width: 40px
+  height: 40px
+  background: #EEE
+  margin: 20px
+  float: left
+
+// Default single box shadow
+#box-shadow-default
+  +single-box-shadow
+
+// Box shadow with custom settings
+#box-shadow-custom
+  +box-shadow(red 2px 2px 10px)
+
+#box-shadow-custom-multiple
+  +box-shadow(rgba(blue, .4) 0 0 25px, rgba(green, .2) 0 0 3px 1px inset)
+
+// ./doc-src/content/examples/compass/css3/box_sizing/stylesheet.sass
+@import compass/css3
+
+.box-sizing-example
+  background: red
+  padding: 20px
+  border: 10px solid green
+  margin: 20px
+  width: 200px
+
+#content-box
+  +box-sizing(content-box)
+
+#border-box
+  +box-sizing(border-box)
+// ./doc-src/content/examples/compass/css3/columns/stylesheet.sass
+@import compass/css3
+
+#two-column
+  +column-count(2)
+  width: 300px
+  margin-bottom: 20px
+
+#three-column
+  +column-count(3)
+  width: 300px
+  margin-bottom: 20px
+
+#four-column-with-rule
+  +column-count(4)
+  +column-rule(1px, solid, red)
+  width: 300px
+  margin-bottom: 20px
+// ./doc-src/content/examples/compass/css3/font-face/stylesheet.sass
+@import compass/css3
+
++font-face("Blooming Grove", font-files("examples/bgrove.ttf", "examples/bgrove.otf"))
+
+.example
+  font-family: "Blooming Grove"
+  font-size: 1.5em
+
+// ./doc-src/content/examples/compass/css3/gradient/stylesheet.sass
+@import compass
+.ex
+  width: 48%
+  margin-right: 2%
+  float: left
+  +clearfix
+
+.gradient-example
+  width: 80px
+  height: 80px
+  background: red
+  float: left
+  margin: 1em 1em 0 0
+
+// This will yield a radial gradient with an apparent specular highlight  
+#radial-gradient
+  +background-image(radial-gradient(45px 45px, #0ff 10px, #1e90ff 30px))
+
+// This yields a linear gradient spanning from the upper left corner to the lower right corner
+#linear-gradient
+  +background-image(linear-gradient(left top, #fff, #ddd))
+
+// This yields a gradient starting at the top with #fff, ending in #aaa  
+#v-gradient
+  +background-image(linear-gradient(#fff, #aaa))
+
+// Same as above but with a #ccc at the halfway point  
+#v-gradient-2
+  +background-image(linear-gradient(#fff, #ccc, #aaa))
+
+// Same as the first example but with #ccc at the 30% from the top, and #bbb at 70% from the top  
+#v-gradient-3
+  +background-image(linear-gradient(#fff, #ccc 30%, #bbb 70%, #aaa))
+
+// This yields a horizontal linear gradient spanning from left to right.
+#h-gradient
+  +background-image(linear-gradient(left, #fff, #ddd))
+
+#svg-gradient
+  $experimental-support-for-svg: true
+  +background-image(linear-gradient(left, #2ac363, #cd8c14, #9c4cc2))
+  width: 80px
+  height: 80px
+
+// ./doc-src/content/examples/compass/css3/inline_block/stylesheet.sass
+@import compass/css3
+
+#inline-block
+  +inline-block
+  padding: 4px 10px
+  background: red
+  color: white
+
+// ./doc-src/content/examples/compass/css3/opacity/stylesheet.sass
+@import compass/css3
+
+.opacity-example
+  background: red
+  width: 40px
+  height: 40px
+  float: left
+
+#opacity-10
+  +opacity(0.1)
+
+#opacity-20
+  +opacity(0.2)
+
+#opacity-50
+  +opacity(0.5)
+
+#opaque
+  +opaque
+
+#transparent
+  +transparent
+// ./doc-src/content/examples/compass/css3/regions/stylesheet.sass
+@import compass/css3
+
+.source   
+  +flow-into(target)
+  border: 10px solid green
+  margin: 20px
+  width: 200px
+
+.new-container 
+  +flow-from(target)
+  border: 10px solid red
+  margin: 20px
+  width: 200px
+// ./doc-src/content/examples/compass/css3/text_shadow/stylesheet.sass
+$default-text-shadow-color: rgba(red, .6)
+$default-text-shadow-blur: 3px
+$default-text-shadow-v-offset: 1px
+
+@import compass/css3
+
+// Uses defaults set before the import above
+.has-single-shadow
+  +single-text-shadow
+
+// Can output up to ten text shadows
+.has-custom-shadow
+  +text-shadow(rgba(blue, .2) 1px 1px 0, rgba(blue, .2) 2px 2px 0, rgba(blue, .2) 3px 3px 0)
+
+// ./doc-src/content/examples/compass/css3/transform/stylesheet.sass
+@import compass/css3, compass/css3/transform-legacy
+
+.transform-example
+  width: 40px
+  height: 40px
+  background: red
+  margin: 20px
+
+#scale
+  +scale(1)
+
+#scale:hover
+  +scale(2)
+
+#rotate
+  +rotate(0deg)
+
+#rotate:hover
+  +rotate(45deg)
+
+#translate
+  +translate(0, 0)
+
+#translate:hover
+  +translate(20px, 20px)
+
+#skew
+  +skew(0deg, 0deg)
+
+#skew:hover
+  +skew(20deg, 20deg)
+
+#combo
+  +transform(1, 0deg, 0, 0, 0deg, 0deg)
+
+#combo:hover
+  +transform(1, 45deg, 20px, 20px, 20deg, 20deg)
+// ./doc-src/content/examples/compass/css3/transition/stylesheet.sass
+@import compass/css3
+
+.transition-example
+  width: 40px
+  height: 40px
+  background: red
+  margin: 20px
+
+#width
+  +transition-property(width)
+
+#width:hover
+  width: 80px
+
+#width-duration
+  +transition-property(width)
+  +transition-duration(2s)
+
+#width-duration:hover
+  width: 80px
+
+#width-duration-easein
+  +transition-property(width)
+  +transition-duration(2s)
+  +transition-timing-function(ease-in)
+
+#width-duration-easein:hover
+  width: 80px
+
+#width-delay
+  +transition-property(width)
+  +transition-delay(2s)
+
+#width-delay:hover
+  width: 80px
+// ./doc-src/content/examples/compass/helpers/elements-of-type/stylesheet.sass
+.example
+  #{elements-of-type(block)}
+    border: 1px solid #777
+    margin: 1em 3em
+  #{elements-of-type(inline)}
+    color: #c00
+  
+// ./doc-src/content/examples/compass/helpers/enumerate/stylesheet.sass
+.example
+  #{enumerate(".class", 2, 4)}
+    background-color: #aaa
+    border: 2px solid #777
+    margin: 1em
+  @for $i from 2 through 4
+    .class-#{$i}
+      margin-left: 1em * ($i - 1)
+// ./doc-src/content/examples/compass/helpers/using-extend-in-place-of-enumerate/stylesheet.sass
+.example
+  .base-class
+    background-color: #aaa
+    border: 2px solid #777
+    margin: 1em
+  @for $i from 2 through 4
+    .class-#{$i}
+      @extend .base-class
+      margin-left: 1em * ($i - 1)
+
+// ./doc-src/content/examples/compass/layout/sticky-footer/stylesheet.sass
+@import compass/reset.scss
+@import compass/layout.scss
+
++sticky-footer(72px, "#layout", "#layout_footer", "#footer")
+
+#header
+  :background #999
+  :height 72px
+
+#footer
+  :background #ccc
+
+.example
+  height: 500px
+  border: 3px solid red
+  
+  p
+    margin: 1em 0.5em
+
+// ./doc-src/content/examples/compass/layout/stretching/stylesheet.sass
+@import "compass/layout/stretching"
+@import "compass/utilities"
+@import "compass/css3"
+
+.stretch-container
+  border: 1px solid #999
+  width: 200px
+  height: 200px
+  position: relative
+  +inline-block
+.stretched
+  $stretch-color: #4C6B99
+  border: 3px solid $stretch-color
+  +border-radius(8px)
+  display: block
+  background-color: darken($stretch-color, 30%)
+  color: white
+  text-align: center
+  vertical-align: middle
+  padding: 0.5em
+#stretch-full
+  @extend .stretched
+  +stretch
+#stretch-offset
+  @extend .stretched
+  +stretch(1em, 1em, 1em, 1em)
+#stretch-x
+  @extend .stretched
+  +stretch-x
+#stretch-y
+  @extend .stretched
+  +stretch-y
+
+// ./doc-src/content/examples/compass/tables/all/stylesheet.sass
+@import "compass/utilities/tables"
+.example
+  table
+    $table-color : #7a98c6
+    +table-scaffolding
+    +inner-table-borders(1px, darken($table-color, 40%))
+    +outer-table-borders(2px)
+    +alternating-rows-and-columns($table-color, adjust-hue($table-color, -120deg), #222)
+
+// ./doc-src/content/examples/compass/tables/borders/stylesheet.sass
+@import "compass/utilities/tables/borders"
+.example
+  table
+    +inner-table-borders(1px, #7a98c6)
+    +outer-table-borders(2px)
+
+// ./doc-src/content/examples/compass/tables/scaffolding/stylesheet.sass
+@import "compass/utilities/tables/scaffolding"
+.example
+  table
+    +table-scaffolding
+
+// ./doc-src/content/examples/compass/tables/striping/stylesheet.sass
+@import "compass/utilities/tables/alternating-rows-and-columns"
+.example
+  table
+    $table-color : #7a98c6
+    +alternating-rows-and-columns($table-color, adjust-hue($table-color, -120deg), #222)
+
+// ./doc-src/content/examples/compass/utilities/contrast/stylesheet.sass
+$contrasted-dark-default:  #333
+$contrasted-light-default: #e7e7e7
+
+@import "compass/utilities/color/contrast"
+
+.example
+  p.dark
+    +contrasted(#5F1210)
+  p.light
+    +contrasted(#C82523)
+
+
+// ./examples/css3/extensions/fancy-fonts/templates/project/fancy-fonts.sass
+@import compass/css3
+
++font-face("Blooming Grove", font-files("bgrove.ttf", truetype, "bgrove.otf", opentype))
++font-face("Prociono", font-files("Prociono.otf", opentype))
+h1
+  font-family: "Blooming Grove"
+  font-size: 3em
+h2
+  font-family: "Prociono"
+  font-size: 2em
+
+// ./frameworks/blueprint/templates/basic/ie.sass
+@import blueprint
+
+// Generate the blueprint IE-specific customizations:
++blueprint-ie
+
+// ./frameworks/blueprint/templates/basic/partials/_base.sass
+// Here is where you can define your constants for your application and to configure the blueprint framework.
+// Feel free to delete these if you want keep the defaults:
+
+$blueprint-grid-columns : 24
+$blueprint-grid-width   : 30px
+$blueprint-grid-margin  : 10px
+
+// If you change your grid column dimensions
+// you can make a new grid background image from the command line like this:
+// compass grid-img 30+10x16
+
+// ./frameworks/blueprint/templates/basic/print.sass
+@import blueprint
+
+// Generate the blueprint print styles:
++blueprint-print
+
+// ./frameworks/blueprint/templates/basic/screen.sass
+// This import applies a global reset to any page that imports this stylesheet.
+@import blueprint/reset
+// To configure blueprint, edit the partials/_base.sass file.
+@import partials/base
+// Import all the default blueprint modules so that we can access their mixins.
+@import blueprint
+// Import the non-default scaffolding module.
+@import blueprint/scaffolding
+
+// Generate the blueprint framework according to your configuration:
++blueprint
++blueprint-scaffolding
+
+// ./frameworks/blueprint/templates/buttons/buttons.sass
+@import compass/utilities/general/float
+@import blueprint/buttons
+
+//
+  Use the following HTML code to place the buttons on your site:
+  
+  <button type="submit" class="button positive">
+    <img src="css/blueprint/plugins/buttons/icons/tick.png" alt=""/> Save
+  </button>
+  
+  <a class="button" href="/password/reset/">
+    <img src="css/blueprint/plugins/buttons/icons/key.png" alt=""/> Change Password
+  </a>
+  
+  <a href="#" class="button negative">
+    <img src="css/blueprint/plugins/buttons/icons/cross.png" alt=""/> Cancel
+  </a>
+
+a.button
+  // you can pass "left" or "right" to +anchor-button to float it in that direction
+  // or you can pass no argument to leave it inline-block (cross browser safe!) within
+  // the flow of your page.
+  +anchor-button(left)
+  // All the button color mixins take 4 optional arguments:
+  // font color, background color, border color, border highlight color
+  // the first three default to constants set in blueprint/buttons.sass
+  // the last one defaults to a shade lighter than the border color.
+  +button-colors
+  +button-hover-colors
+  +button-active-colors
+
+button
+  // The +button-button mixin is just like the +anchor-button mixin, but for <button> elements.
+  +button-button(left)
+  +button-colors
+  +button-hover-colors
+  +button-active-colors
+
+// We can change the colors for buttons of certain classes, etc.
+a.positive, button.positive
+  color: #529214
+  +button-hover-colors(#529214, #E6EFC2, #C6D880)
+  +button-active-colors(#FFF, #529214, #529214)
+
+a.negative, button.negative
+  color: #D12F19
+  +button-hover-colors(#D12F19, #FBE3E4, #FBC2C4)
+  +button-active-colors(#FFF, #D12F19, #D12F19)
+
+
+// ./frameworks/blueprint/templates/link_icons/link_icons.sass
+@import blueprint/link-icons
+
+// This turns link icons on for all links. You can change the scoping selector from
+// body to something more specific if you prefer.
+body
+  +link-icons
+  // Use this class if a link gets an icon when it shouldn't.
+  a.noicon
+    +no-link-icon
+  // Not all links have a url structure that can be detected,
+  // So you can set them explicitly yourself like so:
+  a#this-is-a-pdf-link
+    +link-icon("pdf.png")
+
+// ./frameworks/blueprint/templates/project/ie.sass
+@import blueprint
+
+// To generate css equivalent to the blueprint css but with your configuration applied, uncomment:
+// @include blueprint-ie
+
+//Recommended Blueprint configuration with scoping and semantic layout:
+body.bp
+  +blueprint-ie(true)
+  // Note: Blueprint centers text to fix IE6 container centering.
+  // This means all your texts will be centered under all version of IE by default.
+  // If your container does not have the .container class, don't forget to restore
+  // the correct behavior to your main container (but not the body tag!)
+  // Example:
+  // .my-container
+  //   text-align: left
+
+
+// ./frameworks/blueprint/templates/project/partials/_base.sass
+// Here is where you can define your constants for your application and to configure the blueprint framework.
+// Feel free to delete these if you want keep the defaults:
+
+$blueprint-grid-columns   : 24
+$blueprint-container-size : 950px
+$blueprint-grid-margin    : 10px
+
+// Use this to calculate the width based on the total width.
+// Or you can set $blueprint-grid-width to a fixed value and unset $blueprint-container-size -- it will be calculated for you.
+$blueprint-grid-width: ($blueprint-container-size + $blueprint-grid-margin) / $blueprint-grid-columns - $blueprint-grid-margin
+
+
+// ./frameworks/blueprint/templates/project/print.sass
+@import blueprint
+
+// To generate css equivalent to the blueprint css but with your configuration applied, uncomment:
+// @include blueprint-print
+
+//Recommended Blueprint configuration with scoping and semantic layout:
+body.bp
+  +blueprint-print(true)
+// ./frameworks/blueprint/templates/project/screen.sass
+// This import applies a global reset to any page that imports this stylesheet.
+@import blueprint/reset
+// To configure blueprint, edit the partials/base.sass file.
+@import partials/base
+// Import all the default blueprint modules so that we can access their mixins.
+@import blueprint
+// Import the non-default scaffolding module.
+@import blueprint/scaffolding
+
+// To generate css equivalent to the blueprint css but with your
+// configuration applied, uncomment:
+// @include blueprint
+
+// If you are doing a lot of stylesheet concatenation, it is suggested
+// that you scope your blueprint styles, so that you can better control
+// what pages use blueprint when stylesheets are concatenated together.
+body.bp
+  +blueprint-typography(true)
+  +blueprint-utilities
+  +blueprint-debug
+  +blueprint-interaction
+  // Remove the scaffolding when you're ready to start doing visual design.
+  // Or leave it in if you're happy with how blueprint looks out-of-the-box
+form.bp
+  +blueprint-form
+  // You'll probably want to remove the scaffolding once you start styling your site.
+  +blueprint-scaffolding
+
+// Page layout can be done using mixins applied to your semantic classes and IDs:
+body.two-col
+  #container
+    +container
+  #header, #footer
+    +column($blueprint-grid-columns)
+  #sidebar
+    // One third of the grid columns, rounding down. With 24 cols, this is 8.
+    $sidebar-columns: floor($blueprint-grid-columns / 3)
+    +column($sidebar-columns)
+  #content
+    // Two thirds of the grid columns, rounding up.
+    // With 24 cols, this is 16.
+    $content-columns: ceil(2 * $blueprint-grid-columns / 3)
+    // true means it's the last column in the row
+    +column($content-columns, true)
+
+
+
+// ./frameworks/blueprint/templates/semantic/ie.sass
+@import blueprint
+
+// To generate css equivalent to the blueprint css but with your configuration applied, uncomment:
+// +blueprint-ie
+
+//Recommended Blueprint configuration with scoping and semantic layout:
+body.bp
+  +blueprint-ie(true)
+  // Note: Blueprint centers text to fix IE6 container centering.
+  // This means all your texts will be centered under all version of IE by default.
+  // If your container does not have the .container class, don't forget to restore
+  // the correct behavior to your main container (but not the body tag!)
+  // Example:
+  // .my-container
+  //   text-align: left
+
+
+// ./frameworks/blueprint/templates/semantic/partials/_base.sass
+// Here is where you can define your constants for your application and to configure the blueprint framework.
+// Feel free to delete these if you want keep the defaults:
+
+$blueprint-grid-columns   : 24
+$blueprint-container-size : 950px
+$blueprint-grid-margin    : 10px
+
+// Use this to calculate the width based on the total width.
+// Or you can set $blueprint-grid-width to a fixed value and unset $blueprint-container-size -- it will be calculated for you.
+$blueprint-grid-width: ($blueprint-container-size + $blueprint-grid-margin) / $blueprint-grid-columns - $blueprint-grid-margin
+
+// ./frameworks/blueprint/templates/semantic/partials/_form.sass
+// Only apply the blueprint form styles to forms with
+// a class of "bp". This makes it easier to style
+// forms from scratch if you need to.
+
+form.bp
+  +blueprint-form
+// ./frameworks/blueprint/templates/semantic/partials/_page.sass
+// Import the non-default scaffolding module to help us get started.
+@import blueprint/scaffolding
+
+// This configuration will only apply the
+// blueprint styles to pages with a body class of "bp"
+// This makes it easier to have pages without blueprint styles
+// when you're using a single/combined stylesheet.
+
+body.bp
+  +blueprint-typography(true)
+  +blueprint-utilities
+  +blueprint-debug
+  +blueprint-interaction
+  // Remove the scaffolding when you're ready to start doing visual design.
+  // Or leave it in if you're happy with how blueprint looks out-of-the-box
+  +blueprint-scaffolding
+
+
+// ./frameworks/blueprint/templates/semantic/partials/_two_col.sass
+// Page layout can be done using mixins applied to your semantic classes and IDs
+// For instance this layout defines a two column layout on pages with
+// a body class of "two-col".
+//
+// The markup would look like:
+//    <div id="container">
+//      <div id="header"></div>
+//      <div id="sidebar"></div>
+//      <div id="content"></div>
+//      <div id="footer"></div>
+//    </div>
+//
+// and the layout would look like:
+//    +------------------------+
+//    |        #header         |
+//    +--------+---------------+
+//    |        |               |
+//    |#sidebar|    #content   |
+//    |        |               |
+//    +------------------------+
+//    |        #footer         |
+//    +--------+---------------+
+
+body.two-col
+  #container
+    +container
+  #header, #footer
+    +column($blueprint-grid-columns)
+  #sidebar
+    // One third of the grid columns, rounding down. With 24 cols, this is 8.
+    $sidebar-columns: floor($blueprint-grid-columns / 3)
+    +column($sidebar-columns)
+  #content
+    // Two thirds of the grid columns, rounding up.
+    // With 24 cols, this is 16.
+    $content-columns: ceil(2 * $blueprint-grid-columns / 3)
+    // true means it's the last column in the row
+    +column($content-columns, true)
+
+// ./frameworks/blueprint/templates/semantic/print.sass
+@import blueprint
+
+//Recommended Blueprint configuration with scoping and semantic layout:
+body.bp
+  +blueprint-print(true)
+// ./frameworks/blueprint/templates/semantic/screen.sass
+// This import applies a global reset to any page that imports this stylesheet.
+@import blueprint/reset
+
+// To configure blueprint, edit the partials/base.sass file.
+@import partials/base
+
+// Import all the default blueprint modules so that we can access their mixins.
+@import blueprint
+
+// Combine the partials into a single screen stylesheet.
+@import partials/page
+@import partials/form
+@import partials/two_col
+
+
+// ./frameworks/compass/templates/ellipsis/ellipsis.sass
+// Since you've installed the xml file, you should set
+// $use-mozilla-ellipsis-binding to true before importing.
+$use-mozilla-ellipsis-binding: true
+@import compass/typography/text/ellipsis
+
+// You can delete this sass file if you want, it's just an example of how to use the ellipsis mixin.
+// By default, ellipsis text is no-wrap. Pass false as the first argument if you don't want that.
+.ellipsis
+  +ellipsis
+// ./frameworks/compass/templates/extension/stylesheets/main.sass
+// This is your framework's main stylesheet. Use it to import all default modules.
+
+// ./frameworks/compass/templates/extension/templates/project/screen.sass
+// This is where you put the contents of the main stylesheet for the user's project.
+// It should import your sass stylesheets and demonstrate how to use them.
+// ./frameworks/compass/templates/project/ie.sass
+/*
+  Welcome to Compass. Use this file to write IE specific override styles.
+  Import this file using the following HTML or equivalent:
+  <!--[if IE]>
+    <link href="/stylesheets/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <![endif]-->
+
+// ./frameworks/compass/templates/project/print.sass
+/*
+  Welcome to Compass. Use this file to define print styles.
+  Import this file using the following HTML or equivalent:
+  <link href="/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" />
+  
+
+
+// ./frameworks/compass/templates/project/screen.sass
+/*
+  Welcome to Compass.
+  In this file you should write your main styles. (or centralize your imports)
+  Import this file using the following HTML or equivalent:
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+
+@import compass/reset
+
+// ./test/fixtures/stylesheets/blueprint/sass/ie.sass
+@import blueprint/ie
+
++blueprint-ie
+
+// ./test/fixtures/stylesheets/blueprint/sass/print.sass
+@import blueprint/print
+
++blueprint-print
+
+// ./test/fixtures/stylesheets/blueprint/sass/screen.sass
+@import blueprint
+@import compass/reset
+
++blueprint
+
+#main.container
+  #top
+    +column(24, true)
+  #middle
+    +column(24, true)
+    #left
+      +column(6)
+    #content
+      +column(12)
+    #right
+      +column(6, true)
+  #bottom
+    +column(24, true)
+
+// ./test/fixtures/stylesheets/busted_image_urls/sass/screen.sass
+.showgrid
+  background-image: image-url("grid.png")
+
+.inlinegrid
+  background-image: inline-image("grid.png")
+
+.no-buster
+  background-image: image-url("grid.png", $only-path: false, $cache-buster: false)
+
+.feed
+  background-image: image-url("feed.png")
+
+.dk
+  background-image: image-url("flags/dk.png")
+// ./test/fixtures/stylesheets/compass/sass/box.sass
+@import compass/css3/box
+
+.hbox
+  +display-box
+  +box-orient
+  +box-align
+  
+  & > *
+    +box-flex
+
+.vbox
+  +display-box
+  +box-orient(vertical)
+  +box-align
+  
+  & > *
+    +box-flex
+
+.spacer
+  +box-flex(1)
+
+.reverse
+  +box-direction(reverse)
+
+.box-flex-0
+  +box-flex(0)
+
+.box-flex-1
+  +box-flex(1)
+
+.box-flex-2
+  +box-flex(2)
+
+.box-flex-group-0
+  +box-flex-group(0)
+
+.box-flex-group-1
+  +box-flex-group(1)
+
+.box-flex-group-2
+  +box-flex-group(2)
+
+.start
+  +box-pack(start)
+
+.end
+  +box-pack(end)
+
+.center
+  +box-pack(center)
+// ./test/fixtures/stylesheets/compass/sass/fonts.sass
+@import compass/css3/font-face
+
++font-face("font1", font-files("font1.woff", woff), "font1.eot")
+// ./test/fixtures/stylesheets/compass/sass/gradients.sass
+@import compass/css3/images
+
+$experimental-support-for-svg: true
+.bg-shortcut-simple-image
+  +background(#fff url('foo.png'))
+
+.bg-shortcut-linear-gradient
+  +background(#fff linear-gradient(top left, #ddd, #aaa))
+
+.bg-shortcut-radial-gradient
+  +background(#fff radial-gradient(center center, #ddd, #aaa 100px))
+
+.bg-linear-gradient-angle-svg
+  +background-image(linear-gradient(-45deg, blue, black))
+
+.bg-linear-gradient-angle2-svg
+  +background-image(linear-gradient(top left, blue, black))
+
+.bg-all-gradient-types-with-simplification
+  +background-with-css2-fallback(image-url("4x6.png"), linear-gradient(top left, #ddd, #aaa), radial-gradient(center center, #ddd, #aaa 100px), #ffcc00)
+
+.bg-simple-image
+  +background-image(url('foo.png'))
+
+.bg-linear-gradient
+  +background-image(linear-gradient(top left, #ddd, #aaa))
+
+.bg-linear-gradient-pixel-stop-from-top
+  +background-image(linear-gradient(top, #ddd 10px, #aaa 40px))
+
+.bg-linear-gradient-pixel-stop-from-left
+  +background-image(linear-gradient(left, #ddd 10px, #aaa 40px))
+
+.transparent-in-linear-gradient
+  +background-image(#fff linear-gradient(top left, transparent, #aaa))
+
+.bg-radial-gradient
+  +background-image(radial-gradient(center center, #ddd, transparent 100px))
+
+.bg-linear-gradient-with-angle
+  +background-image(linear-gradient(-45deg, #ddd, #aaa))
+
+.bg-radial-gradient-with-angle-and-shape
+  +background-image(radial-gradient(ellipse cover, #ddd, #aaa 100px))
+
+.bg-all-gradient-types
+  +background-image(image-url("4x6.png"), linear-gradient(top left, #ddd, #aaa), radial-gradient(center center, #ddd, #aaa 100px))
+
+.border-image-gradient
+  +border-image(radial-gradient(#0f0,#f00 100px) 100 stretch)
+
+.direct-list-image-plain
+  +list-style-image(image-url("4x6.png"))
+
+.shorthand-list-image-plain
+  +list-style(outside image-url("4x6.png"))
+
+.direct-list-image-with-gradient
+  +list-style-image(radial-gradient(lime, red 10px))
+
+.shorthand-list-image-with-gradient
+  // Note: I haven't seen a browser render this correctly, but they should eventually.
+  +list-style(outside radial-gradient(lime, red 10px))
+
+.content-plain
+  +content("asdf")
+
+.content-with-gradient
+  +content(radial-gradient(lime, red 10px))
+
+$experimental-support-for-svg: false
+
+.bg-linear-gradient-no-position
+  +background-image(linear-gradient(#ddd, #aaa))
+
+.bg-radial-gradient-no-position
+  +background-image(radial-gradient(#ddd, #aaa 100px))
+
+.image-fallback
+  +background-image(image(radial-gradient(#ddd, #aaa 100px), image-url("4x6.png"), #c00))
+
+.cross-fade
+  +background-image(cross-fade(radial-gradient(#ddd, #aaa 100px), image-url("4x6.png")))
+
+.unknown-function-wrapper
+  +background(foo(radial-gradient(#ddd, #aaa 100px)))
+
+.ie-horizontal-filter
+  +filter-gradient(white, black, horizontal)
+
+.ie-vertical-filter
+  +filter-gradient(white, black, vertical)
+
+.ie-alpha-filter
+  +filter-gradient(rgba(#fff, 1), rgba(#fff, 0))
+
+
+// ./test/fixtures/stylesheets/compass/sass/image_size.sass
+.png
+  width: image_width(unquote("100x150.png"))
+  height: image_height(unquote("100x150.png"))
+
+.jpg
+  width: image_width(unquote("100x150.jpg"))
+  height: image_height(unquote("100x150.jpg"))
+
+.jpeg
+  width: image_width(unquote("100x150.jpeg"))
+  height: image_height(unquote("100x150.jpeg"))
+
+.gif
+  width: image_width(unquote("100x150.gif"))
+  height: image_height(unquote("100x150.gif"))
+
+// ./test/fixtures/stylesheets/compass/sass/layout.sass
+@import compass/layout
+
++sticky-footer(72px, unquote("#layout"), unquote("#layout_footer"), unquote("#footer"))
+
+// ./test/fixtures/stylesheets/compass/sass/print.sass
+@import compass/utilities/print
+
++print-utilities
+
++print-utilities(screen)
+
+// ./test/fixtures/stylesheets/compass/sass/reset.sass
+@import compass/reset
+
+// Turn off the display for both of these classes
+.unregistered-only, .registered-only
+  display: none
+
+// Now turn only one of them back on depending on some other context.
+body.registered
+  +reset-display(unquote(".registered-only"))
+
+body.unregistered
+  +reset-display(unquote(".unregistered-only"))
+
+// ./test/fixtures/stylesheets/compass/sass/stretching.sass
+@import "compass/layout/stretching"
+
+.stretched-completely
+  +stretch
+
+.stretched-horizontally
+  +stretch-x
+
+.stretched-right
+  +stretch-x(0, 50%)
+
+.left-pane
+  +stretch(0, 50%, 0, 0)
+
+.stretched-left
+  +stretch-x(50%, 0)
+
+.right-pane
+  +stretch(0, 0, 0, 50%)
+
+.stretched-down
+  +stretch-y(0, 50%)
+
+.top-pane
+  +stretch(0, 0, 50%, 0)
+
+.stretched-up
+  +stretch-y(50%, 0)
+
+.bottom-pane
+  +stretch(50%, 0, 0, 0)
+
+.viewport
+  +stretch(10px, 20px, 30px, 40px)
+// ./test/fixtures/stylesheets/error/sass/screen.sass
+test
+  background: image_url("testing.png")
+
+// ./test/fixtures/stylesheets/image_urls/sass/screen.sass
+.showgrid
+  background-image: image-url(unquote("grid.png"))
+
+.inlinegrid
+  background-image: inline-image(unquote("grid.png"))
+
+.no-buster
+  background-image: image-url("grid.png", $only-path: false, $cache-buster: false)
+
+// ./test/fixtures/stylesheets/relative/sass/ie.sass
+/* Welcome to Compass. Use this file to write IE specific override styles.
+   Import this file using the following HTML or equivalent:
+   <!--[if IE]>
+     <link href="/stylesheets/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
+   <![endif]-->
+
+// ./test/fixtures/stylesheets/relative/sass/print.sass
+/* Welcome to Compass. Use this file to define print styles.
+   Import this file using the following HTML or equivalent:
+   <link href="/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" />
+
+// ./test/fixtures/stylesheets/relative/sass/screen.sass
+test
+  background: image_url(unquote("testing.png"))
+
+// ./test/fixtures/stylesheets/valid/sass/simple.sass
+div
+  color: red

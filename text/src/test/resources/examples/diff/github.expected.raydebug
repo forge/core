@@ -1,0 +1,9 @@
+change<change(@@)plain( -140,7 +140,7 )change(@@)>plain( module ActiveSupport)
+plain( )
+plain(         private)
+plain(           def thread_local_key)
+delete[delete(-)plain(            @thread_local_key ||= "#{self.class.name.underscore}_local_cache_#{)eyecatcher<plain(self.object_id}".gsub("/", "_")>plain(\).to_sym)]
+insert[insert(+)plain(            @thread_local_key ||= "#{self.class.name.underscore}_local_cache_#{)eyecatcher<plain(object_id}".gsub(/[\\/-]/, '_')>plain(\).to_sym)]
+plain(           end)
+plain( )
+plain(           def local_cache)

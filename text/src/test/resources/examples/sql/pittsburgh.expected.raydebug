@@ -1,0 +1,689 @@
+comment(----CS1555 - DATABASE MANAGEMENT SYSTEMS (SPRING 2011\))
+comment(----DEPT. OF COMPUTER SCIENCE, UNIVERSITY OF PITTSBURGH)
+comment(----ASSIGMENT #2: SQL - SAMPLE SOLUTION - PART 2)
+comment(----Release: February 18, 2011)
+
+comment(-----------------------------------------------------------)
+comment(--Q4.a: List the names of all forests that have acid_level over 0.5.)
+
+class(prompt) ident(Q4)operator(.)ident(a) 
+
+class(SELECT) ident(Name) 
+keyword(FROM) ident(FOREST) 
+keyword(WHERE) ident(Acid_Level)operator(>)float(0.5)operator(;)
+
+
+comment(--------------------------)
+
+comment(--Q4.b: Find the names of all roads in the forest whose name is “Allegheny National Forest”.)
+ 
+class(prompt) ident(Q4)operator(.)ident(b) 
+class(SELECT) ident(R)operator(.)ident(Name) 
+keyword(FROM)	ident(ROAD) ident(R)operator(,) ident(INTERSECTION) ident(I)operator(,) ident(FOREST) ident(F) 
+keyword(WHERE) ident(R)operator(.)ident(Road_No)operator(=)ident(I)operator(.)ident(Road_No) keyword(and) ident(F)operator(.)ident(Forest_No)operator(=)ident(I)operator(.)ident(Forest_No) keyword(and)  
+ident(F)operator(.)ident(Name)operator(=)string<delimiter(')content(Allegheny National Forest)delimiter(')>operator(;)
+
+comment(-------------------------)
+comment(--Q4.c: List all the sensors along with the name of the workers who maintain them.)
+ 
+class(prompt) ident(Q4)operator(.)ident(c)
+
+class(SELECT) ident(s)operator(.)ident(Sensor_ID)operator(,) ident(w)operator(.)ident(Ssn)operator(,) ident(w)operator(.)ident(Name)
+keyword(from) ident(SENSOR) ident(s) keyword(left) keyword(outer) keyword(join) ident(WORKER) ident(w) keyword(on) ident(s)operator(.)ident(Maintainer) operator(=) ident(w)operator(.)ident(ssn)operator(;) 
+
+comment(-------------------------------)
+comment(--Q4.d: List all the sensors which have not been assigned a maintainer. )
+class(prompt) ident(Q4)operator(.)ident(d)
+
+class(SELECT) operator(*)
+keyword(FROM) ident(SENSOR)
+keyword(WHERE) ident(Maintainer) keyword(is) predefined_constant(null)operator(;)
+
+comment(------------------------------)
+comment(--Q4.e: Find the names of all forests such that no sensors in those forests reported anything between Jan 10, 2007 and Jan 11, 2007.)
+class(prompt) ident(Q4)operator(.)ident(e)
+
+class(SELECT) ident(Name) 
+keyword(FROM)   ident(FOREST)
+keyword(WHERE) keyword(NOT) keyword(EXISTS) operator(()class(SELECT) ident(Sensor_ID) 
+                  keyword(FROM) ident(SENSOR) ident(natural) keyword(join) ident(REPORT) 
+                  keyword(WHERE) operator(()ident(X) keyword(between) ident(MBR_XMin) keyword(and) ident(MBR_XMax)operator(\)) keyword(and) operator(()ident(Y) keyword(between) ident(MBR_YMin) keyword(and) ident(MBR_YMax)operator(\)) 
+                        keyword(and)  operator(()ident(Report_Time) keyword(between) string<delimiter(')content(10-JAN-07)delimiter(')> keyword(and) string<delimiter(')content(11-JAN-07)delimiter(')>operator(\))
+                 operator(\))operator(;)
+
+ 
+
+
+comment(------------------------------)
+comment(--Q4.f: List the pairs of states that share at least one forest (i.e., cover parts of the same forests\).)
+
+class(prompt) ident(Q4)operator(.)ident(f)
+
+class(SELECT) keyword(distinct) ident(c1)operator(.)ident(State)operator(,) ident(c2)operator(.)ident(State)
+keyword(FROM) ident(COVERAGE) ident(c1)operator(,) ident(COVERAGE) ident(c2)
+keyword(where) ident(c1)operator(.)ident(Forest_No) operator(=) ident(c2)operator(.)ident(Forest_No)
+     keyword(and) ident(c1)operator(.)ident(State) operator(<) ident(c2)operator(.)ident(State)operator(;)
+
+comment(------------------------------)
+comment(--Q4.g: For each forest, find its number of sensors and average temperature reported in January 2007. List them in descending order of the average temperatures.)
+
+class(prompt) ident(Q4)operator(.)ident(g)
+class(SELECT) ident(f)operator(.)ident(Forest_No)operator(,) predefined(COUNT)operator(()keyword(distinct) ident(s)operator(.)ident(Sensor_ID)operator(\)) keyword(as) ident(Num_Sensors)operator(,) predefined(AVG)operator(()ident(r)operator(.)ident(Temperature)operator(\)) keyword(as) ident(Avg_Temp)
+keyword(FROM) operator(()ident(FOREST) ident(f) keyword(left) keyword(outer) keyword(join) ident(SENSOR) ident(s) keyword(on) operator(()ident(s)operator(.)ident(X) keyword(between) ident(f)operator(.)ident(MBR_XMin) keyword(and) ident(f)operator(.)ident(MBR_XMax)operator(\)) keyword(and) operator(()ident(s)operator(.)ident(Y) keyword(between) ident(f)operator(.)ident(MBR_YMin) keyword(and) ident(f)operator(.)ident(MBR_YMax)operator(\))operator(\))
+      keyword(left) keyword(outer) keyword(join) operator(()class(select) operator(*) keyword(from) ident(Report) keyword(where) ident(Report_Time) keyword(between) string<delimiter(')content(1-JAN-07)delimiter(')> keyword(and) string<delimiter(')content(31-JAN-07)delimiter(')>operator(\)) ident(r) keyword(on) ident(s)operator(.)ident(Sensor_Id) operator(=) ident(r)operator(.)ident(Sensor_Id)
+keyword(GROUP) keyword(BY) ident(f)operator(.)ident(Forest_No)
+keyword(ORDER) keyword(BY) predefined(AVG)operator(()ident(r)operator(.)ident(Temperature)operator(\)) directive(desc)operator(;)
+
+comment(--Note that the left outer join is used instead of normal equi-join or theta-join in order to:)
+comment(--+ include the forest that does not have any sensor in it)
+comment(--+ include the forest whose sensors did not report anything in January 2007)
+
+comment(-----------------------------)
+
+comment(--Q4.h Find the states that have higher area of forest than Pennsylvania)
+class(prompt) ident(Q4)operator(.)ident(h)
+
+class(SELECT) ident(State)
+keyword(FROM) ident(coverage)
+keyword(GROUP) keyword(BY) ident(State)
+keyword(HAVING) predefined(sum)operator(()ident(area)operator(\)) operator(>) operator(()class(select) predefined(sum)operator(()ident(c)operator(.)ident(area)operator(\)) keyword(from) ident(State) ident(s) keyword(join) ident(Coverage) ident(c) keyword(on) ident(s)operator(.)ident(Abbreviation) operator(=) ident(c)operator(.)ident(State)
+                    keyword(where) ident(s)operator(.)ident(Name) operator(=) string<delimiter(')content(Pennsylvania)delimiter(')>operator(\)) operator(;)
+
+
+comment(------------------------------------)
+comment(--Q4.i: Find the states whose forests cover more than 30% of its area.)
+
+class(SELECT) ident(c)operator(.)ident(State) 
+keyword(FROM) ident(coverage) ident(c)
+keyword(GROUP) keyword(BY) ident(c)operator(.)ident(State)
+keyword(HAVING) predefined(sum)operator(()ident(c)operator(.)ident(area)operator(\)) operator(>) float(0.03)operator(*) operator(()class(select) ident(s)operator(.)ident(area) keyword(from) ident(State) ident(s) keyword(where) ident(s)operator(.)ident(Abbreviation) operator(=) ident(c)operator(.)ident(State)operator(\)) operator(;)
+
+comment(---------------------------------)
+comment(--Q4.j: Find the forest with the highest number of sensors)
+
+class(SELECT) ident(Forest_No)
+keyword(FROM) ident(Forest) keyword(join) ident(Sensor)  keyword(on) operator(()ident(X) keyword(between) ident(MBR_XMin) keyword(and) ident(MBR_XMax)operator(\)) keyword(and) operator(()ident(Y) keyword(between) ident(MBR_YMin) keyword(and) ident(MBR_YMax)operator(\))
+keyword(GROUP) keyword(BY) ident(Forest_No)
+keyword(HAVING) predefined(count)operator(()ident(sensor_ID)operator(\))  operator(=) operator(()class(SELECT) predefined(max)operator(()ident(num_sensors)operator(\)) 
+                              keyword(FROM) operator(()class(SELECT) predefined(count)operator(()ident(sensor_id)operator(\)) keyword(as) ident(num_sensors)
+                                    keyword(FROM) ident(Forest) keyword(join) ident(Sensor) keyword(on) operator(()ident(X) keyword(between) ident(MBR_XMin) keyword(and) ident(MBR_XMax)operator(\)) keyword(and) operator(()ident(Y) keyword(between) ident(MBR_YMin) keyword(and) ident(MBR_YMax)operator(\))
+                                    keyword(GROUP) keyword(BY) ident(Forest_No)operator(\))
+			   operator(\))operator(;)	
+ 
+
+
+
+comment(----CS1555 - DATABASE MANAGEMENT SYSTEMS (SPRING 2011\))
+comment(----DEPT. OF COMPUTER SCIENCE, UNIVERSITY OF PITTSBURGH)
+comment(----ASSIGMENT #2: SQL - SAMPLE SOLUTION  - PART 1)
+comment(----Release: February 18, 2011)
+
+comment(--Question 1: )
+
+
+comment(-- Clean up)
+class(drop) type(table) ident(report) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(coverage) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(intersection) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(road) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(sensor) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(worker) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(forest) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(state) directive(cascade) type(constraints)operator(;)
+
+comment(-- Create tables)
+class(create) type(table) ident(FOREST) operator(()
+    ident(Forest_No)   predefined_type(varchar2)operator(()integer(10)operator(\))operator(,)
+    ident(Name)	predefined_type(varchar2)operator(()integer(30)operator(\))operator(,)
+    ident(Area)	predefined_type(float)operator(,)
+    ident(Acid_Level)	predefined_type(float)operator(,)
+    ident(MBR_XMin)	predefined_type(float)operator(,)
+    ident(MBR_XMax)	predefined_type(float)operator(,)
+    ident(MBR_YMin)	predefined_type(float)operator(,)
+    ident(MBR_YMax)	predefined_type(float)operator(,)
+    type(Constraint) ident(forest_PK) directive(primary) type(key) operator(()ident(Forest_No)operator(\)) directive(deferrable)	
+operator(\))operator(;)
+
+class(create) type(table) ident(STATE) operator(()
+	ident(Name)		predefined_type(varchar2)operator(()integer(30)operator(\))operator(,)
+	ident(Abbreviation)	predefined_type(varchar2)operator(()integer(2)operator(\))operator(,)
+	ident(Area)		predefined_type(float)operator(,)
+	ident(Population)	predefined_type(int)operator(,)
+    type(Constraint) ident(State_PK) directive(primary) type(key) operator(()ident(Abbreviation)operator(\)) directive(deferrable)
+operator(\))operator(;)
+
+class(create) type(table) ident(COVERAGE) operator(()
+    ident(Forest_No)	predefined_type(varchar2)operator(()integer(10)operator(\))operator(,)
+    ident(State)	predefined_type(varchar2)operator(()integer(2)operator(\))operator(,)
+    ident(Percentage)	predefined_type(float)operator(,)
+    ident(Area)	predefined_type(float)operator(,)
+    type(Constraint) ident(coverage_PK) directive(primary) type(key) operator(()ident(Forest_No)operator(,) ident(State)operator(\)) directive(deferrable)operator(,)
+    type(Constraint) ident(coverage_FK1) directive(foreign) type(key) operator(()ident(Forest_No)operator(\)) keyword(references) ident(FOREST)operator(() ident(Forest_No) operator(\)) directive(initially) directive(deferred) directive(deferrable)operator(,)
+    type(Constraint) ident(coverage_FK2) directive(foreign) type(key) operator(() ident(State) operator(\)) keyword(references) ident(State)operator(() ident(Abbreviation) operator(\)) directive(initially) directive(deferred) directive(deferrable)
+operator(\))operator(;)
+
+class(create) type(table) ident(ROAD) operator(()
+    ident(Road_No)		predefined_type(varchar2)operator(()integer(10)operator(\))operator(,)
+    ident(Name)		predefined_type(varchar2)operator(()integer(30)operator(\))operator(,)
+    ident(Length)		predefined_type(float)operator(,)
+    type(Constraint) ident(road_PK) directive(primary) type(key) operator(()ident(Road_No)operator(\)) directive(deferrable)
+operator(\))operator(;)
+
+class(create) type(table) ident(INTERSECTION) operator(()
+    ident(Forest_No)	predefined_type(varchar2)operator(()integer(10)operator(\))operator(,)
+    ident(Road_No)	predefined_type(varchar2)operator(()integer(10)operator(\))operator(,)
+    type(Constraint) ident(intersection_PK)  directive(primary) type(key) operator(()ident(Forest_No)operator(,) ident(Road_No)operator(\)) directive(deferrable)operator(,)
+    type(Constraint) ident(intersection_FK1) directive(foreign) type(key) operator(()ident(Forest_No)operator(\)) keyword(references) ident(FOREST)operator(()ident(Forest_No)operator(\)) directive(initially) directive(deferred) directive(deferrable)operator(,)
+    type(Constraint) ident(intersection_FK2) directive(foreign) type(key) operator(()ident(Road_No)operator(\)) keyword(references) ident(ROAD)operator(()ident(Road_No)operator(\)) directive(initially) directive(deferred) directive(deferrable)
+operator(\))operator(;)
+
+class(create) type(table) ident(SENSOR) operator(()
+    ident(Sensor_Id)	predefined_type(int)operator(,)
+    ident(X)		predefined_type(float)operator(,)
+    ident(Y)		predefined_type(float)operator(,)
+    ident(Last_Charged) predefined_type(date)operator(,)
+    type(Constraint) ident(sensor_PK) directive(primary) type(key) operator(()ident(Sensor_Id)operator(\)) directive(deferrable)
+operator(\))operator(;)
+
+class(create) type(table) ident(REPORT) operator(()
+    ident(Sensor_Id)	predefined_type(int)operator(,)
+    ident(Temperature)	predefined_type(float)operator(,)
+    ident(Report_Time)	predefined_type(date)operator(,)
+    type(Constraint) ident(report_PK) directive(primary) type(key) operator(()ident(Sensor_Id)operator(,) ident(Report_Time)operator(\)) directive(deferrable)operator(,)
+    type(Constraint) ident(report_FK) directive(foreign) type(key) operator(()ident(Sensor_Id)operator(\)) keyword(references) ident(SENSOR)operator(()ident(Sensor_Id)operator(\)) directive(initially) directive(deferred) directive(deferrable)
+operator(\))operator(;)
+
+class(create) type(table) ident(WORKER) operator(()
+    ident(ssn)			predefined_type(varchar2)operator(()integer(9)operator(\))operator(,)
+    ident(Name)		predefined_type(varchar2)operator(()integer(30)operator(\))operator(,)
+    ident(Age)			predefined_type(int)operator(,)
+    ident(Rank)		predefined_type(int)operator(,)
+    type(Constraint) ident(worker_PK) directive(primary) type(key) operator(()ident(ssn)operator(\)) directive(deferrable)
+operator(\))operator(;)
+
+
+comment(------------------------------------------------------------------------------)
+
+comment(--Question 2)
+
+comment(--a)
+comment(--note that initially immediate not deferrable is the default setting so you don't really need to specify it)
+
+class(alter) type(table) ident(FOREST) class(add) type(Constraint) ident(forest_UQ_name) directive(UNIQUE)operator(()ident(name)operator(\)) directive(initially) directive(immediate) keyword(not) directive(deferrable)operator(,) 
+
+class(alter) type(table) ident(FOREST) class(add) type(constraint) ident(forest_UQ_MBR) directive(UNIQUE)operator(()ident(MBR_XMin)operator(,) ident(MBR_XMax)operator(,) ident(MBR_YMin)operator(,) ident(MBR_YMax)operator(\)) directive(initially) directive(immediate) keyword(not) directive(deferrable)operator(;)
+
+class(alter) type(table) ident(STATE) class(add)  type(Constraint) ident(state_UQ_Name) directive(UNIQUE) operator(()ident(Name)operator(\)) directive(initially) directive(immediate) keyword(not) directive(deferrable)operator(;)
+
+class(alter) type(table) ident(SENSOR) class(add) type(constraint) ident(sensor_UQ_coordinate) directive(UNIQUE)operator(()ident(X)operator(,)ident(Y)operator(\)) directive(initially) directive(immediate) keyword(not) directive(deferrable)operator(;)
+
+
+comment(--b)
+class(alter) type(table) ident(SENSOR)
+class(add) ident(Energy) predefined_type(int) keyword(not) predefined_constant(null)operator(;) 
+
+class(alter) type(table) ident(SENSOR)
+class(add) type(constraint) ident(energy_check) keyword(CHECK) operator(()ident(Energy) operator(>)operator(=)integer(0) keyword(and) ident(Energy) operator(<)operator(=)integer(10)operator(\)) directive(initially) directive(immediate) keyword(not) directive(deferrable)operator(;)
+comment(--c)
+class(alter) type(table) ident(FOREST)
+class(add) type(Constraint) ident(acidCheck) keyword(CHECK) operator(()ident(Acid_Level)operator(>)operator(=)integer(0) keyword(and) ident(Acid_Level)operator(<)operator(=)integer(1)operator(\)) directive(initially) directive(immediate) keyword(not) directive(deferrable)operator(;)
+
+comment(--d)
+class(alter) type(table) ident(SENSOR) class(add) ident(Maintainer) predefined_type(varchar2)operator(()integer(9)operator(\)) directive(default) predefined_constant(null)operator(;) 
+
+
+comment(--e)
+class(alter) type(table) ident(SENSOR)
+class(add) type(Constraint) ident(sensor_FK)  directive(foreign) type(key) operator(()ident(Maintainer)operator(\)) keyword(references) ident(WORKER)operator(()ident(ssn)operator(\)) directive(initially) directive(immediate) keyword(not) directive(deferrable)operator(;) 
+
+
+comment(--------------------------------------------------------)
+comment(--Question 3:)
+
+class(INSERT) class(INTO) ident(FOREST) keyword(VALUES)operator(() string<delimiter(')content(1)delimiter(')>operator(,) string<delimiter(')content(Allegheny National Forest)delimiter(')>operator(,) float(400.0)operator(,) float(0.3)operator(,) float(134.0)operator(,) float(550.0)operator(,) float(233.0)operator(,) float(598.0)operator(\))operator(;)
+class(INSERT) class(INTO) ident(FOREST) keyword(VALUES)operator(() string<delimiter(')content(2)delimiter(')>operator(,) string<delimiter(')content(Pennsylvania Forest)delimiter(')>operator(,) float(100.0)operator(,) float(0.55)operator(,) float(21.0)operator(,) float(100.0)operator(,) float(35.0)operator(,) float(78.0)operator(\))operator(;)
+class(INSERT) class(INTO) ident(FOREST) keyword(VALUES)operator(() string<delimiter(')content(3)delimiter(')>operator(,) string<delimiter(')content(Stone Valley)delimiter(')>operator(,) float(150.0)operator(,) float(0.4)operator(,) float(22.0)operator(,) float(78.0)operator(,) float(12.0)operator(,) float(20.0)operator(\))operator(;)
+
+class(INSERT) class(INTO) ident(STATE) keyword(VALUES)operator(() string<delimiter(')content(Pennsylvania)delimiter(')>operator(,) string<delimiter(')content(PA)delimiter(')>operator(,) float(50000.0)operator(,) integer(1400000) operator(\))operator(;)
+class(INSERT) class(INTO) ident(STATE) keyword(VALUES)operator(() string<delimiter(')content(Ohio)delimiter(')>operator(,) string<delimiter(')content(OH)delimiter(')>operator(,) float(45000.0)operator(,) integer(1200000) operator(\))operator(;)
+class(INSERT) class(INTO) ident(STATE) keyword(VALUES)operator(() string<delimiter(')content(Virginia)delimiter(')>operator(,) string<delimiter(')content(VA)delimiter(')>operator(,) float(35000.0)operator(,) integer(1000000) operator(\))operator(;)
+
+class(INSERT) class(INTO) ident(COVERAGE) keyword(VALUES)operator(() integer(1)operator(,) string<delimiter(')content(PA)delimiter(')>operator(,) float(0.4)operator(,) float(160.0) operator(\))operator(;)
+class(INSERT) class(INTO) ident(COVERAGE) keyword(VALUES)operator(() integer(1)operator(,) string<delimiter(')content(OH)delimiter(')>operator(,) float(0.6)operator(,) float(240.0) operator(\))operator(;)
+class(INSERT) class(INTO) ident(COVERAGE) keyword(VALUES)operator(() integer(2)operator(,) string<delimiter(')content(PA)delimiter(')>operator(,) integer(1)operator(,) float(100.0) operator(\))operator(;)
+class(INSERT) class(INTO) ident(COVERAGE) keyword(VALUES)operator(() integer(3)operator(,) string<delimiter(')content(PA)delimiter(')>operator(,) float(0.3)operator(,) float(45.0) operator(\))operator(;)
+class(INSERT) class(INTO) ident(COVERAGE) keyword(VALUES)operator(() integer(3)operator(,) string<delimiter(')content(VA)delimiter(')>operator(,) float(0.6)operator(,) float(90.0) operator(\))operator(;)
+class(INSERT) class(INTO) ident(COVERAGE) keyword(VALUES)operator(() integer(3)operator(,) string<delimiter(')content(OH)delimiter(')>operator(,) float(0.1)operator(,) float(15.0) operator(\))operator(;)
+
+class(INSERT) class(INTO) ident(ROAD) keyword(VALUES)operator(() integer(1)operator(,) string<delimiter(')content(FORBES)delimiter(')>operator(,) float(500.0) operator(\))operator(;)
+class(INSERT) class(INTO) ident(ROAD) keyword(VALUES)operator(() integer(2)operator(,) string<delimiter(')content(BIGELOW)delimiter(')>operator(,) float(300.0) operator(\))operator(;)
+class(INSERT) class(INTO) ident(ROAD) keyword(VALUES)operator(() integer(3)operator(,) string<delimiter(')content(BAYARD)delimiter(')>operator(,) float(100.0) operator(\))operator(;)
+
+class(INSERT) class(INTO) ident(INTERSECTION) keyword(VALUES) operator(() string<delimiter(')content(1)delimiter(')>operator(,) string<delimiter(')content(1)delimiter(')> operator(\))operator(;)
+class(INSERT) class(INTO) ident(INTERSECTION) keyword(VALUES) operator(() string<delimiter(')content(1)delimiter(')>operator(,) string<delimiter(')content(2)delimiter(')> operator(\))operator(;)
+class(INSERT) class(INTO) ident(INTERSECTION) keyword(VALUES) operator(() string<delimiter(')content(2)delimiter(')>operator(,) string<delimiter(')content(1)delimiter(')> operator(\))operator(;)
+class(INSERT) class(INTO) ident(INTERSECTION) keyword(VALUES) operator(() string<delimiter(')content(2)delimiter(')>operator(,) string<delimiter(')content(2)delimiter(')> operator(\))operator(;)
+class(INSERT) class(INTO) ident(INTERSECTION) keyword(VALUES) operator(() string<delimiter(')content(3)delimiter(')>operator(,) string<delimiter(')content(3)delimiter(')> operator(\))operator(;)
+
+class(INSERT) class(INTO) ident(WORKER) keyword(VALUES)operator(() string<delimiter(')content(123456789)delimiter(')>operator(,) string<delimiter(')content(John)delimiter(')>operator(,) integer(22)operator(,) integer(3) operator(\))operator(;)
+class(INSERT) class(INTO) ident(WORKER) keyword(VALUES)operator(() string<delimiter(')content(121212121)delimiter(')>operator(,) string<delimiter(')content(Jason)delimiter(')>operator(,) integer(30)operator(,) integer(5) operator(\))operator(;)
+class(INSERT) class(INTO) ident(WORKER) keyword(VALUES)operator(() string<delimiter(')content(222222222)delimiter(')>operator(,) string<delimiter(')content(Mike)delimiter(')>operator(,) integer(25)operator(,) integer(4) operator(\))operator(;)
+
+
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(1)operator(,) float(150.0)operator(,) float(300.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2006 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(2)operator(,) string<delimiter(')content(123456789)delimiter(')> operator(\))operator(;)
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(2)operator(,) float(200.0)operator(,) float(400.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2006 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(3)operator(,) string<delimiter(')content(123456789)delimiter(')> operator(\))operator(;)
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(3)operator(,) float(50.0)operator(,) float(50.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2006 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(3)operator(,) string<delimiter(')content(121212121)delimiter(')> operator(\))operator(;)
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(4)operator(,) float(50.0)operator(,) float(15.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2006 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(3)operator(,) predefined_constant(null)operator(\))operator(;)
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(5)operator(,) float(60.0)operator(,) float(60.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2006 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(4)operator(,) string<delimiter(')content(121212121)delimiter(')> operator(\))operator(;)
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(6)operator(,) float(50.0)operator(,) float(60.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2007 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(3)operator(,) predefined_constant(null)operator(\))operator(;)
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(7)operator(,) float(150.0)operator(,) float(310.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-MAR-2006 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(3)operator(,) string<delimiter(')content(222222222)delimiter(')> operator(\))operator(;)
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(8)operator(,) float(60.0)operator(,) float(50.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-SEP-2007 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(4)operator(,) string<delimiter(')content(121212121)delimiter(')> operator(\))operator(;)   
+
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(1)operator(,) integer(55)operator(,) ident(to_date)operator(()string<delimiter(')content(10-JAN-2006 09:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(1)operator(,) integer(57)operator(,) ident(to_date)operator(()string<delimiter(')content(10-JAN-2006 14:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(1)operator(,) integer(40)operator(,) ident(to_date)operator(()string<delimiter(')content(10-JAN-2006 20:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(2)operator(,) integer(58)operator(,) ident(to_date)operator(()string<delimiter(')content(10-JAN-2006 12:30:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(2)operator(,) integer(59)operator(,) ident(to_date)operator(()string<delimiter(')content(10-JAN-2007 12:30:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(3)operator(,) integer(50)operator(,) ident(to_date)operator(()string<delimiter(')content(10-JAN-2006 12:30:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(4)operator(,) integer(30)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2006 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(5)operator(,) integer(33)operator(,) ident(to_date)operator(()string<delimiter(')content(02-JAN-2006 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(5)operator(,) integer(38)operator(,) ident(to_date)operator(()string<delimiter(')content(02-JAN-2007 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(6)operator(,) integer(39)operator(,) ident(to_date)operator(()string<delimiter(')content(10-MAR-2006 12:30:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(7)operator(,) integer(45)operator(,) ident(to_date)operator(()string<delimiter(')content(20-SEP-2006 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(7)operator(,) integer(50)operator(,) ident(to_date)operator(()string<delimiter(')content(20-SEP-2007 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(8)operator(,) integer(57)operator(,) ident(to_date)operator(()string<delimiter(')content(02-JAN-2007 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+
+class(select) operator(*) keyword(from) ident(forest)operator(;)
+class(select) operator(*) keyword(from) ident(state)operator(;)
+class(select) operator(*) keyword(from) ident(coverage)operator(;)
+class(select) operator(*) keyword(from) ident(road)operator(;)
+class(select) operator(*) keyword(from) ident(intersection)operator(;)
+class(select) ident(Sensor_Id)operator(,) ident(X)operator(,) ident(Y)operator(,) ident(to_char)operator(()ident(Last_Charged)operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) keyword(as) ident(Last_Charged)operator(,) ident(Energy)operator(,) ident(Maintainer) keyword(from) ident(sensor)operator(;)
+class(select) ident(Sensor_Id) ident(Temperature)operator(,) ident(to_char)operator(()ident(Report_time)operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) keyword(as) ident(Report_Time) keyword(from) ident(report)operator(;)
+class(select) operator(*) keyword(from) ident(worker)operator(;)
+
+class(commit)operator(;)    
+
+comment(--exit;)
+
+
+comment(--
+-- hw3 database)
+comment(--
+--)
+
+comment(-- Clean up)
+class(drop) type(table) ident(report) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(coverage) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(intersection) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(road) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(sensor) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(worker) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(forest) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(state) directive(cascade) type(constraints)operator(;)
+class(drop) type(table) ident(emergency) directive(cascade) type(constraints)operator(;)
+
+comment(-- Create tables)
+class(create) type(table) ident(FOREST) operator(()
+    ident(Forest_No)   predefined_type(varchar2)operator(()integer(10)operator(\))operator(,)
+    ident(Name)	predefined_type(varchar2)operator(()integer(30)operator(\))operator(,)
+    ident(Area)	predefined_type(float)operator(,)
+    ident(Acid_Level)	predefined_type(float)operator(,)
+    ident(MBR_XMin)	predefined_type(float)operator(,)
+    ident(MBR_XMax)	predefined_type(float)operator(,)
+    ident(MBR_YMin)	predefined_type(float)operator(,)
+    ident(MBR_YMax)	predefined_type(float)operator(,)
+    type(Constraint) ident(forest_PK) directive(primary) type(key) operator(()ident(Forest_No)operator(\)) directive(deferrable)operator(,)
+    type(constraint) ident(acidCheck) keyword(CHECK) operator(()ident(Acid_Level)operator(>)operator(=)integer(0) keyword(and) ident(Acid_Level)operator(<)operator(=)integer(1)operator(\)) directive(deferrable)operator(,)
+    type(Constraint) ident(forest_UQ_name) directive(UNIQUE)operator(()ident(name)operator(\)) directive(deferrable)operator(,) 
+    type(constraint) ident(forest_UQ_MBR) directive(UNIQUE)operator(()ident(MBR_XMin)operator(,) ident(MBR_XMax)operator(,) ident(MBR_YMin)operator(,) ident(MBR_YMax)operator(\)) directive(deferrable)	
+operator(\))operator(;)
+
+class(create) type(table) ident(STATE) operator(()
+	ident(Name)		predefined_type(varchar2)operator(()integer(30)operator(\))operator(,)
+	ident(abbreviation)	predefined_type(varchar2)operator(()integer(2)operator(\))operator(,)
+	ident(Area)		predefined_type(float)operator(,)
+	ident(Population)	predefined_type(int)operator(,)
+    type(Constraint) ident(State_PK) directive(primary) type(key) operator(()ident(abbreviation)operator(\)) directive(deferrable)operator(,)
+    type(Constraint) ident(state_UQ_Name) directive(UNIQUE) operator(()ident(Name)operator(\)) directive(deferrable)
+operator(\))operator(;)
+
+class(create) type(table) ident(COVERAGE) operator(()
+    ident(Forest_No)	predefined_type(varchar2)operator(()integer(10)operator(\))operator(,)
+    ident(State)	predefined_type(varchar2)operator(()integer(2)operator(\))operator(,)
+    ident(Percentage)	predefined_type(float)operator(,)
+    ident(Area)	predefined_type(float)operator(,)
+    type(Constraint) ident(coverage_PK) directive(primary) type(key) operator(()ident(Forest_No)operator(,) ident(State)operator(\)) directive(deferrable)operator(,)
+    type(Constraint) ident(coverage_FK1) directive(foreign) type(key) operator(()ident(Forest_No)operator(\)) keyword(references) ident(FOREST)operator(() ident(Forest_No) operator(\)) directive(initially) directive(deferred) directive(deferrable)operator(,)
+    type(Constraint) ident(coverage_FK2) directive(foreign) type(key) operator(() ident(State) operator(\)) keyword(references) ident(State)operator(() ident(abbreviation) operator(\)) directive(initially) directive(deferred) directive(deferrable)
+operator(\))operator(;)
+
+class(create) type(table) ident(ROAD) operator(()
+    ident(Road_No)		predefined_type(varchar2)operator(()integer(10)operator(\))operator(,)
+    ident(Name)		predefined_type(varchar2)operator(()integer(30)operator(\))operator(,)
+    ident(Length)		predefined_type(float)operator(,)
+    type(Constraint) ident(road_PK) directive(primary) type(key) operator(()ident(Road_No)operator(\)) directive(deferrable)
+operator(\))operator(;)
+
+class(create) type(table) ident(INTERSECTION) operator(()
+    ident(Forest_No)	predefined_type(varchar2)operator(()integer(10)operator(\))operator(,)
+    ident(Road_No)	predefined_type(varchar2)operator(()integer(10)operator(\))operator(,)
+    type(Constraint) ident(intersection_PK)  directive(primary) type(key) operator(()ident(Forest_No)operator(,) ident(Road_No)operator(\)) directive(deferrable)operator(,)
+    type(Constraint) ident(intersection_FK1) directive(foreign) type(key) operator(()ident(Forest_No)operator(\)) keyword(references) ident(FOREST)operator(()ident(Forest_No)operator(\)) directive(initially) directive(deferred) directive(deferrable)operator(,)
+    type(Constraint) ident(intersection_FK2) directive(foreign) type(key) operator(()ident(Road_No)operator(\)) keyword(references) ident(ROAD)operator(()ident(Road_No)operator(\)) directive(initially) directive(deferred) directive(deferrable)
+operator(\))operator(;)
+
+class(create) type(table) ident(WORKER) operator(()
+    ident(ssn)			predefined_type(varchar2)operator(()integer(9)operator(\))operator(,)
+    ident(Name)		predefined_type(varchar2)operator(()integer(30)operator(\))operator(,)
+    ident(Age)			predefined_type(int)operator(,)
+    ident(Rank)		predefined_type(int)operator(,)
+    type(Constraint) ident(worker_PK) directive(primary) type(key) operator(()ident(ssn)operator(\)) directive(deferrable)
+operator(\))operator(;)
+
+class(create) type(table) ident(SENSOR) operator(()
+    ident(Sensor_Id)	predefined_type(int)operator(,)
+    ident(X)		predefined_type(float)operator(,)
+    ident(Y)		predefined_type(float)operator(,)
+    ident(Last_Charged) predefined_type(date)operator(,)
+    ident(Energy)	predefined_type(int)operator(,)
+    ident(Maintainer)  predefined_type(varchar2)operator(()integer(9)operator(\))operator(,) 
+    ident(LastRead)	predefined_type(date)operator(,)
+    type(Constraint) ident(sensor_PK) directive(primary) type(key) operator(()ident(Sensor_Id)operator(\)) directive(deferrable)operator(,)
+    type(constraint) ident(energy_check) keyword(CHECK) operator(()ident(Energy) operator(>)operator(=)integer(0) keyword(and) ident(Energy) operator(<)operator(=)integer(10)operator(\)) directive(deferrable)operator(,)
+    type(constraint) ident(sensor_FK)  directive(foreign) type(key) operator(()ident(Maintainer)operator(\)) keyword(references) ident(WORKER)operator(()ident(ssn)operator(\)) directive(initially) directive(deferred) directive(deferrable)	
+operator(\))operator(;)
+
+class(create) type(table) ident(REPORT) operator(()
+    ident(Sensor_Id)	predefined_type(int)operator(,)
+    ident(Temperature)	predefined_type(float)operator(,)
+    ident(Report_Time)	predefined_type(date)operator(,)
+    type(Constraint) ident(report_PK) directive(primary) type(key) operator(()ident(Sensor_Id)operator(,) ident(Report_Time)operator(\)) directive(deferrable)operator(,)
+    type(Constraint) ident(report_FK) directive(foreign) type(key) operator(()ident(Sensor_Id)operator(\)) keyword(references) ident(SENSOR)operator(()ident(Sensor_Id)operator(\)) directive(initially) directive(deferred) directive(deferrable)
+operator(\))operator(;)
+
+
+class(create) type(table) ident(Emergency)operator(()
+   ident(Sensor_id) predefined_type(int)operator(,)
+   ident(Report_Time) predefined_type(date)operator(,)
+   type(constraint) ident(emergency_PK) directive(primary) type(key)operator(()ident(sensor_id)operator(,) ident(Report_Time)operator(\)) directive(deferrable)operator(,)
+   type(constraint) ident(emergency_FK) directive(foreign) type(key)operator(()ident(Sensor_id)operator(,) ident(report_time)operator(\)) keyword(references) ident(REPORT) operator(()ident(sensor_id)operator(,) ident(report_time)operator(\)) directive(initially) directive(deferred) directive(deferrable)	
+operator(\))operator(;)
+
+
+class(INSERT) class(INTO) ident(FOREST) keyword(VALUES)operator(() string<delimiter(')content(1)delimiter(')>operator(,) string<delimiter(')content(Allegheny National Forest)delimiter(')>operator(,) float(400.0)operator(,) float(0.3)operator(,) float(134.0)operator(,) float(550.0)operator(,) float(233.0)operator(,) float(598.0)operator(\))operator(;) 
+class(INSERT) class(INTO) ident(FOREST) keyword(VALUES)operator(() string<delimiter(')content(2)delimiter(')>operator(,) string<delimiter(')content(Pennsylvania Forest)delimiter(')>operator(,) float(100.0)operator(,) float(0.55)operator(,) float(21.0)operator(,) float(100.0)operator(,) float(35.0)operator(,) float(78.0)operator(\))operator(;) 
+class(INSERT) class(INTO) ident(FOREST) keyword(VALUES)operator(() string<delimiter(')content(3)delimiter(')>operator(,) string<delimiter(')content(Stone Valley)delimiter(')>operator(,) float(150.0)operator(,) float(0.4)operator(,) float(22.0)operator(,) float(78.0)operator(,) float(12.0)operator(,) float(20.0)operator(\))operator(;) 
+
+class(INSERT) class(INTO) ident(STATE) keyword(VALUES)operator(() string<delimiter(')content(Pennsylvania)delimiter(')>operator(,) string<delimiter(')content(PA)delimiter(')>operator(,) float(50000.0)operator(,) integer(1400000) operator(\))operator(;)
+class(INSERT) class(INTO) ident(STATE) keyword(VALUES)operator(() string<delimiter(')content(Ohio)delimiter(')>operator(,) string<delimiter(')content(OH)delimiter(')>operator(,) float(45000.0)operator(,) integer(1200000) operator(\))operator(;)
+class(INSERT) class(INTO) ident(STATE) keyword(VALUES)operator(() string<delimiter(')content(Virginia)delimiter(')>operator(,) string<delimiter(')content(VA)delimiter(')>operator(,) float(35000.0)operator(,) integer(1000000) operator(\))operator(;)
+
+class(INSERT) class(INTO) ident(COVERAGE) keyword(VALUES)operator(() integer(1)operator(,) string<delimiter(')content(PA)delimiter(')>operator(,) float(0.4)operator(,) float(160.0) operator(\))operator(;)
+class(INSERT) class(INTO) ident(COVERAGE) keyword(VALUES)operator(() integer(1)operator(,) string<delimiter(')content(OH)delimiter(')>operator(,) float(0.6)operator(,) float(240.0) operator(\))operator(;)
+class(INSERT) class(INTO) ident(COVERAGE) keyword(VALUES)operator(() integer(2)operator(,) string<delimiter(')content(PA)delimiter(')>operator(,) integer(1)operator(,) float(100.0) operator(\))operator(;)
+class(INSERT) class(INTO) ident(COVERAGE) keyword(VALUES)operator(() integer(3)operator(,) string<delimiter(')content(PA)delimiter(')>operator(,) float(0.3)operator(,) float(45.0) operator(\))operator(;)
+class(INSERT) class(INTO) ident(COVERAGE) keyword(VALUES)operator(() integer(3)operator(,) string<delimiter(')content(VA)delimiter(')>operator(,) float(0.6)operator(,) float(90.0) operator(\))operator(;)
+class(INSERT) class(INTO) ident(COVERAGE) keyword(VALUES)operator(() integer(3)operator(,) string<delimiter(')content(OH)delimiter(')>operator(,) float(0.1)operator(,) float(15.0) operator(\))operator(;)
+
+class(INSERT) class(INTO) ident(ROAD) keyword(VALUES)operator(() integer(1)operator(,) string<delimiter(')content(FORBES)delimiter(')>operator(,) float(500.0) operator(\))operator(;)
+class(INSERT) class(INTO) ident(ROAD) keyword(VALUES)operator(() integer(2)operator(,) string<delimiter(')content(BIGELOW)delimiter(')>operator(,) float(300.0) operator(\))operator(;)
+class(INSERT) class(INTO) ident(ROAD) keyword(VALUES)operator(() integer(3)operator(,) string<delimiter(')content(BAYARD)delimiter(')>operator(,) float(100.0) operator(\))operator(;)
+
+class(INSERT) class(INTO) ident(INTERSECTION) keyword(VALUES) operator(() string<delimiter(')content(1)delimiter(')>operator(,) string<delimiter(')content(1)delimiter(')> operator(\))operator(;)
+class(INSERT) class(INTO) ident(INTERSECTION) keyword(VALUES) operator(() string<delimiter(')content(1)delimiter(')>operator(,) string<delimiter(')content(2)delimiter(')> operator(\))operator(;)
+class(INSERT) class(INTO) ident(INTERSECTION) keyword(VALUES) operator(() string<delimiter(')content(2)delimiter(')>operator(,) string<delimiter(')content(1)delimiter(')> operator(\))operator(;)
+class(INSERT) class(INTO) ident(INTERSECTION) keyword(VALUES) operator(() string<delimiter(')content(2)delimiter(')>operator(,) string<delimiter(')content(2)delimiter(')> operator(\))operator(;)
+class(INSERT) class(INTO) ident(INTERSECTION) keyword(VALUES) operator(() string<delimiter(')content(3)delimiter(')>operator(,) string<delimiter(')content(3)delimiter(')> operator(\))operator(;)
+
+class(INSERT) class(INTO) ident(WORKER) keyword(VALUES)operator(() string<delimiter(')content(123456789)delimiter(')>operator(,) string<delimiter(')content(John)delimiter(')>operator(,) integer(22)operator(,) integer(3) operator(\))operator(;)
+class(INSERT) class(INTO) ident(WORKER) keyword(VALUES)operator(() string<delimiter(')content(121212121)delimiter(')>operator(,) string<delimiter(')content(Jason)delimiter(')>operator(,) integer(30)operator(,) integer(5) operator(\))operator(;)
+class(INSERT) class(INTO) ident(WORKER) keyword(VALUES)operator(() string<delimiter(')content(222222222)delimiter(')>operator(,) string<delimiter(')content(Mike)delimiter(')>operator(,) integer(25)operator(,) integer(4) operator(\))operator(;)
+
+
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(1)operator(,) float(150.0)operator(,) float(300.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2006 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(2)operator(,) string<delimiter(')content(123456789)delimiter(')>operator(,) ident(to_date)operator(()string<delimiter(')content(10-JAN-2006 20:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(2)operator(,) float(200.0)operator(,) float(400.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2006 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(3)operator(,) string<delimiter(')content(123456789)delimiter(')>operator(,)ident(to_date)operator(()string<delimiter(')content(10-JAN-2007 12:30:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(\))operator(;)
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(3)operator(,) float(50.0)operator(,) float(50.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2006 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(3)operator(,) string<delimiter(')content(121212121)delimiter(')>operator(,) ident(to_date)operator(()string<delimiter(')content(10-JAN-2006 12:30:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(4)operator(,) float(50.0)operator(,) float(15.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2006 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(3)operator(,) predefined_constant(null)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2006 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(\))operator(;)
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(5)operator(,) float(60.0)operator(,) float(60.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2006 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(4)operator(,) string<delimiter(')content(121212121)delimiter(')>operator(,) ident(to_date)operator(()string<delimiter(')content(02-JAN-2007 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(\))operator(;)
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(6)operator(,) float(50.0)operator(,) float(60.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2007 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(3)operator(,) predefined_constant(null)operator(,) ident(to_date)operator(()string<delimiter(')content(10-MAR-2006 12:30:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(\))operator(;) 
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(7)operator(,) float(150.0)operator(,) float(310.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-MAR-2006 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(3)operator(,) string<delimiter(')content(222222222)delimiter(')>operator(,) ident(to_date)operator(()string<delimiter(')content(20-SEP-2007 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;) 
+class(INSERT) class(INTO) ident(SENSOR) keyword(VALUES)operator(() integer(8)operator(,) float(60.0)operator(,) float(50.0)operator(,) ident(to_date)operator(()string<delimiter(')content(01-SEP-2007 10:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\))operator(,) integer(4)operator(,) string<delimiter(')content(121212121)delimiter(')>operator(,) ident(to_date)operator(()string<delimiter(')content(02-JAN-2007 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)   
+
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(1)operator(,) integer(55)operator(,) ident(to_date)operator(()string<delimiter(')content(10-JAN-2006 09:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(1)operator(,) integer(57)operator(,) ident(to_date)operator(()string<delimiter(')content(10-JAN-2006 14:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(1)operator(,) integer(40)operator(,) ident(to_date)operator(()string<delimiter(')content(10-JAN-2006 20:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(2)operator(,) integer(58)operator(,) ident(to_date)operator(()string<delimiter(')content(10-JAN-2006 12:30:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(2)operator(,) integer(59)operator(,) ident(to_date)operator(()string<delimiter(')content(10-JAN-2007 12:30:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(3)operator(,) integer(50)operator(,) ident(to_date)operator(()string<delimiter(')content(10-JAN-2006 12:30:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(4)operator(,) integer(30)operator(,) ident(to_date)operator(()string<delimiter(')content(01-JAN-2006 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(5)operator(,) integer(33)operator(,) ident(to_date)operator(()string<delimiter(')content(02-JAN-2006 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(5)operator(,) integer(38)operator(,) ident(to_date)operator(()string<delimiter(')content(02-JAN-2007 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;) 
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(6)operator(,) integer(39)operator(,) ident(to_date)operator(()string<delimiter(')content(10-MAR-2006 12:30:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;) 
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(7)operator(,) integer(45)operator(,) ident(to_date)operator(()string<delimiter(')content(20-SEP-2006 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;) 
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(7)operator(,) integer(50)operator(,) ident(to_date)operator(()string<delimiter(')content(20-SEP-2007 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;) 
+class(INSERT) class(INTO) ident(REPORT) keyword(VALUES)operator(() integer(8)operator(,) integer(57)operator(,) ident(to_date)operator(()string<delimiter(')content(02-JAN-2007 22:00:00)delimiter(')>operator(,) string<delimiter(')content(DD-MON-YYYY HH24:MI:SS)delimiter(')>operator(\)) operator(\))operator(;)
+
+class(commit)operator(;)    
+
+comment(--exit;)
+
+
+comment(-------------------------------------------------)
+comment(--Question 1)
+comment(------------------------------------------------)
+
+comment(-- a)
+class(set) type(transaction) directive(read) directive(write)operator(;)
+class(set) type(constraint) keyword(all) directive(deferred)operator(;)
+class(INSERT) class(INTO) ident(ROAD) keyword(VALUES)operator(() integer(4)operator(,) string<delimiter(')content(century road)delimiter(')>operator(,) integer(200)operator(\))operator(;)
+class(INSERT) class(INTO) ident(INTERSECTION)
+   operator(()class(SELECT) ident(Forest_No)operator(,) integer(4) keyword(from) ident(FOREST) keyword(where) ident(Name) operator(=) string<delimiter(')content(Allegheny National Forest)delimiter(')>operator(\))operator(;)
+comment(-- for this hw, this statement is also accepted: INSERT INTO INTERSECTION VALUES( '1', 4\);)
+class(commit)operator(;)
+
+comment(-------------------------)
+comment(--b)
+
+class(set) type(transaction) directive(read) directive(write)operator(;)
+class(set) type(constraint) keyword(all) directive(deferred)operator(;)
+class(UPDATE) ident(SENSOR) class(SET) ident(Maintainer)operator(=)string<delimiter(')content(121212121)delimiter(')> keyword(WHERE) ident(Sensor_ID)operator(=)integer(7)operator(;)
+class(UPDATE) ident(SENSOR) class(SET) ident(Maintainer)operator(=)string<delimiter(')content(222222222)delimiter(')> keyword(WHERE) ident(Sensor_ID)operator(=)integer(3) keyword(or) ident(Sensor_ID)operator(=)integer(5) keyword(or) ident(Sensor_ID) operator(=) integer(8)operator(;)
+class(commit)operator(;)
+
+comment(--** the following solution gets 2 bonus points:)
+
+class(set) type(transaction) directive(read) directive(write)operator(;)
+class(set) type(constraint) keyword(all) directive(deferred)operator(;)
+class(UPDATE) ident(SENSOR) class(SET) ident(Maintainer) operator(=) string<delimiter(')content(temp)delimiter(')> keyword(WHERE) ident(Maintainer) operator(=) string<delimiter(')content(222222222)delimiter(')>operator(;)
+class(UPDATE) ident(SENSOR) class(SET) ident(Maintainer) operator(=) string<delimiter(')content(222222222)delimiter(')> keyword(WHERE) ident(Maintainer) operator(=) string<delimiter(')content(121212121)delimiter(')>operator(;)
+class(UPDATE) ident(SENSOR) class(SET) ident(Maintainer) operator(=) string<delimiter(')content(121212121)delimiter(')> keyword(WHERE) ident(Maintainer) operator(=) string<delimiter(')content(temp)delimiter(')>operator(;)
+class(commit)operator(;)
+
+comment(--**NOTE that if we had the assumption/constraint the worker's name is unique, the following should have been be the complete solution:)
+
+class(set) type(transaction) directive(read) directive(write)operator(;)
+class(set) type(constraint) keyword(all) directive(deferred)operator(;)
+
+class(UPDATE) ident(SENSOR) 
+class(SET) ident(Maintainer) operator(=) string<delimiter(')content(temp)delimiter(')> 
+keyword(WHERE) ident(Maintainer) operator(=) operator(()class(select) ident(SSN) keyword(from) ident(Worker) keyword(where) ident(Name) operator(=) string<delimiter(')content(Jason)delimiter(')>operator(\))operator(;)
+
+class(UPDATE) ident(SENSOR) class(SET) ident(Maintainer) operator(=) operator(()class(select) ident(ssn) keyword(from) ident(Worker) keyword(where) ident(Name) operator(=) string<delimiter(')content(Jason)delimiter(')>operator(\)) 
+keyword(WHERE) ident(Maintainer) operator(=) operator(()class(select) ident(ssn) keyword(from) ident(Worker) keyword(where) ident(Name) operator(=)string<delimiter(')content(Mike)delimiter(')>operator(\))operator(;)
+
+class(UPDATE) ident(SENSOR) class(SET) ident(Maintainer) operator(=) operator(()class(select) ident(ssn) keyword(from) ident(Worker) keyword(where) ident(Name) operator(=) string<delimiter(')content(Mike)delimiter(')>operator(\)) 
+keyword(WHERE) ident(Maintainer) operator(=) string<delimiter(')content(temp)delimiter(')>operator(;)
+
+comment(-------------------------)
+comment(--c)
+
+class(set) type(transaction) directive(read) directive(write)operator(;)
+class(set) type(constraint) keyword(all) directive(deferred)operator(;)
+class(INSERT) class(INTO) ident(WORKER) keyword(VALUES)operator(() string<delimiter(')content(555555555)delimiter(')>operator(,) string<delimiter(')content(Peter)delimiter(')>operator(,) integer(25)operator(,) integer(1)operator(\))operator(;)
+class(UPDATE) ident(SENSOR) class(SET) ident(Maintainer)operator(=)string<delimiter(')content(555555555)delimiter(')> keyword(WHERE) ident(Sensor_ID)operator(=)integer(1)operator(;)
+class(commit)operator(;)    
+
+
+comment(-----------------------------------------------------------------------------)
+comment(--Question 2)
+comment(-----------------------------------------------------------------------------)
+
+comment(--a)
+class(CREATE) type(VIEW) ident(PA_FOREST) keyword(AS) 
+class(SELECT) ident(f)operator(.)ident(Forest_No)operator(,) ident(f)operator(.)ident(Name)operator(,) ident(f)operator(.)ident(Area) 
+keyword(FROM) ident(FOREST) ident(f)operator(,) ident(COVERAGE) ident(c)operator(,) ident(STATE) ident(s) 
+keyword(WHERE) ident(f)operator(.)ident(Forest_No) operator(=) ident(c)operator(.)ident(Forest_No) 
+      keyword(AND) ident(c)operator(.)ident(State) operator(=) ident(s)operator(.)ident(Abbrevation) 
+      keyword(AND) ident(s)operator(.)ident(Name) operator(=) string<delimiter(')content(Pennsylvania)delimiter(')>operator(;)
+
+comment(--or)
+
+class(CREATE) type(VIEW) ident(PA_FOREST) keyword(AS) 
+class(SELECT) ident(f)operator(.)ident(Forest_No) operator(,) ident(f)operator(.)ident(Name)operator(,) ident(f)operator(.)ident(Area) 
+keyword(FROM) operator(()ident(FOREST) ident(f) keyword(JOIN) ident(COVERAGE) ident(c) keyword(ON) ident(f)operator(.)ident(Forest_No) operator(=) ident(c)operator(.)ident(Forest_No)operator(\)) keyword(JOIN) ident(STATE) ident(s) keyword(ON) ident(c)operator(.)ident(State) operator(=) ident(s)operator(.)ident(Abbrevation)  
+keyword(WHERE) keyword(AND) ident(s)operator(.)ident(Name) operator(=) string<delimiter(')content(Pennsylvania)delimiter(')>operator(;)
+
+
+comment(---------------------)
+comment(--b)
+class(CREATE) type(VIEW) ident(FOREST_AREA) keyword(AS) 
+class(SELECT) ident(State)operator(,) predefined(SUM)operator(()ident(area)operator(\)) keyword(as) ident(Total_Area) 
+keyword(FROM) ident(COVERAGE) 
+keyword(GROUP) keyword(BY) ident(State)operator(;)
+
+
+comment(---------------------)
+comment(--c)
+class(CREATE) type(VIEW) ident(DUTIES) keyword(AS) class(SELECT) ident(Maintainer)operator(,) predefined(COUNT)operator(()operator(*)operator(\)) keyword(as) ident(Total) 
+keyword(FROM) ident(SENSOR) 
+keyword(GROUP) keyword(BY) ident(Maintainer)operator(;)
+
+
+
+comment(----------------------------------------------------------)
+comment(--Question 3)
+comment(----------------------------------------------------------)
+
+comment(--a)
+class(SELECT) keyword(distinct) ident(Maintainer) 
+keyword(FROM) ident(SENSOR) ident(s)operator(,) ident(FOREST) ident(f)operator(,) ident(PA_FOREST) ident(pf)
+keyword(WHERE) operator(()ident(X) keyword(between) ident(Mbr_Xmin) keyword(and) ident(Mbr_Xmax)operator(\))
+	keyword(AND) operator(()ident(Y) keyword(between) ident(Mbr_Ymin) keyword(and) ident(Mbr_Ymax)operator(\))
+	keyword(AND) ident(f)operator(.)ident(Forest_No) operator(=) ident(pf)operator(.)ident(forest_no)
+	keyword(AND) ident(Maintainer) keyword(is) keyword(not) predefined_constant(null)operator(;)
+
+comment(--------------------------)
+comment(--b)
+
+class(SELECT) ident(F1)operator(.)ident(State) 
+keyword(FROM) ident(FOREST_AREA) ident(F1) 
+keyword(WHERE) ident(F1)operator(.)ident(Total_AREA) operator(=) operator(()class(SELECT) predefined(MAX)operator(()ident(F2)operator(.)ident(Total_AREA)operator(\)) 
+                        keyword(FROM) ident(FOREST_AREA) ident(F2)operator(\))operator(;)
+
+
+comment(------------------------)
+comment(--c)
+class(SELECT) ident(Name)
+keyword(FROM) ident(WORKER) ident(W) keyword(JOIN) ident(DUTIES) ident(D1) keyword(ON) ident(W)operator(.)ident(SSN)operator(=)ident(D1)operator(.)ident(Maintainer)
+keyword(WHERE) ident(D1)operator(.)ident(Total) operator(=) operator(()class(SELECT) predefined(MAX)operator(()ident(D2)operator(.)ident(Total)operator(\))
+                keyword(FROM) ident(DUTIES) ident(D2)operator(\))operator(;)
+
+
+comment(-------------------------)
+comment(--d)
+class(SELECT) ident(Sensor_ID)operator(,) ident(Energy) 
+keyword(FROM) ident(SENSOR) ident(S) keyword(JOIN) ident(DUTIES) ident(D1) keyword(ON) ident(S)operator(.)ident(Maintainer) operator(=) ident(D1)operator(.)ident(Maintainer) 
+keyword(WHERE) ident(D1)operator(.)ident(Total) operator(=) operator(()class(SELECT) predefined(MAX)operator(()ident(D2)operator(.)ident(Total)operator(\)) 
+                 keyword(FROM) ident(DUTIES) ident(D2)operator(\))operator(;)
+
+
+
+comment(------------------------)
+
+comment(--e: I am listing several of the possible solutions:)
+comment(--e1)
+class(SELECT) ident(State)
+keyword(FROM) ident(FOREST_AREA) ident(f)
+keyword(WHERE) ident(f)operator(.)ident(Total_Area) operator(>)operator(=) keyword(ANY) operator(()class(SELECT) ident(Total_Area) 
+                           keyword(FROM) operator(()class(SELECT) operator(*) keyword(FROM) ident(FOREST_AREA) keyword(ORDER) keyword(BY) ident(ToTal_Area) directive(DESC)operator(\))
+                           keyword(WHERE) ident(RowNum) operator(<)operator(=)integer(3)operator(\))operator(;)
+
+comment(--e2:)
+class(SELECT) ident(State)
+keyword(FROM) ident(FOREST_AREA) ident(f1)
+keyword(WHERE) integer(3) operator(>) operator(()class(SELECT) predefined(count)operator(()operator(*)operator(\)) 
+           keyword(FROM) ident(Forest_Area) ident(f2) 
+           keyword(WHERE) ident(f2)operator(.)ident(ToTal_Area) operator(>) ident(f1)operator(.)ident(ToTal_Area)operator(\))operator(;)
+
+
+comment(--e3: use Oracle's rank(\) function )
+class(SELECT) ident(State)
+keyword(FROM) operator(()class(SELECT) ident(State)operator(,) ident(rank)operator(()operator(\)) keyword(OVER) operator(()keyword(ORDER) keyword(BY) ident(TOTAL_AREA) directive(DESC)operator(\)) keyword(as) ident(rank) 
+      keyword(FROM) ident(FOREST_AREA)operator(\))
+keyword(WHERE) ident(rank) operator(<)operator(=)integer(3)operator(;)
+
+
+
+comment(-------------------------------------------------------------)
+comment(--QUESTION 4)
+comment(-------------------------------------------------------------)
+
+comment(--a)
+
+class(CREATE) keyword(OR) class(REPLACE) type(PROCEDURE) ident(proc_update_Last_Read)operator(()ident(sensorID) keyword(in) predefined_type(int)operator(,) ident(read_date) keyword(in) predefined_type(date)operator(\))
+keyword(AS)
+class(BEGIN)
+class(update) ident(Sensor)
+class(set) ident(LastRead) operator(=) ident(read_date)
+keyword(where) ident(Sensor)operator(.)ident(sensor_id) operator(=) ident(sensorID)operator(;)
+keyword(END)operator(;) 
+
+
+comment(------------------------------)
+comment(--b)
+class(CREATE) keyword(OR) class(REPLACE) type(FUNCTION) ident(fun_compute_percentage) operator(()ident(forestNo) keyword(in) predefined_type(varchar2)operator(,) ident(area_covered) keyword(in) predefined_type(float)operator(\)) directive(RETURN) predefined_type(float) 
+keyword(AS)
+ident(percentage) predefined_type(float)operator(;)
+class(BEGIN)
+class(select) ident(area_covered)operator(/)ident(f)operator(.)ident(area) class(into) ident(percentage)
+keyword(from) ident(forest) ident(f)
+keyword(where) ident(f)operator(.)ident(forest_no) operator(=) ident(forestNo)operator(;)
+directive(return) operator(()ident(percentage)operator(\))operator(;)
+keyword(END)operator(;)
+
+comment(--Again, note that the variable delaration has to come before the body of the function/procedure)
+comment(------------------------------------------------------------------)
+comment(--QUESTION 5)
+comment(------------------------------------------------------------------)
+
+comment(--a)
+
+class(CREATE) keyword(OR) class(REPLACE) type(TRIGGER) ident(tri_LastRead)
+directive(AFTER) class(INSERT) keyword(ON) ident(Report)
+keyword(FOR) keyword(EACH) type(ROW)
+class(BEGIN)
+ident(proc_update_Last_Read)operator(()operator(:)ident(new)operator(.)ident(sensor_id)operator(,) operator(:)ident(new)operator(.)ident(report_time)operator(\))operator(;)
+keyword(END)operator(;)
+
+
+comment(------------------------------)
+comment(--b)
+class(CREATE) keyword(OR) class(REPLACE) type(TRIGGER) ident(tri_Percentage)
+keyword(BEFORE) class(UPDATE) keyword(OF) ident(area) keyword(ON) ident(coverage)
+keyword(FOR) keyword(EACH) type(ROW)
+class(BEGIN)
+operator(:)ident(new)operator(.)ident(percentage) operator(:)operator(=) ident(fun_compute_percentage)operator(()operator(:)ident(new)operator(.)ident(forest_no)operator(,) operator(:)ident(new)operator(.)ident(area)operator(\))operator(;)
+keyword(END)operator(;)
+
+
+comment(----------------------------)
+comment(--c)
+class(CREATE) keyword(OR) class(REPLACE) type(TRIGGER) ident(tri_Emergency)
+directive(AFTER) class(INSERT) keyword(ON) ident(REPORT)
+keyword(FOR) keyword(EACH) type(ROW)
+keyword(WHEN) operator(()ident(new)operator(.)ident(Temperature) operator(>) integer(100)operator(\))
+class(BEGIN)
+class(insert) class(into) ident(Emergency) keyword(values) operator(()operator(:)ident(new)operator(.)ident(Sensor_ID)operator(,) operator(:)ident(new)operator(.)ident(Report_Time)operator(\))operator(;)
+keyword(END)operator(;)
+

@@ -1,0 +1,13 @@
+diff --git a/etc/todo/scanners/coderay_lua_lexar.patch b/etc/todo/scanners/coderay_lua_lexar.patch
+index f7e3c8d..0c59559 100644
+--- a/etc/todo/scanners/coderay_lua_lexar.patch
++++ b/etc/todo/scanners/coderay_lua_lexar.patch
+@@ -117,7 +117,7 @@ Index: vendor/plugins/coderay-0.7.6.227/lib/coderay/scanners/lua.rb
+ +            kind = :hex
+ +
+ +          elsif scan(/(?:0[0-7]+)(?![89.eEfF])/)
+-+            kind = :oct
+++            kind = :octal
+ +
+ +          elsif scan(/(?:\d+)(?![.eEfF])/)
+ +            kind = :integer
