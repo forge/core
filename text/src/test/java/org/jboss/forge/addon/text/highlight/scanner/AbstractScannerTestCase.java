@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,6 +21,7 @@ import org.junit.Assert;
 
 public abstract class AbstractScannerTestCase
 {
+   private static Charset UTF_8 = Charset.forName("UTF-8");
 
    public static final String ASSERT_ENCODER = "TEST";
    {
@@ -39,10 +41,12 @@ public abstract class AbstractScannerTestCase
          sourcePath.getParent().toFile().mkdirs();
          URL source = new URL(BASE_URL + type + "/" + example);
          System.out.println("Fetching " + source);
-         Files.write(sourcePath, asByteArray(new BufferedInputStream(source.openStream())), StandardOpenOption.WRITE,
-                  StandardOpenOption.CREATE);
+         Files.write(
+               sourcePath,
+               new String(asByteArray(new BufferedInputStream(source.openStream())), UTF_8).getBytes(),
+               StandardOpenOption.WRITE, StandardOpenOption.CREATE);
       }
-      return new String(Files.readAllBytes(sourcePath));
+      return new String(Files.readAllBytes(sourcePath), UTF_8);
    }
 
    private String expectedName(String example)
