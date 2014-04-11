@@ -19,7 +19,7 @@ import org.junit.Assert;
 public abstract class AbstractScannerTestCase
 {
 
-   private static final Charset DEFAULT_CHARSET = Charset.forName("ISO-8859-1");
+   private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
    public static final String ASSERT_ENCODER = "TEST";
    {
