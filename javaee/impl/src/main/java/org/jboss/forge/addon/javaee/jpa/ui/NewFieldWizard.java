@@ -19,6 +19,8 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
@@ -35,6 +37,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -97,6 +100,10 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
    @Inject
    @WithAttributes(label = "Column Name", description = "The column name. Defaults to the field name if not informed")
    private UIInput<String> columnName;
+
+   @Inject
+   @WithAttributes(label = "Enum Type", defaultValue = "ORDINAL", description = "Defines mapping for enumerated type. Will be ignored if the type of field is other than enum.", type = InputType.RADIO)
+   private UISelectOne<EnumType> enumType;
 
    @Inject
    private JPAFieldOperations fieldOperations;
@@ -214,9 +221,33 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
                      && (Date.class.getName().equals(typeValue) || Calendar.class.getName().equals(typeValue));
          }
       });
+
+      enumType.setEnabled(new Callable<Boolean>() {
+
+         @Override
+         public Boolean call() throws Exception
+         {
+            JavaClassSource targetEntityType = null;
+            if (targetEntity.getValue() != null)
+            {
+               try
+               {
+                  targetEntityType = targetEntity.getValue().getJavaType();
+               }
+               catch (FileNotFoundException | ResourceException ignored)
+               {
+               }
+            }
+
+            return !lob.getValue() && !transientField.getValue()
+                     && fieldOperations.isFieldTypeEnum(project, targetEntityType, type.getValue());
+         }
+      });
+
       builder.add(targetEntity).add(named).add(type).add(temporalType).add(columnName).add(length)
                .add(relationshipType)
-               .add(lob).add(transientField);
+               .add(lob).add(transientField)
+               .add(enumType);
    }
 
    private void setupEntities(UIContext context)
@@ -238,7 +269,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
 
    /**
     * @param project
-    * @param entities
+    * @return entities
     */
    private List<JavaResource> getProjectEntities(Project project)
    {
@@ -254,7 +285,8 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
                try
                {
                   JavaSource<?> javaSource = resource.getJavaType();
-                  if (javaSource.hasAnnotation(Entity.class) || javaSource.hasAnnotation(MappedSuperclass.class))
+                  if (javaSource.hasAnnotation(Entity.class) || javaSource.hasAnnotation(MappedSuperclass.class)
+                           || javaSource.isEnum())
                   {
                      entities.add(resource);
                   }
@@ -285,6 +317,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
+      Project project = getSelectedProject(context);
       JavaResource javaResource = targetEntity.getValue();
       String fieldNameStr = named.getValue();
       JavaClassSource targetEntity = javaResource.getJavaType();
@@ -319,6 +352,22 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
             field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr, Lob.class.getName());
             field.addAnnotation(Column.class).setLiteralValue("length", String.valueOf(Integer.MAX_VALUE));
          }
+         else if (fieldOperations.isFieldTypeEnum(project, targetEntity, type.getValue()))
+         {
+            String fieldType = type.getValue();
+
+            field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
+                     Enumerated.class.getCanonicalName());
+
+            if (enumType.isEnabled() && enumType.getValue() != EnumType.ORDINAL) {
+               field.getAnnotation(Enumerated.class).setEnumArrayValue(enumType.getValue());
+            }
+
+            if (columnName.isEnabled() && columnName.hasValue())
+            {
+               field.addAnnotation(Column.class).setStringValue("name", columnName.getValue());
+            }
+         }
          else
          {
             String fieldType = type.getValue();
@@ -331,7 +380,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
          }
          if (columnName.isEnabled() && columnName.hasValue())
          {
-            field.getAnnotation(Column.class).setLiteralValue("name", columnName.getValue());
+            field.getAnnotation(Column.class).setStringValue("name", columnName.getValue());
          }
          if (temporalType.isEnabled())
          {

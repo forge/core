@@ -22,16 +22,19 @@ import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_0;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.javaee.validation.ValidationFacet;
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.projects.JavaProjectType;
 import org.jboss.forge.addon.parser.java.projects.JavaWebProjectType;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaEnumSource;
 
 /**
  * Helps with the configuration of a project
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class ProjectHelper
@@ -127,5 +130,14 @@ public class ProjectHelper
    {
       String packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
       return persistenceOperations.newEntity(project, entityName, packageName, GenerationType.AUTO);
+   }
+
+   public JavaResource createEmptyEnum(Project project, String enumName) throws IOException
+   {
+      JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
+      JavaEnumSource enumSource = Roaster.create(JavaEnumSource.class).setName(enumName);
+      String packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
+      enumSource.setPackage(packageName);
+      return javaSourceFacet.saveJavaSource(enumSource);
    }
 }
