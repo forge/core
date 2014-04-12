@@ -128,6 +128,9 @@ public class ProjectFactoryImpl implements ProjectFactory
          for (ProjectProvider projectProvider : getProviders())
          {
             result = findProjectInDirectory(dir, projectProvider, filter);
+
+            if (result != null)
+               break;
          }
 
          if (result != null)
