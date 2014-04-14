@@ -4,6 +4,7 @@
       <groupId>org.jboss</groupId>
       <artifactId>jboss-parent</artifactId>
       <version>14</version>
+      <relativePath/>
    </parent>
    <groupId>org.jboss.forge</groupId>
    <artifactId>forge-bom</artifactId>
