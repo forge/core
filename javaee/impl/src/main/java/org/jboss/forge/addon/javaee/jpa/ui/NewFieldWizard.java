@@ -19,8 +19,8 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
@@ -48,7 +48,6 @@ import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIPrompt;
@@ -67,6 +66,11 @@ import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
 
+/**
+ * Creates a new JPA Field
+ *
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ */
 public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, PrerequisiteCommandsProvider
 {
    @Inject
@@ -106,12 +110,11 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
    private UISelectOne<EnumType> enumType;
 
    @Inject
-   private JPAFieldOperations fieldOperations;
+   @WithAttributes(name = "transient", shortName = 't', label = "Is Transient?", description = "Creates a field with @Transient", defaultValue = "false")
+   private UIInput<Boolean> transientField;
 
    @Inject
-   private InputComponentFactory inputFactory;
-
-   private UIInput<Boolean> transientField;
+   private JPAFieldOperations fieldOperations;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -127,11 +130,6 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
       final Project project = getSelectedProject(builder);
       setupEntities(builder.getUIContext());
       setupRelationshipType();
-
-      transientField = inputFactory.createInput("transient", 't', Boolean.class);
-      transientField.setLabel("Is Transient?");
-      transientField.setDescription("Creates a field with @Transient").setDefaultValue(Boolean.FALSE);
-
       final List<String> types = Arrays.asList("byte", "float", "char", "double", "int", "long", "short", "boolean",
                "String");
       type.setCompleter(new UICompleter<String>()
@@ -222,7 +220,8 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
          }
       });
 
-      enumType.setEnabled(new Callable<Boolean>() {
+      enumType.setEnabled(new Callable<Boolean>()
+      {
 
          @Override
          public Boolean call() throws Exception
@@ -359,7 +358,8 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
             field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
                      Enumerated.class.getCanonicalName());
 
-            if (enumType.isEnabled() && enumType.getValue() != EnumType.ORDINAL) {
+            if (enumType.isEnabled() && enumType.getValue() != EnumType.ORDINAL)
+            {
                field.getAnnotation(Enumerated.class).setEnumArrayValue(enumType.getValue());
             }
 
