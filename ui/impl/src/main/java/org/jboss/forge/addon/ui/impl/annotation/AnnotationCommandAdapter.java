@@ -93,26 +93,30 @@ public class AnnotationCommandAdapter implements UICommand
                   option = (Option) annotation;
                }
             }
-            char shortName = option.shortName();
-            String paramName = (option == null || option.value().isEmpty()) ? "param" + position : option.value();
-            InputComponent<?, ?> input;
-            if (Iterable.class.isAssignableFrom(parameterType))
+
+            if (option != null)
             {
-               // TODO: UIInputMany or UISelectMany ?
-               input = factory.createInputMany(paramName, shortName, parameterType);
+               char shortName = option.shortName();
+               String paramName = (option.value().isEmpty()) ? "param" + position : option.value();
+               InputComponent<?, ?> input;
+               if (Iterable.class.isAssignableFrom(parameterType))
+               {
+                  // TODO: UIInputMany or UISelectMany ?
+                  input = factory.createInputMany(paramName, shortName, parameterType);
+               }
+               else if (parameterType.isEnum() || Boolean.class == parameterType)
+               {
+                  input = factory.createSelectOne(paramName, shortName, parameterType);
+                  factory.setupSelectComponent((SelectComponent<?, ?>) input);
+               }
+               else
+               {
+                  input = factory.createInput(paramName, shortName, parameterType);
+               }
+               factory.preconfigureInput(input, option);
+               builder.add(input);
+               inputs.add(input);
             }
-            else if (parameterType.isEnum() || Boolean.class == parameterType)
-            {
-               input = factory.createSelectOne(paramName, shortName, parameterType);
-               factory.setupSelectComponent((SelectComponent<?, ?>) input);
-            }
-            else
-            {
-               input = factory.createInput(paramName, shortName, parameterType);
-            }
-            factory.preconfigureInput(input, option);
-            builder.add(input);
-            inputs.add(input);
          }
          position++;
       }

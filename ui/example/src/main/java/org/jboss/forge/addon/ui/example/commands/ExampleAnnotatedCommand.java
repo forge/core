@@ -44,4 +44,15 @@ public class ExampleAnnotatedCommand
          output.out().println("Ok, I will not display the values.");
       }
    }
+   
+   @Command(value = "Annotation Commands: Number 3", categories = { "Root", "Branch" })
+   public String executeFromAnnotationWithNonAnnotatedParam(
+            @Option(value = "name", label = "Field Name", required = true) String name,
+            String notAnnotated,
+            @Option(value = "elementType", label = "Element Type") ElementType elementType,
+            @Option("anyData") String anyData)
+   {
+      System.out.println("EXECUTED FIELD with name =" + name + " and elementType=" + elementType);
+      return "Hello there !";
+   }
 }

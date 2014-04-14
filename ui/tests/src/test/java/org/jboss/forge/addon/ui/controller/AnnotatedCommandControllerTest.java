@@ -73,6 +73,23 @@ public class AnnotatedCommandControllerTest
    }
 
    @Test
+   public void testWizardExecutionWithIncorrectlyAnnotatedCommand() throws Exception
+   {
+      try (CommandController controller = testHarness.createCommandController("Annotation Commands: Number 3"))
+      {
+         controller.initialize();
+         Assert.assertTrue(controller.isInitialized());
+         Assert.assertEquals("Annotation Commands: Number 3", controller.getMetadata().getName());
+
+         Assert.assertFalse(controller.isValid());
+         controller.setValueFor("name", "Lincoln");
+         Assert.assertTrue(controller.isValid());
+
+         Assert.assertTrue(controller.getMetadata().getType().equals(ExampleAnnotatedCommand.class));
+      }
+   }
+
+   @Test
    public void testCommandMetadata() throws Exception
    {
       try (CommandController controller = testHarness.createCommandController("Annotation Commands: Number 1"))
