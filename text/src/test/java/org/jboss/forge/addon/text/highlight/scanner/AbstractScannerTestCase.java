@@ -4,9 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +11,7 @@ import org.jboss.forge.addon.text.highlight.Encoder;
 import org.jboss.forge.addon.text.highlight.Scanner;
 import org.jboss.forge.addon.text.highlight.Syntax;
 import org.jboss.forge.addon.text.highlight.encoder.AssertEncoder;
+import org.jboss.forge.furnace.util.Streams;
 import org.junit.Assert;
 
 public abstract class AbstractScannerTestCase
@@ -27,13 +25,13 @@ public abstract class AbstractScannerTestCase
       Encoder.Factory.registrer(ASSERT_ENCODER, AssertEncoder.class);
    }
 
-   public static String OUTPUT = "src/test/resources/examples";
+   public static String OUTPUT = "examples/";
    public static Pattern MATCH_DATA = Pattern.compile("(.*)\\..*\\..*");
 
    protected String fetch(String type, String example) throws Exception
    {
-      Path sourcePath = Paths.get(OUTPUT, type, example);
-      return new String(Files.readAllBytes(sourcePath), DEFAULT_CHARSET);
+      InputStream is = getClass().getClassLoader().getResourceAsStream(OUTPUT + type + "/" + example);
+      return Streams.toString(is, DEFAULT_CHARSET);
    }
 
    private String expectedName(String example)
