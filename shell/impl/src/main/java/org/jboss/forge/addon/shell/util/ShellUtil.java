@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.shell.util;
 
+import java.util.regex.Pattern;
+
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.aesh.terminal.TerminalString;
@@ -14,25 +16,29 @@ import org.jboss.forge.addon.resource.FileResource;
 
 /**
  * Shell Utilities
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class ShellUtil
 {
+
+   private static final Pattern WHITESPACES = Pattern.compile("\\W+");
+   private static final Pattern COLONS = Pattern.compile("\\:");
+
    /**
     * "Shellifies" a name (that is, makes the name shell-friendly) by replacing spaces with "-" and removing colons
-    * 
+    *
     * @param name
     * @return
     */
    public static String shellifyName(String name)
    {
-      return name.trim().toLowerCase().replaceAll("\\W+", "-").replaceAll("\\:", "");
+      return COLONS.matcher(WHITESPACES.matcher(name.trim()).replaceAll("-")).replaceAll("");
    }
 
    /**
     * Applies ANSI colors in a specific resource
-    * 
+    *
     * @param resource
     * @return
     */

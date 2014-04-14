@@ -25,13 +25,14 @@ import org.jboss.forge.addon.ui.input.events.ValueChangeEvent;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
+import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Callables;
 
 /**
  * Implementation of a {@link UIInput} object
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  * @param <VALUETYPE>
  */
 @Vetoed
@@ -54,6 +55,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
 
    public AbstractInputComponent(String name, char shortName, Class<VALUETYPE> type)
    {
+      Assert.notNull(name, "Name is required");
       this.name = name;
       this.shortName = shortName;
       this.type = type;

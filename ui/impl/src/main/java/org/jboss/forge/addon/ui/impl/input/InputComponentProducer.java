@@ -38,9 +38,9 @@ import org.jboss.forge.furnace.services.Imported;
 
 /**
  * Produces UIInput objects
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ *
  */
 @Singleton
 public class InputComponentProducer implements InputComponentFactory
@@ -73,8 +73,10 @@ public class InputComponentProducer implements InputComponentFactory
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) resolveRealType(typeArguments[0]);
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+         String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
+                  : withAttributes.name();
          char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
-         UISelectOne<T> input = createSelectOne(name, shortName, valueType);
+         UISelectOne<T> input = createSelectOne(paramName, shortName, valueType);
          setupSelectComponent(input);
          preconfigureInput(input, withAttributes);
          for (InputComponentInjectionEnricher enricher : enrichers)
@@ -104,8 +106,10 @@ public class InputComponentProducer implements InputComponentFactory
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) resolveRealType(typeArguments[0]);
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+         String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
+                  : withAttributes.name();
          char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
-         UISelectMany<T> input = createSelectMany(name, shortName, valueType);
+         UISelectMany<T> input = createSelectMany(paramName, shortName, valueType);
          setupSelectComponent(input);
          preconfigureInput(input, withAttributes);
          for (InputComponentInjectionEnricher enricher : enrichers)
@@ -134,8 +138,10 @@ public class InputComponentProducer implements InputComponentFactory
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = resolveRealType(typeArguments[0]);
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+         String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
+                  : withAttributes.name();
          char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
-         UIInput<T> input = createInput(name, shortName, valueType);
+         UIInput<T> input = createInput(paramName, shortName, valueType);
          preconfigureInput(input, withAttributes);
          for (InputComponentInjectionEnricher enricher : enrichers)
          {
@@ -164,8 +170,10 @@ public class InputComponentProducer implements InputComponentFactory
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
          Class<T> valueType = (Class<T>) resolveRealType(typeArguments[0]);
          WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+         String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
+                  : withAttributes.name();
          char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
-         UIInputMany<T> input = createInputMany(name, shortName, valueType);
+         UIInputMany<T> input = createInputMany(paramName, shortName, valueType);
          preconfigureInput(input, withAttributes);
          for (InputComponentInjectionEnricher enricher : enrichers)
          {

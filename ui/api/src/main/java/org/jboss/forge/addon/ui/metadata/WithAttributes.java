@@ -18,15 +18,20 @@ import org.jboss.forge.addon.ui.util.InputComponents;
 
 /**
  * Allows configuration of {@link InputComponent} injected fields
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
 public @interface WithAttributes
 {
+   /**
+    * The parameter name for this {@link InputComponent}
+    */
+   String name() default "";
+
    /**
     * The label of this {@link InputComponent}.
     */

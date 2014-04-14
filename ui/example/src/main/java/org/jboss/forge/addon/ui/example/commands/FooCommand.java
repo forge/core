@@ -39,7 +39,7 @@ public class FooCommand implements UICommand
    private UIInput<String> name;
 
    @Inject
-   @WithAttributes(label = "help")
+   @WithAttributes(name = "Help Me", label = "help")
    private UIInput<String> help;
 
    @Inject
@@ -117,6 +117,6 @@ public class FooCommand implements UICommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      return Results.success("boo");
+      return Results.success("Help: " + help.getValue());
    }
 }

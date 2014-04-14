@@ -37,7 +37,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Tests the validation features
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -72,7 +72,17 @@ public class InputComponentValidatorTest
    UIInput<String> notRequired;
 
    @Inject
+   @WithAttributes(name = "Custom Name", label = "Not Required", required = false)
+   UIInput<String> anotherName;
+
+   @Inject
    UIInput<String> withValidator;
+
+   @Test
+   public void testInputName()
+   {
+      Assert.assertEquals("Custom Name", anotherName.getName());
+   }
 
    @Test
    public void testRequiredWithMessage()

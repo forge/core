@@ -48,6 +48,12 @@ public class InputComponentFactoryTest
    @Inject
    InputComponentFactory factory;
 
+   @Test(expected = IllegalArgumentException.class)
+   public void testAssertNameNotNull() throws Exception
+   {
+      factory.createInput(null, String.class);
+   }
+
    @Test
    public void testCreateUIInput() throws Exception
    {
