@@ -26,7 +26,7 @@ import org.jboss.shrinkwrap.descriptor.api.beans11.BeansDescriptor;
 
 /**
  * Common CDI commands
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class BeansCommand
@@ -35,7 +35,7 @@ public class BeansCommand
    @Inject
    private ProjectFactory projectFactory;
 
-   @Command(value = "cdi-list-interceptors", enabled = RequiresCDIFacetPredicate.class, categories = { "Java EE", "CDI" })
+   @Command(value = "CDI: List Interceptors", enabled = RequiresCDIFacetPredicate.class, categories = { "Java EE", "CDI" })
    public void listInterceptors(final UIContext context, final UIOutput output)
    {
       CDIFacet<?> cdi = getProject(context).getFacet(CDIFacet.class);
@@ -55,7 +55,7 @@ public class BeansCommand
       }
    }
 
-   @Command(value = "cdi-list-alternatives", enabled = RequiresCDIFacetPredicate.class, categories = { "Java EE", "CDI" })
+   @Command(value = "CDI: List Alternatives", enabled = RequiresCDIFacetPredicate.class, categories = { "Java EE", "CDI" })
    public void listAlternatives(final UIContext context, final UIOutput output)
    {
       CDIFacet<?> cdi = getProject(context).getFacet(CDIFacet.class);
@@ -79,7 +79,7 @@ public class BeansCommand
       }
    }
 
-   @Command(value = "cdi-list-decorators", enabled = RequiresCDIFacetPredicate.class, categories = { "Java EE", "CDI" })
+   @Command(value = "CDI: List Decorators", enabled = RequiresCDIFacetPredicate.class, categories = { "Java EE", "CDI" })
    public void listDecorators(final UIContext context, final UIOutput output)
    {
       CDIFacet<?> cdi = getProject(context).getFacet(CDIFacet.class);
