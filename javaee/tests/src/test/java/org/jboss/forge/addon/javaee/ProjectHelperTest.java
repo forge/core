@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -130,6 +130,19 @@ public class ProjectHelperTest
       projectHelper.installJPA_2_0(project);
       JavaResource jpaEntity = projectHelper.createJPAEntity(project, "Customer");
       Assert.assertTrue(jpaEntity.exists());
+      Resource<?> build = project.getFacet(PackagingFacet.class).createBuilder().runTests(false).build();
+      Assert.assertNotNull(build);
+      Assert.assertTrue("Build artifact does not exist", build.exists());
+   }
+
+   @Test
+   public void testEnumCreation() throws Exception
+   {
+      Project project = projectHelper.createWebProject();
+      projectHelper.installJPA_2_0(project);
+      JavaResource enumEntity = projectHelper.createEmptyEnum(project, "CustomerType");
+      Assert.assertTrue(enumEntity.exists());
+      Assert.assertTrue(enumEntity.getJavaType().isEnum());
       Resource<?> build = project.getFacet(PackagingFacet.class).createBuilder().runTests(false).build();
       Assert.assertNotNull(build);
       Assert.assertTrue("Build artifact does not exist", build.exists());

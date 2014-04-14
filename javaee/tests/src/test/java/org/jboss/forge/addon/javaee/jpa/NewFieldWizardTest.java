@@ -11,6 +11,8 @@ import static org.junit.Assert.assertThat;
 
 import javax.inject.Inject;
 import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
@@ -231,5 +233,104 @@ public class NewFieldWizardTest
       Assert.assertEquals(FetchType.EAGER, field.getAnnotation(OneToMany.class).getEnumValue(FetchType.class, "fetch"));
       Assert.assertEquals("Set", field.getType().getName());
    }
+
+   @Test
+   public void testNewEnumField() throws Exception
+   {
+      JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
+      JavaResource enumEntity = projectHelper.createEmptyEnum(project, "CustomerType");
+
+      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         Assert.assertTrue(controller.isEnabled());
+         controller.setValueFor("targetEntity", entity);
+         Assert.assertFalse(controller.canExecute());
+         controller.setValueFor("named", "customerType");
+         controller.setValueFor("type", enumEntity.getJavaType().getCanonicalName());
+         Assert.assertFalse(controller.canMoveToNextStep());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertFalse(result instanceof Failed);
+         Assert.assertEquals("Field customerType created", result.getMessage());
+      }
+
+      JavaClass<?> javaClass = entity.getJavaType();
+      Assert.assertTrue(javaClass.hasField("customerType"));
+      final Field<?> field = javaClass.getField("customerType");
+      Assert.assertEquals("CustomerType", field.getType().getName());
+      Assert.assertFalse(field.hasAnnotation(Column.class));
+      Assert.assertTrue(field.hasAnnotation(Enumerated.class));
+      Assert.assertTrue(field.getAnnotation(Enumerated.class).getValues().isEmpty());
+   }
+
+   @Test
+   public void testNewEnumFieldWithColumnName() throws Exception
+   {
+      JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
+      JavaResource enumEntity = projectHelper.createEmptyEnum(project, "CustomerType");
+
+      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         Assert.assertTrue(controller.isEnabled());
+         controller.setValueFor("targetEntity", entity);
+         Assert.assertFalse(controller.canExecute());
+         controller.setValueFor("named", "customerType");
+         controller.setValueFor("type", enumEntity.getJavaType().getCanonicalName());
+         controller.setValueFor("columnName", "CUSTOMER_TYPE_COLUMN");
+         Assert.assertFalse(controller.canMoveToNextStep());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertFalse(result instanceof Failed);
+         Assert.assertEquals("Field customerType created", result.getMessage());
+      }
+
+      JavaClass<?> javaClass = entity.getJavaType();
+      Assert.assertTrue(javaClass.hasField("customerType"));
+      final Field<?> field = javaClass.getField("customerType");
+      Assert.assertEquals("CustomerType", field.getType().getName());
+      Assert.assertTrue(field.hasAnnotation(Column.class));
+      Assert.assertEquals("CUSTOMER_TYPE_COLUMN", field.getAnnotation(Column.class).getStringValue("name"));
+      Assert.assertTrue(field.hasAnnotation(Enumerated.class));
+      Assert.assertTrue(field.getAnnotation(Enumerated.class).getValues().isEmpty());
+   }
+
+   @Test
+   public void testNewEnumFieldWithType() throws Exception
+   {
+      JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
+      JavaResource enumEntity = projectHelper.createEmptyEnum(project, "CustomerType");
+
+      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         Assert.assertTrue(controller.isEnabled());
+         controller.setValueFor("targetEntity", entity);
+         Assert.assertFalse(controller.canExecute());
+         controller.setValueFor("named", "customerType");
+         controller.setValueFor("type", enumEntity.getJavaType().getCanonicalName());
+         controller.setValueFor("enumType", EnumType.STRING);
+         Assert.assertFalse(controller.canMoveToNextStep());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertFalse(result instanceof Failed);
+         Assert.assertEquals("Field customerType created", result.getMessage());
+      }
+
+      JavaClass<?> javaClass = entity.getJavaType();
+      Assert.assertTrue(javaClass.hasField("customerType"));
+      final Field<?> field = javaClass.getField("customerType");
+      Assert.assertEquals("CustomerType", field.getType().getName());
+      Assert.assertFalse(field.hasAnnotation(Column.class));
+      Assert.assertTrue(field.hasAnnotation(Enumerated.class));
+      Assert.assertFalse(field.getAnnotation(Enumerated.class).getValues().isEmpty());
+      Assert.assertEquals(EnumType.STRING, field.getAnnotation(Enumerated.class).getEnumValue(EnumType.class));
+   }
+
+
 
 }

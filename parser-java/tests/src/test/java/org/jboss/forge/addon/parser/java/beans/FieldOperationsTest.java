@@ -4,14 +4,52 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.parser.java.projects.JavaProjectType;
+import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.arquillian.AddonDependency;
+import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaEnumSource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+
+@RunWith(Arquillian.class)
 public class FieldOperationsTest
 {
+   @Deployment
+   @Dependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:parser-java"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven")
+   })
+   public static ForgeArchive getDeployment()
+   {
+      return ShrinkWrap
+               .create(ForgeArchive.class)
+               .addClass(FieldOperationsTest.class)
+               .addBeansXML()
+               .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:parser-java"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:maven")
+               );
+   }
+
+   @Inject
+   private ProjectFactory projectFactory;
 
    private FieldOperations fieldOperations;
 
@@ -108,5 +146,38 @@ public class FieldOperationsTest
 
       fieldOperations.addFieldTo(targetClass, "int", "age", Visibility.PACKAGE_PRIVATE, true, true);
       assertThat(targetClass.getField("age").getVisibility(), is(Visibility.PACKAGE_PRIVATE));
+   }
+
+   @Test
+   public void testIsFieldEnum() throws Exception
+   {
+      JavaProjectType javaProjectType = new JavaProjectType();
+      Project project = projectFactory.createTempProject(javaProjectType.getRequiredFacets());
+      JavaClassSource targetClass = Roaster.parse(JavaClassSource.class, "public class Test{}");
+      JavaEnumSource testEnum = Roaster.create(JavaEnumSource.class).setName("TestEnum");
+
+      String testPackage = "org.jboss.forge.testpkg";
+
+      targetClass.setPackage(testPackage);
+      testEnum.setPackage(testPackage);
+
+      JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
+
+      javaSourceFacet.saveJavaSource(targetClass);
+      javaSourceFacet.saveJavaSource(testEnum);
+
+      assertThat(fieldOperations.isFieldTypeEnum(project, targetClass, "TestEnum"), is(true));
+      assertThat(fieldOperations.isFieldTypeEnum(project, targetClass, "org.jboss.forge.testpkg.TestEnum"), is(true));
+
+      assertThat(fieldOperations.isFieldTypeEnum(project, targetClass, "NotExist"), is(false));
+      assertThat(fieldOperations.isFieldTypeEnum(project, targetClass, "Test"), is(false));
+      assertThat(fieldOperations.isFieldTypeEnum(project, targetClass, "org.jboss.forge.testpkg.Test"), is(false));
+
+      assertThat(fieldOperations.isFieldTypeEnum(project, "TestEnum"), is(false));
+      assertThat(fieldOperations.isFieldTypeEnum(project, "org.jboss.forge.testpkg.TestEnum"), is(true));
+
+      assertThat(fieldOperations.isFieldTypeEnum(project, "NotExist"), is(false));
+      assertThat(fieldOperations.isFieldTypeEnum(project, "Test"), is(false));
+      assertThat(fieldOperations.isFieldTypeEnum(project, "org.jboss.forge.testpkg.Test"), is(false));
    }
 }

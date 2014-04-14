@@ -7,9 +7,15 @@
 
 package org.jboss.forge.addon.parser.java.beans;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.parser.java.resources.JavaResource;
+import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.resource.ResourceException;
+import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.roaster.model.Field;
 import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.forge.roaster.model.source.FieldSource;
@@ -126,5 +132,56 @@ public class FieldOperations
    protected boolean canAddFieldToToString(Field<JavaClassSource> field)
    {
       return !field.isStatic();
+   }
+
+   /**
+    * @param project   Project in which the fieldType will be searched
+    * @param fieldType Full type of the field with package
+    * @return true if fieldType was found and is enum
+    *         false otherwise.
+    * @throws IllegalArgumentException if fieldType or project is null
+    */
+   public boolean isFieldTypeEnum(Project project, String fieldType)
+   {
+      return isFieldTypeEnum(project, null, fieldType);
+   }
+
+   /**
+    * @param project      Project in which the fieldType will be searched
+    * @param fieldType    Type of the field
+    * @param targetEntity Entity which package which will be used if fieldType doesn't have package specified
+    * @return true if fieldType was found and is enum
+    *         false otherwise.
+    * @throws IllegalArgumentException if fieldType or project is null
+    */
+   public boolean isFieldTypeEnum(Project project, JavaClassSource targetEntity, String fieldType)
+   {
+      boolean isEnum = false;
+
+      Assert.notNull(fieldType, "Field type should not be null");
+      Assert.notNull(project, "Field project should not be null");
+
+      try
+      {
+         isEnum = project.getFacet(JavaSourceFacet.class).getJavaResource(fieldType).getJavaType().isEnum();
+      }
+      catch (FileNotFoundException | ResourceException e1)
+      {
+         try
+         {
+            if (targetEntity != null)
+            {
+
+               isEnum = project.getFacet(JavaSourceFacet.class)
+                        .getJavaResource(targetEntity.getPackage() + "." + fieldType).getJavaType().isEnum();
+            }
+         }
+         catch (FileNotFoundException | ResourceException e2)
+         {
+            // ignore
+         }
+      }
+
+      return isEnum;
    }
 }
