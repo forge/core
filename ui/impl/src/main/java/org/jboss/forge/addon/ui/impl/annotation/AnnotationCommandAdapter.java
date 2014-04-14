@@ -135,15 +135,27 @@ public class AnnotationCommandAdapter implements UICommand
       int idx = 0;
       for (Class<?> type : method.getParameterTypes())
       {
-         Object value;
+         Object value = null;
          if (ReservedParameters.isReservedParameter(type))
          {
             value = ReservedParameters.getReservedParameter(context, type);
          }
          else
          {
-            value = InputComponents.getValueFor(inputs.get(idx));
-            idx++;
+            Option option = null;
+            for (Annotation annotation : method.getParameterAnnotations()[idx])
+            {
+               if (annotation instanceof Option)
+               {
+                  option = (Option) annotation;
+               }
+            }
+
+            if (option != null)
+            {
+               value = InputComponents.getValueFor(inputs.get(idx));
+               idx++;
+            }
          }
          args.add(value);
       }

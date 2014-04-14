@@ -14,6 +14,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.ui.controller.mock.EnabledHandlerCommand;
 import org.jboss.forge.addon.ui.example.commands.ExampleAnnotatedCommand;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.result.Failed;
+import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -83,7 +85,11 @@ public class AnnotatedCommandControllerTest
 
          Assert.assertFalse(controller.isValid());
          controller.setValueFor("name", "Lincoln");
+         controller.setValueFor("anyData", "SomethingElse");
          Assert.assertTrue(controller.isValid());
+
+         Result result = controller.execute();
+         Assert.assertTrue(!(result instanceof Failed));
 
          Assert.assertTrue(controller.getMetadata().getType().equals(ExampleAnnotatedCommand.class));
       }
