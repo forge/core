@@ -20,9 +20,7 @@ import org.jboss.forge.addon.ui.controller.mock.ExampleCommand;
 import org.jboss.forge.addon.ui.controller.mock.ExampleNoUICommand;
 import org.jboss.forge.addon.ui.controller.mock.FlowExampleStep;
 import org.jboss.forge.addon.ui.example.commands.ExampleAnnotatedCommand;
-import org.jboss.forge.addon.ui.impl.mock.MockUIContext;
 import org.jboss.forge.addon.ui.impl.mock.MockUIRuntime;
-import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.test.impl.UIContextImpl;
 import org.jboss.forge.addon.ui.util.Selections;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -77,7 +75,7 @@ public class CommandFactoryExceptionTest
    {
       UIContext context = new UIContextImpl(true, Selections.emptySelection());
       Set<String> enabledCommandNames = commandFactory.getEnabledCommandNames(context);
-      Assert.assertEquals(4, enabledCommandNames.size());
+      Assert.assertEquals(5, enabledCommandNames.size());
    }
 
    @Test
@@ -85,7 +83,7 @@ public class CommandFactoryExceptionTest
    {
       UIContext context = new UIContextImpl(true, Selections.emptySelection());
       Set<String> commandNames = commandFactory.getCommandNames(context);
-      Assert.assertEquals(4, commandNames.size());
+      Assert.assertEquals(5, commandNames.size());
 
    }
 
@@ -93,7 +91,7 @@ public class CommandFactoryExceptionTest
    public void testNoExceptionsOnUICommands()
    {
       List<UICommand> list = Lists.toList(commandFactory.getCommands());
-      Assert.assertEquals(5, list.size());
+      Assert.assertEquals(6, list.size());
 
    }
 

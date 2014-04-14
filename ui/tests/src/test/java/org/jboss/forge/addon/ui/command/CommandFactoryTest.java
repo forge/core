@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Test class for the {@link CommandController} feature
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -80,7 +80,7 @@ public class CommandFactoryTest
          count++;
       }
 
-      Assert.assertEquals(4, count);
+      Assert.assertEquals(5, count);
    }
 
 }
