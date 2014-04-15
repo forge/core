@@ -158,6 +158,8 @@ public class EntityWidgetBuilder
                         (StaticUIMetawidget) metawidget);
             }
 
+            link.putAttribute("rendered", StaticFacesUtils.wrapExpression("!empty " + StaticFacesUtils.unwrapExpression(link.getValue())));
+
             String reverseKey = "id";
             if (attributes.containsKey(REVERSE_PRIMARY_KEY))
             {
