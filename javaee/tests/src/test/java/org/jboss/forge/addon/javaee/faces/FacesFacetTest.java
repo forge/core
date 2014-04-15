@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -163,7 +163,7 @@ public class FacesFacetTest
       Assert.assertTrue("Should have FacesFacet", project.hasFacet(FacesFacet.class));
       Assert.assertTrue("Should have FacesFacet_2_2", project.hasFacet(FacesFacet_2_2.class));
       projectFactory.invalidateCaches();
-      project = projectFactory.findProject(project.getRootDirectory());
+      project = projectFactory.findProject(project.getRoot());
       Assert.assertTrue("Should have FacesFacet", project.hasFacet(FacesFacet.class));
       Assert.assertTrue("Should have FacesFacet_2_2", project.hasFacet(FacesFacet_2_2.class));
 

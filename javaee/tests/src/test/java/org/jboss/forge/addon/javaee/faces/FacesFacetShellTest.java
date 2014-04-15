@@ -31,7 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -73,7 +73,7 @@ public class FacesFacetShellTest
    public void testFacesFacetAvailability() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
-      shell.getShell().setCurrentResource(project.getRootDirectory());
+      shell.getShell().setCurrentResource(project.getRoot());
       shell.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
       Assert.assertTrue(project.hasFacet(FacesFacet.class));
       Assert.assertTrue(project.hasFacet(FacesFacet_2_0.class));
@@ -83,7 +83,7 @@ public class FacesFacetShellTest
    public void testFacesFacetAvailabilityThroughShell() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
-      shell.getShell().setCurrentResource(project.getRootDirectory());
+      shell.getShell().setCurrentResource(project.getRoot());
       shell.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
       shell.execute("project-list-facets", 5, TimeUnit.SECONDS);
       Assert.assertThat(shell.getStdOut(), containsString("FacesFacet"));

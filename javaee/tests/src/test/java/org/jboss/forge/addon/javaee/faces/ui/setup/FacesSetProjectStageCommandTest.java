@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -72,7 +72,7 @@ public class FacesSetProjectStageCommandTest
       FacesFacet_2_2 facesFacet = projectHelper.installFaces_2_2(project);
       Assert.assertEquals(ProjectStage.Production, facesFacet.getProjectStage());
       try (CommandController controller = testHarness.createCommandController(FacesSetProjectStageCommand.class,
-               project.getRootDirectory()))
+               project.getRoot()))
       {
          controller.initialize();
          Assert.assertTrue(controller.isEnabled());

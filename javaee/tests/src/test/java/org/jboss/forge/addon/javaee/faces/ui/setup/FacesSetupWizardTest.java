@@ -67,19 +67,20 @@ public class FacesSetupWizardTest
    @Inject
    private UITestHarness testHarness;
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testSetupCreatesFacesConfigXML() throws Exception
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, ServletFacet_3_1.class);
       try (CommandController tester = testHarness.createCommandController(FacesSetupWizard.class,
-               project.getRootDirectory()))
+               project.getRoot()))
       {
          tester.initialize();
          Assert.assertTrue(tester.isValid());
 
          Result result = tester.execute();
-         project = Projects.getSelectedProject(projectFactory, Selections.from(project.getRootDirectory()));
+         project = Projects.getSelectedProject(projectFactory, Selections.from(project.getRoot()));
          Assert.assertFalse(result instanceof Failed);
          Assert.assertTrue(project.hasFacet(FacesFacet.class));
          Assert.assertTrue(project.getFacet(FacesFacet.class).getConfigFile().exists());

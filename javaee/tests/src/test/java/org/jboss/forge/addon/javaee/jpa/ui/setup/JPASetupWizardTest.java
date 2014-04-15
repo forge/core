@@ -90,7 +90,7 @@ public class JPASetupWizardTest
    {
       Project project = projectFactory.createTempProject();
       WizardCommandController tester = testHarness.createWizardController(JPASetupWizard.class,
-               project.getRootDirectory());
+               project.getRoot());
 
       tester.initialize();
 
@@ -120,13 +120,14 @@ public class JPASetupWizardTest
       Assert.assertEquals(2, counter.get());
 
       // Reload to refresh facets.
-      project = projectFactory.findProject(project.getRootDirectory());
+      project = projectFactory.findProject(project.getRoot());
 
       // Check SUT values
       PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
       List<PersistenceUnitCommon> allUnits = config.getAllPersistenceUnit();
       Assert.assertEquals("java:jboss:jta-ds", allUnits.get(0).getJtaDataSource());
-      assertDefaultProviderProperties(allUnits.get(0).getOrCreateProperties(), project.getFacet(MetadataFacet.class).getProjectName());
+      assertDefaultProviderProperties(allUnits.get(0).getOrCreateProperties(), project.getFacet(MetadataFacet.class)
+               .getProjectName());
    }
 
    @Test
@@ -135,7 +136,7 @@ public class JPASetupWizardTest
       // Execute SUT
       final Project project = projectFactory.createTempProject();
       WizardCommandController tester = testHarness.createWizardController(JPASetupWizard.class,
-               project.getRootDirectory());
+               project.getRoot());
 
       tester.initialize();
 
@@ -153,10 +154,11 @@ public class JPASetupWizardTest
       // Check SUT values
       PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
       List<PersistenceUnitCommon> allUnits = config.getAllPersistenceUnit();
-      Assert.assertEquals(project.getFacet(MetadataFacet.class).getProjectName() + PersistenceOperations.DEFAULT_UNIT_SUFFIX, allUnits.get(0).getName());
+      Assert.assertEquals(project.getFacet(MetadataFacet.class).getProjectName()
+               + PersistenceOperations.DEFAULT_UNIT_SUFFIX, allUnits.get(0).getName());
 
       WizardCommandController tester2 = testHarness.createWizardController(JPASetupWizard.class,
-               project.getRootDirectory());
+               project.getRoot());
 
       // Launch
       tester2.initialize();
@@ -175,8 +177,10 @@ public class JPASetupWizardTest
       // Check SUT values
       config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
       allUnits = config.getAllPersistenceUnit();
-      Assert.assertEquals(project.getFacet(MetadataFacet.class).getProjectName() +PersistenceOperations.DEFAULT_UNIT_SUFFIX, allUnits.get(0).getName());
-      Assert.assertEquals(project.getFacet(MetadataFacet.class).getProjectName() +PersistenceOperations.DEFAULT_UNIT_SUFFIX + "-1", allUnits.get(1).getName());
+      Assert.assertEquals(project.getFacet(MetadataFacet.class).getProjectName()
+               + PersistenceOperations.DEFAULT_UNIT_SUFFIX, allUnits.get(0).getName());
+      Assert.assertEquals(project.getFacet(MetadataFacet.class).getProjectName()
+               + PersistenceOperations.DEFAULT_UNIT_SUFFIX + "-1", allUnits.get(1).getName());
    }
 
    @Test
@@ -185,7 +189,7 @@ public class JPASetupWizardTest
       // Execute SUT
       Project project = projectFactory.createTempProject();
       WizardCommandController tester = testHarness.createWizardController(JPASetupWizard.class,
-               project.getRootDirectory());
+               project.getRoot());
 
       tester.initialize();
 
@@ -213,7 +217,7 @@ public class JPASetupWizardTest
       Assert.assertEquals(2, counter.get());
 
       // Reload to refresh facets.
-      project = projectFactory.findProject(project.getRootDirectory());
+      project = projectFactory.findProject(project.getRoot());
 
       // Check SUT values
       PersistenceCommonDescriptor config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
@@ -230,8 +234,10 @@ public class JPASetupWizardTest
    {
       assertPropertyValue(puProperties, "javax.persistence.schema-generation.database.action", "drop-and-create");
       assertPropertyValue(puProperties, "javax.persistence.schema-generation.scripts.action", "drop-and-create");
-      assertPropertyValue(puProperties, "javax.persistence.schema-generation.scripts.create-target", projectName + "Create.ddl");
-      assertPropertyValue(puProperties, "javax.persistence.schema-generation.scripts.drop-target", projectName + "Drop.ddl");
+      assertPropertyValue(puProperties, "javax.persistence.schema-generation.scripts.create-target", projectName
+               + "Create.ddl");
+      assertPropertyValue(puProperties, "javax.persistence.schema-generation.scripts.drop-target", projectName
+               + "Drop.ddl");
    }
 
    private void assertPropertyValue(PropertiesCommon puProperties, String name, String expectedValue)

@@ -92,8 +92,8 @@ public class CDIFacetTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, CDIFacet_1_1.class);
-      projectFactory.invalidateCaches();      
-      project = projectFactory.findProject(project.getRootDirectory());
+      projectFactory.invalidateCaches();
+      project = projectFactory.findProject(project.getRoot());
       Assert.assertTrue(project.hasFacet(CDIFacet_1_1.class));
       Assert.assertFalse(project.hasFacet(CDIFacet_1_0.class));
    }
@@ -103,8 +103,8 @@ public class CDIFacetTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, CDIFacet_1_0.class);
-      projectFactory.invalidateCaches();      
-      project = projectFactory.findProject(project.getRootDirectory());
+      projectFactory.invalidateCaches();
+      project = projectFactory.findProject(project.getRoot());
       Assert.assertTrue(project.hasFacet(CDIFacet_1_0.class));
       Assert.assertFalse(project.hasFacet(CDIFacet_1_1.class));
    }
