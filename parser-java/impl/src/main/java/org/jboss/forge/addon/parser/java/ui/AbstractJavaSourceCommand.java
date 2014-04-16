@@ -7,10 +7,12 @@
 
 package org.jboss.forge.addon.parser.java.ui;
 
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -21,6 +23,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
+import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -61,9 +64,15 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
    @WithAttributes(label = "Type Name", required = true)
    private UIInput<String> named;
 
+   @Inject
+   @WithAttributes(label = "Overwrite", description = "The overwrite flag that is used if the class already exists.", defaultValue = "false")
+   private UIInput<Boolean> overwrite;
+
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      Project project = getSelectedProject(builder);
+      final JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
       // Setup named
       named.addValidator(new UIValidator()
       {
@@ -75,12 +84,25 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
          }
       });
 
+      overwrite.setEnabled(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call()
+         {
+            if (named.getValue() == null)
+            {
+               return false;
+            }
+            return classExists(javaSourceFacet);
+         }
+      });
+
       // Setup targetPackage
-      Project project = getSelectedProject(builder);
+
       if (project != null && project.hasFacet(JavaSourceFacet.class))
       {
          final Set<String> packageNames = new TreeSet<>();
-         final JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
+
          javaSourceFacet.visitJavaSources(new JavaResourceVisitor()
          {
             @Override
@@ -110,7 +132,7 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
          });
       }
       targetPackage.setDefaultValue(calculateDefaultPackage(builder.getUIContext()));
-      builder.add(targetPackage).add(named);
+      builder.add(targetPackage).add(named).add(overwrite);
    }
 
    @Override
@@ -131,14 +153,34 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
     */
    protected abstract Class<? extends JavaSource<?>> getSourceType();
 
-   @Override
-   public Result execute(UIExecutionContext context) throws Exception
+   private boolean classExists(JavaSourceFacet javaSourceFacet)
    {
-      UIContext uiContext = context.getUIContext();
-      Project project = getSelectedProject(uiContext);
-      JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
+      JavaSource<?> source = buildJavaSource(javaSourceFacet);
+      if (source == null)
+      {
+         return false;
+      }
+      boolean classAlreadyExists;
+      try
+      {
+         JavaResource parsedJavaResource = javaSourceFacet.getJavaResource(source);
+         classAlreadyExists = parsedJavaResource.exists();
+      }
+      catch (FileNotFoundException | ResourceException ex)
+      {
+         classAlreadyExists = false;
+      }
+      return classAlreadyExists;
+   }
+
+   private JavaSource<?> buildJavaSource(JavaSourceFacet javaSourceFacet)
+   {
+      if (named.getValue() == null)
+      {
+         return null;
+      }
       JavaSource<?> source = Roaster.create(getSourceType()).setName(named.getValue());
-      JavaResource javaResource;
+
       if (targetPackage.hasValue() || targetPackage.hasDefaultValue())
       {
          source.setPackage(targetPackage.getValue());
@@ -147,6 +189,30 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
       {
          source.setPackage(javaSourceFacet.getBasePackage());
       }
+      return source;
+   }
+
+   @Override
+   public void validate(UIValidationContext validator)
+   {
+      Project project = getSelectedProject(validator);
+      final JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
+
+      if (classExists(javaSourceFacet) && overwrite.isEnabled() && overwrite.getValue() == false)
+      {
+         validator.addValidationError(named, getType() + " " + targetPackage.getValue() + "." + named.getValue()
+                  + " already exists. Use the --overwrite flag to allow the overwrite.");
+      }
+   }
+
+   @Override
+   public Result execute(UIExecutionContext context) throws Exception
+   {
+      UIContext uiContext = context.getUIContext();
+      Project project = getSelectedProject(uiContext);
+      JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
+      JavaSource<?> source = buildJavaSource(javaSourceFacet);
+      JavaResource javaResource;
       if (source.hasSyntaxErrors())
       {
          UIOutput output = uiContext.getProvider().getOutput();
@@ -181,6 +247,11 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
    protected UIInput<String> getNamed()
    {
       return named;
+   }
+
+   protected UIInput<Boolean> getOverwrite()
+   {
+      return overwrite;
    }
 
    protected String calculateDefaultPackage(UIContext context)
