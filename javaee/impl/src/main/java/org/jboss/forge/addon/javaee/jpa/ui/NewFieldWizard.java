@@ -163,6 +163,22 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
                   {
                   }
                }
+               for (JavaResource resource : getProjectEnums(project))
+               {
+                  try
+                  {
+                     JavaSource<?> javaSource = resource.getJavaType();
+                     String qualifiedName = javaSource.getQualifiedName();
+                     if (Strings.isNullOrEmpty(value) || qualifiedName.startsWith(value))
+                     {
+                        options.add(qualifiedName);
+                     }
+                  }
+                  catch (FileNotFoundException ignored)
+                  {
+                  }
+               }
+
             }
             return options;
          }
@@ -266,10 +282,6 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
       }
    }
 
-   /**
-    * @param project
-    * @return entities
-    */
    private List<JavaResource> getProjectEntities(Project project)
    {
       final List<JavaResource> entities = new ArrayList<>();
@@ -277,20 +289,18 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
       {
          project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
          {
-
             @Override
             public void visit(VisitContext context, JavaResource resource)
             {
                try
                {
                   JavaSource<?> javaSource = resource.getJavaType();
-                  if (javaSource.hasAnnotation(Entity.class) || javaSource.hasAnnotation(MappedSuperclass.class)
-                           || javaSource.isEnum())
+                  if (javaSource.hasAnnotation(Entity.class) || javaSource.hasAnnotation(MappedSuperclass.class))
                   {
                      entities.add(resource);
                   }
                }
-               catch (FileNotFoundException e)
+               catch (ResourceException | FileNotFoundException e)
                {
                   // ignore
                }
@@ -298,6 +308,34 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
          });
       }
       return entities;
+   }
+
+   private List<JavaResource> getProjectEnums(Project project)
+   {
+      final List<JavaResource> enums = new ArrayList<>();
+      if (project != null)
+      {
+         project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
+         {
+            @Override
+            public void visit(VisitContext context, JavaResource resource)
+            {
+               try
+               {
+                  JavaSource<?> javaSource = resource.getJavaType();
+                  if (javaSource.isEnum())
+                  {
+                     enums.add(resource);
+                  }
+               }
+               catch (ResourceException | FileNotFoundException e)
+               {
+                  // ignore
+               }
+            }
+         });
+      }
+      return enums;
    }
 
    private void setupRelationshipType()
