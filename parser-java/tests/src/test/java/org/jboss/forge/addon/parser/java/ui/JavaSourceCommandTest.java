@@ -83,7 +83,7 @@ public class JavaSourceCommandTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      CommandController controller=getInitializedController(JavaAnnotationCommand.class,project.getRoot());
+      CommandController controller = getInitializedController(JavaAnnotationCommand.class, project.getRoot());
       Assert.assertTrue(controller.isValid());
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
@@ -93,9 +93,9 @@ public class JavaSourceCommandTest
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaAnnotation.class)));
-      
-      //overwriting the annotation file
-      controller=getInitializedController(JavaAnnotationCommand.class,project.getRoot());
+
+      // overwriting the annotation file
+      controller = getInitializedController(JavaAnnotationCommand.class, project.getRoot());
       Assert.assertFalse(controller.isValid());
       controller.setValueFor("overwrite", "true");
       Assert.assertTrue(controller.isValid());
@@ -108,7 +108,7 @@ public class JavaSourceCommandTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      CommandController controller=getInitializedController(JavaEnumCommand.class,project.getRoot());
+      CommandController controller = getInitializedController(JavaEnumCommand.class, project.getRoot());
       Assert.assertTrue(controller.isValid());
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
@@ -118,9 +118,9 @@ public class JavaSourceCommandTest
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaEnum.class)));
-      
-      //overwriting the enum file
-      controller=getInitializedController(JavaEnumCommand.class,project.getRoot());
+
+      // overwriting the enum file
+      controller = getInitializedController(JavaEnumCommand.class, project.getRoot());
       Assert.assertFalse(controller.isValid());
       controller.setValueFor("overwrite", "true");
       Assert.assertTrue(controller.isValid());
@@ -133,7 +133,7 @@ public class JavaSourceCommandTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      CommandController controller=getInitializedController(JavaClassCommand.class,project.getRoot());
+      CommandController controller = getInitializedController(JavaClassCommand.class, project.getRoot());
       Assert.assertTrue(controller.isValid());
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
@@ -143,9 +143,9 @@ public class JavaSourceCommandTest
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
-      
-      //overwriting the class file
-      controller=getInitializedController(JavaClassCommand.class,project.getRoot());
+
+      // overwriting the class file
+      controller = getInitializedController(JavaClassCommand.class, project.getRoot());
       Assert.assertFalse(controller.isValid());
       controller.setValueFor("overwrite", "true");
       Assert.assertTrue(controller.isValid());
@@ -158,7 +158,7 @@ public class JavaSourceCommandTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      CommandController controller=getInitializedController(JavaInterfaceCommand.class,project.getRoot());
+      CommandController controller = getInitializedController(JavaInterfaceCommand.class, project.getRoot());
       Assert.assertTrue(controller.isValid());
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
@@ -168,18 +168,20 @@ public class JavaSourceCommandTest
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaInterface.class)));
-      
-      //overwriting the interface file
-      controller=getInitializedController(JavaInterfaceCommand.class,project.getRoot());
+
+      // overwriting the interface file
+      controller = getInitializedController(JavaInterfaceCommand.class, project.getRoot());
       Assert.assertFalse(controller.isValid());
       controller.setValueFor("overwrite", "true");
       Assert.assertTrue(controller.isValid());
       result = controller.execute();
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
    }
-   
-   private CommandController getInitializedController(Class<? extends UICommand> clazz, Resource<?>... initialSelection) throws Exception {
-      CommandController controller = testHarness.createCommandController(clazz,initialSelection);
+
+   private CommandController getInitializedController(Class<? extends UICommand> clazz, Resource<?>... initialSelection)
+            throws Exception
+   {
+      CommandController controller = testHarness.createCommandController(clazz, initialSelection);
       controller.initialize();
       controller.setValueFor("named", "CreditCardType");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");
