@@ -14,50 +14,35 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.maven.projects.util.Packages;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
+import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
-import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
-import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.context.UISelection;
-import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  *
  */
-public class NewUICommandWizard extends AbstractProjectCommand
+public class NewUICommandWizard extends AbstractJavaSourceCommand
 {
    @Inject
-   private ProjectFactory projectFactory;
-
-   @Inject
    @WithAttributes(label = "Command name", required = true)
-   private UIInput<String> named;
-
-   @Inject
-   @WithAttributes(label = "Target package", type = InputType.JAVA_PACKAGE_PICKER)
-   private UIInput<String> targetPackage;
-
-   @Inject
-   @WithAttributes(label = "Target Directory", required = true)
-   private UIInput<DirectoryResource> targetLocation;
+   private UIInput<String> commandName;
 
    @Inject
    @WithAttributes(label = "Categories", required = false)
@@ -67,69 +52,37 @@ public class NewUICommandWizard extends AbstractProjectCommand
    public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(NewUICommandWizard.class)
-               .name("Addon: New Command").description("Generates a UICommand implementation")
+               .name("Addon: New UI Command").description("Generates a UICommand implementation")
                .category(Categories.create("Forge", "Generate"));
    }
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      Project project = getSelectedProject(builder.getUIContext());
-      if (project == null)
-      {
-         UISelection<FileResource<?>> currentSelection = builder.getUIContext().getInitialSelection();
-         if (!currentSelection.isEmpty())
-         {
-            FileResource<?> resource = currentSelection.get();
-            while (!(resource instanceof DirectoryResource) && resource != null)
-            {
-               resource = resource.getParent();
-            }
-            if (resource != null)
-               targetLocation.setDefaultValue((DirectoryResource) resource);
-         }
-      }
-      else if (project.hasFacet(JavaSourceFacet.class))
-      {
-         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-         targetLocation.setDefaultValue(facet.getSourceDirectory()).setEnabled(false);
-         targetPackage.setValue(calculateModelPackage(project));
-      }
+      super.initializeUI(builder);
       categories.setDefaultValue(new ArrayList<String>());
-      builder.add(targetLocation).add(targetPackage).add(named).add(categories);
+      builder.add(commandName).add(categories);
    }
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      JavaResource javaResource;
-      Project project = getSelectedProject(context);
-      if (project == null)
+      Result result = super.execute(context);
+      if (!(result instanceof Failed))
       {
-         JavaClassSource javaClass = createCommand(named.getValue(), targetPackage.getValue(), categories.getValue());
-         javaResource = getJavaResource(targetLocation.getValue(), javaClass.getName());
-         javaResource.setContents(javaClass);
-      }
-      else
-      {
+         JavaResource javaResource = context.getUIContext().getSelection();
+         JavaClassSource command = javaResource.getJavaType();
+         JavaClassSource javaClass = createCommand(command, commandName.getValue(), categories.getValue());
+         Project project = getSelectedProject(context);
          final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-         JavaClassSource javaClass = createCommand(named.getValue(), targetPackage.getValue(), categories.getValue());
          javaResource = java.saveJavaSource(javaClass);
+         context.getUIContext().setSelection(javaResource);
       }
-      context.getUIContext().setSelection(javaResource);
-      return Results.success("Command " + javaResource + " created");
+      return result;
    }
 
-   private JavaClassSource createCommand(String commandName, String targetPackage, Iterable<String> categories)
+   private JavaClassSource createCommand(JavaClassSource command, String commandName, Iterable<String> categories)
    {
-      // TODO Replace with Templates addon?
-      JavaClassSource command = Roaster.create(JavaClassSource.class)
-               .setName(commandName)
-               .setPublic();
-
-      if (targetPackage != null && !targetPackage.isEmpty())
-         command.setPackage(targetPackage);
-
       command.setSuperType(AbstractUICommand.class);
       command.addImport(UIBuilder.class);
       command.addImport(UIContext.class);
@@ -185,31 +138,22 @@ public class NewUICommandWizard extends AbstractProjectCommand
       return command;
    }
 
-   // TODO Should this be available in a utility?
-   private JavaResource getJavaResource(final DirectoryResource sourceDir, final String relativePath)
+   @Override
+   protected Class<? extends JavaSource<?>> getSourceType()
    {
-      String path = relativePath.trim().endsWith(".java")
-               ? relativePath.substring(0, relativePath.lastIndexOf(".java")) : relativePath;
-      path = path.replace(".", "/") + ".java";
-      JavaResource target = sourceDir.getChildOfType(JavaResource.class, path);
-      return target;
+      return JavaClassSource.class;
    }
 
-   private String calculateModelPackage(Project project)
+   @Override
+   protected String calculateDefaultPackage(UIContext context)
    {
+      Project project = getSelectedProject(context);
       return Packages.toValidPackageName(project.getFacet(MetadataFacet.class).getTopLevelPackage()) + ".commands";
    }
 
    @Override
-   protected boolean isProjectRequired()
+   protected String getType()
    {
-      return false;
+      return "UI Command";
    }
-
-   @Override
-   protected ProjectFactory getProjectFactory()
-   {
-      return projectFactory;
-   }
-
 }
