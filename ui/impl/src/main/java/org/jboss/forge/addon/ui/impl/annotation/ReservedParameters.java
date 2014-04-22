@@ -27,7 +27,8 @@ class ReservedParameters
                || type == UIPrompt.class
                || type == UIOutput.class
                || type == UIProgressMonitor.class
-               || type == UIProvider.class;
+               || type == UIProvider.class
+               || type == UIExecutionContext.class;
    }
 
    public static Object getReservedParameter(UIExecutionContext context, Class<?> type)
@@ -51,6 +52,10 @@ class ReservedParameters
       else if (type == UIProgressMonitor.class)
       {
          return context.getProgressMonitor();
+      }
+      else if (type == UIExecutionContext.class) 
+      {
+         return context;
       }
       else
       {
