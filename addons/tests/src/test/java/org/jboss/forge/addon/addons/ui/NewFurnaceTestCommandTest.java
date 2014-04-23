@@ -16,11 +16,14 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.addons.facets.AddonTestFacet;
 import org.jboss.forge.addon.addons.facets.FurnaceVersionFacet;
+import org.jboss.forge.addon.dependencies.Dependency;
+import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.controller.CommandController;
@@ -75,7 +78,7 @@ public class NewFurnaceTestCommandTest
 
    @Inject
    private FacetFactory facetFactory;
-
+   
    @Inject
    private UITestHarness testHarness;
 
@@ -102,7 +105,13 @@ public class NewFurnaceTestCommandTest
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
       Assert.assertFalse(result instanceof Failed);
-
+      DependencyFacet deps = project.getFacet(DependencyFacet.class);
+      for (AddonId addonId: component.getValueChoices()) {
+         Dependency dependency = DependencyBuilder.create(addonId.getName()).setVersion(
+         addonId.getVersion().toString()).setScopeType("test");
+         Assert.assertTrue(deps.hasEffectiveDependency(dependency));
+      }
+      
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getTestJavaResource("org.jboss.forge.test.MyTestCase");
       Assert.assertNotNull(javaResource);
