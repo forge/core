@@ -1,35 +1,29 @@
 package org.jboss.forge.addon.parser.java.ui;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
+import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
+import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet.CompilerVersion;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.ui.command.CommandExecutionListener;
-import org.jboss.forge.addon.ui.command.UICommand;
-import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
-import org.jboss.forge.addon.ui.result.Failed;
-import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-
-import static junit.framework.Assert.assertEquals;
-import static org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet.CompilerVersion;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class SetCompilerVersionCommandTest
@@ -144,7 +138,7 @@ public class SetCompilerVersionCommandTest
    private void assertSourceVersion(CompilerVersion version)
    {
       MavenFacet mavenFacet = project.getFacet(MavenFacet.class);
-      assertEquals(version.toString(), mavenFacet.getProperties().get("maven.compiler.source"));
+      Assert.assertEquals(version.toString(), mavenFacet.getProperties().get("maven.compiler.source"));
    }
 
    private void assertTargetVersion(CompilerVersion versionString)

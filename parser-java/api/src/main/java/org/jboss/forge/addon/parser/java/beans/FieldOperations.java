@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.furnace.util.Assert;
