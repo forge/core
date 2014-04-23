@@ -29,6 +29,7 @@ import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
+import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -68,31 +69,46 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
    private UIInput<String> named;
 
    @Inject
+   @WithAttributes(label = "Furnace container", required = true, requiredMessage = "You must select one Furnace container")
+   private UISelectOne<AddonId> furnaceContainer;
+
+   @Inject
    @WithAttributes(label = "Dependency addons", description = "Addons this test depends upon")
    private UISelectMany<AddonId> addonDependencies;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      Set<AddonId> choices = new TreeSet<>();
+      configureAddonDependencies();
+      Project project = getSelectedProject(builder.getUIContext());
+      packageName.setDefaultValue(project.getFacet(MetadataFacet.class).getTopLevelPackage());
+      builder.add(packageName).add(named).add(furnaceContainer).add(addonDependencies);
+   }
+
+   private void configureAddonDependencies()
+   {
+      Set<AddonId> addonChoices = new TreeSet<AddonId>();
+      Set<AddonId> containerChoices = new TreeSet<AddonId>();
       for (AddonRepository repository : furnace.getRepositories())
       {
          for (AddonId id : repository.listEnabled())
          {
-            choices.add(id);
+            // TODO: Furnace should provide some way to detect if an addon is a Container type
+            boolean isContainerAddon = id.getName().contains("org.jboss.forge.furnace.container");
+            if (isContainerAddon)
+            {
+               containerChoices.add(id);
+            }
+            else
+            {
+               addonChoices.add(id);
+            }
          }
       }
-      addonDependencies.setValueChoices(choices);
-      Project project = getSelectedProject(builder.getUIContext());
-      packageName.setDefaultValue(project.getFacet(MetadataFacet.class).getTopLevelPackage());
-      builder.add(packageName).add(named).add(addonDependencies);
+      addonDependencies.setValueChoices(addonChoices);
+      furnaceContainer.setValueChoices(containerChoices);
    }
 
-   /*
-    * (non-Javadoc)
-    *
-    * @see org.jboss.forge.addon.ui.AbstractUICommand#getMetadata(org.jboss.forge.addon.ui.context.UIContext)
-    */
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
@@ -126,32 +142,26 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
       StringBuilder body = new StringBuilder(
                "ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class).addBeansXML()");
       StringBuilder dependenciesAnnotationBody = new StringBuilder();
-      if (addonDependencies.hasValue())
+      body.append(".addAsAddonDependencies(");
+      AddonId furnaceContainerId = furnaceContainer.getValue();
+      addAddonDependency(project, body, dependenciesAnnotationBody, furnaceContainerId);
+      Iterator<AddonId> it = addonDependencies.getValue().iterator();
+      if (it.hasNext())
       {
-         body.append(".addAsAddonDependencies(");
-         Iterator<AddonId> it = addonDependencies.getValue().iterator();
-         while (it.hasNext())
-         {
-            AddonId addonId = it.next();
-            Dependency dependency = DependencyBuilder.create(addonId.getName()).setVersion(
-                     addonId.getVersion().toString()).setScopeType("test");
-            String name = addonId.getName();
-            if (!dependencyInstaller.isInstalled(project, dependency))
-            {
-               dependencyInstaller.install(project, dependency);
-            }
-            body.append("AddonDependencyEntry.create(\"").append(name);
-            dependenciesAnnotationBody.append("@AddonDependency(name = \"").append(name);
-            body.append("\")");
-            dependenciesAnnotationBody.append("\")");
-            if (it.hasNext())
-            {
-               body.append(",");
-               dependenciesAnnotationBody.append(",");
-            }
-         }
-         body.append(")");
+         body.append(",");
+         dependenciesAnnotationBody.append(",");
       }
+      while (it.hasNext())
+      {
+         AddonId addonId = it.next();
+         addAddonDependency(project, body, dependenciesAnnotationBody, addonId);
+         if (it.hasNext())
+         {
+            body.append(",");
+            dependenciesAnnotationBody.append(",");
+         }
+      }
+      body.append(")");
       body.append(";");
       body.append("return archive;");
       MethodSource<JavaClassSource> getDeployment = javaClass.addMethod().setName("getDeployment").setPublic()
@@ -168,6 +178,22 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
       JavaResource javaResource = facet.saveTestJavaSource(javaClass);
       uiContext.setSelection(javaResource);
       return Results.success("Test class " + javaClass.getQualifiedName() + " created");
+   }
+
+   private void addAddonDependency(Project project, StringBuilder body, StringBuilder dependenciesAnnotationBody,
+            AddonId addonId)
+   {
+      Dependency dependency = DependencyBuilder.create(addonId.getName()).setVersion(
+               addonId.getVersion().toString()).setScopeType("test");
+      String name = addonId.getName();
+      if (!dependencyInstaller.isInstalled(project, dependency))
+      {
+         dependencyInstaller.install(project, dependency);
+      }
+      body.append("AddonDependencyEntry.create(\"").append(name);
+      dependenciesAnnotationBody.append("@AddonDependency(name = \"").append(name);
+      body.append("\")");
+      dependenciesAnnotationBody.append("\")");
    }
 
    @Override
