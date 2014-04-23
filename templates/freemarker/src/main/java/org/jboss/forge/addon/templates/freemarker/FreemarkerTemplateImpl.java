@@ -7,6 +7,7 @@ import java.io.Writer;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.templates.AbstractTemplate;
 
+import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 
 /**
@@ -19,16 +20,15 @@ import freemarker.template.TemplateException;
  */
 class FreemarkerTemplateImpl extends AbstractTemplate implements FreemarkerTemplate
 {
-   private final freemarker.template.Configuration freemarkerConfig;
+   private final freemarker.template.Configuration config;
    private final ResourceTemplateLoader loader;
 
-   public FreemarkerTemplateImpl(ResourceTemplateLoader loader, Resource<?> resource)
+   public FreemarkerTemplateImpl(ResourceTemplateLoader loader, Resource<?> resource, Configuration config)
    {
       super(resource);
       this.loader = loader;
 
-      freemarkerConfig = new freemarker.template.Configuration();
-      freemarkerConfig.setTemplateLoader(loader);
+      this.config = config;
    }
 
    @Override
@@ -62,6 +62,6 @@ class FreemarkerTemplateImpl extends AbstractTemplate implements FreemarkerTempl
    @Override
    public freemarker.template.Configuration getFreemarkerConfig()
    {
-      return freemarkerConfig;
+      return config;
    }
 }

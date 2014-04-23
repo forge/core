@@ -14,6 +14,8 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.templates.Template;
 import org.jboss.forge.addon.templates.TemplateGenerator;
 
+import freemarker.template.Configuration;
+
 /**
  * A Freemarker implementation of a {@link TemplateGenerator}
  * 
@@ -24,6 +26,7 @@ public class FreemarkerTemplateGenerator implements TemplateGenerator
 {
    @Inject
    private ResourceTemplateLoader loader;
+   private Configuration config;
 
    @Override
    public boolean handles(Class<? extends Template> type)
@@ -34,7 +37,17 @@ public class FreemarkerTemplateGenerator implements TemplateGenerator
    @Override
    public Template create(Resource<?> template, Class<? extends Template> type)
    {
-      return new FreemarkerTemplateImpl(loader, template);
+      return new FreemarkerTemplateImpl(loader, template, getConfiguration());
+   }
+
+   private Configuration getConfiguration()
+   {
+      if (config == null)
+      {
+         config = new Configuration();
+         config.setTemplateLoader(loader);
+      }
+      return config;
    }
 
 }
