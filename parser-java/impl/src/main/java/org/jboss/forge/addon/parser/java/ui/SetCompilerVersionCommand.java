@@ -71,7 +71,7 @@ public class SetCompilerVersionCommand extends AbstractProjectCommand
    @Override
    public void validate(UIValidationContext validator)
    {
-      if (sourceVersion.hasValue() && targetVersion.hasValue())
+      if (sourceVersion.getValue() != null && targetVersion.getValue() != null)
       {
          if (sourceVersion.getValue().ordinal() > targetVersion.getValue().ordinal())
          {
