@@ -46,8 +46,8 @@ public class SetCompilerVersionCommand extends AbstractProjectCommand
    public void initializeUI(UIBuilder builder) throws Exception
    {
       JavaCompilerFacet javaCompilerFacet = getJavaCompilerFacet(builder.getUIContext());
-      sourceVersion.setValue(javaCompilerFacet.getSourceCompilerVersion());
-      targetVersion.setValue(javaCompilerFacet.getTargetCompilerVersion());
+      sourceVersion.setDefaultValue(javaCompilerFacet.getSourceCompilerVersion());
+      targetVersion.setDefaultValue(javaCompilerFacet.getTargetCompilerVersion());
       builder.add(sourceVersion).add(targetVersion);
    }
 
@@ -71,10 +71,13 @@ public class SetCompilerVersionCommand extends AbstractProjectCommand
    @Override
    public void validate(UIValidationContext validator)
    {
-      if (sourceVersion.getValue().ordinal() > targetVersion.getValue().ordinal())
+      if (sourceVersion.hasValue() && targetVersion.hasValue())
       {
-         validator.addValidationError(sourceVersion, "Selected source version (" + sourceVersion.toString() +
-                  ") is higher than the target version (" + targetVersion.toString() + ").");
+         if (sourceVersion.getValue().ordinal() > targetVersion.getValue().ordinal())
+         {
+            validator.addValidationError(sourceVersion, "Selected source version (" + sourceVersion.getValue() +
+                     ") is higher than the target version (" + targetVersion.getValue() + ").");
+         }
       }
    }
 
