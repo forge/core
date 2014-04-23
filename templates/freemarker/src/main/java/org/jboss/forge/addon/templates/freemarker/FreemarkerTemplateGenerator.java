@@ -17,8 +17,6 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.templates.Template;
 import org.jboss.forge.addon.templates.TemplateGenerator;
 
-import freemarker.cache.TemplateCache;
-import freemarker.cache.TemplateLoader;
 import freemarker.template.TemplateException;
 
 /**

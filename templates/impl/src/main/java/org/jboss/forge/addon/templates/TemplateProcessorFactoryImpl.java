@@ -15,7 +15,7 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @Singleton
@@ -39,17 +39,19 @@ public class TemplateProcessorFactoryImpl implements TemplateProcessorFactory
       throw new IllegalStateException("No generator found for [" + template + "]");
    }
 
-    @Override
-    public TemplateProcessor fromTemplate(Resource template) {
-        Assert.notNull(template, "Template resource cannot be null");
-        Assert.isTrue(template.exists(), "Template does not exist: " + template);
-        for (TemplateGenerator generator : generators)
-        {
-            if (generator.handles(template))
-            {
-                return new TemplateProcessorImpl(generator, template);
-            }
-        }
-        throw new IllegalStateException("No generator found for [" + template + "]");
-    }
+   @SuppressWarnings("deprecation")
+   @Override
+   public TemplateProcessor fromTemplate(Resource<?> template)
+   {
+      Assert.notNull(template, "Template resource cannot be null");
+      Assert.isTrue(template.exists(), "Template does not exist: " + template);
+      for (TemplateGenerator generator : generators)
+      {
+         if (generator.handles(template))
+         {
+            return new TemplateProcessorImpl(generator, template);
+         }
+      }
+      throw new IllegalStateException("No generator found for [" + template + "]");
+   }
 }

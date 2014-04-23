@@ -15,14 +15,14 @@ import java.io.Writer;
 
 /**
  * {@link TemplateProcessor} implementation
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class TemplateProcessorImpl implements TemplateProcessor
 {
    private final TemplateGenerator generator;
    private Template template;
-   private Resource resource;
+   private Resource<?> resource;
 
    TemplateProcessorImpl(TemplateGenerator generator, Template template)
    {
@@ -34,7 +34,7 @@ public class TemplateProcessorImpl implements TemplateProcessor
    /**
     * @deprecated Deprecated after Forge 2.1.1. Use the {@link Template} based constructor instead.
     */
-   TemplateProcessorImpl(TemplateGenerator generator, Resource resource)
+   TemplateProcessorImpl(TemplateGenerator generator, Resource<?> resource)
    {
       super();
       this.generator = generator;
@@ -49,6 +49,7 @@ public class TemplateProcessorImpl implements TemplateProcessor
       return writer.toString();
    }
 
+   @SuppressWarnings("deprecation")
    @Override
    public void process(Object dataModel, Writer output) throws IOException
    {
