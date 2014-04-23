@@ -35,27 +35,26 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 </dependency>
 ----
 == Features
-TemplateProcessorFactory for template processing:: 
-Allows a template to be processed by replacing the variables with the provided parameters 
+TemplateFactory for template creation:: 
+Allows a Template to be created, which will replace its template's variables with the provided parameters 
 +
 [source,java]
 ----
-@Inject private TemplateProcessorFactory factory;
+@Inject private TemplateFactory factory;
 ...
 FileResource<?> resource = ...; // A file resource containing "Hello ${name}"
-Template template = new FreemarkerTemplate(resource); // Mark this resource as a Freemarker template
-TemplateProcessor processor = factory.fromTemplate(template);
-Map<String,Object> params = new HashMap<String,Object>(); //Could be a POJO also.
+Template template = factory.create(resource, FreemarkerTemplate.class); // Create a freemarker template for the given Resource
+Map<String,Object> params = new HashMap<String,Object>(); //Could also be a POJO also.
 params.put("name", "JBoss Forge");
-String output = processor.process(params); // should return "Hello JBoss Forge". 
+String output = template.process(params); // should return "Hello JBoss Forge". 
 ----
 +
 [TIP] 
 ====
-If your addon uses a container that does not support "@Inject" annotations, services such as the `TemplateProcessorFactory` may also be 
+If your addon uses a container that does not support "@Inject" annotations, services such as the `TemplateFactory` may also be 
 accessed via the `AddonRegistry`:
 ----
-Imported<TemplateProcessorFactory> imported = addonRegistry.getServices(TemplateProcessorFactory.class);
-TemplateProcessorFactory factory = imported.get();
+Imported<TemplateFactory> imported = addonRegistry.getServices(TemplateProcessorFactory.class);
+TemplateFactory factory = imported.get();
 ----
 ==== 

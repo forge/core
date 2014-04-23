@@ -55,38 +55,38 @@ public class TemplateTestCase
    private ResourceFactory resourceFactory;
 
    @Inject
-   private TemplateProcessorFactory templateProcessorFactory;
+   private TemplateFactory templateFactory;
 
    @Test
    public void testProcessorFactoryInjection() throws Exception
    {
-      Assert.assertNotNull(templateProcessorFactory);
+      Assert.assertNotNull(templateFactory);
    }
 
    @Test
    @SuppressWarnings("rawtypes")
    public void testTemplateProcessor() throws Exception
    {
-      String template = "Hello ${name}!";
+      String templateContents = "Hello ${name}!";
       String expected = "Hello JBoss Forge!";
       File tempFile = File.createTempFile("template", ".tmp");
       tempFile.deleteOnExit();
       FileResource resource = resourceFactory.create(tempFile).reify(FileResource.class);
-      resource.setContents(template);
-      TemplateProcessor processor = templateProcessorFactory.fromTemplate(new FreemarkerTemplate(resource));
-      String actual = processor.process(Collections.singletonMap("name", "JBoss Forge"));
+      resource.setContents(templateContents);
+      Template template = templateFactory.create(resource, FreemarkerTemplate.class);
+      String actual = template.process(Collections.singletonMap("name", "JBoss Forge"));
       Assert.assertEquals(expected, actual);
    }
 
    @Test
    public void testClasspathTemplateProcessor() throws Exception
    {
-      URL template = getClass().getResource("template.ftl");
-      Assert.assertNotNull(template);
+      URL templateURL = getClass().getResource("template.ftl");
+      Assert.assertNotNull(templateURL);
       String expected = "Hello JBoss Forge!";
-      Resource<?> resource = resourceFactory.create(template);
-      TemplateProcessor processor = templateProcessorFactory.fromTemplate(new FreemarkerTemplate(resource));
-      String actual = processor.process(Collections.singletonMap("name", "JBoss Forge"));
+      Resource<?> resource = resourceFactory.create(templateURL);
+      Template template = templateFactory.create(resource, FreemarkerTemplate.class);
+      String actual = template.process(Collections.singletonMap("name", "JBoss Forge"));
       Assert.assertEquals(expected, actual);
    }
 
@@ -94,28 +94,28 @@ public class TemplateTestCase
    @SuppressWarnings("rawtypes")
    public void testTemplateProcessorJavaBean() throws Exception
    {
-      String template = "Hello ${name}!";
+      String templateContents = "Hello ${name}!";
       String expected = "Hello JBoss Forge!";
       File tempFile = File.createTempFile("template", ".tmp");
       tempFile.deleteOnExit();
       FileResource resource = resourceFactory.create(tempFile).reify(FileResource.class);
-      resource.setContents(template);
-      TemplateProcessor processor = templateProcessorFactory.fromTemplate(new FreemarkerTemplate(resource));
+      resource.setContents(templateContents);
+      Template template = templateFactory.create(resource, FreemarkerTemplate.class);
       JavaBean dataModel = new JavaBean();
       dataModel.setName("JBoss Forge");
-      String actual = processor.process(dataModel);
+      String actual = template.process(dataModel);
       Assert.assertEquals(expected, actual);
    }
 
    @Test
    public void testIncludesTemplateProcessor() throws Exception
    {
-      URL template = getClass().getResource("includes.ftl");
-      Assert.assertNotNull(template);
+      URL templateURL = getClass().getResource("includes.ftl");
+      Assert.assertNotNull(templateURL);
       String expected = "Hello JBoss Forge! And Goodbye JBoss Forge!";
-      Resource<?> resource = resourceFactory.create(template);
-      TemplateProcessor processor = templateProcessorFactory.fromTemplate(new FreemarkerTemplate(resource));
-      String actual = processor.process(Collections.singletonMap("name", "JBoss Forge"));
+      Resource<?> resource = resourceFactory.create(templateURL);
+      Template template = templateFactory.create(resource, FreemarkerTemplate.class);
+      String actual = template.process(Collections.singletonMap("name", "JBoss Forge"));
       Assert.assertEquals(expected, actual);
    }
 

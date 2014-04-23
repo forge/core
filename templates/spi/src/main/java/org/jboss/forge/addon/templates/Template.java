@@ -1,26 +1,30 @@
 package org.jboss.forge.addon.templates;
 
+import java.io.IOException;
+import java.io.Writer;
+
 import org.jboss.forge.addon.resource.Resource;
 
 /**
- * An abstract representation of a template. Concrete instances of this class are used to wrap {@link Resource}
- * instances representing template resources.
- *
+ * A representation of a {@link Template} that knows how to render a specific {@link Resource} instance.
+ * 
  * @author Vineet Reynolds
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface Template
 {
    /**
-    * Fetches the underlying resource associated with this Template instance.
-    *
-    * @return the resource associated with this instance
+    * Fetches the underlying {@link Resource} associated with this {@link Template} instance.
     */
    Resource<?> getResource();
 
    /**
-    * Indicates whether the template exists or not, usually through it's underlying resource.
-    *
-    * @return whether the template exists or not
+    * Process the given model and return a {@link String} result containing {@link Template} output.
     */
-   boolean exists();
+   public String process(Object model) throws IOException;
+
+   /**
+    * Process the given model and write the {@link Template} output to the given {@link Writer}.
+    */
+   public void process(Object model, Writer output) throws IOException;
 }

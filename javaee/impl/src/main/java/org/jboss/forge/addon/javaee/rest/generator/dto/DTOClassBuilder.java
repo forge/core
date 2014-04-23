@@ -17,8 +17,8 @@ import javax.persistence.TypedQuery;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.templates.TemplateProcessor;
-import org.jboss.forge.addon.templates.TemplateProcessorFactory;
+import org.jboss.forge.addon.templates.Template;
+import org.jboss.forge.addon.templates.TemplateFactory;
 import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaClass;
@@ -46,25 +46,27 @@ public class DTOClassBuilder
    private MethodSource<JavaClassSource> assembleJPA;
    private MethodSource<JavaClassSource> copyCtor;
    private final Property<?> idProperty;
-   private final TemplateProcessor initializeJPAEntityFromId;
-   private final TemplateProcessor assembleCollection;
-   private final TemplateProcessor initializeNestedDTOCollection;
+   private final Template initializeJPAEntityFromId;
+   private final Template assembleCollection;
+   private final Template initializeNestedDTOCollection;
 
    public DTOClassBuilder(JavaClass<?> entity, Property<?> idProperty, boolean topLevel,
-            TemplateProcessorFactory processorFactory, ResourceFactory resourceFactory)
+            TemplateFactory templateFactory, ResourceFactory resourceFactory)
    {
       this.entity = entity;
       this.idProperty = idProperty;
       this.topLevel = topLevel;
       this.copyCtorBuilder = new StringBuilder();
       this.assembleJPABuilder = new StringBuilder();
-      this.initializeJPAEntityFromId = processorFactory.fromTemplate(new FreemarkerTemplate(resourceFactory
-               .create(getClass().getResource("InitializeJPAEntityFromId.jv"))));
-      this.assembleCollection = processorFactory.fromTemplate(new FreemarkerTemplate(resourceFactory.create(getClass()
-               .getResource("AssembleCollection.jv"))));
+      this.initializeJPAEntityFromId = templateFactory.create(
+               resourceFactory.create(getClass().getResource("InitializeJPAEntityFromId.jv")),
+               FreemarkerTemplate.class);
+      this.assembleCollection = templateFactory.create(
+               resourceFactory.create(getClass().getResource("AssembleCollection.jv")), FreemarkerTemplate.class);
 
-      this.initializeNestedDTOCollection = processorFactory.fromTemplate(new FreemarkerTemplate(resourceFactory
-               .create(getClass().getResource("InitializeNestedDTOCollection.jv"))));
+      this.initializeNestedDTOCollection = templateFactory.create(
+               resourceFactory.create(getClass().getResource("InitializeNestedDTOCollection.jv")),
+               FreemarkerTemplate.class);
 
       initName();
       initClassStructure();

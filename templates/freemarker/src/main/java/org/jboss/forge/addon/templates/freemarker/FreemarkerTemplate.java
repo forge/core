@@ -1,19 +1,17 @@
 package org.jboss.forge.addon.templates.freemarker;
 
-import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.templates.AbstractTemplate;
+import org.jboss.forge.addon.templates.Template;
 
 /**
- * An abstract representation of a Freemarker template. Consumers of this class create instances of it with
- * {@link Resource} instances to wrap Freemarker template resources. This class is used to distinguish Freemarker
- * templates from other templates.
- *
+ * A Freemarker {@link Template}.
+ * 
  * @author Vineet Reynolds
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class FreemarkerTemplate extends AbstractTemplate
+public interface FreemarkerTemplate extends Template
 {
-   public FreemarkerTemplate(Resource<?> resource)
-   {
-      super(resource);
-   }
+   /**
+    * Get the Freemarker engine template Configuration.
+    */
+   public freemarker.template.Configuration getFreemarkerConfig();
 }

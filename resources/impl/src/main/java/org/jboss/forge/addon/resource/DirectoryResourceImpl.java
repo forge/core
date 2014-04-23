@@ -28,6 +28,8 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    public DirectoryResourceImpl(final ResourceFactory factory, final File file)
    {
       super(factory, file);
+
+      isStale();
    }
 
    @Override
@@ -84,7 +86,8 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
 
       if (!(result instanceof DirectoryResourceImpl))
       {
-         result = new DirectoryResourceImpl(getResourceFactory(), new File(getUnderlyingResourceObject().getAbsoluteFile(), name));
+         result = new DirectoryResourceImpl(getResourceFactory(), new File(getUnderlyingResourceObject()
+                  .getAbsoluteFile(), name));
       }
       return (DirectoryResourceImpl) result;
    }
@@ -179,13 +182,15 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    {
       String fileName = getUnderlyingResourceObject().getName();
       // Windows: drive letter is needed. If filename is empty, we are on a root folder
-      return (OperatingSystemUtils.isWindows() && fileName.length() == 0) ? getUnderlyingResourceObject().getPath() : fileName;
+      return (OperatingSystemUtils.isWindows() && fileName.length() == 0) ? getUnderlyingResourceObject().getPath()
+               : fileName;
    }
 
    @Override
    public boolean equals(final Object obj)
    {
-      return (obj instanceof DirectoryResourceImpl) && ((DirectoryResourceImpl) obj).getUnderlyingResourceObject().equals(getUnderlyingResourceObject());
+      return (obj instanceof DirectoryResourceImpl)
+               && ((DirectoryResourceImpl) obj).getUnderlyingResourceObject().equals(getUnderlyingResourceObject());
    }
 
    @Override

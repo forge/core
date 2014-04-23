@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
@@ -24,13 +25,14 @@ import freemarker.cache.StatefulTemplateLoader;
 
 /**
  * Loader for Resource objects
- *
+ * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Singleton
 public class ResourceTemplateLoader implements StatefulTemplateLoader
 {
-   private Map<String, ResourceId> resourceMap = new ConcurrentHashMap<String, ResourceId>();
+   private final Map<String, ResourceId> resourceMap = new ConcurrentHashMap<>();
 
    /**
     * Needed for includes
@@ -41,8 +43,8 @@ public class ResourceTemplateLoader implements StatefulTemplateLoader
    String register(Resource<?> resource)
    {
       ResourceId resourceId = generateResourceId(resource);
-      resourceMap.put(resourceId.id, resourceId);
-      return resourceId.id;
+      resourceMap.put(resourceId.getId(), resourceId);
+      return resourceId.getId();
    }
 
    void dispose(String id)
@@ -53,26 +55,38 @@ public class ResourceTemplateLoader implements StatefulTemplateLoader
    @Override
    public Object findTemplateSource(String name) throws IOException
    {
-      ResourceId resource = resourceMap.get(name);
-      if (resource == null)
+      ResourceId id = resourceMap.get(name);
+      if (id == null)
+      {
+         for (Entry<String, ResourceId> entry : resourceMap.entrySet())
+         {
+            if (name.startsWith(entry.getKey()))
+            {
+               id = entry.getValue();
+               break;
+            }
+         }
+      }
+
+      if (id == null)
       {
          Resource<?> includedResource = resourceFactory.create(name);
          if (includedResource != null && includedResource.exists())
          {
-            resource = generateResourceId(includedResource);
+            id = generateResourceId(includedResource);
          }
       }
-      return resource;
+      return id;
    }
 
    @Override
    public long getLastModified(Object templateSource)
    {
       ResourceId resourceId = (ResourceId) templateSource;
-      Resource<?> resource = resourceId.resource;
+      Resource<?> resource = resourceId.getResource();
       if (resource instanceof FileResource)
       {
-         return ((FileResource<?>) resource).getUnderlyingResourceObject().lastModified();
+         return ((FileResource<?>) resource).getLastModified();
       }
       return 0L;
    }
@@ -81,14 +95,14 @@ public class ResourceTemplateLoader implements StatefulTemplateLoader
    public Reader getReader(Object templateSource, String encoding) throws IOException
    {
       ResourceId resourceId = (ResourceId) templateSource;
-      return new InputStreamReader(resourceId.resource.getResourceInputStream(), encoding);
+      return new InputStreamReader(resourceId.getResource().getResourceInputStream(), encoding);
    }
 
    @Override
    public void closeTemplateSource(Object templateSource) throws IOException
    {
       ResourceId resourceId = (ResourceId) templateSource;
-      dispose(resourceId.id);
+      dispose(resourceId.getId());
    }
 
    @Override
@@ -99,21 +113,7 @@ public class ResourceTemplateLoader implements StatefulTemplateLoader
 
    private ResourceId generateResourceId(Resource<?> resource)
    {
-      String id = resource.getName();
-      return new ResourceId(id, resource);
-   }
-
-   private static class ResourceId
-   {
-      final String id;
-      final Resource<?> resource;
-
-      ResourceId(String id, Resource<?> resource)
-      {
-         super();
-         this.id = id;
-         this.resource = resource;
-      }
+      return new ResourceId(resource);
    }
 
 }

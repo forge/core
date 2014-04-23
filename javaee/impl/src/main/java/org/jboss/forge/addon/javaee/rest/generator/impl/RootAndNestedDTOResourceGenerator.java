@@ -35,8 +35,8 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.templates.TemplateProcessor;
-import org.jboss.forge.addon.templates.TemplateProcessorFactory;
+import org.jboss.forge.addon.templates.Template;
+import org.jboss.forge.addon.templates.TemplateFactory;
 import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Field;
@@ -49,13 +49,13 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 /**
  * A JAX-RS resource generator that creates root and nested DTOs for JPA entities, and references these DTOs in the
  * created REST resources.
- *
+ * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
 {
    @Inject
-   TemplateProcessorFactory processorFactory;
+   TemplateFactory templateFactory;
 
    @Inject
    ResourceFactory resourceFactory;
@@ -95,7 +95,7 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
       map.put("resourcePath", resourcePath);
 
       Resource<URL> templateResource = resourceFactory.create(getClass().getResource("EndpointWithDTO.jv"));
-      TemplateProcessor processor = processorFactory.fromTemplate(new FreemarkerTemplate(templateResource));
+      Template processor = templateFactory.create(templateResource, FreemarkerTemplate.class);
       String output = processor.process(map);
       JavaClassSource resource = Roaster.parse(JavaClassSource.class, output);
       resource.addImport(rootDto.getQualifiedName());
@@ -109,7 +109,7 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
 
    /**
     * Creates a collection of DTOs for the provided JPA entity, and any JPA entities referenced in the JPA entity.
-    *
+    * 
     * @param entity The JPA entity for which DTOs are to be generated
     * @param dtoPackage The Java package in which the DTOs are to be created
     * @return The {@link DTOCollection} containing the DTOs created for the JPA entity.
@@ -136,7 +136,7 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
 
       Property<?> idProperty = parseIdPropertyForJPAEntity(entity);
 
-      DTOClassBuilder dtoClassBuilder = new DTOClassBuilder(entity, idProperty, topLevel, processorFactory,
+      DTOClassBuilder dtoClassBuilder = new DTOClassBuilder(entity, idProperty, topLevel, templateFactory,
                resourceFactory)
                .setPackage(dtoPackage)
                .setEmbeddedType(isEmbeddedType);

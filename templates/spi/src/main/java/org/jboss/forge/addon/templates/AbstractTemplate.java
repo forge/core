@@ -6,8 +6,9 @@ import org.jboss.forge.furnace.util.Assert;
 /**
  * An abstract representation of a template. Concrete instances of this class are used to wrap {@link Resource}
  * instances representing template resources.
- *
+ * 
  * @author Vineet Reynolds
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public abstract class AbstractTemplate implements Template
 {
@@ -22,21 +23,12 @@ public abstract class AbstractTemplate implements Template
 
    /**
     * Fetches the underlying resource associated with this Template instance.
-    *
+    * 
     * @return the resource associated with this instance
     */
+   @Override
    public Resource<?> getResource()
    {
       return resource;
-   }
-
-   /**
-    * Indicates whether the template exists or not, usually through it's underlying resource.
-    *
-    * @return whether the template exists or not
-    */
-   public boolean exists()
-   {
-      return resource.exists();
    }
 }

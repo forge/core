@@ -16,6 +16,11 @@
          <scope>provided</scope>
       </dependency>
       <dependency>
+         <groupId>org.jboss.forge.furnace</groupId>
+         <artifactId>furnace-se</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
          <groupId>org.jboss.forge.furnace.test</groupId>
          <artifactId>furnace-test-harness</artifactId>
          <scope>test</scope>
