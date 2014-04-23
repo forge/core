@@ -34,11 +34,12 @@ public class SetCompilerVersionCommand extends AbstractProjectCommand
    @WithAttributes(label = "Target compilation version", required = true)
    private UISelectOne<JavaCompilerFacet.CompilerVersion> targetVersion;
 
-   @Override public UICommandMetadata getMetadata(UIContext context)
+   @Override
+   public UICommandMetadata getMetadata(UIContext context)
    {
-      return  Metadata.from(super.getMetadata(context), getClass()).name("Project: Set Compiler Version")
+      return Metadata.from(super.getMetadata(context), getClass()).name("Project: Set Compiler Version")
                .description("Set the java sources and the target compilation version")
-               .category(Categories.create(super.getMetadata(context).getCategory(), "Project"));
+               .category(Categories.create("Project", "Manage"));
    }
 
    @Override
@@ -77,7 +78,8 @@ public class SetCompilerVersionCommand extends AbstractProjectCommand
       }
    }
 
-   @Override protected boolean isProjectRequired()
+   @Override
+   protected boolean isProjectRequired()
    {
       return true;
    }
@@ -85,7 +87,8 @@ public class SetCompilerVersionCommand extends AbstractProjectCommand
    @Inject
    private ProjectFactory projectFactory;
 
-   @Override protected ProjectFactory getProjectFactory()
+   @Override
+   protected ProjectFactory getProjectFactory()
    {
       return projectFactory;
    }
