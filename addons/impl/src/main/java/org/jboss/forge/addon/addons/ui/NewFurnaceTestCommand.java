@@ -134,23 +134,14 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
          {
             AddonId addonId = it.next();
             Dependency dependency = DependencyBuilder.create(addonId.getName()).setVersion(
-                     addonId.getVersion().toString());
+                     addonId.getVersion().toString()).setScopeType("test");
             String name = addonId.getName();
-            String version = null;
-            if (dependencyInstaller.isInstalled(project, dependency))
+            if (!dependencyInstaller.isInstalled(project, dependency))
             {
-               version = addonId.getVersion().toString();
+               dependencyInstaller.install(project, dependency);
             }
             body.append("AddonDependencyEntry.create(\"").append(name);
             dependenciesAnnotationBody.append("@AddonDependency(name = \"").append(name);
-            if (version != null)
-            {
-               body.append("\", \"");
-               body.append(version);
-               dependenciesAnnotationBody.append("\", version=\"");
-               dependenciesAnnotationBody.append(version);
-            }
-
             body.append("\")");
             dependenciesAnnotationBody.append("\")");
             if (it.hasNext())
