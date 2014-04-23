@@ -410,6 +410,11 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>templates-freemarker</artifactId>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>text</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
