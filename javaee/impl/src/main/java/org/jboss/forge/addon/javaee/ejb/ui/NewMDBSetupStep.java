@@ -6,11 +6,18 @@
  */
 package org.jboss.forge.addon.javaee.ejb.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.javaee.ejb.EJBOperations;
 import org.jboss.forge.addon.javaee.ejb.JMSDestinationType;
+import org.jboss.forge.addon.javaee.facets.JMSFacet;
+import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -32,7 +39,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  *
  */
-public class NewMDBSetupStep implements UIWizardStep
+public class NewMDBSetupStep extends AbstractJavaEECommand implements UIWizardStep
 {
 
    @Override
@@ -47,6 +54,13 @@ public class NewMDBSetupStep implements UIWizardStep
    EJBOperations operations;
 
    @Inject
+   private FacetFactory facetFactory;
+
+   @Inject
+   @WithAttributes(required = true, label = "JMS Version", defaultValue = "1.1")
+   private UISelectOne<JMSFacet> jmsVersion;
+
+   @Inject
    @WithAttributes(label = "JMS Destination Type", required = true)
    private UISelectOne<JMSDestinationType> destType;
 
@@ -58,8 +72,12 @@ public class NewMDBSetupStep implements UIWizardStep
    public void initializeUI(UIBuilder builder) throws Exception
    {
       destType.setDefaultValue(JMSDestinationType.QUEUE);
-
-      builder.add(destName).add(destType);
+      Project project = getSelectedProject(builder);
+      if (project.hasFacet(JMSFacet.class))
+      {
+         jmsVersion.setEnabled(false).setValue(project.getFacet(JMSFacet.class));
+      }
+      builder.add(jmsVersion).add(destName).add(destType);
    }
 
    @Override
@@ -70,12 +88,18 @@ public class NewMDBSetupStep implements UIWizardStep
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
+      List<Result> results = new ArrayList<>();
+      if (jmsVersion.isEnabled() && facetFactory.install(getSelectedProject(context), jmsVersion.getValue()))
+      {
+         results.add(Results.success("JMS has been installed."));
+      }
       JavaResource ejbResource = (JavaResource) context.getUIContext().getAttributeMap().get(JavaResource.class);
       JavaClassSource ejb = operations.setupMessageDrivenBean((JavaClassSource) ejbResource.getJavaType(),
                destType.getValue(),
                destName.getValue());
       ejbResource.setContents(ejb);
-      return Results.success("Configured Message Driven EJB.");
+      results.add(Results.success("Configured Message Driven EJB."));
+      return Results.aggregate(results);
    }
 
    @Override
@@ -88,5 +112,11 @@ public class NewMDBSetupStep implements UIWizardStep
    public NavigationResult next(UINavigationContext context) throws Exception
    {
       return null;
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return true;
    }
 }

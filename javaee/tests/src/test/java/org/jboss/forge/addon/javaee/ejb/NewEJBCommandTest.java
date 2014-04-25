@@ -25,6 +25,7 @@ import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.javaee.ejb.ui.EJBSetClassTransactionAttributeCommand;
 import org.jboss.forge.addon.javaee.ejb.ui.EJBSetMethodTransactionAttributeCommand;
 import org.jboss.forge.addon.javaee.ejb.ui.NewEJBCommand;
+import org.jboss.forge.addon.javaee.facets.JMSFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -96,7 +97,8 @@ public class NewEJBCommandTest
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
-
+      Assert.assertTrue(project.hasFacet(EJBFacet.class));
+      Assert.assertFalse(project.hasFacet(JMSFacet.class));
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.TestEJB");
       Assert.assertNotNull(javaResource);
@@ -132,6 +134,9 @@ public class NewEJBCommandTest
       Result result = controller.execute();
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
 
+      project = projectHelper.refreshProject(project);
+      Assert.assertTrue(project.hasFacet(EJBFacet.class));
+      Assert.assertTrue(project.hasFacet(JMSFacet.class));
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.TestEJB");
       Assert.assertNotNull(javaResource);
@@ -205,6 +210,9 @@ public class NewEJBCommandTest
       Assert.assertFalse(((JavaClass<?>) javaResource.getJavaType()).getMethod("onMessage", Message.class)
                .hasAnnotation(TransactionAttribute.class));
       controller3.execute();
+      project = projectHelper.refreshProject(project);
+      Assert.assertTrue(project.hasFacet(EJBFacet.class));
+      Assert.assertTrue(project.hasFacet(JMSFacet.class));
       Assert.assertTrue(((JavaClass<?>) javaResource.getJavaType()).getMethod("onMessage", Message.class)
                .hasAnnotation(
                         TransactionAttribute.class));

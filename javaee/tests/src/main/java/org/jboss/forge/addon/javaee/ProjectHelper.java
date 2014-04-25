@@ -140,4 +140,9 @@ public class ProjectHelper
       enumSource.setPackage(packageName);
       return javaSourceFacet.saveJavaSource(enumSource);
    }
+
+   public Project refreshProject(Project project)
+   {
+      return projectFactory.findProject(project.getRoot());
+   }
 }

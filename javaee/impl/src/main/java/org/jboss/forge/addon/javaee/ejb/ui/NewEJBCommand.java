@@ -7,6 +7,8 @@
 package org.jboss.forge.addon.javaee.ejb.ui;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ejb.MessageDriven;
 import javax.ejb.Singleton;
@@ -14,6 +16,8 @@ import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.javaee.ejb.EJBFacet;
 import org.jboss.forge.addon.javaee.ejb.EJBOperations;
 import org.jboss.forge.addon.javaee.ejb.EJBType;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
@@ -68,6 +72,13 @@ public class NewEJBCommand extends AbstractJavaEECommand implements UIWizard
    private UIInput<DirectoryResource> targetLocation;
 
    @Inject
+   private FacetFactory facetFactory;
+
+   @Inject
+   @WithAttributes(required = true, label = "EJB Version", defaultValue = "3.1")
+   private UISelectOne<EJBFacet> ejbVersion;
+
+   @Inject
    private EJBOperations ejbOperations;
 
    @Override
@@ -99,14 +110,21 @@ public class NewEJBCommand extends AbstractJavaEECommand implements UIWizard
             }
          }
       }
-      else if (project.hasFacet(JavaSourceFacet.class))
+      else
       {
-         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-         targetLocation.setDefaultValue(facet.getSourceDirectory()).setEnabled(false);
-         targetPackage.setValue(calculateServicePackage(project));
+         if (project.hasFacet(EJBFacet.class))
+         {
+            ejbVersion.setEnabled(false).setValue(project.getFacet(EJBFacet.class));
+         }
+         if (project.hasFacet(JavaSourceFacet.class))
+         {
+            JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+            targetLocation.setDefaultValue(facet.getSourceDirectory()).setEnabled(false);
+            targetPackage.setValue(calculateServicePackage(project));
+         }
       }
 
-      builder.add(targetLocation).add(targetPackage).add(named).add(type).add(serializable);
+      builder.add(ejbVersion).add(targetLocation).add(targetPackage).add(named).add(type).add(serializable);
    }
 
    private String calculateServicePackage(Project project)
@@ -141,6 +159,12 @@ public class NewEJBCommand extends AbstractJavaEECommand implements UIWizard
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
+      List<Result> results = new ArrayList<>();
+      if (ejbVersion.isEnabled()
+               && facetFactory.install(getSelectedProject(context.getUIContext()), ejbVersion.getValue()))
+      {
+         results.add(Results.success("EJB has been installed."));
+      }
       String entityName = named.getValue();
       String entityPackage = targetPackage.getValue();
       EJBType ejbTypeChosen = type.getValue();
@@ -162,7 +186,8 @@ public class NewEJBCommand extends AbstractJavaEECommand implements UIWizard
       context.getUIContext().getAttributeMap().put(JavaResource.class, javaResource);
 
       context.getUIContext().setSelection(javaResource);
-      return Results.success("EJB " + javaResource + " created.");
+      results.add(Results.success("EJB " + javaResource + " created."));
+      return Results.aggregate(results);
    }
 
    @Override
