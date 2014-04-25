@@ -83,7 +83,7 @@ If you wish to remove any addon, you can use the following command:
 == Get Started with the Forge 2 Eclipse Plugin:
 
 ____
-Forge 2 is known to work with Eclipse Luna (4.3) or higher versions.
+Forge 2 is known to work with Eclipse Luna (4.4) or higher versions.
 ____
 
 
