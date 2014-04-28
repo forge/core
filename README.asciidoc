@@ -97,69 +97,132 @@ This plugin starts the Forge 2 Container and your installed addons, so you can u
 
 [options="header"]
 |===
-|Addon name |Included in Eclipse Plugin ?
+|Addon name | What does it do? | Standalone func.? | Exports services? | Included in Eclipse Plugin ?
 
 |link:addon-manager/README.asciidoc[Addon Manager]
+|
+|
+|
 |yes
 
 |link:addons/README.asciidoc[Addons]
+|
+|
+|
 |yes
 
 |link:configuration/README.asciidoc[Configuration]
+|
+|
+|
 |yes
 
 |link:convert/README.asciidoc[Convert]
+|
+|
+|
 |yes
 
 |link:dependencies/README.asciidoc[Dependencies]
+|
+|
+|
 |yes
 
 |link:dev-tools-java/README.asciidoc[Dev Tools - Java]
+|
+|
+|
 |yes
 
 |link:environment/README.asciidoc[Environment]
+|
+|
+|
 |yes
 
 |link:facets/README.asciidoc[Facets]
+|
+|
+|
 |yes
 
 |link:git/README.asciidoc[Git]
+|
+|
+|
 |yes
 
 |link:javaee/README.asciidoc[Java EE]
+|
+|
+|
 |yes
 
 |link:maven/README.asciidoc[Maven]
+|
+|
+|
 |yes
 
 |link:parser-java/README.asciidoc[Parser Java]
+|
+|
+|
 |yes
 
 |link:parser-json/README.asciidoc[Parser Json]
+|
+|
+|
 |no
 
 |link:parser-xml/README.asciidoc[Parser XML]
+|
+|
+|
 |yes
 
 |link:projects/README.asciidoc[Projects]
+|
+|
+|
 |yes
 
 |link:resources/README.asciidoc[Resources]
+|
+|
+|
 |yes
 
 |link:scaffold/README.asciidoc[Scaffold]
+|
+|
+|
 |yes
 
 |link:shell/README.asciidoc[Shell]
+|
+|
+|
 |yes
 
 |link:templates/README.asciidoc[Templates]
+|
+|
+|
 |yes
 
 |link:text/README.asciidoc[Text]
+|
+|
+|
 |yes
 
 |link:ui/README.asciidoc[User Interface (UI)]
+|
+|
+|
 |yes
 
 |===
