@@ -91,7 +91,7 @@ ____
 
 This plugin starts the Forge 2 Container and your installed addons, so you can use them directly in your workspace
 
-- Press Ctrl + 5 to show the installed addons that you may interact with (these addons use the UI addon, hence providing a user interface - see Developing an UI Addon for more details).
+- Press Ctrl + 4 to show the installed addons that you may interact with (these addons use the UI addon, hence providing a user interface - see Developing an UI Addon for more details).
 
 == Available addons
 
