@@ -20,6 +20,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import javax.validation.Constraint;
+import javax.validation.Payload;
 import javax.validation.ReportAsSingleViolation;
 
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -66,15 +67,22 @@ public class NewAnnotationCommand extends AbstractJavaSourceCommand
          JavaResource javaResource = context.getUIContext().getSelection();
          JavaAnnotationSource constraint = javaResource.getJavaType();
          // Constraint annotation header
-         constraint.addAnnotation(Constraint.class).setStringValue("validatedBy = {}");
+         constraint.addAnnotation(Constraint.class).setLiteralValue("validatedBy", "{}");
          constraint.addAnnotation(ReportAsSingleViolation.class);
          constraint.addAnnotation(Retention.class).setEnumValue(RUNTIME);
          constraint.addAnnotation(Target.class).setEnumValue(METHOD, FIELD, PARAMETER, TYPE, ANNOTATION_TYPE, CONSTRUCTOR);
          constraint.addAnnotation(Documented.class);
+         constraint.addImport(Payload.class);
          // Constraint annotation body
          constraint.addAnnotationElement("String message() default \"Invalid value\"");
          constraint.addAnnotationElement("Class<?>[] groups() default { }");
          constraint.addAnnotationElement("Class<? extends Payload>[] payload() default { }");
+         // Add nested annotation
+         JavaAnnotationSource listNestedAnnotation = constraint.addNestedType(JavaAnnotationSource.class);
+         listNestedAnnotation.setName("List");
+         listNestedAnnotation.addAnnotation(Retention.class).setEnumValue(RUNTIME);
+         listNestedAnnotation.addAnnotation(Target.class).setEnumValue(METHOD, FIELD, PARAMETER, TYPE, ANNOTATION_TYPE, CONSTRUCTOR);
+         listNestedAnnotation.addAnnotationElement(constraint.getName() + "[] value()");
 
          javaSourceFacet.saveJavaSource(constraint);
       }
