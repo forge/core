@@ -18,6 +18,7 @@ import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeIns
 import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.OWNING_FIELD;
 import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.PRIMARY_KEY;
 import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.REVERSE_PRIMARY_KEY;
+import static org.metawidget.inspector.InspectionResultConstants.LARGE;
 import static org.metawidget.inspector.InspectionResultConstants.LOOKUP;
 import static org.metawidget.inspector.InspectionResultConstants.TRUE;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_CONVERTER_ID;
@@ -26,6 +27,7 @@ import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstant
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -53,6 +55,7 @@ import org.w3c.dom.Element;
 public class ForgeInspector
          extends BaseObjectInspector
 {
+   public static final int TEXT_AREA_GENERATION_LENGTH = 800;
 
    //
    // Constructor
@@ -179,6 +182,15 @@ public class ForgeInspector
          attributes.put(GENERATED_VALUE, TRUE);
       }
 
+      // Large inputs
+      if (property.isAnnotationPresent(Column.class))
+      {
+         Column annotation = property.getAnnotation(Column.class);
+         if (annotation.length() >= TEXT_AREA_GENERATION_LENGTH)
+         {
+            attributes.put(LARGE, TRUE);
+         }
+      }
       return attributes;
    }
 

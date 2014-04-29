@@ -17,6 +17,7 @@ import static org.metawidget.inspector.InspectionResultConstants.PARAMETERIZED_T
 import static org.metawidget.inspector.InspectionResultConstants.REQUIRED;
 import static org.metawidget.inspector.InspectionResultConstants.TRUE;
 import static org.metawidget.inspector.InspectionResultConstants.TYPE;
+import static org.metawidget.inspector.InspectionResultConstants.LARGE;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_CONVERTER_ID;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_LOOKUP;
 
@@ -44,6 +45,7 @@ import org.metawidget.statically.faces.component.html.widgetbuilder.Facet;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlColumn;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlCommandLink;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlDataTable;
+import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlInputTextarea;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlOutcomeTargetLink;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlOutputText;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlSelectOneMenu;
@@ -62,6 +64,7 @@ import org.metawidget.util.XmlUtils;
 import org.metawidget.util.simple.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
 
 /**
  * Builds widgets with Forge-specific behaviours (such as links to other scaffolding pages).
@@ -271,6 +274,13 @@ public class EntityWidgetBuilder
             if (Collection.class.isAssignableFrom(clazz))
             {
                return createDataTableComponent(elementName, attributes, metawidget);
+            }
+            else if (String.class.equals(clazz))
+            {
+               if (TRUE.equals(attributes.get(LARGE)))
+               {
+                  return new HtmlInputTextarea();
+               }
             }
          }
       }

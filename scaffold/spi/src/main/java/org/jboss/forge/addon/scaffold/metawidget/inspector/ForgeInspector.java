@@ -20,11 +20,14 @@ import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectio
 import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.OWNING_FIELD;
 import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.PRIMARY_KEY;
 import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.REVERSE_PRIMARY_KEY;
+import static org.metawidget.inspector.InspectionResultConstants.LARGE;
+import static org.metawidget.inspector.InspectionResultConstants.TRUE;
 
 import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.GeneratedValue;
@@ -56,6 +59,8 @@ import org.w3c.dom.Element;
 public class ForgeInspector
          extends BaseObjectInspector
 {
+   public static final int TEXT_AREA_GENERATION_LENGTH = 800;
+
    private Project project;
    private JavaSourceFacet java;
 
@@ -111,7 +116,7 @@ public class ForgeInspector
 
       if (property.isAnnotationPresent(OneToOne.class))
       {
-         attributes.put(ONE_TO_ONE, InspectionResultConstants.TRUE);
+         attributes.put(ONE_TO_ONE, TRUE);
          attributes.put(JPA_REL_TYPE, JPA_ONE_TO_ONE);
          getReversePrimaryKey(property, attributes);
          if (property.isAnnotationPresent(OneToOne.class))
@@ -122,7 +127,7 @@ public class ForgeInspector
 
       if (property.isAnnotationPresent(Embedded.class) || isPropertyTypeEmbeddedable(property.getType()))
       {
-         attributes.put(EMBEDDABLE, InspectionResultConstants.TRUE);
+         attributes.put(EMBEDDABLE, TRUE);
       }
 
       // ManyToOne
@@ -130,7 +135,7 @@ public class ForgeInspector
       if (property.isAnnotationPresent(ManyToOne.class))
       {
          attributes.put(JPA_REL_TYPE, JPA_MANY_TO_ONE);
-         attributes.put(MANY_TO_ONE, InspectionResultConstants.TRUE);
+         attributes.put(MANY_TO_ONE, TRUE);
          getReversePrimaryKey(property, attributes);
          getManyToOneBidirectionalProperties(property, attributes);
       }
@@ -139,7 +144,7 @@ public class ForgeInspector
 
       if (property.isAnnotationPresent(OneToMany.class) || property.isAnnotationPresent(ManyToMany.class))
       {
-         attributes.put(N_TO_MANY, InspectionResultConstants.TRUE);
+         attributes.put(N_TO_MANY, TRUE);
          getCollectionReversePrimaryKey(property, attributes);
          if (property.isAnnotationPresent(OneToMany.class))
          {
@@ -176,11 +181,21 @@ public class ForgeInspector
 
       if (property.isAnnotationPresent(Id.class))
       {
-         attributes.put(PRIMARY_KEY, InspectionResultConstants.TRUE);
+         attributes.put(PRIMARY_KEY, TRUE);
       }
       if (property.isAnnotationPresent(GeneratedValue.class))
       {
-         attributes.put(GENERATED_VALUE, InspectionResultConstants.TRUE);
+         attributes.put(GENERATED_VALUE, TRUE);
+      }
+
+      // Large inputs
+      if (property.isAnnotationPresent(Column.class))
+      {
+         Column annotation = property.getAnnotation(Column.class);
+         if (annotation.length() >= TEXT_AREA_GENERATION_LENGTH)
+         {
+            attributes.put(LARGE, TRUE);
+         }
       }
 
       return attributes;
