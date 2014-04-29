@@ -18,6 +18,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectAssociationProvider;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Setup parent-child relation of Maven projects.
@@ -38,37 +39,53 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
          Project parent = projectFactory.findProject(parentResource);
          MavenFacet parentMavenFacet = parent.getFacet(MavenFacet.class);
          Model parentPom = parentMavenFacet.getModel();
-         parentPom.setPackaging("pom");
 
-         String moduleDir = project.getRoot().getFullyQualifiedName()
-                  .substring(parent.getRoot().getFullyQualifiedName().length());
-         if (moduleDir.startsWith(File.separator))
-            moduleDir = moduleDir.substring(1);
+         if (parentPom.getPackaging().equalsIgnoreCase("pom"))
+         {
+            String moduleDir = project.getRoot().getFullyQualifiedName()
+                     .substring(parent.getRoot().getFullyQualifiedName().length());
+            if (moduleDir.startsWith(File.separator))
+               moduleDir = moduleDir.substring(1);
 
-         parentPom.addModule(moduleDir);
-         parentMavenFacet.setModel(parentPom);
+            parentPom.addModule(moduleDir);
+            parentMavenFacet.setModel(parentPom);
 
-         MavenFacet projectMavenFacet = project.getFacet(MavenFacet.class);
-         Model pom = projectMavenFacet.getModel();
+            MavenFacet projectMavenFacet = project.getFacet(MavenFacet.class);
+            Model pom = projectMavenFacet.getModel();
 
-         Parent projectParent = new Parent();
-         projectParent.setGroupId(parentPom.getGroupId());
-         projectParent.setArtifactId(parentPom.getArtifactId());
-         projectParent.setVersion(parentPom.getVersion());
+            Parent projectParent = new Parent();
+            projectParent.setGroupId(parentPom.getGroupId());
+            projectParent.setArtifactId(parentPom.getArtifactId());
 
-         // Calculate parent relative path
-         Path parentPomPath = Paths.get(parentMavenFacet.getModelResource().getFullyQualifiedName());
-         Path childPath = Paths.get(project.getRoot().getFullyQualifiedName());
-         Path relativePath = childPath.relativize(parentPomPath).normalize();
+            String version = resolveVersion(parentPom);
+            projectParent.setVersion(version);
 
-         projectParent.setRelativePath(relativePath.toString());
+            // Calculate parent relative path
+            Path parentPomPath = Paths.get(parentMavenFacet.getModelResource().getFullyQualifiedName());
+            Path childPath = Paths.get(project.getRoot().getFullyQualifiedName());
+            Path relativePath = childPath.relativize(parentPomPath).normalize();
 
-         // Reuse GroupId and version from parent
-         pom.setGroupId(null);
-         pom.setVersion(null);
-         pom.setParent(projectParent);
-         projectMavenFacet.setModel(pom);
+            projectParent.setRelativePath(relativePath.toString());
+
+            // Reuse GroupId and version from parent
+            pom.setGroupId(null);
+            pom.setVersion(null);
+            pom.setParent(projectParent);
+            projectMavenFacet.setModel(pom);
+         }
       }
+   }
+
+   private String resolveVersion(Model parent)
+   {
+      String version = parent.getVersion();
+      while (Strings.isNullOrEmpty(version)
+               && parent.getParent() != null
+               && !Strings.isNullOrEmpty(parent.getParent().getVersion()))
+      {
+         version = parent.getParent().getVersion();
+      }
+      return version;
    }
 
    @Override

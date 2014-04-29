@@ -13,11 +13,12 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.maven.projects.MavenBuildSystemImpl;
+import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -81,17 +82,59 @@ public class MavenMultiModuleProviderTest
       DirectoryResource projectDir = addonDir.createTempResource();
       Project parentProject = projectFactory.createProject(projectDir, locator);
       Assert.assertNotNull(parentProject);
-
+      
+      parentProject.getFacet(PackagingFacet.class).setPackagingType("pom");
+      
       MetadataFacet metadata = parentProject.getFacet(MetadataFacet.class);
       metadata.setProjectName("parent");
       metadata.setTopLevelPackage("com.project.parent");
 
-      DirectoryResource subProjectDir = parentProject.getRootDirectory().getChildDirectory("sub");
+      DirectoryResource subProjectDir = parentProject.getRoot().reify(DirectoryResource.class).getChildDirectory("sub");
       projectFactory.createProject(subProjectDir, locator);
 
       MavenFacet mavenFacet = parentProject.getFacet(MavenFacet.class);
       List<String> modules = mavenFacet.getModel().getModules();
-      Assert.assertTrue(!modules.isEmpty());
+      Assert.assertFalse(modules.isEmpty());
       Assert.assertEquals("sub", modules.get(0));
+   }
+
+   @Test
+   public void testCreateNestedProjectWithParentThatHasInheritedVersion() throws Exception
+   {
+      DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
+               DirectoryResource.class);
+      DirectoryResource projectDir = addonDir.createTempResource();
+      Project parentProject = projectFactory.createProject(projectDir, locator);
+      Assert.assertNotNull(parentProject);
+
+      MetadataFacet metadata = parentProject.getFacet(MetadataFacet.class);
+      metadata.setProjectName("parent");
+      metadata.setTopLevelPackage("com.project.parent");
+      parentProject.getFacet(PackagingFacet.class).setPackagingType("pom");
+
+      DirectoryResource intermediateProjectDir = parentProject.getRoot().reify(DirectoryResource.class)
+               .getChildDirectory("intermediate");
+      Project intermediateProject = projectFactory.createProject(intermediateProjectDir, locator);
+
+      MavenFacet parentMavenFacet = parentProject.getFacet(MavenFacet.class);
+      List<String> modules = parentMavenFacet.getModel().getModules();
+      Assert.assertFalse(modules.isEmpty());
+      Assert.assertEquals("intermediate", modules.get(0));
+
+      intermediateProject.getFacet(MetadataFacet.class).setProjectVersion("");
+      intermediateProject.getFacet(PackagingFacet.class).setPackagingType("pom");
+
+      DirectoryResource subProjectDir = intermediateProject.getRoot().reify(DirectoryResource.class)
+               .getChildDirectory("sub");
+      Project subProject = projectFactory.createProject(subProjectDir, locator);
+
+      MavenFacet intermediateMavenFacet = intermediateProject.getFacet(MavenFacet.class);
+      List<String> intermediateModules = intermediateMavenFacet.getModel().getModules();
+      Assert.assertFalse(intermediateModules.isEmpty());
+      Assert.assertEquals("sub", intermediateModules.get(0));
+
+      String version = subProject.getFacet(MetadataFacet.class).getProjectVersion();
+      Assert.assertEquals(parentProject.getFacet(MetadataFacet.class).getProjectVersion(), version);
+
    }
 }
