@@ -79,7 +79,7 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
    private String resolveVersion(Model parent)
    {
       String version = parent.getVersion();
-      while (Strings.isNullOrEmpty(version)
+      if (Strings.isNullOrEmpty(version)
                && parent.getParent() != null
                && !Strings.isNullOrEmpty(parent.getParent().getVersion()))
       {
