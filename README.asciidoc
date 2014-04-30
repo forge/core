@@ -344,7 +344,7 @@ Forge has a modular architecture that enables you to re-use functionality from o
 There is a simple rule that will make this an easy decision:
 
 ____
-"`compile` if it shows, `provided` if nobody knows."
+"`compile` if everyone knows, `provided` if I know, `runtime` if nobody knows."
 ____
 
 To explain, if you never publicly expose types (classes, interfaces, etc...) from another addon in the outward-facing APIs of your addon, then you should include
@@ -385,7 +385,7 @@ implementation detail and is not exposed in your public API.
 |
 The `Resource<?>` and `ResourceFactory` types are provided by the `resources` addon. Your addon defines `ExposedExample`.
 [source,java]
-----
+---- 
 public class ExposedExample {
    @Inject private ResourceFactory factory;
 
@@ -402,31 +402,59 @@ public class ExposedExample {
 
 
 |
-The type `ServiceX` is defined by addon X, but addon X does not include an implementation of its own service interface.
+The type `LockCreator` is defined by addon X.
 [source,java]
 ----
-public interface ServiceX {
-   public void doSomething()
+public class LockCreator {
+   public void createFile(@Observes PostStartup event) throws Exception
+   {
+      File lock = new File("lockfile");
+      lock.createNewFile();
+   }
 }
 ----
 
-Your addon defines `RuntimeExample`, which depends on addon X in order to use `ServiceX`, but requires that another addon (addon Y) actually provide an implementation.
+Your addon defines `LockConsumer`, which requires that a file "lockfile" be available when it runs. This file is created by addon X.
 [source,java]
 ----
-public class RuntimeExample {
-   @Inject private Imported<ServiceX> services;
+public class LockConsumer {
+   public void deleteLock() {
+      File lock = new File("lockfile");
+      Assert.assertTrue(lock.exists());
+   }
+}
+----
+|`runtime`
+|Your addon makes assumptions about the runtime environment that are satisfied by the presence of addon X, but your addon does not depend on or expose types from addon X in its APIs.
 
-   public void doEverything() {
-      System.out.println("Doing everything I can!");
+*Your addon should include addon X at `runtime` scope.*
+
+|
+The type `Logger` is defined by addon X, but addon X does not include an implementation of its own logging interface.
+[source,java]
+----
+public interface Logger {
+   public void log(String message)
+}
+----
+
+Your addon defines `LoggerConsumer`, which depends on addon X in order to use `Logger`, but requires that another addon (addon Y) actually provide an logging implementation.
+[source,java]
+----
+public class LoggerConsumer {
+   @Inject private Imported<Logger> loggers;
+
+   public void logEverything() {
+      System.out.println("Logging everything I can!");
       
-      for( ServiceX service : services {
-         service.doSomething();
+      for( Logger log : loggers {
+         log.log("Log for you!");
       }
    }
 }
 ----
 |`provided` / `runtime`
-|Your addon requires an instance of `ServiceX`, which is defined in addon X, but provided by addon Y (for instance), thus your addon requires addon Y to provide an instance of `ServiceX`, but does not need to import or compile against Addon Y's types directly. Your addon does not expose types from addon X in its APIs.
+|Your addon requires instances of `Logger`, which is defined in addon X, but provided by addon Y (for instance), thus your addon requires addon Y to provide an instance of `Logger`, but does not need to import or compile against addon Y's types directly (they are provided by Furnace). Your addon does not expose the `Logger` type from addon X in its APIs.
 
 *Your addon should include addon X at `provided` scope, and addon Y at `runtime` scope.*
 |===
