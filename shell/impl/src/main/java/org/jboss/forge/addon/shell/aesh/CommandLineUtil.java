@@ -211,7 +211,7 @@ public class CommandLineUtil
             for (String optionValue : optionValues)
             {
                String optionPattern = ResourcePathResolver.pathspecToRegEx(optionValue);
-               if (optionValue == optionPattern)
+               if (optionValue != null && optionValue.equals(optionPattern))
                {
                   resolvedOptionValues.add(optionValue);
                   break;
