@@ -38,6 +38,7 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
@@ -49,9 +50,9 @@ import org.jboss.forge.roaster.model.source.JavaPackageInfoSource;
 
 /**
  * Creates Furnace Addon projects
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 @SuppressWarnings("unchecked")
 public class AddonProjectConfigurator
@@ -95,7 +96,7 @@ public class AddonProjectConfigurator
 
    /**
     * Create a Furnace Project with the full structure (api,impl,tests,spi and addon)
-    *
+    * 
     * @throws FacetNotFoundException
     * @throws FileNotFoundException
     */
@@ -106,6 +107,8 @@ public class AddonProjectConfigurator
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
       String projectName = metadata.getProjectName();
       metadata.setProjectName(projectName + "-parent");
+
+      project.getFacet(PackagingFacet.class).setPackagingType("pom");
 
       facetFactory.install(project, AddonParentFacet.class);
       project.getFacet(FurnaceVersionFacet.class).setVersion(forgeVersion.toString());
@@ -170,7 +173,8 @@ public class AddonProjectConfigurator
    private void generateReadme(Project project)
    {
       String readmeTemplate = Streams.toString(getClass().getResourceAsStream("README.asciidoc"));
-      FileResource<?> child = project.getRootDirectory().getChildOfType(FileResource.class, "README.asciidoc");
+      FileResource<?> child = project.getRoot().reify(DirectoryResource.class)
+               .getChildOfType(FileResource.class, "README.asciidoc");
 
       // TODO: Replace with template addon
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
@@ -218,9 +222,10 @@ public class AddonProjectConfigurator
    private Project createSubmoduleProject(final Project parent, String moduleName, String artifactId,
             Class<? extends ProjectFacet>... requiredProjectFacets)
    {
-      DirectoryResource location = parent.getRootDirectory().getOrCreateChildDirectory(moduleName);
+      DirectoryResource location = parent.getRoot().reify(DirectoryResource.class)
+               .getOrCreateChildDirectory(moduleName);
 
-      List<Class<? extends ProjectFacet>> facets = new ArrayList<Class<? extends ProjectFacet>>();
+      List<Class<? extends ProjectFacet>> facets = new ArrayList<>();
       facets.add(ResourcesFacet.class);
       facets.addAll(Arrays.asList(requiredProjectFacets));
       Project project = projectFactory.createProject(location, buildSystem, facets);
