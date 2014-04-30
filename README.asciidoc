@@ -406,7 +406,7 @@ The type `LockCreator` is defined by addon X.
 [source,java]
 ----
 public class LockCreator {
-   public void createFile(@Observes PostStartup event) throws Exception
+   public void createFile(@Observes PostStartup event)
    {
       File lock = new File("lockfile");
       lock.createNewFile();
