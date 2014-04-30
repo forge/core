@@ -157,22 +157,7 @@
             <artifactId>forge-bootstrap</artifactId>
             <version>${project.version}</version>
          </dependency>
-         <!-- SLF4J Logging API -->
-         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${version.slf4j}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>${version.slf4j}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-ext</artifactId>
-            <version>${version.slf4j}</version>
-         </dependency>
+         
          <!-- JBoss Logging dependencies -->
          <dependency>
             <groupId>org.jboss.logmanager</groupId>
