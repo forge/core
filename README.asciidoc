@@ -364,6 +364,7 @@ the `ResourceFactory` and `FileResource` classes:
 |Example |Scope should be |Explanation
 
 |
+The `Resource<?>` and `ResourceFactory` types are provided by the `resources` addon. Your addon defines `InternalExample`.
 [source,java]
 ----
 public class InternalExample {
@@ -371,18 +372,23 @@ public class InternalExample {
 
    public void doSomething(File file) {
       Resource<?> r = factory.create(file);
-      System.out.println("New resource: " + r)
+      System.out.println("New resource: " + r)a
    }
 }
 ----
 |`provided`
 |Consumers of your addon never see classes or interfaces from the resources addon; it is only used internally as an
-implementation detail.
+implementation detail and is not exposed in your public API. 
+
+*Your addon should depend on the resources addon at `provided` scope.*
 
 |
+The `Resource<?>` and `ResourceFactory` types are provided by the `resources` addon. Your addon defines `ExposedExample`.
 [source,java]
 ----
 public class ExposedExample {
+   @Inject private ResourceFactory factory;
+
    public Resource<?> doSomething(File file) {
       Resource<?> r = factory.create(file);
       return r;
@@ -390,24 +396,39 @@ public class ExposedExample {
 }
 ----
 |`compile`
-|Consumers of your addon require classes from the `resources` addon to interact with your code, since it has been used
-in the public APIs of your classes.
+|Consumers of your addon require classes from the `resources` addon to interact with your code, since it has been referenced in the your addon's public API. 
+
+*Your addon should depend on the resources addon at `compile` scope.*
+
 
 |
+The type `ServiceX` is defined by addon X, but addon X does not include an implementation of its own service interface.
 [source,java]
 ----
-public class TransitiveExample {
-   public void doSomething(Facet<?> f) {
-      System.out.println("I got a facet! " + f);
+public interface ServiceX {
+   public void doSomething()
+}
+----
+
+Your addon defines `RuntimeExample`, which depends on addon X in order to use `ServiceX`, but requires that another addon (addon Y) actually provide an implementation.
+[source,java]
+----
+public class RuntimeExample {
+   @Inject private Imported<ServiceX> services;
+
+   public void doEverything() {
+      System.out.println("Doing everything I can!");
+      
+      for( ServiceX service : services {
+         service.doSomething();
+      }
    }
 }
 ----
-|`compile`
-|Consumers of your addon require classes from the `facets` addon to interact with your code, which is an exported
-dependency of the `resources` addon.
+|`provided` / `runtime`
+|Your addon requires an instance of `ServiceX`, which is defined in addon X, but provided by addon Y (for instance), thus your addon requires addon Y to provide an instance of `ServiceX`, but does not need to import or compile against Addon Y's types directly. Your addon does not expose types from addon X in its APIs.
 
-The `Facet` class comes from the `facets` addon and is used in the public APIs of your addon.
-
+*Your addon should include addon X at `provided` scope, and addon Y at `runtime` scope.*
 |===
 
 
@@ -580,4 +601,3 @@ Run
 ----
 
 WARNING: This coordinate is *NOT* the same as Maven's. You MUST use a comma (,) between the `artifactId` and the version.
-
