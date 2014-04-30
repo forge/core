@@ -406,7 +406,8 @@ The type `LockCreator` is defined by addon X.
 [source,java]
 ----
 public class LockCreator {
-   public void createFile(@Observes PostStartup event)
+   public void createFile(
+      @Observes PostStartup event)
    {
       File lock = new File("lockfile");
       lock.createNewFile();
@@ -445,8 +446,6 @@ public class LoggerConsumer {
    @Inject private Imported<Logger> loggers;
 
    public void logEverything() {
-      System.out.println("Logging everything I can!");
-      
       for( Logger log : loggers {
          log.log("Log for you!");
       }
