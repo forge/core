@@ -21,6 +21,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.shell.mock.command.Career;
 import org.jboss.forge.addon.shell.mock.command.FooCommand;
 import org.jboss.forge.addon.shell.test.ShellTest;
+import org.jboss.forge.addon.ui.result.Failed;
+import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -37,6 +39,8 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class CommandCompletionTest
 {
+   private static final int QUANTITY = 500;
+
    @Deployment
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness")
@@ -66,20 +70,20 @@ public class CommandCompletionTest
    @Test
    public void testCommandAutocomplete() throws Exception
    {
-      test.waitForCompletion("foocommand ", "foocomm", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("foocommand ", "foocomm", QUANTITY, TimeUnit.SECONDS);
    }
 
    @Test
    public void testCommandAutocompleteOption() throws Exception
    {
-      test.waitForCompletion("foocommand --help ", "foocommand --h", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("foocommand --help ", "foocommand --h", QUANTITY, TimeUnit.SECONDS);
       Assert.assertEquals("foocommand --help ", test.getBuffer());
    }
 
    @Test
    public void testCommandAutocompleteOptionShortName() throws Exception
    {
-      test.waitForCompletion("foocommand -h ", "foocommand -h", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("foocommand -h ", "foocommand -h", QUANTITY, TimeUnit.SECONDS);
       Assert.assertEquals("foocommand -h ", test.getBuffer());
    }
 
@@ -88,8 +92,8 @@ public class CommandCompletionTest
    {
       test.waitForCompletion("foocommand --valueWithSpaces Value\\ ",
                "foocommand --valueWithSpaces Value",
-               5, TimeUnit.SECONDS);
-      String stdOut = test.waitForCompletion(5, TimeUnit.SECONDS);
+               QUANTITY, TimeUnit.SECONDS);
+      String stdOut = test.waitForCompletion(QUANTITY, TimeUnit.SECONDS);
       Assert.assertThat(
                stdOut,
                allOf(containsString("Value 1"), containsString("Value 2"), containsString("Value 10"),
@@ -114,15 +118,15 @@ public class CommandCompletionTest
                               not(containsString("Value 100"))));
             return null;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, QUANTITY, TimeUnit.SECONDS);
    }
 
    @Test
    public void testUISelectOneWithEnum() throws Exception
    {
       test.waitForCompletion("foocommand --career ME", "foocommand --career M",
-               5, TimeUnit.SECONDS);
-      String stdOut = test.waitForCompletion(5, TimeUnit.SECONDS);
+               QUANTITY, TimeUnit.SECONDS);
+      String stdOut = test.waitForCompletion(QUANTITY, TimeUnit.SECONDS);
       Assert.assertThat(stdOut,
                allOf(containsString(Career.MEDICINE.toString()), containsString(Career.MECHANICS.toString())));
    }
@@ -131,17 +135,33 @@ public class CommandCompletionTest
    public void testUISelectManyWithEnum() throws Exception
    {
       test.waitForCompletion("foocommand --manyCareer ME", "foocommand --manyCareer M",
-               5, TimeUnit.SECONDS);
-      String stdOut = test.waitForCompletion(5, TimeUnit.SECONDS);
+               QUANTITY, TimeUnit.SECONDS);
+      String stdOut = test.waitForCompletion(QUANTITY, TimeUnit.SECONDS);
       Assert.assertThat(stdOut,
+               allOf(containsString(Career.MEDICINE.toString()), containsString(Career.MECHANICS.toString())));
+   }
+
+   @Test
+   public void testUISelectManyWithEnumWildcard() throws Exception
+   {
+      test.waitForCompletion("foocommand --manyCareer ME", "foocommand --manyCareer M",
+               QUANTITY, TimeUnit.SECONDS);
+      String stdOut = test.waitForCompletion(QUANTITY, TimeUnit.SECONDS);
+      Assert.assertThat(stdOut,
+               allOf(containsString(Career.MEDICINE.toString()), containsString(Career.MECHANICS.toString())));
+
+      test.write("*");
+      Result result = test.execute(stdOut, QUANTITY, TimeUnit.SECONDS);
+      Assert.assertFalse(result instanceof Failed);
+      Assert.assertThat(result.getMessage(),
                allOf(containsString(Career.MEDICINE.toString()), containsString(Career.MECHANICS.toString())));
    }
 
    @Test
    public void testDisabledOptionsShouldNotBeDisplayed() throws Exception
    {
-      test.waitForCompletion("foocommand --", "foocommand --", 5, TimeUnit.SECONDS);
-      String stdOut = test.waitForCompletion(5, TimeUnit.SECONDS);
+      test.waitForCompletion("foocommand --", "foocommand --", QUANTITY, TimeUnit.SECONDS);
+      String stdOut = test.waitForCompletion(QUANTITY, TimeUnit.SECONDS);
       Assert.assertThat(stdOut, not(containsString("--disabledOption")));
    }
 }

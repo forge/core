@@ -38,16 +38,16 @@ class SelectComponentOptionCompleter implements OptionCompleter<CompleterInvocat
       this.selectComponent = selectComponent;
       this.converterFactory = converterFactory;
    }
-   
+
    @SuppressWarnings("unchecked")
    @Override
    public void complete(final CompleterInvocation completerData)
    {
       final String completeValue = completerData.getGivenCompleteValue();
-      Converter<Object, String> itemLabelConverter = (Converter<Object, String>) InputComponents
+      Converter<Object, String> itemLabelConverter = InputComponents
                .getItemLabelConverter(converterFactory, selectComponent);
       Iterable<Object> valueChoices = selectComponent.getValueChoices();
-      List<String> choices = new ArrayList<String>();
+      List<String> choices = new ArrayList<>();
       for (Object choice : valueChoices)
       {
          String convert = itemLabelConverter.convert(choice);

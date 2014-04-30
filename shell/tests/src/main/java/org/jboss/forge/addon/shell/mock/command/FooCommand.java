@@ -122,6 +122,8 @@ public class FooCommand implements UICommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      return Results.success("boo");
+      return Results.success(name.getValue() + help.getValue() + bool.getValue() + bar.getValue()
+               + targetLocation.getValue() + valueWithSpaces.getValue() + career.getValue()
+               + manyCareer.getValue() + disabledOption.getValue() + arguments.getValue());
    }
 }

@@ -136,7 +136,7 @@ public final class InputComponents
       final Iterable<Object> convertedValues;
       if (value != null)
       {
-         List<Object> convertedValuesList = new ArrayList<Object>();
+         List<Object> convertedValuesList = new ArrayList<>();
          if (value instanceof Iterable)
          {
             for (Object itValue : (Iterable) value)
@@ -191,7 +191,7 @@ public final class InputComponents
             final Converter<Object, ?> selectConverter;
             if (String.class.isAssignableFrom(sourceType))
             {
-               selectConverter = (Converter<Object, ?>) getItemLabelConverter(converterFactory, selectComponent);
+               selectConverter = getItemLabelConverter(converterFactory, selectComponent);
             }
             else
             {
