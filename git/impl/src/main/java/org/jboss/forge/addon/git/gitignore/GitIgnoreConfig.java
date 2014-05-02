@@ -19,7 +19,7 @@ public class GitIgnoreConfig
 
    private static final String CLONE_LOCATION_KEY = "gitignore.plugin.clone";
    private static final String REPOSITORY_KEY = "gitignore.plugin.repo";
-
+   private static final String BOILERPLATE_FILE = ".gitignore_boilerplate";
    private static final String REPOSITORY = "https://github.com/github/gitignore.git";
 
    @Inject
@@ -47,7 +47,7 @@ public class GitIgnoreConfig
    
    public File defaultLocalRepository()
    {
-      return new File(System.getProperty("user.home") + File.separator + ".gitignore_boilerplate");
+      return new File(System.getProperty("user.home") + File.separator + BOILERPLATE_FILE);
    }
    
    public File localRepository()
