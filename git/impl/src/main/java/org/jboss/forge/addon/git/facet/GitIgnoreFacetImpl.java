@@ -35,8 +35,8 @@ import org.jboss.forge.furnace.util.Streams;
 public class GitIgnoreFacetImpl extends AbstractFacet<Project> implements GitIgnoreFacet
 {
    public static final String GITIGNORE = ".gitignore";
-
    private static final String GLOBAL_TEMPLATES = "Global";
+   private static final String GIT_DIRECTORY = ".git";
 
    @Inject
    private GitIgnoreConfig config;
@@ -71,7 +71,7 @@ public class GitIgnoreFacetImpl extends AbstractFacet<Project> implements GitIgn
    {
       File clone = config.localRepository();
       Resource<File> cloneDir = factory.create(clone);
-      return cloneDir.exists() && cloneDir.getChild(".git").exists();
+      return cloneDir.exists() && cloneDir.getChild(GIT_DIRECTORY).exists();
    }
 
    @Override

@@ -25,6 +25,7 @@ import org.jboss.forge.addon.resource.FileResource;
  */
 public class GitFacetImpl extends AbstractFacet<Project> implements GitFacet
 {
+   private static final String GIT_DIRECTORY = ".git";
 
    @Inject
    private GitUtils gitUtils;
@@ -35,7 +36,7 @@ public class GitFacetImpl extends AbstractFacet<Project> implements GitFacet
       Project project = getFaceted();
       // init git repo
       final DirectoryResource rootDirectory = project.getRootDirectory();
-      FileResource<?> gitDir = rootDirectory.getChildDirectory(".git").reify(FileResource.class);
+      FileResource<?> gitDir = rootDirectory.getChildDirectory(GIT_DIRECTORY).reify(FileResource.class);
       if (!gitDir.exists())
       {
          InitCommand init = Git.init();
@@ -56,7 +57,7 @@ public class GitFacetImpl extends AbstractFacet<Project> implements GitFacet
    @Override
    public boolean isInstalled()
    {
-      return getFaceted().getRootDirectory().getChildDirectory(".git").exists();
+      return getFaceted().getRootDirectory().getChildDirectory(GIT_DIRECTORY).exists();
    }
 
 }

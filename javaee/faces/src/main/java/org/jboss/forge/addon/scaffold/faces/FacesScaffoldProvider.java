@@ -97,15 +97,25 @@ import freemarker.template.Template;
 public class FacesScaffoldProvider implements ScaffoldProvider
 {
    private static final String JBOSS_COMMUNITY_PNG = "/resources/jboss-community.png";
+   private static final String SCAFFOLD_JBOSS_COMMUNITY_PNG = "/scaffold/faces/jboss-community.png";
    private static final String TRUE_PNG = "/resources/true.png";
+   private static final String SCAFFOLD_TRUE_PNG = "/scaffold/faces/true.png";
    private static final String SEARCH_PNG = "/resources/search.png";
+   private static final String SCAFFOLD_SEARCH_PNG = "/scaffold/faces/search.png";
    private static final String REMOVE_PNG = "/resources/remove.png";
+   private static final String SCAFFOLD_REMOVE_PNG = "/scaffold/faces/remove.png";
    private static final String FORGE_STYLE_CSS = "/resources/forge-style.css";
+   private static final String SCAFFOLD_FORGE_STYLE_CSS = "/scaffold/faces/forge-style.css";
    private static final String FORGE_LOGO_PNG = "/resources/forge-logo.png";
+   private static final String SCAFFOLD_FORGE_LOGO_PNG = "/scaffold/faces/forge-logo.png";
    private static final String FAVICON_ICO = "/resources/favicon.ico";
+   private static final String SCAFFOLD_FAVICON_ICO = "/scaffold/faces/favicon.ico";
    private static final String FALSE_PNG = "/resources/false.png";
+   private static final String SCAFFOLD_FALSE_PNG = "/scaffold/faces/false.png";
    private static final String BOOTSTRAP_CSS = "/resources/bootstrap.css";
+   private static final String SCAFFOLD_BOOTSTRAP_CSS = "/scaffold/faces/bootstrap.css";
    private static final String ADD_PNG = "/resources/add.png";
+   private static final String SCAFFOLD_ADD_PNG = "/scaffold/faces/add.png";
    private static final String ERROR_XHTML = "error.xhtml";
    private static final String XMLNS_PREFIX = "xmlns:";
    private static final String BACKING_BEAN_TEMPLATE = "scaffold/faces/BackingBean.jv";
@@ -115,9 +125,18 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    private static final String CREATE_TEMPLATE = "scaffold/faces/create.xhtml";
    private static final String SEARCH_TEMPLATE = "scaffold/faces/search.xhtml";
    private static final String NAVIGATION_TEMPLATE = "scaffold/faces/pageTemplate.xhtml";
+   private static final String SCAFFOLD_NAVIGATION_TEMPLATE = "/resources/scaffold/pageTemplate.xhtml";
    private static final String ERROR_TEMPLATE = "scaffold/faces/error.xhtml";
    private static final String INDEX_TEMPLATE = "scaffold/faces/index.xhtml";
-   private static final String INDEX_WELCOME_TEMPLATE = "scaffold/faces/index.html";
+   private static final String INDEX_XHTML = "/index.xhtml";
+   private static final String INDEX_HTML = "/index.html";
+   private static final String SCAFFOLD_META_WIDGET_REMOVE_ENTITY = "scaffold/faces/metawidget-remove-entity.xml";
+   private static final String SCAFFOLD_META_WIDGET_ENTITY = "scaffold/faces/metawidget-entity.xml";
+   private static final String SCAFFOLD_META_WIDGET_SEARCH = "scaffold/faces/metawidget-search.xml";
+   private static final String SCAFFOLD_META_WIDGET_BEAN = "scaffold/faces/metawidget-bean.xml";
+   private static final String SCAFFOLD_META_WIDGET_QBE = "scaffold/faces/metawidget-qbe.xml";
+   private static final String PAGINATOR = "/resources/scaffold/paginator.xhtml";
+   private static final String SCAFFOLD_PAGINATOR = "/scaffold/faces/paginator.xhtml";
 
    private final Dependency richfaces3UI = DependencyBuilder.create("org.richfaces.ui:richfaces-ui");
    private final Dependency richfaces3Impl = DependencyBuilder.create("org.richfaces.framework:richfaces-impl");
@@ -197,8 +216,8 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    {
       WebResourcesFacet web = project.getFacet(WebResourcesFacet.class);
       String targetDir = setupContext.getTargetDirectory();
-      FileResource<?> indexFacelet = web.getWebResource(targetDir + "/index.xhtml");
-      FileResource<?> indexPage = web.getWebResource(targetDir + "/index.html");
+      FileResource<?> indexFacelet = web.getWebResource(targetDir + INDEX_XHTML);
+      FileResource<?> indexPage = web.getWebResource(targetDir + INDEX_HTML);
       if (indexFacelet.exists() && indexPage.exists())
       {
          return true;
@@ -301,13 +320,13 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       if (servlet instanceof ServletFacet_3_0)
       {
          WebAppDescriptor servletConfig = (WebAppDescriptor) servlet.getConfig();
-         servletConfig.getOrCreateWelcomeFileList().welcomeFile("/index.html");
+         servletConfig.getOrCreateWelcomeFileList().welcomeFile(INDEX_HTML);
       }
       else if (servlet instanceof ServletFacet_3_1)
       {
          org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor servletConfig = (org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor) servlet
                   .getConfig();
-         servletConfig.getOrCreateWelcomeFileList().welcomeFile("/index.html");
+         servletConfig.getOrCreateWelcomeFileList().welcomeFile(INDEX_HTML);
       }
       loadTemplates();
 
@@ -316,10 +335,10 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
       // Basic pages
 
-      result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(targetDir + "/index.html"),
+      result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(targetDir + INDEX_HTML),
                this.templateProcessor.processTemplate(context, indexWelcomeTemplate), overwrite));
 
-      result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(targetDir + "/index.xhtml"),
+      result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(targetDir + INDEX_XHTML),
                this.templateProcessor.processTemplate(context, indexTemplate), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(ERROR_XHTML),
@@ -328,34 +347,34 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       // Static resources
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(ADD_PNG),
-               getClass().getResourceAsStream("/scaffold/faces/add.png"), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_ADD_PNG), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(BOOTSTRAP_CSS),
-               getClass().getResourceAsStream("/scaffold/faces/bootstrap.css"), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_BOOTSTRAP_CSS), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(FALSE_PNG),
-               getClass().getResourceAsStream("/scaffold/faces/false.png"), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_FALSE_PNG), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(FAVICON_ICO),
-               getClass().getResourceAsStream("/scaffold/faces/favicon.ico"), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_FAVICON_ICO), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(FORGE_LOGO_PNG),
-               getClass().getResourceAsStream("/scaffold/faces/forge-logo.png"), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_FORGE_LOGO_PNG), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(FORGE_STYLE_CSS),
-               getClass().getResourceAsStream("/scaffold/faces/forge-style.css"), overwrite));
-
+               getClass().getResourceAsStream(SCAFFOLD_FORGE_STYLE_CSS), overwrite));
+      
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(REMOVE_PNG),
-               getClass().getResourceAsStream("/scaffold/faces/remove.png"), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_REMOVE_PNG), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(SEARCH_PNG),
-               getClass().getResourceAsStream("/scaffold/faces/search.png"), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_SEARCH_PNG), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(TRUE_PNG),
-               getClass().getResourceAsStream("/scaffold/faces/true.png"), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_TRUE_PNG), overwrite));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(JBOSS_COMMUNITY_PNG),
-               getClass().getResourceAsStream("/scaffold/faces/jboss-community.png"), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_JBOSS_COMMUNITY_PNG), overwrite));
 
       return result;
    }
@@ -379,8 +398,8 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       {
          WebResourcesFacet web = this.project.getFacet(WebResourcesFacet.class);
 
-         result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource("/resources/scaffold/paginator.xhtml"),
-                  getClass().getResourceAsStream("/scaffold/faces/paginator.xhtml"), overwrite));
+         result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(PAGINATOR),
+                  getClass().getResourceAsStream(SCAFFOLD_PAGINATOR), overwrite));
 
          result.add(generateNavigation(targetDir, overwrite));
       }
@@ -447,7 +466,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       }
       if (this.indexWelcomeTemplate == null)
       {
-         this.indexWelcomeTemplate = this.templateProcessor.getTemplate(INDEX_WELCOME_TEMPLATE);
+         this.indexWelcomeTemplate = this.templateProcessor.getTemplate(INDEX_TEMPLATE);
       }
    }
 
@@ -460,7 +479,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       context.put("template", template);
       context.put("templatePath",
                templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate()));
-      context.put("templatePath", "/resources/scaffold/pageTemplate.xhtml");
+      context.put("templatePath", SCAFFOLD_NAVIGATION_TEMPLATE);
       context.put("templateStrategy", templateStrategy);
       context.put("targetDir", targetDir);
       return context;
@@ -664,23 +683,23 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
       this.entityMetawidget = new StaticHtmlMetawidget();
       this.entityMetawidget.setConfigReader(configReader);
-      this.entityMetawidget.setConfig("scaffold/faces/metawidget-entity.xml");
+      this.entityMetawidget.setConfig(SCAFFOLD_META_WIDGET_ENTITY);
 
       this.searchMetawidget = new StaticHtmlMetawidget();
       this.searchMetawidget.setConfigReader(configReader);
-      this.searchMetawidget.setConfig("scaffold/faces/metawidget-search.xml");
+      this.searchMetawidget.setConfig(SCAFFOLD_META_WIDGET_SEARCH);
 
       this.beanMetawidget = new StaticHtmlMetawidget();
       this.beanMetawidget.setConfigReader(configReader);
-      this.beanMetawidget.setConfig("scaffold/faces/metawidget-bean.xml");
+      this.beanMetawidget.setConfig(SCAFFOLD_META_WIDGET_BEAN);
 
       this.qbeMetawidget = new StaticJavaMetawidget();
       this.qbeMetawidget.setConfigReader(configReader);
-      this.qbeMetawidget.setConfig("scaffold/faces/metawidget-qbe.xml");
+      this.qbeMetawidget.setConfig(SCAFFOLD_META_WIDGET_QBE);
 
       this.rmEntityMetawidget = new StaticJavaMetawidget();
       this.rmEntityMetawidget.setConfigReader(configReader);
-      this.rmEntityMetawidget.setConfig("scaffold/faces/metawidget-remove-entity.xml");
+      this.rmEntityMetawidget.setConfig(SCAFFOLD_META_WIDGET_REMOVE_ENTITY);
    }
 
    private List<Resource<?>> generateFromEntity(String targetDir, final Resource<?> template, final JavaClassSource entity,
