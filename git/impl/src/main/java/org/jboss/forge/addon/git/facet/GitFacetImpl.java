@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.git.facet;
 
+import static org.jboss.forge.addon.git.constants.GitConstants.GIT_DIRECTORY;
+
 import javax.inject.Inject;
 
 import org.eclipse.jgit.api.Git;
@@ -14,7 +16,6 @@ import org.eclipse.jgit.api.InitCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.git.GitUtils;
-import org.jboss.forge.addon.git.facet.GitFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
@@ -25,7 +26,6 @@ import org.jboss.forge.addon.resource.FileResource;
  */
 public class GitFacetImpl extends AbstractFacet<Project> implements GitFacet
 {
-   private static final String GIT_DIRECTORY = ".git";
 
    @Inject
    private GitUtils gitUtils;

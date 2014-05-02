@@ -26,9 +26,7 @@ import org.jboss.forge.furnace.util.Streams;
 public class GitIgnoreResource extends FileResourceImpl
 {
 
-   public static final String RESOURCE_NAME = ".gitignore";
-
-//   @Inject
+   // @Inject
    public GitIgnoreResource(ResourceFactory factory)
    {
       this(factory, null);

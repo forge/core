@@ -1,5 +1,7 @@
 package org.jboss.forge.addon.git.ui;
 
+import static org.jboss.forge.addon.git.constants.GitConstants.GIT_DIRECTORY;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.facets.FacetFactory;
@@ -41,6 +43,6 @@ public class GitSetupCommand extends AbstractGitCommand
    public boolean isEnabled(UIContext context)
    {
       return super.isEnabled(context)
-               && !getSelectedProject(context).getRootDirectory().getChildDirectory(".git").exists();
+               && !getSelectedProject(context).getRootDirectory().getChildDirectory(GIT_DIRECTORY).exists();
    }
 }
