@@ -10,18 +10,20 @@ import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 
 public class TomEEContainer extends JavaEEDefaultContainer
 {
-   private static final String DEFAULT_DATASOURCE_NAME = "Default JDBC Database";
 
+   /**
+    * When you do not specify a jta-data-source and non-jta-data-source,
+    * TomEE will automatically look for a suitable DataSource from the
+    * tomee.xml config.  The matching is quite intelligent and will start
+    * with the persistence unit name, but also try the webapp name and
+    * even the ear name if applicable.
+    * 
+    * If one is not found, defaults are created.
+    */
    @Override
-   public DatabaseType getDefaultDatabaseType()
+   public boolean isDataSourceRequired()
    {
-      return DatabaseType.HSQLDB;
-   }
-
-   @Override
-   public String getDefaultDataSource()
-   {
-      return DEFAULT_DATASOURCE_NAME;
+      return false;
    }
 
    @Override
