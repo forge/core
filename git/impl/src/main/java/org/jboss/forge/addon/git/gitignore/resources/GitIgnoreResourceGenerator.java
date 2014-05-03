@@ -1,5 +1,7 @@
 package org.jboss.forge.addon.git.gitignore.resources;
 
+import static org.jboss.forge.addon.git.constants.GitConstants.GITIGNORE;
+
 import java.io.File;
 
 import org.jboss.forge.addon.resource.Resource;
@@ -12,7 +14,7 @@ public class GitIgnoreResourceGenerator implements ResourceGenerator<GitIgnoreRe
    @Override
    public boolean handles(Class<?> type, Object resource)
    {
-      if (resource instanceof File && ((File) resource).getName().equals(GitIgnoreResource.RESOURCE_NAME)) 
+      if (resource instanceof File && ((File) resource).getName().equals(GITIGNORE))
       {
          return true;
       }

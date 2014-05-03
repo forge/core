@@ -7,6 +7,10 @@
 
 package org.jboss.forge.addon.git.facet;
 
+import static org.jboss.forge.addon.git.constants.GitConstants.GITIGNORE;
+import static org.jboss.forge.addon.git.constants.GitConstants.GIT_DIRECTORY;
+import static org.jboss.forge.addon.git.constants.GitConstants.GLOBAL_TEMPLATES;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,13 +38,10 @@ import org.jboss.forge.furnace.util.Streams;
 @FacetConstraint(GitFacet.class)
 public class GitIgnoreFacetImpl extends AbstractFacet<Project> implements GitIgnoreFacet
 {
-   public static final String GITIGNORE = ".gitignore";
-   private static final String GLOBAL_TEMPLATES = "Global";
-   private static final String GIT_DIRECTORY = ".git";
 
    @Inject
    private GitIgnoreConfig config;
-   
+
    @Inject
    private GitUtils gitUtils;
 
@@ -54,14 +55,14 @@ public class GitIgnoreFacetImpl extends AbstractFacet<Project> implements GitIgn
       {
          DirectoryResource cloneDir = cloneDir();
          String repo = config.remoteRepository();
-// TODO        ShellMessages.info(shell, "Cloning " + repo + " into " + cloneDir.getFullyQualifiedName());
+         // TODO ShellMessages.info(shell, "Cloning " + repo + " into " + cloneDir.getFullyQualifiedName());
          Git git = gitUtils.clone(cloneDir, repo);
          gitUtils.close(git);
          return true;
       }
       catch (Exception e)
       {
-// TODO         ShellMessages.error(shell, "Failed to checkout gitignore: " + e);
+         // TODO ShellMessages.error(shell, "Failed to checkout gitignore: " + e);
          return false;
       }
    }

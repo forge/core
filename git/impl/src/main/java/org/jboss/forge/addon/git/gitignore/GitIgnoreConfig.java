@@ -7,6 +7,11 @@
 
 package org.jboss.forge.addon.git.gitignore;
 
+import static org.jboss.forge.addon.git.constants.GitConstants.BOILERPLATE_FILE;
+import static org.jboss.forge.addon.git.constants.GitConstants.CLONE_LOCATION_KEY;
+import static org.jboss.forge.addon.git.constants.GitConstants.REPOSITORY;
+import static org.jboss.forge.addon.git.constants.GitConstants.REPOSITORY_KEY;
+
 import java.io.File;
 
 import javax.inject.Inject;
@@ -16,11 +21,6 @@ import org.jboss.forge.addon.configuration.ConfigurationFactory;
 
 public class GitIgnoreConfig
 {
-
-   private static final String CLONE_LOCATION_KEY = "gitignore.plugin.clone";
-   private static final String REPOSITORY_KEY = "gitignore.plugin.repo";
-   private static final String BOILERPLATE_FILE = ".gitignore_boilerplate";
-   private static final String REPOSITORY = "https://github.com/github/gitignore.git";
 
    @Inject
    private ConfigurationFactory configFactory;
@@ -39,17 +39,17 @@ public class GitIgnoreConfig
       }
       return defaultRemoteRepository();
    }
-   
+
    public void setRemoteRepository(String repoUrl)
    {
       userConfig().setProperty(REPOSITORY_KEY, repoUrl);
    }
-   
+
    public File defaultLocalRepository()
    {
       return new File(System.getProperty("user.home") + File.separator + BOILERPLATE_FILE);
    }
-   
+
    public File localRepository()
    {
       Configuration user = userConfig();
@@ -59,7 +59,7 @@ public class GitIgnoreConfig
       }
       return defaultLocalRepository();
    }
-   
+
    public void setLocalRepository(String location)
    {
       userConfig().setProperty(CLONE_LOCATION_KEY, location);

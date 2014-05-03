@@ -26,7 +26,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:jevgeni.zelenkov@gmail.com">Jevgeni Zelenkov</a>
- *
+ * 
  */
 public class GitCloneCommand extends AbstractGitCommand
 {

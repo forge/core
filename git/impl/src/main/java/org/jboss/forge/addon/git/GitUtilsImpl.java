@@ -7,6 +7,10 @@
 
 package org.jboss.forge.addon.git;
 
+import static org.jboss.forge.addon.git.constants.GitConstants.GIT_DIRECTORY;
+import static org.jboss.forge.addon.git.constants.GitConstants.GIT_REFS_HEADS;
+import static org.jboss.forge.addon.git.constants.GitConstants.GIT_REMOTE_ORIGIN;
+
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -51,10 +55,10 @@ import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Convenience tools for interacting with the Git version control system.
- *
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:jevgeni.zelenkov@gmail.com">Jevgeni Zelenkov</a>
- *
+ * 
  */
 public class GitUtilsImpl implements GitUtils
 {
@@ -124,7 +128,7 @@ public class GitUtilsImpl implements GitUtils
    @Override
    public Git init(final DirectoryResource dir) throws IOException
    {
-      FileResource<?> gitDir = dir.getChildDirectory(".git").reify(FileResource.class);
+      FileResource<?> gitDir = dir.getChildDirectory(GIT_DIRECTORY).reify(FileResource.class);
       gitDir.mkdirs();
 
       RepositoryBuilder db = new RepositoryBuilder().setGitDir(gitDir.getUnderlyingResourceObject()).setup();
@@ -151,11 +155,11 @@ public class GitUtilsImpl implements GitUtils
       List<Ref> results = new ArrayList<>();
       try
       {
-         FetchResult fetch = repo.fetch().setRemote("origin").call();
+         FetchResult fetch = repo.fetch().setRemote(GIT_REMOTE_ORIGIN).call();
          Collection<Ref> refs = fetch.getAdvertisedRefs();
          for (Ref ref : refs)
          {
-            if (ref.getName().startsWith("refs/heads"))
+            if (ref.getName().startsWith(GIT_REFS_HEADS))
             {
                results.add(ref);
             }

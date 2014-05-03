@@ -1,5 +1,7 @@
 package org.jboss.forge.addon.git.ui;
 
+import static org.jboss.forge.addon.git.constants.GitConstants.GITIGNORE;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.git.gitignore.resources.GitIgnoreResource;
@@ -44,7 +46,7 @@ abstract class AbstractGitCommand extends AbstractProjectCommand
    {
       GitIgnoreResource resource = getSelectedProject(context).getRootDirectory().getChildOfType(
                GitIgnoreResource.class,
-               ".gitignore");
+               GITIGNORE);
       if (resource == null || !resource.exists())
       {
          resource.createNewFile();
