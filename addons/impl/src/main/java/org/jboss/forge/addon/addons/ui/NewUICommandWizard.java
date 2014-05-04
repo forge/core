@@ -6,11 +6,6 @@
  */
 package org.jboss.forge.addon.addons.ui;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.maven.projects.util.Packages;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -30,18 +25,23 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Iterator;
+
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  */
 public class NewUICommandWizard extends AbstractJavaSourceCommand
 {
    @Inject
-   @WithAttributes(label = "Command name", required = true)
+   @WithAttributes(label = "Command name", required = false)
    private UIInput<String> commandName;
 
    @Inject
@@ -72,6 +72,12 @@ public class NewUICommandWizard extends AbstractJavaSourceCommand
       {
          JavaResource javaResource = context.getUIContext().getSelection();
          JavaClassSource command = javaResource.getJavaType();
+
+         if (Strings.isNullOrEmpty(commandName.getValue()))
+         {
+            commandName.setValue(calculateCommandName(command.getName()));
+         }
+
          JavaClassSource javaClass = createCommand(command, commandName.getValue(), categories.getValue());
          Project project = getSelectedProject(context);
          final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
@@ -155,5 +161,36 @@ public class NewUICommandWizard extends AbstractJavaSourceCommand
    protected String getType()
    {
       return "UI Command";
+   }
+
+   static String calculateCommandName(String value)
+   {
+      StringBuilder builder = new StringBuilder();
+
+      if (Strings.isNullOrEmpty(value))
+      {
+         throw new IllegalArgumentException("It isn't possible to parse a null value");
+      }
+
+      if (value.toLowerCase().endsWith("command"))
+      {
+         value = value.substring(0, value.toLowerCase().lastIndexOf("command"));
+      }
+
+      value = value
+               .replaceFirst(Character.toString(value.charAt(0)), Character.toString(value.charAt(0)).toLowerCase());
+      for (int index = 0; index < value.length(); index++)
+      {
+         char charValue = value.charAt(index);
+         if (index > 0 && Character.isUpperCase(charValue) && Character.isLowerCase(value.charAt(index - 1)))
+         {
+            builder.append("-").append(Character.toLowerCase(charValue));
+         }
+         else
+         {
+            builder.append(Character.toLowerCase(charValue));
+         }
+      }
+      return builder.toString();
    }
 }
