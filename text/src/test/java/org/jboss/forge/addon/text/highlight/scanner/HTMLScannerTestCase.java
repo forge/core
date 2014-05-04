@@ -74,6 +74,7 @@ public class HTMLScannerTestCase extends AbstractScannerTestCase
    }
 
    @Test
+   @Ignore
    public void shouldMatchHTMLTPuthTagsExample() throws Exception
    {
       assertMatchExample(Builder.create(), "html", "tputh.in.html");
