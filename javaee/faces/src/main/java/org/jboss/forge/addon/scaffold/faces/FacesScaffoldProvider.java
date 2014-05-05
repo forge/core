@@ -364,7 +364,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(FORGE_STYLE_CSS),
                getClass().getResourceAsStream(SCAFFOLD_FORGE_STYLE_CSS), overwrite));
-      
+
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(REMOVE_PNG),
                getClass().getResourceAsStream(SCAFFOLD_REMOVE_PNG), overwrite));
 
@@ -595,7 +595,8 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       for (Resource<?> resource : web.getWebResource(targetDir + "/").listResources(filter))
       {
          HtmlOutcomeTargetLink outcomeTargetLink = new HtmlOutcomeTargetLink();
-         outcomeTargetLink.putAttribute("outcome", targetDir + "/" + resource.getName() + "/search");
+         String outcome = targetDir.isEmpty() || targetDir.startsWith("/") ? targetDir : "/" + targetDir;
+         outcomeTargetLink.putAttribute("outcome", outcome + "/" + resource.getName() + "/search");
          outcomeTargetLink.setValue(StringUtils.uncamelCase(resource.getName()));
 
          HtmlTag listItem = new HtmlTag("li");
@@ -703,7 +704,8 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       this.rmEntityMetawidget.setConfig(SCAFFOLD_META_WIDGET_REMOVE_ENTITY);
    }
 
-   private List<Resource<?>> generateFromEntity(String targetDir, final Resource<?> template, final JavaClassSource entity,
+   private List<Resource<?>> generateFromEntity(String targetDir, final Resource<?> template,
+            final JavaClassSource entity,
             final boolean overwrite)
    {
       resetMetaWidgets();

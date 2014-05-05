@@ -65,10 +65,9 @@ import org.metawidget.util.simple.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
 /**
  * Builds widgets with Forge-specific behaviours (such as links to other scaffolding pages).
- *
+ * 
  * @author Richard Kennard
  */
 
@@ -151,7 +150,12 @@ public class EntityWidgetBuilder
             controllerName = StringUtils.decapitalize(controllerName);
 
             HtmlOutcomeTargetLink link = new HtmlOutcomeTargetLink();
-            link.putAttribute("outcome", getTargetDir() + "/" + controllerName + "/view");
+            String outcome = getTargetDir();
+            if (!outcome.isEmpty() && !outcome.startsWith("/"))
+            {
+               outcome = "/" + outcome;
+            }
+            link.putAttribute("outcome", outcome + "/" + controllerName + "/view");
 
             StandardBindingProcessor bindingProcessor = metawidget.getWidgetProcessor(StandardBindingProcessor.class);
 
@@ -161,7 +165,8 @@ public class EntityWidgetBuilder
                         (StaticUIMetawidget) metawidget);
             }
 
-            link.putAttribute("rendered", StaticFacesUtils.wrapExpression("!empty " + StaticFacesUtils.unwrapExpression(link.getValue())));
+            link.putAttribute("rendered",
+                     StaticFacesUtils.wrapExpression("!empty " + StaticFacesUtils.unwrapExpression(link.getValue())));
 
             String reverseKey = "id";
             if (attributes.containsKey(REVERSE_PRIMARY_KEY))
@@ -173,7 +178,8 @@ public class EntityWidgetBuilder
             param.putAttribute("name", "id");
             param.putAttribute(
                      "value",
-                     StaticFacesUtils.wrapExpression(StaticFacesUtils.unwrapExpression(link.getValue()) + StringUtils.SEPARATOR_DOT_CHAR
+                     StaticFacesUtils.wrapExpression(StaticFacesUtils.unwrapExpression(link.getValue())
+                              + StringUtils.SEPARATOR_DOT_CHAR
                               + reverseKey));
             link.getChildren().add(param);
 
@@ -209,11 +215,12 @@ public class EntityWidgetBuilder
       }
 
       // Change the labels of the f:selectItems in the h:select widget (when FACES_LOOKUP is present)
-      String facesLookup = attributes.get( FACES_LOOKUP );
+      String facesLookup = attributes.get(FACES_LOOKUP);
 
-      if ( facesLookup != null && !"".equals( facesLookup ) ) {
+      if (facesLookup != null && !"".equals(facesLookup))
+      {
          HtmlSelectOneMenu select = new HtmlSelectOneMenu();
-         addSelectItems( select, facesLookup, attributes );
+         addSelectItems(select, facesLookup, attributes);
          return select;
       }
 
@@ -566,7 +573,13 @@ public class EntityWidgetBuilder
          // Create a link...
 
          HtmlOutcomeTargetLink link = new HtmlOutcomeTargetLink();
-         link.putAttribute("outcome", getTargetDir() + "/" + controllerName + "/view");
+         String outcome = getTargetDir();
+         if (!outcome.isEmpty() && !outcome.startsWith("/"))
+         {
+            outcome = "/" + outcome;
+         }
+         
+         link.putAttribute("outcome", outcome + "/" + controllerName + "/view");
 
          // ...pointing to the id
 
@@ -598,7 +611,7 @@ public class EntityWidgetBuilder
                            + primaryKeyName));
          link.getChildren().add(param);
          link.getChildren().add(column.getChildren().remove(1));
-         if(columnAttributes.containsKey(FACES_LOOKUP) && columnAttributes.containsKey(REVERSE_PRIMARY_KEY))
+         if (columnAttributes.containsKey(FACES_LOOKUP) && columnAttributes.containsKey(REVERSE_PRIMARY_KEY))
          {
             StaticHtmlMetawidget output = (StaticHtmlMetawidget) link.getChildren().get(1);
             String displayExpression = "forgeview:display(" + dataTable.getAttribute("var")
@@ -667,7 +680,8 @@ public class EntityWidgetBuilder
     * Overrriden to enhance the default f:selectItem widget with more suitable item labels
     */
    @Override
-   protected void addSelectItems( HtmlSelectOneMenu select, String valueExpression, Map<String, String> attributes ) {
+   protected void addSelectItems(HtmlSelectOneMenu select, String valueExpression, Map<String, String> attributes)
+   {
 
       // Empty option
       //
@@ -675,8 +689,9 @@ public class EntityWidgetBuilder
       // than an <f:selectItem itemValue=""/>. This works out better if the HtmlSelectOneMenu has
       // a converter, because the empty String may not be a compatible value
 
-      if ( WidgetBuilderUtils.needsEmptyLookupItem( attributes ) ) {
-         addSelectItem( select, null, null );
+      if (WidgetBuilderUtils.needsEmptyLookupItem(attributes))
+      {
+         addSelectItem(select, null, null);
       }
 
       // Add the select items
@@ -694,7 +709,7 @@ public class EntityWidgetBuilder
          selectItems.putAttribute("itemLabel", StaticFacesUtils.wrapExpression(displayExpression));
       }
 
-      select.getChildren().add( selectItems );
+      select.getChildren().add(selectItems);
    }
 
    //
@@ -719,12 +734,13 @@ public class EntityWidgetBuilder
       return target;
    }
 
-   private void addSelectItem( HtmlSelectOneMenu select, String value, String label ) {
+   private void addSelectItem(HtmlSelectOneMenu select, String value, String label)
+   {
 
       SelectItem selectItem = new SelectItem();
-      selectItem.putAttribute( "itemLabel", label );
-      selectItem.putAttribute( "itemValue", value );
+      selectItem.putAttribute("itemLabel", label);
+      selectItem.putAttribute("itemValue", value);
 
-      select.getChildren().add( selectItem );
+      select.getChildren().add(selectItem);
    }
 }
