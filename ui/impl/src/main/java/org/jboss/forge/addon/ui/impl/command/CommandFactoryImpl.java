@@ -53,10 +53,17 @@ public class CommandFactoryImpl implements CommandFactory
             Iterator<UICommand> iterator = commands.iterator();
             while (iterator.hasNext())
             {
-               UICommand command = iterator.next();
-               if (!(command instanceof UIWizardStep))
+               try
                {
-                  result.add(command);
+                  UICommand command = iterator.next();
+                  if (!(command instanceof UIWizardStep))
+                  {
+                     result.add(command);
+                  }
+               }
+               catch (Exception e)
+               {
+                  log.log(Level.SEVERE, "Error while retrieving command instance", e);
                }
             }
             instances.release(provider);
