@@ -64,7 +64,7 @@ public class RunCommand extends AbstractShellCommand
    ResourceFactory resourceFactory;
 
    @Inject
-   @WithAttributes(label = "Timeout (seconds)", defaultValue = "15", required = false,
+   @WithAttributes(label = "Timeout (seconds)", defaultValue = "500", required = false,
             description = "Set the timeout after which this script should abort if execution has not completed.")
    private UIInput<Integer> timeout;
 
