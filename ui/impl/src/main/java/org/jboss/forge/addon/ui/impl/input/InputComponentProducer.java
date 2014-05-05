@@ -38,11 +38,12 @@ import org.jboss.forge.furnace.services.Imported;
 
 /**
  * Produces UIInput objects
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 @Singleton
+@SuppressWarnings("unchecked")
 public class InputComponentProducer implements InputComponentFactory
 {
    private final AddonRegistry addonRegistry;
@@ -60,69 +61,68 @@ public class InputComponentProducer implements InputComponentFactory
    }
 
    @Produces
-   @SuppressWarnings("unchecked")
    public <T> UISelectOne<T> produceSelectOne(InjectionPoint injectionPoint)
    {
       String name = injectionPoint.getMember().getName();
       Type type = injectionPoint.getAnnotated().getBaseType();
-
+      Class<T> valueType;
       if (type instanceof ParameterizedType)
       {
          ParameterizedType parameterizedType = (ParameterizedType) type;
 
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
-         Class<T> valueType = (Class<T>) resolveRealType(typeArguments[0]);
-         WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
-         String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
-                  : withAttributes.name();
-         char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
-         UISelectOne<T> input = createSelectOne(paramName, shortName, valueType);
-         setupSelectComponent(input);
-         preconfigureInput(input, withAttributes);
-         for (InputComponentInjectionEnricher enricher : enrichers)
-         {
-            enricher.enrich(injectionPoint, input);
-         }
-         return input;
+         valueType = resolveRealType(typeArguments[0]);
       }
       else
       {
-         throw new IllegalStateException("Cannot inject a generic instance of type " + UISelectOne.class.getName()
-                  + "<?> without specifying concrete generic types at injection point " + injectionPoint + ".");
+         // FORGE-1781: Using String if parameter type is not defined
+         valueType = (Class<T>) String.class;
       }
+      WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+      String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
+               : withAttributes.name();
+      char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
+      UISelectOne<T> input = createSelectOne(paramName, shortName, valueType);
+      setupSelectComponent(input);
+      preconfigureInput(input, withAttributes);
+      for (InputComponentInjectionEnricher enricher : enrichers)
+      {
+         enricher.enrich(injectionPoint, input);
+      }
+      return input;
    }
 
    @Produces
-   @SuppressWarnings({ "unchecked" })
    public <T> UISelectMany<T> produceSelectMany(InjectionPoint injectionPoint)
    {
       String name = injectionPoint.getMember().getName();
       Type type = injectionPoint.getAnnotated().getBaseType();
-
+      Class<T> valueType;
       if (type instanceof ParameterizedType)
       {
          ParameterizedType parameterizedType = (ParameterizedType) type;
 
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
-         Class<T> valueType = (Class<T>) resolveRealType(typeArguments[0]);
-         WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
-         String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
-                  : withAttributes.name();
-         char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
-         UISelectMany<T> input = createSelectMany(paramName, shortName, valueType);
-         setupSelectComponent(input);
-         preconfigureInput(input, withAttributes);
-         for (InputComponentInjectionEnricher enricher : enrichers)
-         {
-            enricher.enrich(injectionPoint, input);
-         }
-         return input;
+         valueType = resolveRealType(typeArguments[0]);
       }
       else
       {
-         throw new IllegalStateException("Cannot inject a generic instance of type " + UISelectMany.class.getName()
-                  + "<?> without specifying concrete generic types at injection point " + injectionPoint + ".");
+         // FORGE-1781: Using String if parameter type is not defined
+         valueType = (Class<T>) String.class;
       }
+
+      WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+      String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
+               : withAttributes.name();
+      char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
+      UISelectMany<T> input = createSelectMany(paramName, shortName, valueType);
+      setupSelectComponent(input);
+      preconfigureInput(input, withAttributes);
+      for (InputComponentInjectionEnricher enricher : enrichers)
+      {
+         enricher.enrich(injectionPoint, input);
+      }
+      return input;
    }
 
    @Produces
@@ -131,64 +131,64 @@ public class InputComponentProducer implements InputComponentFactory
       String name = injectionPoint.getMember().getName();
       Type type = injectionPoint.getAnnotated().getBaseType();
 
+      Class<T> valueType;
       if (type instanceof ParameterizedType)
       {
          ParameterizedType parameterizedType = (ParameterizedType) type;
 
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
-         Class<T> valueType = resolveRealType(typeArguments[0]);
-         WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
-         String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
-                  : withAttributes.name();
-         char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
-         UIInput<T> input = createInput(paramName, shortName, valueType);
-         preconfigureInput(input, withAttributes);
-         for (InputComponentInjectionEnricher enricher : enrichers)
-         {
-            enricher.enrich(injectionPoint, input);
-         }
-         return input;
+         valueType = resolveRealType(typeArguments[0]);
       }
       else
       {
-         throw new IllegalStateException("Cannot inject a generic instance of type " + UIInput.class.getName()
-                  + "<?> without specifying concrete generic types at injection point " + injectionPoint + ".");
+         // FORGE-1781: Using String if parameter type is not defined
+         valueType = (Class<T>) String.class;
       }
+      WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+      String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
+               : withAttributes.name();
+      char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
+      UIInput<T> input = createInput(paramName, shortName, valueType);
+      preconfigureInput(input, withAttributes);
+      for (InputComponentInjectionEnricher enricher : enrichers)
+      {
+         enricher.enrich(injectionPoint, input);
+      }
+      return input;
    }
 
    @Produces
-   @SuppressWarnings({ "unchecked" })
    public <T> UIInputMany<T> produceInputMany(InjectionPoint injectionPoint)
    {
       String name = injectionPoint.getMember().getName();
       Type type = injectionPoint.getAnnotated().getBaseType();
-
+      Class<T> valueType;
       if (type instanceof ParameterizedType)
       {
          ParameterizedType parameterizedType = (ParameterizedType) type;
 
          Type[] typeArguments = parameterizedType.getActualTypeArguments();
-         Class<T> valueType = (Class<T>) resolveRealType(typeArguments[0]);
-         WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
-         String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
-                  : withAttributes.name();
-         char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
-         UIInputMany<T> input = createInputMany(paramName, shortName, valueType);
-         preconfigureInput(input, withAttributes);
-         for (InputComponentInjectionEnricher enricher : enrichers)
-         {
-            enricher.enrich(injectionPoint, input);
-         }
-         return input;
+         valueType = resolveRealType(typeArguments[0]);
       }
       else
       {
-         throw new IllegalStateException("Cannot inject a generic instance of type " + UIInputMany.class.getName()
-                  + "<?> without specifying concrete generic types at injection point " + injectionPoint + ".");
+         // FORGE-1781: Using String if parameter type is not defined
+         valueType = (Class<T>) String.class;
       }
+
+      WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+      String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
+               : withAttributes.name();
+      char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
+      UIInputMany<T> input = createInputMany(paramName, shortName, valueType);
+      preconfigureInput(input, withAttributes);
+      for (InputComponentInjectionEnricher enricher : enrichers)
+      {
+         enricher.enrich(injectionPoint, input);
+      }
+      return input;
    }
 
-   @SuppressWarnings("unchecked")
    private <T> Class<T> resolveRealType(Type type)
    {
       if (type instanceof ParameterizedType)
@@ -199,7 +199,6 @@ public class InputComponentProducer implements InputComponentFactory
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public <T> UIInput<T> createInput(String name, char shortName, Class<T> valueType)
    {
       UIInputImpl<T> input = new UIInputImpl<>(name, shortName, valueType);
@@ -236,7 +235,6 @@ public class InputComponentProducer implements InputComponentFactory
    /**
     * Pre-configure input based on WithAttributes info if annotation exists
     */
-   @SuppressWarnings("unchecked")
    public void preconfigureInput(InputComponent<?, ?> input, WithAttributes atts)
    {
       if (atts != null)
@@ -262,7 +260,6 @@ public class InputComponentProducer implements InputComponentFactory
       }
    }
 
-   @SuppressWarnings("unchecked")
    public void preconfigureInput(InputComponent<?, ?> input, Option option)
    {
       if (option != null)
@@ -295,7 +292,7 @@ public class InputComponentProducer implements InputComponentFactory
       }
    }
 
-   @SuppressWarnings({ "rawtypes", "unchecked" })
+   @SuppressWarnings("rawtypes")
    public void setupSelectComponent(SelectComponent selectComponent)
    {
       Class<?> valueType = selectComponent.getValueType();
