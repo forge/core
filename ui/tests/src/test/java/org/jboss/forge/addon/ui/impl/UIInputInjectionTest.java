@@ -55,7 +55,7 @@ public class UIInputInjectionTest
    }
 
    @Inject
-   @WithAttributes(defaultValue="true", label = "")
+   @WithAttributes(defaultValue = "true", label = "")
    UIInput<Boolean> enabled;
 
    @Inject
@@ -79,6 +79,17 @@ public class UIInputInjectionTest
 
    @Inject
    UISelectOne<Gender> gender;
+
+   @SuppressWarnings("rawtypes")
+   @Inject
+   UIInput noParameter;
+
+   @Test
+   public void testNoParameterInput()
+   {
+      Assert.assertNotNull(noParameter);
+      Assert.assertEquals(String.class, noParameter.getValueType());
+   }
 
    @Test
    public void testEnumValuesAvailability() throws Exception
