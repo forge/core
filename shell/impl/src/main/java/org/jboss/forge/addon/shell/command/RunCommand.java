@@ -115,7 +115,7 @@ public class RunCommand extends AbstractShellCommand
 
                Shell scriptShell = shellFactory.createShell(((FileResource<?>) context.getUIContext()
                         .getInitialSelection().get()).getUnderlyingResourceObject(), settings);
-               
+
                scriptShell.getConsole().setPrompt(new Prompt(""));
 
                try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getResourceInputStream())))
@@ -126,6 +126,11 @@ public class RunCommand extends AbstractShellCommand
                      try
                      {
                         String line = reader.readLine();
+                        if (isComment(line))
+                        {
+                           // Skip Comments
+                           continue;
+                        }
                         Integer timeoutValue = timeout.getValue();
                         result = execute(scriptShell, writer, line, timeoutValue,
                                  TimeUnit.SECONDS, startTime);
@@ -163,7 +168,10 @@ public class RunCommand extends AbstractShellCommand
             throws TimeoutException
    {
       Assert.notNull(line, "Line to execute cannot be null.");
-
+      if (isComment(line))
+      {
+         return Results.success();
+      }
       Result result = null;
 
       if (!line.trim().isEmpty())
@@ -264,6 +272,11 @@ public class RunCommand extends AbstractShellCommand
    public boolean isEnabled(ShellContext context)
    {
       return super.isEnabled(context) && context.getInitialSelection().get() instanceof DirectoryResource;
+   }
+
+   private boolean isComment(String line)
+   {
+      return line.startsWith("#");
    }
 
    private static class UncloseablePrintStream extends PrintStream
