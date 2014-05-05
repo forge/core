@@ -74,10 +74,10 @@ public class CatCommandTest
    public void testCatCommand() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      File target = new File(project.getRootDirectory().getFullyQualifiedName(), "test.java");
+      File target = new File(project.getRoot().getFullyQualifiedName(), "test.java");
       target.createNewFile();
 
-      FileResource<?> source = project.getRootDirectory().getChild(target.getName()).reify(FileResource.class);
+      FileResource<?> source = project.getRoot().getChild(target.getName()).reify(FileResource.class);
       source.setContents("public void test() {}");
 
       shellTest.execute("cat " + source.getFullyQualifiedName(), 5, TimeUnit.SECONDS);
@@ -88,10 +88,10 @@ public class CatCommandTest
    public void testCatColoredCommand() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      File target = new File(project.getRootDirectory().getFullyQualifiedName(), "test.java");
+      File target = new File(project.getRoot().getFullyQualifiedName(), "test.java");
       target.createNewFile();
 
-      FileResource<?> source = project.getRootDirectory().getChild(target.getName()).reify(FileResource.class);
+      FileResource<?> source = project.getRoot().getChild(target.getName()).reify(FileResource.class);
       source.setContents("public void test() {}");
 
       shellTest.execute("cat " + source.getFullyQualifiedName() + " --color", 5, TimeUnit.SECONDS);
