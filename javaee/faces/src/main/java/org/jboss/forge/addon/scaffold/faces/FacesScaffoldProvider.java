@@ -128,6 +128,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    private static final String SCAFFOLD_NAVIGATION_TEMPLATE = "/resources/scaffold/pageTemplate.xhtml";
    private static final String ERROR_TEMPLATE = "scaffold/faces/error.xhtml";
    private static final String INDEX_TEMPLATE = "scaffold/faces/index.xhtml";
+   private static final String INDEX_HTML_TEMPLATE = "scaffold/faces/index.html";
    private static final String INDEX_XHTML = "/index.xhtml";
    private static final String INDEX_HTML = "/index.html";
    private static final String SCAFFOLD_META_WIDGET_REMOVE_ENTITY = "scaffold/faces/metawidget-remove-entity.xml";
@@ -466,7 +467,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       }
       if (this.indexWelcomeTemplate == null)
       {
-         this.indexWelcomeTemplate = this.templateProcessor.getTemplate(INDEX_TEMPLATE);
+         this.indexWelcomeTemplate = this.templateProcessor.getTemplate(INDEX_HTML_TEMPLATE);
       }
    }
 
