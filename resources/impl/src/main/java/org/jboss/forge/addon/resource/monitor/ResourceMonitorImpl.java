@@ -15,6 +15,8 @@ import java.util.logging.Logger;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.PathResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceFilter;
 import org.jboss.forge.addon.resource.events.ResourceCreated;
@@ -22,28 +24,32 @@ import org.jboss.forge.addon.resource.events.ResourceDeleted;
 import org.jboss.forge.addon.resource.events.ResourceEvent;
 import org.jboss.forge.addon.resource.events.ResourceModified;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * Implementation of the {@link ResourceMonitor} interface
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-
-@SuppressWarnings("unchecked")
 public class ResourceMonitorImpl implements ResourceMonitor
 {
    private static final Logger log = Logger.getLogger(ResourceMonitorImpl.class.getName());
 
    private final FileMonitor fileMonitor;
 
-   private final DirectoryResource resource;
+   private final Resource<?> resource;
    private final Set<ResourceListener> listeners = new LinkedHashSet<>();
    private final ResourceFactory resourceFactory;
    private final ResourceFilter resourceFilter;
+   private final boolean resourceIsFile;
 
-   public ResourceMonitorImpl(FileMonitor fileMonitor, DirectoryResource resource, ResourceFactory resourceFactory,
+   public ResourceMonitorImpl(FileMonitor fileMonitor, Resource<?> resource, ResourceFactory resourceFactory,
             ResourceFilter resourceFilter)
    {
+      Assert.isTrue(resource instanceof DirectoryResource || resource instanceof PathResource,
+               "resource parameter must be either DirectoryResource or PathResource");
+
+      this.resourceIsFile = resource instanceof FileResource;
       this.fileMonitor = fileMonitor;
       this.resource = resource;
       this.resourceFactory = resourceFactory;
@@ -68,20 +74,23 @@ public class ResourceMonitorImpl implements ResourceMonitor
 
    void onPathModify(Path path)
    {
-      FileResource<?> fileResource = resourceFactory.create(FileResource.class, path.toFile());
-      fireEvent(new ResourceModified(fileResource));
+      Object underlyingObject = (resourceIsFile) ? path.toFile() : path;
+      Resource<?> resource = resourceFactory.create(underlyingObject);
+      fireEvent(new ResourceModified(resource));
    }
 
    void onPathCreate(Path path)
    {
-      FileResource<?> fileResource = resourceFactory.create(FileResource.class, path.toFile());
-      fireEvent(new ResourceCreated(fileResource));
+      Object underlyingObject = (resourceIsFile) ? path.toFile() : path;
+      Resource<?> resource = resourceFactory.create(underlyingObject);
+      fireEvent(new ResourceCreated(resource));
    }
 
    void onPathDelete(Path path)
    {
-      FileResource<?> fileResource = resourceFactory.create(FileResource.class, path.toFile());
-      fireEvent(new ResourceDeleted(fileResource));
+      Object underlyingObject = (resourceIsFile) ? path.toFile() : path;
+      Resource<?> resource = resourceFactory.create(underlyingObject);
+      fireEvent(new ResourceDeleted(resource));
    }
 
    private void fireEvent(ResourceEvent event)
@@ -103,14 +112,25 @@ public class ResourceMonitorImpl implements ResourceMonitor
    }
 
    @Override
-   public DirectoryResource getResource()
+   public Resource<?> getResource()
    {
       return resource;
    }
 
    Path getResourcePath()
    {
-      return resource.getUnderlyingResourceObject().toPath();
+      if (resource instanceof DirectoryResource)
+      {
+         return ((DirectoryResource) resource).getUnderlyingResourceObject().toPath();
+      }
+      else if (resource instanceof PathResource)
+      {
+         return (Path) ((PathResource) resource).getUnderlyingResourceObject();
+      }
+      else
+      {
+         throw new IllegalStateException("Invalid resource type");
+      }
    }
 
    @Override

@@ -60,12 +60,13 @@ public interface ResourceFactory
    ResourceTransaction getTransaction();
 
    /**
-    * Returns the operational layer for {@link File} objects. This object should be used if operations on a {@link File}
-    * should happen in a transactional context.
+    * Returns the operational layer for resource objects.  For {@link File} operations, this object should be used if a
+    * transactional context is required.  For {@link Path} operations, transactions are not currently supported.
     * 
-    * The default implementation invokes the {@link File} methods where applicable
+    * The default implementation invokes the resource's native methods where applicable
+    * @param <T>
     */
-   FileOperations getFileOperations();
+   <T> ResourceOperations<T> getResourceOperations(Class<T> type);
 
    /**
     * Add a {@link ResourceTransactionListener} to be notified when {@link ResourceTransaction} events occur.

@@ -20,52 +20,52 @@ import java.nio.channels.FileChannel;
 import org.jboss.forge.furnace.util.Streams;
 
 /**
- * Default implementation for {@link FileOperations} interface
+ * Default implementation for {@link File} based {@link ResourceOperations} interface
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public enum DefaultFileOperations implements FileOperations
+public enum DefaultFileOperations implements ResourceOperations<File>
 {
    INSTANCE;
 
    @Override
-   public boolean fileExists(File f)
+   public boolean resourceExists(File f)
    {
       return f.exists();
    }
 
    @Override
-   public boolean fileExistsAndIsDirectory(File f)
+   public boolean resourceExistsAndIsDirectory(File f)
    {
       return f.isDirectory();
    }
 
    @Override
-   public File[] listFiles(File f)
+   public File[] listResources(File f)
    {
       return f.listFiles();
    }
 
    @Override
-   public long getFileLength(File f)
+   public long getResourceLength(File f)
    {
       return f.length();
    }
 
    @Override
-   public boolean deleteFile(File file)
+   public boolean deleteResource(File file)
    {
       return file.delete();
    }
 
    @Override
-   public void deleteFileOnExit(File file)
+   public void deleteResourceOnExit(File file)
    {
       file.deleteOnExit();
    }
 
    @Override
-   public boolean createNewFile(File file) throws IOException
+   public boolean createNewResource(File file) throws IOException
    {
       return file.createNewFile();
    }
@@ -95,7 +95,7 @@ public enum DefaultFileOperations implements FileOperations
    }
 
    @Override
-   public boolean renameFile(File srcFile, File destFile)
+   public boolean renameResource(File srcFile, File destFile)
    {
       if (srcFile == null)
       {
@@ -109,7 +109,7 @@ public enum DefaultFileOperations implements FileOperations
    }
 
    @Override
-   public void copyFile(File srcFile, File destFile) throws IOException
+   public void copyResource(File srcFile, File destFile) throws IOException
    {
       if (srcFile == null)
       {

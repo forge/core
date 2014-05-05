@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.PathResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceFilter;
@@ -23,7 +24,7 @@ import org.jboss.forge.furnace.event.PreShutdown;
 
 /**
  * This {@link FileMonitor} uses commons-io to listen for changes in files
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @Singleton
@@ -81,6 +82,53 @@ public class FileMonitor
          };
       }
       ResourceMonitorImpl resourceMonitor = new ResourceMonitorImpl(this, dirResource, resourceFactory, filter);
+      try
+      {
+         watcher.register(resourceMonitor);
+      }
+      catch (IOException e)
+      {
+         throw new IllegalStateException("Could not register resource monitor", e);
+      }
+      return resourceMonitor;
+   }
+
+   public ResourceMonitor registerMonitor(final ResourceFactory resourceFactory, final PathResource resource,
+            final ResourceFilter resourceFilter)
+   {
+      if (watcher == null)
+      {
+         throw new IllegalStateException("File Monitor is not started yet");
+      }
+      PathResource thisResource = resource;
+      ResourceFilter filter = resourceFilter;
+
+      if (!resource.isDirectory())
+      {
+         // It's a file, monitor the parent and add a filter to the file
+         thisResource = resource.getParent();
+         filter = new ResourceFilter()
+         {
+            @Override
+            public boolean accept(Resource<?> type)
+            {
+               boolean isMonitoredFile = type.equals(resource);
+               if (!isMonitoredFile)
+               {
+                  return false;
+               }
+               else if (resourceFilter != null)
+               {
+                  return resourceFilter.accept(type);
+               }
+               else
+               {
+                  return true;
+               }
+            }
+         };
+      }
+      ResourceMonitorImpl resourceMonitor = new ResourceMonitorImpl(this, thisResource, resourceFactory, filter);
       try
       {
          watcher.register(resourceMonitor);
