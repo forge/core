@@ -462,7 +462,8 @@ public class DefaultShellTest implements ShellTest
             @Override
             public String call() throws Exception
             {
-               getStdIn().write((Key.CTRL_U.getAsChar() + LINE_SEPARATOR).getBytes());
+               AeshConsoleImpl console = (AeshConsoleImpl) shell.getConsole();
+               console.getInputProcessor().resetBuffer();
                provider.getStdOut().reset();
                provider.getStdErr().reset();
                return null;
