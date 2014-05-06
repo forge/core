@@ -82,7 +82,7 @@ public class ConfigListCommandTest
       Project project = projectFactory.createTempProject();
       Configuration projectConfig = project.getFacet(ConfigurationFacet.class).getConfiguration();
       addPropsToProjectConfig(projectConfig);
-      test.getShell().setCurrentResource(project.getRootDirectory());
+      test.getShell().setCurrentResource(project.getRoot());
       test.execute("config-list", 5, TimeUnit.SECONDS);
       Assert.assertThat(test.getStdOut(), containsString("key2=project: [projectValue2]"));
       Assert.assertThat(test.getStdOut(), containsString("key3=project: [projectValue3]"));
@@ -95,7 +95,7 @@ public class ConfigListCommandTest
       Project project = projectFactory.createTempProject();
       Configuration projectConfig = project.getFacet(ConfigurationFacet.class).getConfiguration();
       addPropsToProjectConfig(projectConfig);
-      test.getShell().setCurrentResource(project.getRootDirectory());
+      test.getShell().setCurrentResource(project.getRoot());
       test.execute("config-list", 5, TimeUnit.SECONDS);
       Assert.assertThat(test.getStdOut(), containsString("key1=user: [userValue1]"));
       Assert.assertThat(test.getStdOut(), containsString("key2=user: [userValue2], project: [projectValue2]"));
