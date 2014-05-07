@@ -161,7 +161,7 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
          // Checkout branch/tag
          if (branch.hasValue())
          {
-            gitUtils.checkout(git, branch.getValue(), false, SetupUpstreamMode.NOTRACK, false);
+            gitUtils.checkout(git, branch.getValue(), true, SetupUpstreamMode.NOTRACK, false);
          }
       }
       finally
