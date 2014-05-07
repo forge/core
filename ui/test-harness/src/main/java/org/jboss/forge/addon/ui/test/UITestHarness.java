@@ -7,6 +7,9 @@
 
 package org.jboss.forge.addon.ui.test;
 
+import java.util.Collections;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.Resource;
@@ -45,6 +48,8 @@ public class UITestHarness
    private CommandControllerFactory factory;
 
    private UIProviderImpl providerImpl;
+
+   private Map<String, String> promptResults = Collections.emptyMap();
 
    public CommandController createCommandController(String name) throws Exception
    {
@@ -99,7 +104,7 @@ public class UITestHarness
 
    private UIRuntimeImpl getUIRuntimeInstance()
    {
-      return new UIRuntimeImpl();
+      return new UIRuntimeImpl(promptResults);
    }
 
    public UIProviderImpl getProvider()
@@ -117,5 +122,16 @@ public class UITestHarness
       UISelection<Resource<?>> selection = Selections.from(initialSelection);
       UIContextImpl context = new UIContextImpl(getProvider(), listeners, selection);
       return context;
+   }
+
+   /**
+    * The {@link Map} is based on the key being a regular expression to the prompt message
+    * 
+    * @param promptResults the promptResults to set
+    */
+   public void setPromptResults(Map<String, String> promptResults)
+   {
+      Assert.notNull(promptResults, "Prompt results map should not be null");
+      this.promptResults = promptResults;
    }
 }

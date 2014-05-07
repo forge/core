@@ -7,6 +7,9 @@
 
 package org.jboss.forge.addon.ui.test.impl;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.jboss.forge.addon.ui.input.UIPrompt;
 
 /**
@@ -15,29 +18,63 @@ import org.jboss.forge.addon.ui.input.UIPrompt;
  */
 public class UIPromptImpl implements UIPrompt
 {
+   private final Map<String, String> promptResults;
+
+   public UIPromptImpl(Map<String, String> promptResults)
+   {
+      super();
+      this.promptResults = promptResults;
+   }
 
    @Override
    public String prompt(String message)
    {
+      for (Entry<String, String> entry : promptResults.entrySet())
+      {
+         if (message != null && message.matches(entry.getKey()))
+         {
+            return entry.getValue();
+         }
+      }
       return null;
    }
 
    @Override
    public String promptSecret(String message)
    {
+      for (Entry<String, String> entry : promptResults.entrySet())
+      {
+         if (message != null && message.matches(entry.getKey()))
+         {
+            return entry.getValue();
+         }
+      }
       return null;
    }
 
    @Override
    public boolean promptBoolean(String message)
    {
-      // TODO: Change
+      for (Entry<String, String> entry : promptResults.entrySet())
+      {
+         if (message != null && message.matches(entry.getKey()))
+         {
+            return Boolean.parseBoolean(entry.getValue());
+         }
+      }
       return true;
    }
 
    @Override
    public boolean promptBoolean(String message, boolean defaultValue)
    {
+      for (Entry<String, String> entry : promptResults.entrySet())
+      {
+         if (message != null && message.matches(entry.getKey()))
+         {
+            return Boolean.parseBoolean(entry.getValue());
+         }
+      }
       return defaultValue;
    }
 

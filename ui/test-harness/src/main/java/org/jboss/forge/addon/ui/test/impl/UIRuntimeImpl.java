@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.ui.test.impl;
 
+import java.util.Map;
+
 import org.jboss.forge.addon.ui.UIRuntime;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.UIPrompt;
@@ -19,10 +21,11 @@ import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 public class UIRuntimeImpl implements UIRuntime
 {
    private final UIProgressMonitor progressMonitor = new DefaultUIProgressMonitor();
-   private final UIPrompt prompt = new UIPromptImpl();
+   private final UIPrompt prompt;
 
-   public UIRuntimeImpl()
+   public UIRuntimeImpl(Map<String, String> promptResults)
    {
+      this.prompt = new UIPromptImpl(promptResults);
    }
 
    @Override
