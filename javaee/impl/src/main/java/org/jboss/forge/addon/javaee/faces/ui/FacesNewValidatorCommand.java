@@ -12,7 +12,6 @@ import javax.faces.validator.FacesValidator;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.javaee.faces.FacesOperations;
-import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
@@ -37,7 +36,7 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class FacesNewValidatorCommand extends AbstractJavaEECommand
+public class FacesNewValidatorCommand extends AbstractFacesCommand
 {
 
    @Inject

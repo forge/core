@@ -13,7 +13,6 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.javaee.faces.FacesOperations;
-import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -32,7 +31,7 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class FacesNewValidatorMethodCommand extends AbstractJavaEECommand
+public class FacesNewValidatorMethodCommand extends AbstractFacesCommand
 {
 
    @Inject
