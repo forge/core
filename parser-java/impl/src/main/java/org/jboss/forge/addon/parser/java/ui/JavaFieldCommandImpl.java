@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.parser.java.beans.FieldOperations;
+import org.jboss.forge.addon.parser.java.beans.ProjectOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
@@ -72,6 +73,10 @@ public class JavaFieldCommandImpl extends AbstractProjectCommand implements Java
 
    @Inject
    private FieldOperations fieldOperations;
+   
+   @Inject
+   private ProjectOperations projectOperations;
+
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -122,7 +127,7 @@ public class JavaFieldCommandImpl extends AbstractProjectCommand implements Java
    {
       UISelection<FileResource<?>> selection = context.getInitialSelection();
       Project project = getSelectedProject(context);
-      final List<JavaResource> entities = getProjectClasses(project);
+      final List<JavaResource> entities = projectOperations.getProjectClasses(project);
       targetClass.setValueChoices(entities);
       int idx = -1;
       if (!selection.isEmpty())
@@ -135,35 +140,7 @@ public class JavaFieldCommandImpl extends AbstractProjectCommand implements Java
       }
    }
 
-   private List<JavaResource> getProjectClasses(Project project)
-   {
-      final List<JavaResource> classes = new ArrayList<>();
-      if (project != null)
-      {
-         project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
-         {
-
-            @Override
-            public void visit(VisitContext context, JavaResource resource)
-            {
-               try
-               {
-                  JavaSource<?> javaType = resource.getJavaType();
-                  if (javaType.isClass())
-                  {
-                     classes.add(resource);
-                  }
-               }
-               catch (FileNotFoundException e)
-               {
-                  // ignore
-               }
-            }
-         });
-      }
-      return classes;
-
-   }
+  
 
    private void setupAccessType()
    {
