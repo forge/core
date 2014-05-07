@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.ui.test;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -49,7 +49,7 @@ public class UITestHarness
 
    private UIProviderImpl providerImpl;
 
-   private Map<String, String> promptResults = Collections.emptyMap();
+   private final Map<String, String> promptResults = new HashMap<>();
 
    public CommandController createCommandController(String name) throws Exception
    {
@@ -126,12 +126,9 @@ public class UITestHarness
 
    /**
     * The {@link Map} is based on the key being a regular expression to the prompt message
-    * 
-    * @param promptResults the promptResults to set
     */
-   public void setPromptResults(Map<String, String> promptResults)
+   public Map<String, String> getPromptResults()
    {
-      Assert.notNull(promptResults, "Prompt results map should not be null");
-      this.promptResults = promptResults;
+      return this.promptResults;
    }
 }

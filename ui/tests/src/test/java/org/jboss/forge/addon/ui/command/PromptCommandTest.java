@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.ui.command;
 
-import java.util.Collections;
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -69,7 +67,7 @@ public class PromptCommandTest
    @Test
    public void testOverridenPromptValue() throws Exception
    {
-      testHarness.setPromptResults(Collections.singletonMap("Type something: ", "Something"));
+      testHarness.getPromptResults().put("Type something: ", "Something");
       try (CommandController controller = testHarness.createCommandController("prompt"))
       {
          controller.initialize();
@@ -92,7 +90,7 @@ public class PromptCommandTest
    @Test
    public void testOverridenBooleanPromptValue() throws Exception
    {
-      testHarness.setPromptResults(Collections.singletonMap("Do you love Forge 2\\?", "false"));
+      testHarness.getPromptResults().put("Do you love Forge 2\\?", "false");
       try (CommandController controller = testHarness.createCommandController("prompt-boolean"))
       {
          controller.initialize();
