@@ -30,7 +30,7 @@ import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Adapts the current {@link AbstractShellInteraction} to a {@link Command}
- *
+ * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -132,6 +132,7 @@ class CommandAdapter implements Command<CommandInvocation>
          if (result instanceof Failed)
          {
             ShellMessages.error(shell.getConsole().getShell().err(), result.getMessage());
+            log.log(Level.SEVERE, result.getMessage(), ((Failed) result).getException());
             failure = true;
          }
          else
