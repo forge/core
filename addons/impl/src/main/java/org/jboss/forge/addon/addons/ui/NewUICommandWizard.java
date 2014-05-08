@@ -132,6 +132,7 @@ public class NewUICommandWizard extends AbstractJavaSourceCommand
                .setReturnType(Result.class)
                .setParameters("UIExecutionContext context")
                .setBody("return Results.fail(\"Not implemented!\");")
+               .addThrows(Exception.class)
                .addAnnotation(Override.class);
 
       // build the thing
