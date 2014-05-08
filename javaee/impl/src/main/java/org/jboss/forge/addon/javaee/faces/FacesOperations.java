@@ -32,6 +32,40 @@ public class FacesOperations
 {
    /**
     * Creates a new {@link JavaResource} in the specified project. If no project is available, use
+    * {@link FacesOperations#newBackingBean(DirectoryResource, String, String)}
+    *
+    * @param project the current project to create the backing bean. Must not be null
+    * @param backingBeanName the name of the backing bean
+    * @param backingBeanPackage the package of the backing bean to be created
+    * @return the created {@link JavaResource}
+    */
+   public JavaResource newBackingBean(Project project, String backingBeanName, String backingBeanPackage)
+            throws FileNotFoundException
+   {
+      final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaClassSource javaClass = createBackingBean(backingBeanName, backingBeanPackage);
+      return java.saveJavaSource(javaClass);
+   }
+
+    /**
+     * Creates a new {@link JavaResource} in the specified target. If a project is available, use
+     * {@link FacesOperations#newBackingBean(Project, String, String)}
+     *
+     * @param target the target directory resource to create the backing bean
+     * @param backingBeanName the name of the backing bean
+     * @param backingBeanPackage the package of the backing bean to be created
+     * @return the created {@link JavaResource}
+     */
+    public JavaResource newBackingBean(DirectoryResource target, String backingBeanName, String backingBeanPackage)
+    {
+        JavaClassSource javaClass = createBackingBean(backingBeanName, backingBeanPackage);
+        JavaResource javaResource = getJavaResource(target, javaClass.getName());
+        javaResource.setContents(javaClass);
+        return javaResource;
+    }
+
+   /**
+    * Creates a new {@link JavaResource} in the specified project. If no project is available, use
     * {@link FacesOperations#newConverter(DirectoryResource, String, String)}
     *
     * @param project the current project to create the converter. Must not be null
@@ -69,6 +103,14 @@ public class FacesOperations
       JavaClassSource source = Roaster.parse(JavaClassSource.class, getClass().getResourceAsStream("Converter.jv"));
       source.setName(converterName);
       source.setPackage(converterPackage);
+      return source;
+   }
+
+   private JavaClassSource createBackingBean(String beanName, String beanPackage)
+   {
+      JavaClassSource source = Roaster.parse(JavaClassSource.class, getClass().getResourceAsStream("BackingBean.jv"));
+      source.setName(beanName);
+      source.setPackage(beanPackage);
       return source;
    }
 

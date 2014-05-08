@@ -69,6 +69,37 @@ public class FacesOperationsTest
    private FacesOperations operations;
 
    @Test
+   public void testCreateBackingBeanInDirectory() throws Exception
+   {
+      DirectoryResource dir = (DirectoryResource) resourceFactory.create(OperatingSystemUtils.createTempDir());
+      JavaResource bean = operations.newConverter(dir, "SampleBean", "org.example");
+
+      Assert.assertEquals("SampleBean.java", bean.getName());
+      Assert.assertEquals("SampleBean", bean.getJavaType().getName());
+      Assert.assertEquals("org.example", bean.getJavaType().getPackage());
+      Assert.assertTrue(bean.exists());
+   }
+
+   @SuppressWarnings("deprecation")
+   @Test
+   public void testCreateBackingBeanInProject() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, ResourcesFacet.class);
+      facetFactory.install(project, JavaSourceFacet.class);
+
+      JavaResource bean = operations.newConverter(project, "SampleBean", "org.example");
+      Assert.assertTrue(bean.exists());
+
+      Assert.assertEquals("SampleBean.java", bean.getName());
+      Resource<?> child = project.getRootDirectory().getChild("src/main/java/org/example/SampleBean.java");
+      Assert.assertTrue(child.exists());
+      Assert.assertTrue(child instanceof JavaResource);
+      Assert.assertEquals("SampleBean", ((JavaResource) child).getJavaType().getName());
+      Assert.assertEquals("org.example", ((JavaResource) child).getJavaType().getPackage());
+   }
+
+   @Test
    public void testCreateConverterInDirectory() throws Exception
    {
       DirectoryResource dir = (DirectoryResource) resourceFactory.create(OperatingSystemUtils.createTempDir());
