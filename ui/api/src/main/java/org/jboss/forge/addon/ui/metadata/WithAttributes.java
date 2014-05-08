@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.ui.metadata;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -18,11 +19,12 @@ import org.jboss.forge.addon.ui.util.InputComponents;
 
 /**
  * Allows configuration of {@link InputComponent} injected fields
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  */
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.FIELD })
 public @interface WithAttributes
