@@ -201,7 +201,7 @@ public class ForgePropertyStyle
             continue;
          }
 
-         String returnType = method.getReturnType().getQualifiedName();
+         String returnType = method.getReturnType() != null ? method.getReturnType().getQualifiedName() : null;
 
          if (returnType == null)
          {
@@ -249,7 +249,7 @@ public class ForgePropertyStyle
 
       }
       else if (methodName.startsWith(ClassUtils.JAVABEAN_IS_PREFIX)
-               && boolean.class.equals(method.getReturnType().getQualifiedName()))
+               && method.getReturnType() != null && boolean.class.equals(method.getReturnType().getQualifiedName()))
       {
 
          // As per section 8.3.2 (Boolean properties) of The JavaBeans API specification, 'is'
