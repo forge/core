@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.Annotated;
+import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
@@ -14,7 +16,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
-@ApplicationScoped
+@Singleton
 public class ConfigurationFactoryImpl implements ConfigurationFactory
 {
    static final String USER_CONFIG_PATH = "org.jboss.forge.addon.configuration.USER_CONFIG_PATH";
@@ -24,9 +26,19 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
    @Inject
    private Furnace furnace;
 
-   @Override
    @Produces
-   @ApplicationScoped
+   Configuration getUserConfiguration(InjectionPoint ip) throws ConfigurationException
+   {
+      Configuration config = getUserConfiguration();
+      Annotated annotated = ip.getAnnotated();
+      if (annotated.isAnnotationPresent(Subset.class))
+      {
+         config = config.subset(annotated.getAnnotation(Subset.class).value());
+      }
+      return config;
+   }
+
+   @Override
    public Configuration getUserConfiguration() throws ConfigurationException
    {
       if (furnace.isTestMode())

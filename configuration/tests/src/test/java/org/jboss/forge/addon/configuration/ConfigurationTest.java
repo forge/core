@@ -55,12 +55,17 @@ public class ConfigurationTest
    private Configuration configuration;
 
    @Inject
+   @Subset("subset")
+   private Configuration subsetConfiguration;
+
+   @Inject
    private ProjectFactory projectFactory;
 
    @Test
    public void testConfigurationInjection() throws Exception
    {
       assertNotNull(configuration);
+      assertNotNull(subsetConfiguration);
    }
 
    @Test
@@ -75,4 +80,12 @@ public class ConfigurationTest
       assertEquals("value", config.getString("key"));
       assertTrue(facet.getConfigLocation().exists());
    }
+
+   @Test
+   public void testSubsetConfiguration() throws Exception
+   {
+      subsetConfiguration.setProperty("A", "Value");
+      assertEquals("Value", configuration.subset("subset").getString("A"));
+   }
+
 }

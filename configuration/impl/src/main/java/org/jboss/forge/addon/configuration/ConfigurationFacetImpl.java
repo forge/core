@@ -53,7 +53,7 @@ public class ConfigurationFacetImpl extends AbstractFacet<Project> implements Co
    @Override
    public FileResource<?> getConfigLocation()
    {
-      return getFaceted().getRootDirectory().getChild(CONFIGURATION_FILE).reify(FileResource.class);
+      return getFaceted().getRoot().getChild(CONFIGURATION_FILE).reify(FileResource.class);
    }
 
    @Override
