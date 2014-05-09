@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
  * Configuration configuration;
  * </pre>
  * 
- * if the equivalent of
+ * is the equivalent of
  * 
  * <pre>
  * &#064;Inject
