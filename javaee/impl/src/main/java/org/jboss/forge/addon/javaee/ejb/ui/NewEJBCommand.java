@@ -6,14 +6,9 @@
  */
 package org.jboss.forge.addon.javaee.ejb.ui;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ejb.MessageDriven;
-import javax.ejb.Singleton;
-import javax.ejb.Stateful;
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.facets.FacetFactory;
@@ -23,12 +18,10 @@ import org.jboss.forge.addon.javaee.ejb.EJBType;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
-import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -44,7 +37,6 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
-import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -129,31 +121,7 @@ public class NewEJBCommand extends AbstractJavaEECommand implements UIWizard
 
    private String calculateServicePackage(Project project)
    {
-      final String[] value = new String[1];
-      project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
-      {
-         @Override
-         public void visit(VisitContext context, JavaResource javaResource)
-         {
-            try
-            {
-               JavaSource<?> javaSource = javaResource.getJavaType();
-               if (javaSource.hasAnnotation(Stateless.class) || javaSource.hasAnnotation(Stateful.class)
-                        || javaSource.hasAnnotation(MessageDriven.class) || javaSource.hasAnnotation(Singleton.class))
-               {
-                  value[0] = javaSource.getPackage();
-               }
-            }
-            catch (FileNotFoundException ignore)
-            {
-            }
-         }
-      });
-      if (value[0] == null)
-      {
-         value[0] = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".service";
-      }
-      return value[0];
+      return project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".service";
    }
 
    @Override
