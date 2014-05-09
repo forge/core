@@ -47,7 +47,7 @@ public interface ScaffoldProvider
     *
     * @return boolean value indicating whether the provider was setup
     */
-   boolean isSetup(ScaffoldSetupContext setupContext);
+   boolean isSetup(Project project, ScaffoldSetupContext setupContext);
 
    /**
     * Generate a set of create, read, update, delete pages for the given collection of {@link Resource}s present in the

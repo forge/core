@@ -18,6 +18,7 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
+import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
 import org.jboss.forge.addon.scaffold.ui.ScaffoldGenerateCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -42,6 +43,8 @@ import org.jboss.forge.furnace.services.Imported;
  */
 public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implements ScaffoldGenerateCommand
 {
+   public static final String REQUIRES_SCAFFOLD_SETUP = "REQUIRES_SCAFFOLD_SETUP";
+
    @Inject
    @WithAttributes(label = "Scaffold Type", required = true)
    private UISelectOne<ScaffoldProvider> provider;
@@ -113,14 +116,26 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
       attributeMap.put(ScaffoldProvider.class, selectedProvider);
       attributeMap.put(ScaffoldGenerationContext.class, populateGenerationContext(uiContext));
 
-      // Get the step sequence from the selected scaffold provider
+      NavigationResult setupFlow = null;
       Project project = getSelectedProject(uiContext);
+
+      // Verify if the selected provider is installed
+      // If not, add the setup flow and inform the generation step to setup the scaffold.
+      ScaffoldSetupContext setupContext = populateSetupContext();
+      if (!selectedProvider.isSetup(project, setupContext))
+      {
+         setupFlow = selectedProvider.getSetupFlow(project);
+         attributeMap.put(REQUIRES_SCAFFOLD_SETUP, true);
+         attributeMap.put(ScaffoldSetupContext.class, setupContext);
+      }
+
+      // Get the step sequence from the selected scaffold provider
       NavigationResult generationFlow = selectedProvider.getGenerationFlow(project);
 
       // Add the execution logic step in the end so that the scaffold generation step is executed last after all other
       // steps
-      NavigationResultBuilder builder = NavigationResultBuilder.create(generationFlow);
-      NavigationResult navigationResult = builder.add(ScaffoldExecuteGenerationStep.class).build();
+      NavigationResultBuilder builder = NavigationResultBuilder.create(setupFlow);
+      NavigationResult navigationResult = builder.add(generationFlow).add(ScaffoldExecuteGenerationStep.class).build();
 
       return navigationResult;
    }
@@ -152,6 +167,11 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
          generationContext.setOverwrite(overwrite.getValue());
          return generationContext;
       }
+   }
+
+   private ScaffoldSetupContext populateSetupContext()
+   {
+      return new ScaffoldSetupContext(webRoot.getValue(), overwrite.getValue());
    }
 
 }

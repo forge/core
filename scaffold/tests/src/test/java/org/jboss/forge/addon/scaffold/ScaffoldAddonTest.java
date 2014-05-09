@@ -101,7 +101,7 @@ public class ScaffoldAddonTest
       scaffoldProvider.setup(project, setupContext);
 
       // Verify
-      assertTrue(scaffoldProvider.isSetup(setupContext));
+      assertTrue(scaffoldProvider.isSetup(project, setupContext));
    }
 
    @Test

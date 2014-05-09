@@ -11,6 +11,7 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.scaffold.spi.ResourceCollection;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
+import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -59,7 +60,13 @@ public class ScaffoldExecuteGenerationStep extends AbstractProjectCommand implem
    public Result execute(UIExecutionContext context) throws Exception
    {
       Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
+      boolean requiresScaffoldSetup = (boolean) attributeMap.get(ScaffoldGenerateCommandImpl.REQUIRES_SCAFFOLD_SETUP);
       ScaffoldProvider selectedProvider = (ScaffoldProvider) attributeMap.get(ScaffoldProvider.class);
+      if(requiresScaffoldSetup)
+      {
+          ScaffoldSetupContext setupContext = (ScaffoldSetupContext) attributeMap.get(ScaffoldSetupContext.class);
+          selectedProvider.setup(getSelectedProject(context), setupContext);
+      }
       ResourceCollection resourceCollection = (ResourceCollection) attributeMap.get(ResourceCollection.class);
       selectedProvider.generateFrom(getSelectedProject(context),
                populateGenerationContext(context.getUIContext(), resourceCollection.getResources()));
