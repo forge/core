@@ -5,7 +5,7 @@ public interface AddonCommandConstants
    String[] ADDON_MANAGER_CATEGORIES = { "Forge", "Manage" };
    String ADDON_INSTALL_COMMAND_NAME = "Install an Addon";
    String ADDON_INSTALL_COMMAND_NAME_NO_GUI = "addon-install";
-   String ADDON_BUILD_INSTALL_COMMAND_NAME_FROM_GIT = "Install Addon from GIT";
+   String ADDON_BUILD_INSTALL_COMMAND_NAME_FROM_GIT = "Install an Addon from GIT";
    String ADDON_BUILD_INSTALL_COMMAND_NAME_FROM_GIT_NO_GUI = "addon-install-from-git";
    String ADDON_BUILD_INSTALL_COMMAND_NAME = "Build and Install an Addon";
    String ADDON_BUILD_INSTALL_COMMAND_NAME_NO_GUI = "addon-build-and-install";
