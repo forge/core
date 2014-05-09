@@ -608,7 +608,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       unorderedList.write(writer);
 
       Map<Object, Object> context = CollectionUtils.newHashMap();
-      context.put("appName", StringUtils.uncamelCase(this.project.getRootDirectory().getName()));
+      context.put("appName", StringUtils.uncamelCase(this.project.getRoot().getName()));
       context.put("navigation", writer.toString().trim());
       context.put("targetDir", targetDir);
 

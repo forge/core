@@ -6,11 +6,12 @@
  */
 package org.jboss.forge.addon.javaee.faces.ui;
 
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
 import org.jboss.forge.addon.javaee.cdi.ui.CDISetupCommand;
 import org.jboss.forge.addon.javaee.faces.FacesFacet;
 import org.jboss.forge.addon.javaee.faces.FacesOperations;
-import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -31,8 +32,6 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-
-import javax.inject.Inject;
 
 /**
  * Creates a new JSF Backing Bean
