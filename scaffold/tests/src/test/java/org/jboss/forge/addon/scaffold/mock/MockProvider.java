@@ -50,7 +50,7 @@ public class MockProvider implements ScaffoldProvider
    }
 
    @Override
-   public boolean isSetup(ScaffoldSetupContext setupContext)
+   public boolean isSetup(Project project, ScaffoldSetupContext setupContext)
    {
       return isSetup;
    }

@@ -83,6 +83,21 @@ public final class NavigationResultBuilder
    }
 
    /**
+    * Add a UICommand instance to create a single navigation entry.
+    * 
+    * @param result The NavigationResult to add
+    * @return This NavigationResultBuilder instance
+    */
+   public NavigationResultBuilder add(NavigationResult result)
+   {
+      if (result != null && result.getNext() != null)
+      {
+         entries.addAll(Arrays.asList(result.getNext()));
+      }
+      return this;
+   }
+
+   /**
     * Add multiple UICommand types to create a single navigation entry. Every invocation of this method creates a
     * separate navigation entry. UIWizard types must not be provided as arguments since wizards and wizard steps cannot
     * be combined with other UICommand types in the same navigation entry.

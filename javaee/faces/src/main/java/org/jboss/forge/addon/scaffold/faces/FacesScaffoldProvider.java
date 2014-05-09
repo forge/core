@@ -213,7 +213,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    }
 
    @Override
-   public boolean isSetup(ScaffoldSetupContext setupContext)
+   public boolean isSetup(Project project, ScaffoldSetupContext setupContext)
    {
       WebResourcesFacet web = project.getFacet(WebResourcesFacet.class);
       String targetDir = setupContext.getTargetDirectory();
