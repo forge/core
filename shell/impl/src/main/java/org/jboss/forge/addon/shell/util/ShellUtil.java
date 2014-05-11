@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.aesh.terminal.TerminalString;
+import org.jboss.forge.addon.parser.java.resources.JavaFieldResource;
+import org.jboss.forge.addon.parser.java.resources.JavaMethodResource;
 import org.jboss.forge.addon.resource.FileResource;
 
 /**
@@ -54,5 +56,21 @@ public class ShellUtil
          name = new TerminalString(name, new TerminalColor(Color.GREEN, Color.DEFAULT)).toString();
       }
       return name;
+   }
+
+   public static String colorizeJavaMethodResource(JavaMethodResource resource) {
+      String name = resource.getName();
+      String[] splitName = name.split("(?=\\:\\:)"); // split with "::" but preserve delimiter
+      return splitName[0] + new TerminalString(splitName[1], new TerminalColor(Color.GREEN, Color.DEFAULT)).toString();
+   }
+
+   public static String colorizeJavaFieldResource(JavaFieldResource resource) {
+      String name = resource.getName();
+      String[] splitName = name.split("(?=\\:\\:)"); // split with "::" but preserve delimiter
+      return splitName[0] + new TerminalString(splitName[1], new TerminalColor(Color.GREEN, Color.DEFAULT)).toString();
+   }
+
+   public static String colorizeLabel(String label) {
+      return new TerminalString(label, new TerminalColor(Color.RED, Color.DEFAULT)).toString();
    }
 }
