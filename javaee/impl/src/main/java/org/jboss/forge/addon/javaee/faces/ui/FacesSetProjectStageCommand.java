@@ -44,7 +44,7 @@ public class FacesSetProjectStageCommand extends AbstractFacesCommand
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("Faces: Project Stage")
+      return Metadata.from(super.getMetadata(context), getClass()).name("Faces: Set Project Stage")
                .description("Set the project stage of this JSF project")
                .category(Categories.create(super.getMetadata(context).getCategory(), "JSF"));
    }
