@@ -66,6 +66,7 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.shrinkwrap.descriptor.api.javaee6.ParamValueType;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webcommon30.WelcomeFileListType;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor;
 import org.metawidget.statically.StaticMetawidget;
@@ -215,13 +216,63 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    @Override
    public boolean isSetup(Project project, ScaffoldSetupContext setupContext)
    {
-      WebResourcesFacet web = project.getFacet(WebResourcesFacet.class);
       String targetDir = setupContext.getTargetDirectory();
-      FileResource<?> indexFacelet = web.getWebResource(targetDir + INDEX_XHTML);
-      FileResource<?> indexPage = web.getWebResource(targetDir + INDEX_HTML);
-      if (indexFacelet.exists() && indexPage.exists())
+      targetDir = targetDir == null ? "" : targetDir;
+      if (project.hasAllFacets(WebResourcesFacet.class, DependencyFacet.class, JPAFacet.class, EJBFacet.class,
+               CDIFacet.class, ServletFacet.class, FacesFacet.class))
       {
-         return true;
+         WebResourcesFacet web = project.getFacet(WebResourcesFacet.class);
+         boolean areResourcesInstalled = web.getWebResource(targetDir + INDEX_HTML).exists()
+                  && web.getWebResource(targetDir + INDEX_XHTML).exists()
+                  && web.getWebResource(ERROR_XHTML).exists()
+                  && web.getWebResource(ADD_PNG).exists()
+                  && web.getWebResource(BOOTSTRAP_CSS).exists()
+                  && web.getWebResource(FALSE_PNG).exists()
+                  && web.getWebResource(FAVICON_ICO).exists()
+                  && web.getWebResource(FORGE_LOGO_PNG).exists()
+                  && web.getWebResource(FORGE_STYLE_CSS).exists()
+                  && web.getWebResource(REMOVE_PNG).exists()
+                  && web.getWebResource(SEARCH_PNG).exists()
+                  && web.getWebResource(TRUE_PNG).exists()
+                  && web.getWebResource(JBOSS_COMMUNITY_PNG).exists()
+                  && web.getWebResource(PAGINATOR).exists()
+                  && getTemplateStrategy().getDefaultTemplate().exists();
+         ServletFacet servlet = project.getFacet(ServletFacet.class);
+         boolean isWelcomeFileListed = false;
+         if (servlet instanceof ServletFacet_3_0)
+         {
+            WebAppDescriptor servletConfig = (WebAppDescriptor) servlet.getConfig();
+            for (WelcomeFileListType<WebAppDescriptor> welcomeFileList : servletConfig.getAllWelcomeFileList())
+            {
+               for (String welcomeFile : welcomeFileList.getAllWelcomeFile())
+               {
+                  if (welcomeFile.equals(INDEX_HTML))
+                  {
+                     isWelcomeFileListed = true;
+                     break;
+                  }
+               }
+            }
+         }
+         else if (servlet instanceof ServletFacet_3_1)
+         {
+            org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor servletConfig = (org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor) servlet
+                     .getConfig();
+            for (org.jboss.shrinkwrap.descriptor.api.webcommon31.WelcomeFileListType<org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor> welcomeFileList : servletConfig
+                     .getAllWelcomeFileList())
+            {
+               for (String welcomeFile : welcomeFileList.getAllWelcomeFile())
+               {
+                  if (welcomeFile.equals(INDEX_HTML))
+                  {
+                     isWelcomeFileListed = true;
+                     break;
+                  }
+               }
+
+            }
+         }
+         return areResourcesInstalled && isWelcomeFileListed;
       }
       return false;
    }
