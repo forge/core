@@ -58,19 +58,40 @@ public class ShellUtil
       return name;
    }
 
-   public static String colorizeJavaMethodResource(JavaMethodResource resource) {
+   public static String colorizeJavaMethodResource(JavaMethodResource resource)
+   {
       String name = resource.getName();
       String[] splitName = name.split("(?=\\:\\:)"); // split with "::" but preserve delimiter
       return splitName[0] + new TerminalString(splitName[1], new TerminalColor(Color.GREEN, Color.DEFAULT)).toString();
    }
 
-   public static String colorizeJavaFieldResource(JavaFieldResource resource) {
+   public static String colorizeJavaFieldResource(JavaFieldResource resource)
+   {
       String name = resource.getName();
       String[] splitName = name.split("(?=\\:\\:)"); // split with "::" but preserve delimiter
       return splitName[0] + new TerminalString(splitName[1], new TerminalColor(Color.GREEN, Color.DEFAULT)).toString();
    }
 
-   public static String colorizeLabel(String label) {
+   public static String colorizeLabel(String label)
+   {
       return new TerminalString(label, new TerminalColor(Color.RED, Color.DEFAULT)).toString();
+   }
+
+   public static TerminalString colorizeResourceTerminal(FileResource resource)
+   {
+      TerminalString name;
+      if (resource.isDirectory())
+      {
+         name = new TerminalString(resource.getName(), new TerminalColor(Color.BLUE, Color.DEFAULT));
+      }
+      else if (resource.isExecutable())
+      {
+         name = new TerminalString(resource.getName(), new TerminalColor(Color.GREEN, Color.DEFAULT));
+      }
+      else
+      {
+         name = new TerminalString(resource.getName());
+      }
+      return name;
    }
 }

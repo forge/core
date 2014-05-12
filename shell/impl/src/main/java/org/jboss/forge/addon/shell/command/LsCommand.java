@@ -2,6 +2,7 @@ package org.jboss.forge.addon.shell.command;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import javax.inject.Inject;
 import org.jboss.aesh.console.Config;
 import org.jboss.aesh.parser.Parser;
 import org.jboss.aesh.terminal.TerminalSize;
+import org.jboss.aesh.terminal.TerminalString;
+import org.jboss.aesh.util.FileLister;
 import org.jboss.forge.addon.parser.java.resources.JavaFieldResource;
 import org.jboss.forge.addon.parser.java.resources.JavaMethodResource;
 import org.jboss.forge.addon.resource.FileResource;
@@ -154,7 +157,7 @@ public class LsCommand extends AbstractShellCommand
    private String getFileFormattedList(List<FileResource> resources, int termHeight, int termWidth) {
 
       boolean showAll = all.getValue();
-      List<String> display = new ArrayList<>();
+      List<TerminalString> display = new ArrayList<>();
 
       for (FileResource resource : resources)
       {
@@ -162,10 +165,23 @@ public class LsCommand extends AbstractShellCommand
          {
             continue;
          }
-         display.add(ShellUtil.colorizeResource(resource));
+         display.add(ShellUtil.colorizeResourceTerminal(resource));
       }
 
-      return Parser.formatDisplayList(display, termHeight, termWidth);
+      Comparator<TerminalString> posixFileNameTerminalComparator = new Comparator<TerminalString>()
+      {
+         private FileLister.PosixFileNameComparator posixFileNameComparator =
+                  new FileLister.PosixFileNameComparator();
+
+         @Override public int compare(TerminalString o1, TerminalString o2)
+         {
+            return posixFileNameComparator.compare(o1.getCharacters(), o2.getCharacters());
+         }
+      };
+
+      Collections.sort(display, posixFileNameTerminalComparator);
+
+      return Parser.formatDisplayCompactListTerminalString(display, termWidth);
    }
 
    private String getJavaFieldFormattedList(List<JavaFieldResource> resources, int termHeight, int termWidth) {
