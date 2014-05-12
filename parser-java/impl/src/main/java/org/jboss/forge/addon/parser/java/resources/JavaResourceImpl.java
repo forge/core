@@ -117,32 +117,35 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
       try
       {
          List<Resource<?>> list = new LinkedList<>();
-         MemberHolder<?> memberHolder = getJavaType();
-         for (Member<?> member : memberHolder.getMembers())
+         JavaType<?> javaType = getJavaType();
+         if (javaType instanceof MemberHolder)
          {
-            if (member instanceof Field)
+            MemberHolder<?> memberHolder = (MemberHolder<?>) javaType;
+            for (Member<?> member : memberHolder.getMembers())
             {
-               list.add(new JavaFieldResourceImpl(getResourceFactory(), this, (Field<?>) member));
+               if (member instanceof Field)
+               {
+                  list.add(new JavaFieldResourceImpl(getResourceFactory(), this, (Field<?>) member));
+               }
+               else if (member instanceof Method)
+               {
+                  list.add(new JavaMethodResourceImpl(getResourceFactory(), this, (Method<?, ?>) member));
+               }
+               else
+               {
+                  throw new UnsupportedOperationException("Unknown member type: " + member);
+               }
             }
-            else if (member instanceof Method)
+
+            if (memberHolder instanceof JavaEnum)
             {
-               list.add(new JavaMethodResourceImpl(getResourceFactory(), this, (Method<?, ?>) member));
-            }
-            else
-            {
-               throw new UnsupportedOperationException("Unknown member type: " + member);
+               List<EnumConstant<?>> enumConstants = ((JavaEnum) memberHolder).getEnumConstants();
+               for (EnumConstant<?> e : enumConstants)
+               {
+                  list.add(new EnumConstantResourceImpl(getResourceFactory(), this, e));
+               }
             }
          }
-
-         if (memberHolder instanceof JavaEnum)
-         {
-            List<EnumConstant<?>> enumConstants = ((JavaEnum) memberHolder).getEnumConstants();
-            for (EnumConstant<?> e : enumConstants)
-            {
-               list.add(new EnumConstantResourceImpl(getResourceFactory(), this, e));
-            }
-         }
-
          return list;
       }
       catch (ParserException e)
