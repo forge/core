@@ -248,8 +248,11 @@ public class UIInputInjectionTest
    public void testNotNullValueChoices()
    {
       // FORGE-1814
+      gender.setValueChoices((Iterable<Gender>) null);
       Assert.assertNotNull(gender.getValueChoices());
+      Assert.assertFalse(gender.getValueChoices().iterator().hasNext());
       Assert.assertNotNull(partners.getValueChoices());
+      Assert.assertFalse(partners.getValueChoices().iterator().hasNext());
    }
 
    @Test
@@ -257,7 +260,9 @@ public class UIInputInjectionTest
    {
       // FORGE-1815
       Assert.assertNotNull(partners.getValue());
+      Assert.assertFalse(partners.getValue().iterator().hasNext());
       Assert.assertNotNull(unknown.getValue());
+      Assert.assertFalse(unknown.getValue().iterator().hasNext());
    }
 
 }
