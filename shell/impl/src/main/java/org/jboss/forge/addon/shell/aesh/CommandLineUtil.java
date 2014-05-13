@@ -77,8 +77,10 @@ public class CommandLineUtil
    {
       UICommandMetadata metadata = (command instanceof WizardCommandController) ? ((WizardCommandController) command)
                .getInitialMetadata() : command.getMetadata();
-      final ProcessedCommand parameter = new ProcessedCommand(ShellUtil.shellifyName(metadata.getName()).toLowerCase(),
-               metadata.getDescription(), (CommandValidator<?>) null);
+      String cmdName = ShellUtil.shellifyName(metadata.getName()).toLowerCase();
+      String cmdDescription = metadata.getDescription();
+      final ProcessedCommand parameter = new ProcessedCommand(cmdName, cmdDescription,
+               (Class<? extends CommandValidator<?>>) null, null);
 
       for (Entry<String, InputComponent<?, ?>> entry : inputs.entrySet())
       {
