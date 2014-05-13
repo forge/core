@@ -124,7 +124,8 @@ public class InputComponentValuesInjectionTest
 
       // Manually created choice values are null
       UISelectOne<Boolean> selectOne = inputFactory.createSelectOne("selectOne", Boolean.class);
-      Assert.assertThat(selectOne.getValueChoices(), nullValue());
+      Assert.assertNotNull(selectOne.getValueChoices());
+      Assert.assertFalse(selectOne.getValueChoices().iterator().hasNext());
    }
 
    @Test(expected = IllegalArgumentException.class)
