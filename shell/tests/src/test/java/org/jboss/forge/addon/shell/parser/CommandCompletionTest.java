@@ -28,8 +28,8 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -61,8 +61,8 @@ public class CommandCompletionTest
    @Inject
    private ShellTest test;
 
-   @After
-   public void after() throws IOException
+   @Before
+   public void setUp() throws IOException
    {
       test.clearScreen();
    }
