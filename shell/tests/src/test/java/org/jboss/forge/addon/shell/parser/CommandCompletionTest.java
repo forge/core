@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class CommandCompletionTest
 {
-   private static final int QUANTITY = 500;
+   private static final int QUANTITY = 5;
 
    @Deployment
    @Dependencies({
