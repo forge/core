@@ -121,6 +121,7 @@ public class InputComponentValuesInjectionTest
    {
       // Injected choice values are not null
       Assert.assertThat(selectBoolean.getValueChoices(), not(nullValue()));
+      Assert.assertTrue(selectBoolean.getValueChoices().iterator().hasNext());
 
       // Manually created choice values are null
       UISelectOne<Boolean> selectOne = inputFactory.createSelectOne("selectOne", Boolean.class);
