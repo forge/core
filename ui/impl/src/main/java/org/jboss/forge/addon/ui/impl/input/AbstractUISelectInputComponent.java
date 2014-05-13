@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.ui.impl.input;
 
+import java.util.Collections;
 import java.util.concurrent.Callable;
 
 import javax.enterprise.inject.Vetoed;
@@ -51,7 +52,8 @@ public abstract class AbstractUISelectInputComponent<IMPLTYPE extends SelectComp
    @Override
    public Iterable<VALUETYPE> getValueChoices()
    {
-      return Callables.call(choices);
+      Iterable<VALUETYPE> valueChoices = Callables.call(choices);
+      return valueChoices == null ? Collections.<VALUETYPE> emptyList() : valueChoices;
    }
 
    @Override

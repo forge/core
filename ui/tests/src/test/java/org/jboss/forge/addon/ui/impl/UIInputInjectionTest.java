@@ -243,4 +243,21 @@ public class UIInputInjectionTest
       Assert.assertEquals("REQUIRED_MESSAGE", attributedInput.getRequiredMessage());
       Assert.assertEquals('a', attributedInput.getShortName());
    }
+
+   @Test
+   public void testNotNullValueChoices()
+   {
+      // FORGE-1814
+      Assert.assertNotNull(gender.getValueChoices());
+      Assert.assertNotNull(partners.getValueChoices());
+   }
+
+   @Test
+   public void testNotNullValuesForUISelectComponents()
+   {
+      // FORGE-1815
+      Assert.assertNotNull(partners.getValue());
+      Assert.assertNotNull(unknown.getValue());
+   }
+
 }

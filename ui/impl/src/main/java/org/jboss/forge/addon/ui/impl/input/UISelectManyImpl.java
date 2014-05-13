@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.ui.impl.input;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -59,7 +60,8 @@ public class UISelectManyImpl<VALUETYPE> extends AbstractUISelectInputComponent<
    @Override
    public Iterable<VALUETYPE> getValue()
    {
-      return (value == null) ? Callables.call(defaultValue) : value;
+      Iterable<VALUETYPE> iterableValue = (value == null) ? Callables.call(defaultValue) : value;
+      return iterableValue == null ? Collections.<VALUETYPE> emptyList() : iterableValue;
    }
 
    @Override
