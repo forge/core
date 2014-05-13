@@ -396,6 +396,7 @@ public class DefaultShellTest implements ShellTest
                      .outputStreamError(new PrintStream(stderr))
                      .name("test")
                      .logging(true)
+                     .ansi(false)
                      .terminal(new TestTerminal())
                      .create();
          }
