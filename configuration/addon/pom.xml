@@ -19,6 +19,7 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>configuration-impl</artifactId>
          <scope>runtime</scope>
+         <optional>true</optional>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>

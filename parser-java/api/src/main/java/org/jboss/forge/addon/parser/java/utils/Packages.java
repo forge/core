@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.maven.projects.util;
+package org.jboss.forge.addon.parser.java.utils;
 
 import java.io.File;
 

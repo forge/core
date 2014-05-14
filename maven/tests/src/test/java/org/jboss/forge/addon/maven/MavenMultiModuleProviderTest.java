@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.maven.projects.MavenBuildSystemImpl;
+import org.jboss.forge.addon.maven.projects.MavenBuildSystem;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -66,7 +66,7 @@ public class MavenMultiModuleProviderTest
    private ProjectFactory projectFactory;
 
    @Inject
-   private MavenBuildSystemImpl locator;
+   private MavenBuildSystem locator;
 
    @Test
    public void testInjectionNotNull()

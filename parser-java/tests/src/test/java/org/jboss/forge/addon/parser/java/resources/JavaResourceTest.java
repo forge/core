@@ -10,7 +10,6 @@ package org.jboss.forge.addon.parser.java.resources;
 import static org.hamcrest.CoreMatchers.instanceOf;
 
 import java.io.File;
-import java.io.FileOutputStream;
 
 import javax.inject.Inject;
 
@@ -25,7 +24,6 @@ import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
-import org.jboss.forge.roaster.spi.Streams;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.junit.Assert;
@@ -69,12 +67,10 @@ public class JavaResourceTest
    {
       File tmpFile = File.createTempFile("MyClass", ".java");
       tmpFile.deleteOnExit();
-      try (FileOutputStream fos = new FileOutputStream(tmpFile))
-      {
-         Streams.write(getClass().getResource("MyClass.java").openStream(), fos);
-      }
       JavaResource resource = resourceFactory.create(tmpFile).reify(JavaResource.class);
       Assert.assertNotNull(resource);
+      
+      resource.setContents(getClass().getResource("MyClass.java").openStream());
 
       // Testing java-parser
       JavaSource<?> javaSource = resource.getJavaType();

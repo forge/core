@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.forge.addon.git.gitignore.GitIgnoreEntry;
-import org.jboss.forge.addon.resource.FileResourceImpl;
+import org.jboss.forge.addon.resource.AbstractFileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.util.Streams;
@@ -23,7 +23,7 @@ import org.jboss.forge.furnace.util.Streams;
 /**
  * @author Dan Allen
  */
-public class GitIgnoreResource extends FileResourceImpl
+public class GitIgnoreResource extends AbstractFileResource<GitIgnoreResource>
 {
 
    // @Inject
@@ -38,7 +38,7 @@ public class GitIgnoreResource extends FileResourceImpl
    }
 
    @Override
-   public FileResourceImpl createFrom(File file)
+   public GitIgnoreResource createFrom(File file)
    {
       return new GitIgnoreResource(getResourceFactory(), file);
    }

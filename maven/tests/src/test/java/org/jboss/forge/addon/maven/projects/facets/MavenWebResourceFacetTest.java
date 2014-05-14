@@ -90,7 +90,7 @@ public class MavenWebResourceFacetTest
    @Test
    public void testDefaultWebResourceFolder() throws Exception
    {
-      WebResourcesFacet facet = project.getFacet(MavenWebResourcesFacet.class);
+      WebResourcesFacet facet = project.getFacet(WebResourcesFacet.class);
       DirectoryResource expected = project.getRootDirectory().getChildDirectory(
                "src" + File.separator + "main" + File.separator + "webapp");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getWebRootDirectory().getFullyQualifiedName());
@@ -105,7 +105,7 @@ public class MavenWebResourceFacetTest
                + "<warSourceDirectory>foo</warSourceDirectory>"
                + "</configuration></plugin></plugins></build></project>");
 
-      WebResourcesFacet facet = project.getFacet(MavenWebResourcesFacet.class);
+      WebResourcesFacet facet = project.getFacet(WebResourcesFacet.class);
       DirectoryResource expected = project.getRootDirectory().getChildDirectory("foo");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getWebRootDirectory().getFullyQualifiedName());
    }

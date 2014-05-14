@@ -46,6 +46,7 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>projects-impl</artifactId>
          <scope>runtime</scope>
+         <optional>true</optional>
       </dependency>
 
       <!-- Furnace Container -->

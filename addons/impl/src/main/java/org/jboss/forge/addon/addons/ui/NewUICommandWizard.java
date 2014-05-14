@@ -6,10 +6,15 @@
  */
 package org.jboss.forge.addon.addons.ui;
 
-import org.jboss.forge.addon.maven.projects.util.Packages;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
+import org.jboss.forge.addon.parser.java.utils.Packages;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
@@ -29,10 +34,6 @@ import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

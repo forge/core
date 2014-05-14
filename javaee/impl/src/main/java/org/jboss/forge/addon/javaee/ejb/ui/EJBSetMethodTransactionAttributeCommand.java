@@ -19,7 +19,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.resource.spi.IllegalStateException;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;

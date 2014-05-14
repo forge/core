@@ -20,6 +20,7 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>facets-impl</artifactId>
          <scope>runtime</scope>
+         <optional>true</optional>
       </dependency>
 
       <!-- Furnace Container -->

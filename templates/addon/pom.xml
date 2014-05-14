@@ -37,6 +37,7 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>templates-impl</artifactId>
          <scope>runtime</scope>
+         <optional>true</optional>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>

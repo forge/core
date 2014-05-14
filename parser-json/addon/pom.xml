@@ -28,6 +28,7 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>parser-json-impl</artifactId>
          <scope>runtime</scope>
+         <optional>true</optional>
       </dependency>
    </dependencies>
    <build>

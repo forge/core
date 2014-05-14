@@ -15,6 +15,11 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>convert</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui-spi</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>

@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.maven.projects.MavenBuildSystemImpl;
+import org.jboss.forge.addon.maven.projects.MavenBuildSystem;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.Project;
@@ -27,6 +27,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.impl.util.Iterators;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
@@ -66,7 +67,7 @@ public class MavenBuildSystemImplTest
    private Furnace forge;
 
    @Inject
-   private MavenBuildSystemImpl buildSystem;
+   private MavenBuildSystem buildSystem;
 
    @Test
    public void testInjectionNotNull()
@@ -83,11 +84,11 @@ public class MavenBuildSystemImplTest
    @Test
    public void testProvidedFacets()
    {
-      Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(MavenFacet.class));
-      Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(MavenPluginFacet.class));
-      Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(MetadataFacet.class));
-      Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(PackagingFacet.class));
-      Assert.assertTrue(buildSystem.getProvidedFacetTypes().contains(DependencyFacet.class));
+      Assert.assertTrue(Iterators.asList(buildSystem.getProvidedFacetTypes()).contains(MavenFacet.class));
+      Assert.assertTrue(Iterators.asList(buildSystem.getProvidedFacetTypes()).contains(MavenPluginFacet.class));
+      Assert.assertTrue(Iterators.asList(buildSystem.getProvidedFacetTypes()).contains(MetadataFacet.class));
+      Assert.assertTrue(Iterators.asList(buildSystem.getProvidedFacetTypes()).contains(PackagingFacet.class));
+      Assert.assertTrue(Iterators.asList(buildSystem.getProvidedFacetTypes()).contains(DependencyFacet.class));
    }
 
    @Test

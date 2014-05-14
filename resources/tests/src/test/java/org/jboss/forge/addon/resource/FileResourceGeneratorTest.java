@@ -53,7 +53,6 @@ public class FileResourceGeneratorTest
       File tempFile = new File(UUID.randomUUID().toString());
       FileResource<?> resource = factory.create(tempFile).reify(FileResource.class);
       Assert.assertNotNull(resource);
-      Assert.assertEquals(FileResourceImpl.class, resource.getClass());
    }
 
    @Test
@@ -63,7 +62,6 @@ public class FileResourceGeneratorTest
       file.deleteOnExit();
       FileResource<?> resource = factory.create(file).reify(FileResource.class);
       Assert.assertNotNull(resource);
-      Assert.assertEquals(FileResourceImpl.class, resource.getClass());
    }
 
    @Test

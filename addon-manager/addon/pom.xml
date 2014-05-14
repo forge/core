@@ -20,6 +20,7 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>addon-manager-impl</artifactId>
          <scope>runtime</scope>
+         <optional>true</optional>
       </dependency>
 
       <!-- Addon Dependencies -->

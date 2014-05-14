@@ -18,6 +18,8 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>shell-impl</artifactId>
+         <optional>true</optional>
+         <scope>compile</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>

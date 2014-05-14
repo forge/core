@@ -73,8 +73,8 @@ public class MavenJavaCompilerFacetTest
       MavenFacet facet = project.getFacet(MavenFacet.class);
       Model model = facet.getModel();
       Properties properties = model.getProperties();
-      Assert.assertThat(properties.getProperty(MavenJavaCompilerFacet.MAVEN_COMPILER_SOURCE_KEY), equalTo("1.7"));
-      Assert.assertThat(properties.getProperty(MavenJavaCompilerFacet.MAVEN_COMPILER_TARGET_KEY), equalTo("1.7"));
-      Assert.assertThat(properties.getProperty(MavenJavaCompilerFacet.MAVEN_COMPILER_ENCODING_KEY), equalTo("UTF-8"));
+      Assert.assertThat(properties.getProperty("maven.compiler.source"), equalTo("1.7"));
+      Assert.assertThat(properties.getProperty("maven.compiler.target"), equalTo("1.7"));
+      Assert.assertThat(properties.getProperty("project.build.sourceEncoding"), equalTo("UTF-8"));
    }
 }

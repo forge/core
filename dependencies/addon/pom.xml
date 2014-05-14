@@ -17,6 +17,7 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>dependencies-impl</artifactId>
+         <optional>true</optional>
          <scope>runtime</scope>
       </dependency>
       <dependency>

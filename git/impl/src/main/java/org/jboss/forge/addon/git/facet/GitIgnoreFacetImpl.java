@@ -28,7 +28,6 @@ import org.jboss.forge.addon.git.gitignore.GitIgnoreConfig;
 import org.jboss.forge.addon.git.gitignore.GitIgnoreTemplateGroup;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.DirectoryResourceImpl;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
@@ -113,7 +112,7 @@ public class GitIgnoreFacetImpl extends AbstractFacet<Project> implements GitIgn
 
    private List<String> listGitignores(DirectoryResource dir)
    {
-      List<String> result = new LinkedList<String>();
+      List<String> result = new LinkedList<>();
       ResourceFilter filter = new ResourceFilter()
       {
          @Override
@@ -133,7 +132,7 @@ public class GitIgnoreFacetImpl extends AbstractFacet<Project> implements GitIgn
 
    private DirectoryResource cloneDir()
    {
-      return new DirectoryResourceImpl(factory, config.localRepository());
+      return factory.create(DirectoryResource.class, config.localRepository());
    }
 
 }

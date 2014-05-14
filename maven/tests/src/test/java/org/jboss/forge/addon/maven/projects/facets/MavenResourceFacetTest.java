@@ -85,7 +85,7 @@ public class MavenResourceFacetTest
    @Test
    public void testDefaultResourceDirectory() throws Exception
    {
-      MavenResourcesFacet facet = project.getFacet(MavenResourcesFacet.class);
+      ResourcesFacet facet = project.getFacet(ResourcesFacet.class);
       DirectoryResource expected = project.getRootDirectory().getChildDirectory(
                "src" + File.separator + "main" + File.separator + "resources");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getResourceDirectory().getFullyQualifiedName());
@@ -94,7 +94,7 @@ public class MavenResourceFacetTest
    @Test
    public void testDefaultTestResourceDirectory() throws Exception
    {
-      MavenResourcesFacet facet = project.getFacet(MavenResourcesFacet.class);
+      ResourcesFacet facet = project.getFacet(ResourcesFacet.class);
       DirectoryResource expected = project.getRootDirectory().getChildDirectory(
                "src" + File.separator + "test" + File.separator + "resources");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getTestResourceDirectory().getFullyQualifiedName());
@@ -107,7 +107,7 @@ public class MavenResourceFacetTest
 
       pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><resources><resource><directory>foo</directory></resource></resources></build></project>");
 
-      MavenResourcesFacet facet = project.getFacet(MavenResourcesFacet.class);
+      ResourcesFacet facet = project.getFacet(ResourcesFacet.class);
       DirectoryResource expected = project.getRootDirectory().getChildDirectory(
                "foo");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getResourceDirectory().getFullyQualifiedName());
@@ -122,7 +122,7 @@ public class MavenResourceFacetTest
       pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><resources><resource><directory>${project.basedir}"
                + File.separator + "foo</directory></resource></resources></build></project>");
 
-      MavenResourcesFacet facet = project.getFacet(MavenResourcesFacet.class);
+      ResourcesFacet facet = project.getFacet(ResourcesFacet.class);
       DirectoryResource expected = project.getRootDirectory().getChildDirectory(
                "foo");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getResourceDirectory().getFullyQualifiedName());
@@ -135,7 +135,7 @@ public class MavenResourceFacetTest
 
       pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><testResources><testResource><directory>foo</directory></testResource></testResources></build></project>");
 
-      MavenResourcesFacet facet = project.getFacet(MavenResourcesFacet.class);
+      ResourcesFacet facet = project.getFacet(ResourcesFacet.class);
       DirectoryResource expected = project.getRootDirectory().getChildDirectory(
                "foo");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getTestResourceDirectory().getFullyQualifiedName());
@@ -150,7 +150,7 @@ public class MavenResourceFacetTest
       pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><testResources><testResource><directory>${project.basedir}"
                + File.separator + "foo</directory></testResource></testResources></build></project>");
 
-      MavenResourcesFacet facet = project.getFacet(MavenResourcesFacet.class);
+      ResourcesFacet facet = project.getFacet(ResourcesFacet.class);
       DirectoryResource expected = project.getRootDirectory().getChildDirectory(
                "foo");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getTestResourceDirectory().getFullyQualifiedName());

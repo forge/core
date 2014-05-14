@@ -61,6 +61,11 @@
          <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
+         <!-- TODO Remove this impl dependency -->
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>database-tools-impl</artifactId>
+      </dependency>
+      <dependency>
          <groupId>com.h2database</groupId>
          <artifactId>h2</artifactId>
          <scope>test</scope>

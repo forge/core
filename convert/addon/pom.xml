@@ -19,6 +19,7 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>convert-impl</artifactId>
+         <optional>true</optional>
          <scope>runtime</scope>
       </dependency>
 
