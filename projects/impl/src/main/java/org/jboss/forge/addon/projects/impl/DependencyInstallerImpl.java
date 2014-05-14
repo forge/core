@@ -100,7 +100,7 @@ public class DependencyInstallerImpl implements DependencyInstaller
 
    private Dependency getUnversioned(Dependency dependency)
    {
-      return DependencyBuilder.create(dependency).setVersion(null);
+      return DependencyBuilder.create(dependency).setVersion(null).setOptional(dependency.isOptional());
    }
 
    @Override

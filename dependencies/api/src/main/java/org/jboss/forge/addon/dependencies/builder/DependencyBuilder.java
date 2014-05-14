@@ -46,6 +46,9 @@ public class DependencyBuilder implements Dependency
       DependencyBuilder builder = new DependencyBuilder();
       builder.setCoordinate(dep.getCoordinate());
       builder.setScopeType(dep.getScopeType());
+      builder.setArtifact(dep.getArtifact());
+      builder.setExcludedCoordinates(dep.getExcludedCoordinates());
+      builder.setOptional(dep.isOptional());
       return builder;
    }
 
@@ -93,7 +96,7 @@ public class DependencyBuilder implements Dependency
    public DependencyBuilder addExclusion(Coordinate coordinate)
    {
       if (exclusions == null)
-         exclusions = new ArrayList<Coordinate>();
+         exclusions = new ArrayList<>();
 
       exclusions.add(coordinate);
       return this;

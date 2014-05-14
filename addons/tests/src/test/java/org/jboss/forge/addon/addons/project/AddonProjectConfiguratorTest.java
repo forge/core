@@ -25,7 +25,6 @@ import org.jboss.forge.addon.addons.facets.DefaultFurnaceContainerFacet;
 import org.jboss.forge.addon.addons.facets.ForgeBOMFacet;
 import org.jboss.forge.addon.addons.facets.FurnaceAPIFacet;
 import org.jboss.forge.addon.addons.facets.FurnacePluginFacet;
-import org.jboss.forge.addon.addons.project.AddonProjectConfigurator;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetNotFoundException;
@@ -55,6 +54,8 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class AddonProjectConfiguratorTest
 {
+   private static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
+
    private static final String FURNACE_VERSION = "2.2.0.Final";
 
    @Deployment
@@ -147,12 +148,12 @@ public class AddonProjectConfiguratorTest
 
       Dependency addonDependency = DependencyBuilder.create(
                addonProject.getFacet(MetadataFacet.class).getOutputDependency())
-               .setClassifier("forge-addon");
+               .setClassifier(FORGE_ADDON_CLASSIFIER);
       Dependency apiDependency = apiProject.getFacet(MetadataFacet.class).getOutputDependency();
       Dependency implDependency = implProject.getFacet(MetadataFacet.class).getOutputDependency();
       Dependency spiDependency = DependencyBuilder.create(
                spiProject.getFacet(MetadataFacet.class).getOutputDependency())
-               .setClassifier("forge-addon");
+               .setClassifier(FORGE_ADDON_CLASSIFIER);
 
       /*
        * Verify parent project
@@ -166,7 +167,7 @@ public class AddonProjectConfiguratorTest
                DependencyBuilder.create("javax.annotation:jsr250-api:1.0")));
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
                DependencyBuilder.create(addonProject.getFacet(MetadataFacet.class).getOutputDependency())
-                        .setClassifier("forge-addon")));
+                        .setClassifier(FORGE_ADDON_CLASSIFIER)));
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(apiDependency));
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
                implProject.getFacet(MetadataFacet.class).getOutputDependency()));
@@ -210,7 +211,8 @@ public class AddonProjectConfiguratorTest
       /*
        * Verify api/ sub-module
        */
-      Assert.assertEquals(".." + File.separator + "pom.xml", apiProject.getFacet(MavenFacet.class).getModel().getParent().getRelativePath());
+      Assert.assertEquals(".." + File.separator + "pom.xml", apiProject.getFacet(MavenFacet.class).getModel()
+               .getParent().getRelativePath());
       Assert.assertTrue(apiProject.hasFacet(DefaultFurnaceContainerAPIFacet.class));
       Assert.assertTrue(apiProject.getFacet(JavaSourceFacet.class)
                .getJavaResource("com.acme.testproject.package-info.java").exists());
@@ -236,7 +238,8 @@ public class AddonProjectConfiguratorTest
       /*
        * Verify spi/ sub-module2.0.0.Final
        */
-      Assert.assertEquals(".." + File.separator + "pom.xml", spiProject.getFacet(MavenFacet.class).getModel().getParent().getRelativePath());
+      Assert.assertEquals(".." + File.separator + "pom.xml", spiProject.getFacet(MavenFacet.class).getModel()
+               .getParent().getRelativePath());
       Assert.assertTrue(spiProject.getFacet(JavaSourceFacet.class)
                .getJavaResource("com.acme.testproject.package-info.java").exists());
 
@@ -258,7 +261,8 @@ public class AddonProjectConfiguratorTest
       /*
        * Verify addon/ sub-module
        */
-      Assert.assertEquals(".." + File.separator + "pom.xml", addonProject.getFacet(MavenFacet.class).getModel().getParent()
+      Assert.assertEquals(".." + File.separator + "pom.xml", addonProject.getFacet(MavenFacet.class).getModel()
+               .getParent()
                .getRelativePath());
       Assert.assertTrue(addonProject.getFacet(JavaSourceFacet.class)
                .getJavaResource("com.acme.testproject.package-info.java").exists());
@@ -268,21 +272,23 @@ public class AddonProjectConfiguratorTest
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(apiDependency));
       Assert.assertNull(addonProject.getFacet(DependencyFacet.class).getDirectDependency(apiDependency)
                .getScopeType());
+      Assert.assertFalse(addonProject.getFacet(DependencyFacet.class).getDirectDependency(apiDependency).isOptional());
 
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasDirectDependency(implDependency));
       Assert.assertFalse(addonProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(implDependency));
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(implDependency));
       Assert.assertEquals("runtime", addonProject.getFacet(DependencyFacet.class).getDirectDependency(implDependency)
                .getScopeType());
+      Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).getDirectDependency(implDependency).isOptional());
 
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasDirectDependency(spiDependency));
       Assert.assertFalse(addonProject.getFacet(DependencyFacet.class).hasDirectManagedDependency(spiDependency));
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(spiDependency));
       Assert.assertNull(addonProject.getFacet(DependencyFacet.class).getDirectDependency(spiDependency)
                .getScopeType());
-      Assert.assertEquals("compile",
-               addonProject.getFacet(DependencyFacet.class).getEffectiveDependency(spiDependency)
-                        .getScopeType());
+      Assert.assertEquals("compile", addonProject.getFacet(DependencyFacet.class).getEffectiveDependency(spiDependency)
+               .getScopeType());
+      Assert.assertFalse(addonProject.getFacet(DependencyFacet.class).getDirectDependency(spiDependency).isOptional());
 
       // Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).getManagedDependencies().isEmpty());
       Assert.assertTrue(addonProject.getFacet(DependencyFacet.class).hasDirectDependency(
@@ -300,7 +306,8 @@ public class AddonProjectConfiguratorTest
        * Verify tests/ sub-module
        */
 
-      Assert.assertEquals(".." + File.separator + "pom.xml", testsProject.getFacet(MavenFacet.class).getModel().getParent()
+      Assert.assertEquals(".." + File.separator + "pom.xml", testsProject.getFacet(MavenFacet.class).getModel()
+               .getParent()
                .getRelativePath());
 
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasDirectDependency(addonDependency));
@@ -426,7 +433,7 @@ public class AddonProjectConfiguratorTest
 
       Dependency spiDependency = DependencyBuilder.create(
                spiProject.getFacet(MetadataFacet.class).getOutputDependency())
-               .setClassifier("forge-addon");
+               .setClassifier(FORGE_ADDON_CLASSIFIER);
       Assert.assertNotNull("SPI module is not present in the TESTS module", testsProject
                .getFacet(DependencyFacet.class).getEffectiveDependency(spiDependency));
       Assert.assertEquals("compile",

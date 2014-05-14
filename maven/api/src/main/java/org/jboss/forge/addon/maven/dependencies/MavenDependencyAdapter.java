@@ -58,6 +58,7 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
       this.setType(dep.getCoordinate().getPackaging());
       this.setClassifier(dep.getCoordinate().getClassifier());
       this.setSystemPath(dep.getCoordinate().getSystemPath());
+      this.setOptional(dep.isOptional());
 
       if (dep.getExcludedCoordinates() != null)
       {

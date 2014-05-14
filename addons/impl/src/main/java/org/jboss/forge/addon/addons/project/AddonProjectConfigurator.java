@@ -156,6 +156,7 @@ public class AddonProjectConfigurator
 
       dependencyInstaller.install(addonProject, DependencyBuilder.create(apiProjectDependency));
       dependencyInstaller.install(addonProject, DependencyBuilder.create(implProjectDependency)
+               .setOptional(true)
                .setScopeType("runtime"));
       dependencyInstaller.install(addonProject, DependencyBuilder.create(spiProjectDependency));
 
