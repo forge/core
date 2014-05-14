@@ -25,7 +25,7 @@ public class MockProvider implements ScaffoldProvider
    public static final String PROVIDER_NAME = "Mock Scaffold Provider";
    public static final String PROVIDER_DESCRIPTION = "Mock Scaffold Provider for use in tests";
 
-   private boolean isSetup;
+   private static boolean isSetup;
 
    @Inject
    private ResourceFactory resourceFactory;
