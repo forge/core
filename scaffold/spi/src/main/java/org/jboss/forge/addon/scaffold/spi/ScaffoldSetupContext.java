@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.scaffold.spi;
 
+import org.jboss.forge.addon.projects.Project;
+
 /**
  * A context object for the scaffold
  * 
@@ -16,12 +18,14 @@ public class ScaffoldSetupContext
 {
    private final String targetDirectory;
    private final boolean overwrite;
+   private final Project project;
 
-   public ScaffoldSetupContext(String targetDirectory, boolean overwrite)
+   public ScaffoldSetupContext(String targetDirectory, boolean overwrite, Project project)
    {
       super();
       this.targetDirectory = targetDirectory == null ? "" : targetDirectory;
       this.overwrite = overwrite;
+      this.project = project;
    }
 
    public String getTargetDirectory()
@@ -34,4 +38,8 @@ public class ScaffoldSetupContext
       return overwrite;
    }
 
+   public Project getProject()
+   {
+      return project;
+   }
 }

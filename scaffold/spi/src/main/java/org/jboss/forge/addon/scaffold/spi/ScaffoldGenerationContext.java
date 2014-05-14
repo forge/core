@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.scaffold.spi;
 
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.Resource;
 
 import java.util.Collection;
@@ -23,21 +24,24 @@ public class ScaffoldGenerationContext
    private boolean overwrite;
    private Collection<Resource<?>> resources;
    private Map<String, Object> attributes;
+   private Project project;
 
-   public ScaffoldGenerationContext(String targetDirectory, boolean overwrite, Collection<Resource<?>> resources)
+   public ScaffoldGenerationContext(String targetDirectory, boolean overwrite, Collection<Resource<?>> resources,
+            Project project)
    {
       super();
       this.targetDirectory = targetDirectory == null ? "" : targetDirectory;
       this.overwrite = overwrite;
       this.resources = resources;
-      this.attributes = new HashMap<String, Object>();
+      this.attributes = new HashMap<>();
+      this.project = project;
    }
 
    public String getTargetDirectory()
    {
       return targetDirectory;
    }
-   
+
    public void setTargetDirectory(String targetDirectory)
    {
       this.targetDirectory = targetDirectory;
@@ -47,35 +51,44 @@ public class ScaffoldGenerationContext
    {
       return overwrite;
    }
-   
+
    public void setOverwrite(boolean overwrite)
    {
       this.overwrite = overwrite;
    }
-   
+
    public Collection<Resource<?>> getResources()
    {
       return resources;
    }
-   
+
    public void setResources(Collection<Resource<?>> resources)
    {
       this.resources = resources;
    }
-   
+
    public Object getAttribute(String key)
    {
       return attributes.get(key);
    }
-   
+
    public void addAttribute(String key, Object value)
    {
       attributes.put(key, value);
    }
-   
+
    public void removeAttribute(String key)
    {
       attributes.remove(key);
    }
 
+   public Project getProject()
+   {
+      return project;
+   }
+
+   public void setProject(Project project)
+   {
+      this.project = project;
+   }
 }

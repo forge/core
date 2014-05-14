@@ -66,14 +66,13 @@ public class ScaffoldExecuteGenerationStep extends AbstractProjectCommand implem
       if(requiresScaffoldSetup)
       {
           ScaffoldSetupContext setupContext = (ScaffoldSetupContext) attributeMap.get(ScaffoldSetupContext.class);
-          selectedProvider.setup(getSelectedProject(context), setupContext);
+          selectedProvider.setup(setupContext);
       }
       ResourceCollection resourceCollection = (ResourceCollection) attributeMap.get(ResourceCollection.class);
       // Ensure that the resource collection is instantiated. Prevents a null check in the scaffold provider.
       Collection<Resource<?>> resources = resourceCollection != null ? resourceCollection.getResources()
                : Collections.EMPTY_SET;
-      selectedProvider.generateFrom(getSelectedProject(context),
-               populateGenerationContext(context.getUIContext(), resources));
+      selectedProvider.generateFrom(populateGenerationContext(context.getUIContext(), resources));
       return Results.success("Scaffold was generated successfully.");
    }
 

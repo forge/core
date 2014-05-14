@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.addon.scaffold.mock;
 
-import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.scaffold.spi.AccessStrategy;
@@ -43,20 +42,20 @@ public class MockProvider implements ScaffoldProvider
    }
 
    @Override
-   public List<Resource<?>> setup(Project project, ScaffoldSetupContext setupContext)
+   public List<Resource<?>> setup(ScaffoldSetupContext setupContext)
    {
       isSetup = true;
       return null;
    }
 
    @Override
-   public boolean isSetup(Project project, ScaffoldSetupContext setupContext)
+   public boolean isSetup(ScaffoldSetupContext setupContext)
    {
       return isSetup;
    }
 
    @Override
-   public List<Resource<?>> generateFrom(Project project, ScaffoldGenerationContext generationContext)
+   public List<Resource<?>> generateFrom(ScaffoldGenerationContext generationContext)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       for (Resource<?> resource : generationContext.getResources())
@@ -69,13 +68,13 @@ public class MockProvider implements ScaffoldProvider
    }
 
    @Override
-   public NavigationResult getSetupFlow(Project project)
+   public NavigationResult getSetupFlow(ScaffoldSetupContext setupContext)
    {
       return null;
    }
 
    @Override
-   public NavigationResult getGenerationFlow(Project project)
+   public NavigationResult getGenerationFlow(ScaffoldGenerationContext generationContext)
    {
       return null;
    }

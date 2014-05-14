@@ -38,36 +38,41 @@ public interface ScaffoldProvider
    /**
     * Set up this scaffold provider, installing any necessary {@link Facet} implementations as necessary. Install the
     * templates in the provider to the src/main/templates directory of the project.
+    *
+    * @param setupContext The execution context for the setup stage
     */
-   List<Resource<?>> setup(Project project, ScaffoldSetupContext setupContext);
+   List<Resource<?>> setup(ScaffoldSetupContext setupContext);
 
    /**
     * Verifies whether the provider was setup or not. This is used to determine whether the setup method should be
     * executed.
     *
+    * @param setupContext The execution context for the setup stage
     * @return boolean value indicating whether the provider was setup
     */
-   boolean isSetup(Project project, ScaffoldSetupContext setupContext);
+   boolean isSetup(ScaffoldSetupContext setupContext);
 
    /**
     * Generate a set of create, read, update, delete pages for the given collection of {@link Resource}s present in the
     * {@link ScaffoldGenerationContext}. Note that any collection of Resource instances can be provided to the
     * {@link ScaffoldProvider}. It is the responsibility of the ScaffoldProvider to verify whether it can act on the
     * provided resource.
+    *
+    * @param generationContext The execution context for the generation stage
     */
-   List<Resource<?>> generateFrom(Project project, ScaffoldGenerationContext generationContext);
+   List<Resource<?>> generateFrom(ScaffoldGenerationContext generationContext);
 
    /**
     * Return the {@link List} of {@link UICommand} classes that begins the scaffold setup of this type, if any.
-    * @param project The currently selected project
+    * @param setupContext The execution context for the setup stage
     */
-   NavigationResult getSetupFlow(Project project);
+   NavigationResult getSetupFlow(ScaffoldSetupContext setupContext);
 
    /**
     * Return the {@link List} of {@link UICommand} classes that begins the scaffold generation of this type, if any.
-    * @param project The currently selected project
+    * @param generationContext The execution context for the generation stage
     */
-   NavigationResult getGenerationFlow(Project project);
+   NavigationResult getGenerationFlow(ScaffoldGenerationContext generationContext);
 
    AccessStrategy getAccessStrategy();
 
