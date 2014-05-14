@@ -114,23 +114,24 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
       Map<Object, Object> attributeMap = uiContext.getAttributeMap();
 
       attributeMap.put(ScaffoldProvider.class, selectedProvider);
-      attributeMap.put(ScaffoldGenerationContext.class, populateGenerationContext(uiContext));
+      ScaffoldGenerationContext generationContext = populateGenerationContext(uiContext);
+      attributeMap.put(ScaffoldGenerationContext.class, generationContext);
 
       NavigationResult setupFlow = null;
       Project project = getSelectedProject(uiContext);
 
       // Verify if the selected provider is installed
       // If not, add the setup flow and inform the generation step to setup the scaffold.
-      ScaffoldSetupContext setupContext = populateSetupContext();
-      if (!selectedProvider.isSetup(project, setupContext))
+      ScaffoldSetupContext setupContext = populateSetupContext(uiContext);
+      if (!selectedProvider.isSetup(setupContext))
       {
-         setupFlow = selectedProvider.getSetupFlow(project);
+         setupFlow = selectedProvider.getSetupFlow(setupContext);
          attributeMap.put(REQUIRES_SCAFFOLD_SETUP, true);
          attributeMap.put(ScaffoldSetupContext.class, setupContext);
       }
 
       // Get the step sequence from the selected scaffold provider
-      NavigationResult generationFlow = selectedProvider.getGenerationFlow(project);
+      NavigationResult generationFlow = selectedProvider.getGenerationFlow(generationContext);
 
       // Add the execution logic step in the end so that the scaffold generation step is executed last after all other
       // steps
@@ -154,24 +155,25 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
 
    private ScaffoldGenerationContext populateGenerationContext(UIContext context)
    {
+      Project project = getSelectedProject(context);
       Map<Object, Object> attributeMap = context.getAttributeMap();
       ScaffoldGenerationContext generationContext = (ScaffoldGenerationContext) attributeMap
                .get(ScaffoldGenerationContext.class);
       if (generationContext == null)
       {
-         return new ScaffoldGenerationContext(webRoot.getValue(), overwrite.getValue(), null);
+         return new ScaffoldGenerationContext(webRoot.getValue(), overwrite.getValue(), null, project);
       }
       else
       {
          generationContext.setTargetDirectory(webRoot.getValue());
-         generationContext.setOverwrite(overwrite.getValue());
          return generationContext;
       }
    }
 
-   private ScaffoldSetupContext populateSetupContext()
+   private ScaffoldSetupContext populateSetupContext(UIContext context)
    {
-      return new ScaffoldSetupContext(webRoot.getValue(), overwrite.getValue());
+      Project project = getSelectedProject(context);
+      return new ScaffoldSetupContext(webRoot.getValue(), overwrite.getValue(), project);
    }
 
 }

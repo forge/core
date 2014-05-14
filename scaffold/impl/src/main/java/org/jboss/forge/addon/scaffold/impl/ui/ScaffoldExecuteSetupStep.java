@@ -59,7 +59,7 @@ public class ScaffoldExecuteSetupStep extends AbstractProjectCommand implements 
 
       ScaffoldProvider selectedProvider = (ScaffoldProvider) attributeMap.get(ScaffoldProvider.class);
       ScaffoldSetupContext setupContext = (ScaffoldSetupContext) attributeMap.get(ScaffoldSetupContext.class);
-      selectedProvider.setup(getSelectedProject(context), setupContext);
+      selectedProvider.setup(setupContext);
       // No-op. Scaffold setup is done in a separate step.
       return Results.success("Scaffold was setup successfully.");
    }

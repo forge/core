@@ -14,6 +14,7 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
@@ -120,11 +121,12 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
       Map<Object, Object> attributeMap = uiContext.getAttributeMap();
 
       ScaffoldProvider selectedProvider = provider.getValue();
+      ScaffoldSetupContext setupContext = createSetupContext(uiContext);
       attributeMap.put(ScaffoldProvider.class, selectedProvider);
-      attributeMap.put(ScaffoldSetupContext.class, createSetupContext());
+      attributeMap.put(ScaffoldSetupContext.class, setupContext);
 
       // Get the navigation result entries from the selected scaffold provider
-      NavigationResult setupFlow = selectedProvider.getSetupFlow(getSelectedProject(uiContext));
+      NavigationResult setupFlow = selectedProvider.getSetupFlow(setupContext);
 
       // Add the execution logic step in the end so that the scaffold setup step is executed last after all other steps
       NavigationResultBuilder builder = NavigationResultBuilder.create(setupFlow);
@@ -145,8 +147,9 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
       return factory;
    }
 
-   private ScaffoldSetupContext createSetupContext()
+   private ScaffoldSetupContext createSetupContext(UIContext context)
    {
-      return new ScaffoldSetupContext(webRoot.getValue(), overwrite.getValue());
+      Project project = getSelectedProject(context);
+      return new ScaffoldSetupContext(webRoot.getValue(), true, project);
    }
 }
