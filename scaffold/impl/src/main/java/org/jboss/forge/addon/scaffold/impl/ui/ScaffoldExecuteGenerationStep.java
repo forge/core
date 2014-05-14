@@ -1,6 +1,7 @@
 package org.jboss.forge.addon.scaffold.impl.ui;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -68,8 +69,11 @@ public class ScaffoldExecuteGenerationStep extends AbstractProjectCommand implem
           selectedProvider.setup(getSelectedProject(context), setupContext);
       }
       ResourceCollection resourceCollection = (ResourceCollection) attributeMap.get(ResourceCollection.class);
+      // Ensure that the resource collection is instantiated. Prevents a null check in the scaffold provider.
+      Collection<Resource<?>> resources = resourceCollection != null ? resourceCollection.getResources()
+               : Collections.EMPTY_SET;
       selectedProvider.generateFrom(getSelectedProject(context),
-               populateGenerationContext(context.getUIContext(), resourceCollection.getResources()));
+               populateGenerationContext(context.getUIContext(), resources));
       return Results.success("Scaffold was generated successfully.");
    }
 
