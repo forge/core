@@ -205,9 +205,8 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    {
       setProject(setupContext.getProject());
       String targetDir = setupContext.getTargetDirectory();
-      boolean overwrite = setupContext.isOverwrite();
       Resource<?> template = null;
-      List<Resource<?>> resources = generateIndex(targetDir, template, overwrite);
+      List<Resource<?>> resources = generateIndex(targetDir, template);
       setupWebXML();
 
       return resources;
@@ -308,9 +307,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
          String targetDir = generationContext.getTargetDirectory();
          targetDir = (targetDir == null) ? "" : targetDir;
          Resource<?> template = (Resource<?>) generationContext.getAttribute("pageTemplate");
-         boolean overwrite = generationContext.isOverwrite();
-         List<Resource<?>> generatedResourcesForEntity = this
-                  .generateFromEntity(targetDir, template, entity, overwrite);
+         List<Resource<?>> generatedResourcesForEntity = this.generateFromEntity(targetDir, template, entity);
 
          // TODO give plugins a chance to react to generated resources, use event bus?
          // if (!generatedResources.isEmpty())
@@ -365,7 +362,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       return builder.build();
    }
 
-   protected List<Resource<?>> generateIndex(String targetDir, final Resource<?> template, final boolean overwrite)
+   protected List<Resource<?>> generateIndex(String targetDir, final Resource<?> template)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       WebResourcesFacet web = this.project.getFacet(WebResourcesFacet.class);
@@ -384,51 +381,51 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       }
       loadTemplates();
 
-      generateTemplates(targetDir, overwrite);
+      generateTemplates(targetDir);
       HashMap<Object, Object> context = getTemplateContext(targetDir, template);
 
       // Basic pages
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(targetDir + INDEX_HTML),
-               this.templateProcessor.processTemplate(context, indexWelcomeTemplate), overwrite));
+               this.templateProcessor.processTemplate(context, indexWelcomeTemplate)));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(targetDir + INDEX_XHTML),
-               this.templateProcessor.processTemplate(context, indexTemplate), overwrite));
+               this.templateProcessor.processTemplate(context, indexTemplate)));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(ERROR_XHTML),
-               this.templateProcessor.processTemplate(context, errorTemplate), overwrite));
+               this.templateProcessor.processTemplate(context, errorTemplate)));
 
       // Static resources
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(ADD_PNG),
-               getClass().getResourceAsStream(SCAFFOLD_ADD_PNG), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_ADD_PNG)));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(BOOTSTRAP_CSS),
-               getClass().getResourceAsStream(SCAFFOLD_BOOTSTRAP_CSS), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_BOOTSTRAP_CSS)));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(FALSE_PNG),
-               getClass().getResourceAsStream(SCAFFOLD_FALSE_PNG), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_FALSE_PNG)));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(FAVICON_ICO),
-               getClass().getResourceAsStream(SCAFFOLD_FAVICON_ICO), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_FAVICON_ICO)));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(FORGE_LOGO_PNG),
-               getClass().getResourceAsStream(SCAFFOLD_FORGE_LOGO_PNG), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_FORGE_LOGO_PNG)));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(FORGE_STYLE_CSS),
-               getClass().getResourceAsStream(SCAFFOLD_FORGE_STYLE_CSS), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_FORGE_STYLE_CSS)));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(REMOVE_PNG),
-               getClass().getResourceAsStream(SCAFFOLD_REMOVE_PNG), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_REMOVE_PNG)));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(SEARCH_PNG),
-               getClass().getResourceAsStream(SCAFFOLD_SEARCH_PNG), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_SEARCH_PNG)));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(TRUE_PNG),
-               getClass().getResourceAsStream(SCAFFOLD_TRUE_PNG), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_TRUE_PNG)));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(JBOSS_COMMUNITY_PNG),
-               getClass().getResourceAsStream(SCAFFOLD_JBOSS_COMMUNITY_PNG), overwrite));
+               getClass().getResourceAsStream(SCAFFOLD_JBOSS_COMMUNITY_PNG)));
 
       return result;
    }
@@ -444,7 +441,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       return new FacesTemplateStrategy(this.project);
    }
 
-   protected List<Resource<?>> generateTemplates(String targetDir, final boolean overwrite)
+   protected List<Resource<?>> generateTemplates(String targetDir)
    {
       List<Resource<?>> result = new ArrayList<Resource<?>>();
 
@@ -453,9 +450,9 @@ public class FacesScaffoldProvider implements ScaffoldProvider
          WebResourcesFacet web = this.project.getFacet(WebResourcesFacet.class);
 
          result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(PAGINATOR),
-                  getClass().getResourceAsStream(SCAFFOLD_PAGINATOR), overwrite));
+                  getClass().getResourceAsStream(SCAFFOLD_PAGINATOR)));
 
-         result.add(generateNavigation(targetDir, overwrite));
+         result.add(generateNavigation(targetDir));
       }
       catch (Exception e)
       {
@@ -620,7 +617,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
     * Generates the navigation menu based on scaffolded entities.
     */
 
-   protected Resource<?> generateNavigation(final String targetDir, final boolean overwrite)
+   protected Resource<?> generateNavigation(final String targetDir)
             throws IOException
    {
       WebResourcesFacet web = this.project.getFacet(WebResourcesFacet.class);
@@ -674,8 +671,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       {
          return ScaffoldUtil.createOrOverwrite((FileResource<?>) getTemplateStrategy()
                   .getDefaultTemplate(),
-                  this.templateProcessor.processTemplate(context, navigationTemplate),
-                  true);
+                  this.templateProcessor.processTemplate(context, navigationTemplate));
       }
       finally
       {
@@ -758,8 +754,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    }
 
    private List<Resource<?>> generateFromEntity(String targetDir, final Resource<?> template,
-            final JavaClassSource entity,
-            final boolean overwrite)
+            final JavaClassSource entity)
    {
       resetMetaWidgets();
 
@@ -814,8 +809,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
          JavaClassSource viewBean = Roaster.parse(JavaClassSource.class,
                   this.templateProcessor.processTemplate(context, this.backingBeanTemplate));
          viewBean.setPackage(java.getBasePackage() + ".view");
-         result.add(ScaffoldUtil.createOrOverwrite(java.getJavaResource(viewBean), viewBean.toString(),
-                  overwrite));
+         result.add(ScaffoldUtil.createOrOverwrite(java.getJavaResource(viewBean), viewBean.toString()));
 
          // Set new context for view generation
          context = getTemplateContext(targetDir, template);
@@ -836,8 +830,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
          result.add(ScaffoldUtil.createOrOverwrite(
                   web.getWebResource(targetDir + "/" + ccEntity + "/create.xhtml"),
-                  this.templateProcessor.processTemplate(context, this.createTemplate),
-                  overwrite));
+                  this.templateProcessor.processTemplate(context, this.createTemplate)));
 
          // Generate view
          this.entityMetawidget.setReadOnly(true);
@@ -845,7 +838,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
          result.add(ScaffoldUtil.createOrOverwrite(
                   web.getWebResource(targetDir + "/" + ccEntity + "/view.xhtml"),
-                  this.templateProcessor.processTemplate(context, this.viewTemplate), overwrite));
+                  this.templateProcessor.processTemplate(context, this.viewTemplate)));
 
          // Generate search
          this.searchMetawidget.setValue(StaticFacesUtils.wrapExpression(beanName + ".example"));
@@ -857,22 +850,21 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
          result.add(ScaffoldUtil.createOrOverwrite(
                   web.getWebResource(targetDir + "/" + ccEntity + "/search.xhtml"),
-                  this.templateProcessor.processTemplate(context, this.searchTemplate), overwrite));
+                  this.templateProcessor.processTemplate(context, this.searchTemplate)));
 
          // Generate navigation
-         result.add(generateNavigation(targetDir, overwrite));
+         result.add(generateNavigation(targetDir));
 
          // Need ViewUtils and forge.taglib.xml for forgeview:asList
          JavaClassSource viewUtils = Roaster.parse(JavaClassSource.class,
                   this.templateProcessor.processTemplate(context, this.viewUtilsTemplate));
          viewUtils.setPackage(viewBean.getPackage());
-         result.add(ScaffoldUtil.createOrOverwrite(java.getJavaResource(viewUtils), viewUtils.toString(),
-                  true));
+         result.add(ScaffoldUtil.createOrOverwrite(java.getJavaResource(viewUtils), viewUtils.toString()));
 
          context.put("viewPackage", viewBean.getPackage());
          result.add(ScaffoldUtil.createOrOverwrite(
                   web.getWebResource("WEB-INF/classes/META-INF/forge.taglib.xml"),
-                  this.templateProcessor.processTemplate(context, this.taglibTemplate), true));
+                  this.templateProcessor.processTemplate(context, this.taglibTemplate)));
 
          createInitializers(entity);
       }

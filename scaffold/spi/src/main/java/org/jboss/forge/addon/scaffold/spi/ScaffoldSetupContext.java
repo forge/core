@@ -17,25 +17,18 @@ import org.jboss.forge.addon.projects.Project;
 public class ScaffoldSetupContext
 {
    private final String targetDirectory;
-   private final boolean overwrite;
    private final Project project;
 
-   public ScaffoldSetupContext(String targetDirectory, boolean overwrite, Project project)
+   public ScaffoldSetupContext(String targetDirectory, Project project)
    {
       super();
       this.targetDirectory = targetDirectory == null ? "" : targetDirectory;
-      this.overwrite = overwrite;
       this.project = project;
    }
 
    public String getTargetDirectory()
    {
       return targetDirectory;
-   }
-
-   public boolean isOverwrite()
-   {
-      return overwrite;
    }
 
    public Project getProject()

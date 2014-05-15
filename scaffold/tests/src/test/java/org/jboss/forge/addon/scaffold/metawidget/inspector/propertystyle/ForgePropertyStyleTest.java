@@ -83,8 +83,7 @@ public class ForgePropertyStyleTest
                         java.getJavaResource("org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/MockAnnotatedClass.java"),
                         getClass()
                                  .getResourceAsStream(
-                                          "/org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/MockAnnotatedClass.java"),
-                        true);
+                                          "/org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/MockAnnotatedClass.java"));
 
       // Test default private field convention
 
@@ -144,8 +143,7 @@ public class ForgePropertyStyleTest
                         java.getJavaResource("org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedClass.java"),
                         getClass()
                                  .getResourceAsStream(
-                                          "/org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedClass.java"),
-                        true);
+                                          "/org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedClass.java"));
 
       ForgePropertyStyle propertyStyle = new ForgePropertyStyle(new ForgePropertyStyleConfig().setProject(project));
       Map<String, Property> properties = propertyStyle
@@ -181,15 +179,13 @@ public class ForgePropertyStyleTest
                         java.getJavaResource("org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedClass.java"),
                         getClass()
                                  .getResourceAsStream(
-                                          "/org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedClass.java"),
-                        true);
+                                          "/org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedClass.java"));
       ScaffoldUtil
                .createOrOverwrite(
                         java.getJavaResource("org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedSubclass.java"),
                         getClass()
                                  .getResourceAsStream(
-                                          "/org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedSubclass.java"),
-                        true);
+                                          "/org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedSubclass.java"));
 
       ForgePropertyStyle propertyStyle = new ForgePropertyStyle(new ForgePropertyStyleConfig().setProject(project));
       Map<String, Property> properties = propertyStyle

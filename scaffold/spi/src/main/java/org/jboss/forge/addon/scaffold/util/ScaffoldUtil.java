@@ -17,28 +17,24 @@ import org.jboss.forge.addon.resource.Resource;
  */
 public class ScaffoldUtil
 {
-   public static Resource<?> createOrOverwrite(final FileResource<?> resource, final InputStream contents,
-            final boolean overwrite)
+   public static Resource<?> createOrOverwrite(final FileResource<?> resource, final InputStream contents)
    {
-      if (!resource.exists() || overwrite)
+      if (!resource.exists())
       {
          resource.createNewFile();
-         resource.setContents(contents);
-         return resource;
       }
-      return null;
+      resource.setContents(contents);
+      return resource;
    }
 
-   public static Resource<?> createOrOverwrite(final FileResource<?> resource, final String contents,
-            final boolean overwrite)
+   public static Resource<?> createOrOverwrite(final FileResource<?> resource, final String contents)
    {
-      if (!resource.exists() || overwrite)
+      if (!resource.exists())
       {
          resource.createNewFile();
-         resource.setContents(contents);
-         return resource;
       }
-      return null;
+      resource.setContents(contents);
+      return resource;
    }
 
 }
