@@ -21,17 +21,15 @@ import java.util.Map;
 public class ScaffoldGenerationContext
 {
    private String targetDirectory;
-   private boolean overwrite;
    private Collection<Resource<?>> resources;
    private Map<String, Object> attributes;
    private Project project;
 
-   public ScaffoldGenerationContext(String targetDirectory, boolean overwrite, Collection<Resource<?>> resources,
+   public ScaffoldGenerationContext(String targetDirectory, Collection<Resource<?>> resources,
             Project project)
    {
       super();
       this.targetDirectory = targetDirectory == null ? "" : targetDirectory;
-      this.overwrite = overwrite;
       this.resources = resources;
       this.attributes = new HashMap<>();
       this.project = project;
@@ -45,16 +43,6 @@ public class ScaffoldGenerationContext
    public void setTargetDirectory(String targetDirectory)
    {
       this.targetDirectory = targetDirectory;
-   }
-
-   public boolean isOverwrite()
-   {
-      return overwrite;
-   }
-
-   public void setOverwrite(boolean overwrite)
-   {
-      this.overwrite = overwrite;
    }
 
    public Collection<Resource<?>> getResources()

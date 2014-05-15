@@ -55,10 +55,6 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    private UIInput<String> webRoot;
 
    @Inject
-   @WithAttributes(label = "Overwrite existing files?")
-   private UIInput<Boolean> overwrite;
-
-   @Inject
    private ProjectFactory factory;
 
    @Inject
@@ -82,7 +78,7 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
             return source == null ? null : source.getName();
          }
       });
-      builder.add(provider).add(webRoot).add(overwrite);
+      builder.add(provider).add(webRoot);
    }
 
    @Override
@@ -161,7 +157,7 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
                .get(ScaffoldGenerationContext.class);
       if (generationContext == null)
       {
-         return new ScaffoldGenerationContext(webRoot.getValue(), overwrite.getValue(), null, project);
+         return new ScaffoldGenerationContext(webRoot.getValue(), null, project);
       }
       else
       {
@@ -173,7 +169,7 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    private ScaffoldSetupContext populateSetupContext(UIContext context)
    {
       Project project = getSelectedProject(context);
-      return new ScaffoldSetupContext(webRoot.getValue(), overwrite.getValue(), project);
+      return new ScaffoldSetupContext(webRoot.getValue(), project);
    }
 
 }

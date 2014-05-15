@@ -53,10 +53,6 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    private UIInput<String> webRoot;
 
    @Inject
-   @WithAttributes(label = "Overwrite existing files?", defaultValue = "false")
-   private UIInput<Boolean> overwrite;
-
-   @Inject
    private Imported<ScaffoldProvider> scaffoldProviders;
 
    @Inject
@@ -65,16 +61,6 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      overwrite.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
-            ScaffoldProvider selectedProvider = provider.getValue();
-            return selectedProvider != null;
-         }
-      });
-
       Iterator<ScaffoldProvider> scaffolds = scaffoldProviders.iterator();
       if (scaffolds.hasNext())
       {
@@ -90,7 +76,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
             return source == null ? null : source.getName();
          }
       });
-      builder.add(provider).add(webRoot).add(overwrite);
+      builder.add(provider).add(webRoot);
    }
 
    @Override
@@ -150,6 +136,6 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    private ScaffoldSetupContext createSetupContext(UIContext context)
    {
       Project project = getSelectedProject(context);
-      return new ScaffoldSetupContext(webRoot.getValue(), true, project);
+      return new ScaffoldSetupContext(webRoot.getValue(), project);
    }
 }

@@ -95,7 +95,7 @@ public class ScaffoldAddonTest
       // Setup
       ScaffoldProvider scaffoldProvider = getScaffoldProvider();
       Project project = projectHelper.createWebProject();
-      ScaffoldSetupContext setupContext = new ScaffoldSetupContext("", true, project);
+      ScaffoldSetupContext setupContext = new ScaffoldSetupContext("", project);
 
       // Execute
       scaffoldProvider.setup(setupContext);
@@ -110,13 +110,13 @@ public class ScaffoldAddonTest
       // Setup
       ScaffoldProvider scaffoldProvider = getScaffoldProvider();
       Project project = projectHelper.createWebProject();
-      ScaffoldSetupContext setupContext = new ScaffoldSetupContext("", true, project);
+      ScaffoldSetupContext setupContext = new ScaffoldSetupContext("", project);
       scaffoldProvider.setup(setupContext);
 
       // Execute
       List<Resource<?>> scaffoldables = new ArrayList<Resource<?>>();
       scaffoldables.add(resourceFactory.create(new Scaffoldable("mock")));
-      ScaffoldGenerationContext generationContext = new ScaffoldGenerationContext("", true, scaffoldables, project);
+      ScaffoldGenerationContext generationContext = new ScaffoldGenerationContext("", scaffoldables, project);
       List<Resource<?>> generatedResources = scaffoldProvider.generateFrom(generationContext);
 
       // Verify

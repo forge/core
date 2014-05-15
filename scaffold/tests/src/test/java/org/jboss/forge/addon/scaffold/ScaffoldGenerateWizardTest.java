@@ -99,7 +99,7 @@ public class ScaffoldGenerateWizardTest
 
       Imported<ScaffoldProvider> providerInstances = registry.getServices(ScaffoldProvider.class);
       ScaffoldProvider scaffoldProvider = providerInstances.get();
-      Assert.assertFalse(scaffoldProvider.isSetup(new ScaffoldSetupContext("", true, project)));
+      Assert.assertFalse(scaffoldProvider.isSetup(new ScaffoldSetupContext("", project)));
 
       try (WizardCommandController c = testHarness.createWizardController(ScaffoldGenerateCommand.class,
                project.getRoot()))
@@ -114,6 +114,6 @@ public class ScaffoldGenerateWizardTest
          Assert.assertNotNull(result);
       }
 
-      Assert.assertTrue(scaffoldProvider.isSetup(new ScaffoldSetupContext("", true, project)));
+      Assert.assertTrue(scaffoldProvider.isSetup(new ScaffoldSetupContext("", project)));
    }
 }
