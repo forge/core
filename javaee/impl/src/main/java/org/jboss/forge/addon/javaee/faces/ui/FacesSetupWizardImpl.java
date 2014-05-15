@@ -33,7 +33,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  */
 @SuppressWarnings("rawtypes")
 @FacetConstraint(DependencyFacet.class)
-public class FacesSetupWizardImpl extends AbstractJavaEECommand
+public class FacesSetupWizardImpl extends AbstractJavaEECommand implements FacesSetupWizard
 {
 
    @Override

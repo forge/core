@@ -27,7 +27,6 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.util.Refactory;
@@ -36,25 +35,17 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
 /**
  * This class contains JPA specific operations
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
-public class PersistenceOperations
+public class PersistenceOperationsImpl implements PersistenceOperations
 {
-   public static final String DEFAULT_UNIT_SUFFIX = "-persistence-unit";
-   public static final String DEFAULT_UNIT_DESC = "Forge Persistence Unit";
 
    @Inject
    private FacetFactory facetFactory;
 
-   /**
-    * Setups JPA in the project
-    *
-    * @param project
-    * @param dataSource
-    * @param configureMetadata
-    */
+   @Override
    @SuppressWarnings({ "rawtypes", "unchecked" })
    public FileResource<?> setup(String unitName, Project project,
             JPADataSource dataSource,
@@ -96,17 +87,7 @@ public class PersistenceOperations
       return result;
    }
 
-   /**
-    * Creates a new {@link JavaResource} in the specified project. If no project is available, use
-    * {@link PersistenceOperations#newEntity(DirectoryResource, String, String, GenerationType)}
-    *
-    * @param project the current project to create the entity. Must not be null
-    * @param entityName the name of the entity
-    * @param entityPackage the package of the entity to be created
-    * @param idStrategy the ID strategy chosen for this entity
-    * @return the created java resource
-    * @throws FileNotFoundException if something wrong happens while saving the {@link JavaClass}
-    */
+   @Override
    public JavaResource newEntity(Project project, String entityName, String entityPackage, GenerationType idStrategy,
             String tableName)
             throws FileNotFoundException
@@ -116,18 +97,7 @@ public class PersistenceOperations
       return java.saveJavaSource(javaClass);
    }
 
-   /**
-    * Creates a new {@link JavaResource} in the specified target. If a project is available, use
-    * {@link PersistenceOperations#newEntity(Project, String, String, GenerationType)}
-    *
-    * @param target the target directory resource to create this class
-    * @param entityName the name of the entity
-    * @param entityPackage the package of the entity to be created
-    * @param idStrategy the ID strategy chosen for this entity
-    * @param tableName the table name (optional)
-    * @return the created java resource
-    * @throws FileNotFoundException if something wrong happens while saving the {@link JavaClass}
-    */
+   @Override
    public JavaResource newEntity(DirectoryResource target, String entityName, String entityPackage,
             GenerationType idStrategy, String tableName)
    {
@@ -137,34 +107,14 @@ public class PersistenceOperations
       return javaResource;
    }
 
-   /**
-    * Creates a new {@link JavaResource} in the specified project. If no project is available, use
-    * {@link PersistenceOperations#newEntity(DirectoryResource, String, String, GenerationType)}
-    *
-    * @param project the current project to create the entity. Must not be null
-    * @param entityName the name of the entity
-    * @param entityPackage the package of the entity to be created
-    * @param idStrategy the ID strategy chosen for this entity
-    * @return the created java resource
-    * @throws FileNotFoundException if something wrong happens while saving the {@link JavaClass}
-    */
+   @Override
    public JavaResource newEntity(Project project, String entityName, String entityPackage, GenerationType idStrategy)
             throws FileNotFoundException
    {
       return newEntity(project, entityName, entityPackage, idStrategy, null);
    }
 
-   /**
-    * Creates a new {@link JavaResource} in the specified target. If a project is available, use
-    * {@link PersistenceOperations#newEntity(Project, String, String, GenerationType)}
-    *
-    * @param target the target directory resource to create this class
-    * @param entityName the name of the entity
-    * @param entityPackage the package of the entity to be created
-    * @param idStrategy the ID strategy chosen for this entity
-    * @return the created java resource
-    * @throws FileNotFoundException if something wrong happens while saving the {@link JavaClass}
-    */
+   @Override
    public JavaResource newEntity(DirectoryResource target, String entityName, String entityPackage,
             GenerationType idStrategy)
    {

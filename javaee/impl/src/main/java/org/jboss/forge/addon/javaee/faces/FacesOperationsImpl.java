@@ -24,21 +24,22 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
  * This class contains Faces specific operations
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
-public class FacesOperations
+public class FacesOperationsImpl implements FacesOperations
 {
    /**
     * Creates a new {@link JavaResource} in the specified project. If no project is available, use
     * {@link FacesOperations#newBackingBean(DirectoryResource, String, String)}
-    *
+    * 
     * @param project the current project to create the backing bean. Must not be null
     * @param backingBeanName the name of the backing bean
     * @param backingBeanPackage the package of the backing bean to be created
     * @return the created {@link JavaResource}
     */
+   @Override
    public JavaResource newBackingBean(Project project, String backingBeanName, String backingBeanPackage)
             throws FileNotFoundException
    {
@@ -47,32 +48,34 @@ public class FacesOperations
       return java.saveJavaSource(javaClass);
    }
 
-    /**
-     * Creates a new {@link JavaResource} in the specified target. If a project is available, use
-     * {@link FacesOperations#newBackingBean(Project, String, String)}
-     *
-     * @param target the target directory resource to create the backing bean
-     * @param backingBeanName the name of the backing bean
-     * @param backingBeanPackage the package of the backing bean to be created
-     * @return the created {@link JavaResource}
-     */
-    public JavaResource newBackingBean(DirectoryResource target, String backingBeanName, String backingBeanPackage)
-    {
-        JavaClassSource javaClass = createBackingBean(backingBeanName, backingBeanPackage);
-        JavaResource javaResource = getJavaResource(target, javaClass.getName());
-        javaResource.setContents(javaClass);
-        return javaResource;
-    }
+   /**
+    * Creates a new {@link JavaResource} in the specified target. If a project is available, use
+    * {@link FacesOperations#newBackingBean(Project, String, String)}
+    * 
+    * @param target the target directory resource to create the backing bean
+    * @param backingBeanName the name of the backing bean
+    * @param backingBeanPackage the package of the backing bean to be created
+    * @return the created {@link JavaResource}
+    */
+   @Override
+   public JavaResource newBackingBean(DirectoryResource target, String backingBeanName, String backingBeanPackage)
+   {
+      JavaClassSource javaClass = createBackingBean(backingBeanName, backingBeanPackage);
+      JavaResource javaResource = getJavaResource(target, javaClass.getName());
+      javaResource.setContents(javaClass);
+      return javaResource;
+   }
 
    /**
     * Creates a new {@link JavaResource} in the specified project. If no project is available, use
     * {@link FacesOperations#newConverter(DirectoryResource, String, String)}
-    *
+    * 
     * @param project the current project to create the converter. Must not be null
     * @param converterName the name of the converter
     * @param converterPackage the package of the converter to be created
     * @return the created {@link JavaResource}
     */
+   @Override
    public JavaResource newConverter(Project project, String converterName, String converterPackage)
             throws FileNotFoundException
    {
@@ -84,12 +87,13 @@ public class FacesOperations
    /**
     * Creates a new {@link JavaResource} in the specified target. If a project is available, use
     * {@link FacesOperations#newConverter(Project, String, String)}
-    *
+    * 
     * @param target the target directory resource to create this class
     * @param converterName the name of the converter
     * @param converterPackage the package of the converter to be created
     * @return the created {@link JavaResource}
     */
+   @Override
    public JavaResource newConverter(DirectoryResource target, String converterName, String converterPackage)
    {
       JavaClassSource javaClass = createConverter(converterName, converterPackage);
@@ -117,12 +121,13 @@ public class FacesOperations
    /**
     * Creates a new {@link JavaResource} in the specified project. If no project is available, use
     * {@link FacesOperations#newValidator(DirectoryResource, String, String)}
-    *
+    * 
     * @param project the current project to create the validator. Must not be null
     * @param validatorName the name of the validator
     * @param validatorPackage the package of the validator to be created
     * @return the created {@link JavaResource}
     */
+   @Override
    public JavaResource newValidator(Project project, String validatorName, String validatorPackage)
             throws FileNotFoundException
    {
@@ -134,12 +139,13 @@ public class FacesOperations
    /**
     * Creates a new {@link JavaResource} in the specified target. If a project is available, use
     * {@link FacesOperations#newConverter(Project, String, String)}
-    *
+    * 
     * @param target the target directory resource to create the validator. Must not be null
     * @param validatorName the name of the validator
     * @param validatorPackage the package of the validator to be created
     * @return the created {@link JavaResource}
     */
+   @Override
    public JavaResource newValidator(DirectoryResource target, String validatorName, String validatorPackage)
    {
       JavaClassSource javaClass = createValidator(validatorName, validatorPackage);
@@ -165,6 +171,7 @@ public class FacesOperations
       return target;
    }
 
+   @Override
    public MethodSource<JavaClassSource> addValidatorMethod(JavaResource target, String name)
             throws FileNotFoundException
    {
