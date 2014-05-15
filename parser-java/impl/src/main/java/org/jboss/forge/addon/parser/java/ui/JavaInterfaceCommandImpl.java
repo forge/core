@@ -13,7 +13,7 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaInterfaceCommand extends AbstractJavaSourceCommand
+public class JavaInterfaceCommandImpl extends AbstractJavaSourceCommand implements JavaInterfaceCommand
 {
    @Override
    protected Class<? extends JavaSource<?>> getSourceType()

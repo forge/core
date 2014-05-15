@@ -33,10 +33,10 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaEnumSource;
 
 /**
- *
+ * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class JavaEnumConstantCommand extends AbstractProjectCommand
+public class JavaEnumConstantCommandImpl extends AbstractProjectCommand implements JavaEnumConstantCommand
 {
    @Inject
    private ProjectFactory projectFactory;

@@ -1,3 +1,10 @@
+/**
+ * Copyright 2014 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.jboss.forge.addon.parser.java.ui;
 
 import javax.inject.Inject;
@@ -20,11 +27,10 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
- *
  * @author <a href="ivan.st.ivanov@gmail.com">Ivan St. Ivanov</a>
  */
 @FacetConstraint(JavaCompilerFacet.class)
-public class SetCompilerVersionCommand extends AbstractProjectCommand
+public class SetCompilerVersionCommandImpl extends AbstractProjectCommand implements SetCompilerVersionCommand
 {
    @Inject
    @WithAttributes(label = "Java sources version", required = true)

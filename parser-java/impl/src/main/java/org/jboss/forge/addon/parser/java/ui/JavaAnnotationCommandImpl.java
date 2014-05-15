@@ -7,23 +7,23 @@
 
 package org.jboss.forge.addon.parser.java.ui;
 
-import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaClassCommand extends AbstractJavaSourceCommand
+public class JavaAnnotationCommandImpl extends AbstractJavaSourceCommand implements JavaAnnotationCommand
 {
    @Override
    protected Class<? extends JavaSource<?>> getSourceType()
    {
-      return JavaClassSource.class;
+      return JavaAnnotationSource.class;
    }
 
    @Override
    protected String getType()
    {
-      return "Class";
+      return "Annotation";
    }
 }

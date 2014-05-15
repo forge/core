@@ -11,10 +11,10 @@ import org.jboss.forge.roaster.model.source.JavaEnumSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
- *
+ * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class JavaEnumCommand extends AbstractJavaSourceCommand
+public class JavaEnumCommandImpl extends AbstractJavaSourceCommand implements JavaEnumCommand
 {
    @Override
    protected Class<? extends JavaSource<?>> getSourceType()
