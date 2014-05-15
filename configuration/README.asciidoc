@@ -49,10 +49,23 @@ It stores properties in a XML format in `<USER_HOME>/.forge/config.xml`.
 [source,java]
 ----
 @Inject private Configuration configuration;
+
 configuration.setString("foo","value");
 String foo = configuration.getString("foo");
 // foo == "value" 
 ----
++
+[TIP] 
+====
+You may also inject a subset of your configuration. Use the @Subset annotation for this:
+
+----
+@Inject
+@Subset("jira") 
+private Configuration configuration;
+----
+
+==== 
 +
 [TIP] 
 ====
