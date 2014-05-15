@@ -35,7 +35,7 @@ public abstract class AbstractFacesCommand extends AbstractJavaEECommand impleme
       {
          if (!project.hasFacet(FacesFacet.class))
          {
-            builder.add(FacesSetupWizard.class);
+            builder.add(FacesSetupWizardImpl.class);
          }
       }
       return builder.build();

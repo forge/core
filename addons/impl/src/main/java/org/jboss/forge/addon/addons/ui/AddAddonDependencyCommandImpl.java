@@ -16,7 +16,7 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.addons.facets.AddonClassifierFacet;
-import org.jboss.forge.addon.addons.project.AddonProjectConfigurator;
+import org.jboss.forge.addon.addons.project.AddonProjectConfiguratorImpl;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -45,13 +45,13 @@ import org.jboss.forge.furnace.util.Strings;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @FacetConstraint(AddonClassifierFacet.class)
-public class AddAddonDependencyCommand extends AbstractProjectCommand
+public class AddAddonDependencyCommandImpl extends AbstractProjectCommand implements AddAddonDependencyCommand
 {
    @Inject
    private ProjectFactory projectFactory;
 
    @Inject
-   private AddonProjectConfigurator configurator;
+   private AddonProjectConfiguratorImpl configurator;
 
    @Inject
    private Furnace furnace;
@@ -63,7 +63,7 @@ public class AddAddonDependencyCommand extends AbstractProjectCommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      final Set<AddonId> addonChoices = new TreeSet<AddonId>();
+      final Set<AddonId> addonChoices = new TreeSet<>();
       Project project = getSelectedProject(builder);
       for (AddonRepository repository : furnace.getRepositories())
       {
@@ -117,7 +117,7 @@ public class AddAddonDependencyCommand extends AbstractProjectCommand
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(NewUICommandWizard.class)
+      return Metadata.forCommand(NewUICommandWizardImpl.class)
                .name("Addon: Add Dependency")
                .description("Adds the provided addon as a dependency to the selected project")
                .category(Categories.create("Forge", "Setup"));

@@ -2,6 +2,7 @@ package org.jboss.forge.addon.projects.ui.repositories;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.dependencies.DependencyRepository;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -19,23 +20,19 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 @FacetConstraint(DependencyFacet.class)
-public class AddRepositoryCommand extends AbstractProjectCommand
+public class RemoveRepositoryCommandImpl extends AbstractProjectCommand implements RemoveRepositoryCommand
 {
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(AddRepositoryCommand.class)
-               .description("Add a repository to the current project descriptor.")
-               .name("Project: Add Repository")
+      return Metadata.forCommand(RemoveRepositoryCommandImpl.class)
+               .description("Remove a repository configured in the current project descriptor.")
+               .name("Project: Remove Repository")
                .category(Categories.create("Project", "Manage"));
    }
 
    @Inject
    private ProjectFactory factory;
-
-   @Inject
-   @WithAttributes(label = "Repository Name", required = true, description = "The repository name")
-   private UIInput<String> named;
 
    @Inject
    @WithAttributes(label = "Repository URL", required = true, description = "The repository URL")
@@ -44,7 +41,7 @@ public class AddRepositoryCommand extends AbstractProjectCommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(named).add(url);
+      builder.add(url);
    }
 
    @Override
@@ -54,16 +51,15 @@ public class AddRepositoryCommand extends AbstractProjectCommand
       Project project = getSelectedProject(context.getUIContext());
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
 
-      String name = named.getValue();
       String urlValue = url.getValue();
-      if (deps.hasRepository(urlValue))
+      DependencyRepository rep = deps.removeRepository(urlValue);
+      if (rep != null)
       {
-         result = Results.fail("Repository exists [" + url + "]");
+         result = Results.success("Removed repository [" + rep.getId() + "->" + rep.getUrl() + "]");
       }
       else
       {
-         deps.addRepository(name, urlValue);
-         result = Results.success("Added repository [" + name + "->" + urlValue + "]");
+         result = Results.fail("No repository with url [" + urlValue + "]");
       }
       return result;
    }

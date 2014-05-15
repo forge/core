@@ -22,12 +22,12 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 @FacetConstraint(DependencyFacet.class)
-public class AddDependenciesCommand extends AbstractProjectCommand
+public class AddDependenciesCommandImpl extends AbstractProjectCommand implements AddDependenciesCommand
 {
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(AddDependenciesCommand.class)
+      return Metadata.forCommand(AddDependenciesCommandImpl.class)
                .description("Add one or more arguments to the current project.")
                .name("Project: Add Dependencies")
                .category(Categories.create("Project", "Manage"));

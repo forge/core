@@ -18,7 +18,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
-import org.jboss.forge.addon.javaee.ejb.ui.EJBSetupWizard;
+import org.jboss.forge.addon.javaee.ejb.ui.EJBSetupWizardImpl;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.rest.RestFacet;
@@ -224,7 +224,7 @@ public class RestEndpointFromEntityCommand extends AbstractJavaEECommand impleme
          }
          if (!project.hasFacet(EJBFacet.class))
          {
-            builder.add(EJBSetupWizard.class);
+            builder.add(EJBSetupWizardImpl.class);
          }
       }
       return builder.build();

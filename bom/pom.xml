@@ -74,11 +74,6 @@
             <artifactId>cdi-api</artifactId>
             <version>${version.furnace}</version>
          </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi-impl</artifactId>
-            <version>${version.furnace}</version>
-         </dependency>
 
          <!-- Simple Container -->
          <dependency>
@@ -90,11 +85,6 @@
          <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>simple-api</artifactId>
-            <version>${version.furnace}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>simple-impl</artifactId>
             <version>${version.furnace}</version>
          </dependency>
 
@@ -172,11 +162,6 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>addon-manager-impl</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>addon-manager-spi</artifactId>
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
@@ -233,11 +218,6 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>dependencies-impl</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>dev-tools-java</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
@@ -284,11 +264,6 @@
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>maven-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>maven-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>
@@ -344,11 +319,6 @@
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>resources-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>resources-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
          <dependency>

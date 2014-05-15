@@ -41,7 +41,7 @@ import org.jboss.forge.furnace.repositories.AddonRepository;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class NewFurnaceTestSetupCommand extends AbstractProjectCommand
+public class NewFurnaceTestSetupCommandImpl extends AbstractProjectCommand implements NewFurnaceTestSetupCommand
 {
 
    @Inject

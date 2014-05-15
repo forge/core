@@ -13,12 +13,12 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
-import org.jboss.forge.addon.projects.ProjectProvider;
-import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.ProjectType;
+import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -45,9 +45,9 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
-public class NewProjectWizard implements UIWizard
+public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
 {
-   private static final Logger log = Logger.getLogger(NewProjectWizard.class.getName());
+   private static final Logger log = Logger.getLogger(NewProjectWizardImpl.class.getName());
 
    @Inject
    private ProjectFactory projectFactory;

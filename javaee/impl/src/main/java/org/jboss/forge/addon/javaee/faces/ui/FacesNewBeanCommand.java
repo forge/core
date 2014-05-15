@@ -139,7 +139,7 @@ public class FacesNewBeanCommand extends AbstractFacesCommand implements Prerequ
          }
          if (!project.hasFacet(FacesFacet.class))
          {
-            builder.add(FacesSetupWizard.class);
+            builder.add(FacesSetupWizardImpl.class);
          }
       }
         return builder.build();

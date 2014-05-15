@@ -45,10 +45,10 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
  * Creates a Furnace Test case
- *
+ * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class NewFurnaceTestCommand extends AbstractProjectCommand
+public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements NewFurnaceTestCommand
 {
 
    @Inject
@@ -87,8 +87,8 @@ public class NewFurnaceTestCommand extends AbstractProjectCommand
 
    private void configureAddonDependencies()
    {
-      Set<AddonId> addonChoices = new TreeSet<AddonId>();
-      Set<AddonId> containerChoices = new TreeSet<AddonId>();
+      Set<AddonId> addonChoices = new TreeSet<>();
+      Set<AddonId> containerChoices = new TreeSet<>();
       for (AddonRepository repository : furnace.getRepositories())
       {
          for (AddonId id : repository.listEnabled())

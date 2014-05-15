@@ -32,7 +32,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @FacetConstraint(DependencyFacet.class)
-public class ServletSetupWizard extends AbstractJavaEECommand
+public class ServletSetupWizardImpl extends AbstractJavaEECommand implements ServletSetupWizard
 {
 
    @Override

@@ -79,8 +79,8 @@ public class FurnaceAddonSetupStep extends AbstractUICommand implements UIWizard
 
    private void configureAddonDependencies()
    {
-      Set<AddonId> addonChoices = new TreeSet<AddonId>();
-      Set<AddonId> containerChoices = new TreeSet<AddonId>();
+      Set<AddonId> addonChoices = new TreeSet<>();
+      Set<AddonId> containerChoices = new TreeSet<>();
       for (AddonRepository repository : furnace.getRepositories())
       {
          for (AddonId id : repository.listEnabled())

@@ -39,7 +39,7 @@ import org.jboss.forge.roaster.model.source.MethodSource;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class NewUICommandWizard extends AbstractJavaSourceCommand
+public class NewUICommandWizardImpl extends AbstractJavaSourceCommand implements NewUICommandWizard
 {
    @Inject
    @WithAttributes(label = "Command name", required = false)
@@ -52,7 +52,7 @@ public class NewUICommandWizard extends AbstractJavaSourceCommand
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(NewUICommandWizard.class)
+      return Metadata.forCommand(NewUICommandWizardImpl.class)
                .name("Addon: New UI Command").description("Generates a UICommand implementation")
                .category(Categories.create("Forge", "Generate"));
    }

@@ -34,9 +34,9 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- *
+ * 
  */
-public class NewAnnotatedUICommandWizard extends AbstractProjectCommand
+public class NewAnnotatedUICommandWizardImpl extends AbstractProjectCommand implements NewAnnotatedUICommandWizard
 {
    @Inject
    private ProjectFactory projectFactory;
@@ -52,7 +52,7 @@ public class NewAnnotatedUICommandWizard extends AbstractProjectCommand
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(NewAnnotatedUICommandWizard.class)
+      return Metadata.forCommand(NewAnnotatedUICommandWizardImpl.class)
                .name("Addon: New Annotated UI Command").description("Generates an annotated UICommand implementation")
                .category(Categories.create("Forge", "Generate"));
    }

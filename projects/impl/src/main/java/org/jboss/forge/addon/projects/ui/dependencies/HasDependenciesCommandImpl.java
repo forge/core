@@ -3,6 +3,7 @@ package org.jboss.forge.addon.projects.ui.dependencies;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.Dependency;
+import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -12,7 +13,7 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.addon.ui.input.UISelectMany;
+import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -21,14 +22,14 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 @FacetConstraint(DependencyFacet.class)
-public class RemoveDependenciesCommand extends AbstractProjectCommand
+public class HasDependenciesCommandImpl extends AbstractProjectCommand implements HasDependenciesCommand
 {
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(RemoveDependenciesCommand.class)
-               .description("Remove one or more arguments from the current project.")
-               .name("Project: Remove Dependencies")
+      return Metadata.forCommand(HasDependenciesCommandImpl.class)
+               .description("Check one or more arguments in the current project.")
+               .name("Project: Has Dependencies")
                .category(Categories.create("Project", "Manage"));
    }
 
@@ -37,20 +38,19 @@ public class RemoveDependenciesCommand extends AbstractProjectCommand
 
    @Inject
    @WithAttributes(shortName = 'd', label = "Coordinates", required = true,
-            description = "The coordinates of the arguments to be removed [groupId :artifactId {:version :scope :packaging}]")
-   private UISelectMany<Dependency> arguments;
+            description = "The coordinates of the arguments to be checked [groupId :artifactId {:version :scope :packaging}]")
+   private UIInputMany<Dependency> arguments;
 
    @Inject
-   @WithAttributes(shortName = 'r', label = "Remove managed arguments", defaultValue = "false", required = false,
-            description = "Also remove any related managed arguments from the current project, if possible.")
-   private UIInput<Boolean> removeManaged;
+   @WithAttributes(shortName = 'e', label = "Effective", required = false,
+            description = "", defaultValue = "")
+   private UIInput<Boolean> effective;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      Project project = getSelectedProject(builder.getUIContext());
-      arguments.setValueChoices(project.getFacet(DependencyFacet.class).getDependencies());
-      builder.add(arguments).add(removeManaged);
+      builder.add(arguments);
+      builder.add(effective);
    }
 
    @Override
@@ -61,18 +61,27 @@ public class RemoveDependenciesCommand extends AbstractProjectCommand
 
       if (arguments.hasValue())
       {
-         int count = 0;
+         int numberOfGavsFound = 0;
+         int numberOfGavs = 0;
          for (Dependency gav : arguments.getValue())
          {
-            deps.removeDependency(gav);
-            if(removeManaged.getValue())
-            {
-               deps.removeManagedDependency(gav);
+            numberOfGavs++;
+            DependencyBuilder dep = DependencyBuilder.create(gav);
+            if(effective.getValue()) {
+               if(deps.hasEffectiveDependency(gav)) {
+                  numberOfGavsFound++;
+               }
+            } else {
+               if(deps.hasDirectDependency(dep)) {
+                  numberOfGavsFound++;
+               }
             }
-            count++;
          }
-
-         return Results.success("Removed [" + count + "] dependenc" + (count == 1 ? "y" : "ies") + ".");
+         if(numberOfGavs == numberOfGavsFound) {
+            return Results.success("All arguments found");
+         } else {
+            return Results.fail("Missing " + (numberOfGavs - numberOfGavsFound));
+         }
       }
       return Results.fail("No arguments specified.");
    }

@@ -7,12 +7,12 @@ import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -22,14 +22,14 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 @FacetConstraint(DependencyFacet.class)
-public class HasManagedDependenciesCommand extends AbstractProjectCommand
+public class AddManagedDependenciesCommandImpl extends AbstractProjectCommand implements AddManagedDependenciesCommand
 {
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(HasManagedDependenciesCommand.class)
-               .description("Check one or more managed dependencies in the current project.")
-               .name("Project: Has Managed Dependencies")
+      return Metadata.forCommand(AddManagedDependenciesCommandImpl.class)
+               .description("Add one or more managed dependencies to the current project.")
+               .name("Project: Add Managed Dependencies")
                .category(Categories.create("Project", "Manage"));
    }
 
@@ -37,20 +37,17 @@ public class HasManagedDependenciesCommand extends AbstractProjectCommand
    private ProjectFactory factory;
 
    @Inject
-   @WithAttributes(shortName = 'd', label = "Coordinates", required = true,
-            description = "The coordinates of the managed arguments to be checked [groupId :artifactId {:version :scope :packaging}]")
-   private UIInputMany<Dependency> arguments;
+   private DependencyInstaller installer;
 
    @Inject
-   @WithAttributes(shortName = 'e', label = "Effective", required = false,
-            description = "", defaultValue = "")
-   private UIInput<Boolean> effective;
+   @WithAttributes(shortName = 'd', label = "Coordinates", required = true,
+            description = "The coordinates of the managed arguments to be added [groupId :artifactId {:version :scope :packaging}]")
+   private UIInputMany<Dependency> arguments;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
       builder.add(arguments);
-      builder.add(effective);
    }
 
    @Override
@@ -61,27 +58,29 @@ public class HasManagedDependenciesCommand extends AbstractProjectCommand
 
       if (arguments.hasValue())
       {
-         int numberOfGavsFound = 0;
-         int numberOfGavs = 0;
-         for (Dependency gav : arguments.getValue())
+         int count = 0;
+         for (Dependency dependency : arguments.getValue())
          {
-            numberOfGavs++;
-            DependencyBuilder dep = DependencyBuilder.create(gav);
-            if(effective.getValue()) {
-               if(deps.hasEffectiveManagedDependency(gav)) {
-                  numberOfGavsFound++;
-               }
-            } else {
-               if(deps.hasDirectManagedDependency(dep)) {
-                  numberOfGavsFound++;
+
+            Dependency existingDep = deps.getEffectiveManagedDependency(DependencyBuilder.create(dependency)
+                     .setVersion(
+                              null));
+            if (existingDep != null)
+            {
+               if (context.getPrompt().promptBoolean(
+                        String.format("Dependency is already managed [%s:%s:%s], reference the managed dependency?",
+                                 existingDep.getCoordinate().getGroupId(), existingDep.getCoordinate().getArtifactId(),
+                                 existingDep.getCoordinate().getVersion())))
+               {
+                  return Results.success("Project not updated: No changes required.");
                }
             }
+
+            this.installer.installManaged(project, dependency);
+            count++;
          }
-         if(numberOfGavs == numberOfGavsFound) {
-            return Results.success("All arguments found");
-         } else {
-            return Results.fail("Missing " + (numberOfGavs - numberOfGavsFound));
-         }
+
+         return Results.success("Installed [" + count + "] dependenc" + (count == 1 ? "y" : "ies") + ".");
       }
 
       return Results.fail("No arguments specified.");

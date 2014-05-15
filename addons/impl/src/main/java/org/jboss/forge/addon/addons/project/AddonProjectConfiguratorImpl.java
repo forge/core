@@ -52,10 +52,10 @@ import org.jboss.forge.roaster.model.source.JavaPackageInfoSource;
  * Creates Furnace Addon projects
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @SuppressWarnings("unchecked")
-public class AddonProjectConfigurator
+public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
 {
    private static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
 
@@ -71,6 +71,7 @@ public class AddonProjectConfigurator
    @Inject
    private MavenBuildSystem buildSystem;
 
+   @Override
    public void setupSimpleAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
             throws FileNotFoundException, FacetNotFoundException
    {
@@ -100,6 +101,7 @@ public class AddonProjectConfigurator
     * @throws FacetNotFoundException
     * @throws FileNotFoundException
     */
+   @Override
    public void setupComplexAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
             throws FileNotFoundException, FacetNotFoundException
    {
@@ -185,6 +187,7 @@ public class AddonProjectConfigurator
       child.setContents(readmeTemplate);
    }
 
+   @Override
    public void installSelectedAddons(final Project project, Iterable<AddonId> addons, boolean managed)
    {
       if (addons != null)
@@ -202,6 +205,7 @@ public class AddonProjectConfigurator
          }
    }
 
+   @Override
    public Dependency toDependency(AddonId addon)
    {
       String[] mavenCoords = addon.getName().split(":");
@@ -214,6 +218,7 @@ public class AddonProjectConfigurator
    /**
     * Checks if the {@link Project} depends on the provided {@link AddonId}
     */
+   @Override
    public boolean dependsOnAddon(final Project project, AddonId addonId)
    {
       Dependency dependency = toDependency(addonId);
