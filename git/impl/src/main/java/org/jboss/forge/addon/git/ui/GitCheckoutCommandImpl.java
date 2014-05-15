@@ -20,7 +20,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 @FacetConstraint(GitFacet.class)
-public class GitCheckoutCommand extends AbstractGitCommand
+public class GitCheckoutCommandImpl extends AbstractGitCommand implements GitCheckoutCommand
 {
 
    @Inject

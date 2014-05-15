@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.database.tools.connections;
+package org.jboss.forge.addon.database.tools.jpa;
 
 public enum HibernateDialect {
 	

@@ -25,7 +25,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.util.Strings;
 
 @FacetConstraint({ GitFacet.class, GitIgnoreFacet.class })
-public class GitIgnoreCreateCommand extends AbstractGitCommand
+public class GitIgnoreCreateCommandImpl extends AbstractGitCommand implements GitIgnoreCreateCommand
 {
 
    @Inject
@@ -71,7 +71,7 @@ public class GitIgnoreCreateCommand extends AbstractGitCommand
    private static class GitIgnoreTemplateCompleter implements UICompleter<String>
    {
 
-      private Project currentProject;
+      private final Project currentProject;
 
       private GitIgnoreTemplateCompleter(Project currentProject)
       {

@@ -1,12 +1,12 @@
-package org.jboss.forge.addon.database.tools.connections;
+package org.jboss.forge.addon.database.tools.connections.ui;
 
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
+import org.jboss.forge.addon.database.tools.connections.ConnectionProfileDetailsPage;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManagerProvider;
-import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -17,9 +17,10 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
-public class CreateConnectionProfileCommand extends ConnectionProfileDetailsPage implements UICommand
+public class CreateConnectionProfileCommandImpl extends ConnectionProfileDetailsPage implements
+         CreateConnectionProfileCommand
 {
-   
+
    private static final String[] COMMAND_CATEGORY = { "Database", "Connections" };
    private static final String COMMAND_NAME = "Connection: Create Profile";
    private static final String COMMAND_DESCRIPTION = "Command to create a database connection profile.";

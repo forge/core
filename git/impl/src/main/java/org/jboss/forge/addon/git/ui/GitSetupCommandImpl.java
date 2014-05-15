@@ -13,7 +13,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 
-public class GitSetupCommand extends AbstractGitCommand
+public class GitSetupCommandImpl extends AbstractGitCommand implements GitSetupCommand
 {
 
    @Inject

@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.database.tools.connections;
+package org.jboss.forge.addon.database.tools.connections.ui;
 
 import java.util.Map;
 
@@ -17,7 +17,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
-public class RemoveConnectionProfileCommand extends AbstractUICommand
+public class RemoveConnectionProfileCommandImpl extends AbstractUICommand implements RemoveConnectionProfileCommand
 {
 
    private static final String[] COMMAND_CATEGORY = { "Database", "Connections" };

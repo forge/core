@@ -21,7 +21,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 @FacetConstraint({ GitFacet.class })
-public class GitIgnoreSetupCommand extends AbstractGitCommand
+public class GitIgnoreSetupCommandImpl extends AbstractGitCommand implements GitIgnoreSetupCommand
 {
 
    @Inject

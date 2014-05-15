@@ -14,7 +14,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 @FacetConstraint({ GitFacet.class, GitIgnoreFacet.class })
-public class GitIgnoreUpdateRepoCommand extends AbstractGitCommand
+public class GitIgnoreUpdateRepoCommandImpl extends AbstractGitCommand implements GitIgnoreUpdateRepoCommand
 {
 
    @Override

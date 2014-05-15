@@ -8,7 +8,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 
-public class GitIgnoreListPatternsCommand extends AbstractGitCommand
+public class GitIgnoreListPatternsCommandImpl extends AbstractGitCommand implements GitIgnoreListPatternsCommand
 {
 
    @Override

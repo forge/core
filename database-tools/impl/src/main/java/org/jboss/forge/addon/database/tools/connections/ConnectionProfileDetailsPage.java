@@ -16,6 +16,7 @@ import java.util.jar.JarFile;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.database.tools.jpa.HibernateDialect;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIValidationContext;

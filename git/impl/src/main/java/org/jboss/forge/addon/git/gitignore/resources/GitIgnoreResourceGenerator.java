@@ -8,7 +8,7 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceGenerator;
 
-public class GitIgnoreResourceGenerator implements ResourceGenerator<GitIgnoreResource, File>
+public class GitIgnoreResourceGenerator implements ResourceGenerator<GitIgnoreResourceImpl, File>
 {
 
    @Override
@@ -23,16 +23,16 @@ public class GitIgnoreResourceGenerator implements ResourceGenerator<GitIgnoreRe
 
    @Override
    @SuppressWarnings("unchecked")
-   public <T extends Resource<File>> T getResource(ResourceFactory factory, Class<GitIgnoreResource> type, File resource)
+   public <T extends Resource<File>> T getResource(ResourceFactory factory, Class<GitIgnoreResourceImpl> type, File resource)
    {
-      return (T) new GitIgnoreResource(factory, resource);
+      return (T) new GitIgnoreResourceImpl(factory, resource);
    }
 
    @Override
-   public <T extends Resource<File>> Class<?> getResourceType(ResourceFactory factory, Class<GitIgnoreResource> type,
+   public <T extends Resource<File>> Class<?> getResourceType(ResourceFactory factory, Class<GitIgnoreResourceImpl> type,
             File resource)
    {
-      return GitIgnoreResource.class;
+      return GitIgnoreResourceImpl.class;
    }
 
 }

@@ -22,17 +22,11 @@ import org.jboss.forge.furnace.util.Streams;
 
 /**
  * @author Dan Allen
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class GitIgnoreResource extends AbstractFileResource<GitIgnoreResource>
+public class GitIgnoreResourceImpl extends AbstractFileResource<GitIgnoreResource> implements GitIgnoreResource
 {
-
-   // @Inject
-   public GitIgnoreResource(ResourceFactory factory)
-   {
-      this(factory, null);
-   }
-
-   public GitIgnoreResource(ResourceFactory factory, File file)
+   public GitIgnoreResourceImpl(ResourceFactory factory, File file)
    {
       super(factory, file);
    }
@@ -40,7 +34,7 @@ public class GitIgnoreResource extends AbstractFileResource<GitIgnoreResource>
    @Override
    public GitIgnoreResource createFrom(File file)
    {
-      return new GitIgnoreResource(getResourceFactory(), file);
+      return new GitIgnoreResourceImpl(getResourceFactory(), file);
    }
 
    @Override
@@ -56,7 +50,8 @@ public class GitIgnoreResource extends AbstractFileResource<GitIgnoreResource>
       }
       return patterns;
    }
-
+   
+   @Override
    public void addPattern(String pattern)
    {
       List<GitIgnoreEntry> entries = getEntries();
@@ -68,6 +63,7 @@ public class GitIgnoreResource extends AbstractFileResource<GitIgnoreResource>
       }
    }
 
+   @Override
    public void addPatterns(String[] newPatterns)
    {
       List<GitIgnoreEntry> entries = getEntries();
@@ -87,6 +83,7 @@ public class GitIgnoreResource extends AbstractFileResource<GitIgnoreResource>
       }
    }
 
+   @Override
    public void removePattern(String pattern)
    {
       List<GitIgnoreEntry> entries = getEntries();
@@ -98,6 +95,7 @@ public class GitIgnoreResource extends AbstractFileResource<GitIgnoreResource>
       }
    }
 
+   @Override
    public List<String> getPatterns()
    {
       List<String> patterns = new ArrayList<>();
@@ -111,6 +109,7 @@ public class GitIgnoreResource extends AbstractFileResource<GitIgnoreResource>
       return patterns;
    }
 
+   @Override
    public List<GitIgnoreEntry> getEntries()
    {
       List<GitIgnoreEntry> lines = new ArrayList<>();

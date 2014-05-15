@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfileDetailsPage;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManager;
-import org.jboss.forge.addon.database.tools.connections.HibernateDialect;
+import org.jboss.forge.addon.database.tools.jpa.HibernateDialect;
 import org.jboss.forge.addon.database.tools.util.HibernateToolsHelper;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;

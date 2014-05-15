@@ -13,9 +13,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManager;
-import org.jboss.forge.addon.database.tools.connections.RemoveConnectionProfileCommand;
+import org.jboss.forge.addon.database.tools.connections.ui.RemoveConnectionProfileCommand;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -54,19 +52,20 @@ public class RemoveConnectionProfileCommandTest
 
    @Inject
    private ConnectionProfileManager manager;
-   
+
    @Inject
    private UITestHarness testHarness;
 
    @Ignore
    @Test
-   public void testRemoveConnectionProfileCommand() throws Exception {
-	  CommandController command = testHarness.createCommandController(RemoveConnectionProfileCommand.class);
-	  command.initialize();
+   public void testRemoveConnectionProfileCommand() throws Exception
+   {
+      CommandController command = testHarness.createCommandController(RemoveConnectionProfileCommand.class);
+      command.initialize();
       command.setValueFor("names", "dummy");
       command.execute();
       Map<String, ConnectionProfile> profiles = manager.loadConnectionProfiles();
       Assert.assertEquals(0, profiles.size());
    }
-   
+
 }

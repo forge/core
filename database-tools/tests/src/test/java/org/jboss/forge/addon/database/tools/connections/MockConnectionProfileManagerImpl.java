@@ -7,22 +7,21 @@ import java.util.Map;
 import javax.annotation.Priority;
 import javax.enterprise.inject.Alternative;
 
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManager;
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManagerImpl;
-
-@Alternative @Priority(Integer.MAX_VALUE)
-public class MockConnectionProfileManagerImpl extends ConnectionProfileManagerImpl implements ConnectionProfileManager
+@Alternative
+@Priority(Integer.MAX_VALUE)
+public class MockConnectionProfileManagerImpl implements ConnectionProfileManager
 {
-   
-   private HashMap<String, ConnectionProfile> profiles;
-   
-   public MockConnectionProfileManagerImpl() {
-      profiles = new HashMap<String, ConnectionProfile>();
+
+   private final HashMap<String, ConnectionProfile> profiles;
+
+   public MockConnectionProfileManagerImpl()
+   {
+      profiles = new HashMap<>();
       addDummyProfile();
    }
-   
-   private void addDummyProfile() {
+
+   private void addDummyProfile()
+   {
       ConnectionProfile profile = new ConnectionProfile();
       profile.setName("dummy");
       profile.setDialect("dialect");
@@ -39,9 +38,10 @@ public class MockConnectionProfileManagerImpl extends ConnectionProfileManagerIm
    public void saveConnectionProfiles(Collection<ConnectionProfile> connectionProfiles)
    {
       profiles.clear();
-      for (ConnectionProfile profile : connectionProfiles) {
+      for (ConnectionProfile profile : connectionProfiles)
+      {
          profiles.put(profile.getName(), profile);
       }
    }
-   
+
 }

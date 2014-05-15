@@ -13,7 +13,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 @FacetConstraint({ GitFacet.class, GitIgnoreFacet.class })
-public class GitIgnoreEditCommand extends AbstractGitCommand
+public class GitIgnoreEditCommandImpl extends AbstractGitCommand implements GitIgnoreEditCommand
 {
 
    @Override

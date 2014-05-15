@@ -14,6 +14,8 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.database.tools.connections.ui.CreateConnectionProfileCommand;
+import org.jboss.forge.addon.database.tools.jpa.HibernateDialect;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.DependencyQuery;
 import org.jboss.forge.addon.dependencies.DependencyResolver;

@@ -28,7 +28,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * @author <a href="mailto:jevgeni.zelenkov@gmail.com">Jevgeni Zelenkov</a>
  * 
  */
-public class GitCloneCommand extends AbstractGitCommand
+public class GitCloneCommandImpl extends AbstractGitCommand implements GitCloneCommand
 {
 
    @Inject
