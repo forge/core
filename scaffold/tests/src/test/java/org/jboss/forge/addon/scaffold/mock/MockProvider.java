@@ -25,6 +25,7 @@ public class MockProvider implements ScaffoldProvider
    public static final String PROVIDER_DESCRIPTION = "Mock Scaffold Provider for use in tests";
 
    private static boolean isSetup;
+   private static boolean isGenerated;
 
    @Inject
    private ResourceFactory resourceFactory;
@@ -57,6 +58,7 @@ public class MockProvider implements ScaffoldProvider
    @Override
    public List<Resource<?>> generateFrom(ScaffoldGenerationContext generationContext)
    {
+      isGenerated = false;
       List<Resource<?>> result = new ArrayList<Resource<?>>();
       for (Resource<?> resource : generationContext.getResources())
       {
@@ -64,6 +66,7 @@ public class MockProvider implements ScaffoldProvider
          Scaffolded scaffolded = new Scaffolded(scaffoldable.getName());
          result.add(new ScaffoldedResource(resourceFactory, scaffolded));
       }
+      isGenerated = true;
       return result;
    }
 
@@ -83,5 +86,10 @@ public class MockProvider implements ScaffoldProvider
    public AccessStrategy getAccessStrategy()
    {
       return null;
+   }
+
+   public boolean isGenerated()
+   {
+      return isGenerated;
    }
 }
