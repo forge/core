@@ -22,6 +22,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.javaee.jpa.ui.NewFieldWizard;
 import org.jboss.forge.addon.javaee.jpa.ui.RelationshipType;
+import org.jboss.forge.addon.parser.java.beans.FieldOperations;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
@@ -77,6 +78,9 @@ public class NewFieldWizardTest
 
    @Inject
    private JPAFieldOperations fieldOperations;
+
+   @Inject
+   private FieldOperations beanOperations;
 
    @Before
    public void setUp()
@@ -144,7 +148,7 @@ public class NewFieldWizardTest
    {
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
       JavaClassSource javaSource = entity.getJavaType();
-      fieldOperations.addFieldTo(javaSource, "String", "firstName");
+      beanOperations.addFieldTo(javaSource, "String", "firstName");
       entity.setContents(javaSource.toString());
       try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
                project.getRoot()))

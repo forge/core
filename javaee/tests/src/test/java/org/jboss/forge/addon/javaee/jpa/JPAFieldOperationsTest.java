@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
 import com.google.common.collect.Lists;
 
 /**
- * Unit tests to verify the behavior of the {@link JPAFieldOperations} class.
+ * Unit tests to verify the behavior of the {@link JPAFieldOperations} implementation class.
  */
 @RunWith(Arquillian.class)
 public class JPAFieldOperationsTest

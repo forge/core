@@ -42,7 +42,7 @@ import org.jboss.forge.roaster.model.util.Types;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-public class JPAFieldOperations extends FieldOperations
+public class JPAFieldOperationsImpl extends FieldOperations implements JPAFieldOperations
 {
 
    /**
@@ -58,6 +58,7 @@ public class JPAFieldOperations extends FieldOperations
     * @param cascadeTypes
     * @throws FileNotFoundException
     */
+   @Override
    public void newOneToOneRelationship(Project project, final JavaResource resource, final String fieldName,
             final String fieldType,
             final String inverseFieldName,
@@ -137,6 +138,7 @@ public class JPAFieldOperations extends FieldOperations
     * @param cascadeTypes
     * @throws FileNotFoundException
     */
+   @Override
    public void newManyToOneRelationship(
             final Project project,
             final JavaResource resource,
@@ -208,6 +210,7 @@ public class JPAFieldOperations extends FieldOperations
       java.saveJavaSource(many);
    }
 
+   @Override
    public void newOneToManyRelationship(
             final Project project,
             final JavaResource resource,
@@ -278,6 +281,7 @@ public class JPAFieldOperations extends FieldOperations
       java.saveJavaSource(one);
    }
 
+   @Override
    public void newManyToManyRelationship(
             final Project project,
             final JavaResource resource,
