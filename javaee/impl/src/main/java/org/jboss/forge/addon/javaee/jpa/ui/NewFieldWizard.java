@@ -32,6 +32,7 @@ import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.JPAFieldOperations;
 import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
+import org.jboss.forge.addon.parser.java.beans.FieldOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
@@ -115,6 +116,9 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
 
    @Inject
    private JPAFieldOperations fieldOperations;
+
+   @Inject
+   private FieldOperations beanOperations;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -255,7 +259,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
             }
 
             return !lob.getValue() && !transientField.getValue()
-                     && fieldOperations.isFieldTypeEnum(project, targetEntityType, type.getValue());
+                     && beanOperations.isFieldTypeEnum(project, targetEntityType, type.getValue());
          }
       });
 
@@ -365,7 +369,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
          UIPrompt prompt = context.getPrompt();
          if (prompt.promptBoolean("Field '" + field.getName() + "' already exists. Do you want to overwrite it?"))
          {
-            fieldOperations.removeField(targetEntity, field);
+            beanOperations.removeField(targetEntity, field);
          }
          else
          {
@@ -376,7 +380,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
       if (transientField.getValue())
       {
          String fieldType = type.getValue();
-         field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
+         field = beanOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
                   Transient.class.getCanonicalName());
          setCurrentWorkingResource(context, javaResource, field);
          return Results.success("Transient Field " + named.getValue() + " " + action);
@@ -386,14 +390,14 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
          if (lob.getValue())
          {
             String fieldType = byte[].class.getName();
-            field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr, Lob.class.getName());
+            field = beanOperations.addFieldTo(targetEntity, fieldType, fieldNameStr, Lob.class.getName());
             field.addAnnotation(Column.class).setLiteralValue("length", String.valueOf(Integer.MAX_VALUE));
          }
-         else if (fieldOperations.isFieldTypeEnum(project, targetEntity, type.getValue()))
+         else if (beanOperations.isFieldTypeEnum(project, targetEntity, type.getValue()))
          {
             String fieldType = type.getValue();
 
-            field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
+            field = beanOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
                      Enumerated.class.getCanonicalName());
 
             if (enumType.isEnabled() && enumType.getValue() != EnumType.ORDINAL)
@@ -409,7 +413,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
          else
          {
             String fieldType = type.getValue();
-            field = fieldOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
+            field = beanOperations.addFieldTo(targetEntity, fieldType, fieldNameStr,
                      Column.class.getCanonicalName());
          }
          if (length.isEnabled() && length.getValue() != null && length.getValue().intValue() != 255)
