@@ -1,5 +1,5 @@
 /**
- * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2014 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -16,17 +16,87 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public interface RestGenerationContext
+public class RestGenerationContext
 {
-   public Project getProject();
+    private Project project;
+    private JavaClassSource entity;
+    private String targetPackageName;
+    private String contentType;
+    private String persistenceUnitName;
+    private Inflector inflector;
 
-   public JavaClassSource getEntity();
+    /**
+     * @return the project
+     */
+    public Project getProject()
+    {
+        return project;
+    }
 
-   public String getTargetPackageName();
+    /**
+     * @return the entity
+     */
+    public JavaClassSource getEntity()
+    {
+        return entity;
+    }
 
-   public String getContentType();
+    /**
+     * @return the targetPackageName
+     */
+    public String getTargetPackageName()
+    {
+        return targetPackageName;
+    }
 
-   public String getPersistenceUnitName();
+    /**
+     * @return the contentType
+     */
+    public String getContentType()
+    {
+        return contentType;
+    }
 
-   public Inflector getInflector();
+    /**
+     * @return the persistenceUnitName
+     */
+    public String getPersistenceUnitName()
+    {
+        return persistenceUnitName;
+    }
+
+    public Inflector getInflector()
+    {
+        return inflector;
+    }
+
+    public void setProject(Project project)
+    {
+        this.project = project;
+    }
+
+    public void setEntity(JavaClassSource entity)
+    {
+        this.entity = entity;
+    }
+
+    public void setTargetPackageName(String targetPackageName)
+    {
+        this.targetPackageName = targetPackageName;
+    }
+
+    public void setContentType(String contentType)
+    {
+        this.contentType = contentType;
+    }
+
+    public void setPersistenceUnitName(String persistenceUnitName)
+    {
+        this.persistenceUnitName = persistenceUnitName;
+    }
+
+    public void setInflector(Inflector inflector)
+    {
+        this.inflector = inflector;
+    }
 }

@@ -22,10 +22,9 @@ import org.jboss.forge.addon.javaee.ejb.ui.EJBSetupWizardImpl;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.rest.RestFacet;
+import org.jboss.forge.addon.javaee.rest.generation.RestGenerationContext;
 import org.jboss.forge.addon.javaee.rest.generation.RestResourceGenerator;
-import org.jboss.forge.addon.javaee.rest.generator.RestGenerationContextImpl;
 import org.jboss.forge.addon.javaee.rest.generator.impl.EntityBasedResourceGenerator;
-import org.jboss.forge.addon.javaee.rest.ui.setup.RestSetupWizard;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -163,7 +162,7 @@ public class RestEndpointFromEntityCommand extends AbstractJavaEECommand impleme
    public Result execute(final UIExecutionContext context) throws Exception
    {
       UIContext uiContext = context.getUIContext();
-      RestGenerationContextImpl generationContext = createContextFor(uiContext);
+      RestGenerationContext generationContext = createContextFor(uiContext);
       Set<JavaClassSource> endpoints = generateEndpoints(generationContext);
       Project project = generationContext.getProject();
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
@@ -177,7 +176,7 @@ public class RestEndpointFromEntityCommand extends AbstractJavaEECommand impleme
       return Results.success("Endpoint created");
    }
 
-   private Set<JavaClassSource> generateEndpoints(RestGenerationContextImpl generationContext) throws Exception
+   private Set<JavaClassSource> generateEndpoints(RestGenerationContext generationContext) throws Exception
    {
       RestResourceGenerator selectedGenerator = generator.getValue();
       Set<JavaClassSource> classes = new HashSet<>();
@@ -196,9 +195,9 @@ public class RestEndpointFromEntityCommand extends AbstractJavaEECommand impleme
       return true;
    }
 
-   private RestGenerationContextImpl createContextFor(final UIContext context)
+   private RestGenerationContext createContextFor(final UIContext context)
    {
-      RestGenerationContextImpl generationContext = new RestGenerationContextImpl();
+      RestGenerationContext generationContext = new RestGenerationContext();
       generationContext.setProject(getSelectedProject(context));
       generationContext.setContentType(contentType.getValue());
       generationContext.setPersistenceUnitName(persistenceUnit.getValue());
