@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jboss.forge.addon.javaee.rest.generation.RestGenerationConstants;
 import org.jboss.forge.addon.javaee.rest.generation.RestGenerationContext;
 import org.jboss.forge.addon.javaee.rest.generation.RestResourceGenerator;
 import org.jboss.forge.addon.javaee.rest.generator.ResourceGeneratorUtil;
@@ -90,6 +91,6 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
    @Override
    public String getName()
    {
-      return "JPA_ENTITY";
+      return RestGenerationConstants.JPA_ENTITY;
    }
 }

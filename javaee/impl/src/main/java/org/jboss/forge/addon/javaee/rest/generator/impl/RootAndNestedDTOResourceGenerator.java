@@ -24,6 +24,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import org.jboss.forge.addon.javaee.rest.generation.RestGenerationConstants;
 import org.jboss.forge.addon.javaee.rest.generation.RestGenerationContext;
 import org.jboss.forge.addon.javaee.rest.generation.RestResourceGenerator;
 import org.jboss.forge.addon.javaee.rest.generator.ResourceGeneratorUtil;
@@ -303,7 +304,7 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
    @Override
    public String getName()
    {
-      return "ROOT_AND_NESTED_DTO";
+      return RestGenerationConstants.ROOT_AND_NESTED_DTO;
    }
 
    @Override
