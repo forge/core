@@ -61,9 +61,9 @@ public class ScaffoldExecuteGenerationStep extends AbstractProjectCommand implem
    public Result execute(UIExecutionContext context) throws Exception
    {
       Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
-      boolean requiresScaffoldSetup = (boolean) attributeMap.get(ScaffoldGenerateCommandImpl.REQUIRES_SCAFFOLD_SETUP);
       ScaffoldProvider selectedProvider = (ScaffoldProvider) attributeMap.get(ScaffoldProvider.class);
-      if(requiresScaffoldSetup)
+      Object requiresScaffoldSetup = attributeMap.get(ScaffoldGenerateCommandImpl.REQUIRES_SCAFFOLD_SETUP);
+      if(requiresScaffoldSetup != null && (boolean) requiresScaffoldSetup == true)
       {
           ScaffoldSetupContext setupContext = (ScaffoldSetupContext) attributeMap.get(ScaffoldSetupContext.class);
           selectedProvider.setup(setupContext);
