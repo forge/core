@@ -16,6 +16,7 @@ import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.javaee.rest.RestFacet;
 import org.jboss.forge.addon.javaee.rest.config.RestConfigurationStrategy;
 import org.jboss.forge.addon.javaee.rest.config.RestConfigurationStrategyFactory;
+import org.jboss.forge.addon.javaee.rest.ui.RestSetupWizard;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
@@ -39,7 +40,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class RestSetupWizard extends AbstractJavaEECommand
+public class RestSetupWizardImpl extends AbstractJavaEECommand implements RestSetupWizard
 {
    @Override
    public Metadata getMetadata(UIContext context)
