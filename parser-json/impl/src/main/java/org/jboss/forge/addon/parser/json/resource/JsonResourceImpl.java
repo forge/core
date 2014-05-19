@@ -45,7 +45,7 @@ public class JsonResourceImpl extends AbstractFileResource<JsonResource> impleme
       }
       catch (Exception e)
       {
-         throw new ResourceException(e);
+         throw new ResourceException("Error while getting the Json structure", e);
       }
    }
 
@@ -61,7 +61,7 @@ public class JsonResourceImpl extends AbstractFileResource<JsonResource> impleme
       }
       catch (Exception e)
       {
-         throw new ResourceException(e);
+         throw new ResourceException("Error while getting the Json array", e);
       }
    }
 
@@ -77,7 +77,7 @@ public class JsonResourceImpl extends AbstractFileResource<JsonResource> impleme
       }
       catch (Exception e)
       {
-         throw new ResourceException(e);
+         throw new ResourceException("Error while getting the Json object", e);
       }
    }
 
@@ -95,7 +95,7 @@ public class JsonResourceImpl extends AbstractFileResource<JsonResource> impleme
       }
       catch (Exception e)
       {
-         throw new ResourceException(e);
+         throw new ResourceException("Error while setting the Json contents", e);
       }
       return this;
    }
@@ -124,7 +124,7 @@ public class JsonResourceImpl extends AbstractFileResource<JsonResource> impleme
       }
       catch (IOException e)
       {
-         throw new ResourceException(e);
+         throw new ResourceException("Error while setting the Json contents", e);
       }
       return this;
    }

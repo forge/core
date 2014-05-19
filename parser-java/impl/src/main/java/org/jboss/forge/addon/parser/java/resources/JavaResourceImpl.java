@@ -180,7 +180,7 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
       }
       catch (FileNotFoundException e)
       {
-         throw new ResourceException(e);
+         throw new ResourceException("Error while fetching the qualified name", e);
       }
       catch (Exception e)
       {
