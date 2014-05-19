@@ -15,18 +15,9 @@ public class ConfigurationException extends RuntimeException
 {
    private static final long serialVersionUID = -6527201091945715721L;
 
-   public ConfigurationException()
-   {
-   }
-
    public ConfigurationException(final String message)
    {
       super(message);
-   }
-
-   public ConfigurationException(final Throwable e)
-   {
-      super(e);
    }
 
    public ConfigurationException(final String message, final Throwable e)

@@ -19,11 +19,6 @@ public class ResourceTransactionException extends ResourceException
 {
    private static final long serialVersionUID = 1L;
 
-   public ResourceTransactionException()
-   {
-      super();
-   }
-
    public ResourceTransactionException(String message, Throwable e)
    {
       super(message, e);
@@ -32,10 +27,5 @@ public class ResourceTransactionException extends ResourceException
    public ResourceTransactionException(String message)
    {
       super(message);
-   }
-
-   public ResourceTransactionException(Throwable e)
-   {
-      super(e);
    }
 }

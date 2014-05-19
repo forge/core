@@ -15,4 +15,9 @@ public class ConfigurationElementNotFoundException extends RuntimeException
    {
       super("Configuration element with name '" + elementName + "' doesn't exist");
    }
+
+   public ConfigurationElementNotFoundException(String message, Throwable cause)
+   {
+      super(message, cause);
+   }
 }

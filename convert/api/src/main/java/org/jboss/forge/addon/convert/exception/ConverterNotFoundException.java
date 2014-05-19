@@ -22,4 +22,13 @@ public class ConverterNotFoundException extends ConversionException
       super("No converter found from " + source.getName() + " to " + target.getName());
    }
 
+   public ConverterNotFoundException(String message, Throwable e)
+   {
+      super(message, e);
+   }
+
+   public ConverterNotFoundException(String message)
+   {
+      super(message);
+   }
 }

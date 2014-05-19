@@ -125,7 +125,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       }
       catch (NoTransactionAssociatedException e)
       {
-         throw new ResourceTransactionException(e);
+         throw new ResourceTransactionException("No transaction is associated", e);
       }
       finally
       {
@@ -157,7 +157,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       }
       catch (NoTransactionAssociatedException e)
       {
-         throw new ResourceTransactionException(e);
+         throw new ResourceTransactionException("No transaction is associated", e);
       }
       finally
       {
@@ -223,11 +223,11 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
             // see https://java.net/jira/browse/XADISK-120
             return false;
          }
-         throw new ResourceTransactionException(pe);
+         throw new ResourceTransactionException("Error while checking if file exists", pe);
       }
       catch (Exception e)
       {
-         throw new ResourceTransactionException(e);
+         throw new ResourceTransactionException("Error while checking if file exists", e);
       }
    }
 
@@ -246,11 +246,11 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
             // see https://java.net/jira/browse/XADISK-120
             return false;
          }
-         throw new ResourceTransactionException(pe);
+         throw new ResourceTransactionException("Error while checking if file exists and is a directory", pe);
       }
       catch (Exception e)
       {
-         throw new ResourceTransactionException(e);
+         throw new ResourceTransactionException("Error while checking if file exists and is a directory", e);
       }
    }
 
@@ -274,7 +274,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       }
       catch (Exception e)
       {
-         throw new ResourceTransactionException(e);
+         throw new ResourceTransactionException("Error while listing files", e);
       }
    }
 
@@ -288,7 +288,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       }
       catch (Exception e)
       {
-         throw new ResourceTransactionException(e);
+         throw new ResourceTransactionException("Error while getting file length", e);
       }
    }
 
@@ -307,7 +307,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       }
       catch (Exception e)
       {
-         throw new ResourceTransactionException(e);
+         throw new ResourceTransactionException("Error while renaming file from " + src + " to " + dest, e);
       }
    }
 
@@ -321,7 +321,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       }
       catch (Exception e)
       {
-         throw new ResourceTransactionException(e);
+         throw new ResourceTransactionException("Error while copying file from " + src + " to " + dest, e);
       }
    }
 
@@ -344,7 +344,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       }
       catch (Exception e)
       {
-         throw new ResourceTransactionException(e);
+         throw new ResourceTransactionException("Error while deleting file " + f, e);
       }
    }
 
@@ -363,7 +363,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       }
       catch (Exception e)
       {
-         throw new ResourceTransactionException(e);
+         throw new ResourceTransactionException("Error while creating new file in " + file, e);
       }
    }
 
@@ -382,7 +382,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       }
       catch (Exception e)
       {
-         throw new ResourceTransactionException(e);
+         throw new ResourceTransactionException("Error while making directory " + file, e);
       }
    }
 
@@ -408,7 +408,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       }
       catch (Exception e)
       {
-         throw new ResourceTransactionException(e);
+         throw new ResourceTransactionException("Error while making directories " + file, e);
       }
    }
 
@@ -425,7 +425,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       }
       catch (Exception e)
       {
-         throw new ResourceTransactionException(e);
+         throw new ResourceTransactionException("Error while creating output stream for " + f, e);
       }
    }
 
@@ -442,7 +442,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
       }
       catch (Exception e)
       {
-         throw new ResourceTransactionException(e);
+         throw new ResourceTransactionException("Error while creating input stream for " + f, e);
       }
    }
 

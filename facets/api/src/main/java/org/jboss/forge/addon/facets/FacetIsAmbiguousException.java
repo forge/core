@@ -15,18 +15,9 @@ public class FacetIsAmbiguousException extends RuntimeException
 {
    private static final long serialVersionUID = 633736084707564318L;
 
-   public FacetIsAmbiguousException()
-   {
-   }
-
    public FacetIsAmbiguousException(final String message)
    {
       super(message);
-   }
-
-   public FacetIsAmbiguousException(final Throwable e)
-   {
-      super(e);
    }
 
    public FacetIsAmbiguousException(final String message, final Throwable e)

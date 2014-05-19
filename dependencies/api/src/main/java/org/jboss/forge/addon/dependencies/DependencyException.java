@@ -14,18 +14,9 @@ public class DependencyException extends RuntimeException
 {
    private static final long serialVersionUID = 3858719629364658345L;
 
-   public DependencyException()
-   {
-   }
-
    public DependencyException(String message)
    {
       super(message);
-   }
-
-   public DependencyException(Throwable e)
-   {
-      super(e);
    }
 
    public DependencyException(String message, Throwable e)

@@ -95,7 +95,7 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
       }
       catch (org.apache.commons.configuration.ConfigurationException e)
       {
-         throw new ConfigurationException(e);
+         throw new ConfigurationException("Error while creating configuration from " + file, e);
       }
    }
 

@@ -10,11 +10,6 @@ public class ResourceException extends RuntimeException
 {
    private static final long serialVersionUID = 1532458466162580423L;
 
-   public ResourceException()
-   {
-      super();
-   }
-
    public ResourceException(String message, Throwable e)
    {
       super(message, e);
@@ -24,10 +19,4 @@ public class ResourceException extends RuntimeException
    {
       super(message);
    }
-
-   public ResourceException(Throwable e)
-   {
-      super(e);
-   }
-
 }

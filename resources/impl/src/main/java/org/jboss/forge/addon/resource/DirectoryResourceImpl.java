@@ -142,7 +142,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
       }
       catch (IOException e)
       {
-         throw new ResourceException(e);
+         throw new ResourceException("Error while creating temporary directory", e);
       }
    }
 

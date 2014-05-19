@@ -15,18 +15,9 @@ public class FacetNotFoundException extends RuntimeException
 {
    private static final long serialVersionUID = 633736084707564318L;
 
-   public FacetNotFoundException()
-   {
-   }
-
    public FacetNotFoundException(final String message)
    {
       super(message);
-   }
-
-   public FacetNotFoundException(final Throwable e)
-   {
-      super(e);
    }
 
    public FacetNotFoundException(final String message, final Throwable e)

@@ -263,7 +263,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       }
       catch (IOException e)
       {
-         throw new ResourceException(e);
+         throw new ResourceException("Error while setting the contents", e);
       }
       return (T) this;
    }
@@ -282,7 +282,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       }
       catch (IOException e)
       {
-         throw new ResourceException(e);
+         throw new ResourceException("Error while creating a new file", e);
       }
    }
 
@@ -297,7 +297,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       }
       catch (IOException e)
       {
-         throw new ResourceException(e);
+         throw new ResourceException("Error while creating a temporary resource", e);
       }
    }
 

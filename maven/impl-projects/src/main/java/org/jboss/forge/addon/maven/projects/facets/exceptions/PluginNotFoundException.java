@@ -14,4 +14,14 @@ public class PluginNotFoundException extends RuntimeException
    {
       super("Plugin " + groupId + ":" + artifactId + " was not found");
    }
+
+   public PluginNotFoundException(String message, Throwable cause)
+   {
+      super(message, cause);
+   }
+
+   public PluginNotFoundException(String message)
+   {
+      super(message);
+   }
 }
