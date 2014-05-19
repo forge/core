@@ -4,6 +4,11 @@ public class ConversionException extends RuntimeException
 {
    private static final long serialVersionUID = -1744577611317933091L;
 
+   public ConversionException()
+   {
+      super("No message");
+   }
+
    public ConversionException(String message, Throwable e)
    {
       super(message, e);

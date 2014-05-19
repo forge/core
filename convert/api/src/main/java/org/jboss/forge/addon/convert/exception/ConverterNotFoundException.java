@@ -17,6 +17,11 @@ public class ConverterNotFoundException extends ConversionException
 {
    private static final long serialVersionUID = 1L;
 
+   public ConverterNotFoundException()
+   {
+      super("No message");
+   }
+
    public ConverterNotFoundException(Class<?> source, Class<?> target)
    {
       super("No converter found from " + source.getName() + " to " + target.getName());

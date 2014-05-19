@@ -10,6 +10,11 @@ public class ResourceException extends RuntimeException
 {
    private static final long serialVersionUID = 1532458466162580423L;
 
+   public ResourceException()
+   {
+      super("No message");
+   }
+
    public ResourceException(String message, Throwable e)
    {
       super(message, e);

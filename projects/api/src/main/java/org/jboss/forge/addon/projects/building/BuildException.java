@@ -17,6 +17,11 @@ public class BuildException extends RuntimeException
 {
    private static final long serialVersionUID = 7523197340850216859L;
 
+   public BuildException()
+   {
+      super("No message");
+   }
+
    public BuildException(final String message, final Throwable cause)
    {
       super(message, cause);

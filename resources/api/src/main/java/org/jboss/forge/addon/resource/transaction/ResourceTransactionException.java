@@ -19,6 +19,11 @@ public class ResourceTransactionException extends ResourceException
 {
    private static final long serialVersionUID = 1L;
 
+   public ResourceTransactionException()
+   {
+      super("No message");
+   }
+
    public ResourceTransactionException(String message, Throwable e)
    {
       super(message, e);

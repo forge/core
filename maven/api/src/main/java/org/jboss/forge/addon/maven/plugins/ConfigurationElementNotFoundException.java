@@ -11,6 +11,11 @@ public class ConfigurationElementNotFoundException extends RuntimeException
 {
    private static final long serialVersionUID = -443270510723493609L;
 
+   public ConfigurationElementNotFoundException()
+   {
+      super("No message");
+   }
+
    public ConfigurationElementNotFoundException(final String elementName)
    {
       super("Configuration element with name '" + elementName + "' doesn't exist");
