@@ -56,7 +56,7 @@ public class ValidationSetupCommandTest
    private UITestHarness testHarness;
 
    @Test
-   public void testNewEntity() throws Exception
+   public void testBeanValidationSetup() throws Exception
    {
       final Project project = projectFactory.createTempProject();
       try (CommandController tester = testHarness.createCommandController(ValidationProviderSetupCommand.class,
