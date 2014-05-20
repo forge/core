@@ -37,7 +37,10 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
       this.setGroupId(clone.getGroupId());
       this.setClassifier("".equals(clone.getClassifier()) ? null : clone.getClassifier());
       this.setExclusions(clone.getExclusions());
-      this.setOptional(clone.isOptional());
+      if (clone.isOptional())
+      {
+         this.setOptional(clone.isOptional());
+      }
       this.setScope(clone.getScope());
       this.setType(clone.getType());
       this.setVersion(clone.getVersion());
@@ -58,7 +61,10 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
       this.setType(dep.getCoordinate().getPackaging());
       this.setClassifier(dep.getCoordinate().getClassifier());
       this.setSystemPath(dep.getCoordinate().getSystemPath());
-      this.setOptional(dep.isOptional());
+      if (dep.isOptional())
+      {
+         this.setOptional(dep.isOptional());
+      }
 
       if (dep.getExcludedCoordinates() != null)
       {
@@ -83,7 +89,10 @@ public class MavenDependencyAdapter extends org.apache.maven.model.Dependency im
       this.setGroupId(dep.getArtifact().getGroupId());
       this.setClassifier("".equals(dep.getArtifact().getClassifier()) ? null : dep.getArtifact().getClassifier());
       this.setExclusions(dep.getExclusions());
-      this.setOptional(dep.isOptional());
+      if (dep.isOptional())
+      {
+         this.setOptional(dep.isOptional());
+      }
       this.setScope(dep.getScope());
       this.setType(dep.getArtifact().getExtension());
       this.setVersion(dep.getArtifact().getBaseVersion());
