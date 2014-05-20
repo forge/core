@@ -39,6 +39,7 @@ public class JavaResourceTest
 {
    @Deployment
    @Dependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
             @AddonDependency(name = "org.jboss.forge.addon:parser-java"),
             @AddonDependency(name = "org.jboss.forge.addon:resources"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
@@ -52,6 +53,7 @@ public class JavaResourceTest
                         "src/test/resources/org/jboss/forge/addon/parser/java/resources/MyClass.java")),
                         "org/jboss/forge/addon/parser/java/resources/MyClass.java")
                .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:parser-java"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:resources")

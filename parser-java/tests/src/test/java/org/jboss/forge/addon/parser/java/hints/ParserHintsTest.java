@@ -28,7 +28,9 @@ import org.junit.runner.RunWith;
 public class ParserHintsTest
 {
    @Deployment
-   @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:ui-spi"),
+   @Dependencies({ 
+      @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:ui-spi"),
             @AddonDependency(name = "org.jboss.forge.addon:environment"),
             @AddonDependency(name = "org.jboss.forge.addon:resources"),
             @AddonDependency(name = "org.jboss.forge.addon:parser-java") })
@@ -38,6 +40,7 @@ public class ParserHintsTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
+                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:resources"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui-spi"),
