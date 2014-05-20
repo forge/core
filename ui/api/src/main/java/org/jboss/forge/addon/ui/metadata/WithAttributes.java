@@ -30,14 +30,14 @@ import org.jboss.forge.addon.ui.util.InputComponents;
 public @interface WithAttributes
 {
    /**
-    * The parameter name for this {@link InputComponent}
-    */
-   String name() default "";
-
-   /**
     * The label of this {@link InputComponent}.
     */
    String label();
+
+   /**
+    * The parameter name for this {@link InputComponent}
+    */
+   String name() default "";
 
    /**
     * The programmatic name of this {@link InputComponent}. This is typically a shorthand or alternate name used for
