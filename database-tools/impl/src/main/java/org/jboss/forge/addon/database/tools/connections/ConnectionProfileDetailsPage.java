@@ -1,7 +1,17 @@
 package org.jboss.forge.addon.database.tools.connections;
 
+import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.database.tools.jpa.HibernateDialect;
+import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UISelectOne;
+import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.validate.UIValidator;
+
+import javax.inject.Inject;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Driver;
@@ -12,18 +22,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import javax.inject.Inject;
-
-import org.jboss.forge.addon.convert.Converter;
-import org.jboss.forge.addon.database.tools.jpa.HibernateDialect;
-import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.ui.context.UIBuilder;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
-import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.addon.ui.input.UISelectOne;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
-import org.jboss.forge.addon.ui.validate.UIValidator;
 
 public class ConnectionProfileDetailsPage
 {
@@ -70,7 +68,7 @@ public class ConnectionProfileDetailsPage
             description = "The class name of the JDBC driver",
             required = true)
    protected UISelectOne<String> driverClass;
-   
+
    public void initializeUI(UIBuilder builder) throws Exception
    {
       builder
@@ -89,85 +87,91 @@ public class ConnectionProfileDetailsPage
          }
       });
       driverLocation.addValidator(new UIValidator()
-      { 
+      {
          @Override
          public void validate(UIValidationContext context)
          {
             FileResource<?> resource = driverLocation.getValue();
-            if (resource != null && !resource.exists()) {
-               context.addValidationError(driverLocation, "The location '" + resource.getFullyQualifiedName() + "' does not exist");
+            if (resource != null && !resource.exists())
+            {
+               context.addValidationError(driverLocation, "The location '" + resource.getFullyQualifiedName()
+                        + "' does not exist");
             }
          }
       });
-      driverClass.setValueChoices(new Callable<Iterable<String>>() {
+      driverClass.setValueChoices(new Callable<Iterable<String>>()
+      {
          @Override
          public Iterable<String> call() throws Exception
          {
             return getDriverClassNames();
-         }         
+         }
       });
-      driverClass.setDefaultValue(new Callable<String>() {
+      driverClass.setDefaultValue(new Callable<String>()
+      {
          @Override
          public String call() throws Exception
          {
             String result = null;
             Iterator<String> iterator = driverClass.getValueChoices().iterator();
-            if (iterator.hasNext()) {
+            if (iterator.hasNext())
+            {
                result = iterator.next();
             }
             return result;
-         }         
+         }
       });
 
    }
-   
-   private List<String> getDriverClassNames() {
+
+   private List<String> getDriverClassNames()
+   {
       ArrayList<String> result = new ArrayList<String>();
       FileResource<?> resource = driverLocation.getValue();
-      if (resource != null && resource.exists()) {
-    	 JarFile jarFile = null;
-         try {
-            File file = (File)resource.getUnderlyingResourceObject();
+      File file = (File) resource.getUnderlyingResourceObject();
+      if (resource != null && resource.exists())
+         try (JarFile jarFile = new JarFile(file);)
+         {
             URL[] urls = new URL[] { file.toURI().toURL() };
             URLClassLoader classLoader = URLClassLoader.newInstance(urls);
             Class<?> driverClass = classLoader.loadClass(Driver.class.getName());
-            jarFile = new JarFile(file);
             Enumeration<JarEntry> iter = jarFile.entries();
-            while (iter.hasMoreElements()) {
+            while (iter.hasMoreElements())
+            {
                JarEntry entry = iter.nextElement();
-               if (entry.getName().endsWith(".class")) { 
+               if (entry.getName().endsWith(".class"))
+               {
                   String name = entry.getName();
                   name = name.substring(0, name.length() - 6);
                   name = name.replace('/', '.');
-                  try {
+                  try
+                  {
                      Class<?> clazz = classLoader.loadClass(name);
-                     if (driverClass.isAssignableFrom(clazz)) {
+                     if (driverClass.isAssignableFrom(clazz))
+                     {
                         result.add(clazz.getName());
                      }
-                  } catch (ClassNotFoundException cnfe) {
-                     //ignore
-                  } catch (NoClassDefFoundError err) {
-                     //ignore
+                  }
+                  catch (ClassNotFoundException cnfe)
+                  {
+                     // ignore
+                  }
+                  catch (NoClassDefFoundError err)
+                  {
+                     // ignore
                   }
                }
             }
-         } catch (Exception e) {
-            // ignore and return an empty list
-         } finally {
-        	 if (jarFile != null) {
-        		 try {
-					jarFile.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-        	 }
          }
-      }
+         catch (Exception e)
+         {
+            // ignore and return an empty list
+         }
       return result;
    }
-   
+
    public void validate(UIValidationContext context)
    {
    }
-   
+
 }

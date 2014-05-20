@@ -367,47 +367,25 @@ public class Bootstrap
 
    private static String getServiceName(final ClassLoader classLoader, final String className)
    {
-      final InputStream stream = classLoader.getResourceAsStream("META-INF/services/" + className);
-      if (stream != null)
+      try (final InputStream stream = classLoader.getResourceAsStream("META-INF/services/" + className))
       {
-         BufferedReader reader = null;
-         try
+         if (stream != null)
          {
-            reader = new BufferedReader(new InputStreamReader(stream));
-            String line;
-            while ((line = reader.readLine()) != null)
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream)))
             {
-               final int i = line.indexOf('#');
-               if (i != -1)
+               String line;
+               while ((line = reader.readLine()) != null)
                {
-                  line = line.substring(0, i);
+                  final int i = line.indexOf('#');
+                  if (i != -1)
+                  {
+                     line = line.substring(0, i);
+                  }
+                  line = line.trim();
+                  if (line.length() == 0)
+                     continue;
+                  return line;
                }
-               line = line.trim();
-               if (line.length() == 0)
-                  continue;
-               return line;
-            }
-         }
-         catch (IOException ignored)
-         {
-            // ignore
-         }
-         finally
-         {
-            try
-            {
-               if (reader != null)
-                  reader.close();
-            }
-            catch (IOException ignored)
-            {
-               // ignore
-            }
-
-            try
-            {
-               if (stream != null)
-                  stream.close();
             }
             catch (IOException e)
             {
@@ -415,7 +393,10 @@ public class Bootstrap
             }
          }
       }
+      catch (IOException e)
+      {
+         // ignore
+      }
       return null;
    }
-
 }
