@@ -15,7 +15,7 @@ import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.javaee.validation.ValidationOperations;
 import org.jboss.forge.addon.javaee.validation.provider.ValidationProvider;
 import org.jboss.forge.addon.javaee.validation.providers.JavaEEValidatorProvider;
-import org.jboss.forge.addon.ui.command.UICommand;
+import org.jboss.forge.addon.javaee.validation.ui.ValidationProviderSetupCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -29,7 +29,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
-public class ValidationProviderSetupCommand extends AbstractJavaEECommand implements UICommand
+public class ValidationProviderSetupCommandImpl extends AbstractJavaEECommand implements ValidationProviderSetupCommand
 {
    @Inject
    @WithAttributes(label = "Bean Validation provider", required = true)

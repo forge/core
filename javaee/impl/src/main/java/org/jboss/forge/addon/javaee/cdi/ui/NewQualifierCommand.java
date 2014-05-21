@@ -21,27 +21,24 @@ import java.lang.annotation.Target;
 import javax.inject.Inject;
 import javax.inject.Qualifier;
 
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
-import org.jboss.forge.addon.ui.result.Failed;
-import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * Creates a new CDI Qualifier annotation
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewQualifierCommand extends AbstractJavaSourceCommand
+public class NewQualifierCommand extends AbstractJavaSourceCommand<JavaAnnotationSource>
 {
    @Inject
    @WithAttributes(label = "Inherited")
@@ -64,26 +61,18 @@ public class NewQualifierCommand extends AbstractJavaSourceCommand
    }
 
    @Override
-   public Result execute(UIExecutionContext context) throws Exception
+   public JavaAnnotationSource decorateSource(UIExecutionContext context, Project project,
+            JavaAnnotationSource qualifier) throws Exception
    {
-      // TODO: Super implementation should have an "overwrite" flag for existing files?
-      Result result = super.execute(context);
-      if (!(result instanceof Failed))
+      qualifier.addAnnotation(Qualifier.class);
+      if (inherited.getValue())
       {
-         JavaSourceFacet javaSourceFacet = getSelectedProject(context).getFacet(JavaSourceFacet.class);
-         JavaResource javaResource = context.getUIContext().getSelection();
-         JavaSource<?> qualifier = javaResource.getJavaType();
-         qualifier.addAnnotation(Qualifier.class);
-         if (inherited.getValue())
-         {
-            qualifier.addAnnotation(Inherited.class);
-         }
-         qualifier.addAnnotation(Retention.class).setEnumValue(RUNTIME);
-         qualifier.addAnnotation(Target.class).setEnumValue(METHOD, FIELD, PARAMETER, TYPE);
-         qualifier.addAnnotation(Documented.class);
-         javaSourceFacet.saveJavaSource(qualifier);
+         qualifier.addAnnotation(Inherited.class);
       }
-      return result;
+      qualifier.addAnnotation(Retention.class).setEnumValue(RUNTIME);
+      qualifier.addAnnotation(Target.class).setEnumValue(METHOD, FIELD, PARAMETER, TYPE);
+      qualifier.addAnnotation(Documented.class);
+      return qualifier;
    }
 
    @Override
@@ -99,7 +88,7 @@ public class NewQualifierCommand extends AbstractJavaSourceCommand
    }
 
    @Override
-   protected Class<? extends JavaSource<?>> getSourceType()
+   protected Class<JavaAnnotationSource> getSourceType()
    {
       return JavaAnnotationSource.class;
    }

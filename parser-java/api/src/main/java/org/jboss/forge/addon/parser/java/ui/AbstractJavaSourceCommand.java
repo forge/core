@@ -51,7 +51,7 @@ import org.jboss.forge.roaster.model.util.Types;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
+public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>> extends AbstractProjectCommand
 {
    @Inject
    private ProjectFactory projectFactory;
@@ -99,7 +99,7 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
 
       // Setup targetPackage
 
-      if (project != null && project.hasFacet(JavaSourceFacet.class))
+      if (project.hasFacet(JavaSourceFacet.class))
       {
          final Set<String> packageNames = new TreeSet<>();
 
@@ -151,7 +151,7 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
    /**
     * Get the {@link JavaSource} type for which this command should create a new source file.
     */
-   protected abstract Class<? extends JavaSource<?>> getSourceType();
+   protected abstract Class<SOURCETYPE> getSourceType();
 
    private boolean classExists(JavaSourceFacet javaSourceFacet)
    {
@@ -173,13 +173,15 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
       return classAlreadyExists;
    }
 
-   private JavaSource<?> buildJavaSource(JavaSourceFacet javaSourceFacet)
+   @SuppressWarnings("unchecked")
+   private SOURCETYPE buildJavaSource(JavaSourceFacet java)
    {
       if (named.getValue() == null)
       {
          return null;
       }
-      JavaSource<?> source = Roaster.create(getSourceType()).setName(named.getValue());
+      
+      SOURCETYPE source = (SOURCETYPE) Roaster.create(getSourceType()).setName(named.getValue());
 
       if (targetPackage.hasValue() || targetPackage.hasDefaultValue())
       {
@@ -187,7 +189,7 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
       }
       else
       {
-         source.setPackage(javaSourceFacet.getBasePackage());
+         source.setPackage(java.getBasePackage());
       }
       return source;
    }
@@ -211,7 +213,7 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
       UIContext uiContext = context.getUIContext();
       Project project = getSelectedProject(uiContext);
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
-      JavaSource<?> source = buildJavaSource(javaSourceFacet);
+      SOURCETYPE source = buildJavaSource(javaSourceFacet);
       JavaResource javaResource;
       if (source.hasSyntaxErrors())
       {
@@ -227,10 +229,23 @@ public abstract class AbstractJavaSourceCommand extends AbstractProjectCommand
       }
       else
       {
+         SOURCETYPE decorated = decorateSource(context, project, source);
+         if (decorated != null)
+            source = decorated;
          javaResource = javaSourceFacet.saveJavaSource(source);
       }
+
       uiContext.setSelection(javaResource);
       return Results.success(getType() + " " + source.getQualifiedName() + " was created");
+   }
+
+   /**
+    * Override this method to do any necessary work to customize the generated {@link JavaResource}.
+    */
+   public SOURCETYPE decorateSource(UIExecutionContext context, Project project, SOURCETYPE source)
+            throws Exception
+   {
+      return source;
    }
 
    @Override

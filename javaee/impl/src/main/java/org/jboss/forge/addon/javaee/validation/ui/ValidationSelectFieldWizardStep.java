@@ -15,6 +15,8 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.javaee.validation.ConstraintOperations;
+import org.jboss.forge.addon.javaee.validation.ConstraintType;
+import org.jboss.forge.addon.javaee.validation.CoreConstraints;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -33,7 +35,7 @@ import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.Property;
 import org.jboss.forge.roaster.model.source.PropertySource;
 
-public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWizardStep
+public class ValidationSelectFieldWizardStep extends AbstractJavaEECommand implements UIWizardStep
 {
    @Inject
    @WithAttributes(label = "On Property", description = "The property on which the constraint applies", required = true, type = InputType.DROPDOWN)
@@ -132,7 +134,7 @@ public class SelectFieldWizardStep extends AbstractJavaEECommand implements UIWi
       }
       else
       {
-         return Results.navigateTo(GenerateConstraintWizardStep.class);
+         return Results.navigateTo(ValidationGenerateConstraintWizardStep.class);
       }
    }
 

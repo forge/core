@@ -20,29 +20,26 @@ import javax.enterprise.context.NormalScope;
 import javax.inject.Inject;
 import javax.inject.Scope;
 
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
-import org.jboss.forge.addon.ui.result.Failed;
-import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * Creates a new CDI Scope annotation
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewScopeCommand extends AbstractJavaSourceCommand
+public class NewScopeCommand extends AbstractJavaSourceCommand<JavaAnnotationSource>
 {
    @Inject
    @WithAttributes(label = "Pseudo Scope")
@@ -82,34 +79,25 @@ public class NewScopeCommand extends AbstractJavaSourceCommand
    }
 
    @Override
-   public Result execute(UIExecutionContext context) throws Exception
+   public JavaAnnotationSource decorateSource(UIExecutionContext context, Project project, JavaAnnotationSource scope)
+            throws Exception
    {
-      // TODO: Super implementation should have an "overwrite" flag for existing files?
-      Result result = super.execute(context);
-      if (!(result instanceof Failed))
+      if (pseudo.getValue())
       {
-         JavaSourceFacet javaSourceFacet = getSelectedProject(context).getFacet(JavaSourceFacet.class);
-         JavaResource javaResource = context.getUIContext().getSelection();
-         JavaSource<?> scope = javaResource.getJavaType();
-         if (pseudo.getValue())
-         {
-            scope.addAnnotation(Scope.class);
-         }
-         else
-         {
-            AnnotationSource<?> normalScope = scope.addAnnotation(NormalScope.class);
-            if (passivating.getValue())
-            {
-               normalScope.setLiteralValue("passivating", Boolean.toString(true));
-            }
-         }
-         scope.addAnnotation(Retention.class).setEnumValue(RUNTIME);
-         scope.addAnnotation(Target.class).setEnumValue(TYPE, METHOD, FIELD);
-         scope.addAnnotation(Documented.class);
-
-         javaSourceFacet.saveJavaSource(scope);
+         scope.addAnnotation(Scope.class);
       }
-      return result;
+      else
+      {
+         AnnotationSource<?> normalScope = scope.addAnnotation(NormalScope.class);
+         if (passivating.getValue())
+         {
+            normalScope.setLiteralValue("passivating", Boolean.toString(true));
+         }
+      }
+      scope.addAnnotation(Retention.class).setEnumValue(RUNTIME);
+      scope.addAnnotation(Target.class).setEnumValue(TYPE, METHOD, FIELD);
+      scope.addAnnotation(Documented.class);
+      return scope;
    }
 
    @Override
@@ -125,7 +113,7 @@ public class NewScopeCommand extends AbstractJavaSourceCommand
    }
 
    @Override
-   protected Class<? extends JavaSource<?>> getSourceType()
+   protected Class<JavaAnnotationSource> getSourceType()
    {
       return JavaAnnotationSource.class;
    }

@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
 @RunWith(Arquillian.class)
-public class NewAnnotationCommandTest
+public class ValidationNewAnnotationCommandTest
 {
    @Deployment
    @Dependencies({
@@ -75,7 +75,7 @@ public class NewAnnotationCommandTest
    public void testCreateNewAnnotation() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
-      CommandController controller = testHarness.createCommandController(NewAnnotationCommand.class, project.getRoot());
+      CommandController controller = testHarness.createCommandController(ValidationNewAnnotationCommand.class, project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "MyConstraint");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");

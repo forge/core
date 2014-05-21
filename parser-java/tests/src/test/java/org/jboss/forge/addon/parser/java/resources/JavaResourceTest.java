@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
@@ -67,7 +68,8 @@ public class JavaResourceTest
    {
       File tmpFile = File.createTempFile("MyClass", ".java");
       tmpFile.deleteOnExit();
-      JavaResource resource = resourceFactory.create(tmpFile).reify(JavaResource.class);
+      Resource<File> unreified = resourceFactory.create(tmpFile);
+      JavaResource resource = unreified.reify(JavaResource.class);
       Assert.assertNotNull(resource);
       
       resource.setContents(getClass().getResource("MyClass.java").openStream());

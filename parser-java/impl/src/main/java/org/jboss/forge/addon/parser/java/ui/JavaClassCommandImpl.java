@@ -8,15 +8,14 @@
 package org.jboss.forge.addon.parser.java.ui;
 
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaClassCommandImpl extends AbstractJavaSourceCommand implements JavaClassCommand
+public class JavaClassCommandImpl extends AbstractJavaSourceCommand<JavaClassSource> implements JavaClassCommand
 {
    @Override
-   protected Class<? extends JavaSource<?>> getSourceType()
+   protected Class<JavaClassSource> getSourceType()
    {
       return JavaClassSource.class;
    }

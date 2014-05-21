@@ -20,7 +20,6 @@ import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -30,7 +29,6 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -71,7 +69,7 @@ public class JavaGetSetMethodsCommandImpl extends AbstractProjectCommand impleme
          @Override
          public Iterable<String> call() throws Exception
          {
-            List<String> strings = new ArrayList<String>();
+            List<String> strings = new ArrayList<>();
             JavaResource javaResource = targetClass.getValue();
             JavaClassSource targetClass = javaResource.getJavaType();
             List<PropertySource<JavaClassSource>> properties = targetClass.getProperties();

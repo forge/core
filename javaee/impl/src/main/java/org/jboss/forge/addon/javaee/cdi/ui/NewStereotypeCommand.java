@@ -17,38 +17,34 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Stereotype;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
-import org.jboss.forge.addon.ui.result.Failed;
-import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * Creates a new CDI Stereotype annotation
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewStereotypeCommand extends AbstractJavaSourceCommand
+public class NewStereotypeCommand extends AbstractJavaSourceCommand<JavaAnnotationSource>
 {
    @Inject
    @WithAttributes(label = "Inherited")
@@ -84,57 +80,28 @@ public class NewStereotypeCommand extends AbstractJavaSourceCommand
    }
 
    @Override
-   public Result execute(UIExecutionContext context) throws Exception
+   public JavaAnnotationSource decorateSource(UIExecutionContext context, Project project,
+            JavaAnnotationSource stereotype)
+            throws Exception
    {
-      // TODO: Super implementation should have an "overwrite" flag for existing files?
-      Result result = super.execute(context);
-      if (!(result instanceof Failed))
+      stereotype.addAnnotation(Stereotype.class);
+      if (inherited.getValue())
       {
-         JavaSourceFacet javaSourceFacet = getSelectedProject(context).getFacet(JavaSourceFacet.class);
-         JavaResource javaResource = context.getUIContext().getSelection();
-         JavaSource<?> stereotype = javaResource.getJavaType();
-         stereotype.addAnnotation(Stereotype.class);
-         if (inherited.getValue())
-         {
-            stereotype.addAnnotation(Inherited.class);
-         }
-         if (withNamed.getValue())
-         {
-            stereotype.addAnnotation(Named.class);
-         }
-         if (alternative.getValue())
-         {
-            stereotype.addAnnotation(Alternative.class);
-         }
-         stereotype.addAnnotation(Retention.class).setEnumValue(RUNTIME);
-         Collection<ElementType> types = toCollection(targetTypes.getValue());
-         stereotype.addAnnotation(Target.class).setEnumValue(types.toArray(new ElementType[types.size()]));
-         stereotype.addAnnotation(Documented.class);
-
-         javaSourceFacet.saveJavaSource(stereotype);
+         stereotype.addAnnotation(Inherited.class);
       }
-      return result;
-   }
-
-   private <T> Collection<T> toCollection(Iterable<T> iterable)
-   {
-      if (iterable == null)
+      if (withNamed.getValue())
       {
-         return null;
+         stereotype.addAnnotation(Named.class);
       }
-      else if (iterable instanceof Collection)
+      if (alternative.getValue())
       {
-         return (Collection<T>) iterable;
+         stereotype.addAnnotation(Alternative.class);
       }
-      else
-      {
-         List<T> list = new ArrayList<>();
-         for (T obj : iterable)
-         {
-            list.add(obj);
-         }
-         return list;
-      }
+      stereotype.addAnnotation(Retention.class).setEnumValue(RUNTIME);
+      Collection<ElementType> types = Iterators.asList(targetTypes.getValue());
+      stereotype.addAnnotation(Target.class).setEnumValue(types.toArray(new ElementType[types.size()]));
+      stereotype.addAnnotation(Documented.class);
+      return stereotype;
    }
 
    @Override
@@ -150,7 +117,7 @@ public class NewStereotypeCommand extends AbstractJavaSourceCommand
    }
 
    @Override
-   protected Class<? extends JavaSource<?>> getSourceType()
+   protected Class<JavaAnnotationSource> getSourceType()
    {
       return JavaAnnotationSource.class;
    }

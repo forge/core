@@ -31,7 +31,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @FacetConstraint(DependencyFacet.class)
-public class WebSocketSetupWizard extends AbstractJavaEECommand
+public class WebSocketSetupWizardImpl extends AbstractJavaEECommand implements WebSocketSetupWizard
 {
 
    @Override

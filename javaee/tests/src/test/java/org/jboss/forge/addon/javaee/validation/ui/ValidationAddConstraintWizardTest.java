@@ -13,6 +13,7 @@ import javax.validation.constraints.Pattern;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
+import org.jboss.forge.addon.javaee.validation.CoreConstraints;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
@@ -34,7 +35,7 @@ import org.junit.runner.RunWith;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-public class AddConstraintWizardTest
+public class ValidationAddConstraintWizardTest
 {
 
    @Deployment
@@ -74,7 +75,8 @@ public class AddConstraintWizardTest
       projectHelper.installValidation(project);
       JavaResource jpaEntity = projectHelper.createJPAEntity(project, "Customer");
 
-      WizardCommandController wizard = testHarness.createWizardController(AddConstraintWizard.class, project.getRoot());
+      WizardCommandController wizard = testHarness.createWizardController(ValidationAddConstraintWizard.class,
+               project.getRoot());
       wizard.initialize();
       // Page 1
       {
@@ -112,7 +114,8 @@ public class AddConstraintWizardTest
       projectHelper.installValidation(project);
       JavaResource jpaEntity = projectHelper.createJPAEntity(project, "Customer");
 
-      WizardCommandController wizard = testHarness.createWizardController(AddConstraintWizard.class, project.getRoot());
+      WizardCommandController wizard = testHarness.createWizardController(ValidationAddConstraintWizard.class,
+               project.getRoot());
       wizard.initialize();
       // Page 1
       {

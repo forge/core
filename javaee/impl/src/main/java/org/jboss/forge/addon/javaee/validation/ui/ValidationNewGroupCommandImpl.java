@@ -12,13 +12,13 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  *
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
-public class NewGroupCommand extends AbstractJavaSourceCommand
+public class ValidationNewGroupCommandImpl extends AbstractJavaSourceCommand<JavaInterfaceSource> implements
+         ValidationNewGroupCommand
 {
 
    @Override
@@ -37,7 +37,7 @@ public class NewGroupCommand extends AbstractJavaSourceCommand
    }
 
    @Override
-   protected Class<? extends JavaSource<?>> getSourceType()
+   protected Class<JavaInterfaceSource> getSourceType()
    {
       return JavaInterfaceSource.class;
    }

@@ -11,9 +11,8 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -21,19 +20,17 @@ import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
-import org.jboss.forge.addon.ui.result.Failed;
-import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * Creates a new CDI Bean with a specific scope
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewBeanCommand extends AbstractJavaSourceCommand
+public class NewBeanCommand extends AbstractJavaSourceCommand<JavaClassSource>
 {
    @Inject
    @WithAttributes(label = "Scope", defaultValue = "DEPENDENT")
@@ -69,27 +66,19 @@ public class NewBeanCommand extends AbstractJavaSourceCommand
    }
 
    @Override
-   public Result execute(UIExecutionContext context) throws Exception
+   public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source)
+            throws Exception
    {
-      // TODO: Super implementation should have an "overwrite" flag for existing files?
-      Result result = super.execute(context);
-      if (!(result instanceof Failed))
+      BeanScope scopedValue = scoped.getValue();
+      if (BeanScope.CUSTOM == scopedValue)
       {
-         JavaSourceFacet javaSourceFacet = getSelectedProject(context).getFacet(JavaSourceFacet.class);
-         JavaResource javaResource = context.getUIContext().getSelection();
-         JavaSource<?> javaSource = javaResource.getJavaType();
-         BeanScope scopedValue = scoped.getValue();
-         if (BeanScope.CUSTOM == scopedValue)
-         {
-            javaSource.addAnnotation(customScopeAnnotation.getValue());
-         }
-         else if (BeanScope.DEPENDENT != scopedValue)
-         {
-            javaSource.addAnnotation(scopedValue.getAnnotation());
-         }
-         javaSourceFacet.saveJavaSource(javaSource);
+         source.addAnnotation(customScopeAnnotation.getValue());
       }
-      return result;
+      else if (BeanScope.DEPENDENT != scopedValue)
+      {
+         source.addAnnotation(scopedValue.getAnnotation());
+      }
+      return source;
    }
 
    @Override
@@ -105,9 +94,8 @@ public class NewBeanCommand extends AbstractJavaSourceCommand
    }
 
    @Override
-   protected Class<? extends JavaSource<?>> getSourceType()
+   protected Class<JavaClassSource> getSourceType()
    {
       return JavaClassSource.class;
    }
-
 }

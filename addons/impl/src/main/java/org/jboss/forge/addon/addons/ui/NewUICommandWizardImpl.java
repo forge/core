@@ -11,8 +11,6 @@ import java.util.Iterator;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.parser.java.utils.Packages;
 import org.jboss.forge.addon.projects.Project;
@@ -25,21 +23,18 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
-import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
  */
-public class NewUICommandWizardImpl extends AbstractJavaSourceCommand implements NewUICommandWizard
+public class NewUICommandWizardImpl extends AbstractJavaSourceCommand<JavaClassSource> implements NewUICommandWizard
 {
    @Inject
    @WithAttributes(label = "Command name", required = false)
@@ -66,30 +61,14 @@ public class NewUICommandWizardImpl extends AbstractJavaSourceCommand implements
    }
 
    @Override
-   public Result execute(UIExecutionContext context) throws Exception
+   public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource command)
+            throws Exception
    {
-      Result result = super.execute(context);
-      if (!(result instanceof Failed))
+      if (Strings.isNullOrEmpty(commandName.getValue()))
       {
-         JavaResource javaResource = context.getUIContext().getSelection();
-         JavaClassSource command = javaResource.getJavaType();
-
-         if (Strings.isNullOrEmpty(commandName.getValue()))
-         {
-            commandName.setValue(calculateCommandName(command.getName()));
-         }
-
-         JavaClassSource javaClass = createCommand(command, commandName.getValue(), categories.getValue());
-         Project project = getSelectedProject(context);
-         final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-         javaResource = java.saveJavaSource(javaClass);
-         context.getUIContext().setSelection(javaResource);
+         commandName.setValue(calculateCommandName(command.getName()));
       }
-      return result;
-   }
 
-   private JavaClassSource createCommand(JavaClassSource command, String commandName, Iterable<String> categories)
-   {
       command.setSuperType(AbstractUICommand.class);
       command.addImport(UIBuilder.class);
       command.addImport(UIContext.class);
@@ -108,8 +87,8 @@ public class NewUICommandWizardImpl extends AbstractJavaSourceCommand implements
       getMetadataMethod.addAnnotation(Override.class);
 
       String getMetadataMethodBody = "return Metadata.forCommand(" + command.getName() + ".class" + ")\n"
-               + "\t.name(\"" + commandName + "\")";
-      Iterator<String> iterator = categories.iterator();
+               + "\t.name(\"" + commandName.getValue() + "\")";
+      Iterator<String> iterator = categories.getValue().iterator();
       if (iterator.hasNext())
       {
          getMetadataMethodBody += "\t.category(Categories.create(";
@@ -142,12 +121,11 @@ public class NewUICommandWizardImpl extends AbstractJavaSourceCommand implements
                .addThrows(Exception.class)
                .addAnnotation(Override.class);
 
-      // build the thing
       return command;
    }
 
    @Override
-   protected Class<? extends JavaSource<?>> getSourceType()
+   protected Class<JavaClassSource> getSourceType()
    {
       return JavaClassSource.class;
    }

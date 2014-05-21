@@ -14,7 +14,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.javaee.validation.ValidationFacet;
-import org.jboss.forge.addon.javaee.validation.ui.setup.ValidationProviderSetupCommand;
+import org.jboss.forge.addon.javaee.validation.ui.setup.ValidationProviderSetupCommandImpl;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
@@ -39,7 +39,8 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 
-public class AddConstraintWizard extends AbstractJavaEECommand implements UIWizard, PrerequisiteCommandsProvider
+public class ValidationAddConstraintWizardImpl extends AbstractJavaEECommand implements UIWizard,
+         PrerequisiteCommandsProvider, ValidationAddConstraintWizard
 {
    @Inject
    @WithAttributes(label = "Class", description = "The Java class containing the field", required = true, type = InputType.DROPDOWN)
@@ -114,7 +115,7 @@ public class AddConstraintWizard extends AbstractJavaEECommand implements UIWiza
    {
       JavaResource selectedClass = javaClass.getValue();
       context.getUIContext().getAttributeMap().put(JavaResource.class, selectedClass);
-      return Results.navigateTo(SelectFieldWizardStep.class);
+      return Results.navigateTo(ValidationSelectFieldWizardStep.class);
    }
 
    @Override
@@ -132,7 +133,7 @@ public class AddConstraintWizard extends AbstractJavaEECommand implements UIWiza
       {
          if (!project.hasFacet(ValidationFacet.class))
          {
-            builder.add(ValidationProviderSetupCommand.class);
+            builder.add(ValidationProviderSetupCommandImpl.class);
          }
       }
       return builder.build();

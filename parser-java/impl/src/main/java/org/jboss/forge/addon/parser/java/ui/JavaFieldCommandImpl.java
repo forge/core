@@ -8,7 +8,6 @@
 package org.jboss.forge.addon.parser.java.ui;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -18,12 +17,10 @@ import org.jboss.forge.addon.parser.java.beans.FieldOperations;
 import org.jboss.forge.addon.parser.java.beans.ProjectOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
-import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -42,7 +39,6 @@ import org.jboss.forge.roaster.model.Field;
 import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 
 public class JavaFieldCommandImpl extends AbstractProjectCommand implements JavaFieldCommand
 {
@@ -73,10 +69,9 @@ public class JavaFieldCommandImpl extends AbstractProjectCommand implements Java
 
    @Inject
    private FieldOperations fieldOperations;
-   
+
    @Inject
    private ProjectOperations projectOperations;
-
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -139,8 +134,6 @@ public class JavaFieldCommandImpl extends AbstractProjectCommand implements Java
          targetClass.setDefaultValue(entities.get(idx));
       }
    }
-
-  
 
    private void setupAccessType()
    {

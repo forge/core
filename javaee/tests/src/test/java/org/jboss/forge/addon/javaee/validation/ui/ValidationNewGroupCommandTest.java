@@ -40,7 +40,7 @@ import org.junit.runner.RunWith;
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
 @RunWith(Arquillian.class)
-public class NewGroupCommandTest
+public class ValidationNewGroupCommandTest
 {
 
    @Deployment
@@ -76,7 +76,7 @@ public class NewGroupCommandTest
    public void testCreateNewGroup() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
-      CommandController controller = testHarness.createCommandController(NewGroupCommand.class, project.getRoot());
+      CommandController controller = testHarness.createCommandController(ValidationNewGroupCommand.class, project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "MyBeanValidationGroup");
       Assert.assertTrue(controller.isValid());
@@ -95,7 +95,7 @@ public class NewGroupCommandTest
    public void testCreateNewGroupWithTargetPackage() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
-      CommandController controller = testHarness.createCommandController(NewGroupCommand.class, project.getRoot());
+      CommandController controller = testHarness.createCommandController(ValidationNewGroupCommand.class, project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "MyBeanValidationGroup");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");

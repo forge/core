@@ -56,7 +56,7 @@ public class JavaMethodResourceImpl extends AbstractJavaMemberResource<Method> i
    @Override
    public String getName()
    {
-      List<String> parameterTypes = new ArrayList<String>();
+      List<String> parameterTypes = new ArrayList<>();
       for (Parameter<?> p : method.getParameters())
       {
          parameterTypes.add(p.getType().getQualifiedName());

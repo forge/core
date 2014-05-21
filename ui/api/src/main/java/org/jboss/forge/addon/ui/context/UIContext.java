@@ -23,6 +23,7 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
  * instance.
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
 public interface UIContext extends AutoCloseable
@@ -33,13 +34,16 @@ public interface UIContext extends AutoCloseable
    Map<Object, Object> getAttributeMap();
 
    /**
-    * Get the user's selection at the time this command was initialized/selected. (Never <code>null</code>.)
+    * Get the user's {@link UISelection} at the time this command was initialized/selected. (Never <code>null</code>.)
     */
    <SELECTIONTYPE> UISelection<SELECTIONTYPE> getInitialSelection();
 
    /**
-    * Sets the current selection. (This will change the current working directory or current selection, depending on the
-    * {@link UIProvider} implementation.)
+    * Sets a new selection. (This will change the current working directory or {@link UISelection} - behavior varies
+    * somewhat depending on the {@link UIProvider} implementation.) The user's selection will be not be changed until
+    * after {@link UICommand#execute(UIExecutionContext)} has completed.
+    * 
+    * @see UISelection
     */
    <SELECTIONTYPE> void setSelection(SELECTIONTYPE resource);
 
@@ -48,6 +52,9 @@ public interface UIContext extends AutoCloseable
     * interaction, the value of {@link UISelection#get()} from the current {@link #getInitialSelection()}.
     * (<b>***WARNING***</b> - This is <b>NOT</b> the same as {@link #getInitialSelection()}. It will <b>NOT</b> return
     * the user's initial selection if a new selection has previously been set via {@link #setSelection(Object)}.)
+    * 
+    * @see UISelection
+    * @see #getInitialSelection()
     */
    <SELECTIONTYPE> SELECTIONTYPE getSelection();
 

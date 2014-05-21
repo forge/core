@@ -8,16 +8,15 @@
 package org.jboss.forge.addon.parser.java.ui;
 
 import org.jboss.forge.roaster.model.source.JavaEnumSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class JavaEnumCommandImpl extends AbstractJavaSourceCommand implements JavaEnumCommand
+public class JavaEnumCommandImpl extends AbstractJavaSourceCommand<JavaEnumSource> implements JavaEnumCommand
 {
    @Override
-   protected Class<? extends JavaSource<?>> getSourceType()
+   protected Class<JavaEnumSource> getSourceType()
    {
       return JavaEnumSource.class;
    }

@@ -8,15 +8,15 @@
 package org.jboss.forge.addon.parser.java.ui;
 
 import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaInterfaceCommandImpl extends AbstractJavaSourceCommand implements JavaInterfaceCommand
+public class JavaInterfaceCommandImpl extends AbstractJavaSourceCommand<JavaInterfaceSource> implements
+         JavaInterfaceCommand
 {
    @Override
-   protected Class<? extends JavaSource<?>> getSourceType()
+   protected Class<JavaInterfaceSource> getSourceType()
    {
       return JavaInterfaceSource.class;
    }

@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.javaee.validation.ui;
+package org.jboss.forge.addon.javaee.validation;
 
 import java.lang.annotation.Annotation;
 

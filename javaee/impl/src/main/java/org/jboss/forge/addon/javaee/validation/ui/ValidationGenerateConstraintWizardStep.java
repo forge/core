@@ -14,6 +14,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
+import org.jboss.forge.addon.javaee.validation.ConstraintType;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -38,7 +39,7 @@ import org.jboss.forge.roaster.model.source.PropertySource;
 import org.jboss.forge.roaster.model.util.Strings;
 
 @SuppressWarnings("unchecked")
-public class GenerateConstraintWizardStep extends AbstractJavaEECommand implements UIWizardStep
+public class ValidationGenerateConstraintWizardStep extends AbstractJavaEECommand implements UIWizardStep
 {
    @Inject
    private InputComponentFactory factory;

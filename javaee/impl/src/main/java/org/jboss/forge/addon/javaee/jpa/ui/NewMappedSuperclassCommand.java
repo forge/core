@@ -9,25 +9,21 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 
 import javax.persistence.MappedSuperclass;
 
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class NewMappedSuperclassCommand extends AbstractJavaSourceCommand
+public class NewMappedSuperclassCommand extends AbstractJavaSourceCommand<JavaClassSource>
 {
 
    @Override
@@ -37,7 +33,7 @@ public class NewMappedSuperclassCommand extends AbstractJavaSourceCommand
    }
 
    @Override
-   protected Class<? extends JavaSource<?>> getSourceType()
+   protected Class<JavaClassSource> getSourceType()
    {
       return JavaClassSource.class;
    }
@@ -67,17 +63,10 @@ public class NewMappedSuperclassCommand extends AbstractJavaSourceCommand
    }
 
    @Override
-   public Result execute(UIExecutionContext context) throws Exception
+   public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source)
+            throws Exception
    {
-      Result result = super.execute(context);
-      UIContext uiContext = context.getUIContext();
-      Project project = getSelectedProject(uiContext);
-      JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
-      JavaResource javaResource = context.getUIContext().getSelection();
-      JavaSource<?> javaSource = javaResource.getJavaType();
-      javaSource.addAnnotation(MappedSuperclass.class);
-      javaResource = javaSourceFacet.saveJavaSource(javaSource);
-      uiContext.setSelection(javaResource);
-      return result;
+      source.addAnnotation(MappedSuperclass.class);
+      return source;
    }
 }
