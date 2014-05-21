@@ -13,6 +13,8 @@ import java.util.Set;
 import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.addon.ui.command.UICommand;
+import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
@@ -42,8 +44,10 @@ public interface UIContext extends AutoCloseable
    <SELECTIONTYPE> void setSelection(SELECTIONTYPE resource);
 
    /**
-    * Returns the selection set by {@link UIContext#setSelection(Object)}, or <code>null</code> if no selection was
-    * provided for this interaction.
+    * Returns the selection set by {@link UIContext#setSelection(Object)}, or if no selection was set for this
+    * interaction, the value of {@link UISelection#get()} from the current {@link #getInitialSelection()}.
+    * (<b>***WARNING***</b> - This is <b>NOT</b> the same as {@link #getInitialSelection()}. It will <b>NOT</b> return
+    * the user's initial selection if a new selection has previously been set via {@link #setSelection(Object)}.)
     */
    <SELECTIONTYPE> SELECTIONTYPE getSelection();
 

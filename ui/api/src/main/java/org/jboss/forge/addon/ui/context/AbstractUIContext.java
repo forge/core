@@ -33,7 +33,7 @@ public abstract class AbstractUIContext implements UIContext
    @SuppressWarnings("unchecked")
    public <SELECTIONTYPE> SELECTIONTYPE getSelection()
    {
-      return (SELECTIONTYPE) selection;
+      return (SELECTIONTYPE) ((SELECTIONTYPE) selection != null ? selection : getInitialSelection().get());
    }
 
    @Override
@@ -47,7 +47,7 @@ public abstract class AbstractUIContext implements UIContext
    {
       return map;
    }
-   
+
    @Override
    public UIProvider getProvider()
    {
