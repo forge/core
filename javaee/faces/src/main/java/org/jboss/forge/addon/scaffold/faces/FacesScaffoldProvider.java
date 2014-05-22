@@ -216,6 +216,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    public boolean isSetup(ScaffoldSetupContext setupContext)
    {
       Project project = setupContext.getProject();
+      setProject(project);
       String targetDir = setupContext.getTargetDirectory();
       targetDir = targetDir == null ? "" : targetDir;
       if (project.hasAllFacets(WebResourcesFacet.class, DependencyFacet.class, JPAFacet.class, EJBFacet.class,
@@ -323,6 +324,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    public NavigationResult getSetupFlow(ScaffoldSetupContext setupContext)
    {
       Project project = setupContext.getProject();
+      setProject(setupContext.getProject());
       NavigationResultBuilder builder = NavigationResultBuilder.create();
       List<Class<? extends UICommand>> setupCommands = new ArrayList<>();
       if (!project.hasFacet(JPAFacet.class))
