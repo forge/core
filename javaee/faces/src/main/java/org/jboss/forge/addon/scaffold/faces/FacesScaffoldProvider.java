@@ -307,6 +307,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
          JavaClassSource entity = (JavaClassSource) javaSource;
          String targetDir = generationContext.getTargetDirectory();
          targetDir = (targetDir == null) ? "" : targetDir;
+         config.setProperty(FacesScaffoldProvider.class.getName() + "_targetDir", targetDir);
          Resource<?> template = (Resource<?>) generationContext.getAttribute("pageTemplate");
          List<Resource<?>> generatedResourcesForEntity = this.generateFromEntity(targetDir, template, entity);
 
