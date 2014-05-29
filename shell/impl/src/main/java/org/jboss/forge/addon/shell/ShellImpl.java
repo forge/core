@@ -292,7 +292,7 @@ public class ShellImpl implements Shell, UIRuntime
                exitCommand.getCommand().execute(
                         new AeshCommandInvocation(ShellImpl.this.console, ControlOperator.NONE, null));
             }
-            catch (CommandNotFoundException | IOException e)
+            catch (InterruptedException | CommandNotFoundException | IOException e)
             {
                log.log(Level.WARNING, "Error while trying to run exit", e);
             }

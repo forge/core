@@ -5,7 +5,8 @@ import java.io.File;
 import org.jboss.aesh.cl.completer.FileOptionCompleter;
 import org.jboss.aesh.cl.completer.OptionCompleter;
 import org.jboss.aesh.console.command.completer.CompleterInvocation;
-import org.jboss.aesh.util.FileLister.Filter;
+
+import org.jboss.aesh.filters.Filter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;

@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.jboss.aesh.comparators.PosixFileNameComparator;
 import org.jboss.aesh.console.Config;
 import org.jboss.aesh.parser.Parser;
 import org.jboss.aesh.terminal.TerminalSize;
@@ -170,8 +171,8 @@ public class LsCommand extends AbstractShellCommand
 
       Comparator<TerminalString> posixFileNameTerminalComparator = new Comparator<TerminalString>()
       {
-         private FileLister.PosixFileNameComparator posixFileNameComparator =
-                  new FileLister.PosixFileNameComparator();
+         private PosixFileNameComparator posixFileNameComparator =
+                  new PosixFileNameComparator();
 
          @Override public int compare(TerminalString o1, TerminalString o2)
          {
