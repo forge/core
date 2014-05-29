@@ -3,6 +3,7 @@ package org.jboss.forge.addon.resource;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
@@ -105,13 +106,14 @@ public class FileResourceGeneratorTest
       File file = File.createTempFile("forge", "testFileSize");
       file.deleteOnExit();
 
-      FileOutputStream fos = new FileOutputStream(file);
-      Streams.write(new ByteArrayInputStream("Test".getBytes()), fos);
-      fos.close();
+      try (FileWriter write = new FileWriter(file))
+      {
+         write.append("Test");
 
-      FileResource<?> fileResource = factory.create(file).reify(FileResource.class);
+         FileResource<?> fileResource = factory.create(file).reify(FileResource.class);
 
-      Assert.assertEquals(file.length(), fileResource.getSize());
+         Assert.assertEquals(file.length(), fileResource.getSize());
+      }
       file.delete();
    }
 
@@ -183,33 +185,33 @@ public class FileResourceGeneratorTest
       File file = File.createTempFile("forge", "testFileReadWrite");
       file.deleteOnExit();
 
-      FileOutputStream fos = new FileOutputStream(file);
-      Streams.write(new ByteArrayInputStream("READ".getBytes()), fos);
-      fos.close();
-
+      try (FileWriter write = new FileWriter(file))
+      {
+         write.append("READ");
+      }
+      
       FileResource<?> fileResource = factory.create(file).reify(FileResource.class);
-
       Assert.assertEquals("READ", fileResource.getContents());
       fileResource.setContents("WRITE");
       Assert.assertEquals("WRITE", fileResource.getContents());
       file.delete();
    }
-   
+
    @Test
    public void testGetSetContentsWithCharset() throws Exception
    {
       File file = File.createTempFile("forge", "testFileReadWrite");
       file.deleteOnExit();
       Charset charset = Charset.forName("ISO-8859-1");
-      
-      FileOutputStream fos = new FileOutputStream(file);
-      Streams.write(new ByteArrayInputStream("READ".getBytes(charset)), fos);
-      fos.close();
+
+      try (FileWriter write = new FileWriter(file))
+      {
+         write.append(new String("READ".getBytes(), charset));
+      }
 
       FileResource<?> fileResource = factory.create(file).reify(FileResource.class);
-
       Assert.assertEquals("READ", fileResource.getContents(charset));
-      fileResource.setContents("WRITE",charset);
+      fileResource.setContents("WRITE", charset);
       Assert.assertEquals("WRITE", fileResource.getContents(charset));
       file.delete();
    }

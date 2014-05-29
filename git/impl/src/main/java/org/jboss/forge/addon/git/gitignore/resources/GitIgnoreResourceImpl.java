@@ -7,18 +7,17 @@
 
 package org.jboss.forge.addon.git.gitignore.resources;
 
+import org.jboss.forge.addon.git.gitignore.GitIgnoreEntry;
+import org.jboss.forge.addon.resource.AbstractFileResource;
+import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jboss.forge.addon.git.gitignore.GitIgnoreEntry;
-import org.jboss.forge.addon.resource.AbstractFileResource;
-import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.furnace.util.Streams;
 
 /**
  * @author Dan Allen
@@ -50,7 +49,7 @@ public class GitIgnoreResourceImpl extends AbstractFileResource<GitIgnoreResourc
       }
       return patterns;
    }
-   
+
    @Override
    public void addPattern(String pattern)
    {
@@ -113,10 +112,8 @@ public class GitIgnoreResourceImpl extends AbstractFileResource<GitIgnoreResourc
    public List<GitIgnoreEntry> getEntries()
    {
       List<GitIgnoreEntry> lines = new ArrayList<>();
-      BufferedReader reader = null;
-      try
+      try (BufferedReader reader = new BufferedReader(new InputStreamReader(getResourceInputStream())))
       {
-         reader = new BufferedReader(new InputStreamReader(getResourceInputStream()));
          String line = null;
          while ((line = reader.readLine()) != null)
          {
@@ -128,10 +125,6 @@ public class GitIgnoreResourceImpl extends AbstractFileResource<GitIgnoreResourc
       {
          throw new RuntimeException(
                   "Error while reading .gitignore patterns", e);
-      }
-      finally
-      {
-         Streams.closeQuietly(reader);
       }
    }
 

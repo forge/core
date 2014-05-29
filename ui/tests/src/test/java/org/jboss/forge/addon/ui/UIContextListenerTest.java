@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.ui;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
@@ -22,6 +20,8 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.inject.Inject;
 
 /**
  * 
@@ -55,13 +55,13 @@ public class UIContextListenerTest
    @Test
    public void testContextListenerIsSet() throws Exception
    {
-      WizardCommandController tester = testHarness.createWizardController(MyFirstWizard.class);
-      tester.initialize();
-      Assert.assertTrue("Wizard is not on a valid state", tester.isValid());
-      Assert.assertTrue("Listener is not set", listener.isContextInitialized());
-      tester.execute();
-      tester.close();
+      try (WizardCommandController tester = testHarness.createWizardController(MyFirstWizard.class))
+      {
+         tester.initialize();
+         Assert.assertTrue("Wizard is not on a valid state", tester.isValid());
+         Assert.assertTrue("Listener is not set", listener.isContextInitialized());
+         tester.execute();
+      }
       Assert.assertFalse("Listener is still set", listener.isContextInitialized());
-
    }
 }
