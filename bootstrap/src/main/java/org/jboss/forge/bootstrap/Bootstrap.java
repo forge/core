@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
@@ -106,8 +107,15 @@ public class Bootstrap
 
       if (args.length > 0)
       {
+         List<String> listArgs = Arrays.asList(args);
          for (int i = 0; i < args.length; i++)
          {
+            if (listArgs.contains("--help") || listArgs.contains("-h"))
+            {
+               System.out.println(help());
+               exitAfter = true;
+            }
+
             if ("--install".equals(args[i]) || "-i".equals(args[i]))
             {
                installAddon = args[++i];
@@ -143,18 +151,48 @@ public class Bootstrap
                exitAfter = true;
             }
             else
-               System.out.println("Unknown option: " + args[i]);
+            {
+               System.out.println("forge: unrecognized option: '" + args[i] + "'");
+               System.out.println("Try 'forge --help' for more information.");
+               exitAfter = true;
+            }
          }
       }
 
       if (!containsMutableRepository(furnace.getRepositories()))
+      {
          furnace.addRepository(AddonRepositoryMode.MUTABLE, new File(OperatingSystemUtils.getUserForgeDir(), "addons"));
+      }
       if (listInstalled)
+      {
          list();
+      }
       if (installAddon != null)
+      {
          install(installAddon);
+      }
       if (removeAddon != null)
+      {
          remove(removeAddon);
+      }
+   }
+
+   private String help()
+   {
+      StringBuilder sb = new StringBuilder();
+      sb.append("Usage: forge [OPTION]... PARAMETER ...\n");
+      sb.append("The fastest way to build applications, share your software, and enjoy doing it.\n");
+      sb.append("\n");
+      sb.append("-i, --install               install the required addons and exit\n");
+      sb.append("-r, --remove                remove the required addons and exit\n");
+      sb.append("-l, --list                  list installed addons and exit\n");
+      sb.append("-a, --addonDir              add addon repository\n");
+      sb.append("-m, --immutableAddonDir     add immutable addon repository\n");
+      sb.append("-b, --batchMode             run Forge in batch mode\n");
+      sb.append("-d, --debug                 run Forge in debug mode\n");
+      sb.append("-h, --help                  display this help and exit\n");
+      sb.append("-v, --version               output version information and exit\n");
+      return sb.toString();
    }
 
    private boolean containsMutableRepository(List<AddonRepository> repositories)
@@ -241,9 +279,13 @@ public class Bootstrap
          if (addonCoordinates.contains(","))
          {
             if (addonCoordinates.contains(":"))
+            {
                addon = AddonId.fromCoordinates(addonCoordinates);
+            }
             else
+            {
                addon = AddonId.fromCoordinates(FORGE_ADDON_GROUP_ID + addonCoordinates);
+            }
          }
          else
          {
@@ -312,9 +354,13 @@ public class Bootstrap
          if (addonCoordinates.contains(","))
          {
             if (addonCoordinates.contains(":"))
+            {
                addon = AddonId.fromCoordinates(addonCoordinates);
+            }
             else
+            {
                addon = AddonId.fromCoordinates(FORGE_ADDON_GROUP_ID + addonCoordinates);
+            }
             coordinates = addon.getName();
          }
          else
@@ -383,7 +429,9 @@ public class Bootstrap
                   }
                   line = line.trim();
                   if (line.length() == 0)
+                  {
                      continue;
+                  }
                   return line;
                }
             }
