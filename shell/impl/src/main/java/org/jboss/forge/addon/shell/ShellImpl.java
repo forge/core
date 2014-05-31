@@ -91,6 +91,8 @@ public class ShellImpl implements Shell, UIRuntime
                .historyFile(history)
                .aliasFile(alias)
                .exportFile(export)
+               .enableExport(true)
+               .setExportUsesSystemEnvironment(true)
                .interruptHook(new ForgeInterruptHook(registry));
       // If system property is set, force POSIXTerminal
       if (Boolean.getBoolean("org.jboss.forge.addon.shell.forcePOSIXTerminal"))
