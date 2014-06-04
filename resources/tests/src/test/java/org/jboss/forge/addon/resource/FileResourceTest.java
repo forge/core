@@ -9,6 +9,8 @@ package org.jboss.forge.addon.resource;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
 
 import javax.inject.Inject;
 
@@ -22,6 +24,8 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import com.google.common.io.Files;
 
 /**
  * 
@@ -58,4 +62,21 @@ public class FileResourceTest
       Assert.assertNotNull(fileResource);
       Assert.assertNull(fileResource.reify(DirectoryResource.class));
    }
+
+   @Test
+   @SuppressWarnings("unchecked")
+   public void testResourceOutputStream() throws IOException
+   {
+      File file = File.createTempFile("fileresourcetest", ".tmp");
+      file.deleteOnExit();
+      FileResource<?> fileResource = resourceFactory.create(FileResource.class, file);
+      try (OutputStream os = fileResource.getResourceOutputStream())
+      {
+         os.write("CONTENT".getBytes());
+         os.flush();
+      }
+      String fileContent = Files.readFirstLine(file, Charset.defaultCharset());
+      Assert.assertEquals("CONTENT", fileContent);
+   }
+
 }

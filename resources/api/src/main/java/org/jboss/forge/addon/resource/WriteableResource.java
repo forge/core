@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.resource;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 /**
@@ -44,5 +45,10 @@ public interface WriteableResource<T extends WriteableResource<T, R>, R> extends
     * Set the contents of this {@link WriteableResource} to the contents of the given {@link InputStream}.
     */
    T setContents(InputStream data);
+
+   /**
+    * Returns the {@link OutputStream} for this {@link WriteableResource}
+    */
+   OutputStream getResourceOutputStream();
 
 }

@@ -382,4 +382,16 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       file.setLastModified(time);
    }
 
+   @Override
+   public OutputStream getResourceOutputStream()
+   {
+      try
+      {
+         return getFileOperations().createOutputStream(file);
+      }
+      catch (IOException ioe)
+      {
+         throw new ResourceException("Error while creating OutputStream for Resource " + this, ioe);
+      }
+   }
 }
