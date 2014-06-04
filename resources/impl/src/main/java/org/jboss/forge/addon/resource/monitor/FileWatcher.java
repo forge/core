@@ -13,6 +13,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
 import java.io.IOException;
+import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
@@ -142,7 +143,7 @@ public class FileWatcher implements Runnable
          {
             key = watcher.take();
          }
-         catch (InterruptedException e)
+         catch (ClosedWatchServiceException | InterruptedException e)
          {
             break;
          }
