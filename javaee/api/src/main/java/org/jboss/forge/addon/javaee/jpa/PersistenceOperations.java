@@ -16,6 +16,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
 /**
  * Defines JPA specific operations
@@ -28,9 +29,23 @@ public interface PersistenceOperations
    public static final String DEFAULT_UNIT_DESC = "Forge Persistence Unit";
 
    /**
-    * Setups JPA in the project
+    * Setups JPA in the project for the given attributes. If persistence unit with the name already exists, the unit will be overwritten.
+    * 
+    * @param unitName Name of the created Persistence Unit
+    * @param project Project for which the JPA is being set up
+    * @param dataSource JPA data-source configuration
+    * @param configureMetadata configure the metadata
     */
    public FileResource<?> setup(String unitName, Project project, JPADataSource dataSource, boolean configureMetadata);
+   
+   /**
+    * Get the object representing the persistence unit, null is returned when no persistence unit was found.
+    * 
+    * @param unitName Name of the Persistence Unit
+    * @param project Project in which the JPA is being looked for
+    */
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public PersistenceUnitCommon getExistingPersistenceUnit(Project project, String unitName);
 
    /**
     * Creates a new {@link JavaResource} in the specified project. If no project is available, use

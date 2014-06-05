@@ -156,6 +156,7 @@ public class JPASetupWizardTest
       List<PersistenceUnitCommon> allUnits = config.getAllPersistenceUnit();
       Assert.assertEquals(project.getFacet(MetadataFacet.class).getProjectName()
                + PersistenceOperations.DEFAULT_UNIT_SUFFIX, allUnits.get(0).getName());
+      Assert.assertEquals(1, allUnits.size());
 
       WizardCommandController tester2 = testHarness.createWizardController(JPASetupWizard.class,
                project.getRoot());
@@ -174,6 +175,33 @@ public class JPASetupWizardTest
       result = tester2.execute();
       Assert.assertFalse(result instanceof Failed);
 
+      config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
+      allUnits = config.getAllPersistenceUnit();
+      Assert.assertEquals(project.getFacet(MetadataFacet.class).getProjectName()
+               + PersistenceOperations.DEFAULT_UNIT_SUFFIX, allUnits.get(0).getName());
+      Assert.assertEquals(project.getFacet(MetadataFacet.class).getProjectName()
+               + PersistenceOperations.DEFAULT_UNIT_SUFFIX + "-1", allUnits.get(1).getName());
+      Assert.assertEquals(2, allUnits.size());
+
+      // testing the overwriting of the first persistence unit
+      WizardCommandController tester3 = testHarness.createWizardController(JPASetupWizard.class,
+               project.getRoot());
+      // Launch
+      tester3.initialize();
+      Assert.assertFalse(tester3.canMoveToPreviousStep());
+      // Setting UI values
+      tester3.setValueFor("provider", defaultProvider);
+      tester3.setValueFor("container", eap6Container);
+
+      Assert.assertTrue(tester3.canMoveToNextStep());
+      tester3.next().initialize();
+      tester3.setValueFor("persistenceUnitName", project.getFacet(MetadataFacet.class).getProjectName()
+               + PersistenceOperations.DEFAULT_UNIT_SUFFIX);
+      tester3.setValueFor("overwritePersistenceUnit", true);
+      
+      result = tester3.execute();
+      Assert.assertFalse(result instanceof Failed);
+
       // Check SUT values
       config = (PersistenceCommonDescriptor) project.getFacet(JPAFacet.class).getConfig();
       allUnits = config.getAllPersistenceUnit();
@@ -181,6 +209,7 @@ public class JPASetupWizardTest
                + PersistenceOperations.DEFAULT_UNIT_SUFFIX, allUnits.get(0).getName());
       Assert.assertEquals(project.getFacet(MetadataFacet.class).getProjectName()
                + PersistenceOperations.DEFAULT_UNIT_SUFFIX + "-1", allUnits.get(1).getName());
+      Assert.assertEquals(2, allUnits.size());
    }
 
    @Test
