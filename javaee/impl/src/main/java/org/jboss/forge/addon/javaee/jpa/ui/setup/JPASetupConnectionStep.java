@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.javaee.jpa.ui.setup;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -15,7 +14,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
-import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
@@ -37,8 +35,6 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
 public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIWizardStep
 {
@@ -71,6 +67,10 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
    private UIInput<String> persistenceUnitName;
 
    @Inject
+   @WithAttributes(label = "Overwrite Persistence Unit")
+   private UIInput<Boolean> overwritePersistenceUnit;
+
+   @Inject
    private PersistenceOperations persistenceOperations;
 
    @Override
@@ -96,12 +96,26 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      UIContext uiContext = builder.getUIContext();
+      final UIContext uiContext = builder.getUIContext();
       PersistenceContainer pc = (PersistenceContainer) uiContext.getAttributeMap().get(PersistenceContainer.class);
       initDBType(uiContext);
       initDatasourceName(uiContext);
       initPersistenceUnitName(builder);
       builder.add(dbType);
+      overwritePersistenceUnit.setEnabled(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            Project project = getSelectedProject(uiContext);
+            if (persistenceUnitName.getValue() == null)
+            {
+               return false;
+            }
+            return isExistingPersistenceUnitName(project, persistenceUnitName.getValue());
+         }
+      });
+      builder.add(overwritePersistenceUnit);
       if (pc.isDataSourceRequired())
       {
          builder.add(dataSourceName);
@@ -190,7 +204,7 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
       }
       // Validate Persistence Unit Name
       Project project = getSelectedProject(uiContext);
-      if (isExistingPersistenceUnitName(project, persistenceUnitName.getValue()))
+      if (isExistingPersistenceUnitName(project, persistenceUnitName.getValue()) && !overwritePersistenceUnit.getValue().booleanValue())
       {
          validator.addValidationError(persistenceUnitName,
                   "A persistence-unit with the name [" + persistenceUnitName.getValue()
@@ -198,23 +212,9 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
       }
    }
 
-   @SuppressWarnings({ "rawtypes", "unchecked" })
    private boolean isExistingPersistenceUnitName(Project project, String unitName)
    {
-      if (project != null && project.hasFacet(JPAFacet.class))
-      {
-         JPAFacet<?> facet = project.getFacet(JPAFacet.class);
-         PersistenceCommonDescriptor config = facet.getConfig();
-         List<PersistenceUnitCommon> allPersistenceUnit = config.getAllPersistenceUnit();
-         for (PersistenceUnitCommon persistenceUnit : allPersistenceUnit)
-         {
-            if (unitName.equals(persistenceUnit.getName()))
-            {
-               return true;
-            }
-         }
-      }
-      return false;
+      return persistenceOperations.getExistingPersistenceUnit(project, unitName) != null;
    }
 
    @Override
@@ -227,6 +227,7 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
       String puName = persistenceUnitName.getValue();
       persistenceOperations.setup(puName, project, dataSource, configureMetadata);
       return Results.success("Persistence (JPA) is installed.");
+
    }
 
    @Override

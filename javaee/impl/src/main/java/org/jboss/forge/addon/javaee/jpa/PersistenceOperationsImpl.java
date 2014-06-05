@@ -10,6 +10,7 @@ package org.jboss.forge.addon.javaee.jpa;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.Column;
@@ -58,7 +59,10 @@ public class PersistenceOperationsImpl implements PersistenceOperations
          PersistenceContainer container = dataSource.getContainer();
          PersistenceProvider provider = dataSource.getProvider();
          PersistenceCommonDescriptor config = facet.getConfig();
-         PersistenceUnitCommon unit = config.createPersistenceUnit();
+         PersistenceUnitCommon unit = getExistingPersistenceUnit(project,unitName);
+         if(unit == null) {
+            unit = config.createPersistenceUnit();
+         }
          unit.name(unitName).description(DEFAULT_UNIT_DESC);
 
          if (provider.getProvider() != null)
@@ -156,6 +160,24 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       Refactory.createToStringFromFields(javaClass, id);
       Refactory.createHashCodeAndEquals(javaClass, id);
       return javaClass;
+   }
+   
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public PersistenceUnitCommon getExistingPersistenceUnit(Project project, String unitName) {
+      if (project != null && project.hasFacet(JPAFacet.class))
+      {
+         JPAFacet<?> facet = project.getFacet(JPAFacet.class);
+         PersistenceCommonDescriptor config = facet.getConfig();
+         List<PersistenceUnitCommon> allPersistenceUnit = config.getAllPersistenceUnit();
+         for (PersistenceUnitCommon persistenceUnit : allPersistenceUnit)
+         {
+            if (unitName.equals(persistenceUnit.getName()))
+            {
+               return persistenceUnit;
+            }
+         }
+      }
+      return null;
    }
 
    private JavaResource getJavaResource(final DirectoryResource sourceDir, final String relativePath)
