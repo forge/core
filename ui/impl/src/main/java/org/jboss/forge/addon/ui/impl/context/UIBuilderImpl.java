@@ -15,6 +15,7 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 
 /**
+ * Implementation of the {@link UIBuilder} interface
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
@@ -35,11 +36,10 @@ public class UIBuilderImpl implements UIBuilder
       return context;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public UIBuilder add(InputComponent<?, ?> input)
    {
-      inputs.put(input.getName(), (InputComponent<?, Object>) input);
+      inputs.put(input.getName(), input);
       return this;
    }
 
