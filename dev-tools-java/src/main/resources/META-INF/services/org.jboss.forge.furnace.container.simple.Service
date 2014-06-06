@@ -1,1 +1,2 @@
 org.jboss.forge.addon.devtools.java.RegisterAsServiceCommand
+org.jboss.forge.addon.devtools.java.JavaEqualsHashcodeCommand
