@@ -4,7 +4,6 @@ import java.io.File;
 
 import javax.inject.Inject;
 
-import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jboss.forge.addon.dependencies.Coordinate;
@@ -161,7 +160,7 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
          // Checkout branch/tag
          if (branch.hasValue())
          {
-            gitUtils.checkout(git, branch.getValue(), true, SetupUpstreamMode.NOTRACK, false);
+            gitUtils.switchBranch(git, branch.getValue());
          }
       }
       finally
