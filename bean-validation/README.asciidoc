@@ -1,0 +1,81 @@
+== bean-validation
+:idprefix: id_ 
+
+This addon provides support of link:http://beanvalidation.org/1.1/(Bean Validation 1.1) features for dependent addons. 
+        
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+
+|javaee-spi
+|no
+|no
+
+|ui
+|no
+|no
+
+|org.jboss.forge.furnace.container:cdi
+|yes
+|no
+
+|===
+
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>bean-validation</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----
++
+[WARNING] 
+====
+This addon will only work with addons that use the CDI container
+==== 
+
+== Features
+
+Method validation:: 
+	link::http://beanvalidation.org/1.1/spec/#d0e267(Method validation) is provided out-of-box for usage in addon methods.
++
+[source,java]
+----
+
+public class MyService {
+   public void sayHello(@NotNull String name) {...}
+}
+
+@Inject private MyService service;
+service.sayHello(null); // will throw ValidationException
+----
+
+UI input validation:: 
+	you can add validators to an InputComponent by declaring the Bean Validation annotations and using the @UnwrapValidatedValue annotation
++
+[source,java]
+----
+
+public class MyCommand {
+
+	@Inject
+	@Size(min=2, max=10)
+	@UnwrapValidatedValue
+	UIInput<String> name;
+
+	...
+}
+----

@@ -57,7 +57,12 @@
          <artifactId>text</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
-
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>javaee-spi</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+      
       <!-- Furnace Container -->
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>
