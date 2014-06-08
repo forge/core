@@ -47,7 +47,7 @@ public class TouchCommand extends AbstractShellCommand
    public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.from(super.getMetadata(context), getClass()).name("touch")
-               .description("Create a new directory.");
+               .description("Create a new file or modify file timestamp.");
    }
 
    @Override
