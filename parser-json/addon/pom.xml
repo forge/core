@@ -22,6 +22,11 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>javaee-spi</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>parser-json-api</artifactId>
       </dependency>
       <dependency>
