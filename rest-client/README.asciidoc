@@ -1,0 +1,63 @@
+== rest-client
+:idprefix: id_ 
+
+
+This addon *exports services* for use in other addons. The rest-client addon allows to .  
+
+=== Depends on
+
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|javaee-spi
+|yes
+|no
+
+|org.jboss.forge.furnace.container:simple
+|no
+|no
+
+|===
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml] 
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>rest-client</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----      
+== Features
+
+ClientFactory service for JAX-RS 2.0 Client creation::
+ The ClientFactory provides a single API to create a javax.ws.rs.client.Client or a javax.ws.rs.client.ClientBuilder object.
++
+[source,java]
+----
+@Inject
+private ClientFactory factory;
+...
+Client client = factory.createClient();
+String response = client.target("http://www.iheartquotes.com/api/v1/random").request(MediaType.TEXT_PLAIN_TYPE).get(String.class);
+---- 
++
+[TIP] 
+====
+If your addon uses a container that does not support "@Inject" annotations, services such as the `ClientFactory` may also be 
+accessed via the `AddonRegistry`:
+
+----
+AddonRegistry registry = ...
+Imported<ClientFactory> imported = registry.getServices(ClientFactory.class);
+ClientFactory factory = imported.get();
+----
+==== 

@@ -90,6 +90,7 @@
             <module>parser-json</module>
             <module>parser-xml</module>
             <module>resources</module>
+            <module>rest-client</module>
             <module>ui</module>
             <module>scaffold</module>
             <module>shell</module>
@@ -115,6 +116,7 @@
             <module>addon-manager/api</module>
             <module>addon-manager/spi</module>
             <module>addons/api</module>
+            <module>bean-validation/api</module>
             <module>convert/api</module>
             <module>configuration/api</module>
             <module>dependencies/api</module>
@@ -128,6 +130,7 @@
             <module>parser-json/api</module>
             <module>parser-xml/api</module>
             <module>resources/api</module>
+            <module>rest-client</module>
             <module>ui/api</module>
             <module>ui/spi</module>
             <module>ui/test-harness</module>
