@@ -2,86 +2,54 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
+
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
-      <artifactId>javaee-parent</artifactId>
+      <artifactId>rest-client-parent</artifactId>
       <version>2.6.1-SNAPSHOT</version>
    </parent>
-   <artifactId>javaee</artifactId>
-   <name>Forge - JavaEE Addon</name>
+
+   <artifactId>rest-client</artifactId>
+   <name>Forge - Core Addon</name>
+
    <dependencies>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>javaee-api</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>javaee-impl</artifactId>
-         <scope>runtime</scope>
-         <optional>true</optional>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui</artifactId>
-         <classifier>forge-addon</classifier>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>configuration</artifactId>
-         <classifier>forge-addon</classifier>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>templates</artifactId>
-         <classifier>forge-addon</classifier>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>projects</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>parser-java</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>parser-xml</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>text</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>bean-validation</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>rest-client</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>javaee-spi</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
-
-      <!-- Furnace Container -->
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>configuration</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.resteasy</groupId>
+         <artifactId>resteasy-client</artifactId>
+         <version>3.0.8.Final</version>
+         <exclusions>
+            <exclusion>
+               <groupId>javax.activation</groupId>
+               <artifactId>activation</artifactId>
+            </exclusion>
+            <exclusion>
+               <groupId>org.jboss.spec.javax.annotation</groupId>
+               <artifactId>jboss-annotations-api_1.1_spec</artifactId>
+            </exclusion>
+            <exclusion>
+               <groupId>org.jboss.resteasy</groupId>
+               <artifactId>jaxrs-api</artifactId>
+            </exclusion>
+         </exclusions>
+      </dependency>
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>
-         <artifactId>cdi</artifactId>
+         <artifactId>simple</artifactId>
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
    </dependencies>
+
    <build>
       <plugins>
          <plugin>
