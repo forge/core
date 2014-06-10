@@ -20,9 +20,8 @@ See the JavaDocs link:http://docs.jboss.org/forge/javadoc/2.4.2-SNAPSHOT/[here]
 
 == Download Forge 2:
 Forge 2 is packaged inside an Eclipse plugin and also as a standalone ZIP file. They are independent of each other.
-It is worth mentioning that the Eclipse plugin does not support access to shell yet.
 
-- Eclipse Update Site for Eclipse Kepler or Luna (Eclipse 4.3 or 4.4) - http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/
+- Eclipse Update Site for Eclipse Luna (Eclipse 4.4) - http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/
 - Command line tools
 
 === Get Started with the Command line tools:
