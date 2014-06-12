@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -28,6 +29,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -178,6 +180,22 @@ public class RunCommandTest
       Assert.assertFalse(child2.exists());
       child.delete();
       child2.delete();
+   }
+
+   @Test
+   public void testRunCommandLinux() throws Exception
+   {
+      Assume.assumeTrue(OperatingSystemUtils.isLinux());
+      shellTest.clearScreen();
+      DirectoryResource temp = (DirectoryResource) resourceFactory.create(OperatingSystemUtils.createTempDir());
+      temp.deleteOnExit();
+      FileResource<?> fileResource = (FileResource<?>) temp.getChild("file.txt");
+      fileResource.createNewFile();
+      fileResource.deleteOnExit();
+      Result result = shellTest.execute("run -c \"ls " + temp.getFullyQualifiedName() + "\"", COMMAND_TIMEOUT,
+               TimeUnit.SECONDS);
+      Assert.assertFalse(result instanceof Failed);
+      Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString("file.txt"));
    }
 
 }

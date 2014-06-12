@@ -9,6 +9,7 @@ package org.jboss.forge.addon.shell.command;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -16,6 +17,8 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -39,11 +42,13 @@ import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
@@ -52,6 +57,7 @@ import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.util.Streams;
 
 /**
  * Implementation of the "run script" command
@@ -69,8 +75,12 @@ public class RunCommand extends AbstractShellCommand
    private UIInput<Integer> timeout;
 
    @Inject
-   @WithAttributes(label = "Arguments", type = InputType.FILE_PICKER, required = true)
+   @WithAttributes(label = "Arguments", type = InputType.FILE_PICKER, required = false)
    private UIInputMany<String> arguments;
+
+   @Inject
+   @WithAttributes(label = "Command", shortName = 'c', required = false)
+   private UIInput<String> command;
 
    @Inject
    private ShellFactory shellFactory;
@@ -85,7 +95,16 @@ public class RunCommand extends AbstractShellCommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(timeout).add(arguments);
+      builder.add(timeout).add(arguments).add(command);
+   }
+
+   @Override
+   public void validate(UIValidationContext validator)
+   {
+      if (!command.hasValue() && !arguments.hasValue())
+      {
+         validator.addValidationError(null, "Command or script file must be informed");
+      }
    }
 
    @Override
@@ -93,74 +112,119 @@ public class RunCommand extends AbstractShellCommand
    {
       Result result = Results.fail("Error executing script.");
       Resource<?> currentResource = (Resource<?>) context.getUIContext().getInitialSelection().get();
-
-      ALL: for (String path : arguments.getValue())
+      final UIOutput output = context.getUIContext().getProvider().getOutput();
+      if (command.hasValue())
       {
-         List<Resource<?>> resources = new ResourcePathResolver(resourceFactory, currentResource, path).resolve();
-         for (Resource<?> resource : resources)
+         String[] commands = command.getValue().split(" ");
+         ProcessBuilder processBuilder = new ProcessBuilder(commands);
+         Object currentDir = currentResource.getUnderlyingResourceObject();
+         if (currentDir instanceof File)
          {
-            if (resource.exists())
+            processBuilder.directory((File) currentDir);
+         }
+         final Process process = processBuilder.start();
+         ExecutorService executor = Executors.newFixedThreadPool(2);
+         // Read std out
+         executor.submit(new Runnable()
+         {
+            @Override
+            public void run()
             {
-               final PipedOutputStream stdin = new PipedOutputStream();
-               BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
-
-               PrintStream stdout = new UncloseablePrintStream(context.getUIContext().getProvider().getOutput().out());
-               PrintStream stderr = new UncloseablePrintStream(context.getUIContext().getProvider().getOutput().err());
-
-               Settings settings = new SettingsBuilder()
-                        .inputStream(new PipedInputStream(stdin))
-                        .outputStream(stdout)
-                        .outputStreamError(stderr)
-                        .create();
-
-               Shell scriptShell = shellFactory.createShell(((FileResource<?>) context.getUIContext()
-                        .getInitialSelection().get()).getUnderlyingResourceObject(), settings);
-
-               scriptShell.getConsole().setPrompt(new Prompt(""));
-
-               try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getResourceInputStream())))
+               Streams.write(process.getInputStream(), output.out());
+            }
+         });
+         // Read std err
+         executor.submit(new Runnable()
+         {
+            @Override
+            public void run()
+            {
+               Streams.write(process.getErrorStream(), output.err());
+            }
+         });
+         executor.shutdown();
+         int returnCode = process.waitFor();
+         if (returnCode == 0)
+         {
+            result = Results.success();
+         }
+         else
+         {
+            result = Results.fail("Error while executing native command. See output for more details");
+         }
+      }
+      else
+      {
+         ALL: for (String path : arguments.getValue())
+         {
+            List<Resource<?>> resources = new ResourcePathResolver(resourceFactory, currentResource, path).resolve();
+            for (Resource<?> resource : resources)
+            {
+               if (resource.exists())
                {
-                  long startTime = System.currentTimeMillis();
-                  while (reader.ready())
-                  {
-                     try
-                     {
-                        String line = reader.readLine();
-                        if (isComment(line))
-                        {
-                           // Skip Comments
-                           continue;
-                        }
-                        Integer timeoutValue = timeout.getValue();
-                        result = execute(scriptShell, writer, line, timeoutValue,
-                                 TimeUnit.SECONDS, startTime);
+                  final PipedOutputStream stdin = new PipedOutputStream();
+                  BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
 
-                        if (result != null)
-                        {
-                           if (result instanceof Failed)
-                              break ALL;
-                        }
-                     }
-                     catch (TimeoutException e)
+                  PrintStream stdout = new UncloseablePrintStream(output
+                           .out());
+                  PrintStream stderr = new UncloseablePrintStream(output
+                           .err());
+
+                  Settings settings = new SettingsBuilder()
+                           .inputStream(new PipedInputStream(stdin))
+                           .outputStream(stdout)
+                           .outputStreamError(stderr)
+                           .create();
+
+                  Shell scriptShell = shellFactory.createShell(((FileResource<?>) context.getUIContext()
+                           .getInitialSelection().get()).getUnderlyingResourceObject(), settings);
+
+                  scriptShell.getConsole().setPrompt(new Prompt(""));
+
+                  try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                           resource.getResourceInputStream())))
+                  {
+                     long startTime = System.currentTimeMillis();
+                     while (reader.ready())
                      {
-                        result = Results.fail(path + ": timed out.");
-                        break ALL;
+                        try
+                        {
+                           String line = reader.readLine();
+                           if (isComment(line))
+                           {
+                              // Skip Comments
+                              continue;
+                           }
+                           Integer timeoutValue = timeout.getValue();
+                           result = execute(scriptShell, writer, line, timeoutValue,
+                                    TimeUnit.SECONDS, startTime);
+
+                           if (result != null)
+                           {
+                              if (result instanceof Failed)
+                                 break ALL;
+                           }
+                        }
+                        catch (TimeoutException e)
+                        {
+                           result = Results.fail(path + ": timed out.");
+                           break ALL;
+                        }
                      }
                   }
+                  finally
+                  {
+                     scriptShell.close();
+                  }
                }
-               finally
+               else
                {
-                  scriptShell.close();
+                  result = Results.fail(path + ": not found.");
+                  break ALL;
                }
-            }
-            else
-            {
-               result = Results.fail(path + ": not found.");
-               break ALL;
             }
          }
       }
-
       return result;
    }
 
