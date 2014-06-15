@@ -63,6 +63,10 @@ public class ${entity.getName()}Bean implements Serializable {
 		return this.${ccEntity};
 	}
 
+	public void set${entity.getName()}(${entity.getName()} ${ccEntity}) {
+		this.${ccEntity} = ${ccEntity};
+	}
+
 	@Inject
 	private Conversation conversation;
 
