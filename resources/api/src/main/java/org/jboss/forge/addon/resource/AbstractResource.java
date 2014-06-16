@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.jboss.forge.addon.facets.AbstractFaceted;
+import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.furnace.util.Streams;
 
 /**
@@ -170,4 +171,12 @@ public abstract class AbstractResource<T> extends AbstractFaceted<ResourceFacet>
    {
       return facet != null;
    }
+
+   @Override
+   public List<Resource<?>> resolveChildren(String path)
+   {
+      ResourcePathResolver resolver = new ResourcePathResolver(getResourceFactory(), this, path);
+      return resolver.resolve();
+   }
+
 }

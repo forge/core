@@ -12,6 +12,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 import org.jboss.forge.addon.facets.Faceted;
+import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.furnace.addons.Addon;
 
 /**
@@ -131,4 +132,12 @@ public interface Resource<T> extends Faceted<ResourceFacet>
     * <code>null</code>.
     */
    ResourceFactory getResourceFactory();
+
+   /**
+    * Resolve children resources from this {@link Resource} given a specific path.
+    * 
+    * @see ResourcePathResolver
+    * @see ResourcePathResolver#resolve()
+    */
+   List<Resource<?>> resolveChildren(String path);
 }

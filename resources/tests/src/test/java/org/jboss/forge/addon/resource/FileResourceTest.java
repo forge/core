@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -77,6 +78,21 @@ public class FileResourceTest
       }
       String fileContent = Files.readFirstLine(file, Charset.defaultCharset());
       Assert.assertEquals("CONTENT", fileContent);
+   }
+
+   @Test
+   @SuppressWarnings("unchecked")
+   public void testDirectoryResourceResolveShouldBeTheSameForChild() throws IOException
+   {
+      File file = File.createTempFile("fileresourcetest", ".tmp");
+      file.deleteOnExit();
+      FileResource<?> fileResource = resourceFactory.create(FileResource.class, file);
+      FileResource<?> parentResource = resourceFactory.create(FileResource.class, file.getParentFile());
+      Assert.assertNotNull(fileResource);
+      Assert.assertNotNull(parentResource);
+      List<Resource<?>> children = parentResource.resolveChildren(file.getName());
+      Assert.assertEquals(1, children.size());
+      Assert.assertEquals(fileResource, children.get(0));
    }
 
 }
