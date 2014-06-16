@@ -25,7 +25,17 @@ public class ProjectOperations
       }
       return classes;
    }
-   
+
+   public List<JavaResource> getProjectAnnotations(Project project)
+   {
+      final List<JavaResource> classes = new ArrayList<>();
+      if (project != null)
+      {
+         project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaAnnotationsSourceVisitor(classes));
+      }
+      return classes;
+   }
+
    private static class JavaClassSourceVisitor extends JavaResourceVisitor
    {
       private final List<JavaResource> classes;
@@ -42,6 +52,33 @@ public class ProjectOperations
          {
             JavaSource<?> javaType = resource.getJavaType();
             if (javaType.isClass())
+            {
+               classes.add(resource);
+            }
+         }
+         catch (FileNotFoundException e)
+         {
+            // ignore
+         }
+      }
+   }
+
+   private static class JavaAnnotationsSourceVisitor extends JavaResourceVisitor
+   {
+      private final List<JavaResource> classes;
+
+      private JavaAnnotationsSourceVisitor(List<JavaResource> classes)
+      {
+         this.classes = classes;
+      }
+
+      @Override
+      public void visit(VisitContext context, JavaResource resource)
+      {
+         try
+         {
+            JavaSource<?> javaType = resource.getJavaType();
+            if (javaType.isAnnotation())
             {
                classes.add(resource);
             }
