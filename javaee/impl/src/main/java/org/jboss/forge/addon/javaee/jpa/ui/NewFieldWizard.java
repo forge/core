@@ -135,7 +135,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
       setupEntities(builder.getUIContext());
       setupRelationshipType();
       final List<String> types = Arrays.asList("byte", "float", "char", "double", "int", "long", "short", "boolean",
-               "String");
+               "String","java.util.Date");
       type.setCompleter(new UICompleter<String>()
       {
          @Override
