@@ -63,6 +63,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MemberSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
+import org.jboss.forge.roaster.model.util.Types;
 import org.jboss.shrinkwrap.descriptor.api.javaee6.ParamValueType;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
@@ -1012,7 +1013,11 @@ public class FacesScaffoldProvider implements ScaffoldProvider
          }
       }
 
-      if ("int".equals(pkType))
+      if (Types.isJavaLang(pkType))
+      {
+         nullablePkType = Types.toSimpleName(pkType);
+      }
+      else if ("int".equals(pkType))
       {
          nullablePkType = Integer.class.getSimpleName();
       }
