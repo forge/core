@@ -82,10 +82,10 @@ If you wish to remove any addon, you can use the following command:
 == Get Started with the Forge 2 Eclipse Plugin:
 
 ____
-Forge 2 is known to work with Eclipse Kepler (Eclipse 4.3) or higher versions. Older versions of Eclipse are not supported.
+Forge 2 is known to work with Eclipse Luna (Eclipse 4.4) or higher versions. Older versions of Eclipse are not supported.
 ____
 
-
+- Install the **JBoss Tools Usage Reporting** plugin, available in http://download.jboss.org/jbosstools/updates/development/luna/ and restart Eclipse
 - Install the Forge 2 Eclipse Plugin from http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/ and restart Eclipse
 
 This plugin starts the Forge 2 Container and your installed addons, so you can use them directly in your workspace
