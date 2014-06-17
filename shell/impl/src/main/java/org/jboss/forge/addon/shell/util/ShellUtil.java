@@ -77,7 +77,7 @@ public class ShellUtil
       return new TerminalString(label, new TerminalColor(Color.RED, Color.DEFAULT)).toString();
    }
 
-   public static TerminalString colorizeResourceTerminal(FileResource resource)
+   public static TerminalString colorizeResourceTerminal(FileResource<?> resource)
    {
       TerminalString name;
       if (resource.isDirectory())

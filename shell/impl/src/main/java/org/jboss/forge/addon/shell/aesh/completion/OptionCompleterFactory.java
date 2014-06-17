@@ -5,8 +5,8 @@ import java.io.File;
 import org.jboss.aesh.cl.completer.FileOptionCompleter;
 import org.jboss.aesh.cl.completer.OptionCompleter;
 import org.jboss.aesh.console.command.completer.CompleterInvocation;
-
-import org.jboss.aesh.filters.Filter;
+import org.jboss.aesh.io.filter.AllResourceFilter;
+import org.jboss.aesh.io.filter.DirectoryResourceFilter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -39,11 +39,11 @@ public class OptionCompleterFactory
       OptionCompleter<CompleterInvocation> strategy = null;
       if (InputType.FILE_PICKER.equals(inputType) && cwd.isDirectory())
       {
-         strategy = new FileOptionCompleter(Filter.ALL);
+         strategy = new FileOptionCompleter(new AllResourceFilter());
       }
       else if (InputType.DIRECTORY_PICKER.equals(inputType) && cwd.isDirectory())
       {
-         strategy = new FileOptionCompleter(Filter.DIRECTORY);
+         strategy = new FileOptionCompleter(new DirectoryResourceFilter());
       }
       else if (component instanceof SelectComponent)
       {
@@ -52,7 +52,7 @@ public class OptionCompleterFactory
       else if (Resource.class.isAssignableFrom(component.getValueType()))
       {
          // fall back to Resource completion.
-         strategy = new FileOptionCompleter(Filter.ALL);
+         strategy = new FileOptionCompleter(new AllResourceFilter());
       }
       // Always try UICompleter first and then fallback to the chosen strategy
       strategy = new UICompleterOptionCompleter(strategy, context, component, converterFactory);

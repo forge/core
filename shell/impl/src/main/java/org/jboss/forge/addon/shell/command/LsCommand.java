@@ -13,7 +13,6 @@ import org.jboss.aesh.console.Config;
 import org.jboss.aesh.parser.Parser;
 import org.jboss.aesh.terminal.TerminalSize;
 import org.jboss.aesh.terminal.TerminalString;
-import org.jboss.aesh.util.FileLister;
 import org.jboss.forge.addon.parser.java.resources.JavaFieldResource;
 import org.jboss.forge.addon.parser.java.resources.JavaMethodResource;
 import org.jboss.forge.addon.resource.FileResource;
@@ -39,6 +38,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 /**
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  */
+@SuppressWarnings("rawtypes")
 public class LsCommand extends AbstractShellCommand
 {
 
