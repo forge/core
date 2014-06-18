@@ -391,7 +391,7 @@ public class GitUtilsImpl implements GitUtils
    {
       if (repo != null)
       {
-         repo.getRepository().close();
+         repo.close();
       }
    }
 }
