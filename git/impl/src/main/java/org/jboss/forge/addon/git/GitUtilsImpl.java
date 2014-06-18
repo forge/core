@@ -189,19 +189,14 @@ public class GitUtilsImpl implements GitUtils
    @Override
    public Ref switchBranch(final Git repo, final String branchName)
    {
-      Ref switchedBranch = null;
       try
       {
-         switchedBranch = repo.checkout().setName(branchName).call();
-         if (switchedBranch == null)
-            throw new RuntimeException("Couldn't switch to branch " + branchName);
+         return repo.checkout().setName(branchName).call();
       }
       catch (GitAPIException e)
       {
-         e.printStackTrace();
+         throw new RuntimeException("Couldn't switch to branch " + branchName + ": " + e.getMessage(), e);
       }
-
-      return switchedBranch;
    }
 
    @Override
