@@ -11,11 +11,13 @@ import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.validate.UIValidator;
 
 import javax.inject.Inject;
+
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Driver;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -128,6 +130,10 @@ public class ConnectionProfileDetailsPage
    {
       ArrayList<String> result = new ArrayList<String>();
       FileResource<?> resource = driverLocation.getValue();
+      if (resource == null)
+      {
+         return Collections.emptyList();
+      }
       File file = (File) resource.getUnderlyingResourceObject();
       if (resource != null && resource.exists())
          try (JarFile jarFile = new JarFile(file);)
