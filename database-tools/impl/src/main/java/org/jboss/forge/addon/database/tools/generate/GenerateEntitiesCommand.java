@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManager;
+import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManagerProvider;
 import org.jboss.forge.addon.database.tools.util.HibernateToolsHelper;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -77,7 +78,7 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
    }
 
    @Inject
-   private ConnectionProfileManager manager;
+   private ConnectionProfileManagerProvider managerProvider;
    private Map<String, ConnectionProfile> profiles;
 
    @Override
@@ -85,6 +86,7 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
    {
       Project project = getSelectedProject(builder.getUIContext());
       targetPackage.setDefaultValue(calculateModelPackage(project));
+      ConnectionProfileManager manager = managerProvider.getConnectionProfileManager();
       profiles = manager.loadConnectionProfiles();
       ArrayList<String> profileNames = new ArrayList<String>();
       profileNames.add("");
