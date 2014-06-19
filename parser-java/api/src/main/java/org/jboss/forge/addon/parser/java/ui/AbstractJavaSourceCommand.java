@@ -16,6 +16,9 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
+import org.jboss.forge.addon.facets.constraints.FacetConstraintType;
+import org.jboss.forge.addon.facets.constraints.FacetConstraints;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
@@ -51,6 +54,9 @@ import org.jboss.forge.roaster.model.util.Types;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
+@FacetConstraints({
+         @FacetConstraint(value = JavaSourceFacet.class, type = FacetConstraintType.REQUIRED)
+})
 public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>> extends AbstractProjectCommand
 {
    @Inject
@@ -180,7 +186,7 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
       {
          return null;
       }
-      
+
       SOURCETYPE source = (SOURCETYPE) Roaster.create(getSourceType()).setName(named.getValue());
 
       if (targetPackage.hasValue() || targetPackage.hasDefaultValue())
