@@ -289,30 +289,38 @@ public class Bootstrap
          }
          else
          {
-            String coordinate = FORGE_ADDON_GROUP_ID + addonCoordinates;
-            AddonId[] versions = resolver.resolveVersions(coordinate).get();
-            if (versions.length == 0)
+            if (addonCoordinates.contains(":"))
             {
-               throw new IllegalArgumentException("No Artifact version found for " + coordinate);
+               addon = AddonId.fromCoordinates(addonCoordinates + ",[,)");
             }
             else
             {
-               AddonId selected = null;
-               for (int i = versions.length - 1; selected == null && i >= 0; i--)
+               String coordinate = FORGE_ADDON_GROUP_ID + addonCoordinates;
+               AddonId[] versions = resolver.resolveVersions(coordinate).get();
+               if (versions.length == 0)
                {
-                  String apiVersion = resolver.resolveAPIVersion(versions[i]).get();
-                  if (apiVersion != null && Versions.isApiCompatible(runtimeAPIVersion, new SingleVersion(apiVersion)))
+                  throw new IllegalArgumentException("No Artifact version found for " + coordinate);
+               }
+               else
+               {
+                  AddonId selected = null;
+                  for (int i = versions.length - 1; selected == null && i >= 0; i--)
                   {
-                     selected = versions[i];
+                     String apiVersion = resolver.resolveAPIVersion(versions[i]).get();
+                     if (apiVersion != null
+                              && Versions.isApiCompatible(runtimeAPIVersion, new SingleVersion(apiVersion)))
+                     {
+                        selected = versions[i];
+                     }
                   }
-               }
-               if (selected == null)
-               {
-                  throw new IllegalArgumentException("No compatible addon API version found for " + coordinate
-                           + " for API " + runtimeAPIVersion);
-               }
+                  if (selected == null)
+                  {
+                     throw new IllegalArgumentException("No compatible addon API version found for " + coordinate
+                              + " for API " + runtimeAPIVersion);
+                  }
 
-               addon = selected;
+                  addon = selected;
+               }
             }
          }
 
@@ -365,7 +373,14 @@ public class Bootstrap
          }
          else
          {
-            coordinates = FORGE_ADDON_GROUP_ID + addonCoordinates;
+            if (addonCoordinates.contains(":"))
+            {
+               coordinates = addonCoordinates + ",[,)";
+            }
+            else
+            {
+               coordinates = FORGE_ADDON_GROUP_ID + addonCoordinates;
+            }
          }
          REPOS: for (AddonRepository repository : furnace.getRepositories())
          {
