@@ -289,14 +289,19 @@ public class Bootstrap
          }
          else
          {
+            AddonId[] versions;
+            String coordinate;
             if (addonCoordinates.contains(":"))
             {
-               addon = AddonId.fromCoordinates(addonCoordinates + ",[,)");
+               coordinate = addonCoordinates;
+               versions = resolver.resolveVersions(addonCoordinates).get();
             }
             else
             {
-               String coordinate = FORGE_ADDON_GROUP_ID + addonCoordinates;
-               AddonId[] versions = resolver.resolveVersions(coordinate).get();
+               coordinate = FORGE_ADDON_GROUP_ID + addonCoordinates;
+               versions = resolver.resolveVersions(coordinate).get();
+            }
+            
                if (versions.length == 0)
                {
                   throw new IllegalArgumentException("No Artifact version found for " + coordinate);
@@ -321,7 +326,6 @@ public class Bootstrap
 
                   addon = selected;
                }
-            }
          }
 
          AddonActionRequest request = addonManager.install(addon);
@@ -375,7 +379,7 @@ public class Bootstrap
          {
             if (addonCoordinates.contains(":"))
             {
-               coordinates = addonCoordinates + ",[,)";
+               coordinates = addonCoordinates;
             }
             else
             {
