@@ -56,8 +56,8 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
    private UIInput<String> coordinate;
 
    @Inject
-   @WithAttributes(shortName = 'b', label = "Branch/Tag", description = "The branch/tag to use if different from default")
-   private UIInput<String> branch;
+   @WithAttributes(shortName = 'r', label = "Branch/Tag", description = "The branch/tag (ref) to use if different from default")
+   private UIInput<String> ref;
 
    @Inject
    private ProjectFactory projectFactory;
@@ -85,7 +85,7 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(url).add(branch).add(coordinate);
+      builder.add(url).add(ref).add(coordinate);
    }
 
    @Override
@@ -96,7 +96,7 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       DirectoryResource projectRoot = resourceFactory.create(DirectoryResource.class, tempDir);
       UIProgressMonitor progressMonitor = context.getProgressMonitor();
       UIOutput output = context.getUIContext().getProvider().getOutput();
-      progressMonitor.beginTask("Installing git addon", 4);
+      progressMonitor.beginTask("Installing Addon from Git", 4);
 
       progressMonitor.subTask("Cloning repository in " + tempDir);
 
@@ -165,10 +165,9 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       try
       {
          git = gitUtils.clone(projectRoot, url.getValue().getFullyQualifiedName());
-         // Checkout branch/tag
-         if (branch.hasValue())
+         if (ref.hasValue())
          {
-            String branchName = branch.getValue();
+            String branchName = ref.getValue();
             git.checkout().
                      setCreateBranch(true).
                      setName(branchName).

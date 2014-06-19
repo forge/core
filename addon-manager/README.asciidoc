@@ -55,6 +55,7 @@ Installation and removal of addons through UI commands::
  * *Install an Addon* - Installs a single addon from Maven 
  * *Remove Addon(s)* - Removes one or more installed addons.
  * *Build and Install an Addon* (Requires project) - Builds the current selected project and installs it as an addon.
+ * *Build and Install an Addon from Git* - Builds a git repository and installs the specified coordinate as an addon.
 +
 More installation methods will become available as they are developed/contributed, but the addon-manager does not
 currently support installation directly from Git repositories.
