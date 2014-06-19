@@ -127,7 +127,14 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       {
          if (coordinate.hasValue())
          {
-            id = AddonId.fromCoordinates(coordinate.getValue());
+            try
+            {
+               id = AddonId.fromCoordinates(coordinate.getValue());
+            }
+            catch (IllegalArgumentException e)
+            {
+               id = AddonId.from(coordinate.getValue(), buildCoordinate.getVersion());
+            }
          }
          else
          {
