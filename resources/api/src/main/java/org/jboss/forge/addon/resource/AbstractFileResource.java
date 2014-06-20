@@ -71,7 +71,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public Resource<?> getChild(final String name)
    {
-      throw new ResourceException("[" + this.getClass().getSimpleName() + "] can have no children");
+      return null;
    }
 
    /**

@@ -82,6 +82,16 @@ public class FileResourceTest
 
    @Test
    @SuppressWarnings("unchecked")
+   public void testFileResourceGetChildReturnsNull() throws IOException
+   {
+      File file = File.createTempFile("fileresourcetest", ".tmp");
+      file.deleteOnExit();
+      FileResource<?> fileResource = resourceFactory.create(FileResource.class, file);
+      Assert.assertNull(fileResource.getChild("foo"));
+   }
+
+   @Test
+   @SuppressWarnings("unchecked")
    public void testDirectoryResourceResolveShouldBeTheSameForChild() throws IOException
    {
       File file = File.createTempFile("fileresourcetest", ".tmp");
