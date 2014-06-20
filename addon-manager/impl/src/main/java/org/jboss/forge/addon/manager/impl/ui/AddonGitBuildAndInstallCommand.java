@@ -156,7 +156,7 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       }
       catch (Throwable t)
       {
-         return Results.fail("Addon " + id + " could not be installed.", t);
+         return Results.fail("Addon " + id + " could not be installed: " + t.getMessage(), t);
       }
    }
 
