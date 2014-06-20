@@ -170,7 +170,7 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
       try
       {
          JavaResource parsedJavaResource = javaSourceFacet.getJavaResource(source);
-         classAlreadyExists = parsedJavaResource.exists();
+         classAlreadyExists = parsedJavaResource != null && parsedJavaResource.exists();
       }
       catch (FileNotFoundException | ResourceException ex)
       {
