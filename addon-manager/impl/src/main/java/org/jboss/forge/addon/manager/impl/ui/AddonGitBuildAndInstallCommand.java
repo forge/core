@@ -1,11 +1,12 @@
 package org.jboss.forge.addon.manager.impl.ui;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.inject.Inject;
 
-import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
+import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.git.GitUtils;
@@ -159,7 +160,7 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       }
    }
 
-   private void cloneTo(DirectoryResource projectRoot) throws GitAPIException
+   private void cloneTo(DirectoryResource projectRoot) throws GitAPIException, IOException
    {
       Git git = null;
       try
@@ -167,13 +168,18 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
          git = gitUtils.clone(projectRoot, url.getValue().getFullyQualifiedName());
          if (ref.hasValue())
          {
-            String branchName = ref.getValue();
-            git.checkout().
-                     setCreateBranch(true).
-                     setName(branchName).
-                     setUpstreamMode(SetupUpstreamMode.TRACK).
-                     setStartPoint("origin/" + branchName).
-                     call();
+            String refName = ref.getValue();
+            String currentBranch = git.getRepository().getBranch();
+            // No need to checkout if the branch name is the same
+            if (!currentBranch.equals(refName))
+            {
+               git.checkout().
+                        setCreateBranch(true).
+                        setName(refName).
+                        setUpstreamMode(SetupUpstreamMode.TRACK).
+                        setStartPoint("origin/" + refName).
+                        call();
+            }
          }
       }
       finally
