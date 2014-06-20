@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.ui.impl.annotation;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -159,7 +160,15 @@ public class AnnotationCommandAdapter implements UICommand
          }
          args.add(value);
       }
-      Object result = method.invoke(instance, args.toArray(new Object[args.size()]));
+      Object result = null;
+      try
+      {
+         result = method.invoke(instance, args.toArray(new Object[args.size()]));
+      }
+      catch (InvocationTargetException ie)
+      {
+         throw (Exception) ie.getCause();
+      }
       if (result == null)
       {
          return Results.success();
