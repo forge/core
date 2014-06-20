@@ -210,7 +210,6 @@ public final class InputComponents
                   }
                }
             }
-//            Assert.notNull(chosenObj, "'" + value + "' is not a valid value for " + input.getName());
             result = chosenObj;
          }
          else
