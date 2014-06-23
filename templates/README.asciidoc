@@ -36,7 +36,7 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 ----
 == Features
 TemplateFactory for template creation:: 
-Allows a Template to be created, which will replace its template's variables with the provided parameters 
+Allows a Template to be created. Templates will replace its variables with the provided parameters.
 +
 [source,java]
 ----
