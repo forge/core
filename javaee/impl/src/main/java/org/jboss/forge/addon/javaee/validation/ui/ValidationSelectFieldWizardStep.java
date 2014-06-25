@@ -71,11 +71,8 @@ public class ValidationSelectFieldWizardStep extends AbstractJavaEECommand imple
                .description("Select the property you wish to constraint");
    }
 
-   @SuppressWarnings("unchecked")
-   private void setupProperty(UIContext context) throws Exception
+   private void setupProperty(final UIContext context) throws Exception
    {
-      JavaResource selectedResource = (JavaResource) context.getAttributeMap().get(JavaResource.class);
-      JavaClass<?> javaClass = selectedResource.getJavaType();
       onProperty.setItemLabelConverter(new Converter<PropertySource<?>, String>()
       {
          @Override
@@ -84,7 +81,17 @@ public class ValidationSelectFieldWizardStep extends AbstractJavaEECommand imple
             return (source == null) ? null : source.getName();
          }
       });
-      onProperty.setValueChoices((Iterable<PropertySource<?>>) javaClass.getProperties());
+      onProperty.setValueChoices(new Callable<Iterable<PropertySource<?>>>()
+      {
+         @Override
+         @SuppressWarnings("unchecked")
+         public Iterable<PropertySource<?>> call() throws Exception
+         {
+            JavaResource selectedResource = (JavaResource) context.getAttributeMap().get(JavaResource.class);
+            JavaClass<?> javaClass = selectedResource.getJavaType();
+            return (Iterable<PropertySource<?>>) javaClass.getProperties();
+         }
+      });
    }
 
    private void setupConstraint()
