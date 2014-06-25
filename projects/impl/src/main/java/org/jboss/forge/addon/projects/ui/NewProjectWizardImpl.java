@@ -147,7 +147,8 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
             targetLocation.setDefaultValue((DirectoryResource) resource);
          }
       }
-      else
+      
+      if(!targetLocation.hasDefaultValue())
       {
          targetLocation.setDefaultValue(resourceFactory.create(DirectoryResource.class,
                   OperatingSystemUtils.getUserHomeDir()));

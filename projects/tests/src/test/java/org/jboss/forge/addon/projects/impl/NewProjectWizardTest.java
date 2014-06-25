@@ -16,6 +16,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.mock.MockBuildSystem;
 import org.jboss.forge.addon.projects.mock.MockProjectType;
 import org.jboss.forge.addon.projects.ui.NewProjectWizard;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -52,7 +53,6 @@ public class NewProjectWizardTest
       return archive;
    }
 
-
    @Inject
    private UITestHarness testHarness;
 
@@ -76,6 +76,34 @@ public class NewProjectWizardTest
          wizard.execute();
 
          Assert.assertTrue(targetDirectory.exists());
+      }
+      finally
+      {
+         tempDir.delete();
+      }
+   }
+
+   @Test
+   public void testTargetDirHasDefaultValue() throws Exception
+   {
+      File tempDir = OperatingSystemUtils.createTempDir();
+      try
+      {
+         WizardCommandController wizard = testHarness.createWizardController(NewProjectWizard.class);
+         wizard.initialize();
+         Assert.assertFalse(wizard.canMoveToNextStep());
+
+         Resource<?> targetLocation = (Resource<?>) wizard.getValueFor("targetLocation");
+         Assert.assertNotNull(targetLocation);
+
+         wizard.setValueFor("named", "test");
+         wizard.setValueFor("topLevelPackage", "org.example");
+         wizard.setValueFor("type", "mock");
+         Assert.assertTrue(wizard.isValid());
+         Assert.assertTrue(wizard.canExecute());
+
+         wizard.execute();
+         Assert.assertTrue(targetLocation.exists());
       }
       finally
       {
