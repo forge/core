@@ -78,7 +78,6 @@ public class ShellImpl implements Shell, UIRuntime
 
    public ShellImpl(FileResource<?> initialResource, Settings settings, AddonRegistry addonRegistry)
    {
-      this.currentResource = initialResource;
       this.addonRegistry = addonRegistry;
 
       // Set the paths for the Aesh history, alias and export files.
@@ -99,24 +98,25 @@ public class ShellImpl implements Shell, UIRuntime
          newSettings.terminal(new POSIXTerminal());
       }
       this.console = new AeshConsoleBuilder()
-               .prompt(createPrompt())
+               .prompt(createPrompt(initialResource))
                .settings(newSettings.create())
                .commandRegistry(registry)
                .commandNotFoundHandler(new ForgeCommandNotFoundHandler(registry))
                .create();
       this.output = new ShellUIOutputImpl(console);
+      setCurrentResource(initialResource);
       this.console.start();
    }
 
    private void updatePrompt()
    {
-      console.setPrompt(createPrompt());
+      console.setPrompt(createPrompt(getCurrentResource()));
    }
 
    /**
     * Creates an initial prompt
     */
-   private Prompt createPrompt()
+   private static Prompt createPrompt(Resource<?> currentResource)
    {
       // [ currentdir]$
       if (OperatingSystemUtils.isWindows())
