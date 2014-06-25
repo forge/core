@@ -7,6 +7,9 @@
 
 package org.jboss.forge.addon.convert.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -17,11 +20,31 @@ import org.jboss.forge.addon.convert.exception.ConverterNotFoundException;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 
+/**
+ * Default implementation of the {@link ConverterFactory} interface
+ * 
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ */
 @Singleton
 public class ConverterFactoryImpl implements ConverterFactory
 {
    @Inject
    private AddonRegistry registry;
+
+   private Map<Class<?>, Class<?>> primitiveToWrapperMap = new HashMap<>();
+
+   public ConverterFactoryImpl()
+   {
+      primitiveToWrapperMap.put(Boolean.TYPE, Boolean.class);
+      primitiveToWrapperMap.put(Character.TYPE, Character.class);
+      primitiveToWrapperMap.put(Byte.TYPE, Byte.class);
+      primitiveToWrapperMap.put(Short.TYPE, Short.class);
+      primitiveToWrapperMap.put(Integer.TYPE, Integer.class);
+      primitiveToWrapperMap.put(Long.TYPE, Long.class);
+      primitiveToWrapperMap.put(Float.TYPE, Float.class);
+      primitiveToWrapperMap.put(Double.TYPE, Double.class);
+      primitiveToWrapperMap.put(Void.TYPE, Void.class);
+   }
 
    @Override
    @SuppressWarnings({ "unchecked" })
@@ -48,7 +71,7 @@ public class ConverterFactoryImpl implements ConverterFactory
          {
             result = (Converter<S, T>) Converters.TO_STRING;
          }
-         else if (target.isAssignableFrom(source))
+         else if (areTypesAssignable(source, target))
          {
             result = (Converter<S, T>) Converters.NOOP;
          }
@@ -73,5 +96,30 @@ public class ConverterFactoryImpl implements ConverterFactory
          }
       }
       return result;
+   }
+
+   /**
+    * Check if the parameters are primitive and if they can be assignable
+    */
+   private boolean areTypesAssignable(Class<?> source, Class<?> target)
+   {
+      if (target.isAssignableFrom(source))
+      {
+         return true;
+      }
+      else if (!source.isPrimitive() && !target.isPrimitive())
+      {
+         return false;
+      }
+      else if (source.isPrimitive())
+      {
+         // source is primitive
+         return target == primitiveToWrapperMap.get(source);
+      }
+      else
+      {
+         // target is primitive
+         return primitiveToWrapperMap.get(target) == source;
+      }
    }
 }
