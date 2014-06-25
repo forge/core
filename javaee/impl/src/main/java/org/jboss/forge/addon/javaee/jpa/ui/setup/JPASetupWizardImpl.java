@@ -150,6 +150,7 @@ public class JPASetupWizardImpl extends AbstractJavaEECommand implements JPASetu
       JPAFacet<?> facet = jpaVersion.getValue();
       if (facetFactory.install(project, facet))
       {
+         context.getUIContext().setSelection(facet.getConfigFile());
          return Results.success();
       }
       return Results.fail("Could not install JPA.");

@@ -24,6 +24,7 @@ import org.jboss.forge.addon.javaee.jpa.providers.JavaEEDefaultProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.command.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -116,6 +117,12 @@ public class JPASetupWizardTest
          }
       });
       tester.execute();
+
+      Object selection = tester.getContext().getSelection();
+      Assert.assertNotNull(selection);
+      Assert.assertTrue(selection instanceof FileResource);
+      Assert.assertEquals("persistence.xml", ((FileResource) selection).getName());
+
       // Ensure that the two pages were invoked
       Assert.assertEquals(2, counter.get());
 
@@ -198,7 +205,7 @@ public class JPASetupWizardTest
       tester3.setValueFor("persistenceUnitName", project.getFacet(MetadataFacet.class).getProjectName()
                + PersistenceOperations.DEFAULT_UNIT_SUFFIX);
       tester3.setValueFor("overwritePersistenceUnit", true);
-      
+
       result = tester3.execute();
       Assert.assertFalse(result instanceof Failed);
 
