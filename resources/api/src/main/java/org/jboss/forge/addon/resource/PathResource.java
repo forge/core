@@ -11,6 +11,7 @@ import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
  *
  */
 public interface PathResource extends Resource<Path>,
+         CreatableResource<PathResource, Path>,
          WriteableResource<PathResource, Path>
 {
    /**

@@ -1,39 +1,42 @@
 package org.jboss.forge.addon.resource;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
  * Resource Operations
  *
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author Shane Bryzak
+ * @author <a href="lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface ResourceOperations<T>
 {
-   public boolean resourceExists(T resource);
+   boolean exists(T resource);
 
-   public boolean resourceExistsAndIsDirectory(T resource);
+   boolean existsAndIsDirectory(T resource);
 
-   public T[] listResources(T resource);
+   T[] listChildren(T resource);
 
-   public long getResourceLength(T resource);
+   long getLength(T resource);
 
-   public boolean renameResource(T src, T dest);
+   boolean rename(T src, T dest);
 
-   public void copyResource(T src, T dest) throws IOException;
+   void copy(T src, T dest) throws ResourceException;
 
-   public boolean deleteResource(T resource);
+   boolean delete(T resource);
 
-   public void deleteResourceOnExit(T resource);
+   void deleteOnExit(T resource);
 
-   public boolean createNewResource(T resource) throws IOException;
+   boolean create(T resource) throws ResourceException;
 
-   public boolean mkdir(T resource);
+   boolean mkdir(T resource) throws ResourceException;
 
-   public boolean mkdirs(T resource);
+   boolean mkdirs(T resource) throws ResourceException;
 
-   public OutputStream createOutputStream(T resource) throws IOException;
+   OutputStream createOutputStream(T resource) throws ResourceException;
 
-   public InputStream createInputStream(T resource) throws IOException;
+   InputStream createInputStream(T resource) throws ResourceException;
+
+   long getLastModifiedTime(T resource);
 }

@@ -76,6 +76,7 @@ public interface Resource<T> extends Faceted<ResourceFacet>
    /**
     * Create a new resource instance for the target resource reference of the type that this current resource is.
     * 
+    * @deprecated use {@link ResourceFactory#create(Class, Object)}
     * @param file The target reference to create the resource instance from.
     * @return A new {@link Resource} instance.
     */

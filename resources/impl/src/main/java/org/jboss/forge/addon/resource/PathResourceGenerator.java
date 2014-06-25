@@ -55,7 +55,8 @@ public class PathResourceGenerator implements ResourceGenerator<PathResource, Ob
       }
       catch (IOException ex)
       {
-         throw new ResourceException(ex);
+         throw new ResourceException("Error occurred while generating resource for resource [" + resource
+                  + "] of type [" + type + "]", ex);
       }
    }
 

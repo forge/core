@@ -1,71 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-   <modelVersion>4.0.0</modelVersion>
-   <parent>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jboss.forge.addon</groupId>
+    <artifactId>javaee-parent</artifactId>
+    <version>2.6.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>javaee-tests</artifactId>
+  <name>Forge - JavaEE Tests</name>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.spec</groupId>
+        <artifactId>jboss-javaee-6.0</artifactId>
+        <version>3.0.2.Final</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.spec.javax.faces</groupId>
+        <artifactId>jboss-jsf-api_2.0_spec</artifactId>
+        <version>1.0.0.Final</version>
+        <scope>provided</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency>
       <groupId>org.jboss.forge.addon</groupId>
-      <artifactId>javaee-parent</artifactId>
-      <version>2.6.1-SNAPSHOT</version>
-   </parent>
-   <artifactId>javaee-tests</artifactId>
-   <name>Forge - JavaEE Tests</name>
-   <dependencies>
-
-      <dependency>
-         <!-- TODO Remove this impl dependency -->
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>javaee-impl</artifactId>
-         <scope>provided</scope>
-      </dependency>
-
-
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>projects</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>maven</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui-test-harness</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>javaee</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-
-      <dependency>
-         <groupId>org.jboss.forge.furnace.test</groupId>
-         <artifactId>furnace-test-harness</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.furnace.test</groupId>
-         <artifactId>arquillian-furnace-classpath</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>shell-test-harness</artifactId>
-         <classifier>forge-addon</classifier>
-         <scope>test</scope>
-      </dependency>
-
-      <!-- Furnace Container -->
-      <dependency>
-         <groupId>org.jboss.forge.furnace.container</groupId>
-         <artifactId>cdi</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-   </dependencies>
+      <artifactId>javaee-impl</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.forge.addon</groupId>
+      <artifactId>projects</artifactId>
+      <classifier>forge-addon</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.forge.addon</groupId>
+      <artifactId>maven</artifactId>
+      <classifier>forge-addon</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.forge.addon</groupId>
+      <artifactId>ui-test-harness</artifactId>
+      <classifier>forge-addon</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.forge.addon</groupId>
+      <artifactId>ui</artifactId>
+      <classifier>forge-addon</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.forge.addon</groupId>
+      <artifactId>javaee</artifactId>
+      <classifier>forge-addon</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.forge.furnace.test</groupId>
+      <artifactId>furnace-test-harness</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.forge.furnace.test</groupId>
+      <artifactId>arquillian-furnace-classpath</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.forge.addon</groupId>
+      <artifactId>shell-test-harness</artifactId>
+      <classifier>forge-addon</classifier>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.forge.furnace.container</groupId>
+      <artifactId>cdi</artifactId>
+      <classifier>forge-addon</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.faces</groupId>
+      <artifactId>jboss-jsf-api_2.0_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>

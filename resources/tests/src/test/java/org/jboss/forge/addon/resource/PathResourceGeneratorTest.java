@@ -58,7 +58,7 @@ public class PathResourceGeneratorTest
       tempFile.toFile().deleteOnExit();
       PathResource resource = factory.create(tempFile).reify(PathResource.class);
       Assert.assertNotNull(resource);
-      Assert.assertEquals(PathResourceImpl.class, resource.getClass());
+      Assert.assertTrue(resource instanceof PathResource);
    }
 
    @Test
@@ -68,7 +68,7 @@ public class PathResourceGeneratorTest
       file.toFile().deleteOnExit();
       PathResource resource = factory.create(file).reify(PathResource.class);
       Assert.assertNotNull(resource);
-      Assert.assertEquals(PathResourceImpl.class, resource.getClass());
+      Assert.assertTrue(resource instanceof PathResource);
    }
 
    @Test

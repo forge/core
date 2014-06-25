@@ -29,6 +29,12 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       super(factory, null);
       this.file = file;
    }
+   
+   @Override
+   public boolean create()
+   {
+      return createNewFile();
+   }
 
    @Override
    public String getName()
@@ -51,14 +57,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public InputStream getResourceInputStream()
    {
-      try
-      {
-         return getFileOperations().createInputStream(file);
-      }
-      catch (IOException e)
-      {
-         throw new ResourceException("cannot obtain stream to file: file does not exist: " + file.getAbsolutePath());
-      }
+      return getFileOperations().createInputStream(file);
    }
 
    @Override
@@ -87,13 +86,13 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public boolean exists()
    {
-      return getFileOperations().resourceExists(file);
+      return getFileOperations().exists(file);
    }
 
    @Override
    public boolean isDirectory()
    {
-      return getFileOperations().resourceExistsAndIsDirectory(file);
+      return getFileOperations().existsAndIsDirectory(file);
    }
 
    @Override
@@ -123,7 +122,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public boolean delete()
    {
-      return delete(false);
+      return getFileOperations().delete(file);
    }
 
    @Override
@@ -138,7 +137,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          return false;
       }
 
-      File[] listFiles = getFileOperations().listResources(file);
+      File[] listFiles = getFileOperations().listChildren(file);
       if ((listFiles != null) && (listFiles.length != 0))
       {
          throw new RuntimeException("directory not empty");
@@ -149,7 +148,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          System.gc(); // ensure no lingering handles that would prevent deletion
       }
 
-      if (getFileOperations().deleteResource(file))
+      if (getFileOperations().delete(file))
       {
          return true;
       }
@@ -159,7 +158,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public void deleteOnExit()
    {
-      getFileOperations().deleteResourceOnExit(file);
+      getFileOperations().deleteOnExit(file);
    }
 
    private boolean _deleteRecursive(final File file, final boolean collect)
@@ -174,18 +173,18 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          return false;
       }
 
-      File[] children = getFileOperations().listResources(file);
+      File[] children = getFileOperations().listChildren(file);
       if (children != null)
       {
          for (File sf : children)
          {
-            if (getFileOperations().resourceExistsAndIsDirectory(sf))
+            if (getFileOperations().existsAndIsDirectory(sf))
             {
                _deleteRecursive(sf, false);
             }
             else
             {
-               if (!getFileOperations().deleteResource(sf))
+               if (!getFileOperations().delete(sf))
                {
                   throw new RuntimeException("failed to delete: " + sf.getAbsolutePath());
                }
@@ -193,7 +192,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          }
       }
 
-      return getFileOperations().deleteResource(file);
+      return getFileOperations().delete(file);
    }
 
    @Override
@@ -271,19 +270,12 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public boolean createNewFile()
    {
-      try
+      getParent().mkdirs();
+      if (getFileOperations().create(file))
       {
-         getParent().mkdirs();
-         if (getFileOperations().createNewResource(file))
-         {
-            return true;
-         }
-         return false;
+         return true;
       }
-      catch (IOException e)
-      {
-         throw new ResourceException("Error while creating a new file", e);
-      }
+      return false;
    }
 
    @Override
@@ -315,7 +307,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
 
    private boolean renameTo(final File target)
    {
-      if (getFileOperations().renameResource(file, target))
+      if (getFileOperations().rename(file, target))
       {
          file = target;
          return true;
@@ -326,25 +318,25 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public long getSize()
    {
-      return getFileOperations().getResourceLength(file);
+      return getFileOperations().getLength(file);
    }
 
    @Override
    public boolean isExecutable()
    {
-      return (this.file.canExecute() && !getFileOperations().resourceExistsAndIsDirectory(file));
+      return (this.file.canExecute() && !getFileOperations().existsAndIsDirectory(file));
    }
 
    @Override
    public boolean isReadable()
    {
-      return (this.file.canRead() && !getFileOperations().resourceExistsAndIsDirectory(file));
+      return (this.file.canRead() && !getFileOperations().existsAndIsDirectory(file));
    }
 
    @Override
    public boolean isWritable()
    {
-      return (this.file.canWrite() && !getFileOperations().resourceExistsAndIsDirectory(file));
+      return (this.file.canWrite() && !getFileOperations().existsAndIsDirectory(file));
    }
 
    @Override
@@ -367,7 +359,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
 
    protected ResourceOperations<File> getFileOperations()
    {
-      return getResourceFactory().<File>getResourceOperations(File.class);
+      return getResourceFactory().<File> getResourceOperations(File.class);
    }
 
    @Override
@@ -385,13 +377,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    @Override
    public OutputStream getResourceOutputStream()
    {
-      try
-      {
-         return getFileOperations().createOutputStream(file);
-      }
-      catch (IOException ioe)
-      {
-         throw new ResourceException("Error while creating OutputStream for Resource " + this, ioe);
-      }
+      return getFileOperations().createOutputStream(file);
    }
 }

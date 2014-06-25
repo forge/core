@@ -29,45 +29,52 @@ public enum DefaultFileOperations implements ResourceOperations<File>
    INSTANCE;
 
    @Override
-   public boolean resourceExists(File f)
+   public boolean exists(File f)
    {
       return f.exists();
    }
 
    @Override
-   public boolean resourceExistsAndIsDirectory(File f)
+   public boolean existsAndIsDirectory(File f)
    {
       return f.isDirectory();
    }
 
    @Override
-   public File[] listResources(File f)
+   public File[] listChildren(File f)
    {
       return f.listFiles();
    }
 
    @Override
-   public long getResourceLength(File f)
+   public long getLength(File f)
    {
       return f.length();
    }
 
    @Override
-   public boolean deleteResource(File file)
+   public boolean delete(File file)
    {
       return file.delete();
    }
 
    @Override
-   public void deleteResourceOnExit(File file)
+   public void deleteOnExit(File file)
    {
       file.deleteOnExit();
    }
 
    @Override
-   public boolean createNewResource(File file) throws IOException
+   public boolean create(File file) throws ResourceException
    {
-      return file.createNewFile();
+      try
+      {
+         return file.createNewFile();
+      }
+      catch (IOException e)
+      {
+         throw new ResourceException(e.getMessage(), e);
+      }
    }
 
    @Override
@@ -83,19 +90,33 @@ public enum DefaultFileOperations implements ResourceOperations<File>
    }
 
    @Override
-   public OutputStream createOutputStream(File file) throws IOException
+   public OutputStream createOutputStream(File file) throws ResourceException
    {
-      return new FileOutputStream(file);
+      try
+      {
+         return new FileOutputStream(file);
+      }
+      catch (FileNotFoundException e)
+      {
+         throw new ResourceException(e.getMessage(), e);
+      }
    }
 
    @Override
-   public InputStream createInputStream(File file) throws IOException
+   public InputStream createInputStream(File file) throws ResourceException
    {
-      return new BufferedInputStream(new FileInputStream(file));
+      try
+      {
+         return new BufferedInputStream(new FileInputStream(file));
+      }
+      catch (FileNotFoundException e)
+      {
+         throw new ResourceException(e.getMessage(), e);
+      }
    }
 
    @Override
-   public boolean renameResource(File srcFile, File destFile)
+   public boolean rename(File srcFile, File destFile)
    {
       if (srcFile == null)
       {
@@ -109,7 +130,7 @@ public enum DefaultFileOperations implements ResourceOperations<File>
    }
 
    @Override
-   public void copyResource(File srcFile, File destFile) throws IOException
+   public void copy(File srcFile, File destFile) throws ResourceException
    {
       if (srcFile == null)
       {
@@ -121,28 +142,35 @@ public enum DefaultFileOperations implements ResourceOperations<File>
       }
       if (srcFile.exists() == false)
       {
-         throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
+         throw new ResourceException("Source '" + srcFile + "' does not exist");
       }
       if (srcFile.isDirectory())
       {
-         throw new IOException("Source '" + srcFile + "' exists but is a directory");
+         throw new ResourceException("Source '" + srcFile + "' exists but is a directory");
       }
-      if (srcFile.getCanonicalPath().equals(destFile.getCanonicalPath()))
+      try
       {
-         throw new IOException("Source '" + srcFile + "' and destination '" + destFile + "' are the same");
-      }
-      if (destFile.getParentFile() != null && destFile.getParentFile().exists() == false)
-      {
-         if (destFile.getParentFile().mkdirs() == false)
+         if (srcFile.getCanonicalPath().equals(destFile.getCanonicalPath()))
          {
-            throw new IOException("Destination '" + destFile + "' directory cannot be created");
+            throw new ResourceException("Source '" + srcFile + "' and destination '" + destFile + "' are the same");
          }
+         if (destFile.getParentFile() != null && destFile.getParentFile().exists() == false)
+         {
+            if (destFile.getParentFile().mkdirs() == false)
+            {
+               throw new ResourceException("Destination '" + destFile + "' directory cannot be created");
+            }
+         }
+         if (destFile.exists() && destFile.canWrite() == false)
+         {
+            throw new ResourceException("Destination '" + destFile + "' exists but is read-only");
+         }
+         doCopyFile(srcFile, destFile);
       }
-      if (destFile.exists() && destFile.canWrite() == false)
+      catch (IOException e)
       {
-         throw new IOException("Destination '" + destFile + "' exists but is read-only");
+         throw new ResourceException(e.getMessage(), e);
       }
-      doCopyFile(srcFile, destFile);
    }
 
    /**
@@ -192,5 +220,11 @@ public enum DefaultFileOperations implements ResourceOperations<File>
          throw new IOException("Failed to copy full contents from '" +
                   srcFile + "' to '" + destFile + "'");
       }
+   }
+
+   @Override
+   public long getLastModifiedTime(File file)
+   {
+      return file.lastModified();
    }
 }

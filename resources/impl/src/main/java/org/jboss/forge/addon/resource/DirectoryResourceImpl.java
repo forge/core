@@ -34,6 +34,12 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    }
 
    @Override
+   public boolean create()
+   {
+      return mkdirs();
+   }
+
+   @Override
    protected List<Resource<?>> doListResources()
    {
       if (isStale())
@@ -46,7 +52,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
          refresh();
          listCache = new LinkedList<>();
 
-         File[] files = getFileOperations().listResources(getUnderlyingResourceObject());
+         File[] files = getFileOperations().listChildren(getUnderlyingResourceObject());
          if (files != null)
          {
             for (File f : files)
@@ -59,44 +65,38 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
       return listCache;
    }
 
-   /**
-    * Obtain a reference to the child resource.
-    */
    @Override
    public Resource<?> getChild(final String name)
    {
       return getResourceFactory().create(new File(getUnderlyingResourceObject().getAbsolutePath(), name));
    }
 
-   /**
-    * Obtain a reference to the child {@link DirectoryResourceImpl}. If that resource does not exist, return a new
-    * instance. If the resource exists and is not a {@link DirectoryResourceImpl}, throw {@link ResourceException}
-    */
    @Override
-   public DirectoryResourceImpl getChildDirectory(final String name) throws ResourceException
+   public DirectoryResource getChildDirectory(final String name) throws ResourceException
    {
       Resource<?> result = getChild(name);
-      if (!(result instanceof DirectoryResourceImpl))
+
+      if (!(result instanceof DirectoryResource))
       {
          if (result.exists())
          {
             throw new ResourceException("The resource [" + result.getFullyQualifiedName()
                      + "] is not a DirectoryResource");
          }
+         else
+         {
+            result = getResourceFactory().create(DirectoryResource.class,
+                     new File(getUnderlyingResourceObject().getAbsoluteFile(), name));
+         }
       }
 
-      if (!(result instanceof DirectoryResourceImpl))
-      {
-         result = new DirectoryResourceImpl(getResourceFactory(), new File(getUnderlyingResourceObject()
-                  .getAbsoluteFile(), name));
-      }
-      return (DirectoryResourceImpl) result;
+      return (DirectoryResource) result;
    }
 
    @Override
-   public DirectoryResourceImpl getOrCreateChildDirectory(String name)
+   public DirectoryResource getOrCreateChildDirectory(String name)
    {
-      DirectoryResourceImpl child = getChildDirectory(name);
+      DirectoryResource child = getChildDirectory(name);
       if (!child.exists())
       {
          child.mkdir();
@@ -104,11 +104,6 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
       return child;
    }
 
-   /**
-    * Using the given type, obtain a reference to the child resource of the given type. If the result is not of the
-    * requested type and does not exist, return null. If the result is not of the requested type and exists, throw
-    * {@link ResourceException}
-    */
    @Override
    @SuppressWarnings("unchecked")
    public <E, T extends Resource<E>> T getChildOfType(final Class<T> type, final String name) throws ResourceException
@@ -133,7 +128,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    }
 
    @Override
-   public DirectoryResourceImpl createTempResource()
+   public DirectoryResource createTempResource()
    {
       try
       {
@@ -148,18 +143,18 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    }
 
    @Override
-   public DirectoryResourceImpl createFrom(final File file)
+   public DirectoryResource createFrom(final File file)
    {
-      if (getFileOperations().resourceExists(file) && !getFileOperations().resourceExistsAndIsDirectory(file))
+      if (getFileOperations().exists(file) && !getFileOperations().existsAndIsDirectory(file))
       {
          throw new ResourceException("File reference is not a directory: " + file.getAbsolutePath());
       }
-      else if (!getFileOperations().resourceExists(file))
+      else if (!getFileOperations().exists(file))
       {
          getFileOperations().mkdirs(file);
       }
 
-      return new DirectoryResourceImpl(getResourceFactory(), file);
+      return getResourceFactory().create(DirectoryResource.class, file);
    }
 
    @Override

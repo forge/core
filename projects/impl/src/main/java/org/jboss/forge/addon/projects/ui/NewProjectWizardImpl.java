@@ -21,6 +21,7 @@ import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
+import org.jboss.forge.addon.resource.CreatableResource;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.PathResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -78,7 +79,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
 
    @Inject
    @WithAttributes(label = "Project location", type = InputType.DIRECTORY_PICKER)
-   private UIInput<Resource> targetLocation;
+   private UIInput<Resource<?>> targetLocation;
 
    @Inject
    @WithAttributes(label = "Overwrite existing project location")
@@ -365,12 +366,11 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
    public Result execute(UIExecutionContext context) throws Exception
    {
       Result result = Results.success("Project named '" + named.getValue() + "' has been created.");
-      Resource directory = targetLocation.getValue();
-      Resource targetDir = directory.getChild(named.getValue());
+      Resource<?> directory = targetLocation.getValue();
+      Resource<?> targetDir = directory.getChild(named.getValue());
 
-      if ((DirectoryResource.class.isInstance(targetDir) && ((DirectoryResource)targetDir).mkdirs()) ||
-          (PathResource.class.isInstance(targetDir) && ((PathResource)targetDir).mkdirs()) ||
-           overwrite.getValue())
+      if ((targetDir instanceof CreatableResource) && ((CreatableResource<?, ?>) targetDir).create()
+               || overwrite.getValue())
       {
          ProjectType value = type.getValue();
 
@@ -415,7 +415,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       return named;
    }
 
-   public UIInput<Resource> getTargetLocation()
+   public UIInput<Resource<?>> getTargetLocation()
    {
       return targetLocation;
    }

@@ -21,19 +21,19 @@ public enum DefaultPathOperations implements ResourceOperations<Path>
    INSTANCE;
 
    @Override
-   public boolean resourceExists(Path resource)
+   public boolean exists(Path resource)
    {
       return Files.exists(resource);
    }
 
    @Override
-   public boolean resourceExistsAndIsDirectory(Path resource)
+   public boolean existsAndIsDirectory(Path resource)
    {
       return Files.isDirectory(resource);
    }
 
    @Override
-   public Path[] listResources(Path resource)
+   public Path[] listChildren(Path resource)
    {
       List<Path> resources = new ArrayList<Path>();
 
@@ -51,7 +51,7 @@ public enum DefaultPathOperations implements ResourceOperations<Path>
       }
       catch (IOException ex)
       {
-         throw new ResourceException(ex);
+         throw new ResourceException(ex.getMessage(), ex);
       }
 
       for (Path entry : stream)
@@ -63,7 +63,7 @@ public enum DefaultPathOperations implements ResourceOperations<Path>
    }
 
    @Override
-   public long getResourceLength(Path resource)
+   public long getLength(Path resource)
    {
       if (Files.isDirectory(resource))
       {
@@ -76,28 +76,38 @@ public enum DefaultPathOperations implements ResourceOperations<Path>
       }
       catch (IOException ex)
       {
-         throw new ResourceException(ex);
+         throw new ResourceException(ex.getMessage(), ex);
       }
    }
 
    @Override
-   public boolean renameResource(Path src, Path dest)
+   public boolean rename(Path src, Path dest)
    {
-      try {
+      try
+      {
          return Files.move(src, dest) != null;
-     } catch (IOException ex) {
-         throw new ResourceException(ex);
-     }
+      }
+      catch (IOException ex)
+      {
+         throw new ResourceException(ex.getMessage(), ex);
+      }
    }
 
    @Override
-   public void copyResource(Path src, Path dest) throws IOException
+   public void copy(Path src, Path dest) throws ResourceException
    {
-      Files.copy(src, dest);
+      try
+      {
+         Files.copy(src, dest);
+      }
+      catch (IOException e)
+      {
+         throw new ResourceException(e.getMessage(), e);
+      }
    }
 
    @Override
-   public boolean deleteResource(Path resource)
+   public boolean delete(Path resource)
    {
       try
       {
@@ -106,24 +116,31 @@ public enum DefaultPathOperations implements ResourceOperations<Path>
       }
       catch (IOException ex)
       {
-         throw new ResourceException(ex);
+         throw new ResourceException(ex.getMessage(), ex);
       }
    }
 
    @Override
-   public void deleteResourceOnExit(Path resource)
+   public void deleteOnExit(Path resource)
    {
       resource.toFile().deleteOnExit();
    }
 
    @Override
-   public boolean createNewResource(Path resource) throws IOException
+   public boolean create(Path resource) throws ResourceException
    {
-      return Files.createFile(resource) != null;
+      try
+      {
+         return Files.createFile(resource) != null;
+      }
+      catch (IOException e)
+      {
+         throw new ResourceException(e.getMessage(), e);
+      }
    }
 
    @Override
-   public boolean mkdir(Path resource)
+   public boolean mkdir(Path resource) throws ResourceException
    {
       try
       {
@@ -135,12 +152,12 @@ public enum DefaultPathOperations implements ResourceOperations<Path>
       }
       catch (IOException ex)
       {
-         throw new ResourceException(ex);
+         throw new ResourceException(ex.getMessage(), ex);
       }
    }
 
    @Override
-   public boolean mkdirs(Path resource)
+   public boolean mkdirs(Path resource) throws ResourceException
    {
       try
       {
@@ -148,19 +165,46 @@ public enum DefaultPathOperations implements ResourceOperations<Path>
       }
       catch (IOException ex)
       {
-         throw new ResourceException(ex);
+         throw new ResourceException(ex.getMessage(), ex);
       }
    }
 
    @Override
-   public OutputStream createOutputStream(Path resource) throws IOException
+   public OutputStream createOutputStream(Path resource) throws ResourceException
    {
-      return  Files.newOutputStream(resource);
+      try
+      {
+         return Files.newOutputStream(resource);
+      }
+      catch (IOException e)
+      {
+         throw new ResourceException(e.getMessage(), e);
+      }
    }
 
    @Override
-   public InputStream createInputStream(Path resource) throws IOException
+   public InputStream createInputStream(Path resource) throws ResourceException
    {
-      return Files.newInputStream(resource);
+      try
+      {
+         return Files.newInputStream(resource);
+      }
+      catch (IOException e)
+      {
+         throw new ResourceException(e.getMessage(), e);
+      }
+   }
+
+   @Override
+   public long getLastModifiedTime(Path resource)
+   {
+      try
+      {
+         return Files.getLastModifiedTime(resource).toMillis();
+      }
+      catch (IOException e)
+      {
+         throw new ResourceException(e.getMessage(), e);
+      }
    }
 }

@@ -10,6 +10,7 @@ import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface FileResource<T extends FileResource<T>> extends Resource<File>,
+         CreatableResource<FileResource<T>, File>,
          WriteableResource<FileResource<T>, File>
 {
    /**
@@ -31,17 +32,6 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>,
    public void refresh();
 
    /**
-    * Create a new single directory for this resource. This will not succeed if any parent directories needed for this
-    * resource to exist are missing. You should consider using {@link #mkdirs()}
-    */
-   public boolean mkdir();
-
-   /**
-    * Create all directories required for this resource to exist.
-    */
-   public boolean mkdirs();
-
-   /**
     * Requests that the file or directory denoted by this resource be deleted when the virtual machine terminates.
     * <p>
     * Once deletion has been requested, it is not possible to cancel the request. This method should therefore be used
@@ -51,6 +41,8 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>,
 
    /**
     * Create the file in the underlying resource system. Necessary directory paths will be created automatically.
+    * 
+    * @deprecated See {@link #create()})
     */
    public boolean createNewFile();
 
@@ -58,6 +50,17 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>,
     * Create a temporary {@link FileResource}
     */
    public T createTempResource();
+
+   /**
+    * Create a new single directory for this resource. This will not succeed if any parent directories needed for this
+    * resource to exist are missing. You should consider using {@link #mkdirs()}
+    */
+   public boolean mkdir();
+
+   /**
+    * Create all directories required for this resource to exist.
+    */
+   public boolean mkdirs();
 
    /**
     * Rename this {@link Resource} to the given path.

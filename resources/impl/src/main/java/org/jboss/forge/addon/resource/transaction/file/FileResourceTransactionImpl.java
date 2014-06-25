@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceOperations;
 import org.jboss.forge.addon.resource.events.ResourceCreated;
@@ -35,8 +36,8 @@ import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.xadisk.additional.XAFileInputStreamWrapper;
 import org.xadisk.additional.XAFileOutputStreamWrapper;
-import org.xadisk.bridge.proxies.interfaces.XADiskBasicIOOperations.PermissionType;
 import org.xadisk.bridge.proxies.interfaces.Session;
+import org.xadisk.bridge.proxies.interfaces.XADiskBasicIOOperations.PermissionType;
 import org.xadisk.bridge.proxies.interfaces.XAFileInputStream;
 import org.xadisk.bridge.proxies.interfaces.XAFileOutputStream;
 import org.xadisk.bridge.proxies.interfaces.XAFileSystem;
@@ -276,7 +277,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, Closeab
    }
 
    @Override
-   public boolean resourceExists(File f)
+   public boolean exists(File f)
    {
       assertSessionCreated();
       try
@@ -299,7 +300,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, Closeab
    }
 
    @Override
-   public boolean resourceExistsAndIsDirectory(File f)
+   public boolean existsAndIsDirectory(File f)
    {
       assertSessionCreated();
       try
@@ -322,7 +323,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, Closeab
    }
 
    @Override
-   public File[] listResources(File file)
+   public File[] listChildren(File file)
    {
       assertSessionCreated();
       try
@@ -346,7 +347,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, Closeab
    }
 
    @Override
-   public long getResourceLength(File f)
+   public long getLength(File f)
    {
       assertSessionCreated();
       try
@@ -360,7 +361,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, Closeab
    }
 
    @Override
-   public boolean renameResource(File src, File dest)
+   public boolean rename(File src, File dest)
    {
       assertSessionCreated();
       try
@@ -379,7 +380,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, Closeab
    }
 
    @Override
-   public void copyResource(File src, File dest) throws IOException
+   public void copy(File src, File dest) throws ResourceException
    {
       assertSessionCreated();
       try
@@ -393,7 +394,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, Closeab
    }
 
    @Override
-   public boolean deleteResource(File f)
+   public boolean delete(File f)
    {
       assertSessionCreated();
       try
@@ -416,7 +417,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, Closeab
    }
 
    @Override
-   public boolean createNewResource(File file) throws IOException
+   public boolean create(File file) throws ResourceException
    {
       assertSessionCreated();
       try
@@ -462,7 +463,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, Closeab
          // Must create the whole structure
          LinkedList<File> stack = new LinkedList<>();
          File parent = file;
-         while (parent != null && !resourceExistsAndIsDirectory(parent))
+         while (parent != null && !existsAndIsDirectory(parent))
          {
             stack.push(parent);
             parent = parent.getParentFile();
@@ -480,7 +481,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, Closeab
    }
 
    @Override
-   public OutputStream createOutputStream(File f) throws IOException
+   public OutputStream createOutputStream(File f) throws ResourceException
    {
       assertSessionCreated();
       try
@@ -497,7 +498,7 @@ public class FileResourceTransactionImpl implements ResourceTransaction, Closeab
    }
 
    @Override
-   public InputStream createInputStream(File f) throws IOException
+   public InputStream createInputStream(File f) throws ResourceException
    {
       assertSessionCreated();
       try
@@ -514,10 +515,15 @@ public class FileResourceTransactionImpl implements ResourceTransaction, Closeab
    }
 
    @Override
-   public void deleteResourceOnExit(File file)
+   public void deleteOnExit(File file)
    {
       file.deleteOnExit();
    }
 
+   @Override
+   public long getLastModifiedTime(File file)
+   {
+      return file.lastModified();
+   }
 
 }

@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -31,7 +30,7 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
 {
    private volatile List<Resource<?>> listCache;
    protected Path path;
-   protected FileTime lastModification;
+   protected long lastModification;
 
    protected PathResourceImpl(ResourceFactory factory, Path file) throws IOException
    {
@@ -41,15 +40,21 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
       {
          try
          {
-            this.lastModification = Files.getLastModifiedTime(path);
+            this.lastModification = getPathOperations().getLastModifiedTime(path);
          }
-         catch (NoSuchFileException ex)
+         catch (Exception ex)
          {
-            this.lastModification = FileTime.fromMillis(0L);
+            this.lastModification = 0L;
          }
       }
    }
 
+   @Override
+   public boolean create()
+   {
+      return createNewPath();
+   }
+   
    @Override
    public String getName()
    {
@@ -71,14 +76,7 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
    @Override
    public InputStream getResourceInputStream()
    {
-      try
-      {
-         return getPathOperations().createInputStream(path);
-      }
-      catch (IOException ex)
-      {
-         throw new ResourceException(ex);
-      }
+      return getPathOperations().createInputStream(path);
    }
 
    @Override
@@ -96,39 +94,25 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
    @Override
    public boolean exists()
    {
-      return getPathOperations().resourceExists(path);
+      return getPathOperations().exists(path);
    }
 
    @Override
    public boolean isDirectory()
    {
-      return getPathOperations().resourceExistsAndIsDirectory(path);
+      return getPathOperations().existsAndIsDirectory(path);
    }
 
    @Override
    public boolean isStale()
    {
-      try
-      {
-         return lastModification.compareTo(Files.getLastModifiedTime(path)) != 0;
-      }
-      catch (IOException ex)
-      {
-         throw new ResourceException(ex);
-      }
+      return Long.compare(lastModification, getPathOperations().getLastModifiedTime(path)) != 0;
    }
 
    @Override
    public void refresh()
    {
-      try
-      {
-         lastModification = Files.getLastModifiedTime(path);
-      }
-      catch (IOException ex)
-      {
-         throw new ResourceException(ex);
-      }
+      lastModification = getPathOperations().getLastModifiedTime(path);
    }
 
    @Override
@@ -146,7 +130,7 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
    @Override
    public boolean delete()
    {
-      return getPathOperations().deleteResource(path);
+      return getPathOperations().delete(path);
    }
 
    @Override
@@ -161,7 +145,7 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
                @Override
                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
                {
-                  getPathOperations().deleteResource(file);
+                  getPathOperations().delete(file);
                   return FileVisitResult.CONTINUE;
                }
 
@@ -170,7 +154,7 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
                {
                   if (e == null)
                   {
-                     getPathOperations().deleteResource(dir);
+                     getPathOperations().delete(dir);
                      return FileVisitResult.CONTINUE;
                   }
                   else
@@ -184,7 +168,7 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
          }
          catch (IOException ex)
          {
-            throw new ResourceException(ex);
+            throw new ResourceException(ex.getMessage(), ex);
          }
       }
       else
@@ -196,7 +180,7 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
    @Override
    public void deleteOnExit()
    {
-      getPathOperations().deleteResourceOnExit(path);
+      getPathOperations().deleteOnExit(path);
    }
 
    @Override
@@ -243,7 +227,7 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
             getParent().mkdirs();
             if (!createNewPath())
             {
-               throw new IOException("Failed to create path: " + path);
+               throw new ResourceException("Failed to create path: " + path);
             }
          }
 
@@ -265,7 +249,7 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
       }
       catch (IOException e)
       {
-         throw new ResourceException(e);
+         throw new ResourceException(e.getMessage(), e);
       }
       return this;
    }
@@ -273,19 +257,12 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
    @Override
    public boolean createNewPath()
    {
-      try
+      getParent().mkdirs();
+      if (getPathOperations().create(path))
       {
-         getParent().mkdirs();
-         if (getPathOperations().createNewResource(path))
-         {
-            return true;
-         }
-         return false;
+         return true;
       }
-      catch (IOException e)
-      {
-         throw new ResourceException(e);
-      }
+      return false;
    }
 
    @Override
@@ -298,20 +275,20 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
       }
       catch (IOException e)
       {
-         throw new ResourceException(e);
+         throw new ResourceException(e.getMessage(), e);
       }
    }
 
    @Override
    public boolean renameTo(final String pathspec)
    {
-      return getPathOperations().renameResource(path, path.resolveSibling(pathspec));
+      return getPathOperations().rename(path, path.resolveSibling(pathspec));
    }
 
    @Override
    public boolean renameTo(final PathResource target)
    {
-      if (getPathOperations().renameResource(path, target.getUnderlyingResourceObject()))
+      if (getPathOperations().rename(path, target.getUnderlyingResourceObject()))
       {
          path = target.getUnderlyingResourceObject();
          return true;
@@ -325,7 +302,7 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
    @Override
    public long getSize()
    {
-      return getPathOperations().getResourceLength(path);
+      return getPathOperations().getLength(path);
    }
 
    @Override
@@ -376,9 +353,9 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
       {
          return Files.getLastModifiedTime(path).toMillis();
       }
-      catch (IOException ex)
+      catch (IOException e)
       {
-         throw new ResourceException(ex);
+         throw new ResourceException(e.getMessage(), e);
       }
    }
 
@@ -389,9 +366,9 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
       {
          Files.setLastModifiedTime(path, FileTime.fromMillis(time));
       }
-      catch (IOException ex)
+      catch (IOException e)
       {
-         throw new ResourceException(ex);
+         throw new ResourceException(e.getMessage(), e);
       }
    }
 
@@ -402,9 +379,9 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
       {
          return new PathResourceImpl(getResourceFactory(), path);
       }
-      catch (IOException ex)
+      catch (IOException e)
       {
-         throw new ResourceException(ex);
+         throw new ResourceException(e.getMessage(), e);
       }
    }
 
@@ -423,7 +400,7 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
             refresh();
             listCache = new LinkedList<>();
 
-            Path[] files = getPathOperations().listResources(getUnderlyingResourceObject());
+            Path[] files = getPathOperations().listChildren(getUnderlyingResourceObject());
             if (files != null)
             {
                for (Path f : files)
@@ -445,5 +422,11 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
    public boolean supports(ResourceFacet type)
    {
       return false;
+   }
+
+   @Override
+   public OutputStream getResourceOutputStream()
+   {
+      return getPathOperations().createOutputStream(path);
    }
 }
