@@ -20,6 +20,7 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.spi.command.CdTokenHandler;
+import org.jboss.forge.addon.shell.spi.command.CdTokenHandlerFactory;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -31,7 +32,6 @@ import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.furnace.services.Imported;
 
 /**
  * Changes to the current directory
@@ -47,7 +47,7 @@ public class CdCommand extends AbstractShellCommand
    private ResourceFactory resourceFactory;
 
    @Inject
-   private Imported<CdTokenHandler> handlers;
+   private CdTokenHandlerFactory tokenHandlerFactory;
 
    @Inject
    @WithAttributes(label = "Arguments", type = InputType.FILE_PICKER)
@@ -78,7 +78,7 @@ public class CdCommand extends AbstractShellCommand
          String token = it.next();
 
          List<Resource<?>> newResource = null;
-         for (CdTokenHandler handler : handlers)
+         for (CdTokenHandler handler : tokenHandlerFactory.getHandlers())
          {
             try
             {
@@ -93,10 +93,6 @@ public class CdCommand extends AbstractShellCommand
             {
                log.log(Level.WARNING, "Error encountered during processing of [" + handler + "] for path token ["
                         + token + "].", e);
-            }
-            finally
-            {
-               handlers.release(handler);
             }
          }
 

@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.shell.command;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -16,11 +17,17 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.Projects;
+import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.shell.spi.command.CdTokenHandler;
+import org.jboss.forge.addon.shell.spi.command.CdTokenHandlerFactory;
 import org.jboss.forge.addon.shell.test.ShellTest;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -65,6 +72,9 @@ public class CdCommandTest
    @Inject
    private ProjectFactory projectFactory;
 
+   @Inject
+   private CdTokenHandlerFactory handlerFactory;
+
    @Test
    public void testCDProject() throws Exception
    {
@@ -81,5 +91,44 @@ public class CdCommandTest
       shellTest.clearScreen();
       shellTest.execute("pwd", 5, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString(projectPath));
+   }
+
+   @Test
+   public void testManualHandlerAddition() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      String projectPath = project.getRoot().getFullyQualifiedName();
+
+      CdTokenHandler handler = new CdTokenHandler()
+      {
+         @Override
+         public List<Resource<?>> getNewCurrentResources(UIContext current, String token)
+         {
+            return Projects.getSelectedProject(projectFactory, current).getRoot().getChild("src").listResources();
+         }
+      };
+
+      Assert.assertFalse(handlerFactory.getHandlers().contains(handler));
+      ListenerRegistration<CdTokenHandler> registration = handlerFactory.addTokenHandler(handler);
+      try
+      {
+         Assert.assertTrue(handlerFactory.getHandlers().contains(handler));
+
+         shellTest.execute("cd " + projectPath, 5, TimeUnit.SECONDS);
+         shellTest.clearScreen();
+         shellTest.execute("pwd", 5, TimeUnit.SECONDS);
+         Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString(projectPath));
+
+         shellTest.execute("mkdir abc", 5, TimeUnit.SECONDS);
+         shellTest.execute("cd abc", 5, TimeUnit.SECONDS);
+         shellTest.execute("cd #/", 5, TimeUnit.SECONDS);
+         shellTest.clearScreen();
+         shellTest.execute("pwd", 5, TimeUnit.SECONDS);
+         Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString(projectPath));
+      }
+      finally
+      {
+         registration.removeListener();
+      }
    }
 }
