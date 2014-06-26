@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>database-tools-parent</artifactId>
-      <version>2.6.1-SNAPSHOT</version>
+      <version>3.0.0-SNAPSHOT</version>
    </parent>
 
    <artifactId>database-tools-api</artifactId>
