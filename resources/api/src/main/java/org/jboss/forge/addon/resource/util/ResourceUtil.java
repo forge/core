@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.PathResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFilter;
 import org.jboss.forge.furnace.util.Assert;
@@ -93,14 +93,14 @@ public class ResourceUtil
       return null;
    }
 
-   public static DirectoryResource getContextDirectory(final Resource<?> r)
+   public static PathResource getContextDirectory(final Resource<?> r)
    {
       Resource<?> temp = r;
       do
       {
-         if (temp instanceof DirectoryResource)
+         if (temp instanceof PathResource)
          {
-            return (DirectoryResource) temp;
+            return (PathResource) temp;
          }
       }
       while ((temp != null) && ((temp = temp.getParent()) != null));

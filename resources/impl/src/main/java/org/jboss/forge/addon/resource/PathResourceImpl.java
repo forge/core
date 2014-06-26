@@ -50,11 +50,17 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
    }
 
    @Override
-   public boolean create()
+   public boolean createLeaf()
    {
-      return createNewPath();
+      return getPathOperations().createLeaf(path);
    }
-   
+
+   @Override
+   public boolean createContainer()
+   {
+      return getPathOperations().createContainer(path);
+   }
+
    @Override
    public String getName()
    {
@@ -98,7 +104,13 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
    }
 
    @Override
-   public boolean isDirectory()
+   public boolean isLeaf()
+   {
+      return getPathOperations().exists(path) && getPathOperations().existsAndIsDirectory(path);
+   }
+
+   @Override
+   public boolean isContainer()
    {
       return getPathOperations().existsAndIsDirectory(path);
    }
@@ -113,18 +125,6 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
    public void refresh()
    {
       lastModification = getPathOperations().getLastModifiedTime(path);
-   }
-
-   @Override
-   public boolean mkdir()
-   {
-      return getPathOperations().mkdir(path);
-   }
-
-   @Override
-   public boolean mkdirs()
-   {
-      return getPathOperations().mkdirs(path);
    }
 
    @Override
@@ -224,8 +224,8 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
       {
          if (!exists())
          {
-            getParent().mkdirs();
-            if (!createNewPath())
+            getParent().createContainer();
+            if (!createLeaf())
             {
                throw new ResourceException("Failed to create path: " + path);
             }
@@ -252,31 +252,6 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
          throw new ResourceException(e.getMessage(), e);
       }
       return this;
-   }
-
-   @Override
-   public boolean createNewPath()
-   {
-      getParent().mkdirs();
-      if (getPathOperations().create(path))
-      {
-         return true;
-      }
-      return false;
-   }
-
-   @Override
-   public PathResource createTempResource()
-   {
-      try
-      {
-         PathResource result = createFrom(Files.createTempFile("forgetemp", ""));
-         return result;
-      }
-      catch (IOException e)
-      {
-         throw new ResourceException(e.getMessage(), e);
-      }
    }
 
    @Override
@@ -388,7 +363,7 @@ public class PathResourceImpl extends AbstractResource<Path> implements PathReso
    @Override
    protected List<Resource<?>> doListResources()
    {
-      if (isDirectory())
+      if (isContainer())
       {
          if (isStale())
          {

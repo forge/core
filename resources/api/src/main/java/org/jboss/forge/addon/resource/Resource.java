@@ -74,15 +74,6 @@ public interface Resource<T> extends Faceted<ResourceFacet>
    Resource<?> getParent();
 
    /**
-    * Create a new resource instance for the target resource reference of the type that this current resource is.
-    * 
-    * @deprecated use {@link ResourceFactory#create(Class, Object)}
-    * @param file The target reference to create the resource instance from.
-    * @return A new {@link Resource} instance.
-    */
-   Resource<T> createFrom(T file);
-
-   /**
     * Return a list of child resources of the current resource. (Never null.)
     */
    List<Resource<?>> listResources();
@@ -121,6 +112,16 @@ public interface Resource<T> extends Faceted<ResourceFacet>
     * Return <code>true</code> if this {@link Resource} exists, return <code>false</code> if not.
     */
    boolean exists();
+
+   /**
+    * Returns <code>true</code> if this {@link Resource} is a leaf
+    */
+   boolean isLeaf();
+
+   /**
+    * Returns <code>true</code> if this {@link Resource} is a container
+    */
+   boolean isContainer();
 
    /**
     * Ask this {@link Resource} if it is actually a resource of the given type; if it is, return a new reference to the
