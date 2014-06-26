@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Embedded;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -38,16 +39,16 @@ import org.jboss.forge.roaster.model.util.Types;
 
 /**
  * Operations in the New Field wizard
- *
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
  */
 public class JPAFieldOperationsImpl extends FieldOperations implements JPAFieldOperations
 {
 
    /**
     * Creates a One-to-One relationship
-    *
+    * 
     * @param project
     * @param resource
     * @param fieldName
@@ -127,7 +128,7 @@ public class JPAFieldOperationsImpl extends FieldOperations implements JPAFieldO
 
    /**
     * Creates a Many-To-One relationship
-    *
+    * 
     * @param project
     * @param resource
     * @param fieldName
@@ -208,6 +209,40 @@ public class JPAFieldOperationsImpl extends FieldOperations implements JPAFieldO
       }
       addCascade(cascadeTypes, manyAnnotation);
       java.saveJavaSource(many);
+   }
+
+   /**
+    * Creates an Embedded relationship
+    * 
+    * @param project
+    * @param resource
+    * @param fieldName
+    * @param fieldType
+    * @throws FileNotFoundException
+    */
+   @Override
+   public void newEmbeddedRelationship(
+            final Project project,
+            final JavaResource resource,
+            final String fieldName,
+            final String fieldType) throws FileNotFoundException
+   {
+      JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaClassSource entityClass = getJavaClassFrom(resource);
+      JavaClassSource fieldEntityClass;
+      if (areTypesSame(fieldType, entityClass.getCanonicalName()))
+      {
+         fieldEntityClass = entityClass;
+      }
+      else
+      {
+         fieldEntityClass = findEntity(project, fieldType);
+         entityClass.addImport(fieldEntityClass);
+      }
+
+      FieldSource<JavaClassSource> localField = addFieldTo(entityClass, fieldEntityClass.getName(), fieldName,
+               Embedded.class.getName());
+      java.saveJavaSource(entityClass);
    }
 
    @Override
@@ -388,7 +423,7 @@ public class JPAFieldOperationsImpl extends FieldOperations implements JPAFieldO
 
    /**
     * Checks if the types are the same, removing the ".java" in the end of the string in case it exists
-    *
+    * 
     * @param from
     * @param to
     * @return

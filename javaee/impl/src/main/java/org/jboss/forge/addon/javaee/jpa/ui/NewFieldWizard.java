@@ -18,6 +18,7 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -299,7 +300,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
                try
                {
                   JavaSource<?> javaSource = resource.getJavaType();
-                  if (javaSource.hasAnnotation(Entity.class) || javaSource.hasAnnotation(MappedSuperclass.class))
+                  if (javaSource.hasAnnotation(Entity.class) || javaSource.hasAnnotation(Embeddable.class) || javaSource.hasAnnotation(MappedSuperclass.class))
                   {
                      entities.add(resource);
                   }

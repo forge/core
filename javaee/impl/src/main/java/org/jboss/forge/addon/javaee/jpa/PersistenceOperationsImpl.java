@@ -15,6 +15,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -97,7 +98,7 @@ public class PersistenceOperationsImpl implements PersistenceOperations
             throws FileNotFoundException
    {
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
-      JavaClassSource javaClass = createJavaClass(entityName, entityPackage, idStrategy, tableName);
+      JavaClassSource javaClass = createJavaEntityClass(entityName, entityPackage, idStrategy, tableName);
       return java.saveJavaSource(javaClass);
    }
 
@@ -105,7 +106,24 @@ public class PersistenceOperationsImpl implements PersistenceOperations
    public JavaResource newEntity(DirectoryResource target, String entityName, String entityPackage,
             GenerationType idStrategy, String tableName)
    {
-      JavaClassSource javaClass = createJavaClass(entityName, entityPackage, idStrategy, tableName);
+      JavaClassSource javaClass = createJavaEntityClass(entityName, entityPackage, idStrategy, tableName);
+      JavaResource javaResource = getJavaResource(target, javaClass.getName());
+      javaResource.setContents(javaClass);
+      return javaResource;
+   }
+   
+   @Override
+   public JavaResource newEmbeddableEntity(Project project, String entityName, String entityPackage) throws FileNotFoundException
+   {
+      final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
+      JavaClassSource javaClass = createJavaEmbeddableClass(entityName, entityPackage);
+      return java.saveJavaSource(javaClass);
+   }
+   
+   @Override
+   public JavaResource newEmbeddableEntity(DirectoryResource target, String entityName, String entityPackage)
+   {
+      JavaClassSource javaClass = createJavaEmbeddableClass(entityName, entityPackage);
       JavaResource javaResource = getJavaResource(target, javaClass.getName());
       javaResource.setContents(javaClass);
       return javaResource;
@@ -124,9 +142,25 @@ public class PersistenceOperationsImpl implements PersistenceOperations
    {
       return newEntity(target, entityName, entityPackage, idStrategy, null);
    }
+   
+   @SuppressWarnings("unchecked")
+   private JavaClassSource createJavaEmbeddableClass(String entityName, String entityPackage)
+   {
+      JavaClassSource javaClass = Roaster.create(JavaClassSource.class)
+               .setName(entityName)
+               .setPublic()
+               .addAnnotation(Embeddable.class).getOrigin()
+               .addInterface(Serializable.class);
+      if (entityPackage != null && !entityPackage.isEmpty())
+      {
+         javaClass.setPackage(entityPackage);
+      }
+
+      return javaClass;
+   }
 
    @SuppressWarnings("unchecked")
-   private JavaClassSource createJavaClass(String entityName, String entityPackage, GenerationType idStrategy,
+   private JavaClassSource createJavaEntityClass(String entityName, String entityPackage, GenerationType idStrategy,
             String tableName)
    {
       JavaClassSource javaClass = Roaster.create(JavaClassSource.class)

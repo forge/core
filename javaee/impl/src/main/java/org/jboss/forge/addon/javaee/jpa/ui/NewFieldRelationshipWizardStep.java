@@ -115,6 +115,9 @@ public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implem
          persistenceOperations.newOneToOneRelationship(project, entity, fieldName, fieldType,
                   inverseFieldName.getValue(), fetchType.getValue(), required.getValue(), cascadeType.getValue());
          break;
+      case EMBEDDED:
+         persistenceOperations.newEmbeddedRelationship(project, entity, fieldName, fieldType);
+         break;
       default:
          throw new UnsupportedOperationException("Relationship " + relationship + " is not supported");
       }
