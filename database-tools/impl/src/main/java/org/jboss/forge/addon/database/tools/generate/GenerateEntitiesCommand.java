@@ -136,25 +136,25 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
-      descriptor.targetPackage = targetPackage.getValue();
-      descriptor.connectionProfileName = connectionProfile.getValue();
-      descriptor.selectedProject = getSelectedProject(context);
-      if (Strings.isNullOrEmpty(descriptor.connectionProfileName))
+      descriptor.setTargetPackage(targetPackage.getValue());
+      descriptor.setConnectionProfileName(connectionProfile.getValue());
+      descriptor.setSelectedProject(getSelectedProject(context));
+      if (Strings.isNullOrEmpty(descriptor.getConnectionProfileName()))
       {
-         descriptor.driverClass = null;
-         descriptor.urls = null;
-         descriptor.connectionProperties = null;
+         descriptor.setDriverClass(null);
+         descriptor.setUrls(null);
+         descriptor.setConnectionProperties(null);
          return Results.navigateTo(ConnectionProfileDetailsStep.class);
       }
       else
       {
-         ConnectionProfile profile = profiles.get(descriptor.connectionProfileName);
+         ConnectionProfile profile = profiles.get(descriptor.getConnectionProfileName());
          if (profile.getPath() != null)
          {
-            descriptor.urls = helper.getDriverUrls(createResource(profile.getPath()));
+            descriptor.setUrls(helper.getDriverUrls(createResource(profile.getPath())));
          }
-         descriptor.driverClass = profile.getDriver();
-         descriptor.connectionProperties = createConnectionProperties(profile);
+         descriptor.setDriverClass(profile.getDriver());
+         descriptor.setConnectionProperties(createConnectionProperties(profile));
 
          return Results.navigateTo(DatabaseTableSelectionStep.class);
       }

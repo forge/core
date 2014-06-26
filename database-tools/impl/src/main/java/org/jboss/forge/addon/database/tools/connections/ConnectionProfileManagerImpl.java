@@ -14,12 +14,12 @@ import org.jboss.forge.parser.xml.XMLParser;
 
 public class ConnectionProfileManagerImpl implements ConnectionProfileManager
 {
-   private final static String NAME = "name";
-   private final static String DIALECT = "dialect";
-   private final static String DRIVER = "driver";
-   private final static String PATH_TO_DRIVER = "path-to-driver";
-   private final static String URL = "url";
-   private final static String USER = "user";
+   private final static String CONFIG_KEY_NAME = "name";
+   private final static String CONFIG_KEY_DIALECT = "dialect";
+   private final static String CONFIG_KEY_DRIVER = "driver";
+   private final static String CONFIG_KEY_PATH_TO_DRIVER = "path-to-driver";
+   private final static String CONFIG_KEY_URL = "url";
+   private final static String CONFIG_KEY_USER = "user";
 
    @Inject
    private Configuration config;
@@ -36,13 +36,14 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
          {
             if (!child.getName().equals("connection-profile"))
                continue; // Only profile elements are valid
+
             ConnectionProfile descriptor = new ConnectionProfile();
-            descriptor.setName(child.getAttribute(NAME));
-            descriptor.setDialect(child.getAttribute(DIALECT));
-            descriptor.setDriver(child.getAttribute(DRIVER));
-            descriptor.setPath(child.getAttribute(PATH_TO_DRIVER));
-            descriptor.setUrl(child.getAttribute(URL));
-            descriptor.setUser(child.getAttribute(USER));
+            descriptor.setName(child.getAttribute(CONFIG_KEY_NAME));
+            descriptor.setDialect(child.getAttribute(CONFIG_KEY_DIALECT));
+            descriptor.setDriver(child.getAttribute(CONFIG_KEY_DRIVER));
+            descriptor.setPath(child.getAttribute(CONFIG_KEY_PATH_TO_DRIVER));
+            descriptor.setUrl(child.getAttribute(CONFIG_KEY_URL));
+            descriptor.setUser(child.getAttribute(CONFIG_KEY_USER));
             result.put(descriptor.getName(), descriptor);
          }
       }
@@ -56,12 +57,12 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
       for (ConnectionProfile descriptor : connectionProfiles)
       {
          Node child = root.createChild("connection-profile");
-         child.attribute(NAME, descriptor.getName());
-         child.attribute(DIALECT, descriptor.getDialect());
-         child.attribute(DRIVER, descriptor.getDriver());
-         child.attribute(PATH_TO_DRIVER, descriptor.getPath());
-         child.attribute(URL, descriptor.getUrl());
-         child.attribute(USER, descriptor.getUser());
+         child.attribute(CONFIG_KEY_NAME, descriptor.getName());
+         child.attribute(CONFIG_KEY_DIALECT, descriptor.getDialect());
+         child.attribute(CONFIG_KEY_DRIVER, descriptor.getDriver());
+         child.attribute(CONFIG_KEY_PATH_TO_DRIVER, descriptor.getPath());
+         child.attribute(CONFIG_KEY_URL, descriptor.getUrl());
+         child.attribute(CONFIG_KEY_USER, descriptor.getUser());
       }
       if (root.getChildren().isEmpty())
       {

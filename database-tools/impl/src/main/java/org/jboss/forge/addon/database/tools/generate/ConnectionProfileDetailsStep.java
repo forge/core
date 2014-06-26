@@ -1,12 +1,11 @@
 package org.jboss.forge.addon.database.tools.generate;
 
 import java.io.File;
-import java.util.Properties;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.database.tools.connections.AbstractConnectionProfileDetailsPage;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfileDetailsPage;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManager;
 import org.jboss.forge.addon.database.tools.jpa.HibernateDialect;
 import org.jboss.forge.addon.database.tools.util.HibernateToolsHelper;
@@ -24,31 +23,25 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
-public class ConnectionProfileDetailsStep extends ConnectionProfileDetailsPage implements UIWizardStep
+public class ConnectionProfileDetailsStep extends AbstractConnectionProfileDetailsPage implements UIWizardStep
 {
-
-   private static String NAME = "Connection Profile Details";
-   private static String DESCRIPTION = "Edit the connection profile details";
-
    @Inject
    private ConnectionProfileManager manager;
 
    @Inject
    private GenerateEntitiesCommandDescriptor descriptor;
-   
-   @Inject 
+
+   @Inject
    private ResourceFactory factory;
-   
+
    @Inject
    private HibernateToolsHelper helper;
-   
+
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata
-               .forCommand(getClass())
-               .name(NAME)
-               .description(DESCRIPTION);
+      return Metadata.forCommand(getClass()).name("Connection Profile Details")
+               .description("Edit the connection profile details");
    }
 
    @Override
@@ -61,23 +54,26 @@ public class ConnectionProfileDetailsStep extends ConnectionProfileDetailsPage i
    public void initializeUI(UIBuilder builder) throws Exception
    {
       super.initializeUI(builder);
-      ConnectionProfile cp =
-               manager.loadConnectionProfiles().get(
-                        descriptor.connectionProfileName);
+      ConnectionProfile cp = manager.loadConnectionProfiles().get(descriptor.getConnectionProfileName());
       if (cp != null)
       {
          jdbcUrl.setValue(cp.getUrl());
          userName.setValue(cp.getUser());
          userPassword.setValue(cp.getPassword());
          hibernateDialect.setValue(HibernateDialect.fromClassName(cp.getDialect()));
-         driverLocation.setValue(createResource(cp.getPath()));
-         driverClass.setValue(cp.getDriver());
+         driverLocation.setValue((FileResource<?>) (FileResource<?>) factory.create(new File(cp.getPath())));
+
+         for (Class<?> driver : driverClass.getValueChoices())
+         {
+            if (cp.getDriver().equals(driver.getName()))
+               driverClass.setValue(driver);
+         }
       }
    }
 
    @Override
    public Result execute(UIExecutionContext context)
-   { 
+   {
       return Results.success();
    }
 
@@ -90,31 +86,12 @@ public class ConnectionProfileDetailsStep extends ConnectionProfileDetailsPage i
    @Override
    public void validate(UIValidationContext context)
    {
-      super.validate(context);
-      if (driverLocation.getValue() != null) {
-    	  descriptor.urls = helper.getDriverUrls(driverLocation.getValue());
+      if (driverLocation.getValue() != null)
+      {
+         descriptor.setUrls(helper.getDriverUrls(driverLocation.getValue()));
       }
-      descriptor.driverClass = driverClass.getValue();
-      descriptor.connectionProperties = createConnectionProperties();
+      descriptor.setDriverClass(driverClass.getValue().getName());
+      descriptor.setConnectionProperties(createConnectionProperties());
    }
-   
-   private Properties createConnectionProperties() {
-      Properties result = new Properties();
-      result.setProperty("hibernate.connection.driver_class", 
-    		  driverClass.getValue() == null ? "" : driverClass.getValue());
-      result.setProperty("hibernate.connection.username", 
-    		  userName.getValue() == null ? "" : userName.getValue());
-      result.setProperty("hibernate.dialect", 
-    		  hibernateDialect.getValue() == null ? "" : hibernateDialect.getValue().getClassName());
-      result.setProperty("hibernate.connection.password",
-              userPassword.getValue() == null ? "" : userPassword.getValue());
-      result.setProperty("hibernate.connection.url", 
-    		  jdbcUrl.getValue() == null ? "" : jdbcUrl.getValue());
-      return result;
-   }
-   
-   private FileResource<?> createResource(String fullPath) {
-      return (FileResource<?>)factory.create(new File(fullPath));
-   }
-   
+
 }

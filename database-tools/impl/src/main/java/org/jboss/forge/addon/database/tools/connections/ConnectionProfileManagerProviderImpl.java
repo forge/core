@@ -7,26 +7,30 @@ import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManager
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManagerProvider;
 
 @Singleton
-public class ConnectionProfileManagerProviderImpl implements
-		ConnectionProfileManagerProvider {
-	
-	@Inject
-	private ConnectionProfileManager defaultManager;
-	
-	private ConnectionProfileManager connectionProfileManager;
+public class ConnectionProfileManagerProviderImpl implements ConnectionProfileManagerProvider
+{
+   @Inject
+   private ConnectionProfileManager defaultManager;
 
-	@Override
-	public void setConnectionProfileManager(ConnectionProfileManager manager) {
-		this.connectionProfileManager = manager;
-	}
+   private ConnectionProfileManager connectionProfileManager;
 
-	@Override
-	public ConnectionProfileManager getConnectionProfileManager() {
-		if (connectionProfileManager != null) {
-			return connectionProfileManager;
-		} else {
-			return defaultManager;
-		}
-	}
+   @Override
+   public void setConnectionProfileManager(ConnectionProfileManager manager)
+   {
+      this.connectionProfileManager = manager;
+   }
+
+   @Override
+   public ConnectionProfileManager getConnectionProfileManager()
+   {
+      if (connectionProfileManager != null)
+      {
+         return connectionProfileManager;
+      }
+      else
+      {
+         return defaultManager;
+      }
+   }
 
 }

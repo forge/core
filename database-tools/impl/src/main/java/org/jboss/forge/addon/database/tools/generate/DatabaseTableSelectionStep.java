@@ -39,9 +39,6 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 public class DatabaseTableSelectionStep implements UIWizardStep
 {
 
-   private static String NAME = "Database Table Selection";
-   private static String DESCRIPTION = "Select the database tables for which you want to generate entities";
-
    @Inject
    @WithAttributes(
             label = "Database Tables",
@@ -57,10 +54,8 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata
-               .forCommand(getClass())
-               .name(NAME)
-               .description(DESCRIPTION);
+      return Metadata.forCommand(getClass()).name("Database Table Selection")
+               .description("Select the database tables for which you want to generate entities");
    }
 
    @Override
@@ -82,9 +77,9 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    public void initializeUI(UIBuilder builder) throws Exception
    {
       jmdc = new JDBCMetaDataConfiguration();
-      jmdc.setProperties(descriptor.connectionProperties);
+      jmdc.setProperties(descriptor.getConnectionProperties());
       jmdc.setReverseEngineeringStrategy(createReverseEngineeringStrategy());
-      helper.buildMappings(descriptor.urls, descriptor.driverClass, jmdc);
+      helper.buildMappings(descriptor.getUrls(), descriptor.getDriverClass(), jmdc);
       Iterator<Object> iterator = jmdc.getTableMappings();
       ArrayList<String> tables = new ArrayList<String>();
       while (iterator.hasNext())
@@ -105,7 +100,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    public Result execute(UIExecutionContext context)
    {
       Collection<String> entities = exportSelectedEntities();
-      return Results.success(entities.size() + " entities were generated in " + descriptor.targetPackage);
+      return Results.success(entities.size() + " entities were generated in " + descriptor.getTargetPackage());
    }
 
    @Override
@@ -173,9 +168,8 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    private Collection<String> exportSelectedEntities()
    {
       final Collection<String> selectedTableNames = getSelectedTableNames();
-      JavaSourceFacet java = descriptor.selectedProject.getFacet(JavaSourceFacet.class);
-      POJOExporter pj = new POJOExporter(jmdc, java.getSourceDirectory()
-               .getUnderlyingResourceObject())
+      JavaSourceFacet java = descriptor.getSelectedProject().getFacet(JavaSourceFacet.class);
+      POJOExporter pj = new POJOExporter(jmdc, java.getSourceDirectory().getUnderlyingResourceObject())
       {
          @Override
          @SuppressWarnings("rawtypes")
@@ -201,7 +195,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
       ReverseEngineeringStrategy strategy = new DefaultReverseEngineeringStrategy();
       ReverseEngineeringSettings revengsettings =
                new ReverseEngineeringSettings(strategy)
-                        .setDefaultPackageName(descriptor.targetPackage)
+                        .setDefaultPackageName(descriptor.getTargetPackage())
                         .setDetectManyToMany(true)
                         .setDetectOneToOne(true)
                         .setDetectOptimisticLock(true);
