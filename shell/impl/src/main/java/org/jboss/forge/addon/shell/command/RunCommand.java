@@ -165,10 +165,8 @@ public class RunCommand extends AbstractShellCommand
                   final PipedOutputStream stdin = new PipedOutputStream();
                   BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stdin));
 
-                  PrintStream stdout = new UncloseablePrintStream(output
-                           .out());
-                  PrintStream stderr = new UncloseablePrintStream(output
-                           .err());
+                  PrintStream stdout = new UncloseablePrintStream(output.out());
+                  PrintStream stderr = new UncloseablePrintStream(output.err());
 
                   Settings settings = new SettingsBuilder()
                            .inputStream(new PipedInputStream(stdin))

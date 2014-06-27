@@ -12,6 +12,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +36,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
@@ -212,14 +215,27 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       return executeMavenEmbedded(out, err, parameters.toArray(new String[parameters.size()]));
    }
 
-   public boolean executeMavenEmbedded(final PrintStream out, final PrintStream err, String[] parms)
+   public boolean executeMavenEmbedded(final PrintStream out, final PrintStream err, String[] arguments)
    {
-      if ((parms == null) || (parms.length == 0))
+      List<String> list = new ArrayList<>();
+      // FORGE-1912: Maven settings are not being set in embedded maven
+      if (System.getProperty(MavenContainer.ALT_USER_SETTINGS_XML_LOCATION) != null)
       {
-         parms = new String[] { "" };
+         list.add("-s");
+         list.add(System.getProperty(MavenContainer.ALT_USER_SETTINGS_XML_LOCATION));
       }
+      else if (System.getProperty(MavenContainer.ALT_GLOBAL_SETTINGS_XML_LOCATION) != null)
+      {
+         list.add("-s");
+         list.add(System.getProperty(MavenContainer.ALT_GLOBAL_SETTINGS_XML_LOCATION));
+      }
+      if (arguments != null)
+      {
+         list.addAll(Arrays.asList(arguments));
+      }
+      String[] params = list.toArray(new String[list.size()]);
       MavenCli cli = new MavenCli();
-      int i = cli.doMain(parms, getFaceted().getRoot().getFullyQualifiedName(),
+      int i = cli.doMain(params, getFaceted().getRoot().getFullyQualifiedName(),
                out, err);
       return i == 0;
    }
