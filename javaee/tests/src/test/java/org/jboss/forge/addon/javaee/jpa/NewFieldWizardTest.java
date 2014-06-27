@@ -11,6 +11,7 @@ import static org.junit.Assert.assertThat;
 
 import javax.inject.Inject;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -202,6 +203,37 @@ public class NewFieldWizardTest
       Assert.assertFalse(field.hasAnnotation(Column.class));
       Assert.assertTrue(field.hasAnnotation(OneToMany.class));
       Assert.assertEquals("Set", field.getType().getName());
+   }
+   
+   @Test
+   public void testEmbeddedRelationship() throws Exception
+   {
+      JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
+      JavaResource otherEntity = projectHelper.createJPAEmbeddable(project, "Account");
+      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         Assert.assertTrue(controller.isEnabled());
+         controller.setValueFor("targetEntity", entity);
+         Assert.assertFalse(controller.canExecute());
+         controller.setValueFor("named", "accounts");
+         controller.setValueFor("type", otherEntity.getJavaType().getCanonicalName());
+         controller.setValueFor("relationshipType", RelationshipType.EMBEDDED);
+         Assert.assertTrue(controller.canMoveToNextStep());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertFalse(result instanceof Failed);
+         assertThat("Result should be of type CompositeResult", result, instanceOf(CompositeResult.class));
+         CompositeResult compositeResult = (CompositeResult) result;
+         Assert.assertEquals("Relationship Embedded created", compositeResult.getResults().get(1).getMessage());
+      }
+      JavaClass<?> javaClass = entity.getJavaType();
+      Assert.assertTrue(javaClass.hasField("accounts"));
+      final Field<?> field = javaClass.getField("accounts");
+      Assert.assertFalse(field.hasAnnotation(Column.class));
+      Assert.assertTrue(field.hasAnnotation(Embedded.class));
+      Assert.assertEquals("Account", field.getType().getName());
    }
 
    @Test

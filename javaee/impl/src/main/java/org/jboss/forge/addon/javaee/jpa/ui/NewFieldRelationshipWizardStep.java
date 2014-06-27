@@ -37,7 +37,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implements UIWizardStep
 {
    @Inject
-   @WithAttributes(label = "Fetch Type", description = "Whether the association should be lazily loaded or must be eagerly fetched", required = true, type = InputType.RADIO)
+   @WithAttributes(label = "Fetch Type", description = "Whether the association should be lazily loaded or must be eagerly fetched", type = InputType.RADIO)
    private UISelectOne<FetchType> fetchType;
 
    @Inject
@@ -73,6 +73,8 @@ public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implem
       case ONE_TO_ONE:
          fetchType.setDefaultValue(FetchType.EAGER);
          shouldAddRequired = true;
+         break;
+      case EMBEDDED:
          break;
       default:
          throw new UnsupportedOperationException("Relationship " + relationship + " is not supported");
