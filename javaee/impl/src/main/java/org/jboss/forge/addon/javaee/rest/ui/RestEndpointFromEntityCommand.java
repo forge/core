@@ -207,10 +207,6 @@ public class RestEndpointFromEntityCommand extends AbstractJavaEECommand impleme
       Set<JavaClassSource> classes = new HashSet<>();
       for (JavaClassSource target : targets.getValue())
       {
-         if(!isEntityWithSimpleKey(target))
-         {
-            break;
-         }
          generationContext.setEntity(target);
          List<JavaClassSource> artifacts = selectedGenerator.generateFrom(generationContext);
          classes.addAll(artifacts);
