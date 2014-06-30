@@ -19,6 +19,7 @@ import javax.enterprise.inject.Vetoed;
 
 import org.jboss.aesh.console.AeshConsole;
 import org.jboss.aesh.console.AeshConsoleBuilder;
+import org.jboss.aesh.console.AeshConsoleImpl;
 import org.jboss.aesh.console.Console;
 import org.jboss.aesh.console.Prompt;
 import org.jboss.aesh.console.command.CommandNotFoundException;
@@ -290,7 +291,8 @@ public class ShellImpl implements Shell, UIRuntime
                // print a new line so we exit nicely
                console.getShell().out().println();
                exitCommand.getCommand().execute(
-                        new AeshCommandInvocation(ShellImpl.this.console, ControlOperator.NONE, null));
+                        new AeshCommandInvocation((AeshConsoleImpl) ShellImpl.this.console, ControlOperator.NONE, 1,
+                                 null));
             }
             catch (InterruptedException | CommandNotFoundException | IOException e)
             {
