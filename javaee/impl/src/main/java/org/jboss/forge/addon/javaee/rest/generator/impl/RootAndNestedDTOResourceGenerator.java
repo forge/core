@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -265,12 +266,12 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
       for (Property<?> property : bean.getProperties())
       {
          Field<?> field = property.getField();
-         if (field != null && field.hasAnnotation(Id.class))
+         if (field != null && (field.hasAnnotation(Id.class) || field.hasAnnotation(EmbeddedId.class)))
          {
             return property;
          }
          Method<?, ?> accessor = property.getAccessor();
-         if (accessor != null && accessor.hasAnnotation(Id.class))
+         if (accessor != null && (accessor.hasAnnotation(Id.class) || accessor.hasAnnotation(EmbeddedId.class)))
          {
             return property;
          }
