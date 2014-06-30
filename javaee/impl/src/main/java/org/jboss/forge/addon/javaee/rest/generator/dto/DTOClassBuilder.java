@@ -36,6 +36,8 @@ import org.jboss.forge.roaster.model.util.Types;
  */
 public class DTOClassBuilder
 {
+   private static final Map<String,String> primitiveToWrapperTypeMap = new HashMap<>(8);
+
    private JavaClassSource dto;
    private final boolean topLevel;
    private String dtoClassName;
@@ -47,8 +49,22 @@ public class DTOClassBuilder
    private MethodSource<JavaClassSource> copyCtor;
    private final Property<?> idProperty;
    private final Template initializeJPAEntityFromId;
+   private final Template initializeJPAEntityFromPrimitiveId;
    private final Template assembleCollection;
+   private final Template assembleCollectionWithPrimitiveId;
    private final Template initializeNestedDTOCollection;
+
+   static
+   {
+      primitiveToWrapperTypeMap.put("boolean", "Boolean");
+      primitiveToWrapperTypeMap.put("byte", "Byte");
+      primitiveToWrapperTypeMap.put("short", "Short");
+      primitiveToWrapperTypeMap.put("int", "Integer");
+      primitiveToWrapperTypeMap.put("long", "Long");
+      primitiveToWrapperTypeMap.put("float", "Float");
+      primitiveToWrapperTypeMap.put("double", "Double");
+      primitiveToWrapperTypeMap.put("char", "Character");
+   }
 
    public DTOClassBuilder(JavaClass<?> entity, Property<?> idProperty, boolean topLevel,
             TemplateFactory templateFactory, ResourceFactory resourceFactory)
@@ -61,8 +77,13 @@ public class DTOClassBuilder
       this.initializeJPAEntityFromId = templateFactory.create(
                resourceFactory.create(getClass().getResource("InitializeJPAEntityFromId.jv")),
                FreemarkerTemplate.class);
+      this.initializeJPAEntityFromPrimitiveId = templateFactory.create(
+               resourceFactory.create(getClass().getResource("InitializeJPAEntityFromPrimitiveId.jv")),
+               FreemarkerTemplate.class);
       this.assembleCollection = templateFactory.create(
                resourceFactory.create(getClass().getResource("AssembleCollection.jv")), FreemarkerTemplate.class);
+      this.assembleCollectionWithPrimitiveId = templateFactory.create(
+               resourceFactory.create(getClass().getResource("AssembleCollectionWithPrimitiveId.jv")), FreemarkerTemplate.class);
 
       this.initializeNestedDTOCollection = templateFactory.create(
                resourceFactory.create(getClass().getResource("InitializeNestedDTOCollection.jv")),
@@ -173,7 +194,16 @@ public class DTOClassBuilder
          String output;
          try
          {
-            output = initializeJPAEntityFromId.process(map);
+            if(idProperty.getType().isPrimitive())
+            {
+               String wrapperType = primitiveToWrapperTypeMap.get(idProperty.getType().getName());
+               map.put("wrapperType", wrapperType);
+               output = initializeJPAEntityFromPrimitiveId.process(map);
+            }
+            else
+            {
+               output = initializeJPAEntityFromId.process(map);
+            }
          }
          catch (IOException e)
          {
@@ -322,7 +352,16 @@ public class DTOClassBuilder
       String output;
       try
       {
-         output = assembleCollection.process(map);
+         if(nestedDtoId.getType().isPrimitive())
+         {
+            String wrapperType = primitiveToWrapperTypeMap.get(nestedDtoId.getType().getName());
+            map.put("wrapperType", wrapperType);
+            output = assembleCollectionWithPrimitiveId.process(map);
+         }
+         else
+         {
+            output = assembleCollection.process(map);
+         }
       }
       catch (IOException e)
       {
