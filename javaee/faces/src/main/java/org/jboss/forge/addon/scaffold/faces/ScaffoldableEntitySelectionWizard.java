@@ -29,9 +29,12 @@ import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
+import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.util.Refactory;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 
 public class ScaffoldableEntitySelectionWizard implements UIWizardStep
@@ -47,6 +50,10 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
    @Inject
    @WithAttributes(label = "Use custom template when generating pages", required = false, description = "Enabling this will allow the generated scaffold to use the specified Facelet template.")
    private UIInput<Boolean> useCustomTemplate;
+
+   @Inject
+   @WithAttributes(label = "Generate missing .equals() and .hashCode() methods", required = false, description = "If enabled, entities missing an .equals() or .hashCode() method will be updated to provide them")
+   private UIInput<Boolean> generateEqualsAndHashCode;
 
    @Inject
    private ProjectFactory projectFactory;
@@ -102,7 +109,7 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
 
    @Override
    @SuppressWarnings({ "unchecked", "rawtypes" })
-   public void initializeUI(UIBuilder builder) throws Exception
+   public void initializeUI(final UIBuilder builder) throws Exception
    {
       UIContext uiContext = builder.getUIContext();
       Project project = getSelectedProject(uiContext);
@@ -136,11 +143,66 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
       {
          builder.add(pageTemplate);
       }
+      generateEqualsAndHashCode.setEnabled(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            for (JavaClassSource javaSource : targets.getValue())
+            {
+               if (!javaSource.hasMethodSignature("hashCode") || !javaSource.hasMethodSignature("equals", Object.class))
+               {
+                  return true;
+               }
+            }
+            return false;
+         }
+      });
+      builder.add(generateEqualsAndHashCode);
    }
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
+      for (JavaClassSource javaSource : targets.getValue())
+      {
+         UIContext uiContext = context.getUIContext();
+         Project project = getSelectedProject(uiContext);
+         JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
+         if (!javaSource.hasMethodSignature("hashCode"))
+         {
+            if (generateEqualsAndHashCode.getValue())
+            {
+               if (javaSource.getField("id") != null)
+               {
+                  Refactory.createHashCode(javaSource, javaSource.getField("id"));
+               }
+               else
+               {
+                  Refactory.createHashCode(javaSource, (FieldSource<?>[]) javaSource.getFields().toArray(new FieldSource[javaSource.getFields().size()]));
+               }
+              
+            }
+         }
+         
+         if(!javaSource.hasMethodSignature("equals", Object.class)) {
+            if (generateEqualsAndHashCode.getValue())
+            {
+               if (javaSource.getField("id") != null)
+               {
+                  Refactory.createEquals(javaSource, javaSource.getField("id"));
+               }
+               else
+               {
+                  Refactory.createEquals(javaSource, (FieldSource<?>[]) javaSource.getFields().toArray(new FieldSource[javaSource.getFields().size()]));
+               }
+            }
+         }
+         javaSourceFacet.saveJavaSource(javaSource);
+         
+         
+      }
+
       return null;
    }
 
