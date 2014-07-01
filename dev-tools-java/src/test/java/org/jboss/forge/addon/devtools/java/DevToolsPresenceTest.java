@@ -1,3 +1,9 @@
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Eclipse Public License version 1.0, available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.jboss.forge.addon.devtools.java;
 
 import javax.inject.Inject;
@@ -14,7 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class RegisterAsServiceCommandTest
+public class DevToolsPresenceTest
 {
    @Deployment
    @Dependencies({
@@ -34,11 +40,17 @@ public class RegisterAsServiceCommandTest
 
    @Inject
    private RegisterAsServiceCommand command;
+   
+   @Inject
+   private JavaEqualsHashcodeCommand ehCommand;
 
    @Test
    public void testCommandInjection() throws Exception
    {
       Assert.assertNotNull(command);
       Assert.assertNotNull(command.toString());
+      
+      Assert.assertNotNull(ehCommand);
+      Assert.assertNotNull(ehCommand.toString());
    }
 }
