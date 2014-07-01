@@ -12,6 +12,7 @@ import org.jboss.forge.addon.projects.Project;
 
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
+
 import java.io.FileNotFoundException;
 
 /**
@@ -53,4 +54,11 @@ public interface JPAFieldOperations
             String inverseFieldName,
             FetchType fetchType,
             Iterable<CascadeType> cascadeTypes) throws FileNotFoundException;
+
+   void newEmbeddedRelationship(
+            Project project, 
+            JavaResource resource, 
+            String fieldName, 
+            String fieldType)
+            throws FileNotFoundException;
 }

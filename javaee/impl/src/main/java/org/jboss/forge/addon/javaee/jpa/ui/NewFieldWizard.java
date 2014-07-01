@@ -18,6 +18,7 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -69,7 +70,7 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * Creates a new JPA Field
- *
+ * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, PrerequisiteCommandsProvider
@@ -135,7 +136,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
       setupEntities(builder.getUIContext());
       setupRelationshipType();
       final List<String> types = Arrays.asList("byte", "float", "char", "double", "int", "long", "short", "boolean",
-               "String","java.util.Date");
+               "String", "java.util.Date");
       type.setCompleter(new UICompleter<String>()
       {
          @Override
@@ -194,6 +195,49 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
          public Boolean call() throws Exception
          {
             return !types.contains(type.getValue()) && !transientField.getValue();
+         }
+      });
+
+      relationshipType.setValueChoices(new Callable<Iterable<RelationshipType>>()
+      {
+         @Override
+         public Iterable<RelationshipType> call() throws Exception
+         {
+            final List<RelationshipType> options = new ArrayList<>();
+            if (project != null)
+            {
+               for (JavaResource resource : getProjectEntities(project))
+               {
+                  try
+                  {
+                     JavaSource<?> javaSource = resource.getJavaType();
+                     String qualifiedName = javaSource.getQualifiedName();
+                     String simpleName = javaSource.getName();
+                     if (qualifiedName.equals(type.getValue()) || simpleName.equals(type.getValue()))
+                     {
+                        if(javaSource.hasAnnotation(Embeddable.class)) {
+                           options.add(RelationshipType.EMBEDDED);
+                        } else  {
+                           options.add(RelationshipType.BASIC);
+                           options.add(RelationshipType.ONE_TO_MANY);
+                           options.add(RelationshipType.ONE_TO_ONE);
+                           options.add(RelationshipType.MANY_TO_MANY);
+                           options.add(RelationshipType.MANY_TO_ONE);
+                        }
+                        
+                     }
+                  }
+                  catch (FileNotFoundException ignored)
+                  {
+                  }
+               }
+            }
+            if(options.isEmpty()) {
+               for(RelationshipType type : RelationshipType.values()) {
+                  options.add(type);
+               }
+            }
+            return options;
          }
       });
 
@@ -299,7 +343,8 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
                try
                {
                   JavaSource<?> javaSource = resource.getJavaType();
-                  if (javaSource.hasAnnotation(Entity.class) || javaSource.hasAnnotation(MappedSuperclass.class))
+                  if (javaSource.hasAnnotation(Entity.class) || javaSource.hasAnnotation(Embeddable.class)
+                           || javaSource.hasAnnotation(MappedSuperclass.class))
                   {
                      entities.add(resource);
                   }

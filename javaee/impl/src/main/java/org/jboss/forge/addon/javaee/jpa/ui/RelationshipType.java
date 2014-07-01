@@ -10,6 +10,7 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 public enum RelationshipType
 {
    BASIC("Basic"),
+   EMBEDDED("Embedded"),
    ONE_TO_ONE("One-to-One"),
    ONE_TO_MANY("One-to-Many"),
    MANY_TO_ONE("Many-to-One"),

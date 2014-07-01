@@ -131,6 +131,12 @@ public class ProjectHelper
       String packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
       return persistenceOperations.newEntity(project, entityName, packageName, GenerationType.AUTO);
    }
+   
+   public JavaResource createJPAEmbeddable(Project project, String entityName) throws IOException
+   {
+      String packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
+      return persistenceOperations.newEmbeddableEntity(project, entityName, packageName);
+   }
 
    public JavaResource createEmptyEnum(Project project, String enumName) throws IOException
    {
