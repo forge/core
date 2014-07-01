@@ -48,7 +48,7 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    private UISelectOne<ScaffoldProvider> provider;
 
    @Inject
-   @WithAttributes(label = "Web Root Path", description = "The web root path where the scaffolding will be "
+   @WithAttributes(label = "Web Root Path", defaultValue = "/", description = "The web root path where the scaffolding will be "
             + "placed/accessible from the client browser (default '/').")
    private UIInput<String> webRoot;
 
@@ -136,6 +136,11 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
    private ScaffoldSetupContext createSetupContext(UIContext context)
    {
       Project project = getSelectedProject(context);
-      return new ScaffoldSetupContext(webRoot.getValue(), project);
+      String targetDir = webRoot.getValue();
+      if(targetDir == null || targetDir.equals("/"))
+      {
+         targetDir = "";
+      }
+      return new ScaffoldSetupContext(targetDir, project);
    }
 }
