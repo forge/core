@@ -50,7 +50,7 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    private UISelectOne<ScaffoldProvider> provider;
 
    @Inject
-   @WithAttributes(label = "Web Root Path", description = "The web root path where the scaffolding will be "
+   @WithAttributes(label = "Web Root Path", defaultValue = "/", description = "The web root path where the scaffolding will be "
             + "placed/accessible from the client browser (default '/').")
    private UIInput<String> webRoot;
 
@@ -153,15 +153,20 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    {
       Project project = getSelectedProject(context);
       Map<Object, Object> attributeMap = context.getAttributeMap();
+      String targetDir = webRoot.getValue();
+      if(targetDir == null || targetDir.equals("/"))
+      {
+         targetDir = "";
+      }
       ScaffoldGenerationContext generationContext = (ScaffoldGenerationContext) attributeMap
                .get(ScaffoldGenerationContext.class);
       if (generationContext == null)
       {
-         return new ScaffoldGenerationContext(webRoot.getValue(), null, project);
+         return new ScaffoldGenerationContext(targetDir, null, project);
       }
       else
       {
-         generationContext.setTargetDirectory(webRoot.getValue());
+         generationContext.setTargetDirectory(targetDir);
          return generationContext;
       }
    }
@@ -169,7 +174,12 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
    private ScaffoldSetupContext populateSetupContext(UIContext context)
    {
       Project project = getSelectedProject(context);
-      return new ScaffoldSetupContext(webRoot.getValue(), project);
+      String targetDir = webRoot.getValue();
+      if(targetDir == null || targetDir.equals("/"))
+      {
+         targetDir = "";
+      }
+      return new ScaffoldSetupContext(targetDir, project);
    }
 
 }
