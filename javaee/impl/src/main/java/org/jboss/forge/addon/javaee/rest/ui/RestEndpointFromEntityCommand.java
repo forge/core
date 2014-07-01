@@ -60,7 +60,7 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 public class RestEndpointFromEntityCommand extends AbstractJavaEECommand implements PrerequisiteCommandsProvider
 {
    @Inject
-   @WithAttributes(label = "Content Type", defaultValue = MediaType.APPLICATION_XML, required = true)
+   @WithAttributes(label = "Content Type", defaultValue = MediaType.APPLICATION_JSON, required = true)
    private UISelectOne<String> contentType;
 
    @Inject
@@ -107,9 +107,9 @@ public class RestEndpointFromEntityCommand extends AbstractJavaEECommand impleme
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
       List<JavaClassSource> allEntities = persistenceFacet.getAllEntities();
       List<JavaClassSource> supportedEntities = new ArrayList<>();
-      for (JavaClassSource entity: allEntities)
+      for (JavaClassSource entity : allEntities)
       {
-         if(isEntityWithSimpleKey(entity))
+         if (isEntityWithSimpleKey(entity))
          {
             supportedEntities.add(entity);
          }
@@ -137,7 +137,7 @@ public class RestEndpointFromEntityCommand extends AbstractJavaEECommand impleme
       // TODO: May detect where @Path resources are located
       packageName.setDefaultValue(javaSourceFacet.getBasePackage() + ".rest");
 
-      contentType.setValueChoices(Arrays.asList(MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON));
+      contentType.setValueChoices(Arrays.asList(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML));
       generator.setDefaultValue(defaultResourceGenerator);
       if (context.getProvider().isGUI())
       {

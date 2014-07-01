@@ -20,6 +20,8 @@ import org.jboss.forge.addon.javaee.faces.FacesFacet_2_2;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_0;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
+import org.jboss.forge.addon.javaee.rest.RestFacet_2_0;
+import org.jboss.forge.addon.javaee.rest.config.RestConfigurationStrategy;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.javaee.validation.ValidationFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -126,12 +128,22 @@ public class ProjectHelper
       return facetFactory.install(project, ValidationFacet.class);
    }
 
+   /**
+    * Installs the {@link RestFacet_2_0} facet
+    */
+   public RestFacet_2_0 installJAXRS_2_0(Project project, RestConfigurationStrategy strategy)
+   {
+      RestFacet_2_0 facet = facetFactory.install(project, RestFacet_2_0.class);
+      facet.setConfigurationStrategy(strategy);
+      return facet;
+   }
+
    public JavaResource createJPAEntity(Project project, String entityName) throws IOException
    {
       String packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
       return persistenceOperations.newEntity(project, entityName, packageName, GenerationType.AUTO);
    }
-   
+
    public JavaResource createJPAEmbeddable(Project project, String entityName) throws IOException
    {
       String packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
