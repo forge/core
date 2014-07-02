@@ -23,7 +23,6 @@ import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.maven.projects.MavenBuildSystem;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
-import org.jboss.forge.addon.parser.java.utils.Packages;
 import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
@@ -112,7 +111,7 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    {
       MavenFacet mvn = getFaceted().getFacet(MavenFacet.class);
       Model pom = mvn.getModel();
-      pom.setGroupId(Packages.toValidPackageName(groupId));
+      pom.setGroupId(groupId);
       mvn.setModel(pom);
       return this;
    }
