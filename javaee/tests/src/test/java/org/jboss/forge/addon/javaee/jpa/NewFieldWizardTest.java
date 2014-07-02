@@ -78,9 +78,6 @@ public class NewFieldWizardTest
    private Project project;
 
    @Inject
-   private JPAFieldOperations fieldOperations;
-
-   @Inject
    private FieldOperations beanOperations;
 
    @Before
@@ -366,7 +363,4 @@ public class NewFieldWizardTest
       Assert.assertFalse(field.getAnnotation(Enumerated.class).getValues().isEmpty());
       Assert.assertEquals(EnumType.STRING, field.getAnnotation(Enumerated.class).getEnumValue(EnumType.class));
    }
-
-
-
 }
