@@ -147,8 +147,7 @@ public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
       for (Project p : Arrays.asList(addonProject, apiProject, implProject, spiProject))
       {
          JavaSourceFacet javaSource = p.getFacet(JavaSourceFacet.class);
-         javaSource.saveJavaSource(Roaster.create(JavaPackageInfoSource.class).setPackage(
-                  project.getFacet(MetadataFacet.class).getTopLevelPackage()));
+         javaSource.saveJavaSource(Roaster.create(JavaPackageInfoSource.class).setPackage(javaSource.getBasePackage()));
       }
 
       installSelectedAddons(project, dependencyAddons, true);
@@ -181,7 +180,7 @@ public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
 
       // TODO: Replace with template addon
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
-      readmeTemplate = readmeTemplate.replaceAll("\\{\\{ADDON_GROUP_ID\\}\\}", metadata.getTopLevelPackage());
+      readmeTemplate = readmeTemplate.replaceAll("\\{\\{ADDON_GROUP_ID\\}\\}", metadata.getProjectGroupName());
       readmeTemplate = readmeTemplate.replaceAll("\\{\\{ADDON_ARTIFACT_ID\\}\\}", metadata.getProjectName());
       child.createNewFile();
       child.setContents(readmeTemplate);

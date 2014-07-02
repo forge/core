@@ -71,10 +71,10 @@ public class AddonTestFacet extends AbstractFacet<Project> implements ProjectFac
       if (isInstalled())
       {
          Project project = getFaceted();
-         String topLevelPackage = project.getFacet(MetadataFacet.class).getTopLevelPackage();
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         String topLevelPackage = facet.getBasePackage();
          JavaClassSource testClass = Roaster.create(JavaClassSource.class).setPackage(topLevelPackage);
          testClass.setName("AbstractTestCase").setAbstract(true);
-         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
          try
          {
             facet.saveTestJavaSource(testClass.getEnclosingType());

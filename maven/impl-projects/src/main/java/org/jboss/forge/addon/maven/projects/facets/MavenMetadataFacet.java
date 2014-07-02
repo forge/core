@@ -23,8 +23,8 @@ import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.maven.projects.MavenBuildSystem;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
-import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 
 /**
@@ -107,6 +107,7 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    }
 
    @Override
+   @Deprecated
    public MavenMetadataFacet setTopLevelPackage(final String groupId)
    {
       MavenFacet mvn = getFaceted().getFacet(MavenFacet.class);
@@ -117,6 +118,35 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    }
 
    @Override
+   public MetadataFacet setProjectGroupName(String groupId)
+   {
+      MavenFacet mvn = getFaceted().getFacet(MavenFacet.class);
+      Model pom = mvn.getModel();
+      pom.setGroupId(groupId);
+      mvn.setModel(pom);
+      return this;
+   }
+
+   @Override
+   public String getProjectGroupName()
+   {
+      Model pom = getFaceted().getFacet(MavenFacet.class).getModel();
+      String groupId = pom.getGroupId();
+
+      // If groupId is null, try to grab the parent's groupId
+      if (groupId == null)
+      {
+         Parent parent = pom.getParent();
+         if (parent != null)
+         {
+            groupId = parent.getGroupId();
+         }
+      }
+      return groupId;
+   }
+
+   @Override
+   @Deprecated
    public String getTopLevelPackage()
    {
       Model pom = getFaceted().getFacet(MavenFacet.class).getModel();
@@ -137,7 +167,7 @@ public class MavenMetadataFacet extends AbstractFacet<Project> implements Metada
    @Override
    public Dependency getOutputDependency()
    {
-      return DependencyBuilder.create().setGroupId(getTopLevelPackage()).setArtifactId(getProjectName())
+      return DependencyBuilder.create().setGroupId(getProjectGroupName()).setArtifactId(getProjectName())
                .setVersion(getProjectVersion());
    }
 

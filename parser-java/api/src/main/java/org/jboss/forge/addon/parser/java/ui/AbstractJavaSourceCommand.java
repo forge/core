@@ -24,7 +24,6 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.visit.VisitContext;
@@ -281,7 +280,7 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
       Project project = getSelectedProject(context);
       if (project != null)
       {
-         packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage();
+         packageName = project.getFacet(JavaSourceFacet.class).getBasePackage();
       }
       else
       {

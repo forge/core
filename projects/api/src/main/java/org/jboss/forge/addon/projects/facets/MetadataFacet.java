@@ -32,13 +32,29 @@ public interface MetadataFacet extends ProvidedProjectFacet
 
    /**
     * Get the top level package of this {@link Project}.
+    * 
+    * @deprecated use {@link MetadataFacet#getProjectGroupName()}
     */
+   @Deprecated
    String getTopLevelPackage();
+
+   /**
+    * Get the project group name of this {@link Project}.
+    */
+   String getProjectGroupName();
+
+   /**
+    * Set the top level package of this {@link Project}.
+    * 
+    * @deprecated use {@link MetadataFacet#setProjectGroupName(String)}
+    */
+   @Deprecated
+   MetadataFacet setTopLevelPackage(String groupId);
 
    /**
     * Set the top level package of this {@link Project}.
     */
-   MetadataFacet setTopLevelPackage(String groupId);
+   MetadataFacet setProjectGroupName(String groupId);
 
    /**
     * Get the version of this {@link Project}.

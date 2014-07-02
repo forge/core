@@ -23,9 +23,9 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.ReportAsSingleViolation;
 
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.util.Categories;
@@ -70,7 +70,7 @@ public class ValidationNewAnnotationCommandImpl extends AbstractJavaSourceComman
    @Override
    protected String calculateDefaultPackage(UIContext context)
    {
-      return getSelectedProject(context).getFacet(MetadataFacet.class).getTopLevelPackage() + ".constraints";
+      return getSelectedProject(context).getFacet(JavaSourceFacet.class).getBasePackage() + ".constraints";
    }
 
    @Override

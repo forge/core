@@ -203,7 +203,7 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
       });
       if (value[0] == null)
       {
-         value[0] = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
+         value[0] = project.getFacet(JavaSourceFacet.class).getBasePackage() + ".model";
       }
       return value[0];
    }

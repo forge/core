@@ -19,7 +19,6 @@ import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
@@ -76,7 +75,8 @@ public class ValidationNewGroupCommandTest
    public void testCreateNewGroup() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
-      CommandController controller = testHarness.createCommandController(ValidationNewGroupCommand.class, project.getRoot());
+      CommandController controller = testHarness.createCommandController(ValidationNewGroupCommand.class,
+               project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "MyBeanValidationGroup");
       Assert.assertTrue(controller.isValid());
@@ -85,7 +85,7 @@ public class ValidationNewGroupCommandTest
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      String path = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".constraints";
+      String path = facet.getBasePackage() + ".constraints";
       JavaResource javaResource = facet.getJavaResource(path + ".MyBeanValidationGroup");
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaInterface.class)));
@@ -95,7 +95,8 @@ public class ValidationNewGroupCommandTest
    public void testCreateNewGroupWithTargetPackage() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
-      CommandController controller = testHarness.createCommandController(ValidationNewGroupCommand.class, project.getRoot());
+      CommandController controller = testHarness.createCommandController(ValidationNewGroupCommand.class,
+               project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "MyBeanValidationGroup");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");

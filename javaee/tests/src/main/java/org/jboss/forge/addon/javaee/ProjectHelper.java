@@ -30,7 +30,6 @@ import org.jboss.forge.addon.parser.java.projects.JavaWebProjectType;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaEnumSource;
 
@@ -140,13 +139,13 @@ public class ProjectHelper
 
    public JavaResource createJPAEntity(Project project, String entityName) throws IOException
    {
-      String packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
+      String packageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + ".model";
       return persistenceOperations.newEntity(project, entityName, packageName, GenerationType.AUTO);
    }
 
    public JavaResource createJPAEmbeddable(Project project, String entityName) throws IOException
    {
-      String packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
+      String packageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + ".model";
       return persistenceOperations.newEmbeddableEntity(project, entityName, packageName);
    }
 
@@ -154,7 +153,7 @@ public class ProjectHelper
    {
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
       JavaEnumSource enumSource = Roaster.create(JavaEnumSource.class).setName(enumName);
-      String packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
+      String packageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + ".model";
       enumSource.setPackage(packageName);
       return javaSourceFacet.saveJavaSource(enumSource);
    }

@@ -72,7 +72,7 @@ public class AddonRemoveCommand extends AbstractUICommand implements AddonComman
       if (project != null)
       {
          MetadataFacet facet = project.getFacet(MetadataFacet.class);
-         String name = facet.getTopLevelPackage() + ":" + facet.getProjectName();
+         String name = facet.getProjectGroupName() + ":" + facet.getProjectName();
          AddonId selectedAddonId = AddonId.from(name, facet.getProjectVersion());
          if (choices.contains(selectedAddonId))
          {

@@ -21,7 +21,6 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -81,7 +80,7 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
    {
       configureAddonDependencies();
       Project project = getSelectedProject(builder.getUIContext());
-      packageName.setDefaultValue(project.getFacet(MetadataFacet.class).getTopLevelPackage());
+      packageName.setDefaultValue(project.getFacet(JavaSourceFacet.class).getBasePackage());
       builder.add(packageName).add(named).add(furnaceContainer).add(addonDependencies);
    }
 

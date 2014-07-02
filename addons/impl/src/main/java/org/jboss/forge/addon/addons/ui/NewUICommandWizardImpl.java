@@ -11,10 +11,9 @@ import java.util.Iterator;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
-import org.jboss.forge.addon.parser.java.utils.Packages;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -134,7 +133,7 @@ public class NewUICommandWizardImpl extends AbstractJavaSourceCommand<JavaClassS
    protected String calculateDefaultPackage(UIContext context)
    {
       Project project = getSelectedProject(context);
-      return Packages.toValidPackageName(project.getFacet(MetadataFacet.class).getTopLevelPackage()) + ".commands";
+      return project.getFacet(JavaSourceFacet.class).getBasePackage() + ".commands";
    }
 
    @Override

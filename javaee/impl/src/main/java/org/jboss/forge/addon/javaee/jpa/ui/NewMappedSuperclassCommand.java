@@ -9,9 +9,9 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 
 import javax.persistence.MappedSuperclass;
 
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -45,7 +45,7 @@ public class NewMappedSuperclassCommand extends AbstractJavaSourceCommand<JavaCl
       Project project = getSelectedProject(context);
       if (project != null)
       {
-         packageName = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
+         packageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + ".model";
       }
       else
       {

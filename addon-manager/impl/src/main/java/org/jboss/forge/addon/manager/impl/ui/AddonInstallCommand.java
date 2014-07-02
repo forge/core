@@ -63,7 +63,7 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
       if (project != null)
       {
          MetadataFacet facet = project.getFacet(MetadataFacet.class);
-         topLevelPackage = facet.getTopLevelPackage();
+         topLevelPackage = facet.getProjectGroupName();
          groupId.setDefaultValue(topLevelPackage);
          name.setDefaultValue(facet.getProjectName());
          version.setDefaultValue(facet.getProjectVersion());

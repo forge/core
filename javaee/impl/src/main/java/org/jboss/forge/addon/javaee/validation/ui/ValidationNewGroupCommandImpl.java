@@ -6,8 +6,8 @@
  */
 package org.jboss.forge.addon.javaee.validation.ui;
 
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -51,6 +51,6 @@ public class ValidationNewGroupCommandImpl extends AbstractJavaSourceCommand<Jav
    @Override
    protected String calculateDefaultPackage(UIContext context)
    {
-      return getSelectedProject(context).getFacet(MetadataFacet.class).getTopLevelPackage() + ".constraints";
+      return getSelectedProject(context).getFacet(JavaSourceFacet.class).getBasePackage() + ".constraints";
    }
 }

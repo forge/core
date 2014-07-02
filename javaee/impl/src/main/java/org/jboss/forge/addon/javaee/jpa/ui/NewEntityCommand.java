@@ -20,7 +20,6 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.visit.VisitContext;
@@ -135,7 +134,7 @@ public class NewEntityCommand extends AbstractJavaEECommand implements Prerequis
       });
       if (value[0] == null)
       {
-         value[0] = project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".model";
+         value[0] = project.getFacet(JavaSourceFacet.class).getBasePackage() + ".model";
       }
       return value[0];
    }

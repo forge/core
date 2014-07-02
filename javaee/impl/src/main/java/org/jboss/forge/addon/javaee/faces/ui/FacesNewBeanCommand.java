@@ -15,7 +15,6 @@ import org.jboss.forge.addon.javaee.faces.FacesOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
@@ -96,7 +95,7 @@ public class FacesNewBeanCommand extends AbstractFacesCommand implements Prerequ
 
    private String calculateBackingBeanPackage(Project project)
    {
-      return project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".view";
+      return project.getFacet(JavaSourceFacet.class).getBasePackage() + ".view";
    }
 
    @Override

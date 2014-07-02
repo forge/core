@@ -19,7 +19,6 @@ import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -121,7 +120,7 @@ public class NewEJBCommand extends AbstractJavaEECommand implements UIWizard
 
    private String calculateServicePackage(Project project)
    {
-      return project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".service";
+      return project.getFacet(JavaSourceFacet.class).getBasePackage() + ".service";
    }
 
    @Override

@@ -18,8 +18,8 @@ import org.jboss.forge.addon.javaee.rest.config.RestConfigurationStrategy;
 import org.jboss.forge.addon.javaee.rest.config.RestConfigurationStrategyFactory;
 import org.jboss.forge.addon.javaee.rest.ui.RestSetupWizard;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -105,7 +105,7 @@ public class RestSetupWizardImpl extends AbstractJavaEECommand implements RestSe
       targetPackage.setRequired(appClassChosen).setEnabled(appClassChosen);
       className.setRequired(appClassChosen).setEnabled(appClassChosen);
       Project project = getSelectedProject(context);
-      targetPackage.setDefaultValue(project.getFacet(MetadataFacet.class).getTopLevelPackage() + ".rest");
+      targetPackage.setDefaultValue(project.getFacet(JavaSourceFacet.class).getBasePackage() + ".rest");
    }
 
    @Override
