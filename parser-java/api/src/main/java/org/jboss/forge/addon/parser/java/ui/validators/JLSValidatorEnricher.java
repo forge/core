@@ -32,9 +32,10 @@ public class JLSValidatorEnricher implements InputComponentInjectionEnricher
          case InputType.JAVA_PACKAGE_PICKER:
             input.addValidator(new PackageUIValidator());
             break;
-         case InputType.JAVA_CLASS_PICKER:
-            input.addValidator(new ClassNameUIValidator());
-            break;
+         // FIXME: Using primitives validates as "int is a keyword"
+         // case InputType.JAVA_CLASS_PICKER:
+         // input.addValidator(new ClassNameUIValidator());
+         // break;
          }
       }
    }
