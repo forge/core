@@ -139,8 +139,7 @@ public class JLSValidator
    {
       if (Strings.isNullOrEmpty(identifier))
          return new ValidationResult(ERROR, Messages.notNullOrEmpty(type));
-      if (JAVA_KEYWORDS.contains(identifier) || BOOLEAN_LITERALS.contains(identifier)
-               || identifier.equals(NULL_LITERAL))
+      if (isReservedWord(identifier))
       {
          return new ValidationResult(ERROR, Messages.isAJavaKeyWord(identifier));
       }
@@ -152,7 +151,7 @@ public class JLSValidator
       for (int ctr = 1; ctr < identifier.length(); ctr++)
       {
          int javaLetterOrDigit = identifier.codePointAt(ctr);
-         if (!Character.isJavaIdentifierStart(javaLetterOrDigit))
+         if (!Character.isJavaIdentifierPart(javaLetterOrDigit))
          {
             return new ValidationResult(ERROR, Messages.containsInvalidCharacters(identifier));
          }

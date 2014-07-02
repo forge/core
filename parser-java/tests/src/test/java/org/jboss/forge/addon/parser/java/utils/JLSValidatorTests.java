@@ -82,6 +82,9 @@ public class JLSValidatorTests
 
       result = JLSValidator.validatePackageName("com.acme.$");
       assertEquals(ResultType.INFO, result.getType());
+
+      result = JLSValidator.validatePackageName("org.agoncal.training.javaee6adv");
+      assertEquals(ResultType.INFO, result.getType());
    }
 
    @Test
