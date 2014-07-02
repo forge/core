@@ -90,7 +90,7 @@ public class AddonProjectConfiguratorTest
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
-      metadataFacet.setTopLevelPackage("com.acme.testproject");
+      metadataFacet.setProjectGroupName("com.acme.testproject");
 
       SingleVersion forgeVersion = new SingleVersion(FURNACE_VERSION);
       configurator.setupComplexAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
@@ -351,7 +351,7 @@ public class AddonProjectConfiguratorTest
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
-      metadataFacet.setTopLevelPackage("com.acme.testproject");
+      metadataFacet.setProjectGroupName("com.acme.testproject");
 
       SingleVersion forgeVersion = new SingleVersion(FURNACE_VERSION);
       configurator.setupSimpleAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
@@ -418,7 +418,7 @@ public class AddonProjectConfiguratorTest
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
-      metadataFacet.setTopLevelPackage("com.acme.testproject");
+      metadataFacet.setProjectGroupName("com.acme.testproject");
 
       SingleVersion forgeVersion = new SingleVersion("2.0.0.Alpha3");
       configurator.setupComplexAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
