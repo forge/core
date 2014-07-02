@@ -32,21 +32,41 @@ public class Packages
       return pkg.replace(File.separator, ".");
    }
 
+   /**
+    * Converts a given package name to a valid/parseable package name (without reserved words)
+    */
    public static String toValidPackageName(String pkg)
    {
       if (pkg == null)
       {
          throw new IllegalArgumentException("Package should not be null");
       }
+      // Sanitizing package name
       StringBuilder sb = new StringBuilder(pkg.length());
       for (int i = 0; i < pkg.length(); i++)
       {
          char c = pkg.charAt(i);
+         // remove dots from the beginning and the end of the package
+         if (c == '.' && (i == 0 || i == pkg.length() - 1))
+         {
+            continue;
+         }
          if (c == '.' || Character.isJavaIdentifierPart(c))
          {
             sb.append(c);
          }
       }
-      return sb.toString();
+      String packageName = sb.toString();
+      StringBuilder result = new StringBuilder();
+      String[] tokens = packageName.split("[.]");
+      for (String token : tokens)
+      {
+         if (JLSValidator.validateIdentifier(token, IdentifierType.PACKAGE_NAME).getType() != ResultType.INFO)
+         {
+            token += "_";
+         }
+         result.append(token).append(".");
+      }
+      return result.substring(0, result.length() - 1);
    }
 }
