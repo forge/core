@@ -61,7 +61,7 @@ public class Packages
       String[] tokens = packageName.split("[.]");
       for (String token : tokens)
       {
-         if (JLSValidator.validateIdentifier(token, IdentifierType.PACKAGE_NAME).getType() != ResultType.INFO)
+         if (JLSValidator.isReservedWord(token))
          {
             token += "_";
          }

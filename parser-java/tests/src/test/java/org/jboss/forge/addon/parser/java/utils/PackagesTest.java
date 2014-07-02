@@ -23,6 +23,7 @@ public class PackagesTest
       Assert.assertEquals("something.for_.burr", Packages.toValidPackageName("something.for.burr"));
       Assert.assertEquals("something.true_", Packages.toValidPackageName("something.true"));
       Assert.assertEquals("native_", Packages.toValidPackageName("native"));
+      Assert.assertEquals("org.agoncal.training.javaee6adv", Packages.toValidPackageName("org.agoncal.training.javaee6adv"));
    }
 
    @Test
