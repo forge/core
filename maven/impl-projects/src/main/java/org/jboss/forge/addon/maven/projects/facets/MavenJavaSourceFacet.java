@@ -14,6 +14,7 @@ import java.util.List;
 import javax.enterprise.context.Dependent;
 
 import org.apache.maven.model.Build;
+import org.apache.maven.model.Model;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
@@ -78,7 +79,13 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    @Override
    public String getBasePackage()
    {
-      return Packages.toValidPackageName(getFaceted().getFacet(MavenFacet.class).getModel().getGroupId());
+      Model model = getFaceted().getFacet(MavenFacet.class).getModel();
+      String groupId = model.getGroupId();
+      if (groupId == null)
+      {
+         groupId = model.getParent().getGroupId();
+      }
+      return Packages.toValidPackageName(groupId);
    }
 
    @Override
