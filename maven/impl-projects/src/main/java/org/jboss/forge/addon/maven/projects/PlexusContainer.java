@@ -48,10 +48,25 @@ class PlexusContainer
 
    public void preShutdown(@Observes @Local PreShutdown event)
    {
-      if (plexusContainer != null)
+      try
       {
-         plexusContainer.dispose();
-         plexusContainer = null;
+         ClassLoaders.executeIn(Thread.currentThread().getContextClassLoader(), new Callable<Void>()
+         {
+            @Override
+            public Void call() throws Exception
+            {
+               if (plexusContainer != null)
+               {
+                  plexusContainer.dispose();
+                  plexusContainer = null;
+               }
+               return null;
+            }
+         });
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException("Error encountered while disposing PlexusContainer", e);
       }
    }
 
