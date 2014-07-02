@@ -20,6 +20,7 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
    private final static String CONFIG_KEY_PATH_TO_DRIVER = "path-to-driver";
    private final static String CONFIG_KEY_URL = "url";
    private final static String CONFIG_KEY_USER = "user";
+   private final static String CONFIG_KEY_PASSWORD = "pass";
 
    @Inject
    private Configuration config;
@@ -44,6 +45,7 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
             descriptor.setPath(child.getAttribute(CONFIG_KEY_PATH_TO_DRIVER));
             descriptor.setUrl(child.getAttribute(CONFIG_KEY_URL));
             descriptor.setUser(child.getAttribute(CONFIG_KEY_USER));
+            descriptor.setPassword(child.getAttribute(CONFIG_KEY_PASSWORD));
             result.put(descriptor.getName(), descriptor);
          }
       }

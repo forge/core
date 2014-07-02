@@ -90,7 +90,10 @@ public class ConnectionProfileDetailsStep extends AbstractConnectionProfileDetai
       {
          descriptor.setUrls(helper.getDriverUrls(driverLocation.getValue()));
       }
-      descriptor.setDriverClass(driverClass.getValue().getName());
+      if (driverClass.getValue() != null)
+      {
+    	  descriptor.setDriverClass(driverClass.getValue().getName());
+      }
       descriptor.setConnectionProperties(createConnectionProperties());
    }
 

@@ -56,6 +56,7 @@ public class CreateConnectionProfileCommandImpl extends AbstractConnectionProfil
       connectionProfile.setPath(driverLocation.getValue().getFullyQualifiedName());
       connectionProfile.setUrl(jdbcUrl.getValue());
       connectionProfile.setUser(userName.getValue());
+      connectionProfile.setPassword(userPassword.getValue());
       connectionProfiles.put(name.getValue(), connectionProfile);
       provider.getConnectionProfileManager().saveConnectionProfiles(connectionProfiles.values());
       return Results.success("Connection profile " + connectionProfile.getName() + " has been saved successfully");
