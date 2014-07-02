@@ -25,7 +25,7 @@ types including classes, enums, interfaces, annotations, and package-info types.
 
 |ui
 |no
-|yes
+|no
 
 |org.jboss.forge.furnace.container:cdi
 |no
