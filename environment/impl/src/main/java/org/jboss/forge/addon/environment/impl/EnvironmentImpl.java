@@ -18,7 +18,7 @@ import org.jboss.forge.furnace.container.simple.Service;
 
 public class EnvironmentImpl implements Environment, Service
 {
-   private static final Map<String, Map<Object, Object>> categorizedMap =
+   private static final Map<String, Map<Object, Object>> CATEGORIZED_MAP =
             Collections.synchronizedMap(
                      new HashMap<String, Map<Object, Object>>());
 
@@ -26,11 +26,11 @@ public class EnvironmentImpl implements Environment, Service
    @Override
    public <K, V> Map<K, V> get(Class<? extends Category> key)
    {
-      Map<Object, Object> map = categorizedMap.get(key.getName());
+      Map<Object, Object> map = CATEGORIZED_MAP.get(key.getName());
       if (map == null)
       {
          map = new ConcurrentHashMap<Object, Object>();
-         categorizedMap.put(key.getName(), map);
+         CATEGORIZED_MAP.put(key.getName(), map);
       }
       return (Map<K, V>) map;
    }
