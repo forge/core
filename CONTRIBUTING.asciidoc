@@ -66,7 +66,7 @@ Here are the steps in detail:
 
         git push origin HEAD
 
-   _Note: The above command assumes your remote repository is named 'origin'. You can verify your forked remote repository name using the command `git remote -v`_.
+IMPORTANT: The above command assumes your remote repository is named 'origin'. You can verify your forked remote repository name using the command _git remote -v_.
 
 12. Browse to the <topic-branch-name> branch on your forked Git repository and link:http://help.github.com/send-pull-requests/[open a Pull Request]. Give it a clear title and description.
 
