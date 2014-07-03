@@ -79,9 +79,8 @@ If you're wondering what issues would be suitable when you're just getting start
 License Information and Contributor Agreement
 ---------------------------------------------
 
-  JBoss Forge is licensed under the [Eclipse Public License 1.0](http://www.eclipse.org/legal/epl-v10.html).
-
-  There is no need to sign a contributor agreement to contribute to JBoss Forge. You just need to explicitly license any contribution under the EPL 1.0. If you add any new files to JBoss Forge, make sure to add the correct header.
+* JBoss Forge is licensed under the link:http://www.eclipse.org/legal/epl-v10.html[Eclipse Public License 1.0].
+* There is no need to sign a contributor agreement to contribute to JBoss Forge. You just need to explicitly license any contribution under the EPL 1.0. If you add any new files to JBoss Forge, make sure to add the correct header.
 
 ### Java,  Javascript and CSS files
 
