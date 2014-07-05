@@ -129,4 +129,16 @@ public class URLResourceImpl extends VirtualResource<URL> implements URLResource
    {
       return getFullyQualifiedName();
    }
+
+   @Override
+   public boolean isLeaf()
+   {
+      return true;
+   }
+
+   @Override
+   public boolean isContainer()
+   {
+      return false;
+   }
 }

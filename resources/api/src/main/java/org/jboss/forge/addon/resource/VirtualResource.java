@@ -9,19 +9,27 @@ import java.io.InputStream;
  */
 public abstract class VirtualResource<T> extends AbstractResource<T>
 {
-   protected VirtualResource(ResourceFactory factory, final Resource<?> parent)
+   private Resource<?> underlyingResource;
+
+   protected VirtualResource(ResourceFactory factory, final Resource<?> underlyingResource)
    {
-      super(factory, parent);
+      super(factory, null);
+      this.underlyingResource = underlyingResource;
+   }
+   
+   public Resource<?> getUnderlyingResource()
+   {
+      return underlyingResource;
+   }
+
+   @Override
+   public Resource<?> getParent()
+   {
+      return underlyingResource.getParent();
    }
 
    @Override
    public Resource<?> getChild(final String name)
-   {
-      throw new RuntimeException("not implemented");
-   }
-
-   @Override
-   public Resource<T> createFrom(T resource)
    {
       throw new RuntimeException("not implemented");
    }

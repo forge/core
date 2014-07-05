@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.PathResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.URLResource;
@@ -93,19 +93,19 @@ public class ResourcePathResolver
 
          if (path.length() == 1)
          {
-            return singleResult(factory.create(DirectoryResource.class, homeDir));
+            return singleResult(factory.create(PathResource.class, homeDir.toPath()));
          }
          else
          {
             cursor++;
-            r = factory.create(DirectoryResource.class, homeDir);
+            r = factory.create(PathResource.class, homeDir.toPath());
          }
       }
       // for windows, support drive letter prefixes here.
       else if (isWindows && path.matches("^[a-zA-Z]{1,1}:(/|\\\\).*"))
       {
          int idx = path.lastIndexOf(slashChar) + 1;
-         r = factory.create(DirectoryResource.class, new File(path.substring(0, idx)).getAbsoluteFile());
+         r = factory.create(PathResource.class, new File(path.substring(0, idx)).getAbsoluteFile().toPath());
          cursor = idx;
       }
       // Is an URL ?
@@ -264,7 +264,7 @@ public class ResourcePathResolver
       if (matchPattern.matcher(res.getName()).matches())
       {
          // if ((nestStart < matchLevels.length) && res.isFlagSet(ResourceFlag.Node))
-         if ((nestStart < matchLevels.length) && res instanceof DirectoryResource)
+         if ((nestStart < matchLevels.length) && res instanceof PathResource)
          {
             return match(matchLevels, nestStart + 1, res, candidates);
          }
@@ -280,7 +280,7 @@ public class ResourcePathResolver
        * bail.
        */
       // if (!res.isFlagSet(ResourceFlag.Node) || (nestStart == matchLevels.length))
-      if (!(res instanceof DirectoryResource) || (nestStart == matchLevels.length))
+      if (!(res instanceof PathResource) || (nestStart == matchLevels.length))
       {
          return candidates;
       }

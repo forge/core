@@ -115,11 +115,7 @@ public class ResourceFactoryImpl implements ResourceFactory
          throw new IllegalStateException("Resource must exist to be monitored");
       }
 
-      if (resource instanceof FileResource)
-      {
-         return fileMonitor.registerMonitor(this, (FileResource<?>) resource, resourceFilter);
-      }
-      else if (resource instanceof PathResource)
+      if (resource instanceof PathResource)
       {
          return fileMonitor.registerMonitor(this, (PathResource) resource, resourceFilter);
       }

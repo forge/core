@@ -28,11 +28,9 @@ public interface ResourceOperations<T>
 
    void deleteOnExit(T resource);
 
-   boolean create(T resource) throws ResourceException;
+   boolean createLeaf(T resource) throws ResourceException;
 
-   boolean mkdir(T resource) throws ResourceException;
-
-   boolean mkdirs(T resource) throws ResourceException;
+   boolean createContainer(T resource) throws ResourceException;
 
    OutputStream createOutputStream(T resource) throws ResourceException;
 

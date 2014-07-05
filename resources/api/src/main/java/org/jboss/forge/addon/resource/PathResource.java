@@ -15,11 +15,6 @@ public interface PathResource extends Resource<Path>,
          WriteableResource<PathResource, Path>
 {
    /**
-    * Return true if this {@link FileResource} exists and is actually a directory, otherwise return false;
-    */
-   public boolean isDirectory();
-
-   /**
     * Returns true if the underlying resource has been modified on the file system since it was initially loaded.
     *
     * @return boolean true if resource is changed.
@@ -32,33 +27,12 @@ public interface PathResource extends Resource<Path>,
    public void refresh();
 
    /**
-    * Create a new single directory for this resource. This will not succeed if any parent directories needed for this
-    * resource to exist are missing. You should consider using {@link #mkdirs()}
-    */
-   public boolean mkdir();
-
-   /**
-    * Create all directories required for this resource to exist.
-    */
-   public boolean mkdirs();
-
-   /**
     * Requests that the file or directory denoted by this resource be deleted when the virtual machine terminates.
     * <p>
     * Once deletion has been requested, it is not possible to cancel the request. This method should therefore be used
     * with care.
     */
    public void deleteOnExit();
-
-   /**
-    * Create the file in the underlying resource system. Necessary directory paths will be created automatically.
-    */
-   public boolean createNewPath();
-
-   /**
-    * Create a temporary {@link PathResource}
-    */
-   public PathResource createTempResource();
 
    /**
     * Rename this {@link Resource} to the given path.

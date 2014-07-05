@@ -16,10 +16,16 @@ package org.jboss.forge.addon.resource;
  */
 public interface CreatableResource<T extends CreatableResource<T, R>, R> extends Resource<R>
 {
+
    /**
-    * Create this {@link Resource} in the underlying resource system. Necessary parent paths will be created
+    * Create this leaf {@link Resource} in the underlying resource system. Necessary parent paths will be created
     * automatically.
     */
-   boolean create();
+   boolean createLeaf();
 
+   /**
+    * Create this container {@link Resource} in the underlying resource system. Necessary parent paths will be created
+    * automatically.
+    */
+   boolean createContainer();
 }
