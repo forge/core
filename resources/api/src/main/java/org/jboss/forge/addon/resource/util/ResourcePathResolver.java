@@ -264,7 +264,7 @@ public class ResourcePathResolver
       if (matchPattern.matcher(res.getName()).matches())
       {
          // if ((nestStart < matchLevels.length) && res.isFlagSet(ResourceFlag.Node))
-         if ((nestStart < matchLevels.length) && res instanceof PathResource)
+         if ((nestStart < matchLevels.length) && res.isContainer())
          {
             return match(matchLevels, nestStart + 1, res, candidates);
          }
