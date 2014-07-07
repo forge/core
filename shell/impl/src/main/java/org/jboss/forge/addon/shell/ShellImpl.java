@@ -38,7 +38,6 @@ import org.jboss.aesh.terminal.TerminalCharacter;
 import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.aesh.ForgeCommandNotFoundHandler;
 import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
@@ -77,7 +76,7 @@ public class ShellImpl implements Shell, UIRuntime
 
    private final static Logger log = Logger.getLogger(ShellImpl.class.getName());
 
-   public ShellImpl(FileResource<?> initialResource, Settings settings, AddonRegistry addonRegistry)
+   public ShellImpl(Resource<?> initialResource, Settings settings, AddonRegistry addonRegistry)
    {
       this.addonRegistry = addonRegistry;
 
