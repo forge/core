@@ -111,8 +111,9 @@ public class RunCommand extends AbstractShellCommand
    public Result execute(UIExecutionContext context) throws Exception
    {
       Result result = Results.fail("Error executing script.");
-      Resource<?> currentResource = (Resource<?>) context.getUIContext().getInitialSelection().get();
-      final UIOutput output = context.getUIContext().getProvider().getOutput();
+      UIContext uiContext = context.getUIContext();
+      Resource<?> currentResource = (Resource<?>) uiContext.getInitialSelection().get();
+      final UIOutput output = uiContext.getProvider().getOutput();
       if (command.hasValue())
       {
          String[] commands = command.getValue().split(" ");
@@ -155,6 +156,7 @@ public class RunCommand extends AbstractShellCommand
       }
       else
       {
+         Resource<?> selectedResource = currentResource;
          ALL: for (String path : arguments.getValue())
          {
             List<Resource<?>> resources = new ResourcePathResolver(resourceFactory, currentResource, path).resolve();
@@ -174,11 +176,10 @@ public class RunCommand extends AbstractShellCommand
                            .outputStreamError(stderr)
                            .create();
 
-                  Shell scriptShell = shellFactory.createShell(((FileResource<?>) context.getUIContext()
+                  Shell scriptShell = shellFactory.createShell(((FileResource<?>) uiContext
                            .getInitialSelection().get()).getUnderlyingResourceObject(), settings);
 
                   scriptShell.getConsole().setPrompt(new Prompt(""));
-
                   try (BufferedReader reader = new BufferedReader(new InputStreamReader(
                            resource.getResourceInputStream())))
                   {
@@ -197,10 +198,13 @@ public class RunCommand extends AbstractShellCommand
                            result = execute(scriptShell, writer, line, timeoutValue,
                                     TimeUnit.SECONDS, startTime);
 
-                           if (result != null)
+                           if (result instanceof Failed)
                            {
-                              if (result instanceof Failed)
-                                 break ALL;
+                              break ALL;
+                           }
+                           else
+                           {
+                              selectedResource = scriptShell.getCurrentResource();
                            }
                         }
                         catch (TimeoutException e)
@@ -221,6 +225,10 @@ public class RunCommand extends AbstractShellCommand
                   break ALL;
                }
             }
+         }
+         if (!(result instanceof Failed))
+         {
+            uiContext.setSelection(selectedResource);
          }
       }
       return result;

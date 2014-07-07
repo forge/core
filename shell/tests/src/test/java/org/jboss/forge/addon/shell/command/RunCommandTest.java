@@ -18,6 +18,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.mock.command.ThrowExceptionCommand;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -196,6 +197,23 @@ public class RunCommandTest
                TimeUnit.SECONDS);
       Assert.assertFalse(result instanceof Failed);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString("file.txt"));
+   }
+
+   @Test
+   public void testKeepShellContext() throws Exception
+   {
+      DirectoryResource temp = (DirectoryResource) resourceFactory.create(OperatingSystemUtils.createTempDir());
+      temp.deleteOnExit();
+      Shell shell = shellTest.getShell();
+      shell.setCurrentResource(temp);
+
+      FileResource<?> script = (FileResource<?>) temp.getChild("script.fsh");
+      script.setContents("mkdir foo\ncd foo");
+      Result result = shellTest.execute("run script.fsh", COMMAND_TIMEOUT, TimeUnit.SECONDS);
+      Assert.assertFalse(result instanceof Failed);
+      Resource<?> child = temp.getChild("foo");
+      Assert.assertTrue(child.exists());
+      Assert.assertEquals(child, shell.getCurrentResource());
    }
 
 }
