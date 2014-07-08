@@ -69,7 +69,7 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
       JavaClassSource entity = context.getEntity();
 
       Project project = context.getProject();
-      String contentType = context.getContentType();
+      String contentType = ResourceGeneratorUtil.getContentType(context.getContentType());
       String idType = ResourceGeneratorUtil.resolveIdType(entity);
       String persistenceUnitName = context.getPersistenceUnitName();
       String idGetterName = ResourceGeneratorUtil.resolveIdGetterName(entity);

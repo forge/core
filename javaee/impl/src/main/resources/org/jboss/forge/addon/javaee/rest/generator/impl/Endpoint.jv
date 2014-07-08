@@ -24,7 +24,7 @@ public class ${entityTable}Endpoint
    private EntityManager em;
 
    @POST
-   @Consumes("${contentType}")
+   @Consumes(${contentType})
    public Response create(${entity.getName()} entity)
    {
       em.persist(entity);
@@ -45,7 +45,7 @@ public class ${entityTable}Endpoint
 
    @GET
    @Path("/{id:[0-9][0-9]*}")
-   @Produces("${contentType}")
+   @Produces(${contentType})
    public Response findById(@PathParam("id") ${idType} id)
    {
       TypedQuery<${entity.getName()}> findByIdQuery = em.createQuery("${selectExpression} ${idClause} ${orderClause}", ${entity.getName()}.class);
@@ -63,7 +63,7 @@ public class ${entityTable}Endpoint
    }
 
    @GET
-   @Produces("${contentType}")
+   @Produces(${contentType})
    public List<${entity.getName()}> listAll(@QueryParam("start") Integer startPosition, @QueryParam("max") Integer maxResult)
    {
       TypedQuery<${entity.getName()}> findAllQuery = em.createQuery("${selectExpression} ${orderClause}", ${entity.getName()}.class);
@@ -81,7 +81,7 @@ public class ${entityTable}Endpoint
 
    @PUT
    @Path("/{id:[0-9][0-9]*}")
-   @Consumes("${contentType}")
+   @Consumes(${contentType})
    public Response update(${entity.getName()} entity)
    {
       try {
