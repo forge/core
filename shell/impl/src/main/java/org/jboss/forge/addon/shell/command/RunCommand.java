@@ -31,6 +31,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourcePathResolver;
+import org.jboss.forge.addon.shell.CommandNotFoundListener;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ShellFactory;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
@@ -248,6 +249,8 @@ public class RunCommand extends AbstractShellCommand
          ScriptCommandListener listener = new ScriptCommandListener();
          ListenerRegistration<CommandExecutionListener> listenerRegistration = shell
                   .addCommandExecutionListener(listener);
+         ListenerRegistration<CommandNotFoundListener> notFoundRegistration = shell
+                  .addCommandNotFoundListener(listener);
          try
          {
             stdin.write(line);
@@ -277,12 +280,13 @@ public class RunCommand extends AbstractShellCommand
          finally
          {
             listenerRegistration.removeListener();
+            notFoundRegistration.removeListener();
          }
       }
       return result;
    }
 
-   public class ScriptCommandListener extends AbstractCommandExecutionListener
+   public class ScriptCommandListener extends AbstractCommandExecutionListener implements CommandNotFoundListener
    {
       Result result;
 
@@ -306,6 +310,15 @@ public class RunCommand extends AbstractShellCommand
          synchronized (this)
          {
             this.result = Results.fail("Error encountered during command execution.", failure);
+         }
+      }
+
+      @Override
+      public void onCommandNotFound(String line, UIContext context)
+      {
+         synchronized (this)
+         {
+            this.result = Results.fail("Command not found: " + line);
          }
       }
 

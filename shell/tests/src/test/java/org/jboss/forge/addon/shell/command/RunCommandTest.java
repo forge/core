@@ -32,7 +32,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -224,7 +223,6 @@ public class RunCommandTest
    }
 
    @Test
-   @Ignore
    public void testRunScriptFailureWithUnknownCommands() throws Exception
    {
       DirectoryResource temp = (DirectoryResource) resourceFactory.create(OperatingSystemUtils.createTempDir());
@@ -234,7 +232,7 @@ public class RunCommandTest
       FileResource<?> script = (FileResource<?>) temp.getChild("script.fsh");
       script.setContents("touch foo.txt\nblah");
 
-      Result result = shellTest.execute("run script.fsh", COMMAND_TIMEOUT, TimeUnit.MINUTES);
+      Result result = shellTest.execute("run script.fsh", COMMAND_TIMEOUT, TimeUnit.SECONDS);
       Assert.assertTrue(result instanceof Failed);
    }
 }

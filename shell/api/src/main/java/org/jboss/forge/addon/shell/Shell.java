@@ -44,4 +44,10 @@ public interface Shell extends UIProvider, AutoCloseable
     * be removed.
     */
    ListenerRegistration<CommandExecutionListener> addCommandExecutionListener(CommandExecutionListener listener);
+
+   /**
+    * Add a {@link CommandNotFoundListener}, returning the {@link ListenerRegistration} with which it may subsequently
+    * be removed.
+    */
+   ListenerRegistration<CommandNotFoundListener> addCommandNotFoundListener(CommandNotFoundListener listener);
 }
