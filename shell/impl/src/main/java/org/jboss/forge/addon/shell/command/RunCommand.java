@@ -28,7 +28,6 @@ import org.jboss.aesh.console.Prompt;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourcePathResolver;
@@ -176,47 +175,44 @@ public class RunCommand extends AbstractShellCommand
                            .outputStreamError(stderr)
                            .create();
 
-                  Shell scriptShell = shellFactory.createShell(((FileResource<?>) uiContext
-                           .getInitialSelection().get()).getUnderlyingResourceObject(), settings);
-
-                  scriptShell.getConsole().setPrompt(new Prompt(""));
-                  try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-                           resource.getResourceInputStream())))
+                  try (Shell scriptShell = shellFactory.createShell(currentResource, settings))
                   {
-                     long startTime = System.currentTimeMillis();
-                     while (reader.ready())
-                     {
-                        try
-                        {
-                           String line = reader.readLine();
-                           if (isComment(line))
-                           {
-                              // Skip Comments
-                              continue;
-                           }
-                           Integer timeoutValue = timeout.getValue();
-                           result = execute(scriptShell, writer, line, timeoutValue,
-                                    TimeUnit.SECONDS, startTime);
 
-                           if (result instanceof Failed)
+                     scriptShell.getConsole().setPrompt(new Prompt(""));
+                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                              resource.getResourceInputStream())))
+                     {
+                        long startTime = System.currentTimeMillis();
+                        while (reader.ready())
+                        {
+                           try
                            {
+                              String line = reader.readLine();
+                              if (skipsLine(line))
+                              {
+                                 // Skip Comments
+                                 continue;
+                              }
+                              Integer timeoutValue = timeout.getValue();
+                              result = execute(scriptShell, writer, line, timeoutValue,
+                                       TimeUnit.SECONDS, startTime);
+
+                              if (result instanceof Failed)
+                              {
+                                 break ALL;
+                              }
+                              else
+                              {
+                                 selectedResource = scriptShell.getCurrentResource();
+                              }
+                           }
+                           catch (TimeoutException e)
+                           {
+                              result = Results.fail(path + ": timed out.");
                               break ALL;
                            }
-                           else
-                           {
-                              selectedResource = scriptShell.getCurrentResource();
-                           }
-                        }
-                        catch (TimeoutException e)
-                        {
-                           result = Results.fail(path + ": timed out.");
-                           break ALL;
                         }
                      }
-                  }
-                  finally
-                  {
-                     scriptShell.close();
                   }
                }
                else
@@ -238,7 +234,7 @@ public class RunCommand extends AbstractShellCommand
             throws TimeoutException
    {
       Assert.notNull(line, "Line to execute cannot be null.");
-      if (isComment(line))
+      if (skipsLine(line))
       {
          return Results.success();
       }
@@ -246,7 +242,7 @@ public class RunCommand extends AbstractShellCommand
 
       if (!line.trim().isEmpty())
       {
-         if (!line.trim().endsWith(OperatingSystemUtils.getLineSeparator()))
+         if (!line.endsWith(OperatingSystemUtils.getLineSeparator()))
             line = line + OperatingSystemUtils.getLineSeparator();
 
          ScriptCommandListener listener = new ScriptCommandListener();
@@ -344,9 +340,9 @@ public class RunCommand extends AbstractShellCommand
       return super.isEnabled(context) && context.getInitialSelection().get() instanceof DirectoryResource;
    }
 
-   private boolean isComment(String line)
+   private boolean skipsLine(String line)
    {
-      return line.startsWith("#");
+      return line.startsWith("#") || line.trim().isEmpty();
    }
 
    private static class UncloseablePrintStream extends PrintStream

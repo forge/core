@@ -31,6 +31,8 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Assume;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -66,13 +68,19 @@ public class RunCommandTest
       return archive;
    }
 
-   private static final int COMMAND_TIMEOUT = 5000;
+   private static final int COMMAND_TIMEOUT = 10;
 
    @Inject
    private ShellTest shellTest;
 
    @Inject
    private ResourceFactory resourceFactory;
+
+   @Before
+   public void setUp() throws Exception
+   {
+      shellTest.clearScreen();
+   }
 
    @Test
    public void testRunScriptSingleLine() throws Exception
@@ -110,7 +118,7 @@ public class RunCommandTest
       Assert.assertFalse(child.exists());
       Assert.assertFalse(child2.exists());
 
-      Result result = shellTest.execute("run script.fsh", COMMAND_TIMEOUT, TimeUnit.SECONDS);
+      Result result = shellTest.execute("run script.fsh", COMMAND_TIMEOUT, TimeUnit.MINUTES);
       Assert.assertFalse(result instanceof Failed);
 
       Assert.assertTrue(child.exists());
@@ -187,7 +195,6 @@ public class RunCommandTest
    public void testRunCommandLinux() throws Exception
    {
       Assume.assumeTrue(OperatingSystemUtils.isLinux());
-      shellTest.clearScreen();
       DirectoryResource temp = (DirectoryResource) resourceFactory.create(OperatingSystemUtils.createTempDir());
       temp.deleteOnExit();
       FileResource<?> fileResource = (FileResource<?>) temp.getChild("file.txt");
@@ -216,4 +223,18 @@ public class RunCommandTest
       Assert.assertEquals(child, shell.getCurrentResource());
    }
 
+   @Test
+   @Ignore
+   public void testRunScriptFailureWithUnknownCommands() throws Exception
+   {
+      DirectoryResource temp = (DirectoryResource) resourceFactory.create(OperatingSystemUtils.createTempDir());
+      temp.deleteOnExit();
+      shellTest.getShell().setCurrentResource(temp);
+
+      FileResource<?> script = (FileResource<?>) temp.getChild("script.fsh");
+      script.setContents("touch foo.txt\nblah");
+
+      Result result = shellTest.execute("run script.fsh", COMMAND_TIMEOUT, TimeUnit.MINUTES);
+      Assert.assertTrue(result instanceof Failed);
+   }
 }
