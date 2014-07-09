@@ -41,6 +41,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.aesh.ForgeCommandNotFoundHandler;
 import org.jboss.forge.addon.shell.aesh.ForgeCommandRegistry;
+import org.jboss.forge.addon.shell.ui.DidYouMeanCommandNotFoundListener;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIOutputImpl;
@@ -73,6 +74,7 @@ public class ShellImpl implements Shell, UIRuntime
    private final AeshConsole console;
    private final UIOutput output;
    private final List<CommandExecutionListener> executionListeners = new LinkedList<>();
+   private final List<CommandNotFoundListener> commandNotFoundListeners = new LinkedList<>();
 
    private final static Logger log = Logger.getLogger(ShellImpl.class.getName());
 
@@ -87,6 +89,8 @@ public class ShellImpl implements Shell, UIRuntime
       File export = new File(forgeHome, "export");
       final ForgeCommandRegistry registry =
                new ForgeCommandRegistry(this, addonRegistry);
+      // Register DidYouMeanListener
+      commandNotFoundListeners.add(new DidYouMeanCommandNotFoundListener(registry));
       SettingsBuilder newSettings = new SettingsBuilder(settings)
                .historyFile(history)
                .aliasFile(alias)
@@ -103,7 +107,7 @@ public class ShellImpl implements Shell, UIRuntime
                .prompt(createPrompt(initialResource))
                .settings(newSettings.create())
                .commandRegistry(registry)
-               .commandNotFoundHandler(new ForgeCommandNotFoundHandler(registry))
+               .commandNotFoundHandler(new ForgeCommandNotFoundHandler(this, commandNotFoundListeners))
                .create();
       this.output = new ShellUIOutputImpl(console);
       setCurrentResource(initialResource);
@@ -238,6 +242,22 @@ public class ShellImpl implements Shell, UIRuntime
          public CommandExecutionListener removeListener()
          {
             executionListeners.remove(listener);
+            return listener;
+         }
+      };
+   }
+
+   @Override
+   public ListenerRegistration<CommandNotFoundListener> addCommandNotFoundListener(
+            final CommandNotFoundListener listener)
+   {
+      commandNotFoundListeners.add(listener);
+      return new ListenerRegistration<CommandNotFoundListener>()
+      {
+         @Override
+         public CommandNotFoundListener removeListener()
+         {
+            commandNotFoundListeners.remove(listener);
             return listener;
          }
       };
