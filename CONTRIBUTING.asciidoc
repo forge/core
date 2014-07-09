@@ -1,8 +1,16 @@
-JBoss Forge Contributing Guide
-==============================
+= JBoss Forge Contributing Guide
 
-Basic Steps
------------
+If you're looking for a development guide for Forge 2.0, first read https://github.com/forge/core/blob/master/README.asciidoc[this document].
+
+== First Steps
+
+=== Prerequisites
+
+* Java 7+
+* Maven 3.1.0+
+* Git
+
+=== Git Workflow
 
 To contribute to Forge, fork the core repository to your own Git, clone your fork, commit your work on topic branches, and make pull requests.
 
@@ -70,19 +78,181 @@ IMPORTANT: The above command assumes your remote repository is named 'origin'. Y
 
 12. Browse to the <topic-branch-name> branch on your forked Git repository and link:http://help.github.com/send-pull-requests/[open a Pull Request]. Give it a clear title and description.
 
-Choosing issues to work on
---------------------------
+== Building from source
+
+Building Forge 2.0 completely from sources would require you to build Furnace, Furnace-CDI, Furnace-Simple and then the Forge 2.0 codebase, <<.
+
+=== Building Furnace
+
+Furnace is the core runtime providing the modular classloading environment.
+
+Clone the repo (or your fork):
+----
+git clone git@github.com:forge/furnace.git
+----
+Use `https://github.com/forge/furnace.git` instead, if you do not have SSH access.
+
+Build:
+----
+mvn clean install
+----
+
+=== Building Furnace-CDI
+
+Furnace-CDI supports @Inject-based dependency injection of services into Furnace addons through CDI.
+
+Clone the repo:
+----
+git clone git@github.com:forge/furnace-cdi.git
+----
+Use `https://github.com/forge/furnace-cdi.git` instead, if you do not have access, or clone the repo and use the fork's URL.
+
+Build:
+----
+cd furnace-cdi/
+mvn clean install
+----
+
+=== Building Furnace-Simple
+
+Furnace-Simple is a Furnace container that provides lifecycle and service registry support for dependent addons. 
+
+Clone the repo:
+----
+git clone git@github.com:forge/furnace-simple.git
+----
+Use `https://github.com/forge/furnace-simple.git` instead, if you do not have SSH access.
+
+Build:
+----
+cd furnace-simple/
+mvn clean install
+----
+
+=== Building Forge 2.0
+
+Clone the repo (or your fork):
+----
+git clone git@github.com:forge/core.git
+----
+Use `https://github.com/forge/core.git` instead, if you do not have access, or clone the repo and use the fork's URL.
+
+Build:
+----
+mvn clean install
+----
+
+The Forge 2 distribution will be present in the `dist/target` directory. Unzip and extract to get started:
+
+----
+unzip dist/target/forge-distribution-<release_version>.zip -d ~
+export FORGE_HOME=~/forge-distribution-<release_version>
+export PATH=$FORGE_HOME/bin:$PATH
+forge
+----
+
+=== Building the JBoss Tools plugins for Forge 2
+
+JBoss Tools for Forge 2 will allow you to run Forge inside Eclipse. Build this only when you need to run Forge in Eclipse. The Forge-Core distribution is sufficient for the CLI mode.
+
+Clone the repo (or your fork):
+----
+git clone git@github.com:jbosstools/jbosstools-forge.git
+----
+
+Include the https://github.com/jbosstools/jbosstools-devdoc/blob/master/building/how_to_build_jbosstools_4.adoc[required repositories in your settings.xml file], or copy the `settings.xml` from below and save it somewhere to use in the Maven build. This is also described in https://community.jboss.org/wiki/MavenGettingStarted-Developers:
+
+[source,xml]
+----
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+	<profiles>
+		<profile>
+		<id>jboss-default</id>
+		<repositories>
+		<!-- To resolve parent artifact -->
+		<repository>
+				<id>jboss-public-repository-group</id>
+				<name>JBoss Public Repository Group</name>
+				<url>http://repository.jboss.org/nexus/content/groups/public/</url>
+			</repository>
+			<repository>
+				<id>jboss-snapshots-repository</id>
+				<name>JBoss Snapshots Repository</name>
+				<url>https://repository.jboss.org/nexus/content/repositories/snapshots/</url>
+			</repository>
+		</repositories>
+		<pluginRepositories>
+			<!-- To resolve parent artifact -->
+			<pluginRepository>
+				<id>jboss-public-repository-group</id>
+				<name>JBoss Public Repository Group</name>
+				<url>http://repository.jboss.org/nexus/content/groups/public/</url>
+			</pluginRepository>
+			<pluginRepository>
+				<id>jboss-snapshots-repository</id>
+				<name>JBoss Snapshots Repository</name>
+				<url>https://repository.jboss.org/nexus/content/repositories/snapshots/</url>
+			</pluginRepository>
+		</pluginRepositories>
+		</profile>
+	</profiles>
+	<activeProfiles>
+		<activeProfile>jboss-default</activeProfile>
+	</activeProfiles>
+</settings>
+----
+
+=== Build:
+
+----
+mvn --settings ~/.m2/jbosstools.xml clean verify
+----
+
+The Forge 2.0 artifacts from your local .m2 repository would be included in the JBoss Tools plugins for Forge. You can install them in an Eclipse Kepler installation, by adding `$JBOSSTOOLS_FORGE_DIR/site/target/forge.site-1.2.0-SNAPSHOT.zip` as an update site.
+
+Note, you may need to run `git clean -fdx` to clean the target directories of older snapshot artifacts.
+
+To use the Maven artifacts from the JBoss Nexus repository instead of your local .m2 repository, run:
+----
+mvn -U --settings ~/.m2/jbosstools.xml clean verify
+----
+
+=== Run:
+
+This section applies when you do not wish to build and install the Eclipse plugin in an installation, but just work on the Forge 2 sources and run it as an Eclipse application. This useful when you're working on the Forge 2 sources instead of your own addons.
+
+Import the following projects from the plugins/ module into your Eclipse workspace:
+
+----
+org.jboss.tools.aesh.core
+org.jboss.tools.aesh.runtime
+org.jboss.tools.aesh.ui
+org.jboss.tools.forge.core
+org.jboss.tools.forge.core.ext
+org.jboss.tools.forge.m2e
+org.jboss.tools.forge.runtime
+org.jboss.tools.forge.ui
+org.jboss.tools.forge.ui.ext
+org.jboss.tools.forge.ui.notifications
+org.jboss.tools.forge2.runtime
+----
+
+Right-click the org.jboss.tools.forge.ui.ext project, and choose Run As -> Eclipse Application. 
+
+IMPORTANT: If you are unable to run the project as an Eclipse application, the reason is that you don't have the Tycho M2 Provider installed. If that's the case, install it via this update site: http://repository.tesla.io:8081/nexus/content/sites/m2e.extras/m2eclipse-tycho/0.7.0/N/0.7.0.201309291400/
+
+Right click the org.jboss.tools.forge.ui.ext project, choose Run As -> Run Configurations.. and set the VM arguments to: -Xmx1024m -XX:MaxPermSize=256m
+
+== Choosing issues to work on
 
 If you're wondering what issues would be suitable when you're just getting started, we recommend taking a look at link:https://issues.jboss.org/issues/?filter=12321213[the issues with the 'starter' label in our JIRA].
 
-
-License Information and Contributor Agreement
----------------------------------------------
+== License Information and Contributor Agreement
 
 * JBoss Forge is licensed under the link:http://www.eclipse.org/legal/epl-v10.html[Eclipse Public License 1.0].
 * There is no need to sign a contributor agreement to contribute to JBoss Forge. You just need to explicitly license any contribution under the EPL 1.0. If you add any new files to JBoss Forge, make sure to add the correct header.
 
-### Java,  Javascript and CSS files
+=== Java,  Javascript and CSS files
 
       /**
        * Copyright 2014 Red Hat, Inc. and/or its affiliates.
@@ -91,7 +261,7 @@ License Information and Contributor Agreement
        * http://www.eclipse.org/legal/epl-v10.html
        */
 
-### HTML, XML, XSD and XHTML files
+=== HTML, XML, XSD and XHTML files
 
       <!--
        ~ Copyright 2014 Red Hat, Inc. and/or its affiliates.
@@ -100,14 +270,14 @@ License Information and Contributor Agreement
        ~ http://www.eclipse.org/legal/epl-v10.html
       -->
 
-### Properties files and Bash Scripts
+=== Properties files and Bash Scripts
 
        # Copyright 2014 Red Hat, Inc. and/or its affiliates.
        #
        # Licensed under the Eclipse Public License version 1.0, available at
        # http://www.eclipse.org/legal/epl-v10.html
 
-### SQL files
+=== SQL files
 
       --
       -- Copyright 2014 Red Hat, Inc. and/or its affiliates.
@@ -116,7 +286,7 @@ License Information and Contributor Agreement
       -- http://www.eclipse.org/legal/epl-v10.html
       --
 
-### JSP files
+=== JSP files
 
 ----
 <%--
@@ -126,3 +296,4 @@ Licensed under the Eclipse Public License version 1.0, available at
 http://www.eclipse.org/legal/epl-v10.html
 --%>
 ----
+
