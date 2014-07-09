@@ -241,7 +241,7 @@ public class RunCommand extends AbstractShellCommand
          if (line.endsWith("\\"))
          {
             // Read next line
-            result.append(line.substring(0, line.lastIndexOf("\\")));
+            result.append(" ").append(line.substring(0, line.lastIndexOf("\\")));
          }
          else
          {
