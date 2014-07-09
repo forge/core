@@ -127,7 +127,7 @@ public class RunCommandTest
    }
 
    @Test
-   public void testRunScriptMultiLineWithRandoWhitespace() throws Exception
+   public void testRunScriptMultiLineWithRandomWhitespace() throws Exception
    {
       DirectoryResource temp = (DirectoryResource) resourceFactory.create(OperatingSystemUtils.createTempDir());
       temp.deleteOnExit();
@@ -234,5 +234,21 @@ public class RunCommandTest
 
       Result result = shellTest.execute("run script.fsh", COMMAND_TIMEOUT, TimeUnit.SECONDS);
       Assert.assertTrue(result instanceof Failed);
+   }
+
+   @Test
+   public void testRunScriptMultipleLines() throws Exception
+   {
+      DirectoryResource temp = (DirectoryResource) resourceFactory.create(OperatingSystemUtils.createTempDir());
+      temp.deleteOnExit();
+      shellTest.getShell().setCurrentResource(temp);
+
+      FileResource<?> script = (FileResource<?>) temp.getChild("script.fsh");
+      script.setContents("touch \\\n\t foo.txt");
+      Result result = shellTest.execute("run script.fsh", COMMAND_TIMEOUT, TimeUnit.SECONDS);
+      Assert.assertFalse(result instanceof Failed);
+      Resource<?> child = temp.getChild("foo.txt");
+      Assert.assertTrue(child.exists());
+
    }
 }

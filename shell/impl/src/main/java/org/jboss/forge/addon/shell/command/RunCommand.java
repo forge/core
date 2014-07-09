@@ -188,7 +188,7 @@ public class RunCommand extends AbstractShellCommand
                         {
                            try
                            {
-                              String line = reader.readLine();
+                              String line = doReadLine(reader);
                               if (skipsLine(line))
                               {
                                  // Skip Comments
@@ -229,6 +229,27 @@ public class RunCommand extends AbstractShellCommand
          }
       }
       return result;
+   }
+
+   private String doReadLine(BufferedReader reader) throws IOException
+   {
+      StringBuilder result = new StringBuilder();
+      String line;
+      while ((line = reader.readLine()) != null)
+      {
+         line = line.trim();
+         if (line.endsWith("\\"))
+         {
+            // Read next line
+            result.append(line.substring(0, line.lastIndexOf("\\")));
+         }
+         else
+         {
+            result.append(line);
+            break;
+         }
+      }
+      return result.toString();
    }
 
    public Result execute(Shell shell, BufferedWriter stdin, String line, int quantity, TimeUnit unit, long startTime)
