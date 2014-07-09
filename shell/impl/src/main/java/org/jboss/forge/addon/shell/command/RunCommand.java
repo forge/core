@@ -188,7 +188,7 @@ public class RunCommand extends AbstractShellCommand
                         {
                            try
                            {
-                              String line = doReadLine(reader);
+                              String line = readLine(reader);
                               if (skipsLine(line))
                               {
                                  // Skip Comments
@@ -231,7 +231,7 @@ public class RunCommand extends AbstractShellCommand
       return result;
    }
 
-   private String doReadLine(BufferedReader reader) throws IOException
+   private String readLine(BufferedReader reader) throws IOException
    {
       StringBuilder result = new StringBuilder();
       String line;
@@ -241,7 +241,7 @@ public class RunCommand extends AbstractShellCommand
          if (line.endsWith("\\"))
          {
             // Read next line
-            result.append(" ").append(line.substring(0, line.lastIndexOf("\\")));
+            result.append(line.substring(0, line.lastIndexOf("\\"))).append(' ');
          }
          else
          {
