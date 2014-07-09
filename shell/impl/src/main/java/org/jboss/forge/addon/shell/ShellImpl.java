@@ -159,6 +159,8 @@ public class ShellImpl implements Shell, UIRuntime
    @Override
    public void close()
    {
+      this.executionListeners.clear();
+      this.commandNotFoundListeners.clear();
       this.console.stop();
    }
 
