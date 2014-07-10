@@ -102,8 +102,8 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractJavaSourceC
                HttpMethod.DELETE, HttpMethod.HEAD, HttpMethod.OPTIONS));
       accessControlAllowMethods.setValue(Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT,
                HttpMethod.DELETE));
-      builder.add(accessControlAllowOrigin).add(accessControlAllowMethods).add(accessControlAllowHeaders)
-               .add(accessControlAllowCredentials);
+      builder.add(accessControlAllowMethods).add(accessControlAllowHeaders)
+               .add(accessControlAllowOrigin).add(accessControlAllowCredentials);
    }
 
    @Override
