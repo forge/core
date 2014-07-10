@@ -226,6 +226,10 @@ public class CommandLineUtil
             }
          }
       }
+      else
+      {
+         resolvedOptionValues = optionValues;
+      }
       return resolvedOptionValues;
    }
 }

@@ -11,92 +11,98 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.text.Inflector;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
+import java.util.List;
+
 /**
  * Parameters for REST resource generation
- *
+ * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class RestGenerationContext
 {
-    private Project project;
-    private JavaClassSource entity;
-    private String targetPackageName;
-    private String contentType;
-    private String persistenceUnitName;
-    private Inflector inflector;
+   private Project project;
+   private JavaClassSource entity;
+   private String targetPackageName;
+   private List<String> contentType;
+   private String persistenceUnitName;
+   private Inflector inflector;
 
-    /**
-     * @return the project
-     */
-    public Project getProject()
-    {
-        return project;
-    }
+   /**
+    * @return the project
+    */
+   public Project getProject()
+   {
+      return project;
+   }
 
-    /**
-     * @return the entity
-     */
-    public JavaClassSource getEntity()
-    {
-        return entity;
-    }
+   /**
+    * @return the entity
+    */
+   public JavaClassSource getEntity()
+   {
+      return entity;
+   }
 
-    /**
-     * @return the targetPackageName
-     */
-    public String getTargetPackageName()
-    {
-        return targetPackageName;
-    }
+   /**
+    * @return the targetPackageName
+    */
+   public String getTargetPackageName()
+   {
+      return targetPackageName;
+   }
 
-    /**
-     * @return the contentType
-     */
-    public String getContentType()
-    {
-        return contentType;
-    }
+   /**
+    * @return the contentType
+    */
+   public List<String> getContentType()
+   {
+      return contentType;
+   }
 
-    /**
-     * @return the persistenceUnitName
-     */
-    public String getPersistenceUnitName()
-    {
-        return persistenceUnitName;
-    }
+   /**
+    * @return the persistenceUnitName
+    */
+   public String getPersistenceUnitName()
+   {
+      return persistenceUnitName;
+   }
 
-    public Inflector getInflector()
-    {
-        return inflector;
-    }
+   public Inflector getInflector()
+   {
+      return inflector;
+   }
 
-    public void setProject(Project project)
-    {
-        this.project = project;
-    }
+   public void setProject(Project project)
+   {
+      this.project = project;
+   }
 
-    public void setEntity(JavaClassSource entity)
-    {
-        this.entity = entity;
-    }
+   public void setEntity(JavaClassSource entity)
+   {
+      this.entity = entity;
+   }
 
-    public void setTargetPackageName(String targetPackageName)
-    {
-        this.targetPackageName = targetPackageName;
-    }
+   public void setTargetPackageName(String targetPackageName)
+   {
+      this.targetPackageName = targetPackageName;
+   }
 
-    public void setContentType(String contentType)
-    {
-        this.contentType = contentType;
-    }
+   public void setContentType(List<String> contentType)
+   {
+      if (contentType.size() < 1)
+      {
+         throw new IllegalArgumentException("At least one content type must be specified.");
+      }
+      this.contentType = contentType;
+   }
 
-    public void setPersistenceUnitName(String persistenceUnitName)
-    {
-        this.persistenceUnitName = persistenceUnitName;
-    }
+   public void setPersistenceUnitName(String persistenceUnitName)
+   {
+      this.persistenceUnitName = persistenceUnitName;
+   }
 
-    public void setInflector(Inflector inflector)
-    {
-        this.inflector = inflector;
-    }
+   public void setInflector(Inflector inflector)
+   {
+      this.inflector = inflector;
+   }
 }

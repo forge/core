@@ -23,6 +23,9 @@ import org.jboss.forge.roaster.model.Member;
 import org.jboss.forge.roaster.model.Method;
 import org.jboss.forge.roaster.model.util.Strings;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * A utlity class that provides information about the project or the JPA entity. This is to be used in the JAX-RS
  * Resource generators.
@@ -272,5 +275,29 @@ public class ResourceGeneratorUtil
    public static char getJpqlEntityVariable(String entityTable)
    {
       return entityTable.toLowerCase().charAt(0);
+   }
+
+   public static String getContentType(List<String> contentType)
+   {
+       StringBuilder contentTypeBuilder = new StringBuilder();
+       if(contentType.size() > 1)
+       {
+           contentTypeBuilder.append("{");
+           for(Iterator iter = contentType.iterator();  iter.hasNext();)
+           {
+               contentTypeBuilder.append('"').append(iter.next()).append('"');
+               if(iter.hasNext())
+               {
+                   contentTypeBuilder.append(',');
+               }
+           }
+           contentTypeBuilder.append("}");
+       }
+       else
+       {
+           String contentTypeValue = contentType.get(0);
+           contentTypeBuilder.append('"').append(contentTypeValue).append('"');
+       }
+       return contentTypeBuilder.toString();
    }
 }
