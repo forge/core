@@ -26,6 +26,7 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -50,27 +51,59 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractJavaSourceC
 {
 
    @Inject
-   @WithAttributes(label = "Access-Control-Allow-Origin", defaultValue = "*")
+   @WithAttributes(label = "Access-Control-Allow-Origin", defaultValue = "*", description = "The Access-Control-Allow-Origin header indicates whether a resource can be shared based by returning the value of the Origin request header, \"*\", or \"null\" in the response")
    private UIInput<String> accessControlAllowOrigin;
 
    @Inject
-   @WithAttributes(label = "Access-Control-Allow-Methods")
+   @WithAttributes(label = "Access-Control-Allow-Methods", description = "The Access-Control-Allow-Methods header indicates, as part of the response to a preflight request, which methods can be used during the actual request.")
    private UISelectMany<String> accessControlAllowMethods;
 
    @Inject
-   @WithAttributes(label = "Access-Control-Allow-Headers", defaultValue = "content-type")
-   private UIInput<String> accessControlAllowHeaders;
+   @WithAttributes(label = "Access-Control-Allow-Headers", description = "The Access-Control-Allow-Headers header indicates, as part of the response to a preflight request, which header field names can be used during the actual request")
+   private UIInputMany<String> accessControlAllowHeaders;
+
+   @Inject
+   @WithAttributes(label = "Access-Control-Allow-Credentials", defaultValue = "true", description = "The Access-Control-Allow-Credentials header indicates whether the response to request can be exposed when the omit credentials flag is unset. When part of the response to a preflight request it indicates that the actual request can include user credentials.")
+   private UIInput<Boolean> accessControlAllowCredentials;
+
+   // @Inject
+   // @WithAttributes(label = "Access-Control-Expose-Headers", description =
+   // "The Access-Control-Expose-Headers header indicates which headers are safe to expose to the API of a CORS API specification.")
+   // private UIInputMany<String> accessControlExposeHeaders;
+   //
+   // @Inject
+   // @WithAttributes(label = "Access-Control-Max-Age", defaultValue = "151200", description =
+   // "The Access-Control-Max-Age header indicates how long the results of a preflight request can be cached in a preflight result cache.")
+   // private UIInput<Integer> accessControlMaxAge;
+   //
+   // @Inject
+   // @WithAttributes(label = "Origin", description =
+   // "The Origin header indicates where the cross-origin request or preflight request originates from.")
+   // private UIInput<String> origin;
+   //
+   // @Inject
+   // @WithAttributes(label = "Access-Control-Request-Method", description =
+   // "The Access-Control-Request-Method header indicates which method will be used in the actual request as part of the preflight request")
+   // private UIInput<String> accessControlRequestMethod;
+   //
+   // @Inject
+   // @WithAttributes(label = "Access-Control-Request-Headers", description =
+   // "The Access-Control-Request-Headers header indicates which headers will be used in the actual request as part of the preflight request")
+   // private UIInputMany<String> accessControlRequestHeaders;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
       super.initializeUI(builder);
       getNamed().setDefaultValue("NewCrossOriginResourceSharingFilter");
+      accessControlAllowHeaders.setValue(Arrays.asList("Content-Type", "User-Agent", "X-Requested-With",
+               "X-Requested-By", "Cache-Control"));
       accessControlAllowMethods.setValueChoices(Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT,
                HttpMethod.DELETE, HttpMethod.HEAD, HttpMethod.OPTIONS));
-      accessControlAllowMethods.setDefaultValue(Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT,
+      accessControlAllowMethods.setValue(Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT,
                HttpMethod.DELETE));
-      builder.add(accessControlAllowOrigin).add(accessControlAllowMethods).add(accessControlAllowHeaders);
+      builder.add(accessControlAllowOrigin).add(accessControlAllowMethods).add(accessControlAllowHeaders)
+               .add(accessControlAllowCredentials);
    }
 
    @Override
@@ -113,16 +146,29 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractJavaSourceC
       method.addParameter(ContainerRequestContext.class, "request");
       method.addParameter(ContainerResponseContext.class, "response");
       StringBuilder body = new StringBuilder();
-      body.append("response.getHeaders().putSingle(\"Access-Control-Allow-Origin\",\"").append(
-               accessControlAllowOrigin.getValue()).append("\");");
+      {
+         body.append("response.getHeaders().putSingle(\"Access-Control-Allow-Origin\",\"").append(
+                  accessControlAllowOrigin.getValue()).append("\");");
+      }
       body.append(OperatingSystemUtils.getLineSeparator());
-      body.append("response.getHeaders().putSingle(\"Access-Control-Allow-Methods\",\"");
-      List<String> accessMethods = Lists.toList(accessControlAllowMethods.getValue());
-      body.append(Strings.join(accessMethods.toArray(), ", "));
-      body.append("\");");
+      {
+         body.append("response.getHeaders().putSingle(\"Access-Control-Allow-Methods\",\"");
+         List<String> list = Lists.toList(accessControlAllowMethods.getValue());
+         body.append(Strings.join(list.toArray(), ", "));
+         body.append("\");");
+      }
       body.append(OperatingSystemUtils.getLineSeparator());
-      body.append("response.getHeaders().putSingle(\"Access-Control-Allow-Headers\",\"").append(
-               accessControlAllowHeaders.getValue()).append("\");");
+      {
+         body.append("response.getHeaders().putSingle(\"Access-Control-Allow-Headers\",\"");
+         List<String> list = Lists.toList(accessControlAllowHeaders.getValue());
+         body.append(Strings.join(list.toArray(), ", "));
+         body.append("\");");
+      }
+      if (accessControlAllowCredentials.getValue())
+      {
+         body.append("response.getHeaders().putSingle(\"Access-Control-Allow-Credentials\",\"true\");");
+
+      }
       method.setBody(body.toString());
       return source;
    }
