@@ -27,9 +27,12 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
+import org.jboss.forge.addon.ui.util.Categories;
+import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.util.Lists;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Strings;
@@ -68,6 +71,14 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractJavaSourceC
       accessControlAllowMethods.setDefaultValue(Arrays.asList(HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT,
                HttpMethod.DELETE));
       builder.add(accessControlAllowOrigin).add(accessControlAllowMethods).add(accessControlAllowHeaders);
+   }
+
+   @Override
+   public UICommandMetadata getMetadata(UIContext context)
+   {
+      return Metadata.from(super.getMetadata(context), getClass()).name("REST: New " + getType())
+               .description("Generate a " + getType())
+               .category(Categories.create("Java EE", "JAX-RS"));
    }
 
    @Override
