@@ -62,11 +62,11 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
    private ProjectFactory projectFactory;
 
    @Inject
-   @WithAttributes(label = "Package Name", type = InputType.JAVA_PACKAGE_PICKER)
+   @WithAttributes(label = "Package Name", type = InputType.JAVA_PACKAGE_PICKER, description = "The package name where this type will be produced")
    private UIInput<String> targetPackage;
 
    @Inject
-   @WithAttributes(label = "Type Name", required = true)
+   @WithAttributes(label = "Type Name", required = true, description = "The type name")
    private UIInput<String> named;
 
    @Inject
