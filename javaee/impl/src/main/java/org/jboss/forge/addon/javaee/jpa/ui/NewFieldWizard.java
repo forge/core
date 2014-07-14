@@ -30,7 +30,6 @@ import javax.persistence.Transient;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
-import org.jboss.forge.addon.javaee.jpa.JPAFieldOperations;
 import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.beans.FieldOperations;
@@ -114,9 +113,6 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
    @Inject
    @WithAttributes(name = "transient", shortName = 't', label = "Is Transient?", description = "Creates a field with @Transient", defaultValue = "false")
    private UIInput<Boolean> transientField;
-
-   @Inject
-   private JPAFieldOperations fieldOperations;
 
    @Inject
    private FieldOperations beanOperations;
@@ -215,16 +211,19 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
                      String simpleName = javaSource.getName();
                      if (qualifiedName.equals(type.getValue()) || simpleName.equals(type.getValue()))
                      {
-                        if(javaSource.hasAnnotation(Embeddable.class)) {
+                        if (javaSource.hasAnnotation(Embeddable.class))
+                        {
                            options.add(RelationshipType.EMBEDDED);
-                        } else  {
+                        }
+                        else
+                        {
                            options.add(RelationshipType.BASIC);
                            options.add(RelationshipType.ONE_TO_MANY);
                            options.add(RelationshipType.ONE_TO_ONE);
                            options.add(RelationshipType.MANY_TO_MANY);
                            options.add(RelationshipType.MANY_TO_ONE);
                         }
-                        
+
                      }
                   }
                   catch (FileNotFoundException ignored)
@@ -232,8 +231,10 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
                   }
                }
             }
-            if(options.isEmpty()) {
-               for(RelationshipType type : RelationshipType.values()) {
+            if (options.isEmpty())
+            {
+               for (RelationshipType type : RelationshipType.values())
+               {
                   options.add(type);
                }
             }

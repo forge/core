@@ -283,7 +283,7 @@ public class ResourceGeneratorUtil
        if(contentType.size() > 1)
        {
            contentTypeBuilder.append("{");
-           for(Iterator iter = contentType.iterator();  iter.hasNext();)
+           for(Iterator<String> iter = contentType.iterator();  iter.hasNext();)
            {
                contentTypeBuilder.append('"').append(iter.next()).append('"');
                if(iter.hasNext())

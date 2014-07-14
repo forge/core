@@ -44,7 +44,7 @@ public interface PersistenceOperations
     * @param unitName Name of the Persistence Unit
     * @param project Project in which the JPA is being looked for
     */
-   @SuppressWarnings({ "rawtypes", "unchecked" })
+   @SuppressWarnings({ "rawtypes" })
    public PersistenceUnitCommon getExistingPersistenceUnit(Project project, String unitName);
 
    /**

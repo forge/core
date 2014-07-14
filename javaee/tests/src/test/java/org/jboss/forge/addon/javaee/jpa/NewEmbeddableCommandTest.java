@@ -10,19 +10,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.javaee.jpa.ui.NewEmbeddableCommand;
-import org.jboss.forge.addon.javaee.validation.ui.ValidationNewGroupCommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -33,7 +29,6 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.model.JavaClass;
-import org.jboss.forge.roaster.model.JavaInterface;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -74,7 +69,6 @@ public class NewEmbeddableCommandTest
    @Inject
    private ProjectHelper projectHelper;
 
-   @SuppressWarnings("unchecked")
    @Test
    public void testCreateEmbeddable() throws Exception
    {
@@ -87,10 +81,10 @@ public class NewEmbeddableCommandTest
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
-      
+
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      
-      final List<JavaClass> embeddables = new ArrayList<JavaClass>();
+
+      final List<JavaClass<?>> embeddables = new ArrayList<>();
       facet.visitJavaSources(new JavaResourceVisitor()
       {
          @Override
@@ -110,12 +104,11 @@ public class NewEmbeddableCommandTest
             }
          }
       });
-      
-      List<JavaClass<?>> allEntities = project.getFacet(JPAFacet.class).getAllEntities();
+
       Assert.assertEquals(1, embeddables.size());
       JavaClass<?> embeddableEntity = embeddables.get(0);
       Assert.assertTrue(embeddableEntity.hasAnnotation(Embeddable.class));
       Assert.assertTrue(embeddableEntity.getName().equals("MyEmbeddable"));
    }
-   
+
 }

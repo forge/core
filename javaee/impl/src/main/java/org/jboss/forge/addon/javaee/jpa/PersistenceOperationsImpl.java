@@ -143,7 +143,6 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       return newEntity(target, entityName, entityPackage, idStrategy, null);
    }
    
-   @SuppressWarnings("unchecked")
    private JavaClassSource createJavaEmbeddableClass(String entityName, String entityPackage)
    {
       JavaClassSource javaClass = Roaster.create(JavaClassSource.class)
