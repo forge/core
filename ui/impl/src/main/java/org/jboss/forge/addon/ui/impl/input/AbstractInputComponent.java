@@ -27,6 +27,7 @@ import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Callables;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Implementation of a {@link UIInput} object
@@ -194,13 +195,18 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    public void validate(UIValidationContext context)
    {
       String msg = InputComponents.validateRequired(this);
-      if (msg != null && !msg.isEmpty())
+      if (!Strings.isNullOrEmpty(msg))
       {
+         // value is required and was not set
          context.addValidationError(this, msg);
       }
-      for (UIValidator validator : validators)
+      if (hasValue() || hasDefaultValue())
       {
-         validator.validate(context);
+         // value is not required or was set, fire the registered validators
+         for (UIValidator validator : validators)
+         {
+            validator.validate(context);
+         }
       }
    }
 

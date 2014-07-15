@@ -131,11 +131,50 @@ public class InputComponentValidatorTest
             validator.addValidationError(withValidator, "MSG");
          }
       });
+      withValidator.setValue("FOO");
       withValidator.validate(context);
       List<String> errors = context.getErrorsFor(withValidator);
       Assert.assertThat(errors, notNullValue());
       Assert.assertThat(errors.size(), equalTo(1));
       Assert.assertThat(errors, hasItem("MSG"));
-
    }
+
+   @Test
+   public void testDoNotValidateOnNullValues()
+   {
+      UIContext ctx = new MockUIContext();
+      MockValidationContext context = new MockValidationContext(ctx);
+      withValidator.addValidator(new UIValidator()
+      {
+         @Override
+         public void validate(UIValidationContext validator)
+         {
+            validator.addValidationError(withValidator, "MSG");
+         }
+      });
+      withValidator.validate(context);
+      List<String> errors = context.getErrorsFor(withValidator);
+      Assert.assertThat(errors, nullValue());
+   }
+
+   @Test
+   public void testRequiredAndAdditionalValidator()
+   {
+      UIContext ctx = new MockUIContext();
+      MockValidationContext context = new MockValidationContext(ctx);
+      requiredNoMessage.addValidator(new UIValidator()
+      {
+         @Override
+         public void validate(UIValidationContext validator)
+         {
+            validator.addValidationError(withValidator, "MSG");
+         }
+      });
+      requiredNoMessage.validate(context);
+      List<String> errors = context.getErrorsFor(requiredNoMessage);
+      Assert.assertThat(errors, notNullValue());
+      Assert.assertThat(errors.size(), equalTo(1));
+      Assert.assertThat(errors, hasItem(InputComponents.validateRequired(requiredNoMessage)));
+   }
+
 }
