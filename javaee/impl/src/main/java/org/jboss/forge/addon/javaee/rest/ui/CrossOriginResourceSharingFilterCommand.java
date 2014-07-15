@@ -178,9 +178,12 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractJavaSourceC
    {
       NavigationResultBuilder builder = NavigationResultBuilder.create();
       Project project = getSelectedProject(context);
-      if (!project.hasFacet(RestFacet.class))
+      if (project != null)
       {
-         builder.add(RestSetupWizard.class);
+         if (!project.hasFacet(RestFacet.class))
+         {
+            builder.add(RestSetupWizard.class);
+         }
       }
       return builder.build();
    }
