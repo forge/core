@@ -108,14 +108,14 @@ public class Bootstrap
       if (args.length > 0)
       {
          List<String> listArgs = Arrays.asList(args);
+         if (listArgs.contains("--help") || listArgs.contains("-h"))
+         {
+            System.out.println(help());
+            exitAfter = true;
+            return;
+         }
          for (int i = 0; i < args.length; i++)
          {
-            if (listArgs.contains("--help") || listArgs.contains("-h"))
-            {
-               System.out.println(help());
-               exitAfter = true;
-            }
-
             if ("--install".equals(args[i]) || "-i".equals(args[i]))
             {
                installAddon = args[++i];
