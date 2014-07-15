@@ -176,7 +176,12 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    }
 
    private JavaResource getJavaResource(final DirectoryResource sourceDir, final String relativePath)
+            throws FileNotFoundException
    {
+      if (Strings.isNullOrEmpty(relativePath))
+      {
+         throw new FileNotFoundException("Empty relative path");
+      }
       String path = relativePath.trim().endsWith(".java")
                ? relativePath.substring(0, relativePath.lastIndexOf(".java")) : relativePath;
 
