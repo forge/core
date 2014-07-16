@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.shell;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -18,7 +20,6 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -51,22 +52,13 @@ public class ShellCommandListenerTest
    private ShellTest test;
 
    @Test(timeout = 10000)
-   @Ignore("Until shell is fixed")
    public void testCommandExecutionListenerTriggers() throws Exception
    {
       Shell shell = test.getShell();
       MockCommandExecutionListener listener = new MockCommandExecutionListener();
       shell.addCommandExecutionListener(listener);
 
-      test.getStdIn().write("list-services\n".getBytes());
-
-      long start = System.currentTimeMillis();
-      while (!listener.isPreExecuted() || !listener.isPostExecuted())
-      {
-         Thread.sleep(10);
-         Assert.assertTrue("Timed out.", System.currentTimeMillis() - start < 5000);
-      }
-
+      test.execute("command-list", 5, TimeUnit.SECONDS);
       Assert.assertTrue(listener.isPreExecuted());
       Assert.assertTrue(listener.isPostExecuted());
    }
