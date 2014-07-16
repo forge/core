@@ -6,11 +6,16 @@
  */
 package org.jboss.forge.addon.shell;
 
+import static org.hamcrest.CoreMatchers.containsString;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.shell.mock.wizard.MockCommand;
 import org.jboss.forge.addon.shell.mock.wizard.MockMultipleArgsCommand;
-import org.jboss.forge.addon.shell.mock.wizard.MockNoOptionsCommand;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -20,16 +25,8 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import static org.hamcrest.CoreMatchers.containsString;
 
 /**
  * @author Vineet Reynolds
