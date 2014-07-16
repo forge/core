@@ -16,7 +16,6 @@ import org.jboss.aesh.terminal.Color.Intensity;
 import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.aesh.terminal.TerminalString;
 import org.jboss.forge.addon.shell.CommandNotFoundListener;
-import org.jboss.forge.addon.shell.ShellMessages;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.output.UIOutput;
 
@@ -51,7 +50,6 @@ public class DidYouMeanCommandNotFoundListener implements CommandNotFoundListene
          }
       }
 
-      ShellMessages.error(output.err(), "No such command: " + commandName);
       if (!similarCommands.isEmpty())
       {
          output.out().println();

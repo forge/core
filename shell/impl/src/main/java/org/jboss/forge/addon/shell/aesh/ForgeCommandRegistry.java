@@ -101,7 +101,7 @@ public class ForgeCommandRegistry implements CommandRegistry
             throws CommandNotFoundException
    {
       AbstractShellInteraction cmd = findCommand(shellContext, name);
-      if (cmd == null)
+      if (cmd == null || !cmd.getController().isEnabled())
       {
          throw new CommandNotFoundException(name);
       }
