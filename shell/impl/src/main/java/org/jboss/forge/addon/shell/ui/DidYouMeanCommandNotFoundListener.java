@@ -59,7 +59,7 @@ public class DidYouMeanCommandNotFoundListener implements CommandNotFoundListene
          }
          else
          {
-            output.out().println("Did you mean any of these?");
+            output.out().println("Did you mean one of these?");
          }
          for (String plugin : similarCommands)
          {
