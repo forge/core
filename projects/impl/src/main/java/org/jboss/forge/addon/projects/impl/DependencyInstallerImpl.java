@@ -107,18 +107,7 @@ public class DependencyInstallerImpl implements DependencyInstaller
    public Dependency installManaged(Project project, Dependency dependency)
    {
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
-
-      if (Strings.isNullOrEmpty(dependency.getCoordinate().getVersion()))
-      {
-         // we didn't request a specific version
-         updateManagedDependency(deps, dependency);
-      }
-      else
-      {
-         // we requested a specific version
-         updateManagedDependency(deps, dependency);
-      }
-
+      updateManagedDependency(deps, dependency);
       return dependency;
    }
 
