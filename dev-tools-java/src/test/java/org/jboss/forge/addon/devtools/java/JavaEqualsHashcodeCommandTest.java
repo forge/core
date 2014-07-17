@@ -10,8 +10,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -85,6 +83,7 @@ public class JavaEqualsHashcodeCommandTest
       facetFactory.install(project, JavaSourceFacet.class);
    }
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testNoEqualsAndHashcode() throws Exception
    {
@@ -109,6 +108,7 @@ public class JavaEqualsHashcodeCommandTest
       assertNotNull(targetClass.getMethod("hashCode"));
    }
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testHashCodeAndEqualsAlreadyInClass() throws Exception
    {
@@ -147,6 +147,7 @@ public class JavaEqualsHashcodeCommandTest
       assertEquals("return 1111;\n ", hashCodeMethod.getBody());
    }
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testHashCodeAlreadyInClass() throws Exception
    {
@@ -176,9 +177,10 @@ public class JavaEqualsHashcodeCommandTest
       MethodSource<JavaClassSource> hashCodeMethod = targetClass.getMethod("hashCode");
       assertNotNull(hashCodeMethod);
       String body = hashCodeMethod.getBody();
-      assertEquals("return 1111;\n ", hashCodeMethod.getBody());
+      assertEquals("return 1111;\n ", body);
    }
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testEqualsAlreadyInClass() throws Exception
    {
