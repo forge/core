@@ -139,7 +139,8 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
             {
                Properties properties = new Properties();
                properties.setProperty("user", userName.getValue());
-               properties.setProperty("password", userPassword.getValue());
+               if (userPassword.hasValue())
+                  properties.setProperty("password", userPassword.getValue());
                try
                {
                   Driver driver = (Driver) driverClass.getValue().newInstance();
