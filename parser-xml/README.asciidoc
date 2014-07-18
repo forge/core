@@ -9,7 +9,7 @@ It enables parsing of XML using the https://github.com/forge/xml-parser project
 |Addon |Exported |Optional
 |resources
 |no
-|yes
+|no
 
 |simple
 |yes

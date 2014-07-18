@@ -25,7 +25,6 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>resources</artifactId>
          <classifier>forge-addon</classifier>
-         <optional>true</optional>
       </dependency>
       <!-- Furnace Container -->
       <dependency>
