@@ -9,7 +9,7 @@
    </parent>
 
    <artifactId>rest-client</artifactId>
-   <name>Forge - Core Addon</name>
+   <name>Forge - Rest Client Addon</name>
 
    <dependencies>
       <dependency>
