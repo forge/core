@@ -35,6 +35,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
+import org.jboss.forge.furnace.util.Lists;
 
 public class DatabaseTableSelectionStep implements UIWizardStep
 {
@@ -154,20 +155,9 @@ public class DatabaseTableSelectionStep implements UIWizardStep
       return result;
    }
 
-   private Collection<String> getSelectedTableNames()
-   {
-      ArrayList<String> result = new ArrayList<String>();
-      Iterator<String> iterator = databaseTables.getValue().iterator();
-      while (iterator.hasNext())
-      {
-         result.add(iterator.next());
-      }
-      return result;
-   }
-
    private Collection<String> exportSelectedEntities()
    {
-      final Collection<String> selectedTableNames = getSelectedTableNames();
+      final Collection<String> selectedTableNames = Lists.toList(databaseTables.getValue());
       JavaSourceFacet java = descriptor.getSelectedProject().getFacet(JavaSourceFacet.class);
       POJOExporter pj = new POJOExporter(jmdc, java.getSourceDirectory().getUnderlyingResourceObject())
       {
