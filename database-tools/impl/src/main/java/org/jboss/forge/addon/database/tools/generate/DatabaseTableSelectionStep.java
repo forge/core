@@ -3,8 +3,10 @@ package org.jboss.forge.addon.database.tools.generate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -73,27 +75,40 @@ public class DatabaseTableSelectionStep implements UIWizardStep
 
    private JDBCMetaDataConfiguration jmdc;
 
+   private List<String> tables;
+   private Properties currentConnectionProperties;
+
    @SuppressWarnings("unchecked")
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      jmdc = new JDBCMetaDataConfiguration();
-      jmdc.setProperties(descriptor.getConnectionProperties());
-      jmdc.setReverseEngineeringStrategy(createReverseEngineeringStrategy());
-      helper.buildMappings(descriptor.getUrls(), descriptor.getDriverClass(), jmdc);
-      Iterator<Object> iterator = jmdc.getTableMappings();
-      ArrayList<String> tables = new ArrayList<String>();
-      while (iterator.hasNext())
+      databaseTables.setValueChoices(new Callable<Iterable<String>>()
       {
-         Object mapping = iterator.next();
-         if (mapping instanceof Table)
+         @Override
+         public Iterable<String> call() throws Exception
          {
-            Table table = (Table) mapping;
-            tables.add(table.getName());
+            if (!descriptor.getConnectionProperties().equals(currentConnectionProperties))
+            {
+               currentConnectionProperties = descriptor.getConnectionProperties();
+               jmdc = new JDBCMetaDataConfiguration();
+               jmdc.setProperties(descriptor.getConnectionProperties());
+               jmdc.setReverseEngineeringStrategy(createReverseEngineeringStrategy());
+               helper.buildMappings(descriptor.getUrls(), descriptor.getDriverClass(), jmdc);
+               Iterator<Object> iterator = jmdc.getTableMappings();
+               tables = new ArrayList<>();
+               while (iterator.hasNext())
+               {
+                  Object mapping = iterator.next();
+                  if (mapping instanceof Table)
+                  {
+                     Table table = (Table) mapping;
+                     tables.add(table.getName());
+                  }
+               }
+            }
+            return tables;
          }
-      }
-      databaseTables.setValueChoices(tables);
-      databaseTables.setDefaultValue(tables);
+      });
       builder.add(databaseTables);
    }
 
