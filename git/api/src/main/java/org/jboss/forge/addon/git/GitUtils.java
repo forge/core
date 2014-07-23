@@ -35,7 +35,7 @@ public interface GitUtils
     * @return A JGit API handle to the GIT object pointing to the cloned repository.
     * @throws GitAPIException Thrown when there are problems cloning the repository.
     */
-   public Git clone(final DirectoryResource dir, final String repoUri) throws GitAPIException;
+   Git clone(final DirectoryResource dir, final String repoUri) throws GitAPIException;
 
    /**
     * Returns a handle to an existing Git repository.
@@ -44,7 +44,7 @@ public interface GitUtils
     * @return A JGit API handle to the specified directory.
     * @throws IOException Thrown when there are problems accessing the specified directory.
     */
-   public Git git(final DirectoryResource dir) throws IOException;
+   Git git(final DirectoryResource dir) throws IOException;
 
    /**
     * Checks out or creates a given GIT branch.
@@ -57,7 +57,7 @@ public interface GitUtils
     * @return A <code>Ref</code> object (part of the JGit API), pointing to the checked out branch.
     * @throws GitAPIException Thrown when there are problems checking out the new branch.
     */
-   public Ref checkout(final Git git, final String remote, final boolean createBranch,
+   Ref checkout(final Git git, final String remote, final boolean createBranch,
             final SetupUpstreamMode mode, final boolean force) throws GitAPIException;
 
    /**
@@ -70,7 +70,7 @@ public interface GitUtils
     * @return A <code>Ref</code> object (part of the JGit API), pointing to the checked out branch.
     * @throws GitAPIException Thrown when there are problems checking out the new branch.
     */
-   public Ref checkout(final Git git, final Ref localRef, final SetupUpstreamMode mode,
+   Ref checkout(final Git git, final Ref localRef, final SetupUpstreamMode mode,
             final boolean force) throws GitAPIException;
 
    /**
@@ -87,7 +87,7 @@ public interface GitUtils
     * @return A <code>FetchResult</code> object (part of the JGit API), specifying the status of this fetch operation.
     * @throws GitAPIException Thrown when there are problems fetching the refs
     */
-   public FetchResult fetch(final Git git, final String remote, final String refSpec, final int timeout,
+   FetchResult fetch(final Git git, final String remote, final String refSpec, final int timeout,
             final boolean fsck, final boolean dryRun,
             final boolean thin, final boolean prune) throws GitAPIException;
 
@@ -98,7 +98,7 @@ public interface GitUtils
     * @return A JGit API handle to the specified directory.
     * @throws IOException Thrown when there are problems accessing the specified directory.
     */
-   public Git init(final DirectoryResource dir) throws IOException;
+   Git init(final DirectoryResource dir) throws IOException;
 
    /**
     * Pulls the latest changes from the remote repository and incorporates them into the given one.
@@ -108,7 +108,7 @@ public interface GitUtils
     * @return A <code>PullResult</code> object (part of the JGit API), that specifies the result of the pull action.
     * @throws GitAPIException Thrown when there are problems pulling the latest changing
     */
-   public PullResult pull(final Git git, final int timeout) throws GitAPIException;
+   PullResult pull(final Git git, final int timeout) throws GitAPIException;
 
    /**
     * Returns all the remote branches of a given GIT repository.
@@ -118,7 +118,7 @@ public interface GitUtils
     *         repository.
     * @throws GitAPIException Thrown when there are problems obtaining the list of remote branches.
     */
-   public List<Ref> getRemoteBranches(final Git repo) throws GitAPIException;
+   List<Ref> getRemoteBranches(final Git repo) throws GitAPIException;
 
    /**
     * Returns all the local branches of a given GIT repository.
@@ -128,7 +128,7 @@ public interface GitUtils
     *         repository.
     * @throws GitAPIException Thrown when there are problems obtaining the list of local branches.
     */
-   public List<Ref> getLocalBranches(final Git repo) throws GitAPIException;
+   List<Ref> getLocalBranches(final Git repo) throws GitAPIException;
 
    /**
     * Returns the name of the branch that is currently checked out in the given repository.
@@ -137,7 +137,7 @@ public interface GitUtils
     * @return The name of the currently checked out branch in the given repository.
     * @throws IOException If there are problems accessing the directory of the GIT repository.
     */
-   public String getCurrentBranchName(final Git repo) throws IOException;
+   String getCurrentBranchName(final Git repo) throws IOException;
 
    /**
     * Changes the currently checked out branch of a given repository.
@@ -146,7 +146,7 @@ public interface GitUtils
     * @param branchName The name of the branch which will be checked out.
     * @return A <code>Ref</code> object (part of the JGit API), pointing to the checked out branch.
     */
-   public Ref switchBranch(final Git repo, final String branchName);
+   Ref switchBranch(final Git repo, final String branchName);
 
    /**
     * Returns a list of the messages of all the commits in the current branch.
@@ -155,7 +155,7 @@ public interface GitUtils
     * @return A list of all the commit messages for the current branch
     * @throws GitAPIException Thrown when there are problems obtaining the list of the commit messages.
     */
-   public List<String> getLogForCurrentBranch(final Git repo) throws GitAPIException;
+   List<String> getLogForCurrentBranch(final Git repo) throws GitAPIException;
 
    /**
     * Returns a list of the messages of all the commits for a given branch.
@@ -165,7 +165,7 @@ public interface GitUtils
     * @return A list of all the commit messages for the given branch.
     * @throws GitAPIException Thrown when there are problems obtaining the list of the commit messages.
     */
-   public List<String> getLogForBranch(final Git repo, String branchName) throws GitAPIException,
+   List<String> getLogForBranch(final Git repo, String branchName) throws GitAPIException,
             IOException;
 
    /**
@@ -176,7 +176,7 @@ public interface GitUtils
     *           recursively.
     * @throws GitAPIException Thrown when there are problems adding files to the GIT index.
     */
-   public void add(final Git repo, String filePattern) throws GitAPIException;
+   void add(final Git repo, String filePattern) throws GitAPIException;
 
    /**
     * Stages all the new, modified and deleted files from the working tree to the GIT index.
@@ -184,7 +184,7 @@ public interface GitUtils
     * @param repo The JGit API handle to the repository, where files will be added.
     * @throws GitAPIException Thrown when there are problems adding files to the GIT index.
     */
-   public void addAll(final Git repo) throws GitAPIException;
+   void addAll(final Git repo) throws GitAPIException;
 
    /**
     * Creates a new commit with the current contents of the index along with a log message.
@@ -193,7 +193,7 @@ public interface GitUtils
     * @param message The commit message.
     * @throws GitAPIException Thrown when there are problems creating the commit.
     */
-   public void commit(final Git repo, String message) throws GitAPIException;
+   void commit(final Git repo, String message) throws GitAPIException;
 
    /**
     * Stages all the new, modified and deleted files to the index and creates a commit from its current contents.
@@ -202,7 +202,7 @@ public interface GitUtils
     * @param message The commit message.
     * @throws GitAPIException Thrown when there are problems creating the commit.
     */
-   public void commitAll(final Git repo, String message) throws GitAPIException;
+   void commitAll(final Git repo, String message) throws GitAPIException;
 
    /**
     * Stashes the contents on the working directory and index in separate commits and resets to the current HEAD commit.
@@ -210,7 +210,7 @@ public interface GitUtils
     * @param repo The JGit API handle to the repository, where the stash action will be performed.
     * @throws GitAPIException Thrown when there are problems performing the stash action.
     */
-   public void stashCreate(final Git repo) throws GitAPIException;
+   void stashCreate(final Git repo) throws GitAPIException;
 
    /**
     * Applies the changes in a stashed commit to the working directory and index.
@@ -219,7 +219,7 @@ public interface GitUtils
     * @param stashRef The stash reference to apply.
     * @throws GitAPIException Thrown when there are problems performing the stash action.
     */
-   public void stashApply(final Git repo, String... stashRef) throws GitAPIException;
+   void stashApply(final Git repo, String... stashRef) throws GitAPIException;
 
    /**
     * Drops the last stashed commit.
@@ -227,7 +227,7 @@ public interface GitUtils
     * @param repo The JGit API handle to the repository, where the stash action will be performed.
     * @throws GitAPIException Thrown when there are problems performing the stash action.
     */
-   public void stashDrop(final Git repo) throws GitAPIException;
+   void stashDrop(final Git repo) throws GitAPIException;
 
    /**
     * Cherry-picks a given commit to the current HEAD.
@@ -236,7 +236,7 @@ public interface GitUtils
     * @param commit A reference to the commit, which will be cherry-picked to the current HEAD.
     * @throws GitAPIException Thrown when there are problems performing the cherry-pick action.
     */
-   public void cherryPick(final Git repo, Ref commit) throws GitAPIException;
+   void cherryPick(final Git repo, Ref commit) throws GitAPIException;
 
    /**
     * Does the same as the original cherry-pick except committing after running merger.
@@ -248,7 +248,7 @@ public interface GitUtils
     * @throws GitAPIException Thrown when there are problems performing the cherry-pick action.
     * @throws CantMergeCommitException Thrown when the commit to cherry-pick has no parents.
     */
-   public CherryPickResult cherryPickNoMerge(final Git git, Ref commit) throws GitAPIException,
+   CherryPickResult cherryPickNoMerge(final Git git, Ref commit) throws GitAPIException,
             CantMergeCommitException;
 
    /**
@@ -258,7 +258,7 @@ public interface GitUtils
     * @param newBase The commit to which the HEAD will be reset.
     * @throws GitAPIException Thrown when there are problems performing the reset action.
     */
-   public void resetHard(final Git repo, String newBase) throws GitAPIException;
+   void resetHard(final Git repo, String newBase) throws GitAPIException;
 
    /**
     * Creates a new branch in the given GIT repository and checks it out.
@@ -268,13 +268,13 @@ public interface GitUtils
     * @return A <code>Ref</code> object (part of the JGit API), pointing to the created branch.
     * @throws GitAPIException Thrown when there are problems creating the new branch.
     */
-   public Ref createBranch(Git git, String branchName) throws GitAPIException;
+   Ref createBranch(Git git, String branchName) throws GitAPIException;
 
    /**
     * Closes the resources and decrements the use count of the given repository.
     * 
     * @param repo The repository where the close action will be performed.
     */
-   public void close(final Git repo);
+   void close(final Git repo);
 
 }

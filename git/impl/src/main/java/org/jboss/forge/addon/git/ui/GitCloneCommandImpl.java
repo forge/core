@@ -9,6 +9,7 @@ package org.jboss.forge.addon.git.ui;
 
 import javax.inject.Inject;
 
+import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.jboss.forge.addon.git.GitUtils;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -66,7 +67,10 @@ public class GitCloneCommandImpl extends AbstractGitCommand implements GitCloneC
       Git clone = null;
       try
       {
-         clone = gitUtils.clone(cloneFolder, uri.getValue());
+         CloneCommand cloneCommand = Git.cloneRepository().setURI(uri.getValue())
+                  .setDirectory(cloneFolder.getUnderlyingResourceObject());
+         cloneCommand.setProgressMonitor(new ProgressMonitorAdapter(context.getProgressMonitor()));
+         clone = cloneCommand.call();
       }
       finally
       {
