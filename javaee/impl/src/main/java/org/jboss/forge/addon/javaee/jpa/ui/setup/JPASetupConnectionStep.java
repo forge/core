@@ -47,7 +47,7 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
    private UIInput<String> dataSourceName;
 
    @Inject
-   @WithAttributes(label = "JDBC Driver", required = true)
+   @WithAttributes(label = "JDBC Driver", required = true, type = InputType.JAVA_CLASS_PICKER)
    private UIInput<String> jdbcDriver;
 
    @Inject
@@ -204,7 +204,8 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
       }
       // Validate Persistence Unit Name
       Project project = getSelectedProject(uiContext);
-      if (isExistingPersistenceUnitName(project, persistenceUnitName.getValue()) && !overwritePersistenceUnit.getValue().booleanValue())
+      if (isExistingPersistenceUnitName(project, persistenceUnitName.getValue())
+               && !overwritePersistenceUnit.getValue().booleanValue())
       {
          validator.addValidationError(persistenceUnitName,
                   "A persistence-unit with the name [" + persistenceUnitName.getValue()
