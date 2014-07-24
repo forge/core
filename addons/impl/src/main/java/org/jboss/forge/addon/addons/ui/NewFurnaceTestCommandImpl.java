@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.addons.ui;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -49,6 +50,8 @@ import org.jboss.forge.roaster.model.source.MethodSource;
  */
 public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements NewFurnaceTestCommand
 {
+   private static final String DEFAULT_CONTAINER_NAME = "org.jboss.forge.furnace.container:cdi";
+   private static final String DEFAULT_DEPENDENCY_NAME = "org.jboss.forge.addon:core";
 
    @Inject
    private ProjectFactory projectFactory;
@@ -88,10 +91,20 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
    {
       Set<AddonId> addonChoices = new TreeSet<>();
       Set<AddonId> containerChoices = new TreeSet<>();
+      AddonId defaultContainer = null;
+      AddonId defaultDependency = null;
       for (AddonRepository repository : furnace.getRepositories())
       {
          for (AddonId id : repository.listEnabled())
          {
+            if (DEFAULT_CONTAINER_NAME.equals(id.getName()))
+            {
+               defaultContainer = id;
+            }
+            else if (DEFAULT_DEPENDENCY_NAME.equals(id.getName()))
+            {
+               defaultDependency = id;
+            }
             // TODO: Furnace should provide some way to detect if an addon is a Container type
             boolean isContainerAddon = id.getName().contains("org.jboss.forge.furnace.container");
             if (isContainerAddon)
@@ -104,8 +117,10 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
             }
          }
       }
+      furnaceContainer.setValueChoices(containerChoices).setDefaultValue(defaultContainer);
       addonDependencies.setValueChoices(addonChoices);
-      furnaceContainer.setValueChoices(containerChoices);
+      if (defaultDependency != null)
+         addonDependencies.setDefaultValue(Arrays.asList(defaultDependency));
    }
 
    @Override
