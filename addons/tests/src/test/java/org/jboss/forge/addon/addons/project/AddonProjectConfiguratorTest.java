@@ -160,7 +160,7 @@ public class AddonProjectConfiguratorTest
        */
       Assert.assertNull(project.getFacet(MavenFacet.class).getModel().getParent());
 
-      Assert.assertFalse(project.getRootDirectory().getChild("src").exists());
+      Assert.assertFalse(project.getRoot().getChild("src").exists());
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
       Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(
@@ -337,8 +337,8 @@ public class AddonProjectConfiguratorTest
       Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectDependency(
                DependencyBuilder.create("javax.annotation:jsr250-api:1.0")));
 
-      Assert.assertTrue(project.getRootDirectory().getChild("README.asciidoc").exists());
-      project.getRootDirectory().delete(true);
+      Assert.assertTrue(project.getRoot().getChild("README.asciidoc").exists());
+      project.getRoot().delete(true);
       project.getRootDirectory().deleteOnExit();
    }
 
@@ -403,8 +403,8 @@ public class AddonProjectConfiguratorTest
       Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(
                DependencyBuilder.create("javax.annotation:jsr250-api:1.0")));
 
-      Assert.assertTrue(project.getRootDirectory().getChild("README.asciidoc").exists());
-      project.getRootDirectory().delete(true);
+      Assert.assertTrue(project.getRoot().getChild("README.asciidoc").exists());
+      project.getRoot().delete(true);
       project.getRootDirectory().deleteOnExit();
    }
 

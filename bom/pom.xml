@@ -212,6 +212,12 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>core</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>database-tools</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
