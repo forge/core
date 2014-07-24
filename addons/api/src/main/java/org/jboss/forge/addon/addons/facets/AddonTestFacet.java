@@ -7,10 +7,6 @@
 
 package org.jboss.forge.addon.addons.facets;
 
-import java.io.FileNotFoundException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.Dependency;
@@ -24,7 +20,6 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
@@ -39,8 +34,6 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 })
 public class AddonTestFacet extends AbstractFacet<Project> implements ProjectFacet
 {
-   private static Logger log = Logger.getLogger(AddonTestFacet.class.toString());
-
    public static Dependency FURNACE_TEST_HARNESS_DEPENDENCY = DependencyBuilder.create()
             .setGroupId("org.jboss.forge.furnace.test")
             .setArtifactId("furnace-test-harness")
@@ -75,15 +68,7 @@ public class AddonTestFacet extends AbstractFacet<Project> implements ProjectFac
          String topLevelPackage = facet.getBasePackage();
          JavaClassSource testClass = Roaster.create(JavaClassSource.class).setPackage(topLevelPackage);
          testClass.setName("AbstractTestCase").setAbstract(true);
-         try
-         {
-            facet.saveTestJavaSource(testClass.getEnclosingType());
-         }
-         catch (FileNotFoundException e)
-         {
-            log.log(Level.WARNING, "Could not create test case stub.", e);
-         }
-
+         facet.saveTestJavaSource(testClass.getEnclosingType());
          return true;
       }
       return false;

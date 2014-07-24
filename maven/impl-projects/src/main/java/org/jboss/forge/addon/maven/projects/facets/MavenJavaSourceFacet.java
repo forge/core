@@ -7,7 +7,6 @@
 package org.jboss.forge.addon.maven.projects.facets;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +24,7 @@ import org.jboss.forge.addon.parser.java.utils.Packages;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.ResourceFilter;
 import org.jboss.forge.addon.resource.visit.ResourceVisit;
 import org.jboss.forge.furnace.util.Strings;
@@ -150,37 +150,36 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    }
 
    @Override
-   public JavaResource getJavaResource(final JavaSource<?> javaClass) throws FileNotFoundException
+   public JavaResource getJavaResource(final JavaSource<?> javaClass)
    {
       String pkg = Strings.isNullOrEmpty(javaClass.getPackage()) ? "" : javaClass.getPackage() + ".";
       return getJavaResource(pkg + javaClass.getName());
    }
 
    @Override
-   public JavaResource getTestJavaResource(final JavaSource<?> javaClass) throws FileNotFoundException
+   public JavaResource getTestJavaResource(final JavaSource<?> javaClass)
    {
       String pkg = Strings.isNullOrEmpty(javaClass.getPackage()) ? "" : javaClass.getPackage() + ".";
       return getTestJavaResource(pkg + javaClass.getName());
    }
 
    @Override
-   public JavaResource getJavaResource(final String relativePath) throws FileNotFoundException
+   public JavaResource getJavaResource(final String relativePath)
    {
       return getJavaResource(getSourceDirectory(), relativePath);
    }
 
    @Override
-   public JavaResource getTestJavaResource(final String relativePath) throws FileNotFoundException
+   public JavaResource getTestJavaResource(final String relativePath)
    {
       return getJavaResource(getTestSourceDirectory(), relativePath);
    }
 
    private JavaResource getJavaResource(final DirectoryResource sourceDir, final String relativePath)
-            throws FileNotFoundException
    {
       if (Strings.isNullOrEmpty(relativePath))
       {
-         throw new FileNotFoundException("Empty relative path");
+         throw new ResourceException("Empty relative path");
       }
       String path = relativePath.trim().endsWith(".java")
                ? relativePath.substring(0, relativePath.lastIndexOf(".java")) : relativePath;
@@ -191,13 +190,13 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
    }
 
    @Override
-   public JavaResource saveJavaSource(final JavaSource<?> source) throws FileNotFoundException
+   public JavaResource saveJavaSource(final JavaSource<?> source)
    {
       return getJavaResource(source.getQualifiedName()).setContents(source);
    }
 
    @Override
-   public JavaResource saveTestJavaSource(final JavaSource<?> source) throws FileNotFoundException
+   public JavaResource saveTestJavaSource(final JavaSource<?> source)
    {
       return getTestJavaResource(source.getQualifiedName()).setContents(source);
    }
