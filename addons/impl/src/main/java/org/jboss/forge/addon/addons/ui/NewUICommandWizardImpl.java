@@ -116,7 +116,7 @@ public class NewUICommandWizardImpl extends AbstractJavaSourceCommand<JavaClassS
                .setName("execute")
                .setReturnType(Result.class)
                .setParameters("UIExecutionContext context")
-               .setBody("return Results.fail(\"Not implemented!\");")
+               .setBody("return Results.success(\"Command '" + commandName.getValue() + "' successfully executed!\");")
                .addThrows(Exception.class)
                .addAnnotation(Override.class);
 
