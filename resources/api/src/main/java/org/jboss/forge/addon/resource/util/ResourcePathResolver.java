@@ -232,7 +232,7 @@ public class ResourcePathResolver
             Resource<?> child = r.getChild(tk);
             if (child == null)
             {
-               throw new RuntimeException("no such child: " + child);
+               throw new RuntimeException("no such child: " + tk);
             }
             r = child;
             break;
