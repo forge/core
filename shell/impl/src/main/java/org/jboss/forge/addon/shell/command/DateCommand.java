@@ -17,18 +17,12 @@ import org.jboss.forge.furnace.util.Strings;
  */
 public class DateCommand
 {
-
-   /**
-    * The date pattern.
-    */
-   private SimpleDateFormat dateFormat = new SimpleDateFormat();
-
    @Command(value = "date", help = "print current date", enabled = NonGUIEnabledPredicate.class)
    public Result execute(
             @Option(value = "pattern", description = "The date pattern") final String pattern,
             final UIOutput output)
    {
-
+      SimpleDateFormat dateFormat;
       if (!Strings.isNullOrEmpty(pattern))
       {
          try
@@ -39,6 +33,10 @@ public class DateCommand
          {
             return Results.fail("Illegal date pattern: " + pattern);
          }
+      }
+      else
+      {
+         dateFormat = new SimpleDateFormat();
       }
 
       String date = dateFormat.format(new Date());
