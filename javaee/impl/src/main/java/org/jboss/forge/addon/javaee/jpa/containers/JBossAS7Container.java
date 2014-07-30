@@ -19,7 +19,7 @@ public class JBossAS7Container extends JavaEEDefaultContainer
    @Override
    public DatabaseType getDefaultDatabaseType()
    {
-      return DatabaseType.HSQLDB;
+      return DatabaseType.H2;
    }
 
    @Override
