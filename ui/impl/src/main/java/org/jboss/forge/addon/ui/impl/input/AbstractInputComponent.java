@@ -48,7 +48,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    private final Set<ValueChangeListener> valueChangeListeners = new LinkedHashSet<>();
 
    private String label;
-   private String description;
+   private Callable<String> description;
    private Callable<Boolean> enabled = Callables.returning(Boolean.TRUE);
    private Callable<Boolean> required = Callables.returning(Boolean.FALSE);
    private String requiredMessage;
@@ -83,7 +83,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    @Override
    public String getDescription()
    {
-      return description;
+      return Callables.call(description);
    }
 
    @Override
@@ -127,6 +127,13 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
 
    @Override
    public IMPLTYPE setDescription(String description)
+   {
+      this.description = Callables.returning(description);
+      return (IMPLTYPE) this;
+   }
+   
+   @Override
+   public IMPLTYPE setDescription(Callable<String> description)
    {
       this.description = description;
       return (IMPLTYPE) this;

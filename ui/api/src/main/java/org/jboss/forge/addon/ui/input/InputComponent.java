@@ -108,6 +108,11 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
     * Set a few sentences describing the purpose of this {@link InputComponent}.
     */
    IMPLTYPE setDescription(String description);
+   
+   /**
+    * Set a few sentences describing the purpose of this {@link InputComponent}.
+    */
+   IMPLTYPE setDescription(Callable<String> description);
 
    /**
     * Set this {@link InputComponent} to be a required input.
