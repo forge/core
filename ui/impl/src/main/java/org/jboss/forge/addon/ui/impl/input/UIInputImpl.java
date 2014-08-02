@@ -18,6 +18,7 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.ValueChangeListener;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.util.Callables;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Implementation of a {@link UIInput} object
@@ -109,12 +110,21 @@ public class UIInputImpl<VALUETYPE> extends AbstractInputComponent<UIInput<VALUE
    @Override
    public boolean hasDefaultValue()
    {
-      return Callables.call(defaultValue) != null;
+      VALUETYPE defaultValueValue = Callables.call(defaultValue);
+      if (defaultValueValue instanceof String)
+      {
+         return !Strings.isNullOrEmpty((String) defaultValueValue);
+      }
+      return defaultValueValue != null;
    }
 
    @Override
    public boolean hasValue()
    {
+      if (value instanceof String)
+      {
+         return !Strings.isNullOrEmpty((String) value);
+      }
       return value != null;
    }
 }

@@ -57,6 +57,9 @@ public class UIInputDefaultValueTest
    @WithAttributes(label = "")
    private UIInput<String> stringNoDefault;
 
+   @Inject
+   private UIInput<String> stringValue;
+
    @Test
    public void testBooleanInputWithDefaultValue()
    {
@@ -87,5 +90,14 @@ public class UIInputDefaultValueTest
       Assert.assertFalse(stringNoDefault.hasDefaultValue());
       Assert.assertFalse(stringNoDefault.hasValue());
       Assert.assertNull(stringNoDefault.getValue());
+   }
+
+   @Test
+   public void testStringEmptyInputNoDefaultValue()
+   {
+      stringValue.setValue("");
+      Assert.assertFalse(stringValue.hasValue());
+      stringValue.setDefaultValue("");
+      Assert.assertFalse(stringValue.hasDefaultValue());
    }
 }

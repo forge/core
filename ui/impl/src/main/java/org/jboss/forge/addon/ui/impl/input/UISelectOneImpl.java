@@ -13,6 +13,7 @@ import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.input.ValueChangeListener;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.util.Callables;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -65,12 +66,21 @@ public class UISelectOneImpl<VALUETYPE> extends AbstractUISelectInputComponent<U
    @Override
    public boolean hasDefaultValue()
    {
-      return Callables.call(defaultValue) != null;
+      VALUETYPE defaultValueValue = Callables.call(defaultValue);
+      if (defaultValueValue instanceof String)
+      {
+         return !Strings.isNullOrEmpty((String) defaultValueValue);
+      }
+      return defaultValueValue != null;
    }
 
    @Override
    public boolean hasValue()
    {
+      if (value instanceof String)
+      {
+         return !Strings.isNullOrEmpty((String) value);
+      }
       return value != null;
    }
 
