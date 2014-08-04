@@ -19,8 +19,8 @@ import org.jboss.forge.addon.projects.ProjectFacet;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-@FacetConstraint({ JavaSourceFacet.class, FurnacePluginFacet.class, FurnacePluginFacet.class,
-         AddonClassifierFacet.class, DefaultFurnaceContainerFacet.class })
+@FacetConstraint({ JavaSourceFacet.class, FurnacePluginFacet.class, AddonClassifierFacet.class,
+         DefaultFurnaceContainerFacet.class })
 public class AddonAddonFacet extends AbstractFacet<Project> implements ProjectFacet
 {
    @Override
