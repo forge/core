@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.javaee.rest.config;
 
-import java.io.FileNotFoundException;
-
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
@@ -68,14 +66,7 @@ public class RestApplicationClassConfigurationStrategy implements RestConfigurat
       {
          applicationClass.addAnnotation(ApplicationPath.class).setStringValue(path);
       }
-      try
-      {
-         facet.saveJavaSource(applicationClass);
-      }
-      catch (FileNotFoundException ffe)
-      {
-         throw new IllegalStateException(ffe);
-      }
+      facet.saveJavaSource(applicationClass);
    }
 
    @Override

@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.maven.projects.facets;
 
-import java.io.FileNotFoundException;
-
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -17,6 +15,7 @@ import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -60,7 +59,7 @@ public class MavenJavaSourceFacetTest
    @Inject
    private FacetFactory facetFactory;
 
-   @Test(expected = FileNotFoundException.class)
+   @Test(expected = ResourceException.class)
    public void testNullRelativePath() throws Exception
    {
       Project project = projectFactory.createTempProject();
@@ -68,7 +67,7 @@ public class MavenJavaSourceFacetTest
       facet.getJavaResource((String) null);
    }
 
-   @Test(expected = FileNotFoundException.class)
+   @Test(expected = ResourceException.class)
    public void testEmptyRelativePath() throws Exception
    {
       Project project = projectFactory.createTempProject();

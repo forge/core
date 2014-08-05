@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.parser.java.ui;
 
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -171,7 +170,7 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
          JavaResource parsedJavaResource = javaSourceFacet.getJavaResource(source);
          classAlreadyExists = parsedJavaResource != null && parsedJavaResource.exists();
       }
-      catch (FileNotFoundException | ResourceException ex)
+      catch (ResourceException ex)
       {
          classAlreadyExists = false;
       }
