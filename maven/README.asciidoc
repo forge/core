@@ -1,5 +1,5 @@
 == maven
-:idprefix: id_ 
+:idprefix: id_
 
 This addon *exports services* for use in other addons. The Maven addon implements extension points in several addons, enabling them to function using maven dependency resolution, project building, and additionally provides maven POM manipulation services.
 
@@ -10,6 +10,10 @@ This addon *exports services* for use in other addons. The Maven addon implement
 |Addon |Exported |Optional
 
 |environment
+|yes
+|no
+
+|configuration
 |yes
 |no
 
@@ -51,7 +55,7 @@ This addon *exports services* for use in other addons. The Maven addon implement
 
 This Addon requires the following installation steps.
 
-=== Add configuration to pom.xml 
+=== Add configuration to pom.xml
 
 To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
 
@@ -67,7 +71,7 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 
 == Features
 
-The maven addon provides very little functionality on its own, but integrates with and extends several other addons. 
+The maven addon provides very little functionality on its own, but integrates with and extends several other addons.
 
 Fluent builders for Maven profile management::
 Independent of other addons, this addon provides the Maven API model for integrating with POM files and profiles, as well as several fluent builders for maintaining profiles.
@@ -88,7 +92,7 @@ The maven addon supplies an implementation of `DependencyResolverProvider` for u
 +
 [source,java]
 ----
-@Inject 
+@Inject
 Imported<DependencyResolver> resolvers;
 ...
 for(DependencyResolver resolver : resolvers)
@@ -110,7 +114,7 @@ The maven addon supplies several additional `Resource` types for interacting wit
 +
 [source,java]
 ----
-@Inject 
+@Inject
 private ResourceFactory factory;
 ...
 MavenPomResource pom = (MavenPomResource) factory.create(".../pom.xml")
@@ -119,7 +123,7 @@ MavenPomResource pom = (MavenPomResource) factory.create(".../pom.xml")
 Remaining resource types are made available as children of the `MavenPomResource` via the `.listResources()` method. Child resources returned in this way will represent individual dependency, repository, and profile elements from the `pom.xml` file itself:
 
 
-(Optional) projects addon integration:: 
+(Optional) projects addon integration::
 When the projects addon is installed, the `ProjectFactory` will be able to locate maven projects in the filesystem. In addition, the Maven addon provides implementations of several `ProjectFacet` sub-types:
 +
 * `MetadataFacet`
@@ -142,18 +146,39 @@ When both the parser-java and projects addons are installed, the Maven addon sup
 * JavaSourceFacet
 
 
-(Optional) ui addon integration:: 
+(Optional) ui addon integration::
 When the ui and project addons are both installed, the maven addon provides several `ProjectType` implementations for use in the "New Project" wizards.
 +
 |===
 |Project type |Description |Requires addons
 
-|Maven - Java
+|Java Library
 |Creates a simple maven project with *'jar'* packaging.
 |parser-java
 
-|Maven - Resources
-|Creates a simple maven project with *'pom'* packaging. 
+|Java Resources
+|Creates a simple maven project with *'pom'* packaging.
+|
+
+|From Archetype
+|Creates a maven project based on an existing archetype
+|
+
+|From Archetype Catalog
+|Creates a maven project based on an existing archetype from the registered catalogs
 |
 
 |===
+
+Archetype catalog registration:: To register a new catalog, just implement a class that implements org.jboss.forge.addon.maven.archetype.ArchetypeCatalogFactory.
+The ArchetypeRegistry will automatically use it on startup. Or you can register manually, as in the following code:
+
+[source,java]
+----
+@Inject
+private ArchetypeCatalogFactoryRegistry registry;
+...
+registry.addArchetypeCatalogFactory(new MyCompanyArchetypeCatalogFactory());
+----
++
+
