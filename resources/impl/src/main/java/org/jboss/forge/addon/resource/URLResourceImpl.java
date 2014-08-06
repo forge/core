@@ -58,6 +58,12 @@ public class URLResourceImpl extends VirtualResource<URL> implements URLResource
    }
 
    @Override
+   public String getFullyQualifiedName()
+   {
+      return resource.toExternalForm();
+   }
+
+   @Override
    public URL getUnderlyingResourceObject()
    {
       return resource;
