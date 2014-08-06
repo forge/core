@@ -12,6 +12,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Iterator;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -24,6 +26,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -86,6 +89,28 @@ public class ConfigurationTest
    {
       subsetConfiguration.setProperty("A", "Value");
       assertEquals("Value", configuration.subset("subset").getString("A"));
+   }
+
+   @Test
+   @Ignore("FORGE-1971")
+   public void testSubsetConfigurationKeys() throws Exception
+   {
+      subsetConfiguration.clear();
+      subsetConfiguration.setProperty("A", "Value");
+      Iterator<?> keys = subsetConfiguration.getKeys();
+      assertTrue(keys.hasNext());
+      assertEquals("A", keys.next());
+      assertFalse(keys.hasNext());
+   }
+
+   @Test
+   @Ignore("FORGE-1971")
+   public void testSubsetConfigurationClearProperty() throws Exception
+   {
+      subsetConfiguration.clear();
+      subsetConfiguration.setProperty("A", "Value");
+      subsetConfiguration.clearProperty("A");
+      assertFalse(subsetConfiguration.getKeys().hasNext());
    }
 
 }
