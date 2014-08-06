@@ -30,7 +30,7 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class BuildCommand extends AbstractProjectCommand
@@ -83,7 +83,7 @@ public class BuildCommand extends AbstractProjectCommand
       }
       else
       {
-         builder.addArguments("install");
+         builder.addArguments("clean", "install");
       }
 
       if (notest.getValue())
