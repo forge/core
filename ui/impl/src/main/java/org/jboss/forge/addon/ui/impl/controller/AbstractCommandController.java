@@ -9,6 +9,8 @@ package org.jboss.forge.addon.ui.impl.controller;
 
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.forge.addon.ui.UIRuntime;
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
@@ -25,7 +27,7 @@ import org.jboss.forge.furnace.util.Assert;
 
 /**
  * Base class for {@link CommandController} implementations.
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -35,6 +37,8 @@ public abstract class AbstractCommandController implements CommandController
    protected final UIRuntime runtime;
    protected final UIContext context;
    protected final UICommand initialCommand;
+
+   private static final Logger log = Logger.getLogger(AbstractCommandController.class.getName());
 
    protected AbstractCommandController(AddonRegistry addonRegistry, UIRuntime runtime,
             UICommand initialCommand, UIContext context)
@@ -103,7 +107,14 @@ public abstract class AbstractCommandController implements CommandController
    {
       for (CommandExecutionListener listener : listeners)
       {
-         listener.preCommandExecuted(command, executionContext);
+         try
+         {
+            listener.preCommandExecuted(command, executionContext);
+         }
+         catch (Throwable t)
+         {
+            log.log(Level.SEVERE, "Error while notifying listeners", t);
+         }
       }
    }
 
@@ -112,7 +123,14 @@ public abstract class AbstractCommandController implements CommandController
    {
       for (CommandExecutionListener listener : listeners)
       {
-         listener.postCommandFailure(command, executionContext, e);
+         try
+         {
+            listener.postCommandFailure(command, executionContext, e);
+         }
+         catch (Throwable t)
+         {
+            log.log(Level.SEVERE, "Error while notifying listeners", t);
+         }
       }
    }
 
@@ -121,7 +139,14 @@ public abstract class AbstractCommandController implements CommandController
    {
       for (CommandExecutionListener listener : listeners)
       {
-         listener.postCommandExecuted(command, executionContext, currentResult);
+         try
+         {
+            listener.postCommandExecuted(command, executionContext, currentResult);
+         }
+         catch (Throwable t)
+         {
+            log.log(Level.SEVERE, "Error while notifying listeners", t);
+         }
       }
    }
 }

@@ -34,7 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
@@ -50,7 +50,7 @@ public class CommandExecutionListenerTest
                .create(ForgeArchive.class)
                .addBeansXML()
                .addClasses(FlowExampleWizard.class, FlowExampleStep.class, WizardTestListener.class,
-                        ExecutionEvent.class)
+                        BogusListener.class, ExecutionEvent.class)
                .addPackage(MockUIContext.class.getPackage())
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
@@ -88,6 +88,27 @@ public class CommandExecutionListenerTest
    public enum ExecutionEvent
    {
       PRE_COMMAND, POST_COMMAND, POST_COMMAND_FAILURE, PRE_WIZARD, POST_WIZARD, POST_WIZARD_FAILURE;
+   }
+
+   private static class BogusListener extends AbstractCommandExecutionListener
+   {
+      @Override
+      public void preCommandExecuted(UICommand command, UIExecutionContext context)
+      {
+         throw new RuntimeException("Forcing RuntimeException on preCommandExecuted");
+      }
+
+      @Override
+      public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
+      {
+         throw new RuntimeException("Forcing Runtime Exception on postCommandExecuted");
+      }
+
+      @Override
+      public void postCommandFailure(UICommand command, UIExecutionContext context, Throwable failure)
+      {
+         throw new RuntimeException("Forcing Runtime Exception on postCommandFailure");
+      }
    }
 
    private static class WizardTestListener extends AbstractCommandExecutionListener implements WizardExecutionListener
