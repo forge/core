@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import org.jboss.aesh.console.Prompt;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
-import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourcePathResolver;
@@ -35,7 +34,6 @@ import org.jboss.forge.addon.shell.CommandNotFoundListener;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ShellFactory;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
-import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.command.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.addon.ui.command.UICommand;
@@ -61,7 +59,7 @@ import org.jboss.forge.furnace.util.Streams;
 
 /**
  * Implementation of the "run script" command
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class RunCommand extends AbstractShellCommand
@@ -366,12 +364,6 @@ public class RunCommand extends AbstractShellCommand
             result = null;
          }
       }
-   }
-
-   @Override
-   public boolean isEnabled(ShellContext context)
-   {
-      return super.isEnabled(context) && context.getInitialSelection().get() instanceof DirectoryResource;
    }
 
    private boolean skipsLine(String line)

@@ -11,13 +11,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
-import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -31,7 +29,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
  * Implementation of the "touch" command
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class TouchCommand extends AbstractShellCommand
@@ -85,11 +83,5 @@ public class TouchCommand extends AbstractShellCommand
       }
 
       return Results.success();
-   }
-
-   @Override
-   public boolean isEnabled(ShellContext context)
-   {
-      return super.isEnabled(context) && context.getInitialSelection().get() instanceof DirectoryResource;
    }
 }
