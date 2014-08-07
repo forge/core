@@ -79,6 +79,7 @@ public class NewEntityCommand extends AbstractJavaEECommand implements Prerequis
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      builder.add(named).add(targetPackage);
       idStrategy.setDefaultValue(GenerationType.AUTO);
       Project project = getSelectedProject(builder.getUIContext());
       if (project == null)
@@ -96,6 +97,7 @@ public class NewEntityCommand extends AbstractJavaEECommand implements Prerequis
                targetLocation.setDefaultValue(resource.getParent());
             }
          }
+         builder.add(targetLocation);
       }
       else if (project.hasFacet(JavaSourceFacet.class))
       {
@@ -103,8 +105,7 @@ public class NewEntityCommand extends AbstractJavaEECommand implements Prerequis
          targetLocation.setDefaultValue(facet.getSourceDirectory()).setEnabled(false);
          targetPackage.setValue(calculateModelPackage(project));
       }
-      builder.add(targetLocation);
-      builder.add(targetPackage).add(named).add(idStrategy).add(tableName);
+      builder.add(idStrategy).add(tableName);
    }
 
    /**
