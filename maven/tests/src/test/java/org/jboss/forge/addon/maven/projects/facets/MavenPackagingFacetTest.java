@@ -7,12 +7,17 @@
 
 package org.jboss.forge.addon.maven.projects.facets;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import javax.inject.Inject;
 
+import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.building.ProjectBuilder;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.Resource;
@@ -23,6 +28,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -84,6 +90,21 @@ public class MavenPackagingFacetTest
       Resource<?> finalArtifact = facet.getFinalArtifact();
       Assert.assertFalse("Final Artifact contains unresolved ${project.basedir} property", finalArtifact
                .getFullyQualifiedName().contains("${project.basedir}"));
+   }
+
+   @Test
+   @Ignore("FORGE-1488")
+   public void testBuildOutput() throws Exception
+   {
+      final PackagingFacet facet = project.getFacet(PackagingFacet.class);
+      ProjectBuilder builder = facet.createBuilder();
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      ByteArrayOutputStream err = new ByteArrayOutputStream();
+
+      builder.addArguments("clean").runTests(false)
+               .build(new PrintStream(out, true), new PrintStream(err, true));
+      Assert.assertEquals("", err.toString());
+      Assert.assertThat(out.toString(), CoreMatchers.containsString("BUILD SUCCESS"));
    }
 
 }

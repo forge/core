@@ -45,12 +45,6 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    private Environment environment;
 
    @Override
-   public void setFaceted(Project origin)
-   {
-      super.setFaceted(origin);
-   }
-
-   @Override
    public void setPackagingType(final String type)
    {
       String oldType = getPackagingType();
