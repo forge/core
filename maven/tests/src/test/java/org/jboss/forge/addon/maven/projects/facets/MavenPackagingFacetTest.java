@@ -28,7 +28,6 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -93,7 +92,6 @@ public class MavenPackagingFacetTest
    }
 
    @Test
-   @Ignore("FORGE-1488")
    public void testBuildOutput() throws Exception
    {
       final PackagingFacet facet = project.getFacet(PackagingFacet.class);
@@ -103,8 +101,22 @@ public class MavenPackagingFacetTest
 
       builder.addArguments("clean").runTests(false)
                .build(new PrintStream(out, true), new PrintStream(err, true));
-      Assert.assertEquals("", err.toString());
+      Assert.assertEquals(0, err.size());
       Assert.assertThat(out.toString(), CoreMatchers.containsString("BUILD SUCCESS"));
+   }
+
+   @Test
+   public void testBuildOutputQuiet() throws Exception
+   {
+      final PackagingFacet facet = project.getFacet(PackagingFacet.class);
+      ProjectBuilder builder = facet.createBuilder();
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      ByteArrayOutputStream err = new ByteArrayOutputStream();
+
+      builder.addArguments("clean", "--quiet").runTests(false)
+               .build(new PrintStream(out, true), new PrintStream(err, true));
+      Assert.assertEquals(0, err.size());
+      Assert.assertEquals(0, out.size());
    }
 
 }

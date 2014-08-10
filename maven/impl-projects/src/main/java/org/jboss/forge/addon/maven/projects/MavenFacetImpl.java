@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -38,9 +40,13 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
+ * Implementation of {@link MavenFacet}
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFacet, MavenFacet
 {
@@ -233,11 +239,33 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       {
          list.addAll(Arrays.asList(arguments));
       }
-      String[] params = list.toArray(new String[list.size()]);
-      MavenCli cli = new MavenCli();
-      int i = cli.doMain(params, getFaceted().getRoot().getFullyQualifiedName(),
-               out, err);
-      return i == 0;
+      return doExecuteMavenEmbedded(out, err, list);
+   }
+
+   /**
+    * The embedded maven CLI uses the java logging API to output the log. <br/>
+    * Since we never write the log to the console, we need register a logging handler.
+    *
+    * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+    */
+   private boolean doExecuteMavenEmbedded(final PrintStream out, final PrintStream err, final List<String> list)
+   {
+      // Have we asked for quiet mode?
+      final boolean quiet = list.contains("-q") || list.contains("--quiet");
+      final String[] params = list.toArray(new String[list.size()]);
+      // Get root logger. Yes, it is an empty logger, Logger.getGlobal() doesn't work here
+      final Logger globalLogger = Logger.getLogger(Strings.EMPTY);
+      final Handler outHandler = new UncloseableStreamHandler(out, quiet);
+      try
+      {
+         globalLogger.addHandler(outHandler);
+         int returnCode = new MavenCli().doMain(params, getFaceted().getRoot().getFullyQualifiedName(), out, err);
+         return returnCode == 0;
+      }
+      finally
+      {
+         globalLogger.removeHandler(outHandler);
+      }
    }
 
    @Override
@@ -310,6 +338,66 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       catch (Exception e)
       {
          return false;
+      }
+   }
+
+   /**
+    * A {@link Handler} implementation that writes to a {@link PrintStream}
+    *
+    * Used in {@link MavenFacetImpl#executeMavenEmbedded(PrintStream, PrintStream, String[])}
+    *
+    * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+    */
+   private static class UncloseableStreamHandler extends Handler
+   {
+      private final PrintStream out;
+      private final boolean quiet;
+
+      public UncloseableStreamHandler(PrintStream out, boolean quiet)
+      {
+         super();
+         this.out = out;
+         this.quiet = quiet;
+      }
+
+      @Override
+      public void publish(LogRecord record)
+      {
+         // Write only if quiet is false
+         if (!quiet && isLoggable(record))
+         {
+            out.printf("[%s] %s%n", record.getLevel(), record.getMessage());
+         }
+      }
+
+      @Override
+      public boolean isLoggable(LogRecord record)
+      {
+         if (super.isLoggable(record))
+         {
+            switch (record.getMessage())
+            {
+            // Avoid unwanted warning messages
+            case "setRootLoggerLevel: operation not supported":
+            case "reset(): operation not supported":
+               break;
+            default:
+               return true;
+            }
+         }
+         return false;
+      }
+
+      @Override
+      public void flush()
+      {
+         out.flush();
+      }
+
+      @Override
+      public void close()
+      {
+         // Never close
       }
    }
 
