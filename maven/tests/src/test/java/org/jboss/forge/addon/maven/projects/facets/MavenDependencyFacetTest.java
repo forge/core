@@ -83,8 +83,8 @@ public class MavenDependencyFacetTest
       facet.addDirectDependency(dependencyOneV2);
       List<Dependency> dependencies = facet.getDependencies();
       Assert.assertEquals(2, dependencies.size());
-      Assert.assertTrue(areEquivalent(dependencyOneV2, dependencies.get(0)));
-      Assert.assertTrue(areEquivalent(dependencyTwo, dependencies.get(1)));
+      assertDependencies(dependencyOneV2, dependencies.get(0));
+      assertDependencies(dependencyTwo, dependencies.get(1));
    }
 
    @Test
@@ -100,7 +100,31 @@ public class MavenDependencyFacetTest
       facet.addManagedDependency(dependencyOneV2);
       List<Dependency> dependencies = facet.getManagedDependencies();
       Assert.assertEquals(2, dependencies.size());
-      Assert.assertTrue(areEquivalent(dependencyOneV2, dependencies.get(0)));
-      Assert.assertTrue(areEquivalent(dependencyTwo, dependencies.get(1)));
+      assertDependencies(dependencyOne, dependencies.get(0));
+      assertDependencies(dependencyTwo, dependencies.get(1));
+   }
+
+   @Test
+   public void testAddDirectManagedDependencyOrder() throws Exception
+   {
+      Assert.assertTrue("DependencyFacet not installed in project", project.hasFacet(DependencyFacet.class));
+      final DependencyFacet facet = project.getFacet(DependencyFacet.class);
+      DependencyBuilder dependencyOne = DependencyBuilder.create("groupId:artifactId:1.0.0.Final");
+      DependencyBuilder dependencyTwo = DependencyBuilder.create("anotherGroupId:anotherArtifactId:1.0.0.Final");
+      DependencyBuilder dependencyOneV2 = DependencyBuilder.create("groupId:artifactId:2.0.0.Final");
+      facet.addDirectManagedDependency(dependencyOne);
+      facet.addDirectManagedDependency(dependencyTwo);
+      facet.addDirectManagedDependency(dependencyOneV2);
+      List<Dependency> dependencies = facet.getManagedDependencies();
+      Assert.assertEquals(2, dependencies.size());
+      assertDependencies(dependencyOneV2, dependencies.get(0));
+      assertDependencies(dependencyTwo, dependencies.get(1));
+   }
+
+   private void assertDependencies(Dependency expected, Dependency actual)
+   {
+      Assert.assertTrue("Dependencies are not equivalent", areEquivalent(expected, actual));
+      Assert.assertEquals("Dependencies version do not match", expected.getCoordinate().getVersion(), actual
+               .getCoordinate().getVersion());
    }
 }
