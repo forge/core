@@ -7,8 +7,10 @@
 package org.jboss.forge.addon.maven.projects.facets;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -64,13 +66,25 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    @Override
    public void addDirectDependency(final Dependency dep)
    {
-      removeDependency(dep);
-
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getModel();
-      List<Dependency> dependencies = MavenDependencyAdapter.fromMavenList(pom.getDependencies());
-      dependencies.add(dep);
-      pom.setDependencies(MavenDependencyAdapter.toMavenList(dependencies));
+      List<org.apache.maven.model.Dependency> dependencies = pom.getDependencies();
+      Coordinate depCoordinate = dep.getCoordinate();
+      boolean exists = false;
+      for (org.apache.maven.model.Dependency dependency : dependencies)
+      {
+         if (dependency.getGroupId().equals(depCoordinate.getGroupId())
+                  && dependency.getArtifactId().equals(depCoordinate.getArtifactId()))
+         {
+            dependency.setVersion(depCoordinate.getVersion());
+            exists = true;
+         }
+      }
+      if (!exists)
+      {
+         org.apache.maven.model.Dependency dependency = MavenDependencyAdapter.toMavenList(Arrays.asList(dep)).get(0);
+         dependencies.add(dependency);
+      }
       maven.setModel(pom);
    }
 
@@ -195,31 +209,34 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    {
       if (!hasEffectiveManagedDependency(resolveProperties(manDep)))
       {
-         MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
-         Model pom = maven.getModel();
-         DependencyManagement depMan = pom.getDependencyManagement();
-         depMan = depMan != null ? depMan : new DependencyManagement();
-
-         List<Dependency> managedDependencies = MavenDependencyAdapter.fromMavenList(depMan.getDependencies());
-         managedDependencies.add(manDep);
-         depMan.setDependencies(MavenDependencyAdapter.toMavenList(managedDependencies));
-         pom.setDependencyManagement(depMan);
-         maven.setModel(pom);
+         addDirectManagedDependency(manDep);
       }
    }
 
    @Override
    public void addDirectManagedDependency(final Dependency dep)
    {
-      removeManagedDependency(dep);
-
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getModel();
       DependencyManagement depMan = pom.getDependencyManagement();
       depMan = depMan != null ? depMan : new DependencyManagement();
 
       List<Dependency> managedDependencies = MavenDependencyAdapter.fromMavenList(depMan.getDependencies());
-      managedDependencies.add(dep);
+      ListIterator<Dependency> managedDepsIterator = managedDependencies.listIterator();
+      boolean found = false;
+      while (managedDepsIterator.hasNext())
+      {
+         Dependency managedDependency = managedDepsIterator.next();
+         if (Dependencies.areEquivalent(managedDependency, dep))
+         {
+            managedDepsIterator.set(dep);
+            found = true;
+         }
+      }
+      if (!found)
+      {
+         managedDependencies.add(dep);
+      }
       depMan.setDependencies(MavenDependencyAdapter.toMavenList(managedDependencies));
       pom.setDependencyManagement(depMan);
       maven.setModel(pom);
