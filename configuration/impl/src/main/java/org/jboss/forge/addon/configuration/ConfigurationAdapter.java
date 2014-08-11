@@ -15,10 +15,11 @@ import java.util.Properties;
 import javax.enterprise.inject.Vetoed;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.jboss.forge.furnace.util.Iterators;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 @Vetoed
 public class ConfigurationAdapter implements Configuration
@@ -91,13 +92,19 @@ public class ConfigurationAdapter implements Configuration
    @Override
    public Iterator<?> getKeys(final String prefix)
    {
-      return getDelegate().getKeys(prefix);
+      // FORGE-1971: getDelegate().getKeys(prefix) returns an empty string as the key
+      List<String> list = Iterators.asList(getDelegate().getKeys(prefix));
+      list.remove("");
+      return list.iterator();
    }
 
    @Override
    public Iterator<?> getKeys()
    {
-      return getDelegate().getKeys();
+      // FORGE-1971: getDelegate().getKeys() returns an empty string as the key
+      List<String> list = Iterators.asList(getDelegate().getKeys());
+      list.remove("");
+      return list.iterator();
    }
 
    @Override

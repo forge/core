@@ -9,15 +9,15 @@ package org.jboss.forge.addon.configuration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Iterator;
 
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.configuration.facets.ConfigurationFacet;
+import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -27,11 +27,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class ConfigurationTest
+public class ProjectConfigurationTest
 {
    @Deployment
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
             @AddonDependency(name = "org.jboss.forge.addon:configuration")
    })
    public static ForgeArchive getDeployment()
@@ -41,51 +43,26 @@ public class ConfigurationTest
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:configuration")
                );
       return archive;
    }
 
    @Inject
-   private Configuration configuration;
-
-   @Inject
-   @Subset("subset")
-   private Configuration subsetConfiguration;
+   private ProjectFactory projectFactory;
 
    @Test
-   public void testConfigurationInjection() throws Exception
+   public void testProjectFacet() throws Exception
    {
-      assertNotNull(configuration);
-      assertNotNull(subsetConfiguration);
+      Project project = projectFactory.createTempProject();
+      assertTrue(project.hasFacet(ConfigurationFacet.class));
+      ConfigurationFacet facet = project.getFacet(ConfigurationFacet.class);
+      assertFalse(facet.getConfigLocation().exists());
+      Configuration config = facet.getConfiguration();
+      config.setProperty("key", "value");
+      assertEquals("value", config.getString("key"));
+      assertTrue(facet.getConfigLocation().exists());
    }
-
-   @Test
-   public void testSubsetConfiguration() throws Exception
-   {
-      subsetConfiguration.setProperty("A", "Value");
-      assertEquals("Value", configuration.subset("subset").getString("A"));
-   }
-
-   @Test
-   public void testSubsetConfigurationKeys() throws Exception
-   {
-      subsetConfiguration.clear();
-      subsetConfiguration.setProperty("A", "Value");
-      Iterator<?> keys = subsetConfiguration.getKeys();
-      assertTrue(keys.hasNext());
-      assertEquals("A", keys.next());
-      assertFalse(keys.hasNext());
-   }
-
-   @Test
-   public void testSubsetConfigurationClearProperty() throws Exception
-   {
-      subsetConfiguration.clear();
-      subsetConfiguration.setProperty("A", "Value");
-      assertTrue(subsetConfiguration.getKeys().hasNext());
-      subsetConfiguration.clearProperty("A");
-      assertFalse(subsetConfiguration.getKeys().hasNext());
-   }
-
 }
