@@ -15,7 +15,7 @@ import org.jboss.forge.furnace.util.Assert;
 
 /**
  * Utility for creating hierarchical {@link UICategory} instances.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
@@ -39,10 +39,10 @@ public class Categories
    {
       Assert.notNull(category, "Parent UICategory must not be null.");
       Assert.notNull(categories, "Sub categories must not be null.");
-      List<String> args = new ArrayList<String>();
+      List<String> args = new ArrayList<>();
       args.add(category.getName());
       args.addAll(Arrays.asList(categories));
-      return create(args.toArray(new String[] {}));
+      return create(args.toArray(new String[args.size()]));
    }
 
    /**
