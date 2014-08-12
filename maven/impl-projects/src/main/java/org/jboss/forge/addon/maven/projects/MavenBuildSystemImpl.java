@@ -76,8 +76,12 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
    @Override
    public boolean containsProject(final Resource<?> target)
    {
-      Resource<?> pom = target.getChild("pom.xml");
-      return pom != null && pom.exists();
+      if (target.exists())
+      {
+         Resource<?> pom = target.getChild("pom.xml");
+         return pom != null && pom.exists();
+      }
+      return false;
    }
 
    @Override
