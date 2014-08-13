@@ -22,4 +22,9 @@ public interface ShellContext extends UIContext
     * If it's in interactive mode
     */
    boolean isInteractive();
+
+   /**
+    * If should display errors
+    */
+   boolean isVerbose();
 }

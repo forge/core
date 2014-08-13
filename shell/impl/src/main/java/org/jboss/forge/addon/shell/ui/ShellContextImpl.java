@@ -72,4 +72,12 @@ public class ShellContextImpl extends AbstractUIContext implements ShellContext
       Object interactiveFlag = getAttributeMap().get("INTERACTIVE");
       return (interactiveFlag == null || "true".equalsIgnoreCase(interactiveFlag.toString()));
    }
+
+   @Override
+   public boolean isVerbose()
+   {
+      Object verboseFlag = getAttributeMap().get("VERBOSE");
+      return (verboseFlag != null && "true".equalsIgnoreCase(verboseFlag.toString()));
+   }
+
 }
