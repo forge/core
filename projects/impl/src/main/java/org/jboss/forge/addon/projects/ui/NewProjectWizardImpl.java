@@ -147,8 +147,8 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
             targetLocation.setDefaultValue((DirectoryResource) resource);
          }
       }
-      
-      if(!targetLocation.hasDefaultValue())
+
+      if (!targetLocation.hasDefaultValue())
       {
          targetLocation.setDefaultValue(resourceFactory.create(DirectoryResource.class,
                   OperatingSystemUtils.getUserHomeDir()));
@@ -388,10 +388,14 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
             metadataFacet.setProjectVersion(version.getValue());
             metadataFacet.setTopLevelPackage(topLevelPackage.getValue());
 
+            PackagingFacet packagingFacet = project.getFacet(PackagingFacet.class);
             if (finalName.hasValue())
             {
-               PackagingFacet packagingFacet = project.getFacet(PackagingFacet.class);
                packagingFacet.setFinalName(finalName.getValue());
+            }
+            else
+            {
+               packagingFacet.setFinalName(named.getValue());
             }
 
             uiContext.setSelection(project.getRoot());
