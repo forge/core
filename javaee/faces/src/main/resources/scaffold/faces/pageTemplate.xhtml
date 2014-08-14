@@ -15,7 +15,11 @@
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
-				<h:link id="brandLink" outcome="/index.xhtml" styleClass="brand">${appName}</h:link>
+                <h:link id="brandLink" outcome="/index.xhtml" styleClass="brand">
+                    <h:outputText value="Welcome to " rendered="${r"#{"}request.userPrincipal != null}"/>
+                    ${appName}
+                    <h:outputText value=", ${r"#{"}request.userPrincipal.name}" rendered="${r"#{"}request.userPrincipal != null}"/>
+                </h:link>
 				<div class="nav-collapse collapse">
 					<ul class="nav">
 						<li><a href="http://forge.jboss.org/docs/important_plugins/ui-scaffolding.html">How to Customize</a></li>
