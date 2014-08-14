@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
@@ -59,6 +60,9 @@ public class ScaffoldExecuteSetupStep extends AbstractProjectCommand implements 
 
       ScaffoldProvider selectedProvider = (ScaffoldProvider) attributeMap.get(ScaffoldProvider.class);
       ScaffoldSetupContext setupContext = (ScaffoldSetupContext) attributeMap.get(ScaffoldSetupContext.class);
+      Project project = getSelectedProject(context);
+      // FIXME: FORGE-1979: Happens because Facets are not refreshed inside a Project instance
+      setupContext = new ScaffoldSetupContext(setupContext.getTargetDirectory(), project);
       selectedProvider.setup(setupContext);
       // No-op. Scaffold setup is done in a separate step.
       return Results.success("Scaffold was setup successfully.");

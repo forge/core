@@ -9,7 +9,6 @@ package org.jboss.forge.addon.scaffold.impl.ui;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
