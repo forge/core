@@ -45,6 +45,10 @@ public class BuildCommand extends AbstractProjectCommand
    private UIInput<Boolean> notest;
 
    @Inject
+   @WithAttributes(label = "Quiet", description = "Quiet output", shortName = 'q')
+   private UIInput<Boolean> quiet;
+
+   @Inject
    @WithAttributes(label = "Profile")
    private UIInput<String> profile;
 
@@ -54,7 +58,7 @@ public class BuildCommand extends AbstractProjectCommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(arguments).add(notest).add(profile);
+      builder.add(arguments).add(notest).add(profile).add(quiet);
    }
 
    @Override
@@ -95,6 +99,8 @@ public class BuildCommand extends AbstractProjectCommand
       {
          builder.addArguments("-P" + profile.getValue());
       }
+
+      builder.quiet(quiet.getValue());
 
       try
       {
