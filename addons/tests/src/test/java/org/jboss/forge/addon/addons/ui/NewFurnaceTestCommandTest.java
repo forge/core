@@ -39,6 +39,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.manager.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -120,12 +121,14 @@ public class NewFurnaceTestCommandTest
       DependencyFacet deps = project.getFacet(DependencyFacet.class);
       {
          Dependency dependency = DependencyBuilder.create(funaceContainerAddonId.getName()).setVersion(
-                  funaceContainerAddonId.getVersion().toString()).setScopeType("test");
+                  funaceContainerAddonId.getVersion().toString())
+                  .setClassifier(MavenAddonDependencyResolver.FORGE_ADDON_CLASSIFIER).setScopeType("test");
          Assert.assertTrue(deps.hasEffectiveDependency(dependency));
       }
       {
          Dependency dependency = DependencyBuilder.create(addonDependency.getName()).setVersion(
-                  addonDependency.getVersion().toString()).setScopeType("test");
+                  addonDependency.getVersion().toString())
+                  .setClassifier(MavenAddonDependencyResolver.FORGE_ADDON_CLASSIFIER).setScopeType("test");
          Assert.assertTrue(deps.hasEffectiveDependency(dependency));
       }
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);

@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.addons.facets.AddonTestFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -38,6 +39,7 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.manager.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -45,9 +47,10 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
  * Creates a Furnace Test case
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
+@FacetConstraint(AddonTestFacet.class)
 public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements NewFurnaceTestCommand
 {
    private static final String DEFAULT_CONTAINER_NAME = "org.jboss.forge.furnace.container:cdi";
@@ -142,12 +145,12 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
       // Add imports
       javaClass.addImport("org.jboss.arquillian.container.test.api.Deployment");
       javaClass.addImport("org.jboss.arquillian.junit.Arquillian");
-      javaClass.addImport("org.junit.runner.RunWith");
       javaClass.addImport("org.jboss.forge.arquillian.AddonDependency");
       javaClass.addImport("org.jboss.forge.arquillian.Dependencies");
       javaClass.addImport("org.jboss.forge.arquillian.archive.ForgeArchive");
       javaClass.addImport("org.jboss.forge.furnace.repositories.AddonDependencyEntry");
       javaClass.addImport("org.jboss.shrinkwrap.api.ShrinkWrap");
+      javaClass.addImport("org.junit.runner.RunWith");
 
       // Add Arquillian annotation
       javaClass.addAnnotation("RunWith").setLiteralValue("Arquillian.class");
@@ -198,7 +201,7 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
             AddonId addonId)
    {
       Dependency dependency = DependencyBuilder.create(addonId.getName()).setVersion(
-               addonId.getVersion().toString()).setScopeType("test");
+               addonId.getVersion().toString()).setClassifier(MavenAddonDependencyResolver.FORGE_ADDON_CLASSIFIER).setScopeType("test");
       String name = addonId.getName();
       if (!dependencyInstaller.isInstalled(project, dependency))
       {
@@ -208,12 +211,6 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
       dependenciesAnnotationBody.append("@AddonDependency(name = \"").append(name);
       body.append("\")");
       dependenciesAnnotationBody.append("\")");
-   }
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return super.isEnabled(context) && getSelectedProject(context).hasFacet(AddonTestFacet.class);
    }
 
    @Override
