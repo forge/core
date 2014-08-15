@@ -21,7 +21,7 @@ import org.jboss.forge.addon.resource.Resource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class MavenProjectBuilder implements ProjectBuilder
 {
@@ -29,6 +29,7 @@ public class MavenProjectBuilder implements ProjectBuilder
    private final Project project;
 
    private boolean runTests = true;
+   private boolean quiet;
    private final List<String> args = new ArrayList<>();
 
    public MavenProjectBuilder(final Environment environment, final Project project)
@@ -48,6 +49,13 @@ public class MavenProjectBuilder implements ProjectBuilder
    public ProjectBuilder runTests(final boolean test)
    {
       this.runTests = test;
+      return this;
+   }
+
+   @Override
+   public ProjectBuilder quiet(boolean quiet)
+   {
+      this.quiet = quiet;
       return this;
    }
 
@@ -79,7 +87,10 @@ public class MavenProjectBuilder implements ProjectBuilder
          selected.add("-DskipTests=true");
          selected.add("-Dmaven.test.skip=true");
       }
-
+      if (quiet)
+      {
+         selected.add("-q");
+      }
       boolean success = project.getFacet(MavenFacet.class).executeMavenEmbedded(selected, out, err);
 
       if (success)

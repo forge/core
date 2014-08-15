@@ -13,7 +13,7 @@ import org.jboss.forge.addon.resource.Resource;
 
 /**
  * Used to configure and execute the project build system.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public interface ProjectBuilder
@@ -38,5 +38,10 @@ public interface ProjectBuilder
     * streams
     */
    Resource<?> build(PrintStream out, PrintStream err) throws BuildException;
+
+   /**
+    * Run in "quiet" mode (no logging output is displayed)
+    */
+   ProjectBuilder quiet(boolean quiet);
 
 }

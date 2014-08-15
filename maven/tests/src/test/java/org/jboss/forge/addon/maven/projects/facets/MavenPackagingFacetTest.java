@@ -7,12 +7,13 @@
 
 package org.jboss.forge.addon.maven.projects.facets;
 
+import static org.hamcrest.CoreMatchers.containsString;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 import javax.inject.Inject;
 
-import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.Project;
@@ -102,7 +103,7 @@ public class MavenPackagingFacetTest
       builder.addArguments("clean").runTests(false)
                .build(new PrintStream(out, true), new PrintStream(err, true));
       Assert.assertEquals(0, err.size());
-      Assert.assertThat(out.toString(), CoreMatchers.containsString("BUILD SUCCESS"));
+      Assert.assertThat(out.toString(), containsString("BUILD SUCCESS"));
    }
 
    @Test
@@ -114,6 +115,20 @@ public class MavenPackagingFacetTest
       ByteArrayOutputStream err = new ByteArrayOutputStream();
 
       builder.addArguments("clean", "--quiet").runTests(false)
+               .build(new PrintStream(out, true), new PrintStream(err, true));
+      Assert.assertEquals(0, err.size());
+      Assert.assertEquals(0, out.size());
+   }
+
+   @Test
+   public void testBuildOutputQuietInBuilder() throws Exception
+   {
+      final PackagingFacet facet = project.getFacet(PackagingFacet.class);
+      ProjectBuilder builder = facet.createBuilder();
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      ByteArrayOutputStream err = new ByteArrayOutputStream();
+
+      builder.addArguments("clean").runTests(false).quiet(true)
                .build(new PrintStream(out, true), new PrintStream(err, true));
       Assert.assertEquals(0, err.size());
       Assert.assertEquals(0, out.size());
