@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.ServiceLoader;
+import java.util.concurrent.ExecutionException;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
@@ -44,13 +45,12 @@ import org.jboss.forge.furnace.versions.Versions;
  */
 public class Bootstrap
 {
-
    private static final String FORGE_ADDON_GROUP_ID = "org.jboss.forge.addon:";
    private final Furnace furnace;
    private boolean exitAfter = false;
    private boolean batchMode = false;
 
-   public static void main(final String[] args)
+   public static void main(final String[] args) throws InterruptedException, ExecutionException
    {
       final List<String> bootstrapArgs = new ArrayList<>();
       final Properties systemProperties = System.getProperties();
@@ -141,6 +141,12 @@ public class Bootstrap
                batchMode = true;
                furnace.setServerMode(false);
             }
+            else if ("--evaluate".equals(args[i]) || "-e".equals(args[i]))
+            {
+               furnace.setServerMode(true);
+               System.setProperty("forge.shell.evaluate", "true");
+               i++;
+            }
             else if ("--debug".equals(args[i]) || "-d".equals(args[i]))
             {
                // This is just to avoid the Unknown option: --debug message below
@@ -180,18 +186,38 @@ public class Bootstrap
    private String help()
    {
       StringBuilder sb = new StringBuilder();
-      sb.append("Usage: forge [OPTION]... PARAMETER ...\n");
-      sb.append("The fastest way to build applications, share your software, and enjoy doing it.\n");
+      sb.append("Usage: forge [OPTION]... PARAMETER ... \n");
+      sb.append("The fastest way to build applications, share your software, and enjoy doing it. \n");
       sb.append("\n");
-      sb.append("-i, --install               install the required addons and exit\n");
-      sb.append("-r, --remove                remove the required addons and exit\n");
-      sb.append("-l, --list                  list installed addons and exit\n");
-      sb.append("-a, --addonDir              add addon repository\n");
-      sb.append("-m, --immutableAddonDir     add immutable addon repository\n");
-      sb.append("-b, --batchMode             run Forge in batch mode\n");
-      sb.append("-d, --debug                 run Forge in debug mode\n");
-      sb.append("-h, --help                  display this help and exit\n");
-      sb.append("-v, --version               output version information and exit\n");
+      sb.append("-i, --install [[groupId:]addon[,version]]\n");
+      sb.append("\t install the required addons and exit. ex: `forge -i core-addon-x` or `forge -i org.example.addon:example,1.0.0` \n");
+
+      sb.append("-r, --remove [[groupId:]addon[,version]]\n");
+      sb.append("\t remove the required addons and exit. ex: `forge -r core-addon-x` or `forge -r org.example.addon:example,1.0.0` \n");
+
+      sb.append("-l, --list\n");
+      sb.append("\t list installed addons and exit \n");
+
+      sb.append("-a, --addonDir [dir]\n");
+      sb.append("\t add the given directory for use as a custom addon repository \n");
+
+      sb.append("-e, --evaluate [cmd]\n");
+      sb.append("\t evaluate the given string as commands (requires shell addon. Install via: `forge -i shell`) \n");
+
+      sb.append("-m, --immutableAddonDir [dir]\n");
+      sb.append("\t add the given directory for use as a custom immutable addon repository (read only) \n");
+
+      sb.append("-b, --batchMode\n");
+      sb.append("\t run Forge in batch mode and does not prompt for confirmation (exits immediately after running) \n");
+
+      sb.append("-d, --debug\n");
+      sb.append("\t run Forge in debug mode (wait on port 8000 for a debugger to attach) \n");
+
+      sb.append("-h, --help\n");
+      sb.append("\t display this help and exit \n");
+
+      sb.append("-v, --version\n");
+      sb.append("\t output version information and exit \n");
       return sb.toString();
    }
 
@@ -245,7 +271,7 @@ public class Bootstrap
       return result;
    }
 
-   private void start()
+   private void start() throws InterruptedException, ExecutionException
    {
       if (!exitAfter)
       {
@@ -262,6 +288,7 @@ public class Bootstrap
                }
             }
          }
+
          furnace.start();
       }
    }
@@ -301,31 +328,31 @@ public class Bootstrap
                coordinate = FORGE_ADDON_GROUP_ID + addonCoordinates;
                versions = resolver.resolveVersions(coordinate).get();
             }
-            
-               if (versions.length == 0)
-               {
-                  throw new IllegalArgumentException("No Artifact version found for " + coordinate);
-               }
-               else
-               {
-                  AddonId selected = null;
-                  for (int i = versions.length - 1; selected == null && i >= 0; i--)
-                  {
-                     String apiVersion = resolver.resolveAPIVersion(versions[i]).get();
-                     if (apiVersion != null
-                              && Versions.isApiCompatible(runtimeAPIVersion, new SingleVersion(apiVersion)))
-                     {
-                        selected = versions[i];
-                     }
-                  }
-                  if (selected == null)
-                  {
-                     throw new IllegalArgumentException("No compatible addon API version found for " + coordinate
-                              + " for API " + runtimeAPIVersion);
-                  }
 
-                  addon = selected;
+            if (versions.length == 0)
+            {
+               throw new IllegalArgumentException("No Artifact version found for " + coordinate);
+            }
+            else
+            {
+               AddonId selected = null;
+               for (int i = versions.length - 1; selected == null && i >= 0; i--)
+               {
+                  String apiVersion = resolver.resolveAPIVersion(versions[i]).get();
+                  if (apiVersion != null
+                           && Versions.isApiCompatible(runtimeAPIVersion, new SingleVersion(apiVersion)))
+                  {
+                     selected = versions[i];
+                  }
                }
+               if (selected == null)
+               {
+                  throw new IllegalArgumentException("No compatible addon API version found for " + coordinate
+                           + " for API " + runtimeAPIVersion);
+               }
+
+               addon = selected;
+            }
          }
 
          AddonActionRequest request = addonManager.install(addon);

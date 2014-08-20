@@ -193,6 +193,11 @@ public class ShellUIPromptImpl implements UIPrompt
    @SuppressWarnings({ "unchecked", "rawtypes" })
    private Object promptSelectComponent(SelectComponent select, List<Object> existingItems)
    {
+      if (isAcceptDefaultsEnabled())
+      {
+         return select.hasDefaultValue() ? select.getValue() : null;
+      }
+      
       PrintStream out = console.getShell().out();
       String label = InputComponents.getLabelFor(select, false);
       String description = select.getDescription();

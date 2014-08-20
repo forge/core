@@ -30,7 +30,9 @@ import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.SingleCommandController;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.exception.ContainerException;
 
 /**
  * Forge implementation of {@link CommandRegistry}.
@@ -42,16 +44,19 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
  */
 public class ForgeCommandRegistry implements CommandRegistry
 {
-   private final CommandFactory commandFactory;
+   private Furnace furnace;
    private final ShellImpl shell;
+
+   private final CommandFactory commandFactory;
    private final CommandRegistry aeshCommandRegistry;
    private final ConverterFactory converterFactory;
 
    private CommandLineUtil commandLineUtil;
    private final CommandControllerFactory commandControllerFactory;
 
-   public ForgeCommandRegistry(ShellImpl shell, AddonRegistry addonRegistry)
+   public ForgeCommandRegistry(Furnace furnace, ShellImpl shell, AddonRegistry addonRegistry)
    {
+      this.furnace = furnace;
       this.shell = shell;
       this.commandFactory = addonRegistry.getServices(CommandFactory.class).get();
       this.commandControllerFactory = addonRegistry.getServices(CommandControllerFactory.class).get();
@@ -71,6 +76,8 @@ public class ForgeCommandRegistry implements CommandRegistry
    @Override
    public CommandContainer getCommand(String name, String completeLine) throws CommandNotFoundException
    {
+      waitUntilStarted();
+      
       ShellContextImpl shellContext = shell.createUIContext();
       try
       {
@@ -158,10 +165,27 @@ public class ForgeCommandRegistry implements CommandRegistry
    @Override
    public Set<String> getAllCommandNames()
    {
+      waitUntilStarted();
+
       Set<String> allCommands = new TreeSet<>();
       allCommands.addAll(getForgeCommandNames());
       allCommands.addAll(aeshCommandRegistry.getAllCommandNames());
       return allCommands;
+   }
+
+   public void waitUntilStarted()
+   {
+      while (furnace.getStatus().isStarting())
+      {
+         try
+         {
+            Thread.sleep(10);
+         }
+         catch (InterruptedException e)
+         {
+            throw new ContainerException("Interrputed while waiting for STARTED state.", e);
+         }
+      }
    }
 
    private Set<String> getForgeCommandNames()
