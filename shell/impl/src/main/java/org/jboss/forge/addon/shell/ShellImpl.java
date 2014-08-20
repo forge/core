@@ -53,6 +53,7 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIContextListener;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
@@ -78,7 +79,7 @@ public class ShellImpl implements Shell, UIRuntime
 
    private final static Logger log = Logger.getLogger(ShellImpl.class.getName());
 
-   public ShellImpl(Resource<?> initialResource, Settings settings, AddonRegistry addonRegistry)
+   public ShellImpl(Furnace furnace, Resource<?> initialResource, Settings settings, AddonRegistry addonRegistry)
    {
       this.addonRegistry = addonRegistry;
 
@@ -88,7 +89,7 @@ public class ShellImpl implements Shell, UIRuntime
       File alias = new File(forgeHome, "alias");
       File export = new File(forgeHome, "export");
       final ForgeCommandRegistry registry =
-               new ForgeCommandRegistry(this, addonRegistry);
+               new ForgeCommandRegistry(furnace, this, addonRegistry);
       // Register DidYouMeanListener
       commandNotFoundListeners.add(new DidYouMeanCommandNotFoundListener(registry));
       SettingsBuilder newSettings = new SettingsBuilder(settings)

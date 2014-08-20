@@ -1,5 +1,6 @@
 package org.jboss.forge.addon.shell;
 
+import java.io.ByteArrayInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,6 +11,7 @@ import javax.inject.Singleton;
 
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.cdi.events.Local;
 import org.jboss.forge.furnace.event.PostStartup;
 import org.jboss.forge.furnace.event.PreShutdown;
@@ -28,9 +30,38 @@ public class ShellInitializer
    @Inject
    private ShellFactory shellFactory;
 
+   @Inject
+   private Furnace furnace;
+
    public void startupDefaultShell(@Observes @Local PostStartup startup) throws Exception
    {
-      if (Boolean.getBoolean("forge.standalone"))
+      if (Boolean.getBoolean("forge.shell.evaluate"))
+      {
+         String command = "";
+         String[] args = furnace.getArgs();
+
+         for (int i = 0; i < args.length; i++)
+         {
+            String arg = args[i];
+            if ("-e".equals(arg) || "--evaluate".equals(arg))
+            {
+               command = args[++i];
+               break;
+            }
+         }
+
+         if (!command.trim().endsWith(OperatingSystemUtils.getLineSeparator()))
+         {
+            command = command + OperatingSystemUtils.getLineSeparator() + "exit"
+                     + OperatingSystemUtils.getLineSeparator() + "\0";
+         }
+
+         Settings settings = new SettingsBuilder().inputStream(new ByteArrayInputStream(command.getBytes()))
+                  .outputStream(System.out).outputStreamError(System.err).create();
+         this.shell = shellFactory.createShell(OperatingSystemUtils.getWorkingDir(), settings);
+         this.shell.getConsole().getExportManager().addVariable("export INTERACTIVE=false");
+      }
+      else if (Boolean.getBoolean("forge.standalone"))
       {
          Settings settings = new SettingsBuilder().create();
          this.shell = shellFactory.createShell(OperatingSystemUtils.getWorkingDir(), settings);
