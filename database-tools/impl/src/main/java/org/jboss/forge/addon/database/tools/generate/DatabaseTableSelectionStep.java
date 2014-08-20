@@ -45,7 +45,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    @Inject
    @WithAttributes(
             label = "Database Tables",
-            description = "The database tables for which to generate entities", required = true)
+            description = "The database tables for which to generate entities. Use '*' to select all tables", required = true)
    private UISelectMany<String> databaseTables;
 
    @Override
