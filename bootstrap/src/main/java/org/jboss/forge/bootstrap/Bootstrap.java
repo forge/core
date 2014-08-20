@@ -37,9 +37,9 @@ import org.jboss.forge.furnace.versions.Versions;
 
 /**
  * A class with a main method to bootstrap Furnace.
- * 
+ *
  * You can deploy addons by calling {@link Bootstrap#install(String)}
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -144,6 +144,7 @@ public class Bootstrap
             else if ("--evaluate".equals(args[i]) || "-e".equals(args[i]))
             {
                furnace.setServerMode(true);
+               System.setProperty("INTERACTIVE", "false");
                System.setProperty("forge.shell.evaluate", "true");
                i++;
             }

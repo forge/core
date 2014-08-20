@@ -19,15 +19,21 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
 /**
  * This class provides a skeletal implementation of the <tt>UIContext</tt> interface, to minimize the effort required to
  * implement this interface.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public abstract class AbstractUIContext implements UIContext
 {
-   private final Map<Object, Object> map = new HashMap<>();
+   private final Map<Object, Object> map;
    private Object selection;
    private final Set<CommandExecutionListener> listeners = new LinkedHashSet<>();
+
+   public AbstractUIContext()
+   {
+      // Initializing with System properties by default
+      map = new HashMap<>(System.getProperties());
+   }
 
    @Override
    @SuppressWarnings("unchecked")
