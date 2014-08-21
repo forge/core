@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
 
    <parent>
@@ -23,7 +24,7 @@
    </modules>
 
    <properties>
-      <hibernate.tools.version>3.4.0.CR2</hibernate.tools.version>
+      <hibernate.tools.version>4.3.1.CR1</hibernate.tools.version>
       <h2database.version>1.3.167</h2database.version>
    </properties>
 
@@ -50,87 +51,6 @@
 
          <!-- Addon dependencies -->
          <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>ui</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>projects</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>parser-java</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>javaee</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>configuration</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>maven</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>ui-test-harness</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>dependencies-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>resources-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>ui-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>projects-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>parser-java-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>configuration-api</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-         </dependency>
-         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-tools</artifactId>
             <version>${hibernate.tools.version}</version>
@@ -140,21 +60,7 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2database.version}</version>
-            <scope>test</scope>
          </dependency>
-
       </dependencies>
    </dependencyManagement>
-   <build>
-      <plugins>
-         <plugin>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-               <source>1.7</source>
-               <target>1.7</target>
-               <encoding>UTF-8</encoding>
-            </configuration>
-         </plugin>
-      </plugins>
-   </build>
 </project>

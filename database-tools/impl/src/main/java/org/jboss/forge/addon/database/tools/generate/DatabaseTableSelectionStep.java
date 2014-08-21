@@ -78,7 +78,6 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    private List<String> tables;
    private Properties currentConnectionProperties;
 
-   @SuppressWarnings("unchecked")
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
@@ -94,16 +93,12 @@ public class DatabaseTableSelectionStep implements UIWizardStep
                jmdc.setProperties(descriptor.getConnectionProperties());
                jmdc.setReverseEngineeringStrategy(createReverseEngineeringStrategy());
                helper.buildMappings(descriptor.getUrls(), descriptor.getDriverClass(), jmdc);
-               Iterator<Object> iterator = jmdc.getTableMappings();
+               Iterator<Table> iterator = jmdc.getTableMappings();
                tables = new ArrayList<>();
                while (iterator.hasNext())
                {
-                  Object mapping = iterator.next();
-                  if (mapping instanceof Table)
-                  {
-                     Table table = (Table) mapping;
-                     tables.add(table.getName());
-                  }
+                  Table table = iterator.next();
+                  tables.add(table.getName());
                }
             }
             return tables;
