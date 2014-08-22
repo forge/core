@@ -50,7 +50,7 @@ public class ShellInitializer
             }
          }
 
-         if (!command.trim().endsWith(OperatingSystemUtils.getLineSeparator()))
+         if (!command.endsWith(OperatingSystemUtils.getLineSeparator()))
          {
             command = command + OperatingSystemUtils.getLineSeparator() + "exit"
                      + OperatingSystemUtils.getLineSeparator() + "\0";
