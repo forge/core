@@ -16,10 +16,8 @@ import org.jboss.forge.addon.projects.building.BuildException;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.URLResource;
-import org.jboss.forge.addon.resource.WriteableResource;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -43,7 +41,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
  * Installs the addon via Git (needs the git addon installed)
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements AddonCommandConstants
@@ -121,8 +119,8 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       Coordinate buildCoordinate = project.getFacet(MetadataFacet.class).getOutputDependency().getCoordinate();
       try
       {
-         updateFurnaceVersion(project);
-         project.getFacet(PackagingFacet.class).createBuilder().addArguments("clean", "install")
+         project.getFacet(PackagingFacet.class).createBuilder()
+                  .addArguments("clean", "install", "-Dversion.furnace=" + furnace.getVersion())
                   .runTests(false)
                   .build(output.out(), output.err());
       }
@@ -165,26 +163,6 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       catch (Throwable t)
       {
          return Results.fail("Addon " + id + " could not be installed: " + t.getMessage(), t);
-      }
-   }
-
-   /**
-    * This will update the build descriptor to the current {@link Furnace} version
-    */
-   private void updateFurnaceVersion(Project project)
-   {
-      // FIXME: Won't work for gradle projects
-      Resource<?> pom = project.getRoot().getChild("pom.xml");
-      if (pom.exists())
-      {
-         String pomContents = pom.getContents();
-         // TODO: This regex can be improved
-         String newPomContents = pomContents.replaceFirst("<version.furnace>.*</version.furnace>",
-                  "<version.furnace>" + furnace.getVersion() + "</version.furnace>");
-         if (!pomContents.equals(newPomContents))
-         {
-            ((WriteableResource<?, ?>) pom).setContents(newPomContents);
-         }
       }
    }
 
