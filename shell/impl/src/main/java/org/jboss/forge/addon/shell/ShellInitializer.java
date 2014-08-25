@@ -52,9 +52,9 @@ public class ShellInitializer
 
          if (!command.endsWith(OperatingSystemUtils.getLineSeparator()))
          {
-            command = command + OperatingSystemUtils.getLineSeparator() + "exit"
-                     + OperatingSystemUtils.getLineSeparator() + "\0";
+            command = command + OperatingSystemUtils.getLineSeparator();
          }
+         command = command + "exit" + OperatingSystemUtils.getLineSeparator() + "\0";
 
          Settings settings = new SettingsBuilder().inputStream(new ByteArrayInputStream(command.getBytes()))
                   .outputStream(System.out).outputStreamError(System.err).create();
