@@ -143,8 +143,8 @@ public class JavaEqualsHashcodeCommandTest
       MethodSource<JavaClassSource> equalsMethod = targetClass.getMethod("equals", Object.class);
       assertNotNull(hashCodeMethod);
       assertNotNull(equalsMethod);
-      assertEquals("return true;\n ", equalsMethod.getBody());
-      assertEquals("return 1111;\n ", hashCodeMethod.getBody());
+      assertEquals("return true;", equalsMethod.getBody());
+      assertEquals("return 1111;", hashCodeMethod.getBody());
    }
 
    @SuppressWarnings("unchecked")
@@ -177,7 +177,7 @@ public class JavaEqualsHashcodeCommandTest
       MethodSource<JavaClassSource> hashCodeMethod = targetClass.getMethod("hashCode");
       assertNotNull(hashCodeMethod);
       String body = hashCodeMethod.getBody();
-      assertEquals("return 1111;\n ", body);
+      assertEquals("return 1111;", body);
    }
 
    @SuppressWarnings("unchecked")
@@ -210,7 +210,7 @@ public class JavaEqualsHashcodeCommandTest
       assertNotNull(targetClass.getMethod("hashCode"));
       MethodSource<JavaClassSource> equalsMethod = targetClass.getMethod("equals", Object.class);
       assertNotNull(equalsMethod);
-      assertEquals("return true;\n ", equalsMethod.getBody());
+      assertEquals("return true;", equalsMethod.getBody());
    }
 
 }
