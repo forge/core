@@ -75,12 +75,15 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
       jdbcUrl.addValueChangeListener(new ConnectionStaleValueChangeListener());
       userName.addValueChangeListener(new ConnectionStaleValueChangeListener());
       userPassword.addValueChangeListener(new ConnectionStaleValueChangeListener());
+      final boolean gui = builder.getUIContext().getProvider().isGUI();
       hibernateDialect.setItemLabelConverter(new Converter<HibernateDialect, String>()
       {
          @Override
          public String convert(HibernateDialect dialect)
          {
-            return dialect == null ? null : dialect.getDatabaseName() + " : " + dialect.getClassName();
+            if (dialect == null)
+               return null;
+            return (gui) ? dialect.getDatabaseName() + " : " + dialect.getClassName() : dialect.getClassName();
          }
       }).addValueChangeListener(new ConnectionStaleValueChangeListener());
 
