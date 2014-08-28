@@ -54,10 +54,9 @@ public class ResourceUtil
     */
    public static byte[] getDigest(Resource<?> resource, MessageDigest digest)
    {
-      try (InputStream stream = resource.getResourceInputStream())
+      try (InputStream stream = resource.getResourceInputStream();
+               DigestInputStream digestStream = new DigestInputStream(stream, digest))
       {
-         DigestInputStream digestStream = new DigestInputStream(stream, digest);
-
          byte[] buffer = new byte[16384];
          while (digestStream.read(buffer, 0, buffer.length) != -1)
          {
