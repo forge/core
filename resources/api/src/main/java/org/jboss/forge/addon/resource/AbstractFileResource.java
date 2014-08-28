@@ -255,10 +255,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
             Streams.closeQuietly(data);
             out.flush();
             Streams.closeQuietly(out);
-            if (OperatingSystemUtils.isWindows())
-            {
-               System.gc();
-            }
          }
       }
       catch (IOException e)
