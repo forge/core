@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.configuration.Configuration;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManager;
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 
@@ -65,6 +66,10 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
          child.attribute(CONFIG_KEY_PATH_TO_DRIVER, descriptor.getPath());
          child.attribute(CONFIG_KEY_URL, descriptor.getUrl());
          child.attribute(CONFIG_KEY_USER, descriptor.getUser());
+         if (!Strings.isNullOrEmpty(descriptor.getPassword()))
+         {
+            child.attribute(CONFIG_KEY_PASSWORD, descriptor.getPassword());
+         }
       }
       if (root.getChildren().isEmpty())
       {
