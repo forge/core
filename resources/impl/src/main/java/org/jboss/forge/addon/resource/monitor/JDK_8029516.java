@@ -7,10 +7,11 @@ import sun.misc.Cleaner;
 
 /**
  * Workaround for JDK bug #8029516 : https://bugs.openjdk.java.net/browse/JDK-8029516
- * 
+ *
  * "Workaround for Java bug which causes crash dump" by apangin @ Stackoverflow: http://stackoverflow.com/a/23450366 is
  * licensed under CC BY-SA 3.0. *
  */
+@SuppressWarnings("restriction")
 class JDK_8029516
 {
    private static final Field bufferField = getField("sun.nio.fs.WindowsWatchService$WindowsWatchKey", "buffer");
