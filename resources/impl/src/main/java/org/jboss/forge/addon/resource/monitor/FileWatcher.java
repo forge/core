@@ -33,6 +33,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
+
 /**
  * Uses {@link WatchService} to watch files
  *
@@ -111,6 +113,10 @@ public class FileWatcher implements Runnable
    private void register(Path path, ResourceMonitorImpl monitorImpl) throws IOException
    {
       WatchKey key = path.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+      if (OperatingSystemUtils.isWindows())
+      {
+         JDK_8029516.patch(key);
+      }
       keys.put(key, monitorImpl);
    }
 
