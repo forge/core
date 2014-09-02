@@ -14,6 +14,7 @@ import org.jboss.forge.addon.dependencies.DependencyRepository;
 import org.jboss.forge.addon.dependencies.util.Dependencies;
 import org.jboss.forge.addon.maven.plugins.MavenPlugin;
 import org.jboss.forge.addon.maven.plugins.MavenPluginBuilder;
+import org.jboss.forge.addon.maven.profiles.Profile;
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.Project;
 
@@ -41,7 +42,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * <p/>
     * See also: {@link MavenPluginBuilder}.
     */
-   void addPlugin(MavenPlugin plugin, String profileId);
+   void addPlugin(MavenPlugin plugin, Profile profile);
 
    /**
     * Add the given managed {@link MavenPlugin} to this {@link Project}'s immediate list of managed plugins. This method
@@ -59,7 +60,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * <p/>
     * See also: {@link MavenPluginBuilder}.
     */
-   void addManagedPlugin(MavenPlugin plugin, String profileId);
+   void addManagedPlugin(MavenPlugin plugin, Profile profile);
 
    /**
     * Attempt to locate a plugin given it's {@link Coordinate}, if it exists in the {@link Project} direct dependency
@@ -83,7 +84,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * somewhere else in the hierarchy, it will not be detected by this method.
     *
     */
-   MavenPlugin getPlugin(Coordinate coordinate, String profileId);
+   MavenPlugin getPlugin(Coordinate coordinate, Profile profile);
 
    /**
     * Attempt to locate a plugin given it's {@link Coordinate}, if it exists anywhere in the {@link Project} plugin
@@ -103,7 +104,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     *
     * @return
     */
-   MavenPlugin getEffectivePlugin(Coordinate coordinate, String profileId);
+   MavenPlugin getEffectivePlugin(Coordinate coordinate, Profile profile);
 
    /**
     * Attempt to locate a managed a plugin given it's {@link Coordinate}, if it exists in the {@link Project}, and
@@ -123,7 +124,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     *
     * @return
     */
-   MavenPlugin getManagedPlugin(Coordinate coordinate, String profileId);
+   MavenPlugin getManagedPlugin(Coordinate coordinate, Profile profile);
 
    /**
     * Searches {@link Project} and returns a managed plugin matching the given {@link Coordinate} at any level of the
@@ -139,7 +140,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * <p/>
     * See also: {@link MavenPluginBuilder}.
     */
-   MavenPlugin getEffectiveManagedPlugin(Coordinate coordinate, String profileId);
+   MavenPlugin getEffectiveManagedPlugin(Coordinate coordinate, Profile profile);
 
    /**
     * Return an immutable list of all direct {@link MavenPlugin} contained within this project. (i.e.: all plugins for
@@ -151,7 +152,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * Return an immutable list of all direct {@link MavenPlugin} contained within this project. (i.e.: all plugins for
     * which {@link #hasPlugin(Coordinate)} returns true;
     */
-   List<MavenPlugin> listConfiguredPlugins(String profileId);
+   List<MavenPlugin> listConfiguredPlugins(Profile profile);
 
    /**
     * Return an immutable list of all {@link MavenPlugin} contained within this project, including the hierarchy (i.e.:
@@ -163,7 +164,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * Return an immutable list of all {@link MavenPlugin} contained within this project, including the hierarchy (i.e.:
     * all plugins for which {@link #hasEffectivePlugin(Coordinate)} returns true;
     */
-   List<MavenPlugin> listConfiguredEffectivePlugins(String profileId);
+   List<MavenPlugin> listConfiguredEffectivePlugins(Profile profile);
 
    /**
     * Return an immutable list of all direct managed {@link MavenPlugin} contained within this project. (i.e.: all
@@ -175,7 +176,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * Return an immutable list of all direct managed {@link MavenPlugin} contained within this project. (i.e.: all
     * managed plugins for which {@link #hasManagedPlugin(Coordinate)} returns true;
     */
-   List<MavenPlugin> listConfiguredManagedPlugins(String profileId);
+   List<MavenPlugin> listConfiguredManagedPlugins(Profile profile);
 
    /**
     * Return an immutable list of all managed {@link MavenPlugin} contained within this project, including the
@@ -187,7 +188,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * Return an immutable list of all managed {@link MavenPlugin} contained within this project, including the
     * hierarchy. (i.e.: all managed plugins for which {@link #hasEffectiveManagedPlugin(Coordinate)} returns true;
     */
-   List<MavenPlugin> listConfiguredEffectiveManagedPlugins(String profileId);
+   List<MavenPlugin> listConfiguredEffectiveManagedPlugins(Profile profile);
 
    /**
     * Return true if this {@link Project} contains a plugin matching the given {@link Coordinate}; return false
@@ -211,7 +212,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * somewhere else in the hierarchy, it will not be detected by this method, even though
     * {@link #hasEffectivePlugin(Coordinate)} may return true.
     */
-   boolean hasPlugin(final Coordinate coordinate, String profileId);
+   boolean hasPlugin(final Coordinate coordinate, Profile profile);
 
    /**
     * Return true if the given {@link Coordinate} exists anywhere in the project dependency hierarchy. See also:
@@ -223,7 +224,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * Return true if the given {@link Coordinate} exists anywhere in the project dependency hierarchy. See also:
     * {@link MavenPluginBuilder}. See also: {@link #getEffectivePlugin(Coordinate)}.
     */
-   boolean hasEffectivePlugin(final Coordinate coordinate, String profileId);
+   boolean hasEffectivePlugin(final Coordinate coordinate, Profile profile);
 
    /**
     * Return true if this {@link Project} contains a managed plugin matching the given {@link Coordinate}; return false
@@ -247,7 +248,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * declared somewhere else in the hierarchy, it will not be detected by this method, even though
     * {@link #hasEffectiveManagedPlugin(Coordinate)} may return true.
     */
-   boolean hasManagedPlugin(final Coordinate coordinate, String profileId);
+   boolean hasManagedPlugin(final Coordinate coordinate, Profile profile);
 
    /**
     * Return true if this {@link Project} contains a managed plugin matching the given {@link Coordinate} at any level
@@ -265,7 +266,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * See also: {@link MavenPluginBuilder}.
     * <p/>
     */
-   boolean hasEffectiveManagedPlugin(final Coordinate coordinate, String profileId);
+   boolean hasEffectiveManagedPlugin(final Coordinate coordinate, Profile profile);
 
    /**
     * Remove the plugin given it's {@link Coordinate} from this {@link Project}.
@@ -289,7 +290,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * {@link #hasPlugin(Coordinate)} first in order to check if the plugin exists in this projects immediate plugins
     * list.
     */
-   void removePlugin(Coordinate coordinate, String profileId);
+   void removePlugin(Coordinate coordinate, Profile profile);
 
    /**
     * Remove the given managed plugin given it's {@link Coordinate} from this {@link Project}.
@@ -313,7 +314,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * {@link #hasManagedPlugin(Coordinate)} first in order to check if the managed plugin exists in this projects
     * immediate managed plugins.
     */
-   void removeManagedPlugin(Coordinate coordinate, String profileId);
+   void removeManagedPlugin(Coordinate coordinate, Profile profile);
 
    /**
     * Update the given {@link MavenPlugin} to this {@link Project}'s immediate list of plugins. This method does not
@@ -329,7 +330,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * <p/>
     * See also: {@link MavenPluginBuilder}.
     */
-   void updatePlugin(final MavenPlugin plugin, String profileId);
+   void updatePlugin(final MavenPlugin plugin, Profile profile);
 
    /**
     * Update the given managed {@link MavenPlugin} to this {@link Project}'s immediate list of managed plugins. This
@@ -347,7 +348,7 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * <p/>
     * See also: {@link MavenPluginBuilder}.
     */
-   void updateManagedPlugin(final MavenPlugin plugin, String profileId);
+   void updateManagedPlugin(final MavenPlugin plugin, Profile profile);
 
    /**
     * Add a repository to the project build system. This is where dependencies can be found, downloaded, and installed
@@ -377,25 +378,25 @@ public interface MavenPluginFacet extends ProvidedProjectFacet
     * Add a repository to the project build system. This is where dependencies can be found, downloaded, and installed
     * to the project build script.
     */
-   void addPluginRepository(String name, String url, String profileId);
+   void addPluginRepository(String name, String url, Profile profile);
 
    /**
     * Return true if the given repository URL is already registered in this project's build system.
     */
-   boolean hasPluginRepository(String url, String profileId);
+   boolean hasPluginRepository(String url, Profile profile);
 
    /**
     * Remove the given {@link org.jboss.forge.project.dependencies.DependencyRepository} from the current project.
     * Return true if the repository was removed; return false otherwise. Return the removed repository, or null if no
     * repository was removed.
     */
-   DependencyRepository removePluginRepository(String url, String profileId);
+   DependencyRepository removePluginRepository(String url, Profile profile);
 
    /**
     * Get the list of plugin repositories for which this project is currently configured to use in dependency
     * resolution.
     */
-   List<DependencyRepository> getPluginRepositories(String profileId);
+   List<DependencyRepository> getPluginRepositories(Profile profile);
 
    /**
     * Merge two plugins, with one having dominance in the case of collision.

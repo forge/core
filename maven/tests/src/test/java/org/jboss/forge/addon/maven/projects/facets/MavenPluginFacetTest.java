@@ -20,6 +20,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.maven.plugins.MavenPluginBuilder;
+import org.jboss.forge.addon.maven.profiles.ProfileBuilder;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.Project;
@@ -44,7 +45,8 @@ public class MavenPluginFacetTest
 {
    private static final String REPOSITORY_ID = "repository_id";
    private static final String REPOSITORY_URL = "http://forge.jboss.org";
-   private static final String TEST_PROFILE_ID = "test_profile";
+   private static final org.jboss.forge.addon.maven.profiles.Profile TEST_PROFILE_ID = ProfileBuilder.create().setId(
+            "test_profile");
 
    private static final Coordinate PLUGIN_COORDINATE = CoordinateBuilder.create()
             .setGroupId("org.testplugin")
@@ -122,7 +124,7 @@ public class MavenPluginFacetTest
       List<Profile> profiles = model.getProfiles();
       Assert.assertEquals(1, profiles.size());
       Profile profile = profiles.get(0);
-      Assert.assertEquals(TEST_PROFILE_ID, profile.getId());
+      assertProfileMatch(TEST_PROFILE_ID, profile);
       assertCoordinateMatch(PLUGIN_COORDINATE, profile.getBuild().getPlugins().get(0));
    }
 
@@ -163,7 +165,7 @@ public class MavenPluginFacetTest
       List<Profile> profiles = model.getProfiles();
       Assert.assertEquals(1, profiles.size());
       Profile profile = profiles.get(0);
-      Assert.assertEquals(TEST_PROFILE_ID, profile.getId());
+      assertProfileMatch(TEST_PROFILE_ID, profile);
       Assert.assertTrue(profile.getBuild().getPlugins().isEmpty());
       assertCoordinateMatch(PLUGIN_COORDINATE, profile.getBuild().getPluginManagement().getPlugins().get(0));
    }
@@ -199,6 +201,11 @@ public class MavenPluginFacetTest
       Assert.assertEquals(coordinate.getGroupId(), plugin.getGroupId());
       Assert.assertEquals(coordinate.getArtifactId(), plugin.getArtifactId());
       Assert.assertEquals(coordinate.getVersion(), plugin.getVersion());
+   }
+
+   private void assertProfileMatch(org.jboss.forge.addon.maven.profiles.Profile profile1, Profile profile2)
+   {
+      Assert.assertEquals(profile1.getId(), profile2.getId());
    }
 
    private void assertRepositoryMatch(String id, String url, Repository repository)
