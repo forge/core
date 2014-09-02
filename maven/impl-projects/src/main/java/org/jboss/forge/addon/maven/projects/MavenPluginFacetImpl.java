@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.maven.projects;
 
-
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,9 +16,11 @@ import java.util.Map;
 import javax.enterprise.context.Dependent;
 
 import org.apache.maven.model.Build;
+import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.PluginManagement;
+import org.apache.maven.model.Profile;
 import org.apache.maven.model.Repository;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.jboss.forge.addon.dependencies.Coordinate;
@@ -55,256 +55,262 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
       return getFaceted().hasFacet(MavenFacet.class);
    }
 
-   private List<org.apache.maven.model.Plugin> getPluginsPOM(boolean managedPlugin, boolean effectivePlugin)
-   {
-      MavenFacet mavenCoreFacet = getFaceted().getFacet(MavenFacet.class);
-      Build build = mavenCoreFacet.getModel().getBuild();
-      if (build != null)
-      {
-         if (managedPlugin)
-         {
-            PluginManagement pluginManagement = build.getPluginManagement();
-            if (pluginManagement != null)
-            {
-               return pluginManagement.getPlugins();
-            }
-         }
-         else
-         {
-            return build.getPlugins();
-         }
-      }
-      return Collections.emptyList();
-   }
-
-   private List<MavenPlugin> listConfiguredPlugins(boolean managedPlugin, boolean effectivePlugin)
-   {
-      List<MavenPlugin> plugins = new ArrayList<>();
-      List<org.apache.maven.model.Plugin> pomPlugins = getPluginsPOM(managedPlugin, effectivePlugin);
-      for (org.apache.maven.model.Plugin plugin : pomPlugins)
-      {
-         plugins.add(new MavenPluginAdapter(plugin));
-      }
-      return plugins;
-   }
-
-   private void addPlugin(final MavenPlugin plugin, boolean managedPlugin)
-   {
-      MavenFacet mavenCoreFacet = getFaceted().getFacet(MavenFacet.class);
-      Model pom = mavenCoreFacet.getModel();
-      Build build = pom.getBuild();
-      if (build == null)
-         build = new Build();
-      if (managedPlugin)
-      {
-         PluginManagement pluginManagement = build.getPluginManagement();
-         if (pluginManagement == null)
-         {
-            pluginManagement = new PluginManagement();
-            build.setPluginManagement(pluginManagement);
-         }
-         pluginManagement.addPlugin(new MavenPluginAdapter(plugin));
-      }
-      else
-      {
-         build.addPlugin(new MavenPluginAdapter(plugin));
-      }
-      pom.setBuild(build);
-      mavenCoreFacet.setModel(pom);
-   }
-
-   private MavenPlugin getPlugin(final Coordinate dependency, boolean managedPlugin, boolean effectivePlugin)
-   {
-      String groupId = dependency.getGroupId();
-      groupId = (groupId == null) || groupId.equals("") ? DEFAULT_GROUPID : groupId;
-
-      for (MavenPlugin mavenPlugin : listConfiguredPlugins(managedPlugin, effectivePlugin))
-      {
-         Coordinate temp = mavenPlugin.getCoordinate();
-         if (Dependencies.areEquivalent(temp, CoordinateBuilder.create(dependency).setGroupId(groupId)))
-         {
-            return mavenPlugin;
-         }
-      }
-
-      throw new PluginNotFoundException(groupId, dependency.getArtifactId());
-   }
-
-   public boolean hasPlugin(final Coordinate dependency, boolean managedPlugin, boolean effectivePlugin)
-   {
-      try
-      {
-         getPlugin(dependency, managedPlugin, effectivePlugin);
-         return true;
-      }
-      catch (PluginNotFoundException ex)
-      {
-         return false;
-      }
-   }
-
-   private void removePlugin(final Coordinate dependency, boolean managedPlugin)
-   {
-      // Get plugin
-      MavenPlugin pluginToRemove = null;
-      if (managedPlugin && hasManagedPlugin(dependency))
-      {
-         pluginToRemove = getManagedPlugin(dependency);
-      }
-      else if (hasPlugin(dependency))
-      {
-         pluginToRemove = getPlugin(dependency);
-      }
-      // Remove if it exists
-      if (pluginToRemove != null)
-      {
-         MavenFacet mavenCoreFacet = getFaceted().getFacet(MavenFacet.class);
-         Model pom = mavenCoreFacet.getModel();
-         Build build = pom.getBuild(); // We know for sure it isnt null because the plugin exists
-         if (managedPlugin)
-         {
-            PluginManagement pluginManagement = build.getPluginManagement(); // We know for sure it isnt null because
-                                                                             // the plugin exists
-            pluginManagement.removePlugin(new MavenPluginAdapter(pluginToRemove));
-         }
-         else
-         {
-            build.removePlugin(new MavenPluginAdapter(pluginToRemove));
-         }
-         pom.setBuild(build);
-         mavenCoreFacet.setModel(pom);
-      }
-   }
-
-   private void updatePlugin(final MavenPlugin plugin, boolean managedPlugin)
-   {
-      this.removePlugin(plugin.getCoordinate(), managedPlugin);
-      if (!this.hasPlugin(plugin.getCoordinate(), managedPlugin, false))
-      {
-         this.addPlugin(plugin, managedPlugin);
-      }
-   }
-
    @Override
    public List<MavenPlugin> listConfiguredPlugins()
    {
-      return listConfiguredPlugins(false, false);
+      return listConfiguredPlugins(false, false, null);
+   }
+
+   @Override
+   public List<MavenPlugin> listConfiguredPlugins(org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      return listConfiguredPlugins(false, false, profile);
    }
 
    @Override
    public List<MavenPlugin> listConfiguredEffectivePlugins()
    {
-      return listConfiguredPlugins(false, true);
+      return listConfiguredPlugins(false, true, null);
+   }
+
+   @Override
+   public List<MavenPlugin> listConfiguredEffectivePlugins(org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      return listConfiguredPlugins(false, true, profile);
    }
 
    @Override
    public List<MavenPlugin> listConfiguredManagedPlugins()
    {
-      return listConfiguredPlugins(true, false);
+      return listConfiguredPlugins(true, false, null);
+   }
+
+   @Override
+   public List<MavenPlugin> listConfiguredManagedPlugins(org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      return listConfiguredPlugins(true, false, profile);
    }
 
    @Override
    public List<MavenPlugin> listConfiguredEffectiveManagedPlugins()
    {
-      return listConfiguredPlugins(true, true);
+      return listConfiguredPlugins(true, true, null);
+   }
+
+   @Override
+   public List<MavenPlugin> listConfiguredEffectiveManagedPlugins(org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      return listConfiguredPlugins(true, true, profile);
    }
 
    @Override
    public void addPlugin(final MavenPlugin plugin)
    {
-      addPlugin(plugin, false);
+      addPlugin(plugin, false, null);
+   }
+
+   @Override
+   public void addPlugin(MavenPlugin plugin, org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      addPlugin(plugin, false, profile);
    }
 
    @Override
    public void addManagedPlugin(final MavenPlugin plugin)
    {
-      addPlugin(plugin, true);
+      addPlugin(plugin, true, null);
+   }
+
+   @Override
+   public void addManagedPlugin(MavenPlugin plugin, org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      addPlugin(plugin, true, profile);
    }
 
    @Override
    public MavenPlugin getPlugin(final Coordinate coordinate)
    {
-      return getPlugin(coordinate, false, false);
+      return getPlugin(coordinate, false, false, null);
+   }
+
+   @Override
+   public MavenPlugin getPlugin(Coordinate coordinate, org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      return getPlugin(coordinate, false, false, profile);
    }
 
    @Override
    public MavenPlugin getEffectivePlugin(final Coordinate dependency)
    {
-      return getPlugin(dependency, false, true);
+      return getPlugin(dependency, false, true, null);
+   }
+
+   @Override
+   public MavenPlugin getEffectivePlugin(Coordinate coordinate, org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      return getPlugin(coordinate, false, true, profile);
    }
 
    @Override
    public MavenPlugin getManagedPlugin(final Coordinate dependency)
    {
-      return getPlugin(dependency, true, false);
+      return getPlugin(dependency, true, false, null);
+   }
+
+   @Override
+   public MavenPlugin getManagedPlugin(Coordinate coordinate, org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      return getPlugin(coordinate, true, false, profile);
    }
 
    @Override
    public MavenPlugin getEffectiveManagedPlugin(final Coordinate dependency)
    {
-      return getPlugin(dependency, true, true);
+      return getPlugin(dependency, true, true, null);
+   }
+
+   @Override
+   public MavenPlugin getEffectiveManagedPlugin(Coordinate coordinate,
+            org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      return getPlugin(coordinate, true, true, profile);
    }
 
    @Override
    public boolean hasPlugin(final Coordinate dependency)
    {
-      return hasPlugin(dependency, false, false);
+      return hasPlugin(dependency, false, false, null);
+   }
+
+   @Override
+   public boolean hasPlugin(Coordinate coordinate, org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      return hasPlugin(coordinate, false, false, profile);
    }
 
    @Override
    public boolean hasEffectivePlugin(final Coordinate dependency)
    {
-      return hasPlugin(dependency, false, true);
+      return hasPlugin(dependency, false, true, null);
+   }
+
+   @Override
+   public boolean hasEffectivePlugin(Coordinate coordinate, org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      return hasPlugin(coordinate, false, true, profile);
    }
 
    @Override
    public boolean hasManagedPlugin(final Coordinate dependency)
    {
-      return hasPlugin(dependency, true, false);
+      return hasPlugin(dependency, true, false, null);
+   }
+
+   @Override
+   public boolean hasManagedPlugin(Coordinate coordinate, org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      return hasPlugin(coordinate, true, false, profile);
    }
 
    @Override
    public boolean hasEffectiveManagedPlugin(final Coordinate managedDependency)
    {
-      return hasPlugin(managedDependency, true, true);
+      return hasPlugin(managedDependency, true, true, null);
+   }
+
+   @Override
+   public boolean hasEffectiveManagedPlugin(Coordinate coordinate, org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      return hasPlugin(coordinate, true, true, profile);
    }
 
    @Override
    public void removePlugin(final Coordinate dependency)
    {
-      removePlugin(dependency, false);
+      removePlugin(dependency, false, null);
+   }
+
+   @Override
+   public void removePlugin(Coordinate coordinate, org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      removePlugin(coordinate, false, profile);
    }
 
    @Override
    public void removeManagedPlugin(final Coordinate dependency)
    {
-      removePlugin(dependency, true);
+      removePlugin(dependency, true, null);
+   }
+
+   @Override
+   public void removeManagedPlugin(Coordinate coordinate, org.jboss.forge.addon.maven.profiles.Profile profileParam)
+   {
+      removePlugin(coordinate, true, profileParam);
+
    }
 
    @Override
    public void updatePlugin(final MavenPlugin plugin)
    {
-      updatePlugin(plugin, false);
+      updatePlugin(plugin, false, null);
+   }
+
+   @Override
+   public void updatePlugin(MavenPlugin plugin, org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      updatePlugin(plugin, false, profile);
    }
 
    @Override
    public void updateManagedPlugin(final MavenPlugin plugin)
    {
-      updatePlugin(plugin, true);
+      updatePlugin(plugin, true, null);
    }
 
    @Override
-   public void addPluginRepository(final String name, final String url)
+   public void updateManagedPlugin(MavenPlugin plugin, org.jboss.forge.addon.maven.profiles.Profile profile)
+   {
+      updatePlugin(plugin, true, profile);
+   }
+
+   @Override
+   public void addPluginRepository(final String id, final String url)
    {
       if (!hasPluginRepository(url))
       {
          MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
          Model pom = maven.getModel();
          Repository repo = new Repository();
-         repo.setId(name);
+         repo.setId(id);
          repo.setUrl(url);
          pom.getPluginRepositories().add(repo);
          maven.setModel(pom);
+      }
+   }
+
+   @Override
+   public void addPluginRepository(String id, String url, org.jboss.forge.addon.maven.profiles.Profile profileParam)
+   {
+      if (profileParam == null)
+         addPluginRepository(id, url);
+      else
+      {
+         if (!hasPluginRepository(url, profileParam))
+         {
+            MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
+            Model pom = maven.getModel();
+            Profile profile = getProfile(pom, profileParam);
+            if (profile == null)
+            {
+               profile = profileParam.getAsMavenProfile();
+               pom.getProfiles().add(profile);
+            }
+            Repository repo = new Repository();
+            repo.setId(id);
+            repo.setUrl(url);
+            profile.addPluginRepository(repo);
+            maven.setModel(pom);
+         }
       }
    }
 
@@ -313,23 +319,46 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
    {
       if (url != null)
       {
+         String trimmedUrl = url.trim();
          MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
          Model pom = maven.getModel();
-         List<Repository> repositories = pom.getPluginRepositories();
-         if (repositories != null)
+         for (Repository repo : pom.getPluginRepositories())
          {
-            for (Repository repo : repositories)
+            if (repo.getUrl().trim().equals(trimmedUrl))
             {
-               if (repo.getUrl().trim().equals(url.trim()))
-               {
-                  repositories.remove(repo);
-                  maven.setModel(pom);
-                  return true;
-               }
+               return true;
             }
          }
       }
       return false;
+   }
+
+   @Override
+   public boolean hasPluginRepository(String url, org.jboss.forge.addon.maven.profiles.Profile profileParam)
+   {
+      if (profileParam == null)
+         return hasPluginRepository(url);
+      else
+      {
+         if (url != null)
+         {
+            String trimmedUrl = url.trim();
+            MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
+            Model pom = maven.getModel();
+            Profile profile = getProfile(pom, profileParam);
+            if (profile != null)
+            {
+               for (Repository repo : profile.getPluginRepositories())
+               {
+                  if (repo.getUrl().trim().equals(trimmedUrl))
+                  {
+                     return true;
+                  }
+               }
+            }
+         }
+         return false;
+      }
    }
 
    @Override
@@ -354,6 +383,39 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
    }
 
    @Override
+   public DependencyRepository removePluginRepository(String url,
+            org.jboss.forge.addon.maven.profiles.Profile profileParam)
+   {
+      if (profileParam == null)
+         return removePluginRepository(url);
+      else
+      {
+         if (url != null)
+         {
+            String trimmedUrl = url.trim();
+            MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
+            Model pom = maven.getModel();
+            Profile profile = getProfile(pom, profileParam);
+            if (profile != null)
+            {
+               List<Repository> repos = profile.getPluginRepositories();
+               for (Repository repo : repos)
+               {
+                  if (repo.getUrl().equals(trimmedUrl))
+                  {
+                     repos.remove(repo);
+                     maven.setModel(pom);
+                     return new DependencyRepository(repo.getId(), repo.getUrl());
+                  }
+               }
+            }
+         }
+
+      }
+      return null;
+   }
+
+   @Override
    public List<DependencyRepository> getPluginRepositories()
    {
       List<DependencyRepository> results = new ArrayList<>();
@@ -369,6 +431,28 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
          }
       }
       return Collections.unmodifiableList(results);
+   }
+
+   @Override
+   public List<DependencyRepository> getPluginRepositories(org.jboss.forge.addon.maven.profiles.Profile profileParam)
+   {
+      if (profileParam == null)
+         return getPluginRepositories();
+      else
+      {
+         List<DependencyRepository> results = new ArrayList<>();
+         MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
+         Model pom = maven.getModel();
+         Profile profile = getProfile(pom, profileParam);
+         if (profile != null)
+         {
+            for (Repository repo : profile.getPluginRepositories())
+            {
+               results.add(new DependencyRepository(repo.getId(), repo.getUrl()));
+            }
+         }
+         return Collections.unmodifiableList(results);
+      }
    }
 
    @Override
@@ -405,6 +489,7 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
       return merged;
    }
 
+   // Private methods
    private List<PluginExecution> mergePluginsExecutions(final Map<String, PluginExecution> dominant,
             final Map<String, PluginExecution> recessive)
    {
@@ -483,5 +568,186 @@ public class MavenPluginFacetImpl extends AbstractFacet<Project> implements Mave
          }
       }
       return executions;
+   }
+
+   private List<org.apache.maven.model.Plugin> getPluginsPOM(boolean managedPlugin, boolean effectivePlugin,
+            org.jboss.forge.addon.maven.profiles.Profile profileParam)
+   {
+      MavenFacet mavenCoreFacet = getFaceted().getFacet(MavenFacet.class);
+      BuildBase build = getBuild(mavenCoreFacet.getModel(), profileParam);
+      if (build != null)
+      {
+         if (managedPlugin)
+         {
+            PluginManagement pluginManagement = build.getPluginManagement();
+            if (pluginManagement != null)
+            {
+               return pluginManagement.getPlugins();
+            }
+         }
+         else
+         {
+            return build.getPlugins();
+         }
+      }
+      return Collections.emptyList();
+   }
+
+   private List<MavenPlugin> listConfiguredPlugins(boolean managedPlugin, boolean effectivePlugin,
+            org.jboss.forge.addon.maven.profiles.Profile profileParam)
+   {
+      List<MavenPlugin> plugins = new ArrayList<>();
+      for (org.apache.maven.model.Plugin plugin : getPluginsPOM(managedPlugin, effectivePlugin, profileParam))
+      {
+         plugins.add(new MavenPluginAdapter(plugin));
+      }
+      return plugins;
+   }
+
+   private void addPlugin(final MavenPlugin plugin, boolean managedPlugin,
+            org.jboss.forge.addon.maven.profiles.Profile profileParam)
+   {
+      MavenFacet mavenCoreFacet = getFaceted().getFacet(MavenFacet.class);
+      Model pom = mavenCoreFacet.getModel();
+      BuildBase build = getBuild(pom, profileParam);
+      if (managedPlugin)
+      {
+         PluginManagement pluginManagement = build.getPluginManagement();
+         if (pluginManagement == null)
+         {
+            pluginManagement = new PluginManagement();
+            build.setPluginManagement(pluginManagement);
+         }
+         pluginManagement.addPlugin(new MavenPluginAdapter(plugin));
+      }
+      else
+      {
+         build.addPlugin(new MavenPluginAdapter(plugin));
+      }
+      mavenCoreFacet.setModel(pom);
+   }
+
+   private BuildBase getBuild(Model pom, org.jboss.forge.addon.maven.profiles.Profile profileParam)
+   {
+      BuildBase build;
+      if (profileParam == null)
+      {
+         // No Profile ID specified, use pom's <build>
+         build = pom.getBuild();
+         if (build == null)
+         {
+            pom.setBuild(new Build());
+            build = pom.getBuild();
+         }
+      }
+      else
+      {
+         Profile profile = getProfile(pom, profileParam);
+         if (profile == null)
+         {
+            profile = profileParam.getAsMavenProfile();
+            profile.setBuild(new Build());
+            pom.getProfiles().add(profile);
+         }
+         build = profile.getBuild();
+         if (build == null)
+         {
+            profile.setBuild(new Build());
+            build = profile.getBuild();
+         }
+      }
+      return build;
+   }
+
+   private MavenPlugin getPlugin(final Coordinate dependency, boolean managedPlugin, boolean effectivePlugin,
+            org.jboss.forge.addon.maven.profiles.Profile profileParam)
+   {
+      String groupId = dependency.getGroupId();
+      groupId = (groupId == null) || groupId.equals("") ? DEFAULT_GROUPID : groupId;
+
+      for (MavenPlugin mavenPlugin : listConfiguredPlugins(managedPlugin, effectivePlugin, profileParam))
+      {
+         Coordinate temp = mavenPlugin.getCoordinate();
+         if (Dependencies.areEquivalent(temp, CoordinateBuilder.create(dependency).setGroupId(groupId)))
+         {
+            return mavenPlugin;
+         }
+      }
+
+      throw new PluginNotFoundException(groupId, dependency.getArtifactId());
+   }
+
+   private Profile getProfile(Model model, org.jboss.forge.addon.maven.profiles.Profile profileParam)
+   {
+      Profile result = null;
+      if (profileParam != null)
+      {
+         for (Profile profile : model.getProfiles())
+         {
+            if (profileParam.getId().equals(profile.getId()))
+            {
+               result = profile;
+               break;
+            }
+         }
+      }
+      return result;
+   }
+
+   private boolean hasPlugin(final Coordinate dependency, boolean managedPlugin, boolean effectivePlugin,
+            org.jboss.forge.addon.maven.profiles.Profile profileParam)
+   {
+      try
+      {
+         getPlugin(dependency, managedPlugin, effectivePlugin, profileParam);
+         return true;
+      }
+      catch (PluginNotFoundException ex)
+      {
+         return false;
+      }
+   }
+
+   private void removePlugin(final Coordinate dependency, boolean managedPlugin,
+            org.jboss.forge.addon.maven.profiles.Profile profileParam)
+   {
+      // Get plugin
+      MavenPlugin pluginToRemove = null;
+      if (managedPlugin && hasManagedPlugin(dependency, profileParam))
+      {
+         pluginToRemove = getManagedPlugin(dependency, profileParam);
+      }
+      else if (hasPlugin(dependency))
+      {
+         pluginToRemove = getPlugin(dependency, profileParam);
+      }
+      // Remove if it exists
+      if (pluginToRemove != null)
+      {
+         MavenFacet mavenCoreFacet = getFaceted().getFacet(MavenFacet.class);
+         Model pom = mavenCoreFacet.getModel();
+         BuildBase build = getBuild(pom, profileParam); // We know for sure it isnt null because the plugin exists
+         if (managedPlugin)
+         {
+            PluginManagement pluginManagement = build.getPluginManagement(); // We know for sure it isnt null because
+                                                                             // the plugin exists
+            pluginManagement.removePlugin(new MavenPluginAdapter(pluginToRemove));
+         }
+         else
+         {
+            build.removePlugin(new MavenPluginAdapter(pluginToRemove));
+         }
+         mavenCoreFacet.setModel(pom);
+      }
+   }
+
+   private void updatePlugin(final MavenPlugin plugin, boolean managedPlugin,
+            org.jboss.forge.addon.maven.profiles.Profile profileParam)
+   {
+      this.removePlugin(plugin.getCoordinate(), managedPlugin, profileParam);
+      if (!this.hasPlugin(plugin.getCoordinate(), managedPlugin, false, profileParam))
+      {
+         this.addPlugin(plugin, managedPlugin, profileParam);
+      }
    }
 }
