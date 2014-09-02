@@ -57,7 +57,7 @@ public class ShellInitializer
          command = command + "exit" + OperatingSystemUtils.getLineSeparator() + "\0";
 
          Settings settings = new SettingsBuilder().inputStream(new ByteArrayInputStream(command.getBytes()))
-                  .outputStream(System.out).outputStreamError(System.err).create();
+                  .outputStream(System.out).outputStreamError(System.err).ansi(false).create();
          this.shell = shellFactory.createShell(OperatingSystemUtils.getWorkingDir(), settings);
          this.shell.getConsole().getExportManager().addVariable("export INTERACTIVE=false");
       }
