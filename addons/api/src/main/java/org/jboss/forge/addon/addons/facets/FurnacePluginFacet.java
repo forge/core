@@ -22,7 +22,7 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 
 /**
  * Adds the Furnace Maven Plugin to the build descriptor in order to generate the DOT file automatically.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
