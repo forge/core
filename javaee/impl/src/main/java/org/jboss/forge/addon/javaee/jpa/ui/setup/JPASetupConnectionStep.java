@@ -129,9 +129,11 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
    private void initPersistenceUnitName(UIBuilder builder)
    {
       int i = 1;
-      String projectName = getSelectedProject(builder.getUIContext()).getFacet(MetadataFacet.class).getProjectName();
+      Project selectedProject = getSelectedProject(builder.getUIContext());
+      String projectName = selectedProject == null ? "forge" : selectedProject.getFacet(MetadataFacet.class)
+               .getProjectName();
       String unitName = projectName + PersistenceOperations.DEFAULT_UNIT_SUFFIX;
-      while (isExistingPersistenceUnitName(getSelectedProject(builder.getUIContext()), unitName))
+      while (isExistingPersistenceUnitName(selectedProject, unitName))
       {
          unitName = projectName + PersistenceOperations.DEFAULT_UNIT_SUFFIX + "-" + i++;
       }
