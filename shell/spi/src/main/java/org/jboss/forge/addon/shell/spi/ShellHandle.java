@@ -5,11 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.shell;
-
-import java.io.File;
-import java.io.InputStream;
-import java.io.PrintStream;
+package org.jboss.forge.addon.shell.spi;
 
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 
@@ -20,10 +16,9 @@ import org.jboss.forge.addon.ui.command.CommandExecutionListener;
  */
 public interface ShellHandle
 {
-   public void initialize(File currentResource, InputStream stdIn, PrintStream stdOut, PrintStream stdErr);
+   void initialize(ShellHandleSettings settings);
 
-   public void destroy();
+   void destroy();
 
-   public void addCommandExecutionListener(CommandExecutionListener listener);
-
+   void addCommandExecutionListener(CommandExecutionListener listener);
 }

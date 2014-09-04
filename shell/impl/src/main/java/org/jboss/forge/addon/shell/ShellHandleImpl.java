@@ -7,16 +7,15 @@
 
 package org.jboss.forge.addon.shell;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
-import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
+import org.jboss.forge.addon.shell.aesh.ForgeTerminal;
+import org.jboss.forge.addon.shell.spi.ShellHandle;
+import org.jboss.forge.addon.shell.spi.ShellHandleSettings;
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 
 /**
@@ -32,15 +31,18 @@ public class ShellHandleImpl implements ShellHandle
    private Shell shell;
 
    @Override
-   public void initialize(File currentResource, InputStream stdIn, PrintStream stdOut, PrintStream stdErr)
+   public void initialize(ShellHandleSettings settings)
    {
-      Settings settings = new SettingsBuilder()
-               .inputStream(stdIn)
-               .outputStream(stdOut)
-               .outputStreamError(stdErr)
-               .enableMan(true)
-               .create();
-      this.shell = shellFactory.createShell(currentResource, settings);
+      SettingsBuilder settingsBuilder = new SettingsBuilder()
+               .inputStream(settings.stdIn())
+               .outputStream(settings.stdOut())
+               .outputStreamError(settings.stdErr())
+               .enableMan(true);
+      if (settings.terminal() != null)
+      {
+         settingsBuilder.terminal(new ForgeTerminal(settings.terminal()));
+      }
+      this.shell = shellFactory.createShell(settings.currentResource(), settingsBuilder.create());
    }
 
    @Override
