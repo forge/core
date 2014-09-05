@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>bean-validation-parent</artifactId>
-      <version>2.9.1.Final</version>
+      <version>2.9.2-SNAPSHOT</version>
    </parent>
    <artifactId>bean-validation-api</artifactId>
    <name>Forge - Bean Validation API</name>
