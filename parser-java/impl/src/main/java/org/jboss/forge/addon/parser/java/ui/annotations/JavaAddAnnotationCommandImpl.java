@@ -1,6 +1,15 @@
 package org.jboss.forge.addon.parser.java.ui.annotations;
 
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.Callable;
+
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.parser.java.beans.ProjectOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaFieldResource;
@@ -28,21 +37,17 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.Annotation;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.Parameter;
 import org.jboss.forge.roaster.model.ValuePair;
-import org.jboss.forge.roaster.model.source.*;
-
-import javax.inject.Inject;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
+import org.jboss.forge.roaster.model.source.AnnotationSource;
+import org.jboss.forge.roaster.model.source.AnnotationTargetSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * @author <a href="mailto:robert@balent.cz">Robert Balent</a>
  */
+@FacetConstraint(JavaSourceFacet.class)
 public class JavaAddAnnotationCommandImpl extends AbstractProjectCommand implements JavaAddAnnotationCommand
 {
    @Inject
@@ -123,7 +128,9 @@ public class JavaAddAnnotationCommandImpl extends AbstractProjectCommand impleme
          public Iterable<JavaFieldResource> call()
          {
             JavaResource javaResource = targetClass.getValue();
-            return ResourceUtil.filterByType(JavaFieldResource.class, javaResource.listResources());
+            if (javaResource != null)
+               return ResourceUtil.filterByType(JavaFieldResource.class, javaResource.listResources());
+            return Collections.emptyList();
          }
       });
 
@@ -133,7 +140,9 @@ public class JavaAddAnnotationCommandImpl extends AbstractProjectCommand impleme
          public Iterable<JavaMethodResource> call()
          {
             JavaResource javaResource = targetClass.getValue();
-            return ResourceUtil.filterByType(JavaMethodResource.class, javaResource.listResources());
+            if (javaResource != null)
+               return ResourceUtil.filterByType(JavaMethodResource.class, javaResource.listResources());
+            return Collections.emptyList();
          }
       });
 
@@ -142,7 +151,7 @@ public class JavaAddAnnotationCommandImpl extends AbstractProjectCommand impleme
          @Override
          public String convert(JavaFieldResource source)
          {
-            return source.getUnderlyingResourceObject().getName();
+            return (source == null ? null : source.getUnderlyingResourceObject().getName());
          }
       });
 
@@ -151,13 +160,14 @@ public class JavaAddAnnotationCommandImpl extends AbstractProjectCommand impleme
          @Override
          public String convert(JavaMethodResource source)
          {
-            return source.getUnderlyingResourceObject().getName();
+            return (source == null ? null : source.getUnderlyingResourceObject().getName());
          }
       });
 
       annotation.setCompleter(new UICompleter<String>()
       {
-         @Override public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
+         @Override
+         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
          {
             Project project = getSelectedProject(builder.getUIContext());
             List<JavaResource> javaClasses = projectOperations.getProjectAnnotations(project);
@@ -248,7 +258,8 @@ public class JavaAddAnnotationCommandImpl extends AbstractProjectCommand impleme
       }
       catch (Exception ex)
       {
-         throw new IllegalArgumentException("Annotation with name \"" + annotationClassName + "\" couldn't be added. Are you sure it's correct?");
+         throw new IllegalArgumentException("Annotation with name \"" + annotationClassName
+                  + "\" couldn't be added. Are you sure it's correct?");
       }
 
       populateAnnotationFromString(annotationSource, annotation.getValue());
@@ -267,23 +278,28 @@ public class JavaAddAnnotationCommandImpl extends AbstractProjectCommand impleme
          throw new IllegalArgumentException("Can't parse annotation \"" + str + "\". Are you sure it's correct?");
       }
 
-      if (parsedClass.getAnnotations().size() == 0) {
+      if (parsedClass.getAnnotations().size() == 0)
+      {
          throw new IllegalArgumentException("Can't parse annotation \"" + str + "\". Are you sure it's correct?");
       }
 
       List<ValuePair> valuePairs = parsedClass.getAnnotations().get(0).getValues();
 
-      for (ValuePair valuePair : valuePairs) {
-         if ("$missing$".equals(valuePair.getLiteralValue())) {
+      for (ValuePair valuePair : valuePairs)
+      {
+         if ("$missing$".equals(valuePair.getLiteralValue()))
+         {
             throw new IllegalArgumentException("Parameter \"" + valuePair.getName() + "\" is missing or is incomplete.");
          }
          annotationSource.setLiteralValue(valuePair.getName(), valuePair.getLiteralValue());
       }
    }
 
-   private String getAnnotationClassNameFromString(String annotationString) {
+   private String getAnnotationClassNameFromString(String annotationString)
+   {
       int leftParenthesisIndex = annotationString.indexOf('(');
-      if (leftParenthesisIndex > -1) {
+      if (leftParenthesisIndex > -1)
+      {
          return annotationString.substring(0, leftParenthesisIndex);
       }
       return annotationString;
@@ -306,7 +322,8 @@ public class JavaAddAnnotationCommandImpl extends AbstractProjectCommand impleme
       }
    }
 
-   @Override protected boolean isProjectRequired()
+   @Override
+   protected boolean isProjectRequired()
    {
       return true;
    }
@@ -314,7 +331,8 @@ public class JavaAddAnnotationCommandImpl extends AbstractProjectCommand impleme
    @Inject
    private ProjectFactory projectFactory;
 
-   @Override protected ProjectFactory getProjectFactory()
+   @Override
+   protected ProjectFactory getProjectFactory()
    {
       return projectFactory;
    }
