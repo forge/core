@@ -354,7 +354,9 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
 
       if (overwrite.isEnabled() && overwrite.getValue() == false)
       {
-         context.addValidationError(targetLocation, "Target location is not empty.");
+         String errorMessage = String.format("Project location '%s' is not empty.",
+                  targetLocation.getValue().getChild(named.getValue()));
+         context.addValidationError(targetLocation, errorMessage);
       }
 
    }
