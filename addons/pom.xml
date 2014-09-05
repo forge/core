@@ -38,51 +38,6 @@
             <artifactId>addons-impl</artifactId>
             <version>${project.version}</version>
          </dependency>
-         <!-- Dependent Addons -->
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>dependencies</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>2.9.3-SNAPSHOT</version>
-            <scope>provided</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>resources</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>2.9.3-SNAPSHOT</version>
-            <scope>provided</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>projects</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>2.9.3-SNAPSHOT</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>ui</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>2.9.3-SNAPSHOT</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>maven</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>2.9.3-SNAPSHOT</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>javaee</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>2.9.3-SNAPSHOT</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>parser-java</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>2.9.3-SNAPSHOT</version>
-         </dependency>
       </dependencies>
    </dependencyManagement>
 </project>
