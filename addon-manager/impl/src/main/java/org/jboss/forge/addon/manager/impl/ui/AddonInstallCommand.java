@@ -70,7 +70,7 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
       {
          MetadataFacet facet = project.getFacet(MetadataFacet.class);
          Coordinate c = facet.getOutputDependency().getCoordinate();
-         coordinate.setDefaultValue(AddonId.from(c.getArtifactId() + ":" + c.getGroupId(), c.getVersion())
+         coordinate.setDefaultValue(AddonId.from(c.getGroupId() + ":" + c.getArtifactId(), c.getVersion())
                   .toCoordinates());
       }
 
