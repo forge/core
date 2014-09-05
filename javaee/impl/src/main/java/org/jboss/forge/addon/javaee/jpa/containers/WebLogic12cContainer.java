@@ -8,9 +8,9 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PropertyCommon;
 
 /**
  * Weblogic 12c Persistence Container
- * 
+ *
  * @author Luca Masini
- * 
+ *
  */
 public class WebLogic12cContainer implements PersistenceContainer
 {
@@ -23,16 +23,15 @@ public class WebLogic12cContainer implements PersistenceContainer
    public PersistenceUnitCommon setupConnection(PersistenceUnitCommon unit,
             JPADataSource dataSource)
    {
+      unit.transactionType("JTA");
+      unit.jtaDataSource(dataSource.getJndiDataSource());
+
       if (HibernateProvider.JPA_PROVIDER.equals(unit.getProvider()))
       {
          PropertyCommon property = unit.getOrCreateProperties()
                   .createProperty();
          property.name(HIBERNATE_TRANSACTION_JTA_PLATFORM).value(WEBLOGIC_JTA_PLATFORM);
       }
-
-      unit.transactionType("JTA");
-      unit.jtaDataSource(dataSource.getJndiDataSource());
-      unit.nonJtaDataSource(null);
 
       return unit;
    }
