@@ -13,6 +13,7 @@ import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManager;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManagerProvider;
 import org.jboss.forge.addon.database.tools.util.HibernateToolsHelper;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -40,6 +41,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.roaster.model.source.JavaSource;
 
+@FacetConstraint(JPAFacet.class)
 public class GenerateEntitiesCommand extends AbstractProjectCommand implements
          UIWizard
 {
@@ -116,20 +118,6 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
    protected boolean isProjectRequired()
    {
       return true;
-   }
-
-   @Override
-   public boolean isEnabled(UIContext context)
-   {
-      Project project = getSelectedProject(context);
-      if (project != null)
-      {
-         return project.hasFacet(JPAFacet.class) && super.isEnabled(context);
-      }
-      else
-      {
-         return false;
-      }
    }
 
    @Override
