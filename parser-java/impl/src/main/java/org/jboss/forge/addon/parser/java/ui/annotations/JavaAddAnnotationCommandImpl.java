@@ -59,11 +59,11 @@ public class JavaAddAnnotationCommandImpl extends AbstractProjectCommand impleme
    private UIInput<String> annotation;
 
    @Inject
-   @WithAttributes(label = "Target property", description = "The property where the annotation will be added", required = false, type = InputType.DROPDOWN)
+   @WithAttributes(label = "Target Property", description = "The property where the annotation will be added", required = false, type = InputType.DROPDOWN)
    private UISelectOne<JavaFieldResource> onProperty;
 
    @Inject
-   @WithAttributes(label = "Target property", description = "The method where the annotation will be added", required = false, type = InputType.DROPDOWN)
+   @WithAttributes(label = "Target Method", description = "The method where the annotation will be added", required = false, type = InputType.DROPDOWN)
    private UISelectOne<JavaMethodResource> onMethod;
 
    @Inject
