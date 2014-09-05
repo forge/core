@@ -25,7 +25,7 @@ import org.jboss.forge.addon.ui.context.UISelection;
  * Supports {@link Project} specific operations on {@link UICommand} sub-classes. Also enables the use of
  * {@link FacetConstraints} on implementations for which {@link AbstractProjectCommand#isProjectRequired()} returns
  * <code>true</code>.
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public abstract class AbstractProjectCommand extends AbstractUICommand
@@ -72,7 +72,12 @@ public abstract class AbstractProjectCommand extends AbstractUICommand
     */
    protected Project getSelectedProject(UIContext context)
    {
-      return Projects.getSelectedProject(getProjectFactory(), context);
+      Project selectedProject = Projects.getSelectedProject(getProjectFactory(), context);
+      if (isProjectRequired() && selectedProject == null)
+      {
+         throw new IllegalStateException("A project is required in the current context");
+      }
+      return selectedProject;
    }
 
    /**
