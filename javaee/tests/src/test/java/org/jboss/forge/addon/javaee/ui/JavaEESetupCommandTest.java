@@ -118,6 +118,7 @@ public class JavaEESetupCommandTest
       project = projectHelper.refreshProject(project);
       Assert.assertTrue(project.hasFacet(JavaEE7Facet.class));
       Assert.assertFalse(dependencyInstaller.isInstalled(project, JAVAEE6));
+      Assert.assertFalse(dependencyInstaller.isManaged(project, JAVAEE6));
       Assert.assertTrue(dependencyInstaller.isInstalled(project, JAVAEE7));
    }
 

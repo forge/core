@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.javaee;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -77,11 +78,23 @@ public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> impleme
 
          if (!satisfied)
          {
-            installer.installManaged(origin, JAVAEE6);
+            for (Dependency dependency : getRequiredManagedDependenciesFor(group.getKey()))
+            {
+               installer.installManaged(origin, dependency);
+            }
             installer.install(origin, group.getKey());
          }
       }
       return true;
+   }
+
+   /**
+    * Returns the required managed dependencies for the given dependency when {@link AbstractJavaEEFacet#install()} is
+    * called.
+    */
+   protected Iterable<Dependency> getRequiredManagedDependenciesFor(Dependency dependency)
+   {
+      return Collections.singleton(JAVAEE6);
    }
 
    @Override

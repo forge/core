@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.javaee;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ import org.jboss.forge.furnace.versions.Version;
 
 /**
  * Implementation for the {@link JavaEE7Facet}
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class JavaEE7FacetImpl extends AbstractJavaEEFacet implements JavaEE7Facet
@@ -46,5 +47,11 @@ public class JavaEE7FacetImpl extends AbstractJavaEEFacet implements JavaEE7Face
       Map<Dependency, List<Dependency>> result = new LinkedHashMap<>();
       result.put(JAVAEE7, Arrays.asList(JAVAEE7));
       return result;
+   }
+
+   @Override
+   protected Iterable<Dependency> getRequiredManagedDependenciesFor(Dependency dependency)
+   {
+      return Collections.emptySet();
    }
 }
