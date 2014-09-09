@@ -21,6 +21,7 @@ import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequestPopulator;
 import org.apache.maven.project.ProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
@@ -46,7 +47,7 @@ import org.jboss.forge.furnace.util.Assert;
 
 /**
  * Manages maven builds based on a {@link MavenModelResource}
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @Singleton
@@ -66,7 +67,7 @@ public class MavenBuildManager
 
    private ProjectBuilder builder;
 
-   ProjectBuildingResult getProjectBuildingResult(MavenModelResource pomResource)
+   ProjectBuildingResult getProjectBuildingResult(MavenModelResource pomResource) throws ProjectBuildingException
    {
       ProjectBuildingResult result = cache.get(pomResource);
       if (result == null)
@@ -74,30 +75,19 @@ public class MavenBuildManager
          ProjectBuildingRequest request = getProjectBuildingRequest();
          Assert.notNull(request, "Project building request was null");
          request.setResolveDependencies(true);
-         try
+         boolean inTransaction = !pomResource.getUnderlyingResourceObject().exists();
+         // FORGE-1287
+         if (inTransaction)
          {
-            boolean inTransaction = !pomResource.getUnderlyingResourceObject().exists();
-            // FORGE-1287
-            if (inTransaction)
-            {
-               result = getBuilder().build(new FileResourceModelSource(pomResource), request);
-               // If under a transaction, don't start monitoring
-            }
-            else
-            {
-               result = getBuilder().build(pomResource.getUnderlyingResourceObject(), request);
-               monitorResource(pomResource);
-            }
-            cache.put(pomResource, result);
+            result = getBuilder().build(new FileResourceModelSource(pomResource), request);
+            // If under a transaction, don't start monitoring
          }
-         catch (RuntimeException full)
+         else
          {
-            throw full;
+            result = getBuilder().build(pomResource.getUnderlyingResourceObject(), request);
+            monitorResource(pomResource);
          }
-         catch (Exception full)
-         {
-            throw new RuntimeException(full);
-         }
+         cache.put(pomResource, result);
       }
       return result;
    }
