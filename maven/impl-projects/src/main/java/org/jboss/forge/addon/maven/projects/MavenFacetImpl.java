@@ -14,6 +14,7 @@ import java.io.PrintStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,6 @@ import javax.inject.Inject;
 
 import org.apache.maven.cli.MavenCli;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.building.ModelProblem;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -343,22 +343,9 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       try
       {
          ProjectBuildingResult result = getProjectBuildingResult();
-         for (ModelProblem problem : result.getProblems())
-         {
-            Level level = Level.SEVERE;
-            switch (problem.getSeverity())
-            {
-            case WARNING:
-               level = Level.WARNING;
-               break;
-            case FATAL:
-            case ERROR:
-            default:
-               level = Level.SEVERE;
-            }
-            LogRecord record = new LogRecord(level, problem.getMessage());
-            messages.add(record);
-         }
+         if (!result.getProblems().isEmpty())
+            messages.add(new LogRecord(Level.SEVERE, new ProjectBuildingException(Collections.singletonList(result))
+                     .getMessage()));
       }
       catch (ProjectBuildingException e)
       {
