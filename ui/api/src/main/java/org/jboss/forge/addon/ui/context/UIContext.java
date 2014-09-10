@@ -21,10 +21,10 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
  * An {@link UIContext} holds information about the environment the {@link UICommand} is being run, such as the initial
  * selection and attributes that could be shared among several {@link UIWizardStep} of a single {@link UIWizard}
  * instance.
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public interface UIContext extends AutoCloseable
 {
@@ -42,21 +42,32 @@ public interface UIContext extends AutoCloseable
     * Sets a new selection. (This will change the current working directory or {@link UISelection} - behavior varies
     * somewhat depending on the {@link UIProvider} implementation.) The user's selection will be not be changed until
     * after {@link UICommand#execute(UIExecutionContext)} has completed.
-    * 
+    *
     * @see UISelection
     */
    <SELECTIONTYPE> void setSelection(SELECTIONTYPE resource);
 
    /**
-    * Returns the selection set by {@link UIContext#setSelection(Object)}, or if no selection was set for this
-    * interaction, the value of {@link UISelection#get()} from the current {@link #getInitialSelection()}.
+    * Sets a new selection. (This will change the current working directory or {@link UISelection} - behavior varies
+    * somewhat depending on the {@link UIProvider} implementation.) The user's selection will be not be changed until
+    * after {@link UICommand#execute(UIExecutionContext)} has completed.
+    *
+    * @see UISelection
+    */
+   <SELECTIONTYPE> void setSelection(UISelection<SELECTIONTYPE> selection);
+
+   /**
+    * Returns the selection set by {@link UIContext#setSelection(Object)} or {@link UIContext#setSelection(UISelection)}
+    * , or if no selection was set for this interaction, the value of {@link #getInitialSelection()}.
+    * <p/>
     * (<b>***WARNING***</b> - This is <b>NOT</b> the same as {@link #getInitialSelection()}. It will <b>NOT</b> return
-    * the user's initial selection if a new selection has previously been set via {@link #setSelection(Object)}.)
-    * 
+    * the user's initial selection if a new selection has previously been set via {@link #setSelection(Object)} or
+    * {@link #setSelection(UISelection)}.)
+    *
     * @see UISelection
     * @see #getInitialSelection()
     */
-   <SELECTIONTYPE> SELECTIONTYPE getSelection();
+   <SELECTIONTYPE> UISelection<SELECTIONTYPE> getSelection();
 
    /**
     * Returns the {@link UIProvider} that created this {@link UIContext} object. (Never <code>null</code>.)

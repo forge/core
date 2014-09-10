@@ -14,6 +14,7 @@ import java.util.Set;
 
 import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
+import org.jboss.forge.addon.ui.util.Selections;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 
 /**
@@ -26,7 +27,7 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
 public abstract class AbstractUIContext implements UIContext
 {
    private final Map<Object, Object> map;
-   private Object selection;
+   private UISelection<?> selection;
    private final Set<CommandExecutionListener> listeners = new LinkedHashSet<>();
 
    public AbstractUIContext()
@@ -37,13 +38,31 @@ public abstract class AbstractUIContext implements UIContext
 
    @Override
    @SuppressWarnings("unchecked")
-   public <SELECTIONTYPE> SELECTIONTYPE getSelection()
+   public <SELECTIONTYPE> UISelection<SELECTIONTYPE> getSelection()
    {
-      return (SELECTIONTYPE) ((SELECTIONTYPE) selection != null ? selection : getInitialSelection().get());
+      return (UISelection<SELECTIONTYPE>) (selection != null ? selection : getInitialSelection());
+   }
+
+   @SuppressWarnings("unchecked")
+   @Override
+   public <SELECTIONTYPE> void setSelection(SELECTIONTYPE selection)
+   {
+      if (selection == null)
+      {
+         this.selection = null;
+      }
+      else if (selection instanceof UISelection)
+      {
+         this.selection = (UISelection<?>) selection;
+      }
+      else
+      {
+         this.selection = Selections.from(selection);
+      }
    }
 
    @Override
-   public <SELECTIONTYPE> void setSelection(SELECTIONTYPE selection)
+   public <SELECTIONTYPE> void setSelection(UISelection<SELECTIONTYPE> selection)
    {
       this.selection = selection;
    }
