@@ -53,7 +53,7 @@ import org.jboss.forge.furnace.util.Assert;
 @Singleton
 public class MavenBuildManager
 {
-   // TODO: Repĺace this with a Cache implementation
+   // TODO: Replace this with a Cache implementation
    private Map<MavenModelResource, ProjectBuildingResult> cache = new WeakHashMap<>();
 
    @Inject
@@ -72,22 +72,34 @@ public class MavenBuildManager
       ProjectBuildingResult result = cache.get(pomResource);
       if (result == null)
       {
-         ProjectBuildingRequest request = getProjectBuildingRequest();
-         Assert.notNull(request, "Project building request was null");
-         request.setResolveDependencies(true);
-         boolean inTransaction = !pomResource.getUnderlyingResourceObject().exists();
-         // FORGE-1287
-         if (inTransaction)
+         try
          {
-            result = getBuilder().build(new FileResourceModelSource(pomResource), request);
-            // If under a transaction, don't start monitoring
+            ProjectBuildingRequest request = getProjectBuildingRequest();
+            Assert.notNull(request, "Project building request was null");
+            request.setResolveDependencies(true);
+            boolean inTransaction = !pomResource.getUnderlyingResourceObject().exists();
+            // FORGE-1287
+            if (inTransaction)
+            {
+               result = getBuilder().build(new FileResourceModelSource(pomResource), request);
+               // If under a transaction, don't start monitoring
+            }
+            else
+            {
+               result = getBuilder().build(pomResource.getUnderlyingResourceObject(), request);
+               monitorResource(pomResource);
+            }
          }
-         else
+         catch (ProjectBuildingException pbe)
          {
-            result = getBuilder().build(pomResource.getUnderlyingResourceObject(), request);
-            monitorResource(pomResource);
+            result = pbe.getResults().get(0);
+            throw pbe;
          }
-         cache.put(pomResource, result);
+         finally
+         {
+            if (result != null)
+               cache.put(pomResource, result);
+         }
       }
       return result;
    }
@@ -97,7 +109,6 @@ public class MavenBuildManager
       final ResourceMonitor monitor = pomResource.monitor();
       monitor.addResourceListener(new ResourceListener()
       {
-
          @Override
          public void processEvent(ResourceEvent event)
          {

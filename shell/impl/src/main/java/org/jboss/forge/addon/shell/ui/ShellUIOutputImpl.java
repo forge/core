@@ -10,10 +10,11 @@ package org.jboss.forge.addon.shell.ui;
 import java.io.PrintStream;
 
 import org.jboss.aesh.console.AeshConsole;
+import org.jboss.forge.addon.shell.ShellMessages;
 import org.jboss.forge.addon.ui.output.UIOutput;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class ShellUIOutputImpl implements UIOutput
@@ -35,5 +36,29 @@ public class ShellUIOutputImpl implements UIOutput
    public PrintStream err()
    {
       return console.getShell().err();
+   }
+
+   @Override
+   public void success(PrintStream out, String message)
+   {
+      ShellMessages.success(out, message);
+   }
+
+   @Override
+   public void error(PrintStream out, String message)
+   {
+      ShellMessages.error(out, message);
+   }
+
+   @Override
+   public void info(PrintStream out, String message)
+   {
+      ShellMessages.info(out, message);
+   }
+
+   @Override
+   public void warn(PrintStream out, String message)
+   {
+      ShellMessages.warn(out, message);
    }
 }

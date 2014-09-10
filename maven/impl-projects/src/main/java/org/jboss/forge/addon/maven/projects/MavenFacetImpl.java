@@ -28,7 +28,9 @@ import javax.inject.Inject;
 
 import org.apache.maven.cli.MavenCli;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.building.ModelProblem;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.jboss.forge.addon.facets.AbstractFacet;
@@ -36,6 +38,7 @@ import org.jboss.forge.addon.maven.projects.util.NativeSystemCall;
 import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
+import org.jboss.forge.addon.projects.facets.BuildStatusFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
@@ -48,7 +51,7 @@ import org.jboss.forge.furnace.util.Strings;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFacet, MavenFacet
+public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFacet, MavenFacet, BuildStatusFacet
 {
    private static final Logger log = Logger.getLogger(MavenFacetImpl.class.getName());
 
@@ -147,7 +150,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    /*
     * POM manipulation methods
     */
-   public synchronized ProjectBuildingResult getProjectBuildingResult() throws Exception
+   public synchronized ProjectBuildingResult getProjectBuildingResult() throws ProjectBuildingException
    {
       return buildManager.getProjectBuildingResult(getModelResource());
    }
@@ -328,14 +331,50 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    }
 
    @Override
+   public boolean isValid()
+   {
+      return isModelValid();
+   }
+
+   @Override
+   public Iterable<LogRecord> getBuildMessages()
+   {
+      List<LogRecord> messages = new ArrayList<>();
+      try
+      {
+         ProjectBuildingResult result = getProjectBuildingResult();
+         for (ModelProblem problem : result.getProblems())
+         {
+            Level level = Level.SEVERE;
+            switch (problem.getSeverity())
+            {
+            case WARNING:
+               level = Level.WARNING;
+               break;
+            case FATAL:
+            case ERROR:
+            default:
+               level = Level.SEVERE;
+            }
+            LogRecord record = new LogRecord(level, problem.getMessage());
+            messages.add(record);
+         }
+      }
+      catch (ProjectBuildingException e)
+      {
+         messages.add(new LogRecord(Level.SEVERE, e.getMessage()));
+      }
+      return messages;
+   }
+
+   @Override
    public boolean isModelValid()
    {
       try
       {
-         getProjectBuildingResult();
-         return true;
+         return getProjectBuildingResult().getProblems().isEmpty();
       }
-      catch (Exception e)
+      catch (ProjectBuildingException e)
       {
          return false;
       }

@@ -26,19 +26,26 @@ public class VerboseExecutionListener extends AbstractCommandExecutionListener
    @Override
    public void postCommandFailure(UICommand command, UIExecutionContext context, Throwable failure)
    {
-      UIContext uiContext = context.getUIContext();
-      if (uiContext instanceof ShellContext)
+      if (failure != null)
       {
-         ShellContext shellContext = (ShellContext) uiContext;
-         if (shellContext.isVerbose() && failure != null)
+         UIContext uiContext = context.getUIContext();
+         if (uiContext instanceof ShellContext)
          {
+            ShellContext shellContext = (ShellContext) uiContext;
             PrintStream err = shellContext.getProvider().getOutput().err();
             UICommandMetadata metadata = command.getMetadata(shellContext);
             if (metadata != null)
                ShellMessages.error(err, "Error while executing '" + metadata.getName() + "'");
-            failure.printStackTrace(err);
+            if (shellContext.isVerbose())
+            {
+               failure.printStackTrace(err);
+            }
+            else
+            {
+               ShellMessages.error(err, failure.getMessage());
+               ShellMessages.info(err, "(type \"export VERBOSE=true\" to enable stack traces)");
+            }
          }
       }
    }
-
 }

@@ -11,7 +11,7 @@ import java.io.PrintStream;
 
 /**
  * Used when information must be shown to users
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public interface UIOutput
@@ -25,4 +25,24 @@ public interface UIOutput
     * Returns the {@link PrintStream} used to display information in the output stream.
     */
    PrintStream err();
+
+   /**
+    * Prints a successful message in the provided {@link PrintStream}
+    */
+   void success(final PrintStream out, final String message);
+
+   /**
+    * Prints an error message in the provided {@link PrintStream}
+    */
+   void error(final PrintStream out, final String message);
+
+   /**
+    * Prints an information message in the provided {@link PrintStream}
+    */
+   void info(final PrintStream out, final String message);
+
+   /**
+    * Prints a warning message in the provided {@link PrintStream}
+    */
+   void warn(final PrintStream out, final String message);
 }

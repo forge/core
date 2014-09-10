@@ -12,7 +12,7 @@ import java.io.PrintStream;
 import org.jboss.forge.addon.ui.output.UIOutput;
 
 /**
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class UIOutputImpl implements UIOutput
@@ -36,6 +36,34 @@ public class UIOutputImpl implements UIOutput
    public PrintStream err()
    {
       return err;
+   }
+
+   @Override
+   public void error(PrintStream writer, String message)
+   {
+      writer.print("[ERROR] ");
+      writer.println(message);
+   }
+
+   @Override
+   public void success(PrintStream writer, String message)
+   {
+      writer.print("[SUCCESS] ");
+      writer.println(message);
+   }
+
+   @Override
+   public void info(PrintStream writer, String message)
+   {
+      writer.print("[INFO] ");
+      writer.println(message);
+   }
+
+   @Override
+   public void warn(PrintStream writer, String message)
+   {
+      writer.print("[WARNING] ");
+      writer.println(message);
    }
 
 }
