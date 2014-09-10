@@ -28,6 +28,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.command.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
@@ -118,10 +119,10 @@ public class JPASetupWizardTest
       });
       tester.execute();
 
-      Object selection = tester.getContext().getSelection();
-      Assert.assertNotNull(selection);
-      Assert.assertTrue(selection instanceof FileResource);
-      Assert.assertEquals("persistence.xml", ((FileResource) selection).getName());
+      UISelection<Object> selection = tester.getContext().getSelection();
+      Assert.assertFalse(selection.isEmpty());
+      Assert.assertTrue(selection.get() instanceof FileResource);
+      Assert.assertEquals("persistence.xml", ((FileResource) selection.get()).getName());
 
       // Ensure that the two pages were invoked
       Assert.assertEquals(2, counter.get());
