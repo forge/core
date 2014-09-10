@@ -15,6 +15,7 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.ext.Provider;
 
 import org.jboss.forge.addon.javaee.rest.RestFacet;
@@ -42,7 +43,7 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
  * Creates a Cross Origin Resource Sharing Filter
- * 
+ *
  * @see https://issues.jboss.org/browse/FORGE-1929
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
@@ -138,6 +139,7 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractJavaSourceC
             throws Exception
    {
       source.addAnnotation(Provider.class);
+      source.addAnnotation(PreMatching.class);
       source.addInterface(ContainerResponseFilter.class);
       MethodSource<JavaClassSource> method = source.addMethod().setName("filter").setPublic().setReturnTypeVoid();
       method.addAnnotation(Override.class);

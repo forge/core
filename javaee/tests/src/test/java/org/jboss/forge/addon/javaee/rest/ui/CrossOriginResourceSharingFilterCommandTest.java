@@ -14,6 +14,7 @@ import static org.hamcrest.CoreMatchers.not;
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.ext.Provider;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -97,6 +98,7 @@ public class CrossOriginResourceSharingFilterCommandTest
       JavaClass<?> filterClass = filterResource.getJavaType();
       Assert.assertFalse(filterClass.hasSyntaxErrors());
       Assert.assertTrue(filterClass.hasAnnotation(Provider.class));
+      Assert.assertTrue(filterClass.hasAnnotation(PreMatching.class));
       Method<?, ?> method = filterClass
                .getMethod("filter", ContainerRequestContext.class, ContainerResponseContext.class);
       Assert.assertNotNull(method);
