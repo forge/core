@@ -6,7 +6,6 @@ import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -21,7 +20,6 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
-import org.hibernate.HibernateException;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.database.tools.jpa.HibernateDialect;
 import org.jboss.forge.addon.resource.FileResource;
@@ -157,7 +155,7 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
                      DriverManager.deregisterDriver(driver);
                   }
                }
-               catch (SQLException | HibernateException | InstantiationException | IllegalAccessException e)
+               catch (Exception e)
                {
                   log.log(Level.INFO, "Connection failed: " + properties, e);
                   context.addValidationError(context.getCurrentInputComponent(),
