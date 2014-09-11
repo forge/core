@@ -8,14 +8,15 @@
 package org.jboss.forge.addon.projects.facets;
 
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
+import org.jboss.forge.addon.projects.building.BuildResult;
 import org.jboss.forge.addon.projects.building.ProjectBuilder;
 import org.jboss.forge.addon.resource.Resource;
 
 /**
  * A Facet representing this project's Packaging (JAR, WAR, EAR, etc...)
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public interface PackagingFacet extends ProvidedProjectFacet
 {
@@ -43,7 +44,7 @@ public interface PackagingFacet extends ProvidedProjectFacet
 
    /**
     * Trigger the underlying build system to perform a build with the given arguments or flags.
-    * 
+    *
     * @return The final build artifact if building succeeded, otherwise return null
     * @see {@link #getFinalArtifact()}
     */
@@ -58,5 +59,12 @@ public interface PackagingFacet extends ProvidedProjectFacet
     * Set the final name of this project's build output artifact. This represents the name without file extension.
     */
    void setFinalName(String finalName);
+
+   /**
+    * Returns the current {@link BuildResult} of this project.
+    * <p/>
+    * It is not affected by the builds executed in {@link #executeBuild(String...)}
+    */
+   BuildResult getBuildResult();
 
 }

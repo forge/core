@@ -14,7 +14,6 @@ import java.io.PrintStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,6 @@ import org.jboss.forge.addon.maven.projects.util.NativeSystemCall;
 import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
-import org.jboss.forge.addon.projects.facets.BuildStatusFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
@@ -51,7 +49,7 @@ import org.jboss.forge.furnace.util.Strings;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFacet, MavenFacet, BuildStatusFacet
+public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFacet, MavenFacet
 {
    private static final Logger log = Logger.getLogger(MavenFacetImpl.class.getName());
 
@@ -328,30 +326,6 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    public DirectoryResource getLocalRepositoryDirectory()
    {
       return factory.create(buildManager.getLocalRepositoryDirectory()).reify(DirectoryResource.class);
-   }
-
-   @Override
-   public boolean isBuildable()
-   {
-      return isModelValid();
-   }
-
-   @Override
-   public Iterable<LogRecord> getBuildMessages()
-   {
-      List<LogRecord> messages = new ArrayList<>();
-      try
-      {
-         ProjectBuildingResult result = getProjectBuildingResult();
-         if (!result.getProblems().isEmpty())
-            messages.add(new LogRecord(Level.SEVERE, new ProjectBuildingException(Collections.singletonList(result))
-                     .getMessage()));
-      }
-      catch (ProjectBuildingException e)
-      {
-         messages.add(new LogRecord(Level.SEVERE, e.getMessage()));
-      }
-      return messages;
    }
 
    @Override

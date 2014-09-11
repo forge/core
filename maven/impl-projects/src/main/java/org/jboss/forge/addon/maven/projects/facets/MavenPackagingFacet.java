@@ -7,6 +7,7 @@
 package org.jboss.forge.addon.maven.projects.facets;
 
 import java.io.File;
+import java.util.Collections;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -14,6 +15,8 @@ import javax.inject.Inject;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingResult;
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
@@ -21,6 +24,9 @@ import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.maven.projects.MavenFacetImpl;
 import org.jboss.forge.addon.maven.projects.MavenProjectBuilder;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.building.BuildMessage.Severity;
+import org.jboss.forge.addon.projects.building.BuildResult;
+import org.jboss.forge.addon.projects.building.BuildResultBuilder;
 import org.jboss.forge.addon.projects.building.ProjectBuilder;
 import org.jboss.forge.addon.projects.events.PackagingChanged;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
@@ -92,7 +98,7 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    @Override
    public Resource<?> getFinalArtifact()
    {
-      MavenFacetImpl mvn = (MavenFacetImpl) getFaceted().getFacet(MavenFacet.class);
+      MavenFacetImpl mvn = getFaceted().getFacet(MavenFacetImpl.class);
 
       try
       {
@@ -165,5 +171,27 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
       }
       pom.getBuild().setFinalName(finalName);
       mavenFacet.setModel(pom);
+   }
+
+   @Override
+   public BuildResult getBuildResult()
+   {
+      BuildResultBuilder resultBuilder = BuildResultBuilder.create();
+      MavenFacetImpl mvn = getFaceted().getFacet(MavenFacetImpl.class);
+      resultBuilder.status(mvn.isModelValid());
+      try
+      {
+         ProjectBuildingResult result = mvn.getProjectBuildingResult();
+         if (!result.getProblems().isEmpty())
+         {
+            String errorMessage = new ProjectBuildingException(Collections.singletonList(result)).getMessage();
+            resultBuilder.addMessage(Severity.ERROR, errorMessage);
+         }
+      }
+      catch (ProjectBuildingException e)
+      {
+         resultBuilder.addMessage(Severity.ERROR, e.getMessage());
+      }
+      return resultBuilder.build();
    }
 }
