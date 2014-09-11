@@ -61,7 +61,7 @@ public interface PackagingFacet extends ProvidedProjectFacet
    void setFinalName(String finalName);
 
    /**
-    * Returns the current {@link BuildResult} of this project.
+    * Returns the current {@link BuildResult} of this project. Runs a build if it was not executed previously.
     * <p/>
     * It is not affected by the builds executed in {@link #executeBuild(String...)}
     */
