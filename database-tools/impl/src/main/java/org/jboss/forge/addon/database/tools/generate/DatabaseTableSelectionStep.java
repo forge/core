@@ -1,5 +1,6 @@
 package org.jboss.forge.addon.database.tools.generate;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -7,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -39,14 +42,30 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.util.Lists;
 
+/**
+ * In this step, the user can choose the database tables
+ */
 public class DatabaseTableSelectionStep implements UIWizardStep
 {
+   private static final Logger logger = Logger.getLogger(DatabaseTableSelectionStep.class.getName());
 
    @Inject
    @WithAttributes(
             label = "Database Tables",
-            description = "The database tables for which to generate entities. Use '*' to select all tables", required = true)
+            description = "The database tables for which to generate entities. Use '*' to select all tables")
    private UISelectMany<String> databaseTables;
+
+   @Inject
+   private GenerateEntitiesCommandDescriptor descriptor;
+
+   @Inject
+   private HibernateToolsHelper helper;
+
+   private JDBCMetaDataConfiguration jmdc;
+
+   private List<String> tables;
+   private Properties currentConnectionProperties;
+   private Throwable exception;
 
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
@@ -67,17 +86,6 @@ public class DatabaseTableSelectionStep implements UIWizardStep
       return true;
    }
 
-   @Inject
-   private GenerateEntitiesCommandDescriptor descriptor;
-
-   @Inject
-   private HibernateToolsHelper helper;
-
-   private JDBCMetaDataConfiguration jmdc;
-
-   private List<String> tables;
-   private Properties currentConnectionProperties;
-
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
@@ -88,17 +96,30 @@ public class DatabaseTableSelectionStep implements UIWizardStep
          {
             if (!descriptor.getConnectionProperties().equals(currentConnectionProperties))
             {
+               exception = null;
                currentConnectionProperties = descriptor.getConnectionProperties();
                jmdc = new JDBCMetaDataConfiguration();
                jmdc.setProperties(descriptor.getConnectionProperties());
                jmdc.setReverseEngineeringStrategy(createReverseEngineeringStrategy());
-               helper.buildMappings(descriptor.getUrls(), descriptor.getDriverClass(), jmdc);
-               Iterator<Table> iterator = jmdc.getTableMappings();
-               tables = new ArrayList<>();
-               while (iterator.hasNext())
+               try
                {
-                  Table table = iterator.next();
-                  tables.add(table.getName());
+                  helper.buildMappings(descriptor.getUrls(), descriptor.getDriverClass(), jmdc);
+                  Iterator<Table> iterator = jmdc.getTableMappings();
+                  tables = new ArrayList<>();
+                  while (iterator.hasNext())
+                  {
+                     Table table = iterator.next();
+                     tables.add(table.getName());
+                  }
+               }
+               catch (Exception e)
+               {
+                  logger.log(Level.SEVERE, "Error while fetching database tables", e);
+                  exception = e;
+                  while (exception.getCause() != null)
+                  {
+                     exception = exception.getCause();
+                  }
                }
             }
             return tables;
@@ -117,6 +138,31 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    @Override
    public void validate(UIValidationContext context)
    {
+      if (exception != null)
+      {
+         if (exception instanceof UnknownHostException)
+         {
+            context.addValidationError(databaseTables, "Unknown host: " + exception.getMessage());
+         }
+         else
+         {
+            context.addValidationError(databaseTables, exception.getMessage());
+         }
+      }
+      List<String> valueChoices = Lists.toList(databaseTables.getValueChoices());
+      if (valueChoices == null || valueChoices.isEmpty())
+      {
+         context.addValidationWarning(databaseTables,
+                  "No database tables were found in the provided connection. Make sure you have at least one table in the database");
+      }
+      else
+      {
+         List<String> list = Lists.toList(databaseTables.getValue());
+         if (list == null || list.isEmpty())
+         {
+            context.addValidationError(databaseTables, "At least one database table must be specified");
+         }
+      }
    }
 
    private boolean isSelected(Collection<String> selection, POJOClass element)
