@@ -331,7 +331,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    }
 
    @Override
-   public boolean isValid()
+   public boolean isBuildable()
    {
       return isModelValid();
    }

@@ -47,7 +47,7 @@ public class ProjectBuildStatusListener extends AbstractCommandExecutionListener
          if (project != null && project.hasFacet(BuildStatusFacet.class))
          {
             BuildStatusFacet facet = project.getFacet(BuildStatusFacet.class);
-            if (!facet.isValid())
+            if (!facet.isBuildable())
             {
                UIOutput output = uiContext.getProvider().getOutput();
                PrintStream err = output.err();

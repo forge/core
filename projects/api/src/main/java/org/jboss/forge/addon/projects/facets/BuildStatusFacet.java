@@ -13,7 +13,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 
 /**
- * A Facet to check {@link Project} status
+ * A Facet to check the {@link Project} build status
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
@@ -22,7 +22,7 @@ public interface BuildStatusFacet extends ProjectFacet
    /**
     * Returns if the project model is buildable
     */
-   boolean isValid();
+   boolean isBuildable();
 
    /**
     * Returns the build messages (if any), never null
