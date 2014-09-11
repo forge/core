@@ -149,8 +149,8 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
                   try (Connection connection = driver.connect(jdbcUrl.getValue(), properties))
                   {
                      if (connection == null)
-                        throw new RuntimeException("Cannot connect to JDBC URL [" + jdbcUrl.getValue()
-                                 + "] with driver [" + driverClass.getValue().getName() + "].");
+                        throw new RuntimeException("JDBC URL [" + jdbcUrl.getValue()
+                                 + "] is not compatible with the selected driver [" + driverClass.getValue().getName() + "].");
 
                      context.addValidationInformation(verifyConnection, "Connection successful.");
                   }
