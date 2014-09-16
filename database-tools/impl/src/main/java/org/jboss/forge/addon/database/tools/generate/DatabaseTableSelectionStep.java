@@ -149,19 +149,10 @@ public class DatabaseTableSelectionStep implements UIWizardStep
             context.addValidationError(databaseTables, exception.getMessage());
          }
       }
-      List<String> valueChoices = Lists.toList(databaseTables.getValueChoices());
-      if (valueChoices == null || valueChoices.isEmpty())
+      List<String> list = Lists.toList(databaseTables.getValue());
+      if (list == null || list.isEmpty())
       {
-         context.addValidationWarning(databaseTables,
-                  "No database tables were found in the provided connection. Make sure you have at least one table in the database");
-      }
-      else
-      {
-         List<String> list = Lists.toList(databaseTables.getValue());
-         if (list == null || list.isEmpty())
-         {
-            context.addValidationError(databaseTables, "At least one database table must be specified");
-         }
+         context.addValidationError(databaseTables, "At least one database table must be specified");
       }
    }
 
