@@ -92,7 +92,9 @@ public class MavenBuildManager
          }
          catch (ProjectBuildingException pbe)
          {
-            result = pbe.getResults().get(0);
+            List<ProjectBuildingResult> results = pbe.getResults();
+            if (results != null && results.size() > 0)
+               result = results.get(0);
             throw pbe;
          }
          finally

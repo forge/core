@@ -28,6 +28,8 @@ import javax.inject.Inject;
 
 import org.apache.maven.cli.MavenCli;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.building.ModelProblem;
+import org.apache.maven.model.building.ModelProblem.Severity;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -333,7 +335,14 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    {
       try
       {
-         return getProjectBuildingResult().getProblems().isEmpty();
+         boolean valid = true;
+         List<ModelProblem> problems = getProjectBuildingResult().getProblems();
+         for (ModelProblem problem : problems)
+         {
+            // It is valid only if all messages are just warnings
+            valid &= Severity.WARNING.equals(problem.getSeverity());
+         }
+         return valid;
       }
       catch (ProjectBuildingException e)
       {
