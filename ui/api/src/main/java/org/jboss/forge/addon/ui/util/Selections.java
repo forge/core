@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jboss.forge.addon.ui.context.UISelection;
+import org.jboss.forge.furnace.util.Lists;
 
 /**
  * Possible {@link UISelection} implementations
@@ -27,6 +28,26 @@ public final class Selections
    public static <SELECTIONTYPE> UISelection<SELECTIONTYPE> from(SELECTIONTYPE... type)
    {
       if (type == null || type.length == 0 || type[0] == null)
+      {
+         return emptySelection();
+      }
+      else
+      {
+         if (type.length == 1 && type[0] instanceof Iterable)
+         {
+            return new SelectionImpl((Iterable<SELECTIONTYPE>) type[0]);
+         }
+         else
+         {
+            return new SelectionImpl(type);
+         }
+      }
+   }
+
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   public static <SELECTIONTYPE> UISelection<SELECTIONTYPE> from(Iterable<SELECTIONTYPE> type)
+   {
+      if (type == null || Lists.toList(type).isEmpty())
       {
          return emptySelection();
       }
@@ -51,6 +72,14 @@ public final class Selections
       {
          if (type != null)
             this.selection = Arrays.asList(type);
+         else
+            selection = Collections.emptyList();
+      }
+
+      public SelectionImpl(Iterable<SELECTIONTYPE> type)
+      {
+         if (type != null)
+            this.selection = Lists.toList(type);
          else
             selection = Collections.emptyList();
       }
