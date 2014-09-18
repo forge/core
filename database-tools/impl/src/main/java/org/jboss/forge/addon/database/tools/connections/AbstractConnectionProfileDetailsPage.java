@@ -3,6 +3,7 @@ package org.jboss.forge.addon.database.tools.connections;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -150,7 +151,8 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
                   {
                      if (connection == null)
                         throw new RuntimeException("JDBC URL [" + jdbcUrl.getValue()
-                                 + "] is not compatible with the selected driver [" + driverClass.getValue().getName() + "].");
+                                 + "] is not compatible with the selected driver [" + driverClass.getValue().getName()
+                                 + "].");
 
                      context.addValidationInformation(verifyConnection, "Connection successful.");
                   }
@@ -162,8 +164,24 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
                catch (Exception e)
                {
                   log.log(Level.INFO, "Connection failed: " + properties, e);
-                  context.addValidationError(context.getCurrentInputComponent(),
-                           "Could not connect to database: " + e.getMessage());
+                  Throwable exception = e;
+                  while (exception.getCause() != null)
+                  {
+                     exception = exception.getCause();
+                  }
+                  if (exception != null)
+                  {
+                     if (exception instanceof UnknownHostException)
+                     {
+                        context.addValidationError(context.getCurrentInputComponent(),
+                                 "Unknown host: " + exception.getMessage());
+                     }
+                     else
+                     {
+                        context.addValidationError(context.getCurrentInputComponent(),
+                                 "Could not connect to database: " + exception.getMessage());
+                     }
+                  }
                }
             }
          }
