@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.projects;
 
-import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 
@@ -29,12 +29,13 @@ public final class Projects
    /**
     * @return the project if {@link UISelection#isEmpty()} does not return false, null otherwise
     */
-   public static Project getSelectedProject(ProjectFactory projectFactory, UISelection<?> initialSelection)
+   public static Project getSelectedProject(ProjectFactory projectFactory, UISelection<?> selection)
    {
       Project project = null;
-      if (!initialSelection.isEmpty())
+      if (!selection.isEmpty() && selection.get() instanceof Resource)
       {
-         project = projectFactory.findProject((FileResource<?>) initialSelection.get());
+         Resource<?> resource = (Resource<?>) selection.get();
+         project = projectFactory.findProject(resource);
       }
       return project;
    }
@@ -44,10 +45,10 @@ public final class Projects
     */
    public static boolean containsProject(ProjectFactory projectFactory, UIContext context)
    {
-      UISelection<FileResource<?>> initialSelection = context.getInitialSelection();
-      if (!initialSelection.isEmpty())
+      UISelection<?> selection = context.getInitialSelection();
+      if (!selection.isEmpty() && selection.get() instanceof Resource)
       {
-         return projectFactory.containsProject(initialSelection.get());
+         return projectFactory.containsProject((Resource<?>) selection.get());
       }
       return false;
 
