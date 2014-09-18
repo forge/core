@@ -20,6 +20,7 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ShellMessages;
 import org.jboss.forge.addon.shell.ui.ShellContext;
+import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.output.UIMessage.Severity;
 import org.jboss.forge.addon.ui.result.CompositeResult;
@@ -54,7 +55,6 @@ class CommandAdapter implements Command<CommandInvocation>
       return interaction.getController().validate();
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public CommandResult execute(CommandInvocation commandInvocation) throws IOException
    {
@@ -79,23 +79,13 @@ class CommandAdapter implements Command<CommandInvocation>
             commandResult = Results.fail(e.getMessage(), e);
          }
          failure = displayResult(commandResult);
-         Object selection = interaction.getContext().getSelection();
-         if (selection != null)
+         UISelection<?> selection = interaction.getContext().getSelection();
+         if (selection != null && !selection.isEmpty())
          {
-            if (selection instanceof Iterable<?>)
+            Object result = selection.get();
+            if (result instanceof Resource<?>)
             {
-               for (Resource<?> item : (Iterable<Resource<?>>) selection)
-               {
-                  if (item != null)
-                  {
-                     shell.setCurrentResource(item);
-                     break;
-                  }
-               }
-            }
-            else
-            {
-               shell.setCurrentResource((Resource<?>) selection);
+               shell.setCurrentResource((Resource<?>) result);
             }
          }
       }
