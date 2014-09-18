@@ -96,6 +96,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
          {
             if (!descriptor.getConnectionProperties().equals(currentConnectionProperties))
             {
+               tables = new ArrayList<>();
                exception = null;
                currentConnectionProperties = descriptor.getConnectionProperties();
                jmdc = new JDBCMetaDataConfiguration();
@@ -105,7 +106,6 @@ public class DatabaseTableSelectionStep implements UIWizardStep
                {
                   helper.buildMappings(descriptor.getUrls(), descriptor.getDriverClass(), jmdc);
                   Iterator<Table> iterator = jmdc.getTableMappings();
-                  tables = new ArrayList<>();
                   while (iterator.hasNext())
                   {
                      Table table = iterator.next();
