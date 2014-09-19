@@ -1,6 +1,7 @@
 package org.jboss.forge.addon.configuration.ui;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,6 +14,7 @@ import org.jboss.forge.addon.configuration.facets.ConfigurationFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.shell.test.ShellTest;
+import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -25,7 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class ConfigListCommandTest
+public class ConfigCommandTest
 {
    @Deployment
    @Dependencies({
@@ -50,7 +52,7 @@ public class ConfigListCommandTest
 
       return archive;
    }
-   
+
    @Inject
    private Configuration userConfig;
 
@@ -59,7 +61,6 @@ public class ConfigListCommandTest
 
    @Inject
    private ProjectFactory projectFactory;
-
 
    @Before
    public void setUp() throws Exception
@@ -77,6 +78,14 @@ public class ConfigListCommandTest
    }
 
    @Test
+   public void testConfigSetProperty() throws Exception
+   {
+      Assert.assertFalse(test.execute("config-set --key key1 --value userValue1", 5, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertFalse(test.execute("config-list", 5, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertThat(test.getStdOut(), containsString("key1=user: [userValue1]"));
+   }
+
+   @Test
    public void testConfigListInProject() throws Exception
    {
       Project project = projectFactory.createTempProject();
@@ -87,7 +96,31 @@ public class ConfigListCommandTest
       Assert.assertThat(test.getStdOut(), containsString("key2=project: [projectValue2]"));
       Assert.assertThat(test.getStdOut(), containsString("key3=project: [projectValue3]"));
    }
-   
+
+   @Test
+   public void testConfigClear() throws Exception
+   {
+      Assert.assertFalse(test.execute("config-set --key key1 --value userValue1", 5, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertFalse(test.execute("config-list", 5, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertThat(test.getStdOut(), containsString("key1=user: [userValue1]"));
+      test.clearScreen();
+      Assert.assertFalse(test.execute("config-clear --key key1", 5, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertFalse(test.execute("config-list", 5, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertThat(test.getStdOut(), not(containsString("key1=user: [userValue1]")));
+   }
+
+   @Test
+   public void testConfigSetPropertyListInProject() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      test.getShell().setCurrentResource(project.getRoot());
+      test.execute("config-set --key key2 --value projectValue2 --local", 5, TimeUnit.MINUTES);
+      test.execute("config-set --key key3 --value projectValue3 --local", 5, TimeUnit.SECONDS);
+      Assert.assertFalse(test.execute("config-list", 5, TimeUnit.SECONDS) instanceof Failed);
+      Assert.assertThat(test.getStdOut(), containsString("key2=project: [projectValue2]"));
+      Assert.assertThat(test.getStdOut(), containsString("key3=project: [projectValue3]"));
+   }
+
    @Test
    public void testMergedConfigList() throws Exception
    {
@@ -101,7 +134,7 @@ public class ConfigListCommandTest
       Assert.assertThat(test.getStdOut(), containsString("key2=user: [userValue2], project: [projectValue2]"));
       Assert.assertThat(test.getStdOut(), containsString("key3=project: [projectValue3]"));
    }
-   
+
    private void addPropsToUserConfig()
    {
       userConfig.setProperty("key1", "userValue1");
@@ -113,7 +146,7 @@ public class ConfigListCommandTest
       projectConfig.addProperty("key2", "projectValue2");
       projectConfig.addProperty("key3", "projectValue3");
    }
-   
+
    @After
    public void tearDown() throws Exception
    {

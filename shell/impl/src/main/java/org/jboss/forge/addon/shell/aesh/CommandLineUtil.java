@@ -89,7 +89,7 @@ public class CommandLineUtil
          final Object defaultValue = InputComponents.getValueFor(input);
          final boolean isMultiple = input instanceof ManyValued;
          final boolean hasValue = (!InputType.CHECKBOX.equals(InputComponents.getInputType(input)) && !Boolean.class
-                  .isAssignableFrom(input.getValueType()));
+                  .isAssignableFrom(input.getValueType()) && !boolean.class.isAssignableFrom(input.getValueType()));
          try
          {
             OptionBuilder optionBuilder = new OptionBuilder();
