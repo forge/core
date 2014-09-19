@@ -34,8 +34,7 @@ public class AddonListCommandTest
 {
    @Deployment
    @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:text"),
             @AddonDependency(name = "org.jboss.forge.addon:addon-manager"),
             @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness")
    })
@@ -44,9 +43,7 @@ public class AddonListCommandTest
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        // TODO Not sure why projects addon must be included for this to work. Weld bug?
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:text"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:addon-manager"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
@@ -67,7 +64,7 @@ public class AddonListCommandTest
       Result result = test.execute("addon-list", timeoutQuantity, TimeUnit.SECONDS);
       Assert.assertFalse(result instanceof Failed);
       String out = test.getStdOut();
-      Assert.assertThat(out, containsString("org.jboss.forge.addon:maven"));
+      Assert.assertThat(out, containsString("org.jboss.forge.addon:text"));
       Assert.assertThat(out, containsString("org.jboss.forge.addon:addon-manager"));
    }
 
