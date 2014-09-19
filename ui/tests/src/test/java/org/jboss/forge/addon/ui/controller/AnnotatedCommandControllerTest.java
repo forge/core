@@ -132,4 +132,19 @@ public class AnnotatedCommandControllerTest
          Assert.assertFalse(controller.isEnabled());
       }
    }
+
+   @Test
+   public void testBooleanCommand() throws Exception
+   {
+      try (CommandController controller = testHarness.createCommandController("with-boolean-option"))
+      {
+         controller.initialize();
+         Assert.assertEquals(Boolean.FALSE, controller.getValueFor("value"));
+         controller.setValueFor("value", "true");
+         Assert.assertTrue(controller.isValid());
+         Result result = controller.execute();
+         Assert.assertEquals("true", result.getMessage());
+      }
+   }
+
 }

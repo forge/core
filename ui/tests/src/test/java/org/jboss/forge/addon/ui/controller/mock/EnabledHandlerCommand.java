@@ -8,11 +8,14 @@
 package org.jboss.forge.addon.ui.controller.mock;
 
 import org.jboss.forge.addon.ui.annotation.Command;
+import org.jboss.forge.addon.ui.annotation.Option;
 import org.jboss.forge.addon.ui.annotation.predicate.DisabledPredicate;
 import org.jboss.forge.addon.ui.annotation.predicate.EnabledPredicate;
 import org.jboss.forge.addon.ui.annotation.predicate.GUIEnabledPredicate;
 import org.jboss.forge.addon.ui.annotation.predicate.NonGUIEnabledPredicate;
 import org.jboss.forge.addon.ui.output.UIOutput;
+import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.result.Results;
 
 /**
  * 
@@ -45,4 +48,9 @@ public class EnabledHandlerCommand
       output.out().println("gui executed!");
    }
 
+   @Command(value = "with-boolean-option")
+   public Result withBooleanOption(@Option(value = "value", required = true) boolean value)
+   {
+      return Results.success("" + value);
+   }
 }
