@@ -27,12 +27,15 @@ import javax.inject.Inject;
 import org.jboss.aesh.console.Prompt;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
+import org.jboss.aesh.terminal.TerminalSize;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.CommandNotFoundListener;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ShellFactory;
+import org.jboss.forge.addon.shell.aesh.ForgeTerminal;
+import org.jboss.forge.addon.shell.spi.Terminal;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.ui.command.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
@@ -167,11 +170,43 @@ public class RunCommand extends AbstractShellCommand
 
                   PrintStream stdout = new UncloseablePrintStream(output.out());
                   PrintStream stderr = new UncloseablePrintStream(output.err());
+                  
+                  Shell currentShell = (Shell) uiContext.getProvider();
+                  final TerminalSize terminalSize = currentShell.getConsole().getShell().getSize();
+                  ForgeTerminal terminal = new ForgeTerminal(
+                           new Terminal()
+                           {
+
+                              @Override
+                              public void close() throws IOException
+                              {
+
+                              }
+
+                              @Override
+                              public void initialize()
+                              {
+
+                              }
+
+                              @Override
+                              public int getWidth()
+                              {
+                                 return terminalSize.getWidth();
+                              }
+
+                              @Override
+                              public int getHeight()
+                              {
+                                 return terminalSize.getHeight();
+                              }
+                           });
 
                   Settings settings = new SettingsBuilder()
                            .inputStream(new PipedInputStream(stdin))
                            .outputStream(stdout)
                            .outputStreamError(stderr)
+                           .terminal(terminal)
                            .create();
 
                   try (Shell scriptShell = shellFactory.createShell(currentResource, settings))
