@@ -47,7 +47,7 @@ public class ConverterFactoryImpl implements ConverterFactory
    }
 
    @Override
-   @SuppressWarnings({ "unchecked" })
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    public <S, T> Converter<S, T> getConverter(Class<S> source, Class<T> target)
    {
       Converter<S, T> result = null;
@@ -77,15 +77,21 @@ public class ConverterFactoryImpl implements ConverterFactory
          }
          else
          {
+            Class<?> targetType = target;
+            if (target.isPrimitive())
+            {
+               targetType = primitiveToWrapperMap.get(target);
+            }
             try
             {
-               result = new MethodConverter<>(source, target, null, target.getMethod("valueOf", source));
+               result = (Converter<S, T>) new MethodConverter<>(source, targetType, null, targetType.getMethod(
+                        "valueOf", source));
             }
             catch (NoSuchMethodException noValueOf)
             {
                try
                {
-                  result = new ConstructorConverter<>(source, target, target.getConstructor(source));
+                  result = new ConstructorConverter(source, targetType, targetType.getConstructor(source));
                }
                catch (NoSuchMethodException noConstructor)
                {

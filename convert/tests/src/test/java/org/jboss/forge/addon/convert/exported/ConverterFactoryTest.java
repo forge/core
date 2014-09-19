@@ -63,4 +63,12 @@ public class ConverterFactoryTest
       Converter<Boolean, Boolean> converter = converterFactory.getConverter(Boolean.class, boolean.class);
       Assert.assertEquals(Boolean.TRUE, converter.convert(Boolean.TRUE));
    }
+
+   @Test
+   public void testPrimitiveConversionFromString()
+   {
+      Converter<String, Boolean> converter = converterFactory.getConverter(String.class, boolean.class);
+      Assert.assertEquals(Boolean.TRUE, converter.convert("true"));
+   }
+
 }
