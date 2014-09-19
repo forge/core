@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.ui.command.ValidateRequiredCommand;
 import org.jboss.forge.addon.ui.controller.mock.ExampleCommand;
 import org.jboss.forge.addon.ui.controller.mock.ExampleNoUICommand;
 import org.jboss.forge.addon.ui.controller.mock.FlowExampleStep;
@@ -46,6 +47,7 @@ public class CommandControllerTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addClasses(ExampleCommand.class, ExampleNoUICommand.class, FlowExampleStep.class,
+                        ValidateRequiredCommand.class,
                         FlowExampleWizard.class, MockPreStepsCommand.class)
                .addPackage(MockUIRuntime.class.getPackage())
                .addBeansXML()
@@ -70,6 +72,9 @@ public class CommandControllerTest
 
    @Inject
    private MockPreStepsCommand preStepsCommand;
+
+   @Inject
+   private ValidateRequiredCommand validateRequiredCommand;
 
    @Test
    public void testInjection() throws Exception
@@ -153,6 +158,20 @@ public class CommandControllerTest
          wizardController.setValueFor("name", "George Gastaldi");
          Assert.assertFalse(wizardController.canMoveToNextStep());
          Assert.assertTrue(wizardController.canExecute());
+      }
+   }
+
+   @Test
+   public void testControllerShouldNotCallCommandValidateWhenRequiredInputsAreMissing() throws Exception
+   {
+      try (CommandController controller = controllerFactory.createController(new MockUIContext(), new MockUIRuntime(),
+               validateRequiredCommand))
+      {
+         controller.initialize();
+         Assert.assertFalse(controller.isValid());
+         controller.setValueFor("input", "Any value");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
       }
    }
 }

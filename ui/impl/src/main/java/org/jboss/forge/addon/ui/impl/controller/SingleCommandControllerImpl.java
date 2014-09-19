@@ -152,19 +152,28 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
          inputComponent.validate(validationContext);
       }
       validationContext.setCurrentInputComponent(null);
-      initialCommand.validate(validationContext);
+      if (!containsErrorMessage(validationContext.getMessages()))
+      {
+         initialCommand.validate(validationContext);
+      }
       return validationContext.getMessages();
    }
 
    @Override
    public boolean isValid()
    {
-      for (UIMessage message : validate())
+      List<UIMessage> messages = validate();
+      return !containsErrorMessage(messages);
+   }
+
+   private boolean containsErrorMessage(List<UIMessage> messages)
+   {
+      for (UIMessage message : messages)
       {
          if (message.getSeverity() == Severity.ERROR)
-            return false;
+            return true;
       }
-      return true;
+      return false;
    }
 
    @Override
