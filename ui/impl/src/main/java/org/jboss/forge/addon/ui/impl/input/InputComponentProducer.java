@@ -203,7 +203,7 @@ public class InputComponentProducer implements InputComponentFactory
    {
       UIInputImpl<T> input = new UIInputImpl<>(name, shortName, valueType);
       configureRequiredFacets(input);
-      if (Boolean.class.equals(valueType))
+      if (Boolean.class.equals(valueType) || boolean.class.equals(valueType))
          ((UIInput<Boolean>) input).setDefaultValue(Boolean.FALSE);
       return input;
    }
@@ -303,7 +303,7 @@ public class InputComponentProducer implements InputComponentFactory
          Class<? extends Enum> enumClass = valueType.asSubclass(Enum.class);
          choices = EnumSet.allOf(enumClass);
       }
-      else if (Boolean.class == valueType)
+      else if (Boolean.class == valueType || boolean.class == valueType)
       {
          choices = Arrays.asList(Boolean.TRUE, Boolean.FALSE);
       }

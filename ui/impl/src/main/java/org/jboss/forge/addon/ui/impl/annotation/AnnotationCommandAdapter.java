@@ -144,7 +144,7 @@ public class AnnotationCommandAdapter implements UICommand
          else
          {
             Option option = null;
-            for (Annotation annotation : method.getParameterAnnotations()[idx])
+            for (Annotation annotation : method.getParameterAnnotations()[args.size()])
             {
                if (annotation instanceof Option)
                {
