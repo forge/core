@@ -40,10 +40,12 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 class SingleCommandControllerImpl extends AbstractCommandController implements SingleCommandController
 {
    private UIBuilderImpl uiBuilder;
+   private ConverterFactory converterFactory;
 
    SingleCommandControllerImpl(AddonRegistry addonRegistry, UIRuntime runtime, UICommand command, UIContext context)
    {
       super(addonRegistry, runtime, command, context);
+      this.converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
    }
 
    @Override
@@ -190,6 +192,6 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
 
    protected ConverterFactory getConverterFactory()
    {
-      return addonRegistry.getServices(ConverterFactory.class).get();
+      return converterFactory;
    }
 }
