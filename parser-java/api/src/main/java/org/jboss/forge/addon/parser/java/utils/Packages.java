@@ -10,7 +10,10 @@ package org.jboss.forge.addon.parser.java.utils;
 import java.io.File;
 
 /**
+ * Utility class for Package operations
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  *
  */
 public class Packages
@@ -61,12 +64,38 @@ public class Packages
       String[] tokens = packageName.split("[.]");
       for (String token : tokens)
       {
+         if (result.length() > 0 && result.charAt(result.length() - 1) != '.')
+         {
+            result.append('.');
+         }
          if (JLSValidator.isReservedWord(token))
          {
-            token += "_";
+            result.append(token).append('_');
          }
-         result.append(token).append(".");
+         else if (isNumber(token))
+         {
+            // skip tokens as numbers and remove the appended '.' if exist
+            if (result.length() > 0)
+               result.deleteCharAt(result.length() - 1);
+         }
+         else
+         {
+            result.append(token);
+         }
       }
-      return result.substring(0, result.length() - 1);
+      return result.toString();
+   }
+
+   private static boolean isNumber(String token)
+   {
+      try
+      {
+         Integer.parseInt(token);
+         return true;
+      }
+      catch (NumberFormatException nfe)
+      {
+         return false;
+      }
    }
 }
