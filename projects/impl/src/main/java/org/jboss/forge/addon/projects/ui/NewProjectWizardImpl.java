@@ -388,7 +388,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
             MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
             metadataFacet.setProjectName(named.getValue());
             metadataFacet.setProjectVersion(version.getValue());
-            metadataFacet.setTopLevelPackage(topLevelPackage.getValue());
+            metadataFacet.setProjectGroupName(topLevelPackage.getValue());
 
             PackagingFacet packagingFacet = project.getFacet(PackagingFacet.class);
             if (finalName.hasValue())

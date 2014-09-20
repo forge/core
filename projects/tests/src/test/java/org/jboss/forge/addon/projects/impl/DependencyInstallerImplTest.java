@@ -84,7 +84,7 @@ public class DependencyInstallerImplTest
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("test");
       metadataFacet.setProjectVersion("1.0");
-      metadataFacet.setTopLevelPackage("org.test");
+      metadataFacet.setProjectGroupName("org.test");
       Assert.assertNotNull("Could not create test project", project);
    }
 

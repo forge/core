@@ -87,7 +87,7 @@ public class MavenMultiModuleProviderTest
       
       MetadataFacet metadata = parentProject.getFacet(MetadataFacet.class);
       metadata.setProjectName("parent");
-      metadata.setTopLevelPackage("com.project.parent");
+      metadata.setProjectGroupName("com.project.parent");
 
       DirectoryResource subProjectDir = parentProject.getRoot().reify(DirectoryResource.class).getChildDirectory("sub");
       projectFactory.createProject(subProjectDir, locator);
@@ -109,7 +109,7 @@ public class MavenMultiModuleProviderTest
 
       MetadataFacet metadata = parentProject.getFacet(MetadataFacet.class);
       metadata.setProjectName("parent");
-      metadata.setTopLevelPackage("com.project.parent");
+      metadata.setProjectGroupName("com.project.parent");
       parentProject.getFacet(PackagingFacet.class).setPackagingType("pom");
 
       DirectoryResource intermediateProjectDir = parentProject.getRoot().reify(DirectoryResource.class)
