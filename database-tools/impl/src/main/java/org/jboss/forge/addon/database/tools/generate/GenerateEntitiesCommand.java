@@ -103,8 +103,7 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
             String connectionProfileName = connectionProfile.getValue();
             if (Strings.isNullOrEmpty(connectionProfileName))
                return false;
-            ConnectionProfile profile = profiles.get(connectionProfileName);
-            return !profile.isSavePassword();
+            return !profiles.get(connectionProfileName).isSavePassword();
          }
       });
       builder.add(targetPackage).add(connectionProfile).add(connectionProfilePassword);
