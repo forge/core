@@ -1,14 +1,12 @@
 package org.jboss.forge.addon.database.tools.connections;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.configuration.Configuration;
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManager;
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
@@ -23,6 +21,7 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
    private final static String CONFIG_KEY_USER = "user";
    private final static String CONFIG_KEY_PASSWORD = "pass";
    private final static String CONFIG_KEY_SAVE_PASSWORD = "save-password";
+   private final static String CONFIG_KEY_ENCRYPTED_PASSWORD = "encrypted-password";
 
    @Inject
    private Configuration config;
@@ -30,7 +29,7 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
    @Override
    public Map<String, ConnectionProfile> loadConnectionProfiles()
    {
-      HashMap<String, ConnectionProfile> result = new HashMap<String, ConnectionProfile>();
+      Map<String, ConnectionProfile> result = new LinkedHashMap<String, ConnectionProfile>();
       String connectionProfiles = config.getString("connection-profiles");
       if (connectionProfiles != null)
       {
@@ -47,8 +46,13 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
             descriptor.setPath(child.getAttribute(CONFIG_KEY_PATH_TO_DRIVER));
             descriptor.setUrl(child.getAttribute(CONFIG_KEY_URL));
             descriptor.setUser(child.getAttribute(CONFIG_KEY_USER));
-            descriptor.setPassword(child.getAttribute(CONFIG_KEY_PASSWORD));
             descriptor.setSavePassword(Boolean.parseBoolean(child.getAttribute(CONFIG_KEY_SAVE_PASSWORD)));
+            String password = child.getAttribute(CONFIG_KEY_PASSWORD);
+            if (Boolean.parseBoolean(child.getAttribute(CONFIG_KEY_ENCRYPTED_PASSWORD)))
+            {
+               password = decodePassword(password);
+            }
+            descriptor.setPassword(password);
             result.put(descriptor.getName(), descriptor);
          }
       }
@@ -71,7 +75,9 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
          child.attribute(CONFIG_KEY_SAVE_PASSWORD, descriptor.isSavePassword());
          if (descriptor.isSavePassword() && !Strings.isNullOrEmpty(descriptor.getPassword()))
          {
-            child.attribute(CONFIG_KEY_PASSWORD, descriptor.getPassword());
+            String encryptedPassword = encodePassword(descriptor.getPassword());
+            child.attribute(CONFIG_KEY_PASSWORD, encryptedPassword);
+            child.attribute(CONFIG_KEY_ENCRYPTED_PASSWORD, "true");
          }
       }
       if (root.getChildren().isEmpty())
@@ -84,4 +90,36 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
       }
    }
 
+   // weak encryption just to avoid plain text passwords
+   // Copied from com.intellij.openapi.util.PasswordUtil.java
+   protected String encodePassword(String password)
+   {
+      StringBuilder result = new StringBuilder();
+      if (password != null)
+      {
+         for (int i = 0; i < password.length(); i++)
+         {
+            int c = password.charAt(i);
+            c ^= 0xdfaa;
+            result.append(Integer.toHexString(c));
+         }
+      }
+      return result.toString();
+   }
+
+   protected String decodePassword(String password)
+   {
+      StringBuilder result = new StringBuilder();
+      if (password != null)
+      {
+         for (int i = 0; i < password.length(); i += 4)
+         {
+            String s = password.substring(i, i + 4);
+            int c = Integer.parseInt(s, 16);
+            c ^= 0xdfaa;
+            result.append((char) c);
+         }
+      }
+      return result.toString();
+   }
 }
