@@ -39,12 +39,14 @@ import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.versions.SingleVersion;
+import org.jboss.forge.furnace.versions.Version;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -55,8 +57,6 @@ import org.junit.runner.RunWith;
 public class AddonProjectConfiguratorTest
 {
    private static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
-
-   private static final String FURNACE_VERSION = "2.2.0.Final";
 
    @Deployment
    @Dependencies({
@@ -81,25 +81,28 @@ public class AddonProjectConfiguratorTest
    @Inject
    private ProjectFactory projectFactory;
 
+   @Inject
+   private Furnace furnace;
+
    @Test
    public void testComplexAddonProject() throws FileNotFoundException, FacetNotFoundException
    {
       Project project = projectFactory.createTempProject();
-      project.getRootDirectory().deleteOnExit();
+      project.getRoot().reify(DirectoryResource.class).deleteOnExit();
 
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
       metadataFacet.setProjectGroupName("com.acme.testproject");
 
-      SingleVersion forgeVersion = new SingleVersion(FURNACE_VERSION);
+      Version forgeVersion = furnace.getVersion();
       configurator.setupComplexAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
       Assert.assertTrue(project.hasFacet(AddonParentFacet.class));
       Assert.assertTrue(project.hasFacet(JavaCompilerFacet.class));
       Assert.assertFalse(project.hasFacet(JavaSourceFacet.class));
       Assert.assertFalse(project.hasFacet(CDIFacet.class));
       Assert.assertFalse(project.hasFacet(ResourcesFacet.class));
-      DirectoryResource projectRoot = project.getRootDirectory();
+      Resource<?> projectRoot = project.getRoot();
 
       Assert.assertTrue("ADDON module is missing", projectRoot.getChild("addon").exists());
       Assert.assertTrue("API module is missing", projectRoot.getChild("api").exists());
@@ -107,11 +110,11 @@ public class AddonProjectConfiguratorTest
       Assert.assertTrue("SPI module is missing", projectRoot.getChild("spi").exists());
       Assert.assertTrue("TESTS module is missing", projectRoot.getChild("tests").exists());
 
-      Project addonProject = projectFactory.findProject(projectRoot.getChildDirectory("addon"));
-      Project apiProject = projectFactory.findProject(projectRoot.getChildDirectory("api"));
-      Project implProject = projectFactory.findProject(projectRoot.getChildDirectory("impl"));
-      Project spiProject = projectFactory.findProject(projectRoot.getChildDirectory("spi"));
-      Project testsProject = projectFactory.findProject(projectRoot.getChildDirectory("tests"));
+      Project addonProject = projectFactory.findProject(projectRoot.getChild("addon"));
+      Project apiProject = projectFactory.findProject(projectRoot.getChild("api"));
+      Project implProject = projectFactory.findProject(projectRoot.getChild("impl"));
+      Project spiProject = projectFactory.findProject(projectRoot.getChild("spi"));
+      Project testsProject = projectFactory.findProject(projectRoot.getChild("tests"));
 
       Assert.assertTrue(project.hasFacet(ForgeBOMFacet.class));
 
@@ -332,28 +335,27 @@ public class AddonProjectConfiguratorTest
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
-      Assert.assertEquals(FURNACE_VERSION, testsProject.getFacet(DependencyFacet.class).getEffectiveDependency(
+      Assert.assertEquals(forgeVersion.toString(), testsProject.getFacet(DependencyFacet.class).getEffectiveDependency(
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY).getCoordinate().getVersion());
       Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectDependency(
                DependencyBuilder.create("javax.annotation:jsr250-api:1.0")));
 
       Assert.assertTrue(project.getRoot().getChild("README.asciidoc").exists());
       project.getRoot().delete(true);
-      project.getRootDirectory().deleteOnExit();
+      project.getRoot().reify(DirectoryResource.class).deleteOnExit();
    }
 
    @Test
    public void testSimpleAddonProject() throws FileNotFoundException, FacetNotFoundException
    {
       Project project = projectFactory.createTempProject();
-      project.getRootDirectory().deleteOnExit();
-
+      project.getRoot().reify(DirectoryResource.class).deleteOnExit();
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
       metadataFacet.setProjectGroupName("com.acme.testproject");
 
-      SingleVersion forgeVersion = new SingleVersion(FURNACE_VERSION);
+      Version forgeVersion = furnace.getVersion();
       configurator.setupSimpleAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
 
       Assert.assertTrue(project.hasFacet(ForgeBOMFacet.class));
@@ -396,7 +398,7 @@ public class AddonProjectConfiguratorTest
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY).getCoordinate().getVersion());
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
-      Assert.assertEquals(FURNACE_VERSION, project.getFacet(DependencyFacet.class).getEffectiveDependency(
+      Assert.assertEquals(forgeVersion.toString(), project.getFacet(DependencyFacet.class).getEffectiveDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY).getCoordinate().getVersion());
       Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
@@ -405,7 +407,6 @@ public class AddonProjectConfiguratorTest
 
       Assert.assertTrue(project.getRoot().getChild("README.asciidoc").exists());
       project.getRoot().delete(true);
-      project.getRootDirectory().deleteOnExit();
    }
 
    @Test
@@ -413,23 +414,23 @@ public class AddonProjectConfiguratorTest
    public void testDependencyResolution() throws FileNotFoundException, FacetNotFoundException
    {
       Project project = projectFactory.createTempProject();
-      project.getRootDirectory().deleteOnExit();
+      project.getRoot().reify(DirectoryResource.class).deleteOnExit();
 
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       metadataFacet.setProjectName("testproject");
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
       metadataFacet.setProjectGroupName("com.acme.testproject");
 
-      SingleVersion forgeVersion = new SingleVersion("2.0.0.Alpha3");
+      Version forgeVersion = furnace.getVersion();
       configurator.setupComplexAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
 
-      DirectoryResource projectRoot = project.getRootDirectory();
+      Resource<?> projectRoot = project.getRoot();
 
       Assert.assertTrue("SPI module is missing", projectRoot.getChild("spi").exists());
       Assert.assertTrue("TESTS module is missing", projectRoot.getChild("tests").exists());
 
-      Project spiProject = projectFactory.findProject(projectRoot.getChildDirectory("spi"));
-      Project testsProject = projectFactory.findProject(projectRoot.getChildDirectory("tests"));
+      Project spiProject = projectFactory.findProject(projectRoot.getChild("spi"));
+      Project testsProject = projectFactory.findProject(projectRoot.getChild("tests"));
 
       Dependency spiDependency = DependencyBuilder.create(
                spiProject.getFacet(MetadataFacet.class).getOutputDependency())
