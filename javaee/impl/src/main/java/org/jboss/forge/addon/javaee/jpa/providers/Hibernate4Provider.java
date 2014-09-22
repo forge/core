@@ -7,14 +7,13 @@
 package org.jboss.forge.addon.javaee.jpa.providers;
 
 /**
- * Hibernate provider
+ * Hibernate 4.x provider
  * 
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class HibernateProvider extends AbstractHibernateProvider
+public class Hibernate4Provider extends AbstractHibernateProvider
 {
-   public static final String JPA_PROVIDER = "org.hibernate.ejb.HibernatePersistence";
+   public static final String JPA_PROVIDER = "org.hibernate.jpa.HibernatePersistenceProvider";
 
    @Override
    public String getProvider()
@@ -25,6 +24,6 @@ public class HibernateProvider extends AbstractHibernateProvider
    @Override
    public String getName()
    {
-      return "Hibernate";
+      return "Hibernate 4.x";
    }
 }
