@@ -95,7 +95,7 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
       connectionProfile.setValueChoices(profileNames);
       connectionProfile.setValue("");
       // Enable password input only if profile does not store saved passwords
-      Callable<Boolean> enablePasswordInput = new Callable<Boolean>()
+      connectionProfilePassword.setEnabled(new Callable<Boolean>()
       {
          @Override
          public Boolean call() throws Exception
@@ -106,8 +106,7 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
             ConnectionProfile profile = profiles.get(connectionProfileName);
             return !profile.isSavePassword();
          }
-      };
-      connectionProfilePassword.setEnabled(enablePasswordInput).setRequired(enablePasswordInput);
+      });
       builder.add(targetPackage).add(connectionProfile).add(connectionProfilePassword);
    }
 
@@ -170,15 +169,18 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
       result.setProperty("hibernate.dialect",
                profile.getDialect() == null ? "" : profile.getDialect());
       String profilePassword;
-      // If password is not saved, user must supply it
+      // If password is not saved, user must provide it
       if (profile.isSavePassword())
       {
-         profilePassword = profile.getPassword() == null ? "" : profile.getPassword();
+         profilePassword = profile.getPassword();
       }
       else
       {
          profilePassword = connectionProfilePassword.getValue();
       }
+      if (profilePassword == null) 
+         profilePassword = "";
+         
       result.setProperty("hibernate.connection.password", profilePassword);
       result.setProperty("hibernate.connection.url",
                profile.getUrl() == null ? "" : profile.getUrl());
