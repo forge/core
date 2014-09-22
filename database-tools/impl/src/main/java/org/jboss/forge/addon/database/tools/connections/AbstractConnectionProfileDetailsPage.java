@@ -52,6 +52,10 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
    protected UIInput<String> userPassword;
 
    @Inject
+   @WithAttributes(label = "Save User Password?", description = "Should the connection password be saved?")
+   protected UIInput<Boolean> saveUserPassword;
+
+   @Inject
    @WithAttributes(label = "Hibernate Dialect", description = "The Hibernate dialect to use", required = true)
    protected UISelectOne<HibernateDialect> hibernateDialect;
 
@@ -190,6 +194,7 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
       builder.add(jdbcUrl)
                .add(userName)
                .add(userPassword)
+               .add(saveUserPassword)
                .add(hibernateDialect)
                .add(driverLocation)
                .add(driverClass)

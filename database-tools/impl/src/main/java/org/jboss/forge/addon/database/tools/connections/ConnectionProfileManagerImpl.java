@@ -22,6 +22,7 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
    private final static String CONFIG_KEY_URL = "url";
    private final static String CONFIG_KEY_USER = "user";
    private final static String CONFIG_KEY_PASSWORD = "pass";
+   private final static String CONFIG_KEY_SAVE_PASSWORD = "save-password";
 
    @Inject
    private Configuration config;
@@ -47,6 +48,7 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
             descriptor.setUrl(child.getAttribute(CONFIG_KEY_URL));
             descriptor.setUser(child.getAttribute(CONFIG_KEY_USER));
             descriptor.setPassword(child.getAttribute(CONFIG_KEY_PASSWORD));
+            descriptor.setSavePassword(Boolean.parseBoolean(child.getAttribute(CONFIG_KEY_SAVE_PASSWORD)));
             result.put(descriptor.getName(), descriptor);
          }
       }
@@ -66,7 +68,8 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
          child.attribute(CONFIG_KEY_PATH_TO_DRIVER, descriptor.getPath());
          child.attribute(CONFIG_KEY_URL, descriptor.getUrl());
          child.attribute(CONFIG_KEY_USER, descriptor.getUser());
-         if (!Strings.isNullOrEmpty(descriptor.getPassword()))
+         child.attribute(CONFIG_KEY_SAVE_PASSWORD, descriptor.isSavePassword());
+         if (descriptor.isSavePassword() && !Strings.isNullOrEmpty(descriptor.getPassword()))
          {
             child.attribute(CONFIG_KEY_PASSWORD, descriptor.getPassword());
          }

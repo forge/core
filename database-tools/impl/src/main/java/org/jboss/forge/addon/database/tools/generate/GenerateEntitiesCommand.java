@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 import javax.persistence.Entity;
@@ -45,7 +46,6 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 public class GenerateEntitiesCommand extends AbstractProjectCommand implements
          UIWizard
 {
-
    private static String[] COMMAND_CATEGORY = { "Java EE", "JPA" };
    private static String COMMAND_NAME = "JPA: Generate Entities From Tables";
    private static String COMMAND_DESCRIPTION = "Command to generate Java EE entities from database tables.";
@@ -55,6 +55,9 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
 
    @Inject
    private ResourceFactory resourceFactory;
+
+   @Inject
+   private ConnectionProfileManagerProvider managerProvider;
 
    @Inject
    @WithAttributes(
@@ -70,16 +73,13 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
             description = "Select the database connection profile you want to use")
    private UISelectOne<String> connectionProfile;
 
-   @Override
-   public Metadata getMetadata(UIContext context)
-   {
-      return Metadata.from(super.getMetadata(context), getClass())
-               .name(COMMAND_NAME).description(COMMAND_DESCRIPTION)
-               .category(Categories.create(COMMAND_CATEGORY));
-   }
-
    @Inject
-   private ConnectionProfileManagerProvider managerProvider;
+   @WithAttributes(
+            label = "Connection Profile Password",
+            type = InputType.SECRET,
+            description = "Enter the database connection profile password")
+   private UIInput<String> connectionProfilePassword;
+
    private Map<String, ConnectionProfile> profiles;
 
    @Override
@@ -94,7 +94,21 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
       profileNames.addAll(profiles.keySet());
       connectionProfile.setValueChoices(profileNames);
       connectionProfile.setValue("");
-      builder.add(targetPackage).add(connectionProfile);
+      // Enable password input only if profile does not store saved passwords
+      Callable<Boolean> enablePasswordInput = new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            String connectionProfileName = connectionProfile.getValue();
+            if (Strings.isNullOrEmpty(connectionProfileName))
+               return false;
+            ConnectionProfile profile = profiles.get(connectionProfileName);
+            return !profile.isSavePassword();
+         }
+      };
+      connectionProfilePassword.setEnabled(enablePasswordInput).setRequired(enablePasswordInput);
+      builder.add(targetPackage).add(connectionProfile).add(connectionProfilePassword);
    }
 
    @Inject
@@ -142,7 +156,6 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
          }
          descriptor.setDriverClass(profile.getDriver());
          descriptor.setConnectionProperties(createConnectionProperties(profile));
-
          return Results.navigateTo(DatabaseTableSelectionStep.class);
       }
    }
@@ -156,8 +169,17 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
                profile.getUser() == null ? "" : profile.getUser());
       result.setProperty("hibernate.dialect",
                profile.getDialect() == null ? "" : profile.getDialect());
-      result.setProperty("hibernate.connection.password",
-               profile.getPassword() == null ? "" : profile.getPassword());
+      String profilePassword;
+      // If password is not saved, user must supply it
+      if (profile.isSavePassword())
+      {
+         profilePassword = profile.getPassword() == null ? "" : profile.getPassword();
+      }
+      else
+      {
+         profilePassword = connectionProfilePassword.getValue();
+      }
+      result.setProperty("hibernate.connection.password", profilePassword);
       result.setProperty("hibernate.connection.url",
                profile.getUrl() == null ? "" : profile.getUrl());
       return result;
@@ -206,4 +228,13 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
    {
       return resourceFactory.create(FileResource.class, new File(fullPath));
    }
+
+   @Override
+   public Metadata getMetadata(UIContext context)
+   {
+      return Metadata.from(super.getMetadata(context), getClass())
+               .name(COMMAND_NAME).description(COMMAND_DESCRIPTION)
+               .category(Categories.create(COMMAND_CATEGORY));
+   }
+
 }
