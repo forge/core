@@ -14,6 +14,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class ConfigurationImpl implements Configuration
 {
@@ -35,9 +36,8 @@ public class ConfigurationImpl implements Configuration
          {
             ConfigurationElementBuilder builder = ConfigurationElementBuilder.create()
                      .setName(xpp3Dom.getName()).setText(xpp3Dom.getValue());
-            addChilds(xpp3Dom, builder);
+            addChildren(xpp3Dom, builder);
             configurationElements.add(builder);
-
          }
 
       }
@@ -84,16 +84,20 @@ public class ConfigurationImpl implements Configuration
       return configurationElements;
    }
 
-   private void addChilds(final Xpp3Dom xpp3Dom, final ConfigurationElementBuilder builder)
+   private void addChildren(final Xpp3Dom xpp3Dom, final ConfigurationElementBuilder builder)
    {
       builder.setText(xpp3Dom.getValue());
+      for (String attributeName : xpp3Dom.getAttributeNames())
+      {
+         String attributeValue = xpp3Dom.getAttribute(attributeName);
+         if (attributeValue != null)
+            builder.addAttribute(attributeName, attributeValue);
+      }
 
       for (Xpp3Dom child : xpp3Dom.getChildren())
       {
-
          ConfigurationElementBuilder elementBuilder = builder.addChild(child.getName());
-         addChilds(child, elementBuilder);
-
+         addChildren(child, elementBuilder);
       }
    }
 

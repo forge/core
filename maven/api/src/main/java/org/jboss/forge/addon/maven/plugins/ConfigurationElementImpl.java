@@ -8,7 +8,11 @@
 package org.jboss.forge.addon.maven.plugins;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
@@ -17,7 +21,8 @@ public class ConfigurationElementImpl implements ConfigurationElement
 {
    private String name;
    private String text;
-   private List<PluginElement> children = new ArrayList<PluginElement>();
+   private List<PluginElement> children = new ArrayList<>();
+   private Map<String, String> attributes;
 
    public void setName(String name)
    {
@@ -117,11 +122,33 @@ public class ConfigurationElementImpl implements ConfigurationElement
       return getConfigElementRecursiveByContent(this, name, FilterType.NAME, false);
    }
 
+   Map<String, String> getMutableAttributes()
+   {
+      if (attributes == null)
+         attributes = new HashMap<String, String>();
+      return attributes;
+   }
+
+   @Override
+   public Map<String, String> getAttributes()
+   {
+      if (attributes == null)
+         return Collections.emptyMap();
+      else
+         return Collections.unmodifiableMap(attributes);
+   }
+
    @Override
    public String toString()
    {
       StringBuilder b = new StringBuilder();
-      b.append("<").append(name).append(">");
+      b.append("<").append(name);
+      if (attributes != null)
+         for (Entry<String, String> entry : attributes.entrySet())
+         {
+            b.append(" ").append(entry.getKey()).append("=").append("\"").append(entry.getValue()).append("\"");
+         }
+      b.append(">");
       for (PluginElement child : children)
       {
          b.append(child.toString());

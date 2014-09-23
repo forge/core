@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.maven.plugins;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
@@ -21,6 +22,11 @@ public interface ConfigurationElement extends PluginElement
    boolean hasChildren();
 
    String getText();
+
+   /**
+    * Returns an immutable map of the element attributes
+    */
+   Map<String, String> getAttributes();
 
    List<PluginElement> getChildren();
 

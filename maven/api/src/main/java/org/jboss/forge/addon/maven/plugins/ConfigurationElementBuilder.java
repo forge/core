@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.maven.plugins;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
@@ -42,9 +43,27 @@ public class ConfigurationElementBuilder implements ConfigurationElement
       return configurationElement.getText();
    }
 
+   @Override
+   public Map<String, String> getAttributes()
+   {
+      return configurationElement.getAttributes();
+   }
+
    public ConfigurationElementBuilder setText(String text)
    {
       configurationElement.setText(text);
+      return this;
+   }
+
+   public ConfigurationElementBuilder addAttribute(String name, String value)
+   {
+      configurationElement.getMutableAttributes().put(name, value);
+      return this;
+   }
+
+   public ConfigurationElementBuilder removeAttribute(String name)
+   {
+      configurationElement.getMutableAttributes().remove(name);
       return this;
    }
 
@@ -120,6 +139,7 @@ public class ConfigurationElementBuilder implements ConfigurationElement
          builder.configurationElement.setName(element.getName());
          builder.configurationElement.setText(element.getText());
          builder.configurationElement.setChildren(element.getChildren());
+         builder.configurationElement.getMutableAttributes().putAll(element.getAttributes());
          return builder;
 
       }
