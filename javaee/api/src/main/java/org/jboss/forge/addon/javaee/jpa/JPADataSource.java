@@ -12,6 +12,7 @@ import org.jboss.forge.furnace.util.Strings;
  * Represents a complete JPA data-source configuration.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class JPADataSource
 {
@@ -23,6 +24,7 @@ public class JPADataSource
    private String jndiDataSource;
    private PersistenceContainer container;
    private PersistenceProvider provider;
+   private SchemaGenerationType schemaGenerationType = SchemaGenerationType.DROP_CREATE;
 
    public DatabaseType getDatabase()
    {
@@ -135,9 +137,20 @@ public class JPADataSource
       return this;
    }
 
+   public JPADataSource setSchemaGenerationType(SchemaGenerationType schemaGenerationType)
+   {
+      this.schemaGenerationType = schemaGenerationType;
+      return this;
+   }
+
    public PersistenceProvider getProvider()
    {
       return provider;
+   }
+
+   public SchemaGenerationType getSchemaGenerationType()
+   {
+      return schemaGenerationType;
    }
 
    public void validate() throws Exception

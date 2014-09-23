@@ -12,11 +12,13 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
+import org.jboss.forge.addon.javaee.jpa.SchemaGenerationType;
 import org.jboss.forge.addon.javaee.jpa.containers.JavaEEDefaultContainer;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.projects.Project;
@@ -73,6 +75,10 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
    @Inject
    private PersistenceOperations persistenceOperations;
 
+   @Inject
+   @WithAttributes(label = "Schema Generation Type", shortName = 's', required = true, type = InputType.RADIO)
+   private UISelectOne<SchemaGenerationType> schemaGenerationType;
+
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
@@ -124,6 +130,27 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
       {
          builder.add(jdbcDriver).add(databaseURL).add(username).add(password);
       }
+      if (uiContext.getProvider().isGUI())
+      {
+         schemaGenerationType.setItemLabelConverter(new Converter<SchemaGenerationType, String>()
+         {
+            @Override
+            public String convert(SchemaGenerationType source)
+            {
+               return source != null ? source.getLabel() : null;
+            }
+         });
+      }
+      schemaGenerationType.setDefaultValue(SchemaGenerationType.DROP_CREATE);
+      schemaGenerationType.setDescription(new Callable<String>()
+      {
+         @Override
+         public String call() throws Exception
+         {
+            return schemaGenerationType.getValue().getDescription();
+         }
+      });
+      builder.add(schemaGenerationType);
    }
 
    private void initPersistenceUnitName(UIBuilder builder)
@@ -185,6 +212,7 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
       dataSource.setDatabaseURL(databaseURL.getValue());
       dataSource.setUsername(username.getValue());
       dataSource.setPassword(password.getValue());
+      dataSource.setSchemaGenerationType(schemaGenerationType.getValue());
       Map<Object, Object> attributeMap = context.getAttributeMap();
       dataSource.setProvider((PersistenceProvider) attributeMap.get(PersistenceProvider.class));
       dataSource.setContainer((PersistenceContainer) attributeMap.get(PersistenceContainer.class));
@@ -209,9 +237,12 @@ public class JPASetupConnectionStep extends AbstractJavaEECommand implements UIW
       if (isExistingPersistenceUnitName(project, persistenceUnitName.getValue())
                && !overwritePersistenceUnit.getValue().booleanValue())
       {
+         boolean gui = uiContext.getProvider().isGUI();
+         String info = gui ? " Check 'Overwrite Persistence Unit' if you want to overwrite it."
+                  : " Use '--overwritePersistenceUnit' if you want to overwrite it.";
          validator.addValidationError(persistenceUnitName,
                   "A persistence-unit with the name [" + persistenceUnitName.getValue()
-                           + "] already exists.");
+                           + "] already exists." + info);
       }
    }
 

@@ -17,7 +17,9 @@ import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.MetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
+import org.jboss.forge.addon.javaee.jpa.SchemaGenerationType;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PropertiesCommon;
 
@@ -80,7 +82,11 @@ public class EclipseLinkProvider implements PersistenceProvider
    {
       unit.excludeUnlistedClasses(Boolean.FALSE);
       PropertiesCommon properties = unit.getOrCreateProperties();
-      properties.createProperty().name("eclipselink.ddl-generation").value("drop-and-create-tables");
+      String schemaGenerationPropertyValue = getSchemaGenerationPropertyValue(ds.getSchemaGenerationType());
+      if (!Strings.isNullOrEmpty(schemaGenerationPropertyValue))
+      {
+         properties.createProperty().name("eclipselink.ddl-generation").value(schemaGenerationPropertyValue);
+      }
 
       if (!DatabaseType.DEFAULT.equals(ds.getDatabase()))
       {
@@ -88,6 +94,26 @@ public class EclipseLinkProvider implements PersistenceProvider
          properties.createProperty().name("eclipselink.target-database").value(platform);
       }
       return unit;
+   }
+
+   /**
+    * @see http://www.eclipse.org/eclipselink/documentation/2.4/jpa/extensions/p_ddl_generation.htm
+    */
+   private String getSchemaGenerationPropertyValue(SchemaGenerationType gen)
+   {
+      if (gen == null)
+         return null;
+      switch (gen)
+      {
+      case DROP_CREATE:
+         return "drop-and-create-tables";
+      case CREATE:
+         return "create-or-extend-tables";
+      case DROP:
+      case NONE:
+      default:
+         return null;
+      }
    }
 
    @Override

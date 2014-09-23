@@ -18,7 +18,9 @@ import org.jboss.forge.addon.javaee.jpa.DatabaseType;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.MetaModelProvider;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
+import org.jboss.forge.addon.javaee.jpa.SchemaGenerationType;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PropertiesCommon;
 
@@ -70,7 +72,11 @@ public abstract class AbstractHibernateProvider implements PersistenceProvider
    {
       unit.excludeUnlistedClasses(Boolean.FALSE);
       PropertiesCommon properties = unit.getOrCreateProperties();
-      properties.createProperty().name("hibernate.hbm2ddl.auto").value("create-drop");
+      String schemaGenerationPropertyValue = getSchemaGenerationPropertyValue(ds.getSchemaGenerationType());
+      if (!Strings.isNullOrEmpty(schemaGenerationPropertyValue))
+      {
+         properties.createProperty().name("hibernate.hbm2ddl.auto").value(schemaGenerationPropertyValue);
+      }
       properties.createProperty().name("hibernate.show_sql").value("true");
       properties.createProperty().name("hibernate.format_sql").value("true");
       properties.createProperty().name("hibernate.transaction.flush_before_completion").value("true");
@@ -82,6 +88,26 @@ public abstract class AbstractHibernateProvider implements PersistenceProvider
       }
 
       return unit;
+   }
+
+   /**
+    * @see https://docs.jboss.org/hibernate/orm/3.3/reference/en/html/session-configuration.html
+    */
+   protected String getSchemaGenerationPropertyValue(SchemaGenerationType gen)
+   {
+      if (gen == null)
+         return null;
+      switch (gen)
+      {
+      case DROP_CREATE:
+         return "create-drop";
+      case CREATE:
+         return "create";
+      case DROP:
+      case NONE:
+      default:
+         return null;
+      }
    }
 
    @Override
