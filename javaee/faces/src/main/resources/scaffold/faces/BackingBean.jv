@@ -169,8 +169,9 @@ public class ${entity.getName()}Bean implements Serializable {
 		this.example = example;
 	}
 
-	public void search() {
+	public String search() {
 		this.page = 0;
+		return null;
 	}
 
 	public void paginate() {
