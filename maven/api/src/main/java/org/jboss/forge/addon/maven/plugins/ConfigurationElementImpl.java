@@ -9,10 +9,10 @@ package org.jboss.forge.addon.maven.plugins;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
@@ -125,7 +125,7 @@ public class ConfigurationElementImpl implements ConfigurationElement
    Map<String, String> getMutableAttributes()
    {
       if (attributes == null)
-         attributes = new HashMap<String, String>();
+         attributes = new TreeMap<String, String>();
       return attributes;
    }
 
