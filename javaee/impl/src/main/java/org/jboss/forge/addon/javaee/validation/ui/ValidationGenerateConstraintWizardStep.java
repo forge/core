@@ -26,10 +26,12 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.InputComponents;
+import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
@@ -53,6 +55,14 @@ public class ValidationGenerateConstraintWizardStep extends AbstractJavaEEComman
    public NavigationResult next(UINavigationContext context) throws Exception
    {
       return null;
+   }
+
+   @Override
+   public UICommandMetadata getMetadata(UIContext context)
+   {
+      return Metadata.from(super.getMetadata(context), getClass())
+               .name("Configure the constraint")
+               .description("Set the properties for the chosen constraint");
    }
 
    @Override
