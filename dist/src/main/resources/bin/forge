@@ -27,7 +27,7 @@ QUOTED_ARGS=""
 
 while [ "$1" != "" ] ; do
 
-  if [ "$1" = "--debug" ] ; then
+  if [ "$1" = "--debug" -o "$1" = "-d" ] ; then
     FORGE_DEBUG_ARGS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"
   fi
 

@@ -128,6 +128,7 @@ for %%x in (%args%) do (
     set "arg=!arg::comma:=,!"
     set "arg=!arg::semicolon:=;!"
     if "!arg!"=="--debug" set FORGE_DEBUG_ARGS=-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
+    if "!arg!"=="-d" set FORGE_DEBUG_ARGS=-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000
     set "FORGE_CMD_LINE_ARGS=!FORGE_CMD_LINE_ARGS! "!arg!""
 )
 
