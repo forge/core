@@ -34,8 +34,8 @@ The projects addon also supplies several commands in the `Project:*` category, s
 |no
 
 |ui
-|no
 |yes
+|no
 
 |shell-spi
 |no
