@@ -22,6 +22,9 @@ import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UISelection;
+import org.jboss.forge.addon.ui.facets.HintsFacet;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.input.UISelectMany;
@@ -63,7 +66,7 @@ public class JavaEqualsHashcodeCommand extends AbstractProjectCommand
       this.projectFactory = furnace.getAddonRegistry().getServices(ProjectFactory.class).get();
       this.projectOperations = furnace.getAddonRegistry().getServices(ProjectOperations.class).get();
    }
-   
+
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
@@ -80,11 +83,18 @@ public class JavaEqualsHashcodeCommand extends AbstractProjectCommand
       targetClass = inputFactory.createSelectOne("targetClass", JavaResource.class);
       targetClass.setDescription("The class where the field will be created");
       targetClass.setRequired(true);
+      // Needs to be explicitly set for the Eclipse plugin to recognize. Bug?
+      targetClass.getFacet(HintsFacet.class).setInputType(InputType.DROPDOWN);
+      UISelection<Object> initialSelection = uiContext.getInitialSelection();
+      if (initialSelection.get() instanceof JavaResource)
+      {
+         targetClass.setValue((JavaResource) initialSelection.get());
+      }
       targetClass.setValueChoices(projectOperations.getProjectClasses(project));
-      
+
       fields = inputFactory.createSelectMany("fields", String.class);
       fields.setDescription("Fields, which should be used in the hashCode/equals method generation");
-      fields.setRequired(true);
+      fields.setRequired(true).setRequiredMessage("At least one field should be selected");
       
       fields.setValueChoices(new Callable<Iterable<String>>()
       {
@@ -92,7 +102,8 @@ public class JavaEqualsHashcodeCommand extends AbstractProjectCommand
          public Iterable<String> call() throws Exception
          {
             List<String> strings = new ArrayList<>();
-            if(!fields.isEnabled()) {
+            if (!fields.isEnabled())
+            {
                return strings;
             }
             JavaResource javaResource = targetClass.getValue();
@@ -105,7 +116,7 @@ public class JavaEqualsHashcodeCommand extends AbstractProjectCommand
             return strings;
          }
       });
-     fields.setEnabled(new Callable<Boolean>()
+      fields.setEnabled(new Callable<Boolean>()
       {
          @Override
          public Boolean call()
@@ -122,22 +133,31 @@ public class JavaEqualsHashcodeCommand extends AbstractProjectCommand
       JavaResource javaResource = targetClass.getValue();
       JavaClassSource targetClass = javaResource.getJavaType();
       List<FieldSource<JavaClassSource>> selectedFields = new ArrayList<>();
-      for(String fieldString : fields.getValue()) {
+      for (String fieldString : fields.getValue())
+      {
          selectedFields.add(targetClass.getField(fieldString));
       }
       UIPrompt prompt = context.getPrompt();
-      if(targetClass.hasMethodSignature("equals", Object.class)) {
-         if(prompt.promptBoolean("Class already has an equals method. Would you like it to be overwritten?")) {
+      if (targetClass.hasMethodSignature("equals", Object.class))
+      {
+         if (prompt.promptBoolean("Class already has an equals method. Would you like it to be overwritten?"))
+         {
             Refactory.createEquals(targetClass, selectedFields.toArray(new FieldSource<?>[selectedFields.size()]));
          }
-      } else {
+      }
+      else
+      {
          Refactory.createEquals(targetClass, selectedFields.toArray(new FieldSource<?>[selectedFields.size()]));
       }
-      if(targetClass.hasMethodSignature("hashcode")) {
-         if(prompt.promptBoolean("Class already has a hashcode method. Would you like it to be overwritten?")) {
+      if (targetClass.hasMethodSignature("hashcode"))
+      {
+         if (prompt.promptBoolean("Class already has a hashcode method. Would you like it to be overwritten?"))
+         {
             Refactory.createHashCode(targetClass, selectedFields.toArray(new FieldSource<?>[selectedFields.size()]));
          }
-      } else {
+      }
+      else
+      {
          Refactory.createHashCode(targetClass, selectedFields.toArray(new FieldSource<?>[selectedFields.size()]));
       }
       setCurrentWorkingResource(context, targetClass);
