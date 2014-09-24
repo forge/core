@@ -44,8 +44,8 @@ public class ArchetypeCatalogCommands
 
    @Command(value = "Archetype: Add", categories = { "Maven" })
    public void addArchetype(
-            @Option(value = "named", label = "Archetype Catalog Name", required = true) String name,
-            @Option(value = "url", label = "Archetype Catalog URL", required = true) URLResource url)
+            @Option(value = "named", label = "Archetype catalog Name", required = true) String name,
+            @Option(value = "url", label = "Archetype catalog URL", required = true) URLResource url)
    {
       configuration.setProperty(name, url.getFullyQualifiedName());
       archetypeRegistry.addArchetypeCatalogFactory(name, url.getUnderlyingResourceObject());
@@ -53,14 +53,14 @@ public class ArchetypeCatalogCommands
 
    @Command(value = "Archetype: Remove", categories = { "Maven" })
    public void removeArchetype(
-            @Option(value = "named", label = "Archetype Catalog Name", required = true) String name)
+            @Option(value = "named", label = "Archetype catalog name", required = true) String name)
    {
       configuration.clearProperty(name);
       archetypeRegistry.removeArchetypeCatalogFactory(name);
    }
 
    @Command(value = "Archetype: List", categories = { "Maven" }, enabled = NonGUIEnabledPredicate.class)
-   public void listArchetypes(@Option(value = "named", label = "Archetype Catalog Name") String name, UIOutput output)
+   public void listArchetypes(@Option(value = "named", label = "Archetype catalog name") String name, UIOutput output)
    {
       PrintStream out = output.out();
       if (Strings.isNullOrEmpty(name))

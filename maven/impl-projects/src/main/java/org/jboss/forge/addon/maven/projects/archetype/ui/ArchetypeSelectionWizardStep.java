@@ -57,7 +57,7 @@ public class ArchetypeSelectionWizardStep extends AbstractUICommand implements U
    private UIInput<String> archetypeVersion;
 
    @Inject
-   @WithAttributes(label = "Archetype Repository")
+   @WithAttributes(label = "Archetype repository URL")
    private UIInput<String> archetypeRepository;
 
    @Inject
@@ -73,7 +73,7 @@ public class ArchetypeSelectionWizardStep extends AbstractUICommand implements U
    public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass()).name("Maven: Choose Archetype")
-               .description("Enter a maven archetype coordinate");
+               .description("Enter a Maven archetype coordinate");
    }
 
    @Override
@@ -88,7 +88,7 @@ public class ArchetypeSelectionWizardStep extends AbstractUICommand implements U
       String repository = archetypeRepository.getValue();
       if (!Strings.isNullOrEmpty(repository) && !Strings.isURL(repository))
       {
-         validator.addValidationError(archetypeRepository, "Archetype Repository must be a valid URL");
+         validator.addValidationError(archetypeRepository, "Archetype repository must be a valid URL");
       }
    }
 

@@ -75,7 +75,7 @@ public class ArchetypeCatalogSelectionWizardStep extends AbstractUICommand imple
    public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass()).name("Maven: Choose Archetype")
-               .description("Choose a maven archetype for your project");
+               .description("Choose a Maven archetype for your project");
    }
 
    @Override
