@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.console.helper.ManProvider;
+import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.ui.command.CommandFactory;
@@ -25,6 +27,8 @@ import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.ManyValued;
+import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.util.Streams;
@@ -122,6 +126,7 @@ public class ForgeManProvider implements ManProvider
          result = result.replaceAll("%synopsis%", buildSynopsis(cmd, context, inputs));
          result = result.replaceAll("%options%", buildOptions(cmd, context, inputs));
          result = result.replaceAll("%addon%", getSourceAddonName(cmd, context));
+         result = result.replaceAll("%year%", String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
 
          return new ByteArrayInputStream(result.getBytes());
       }
@@ -181,6 +186,7 @@ public class ForgeManProvider implements ManProvider
       return result.toString();
    }
 
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    private String buildOptions(UICommand cmd, UIContext context, List<InputComponent<?, ?>> inputs)
    {
       StringBuilder result = new StringBuilder();
@@ -202,12 +208,14 @@ public class ForgeManProvider implements ManProvider
          }
          else
          {
-            result.append("   ");
             if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
-               result.append("-").append(input.getShortName()).append("   ");
+               result.append("*-").append(input.getShortName()).append("* ");
+            else
+               result.append("   ");
 
-            result.append(input.getName());
-            result.append("\n      ");
+            result.append("*--").append(input.getName()).append("*");
+            result.append("\n");
+            result.append("        ");
 
             if (!input.getName().equals(input.getLabel()))
             {
@@ -221,6 +229,62 @@ public class ForgeManProvider implements ManProvider
             result.append(" [").append(input.getValueType().getSimpleName()).append("]");
             if (input.isRequired())
                result.append(" (*required*)");
+
+            if (input instanceof SelectComponent)
+            {
+               result.append(" Valid choices: [");
+               Iterable<?> valueChoices = ((SelectComponent) input).getValueChoices();
+               Converter itemLabelConverter = ((SelectComponent) input).getItemLabelConverter();
+               for (Object choice : valueChoices)
+               {
+                  if (choice != null)
+                  {
+                     Object itemLabel = choice.toString();
+                     if (itemLabelConverter != null)
+                        itemLabel = itemLabelConverter.convert(choice);
+                     result.append("\"" + itemLabel + "\" ");
+                  }
+               }
+               result.append("] ");
+
+               if (input.hasDefaultValue() && input.hasValue())
+               {
+                  result.append(" defaults to: [");
+                  if (input instanceof ManyValued)
+                  {
+                     Iterable values = ((ManyValued) input).getValue();
+                     if (values.iterator().hasNext())
+                     {
+                        for (Object value : values)
+                        {
+                           if (value != null)
+                           {
+                              Object itemLabel = value.toString();
+                              if (itemLabelConverter != null)
+                                 itemLabel = itemLabelConverter.convert(value);
+                              result.append("\"" + itemLabel + "\" ");
+                           }
+                        }
+                     }
+                     else
+                     {
+                        Object value = input.getValue();
+                        if (value != null)
+                        {
+                           Object itemLabel = value.toString();
+                           if (itemLabelConverter != null)
+                              itemLabel = itemLabelConverter.convert(value);
+                           result.append("\"" + itemLabel + "\" ");
+                        }
+                     }
+                  }
+                  result.append("]");
+               }
+            }
+            else if (input.hasDefaultValue())
+            {
+               result.append(" defaults to: [" + input.getValue() + "]");
+            }
 
             result.append("\n\n");
          }
