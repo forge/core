@@ -16,6 +16,8 @@ import org.jboss.forge.addon.maven.plugins.ConfigurationElementBuilder;
 import org.jboss.forge.addon.maven.plugins.Execution;
 import org.jboss.forge.addon.maven.plugins.ExecutionBuilder;
 import org.jboss.forge.addon.maven.plugins.MavenPluginBuilder;
+import org.jboss.forge.addon.maven.profiles.Profile;
+import org.jboss.forge.addon.maven.profiles.ProfileBuilder;
 import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -34,6 +36,8 @@ public class FurnacePluginFacet extends AbstractFacet<Project> implements Projec
             .setArtifactId("furnace-maven-plugin")
             .setVersion(FurnaceVersionFacet.VERSION_PROPERTY);
 
+   private static final Profile RELEASE_PROFILE = ProfileBuilder.create().setId("release");
+
    @Override
    public boolean install()
    {
@@ -50,7 +54,7 @@ public class FurnacePluginFacet extends AbstractFacet<Project> implements Projec
                                  .setConfig(ConfigurationBuilder.create().addConfigurationElement(
                                           ConfigurationElementBuilder.create().setName("attach")
                                                    .setText("true"))));
-      pluginFacet.addPlugin(plugin);
+      pluginFacet.addPlugin(plugin, RELEASE_PROFILE);
       return true;
    }
 
@@ -58,20 +62,30 @@ public class FurnacePluginFacet extends AbstractFacet<Project> implements Projec
    public boolean isInstalled()
    {
       boolean installed = false;
-      if (getFaceted().hasFacet(MavenPluginFacet.class)
-               && getFaceted().getFacet(MavenPluginFacet.class).hasPlugin(FURNACE_PLUGIN_COORDINATE))
+      Project faceted = getFaceted();
+      if (faceted.hasFacet(MavenPluginFacet.class))
       {
-         List<Execution> executions = getFaceted().getFacet(MavenPluginFacet.class).getPlugin(FURNACE_PLUGIN_COORDINATE)
-                  .listExecutions();
-         for (Execution execution : executions)
+         MavenPluginFacet facet = faceted.getFacet(MavenPluginFacet.class);
+         List<Execution> executions = null;
+         if (facet.hasPlugin(FURNACE_PLUGIN_COORDINATE))
          {
-            if ("generate-dot".equals(execution.getId())
-                     && "true".equals(execution.getConfig().getConfigurationElement("attach").getText()))
-            {
-               installed = true;
-               break;
-            }
+            executions = facet.getPlugin(FURNACE_PLUGIN_COORDINATE).listExecutions();
          }
+         else if (facet.hasPlugin(FURNACE_PLUGIN_COORDINATE, RELEASE_PROFILE))
+         {
+            executions = facet.getPlugin(FURNACE_PLUGIN_COORDINATE, RELEASE_PROFILE).listExecutions();
+         }
+         if (executions != null)
+            for (Execution execution : executions)
+            {
+               if ("generate-dot".equals(execution.getId())
+                        && "true".equals(execution.getConfig().getConfigurationElement("attach").getText()))
+               {
+                  installed = true;
+                  break;
+               }
+            }
+
       }
       return installed;
    }
