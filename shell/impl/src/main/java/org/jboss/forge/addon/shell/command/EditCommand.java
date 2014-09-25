@@ -27,6 +27,7 @@ import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -77,14 +78,14 @@ public class EditCommand extends AbstractShellCommand
          {
             for (Resource<?> resource : newResource)
             {
-               editResource(resource);
+               editResource(context, resource);
             }
             result = Results.success();
          }
       }
       else if (currentResource != null)
       {
-         editResource(currentResource);
+         editResource(context, currentResource);
          result = Results.success();
       }
       else
@@ -94,13 +95,18 @@ public class EditCommand extends AbstractShellCommand
       return result;
    }
 
-   private void editResource(Resource<?> resource) throws IOException
+   private void editResource(UIExecutionContext context, Resource<?> resource) throws IOException
    {
       Desktop dt = Desktop.getDesktop();
       FileResource<?> fileResource = resource.reify(FileResource.class);
-      if (fileResource != null)
+      if (fileResource != null && !fileResource.isDirectory())
       {
          dt.edit(fileResource.getUnderlyingResourceObject());
+      }
+      else
+      {
+         UIOutput output = context.getUIContext().getProvider().getOutput();
+         output.warn(output.err(), "Cannot edit [" + resource.getFullyQualifiedName() + "].");
       }
    }
 
