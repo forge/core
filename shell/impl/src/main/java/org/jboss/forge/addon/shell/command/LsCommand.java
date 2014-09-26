@@ -78,7 +78,21 @@ public class LsCommand extends AbstractShellCommand
       {
          String value = it.next();
          boolean searching = (value.matches(".*(\\?|\\*)+.*"));
-         resourceList = new ResourcePathResolver(resourceFactory, currentResource, value).resolve();
+         try
+         {
+            resourceList = new ResourcePathResolver(resourceFactory, currentResource, value).resolve();
+         }
+         catch (RuntimeException re)
+         {
+            if (re.getMessage() == null || !re.getMessage().contains("no such child"))
+            {
+               throw re;
+            }
+            else
+            {
+               return Results.fail(value + ": No such file or directory");
+            }
+         }
          if (!searching && !resourceList.isEmpty() && resourceList.get(0).exists())
          {
             resourceList = resourceList.get(0).listResources();
@@ -104,7 +118,8 @@ public class LsCommand extends AbstractShellCommand
 
    private String listMany(Iterable<Resource<?>> resources, Shell shell)
    {
-      if (resources == null) {
+      if (resources == null)
+      {
          return "";
       }
 
@@ -117,45 +132,57 @@ public class LsCommand extends AbstractShellCommand
 
       for (Resource<?> resource : resources)
       {
-         if (resource instanceof FileResource) {
+         if (resource instanceof FileResource)
+         {
             fileResources.add((FileResource) resource);
-         } else if (resource instanceof JavaFieldResource) {
+         }
+         else if (resource instanceof JavaFieldResource)
+         {
             fieldResources.add((JavaFieldResource) resource);
-         } else if (resource instanceof JavaMethodResource) {
+         }
+         else if (resource instanceof JavaMethodResource)
+         {
             methodResources.add((JavaMethodResource) resource);
-         } else {
+         }
+         else
+         {
             otherResources.add(resource);
          }
       }
 
       StringBuilder sb = new StringBuilder();
 
-      if (fileResources.size() > 0) {
+      if (fileResources.size() > 0)
+      {
          sb.append(getFileFormattedList(fileResources, terminalSize.getHeight(), terminalSize.getWidth()));
       }
 
-      if (fieldResources.size() > 0) {
+      if (fieldResources.size() > 0)
+      {
          sb.append(Config.getLineSeparator());
          sb.append(ShellUtil.colorizeLabel("[fields]"));
          sb.append(Config.getLineSeparator());
          sb.append(getJavaFieldFormattedList(fieldResources, terminalSize.getHeight(), terminalSize.getWidth()));
       }
 
-      if (methodResources.size() > 0) {
+      if (methodResources.size() > 0)
+      {
          sb.append(Config.getLineSeparator());
          sb.append(ShellUtil.colorizeLabel("[methods]"));
          sb.append(Config.getLineSeparator());
          sb.append(getJavaMethodFormattedList(methodResources, terminalSize.getHeight(), terminalSize.getWidth()));
       }
 
-      if (otherResources.size() > 0) {
+      if (otherResources.size() > 0)
+      {
          sb.append(getFormattedList(otherResources, terminalSize.getHeight(), terminalSize.getWidth()));
       }
 
       return sb.toString();
    }
 
-   private String getFileFormattedList(List<FileResource> resources, int termHeight, int termWidth) {
+   private String getFileFormattedList(List<FileResource> resources, int termHeight, int termWidth)
+   {
 
       boolean showAll = all.getValue();
       List<TerminalString> display = new ArrayList<>();
@@ -174,7 +201,8 @@ public class LsCommand extends AbstractShellCommand
          private PosixFileNameComparator posixFileNameComparator =
                   new PosixFileNameComparator();
 
-         @Override public int compare(TerminalString o1, TerminalString o2)
+         @Override
+         public int compare(TerminalString o1, TerminalString o2)
          {
             return posixFileNameComparator.compare(o1.getCharacters(), o2.getCharacters());
          }
@@ -185,30 +213,36 @@ public class LsCommand extends AbstractShellCommand
       return Parser.formatDisplayCompactListTerminalString(display, termWidth);
    }
 
-   private String getJavaFieldFormattedList(List<JavaFieldResource> resources, int termHeight, int termWidth) {
+   private String getJavaFieldFormattedList(List<JavaFieldResource> resources, int termHeight, int termWidth)
+   {
       List<String> display = new ArrayList<>();
 
-      for (JavaFieldResource resource : resources) {
+      for (JavaFieldResource resource : resources)
+      {
          display.add(ShellUtil.colorizeJavaFieldResource(resource));
       }
 
       return Parser.formatDisplayList(display, termHeight, termWidth);
    }
 
-   private String getJavaMethodFormattedList(List<JavaMethodResource> resources, int termHeight, int termWidth) {
+   private String getJavaMethodFormattedList(List<JavaMethodResource> resources, int termHeight, int termWidth)
+   {
       List<String> display = new ArrayList<>();
 
-      for (JavaMethodResource resource : resources) {
+      for (JavaMethodResource resource : resources)
+      {
          display.add(ShellUtil.colorizeJavaMethodResource(resource));
       }
 
       return Parser.formatDisplayList(display, termHeight, termWidth);
    }
 
-   private String getFormattedList(List<Resource> resources, int termHeight, int termWidth) {
+   private String getFormattedList(List<Resource> resources, int termHeight, int termWidth)
+   {
       List<String> display = new ArrayList<>();
 
-      for (Resource resource : resources) {
+      for (Resource resource : resources)
+      {
          display.add(resource.getName());
       }
 

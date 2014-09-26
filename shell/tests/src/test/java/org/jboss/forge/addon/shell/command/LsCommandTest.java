@@ -7,6 +7,9 @@
 
 package org.jboss.forge.addon.shell.command;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -17,6 +20,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.shell.test.ShellTest;
+import org.jboss.forge.addon.ui.result.Failed;
+import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -75,5 +80,19 @@ public class LsCommandTest
       shellTest.clearScreen();
       shellTest.execute("ls *file*", 5, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString("file.txt"));
+   }
+
+   @Test
+   public void testLsCommandFailed() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      String projectPath = project.getRoot().getFullyQualifiedName();
+      shellTest.execute("cd " + projectPath, 5, TimeUnit.SECONDS);
+      shellTest.clearScreen();
+      Result result = shellTest.execute(
+               "ls foo" + File.separator + "jee-example-app-1.0.0.ear", 5,
+               TimeUnit.SECONDS);
+      Assert.assertThat(result, instanceOf(Failed.class));
+      Assert.assertThat(result.getMessage(), CoreMatchers.containsString("No such file or directory"));
    }
 }
