@@ -94,7 +94,7 @@ public class AnnotatedCommandProvider implements CommandProvider
       return new AnnotationCommandAdapter(method, instance, factory, enabledPredicates);
    }
 
-   public void addonInitialized(@Observes PreShutdown shutdown)
+   public void addonDestroyed(@Observes PreShutdown shutdown)
    {
       AddonId id = shutdown.getAddon().getId();
       extension.addonDestroyed(id);
