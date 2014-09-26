@@ -132,7 +132,7 @@ public class ForgeCommandRegistry implements CommandRegistry
    {
       AbstractShellInteraction result = null;
       CommandLineUtil cmdLineUtil = getCommandLineUtil();
-      UICommand cmd = commandFactory.getCommandByName(shellContext, commandName);
+      UICommand cmd = commandFactory.getNewCommandByName(shellContext, commandName);
       if (cmd != null)
       {
          CommandController controller = commandControllerFactory.createController(shellContext, shell, cmd);
