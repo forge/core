@@ -208,12 +208,13 @@ public class ForgeManProvider implements ManProvider
          }
          else
          {
+            result.append("*");
             if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
-               result.append("*-").append(input.getShortName()).append("* ");
+               result.append("-").append(input.getShortName()).append(", ");
             else
                result.append("   ");
 
-            result.append("*--").append(input.getName()).append("*");
+            result.append("--").append(input.getName()).append("*");
             result.append("\n");
             result.append("        ");
 
