@@ -28,7 +28,7 @@ import ${entity.getQualifiedName()}${metawidgetImports};
 
 /**
  * Backing bean for ${entity.getName()} entities.
- * <p>
+ * <p/>
  * This class provides CRUD functionality for all ${entity.getName()} entities. It focuses
  * purely on Java EE 6 standards (e.g. <tt>&#64;ConversationScoped</tt> for
  * state management, <tt>PersistenceContext</tt> for persistence,
