@@ -14,8 +14,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Embeddable;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -60,9 +60,26 @@ public class PersistenceOperationsImpl implements PersistenceOperations
          PersistenceContainer container = dataSource.getContainer();
          PersistenceProvider provider = dataSource.getProvider();
          PersistenceCommonDescriptor config = facet.getConfig();
-         PersistenceUnitCommon unit = getExistingPersistenceUnit(project,unitName);
-         if(unit == null) {
+         PersistenceUnitCommon unit = null;
+         List<PersistenceUnitCommon> allPersistenceUnit = config.getAllPersistenceUnit();
+         for (PersistenceUnitCommon persistenceUnit : allPersistenceUnit)
+         {
+            if (unitName.equals(persistenceUnit.getName()))
+            {
+               unit = persistenceUnit;
+               break;
+            }
+         }
+         if (unit == null)
+         {
             unit = config.createPersistenceUnit();
+         }
+         else
+         {
+            // FORGE-2049: Call all Remove methods until there is a decent way to do this in ShrinkWrap Descriptors
+            unit.removeAllClazz().removeAllJarFile().removeAllMappingFile().removeDescription()
+                     .removeExcludeUnlistedClasses().removeJtaDataSource().removeName().removeNonJtaDataSource()
+                     .removeProperties().removeProvider();
          }
          unit.name(unitName).description(DEFAULT_UNIT_DESC);
 
@@ -111,15 +128,16 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       javaResource.setContents(javaClass);
       return javaResource;
    }
-   
+
    @Override
-   public JavaResource newEmbeddableEntity(Project project, String entityName, String entityPackage) throws FileNotFoundException
+   public JavaResource newEmbeddableEntity(Project project, String entityName, String entityPackage)
+            throws FileNotFoundException
    {
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       JavaClassSource javaClass = createJavaEmbeddableClass(entityName, entityPackage);
       return java.saveJavaSource(javaClass);
    }
-   
+
    @Override
    public JavaResource newEmbeddableEntity(DirectoryResource target, String entityName, String entityPackage)
    {
@@ -142,7 +160,7 @@ public class PersistenceOperationsImpl implements PersistenceOperations
    {
       return newEntity(target, entityName, entityPackage, idStrategy, null);
    }
-   
+
    private JavaClassSource createJavaEmbeddableClass(String entityName, String entityPackage)
    {
       JavaClassSource javaClass = Roaster.create(JavaClassSource.class)
@@ -194,9 +212,10 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       Refactory.createHashCodeAndEquals(javaClass, id);
       return javaClass;
    }
-   
+
    @SuppressWarnings({ "rawtypes", "unchecked" })
-   public PersistenceUnitCommon getExistingPersistenceUnit(Project project, String unitName) {
+   public PersistenceUnitCommon getExistingPersistenceUnit(Project project, String unitName)
+   {
       if (project != null && project.hasFacet(JPAFacet.class))
       {
          JPAFacet<?> facet = project.getFacet(JPAFacet.class);
