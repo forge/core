@@ -1,4 +1,4 @@
-== JBoss Forge 2.0
+== JBoss Forge 2
 
 The fastest way to build applications, share your software, and enjoy doing it.
 
