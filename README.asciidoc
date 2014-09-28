@@ -65,7 +65,7 @@ If you wish to install the core addons including the shell, "Project: New", the 
     forge --install core
 ----
 
-If you only wish to install the prototype Forge 2 Shell based on link:http://aeshell.github.io/[Aesh], run the following command instead:
+If you only wish to install the Forge 2 Shell based on link:http://aeshell.github.io/[Aesh], run the following command instead:
 
 [source,cmd]
 ----
