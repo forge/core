@@ -83,4 +83,15 @@ public class CommandFactoryTest
       Assert.assertEquals(5, count);
    }
 
+   @Test
+   public void testCommandCache()
+   {
+      String commandName = ExampleCommand.class.getName();
+      MockUIContext context = new MockUIContext();
+      UICommand command = commandFactory.getCommandByName(context, commandName);
+      Assert.assertNotNull(command);
+      Assert.assertSame(command, commandFactory.getCommandByName(context, commandName));
+      Assert.assertNotSame(command, commandFactory.getNewCommandByName(context, commandName));
+   }
+
 }
