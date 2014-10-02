@@ -104,6 +104,10 @@ public class CommandFactoryTest
       Assert.assertNotNull(commandFactory.getCommandByName(context, "a-gui-command"));
       Assert.assertNotNull(commandFactory.getCommandByName(context, "a-shell-command"));
       Assert.assertNull(commandFactory.getCommandByName(context, "an-invalid-command"));
+      context.getProvider().setGUI(true);
+      Assert.assertNotNull(commandFactory.getCommandByName(context, "a-gui-command"));
+      Assert.assertNotNull(commandFactory.getCommandByName(context, "a-shell-command"));
+      Assert.assertNull(commandFactory.getCommandByName(context, "an-invalid-command"));
    }
 
 }
