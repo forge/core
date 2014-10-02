@@ -25,6 +25,7 @@ import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Creates and manages commands
@@ -135,7 +136,7 @@ public class CommandFactoryImpl implements CommandFactory
       for (UICommand cmd : getCommands())
       {
          String commandName = getCommandName(context, cmd);
-         if (name.equals(commandName))
+         if (Strings.compare(name, commandName) || Strings.compare(name, shellifyName(commandName)))
          {
             return cmd;
          }
