@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.addon.ui.impl.command;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -25,6 +24,7 @@ import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.util.Sets;
 import org.jboss.forge.furnace.util.Strings;
 
 /**
@@ -38,39 +38,17 @@ public class CommandFactoryImpl implements CommandFactory
 {
    @Inject
    private AddonRegistry registry;
+   
+   private Set<UICommand> cache = Sets.getConcurrentSet();
+   
+   private long version = -1;
 
    private static final Logger log = Logger.getLogger(CommandFactoryImpl.class.getName());
 
    @Override
    public Iterable<UICommand> getCommands()
    {
-      Set<UICommand> result = new HashSet<>();
-      synchronized (this)
-      {
-         Imported<CommandProvider> instances = registry.getServices(CommandProvider.class);
-         for (CommandProvider provider : instances)
-         {
-            Iterable<UICommand> commands = provider.getCommands();
-            Iterator<UICommand> iterator = commands.iterator();
-            while (iterator.hasNext())
-            {
-               try
-               {
-                  UICommand command = iterator.next();
-                  if (!(command instanceof UIWizardStep))
-                  {
-                     result.add(command);
-                  }
-               }
-               catch (Exception e)
-               {
-                  log.log(Level.SEVERE, "Error while retrieving command instance", e);
-               }
-            }
-            instances.release(provider);
-         }
-      }
-      return result;
+      return getCachedCommands();
    }
 
    @Override
@@ -143,6 +121,78 @@ public class CommandFactoryImpl implements CommandFactory
       }
       return null;
    }
+   
+   @Override
+   public UICommand getNewCommandByName(UIContext context, String name)
+   {
+      for (UICommand cmd : getCommandsFromSource())
+      {
+         String commandName = getCommandName(context, cmd);
+         if (Strings.compare(name, commandName) || Strings.compare(name, shellifyName(commandName)))
+         {
+            return cmd;
+         }
+      }
+      return null;
+   }
+   
+   private Iterable<UICommand> getCachedCommands()
+   {
+      if (registry.getVersion() != version)
+      {
+         version = registry.getVersion();
+         cache.clear();
+         getCommands(new Operation()
+         {
+            @Override
+            public void execute(UICommand command)
+            {
+               cache.add(command);
+            }
+         });
+      }
+      return cache;
+   }
+   
+   private Iterable<UICommand> getCommandsFromSource()
+   {
+      final Set<UICommand> result = Sets.getConcurrentSet();
+      getCommands(new Operation()
+      {
+         @Override
+         public void execute(UICommand command)
+         {
+            result.add(command);
+         }
+      });
+      return result;
+   }
+   
+   private void getCommands(Operation operation)
+   {
+      Imported<CommandProvider> instances = registry.getServices(CommandProvider.class);
+      for (CommandProvider provider : instances)
+      {
+         Iterable<UICommand> commands = provider.getCommands();
+         Iterator<UICommand> iterator = commands.iterator();
+         while (iterator.hasNext())
+         {
+            try
+            {
+               UICommand command = iterator.next();
+               if (!(command instanceof UIWizardStep))
+               {
+                  operation.execute(command);
+               }
+            }
+            catch (Exception e)
+            {
+               log.log(Level.SEVERE, "Error while retrieving command instance", e);
+            }
+         }
+         instances.release(provider);
+      }
+   }
 
    /**
     * "Shellifies" a name (that is, makes the name shell-friendly) by replacing spaces with "-" and removing colons
@@ -150,6 +200,16 @@ public class CommandFactoryImpl implements CommandFactory
    private static String shellifyName(String name)
    {
       return name.trim().toLowerCase().replaceAll("\\W+", "-").replaceAll("\\:", "");
+   }
+   
+   /**
+    * 
+    * Strategy for operation to be performed when iterating through Commands 
+    *
+    */
+   interface Operation
+   {
+      void execute(UICommand command);
    }
 
 }

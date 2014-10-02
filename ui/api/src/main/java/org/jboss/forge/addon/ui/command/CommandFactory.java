@@ -19,6 +19,13 @@ public interface CommandFactory
 {
    /**
     * Get all {@link UICommand} instances from all available {@link CommandProvider} services.
+    * The underlying collection of UICommands is very likely be cached, and thus invoking operations
+    * directly on them is not recommended for safety.
+    * 
+    * Consecutive invocations may be performed on the same UICommand instance, instead of different instances.
+    * 
+    * It is recommended to create a new UICommand when required. This can be done through the
+    * {@link #getNewCommandByName(UIContext, String)} method.
     */
    Iterable<UICommand> getCommands();
 
@@ -41,4 +48,9 @@ public interface CommandFactory
     * Return the {@link UICommand} name for a given {@link UIContext}
     */
    String getCommandName(UIContext context, UICommand cmd);
+
+   /**
+    * Get an un-cached {@link UICommand} instance given its name in the given {@link UIContext}
+    */
+   UICommand getNewCommandByName(UIContext context, String name);
 }
