@@ -207,7 +207,7 @@ public class MyInitialPage extends AbstractUICommand implements UIWizard {
    
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception {
-      context.getAttributeMap().put("firstName", firstName.getValue());
+      context.getUIContext().getAttributeMap().put("firstName", firstName.getValue());
       return Results.navigateTo(MyNextStep.class);
    }
 
