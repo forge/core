@@ -19,10 +19,12 @@ import org.junit.Assert;
 public class MockUIContext extends AbstractUIContext
 {
    private final UISelection<?> selection;
+   private MockUIProvider provider;
 
    public MockUIContext()
    {
       this(Selections.emptySelection());
+      this.provider = new MockUIProvider(true);
    }
 
    public MockUIContext(UISelection<?> selection)
@@ -36,5 +38,11 @@ public class MockUIContext extends AbstractUIContext
    public <SELECTIONTYPE> UISelection<SELECTIONTYPE> getInitialSelection()
    {
       return (UISelection<SELECTIONTYPE>) selection;
+   }
+
+   @Override
+   public MockUIProvider getProvider()
+   {
+      return provider;
    }
 }

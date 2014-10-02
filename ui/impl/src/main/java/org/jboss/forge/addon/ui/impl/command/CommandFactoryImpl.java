@@ -15,11 +15,14 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.command.CommandFactory;
 import org.jboss.forge.addon.ui.command.CommandProvider;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.impl.context.DelegatingUIContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.addons.AddonRegistry;
@@ -38,9 +41,9 @@ public class CommandFactoryImpl implements CommandFactory
 {
    @Inject
    private AddonRegistry registry;
-   
+
    private Set<UICommand> cache = Sets.getConcurrentSet();
-   
+
    private long version = -1;
 
    private static final Logger log = Logger.getLogger(CommandFactoryImpl.class.getName());
@@ -111,31 +114,45 @@ public class CommandFactoryImpl implements CommandFactory
    @Override
    public UICommand getCommandByName(UIContext context, String name)
    {
-      for (UICommand cmd : getCommands())
-      {
-         String commandName = getCommandName(context, cmd);
-         if (Strings.compare(name, commandName) || Strings.compare(name, shellifyName(commandName)))
-         {
-            return cmd;
-         }
-      }
-      return null;
+      return findCommand(getCommands(), context, name);
    }
-   
+
    @Override
    public UICommand getNewCommandByName(UIContext context, String name)
    {
-      for (UICommand cmd : getCommandsFromSource())
-      {
-         String commandName = getCommandName(context, cmd);
-         if (Strings.compare(name, commandName) || Strings.compare(name, shellifyName(commandName)))
-         {
-            return cmd;
-         }
-      }
-      return null;
+      return findCommand(getCommandsFromSource(), context, name);
    }
-   
+
+   private UICommand findCommand(Iterable<UICommand> commands, UIContext context, String name)
+   {
+      CommandNameUIProvider provider = new CommandNameUIProvider(context.getProvider());
+      final UIContext delegatingContext = new DelegatingUIContext(context, provider);
+      if (commands != null)
+         for (UICommand cmd : commands)
+         {
+            // Test non-gui command name
+            {
+               provider.setGUI(false);
+               String commandName = getCommandName(delegatingContext, cmd);
+               if (Strings.compare(name, commandName) || Strings.compare(name, shellifyName(commandName)))
+               {
+                  return cmd;
+               }
+            }
+            // Test gui command name
+            {
+               provider.setGUI(true);
+               String commandName = getCommandName(delegatingContext, cmd);
+               if (Strings.compare(name, commandName) || Strings.compare(name, shellifyName(commandName)))
+               {
+                  return cmd;
+               }
+            }
+         }
+      return null;
+
+   }
+
    private Iterable<UICommand> getCachedCommands()
    {
       if (registry.getVersion() != version)
@@ -153,7 +170,7 @@ public class CommandFactoryImpl implements CommandFactory
       }
       return cache;
    }
-   
+
    private Iterable<UICommand> getCommandsFromSource()
    {
       final Set<UICommand> result = Sets.getConcurrentSet();
@@ -167,7 +184,7 @@ public class CommandFactoryImpl implements CommandFactory
       });
       return result;
    }
-   
+
    private void getCommands(Operation operation)
    {
       Imported<CommandProvider> instances = registry.getServices(CommandProvider.class);
@@ -199,17 +216,51 @@ public class CommandFactoryImpl implements CommandFactory
     */
    private static String shellifyName(String name)
    {
-      return name.trim().toLowerCase().replaceAll("\\W+", "-").replaceAll("\\:", "");
+      return name != null ? name.trim().toLowerCase().replaceAll("\\W+", "-").replaceAll("\\:", "") : null;
    }
-   
+
    /**
     * 
-    * Strategy for operation to be performed when iterating through Commands 
+    * Strategy for operation to be performed when iterating through Commands
     *
     */
    interface Operation
    {
       void execute(UICommand command);
+   }
+
+   /**
+    * {@link UIProvider} implementation for querying the command name in GUI and non-GUI modes, which is a common use
+    * case for defining different names between GUI and CLI environments.
+    * 
+    * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+    */
+   private static class CommandNameUIProvider implements UIProvider
+   {
+      private final UIProvider delegate;
+      private boolean gui;
+
+      public CommandNameUIProvider(UIProvider delegate)
+      {
+         this.delegate = delegate;
+      }
+
+      @Override
+      public boolean isGUI()
+      {
+         return gui;
+      }
+
+      public void setGUI(boolean gui)
+      {
+         this.gui = gui;
+      }
+
+      @Override
+      public UIOutput getOutput()
+      {
+         return delegate.getOutput();
+      }
    }
 
 }

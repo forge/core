@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.controller.mock.DifferentNameCommand;
 import org.jboss.forge.addon.ui.controller.mock.ExampleCommand;
 import org.jboss.forge.addon.ui.controller.mock.ExampleNoUICommand;
 import org.jboss.forge.addon.ui.controller.mock.FlowExampleStep;
@@ -44,7 +45,7 @@ public class CommandFactoryTest
       ForgeArchive archive = ShrinkWrap
                .create(ForgeArchive.class)
                .addClasses(ExampleCommand.class, ExampleNoUICommand.class, ExampleAnnotatedCommand.class,
-                        FlowExampleStep.class)
+                        FlowExampleStep.class, DifferentNameCommand.class)
                .addPackage(MockUIRuntime.class.getPackage())
                .addBeansXML()
                .addAsAddonDependencies(
@@ -76,11 +77,12 @@ public class CommandFactoryTest
          Assert.assertTrue(ExampleCommand.class.equals(metadata.getType())
                   || ExampleNoUICommand.class.equals(metadata.getType())
                   || ExampleAnnotatedCommand.class.equals(metadata.getType())
+                  || DifferentNameCommand.class.equals(metadata.getType())
                   );
          count++;
       }
 
-      Assert.assertEquals(5, count);
+      Assert.assertEquals(6, count);
    }
 
    @Test
@@ -92,6 +94,16 @@ public class CommandFactoryTest
       Assert.assertNotNull(command);
       Assert.assertSame(command, commandFactory.getCommandByName(context, commandName));
       Assert.assertNotSame(command, commandFactory.getNewCommandByName(context, commandName));
+   }
+
+   @Test
+   public void testCommandByNameLookup()
+   {
+      MockUIContext context = new MockUIContext();
+      context.getProvider().setGUI(false);
+      Assert.assertNotNull(commandFactory.getCommandByName(context, "a-gui-command"));
+      Assert.assertNotNull(commandFactory.getCommandByName(context, "a-shell-command"));
+      Assert.assertNull(commandFactory.getCommandByName(context, "an-invalid-command"));
    }
 
 }
