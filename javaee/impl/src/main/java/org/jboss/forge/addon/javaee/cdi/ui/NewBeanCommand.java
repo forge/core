@@ -11,8 +11,10 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.javaee.cdi.CDIFacet;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -20,6 +22,8 @@ import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.result.NavigationResult;
+import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -30,7 +34,8 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewBeanCommand extends AbstractJavaSourceCommand<JavaClassSource>
+public class NewBeanCommand extends AbstractJavaSourceCommand<JavaClassSource> implements
+      PrerequisiteCommandsProvider
 {
    @Inject
    @WithAttributes(label = "Scope", defaultValue = "DEPENDENT")
@@ -97,5 +102,20 @@ public class NewBeanCommand extends AbstractJavaSourceCommand<JavaClassSource>
    protected Class<JavaClassSource> getSourceType()
    {
       return JavaClassSource.class;
+   }
+
+   @Override
+   public NavigationResult getPrerequisiteCommands(UIContext context)
+   {
+      NavigationResultBuilder builder = NavigationResultBuilder.create();
+      Project project = getSelectedProject(context);
+      if (project != null)
+      {
+         if (!project.hasFacet(CDIFacet.class))
+         {
+            builder.add(CDISetupCommand.class);
+         }
+      }
+      return builder.build();
    }
 }

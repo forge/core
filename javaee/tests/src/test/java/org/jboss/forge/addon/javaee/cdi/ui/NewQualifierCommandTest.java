@@ -76,6 +76,7 @@ public class NewQualifierCommandTest
    public void testCreateNewQualifier() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
+      projectHelper.installCDI_1_0(project);
       CommandController controller = testHarness.createCommandController(NewQualifierCommand.class,
                project.getRoot());
       controller.initialize();
@@ -99,6 +100,7 @@ public class NewQualifierCommandTest
    public void testCreateNewQualifierInherited() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
+      projectHelper.installCDI_1_0(project);
       CommandController controller = testHarness.createCommandController(NewQualifierCommand.class,
                project.getRoot());
       controller.initialize();
@@ -118,5 +120,4 @@ public class NewQualifierCommandTest
       Assert.assertTrue(ann.hasAnnotation(Qualifier.class));
       Assert.assertTrue(ann.hasAnnotation(Inherited.class));
    }
-
 }

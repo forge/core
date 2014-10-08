@@ -75,6 +75,7 @@ public class NewScopeCommandTest
    public void testCreateNewScope() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
+      projectHelper.installCDI_1_0(project);
       CommandController controller = testHarness.createCommandController(NewScopeCommand.class,
                project.getRoot());
       controller.initialize();
@@ -98,6 +99,7 @@ public class NewScopeCommandTest
    public void testCreateNewPassivatingScope() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
+      projectHelper.installCDI_1_0(project);
       CommandController controller = testHarness.createCommandController(NewScopeCommand.class,
                project.getRoot());
       controller.initialize();
@@ -123,6 +125,7 @@ public class NewScopeCommandTest
    public void testCreateNewPseudoScope() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
+      projectHelper.installCDI_1_0(project);
       CommandController controller = testHarness.createCommandController(NewScopeCommand.class,
                project.getRoot());
       controller.initialize();
@@ -142,5 +145,4 @@ public class NewScopeCommandTest
       Assert.assertTrue(ann.hasAnnotation(Scope.class));
       Assert.assertFalse(ann.hasAnnotation(NormalScope.class));
    }
-
 }
