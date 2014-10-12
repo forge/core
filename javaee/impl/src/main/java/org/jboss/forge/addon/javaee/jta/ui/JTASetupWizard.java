@@ -48,18 +48,18 @@ public class JTASetupWizard extends AbstractJavaEECommand
 
    @Inject
    @WithAttributes(required = true, label = "JTA Version", defaultValue = "1.1")
-   private UISelectOne<JTAFacet> version;
+   private UISelectOne<JTAFacet> jtaVersion;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(version);
+      builder.add(jtaVersion);
    }
 
    @Override
    public Result execute(final UIExecutionContext context) throws Exception
    {
-      if (facetFactory.install(getSelectedProject(context), version.getValue()))
+      if (facetFactory.install(getSelectedProject(context), jtaVersion.getValue()))
       {
          return Results.success("JTA has been installed.");
       }
