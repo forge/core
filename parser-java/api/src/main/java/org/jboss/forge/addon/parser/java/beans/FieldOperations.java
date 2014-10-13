@@ -70,11 +70,12 @@ public class FieldOperations
     * @param visibility The visibility of the newly created field
     * @param withGetter Specifies whether accessor method should be created
     * @param withSetter Specifies whether mutator method should be created
+    * @param updateToString Specifies whether the field should be added in the toString method
     * @param annotations An optional list of annotations that will be added to the field
     * @return The newly created field
     */
    public FieldSource<JavaClassSource> addFieldTo(final JavaClassSource targetClass, final String fieldType,
-            final String fieldName, Visibility visibility, boolean withGetter, boolean withSetter,
+            final String fieldName, Visibility visibility, boolean withGetter, boolean withSetter, boolean updateToString,
             String... annotations)
    {
       if (targetClass.hasField(fieldName))
@@ -103,9 +104,31 @@ public class FieldOperations
       {
          targetClass.removeMethod(property.getMutator());
       }
+      if (updateToString)
+      {
+         updateToString(targetClass);
+      }
 
-      updateToString(targetClass);
       return field;
+   }
+
+   /**
+    * Adds the field, updating the toString(). If specified, adds a getter, a setter or both.
+    *
+    * @param targetClass The class which the field will be added to
+    * @param fieldType The type of the field
+    * @param fieldName The name of the field
+    * @param visibility The visibility of the newly created field
+    * @param withGetter Specifies whether accessor method should be created
+    * @param withSetter Specifies whether mutator method should be created
+    * @param annotations An optional list of annotations that will be added to the field
+    * @return The newly created field
+    */
+   public FieldSource<JavaClassSource> addFieldTo(final JavaClassSource targetClass, final String fieldType,
+            final String fieldName, Visibility visibility, boolean withGetter, boolean withSetter,
+            String... annotations)
+   {
+      return addFieldTo(targetClass, fieldType, fieldName, visibility, withGetter, withSetter, true, annotations);
    }
 
    private void updateToString(final JavaClassSource targetEntity)
