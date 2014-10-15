@@ -141,6 +141,6 @@ public class FacesNewBeanCommand extends AbstractFacesCommand implements Prerequ
             builder.add(FacesSetupWizardImpl.class);
          }
       }
-        return builder.build();
-    }
+      return builder.build();
+   }
 }

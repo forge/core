@@ -35,7 +35,8 @@ public class BeansCommand
    @Inject
    private ProjectFactory projectFactory;
 
-   @Command(value = "CDI: List Interceptors", enabled = RequiresCDIFacetPredicate.class, categories = { "Java EE", "CDI" })
+   @Command(value = "CDI: List Interceptors", enabled = RequiresCDIFacetPredicate.class, categories = { "Java EE",
+            "CDI" })
    public void listInterceptors(final UIContext context, final UIOutput output)
    {
       CDIFacet<?> cdi = getProject(context).getFacet(CDIFacet.class);
@@ -55,7 +56,8 @@ public class BeansCommand
       }
    }
 
-   @Command(value = "CDI: List Alternatives", enabled = RequiresCDIFacetPredicate.class, categories = { "Java EE", "CDI" })
+   @Command(value = "CDI: List Alternatives", enabled = RequiresCDIFacetPredicate.class, categories = { "Java EE",
+            "CDI" })
    public void listAlternatives(final UIContext context, final UIOutput output)
    {
       CDIFacet<?> cdi = getProject(context).getFacet(CDIFacet.class);

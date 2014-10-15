@@ -36,7 +36,7 @@ import org.jboss.forge.roaster.model.util.Types;
  */
 public class DTOClassBuilder
 {
-   private static final Map<String,String> primitiveToWrapperTypeMap = new HashMap<>(8);
+   private static final Map<String, String> primitiveToWrapperTypeMap = new HashMap<>(8);
 
    private JavaClassSource dto;
    private final boolean topLevel;
@@ -83,7 +83,8 @@ public class DTOClassBuilder
       this.assembleCollection = templateFactory.create(
                resourceFactory.create(getClass().getResource("AssembleCollection.jv")), FreemarkerTemplate.class);
       this.assembleCollectionWithPrimitiveId = templateFactory.create(
-               resourceFactory.create(getClass().getResource("AssembleCollectionWithPrimitiveId.jv")), FreemarkerTemplate.class);
+               resourceFactory.create(getClass().getResource("AssembleCollectionWithPrimitiveId.jv")),
+               FreemarkerTemplate.class);
 
       this.initializeNestedDTOCollection = templateFactory.create(
                resourceFactory.create(getClass().getResource("InitializeNestedDTOCollection.jv")),
@@ -194,7 +195,7 @@ public class DTOClassBuilder
          String output;
          try
          {
-            if(idProperty.getType().isPrimitive())
+            if (idProperty.getType().isPrimitive())
             {
                String wrapperType = primitiveToWrapperTypeMap.get(idProperty.getType().getName());
                map.put("wrapperType", wrapperType);
@@ -352,7 +353,7 @@ public class DTOClassBuilder
       String output;
       try
       {
-         if(nestedDtoId.getType().isPrimitive())
+         if (nestedDtoId.getType().isPrimitive())
          {
             String wrapperType = primitiveToWrapperTypeMap.get(nestedDtoId.getType().getName());
             map.put("wrapperType", wrapperType);
