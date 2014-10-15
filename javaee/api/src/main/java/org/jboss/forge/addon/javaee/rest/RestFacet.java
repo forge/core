@@ -31,6 +31,7 @@ public interface RestFacet extends JavaEEFacet
 
    /**
     * Returns the application path configured for this project
+    * 
     * @return
     */
    public String getApplicationPath();

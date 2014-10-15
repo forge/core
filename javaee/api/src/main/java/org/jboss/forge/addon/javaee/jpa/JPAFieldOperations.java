@@ -56,9 +56,9 @@ public interface JPAFieldOperations
             Iterable<CascadeType> cascadeTypes) throws FileNotFoundException;
 
    void newEmbeddedRelationship(
-            Project project, 
-            JavaResource resource, 
-            String fieldName, 
+            Project project,
+            JavaResource resource,
+            String fieldName,
             String fieldType)
             throws FileNotFoundException;
 }

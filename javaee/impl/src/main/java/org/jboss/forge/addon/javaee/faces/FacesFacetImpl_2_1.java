@@ -70,6 +70,6 @@ public class FacesFacetImpl_2_1 extends AbstractFacesFacetImpl<WebFacesConfigDes
    {
       WebFacesConfigDescriptor descriptorContents = Descriptors.create(WebFacesConfigDescriptor.class)
                .version("2.1");
-      descriptor.setContents(descriptorContents.exportAsString());      
+      descriptor.setContents(descriptorContents.exportAsString());
    }
 }

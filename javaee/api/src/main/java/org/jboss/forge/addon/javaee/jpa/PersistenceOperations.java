@@ -29,7 +29,8 @@ public interface PersistenceOperations
    public static final String DEFAULT_UNIT_DESC = "Forge Persistence Unit";
 
    /**
-    * Setups JPA in the project for the given attributes. If persistence unit with the name already exists, the unit will be overwritten.
+    * Setups JPA in the project for the given attributes. If persistence unit with the name already exists, the unit
+    * will be overwritten.
     * 
     * @param unitName Name of the created Persistence Unit
     * @param project Project for which the JPA is being set up
@@ -37,7 +38,7 @@ public interface PersistenceOperations
     * @param configureMetadata configure the metadata
     */
    public FileResource<?> setup(String unitName, Project project, JPADataSource dataSource, boolean configureMetadata);
-   
+
    /**
     * Get the object representing the persistence unit, null is returned when no persistence unit was found.
     * 
@@ -104,10 +105,9 @@ public interface PersistenceOperations
    public JavaResource newEntity(DirectoryResource target, String entityName, String entityPackage,
             GenerationType idStrategy);
 
-   
    /**
-    * Creates a new {@link JavaResource} for an embeddable entity in the specified project. If a project is available, use
-    * {@link PersistenceOperations#newEmbeddableEntity(Project, String, String)}
+    * Creates a new {@link JavaResource} for an embeddable entity in the specified project. If a project is available,
+    * use {@link PersistenceOperations#newEmbeddableEntity(Project, String, String)}
     * 
     * @param target the target directory resource to create this class
     * @param entityName the name of the entity
@@ -116,11 +116,10 @@ public interface PersistenceOperations
     * @throws FileNotFoundException if something wrong happens while saving the {@link JavaClass}
     */
    public JavaResource newEmbeddableEntity(DirectoryResource target, String entityName, String entityPackage);
-   
-   
+
    /**
-    * Creates a new {@link JavaResource} for an embeddable entity in the specified target. If no project is available, use
-    * {@link PersistenceOperations#newEmbeddableEntity(DirectoryResource, String, String)}
+    * Creates a new {@link JavaResource} for an embeddable entity in the specified target. If no project is available,
+    * use {@link PersistenceOperations#newEmbeddableEntity(DirectoryResource, String, String)}
     * 
     * @param project the current project to create the entity. Must not be null
     * @param entityName the name of the entity
@@ -128,6 +127,7 @@ public interface PersistenceOperations
     * @return the created java resource
     * @throws FileNotFoundException if something wrong happens while saving the {@link JavaClass}
     */
-   public JavaResource newEmbeddableEntity(Project project, String entityName, String entityPackage) throws FileNotFoundException;
+   public JavaResource newEmbeddableEntity(Project project, String entityName, String entityPackage)
+            throws FileNotFoundException;
 
 }

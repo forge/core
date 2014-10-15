@@ -26,7 +26,7 @@ public class JavaEEValidatorProvider implements ValidationProvider
    {
       this.descriptor = Descriptors.create(ValidationConfigurationDescriptor.class);
    }
-   
+
    @Override
    public String getName()
    {

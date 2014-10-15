@@ -60,7 +60,7 @@ public class RestGeneratedResources
    {
       this.endpoints.add(endpoint);
    }
-   
+
    public void addToEndpoints(Collection<JavaResource> endpoints)
    {
       this.endpoints.addAll(endpoints);
@@ -70,7 +70,7 @@ public class RestGeneratedResources
    {
       this.entities.add(entity);
    }
-   
+
    public void addToEntities(Collection<JavaResource> entities)
    {
       this.entities.addAll(entities);

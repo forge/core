@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.jboss.forge.addon.javaee.jpa.JPAEntityUtil;
 import org.jboss.forge.addon.javaee.rest.generation.RestGenerationConstants;
 import org.jboss.forge.addon.javaee.rest.generation.RestGenerationContext;
 import org.jboss.forge.addon.javaee.rest.generation.RestResourceGenerator;
@@ -51,14 +52,14 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
          project.getFacet(JavaSourceFacet.class).saveJavaSource(entity);
       }
       String contentType = ResourceGeneratorUtil.getContentType(context.getContentType());
-      String idType = ResourceGeneratorUtil.resolveIdType(entity);
+      String idType = JPAEntityUtil.resolveIdType(entity);
       String persistenceUnitName = context.getPersistenceUnitName();
-      String idGetterName = ResourceGeneratorUtil.resolveIdGetterName(entity);
-      String entityTable = ResourceGeneratorUtil.getEntityTable(entity);
-      String selectExpression = ResourceGeneratorUtil.getSelectExpression(entity, entityTable);
-      String idClause = ResourceGeneratorUtil.getIdClause(entity, entityTable);
-      String orderClause = ResourceGeneratorUtil.getOrderClause(entity,
-               ResourceGeneratorUtil.getJpqlEntityVariable(entityTable));
+      String idGetterName = JPAEntityUtil.resolveIdGetterName(entity);
+      String entityTable = JPAEntityUtil.getEntityTable(entity);
+      String selectExpression = JPAEntityUtil.getSelectExpression(entity, entityTable);
+      String idClause = JPAEntityUtil.getIdClause(entity, entityTable);
+      String orderClause = JPAEntityUtil.getOrderClause(entity,
+               JPAEntityUtil.getJpqlEntityVariable(entityTable));
       String resourcePath = ResourceGeneratorUtil.getResourcePath(context);
 
       Map<Object, Object> map = new HashMap<>();

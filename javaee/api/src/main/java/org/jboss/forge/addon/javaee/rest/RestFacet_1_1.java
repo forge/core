@@ -16,8 +16,8 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @FacetConstraints({
-   @FacetConstraint(JavaSourceFacet.class),
-   @FacetConstraint(ServletFacet_3_0.class)
+         @FacetConstraint(JavaSourceFacet.class),
+         @FacetConstraint(ServletFacet_3_0.class)
 })
 public interface RestFacet_1_1 extends RestFacet
 {

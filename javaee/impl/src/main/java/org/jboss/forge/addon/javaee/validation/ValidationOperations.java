@@ -24,7 +24,7 @@ public class ValidationOperations
 
    @Inject
    private DependencyInstaller installer;
-   
+
    @Inject
    private FacetFactory facetFactory;
 
@@ -34,15 +34,16 @@ public class ValidationOperations
       if (project != null)
       {
          ValidationFacet facet = facetFactory.install(project, ValidationFacet.class);
-         
-         String scopeType = provided?"PROVIDED":"COMPILE";
+
+         String scopeType = provided ? "PROVIDED" : "COMPILE";
          installDependencies(project, provider.getDependencies(), scopeType);
          installDependencies(project, provider.getAdditionalDependencies(), scopeType);
-         
+
          if (provider.getDefaultDescriptor() != null)
          {
             final ValidationConfigurationDescriptor providerDescriptor = provider.getDefaultDescriptor();
-            final ValidationConfigurationDescriptor descriptor = Descriptors.create(ValidationConfigurationDescriptor.class);
+            final ValidationConfigurationDescriptor descriptor = Descriptors
+                     .create(ValidationConfigurationDescriptor.class);
             String defaultProvider = providerDescriptor.getDefaultProvider();
             if (defaultProvider != null && !defaultProvider.isEmpty())
             {
@@ -68,15 +69,15 @@ public class ValidationOperations
          facet.saveConfig(config);
       }
    }
-   
-   private void installDependencies(Project project,final Set<Dependency> dependencies, String scopeType)
+
+   private void installDependencies(Project project, final Set<Dependency> dependencies, String scopeType)
    {
       for (Dependency dep : dependencies)
       {
          if (!installer.isInstalled(project, dep))
          {
-             dep = DependencyBuilder.create(dep).setScopeType(scopeType);
-             installer.install(project, dep);
+            dep = DependencyBuilder.create(dep).setScopeType(scopeType);
+            installer.install(project, dep);
          }
       }
    }

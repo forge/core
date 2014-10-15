@@ -1,0 +1,57 @@
+package org.jboss.forge.spec.javaee.rest;
+
+import java.util.List;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+
+
+/**
+ *  DAO for ${entity.getName()}
+ */
+@Stateless
+public class ${entity.getName()}Dao
+{
+   @PersistenceContext(unitName="${persistenceUnitName}")
+   private EntityManager em;
+
+   public void create(${entity.getName()} entity)
+   {
+      em.persist(entity);
+   }
+
+   public void deleteById(${idType} id)
+   {
+      ${entity.getName()} entity = em.find(${entity.getName()}.class, id);
+      if (entity != null) {
+        em.remove(entity);
+      }
+   }
+
+   public ${entity.getName()} findById(${idType} id)
+   {
+      return em.find(${entity.getName()}.class, id);
+   }
+
+   public ${entity.getName()} update(${entity.getName()} entity)
+   {
+      return em.merge(entity);
+   }
+   
+
+   public List<${entity.getName()}> listAll(Integer startPosition, Integer maxResult)
+   {
+      TypedQuery<${entity.getName()}> findAllQuery = em.createQuery("${selectExpression} ${orderClause}", ${entity.getName()}.class);
+      if (startPosition != null)
+      {
+         findAllQuery.setFirstResult(startPosition);
+      }
+      if (maxResult != null)
+      {
+         findAllQuery.setMaxResults(maxResult);
+      }
+      return findAllQuery.getResultList();
+   }
+}
