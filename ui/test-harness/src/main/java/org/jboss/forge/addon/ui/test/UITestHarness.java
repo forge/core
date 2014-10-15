@@ -88,6 +88,32 @@ public class UITestHarness
                addonRegistry.getServices(commandClass).get());
    }
 
+   public WizardCommandController createWizardController(String name) throws Exception
+   {
+      return createWizardController(name, (Resource<?>) null);
+   }
+
+   public WizardCommandController createWizardController(String name, Resource<?>... initialSelection) throws Exception
+   {
+      WizardCommandController result = null;
+      Iterable<UICommand> commands = commandFactory.getCommands();
+      UIContextImpl context = getUIContextInstance(initialSelection);
+      for (UICommand command : commands)
+      {
+         if (command instanceof UIWizard)
+         {
+            UICommandMetadata metadata = command.getMetadata(context);
+            if (name.equals(metadata.getName()))
+            {
+               result = factory.createWizardController(context, getUIRuntimeInstance(), (UIWizard) command);
+               break;
+            }
+         }
+      }
+      Assert.notNull(result, "Command " + name + " not found");
+      return result;
+   }
+
    public WizardCommandController createWizardController(Class<? extends UIWizard> wizardClass) throws Exception
    {
       return createWizardController(wizardClass, (Resource<?>) null);
