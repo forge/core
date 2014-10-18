@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.javaee.cdi.ui;
 
+import javax.decorator.Decorator;
+import javax.decorator.Delegate;
 import javax.inject.Inject;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
@@ -18,33 +20,33 @@ import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
- * Creates a new CDI Interceptor
+ * Creates a new CDI Decorator
  *
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
-public class NewInterceptorCommand extends AbstractJavaSourceCommand<JavaClassSource> implements
+public class NewDecoratorCommand extends AbstractJavaSourceCommand<JavaClassSource> implements
          PrerequisiteCommandsProvider
 {
    @Inject
-   @WithAttributes(label = "Interceptor Binding", required = true)
-   private UIInput<String> interceptorBinding;
+   @WithAttributes(label = "Interface to delegate", required = true)
+   private UIInput<String> delegate;
 
    @Override
    public Metadata getMetadata(UIContext context)
    {
       return Metadata.from(super.getMetadata(context), getClass())
-               .name("CDI: New Interceptor")
-               .description("Creates a new CDI Interceptor")
+               .name("CDI: New Decorator")
+               .description("Creates a new CDI Decorator")
                .category(Categories.create(super.getMetadata(context).getCategory(), "CDI"));
    }
 
@@ -52,25 +54,20 @@ public class NewInterceptorCommand extends AbstractJavaSourceCommand<JavaClassSo
    public void initializeUI(UIBuilder builder) throws Exception
    {
       super.initializeUI(builder);
-      builder.add(interceptorBinding);
+      builder.add(delegate);
    }
 
    @Override
    public JavaClassSource decorateSource(UIExecutionContext context, Project project,
-            JavaClassSource interceptor) throws Exception
+            JavaClassSource decorator) throws Exception
    {
-      interceptor.addImport(interceptorBinding.getValue());
-      interceptor.addAnnotation(interceptorBinding.getValue());
-      interceptor.addAnnotation(Interceptor.class);
-      interceptor.addImport(InvocationContext.class);
-      interceptor.addMethod().setName("intercept").setParameters("InvocationContext ic").setReturnType(Object.class)
-               .setPrivate()
-               .addThrows(Exception.class).setBody(
-                        "try {\n" +
-                                 "            return ic.proceed();\n" +
-                                 "        } finally {\n" +
-                                 "        }");
-      return interceptor;
+      decorator.setAbstract(true).addInterface(delegate.getValue()).addAnnotation(Decorator.class);
+      // Fields
+      FieldSource<?> field = decorator.addField().setPrivate().setName("delegate").setType(delegate.getValue());
+      field.addAnnotation(Inject.class);
+      field.addAnnotation(Delegate.class);
+
+      return decorator;
    }
 
    @Override
@@ -82,7 +79,7 @@ public class NewInterceptorCommand extends AbstractJavaSourceCommand<JavaClassSo
    @Override
    protected String getType()
    {
-      return "CDI Interceptor";
+      return "CDI Decorator";
    }
 
    @Override
