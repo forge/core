@@ -154,6 +154,28 @@ public class JavaSourceCommandTest
    }
 
    @Test
+   public void testCreateException() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, JavaSourceFacet.class);
+
+      CommandController controller = testHarness.createCommandController(JavaExceptionCommand.class, project.getRoot());
+      controller.initialize();
+      controller.setValueFor("named", "MyException");
+      controller.setValueFor("targetPackage", "org.jboss.forge.test");
+
+      Assert.assertTrue(controller.isValid());
+      Assert.assertTrue(controller.canExecute());
+      Result result = controller.execute();
+      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyException");
+      Assert.assertNotNull(javaResource);
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+   }
+
+   @Test
    public void testCreateInterface() throws Exception
    {
       Project project = projectFactory.createTempProject();
