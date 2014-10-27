@@ -55,7 +55,7 @@ public class NewDecoratorCommandTest
       return ShrinkWrap
                .create(ForgeArchive.class)
                .addClass(ProjectHelper.class)
-               .addBeansXML
+               .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
