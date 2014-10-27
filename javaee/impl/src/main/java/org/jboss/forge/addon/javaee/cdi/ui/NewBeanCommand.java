@@ -9,7 +9,9 @@ package org.jboss.forge.addon.javaee.cdi.ui;
 
 import java.util.concurrent.Callable;
 
+import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
@@ -40,6 +42,18 @@ public class NewBeanCommand extends AbstractJavaSourceCommand<JavaClassSource>
    @WithAttributes(label = "Custom Scope Annotation", type = InputType.JAVA_CLASS_PICKER)
    private UIInput<String> customScopeAnnotation;
 
+   @Inject
+   @WithAttributes(label = "Qualifier")
+   private UIInput<String> qualifier;
+
+   @Inject
+   @WithAttributes(label = "Alternative")
+   private UIInput<Boolean> alternative;
+
+   @Inject
+   @WithAttributes(label = "Named")
+   private UIInput<Boolean> withNamed;
+
    @Override
    public Metadata getMetadata(UIContext context)
    {
@@ -62,7 +76,7 @@ public class NewBeanCommand extends AbstractJavaSourceCommand<JavaClassSource>
          }
       };
       customScopeAnnotation.setEnabled(customScopeSelected).setRequired(customScopeSelected);
-      builder.add(scoped).add(customScopeAnnotation);
+      builder.add(scoped).add(customScopeAnnotation).add(qualifier).add(alternative).add(withNamed);
    }
 
    @Override
@@ -77,6 +91,18 @@ public class NewBeanCommand extends AbstractJavaSourceCommand<JavaClassSource>
       else if (BeanScope.DEPENDENT != scopedValue)
       {
          source.addAnnotation(scopedValue.getAnnotation());
+      }
+      if (withNamed.getValue())
+      {
+         source.addAnnotation(Named.class);
+      }
+      if (alternative.getValue())
+      {
+         source.addAnnotation(Alternative.class);
+      }
+      if (qualifier != null && qualifier.getValue() != null && !"".equals(qualifier.getValue()))
+      {
+         source.addAnnotation(qualifier.getValue());
       }
       return source;
    }
