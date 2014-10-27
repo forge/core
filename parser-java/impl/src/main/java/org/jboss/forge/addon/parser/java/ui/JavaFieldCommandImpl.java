@@ -68,6 +68,10 @@ public class JavaFieldCommandImpl extends AbstractProjectCommand implements Java
    private UIInput<Boolean> generateSetter;
 
    @Inject
+   @WithAttributes(label = "Update toString", description = "Updates the toString method by adding the field", defaultValue = "true")
+   private UIInput<Boolean> updateToString;
+
+   @Inject
    private FieldOperations fieldOperations;
 
    @Inject
@@ -86,7 +90,7 @@ public class JavaFieldCommandImpl extends AbstractProjectCommand implements Java
    {
       setupTargetClass(builder.getUIContext());
       setupAccessType();
-      builder.add(targetClass).add(named).add(type).add(accessType).add(generateGetter).add(generateSetter);
+      builder.add(targetClass).add(named).add(type).add(accessType).add(generateGetter).add(generateSetter).add(updateToString);
    }
 
    @Override
@@ -112,7 +116,7 @@ public class JavaFieldCommandImpl extends AbstractProjectCommand implements Java
 
       String fieldType = type.getValue();
       field = fieldOperations.addFieldTo(targetClass, fieldType, fieldNameStr, accessType.getValue(),
-               generateGetter.getValue(), generateSetter.getValue());
+               generateGetter.getValue(), generateSetter.getValue(), updateToString.getValue());
       setCurrentWorkingResource(context, javaResource, field);
       return Results.success("Field " + named.getValue() + " " + action);
 

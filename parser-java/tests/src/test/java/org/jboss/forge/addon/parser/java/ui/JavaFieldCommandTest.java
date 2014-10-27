@@ -2,6 +2,7 @@ package org.jboss.forge.addon.parser.java.ui;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
@@ -90,6 +91,23 @@ public class JavaFieldCommandTest
       assertTrue(targetClass.getField(name).isPrivate());
       assertNotNull(targetClass.getMethod("getFirstName"));
       assertNotNull(targetClass.getMethod("setFirstName", String.class));
+      assertNotNull(targetClass.getMethod("toString"));
+   }
+
+   @Test
+   public void testGenerateFieldWithoutToStringUpdate() throws Exception
+   {
+      commandController.initialize();
+      String name = "firstName";
+      setName(name);
+      setUpdateToString(false);
+      commandController.execute();
+      reloadTargetClass();
+      assertNotNull(targetClass.getField(name));
+      assertTrue(targetClass.getField(name).isPrivate());
+      assertNotNull(targetClass.getMethod("getFirstName"));
+      assertNotNull(targetClass.getMethod("setFirstName", String.class));
+      assertNull(targetClass.getMethod("toString"));
    }
 
    @Test
@@ -105,6 +123,7 @@ public class JavaFieldCommandTest
       assertTrue(targetClass.getField(age).isPrivate());
       assertNotNull(targetClass.getMethod("getAge"));
       assertNotNull(targetClass.getMethod("setAge", int.class));
+      assertNotNull(targetClass.getMethod("toString"));
    }
 
    @Test
@@ -149,6 +168,7 @@ public class JavaFieldCommandTest
       assertNotNull(targetClass.getField(firstName));
       assertEquals(generateGetter, targetClass.getMethod("getFirstName") != null);
       assertEquals(generateSetter, targetClass.getMethod("setFirstName", String.class) != null);
+      assertNotNull(targetClass.getMethod("toString"));
    }
 
    private void createTempProject()
@@ -199,5 +219,10 @@ public class JavaFieldCommandTest
    private void setWithSetter(boolean withSetter)
    {
       commandController.setValueFor("generateSetter", withSetter);
+   }
+
+   private void setUpdateToString(boolean updateToString)
+   {
+      commandController.setValueFor("updateToString", updateToString);
    }
 }
