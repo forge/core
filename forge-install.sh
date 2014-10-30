@@ -5,7 +5,6 @@
 # curl  | sh  //DECIDE THE URL
 # This way to install FORGE currently works with:
 # Mac OSX and Linux
-# forge-distribution-2.12.1.Final
 # POSIX sh script
 
 set -e
@@ -13,9 +12,6 @@ set -u
 
 #using stderr
 exec 1>&2
-
-RELEASE="2.12.1"
-PACKAGE=forge-distribution-2.12.1.Final
 
 #OS Check
 UNAME=$(uname)
@@ -50,21 +46,20 @@ if [ -d ~/forge ]; then
   rm -rf ~/forge
 fi
 
-
-ZIP_URL="https://repository.jboss.org/nexus/service/local/repositories/releases/content/org/jboss/forge/forge-distribution/2.12.1.Final/forge-distribution-2.12.1.Final-offline.zip"
 INSTALL_DIR=~/forge
 INSTALLER_DIR=~/.forge
 rm -rf $INSTALLER_DIR
 mkdir $INSTALLER_DIR
 mkdir $INSTALL_DIR
-echo "Downloading Forge $RELEASE "
-curl --progress-bar --fail "$ZIP_URL"  >> $INSTALLER_DIR/forge_installer.zip 
+echo "Downloading Forge"
+curl --location --fail --progress-bar https://repository.jboss.org/nexus/service/local/artifact/maven/redirect\?r\=releases\&g\=org.jboss.forge\&a\=forge-distribution\&v\=LATEST\&e\=zip\&c\=offline > $INSTALLER_DIR/forge_installer.zip 
 test -f $INSTALLER_DIR/forge_installer.zip 
 unzip $INSTALLER_DIR/forge_installer.zip  -d $INSTALL_DIR
+PACKAGE="$(ls $INSTALL_DIR)"
 rm -rf $INSTALLER_DIR
 test -x $INSTALL_DIR/$PACKAGE
 echo 
-echo "FORGE ${RELEASE} has been installed inside the directory : "$ ~/"forge."
+echo "FORGE has been installed inside the directory : "$ ~/"forge."
 echo 
 
 trap - EXIT
