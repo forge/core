@@ -2,7 +2,7 @@
 # This is the Forge install script!
 # To install Forge
 # Just open up your terminal and type:
-# curl  | sh  //DECIDE THE URL
+# curl http://forge.jboss.org/sh | sh 
 # This way to install FORGE currently works with:
 # Mac OSX and Linux
 # POSIX sh script
