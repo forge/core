@@ -9,8 +9,6 @@ package org.jboss.forge.addon.shell.command;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.inject.Inject;
 
@@ -21,38 +19,27 @@ import org.jboss.aesh.terminal.TerminalSize;
 import org.jboss.aesh.terminal.TerminalString;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
-import org.jboss.forge.addon.shell.util.CommandControllerComparator;
-import org.jboss.forge.addon.ui.UIRuntime;
 import org.jboss.forge.addon.ui.command.CommandFactory;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.controller.CommandController;
-import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
-import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIOutput;
-import org.jboss.forge.addon.ui.progress.DefaultUIProgressMonitor;
-import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
+ * Lists all the available commands
+ * 
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class CommandListCommand extends AbstractShellCommand
 {
-   private final CommandFactory commandFactory;
-   private final CommandControllerFactory factory;
-
    @Inject
-   public CommandListCommand(CommandFactory commandFactory, CommandControllerFactory factory)
-   {
-      this.commandFactory = commandFactory;
-      this.factory = factory;
-   }
+   private CommandFactory commandFactory;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -63,54 +50,33 @@ public class CommandListCommand extends AbstractShellCommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      // No inputs needed
    }
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      Shell shell = (Shell) context.getUIContext().getProvider();
+      UIContext uiContext = context.getUIContext();
+      Shell shell = (Shell) uiContext.getProvider();
       TerminalSize terminalSize = shell.getConsole().getShell().getSize();
       List<String> display = new ArrayList<>();
 
-      Set<CommandController> controllers = new TreeSet<>(new CommandControllerComparator());
-      for (UICommand command : commandFactory.getCommands())
+      Iterable<UICommand> commands = commandFactory.getCommands();
+      for (UICommand command : commands)
       {
-         controllers.add(getCommandController(context, command));
-      }
-
-      for (CommandController controller : controllers)
-      {
-         String name = commandFactory.getCommandName(context.getUIContext(), controller.getCommand());
-         UICommandMetadata metadata = controller.getMetadata();
+         UICommandMetadata metadata = command.getMetadata(uiContext);
+         String name = commandFactory.getCommandName(uiContext, command);
+         boolean enabled = command.isEnabled(uiContext);
          display.add(metadata.getCategory()
                   + " > "
-                  + new TerminalString(name, new TerminalColor(controller.isEnabled() ? Color.CYAN : Color.RED,
+                  + new TerminalString(name, new TerminalColor(enabled ? Color.CYAN : Color.RED,
                            Color.DEFAULT)).toString() + " - " + metadata.getDescription());
       }
-
-      UIOutput output = context.getUIContext().getProvider().getOutput();
+      UIOutput output = uiContext.getProvider().getOutput();
       PrintStream out = output.out();
       out.println(Parser.formatDisplayList(display.toArray(new String[display.size()]),
                terminalSize.getHeight(), terminalSize.getWidth()));
 
       return Results.success();
-   }
-
-   private CommandController getCommandController(UIExecutionContext context, UICommand command)
-   {
-      return factory.createController(context.getUIContext(), new UIRuntime()
-      {
-         @Override
-         public UIProgressMonitor createProgressMonitor(UIContext context)
-         {
-            return new DefaultUIProgressMonitor();
-         }
-
-         @Override
-         public UIPrompt createPrompt(UIContext context)
-         {
-            return null;
-         }
-      }, command);
    }
 }
