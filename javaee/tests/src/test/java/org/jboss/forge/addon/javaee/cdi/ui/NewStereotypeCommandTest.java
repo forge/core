@@ -80,6 +80,7 @@ public class NewStereotypeCommandTest
    public void testCreateNewStereotype() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
+      projectHelper.installCDI_1_0(project);
       CommandController controller = testHarness.createCommandController(NewStereotypeCommand.class,
                project.getRoot());
       controller.initialize();
@@ -106,6 +107,7 @@ public class NewStereotypeCommandTest
    public void testCreateNewInheritedStereotype() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
+      projectHelper.installCDI_1_0(project);
       CommandController controller = testHarness.createCommandController(NewStereotypeCommand.class,
                project.getRoot());
       controller.initialize();
@@ -133,6 +135,7 @@ public class NewStereotypeCommandTest
    public void testCreateNewNamedStereotype() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
+      projectHelper.installCDI_1_0(project);
       CommandController controller = testHarness.createCommandController(NewStereotypeCommand.class,
                project.getRoot());
       controller.initialize();
@@ -160,6 +163,7 @@ public class NewStereotypeCommandTest
    public void testCreateNewAlternativeStereotype() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
+      projectHelper.installCDI_1_0(project);
       CommandController controller = testHarness.createCommandController(NewStereotypeCommand.class,
                project.getRoot());
       controller.initialize();

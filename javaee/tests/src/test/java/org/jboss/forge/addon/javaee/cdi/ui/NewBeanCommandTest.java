@@ -84,6 +84,7 @@ public class NewBeanCommandTest
    public void testCreateNewBean() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
+      projectHelper.installCDI_1_0(project);
       CommandController controller = testHarness.createCommandController(NewBeanCommand.class,
                project.getRoot());
       controller.initialize();
@@ -182,6 +183,7 @@ public class NewBeanCommandTest
    public void testCreateNewBeanCustomScope() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
+      projectHelper.installCDI_1_0(project);
       JavaAnnotationSource ann = Roaster.create(JavaAnnotationSource.class).setName("MyCustomScope")
                .setPackage("org.jboss.forge.test.scope");
       ann.addAnnotation(NormalScope.class);
