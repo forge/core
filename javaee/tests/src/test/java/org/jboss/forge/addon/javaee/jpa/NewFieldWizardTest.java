@@ -112,6 +112,76 @@ public class NewFieldWizardTest
       Assert.assertTrue(field.hasAnnotation(Column.class));
       Assert.assertEquals("String", field.getType().getName());
       Assert.assertEquals("FIRST_NAME_COLUMN", field.getAnnotation(Column.class).getStringValue("name"));
+      Assert.assertNull(field.getAnnotation(Column.class).getLiteralValue("nullable"));
+      Assert.assertNull(field.getAnnotation(Column.class).getLiteralValue("updatable"));
+      Assert.assertNull(field.getAnnotation(Column.class).getLiteralValue("insertable"));
+   }
+
+   @Test
+   public void testNewFieldWithNullableInsertableUpdatableTrue() throws Exception
+   {
+      JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
+      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         Assert.assertTrue(controller.isEnabled());
+         controller.setValueFor("targetEntity", entity);
+         Assert.assertFalse(controller.canExecute());
+         controller.setValueFor("named", "firstName");
+         controller.setValueFor("columnName", "FIRST_NAME_COLUMN");
+         controller.setValueFor("nullable", "true");
+         controller.setValueFor("insertable", "true");
+         controller.setValueFor("updatable", "true");
+         Assert.assertFalse(controller.canMoveToNextStep());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertFalse(result instanceof Failed);
+         Assert.assertEquals("Field firstName created", result.getMessage());
+      }
+      JavaClass<?> javaClass = entity.getJavaType();
+      Assert.assertTrue(javaClass.hasField("firstName"));
+      final Field<?> field = javaClass.getField("firstName");
+      Assert.assertTrue(field.hasAnnotation(Column.class));
+      Assert.assertEquals("String", field.getType().getName());
+      Assert.assertEquals("FIRST_NAME_COLUMN", field.getAnnotation(Column.class).getStringValue("name"));
+      Assert.assertEquals("true", field.getAnnotation(Column.class).getLiteralValue("nullable"));
+      Assert.assertEquals("true", field.getAnnotation(Column.class).getLiteralValue("updatable"));
+      Assert.assertEquals("true", field.getAnnotation(Column.class).getLiteralValue("insertable"));
+   }
+
+
+   @Test
+   public void testNewFieldWithNullableInsertableUpdatableFalse() throws Exception
+   {
+      JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
+      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         Assert.assertTrue(controller.isEnabled());
+         controller.setValueFor("targetEntity", entity);
+         Assert.assertFalse(controller.canExecute());
+         controller.setValueFor("named", "firstName");
+         controller.setValueFor("columnName", "FIRST_NAME_COLUMN");
+         controller.setValueFor("nullable", "false");
+         controller.setValueFor("insertable", "false");
+         controller.setValueFor("updatable", "false");
+         Assert.assertFalse(controller.canMoveToNextStep());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertFalse(result instanceof Failed);
+         Assert.assertEquals("Field firstName created", result.getMessage());
+      }
+      JavaClass<?> javaClass = entity.getJavaType();
+      Assert.assertTrue(javaClass.hasField("firstName"));
+      final Field<?> field = javaClass.getField("firstName");
+      Assert.assertTrue(field.hasAnnotation(Column.class));
+      Assert.assertEquals("String", field.getType().getName());
+      Assert.assertEquals("FIRST_NAME_COLUMN", field.getAnnotation(Column.class).getStringValue("name"));
+      Assert.assertEquals("false", field.getAnnotation(Column.class).getLiteralValue("nullable"));
+      Assert.assertEquals("false", field.getAnnotation(Column.class).getLiteralValue("updatable"));
+      Assert.assertEquals("false", field.getAnnotation(Column.class).getLiteralValue("insertable"));
    }
 
    @Test
