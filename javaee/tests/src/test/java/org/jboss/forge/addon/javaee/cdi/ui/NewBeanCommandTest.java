@@ -14,7 +14,6 @@ import static org.hamcrest.CoreMatchers.not;
 import javax.enterprise.context.NormalScope;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Alternative;
-import javax.enterprise.inject.Stereotype;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -33,16 +32,12 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.Roaster;
-import org.jboss.forge.roaster.model.JavaAnnotation;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.lang.annotation.Inherited;
 
 /**
  *
@@ -109,6 +104,7 @@ public class NewBeanCommandTest
    public void testCreateNewBeanWithAlternativeAndNamed() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
+      projectHelper.installCDI_1_0(project);
       CommandController controller = testHarness.createCommandController(NewBeanCommand.class,
                project.getRoot());
       controller.initialize();
@@ -135,6 +131,7 @@ public class NewBeanCommandTest
    public void testCreateNewBeanWithNoAlternativeAndNamed() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
+      projectHelper.installCDI_1_0(project);
       CommandController controller = testHarness.createCommandController(NewBeanCommand.class,
                project.getRoot());
       controller.initialize();
@@ -159,6 +156,7 @@ public class NewBeanCommandTest
    public void testCreateNewBeanWithQualifier() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
+      projectHelper.installCDI_1_0(project);
       CommandController controller = testHarness.createCommandController(NewBeanCommand.class,
                project.getRoot());
       controller.initialize();

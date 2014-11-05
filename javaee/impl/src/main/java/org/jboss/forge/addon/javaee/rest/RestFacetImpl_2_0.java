@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.javaee.rest;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,12 @@ public class RestFacetImpl_2_0 extends AbstractRestFacet implements RestFacet_2_
       Map<Dependency, List<Dependency>> result = new LinkedHashMap<>();
       result.put(JAX_RS_2_0, Arrays.asList(JAX_RS_2_0, JAVAEE7));
       return result;
+   }
+
+   @Override
+   protected Iterable<Dependency> getRequiredManagedDependenciesFor(Dependency dependency)
+   {
+      return Collections.emptySet();
    }
 
    @Override
