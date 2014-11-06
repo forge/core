@@ -36,7 +36,7 @@ public class CatCommand extends AbstractShellCommand
    private Highlighter highlighter;
 
    @Inject
-   @WithAttributes(shortName='c', label = "Color", description = "Enable color hightlight in output")
+   @WithAttributes(shortName = 'c', label = "Color", description = "Enable color hightlight in output")
    private UIInput<Boolean> color;
 
    @Inject
@@ -76,7 +76,8 @@ public class CatCommand extends AbstractShellCommand
       while (it.hasNext())
       {
          final Resource<?> resource = it.hasNext() ?
-                  (new ResourcePathResolver(resourceFactory, currentResource, it.next()).resolve().get(0)) : currentResource;
+                  (new ResourcePathResolver(resourceFactory, currentResource, it.next()).resolve().get(0))
+                  : currentResource;
 
          if (!resource.exists())
          {
@@ -85,10 +86,21 @@ public class CatCommand extends AbstractShellCommand
          }
          else
          {
-            if(color.getValue()) {
-               highlighter.byFileName(resource.getName(), resource.getContents(), output.out());
-            } else {
-               output.out().println(resource.getContents());
+            try
+            {
+               if (color.getValue())
+               {
+                  highlighter.byFileName(resource.getName(), resource.getContents(), output.out());
+               }
+               else
+               {
+                  output.out().println(resource.getContents());
+               }
+            }
+            catch (UnsupportedOperationException uoe)
+            {
+               output.err().println("cat: " + resource.getName() + ": " + uoe.getMessage());
+               result = Results.fail();
             }
          }
       }

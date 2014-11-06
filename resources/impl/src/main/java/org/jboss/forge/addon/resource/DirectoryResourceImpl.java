@@ -215,13 +215,13 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    @Override
    public DirectoryResource setContents(String data)
    {
-      throw new UnsupportedOperationException("setContents(String) is not supported on DirectoryResource objects");
+      throw new UnsupportedOperationException("Is a directory");
    }
 
    @Override
    public String getContents()
    {
-      throw new UnsupportedOperationException("getContents() is not supported on DirectoryResource objects");
+      throw new UnsupportedOperationException("Is a directory");
    }
 
    @Override
