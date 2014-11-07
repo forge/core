@@ -59,7 +59,6 @@ public class ShellInitializer
          Settings settings = new SettingsBuilder().inputStream(new ByteArrayInputStream(command.getBytes()))
                   .outputStream(System.out).outputStreamError(System.err).ansi(false).create();
          this.shell = shellFactory.createShell(OperatingSystemUtils.getWorkingDir(), settings);
-         this.shell.getConsole().getExportManager().addVariable("export INTERACTIVE=false");
       }
       else if (Boolean.getBoolean("forge.standalone"))
       {

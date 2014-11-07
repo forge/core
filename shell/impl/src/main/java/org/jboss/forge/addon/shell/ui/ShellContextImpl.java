@@ -69,6 +69,11 @@ public class ShellContextImpl extends AbstractUIContext implements ShellContext
    @Override
    public boolean isInteractive()
    {
+      String sysProp = System.getProperty("INTERACTIVE");
+      if (sysProp != null)
+      {
+         return Boolean.parseBoolean(sysProp);
+      }
       Object interactiveFlag = getAttributeMap().get("INTERACTIVE");
       return (interactiveFlag == null || "true".equalsIgnoreCase(interactiveFlag.toString()));
    }
