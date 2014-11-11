@@ -147,7 +147,14 @@ public class ShellUIPromptImpl implements UIPrompt
             }
             if (promptValue != null)
             {
-               inputValues.add(promptValue);
+               if (inputValues.contains(promptValue))
+               {
+                  inputValues.remove(promptValue);
+               }
+               else
+               {
+                  inputValues.add(promptValue);
+               }
             }
          }
          while (promptValue != null);
@@ -197,7 +204,7 @@ public class ShellUIPromptImpl implements UIPrompt
       {
          return select.hasDefaultValue() ? select.getValue() : null;
       }
-      
+
       PrintStream out = console.getShell().out();
       String label = InputComponents.getLabelFor(select, false);
       String description = select.getDescription();
@@ -212,24 +219,21 @@ public class ShellUIPromptImpl implements UIPrompt
       Object value = null;
       Converter<Object, String> itemLabelConverter = InputComponents.getItemLabelConverter(converterFactory,
                select);
-      List<Object> items = new ArrayList<>(Lists.toList(select.getValueChoices()));
-      items.removeAll(existingItems);
-      if (items.isEmpty())
-      {
-         return null;
-      }
+      List<Object> items = Lists.toList(select.getValueChoices());
       out.println();
       for (int i = 0; i < items.size(); i++)
       {
          Object item = items.get(i);
          String itemLabel = itemLabelConverter.convert(item);
-         out.printf("[%s] - %s", i, itemLabel);
+         Object separator = existingItems.contains(item) ? "(x)" : "( )";
+         out.printf("[%s] %s %s", i, separator, itemLabel);
          out.println();
       }
       out.println();
       int idx;
       try
       {
+         out.println("Press <ENTER> to confirm, or <CTRL>+C to cancel.");
          idx = Integer.parseInt(prompt(label + description + " [0-" + (items.size() - 1) + "]"));
       }
       catch (NumberFormatException nfe)
