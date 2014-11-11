@@ -27,7 +27,10 @@ import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.Resource;
 
 /**
+ * Implementation of the {@link MavenBuildSystem} interface
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class MavenBuildSystemImpl implements MavenBuildSystem
 {
@@ -102,4 +105,32 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
    {
       return 0;
    }
+
+   @Override
+   public int hashCode()
+   {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (!(obj instanceof MavenBuildSystemImpl))
+         return false;
+      MavenBuildSystemImpl other = (MavenBuildSystemImpl) obj;
+      if (getType() == null)
+      {
+         if (other.getType() != null)
+            return false;
+      }
+      else if (!getType().equals(other.getType()))
+         return false;
+      return true;
+   }
+
 }
