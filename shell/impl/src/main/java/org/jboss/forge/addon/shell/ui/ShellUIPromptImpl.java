@@ -116,7 +116,7 @@ public class ShellUIPromptImpl implements UIPrompt
          else
          {
             // UIInput
-            value = promptInputComponent(input);
+            value = promptInputComponent(input, input.getValue());
          }
       }
       else if (input instanceof ManyValued)
@@ -139,7 +139,7 @@ public class ShellUIPromptImpl implements UIPrompt
             else
             {
                // UIInputMany
-               promptValue = promptInputComponent(input);
+               promptValue = promptInputComponent(input, inputValues);
             }
             if (promptValue != null)
             {
@@ -204,18 +204,21 @@ public class ShellUIPromptImpl implements UIPrompt
       }
    }
 
-   private Object promptInputComponent(InputComponent<?, ?> input) throws InterruptedException
+   private Object promptInputComponent(InputComponent<?, ?> input, Object componentValue) throws InterruptedException
    {
       Object value;
       String label = InputComponents.getLabelFor(input, false);
       String description = input.getDescription();
-      Object componentValue = InputComponents.getValueFor(input);
       if (!Strings.isNullOrEmpty(description))
       {
          description = " (" + description + ")";
       }
       String defaultValueDescription;
-      if (componentValue != null)
+      if (componentValue instanceof Collection)
+      {
+         defaultValueDescription = " " + componentValue.toString();
+      }
+      else if (componentValue != null)
       {
          defaultValueDescription = " [" + componentValue + "]";
       }
