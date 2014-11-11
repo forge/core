@@ -24,6 +24,8 @@ import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_0;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.rest.RestFacet_2_0;
 import org.jboss.forge.addon.javaee.rest.config.RestConfigurationStrategy;
+import org.jboss.forge.addon.javaee.servlet.ServletFacet_2_5;
+import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.javaee.validation.ValidationFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -79,6 +81,22 @@ public class ProjectHelper
    public EJBFacet_3_2 installEJB_3_2(Project project)
    {
       return facetFactory.install(project, EJBFacet_3_2.class);
+   }
+
+   /**
+    * Installs the {@link ServletFacet_2_5} facet
+    */
+   public ServletFacet_2_5 installServlet_2_5(Project project)
+   {
+      return facetFactory.install(project, ServletFacet_2_5.class);
+   }
+
+   /**
+    * Installs the {@link ServletFacet_3_0} facet
+    */
+   public ServletFacet_3_0 installServlet_3_0(Project project)
+   {
+      return facetFactory.install(project, ServletFacet_3_0.class);
    }
 
    /**

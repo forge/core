@@ -7,14 +7,6 @@
 
 package org.jboss.forge.addon.javaee.servlet;
 
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.javaee.Descriptors;
@@ -27,6 +19,13 @@ import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.shrinkwrap.descriptor.api.DescriptorImporter;
 import org.jboss.shrinkwrap.descriptor.api.webapp25.WebAppDescriptor;
+
+import javax.inject.Inject;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ServletFacetImpl_2_5 extends AbstractServletFacet<WebAppDescriptor> implements ServletFacet_2_5
 {
