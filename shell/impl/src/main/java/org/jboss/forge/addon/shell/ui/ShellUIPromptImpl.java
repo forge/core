@@ -9,6 +9,7 @@ package org.jboss.forge.addon.shell.ui;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,7 +17,12 @@ import org.jboss.aesh.console.AeshConsole;
 import org.jboss.aesh.console.Buffer;
 import org.jboss.aesh.console.command.CommandOperation;
 import org.jboss.aesh.console.command.invocation.CommandInvocation;
+import org.jboss.aesh.terminal.CharacterType;
+import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.Key;
+import org.jboss.aesh.terminal.TerminalColor;
+import org.jboss.aesh.terminal.TerminalString;
+import org.jboss.aesh.terminal.TerminalTextStyle;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.ui.hints.InputType;
@@ -53,29 +59,27 @@ public class ShellUIPromptImpl implements UIPrompt
    @Override
    public String prompt(String message)
    {
-      if (isAcceptDefaultsEnabled())
+      try
+      {
+         return promptInternal(message, true);
+      }
+      catch (InterruptedException e)
       {
          return null;
       }
-      PrintStream out = console.getShell().out();
-      out.print(message + " ");
-      String output = readInput(out, true);
-      out.println();
-      return output;
    }
 
    @Override
    public String promptSecret(String message)
    {
-      if (isAcceptDefaultsEnabled())
+      try
+      {
+         return promptInternal(message, false);
+      }
+      catch (InterruptedException e)
       {
          return null;
       }
-      PrintStream out = console.getShell().out();
-      out.print(message + " ");
-      String output = readInput(out, false);
-      out.println();
-      return output;
    }
 
    @Override
@@ -87,31 +91,18 @@ public class ShellUIPromptImpl implements UIPrompt
    @Override
    public boolean promptBoolean(String message, boolean defaultValue)
    {
-      if (isAcceptDefaultsEnabled())
+      try
+      {
+         return promptBooleanInternal(message, defaultValue);
+      }
+      catch (InterruptedException e)
       {
          return defaultValue;
-      }
-      String suffix = (defaultValue) ? " [Y/n] " : " [y/N] ";
-      String answer = prompt(message + suffix);
-      if (Strings.isNullOrEmpty(answer))
-      {
-         return defaultValue;
-      }
-      else
-      {
-         if (defaultValue)
-         {
-            return !"N".equalsIgnoreCase(answer);
-         }
-         else
-         {
-            return "Y".equalsIgnoreCase(answer);
-         }
       }
    }
 
-   @SuppressWarnings("rawtypes")
-   public Object promptValueFrom(InputComponent<?, ?> input)
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   public Object promptValueFrom(InputComponent<?, ?> input) throws InterruptedException
    {
       Object value = null;
       if (input instanceof SingleValued)
@@ -120,7 +111,7 @@ public class ShellUIPromptImpl implements UIPrompt
          {
             // UISelectOne
             SelectComponent select = (SelectComponent) input;
-            value = promptSelectComponent(select, Collections.emptyList());
+            value = promptSelectComponent(select, Collections.singleton(select.getValue()));
          }
          else
          {
@@ -131,6 +122,11 @@ public class ShellUIPromptImpl implements UIPrompt
       else if (input instanceof ManyValued)
       {
          List<Object> inputValues = new ArrayList<>();
+         Iterable<Object> currentValues = ((ManyValued<?, Object>) input).getValue();
+         if (currentValues != null)
+         {
+            inputValues.addAll(Lists.toList(currentValues));
+         }
          Object promptValue;
          do
          {
@@ -167,38 +163,87 @@ public class ShellUIPromptImpl implements UIPrompt
       return input.getValue();
    }
 
-   private Object promptInputComponent(InputComponent<?, ?> input)
+   private String promptInternal(String message, boolean echo) throws InterruptedException
+   {
+      if (isAcceptDefaultsEnabled())
+      {
+         return null;
+      }
+      PrintStream out = console.getShell().out();
+      // prompts should begin with a blue '?'
+      String promptFlag = new TerminalString("?", new TerminalColor(Color.BLUE, Color.DEFAULT), new TerminalTextStyle(
+               CharacterType.BOLD)).toString();
+      out.print(promptFlag + " " + message + " ");
+      String output = readInput(out, echo);
+      out.println();
+      return output;
+   }
+
+   private boolean promptBooleanInternal(String message, boolean defaultValue) throws InterruptedException
+   {
+      if (isAcceptDefaultsEnabled())
+      {
+         return defaultValue;
+      }
+      String suffix = (defaultValue) ? " [Y/n]:" : " [y/N]:";
+      String answer = promptInternal(message + suffix, true);
+      if (Strings.isNullOrEmpty(answer))
+      {
+         return defaultValue;
+      }
+      else
+      {
+         if (defaultValue)
+         {
+            return !"N".equalsIgnoreCase(answer);
+         }
+         else
+         {
+            return "Y".equalsIgnoreCase(answer);
+         }
+      }
+   }
+
+   private Object promptInputComponent(InputComponent<?, ?> input) throws InterruptedException
    {
       Object value;
       String label = InputComponents.getLabelFor(input, false);
       String description = input.getDescription();
+      Object componentValue = InputComponents.getValueFor(input);
       if (!Strings.isNullOrEmpty(description))
       {
-         description = " (" + description + "): ";
+         description = " (" + description + ")";
+      }
+      String defaultValueDescription;
+      if (componentValue != null)
+      {
+         defaultValueDescription = " [" + componentValue + "]";
       }
       else
       {
-         description = ": ";
+         defaultValueDescription = "";
       }
       String inputType = InputComponents.getInputType(input);
       if (InputType.SECRET.equals(inputType))
       {
-         value = promptSecret(label + description);
+         value = promptInternal(label + description + defaultValueDescription + ": ", false);
       }
       else if (input.getValueType() == Boolean.class)
       {
-         value = promptBoolean(label + description);
+         Boolean defaultValue = (Boolean) input.getValue();
+         value = promptBooleanInternal(label + description, defaultValue == null || defaultValue.booleanValue());
       }
       else
       {
-         value = prompt(label + description);
+         value = promptInternal(label + description + defaultValueDescription + ": ", true);
       }
       return value;
 
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
-   private Object promptSelectComponent(SelectComponent select, List<Object> existingItems)
+   private Object promptSelectComponent(SelectComponent select, Collection<Object> existingItems)
+            throws InterruptedException
    {
       if (isAcceptDefaultsEnabled())
       {
@@ -234,7 +279,9 @@ public class ShellUIPromptImpl implements UIPrompt
       try
       {
          out.println("Press <ENTER> to confirm, or <CTRL>+C to cancel.");
-         idx = Integer.parseInt(prompt(label + description + " [0-" + (items.size() - 1) + "]"));
+         String limit = items.size() == 1 ? "" : "-" + (items.size() - 1);
+         String message = label + description + " [0" + limit + "]";
+         idx = Integer.parseInt(promptInternal(message, true));
       }
       catch (NumberFormatException nfe)
       {
@@ -247,52 +294,48 @@ public class ShellUIPromptImpl implements UIPrompt
       return value;
    }
 
-   private String readInput(PrintStream out, boolean echo)
+   /**
+    * Performs the hard work
+    * 
+    * @throws InterruptedException if CTRL+C or CTRL+D is pressed
+    */
+   private String readInput(PrintStream out, boolean echo) throws InterruptedException
    {
-      String output;
-      try
+      StringBuilder sb = new StringBuilder();
+      Key inputKey;
+      do
       {
-         StringBuilder sb = new StringBuilder();
-         Key inputKey;
-         do
+         CommandOperation input = commandInvocation.getInput();
+         inputKey = input.getInputKey();
+         if (inputKey == Key.CTRL_C || inputKey == Key.CTRL_D)
          {
-            CommandOperation input = commandInvocation.getInput();
-            inputKey = input.getInputKey();
-            if (inputKey == Key.CTRL_C || inputKey == Key.CTRL_D)
+            throw new InterruptedException(inputKey.name());
+         }
+         else if (inputKey == Key.BACKSPACE && sb.length() > 0)
+         {
+            sb.setLength(sb.length() - 1);
+            if (echo)
             {
-               return null;
-            }
-            else if (inputKey == Key.BACKSPACE && sb.length() > 0)
-            {
-               sb.setLength(sb.length() - 1);
-               if (echo)
-               {
-                  // move cursor left
-                  out.print(Buffer.printAnsi("1D"));
-                  out.flush();
-                  // overwrite it with space
-                  out.print(" ");
-                  // move cursor back again
-                  out.print(Buffer.printAnsi("1D"));
-                  out.flush();
-               }
-            }
-            else if (inputKey.isPrintable())
-            {
-               if (echo)
-                  out.print(inputKey.getAsChar());
-
-               sb.append(inputKey.getAsChar());
+               // move cursor left
+               out.print(Buffer.printAnsi("1D"));
+               out.flush();
+               // overwrite it with space
+               out.print(" ");
+               // move cursor back again
+               out.print(Buffer.printAnsi("1D"));
+               out.flush();
             }
          }
-         while (inputKey != Key.ENTER && inputKey != Key.ENTER_2);
-         output = (sb.length() == 0) ? null : sb.toString();
+         else if (inputKey.isPrintable())
+         {
+            if (echo)
+               out.print(inputKey.getAsChar());
+
+            sb.append(inputKey.getAsChar());
+         }
       }
-      catch (InterruptedException e)
-      {
-         output = null;
-      }
-      return output;
+      while (inputKey != Key.ENTER && inputKey != Key.ENTER_2);
+      return (sb.length() == 0) ? null : sb.toString();
    }
 
    private boolean isAcceptDefaultsEnabled()

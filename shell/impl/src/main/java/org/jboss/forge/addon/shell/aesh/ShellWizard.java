@@ -16,6 +16,7 @@ import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.output.UIOutput;
 
 /**
  * Encapsulates the {@link WizardCommandController}.
@@ -25,6 +26,7 @@ import org.jboss.forge.addon.ui.input.InputComponent;
  */
 public class ShellWizard extends AbstractShellInteraction
 {
+
    public ShellWizard(WizardCommandController wizardCommandController, ShellContext shellContext,
             CommandLineUtil commandLineUtil, ForgeCommandRegistry forgeCommandRegistry)
    {
@@ -88,10 +90,17 @@ public class ShellWizard extends AbstractShellInteraction
    }
 
    @Override
-   public void promptRequiredMissingValues(ShellImpl shell)
+   public void promptRequiredMissingValues(ShellImpl shell) throws InterruptedException
    {
       WizardCommandController controller = getController();
-      promptRequiredMissingValues(shell, controller.getInputs().values());
+      boolean interactiveMode = false;
+      if (hasMissingRequiredInputValues(controller.getInputs().values()))
+      {
+         UIOutput output = shell.getOutput();
+         output.info(output.out(), INTERACTIVE_MODE_MESSAGE);
+         interactiveMode = true;
+         promptRequiredMissingValues(shell, controller.getInputs().values());
+      }
       while (controller.canMoveToNextStep())
       {
          try
@@ -103,7 +112,16 @@ public class ShellWizard extends AbstractShellInteraction
             // TODO: Log this
             break;
          }
-         promptRequiredMissingValues(shell, controller.getInputs().values());
+         if (hasMissingRequiredInputValues(controller.getInputs().values()))
+         {
+            if (!interactiveMode)
+            {
+               UIOutput output = shell.getOutput();
+               output.info(output.out(), INTERACTIVE_MODE_MESSAGE);
+               interactiveMode = true;
+            }
+            promptRequiredMissingValues(shell, controller.getInputs().values());
+         }
       }
    }
 }

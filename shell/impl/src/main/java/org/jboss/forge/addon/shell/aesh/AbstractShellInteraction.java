@@ -23,6 +23,8 @@ import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
  */
 public abstract class AbstractShellInteraction implements Comparable<AbstractShellInteraction>
 {
+   protected static final String INTERACTIVE_MODE_MESSAGE = "Required inputs not satisfied, entering interactive mode";
+
    private final String name;
    private final CommandController controller;
    private final UICommandMetadata metadata;
@@ -41,7 +43,12 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
 
    public abstract CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception;
 
-   public abstract void promptRequiredMissingValues(ShellImpl impl);
+   /**
+    * Called when a required input value is missing.
+    * 
+    * @throws InterruptedException if Ctrl+C or Ctrl+D was pressed during the input
+    */
+   public abstract void promptRequiredMissingValues(ShellImpl impl) throws InterruptedException;
 
    public UIContext getContext()
    {
@@ -92,18 +99,35 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
       return getName();
    }
 
+   protected boolean hasMissingRequiredInputValues(Iterable<InputComponent<?, ?>> inputs)
+   {
+      for (InputComponent<?, ?> input : inputs)
+      {
+         if (input.isEnabled())
+         {
+            if (input.isRequired() && !(input.hasDefaultValue() || input.hasValue()))
+            {
+               return true;
+            }
+         }
+      }
+      return false;
+   }
+
    /**
     * Called by {@link AbstractShellInteraction#promptRequiredMissingValues(ShellImpl)}
     */
    protected void promptRequiredMissingValues(ShellImpl shell, Iterable<InputComponent<?, ?>> inputs)
+            throws InterruptedException
    {
       ShellUIPromptImpl prompt = shell.createPrompt(context);
       for (InputComponent<?, ?> input : inputs)
       {
-         if (input.isRequired() && !(input.hasDefaultValue() || input.hasValue()))
+         if (input.isEnabled())
          {
+            boolean requiredInputMissing = input.isRequired() && !(input.hasDefaultValue() || input.hasValue());
             Object obj = prompt.promptValueFrom(input);
-            if (obj == null)
+            if (obj == null && requiredInputMissing)
             {
                // No value returned. Just stop testing other inputs
                break;

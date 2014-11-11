@@ -64,40 +64,52 @@ class CommandAdapter implements Command<CommandInvocation>
       // FORGE-1668: Prompt for required missing values
       if (shellContext.isInteractive())
       {
-         interaction.promptRequiredMissingValues(shell);
-      }
-      if (interaction.getController().isValid())
-      {
-         Result commandResult = null;
          try
          {
-            commandResult = interaction.getController().execute();
+            interaction.promptRequiredMissingValues(shell);
          }
-         catch (Exception e)
+         catch (InterruptedException ie)
          {
-            log.log(Level.SEVERE, "Failed to execute [" + interaction.getName() + "] due to exception.", e);
-            commandResult = Results.fail(e.getMessage(), e);
-         }
-         failure = displayResult(commandResult);
-         UISelection<?> selection = interaction.getContext().getSelection();
-         if (selection != null && !selection.isEmpty())
-         {
-            Object result = selection.get();
-            if (result instanceof Resource<?>)
-            {
-               shell.setCurrentResource((Resource<?>) result);
-            }
+            // <CTRL>+C was pressed.
+            log.log(Level.FINE, "Caught InterruptedException while prompting in interactive mode", ie);
+            failure = true;
          }
       }
-      else
+      if (!failure)
       {
-         List<UIMessage> messages = interaction.getController().validate();
-         for (UIMessage message : messages)
+         if (interaction.getController().isValid())
          {
-            if (message.getSeverity() == Severity.ERROR)
+            Result commandResult = null;
+            try
             {
-               failure = true;
-               ShellMessages.error(shell.getConsole().getShell().err(), message.getDescription());
+               commandResult = interaction.getController().execute();
+            }
+            catch (Exception e)
+            {
+               log.log(Level.SEVERE, "Failed to execute [" + interaction.getName() + "] due to exception.", e);
+               commandResult = Results.fail(e.getMessage(), e);
+            }
+            failure = displayResult(commandResult);
+            UISelection<?> selection = interaction.getContext().getSelection();
+            if (selection != null && !selection.isEmpty())
+            {
+               Object result = selection.get();
+               if (result instanceof Resource<?>)
+               {
+                  shell.setCurrentResource((Resource<?>) result);
+               }
+            }
+         }
+         else
+         {
+            List<UIMessage> messages = interaction.getController().validate();
+            for (UIMessage message : messages)
+            {
+               if (message.getSeverity() == Severity.ERROR)
+               {
+                  failure = true;
+                  ShellMessages.error(shell.getConsole().getShell().err(), message.getDescription());
+               }
             }
          }
       }

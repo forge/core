@@ -14,6 +14,7 @@ import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.output.UIOutput;
 
 /**
  * Encapsulates a {@link UICommand} to be useful in a Shell context
@@ -51,10 +52,15 @@ public class ShellSingleCommand extends AbstractShellInteraction
     * Prompts for required missing values
     */
    @Override
-   public void promptRequiredMissingValues(ShellImpl shell)
+   public void promptRequiredMissingValues(ShellImpl shell) throws InterruptedException
    {
       Map<String, InputComponent<?, ?>> inputs = getController().getInputs();
-      promptRequiredMissingValues(shell, inputs.values());
+      if (hasMissingRequiredInputValues(inputs.values()))
+      {
+         UIOutput output = shell.getOutput();
+         output.info(output.out(), INTERACTIVE_MODE_MESSAGE);
+         promptRequiredMissingValues(shell, inputs.values());
+      }
    }
 
 }
