@@ -131,7 +131,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
       this.description = Callables.returning(description);
       return (IMPLTYPE) this;
    }
-   
+
    @Override
    public IMPLTYPE setDescription(Callable<String> description)
    {
@@ -205,7 +205,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
       if (!Strings.isNullOrEmpty(msg))
       {
          // value is required and was not set
-         context.addValidationError(this, msg);
+         context.addValidationError(this, createValidatorMsg(context, msg));
       }
       if (hasValue() || hasDefaultValue())
       {
@@ -215,6 +215,15 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
             validator.validate(context);
          }
       }
+   }
+
+   private String createValidatorMsg(UIValidationContext context, String msg)
+   {
+      if (context.getCurrentInputComponent() != null)
+      {
+         return "[ " + context.getCurrentInputComponent().getName() + " ] " + msg;
+      }
+      return msg;
    }
 
    @Override
