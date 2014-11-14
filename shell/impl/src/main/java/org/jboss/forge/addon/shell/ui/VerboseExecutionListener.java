@@ -9,12 +9,12 @@ package org.jboss.forge.addon.shell.ui;
 
 import java.io.PrintStream;
 
-import org.jboss.forge.addon.shell.ShellMessages;
 import org.jboss.forge.addon.ui.command.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.output.UIOutput;
 
 /**
  * Displays the command execution failure if VERBOSE is set to true
@@ -32,18 +32,18 @@ public class VerboseExecutionListener extends AbstractCommandExecutionListener
          if (uiContext instanceof ShellContext)
          {
             ShellContext shellContext = (ShellContext) uiContext;
-            PrintStream err = shellContext.getProvider().getOutput().err();
+            UIOutput output = shellContext.getProvider().getOutput();
+            PrintStream err = output.err();
             UICommandMetadata metadata = command.getMetadata(shellContext);
             if (metadata != null)
-               ShellMessages.error(err, "Error while executing '" + metadata.getName() + "'");
+               output.error(err, "Error while executing '" + metadata.getName() + "'");
             if (shellContext.isVerbose())
             {
                failure.printStackTrace(err);
             }
             else
             {
-               ShellMessages.error(err, failure.getMessage());
-               ShellMessages.info(err, "(type \"export VERBOSE=true\" to enable stack traces)");
+               output.info(err, "(type \"export VERBOSE=true\" to enable stack traces)");
             }
          }
       }
