@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.javaee.cdi.ui;
 
 import javax.inject.Inject;
+import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
@@ -69,7 +70,7 @@ public class NewInterceptorCommand extends AbstractJavaSourceCommand<JavaClassSo
                         "try {\n" +
                                  "            return ic.proceed();\n" +
                                  "        } finally {\n" +
-                                 "        }");
+                                 "        }").addAnnotation(AroundInvoke.class);
       return interceptor;
    }
 

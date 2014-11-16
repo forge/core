@@ -15,6 +15,7 @@ import java.lang.annotation.Inherited;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InterceptorBinding;
 
@@ -33,6 +34,7 @@ import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.Method;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -95,9 +97,10 @@ public class NewInterceptorCommandTest
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyInterceptor");
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
-      JavaClass<?> ann = javaResource.getJavaType();
-      Assert.assertTrue(ann.hasAnnotation(Named.class));
-      Assert.assertTrue(ann.hasAnnotation(Interceptor.class));
-      Assert.assertFalse(ann.hasAnnotation(Inherited.class));
+      JavaClass<?> interceptor = javaResource.getJavaType();
+      Assert.assertTrue(interceptor.hasAnnotation(Named.class));
+      Assert.assertTrue(interceptor.hasAnnotation(Interceptor.class));
+      Assert.assertTrue(interceptor.getMethods().get(0).hasAnnotation(AroundInvoke.class));
+      Assert.assertFalse(interceptor.hasAnnotation(Inherited.class));
    }
 }
