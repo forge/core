@@ -243,7 +243,7 @@ public class ShellUIPromptImpl implements UIPrompt
       {
          value = promptInternal(label + description + defaultValueDescription + ": ", true, input.isRequired());
       }
-      return value;
+      return value == null ? componentValue : value;
 
    }
 
