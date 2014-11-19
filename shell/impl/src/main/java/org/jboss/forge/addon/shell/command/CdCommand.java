@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourcePathResolver;
@@ -108,7 +107,7 @@ public class CdCommand extends AbstractShellCommand
          }
          else
          {
-            FileResource<?> newFileResource = newResource.get(0).reify(FileResource.class);
+            Resource<?> newFileResource = newResource.get(0);
             if (newFileResource == null)
             {
                result = Results.fail(token + ": Invalid path");
