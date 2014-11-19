@@ -159,7 +159,8 @@ public class ShellUIPromptImpl implements UIPrompt
             value = inputValues;
          }
       }
-      InputComponents.setValueFor(converterFactory, input, value);
+      if (value != null)
+         InputComponents.setValueFor(converterFactory, input, value);
       return input.getValue();
    }
 
@@ -240,7 +241,7 @@ public class ShellUIPromptImpl implements UIPrompt
       {
          value = promptInternal(label + description + defaultValueDescription + ": ", true);
       }
-      return value == null ? componentValue : value;
+      return value;
 
    }
 
