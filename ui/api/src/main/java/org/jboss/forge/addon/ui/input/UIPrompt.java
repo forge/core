@@ -20,7 +20,7 @@ public interface UIPrompt
    String prompt(String message);
 
    /**
-    * First print the given message, prompt the user for input (masking keystrokes for secrecy,) then return user input.
+    * First print the given message, prompt the user for input (masking keystrokes for secrecy) then return user input.
     */
    String promptSecret(String message);
 
