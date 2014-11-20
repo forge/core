@@ -98,12 +98,19 @@ public class CdCommand extends AbstractShellCommand
          if (newResource == null)
          {
             Resource<?> currentResource = (Resource<?>) uiContext.getInitialSelection().get();
-            newResource = new ResourcePathResolver(resourceFactory, currentResource, token).resolve();
+            try
+            {
+               newResource = new ResourcePathResolver(resourceFactory, currentResource, token).resolve();
+            }
+            catch (RuntimeException re)
+            {
+               log.log(Level.WARNING, "Error while resolving child resource " + token + " of " + currentResource, re);
+            }
          }
 
-         if (newResource.isEmpty() || !newResource.get(0).exists())
+         if (newResource == null || newResource.isEmpty() || !newResource.get(0).exists())
          {
-            result = Results.fail(token + ": No such file or directory");
+            result = Results.fail(token + ": Child resource doesn't exist");
          }
          else
          {

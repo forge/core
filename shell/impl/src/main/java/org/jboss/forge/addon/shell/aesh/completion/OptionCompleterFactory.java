@@ -16,7 +16,6 @@ import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.SelectComponent;
-import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
  * Returns the completion based on the input component
@@ -29,19 +28,23 @@ public class OptionCompleterFactory
    public static OptionCompleter<CompleterInvocation> getCompletionFor(InputComponent<?, ?> component,
             ShellContext context, ConverterFactory converterFactory)
    {
-      UISelection<FileResource<?>> selection = context.getInitialSelection();
-
-      // FIXME This should use the Resource API to allow completion of virtual resources.
-      final File cwd = selection.isEmpty() ? OperatingSystemUtils.getUserHomeDir() : selection.get()
-               .getUnderlyingResourceObject();
+      UISelection<Resource<?>> selection = context.getInitialSelection();
+      Resource<?> selectedResource = selection.get();
+      
+      File cwd = null;
+      if (selectedResource instanceof FileResource)
+      {
+         cwd = ((FileResource<?>) selectedResource).getUnderlyingResourceObject();
+      }
 
       String inputType = component.getFacet(HintsFacet.class).getInputType();
       OptionCompleter<CompleterInvocation> strategy = null;
-      if (InputType.FILE_PICKER.equals(inputType) && cwd.isDirectory())
+      // FIXME This should use the Resource API to allow completion of virtual resources.
+      if (InputType.FILE_PICKER.equals(inputType) && (cwd != null && cwd.isDirectory()))
       {
          strategy = new FileOptionCompleter(new AllResourceFilter());
       }
-      else if (InputType.DIRECTORY_PICKER.equals(inputType) && cwd.isDirectory())
+      else if (InputType.DIRECTORY_PICKER.equals(inputType) && (cwd != null && cwd.isDirectory()))
       {
          strategy = new FileOptionCompleter(new DirectoryResourceFilter());
       }
