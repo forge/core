@@ -32,15 +32,9 @@ public class Dependencies
          return false;
       }
 
-      return !(l.getCoordinate().getArtifactId() != null ? !l.getCoordinate().getArtifactId()
-               .equals(r.getCoordinate().getArtifactId()) : r.getCoordinate().getArtifactId() != null)
-               &&
-               !(l.getCoordinate().getGroupId() != null ? !l.getCoordinate().getGroupId()
-                        .equals(r.getCoordinate().getGroupId()) : r.getCoordinate().getGroupId() != null)
-               &&
-               !(l.getCoordinate().getClassifier() != null ? !l.getCoordinate().getClassifier()
-                        .equals(r.getCoordinate().getClassifier()) : r.getCoordinate().getClassifier() != null);
+      return areEquivalent(l.getCoordinate(), r.getCoordinate());
    }
+
    /**
     * Compare the {@link Coordinate} of each given {@link Dependency} for equivalence.
     */
@@ -59,6 +53,9 @@ public class Dependencies
          return false;
       }
 
+      String lPackacking = l.getPackaging() == null ? "jar" : l.getPackaging();
+      String rPackaging = r.getPackaging() == null ? "jar" : r.getPackaging();
+
       return !(l.getArtifactId() != null ? !l.getArtifactId()
                .equals(r.getArtifactId()) : r.getArtifactId() != null)
                &&
@@ -66,7 +63,9 @@ public class Dependencies
                         .equals(r.getGroupId()) : r.getGroupId() != null)
                &&
                !(l.getClassifier() != null ? !l.getClassifier()
-                        .equals(r.getClassifier()) : r.getClassifier() != null);
+                        .equals(r.getClassifier()) : r.getClassifier() != null)
+               &&
+               lPackacking.equals(rPackaging);
    }
 
 }
