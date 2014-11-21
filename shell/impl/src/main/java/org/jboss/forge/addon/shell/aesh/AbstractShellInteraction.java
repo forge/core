@@ -12,24 +12,28 @@ import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellUIPromptImpl;
 import org.jboss.forge.addon.shell.util.ShellUtil;
-import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 
 /**
+ * Base class for commands and wizards running in shell
+ * 
+ * @see {@link ShellSingleCommand} and {@link ShellWizard}
+ * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public abstract class AbstractShellInteraction implements Comparable<AbstractShellInteraction>
 {
    protected static final String INTERACTIVE_MODE_MESSAGE = "Required inputs not satisfied, entering interactive mode";
+   protected static final String NON_INTERACTIVE_MODE_MESSAGE = "Required inputs not satisfied and INTERACTIVE=false, aborting. Please 'export INTERACTIVE=true' or try again providing the required values.";
 
    private final String name;
    private final CommandController controller;
    private final UICommandMetadata metadata;
    protected final CommandLineUtil commandLineUtil;
-   private final UIContext context;
+   private final ShellContext context;
 
    protected AbstractShellInteraction(CommandController controller, ShellContext shellContext,
             CommandLineUtil commandLineUtil)
@@ -41,26 +45,27 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
       this.commandLineUtil = commandLineUtil;
    }
 
-   public abstract CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception;
+   protected abstract CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception;
 
    /**
     * Called when a required input value is missing.
     * 
+    * @return true if the operation succeeded, false otherwise
     * @throws InterruptedException if Ctrl+C or Ctrl+D was pressed during the input
     */
-   public abstract void promptRequiredMissingValues(ShellImpl impl) throws InterruptedException;
+   protected abstract boolean promptRequiredMissingValues(ShellImpl impl) throws InterruptedException;
 
-   public UIContext getContext()
+   protected ShellContext getContext()
    {
       return context;
    }
 
-   public CommandController getController()
+   protected CommandController getController()
    {
       return controller;
    }
 
-   public final String getName()
+   protected final String getName()
    {
       return name;
    }

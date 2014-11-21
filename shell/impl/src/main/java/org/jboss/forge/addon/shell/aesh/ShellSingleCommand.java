@@ -52,15 +52,21 @@ public class ShellSingleCommand extends AbstractShellInteraction
     * Prompts for required missing values
     */
    @Override
-   public void promptRequiredMissingValues(ShellImpl shell) throws InterruptedException
+   public boolean promptRequiredMissingValues(ShellImpl shell) throws InterruptedException
    {
       Map<String, InputComponent<?, ?>> inputs = getController().getInputs();
       if (hasMissingRequiredInputValues(inputs.values()))
       {
          UIOutput output = shell.getOutput();
+         if (!getContext().isInteractive())
+         {
+            output.error(output.out(), NON_INTERACTIVE_MODE_MESSAGE);
+            return false;
+         }
          output.info(output.out(), INTERACTIVE_MODE_MESSAGE);
          promptRequiredMissingValues(shell, inputs.values());
       }
+      return true;
    }
 
 }
