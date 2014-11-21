@@ -48,7 +48,7 @@ public class FacesSetupWizardImpl extends AbstractJavaEECommand implements Faces
    private FacetFactory facetFactory;
 
    @Inject
-   @WithAttributes(required = true, label = "JavaServer Faces Version", defaultValue = "2.0")
+   @WithAttributes(required = true, label = "JavaServer Faces Version", defaultValue = "2.1")
    private UISelectOne<FacesFacet> facesVersion;
 
    @Override
