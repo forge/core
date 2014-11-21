@@ -48,7 +48,7 @@ public class FacesFacetImpl_2_1 extends AbstractFacesFacetImpl<WebFacesConfigDes
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
       Map<Dependency, List<Dependency>> result = new LinkedHashMap<>();
-      result.put(JAVAEE6_FACES_21, Arrays.asList(JAVAEE6_FACES_21));
+      result.put(JAVAEE6_FACES_21, Arrays.asList(JAVAEE6_FACES_21, JAVAEE6));
       return result;
    }
 
