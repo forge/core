@@ -18,11 +18,11 @@ import org.jboss.aesh.console.command.CommandResult;
 import org.jboss.aesh.console.command.invocation.CommandInvocation;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.ShellImpl;
-import org.jboss.forge.addon.shell.ShellMessages;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.output.UIMessage.Severity;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.CompositeResult;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
@@ -62,18 +62,15 @@ class CommandAdapter implements Command<CommandInvocation>
       attributeMap.put(CommandInvocation.class, commandInvocation);
       boolean failure = false;
       // FORGE-1668: Prompt for required missing values
-      if (shellContext.isInteractive())
+      try
       {
-         try
-         {
-            interaction.promptRequiredMissingValues(shell);
-         }
-         catch (InterruptedException ie)
-         {
-            // <CTRL>+C was pressed.
-            log.log(Level.FINE, "Caught InterruptedException while prompting in interactive mode", ie);
-            failure = true;
-         }
+         failure = !interaction.promptRequiredMissingValues(shell);
+      }
+      catch (InterruptedException ie)
+      {
+         // <CTRL>+C was pressed.
+         log.log(Level.FINE, "Caught InterruptedException while prompting in interactive mode", ie);
+         failure = true;
       }
       if (!failure)
       {
@@ -103,12 +100,13 @@ class CommandAdapter implements Command<CommandInvocation>
          else
          {
             List<UIMessage> messages = interaction.getController().validate();
+            UIOutput output = shell.getOutput();
             for (UIMessage message : messages)
             {
                if (message.getSeverity() == Severity.ERROR)
                {
                   failure = true;
-                  ShellMessages.error(shell.getConsole().getShell().err(), message.getDescription());
+                  output.error(output.err(), message.getDescription());
                }
             }
          }
@@ -131,15 +129,16 @@ class CommandAdapter implements Command<CommandInvocation>
       }
       else if (result != null && !Strings.isNullOrEmpty(result.getMessage()))
       {
+         UIOutput output = shell.getOutput();
          if (result instanceof Failed)
          {
-            ShellMessages.error(shell.getConsole().getShell().err(), result.getMessage());
+            output.error(output.err(), result.getMessage());
             log.log(Level.SEVERE, result.getMessage(), ((Failed) result).getException());
             failure = true;
          }
          else
          {
-            ShellMessages.success(shell.getConsole().getShell().out(), result.getMessage());
+            output.success(output.out(), result.getMessage());
             failure = false;
          }
       }

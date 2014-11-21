@@ -90,15 +90,20 @@ public class ShellWizard extends AbstractShellInteraction
    }
 
    @Override
-   public void promptRequiredMissingValues(ShellImpl shell) throws InterruptedException
+   public boolean promptRequiredMissingValues(ShellImpl shell) throws InterruptedException
    {
       WizardCommandController controller = getController();
-      boolean interactiveMode = false;
+      boolean interactiveModeEnabled = false;
+      UIOutput output = shell.getOutput();
       if (hasMissingRequiredInputValues(controller.getInputs().values()))
       {
-         UIOutput output = shell.getOutput();
+         if (!getContext().isInteractive())
+         {
+            output.error(output.err(), NON_INTERACTIVE_MODE_MESSAGE);
+            return false;
+         }
          output.info(output.out(), INTERACTIVE_MODE_MESSAGE);
-         interactiveMode = true;
+         interactiveModeEnabled = true;
          promptRequiredMissingValues(shell, controller.getInputs().values());
       }
       while (controller.canMoveToNextStep())
@@ -114,14 +119,19 @@ public class ShellWizard extends AbstractShellInteraction
          }
          if (hasMissingRequiredInputValues(controller.getInputs().values()))
          {
-            if (!interactiveMode)
+            if (!interactiveModeEnabled)
             {
-               UIOutput output = shell.getOutput();
+               if (!getContext().isInteractive())
+               {
+                  output.error(output.out(), NON_INTERACTIVE_MODE_MESSAGE);
+                  return false;
+               }               
                output.info(output.out(), INTERACTIVE_MODE_MESSAGE);
-               interactiveMode = true;
+               interactiveModeEnabled = true;
             }
             promptRequiredMissingValues(shell, controller.getInputs().values());
          }
       }
+      return true;
    }
 }
