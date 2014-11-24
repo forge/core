@@ -13,6 +13,7 @@ import static org.hamcrest.CoreMatchers.not;
 
 import javax.inject.Inject;
 import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -91,6 +92,8 @@ public class NewNamedQueryCommandTest
       }
       Assert.assertTrue(jpaEntity.exists());
       JavaClassSource javaClass = jpaEntity.getJavaType();
+      Assert.assertTrue(javaClass.hasImport(NamedQueries.class));
+      Assert.assertTrue(javaClass.hasImport(NamedQuery.class));
       Assert.assertTrue(javaClass.hasAnnotation(NamedQueries.class));
       AnnotationSource<JavaClassSource> namedQueries = javaClass.getAnnotation(NamedQueries.class);
       AnnotationSource<JavaClassSource>[] namedQueryArray = namedQueries.getAnnotationArrayValue();

@@ -114,9 +114,6 @@ public class NewNamedQueryCommand extends AbstractJavaEECommand
       // namedQueriesAnn.addAnnotationValue(annotation);
       // javaClass.removeAnnotation(annotation);
       // }
-      if (!javaClass.hasImport(NamedQuery.class))
-         javaClass.addImport(NamedQuery.class);
-
       AnnotationSource<JavaClassSource> namedQuery = null;
       // Find if an existing NamedQuery exists
       if (namedQueriesAnn.getAnnotationArrayValue() != null)
@@ -130,7 +127,7 @@ public class NewNamedQueryCommand extends AbstractJavaEECommand
          }
       if (namedQuery == null)
       {
-         namedQuery = namedQueriesAnn.addAnnotationValue().setName(NamedQuery.class.getSimpleName());
+         namedQuery = namedQueriesAnn.addAnnotationValue(NamedQuery.class);
          namedQuery.setStringValue("name", queryName);
       }
       namedQuery.setStringValue("query", queryValue);
