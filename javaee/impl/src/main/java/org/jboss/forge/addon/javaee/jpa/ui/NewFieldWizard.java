@@ -115,7 +115,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
    private UISelectOne<TemporalType> temporalType;
 
    @Inject
-   @WithAttributes(label = "Column Name", description = "The column name. Defaults to the field name if not informed")
+   @WithAttributes(label = "Column Name", description = "The column name. Defaults to the field name")
    private UIInput<String> columnName;
 
    @Inject
