@@ -73,8 +73,8 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
       boolean exists = false;
       for (org.apache.maven.model.Dependency dependency : dependencies)
       {
-         if (dependency.getGroupId().equals(depCoordinate.getGroupId())
-                  && dependency.getArtifactId().equals(depCoordinate.getArtifactId()))
+         Coordinate dependencyCoordinate = new MavenDependencyAdapter(dependency).getCoordinate();
+         if (Dependencies.areEquivalent(depCoordinate, dependencyCoordinate))
          {
             dependency.setVersion(depCoordinate.getVersion());
             exists = true;
