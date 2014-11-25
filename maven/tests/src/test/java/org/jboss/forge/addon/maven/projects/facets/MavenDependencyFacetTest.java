@@ -121,6 +121,23 @@ public class MavenDependencyFacetTest
       assertDependencies(dependencyTwo, dependencies.get(1));
    }
 
+   @Test
+   public void testDifferentDependencyType() throws Exception
+   {
+      Assert.assertTrue("DependencyFacet not installed in project", project.hasFacet(DependencyFacet.class));
+      final DependencyFacet facet = project.getFacet(DependencyFacet.class);
+      DependencyBuilder dependencyOne = DependencyBuilder.create("org.jboss.errai:errai-cdi-client")
+               .setPackaging("jar").setScopeType("provided");
+      DependencyBuilder dependencyTwo = DependencyBuilder.create("org.jboss.errai:errai-cdi-client")
+               .setPackaging("test-jar").setScopeType("test");
+      facet.addDirectDependency(dependencyOne);
+      facet.addDirectDependency(dependencyTwo);
+      List<Dependency> dependencies = facet.getDependencies();
+      Assert.assertEquals(2, dependencies.size());
+      assertDependencies(dependencyOne, dependencies.get(0));
+      assertDependencies(dependencyTwo, dependencies.get(1));
+   }
+
    private void assertDependencies(Dependency expected, Dependency actual)
    {
       Assert.assertTrue("Dependencies are not equivalent", areEquivalent(expected, actual));
