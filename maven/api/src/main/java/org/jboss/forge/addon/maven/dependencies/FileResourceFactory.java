@@ -29,7 +29,7 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @Vetoed
-public class FileResourceFactory implements ResourceFactory
+class FileResourceFactory implements ResourceFactory
 {
    @Override
    @SuppressWarnings("unchecked")
