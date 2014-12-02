@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.shell.command;
 
-import java.awt.Desktop;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
@@ -20,6 +19,7 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
+import org.jboss.forge.addon.ui.UIDesktop;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -97,11 +97,11 @@ public class EditCommand extends AbstractShellCommand
 
    private void editResource(UIExecutionContext context, Resource<?> resource) throws IOException
    {
-      Desktop dt = Desktop.getDesktop();
+      UIDesktop desktop = context.getUIContext().getProvider().getDesktop();
       FileResource<?> fileResource = resource.reify(FileResource.class);
       if (fileResource != null && !fileResource.isDirectory())
       {
-         dt.edit(fileResource.getUnderlyingResourceObject());
+         desktop.edit(fileResource.getUnderlyingResourceObject());
       }
       else
       {

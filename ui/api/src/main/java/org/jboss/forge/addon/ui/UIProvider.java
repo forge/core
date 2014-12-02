@@ -21,4 +21,9 @@ public interface UIProvider
     * Returns the output object used to display messages during a UI interaction
     */
    UIOutput getOutput();
+
+   /**
+    * Returns the desktop associated with this UI.
+    */
+   UIDesktop getDesktop();
 }

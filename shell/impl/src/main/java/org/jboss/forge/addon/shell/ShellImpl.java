@@ -47,6 +47,8 @@ import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIOutputImpl;
 import org.jboss.forge.addon.shell.ui.ShellUIProgressMonitor;
 import org.jboss.forge.addon.shell.ui.ShellUIPromptImpl;
+import org.jboss.forge.addon.ui.DefaultUIDesktop;
+import org.jboss.forge.addon.ui.UIDesktop;
 import org.jboss.forge.addon.ui.UIRuntime;
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -324,5 +326,11 @@ public class ShellImpl implements Shell, UIRuntime
             }
          }
       }
+   }
+
+   @Override
+   public UIDesktop getDesktop()
+   {
+      return new DefaultUIDesktop();
    }
 }
