@@ -19,11 +19,11 @@ import org.jboss.forge.addon.ui.context.UISelection;
 public final class Projects
 {
    /**
-    * @return the project if {@link UIContext#getInitialSelection()} returns a path containing a project, null otherwise
+    * @return the project if {@link UIContext#getSelection()()} returns a path containing a project, null otherwise
     */
    public static Project getSelectedProject(ProjectFactory projectFactory, UIContext context)
    {
-      return getSelectedProject(projectFactory, context.getInitialSelection());
+      return getSelectedProject(projectFactory, context.getSelection());
    }
 
    /**
