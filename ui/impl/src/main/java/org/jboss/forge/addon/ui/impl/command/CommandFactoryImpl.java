@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jboss.forge.addon.ui.UIDesktop;
 import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.command.CommandFactory;
 import org.jboss.forge.addon.ui.command.CommandProvider;
@@ -260,6 +261,12 @@ public class CommandFactoryImpl implements CommandFactory
       public UIOutput getOutput()
       {
          return delegate.getOutput();
+      }
+      
+      @Override
+      public UIDesktop getDesktop()
+      {
+         return delegate.getDesktop();
       }
    }
 

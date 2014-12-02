@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.ui.impl.mock;
 
+import org.jboss.forge.addon.ui.DefaultUIDesktop;
+import org.jboss.forge.addon.ui.UIDesktop;
 import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.output.UIOutput;
 
@@ -40,5 +42,11 @@ public class MockUIProvider implements UIProvider
    public UIOutput getOutput()
    {
       return output;
+   }
+
+   @Override
+   public UIDesktop getDesktop()
+   {
+      return new DefaultUIDesktop();
    }
 }
