@@ -269,31 +269,34 @@ public class ShellUIPromptImpl implements UIPrompt
       Converter<Object, String> itemLabelConverter = InputComponents.getItemLabelConverter(converterFactory,
                select);
       List<Object> items = Lists.toList(select.getValueChoices());
-      out.println();
-      for (int i = 0; i < items.size(); i++)
+      if (items.size() > 0)
       {
-         Object item = items.get(i);
-         String itemLabel = itemLabelConverter.convert(item);
-         Object separator = existingItems.contains(item) ? "(x)" : "( )";
-         out.printf("[%s] %s %s", i, separator, itemLabel);
          out.println();
-      }
-      out.println();
-      int idx;
-      try
-      {
-         out.println("Press <ENTER> to confirm, or <CTRL>+C to cancel.");
-         String limit = items.size() == 1 ? "" : "-" + (items.size() - 1);
-         String message = label + description + " [0" + limit + "]";
-         idx = Integer.parseInt(promptInternal(message, true));
-      }
-      catch (NumberFormatException nfe)
-      {
-         idx = -1;
-      }
-      if (idx > -1 && idx < items.size())
-      {
-         value = items.get(idx);
+         for (int i = 0; i < items.size(); i++)
+         {
+            Object item = items.get(i);
+            String itemLabel = itemLabelConverter.convert(item);
+            Object separator = existingItems.contains(item) ? "(x)" : "( )";
+            out.printf("[%s] %s %s", i, separator, itemLabel);
+            out.println();
+         }
+         out.println();
+         int idx;
+         try
+         {
+            out.println("Press <ENTER> to confirm, or <CTRL>+C to cancel.");
+            String limit = items.size() == 1 ? "" : "-" + (items.size() - 1);
+            String message = label + description + " [0" + limit + "]";
+            idx = Integer.parseInt(promptInternal(message, true));
+         }
+         catch (NumberFormatException nfe)
+         {
+            idx = -1;
+         }
+         if (idx > -1 && idx < items.size())
+         {
+            value = items.get(idx);
+         }
       }
       return value;
    }
