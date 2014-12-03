@@ -43,6 +43,10 @@ public class ShellHandleImpl implements ShellHandle
          settingsBuilder.terminal(new ForgeTerminal(settings.terminal()));
       }
       this.shell = shellFactory.createShell(settings.currentResource(), settingsBuilder.create());
+      if (settings.desktop() != null)
+      {
+         ((ShellImpl) shell).setDesktop(settings.desktop());
+      }
    }
 
    @Override

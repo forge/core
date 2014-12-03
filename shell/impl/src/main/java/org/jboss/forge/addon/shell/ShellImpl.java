@@ -76,6 +76,7 @@ public class ShellImpl implements Shell, UIRuntime
    private final AddonRegistry addonRegistry;
    private final AeshConsole console;
    private final UIOutput output;
+   private UIDesktop desktop;
    private final List<CommandExecutionListener> executionListeners = new LinkedList<>();
    private final List<CommandNotFoundListener> commandNotFoundListeners = new LinkedList<>();
 
@@ -328,9 +329,16 @@ public class ShellImpl implements Shell, UIRuntime
       }
    }
 
+   public void setDesktop(UIDesktop desktop)
+   {
+      this.desktop = desktop;
+   }
+
    @Override
    public UIDesktop getDesktop()
    {
-      return new DefaultUIDesktop();
+      if (desktop == null)
+         desktop = new DefaultUIDesktop();
+      return desktop;
    }
 }

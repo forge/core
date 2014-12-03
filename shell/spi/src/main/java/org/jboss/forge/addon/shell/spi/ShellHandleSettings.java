@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import org.jboss.forge.addon.ui.UIDesktop;
+
 /**
  * A parameter object to initialize the shell
  *
@@ -23,6 +25,7 @@ public class ShellHandleSettings
    private PrintStream stdOut;
    private PrintStream stdErr;
    private Terminal terminal;
+   private UIDesktop desktop;
 
    public ShellHandleSettings()
    {
@@ -80,6 +83,17 @@ public class ShellHandleSettings
    public ShellHandleSettings terminal(Terminal terminal)
    {
       this.terminal = terminal;
+      return this;
+   }
+
+   public UIDesktop desktop()
+   {
+      return desktop;
+   }
+
+   public ShellHandleSettings desktop(UIDesktop desktop)
+   {
+      this.desktop = desktop;
       return this;
    }
 
