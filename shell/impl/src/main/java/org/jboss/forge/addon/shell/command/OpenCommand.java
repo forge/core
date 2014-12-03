@@ -74,7 +74,7 @@ public class OpenCommand extends AbstractShellCommand
                   .resolve();
          if (newResource.isEmpty() || !newResource.get(0).exists())
          {
-            result = Results.fail(newPath + ": No such file or directory");
+            result = Results.fail(newPath + ": resource does not exist or cannot be accessed");
          }
          else
          {
