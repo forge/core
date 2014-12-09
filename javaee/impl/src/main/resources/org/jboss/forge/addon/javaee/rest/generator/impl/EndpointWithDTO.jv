@@ -100,13 +100,17 @@ public class ${entityTable}Endpoint
    @Consumes(${contentType})
    public Response update(@PathParam("id") ${idType} id, ${dto.getName()} dto)
    {
+      if (dto == null) 
+      {
+      	return Response.status(Status.BAD_REQUEST).build();
+      }
       TypedQuery<${entity.getName()}> findByIdQuery = em.createQuery("${selectExpression} ${idClause} ${orderClause}", ${entity.getName()}.class);
       findByIdQuery.setParameter("entityId", id);
       ${entity.getName()} entity;
       try {
          entity = findByIdQuery.getSingleResult();
       } catch (NoResultException nre) {
-         entity = null;
+         return Response.status(Status.NOT_FOUND).build();
       }
       entity = dto.fromDTO(entity, em);
       try {
