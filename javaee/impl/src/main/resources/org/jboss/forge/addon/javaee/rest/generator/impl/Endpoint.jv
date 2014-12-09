@@ -90,8 +90,20 @@ public class ${entityTable}Endpoint
    @PUT
    @Path("/{id:[0-9][0-9]*}")
    @Consumes(${contentType})
-   public Response update(${entity.getName()} entity)
+   public Response update(@PathParam("id") ${idType} id, ${entity.getName()} entity)
    {
+      if (entity == null) 
+      {
+      	return Response.status(Status.BAD_REQUEST).build();
+      }
+      if (!id.equals(entity.${getIdStatement}))
+      {
+      	return Response.status(Status.CONFLICT).entity(entity).build();
+      }
+      if (em.find(${entity.getName()}.class, id) == null) 
+      {
+		return Response.status(Status.NOT_FOUND).build();
+      }
       try {
         entity = em.merge(entity);
       } catch (OptimisticLockException e) {
