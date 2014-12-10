@@ -51,7 +51,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    private Callable<String> description;
    private Callable<Boolean> enabled = Callables.returning(Boolean.TRUE);
    private Callable<Boolean> required = Callables.returning(Boolean.FALSE);
-   private String requiredMessage;
+   private Callable<String> requiredMessage;
    private Converter<String, VALUETYPE> valueConverter;
 
    public AbstractInputComponent(String name, char shortName, Class<VALUETYPE> type)
@@ -162,11 +162,18 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    @Override
    public String getRequiredMessage()
    {
-      return requiredMessage;
+      return Callables.call(requiredMessage);
    }
 
    @Override
    public IMPLTYPE setRequiredMessage(String requiredMessage)
+   {
+      this.requiredMessage = Callables.returning(requiredMessage);
+      return (IMPLTYPE) this;
+   }
+   
+   @Override
+   public IMPLTYPE setRequiredMessage(Callable<String> requiredMessage)
    {
       this.requiredMessage = requiredMessage;
       return (IMPLTYPE) this;
