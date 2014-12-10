@@ -108,7 +108,7 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
     * Set a few sentences describing the purpose of this {@link InputComponent}.
     */
    IMPLTYPE setDescription(String description);
-   
+
    /**
     * Set a few sentences describing the purpose of this {@link InputComponent}.
     */
@@ -129,6 +129,12 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
     * been set.
     */
    IMPLTYPE setRequiredMessage(String message);
+
+   /**
+    * Set the {@link Callable} object to supply the message to be displayed when this {@link InputComponent} is required
+    * and no primary or default value has been set.
+    */
+   IMPLTYPE setRequiredMessage(Callable<String> message);
 
    /**
     * Get the current {@link Converter} instance with which this {@link InputComponent} value should be converted to and
