@@ -13,6 +13,7 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -62,6 +63,10 @@ public class InputComponentValidatorTest
    @Inject
    @WithAttributes(label = "Required With Message", required = true, requiredMessage = "MSG")
    UIInput<String> requiredWithMessage;
+
+   @Inject
+   @WithAttributes(label = "Required With Callback Message", required = true)
+   UIInput<String> requiredWithCallbackMessage;
 
    @Inject
    @WithAttributes(label = "Required Without Message", required = true)
@@ -175,6 +180,26 @@ public class InputComponentValidatorTest
       Assert.assertThat(errors, notNullValue());
       Assert.assertThat(errors.size(), equalTo(1));
       Assert.assertThat(errors, hasItem(InputComponents.validateRequired(requiredNoMessage)));
+   }
+
+   @Test
+   public void testRequiredCallbackMessage()
+   {
+      UIContext ctx = new MockUIContext();
+      MockValidationContext context = new MockValidationContext(ctx);
+      requiredWithCallbackMessage.setRequiredMessage(new Callable<String>()
+      {
+         @Override
+         public String call() throws Exception
+         {
+            return "MSG";
+         }
+      });
+      requiredWithCallbackMessage.validate(context);
+      List<String> errors = context.getErrorsFor(requiredWithCallbackMessage);
+      Assert.assertThat(errors, notNullValue());
+      Assert.assertThat(errors.size(), equalTo(1));
+      Assert.assertThat(errors, hasItem("MSG"));
    }
 
 }
