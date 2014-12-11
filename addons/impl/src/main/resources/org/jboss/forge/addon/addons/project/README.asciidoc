@@ -21,8 +21,11 @@ This addon is a 'Furnace container' that provides *lifecycle* and *service regis
 |===
 
 == Setup
+
 This Addon requires the following installation steps.
+
 === Add configuration to pom.xml 
+
 To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
 (Make sure the dependency is put all the way to the left, and uses 3 spaces for indentation of GAV)
 [source,xml]
