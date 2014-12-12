@@ -104,19 +104,20 @@ public class ${entityTable}Endpoint
       {
       	return Response.status(Status.BAD_REQUEST).build();
       }
-      TypedQuery<${entity.getName()}> findByIdQuery = em.createQuery("${selectExpression} ${idClause} ${orderClause}", ${entity.getName()}.class);
-      findByIdQuery.setParameter("entityId", id);
-      ${entity.getName()} entity;
-      try {
-         entity = findByIdQuery.getSingleResult();
-      } catch (NoResultException nre) {
-         return Response.status(Status.NOT_FOUND).build();
+      if (!id.equals(dto.${getIdStatement}))
+      {
+      	return Response.status(Status.CONFLICT).entity(dto).build();
+      }
+      ${entity.getName()} entity = em.find(${entity.getName()}.class, id); 
+      if (entity == null) 
+      {
+		return Response.status(Status.NOT_FOUND).build();
       }
       entity = dto.fromDTO(entity, em);
       try {
         entity = em.merge(entity);
       } catch (OptimisticLockException e) {
-          return Response.status(Response.Status.CONFLICT).entity(e.getEntity()).build();
+        return Response.status(Status.CONFLICT).entity(e.getEntity()).build();
       }
       return Response.noContent().build();
    }
