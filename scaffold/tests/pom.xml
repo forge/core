@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>scaffold-parent</artifactId>
-      <version>2.13.0.Final</version>
+      <version>2.13.1-SNAPSHOT</version>
    </parent>
    <artifactId>scaffold-tests</artifactId>
    <name>Forge - Scaffold Tests</name>
