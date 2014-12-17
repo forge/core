@@ -19,7 +19,6 @@ import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.facets.constraints.FacetInspector;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
@@ -28,7 +27,7 @@ import org.jboss.forge.furnace.util.Predicate;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class FacetFactoryImpl implements FacetFactory, Service
+public class FacetFactoryImpl implements FacetFactory
 {
    private static final Logger log = Logger.getLogger(FacetFactoryImpl.class.getName());
 

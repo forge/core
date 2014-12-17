@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Strings;
 
@@ -24,7 +23,7 @@ import org.jboss.forge.furnace.util.Strings;
  * href="http://www.rubyonrails.org">Ruby on Rails</a>, which is distributed under the <a
  * href="http://wiki.rubyonrails.org/rails/pages/License">Rails license</a>.
  */
-public class Inflector implements Service
+public class Inflector
 {
    public Inflector()
    {

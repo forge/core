@@ -9,12 +9,11 @@ package org.jboss.forge.addon.dependencies.convert;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.convert.ConverterGenerator;
 import org.jboss.forge.addon.dependencies.Dependency;
-import org.jboss.forge.furnace.container.simple.Service;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class DependencyConverterGenerator implements ConverterGenerator, Service
+public class DependencyConverterGenerator implements ConverterGenerator
 {
    @Override
    public boolean handles(Class<?> source, Class<?> target)

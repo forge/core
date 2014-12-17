@@ -16,7 +16,7 @@ import org.jboss.forge.addon.environment.Category;
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.furnace.container.simple.Service;
 
-public class EnvironmentImpl implements Environment, Service
+public class EnvironmentImpl implements Environment
 {
    private static final Map<String, Map<Object, Object>> CATEGORIZED_MAP =
             Collections.synchronizedMap(
