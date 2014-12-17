@@ -6,11 +6,10 @@ import org.jboss.forge.addon.text.highlight.Encoder;
 import org.jboss.forge.addon.text.highlight.Scanner;
 import org.jboss.forge.addon.text.highlight.Syntax;
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.services.Imported;
 
-public class Highlighter implements Service
+public class Highlighter
 {
    private Imported<Scanner> importedScanners;
 
