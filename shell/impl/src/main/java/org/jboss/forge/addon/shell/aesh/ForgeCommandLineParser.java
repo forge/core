@@ -12,6 +12,7 @@ import java.util.Map;
 import org.jboss.aesh.cl.internal.ProcessedCommand;
 import org.jboss.aesh.cl.parser.AeshCommandLineParser;
 import org.jboss.aesh.cl.parser.CommandPopulator;
+import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 
 /**
@@ -23,10 +24,10 @@ public class ForgeCommandLineParser extends AeshCommandLineParser
    private final CommandPopulator<Object> commandPopulator;
 
    public ForgeCommandLineParser(ProcessedCommand command, CommandLineUtil commandLineUtil,
-            Map<String, InputComponent<?, ?>> inputs)
+            Map<String, InputComponent<?, ?>> inputs, ShellContext shellContext)
    {
       super(command);
-      this.commandPopulator = new ForgeCommandPopulator(commandLineUtil, inputs);
+      this.commandPopulator = new ForgeCommandPopulator(commandLineUtil, inputs, shellContext);
    }
 
    @Override

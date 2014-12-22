@@ -25,10 +25,13 @@ import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.aesh.cl.validator.CommandValidator;
 import org.jboss.aesh.console.command.completer.CompleterInvocation;
 import org.jboss.forge.addon.convert.ConverterFactory;
+import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.aesh.completion.OptionCompleterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.hints.InputType;
@@ -38,6 +41,7 @@ import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.SingleValued;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.util.InputComponents;
+import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
  * Contains utility methods to parse command lines
@@ -45,24 +49,26 @@ import org.jboss.forge.addon.ui.util.InputComponents;
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class CommandLineUtil
+class CommandLineUtil
 {
    private static final Logger logger = Logger.getLogger(CommandLineUtil.class.getName());
 
    private static final String ARGUMENTS_INPUT_NAME = "arguments";
 
    private final ConverterFactory converterFactory;
+   private final ResourceFactory resourceFactory;
 
-   public CommandLineUtil(ConverterFactory converterFactory)
+   public CommandLineUtil(AddonRegistry addonRegistry)
    {
-      this.converterFactory = converterFactory;
+      this.converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
+      this.resourceFactory = addonRegistry.getServices(ResourceFactory.class).get();
    }
 
    public CommandLineParser generateParser(CommandController command, ShellContext shellContext,
             Map<String, InputComponent<?, ?>> inputs)
    {
       ProcessedCommand processedCommand = generateCommand(command, shellContext, inputs);
-      return new ForgeCommandLineParser(processedCommand, this, inputs);
+      return new ForgeCommandLineParser(processedCommand, this, inputs, shellContext);
    }
 
    private ProcessedCommand generateCommand(final CommandController command, final ShellContext shellContext,
@@ -133,7 +139,7 @@ public class CommandLineUtil
    }
 
    public Map<String, InputComponent<?, ?>> populateUIInputs(CommandLine commandLine,
-            Map<String, InputComponent<?, ?>> inputs)
+            Map<String, InputComponent<?, ?>> inputs, UIContext context)
    {
       Map<String, InputComponent<?, ?>> populatedInputs = new LinkedHashMap<>();
       for (Entry<String, InputComponent<?, ?>> entry : inputs.entrySet())
@@ -147,16 +153,50 @@ public class CommandLineUtil
          }
          if (commandLine.hasOption(name))
          {
+            Resource<?> initialResource = (Resource<?>) context
+                     .getInitialSelection().get();
             if (input instanceof ManyValued)
             {
                List<String> resolvedOptionValues = resolveWildcardSelectOptionValues(commandLine, name, input);
-               InputComponents.setValueFor(converterFactory, input, resolvedOptionValues);
+               if (Resource.class.isAssignableFrom(input.getValueType()))
+               {
+                  List<Resource<?>> resources = new ArrayList<>();
+                  for (String optionValue : resolvedOptionValues)
+                  {
+                     ResourcePathResolver resolver = new ResourcePathResolver(resourceFactory, initialResource,
+                              optionValue);
+                     List<Resource<?>> resolved = resolver.resolve();
+                     resources.addAll(resolved);
+                  }
+                  InputComponents.setValueFor(converterFactory, input, resources);
+               }
+               else
+               {
+                  InputComponents.setValueFor(converterFactory, input, resolvedOptionValues);
+               }
                populatedInputs.put(name, input);
             }
             else if (input instanceof SingleValued)
             {
                String optionValue = commandLine.getOptionValue(name);
-               InputComponents.setValueFor(converterFactory, input, optionValue);
+               if (Resource.class.isAssignableFrom(input.getValueType()))
+               {
+                  ResourcePathResolver resolver = new ResourcePathResolver(resourceFactory, initialResource,
+                           optionValue);
+                  List<Resource<?>> resolved = resolver.resolve();
+                  if (resolved.size() > 0)
+                  {
+                     InputComponents.setValueFor(converterFactory, input, resolved.get(0));
+                  }
+                  else
+                  {
+                     InputComponents.setValueFor(converterFactory, input, optionValue);
+                  }
+               }
+               else
+               {
+                  InputComponents.setValueFor(converterFactory, input, optionValue);
+               }
                populatedInputs.put(name, input);
             }
          }

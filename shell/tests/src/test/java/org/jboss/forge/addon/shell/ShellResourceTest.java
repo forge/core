@@ -21,6 +21,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.shell.mock.command.ResourceTestCommand;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
@@ -50,6 +51,7 @@ public class ShellResourceTest
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                .addBeansXML()
+               .addClass(ResourceTestCommand.class)
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
@@ -139,7 +141,7 @@ public class ShellResourceTest
       shell.setCurrentResource(tempResource);
       Result changeDirResult = shellTest.execute("cd child", 10, TimeUnit.SECONDS);
       Assert.assertTrue(changeDirResult instanceof Failed);
-      Assert.assertEquals("child: No such file or directory", changeDirResult.getMessage());
+      Assert.assertEquals("child: Child resource doesn't exist", changeDirResult.getMessage());
    }
 
    @Test(timeout = 10000)
@@ -223,4 +225,17 @@ public class ShellResourceTest
       tempDir.delete();
    }
 
+   @Test(timeout = 10000)
+   public void testResolveResources() throws Exception
+   {
+      String userHomePath = OperatingSystemUtils.getUserHomePath();
+      shellTest.execute("resourcecommand --singleFileResource ~", 10, TimeUnit.SECONDS);
+      Assert.assertThat(shellTest.getStdOut(), containsString("Single File Resource: " + userHomePath));
+      
+      shellTest.clearScreen();
+      
+      shellTest.execute("resourcecommand --singleFileResource .", 10, TimeUnit.SECONDS);
+      Assert.assertThat(shellTest.getStdOut(), containsString("Single File Resource: "
+               + shellTest.getShell().getCurrentResource()));
+   }
 }
