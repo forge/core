@@ -18,17 +18,12 @@ import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.activation.OptionActivator;
 import org.jboss.aesh.cl.builder.OptionBuilder;
 import org.jboss.aesh.cl.completer.OptionCompleter;
-import org.jboss.aesh.cl.converter.Converter;
 import org.jboss.aesh.cl.exception.OptionParserException;
 import org.jboss.aesh.cl.internal.ProcessedCommand;
 import org.jboss.aesh.cl.internal.ProcessedOption;
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.aesh.cl.validator.CommandValidator;
-import org.jboss.aesh.cl.validator.OptionValidator;
-import org.jboss.aesh.cl.validator.OptionValidatorException;
 import org.jboss.aesh.console.command.completer.CompleterInvocation;
-import org.jboss.aesh.console.command.converter.ConverterInvocation;
-import org.jboss.aesh.console.command.validator.ValidatorInvocation;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.aesh.completion.OptionCompleterFactory;
@@ -42,8 +37,6 @@ import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.SingleValued;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.output.UIMessage;
-import org.jboss.forge.addon.ui.output.UIMessage.Severity;
 import org.jboss.forge.addon.ui.util.InputComponents;
 
 /**
@@ -114,30 +107,6 @@ public class CommandLineUtil
                public boolean isActivated(ProcessedCommand processedCommand)
                {
                   return input.isEnabled();
-               }
-            }).validator(new OptionValidator<ValidatorInvocation<Object, Object>>()
-            {
-               @Override
-               public void validate(ValidatorInvocation<Object, Object> validatorInvocation)
-                        throws OptionValidatorException
-               {
-                  Object value = validatorInvocation.getValue();
-                  InputComponents.setValueFor(converterFactory, input, value);
-                  for (UIMessage message : command.validate(input))
-                  {
-                     if (message.getSource() == input && message.getSeverity() == Severity.ERROR)
-                     {
-                        throw new OptionValidatorException(message.getDescription());
-                     }
-                  }
-               }
-            }).converter(new Converter<Object, ConverterInvocation>()
-            {
-               @Override
-               public Object convert(ConverterInvocation converterInvocation) throws OptionValidatorException
-               {
-                  String value = converterInvocation.getInput();
-                  return InputComponents.convertToUIInputValue(converterFactory, input, value);
                }
             }).valueSeparator(' ');
 
