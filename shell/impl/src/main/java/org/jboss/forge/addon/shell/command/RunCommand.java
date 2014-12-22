@@ -104,7 +104,7 @@ public class RunCommand extends AbstractShellCommand
    {
       if (!command.hasValue() && !arguments.hasValue())
       {
-         validator.addValidationError(null, "Command or script file must be informed");
+         validator.addValidationError(null, "Command or script file must be provided");
       }
    }
 
