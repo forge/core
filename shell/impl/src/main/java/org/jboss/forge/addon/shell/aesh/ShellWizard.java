@@ -56,12 +56,12 @@ public class ShellWizard extends AbstractShellInteraction
       allInputs.putAll(pageInputs);
       CommandLineParser parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
       CommandLine cmdLine = parser.parse(line, true);
-      Map<String, InputComponent<?, ?>> populatedInputs = commandLineUtil.populateUIInputs(cmdLine, allInputs);
+      Map<String, InputComponent<?, ?>> populatedInputs = commandLineUtil.populateUIInputs(cmdLine, allInputs, shellContext);
 
       // Second pass to ensure disabled fields are set
       parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
       cmdLine = parser.parse(line, true);
-      populatedInputs = commandLineUtil.populateUIInputs(cmdLine, allInputs);
+      populatedInputs = commandLineUtil.populateUIInputs(cmdLine, allInputs, shellContext);
 
       boolean inputsChanged = false;
       for (String input : pageInputs.keySet())

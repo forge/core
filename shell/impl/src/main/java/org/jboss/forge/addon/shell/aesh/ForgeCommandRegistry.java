@@ -19,7 +19,6 @@ import org.jboss.aesh.console.man.Man;
 import org.jboss.aesh.extensions.grep.Grep;
 import org.jboss.aesh.extensions.less.aesh.Less;
 import org.jboss.aesh.extensions.more.aesh.More;
-import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.AeshUICommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
@@ -49,7 +48,7 @@ public class ForgeCommandRegistry implements CommandRegistry
 
    private final CommandFactory commandFactory;
    private final CommandRegistry aeshCommandRegistry;
-   private final ConverterFactory converterFactory;
+   private final AddonRegistry addonRegistry;
 
    private CommandLineUtil commandLineUtil;
    private final CommandControllerFactory commandControllerFactory;
@@ -58,9 +57,9 @@ public class ForgeCommandRegistry implements CommandRegistry
    {
       this.furnace = furnace;
       this.shell = shell;
+      this.addonRegistry = addonRegistry;
       this.commandFactory = addonRegistry.getServices(CommandFactory.class).get();
       this.commandControllerFactory = addonRegistry.getServices(CommandControllerFactory.class).get();
-      this.converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
 
       // Use Aesh commands
       Man manCommand = new Man(new ForgeManProvider(shell, commandFactory));
@@ -152,14 +151,9 @@ public class ForgeCommandRegistry implements CommandRegistry
    {
       if (commandLineUtil == null)
       {
-         commandLineUtil = new CommandLineUtil(getConverterFactory());
+         commandLineUtil = new CommandLineUtil(addonRegistry);
       }
       return commandLineUtil;
-   }
-
-   private ConverterFactory getConverterFactory()
-   {
-      return converterFactory;
    }
 
    @Override
