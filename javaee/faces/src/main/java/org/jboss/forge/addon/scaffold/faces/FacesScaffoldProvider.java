@@ -66,7 +66,10 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.util.Types;
 import org.jboss.shrinkwrap.descriptor.api.javaee6.ParamValueType;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp.WebAppCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webcommon.ErrorPageCommonType;
+import org.jboss.shrinkwrap.descriptor.api.webcommon30.ErrorPageType;
 import org.jboss.shrinkwrap.descriptor.api.webcommon30.WelcomeFileListType;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor;
@@ -553,8 +556,8 @@ public class FacesScaffoldProvider implements ScaffoldProvider
          // (prefer /faces/error.xhtml)
 
          String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource(ERROR_XHTML)).get(1);
-         servletConfig.createErrorPage().errorCode("404").location(errorLocation);
-         servletConfig.createErrorPage().errorCode("500").location(errorLocation);
+         createErrorPageServlet(servletConfig, errorLocation, "404");
+         createErrorPageServlet(servletConfig, errorLocation, "500");
 
          // Use the server timezone since we accept dates in that timezone, and it makes sense to display them in the
          // same
@@ -580,8 +583,8 @@ public class FacesScaffoldProvider implements ScaffoldProvider
          // (prefer /faces/error.xhtml)
 
          String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource(ERROR_XHTML)).get(1);
-         servletConfig.createErrorPage().errorCode("404").location(errorLocation);
-         servletConfig.createErrorPage().errorCode("500").location(errorLocation);
+         createErrorPageServlet(servletConfig, errorLocation, "404");
+         createErrorPageServlet(servletConfig, errorLocation, "500");
 
          // Use the server timezone since we accept dates in that timezone, and it makes sense to display them in the
          // same
@@ -1038,6 +1041,16 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       context.put("primaryKeyCC", StringUtils.capitalize(pkName));
       context.put("primaryKeyType", pkType);
       context.put("nullablePrimaryKeyType", nullablePkType);
+   }
+
+   private void createErrorPageServlet(WebAppCommonDescriptor servletConfig, String errorLocation, String errorCode) {
+      List<ErrorPageCommonType> allErrorPage = servletConfig.getAllErrorPage();
+      for (ErrorPageCommonType errorPageType : allErrorPage) {
+         if (errorPageType.getErrorCode().equalsIgnoreCase(errorCode)) {
+            return;
+         }
+      }
+      servletConfig.createErrorPage().errorCode(errorCode).location(errorLocation);
    }
 
    protected void setupRichFaces()
