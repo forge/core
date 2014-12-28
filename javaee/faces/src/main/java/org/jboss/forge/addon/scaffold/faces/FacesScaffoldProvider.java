@@ -64,9 +64,11 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MemberSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.util.Types;
-import org.jboss.shrinkwrap.descriptor.api.javaee6.ParamValueType;
+import org.jboss.shrinkwrap.descriptor.api.javaee.ParamValueCommonType;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webapp.WebAppCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webcommon.ErrorPageCommonType;
 import org.jboss.shrinkwrap.descriptor.api.webcommon30.WelcomeFileListType;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor;
@@ -540,67 +542,38 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       return context;
    }
 
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    protected void setupWebXML()
    {
       WebResourcesFacet web = this.project.getFacet(WebResourcesFacet.class);
       ServletFacet servlet = this.project.getFacet(ServletFacet.class);
-      if (servlet instanceof ServletFacet_3_0)
+      WebAppCommonDescriptor servletConfig = (WebAppCommonDescriptor) servlet.getConfig();
+      Node root = ((NodeDescriptor) servletConfig).getRootNode();
+      removeConflictingErrorPages(root);
+
+      // (prefer /faces/error.xhtml)
+
+      String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource(ERROR_XHTML)).get(1);
+      createErrorPageEntry(servletConfig, errorLocation, "404");
+      createErrorPageEntry(servletConfig, errorLocation, "500");
+
+      // Use the server timezone since we accept dates in that timezone, and it makes sense to display them in the
+      // same
+      boolean found = false;
+      List<ParamValueCommonType<?>> allContextParam = servletConfig.getAllContextParam();
+      for (ParamValueCommonType<?> contextParam : allContextParam)
       {
-         WebAppDescriptor servletConfig = (WebAppDescriptor) servlet.getConfig();
-         Node root = ((NodeDescriptor) servletConfig).getRootNode();
-         removeConflictingErrorPages(root);
-
-         // (prefer /faces/error.xhtml)
-
-         String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource(ERROR_XHTML)).get(1);
-         servletConfig.createErrorPage().errorCode("404").location(errorLocation);
-         servletConfig.createErrorPage().errorCode("500").location(errorLocation);
-
-         // Use the server timezone since we accept dates in that timezone, and it makes sense to display them in the
-         // same
-         boolean found = false;
-         for (ParamValueType<WebAppDescriptor> contextParam : servletConfig.getAllContextParam())
+         if (contextParam.getParamName().equals("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE"))
          {
-            if (contextParam.getParamName().equals("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE"))
-            {
-               found = true;
-            }
+            found = true;
          }
-         if (!found)
-         {
-            servletConfig.createContextParam()
-                     .paramName("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE").paramValue("true");
-         }
-         servlet.saveConfig(servletConfig);
       }
-      else if (servlet instanceof ServletFacet_3_1)
+      if (!found)
       {
-         org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor servletConfig = (org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor) servlet
-                  .getConfig();
-         // (prefer /faces/error.xhtml)
-
-         String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource(ERROR_XHTML)).get(1);
-         servletConfig.createErrorPage().errorCode("404").location(errorLocation);
-         servletConfig.createErrorPage().errorCode("500").location(errorLocation);
-
-         // Use the server timezone since we accept dates in that timezone, and it makes sense to display them in the
-         // same
-         boolean found = false;
-         for (org.jboss.shrinkwrap.descriptor.api.javaee7.ParamValueType<org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor> contextParam : servletConfig
-                  .getAllContextParam())
-         {
-            if (contextParam.getParamName().equals("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE"))
-            {
-               found = true;
-            }
-         }
-         if (!found)
-         {
-            servletConfig.createContextParam()
-                     .paramName("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE").paramValue("true");
-         }
-         servlet.saveConfig(servletConfig);
+         servletConfig.createContextParam()
+                  .paramName("javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE").paramValue("true");
       }
+      servlet.saveConfig(servletConfig);
    }
 
    private void removeConflictingErrorPages(Node root)
@@ -1038,6 +1011,20 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       context.put("primaryKeyCC", StringUtils.capitalize(pkName));
       context.put("primaryKeyType", pkType);
       context.put("nullablePrimaryKeyType", nullablePkType);
+   }
+
+   @SuppressWarnings({ "rawtypes", "unchecked" })
+   private void createErrorPageEntry(WebAppCommonDescriptor servletConfig, String errorLocation, String errorCode)
+   {
+      List<ErrorPageCommonType> allErrorPage = servletConfig.getAllErrorPage();
+      for (ErrorPageCommonType errorPageType : allErrorPage)
+      {
+         if (errorPageType.getErrorCode().equalsIgnoreCase(errorCode))
+         {
+            return;
+         }
+      }
+      servletConfig.createErrorPage().errorCode(errorCode).location(errorLocation);
    }
 
    protected void setupRichFaces()
