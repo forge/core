@@ -20,8 +20,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 import org.jboss.forge.addon.configuration.Configuration;
-import org.jboss.forge.addon.dependencies.Dependency;
-import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.FacetNotFoundException;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
 import org.jboss.forge.addon.javaee.cdi.ui.CDISetupCommand;
@@ -72,23 +70,15 @@ import org.jboss.shrinkwrap.descriptor.api.webcommon.ErrorPageCommonType;
 import org.jboss.shrinkwrap.descriptor.api.webcommon30.WelcomeFileListType;
 import org.jboss.shrinkwrap.descriptor.spi.node.Node;
 import org.jboss.shrinkwrap.descriptor.spi.node.NodeDescriptor;
-import org.metawidget.statically.StaticMetawidget;
 import org.metawidget.statically.StaticUtils.IndentedWriter;
-import org.metawidget.statically.StaticWidget;
 import org.metawidget.statically.faces.StaticFacesUtils;
 import org.metawidget.statically.faces.component.html.StaticHtmlMetawidget;
 import org.metawidget.statically.faces.component.html.widgetbuilder.HtmlOutcomeTargetLink;
-import org.metawidget.statically.faces.component.html.widgetbuilder.ReadOnlyWidgetBuilder;
-import org.metawidget.statically.faces.component.html.widgetbuilder.richfaces.RichFacesWidgetBuilder;
 import org.metawidget.statically.html.widgetbuilder.HtmlTag;
 import org.metawidget.statically.javacode.StaticJavaMetawidget;
-import org.metawidget.util.ArrayUtils;
 import org.metawidget.util.CollectionUtils;
 import org.metawidget.util.XmlUtils;
 import org.metawidget.util.simple.StringUtils;
-import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilder;
-import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilderConfig;
-import org.metawidget.widgetbuilder.iface.WidgetBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -142,11 +132,6 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    private static final String SCAFFOLD_META_WIDGET_QBE = "scaffold/faces/metawidget-qbe.xml";
    private static final String PAGINATOR = "/resources/scaffold/paginator.xhtml";
    private static final String SCAFFOLD_PAGINATOR = "/scaffold/faces/paginator.xhtml";
-
-   private final Dependency richfaces3UI = DependencyBuilder.create("org.richfaces.ui:richfaces-ui");
-   private final Dependency richfaces3Impl = DependencyBuilder.create("org.richfaces.framework:richfaces-impl");
-   private final Dependency richfaces4UI = DependencyBuilder.create("org.richfaces.ui:richfaces-components-ui");
-   private final Dependency richfaces4Impl = DependencyBuilder.create("org.richfaces.core:richfaces-core-impl");
 
    protected FreemarkerTemplateProcessor templateProcessor;
    protected Template backingBeanTemplate;
@@ -735,11 +720,6 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    {
       resetMetaWidgets();
 
-      // FORGE-460: setupRichFaces during generateFromEntity, not during setup, as generally 'richfaces setup' is called
-      // *after* 'scaffold setup'
-      // TODO: Decide on whether to support Richfaces via the Faces scaffold
-      // setupRichFaces();
-
       // Track the list of resources generated
 
       List<Resource<?>> result = new ArrayList<Resource<?>>();
@@ -1026,69 +1006,4 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       }
       servletConfig.createErrorPage().errorCode(errorCode).location(errorLocation);
    }
-
-   protected void setupRichFaces()
-   {
-      if ((this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces3UI)
-               && this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces3Impl))
-               || (this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces4UI)
-               && this.project.getFacet(DependencyFacet.class).hasEffectiveDependency(this.richfaces4Impl)))
-      {
-         this.entityMetawidget
-                  .setWidgetBuilder(insertRichFacesWidgetBuilder((CompositeWidgetBuilder<StaticWidget, StaticMetawidget>) this.entityMetawidget
-                           .getWidgetBuilder()));
-
-         this.searchMetawidget
-                  .setWidgetBuilder(insertRichFacesWidgetBuilder((CompositeWidgetBuilder<StaticWidget, StaticMetawidget>) this.searchMetawidget
-                           .getWidgetBuilder()));
-
-         this.beanMetawidget
-                  .setWidgetBuilder(insertRichFacesWidgetBuilder((CompositeWidgetBuilder<StaticWidget, StaticMetawidget>) this.beanMetawidget
-                           .getWidgetBuilder()));
-      }
-   }
-
-   /**
-    * Locates a <code>ReadOnlyWidgetBuilder</code> in the list of WidgetBuilders, and inserts a
-    * <code>RichFacesWidgetBuilder</code> after it (unless there's a <code>RichFacesWidgetBuilder</code> in there
-    * already).
-    */
-   protected <W extends StaticWidget, M extends W> CompositeWidgetBuilder<W, M> insertRichFacesWidgetBuilder(
-            final CompositeWidgetBuilder<W, M> compositeWidgetBuilder)
-   {
-      // Get the current WidgetBuilders...
-
-      WidgetBuilder<W, M>[] existingWidgetBuilders = compositeWidgetBuilder.getWidgetBuilders();
-
-      // ...find the ReadOnlyWidgetBuilder (if any)...
-
-      int addAt = 0;
-
-      for (int loop = 0; loop < existingWidgetBuilders.length; loop++)
-      {
-         // ...(abort if there's already a RichFacesWidgetBuilder)...
-
-         // Use an Object loop variable here to avoid a nasty Java/Generics compiler bug
-         Object widgetBuilder = existingWidgetBuilders[loop];
-         if (widgetBuilder instanceof RichFacesWidgetBuilder)
-         {
-            return compositeWidgetBuilder;
-         }
-
-         if (widgetBuilder instanceof ReadOnlyWidgetBuilder)
-         {
-            addAt = loop + 1;
-         }
-      }
-
-      // ...and insert our RichFacesWidgetBuilder just after it
-
-      @SuppressWarnings("unchecked")
-      WidgetBuilder<W, M>[] newWidgetBuilders = (WidgetBuilder<W, M>[]) ArrayUtils.addAt(existingWidgetBuilders, addAt,
-               new RichFacesWidgetBuilder());
-
-      return new CompositeWidgetBuilder<W, M>(
-               new CompositeWidgetBuilderConfig<W, M>().setWidgetBuilders(newWidgetBuilders));
-   }
-
 }
