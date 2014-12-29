@@ -10,6 +10,7 @@ package org.jboss.forge.addon.projects;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UISelection;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * Helper class for {@link Project} objects
@@ -31,6 +32,7 @@ public final class Projects
     */
    public static Project getSelectedProject(ProjectFactory projectFactory, UISelection<?> selection)
    {
+      Assert.notNull(projectFactory, "Project Factory cannot be null");
       Project project = null;
       if (!selection.isEmpty() && selection.get() instanceof Resource)
       {
@@ -45,6 +47,7 @@ public final class Projects
     */
    public static boolean containsProject(ProjectFactory projectFactory, UIContext context)
    {
+      Assert.notNull(projectFactory, "Project Factory cannot be null");
       UISelection<?> selection = context.getInitialSelection();
       if (!selection.isEmpty() && selection.get() instanceof Resource)
       {
