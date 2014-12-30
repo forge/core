@@ -44,6 +44,12 @@
          <classifier>forge-addon</classifier>
          <scope>test</scope>
       </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>parser-xml</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
 
       <!-- Furnace Container -->
       <dependency>
@@ -76,6 +82,12 @@
          <classifier>forge-addon</classifier>
          <scope>test</scope>
       </dependency>
+         <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>shell-test-harness</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>test</scope>
+         </dependency>
    </dependencies>
 
    <build>
