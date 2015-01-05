@@ -92,13 +92,16 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
          for (FileResource<?> fileResource : formatSources)
             fileResourceList.add(fileResource);
 
-      Properties formatProfile = new Properties();
+      Properties formatProfile;
 
       if (formatProfileLocation == null || !formatProfileLocation.exists())
          formatProfile = null;
 
       else
+      {
+         formatProfile = new Properties();
          formatProfile.load(formatProfileLocation.getResourceInputStream());
+      }
 
       format(fileResourceList, formatProfile);
 
