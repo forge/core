@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -291,9 +292,10 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
          @Override
          public ProjectProvider call() throws Exception
          {
-            if (buildSystem.getValueChoices().iterator().hasNext())
+            Iterator<ProjectProvider> iterator = buildSystem.getValueChoices().iterator();
+            if (iterator.hasNext())
             {
-               return buildSystem.getValueChoices().iterator().next();
+               return iterator.next();
             }
             return null;
          }
