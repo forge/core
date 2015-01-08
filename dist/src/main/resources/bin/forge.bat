@@ -114,6 +114,7 @@ goto error
 @REM Initializing the argument line
 :init
 setlocal enableextensions enabledelayedexpansion
+echo Using Forge at %FORGE_HOME%
 set FORGE_CMD_LINE_ARGS=
 set FORGE_DEBUG_ARGS=
 
