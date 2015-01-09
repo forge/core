@@ -31,6 +31,7 @@ public final class InputType
    public static final String TEXTAREA = PREFIX + "TEXTAREA";
    public static final String FILE_PICKER = PREFIX + "FILE_PICKER";
    public static final String DIRECTORY_PICKER = PREFIX + "DIRECTORY_PICKER";
+   public static final String FILE_OR_DIRECTORY_PICKER = PREFIX + "FILE_OR_DIRECTORY_PICKER";   
    public static final String DROPDOWN = PREFIX + "DROPDOWN";
    public static final String RADIO = PREFIX + "RADIO";
    public static final String SECRET = PREFIX + "SECRET";
