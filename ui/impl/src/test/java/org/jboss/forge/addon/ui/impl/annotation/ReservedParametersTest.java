@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.ui.impl.annotation;
 
+import java.io.File;
+
 import org.jboss.forge.addon.ui.UIDesktop;
 import org.jboss.forge.addon.ui.UIProvider;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -34,5 +36,8 @@ public class ReservedParametersTest
       Assert.assertTrue(ReservedParameters.isReservedParameter(UIProvider.class));
       Assert.assertTrue(ReservedParameters.isReservedParameter(UIExecutionContext.class));
       Assert.assertTrue(ReservedParameters.isReservedParameter(UIDesktop.class));
+
+      Assert.assertFalse(ReservedParameters.isReservedParameter(String.class));
+      Assert.assertFalse(ReservedParameters.isReservedParameter(File.class));
    }
 }
