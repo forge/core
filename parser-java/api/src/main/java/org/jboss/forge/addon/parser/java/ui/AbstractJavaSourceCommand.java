@@ -180,7 +180,7 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
    @SuppressWarnings("unchecked")
    private SOURCETYPE buildJavaSource(JavaSourceFacet java)
    {
-      if (named.getValue() == null)
+      if (!named.hasValue())
       {
          return null;
       }
