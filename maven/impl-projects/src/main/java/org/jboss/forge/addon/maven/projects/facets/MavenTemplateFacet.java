@@ -32,7 +32,7 @@ public class MavenTemplateFacet extends AbstractFacet<Project> implements Templa
    public DirectoryResource getRootTemplateDirectory()
    {
       Project project = getFaceted();
-      return project.getRootDirectory().getChildDirectory("src" + File.separator + "main"
+      return project.getRoot().reify(DirectoryResource.class).getChildDirectory("src" + File.separator + "main"
                + File.separator + "templates");
    }
 
