@@ -108,7 +108,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
       {
          srcFolderName = "src" + File.separator + "main" + File.separator + "java";
       }
-      DirectoryResource projectRoot = getFaceted().getRootDirectory();
+      DirectoryResource projectRoot = getFaceted().getRoot().reify(DirectoryResource.class);
       return projectRoot.getChildDirectory(srcFolderName);
    }
 
@@ -126,7 +126,7 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
       {
          srcFolderName = "src" + File.separator + "test" + File.separator + "java";
       }
-      DirectoryResource projectRoot = getFaceted().getRootDirectory();
+      DirectoryResource projectRoot = getFaceted().getRoot().reify(DirectoryResource.class);
       return projectRoot.getChildDirectory(srcFolderName);
    }
 
