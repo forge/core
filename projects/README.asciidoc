@@ -306,3 +306,17 @@ Project temp = factory.createTempProject();
 
 Consistent programming experience::
  Because the Project API provides an abstract model for interacting with existing and creating new projects, it is used in a number of addons and should be considered the standard approach for project manipulation.
+ 
+ClassLoaderFacet:: 
+This addon introduces a ClassLoaderFacet that provides a URLClassLoader from the project dependencies.
++
+[source,java]
+----
+ClassLoaderFacet facet = project.getFacet(ClassLoaderFacet.class);
+// This classloader contains all the project classes and their dependencies
+try (URLClassLoader classLoader = facet.getClassLoader()) {
+     // Load classes and use the reflection API to introspect classes
+     Class<?> clazz = classLoader.loadClass("com.example.Foo"); 
+
+----
+ 
