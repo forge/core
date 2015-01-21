@@ -308,8 +308,8 @@ Consistent programming experience::
  Because the Project API provides an abstract model for interacting with existing and creating new projects, it is used in a number of addons and should be considered the standard approach for project manipulation.
  
 ClassLoaderFacet:: 
-This addon introduces a ClassLoaderFacet that provides a URLClassLoader from the project dependencies.
-+
+This facet exposes a `URLClassLoader` that encompasses all `Dependency` instances on which this project depends. It also includes the compiled/fully built `PackagingFacet#getFinalArtifact()` from the project sources itself. 
+This is the equivalent of class-loading the entire project classpath.
 [source,java]
 ----
 ClassLoaderFacet facet = project.getFacet(ClassLoaderFacet.class);
@@ -317,6 +317,13 @@ ClassLoaderFacet facet = project.getFacet(ClassLoaderFacet.class);
 try (URLClassLoader classLoader = facet.getClassLoader()) {
      // Load classes and use the reflection API to introspect classes
      Class<?> clazz = classLoader.loadClass("com.example.Foo"); 
-
+}
 ----
+
+[WARNING]
+You *MUST* call `URLClassLoader#close()` when finished with this object. Failure to close this object upon completion will result in fatal memory leaks over time. If the scope of work is appropriate, consider using a try-with-resources block to encapsulate the operations and automatically clean up any ClassLoader resources.
+
+[IMPORTANT] 
+You must also clean up and release any `Class` references that were produced by this `ClassLoader`. It is not enough to close this. Held `Class` references will keep the `ClassLoader` from being garbage collected.
+
  
