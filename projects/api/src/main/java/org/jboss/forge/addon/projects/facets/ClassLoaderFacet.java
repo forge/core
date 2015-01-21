@@ -21,11 +21,11 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 public interface ClassLoaderFacet extends ProjectFacet
 {
    /**
-    * Returns the {@link URLClassLoader} with the {@link URL}s that this project depends on.
+    * Returns a {@link URLClassLoader} that encompasses all {@link Dependency} instances on which this project depends. This is the equivalent of class-loading the entire project classpath.
     * 
-    * WARNING: Remember to close this {@link URLClassLoader} when no longer in use.
+    * WARNING: You *MUST* call {@link URLClassLoader#close()} when finished with this object. Failure to close this object upon completion will result in fatal memory leaks over time. If the scope of work is appropriate, consider using a try-with-resources block to encapsulate the operations and automatically clean up any ClassLoader resources.
     * <p/>
-    * Leaving it open could introduce memory leaks.
+    * IMPORTANT: You must also clean up and release any {@link Class} references that were produced by this {@link ClassLoader}. It is not enough to close this. Held {@link Class} references will keep the {@link ClassLoader} from being garbage collected.
     */
    URLClassLoader getClassLoader();
 
