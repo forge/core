@@ -13,8 +13,9 @@ import javax.inject.Singleton;
 
 import org.codehaus.plexus.ContainerConfiguration;
 import org.codehaus.plexus.DefaultContainerConfiguration;
+import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.logging.console.ConsoleLoggerManager;
-import org.jboss.forge.addon.maven.projects.plexus.DefaultPlexusContainer;
 import org.jboss.forge.furnace.container.cdi.events.Local;
 import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.util.ClassLoaders;
@@ -25,7 +26,7 @@ import org.jboss.forge.furnace.util.ClassLoaders;
 @Singleton
 class PlexusContainer
 {
-   private org.codehaus.plexus.PlexusContainer plexusContainer;
+   private org.codehaus.plexus.DefaultPlexusContainer plexusContainer;
 
    public <T> T lookup(final Class<T> type)
    {
@@ -83,12 +84,14 @@ class PlexusContainer
                      {
                         try
                         {
-                           ContainerConfiguration config = new DefaultContainerConfiguration().setAutoWiring(true);
+                           ContainerConfiguration config = new DefaultContainerConfiguration().setAutoWiring(true).setClassPathScanning(PlexusConstants.SCANNING_INDEX);
                            plexusContainer = new DefaultPlexusContainer(config);
+                           // NOTE: To avoid inconsistencies, we'll use the TCCL exclusively for lookups
+                           plexusContainer.setLookupRealm(null);
                            ConsoleLoggerManager loggerManager = new ConsoleLoggerManager();
                            loggerManager.setThreshold("ERROR");
-                           ((DefaultPlexusContainer) plexusContainer).setLoggerManager(loggerManager);
-                           return (DefaultPlexusContainer) plexusContainer;
+                           plexusContainer.setLoggerManager(loggerManager);
+                           return plexusContainer;
                         }
                         catch (Exception e)
                         {
