@@ -14,6 +14,7 @@ import javax.inject.Singleton;
 import org.codehaus.plexus.ContainerConfiguration;
 import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.logging.console.ConsoleLoggerManager;
 import org.jboss.forge.furnace.container.cdi.events.Local;
 import org.jboss.forge.furnace.event.PreShutdown;
@@ -83,7 +84,7 @@ class PlexusContainer
                      {
                         try
                         {
-                           ContainerConfiguration config = new DefaultContainerConfiguration().setAutoWiring(true);
+                           ContainerConfiguration config = new DefaultContainerConfiguration().setAutoWiring(true).setClassPathScanning(PlexusConstants.SCANNING_INDEX);
                            plexusContainer = new DefaultPlexusContainer(config);
                            // NOTE: To avoid inconsistencies, we'll use the TCCL exclusively for lookups
                            plexusContainer.setLookupRealm(null);
