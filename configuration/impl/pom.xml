@@ -16,7 +16,7 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>shell</artifactId>
+         <artifactId>ui</artifactId>
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
