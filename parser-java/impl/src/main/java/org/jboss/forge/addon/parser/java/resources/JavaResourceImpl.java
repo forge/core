@@ -7,13 +7,20 @@
 
 package org.jboss.forge.addon.parser.java.resources;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.forge.addon.resource.AbstractFileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -31,6 +38,8 @@ import org.jboss.forge.roaster.model.Member;
 import org.jboss.forge.roaster.model.MemberHolder;
 import org.jboss.forge.roaster.model.Method;
 import org.jboss.forge.roaster.model.source.JavaSource;
+import org.jboss.forge.roaster.model.util.FormatterProfileReader;
+import org.jboss.forge.roaster.spi.Streams;
 
 /**
  * @author Mike Brock
@@ -38,12 +47,18 @@ import org.jboss.forge.roaster.model.source.JavaSource;
  */
 public class JavaResourceImpl extends AbstractFileResource<JavaResource> implements JavaResource
 {
+   private final String formatterProfilePath;
+   private final String formatterProfileName;
+
    private JavaType<?> javaType;
    private byte[] lastDigest;
 
-   public JavaResourceImpl(final ResourceFactory factory, final File file)
+   public JavaResourceImpl(final ResourceFactory factory, final File file, String formatterProfileName,
+            String formatterProfilePath)
    {
       super(factory, file);
+      this.formatterProfilePath = formatterProfilePath;
+      this.formatterProfileName = formatterProfileName;
    }
 
    @Override
@@ -168,7 +183,7 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    @Override
    public JavaResourceImpl createFrom(final File file)
    {
-      return new JavaResourceImpl(getResourceFactory(), file);
+      return new JavaResourceImpl(getResourceFactory(), file, formatterProfileName, formatterProfilePath);
    }
 
    @Override
@@ -193,4 +208,27 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    {
       return false;
    }
+
+   @Override
+   public JavaResource setContents(final InputStream data)
+   {
+      InputStream contents = data;
+      if (formatterProfilePath != null)
+      {
+         try (FileInputStream fis = new FileInputStream(formatterProfilePath))
+         {
+            FormatterProfileReader reader = FormatterProfileReader.fromEclipseXml(fis);
+            Properties formatterProfile = reader.getProfileNames().contains(formatterProfileName) ? reader
+                     .getPropertiesFor(formatterProfileName) : reader.getDefaultProperties();
+            String formattedSource = Roaster.format(formatterProfile, Streams.toString(data));
+            contents = new ByteArrayInputStream(formattedSource.getBytes());
+         }
+         catch (IOException e)
+         {
+            Logger.getLogger(getClass().getName()).log(Level.FINE, "Error while reading formatter path", e);
+         }
+      }
+      return super.setContents(contents);
+   }
+
 }

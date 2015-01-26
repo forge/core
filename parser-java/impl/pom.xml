@@ -33,6 +33,12 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>configuration</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui-spi</artifactId>
          <classifier>forge-addon</classifier>
          <optional>true</optional>
