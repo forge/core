@@ -19,9 +19,16 @@ import org.jboss.forge.roaster.model.source.JavaSource;
  *
  * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public interface JavaResource extends FileResource<JavaResource>
 {
+   /**
+    * The possible keys be set in the user configuration file for formatting options
+    */
+   static final String FORMATTER_PROFILE_NAME_KEY = "org.jboss.forge.addon.parser.java.formatter_profile_name";
+   static final String FORMATTER_PROFILE_PATH_KEY = "org.jboss.forge.addon.parser.java.formatter_profile_path";
+
    /**
     * Set the content of this {@link Resource} to the value of the given
     * {@link org.jboss.forge.roaster.model.source.JavaSource}.
