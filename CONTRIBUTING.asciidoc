@@ -55,7 +55,7 @@ Here are the steps in detail:
 
     Change 'pick' to 'f' for each commit you wish to fixup upwards. (If you do not change a line, it will not be modified.)
 
-        1 pick ade2b1a Implemented FORGE-XX
+        1 pick ade2b1a FORGE-XX: Does something cool
         2 f c3ae0a2 almost done
         3 f c863bfb did more work
         4 f af793ae Started working on FORGE-XX
@@ -63,7 +63,7 @@ Here are the steps in detail:
 
     Once you are done, your commits should look like this:
 
-        1 ade2b1a Implemented FORGE-XX
+        1 ade2b1a FORGE-XX: Does something cool
         2 368bbb9 Previous commit written by someone else
 
     You can view your commits by typing:
