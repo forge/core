@@ -47,6 +47,7 @@ public class JavaFormatSourcesCommandTest
             @AddonDependency(name = "org.jboss.forge.addon:projects"),
             @AddonDependency(name = "org.jboss.forge.addon:maven"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.forge.addon:configuration"),
             @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness")
    })
    public static ForgeArchive getDeployment()
@@ -61,19 +62,22 @@ public class JavaFormatSourcesCommandTest
                .add(new FileAsset(new File(
                         "src/test/resources/org/jboss/forge/addon/devtools/java/resources/UnformattedSource.java")),
                         "org/jboss/forge/addon/devtools/java/UnformattedSource.java")
-               .add(new FileAsset(
-                        new File(
-                                 "src/test/resources/org/jboss/forge/addon/devtools/java/resources/DefaultFormattedSource.java")),
+               .add(new FileAsset(new File(
+                        "src/test/resources/org/jboss/forge/addon/devtools/java/resources/DefaultFormattedSource.java")),
                         "org/jboss/forge/addon/devtools/java/DefaultFormattedSource.java")
                .add(new FileAsset(new File(
-                        "src/test/resources/org/jboss/forge/addon/devtools/java/resources/FormatProfile.xml")),
-                        "org/jboss/forge/addon/devtools/java/FormatProfile.xml")
+                        "src/test/resources/org/jboss/forge/addon/devtools/java/resources/eclipse_profile.xml")),
+                        "org/jboss/forge/addon/devtools/java/eclipse_profile.xml")
+               .add(new FileAsset(new File(
+                        "src/test/resources/org/jboss/forge/addon/devtools/java/resources/forge_profile.xml")),
+                        "org/jboss/forge/addon/devtools/java/forge_profile.xml")
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:dev-tools-java"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:configuration"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:resources")
                );
       return archive;
@@ -103,69 +107,49 @@ public class JavaFormatSourcesCommandTest
 
       File formattedFile = File.createTempFile("FormattedSource", ".java");
       formattedFile.deleteOnExit();
-      Assert.assertNotNull(formattedFile);
-
       File unformattedFile = File.createTempFile("UnformattedSource", ".java");
       unformattedFile.deleteOnExit();
-      Assert.assertNotNull(unformattedFile);
-
       File profile = File.createTempFile("FormatProfile", ".xml");
       profile.deleteOnExit();
-      Assert.assertNotNull(profile);
 
       // Loading the sample formatted source
       Resource<File> unreifiedFormattedSource = resourceFactory.create(formattedFile);
       FileResource<?> formattedSource = unreifiedFormattedSource.reify(FileResource.class);
-
-      Assert.assertNotNull(getClass().getResource("FormattedSource.java"));
       Assert.assertNotNull(getClass().getResource("FormattedSource.java").openStream());
-
       formattedSource.setContents((getClass().getResource("FormattedSource.java").openStream()));
 
       // Loading the temporary unformatted source from the sample unformatted source
       Resource<File> unreifiedTempUnformattedSource = resourceFactory.create(unformattedFile);
       FileResource<?> tempUnformattedSource = unreifiedTempUnformattedSource.reify(FileResource.class);
-
-      Assert.assertNotNull(getClass().getResource("UnformattedSource.java"));
       Assert.assertNotNull(getClass().getResource("UnformattedSource.java").openStream());
-
       tempUnformattedSource.setContents((getClass().getResource("UnformattedSource.java").openStream()));
 
       // Loading the sample format profile
       Resource<File> unreifiedProfile = resourceFactory.create(profile);
       XMLResource profileXML = unreifiedProfile.reify(XMLResource.class);
-
-      Assert.assertNotNull(getClass().getResource("FormatProfile.xml"));
-      Assert.assertNotNull(getClass().getResource("FormatProfile.xml").openStream());
-
-      profileXML.setContents((getClass().getResource("FormatProfile.xml").openStream()));
+      Assert.assertNotNull(getClass().getResource("eclipse_profile.xml").openStream());
+      profileXML.setContents((getClass().getResource("eclipse_profile.xml").openStream()));
 
       commandController.initialize();
       commandController.setValueFor("profile", profileXML);
-
       commandController.setValueFor("sources", tempUnformattedSource);
       commandController.execute();
 
-      // Asserting that the formatted source and unformatted source after format are equal.
       Assert.assertEquals(formattedSource.getContents(), tempUnformattedSource.getContents());
    }
 
-   // Runs the test on the command without specifying the format sources and the format profile.
+   // Runs the test on the command without specifying the format sources(formats a directory).
    @SuppressWarnings("unchecked")
    @Test
-   public void testFileFormattingWithoutProfileAndSourceInput() throws Exception
+   public void testFileFormattingWithoutSourceInput() throws Exception
    {
-      File formattedFile = File.createTempFile("FormattedSource", ".java");
+      File formattedFile = File.createTempFile("DefaultFormattedSource", ".java");
       formattedFile.deleteOnExit();
-      Assert.assertNotNull(formattedFile);
 
       // Loading the sample formatted source
       Resource<File> unreifiedFormattedSource = resourceFactory.create(formattedFile);
       FileResource<?> formattedSource = unreifiedFormattedSource.reify(FileResource.class);
-
-      Assert.assertNotNull(getClass().getResource("FormattedSource.java"));
-      Assert.assertNotNull(getClass().getResource("FormattedSource.java").openStream());
-
+      Assert.assertNotNull(getClass().getResource("DefaultFormattedSource.java").openStream());
       formattedSource.setContents((getClass().getResource("DefaultFormattedSource.java").openStream()));
 
       // Creating the temporary directory to be formatted.
@@ -177,15 +161,22 @@ public class JavaFormatSourcesCommandTest
       tempUnformattedSource.createNewFile();
       tempUnformattedSource.deleteOnExit();
 
+      // Creating the temporary profile xml.
+      FileResource<?> profileXML = tempUnformattedResourceDir.getChildOfType(XMLResource.class,
+               "forge_profile.xml");
+      profileXML.createNewFile();
+      profileXML.deleteOnExit();
+      profileXML.setContents((getClass().getResource("forge_profile.xml").openStream()));
+
       // Setting the contents of the temporary directory to unformatted source.
-      Assert.assertNotNull(getClass().getResource("UnformattedSource.java"));
       Assert.assertNotNull(getClass().getResource("UnformattedSource.java").openStream());
       tempUnformattedSource.setContents((getClass().getResource("UnformattedSource.java").openStream()));
 
       Shell shell = shellTest.getShell();
       shell.setCurrentResource(tempUnformattedResourceDir);
 
-      Result javaformatsourcesResult = shellTest.execute("java-format-sources", 10, TimeUnit.SECONDS);
+      Result javaformatsourcesResult = shellTest.execute("java-format-sources --profile forge_profile.xml", 10,
+               TimeUnit.SECONDS);
       Assert.assertNotNull(javaformatsourcesResult);
 
       // Asserting the contents of the temporary directory are formatted after command execution.

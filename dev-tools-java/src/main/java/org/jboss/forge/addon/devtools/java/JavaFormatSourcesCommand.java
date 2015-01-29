@@ -7,14 +7,18 @@
 
 package org.jboss.forge.addon.devtools.java;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.jboss.forge.addon.configuration.Configuration;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.xml.resources.XMLResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -31,6 +35,8 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.util.FormatterProfileReader;
+import org.jboss.forge.roaster.model.util.Strings;
 
 public class JavaFormatSourcesCommand extends AbstractUICommand
 {
@@ -42,10 +48,16 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
    @SuppressWarnings("rawtypes")
    private UIInputMany<FileResource> sources;
 
+   private Configuration userConfig;
+
+   private ResourceFactory resourceFactory;
+
    public JavaFormatSourcesCommand()
    {
       Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
       this.inputFactory = furnace.getAddonRegistry().getServices(InputComponentFactory.class).get();
+      this.userConfig = furnace.getAddonRegistry().getServices(Configuration.class).get();
+      this.resourceFactory = furnace.getAddonRegistry().getServices(ResourceFactory.class).get();
    }
 
    @Override
@@ -68,10 +80,17 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
       profile = inputFactory.createInput("profile", 'p', XMLResource.class);
       profile.setDescription("The eclipse code format profile");
 
+      String path = userConfig.getString(JavaResource.FORMATTER_PROFILE_PATH_KEY);
+      if (!Strings.isNullOrEmpty(path))
+      {
+         XMLResource resource = resourceFactory.create(XMLResource.class, new File(path));
+         profile.setDefaultValue(resource);
+      }
+
       builder.add(sources).add(profile);
    }
 
-   @SuppressWarnings("rawtypes")
+   @SuppressWarnings({ "rawtypes" })
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
@@ -99,8 +118,10 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
 
       else
       {
-         formatProfile = new Properties();
-         formatProfile.load(formatProfileLocation.getResourceInputStream());
+         String formatterProfilePath = formatProfileLocation.getFullyQualifiedName();
+         FileInputStream fis = new FileInputStream(formatterProfilePath);
+         FormatterProfileReader reader = FormatterProfileReader.fromEclipseXml(fis);
+         formatProfile = reader.getDefaultProperties();
       }
 
       format(fileResourceList, formatProfile);
