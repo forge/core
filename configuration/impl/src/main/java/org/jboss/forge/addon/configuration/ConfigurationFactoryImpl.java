@@ -30,10 +30,13 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
    Configuration getUserConfiguration(InjectionPoint ip) throws ConfigurationException
    {
       Configuration config = getUserConfiguration();
-      Annotated annotated = ip.getAnnotated();
-      if (annotated.isAnnotationPresent(Subset.class))
+      if (ip != null)
       {
-         config = config.subset(annotated.getAnnotation(Subset.class).value());
+         Annotated annotated = ip.getAnnotated();
+         if (annotated.isAnnotationPresent(Subset.class))
+         {
+            config = config.subset(annotated.getAnnotation(Subset.class).value());
+         }
       }
       return config;
    }
