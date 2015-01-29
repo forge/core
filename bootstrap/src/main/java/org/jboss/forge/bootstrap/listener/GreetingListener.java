@@ -44,25 +44,31 @@ public class GreetingListener implements ContainerLifecycleListener
    }
 
    @Override
-   public void beforeStop(Furnace forge) throws ContainerException
+   public void afterStart(Furnace furnace) throws ContainerException
    {
       // Do nothing
    }
 
    @Override
-   public void afterStop(Furnace forge) throws ContainerException
+   public void beforeStop(Furnace furnace) throws ContainerException
    {
       // Do nothing
    }
 
    @Override
-   public void beforeConfigurationScan(Furnace forge) throws ContainerException
+   public void afterStop(Furnace furnace) throws ContainerException
    {
       // Do nothing
    }
 
    @Override
-   public void afterConfigurationScan(Furnace forge) throws ContainerException
+   public void beforeConfigurationScan(Furnace furnace) throws ContainerException
+   {
+      // Do nothing
+   }
+
+   @Override
+   public void afterConfigurationScan(Furnace furnace) throws ContainerException
    {
       // Do nothing
    }
