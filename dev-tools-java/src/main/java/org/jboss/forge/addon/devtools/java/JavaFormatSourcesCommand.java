@@ -144,7 +144,7 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
          }
          catch (IOException e)
          {
-            return Results.fail("The profile could not be read");
+            return Results.fail("The profile xml could not be read");
          }
 
       }
@@ -171,11 +171,16 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
          }
 
          else if (fileResource instanceof JavaResource)
-         {
-            if (formatProfile == null)
-               fileResource.setContents(Roaster.format(fileResource.getContents()));
-            else
-               fileResource.setContents(Roaster.format(formatProfile, fileResource.getContents()));
+         {            
+          
+          JavaResource file=fileResource.reify(JavaResource.class);
+            
+          if (formatProfile == null)
+          file.setContents(fileResource.getResourceInputStream());
+    
+          else
+          file.setContents(fileResource.getResourceInputStream(),formatProfile);
+            
          }
       }
 
