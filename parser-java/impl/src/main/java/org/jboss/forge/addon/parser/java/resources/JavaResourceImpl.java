@@ -44,6 +44,7 @@ import org.jboss.forge.roaster.spi.Streams;
 /**
  * @author Mike Brock
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public class JavaResourceImpl extends AbstractFileResource<JavaResource> implements JavaResource
 {
@@ -212,23 +213,33 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
    @Override
    public JavaResource setContents(final InputStream data)
    {
-      InputStream contents = data;
       if (formatterProfilePath != null)
       {
          try (FileInputStream fis = new FileInputStream(formatterProfilePath))
          {
             FormatterProfileReader reader = FormatterProfileReader.fromEclipseXml(fis);
-            Properties formatterProfile = reader.getProfileNames().contains(formatterProfileName) ? reader
+            Properties formatterProfileProperties = reader.getProfileNames().contains(formatterProfileName) ? reader
                      .getPropertiesFor(formatterProfileName) : reader.getDefaultProperties();
-            String formattedSource = Roaster.format(formatterProfile, Streams.toString(data));
-            contents = new ByteArrayInputStream(formattedSource.getBytes());
+            return setContents(data, formatterProfileProperties);
          }
          catch (IOException e)
          {
             Logger.getLogger(getClass().getName()).log(Level.FINE, "Error while reading formatter path", e);
          }
       }
-      return super.setContents(contents);
+      return super.setContents(data);
    }
 
+   @Override
+   public JavaResource setContents(InputStream data, Properties formatterProperties)
+   {
+      InputStream contents = data;
+      if (formatterProperties != null)
+      {
+         String source = Streams.toString(data);
+         String formattedSource = Roaster.format(formatterProperties, source);
+         contents = new ByteArrayInputStream(formattedSource.getBytes());
+      }
+      return super.setContents(contents);
+   }
 }
