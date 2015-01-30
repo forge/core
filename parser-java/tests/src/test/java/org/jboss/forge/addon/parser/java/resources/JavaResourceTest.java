@@ -9,10 +9,12 @@ package org.jboss.forge.addon.parser.java.resources;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Properties;
 
 import javax.inject.Inject;
 
@@ -30,6 +32,7 @@ import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
+import org.jboss.forge.roaster.model.util.FormatterProfileReader;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.junit.Assert;
@@ -105,8 +108,9 @@ public class JavaResourceTest
    }
 
    @Test
-   public void testCustomClassFormatting() throws Exception
+   public void testDefaultClassFormatting() throws Exception
    {
+      configuration.clearProperty(JavaResource.FORMATTER_PROFILE_PATH_KEY);
       String forgeFormatterContents = Streams.toString(getClass().getResourceAsStream("formatter_forge.jv"));
       String eclipseFormatterContents = Streams.toString(getClass().getResourceAsStream("formatter_eclipse.jv"));
       File tmpFile = File.createTempFile("MyClass", ".java");
@@ -124,4 +128,32 @@ public class JavaResourceTest
       resource.setContents(forgeFormatterContents);
       Assert.assertEquals(eclipseFormatterContents, resource.getContents());
    }
+
+   @Test
+   public void testCustomClassFormattingProperties() throws Exception
+   {
+      configuration.clearProperty(JavaResource.FORMATTER_PROFILE_PATH_KEY);
+      String forgeFormatterContents = Streams.toString(getClass().getResourceAsStream("formatter_forge.jv"));
+      File tmpFile = File.createTempFile("MyClass", ".java");
+      tmpFile.deleteOnExit();
+      JavaResource resource = resourceFactory.create(JavaResource.class, tmpFile);
+      resource.setContents(forgeFormatterContents);
+      Assert.assertEquals(forgeFormatterContents, resource.getContents());
+      File profileFile = File.createTempFile("profile", ".xml");
+      try (InputStream is = getClass().getResourceAsStream("eclipse_profile.xml"))
+      {
+         Files.copy(is, profileFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+      }
+      Properties properties = null;
+      try (InputStream is = getClass().getResourceAsStream("forge_profile.xml"))
+      {
+         FormatterProfileReader reader = FormatterProfileReader.fromEclipseXml(is);
+         properties = reader.getPropertiesFor("Forge");
+      }
+      configuration.setProperty(JavaResource.FORMATTER_PROFILE_PATH_KEY, profileFile.getAbsolutePath());
+      resource = resourceFactory.create(JavaResource.class, tmpFile);
+      resource.setContents(new ByteArrayInputStream(forgeFormatterContents.getBytes()), properties);
+      Assert.assertEquals(forgeFormatterContents, resource.getContents());
+   }
+
 }

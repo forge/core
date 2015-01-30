@@ -8,6 +8,8 @@
 package org.jboss.forge.addon.parser.java.resources;
 
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -39,5 +41,10 @@ public interface JavaResource extends FileResource<JavaResource>
     * Attempt to determine and return the {@link JavaType} type of the underlying class.
     */
    <T extends JavaType<?>> T getJavaType() throws FileNotFoundException;
+
+   /**
+    * Sets the contents using the given formatter properties
+    */
+   JavaResource setContents(InputStream data, Properties formatterProperties);
 
 }
