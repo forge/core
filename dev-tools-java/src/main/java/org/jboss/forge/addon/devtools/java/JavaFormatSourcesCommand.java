@@ -9,6 +9,7 @@ package org.jboss.forge.addon.devtools.java;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -43,10 +44,12 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
 
    private final InputComponentFactory inputFactory;
 
-   private UIInput<XMLResource> profile;
+   private UIInput<XMLResource> profilepath;
 
    @SuppressWarnings("rawtypes")
    private UIInputMany<FileResource> sources;
+
+   private UIInput<String> profilename;
 
    private Configuration userConfig;
 
@@ -77,25 +80,35 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
       sources = inputFactory.createInputMany("sources", 's', FileResource.class);
       sources.setDescription("The folder or file where the java sources will be formatted");
 
-      profile = inputFactory.createInput("profile", 'p', XMLResource.class);
-      profile.setDescription("The eclipse code format profile");
+      profilepath = inputFactory.createInput("profilepath", 'p', XMLResource.class);
+      profilepath.setDescription("The eclipse code format profile");
+
+      profilename = inputFactory.createInput("profilename", 'n', String.class);
+      profilename.setDescription("The eclipse code format profile name");
+
+      String profileName = userConfig.getString(JavaResource.FORMATTER_PROFILE_NAME_KEY);
+      if (!Strings.isNullOrEmpty(profileName))
+      {
+         profilename.setDefaultValue(profileName);
+      }
 
       String path = userConfig.getString(JavaResource.FORMATTER_PROFILE_PATH_KEY);
       if (!Strings.isNullOrEmpty(path))
       {
          XMLResource resource = resourceFactory.create(XMLResource.class, new File(path));
-         profile.setDefaultValue(resource);
+         profilepath.setDefaultValue(resource);
       }
 
-      builder.add(sources).add(profile);
+      builder.add(sources).add(profilepath).add(profilename);
    }
 
    @SuppressWarnings({ "rawtypes" })
    @Override
-   public Result execute(UIExecutionContext context) throws Exception
+   public Result execute(UIExecutionContext context)
    {
-      XMLResource formatProfileLocation = profile.getValue();
+      XMLResource formatProfileLocation = profilepath.getValue();
       Iterable<FileResource> formatSources = sources.getValue();
+      String formatterName = profilename.getValue();
       List<FileResource<?>> fileResourceList = new ArrayList<>();
 
       if (!formatSources.iterator().hasNext())
@@ -111,7 +124,7 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
          for (FileResource<?> fileResource : formatSources)
             fileResourceList.add(fileResource);
 
-      Properties formatProfile;
+      Properties formatProfile = null;
 
       if (formatProfileLocation == null || !formatProfileLocation.exists())
          formatProfile = null;
@@ -119,9 +132,21 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
       else
       {
          String formatterProfilePath = formatProfileLocation.getFullyQualifiedName();
-         FileInputStream fis = new FileInputStream(formatterProfilePath);
-         FormatterProfileReader reader = FormatterProfileReader.fromEclipseXml(fis);
-         formatProfile = reader.getDefaultProperties();
+         FileInputStream fis;
+         FormatterProfileReader reader;
+
+         try
+         {
+            fis = new FileInputStream(formatterProfilePath);
+            reader = FormatterProfileReader.fromEclipseXml(fis);
+            formatProfile = reader.getPropertiesFor(formatterName);
+
+         }
+         catch (IOException e)
+         {
+            return Results.fail("The profile could not be read");
+         }
+
       }
 
       format(fileResourceList, formatProfile);

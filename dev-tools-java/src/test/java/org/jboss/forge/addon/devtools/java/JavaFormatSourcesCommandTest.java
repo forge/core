@@ -131,8 +131,10 @@ public class JavaFormatSourcesCommandTest
       profileXML.setContents((getClass().getResource("eclipse_profile.xml").openStream()));
 
       commandController.initialize();
-      commandController.setValueFor("profile", profileXML);
+      commandController.setValueFor("profilepath", profileXML);
       commandController.setValueFor("sources", tempUnformattedSource);
+      commandController.setValueFor("profilename", "Eclipse [built-in]");
+
       commandController.execute();
 
       Assert.assertEquals(formattedSource.getContents(), tempUnformattedSource.getContents());
@@ -175,7 +177,8 @@ public class JavaFormatSourcesCommandTest
       Shell shell = shellTest.getShell();
       shell.setCurrentResource(tempUnformattedResourceDir);
 
-      Result javaformatsourcesResult = shellTest.execute("java-format-sources --profile forge_profile.xml", 10,
+      Result javaformatsourcesResult = shellTest.execute(
+               "java-format-sources --profilepath forge_profile.xml --profilename Forge", 10,
                TimeUnit.SECONDS);
       Assert.assertNotNull(javaformatsourcesResult);
 
