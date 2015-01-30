@@ -8,8 +8,7 @@
 package org.jboss.forge.addon.devtools.java;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -35,7 +34,6 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
-import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.util.FormatterProfileReader;
 import org.jboss.forge.roaster.model.util.Strings;
 
@@ -104,7 +102,7 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
 
    @SuppressWarnings({ "rawtypes" })
    @Override
-   public Result execute(UIExecutionContext context)
+   public Result execute(UIExecutionContext context) throws Exception
    {
       XMLResource formatProfileLocation = profilepath.getValue();
       Iterable<FileResource> formatSources = sources.getValue();
@@ -131,27 +129,21 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
 
       else
       {
-         String formatterProfilePath = formatProfileLocation.getFullyQualifiedName();
-         FileInputStream fis;
-         FormatterProfileReader reader;
-
-         try
+         try (InputStream is = formatProfileLocation.getResourceInputStream())
          {
-            fis = new FileInputStream(formatterProfilePath);
-            reader = FormatterProfileReader.fromEclipseXml(fis);
+            FormatterProfileReader reader = FormatterProfileReader.fromEclipseXml(is);
             formatProfile = reader.getPropertiesFor(formatterName);
-
          }
-         catch (IOException e)
-         {
-            return Results.fail("The profile xml could not be read");
-         }
-
       }
-
-      format(fileResourceList, formatProfile);
-
-      return Results.success("Files Formatted Sucessfully");
+      if (formatProfile != null)
+      {
+         format(fileResourceList, formatProfile);
+         return Results.success("Files Formatted Sucessfully");
+      }
+      else
+      {
+         return Results.fail("No format profile found to be applied");
+      }
    }
 
    // Formatting the file or folder(recursively).
@@ -169,18 +161,10 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
 
             format(newFileResourceList, formatProfile);
          }
-
          else if (fileResource instanceof JavaResource)
-         {            
-          
-          JavaResource file=fileResource.reify(JavaResource.class);
-            
-          if (formatProfile == null)
-          file.setContents(fileResource.getResourceInputStream());
-    
-          else
-          file.setContents(fileResource.getResourceInputStream(),formatProfile);
-            
+         {
+            JavaResource file = fileResource.reify(JavaResource.class);
+            file.setContents(fileResource.getResourceInputStream(), formatProfile);
          }
       }
 
