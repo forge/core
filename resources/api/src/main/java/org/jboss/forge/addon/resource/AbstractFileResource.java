@@ -245,16 +245,14 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
             }
          }
 
-         OutputStream out = getFileOperations().createOutputStream(file);
-         try
+         try (OutputStream out = getResourceOutputStream())
          {
             Streams.write(data, out);
+            out.flush();
          }
          finally
          {
             Streams.closeQuietly(data);
-            out.flush();
-            Streams.closeQuietly(out);
          }
       }
       catch (IOException e)
