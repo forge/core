@@ -31,6 +31,7 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UISelection;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -60,7 +61,7 @@ public class NewNamedQueryCommand extends AbstractJavaEECommand
    private UIInput<String> query;
 
    @Inject
-   @WithAttributes(label = "Target Entity", required = true)
+   @WithAttributes(label = "Target Entity", required = true, type = InputType.DROPDOWN)
    private UISelectOne<JavaResource> targetEntity;
 
    @Override
