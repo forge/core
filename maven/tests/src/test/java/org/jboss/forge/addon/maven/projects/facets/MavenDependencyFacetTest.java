@@ -9,12 +9,16 @@ package org.jboss.forge.addon.maven.projects.facets;
 
 import static org.jboss.forge.addon.dependencies.util.Dependencies.areEquivalent;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.projects.Project;
@@ -23,10 +27,13 @@ import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -64,10 +71,51 @@ public class MavenDependencyFacetTest
    @Inject
    private ProjectFactory projectFactory;
 
+   private static String previousUserSettings;
+   private static String previousLocalRepository;
+
    @Before
    public void setUp()
    {
       project = projectFactory.createTempProject();
+   }
+
+   @BeforeClass
+   public static void setRemoteRepository() throws IOException
+   {
+      previousUserSettings = System.setProperty(MavenContainer.ALT_USER_SETTINGS_XML_LOCATION,
+               getAbsolutePath("profiles/settings.xml"));
+      previousLocalRepository = System.setProperty(MavenContainer.ALT_LOCAL_REPOSITORY_LOCATION,
+               "target/the-other-repository");
+   }
+
+   private static String getAbsolutePath(String path) throws FileNotFoundException
+   {
+      URL resource = Thread.currentThread().getContextClassLoader().getResource(path);
+      if (resource == null)
+         throw new FileNotFoundException(path);
+      return resource.getFile();
+   }
+
+   @AfterClass
+   public static void clearRemoteRepository()
+   {
+      if (previousUserSettings == null)
+      {
+         System.clearProperty(MavenContainer.ALT_USER_SETTINGS_XML_LOCATION);
+      }
+      else
+      {
+         System.setProperty(MavenContainer.ALT_USER_SETTINGS_XML_LOCATION, previousUserSettings);
+      }
+      if (previousLocalRepository == null)
+      {
+         System.clearProperty(MavenContainer.ALT_LOCAL_REPOSITORY_LOCATION);
+      }
+      else
+      {
+         System.setProperty(MavenContainer.ALT_LOCAL_REPOSITORY_LOCATION, previousUserSettings);
+      }
    }
 
    @Test
@@ -119,6 +167,15 @@ public class MavenDependencyFacetTest
       Assert.assertEquals(2, dependencies.size());
       assertDependencies(dependencyOneV2, dependencies.get(0));
       assertDependencies(dependencyTwo, dependencies.get(1));
+   }
+
+   @Test
+   public void testResolveAvailableVersions() throws Exception
+   {
+      final DependencyFacet facet = project.getFacet(DependencyFacet.class);
+      DependencyBuilder dependency = DependencyBuilder.create("test:no_dep:::pom");
+      List<Coordinate> versions = facet.resolveAvailableVersions(dependency);
+      Assert.assertEquals(6, versions.size());
    }
 
    @Test

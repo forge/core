@@ -38,6 +38,7 @@ import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.maven.projects.MavenFacetImpl;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -387,7 +388,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    {
       DependencyQueryBuilder query = DependencyQueryBuilder.create(dep.getCoordinate()).setRepositories(
                getRepositories());
-      if (dep.getCoordinate().getVersion() != null && !dep.getCoordinate().getVersion().contains("SNAPSHOT"))
+      if (!Strings.isNullOrEmpty(dep.getCoordinate().getVersion()) && !dep.getCoordinate().getVersion().contains("SNAPSHOT"))
       {
          query.setFilter(new NonSnapshotDependencyFilter());
       }
