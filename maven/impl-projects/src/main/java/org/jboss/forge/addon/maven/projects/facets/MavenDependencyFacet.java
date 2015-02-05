@@ -387,7 +387,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project> implements Depe
    {
       DependencyQueryBuilder query = DependencyQueryBuilder.create(dep.getCoordinate()).setRepositories(
                getRepositories());
-      if (dep.getCoordinate().getVersion() != null && !dep.getCoordinate().getVersion().contains("SNAPSHOT"))
+      if (dep.getCoordinate().getVersion() != null && dep.getCoordinate().getVersion().length() > 0 && !dep.getCoordinate().getVersion().contains("SNAPSHOT"))
       {
          query.setFilter(new NonSnapshotDependencyFilter());
       }
