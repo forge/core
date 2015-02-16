@@ -11,7 +11,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,15 +47,11 @@ public class ArchetypeCatalogFactoryRegistryImpl implements ArchetypeCatalogFact
    private Configuration archetypeConfiguration;
 
    /**
-    * Add all the available {@link ArchetypeCatalogFactory}es to registry
+    * Registers the {@link ArchetypeCatalogFactory} objects from the user {@link Configuration}
     */
    @PostConstruct
    void initializeDefaultFactories()
    {
-      for (ArchetypeCatalogFactory factory : addonRegistry.getServices(ArchetypeCatalogFactory.class))
-      {
-         addArchetypeCatalogFactory(factory);
-      }
       Iterator<?> keys = archetypeConfiguration.getKeys();
       while (keys.hasNext())
       {
@@ -103,13 +101,35 @@ public class ArchetypeCatalogFactoryRegistryImpl implements ArchetypeCatalogFact
    @Override
    public Iterable<ArchetypeCatalogFactory> getArchetypeCatalogFactories()
    {
-      return Collections.unmodifiableCollection(factories.values());
+      Set<ArchetypeCatalogFactory> result = new LinkedHashSet<>();
+      for (ArchetypeCatalogFactory factory : addonRegistry.getServices(ArchetypeCatalogFactory.class))
+      {
+         result.add(factory);
+      }
+      result.addAll(factories.values());
+      return Collections.unmodifiableCollection(result);
    }
 
    @Override
    public ArchetypeCatalogFactory getArchetypeCatalogFactory(String name)
    {
-      return factories.get(name);
+      ArchetypeCatalogFactory result = null;
+      if (name != null)
+      {
+         if (factories.containsKey(name))
+         {
+            result = factories.get(name);
+         }
+         else
+         {
+            for (ArchetypeCatalogFactory factory : addonRegistry.getServices(ArchetypeCatalogFactory.class))
+            {
+               if (name.equals(factory.getName()))
+                  return factory;
+            }
+         }
+      }
+      return result;
    }
 
    @Override
