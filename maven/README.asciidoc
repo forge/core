@@ -170,7 +170,7 @@ When the ui and project addons are both installed, the maven addon provides seve
 
 |===
 
-Archetype catalog registration:: To register a new catalog, just implement a class that implements org.jboss.forge.addon.maven.archetype.ArchetypeCatalogFactory.
+Archetype catalog registration:: To register a new catalog, just implement a class that implements `org.jboss.forge.addon.maven.archetype.ArchetypeCatalogFactory`.
 The ArchetypeRegistry will automatically use it on startup. Or you can register manually, as in the following code:
 
 [source,java]
@@ -179,6 +179,8 @@ The ArchetypeRegistry will automatically use it on startup. Or you can register 
 private ArchetypeCatalogFactoryRegistry registry;
 ...
 registry.addArchetypeCatalogFactory(new MyCompanyArchetypeCatalogFactory());
+// You can also add the URL to the archetype-catalog.xml too
+registry.addArchetypeCatalogFactory("my-archetypes",new URL("http://foo.com/archetype-catalog.xml"));
 ----
-+
+
 
