@@ -25,7 +25,7 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.addon.configuration.Configuration;
 import org.jboss.forge.addon.configuration.Subset;
-import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 
 /**
@@ -40,7 +40,7 @@ public class ArchetypeCatalogFactoryRegistryImpl implements ArchetypeCatalogFact
    private final Logger log = Logger.getLogger(getClass().getName());
 
    @Inject
-   private AddonRegistry addonRegistry;
+   private Imported<ArchetypeCatalogFactory> services;
 
    @Inject
    @Subset("maven.archetypes")
@@ -61,8 +61,7 @@ public class ArchetypeCatalogFactoryRegistryImpl implements ArchetypeCatalogFact
             String url = archetypeConfiguration.getString(name);
             try
             {
-               URL catalogUrl = new URL(url);
-               addArchetypeCatalogFactory(name, catalogUrl);
+               addArchetypeCatalogFactory(name, new URL(url));
             }
             catch (MalformedURLException e)
             {
@@ -102,7 +101,7 @@ public class ArchetypeCatalogFactoryRegistryImpl implements ArchetypeCatalogFact
    public Iterable<ArchetypeCatalogFactory> getArchetypeCatalogFactories()
    {
       Set<ArchetypeCatalogFactory> result = new LinkedHashSet<>();
-      for (ArchetypeCatalogFactory factory : addonRegistry.getServices(ArchetypeCatalogFactory.class))
+      for (ArchetypeCatalogFactory factory : services)
       {
          result.add(factory);
       }
@@ -116,17 +115,10 @@ public class ArchetypeCatalogFactoryRegistryImpl implements ArchetypeCatalogFact
       ArchetypeCatalogFactory result = null;
       if (name != null)
       {
-         if (factories.containsKey(name))
+         for (ArchetypeCatalogFactory factory : getArchetypeCatalogFactories())
          {
-            result = factories.get(name);
-         }
-         else
-         {
-            for (ArchetypeCatalogFactory factory : addonRegistry.getServices(ArchetypeCatalogFactory.class))
-            {
-               if (name.equals(factory.getName()))
-                  return factory;
-            }
+            if (name.equals(factory.getName()))
+               return factory;
          }
       }
       return result;
