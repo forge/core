@@ -119,7 +119,7 @@ public abstract class AbstractCommandController implements CommandController
    }
 
    protected void firePostCommandFailure(UIExecutionContext executionContext,
-            Set<CommandExecutionListener> listeners, UICommand command, Exception e)
+            Set<CommandExecutionListener> listeners, UICommand command, Throwable e)
    {
       for (CommandExecutionListener listener : listeners)
       {
