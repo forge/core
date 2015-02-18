@@ -7,6 +7,7 @@
 package org.jboss.forge.addon.ui.example.wizards;
 
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -73,9 +74,20 @@ public class ExampleWizard extends AbstractUICommand implements UIWizard
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      firstName.setRequired(true).setRequiredMessage("First Name must be informed !");
-      valueWithSpaces.setValueChoices(Arrays.asList("Value 1", "Value 2", "Value 10", "Value 100"));
-      selectManyValues.setValueChoices(Arrays.asList("A", "B", "C", "AA", "BB"));
+      firstName.setRequired(true).setRequiredMessage("First Name must be informed !").setNote("This is a UIInput");
+      valueWithSpaces.setValueChoices(Arrays.asList("Value 1", "Value 2", "Value 10", "Value 100")).setNote(
+               "This is a UISelectOne");
+      selectManyValues.setValueChoices(Arrays.asList("A", "B", "C", "AA", "BB")).setNote("This is a UISelectMany");
+      manyValues.setNote("This is a UIInputMany");
+      directory.setNote(new Callable<String>()
+      {
+         @Override
+         public String call() throws Exception
+         {
+            DirectoryResource value = directory.getValue();
+            return value == null ? null : "Path: " + value.getFullyQualifiedName();
+         }
+      });
       builder.add(firstName).add(showSelectComponents).add(goToLastStep).add(directory).add(valueWithSpaces)
                .add(career).add(manyCareer).add(manyValues).add(selectManyValues);
    }
