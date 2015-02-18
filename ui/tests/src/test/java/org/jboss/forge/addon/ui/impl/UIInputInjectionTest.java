@@ -9,6 +9,7 @@ package org.jboss.forge.addon.ui.impl;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -267,4 +268,23 @@ public class UIInputInjectionTest
       Assert.assertFalse(unknown.getValue().iterator().hasNext());
    }
 
+   @Test
+   public void testNote()
+   {
+      // FORGE-2247
+      Assert.assertNull(firstName.getNote());
+      firstName.setNote("A Note From String Signature");
+      Assert.assertEquals("A Note From String Signature", firstName.getNote());
+      firstName.setNote((String) null);
+      Assert.assertNull(firstName.getNote());
+      firstName.setNote(new Callable<String>()
+      {
+         @Override
+         public String call() throws Exception
+         {
+            return "A Note from Callable Signature";
+         }
+      });
+      Assert.assertEquals("A Note from Callable Signature", firstName.getNote());
+   }
 }
