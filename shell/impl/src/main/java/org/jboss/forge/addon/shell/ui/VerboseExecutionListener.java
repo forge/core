@@ -15,6 +15,8 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIOutput;
+import org.jboss.forge.addon.ui.result.Failed;
+import org.jboss.forge.addon.ui.result.Result;
 
 /**
  * Displays the command execution failure if VERBOSE is set to true
@@ -23,6 +25,15 @@ import org.jboss.forge.addon.ui.output.UIOutput;
  */
 public class VerboseExecutionListener extends AbstractCommandExecutionListener
 {
+   @Override
+   public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
+   {
+      if (result instanceof Failed)
+      {
+         postCommandFailure(command, context, ((Failed) result).getException());
+      }
+   }
+
    @Override
    public void postCommandFailure(UICommand command, UIExecutionContext context, Throwable failure)
    {
