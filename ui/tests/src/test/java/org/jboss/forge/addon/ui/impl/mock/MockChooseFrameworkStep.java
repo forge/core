@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.ui.impl;
+package org.jboss.forge.addon.ui.impl.mock;
 
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
