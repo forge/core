@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.ui.impl;
+package org.jboss.forge.addon.ui.impl.mock;
 
 public enum Career
 {

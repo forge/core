@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.ui.impl;
+package org.jboss.forge.addon.ui.impl.mock;
 
 import java.io.File;
 import java.util.concurrent.Callable;

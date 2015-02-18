@@ -18,6 +18,8 @@ import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
+import org.jboss.forge.addon.ui.impl.mock.Career;
+import org.jboss.forge.addon.ui.impl.mock.Gender;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
