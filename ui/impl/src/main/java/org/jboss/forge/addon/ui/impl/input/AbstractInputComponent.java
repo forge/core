@@ -49,6 +49,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
 
    private String label;
    private Callable<String> description;
+   private Callable<String> note;
    private Callable<Boolean> enabled = Callables.returning(Boolean.TRUE);
    private Callable<Boolean> required = Callables.returning(Boolean.FALSE);
    private Callable<String> requiredMessage;
@@ -131,7 +132,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
       this.description = Callables.returning(description);
       return (IMPLTYPE) this;
    }
-   
+
    @Override
    public IMPLTYPE setDescription(Callable<String> description)
    {
@@ -171,7 +172,7 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
       this.requiredMessage = Callables.returning(requiredMessage);
       return (IMPLTYPE) this;
    }
-   
+
    @Override
    public IMPLTYPE setRequiredMessage(Callable<String> requiredMessage)
    {
@@ -237,6 +238,26 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
             return listener;
          }
       };
+   }
+
+   @Override
+   public IMPLTYPE setNote(Callable<String> note)
+   {
+      this.note = note;
+      return (IMPLTYPE) this;
+   }
+
+   @Override
+   public IMPLTYPE setNote(String note)
+   {
+      this.note = Callables.returning(note);
+      return (IMPLTYPE) this;
+   }
+
+   @Override
+   public String getNote()
+   {
+      return Callables.call(note);
    }
 
    protected Set<ValueChangeListener> getValueChangeListeners()

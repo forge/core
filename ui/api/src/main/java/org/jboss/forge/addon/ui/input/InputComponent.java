@@ -170,4 +170,25 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
     * @param validator the {@link UIValidationContext} object that holds validation errors
     */
    void validate(UIValidationContext context);
+
+   /**
+    * A note is a description about the value of this input. in a GUI environment, it is displayed below the input.
+    * 
+    * @param note to be displayed below the input in GUIs
+    */
+   IMPLTYPE setNote(String note);
+
+   /**
+    * A note is a description about the value of this input. in a GUI environment, it is displayed below the input.
+    * 
+    * @param note to be displayed below the input in GUIs
+    */
+   IMPLTYPE setNote(Callable<String> note);
+
+   /**
+    * A note is a description about the value of this input. in a GUI environment, it is displayed below the input.
+    * 
+    * @return the note to be displayed below the input in GUIs
+    */
+   String getNote();
 }
