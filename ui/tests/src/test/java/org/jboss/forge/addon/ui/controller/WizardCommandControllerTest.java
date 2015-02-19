@@ -7,9 +7,7 @@
 
 package org.jboss.forge.addon.ui.controller;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 
 import java.util.List;
 
