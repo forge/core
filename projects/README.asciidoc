@@ -258,11 +258,11 @@ TIP: `ProjectListener` instances may also be registered directly via the `Projec
 (Optional) ui addon integration::
  The projects addon supplies a `UIWizard` implementation called "New Project". This, as the name suggests, is used for creating new projects from a UI provider such as Eclipse, IntelliJ, NetBeans, or the command line shell (CLI).
 +
-Additional project types can be supplied to the "New Project" wizard via extension of the `ProjectType` service interface. New implementations are automatically detected by the "New Project" wizard when it is executed.
+Additional project types can be supplied to the "New Project" wizard via extension of the `ProjectType` service interface (or the `AbstractProjectType` skeleton class). New implementations are automatically detected by the "New Project" wizard when it is executed.
 +
 [source,java]
 ----
-public class CustomProjectType implements ProjectType {
+public class CustomProjectType extends AbstractProjectType {
 
    @Override
    public String getType() {

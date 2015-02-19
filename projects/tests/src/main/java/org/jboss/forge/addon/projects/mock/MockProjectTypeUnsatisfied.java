@@ -9,6 +9,7 @@ package org.jboss.forge.addon.projects.mock;
 
 import java.util.Arrays;
 
+import org.jboss.forge.addon.projects.AbstractProjectType;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
@@ -18,7 +19,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MockProjectTypeUnsatisfied implements ProjectType
+public class MockProjectTypeUnsatisfied extends AbstractProjectType
 {
    @Override
    public String getType()

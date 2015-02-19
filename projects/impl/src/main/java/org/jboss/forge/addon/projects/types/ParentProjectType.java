@@ -10,12 +10,14 @@ package org.jboss.forge.addon.projects.types;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jboss.forge.addon.projects.AbstractProjectType;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.ModuleFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
@@ -23,7 +25,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class ParentProjectType implements ProjectType
+public class ParentProjectType extends AbstractProjectType
 {
    @Override
    public String getType()

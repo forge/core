@@ -9,19 +9,21 @@ package org.jboss.forge.addon.projects.types;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.forge.addon.projects.AbstractProjectType;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class ResourcesProjectType implements ProjectType
+public class ResourcesProjectType extends AbstractProjectType
 {
    @Override
    public String getType()

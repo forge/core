@@ -10,6 +10,7 @@ package org.jboss.forge.addon.parser.java.projects;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.forge.addon.projects.AbstractProjectType;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
@@ -22,7 +23,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class JavaEnterpriseProjectType implements ProjectType
+public class JavaEnterpriseProjectType extends AbstractProjectType
 {
 
    @Override

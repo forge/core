@@ -7,21 +7,23 @@
 
 package org.jboss.forge.addon.projects.mock;
 
+import java.util.Arrays;
+
 import org.jboss.forge.addon.projects.AbstractProjectType;
 import org.jboss.forge.addon.projects.ProjectFacet;
-import org.jboss.forge.addon.projects.ProjectType;
+import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class MockProjectTypeNullRequiredFacets extends AbstractProjectType
+public class MockDisabledProjectType extends AbstractProjectType
 {
     @Override
     public String getType()
     {
-        return "nullrequirements";
+        return "disabled-mock";
     }
 
     @Override
@@ -33,7 +35,7 @@ public class MockProjectTypeNullRequiredFacets extends AbstractProjectType
     @Override
     public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
     {
-        return null;
+        return Arrays.<Class<? extends ProjectFacet>> asList(MetadataFacet.class);
     }
 
     @Override
@@ -51,7 +53,6 @@ public class MockProjectTypeNullRequiredFacets extends AbstractProjectType
     @Override
     public boolean isEnabled(UIContext context)
     {
-        return true;
+        return false;
     }
-
 }

@@ -107,15 +107,17 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
    @Override
    public void initializeUI(final UIBuilder builder) throws Exception
    {
+      UIContext uiContext = builder.getUIContext();
       configureProjectNamedInput();
       configureVersionInput();
-      configureTargetLocationInput(builder);
+      configureTargetLocationInput(uiContext);
       configureOverwriteInput();
-      configureProjectTypeInput(builder);
+      configureProjectTypeInput(uiContext);
       configureTopLevelPackageInput();
-      configureBuildSystemInput();
+      configureBuildSystemInput(uiContext);
 
-      builder.add(named).add(topLevelPackage).add(version).add(finalName).add(targetLocation).add(overwrite).add(type)
+      builder.add(named).add(topLevelPackage).add(version).add(finalName).add(targetLocation)
+               .add(overwrite).add(type)
                .add(buildSystem);
    }
 
@@ -127,7 +129,8 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
          public void validate(UIValidationContext context)
          {
             if (named.getValue() != null && named.getValue().matches(".*[^-_.a-zA-Z0-9].*"))
-               context.addValidationError(named, "Project name must not contain spaces or special characters.");
+               context.addValidationError(named,
+                        "Project name must not contain spaces or special characters.");
          }
       });
    }
@@ -137,9 +140,9 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       version.setDefaultValue("1.0.0-SNAPSHOT");
    }
 
-   private void configureTargetLocationInput(final UIBuilder builder)
+   private void configureTargetLocationInput(final UIContext uiContext)
    {
-      UISelection<Resource<?>> currentSelection = builder.getUIContext().getInitialSelection();
+      UISelection<Resource<?>> currentSelection = uiContext.getInitialSelection();
       if (!currentSelection.isEmpty())
       {
          Resource<?> resource = currentSelection.get();
@@ -171,9 +174,9 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       });
    }
 
-   private void configureProjectTypeInput(final UIBuilder builder)
+   private void configureProjectTypeInput(final UIContext uiContext)
    {
-      if (builder.getUIContext().getProvider().isGUI())
+      if (uiContext.getProvider().isGUI())
       {
          type.setItemLabelConverter(new Converter<ProjectType, String>()
          {
@@ -192,18 +195,22 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
          boolean buildable = false;
          for (ProjectProvider buildSystem : buildSystems)
          {
-            if (isProjectTypeBuildable(projectType, buildSystem))
+            if (projectType.isEnabled(uiContext) && isProjectTypeBuildable(projectType, buildSystem))
             {
                projectTypes.add(projectType);
                buildable = true;
                break;
             }
          }
-
          if (!buildable)
-            log.log(Level.FINE, "ProjectType [" + projectType.getType() + "] "
-                     + "deactivated because it cannot be built with any registered ProjectProvider instances ["
-                     + buildSystems + "].");
+         {
+            log.log(Level.FINE,
+                     "ProjectType ["
+                              + projectType.getType()
+                              + "] "
+                              + "deactivated because it cannot be built with any registered ProjectProvider instances ["
+                              + buildSystems + "].");
+         }
       }
 
       Collections.sort(projectTypes, new Comparator<ProjectType>()
@@ -244,7 +251,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       });
    }
 
-   private void configureBuildSystemInput()
+   private void configureBuildSystemInput(final UIContext uiContext)
    {
       buildSystem.setRequired(true);
       buildSystem.setItemLabelConverter(new Converter<ProjectProvider, String>()
@@ -267,7 +274,8 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
                ProjectType projectType = type.getValue();
                if (projectType != null)
                {
-                  if (isProjectTypeBuildable(projectType, buildSystemType))
+                  if (projectType.isEnabled(uiContext)
+                           && isProjectTypeBuildable(projectType, buildSystemType))
                      result.add(buildSystemType);
                }
                else
@@ -377,7 +385,8 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
          Project project = null;
          if (value != null)
          {
-            project = projectFactory.createProject(targetDir, buildSystem.getValue(), value.getRequiredFacets());
+            project = projectFactory.createProject(targetDir, buildSystem.getValue(),
+                     value.getRequiredFacets());
          }
          else
          {
