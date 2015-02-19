@@ -74,4 +74,9 @@ public @interface WithAttributes
     * The default value for this {@link InputComponent}.
     */
    String defaultValue() default "";
+   
+   /**
+    * The note for this {@link InputComponent}.
+    */
+   String note() default "";
 }
