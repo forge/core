@@ -94,16 +94,16 @@ public class JavaNewMethodCommandTest
 
       createCommandController();
       commandController.initialize();
-      String methodName = "methodName";
-      setMethodName(methodName);
+      String named = "named";
+      setNamed(named);
 
       commandController.execute();
       reloadTargetClass();
 
-      Assert.assertNotNull(targetClass.getMethod(methodName));
-      Assert.assertTrue(targetClass.getMethod(methodName).isPrivate());
-      Assert.assertEquals(targetClass.getMethod(methodName).getReturnType().toString(), "String");
-      Assert.assertEquals(targetClass.getMethod(methodName).getBody(),
+      Assert.assertNotNull(targetClass.getMethod(named));
+      Assert.assertTrue(targetClass.getMethod(named).isPrivate());
+      Assert.assertEquals(targetClass.getMethod(named).getReturnType().toString(), "String");
+      Assert.assertEquals(targetClass.getMethod(named).getBody(),
                "throw new UnsupportedOperationException(\"Not supported yet.\");");
 
    }
@@ -117,17 +117,17 @@ public class JavaNewMethodCommandTest
       createCommandController();
       commandController.initialize();
 
-      String methodName = "methodName";
-      setMethodName(methodName);
+      String named = "named";
+      setNamed(named);
       setReturnType("int");
 
       commandController.execute();
       reloadTargetClass();
 
-      Assert.assertNotNull(targetClass.getMethod(methodName));
-      Assert.assertTrue(targetClass.getMethod(methodName).isPrivate());
-      Assert.assertEquals(targetClass.getMethod(methodName).getReturnType().toString(), "int");
-      Assert.assertEquals(targetClass.getMethod(methodName).getBody(),
+      Assert.assertNotNull(targetClass.getMethod(named));
+      Assert.assertTrue(targetClass.getMethod(named).isPrivate());
+      Assert.assertEquals(targetClass.getMethod(named).getReturnType().toString(), "int");
+      Assert.assertEquals(targetClass.getMethod(named).getBody(),
                "throw new UnsupportedOperationException(\"Not supported yet.\");");
 
    }
@@ -141,8 +141,8 @@ public class JavaNewMethodCommandTest
       createCommandController();
       commandController.initialize();
 
-      String methodName = "methodName";
-      setMethodName(methodName);
+      String named = "named";
+      setNamed(named);
       setParameters("int a,String s,int c,int d");
 
       commandController.execute();
@@ -150,10 +150,10 @@ public class JavaNewMethodCommandTest
 
       String[] paramTypes = { "int", "String", "int", "int" };
 
-      Assert.assertNotNull(targetClass.getMethod(methodName, paramTypes));
-      Assert.assertTrue(targetClass.getMethod(methodName, paramTypes).isPrivate());
-      Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getReturnType().toString(), "String");
-      Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getBody(),
+      Assert.assertNotNull(targetClass.getMethod(named, paramTypes));
+      Assert.assertTrue(targetClass.getMethod(named, paramTypes).isPrivate());
+      Assert.assertEquals(targetClass.getMethod(named, paramTypes).getReturnType().toString(), "String");
+      Assert.assertEquals(targetClass.getMethod(named, paramTypes).getBody(),
                "throw new UnsupportedOperationException(\"Not supported yet.\");");
 
    }
@@ -167,8 +167,8 @@ public class JavaNewMethodCommandTest
       createCommandController();
       commandController.initialize();
 
-      String methodName = "methodName";
-      setMethodName(methodName);
+      String named = "named";
+      setNamed(named);
       setParameters("int a,String s");
       setReturnType("int");
       setAccessType(Visibility.PUBLIC);
@@ -178,10 +178,10 @@ public class JavaNewMethodCommandTest
 
       String[] paramTypes = { "int", "String" };
 
-      Assert.assertNotNull(targetClass.getMethod(methodName, paramTypes));
-      Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getReturnType().toString(), "int");
-      Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getVisibility(), Visibility.PUBLIC);
-      Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getBody(),
+      Assert.assertNotNull(targetClass.getMethod(named, paramTypes));
+      Assert.assertEquals(targetClass.getMethod(named, paramTypes).getReturnType().toString(), "int");
+      Assert.assertEquals(targetClass.getMethod(named, paramTypes).getVisibility(), Visibility.PUBLIC);
+      Assert.assertEquals(targetClass.getMethod(named, paramTypes).getBody(),
                "throw new UnsupportedOperationException(\"Not supported yet.\");");
 
    }
@@ -202,17 +202,17 @@ public class JavaNewMethodCommandTest
       createCommandController();
       commandController.initialize();
 
-      String methodName = "methodName";
-      setMethodName(methodName);
+      String named = "named";
+      setNamed(named);
       setAccessType(visibility);
 
       commandController.execute();
       reloadTargetClass();
 
-      Assert.assertNotNull(targetClass.getMethod(methodName));
-      Assert.assertEquals(targetClass.getMethod(methodName).getVisibility(), visibility);
-      Assert.assertEquals(targetClass.getMethod(methodName).getReturnType().toString(), "String");
-      Assert.assertEquals(targetClass.getMethod(methodName).getBody(),
+      Assert.assertNotNull(targetClass.getMethod(named));
+      Assert.assertEquals(targetClass.getMethod(named).getVisibility(), visibility);
+      Assert.assertEquals(targetClass.getMethod(named).getReturnType().toString(), "String");
+      Assert.assertEquals(targetClass.getMethod(named).getBody(),
                "throw new UnsupportedOperationException(\"Not supported yet.\");");
 
    }
@@ -220,13 +220,13 @@ public class JavaNewMethodCommandTest
    @Test
    public void testMethodAlreadyExists() throws Exception
    {
-      createTargetClass("public class Test{private String simpleString;public Test setSimpleString(String simple){simpleString = simple;}private String methodName(){int a;}}");
+      createTargetClass("public class Test{private String simpleString;public Test setSimpleString(String simple){simpleString = simple;}private String named(){int a;}}");
 
       createCommandController();
       commandController.initialize();
 
-      String name = "methodName";
-      setMethodName(name);
+      String name = "named";
+      setNamed(name);
 
       Result result = commandController.execute();
 
@@ -239,13 +239,13 @@ public class JavaNewMethodCommandTest
    public void testFinalSuperClassMethodExists() throws Exception
    {
       createTargetClass("public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
-      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} final String methodName(){int a;}}");
+      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} final String named(){int a;}}");
 
       createCommandController();
       commandController.initialize();
 
-      String name = "methodName";
-      setMethodName(name);
+      String name = "named";
+      setNamed(name);
 
       Result result = commandController.execute();
 
@@ -258,13 +258,13 @@ public class JavaNewMethodCommandTest
    public void testNotFinalSuperClassMethodExists() throws Exception
    {
       createTargetClass("public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
-      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} String methodName(int a,String s,int c,int d){int a;}}");
+      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} String named(int a,String s,int c,int d){int a;}}");
 
       createCommandController();
       commandController.initialize();
 
-      String methodName = "methodName";
-      setMethodName(methodName);
+      String named = "named";
+      setNamed(named);
       setParameters("int a,String s,int c,int d");
 
       commandController.execute();
@@ -272,11 +272,11 @@ public class JavaNewMethodCommandTest
 
       String[] paramTypes = { "int", "String", "int", "int" };
 
-      Assert.assertNotNull(targetClass.getMethod(methodName, paramTypes));
-      Assert.assertTrue(targetClass.getMethod(methodName, paramTypes).isPrivate());
-      Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getReturnType().toString(), "String");
-      Assert.assertNotNull(targetClass.getMethod(methodName, paramTypes).getAnnotation("Override"));
-      Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getBody(),
+      Assert.assertNotNull(targetClass.getMethod(named, paramTypes));
+      Assert.assertTrue(targetClass.getMethod(named, paramTypes).isPrivate());
+      Assert.assertEquals(targetClass.getMethod(named, paramTypes).getReturnType().toString(), "String");
+      Assert.assertNotNull(targetClass.getMethod(named, paramTypes).getAnnotation("Override"));
+      Assert.assertEquals(targetClass.getMethod(named, paramTypes).getBody(),
                "throw new UnsupportedOperationException(\"Not supported yet.\");");
 
    }
@@ -285,13 +285,13 @@ public class JavaNewMethodCommandTest
    public void testHigherAccessSuperClassMethodExists() throws Exception
    {
       createTargetClass("public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
-      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} public String methodName(){int a;}}");
+      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} public String named(){int a;}}");
 
       createCommandController();
       commandController.initialize();
 
-      String methodName = "methodName";
-      setMethodName(methodName);
+      String named = "named";
+      setNamed(named);
       setAccessType(Visibility.PRIVATE);
 
       Result result = commandController.execute();
@@ -305,13 +305,13 @@ public class JavaNewMethodCommandTest
    public void testLowerAccessSuperClassMethodExists() throws Exception
    {
       createTargetClass("public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
-      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} String methodName(int a,String s,int c,int d){int a;}}");
+      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} String named(int a,String s,int c,int d){int a;}}");
 
       createCommandController();
       commandController.initialize();
 
-      String methodName = "methodName";
-      setMethodName(methodName);
+      String named = "named";
+      setNamed(named);
       setAccessType(Visibility.PUBLIC);
       setParameters("int a,String s,int c,int d");
 
@@ -320,11 +320,11 @@ public class JavaNewMethodCommandTest
 
       String[] paramTypes = { "int", "String", "int", "int" };
 
-      Assert.assertNotNull(targetClass.getMethod(methodName, paramTypes));
-      Assert.assertTrue(targetClass.getMethod(methodName, paramTypes).isPublic());
-      Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getReturnType().toString(), "String");
-      Assert.assertNotNull(targetClass.getMethod(methodName, paramTypes).getAnnotation("Override"));
-      Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getBody(),
+      Assert.assertNotNull(targetClass.getMethod(named, paramTypes));
+      Assert.assertTrue(targetClass.getMethod(named, paramTypes).isPublic());
+      Assert.assertEquals(targetClass.getMethod(named, paramTypes).getReturnType().toString(), "String");
+      Assert.assertNotNull(targetClass.getMethod(named, paramTypes).getAnnotation("Override"));
+      Assert.assertEquals(targetClass.getMethod(named, paramTypes).getBody(),
                "throw new UnsupportedOperationException(\"Not supported yet.\");");
 
    }
@@ -333,13 +333,13 @@ public class JavaNewMethodCommandTest
    public void testDifferentReturnSuperClassMethodExists() throws Exception
    {
       createTargetClass("public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
-      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} public int methodName(){int a;}}");
+      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} public int named(){int a;}}");
 
       createCommandController();
       commandController.initialize();
 
-      String methodName = "methodName";
-      setMethodName(methodName);
+      String named = "named";
+      setNamed(named);
       setReturnType("long");
 
       Result result = commandController.execute();
@@ -354,13 +354,13 @@ public class JavaNewMethodCommandTest
    public void testPrivateAndFinalSuperClassMethodExists() throws Exception
    {
       createTargetClass("public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
-      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} private final String methodName(int a,String s,int c,int d){int a;}}");
+      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} private final String named(int a,String s,int c,int d){int a;}}");
 
       createCommandController();
       commandController.initialize();
 
-      String methodName = "methodName";
-      setMethodName(methodName);
+      String named = "named";
+      setNamed(named);
       setParameters("int a,String s,int c,int d");
 
       commandController.execute();
@@ -368,11 +368,11 @@ public class JavaNewMethodCommandTest
 
       String[] paramTypes = { "int", "String", "int", "int" };
 
-      Assert.assertNotNull(targetClass.getMethod(methodName, paramTypes));
-      Assert.assertTrue(targetClass.getMethod(methodName, paramTypes).isPrivate());
-      Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getReturnType().toString(), "String");
-      Assert.assertNull(targetClass.getMethod(methodName, paramTypes).getAnnotation("Override"));
-      Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getBody(),
+      Assert.assertNotNull(targetClass.getMethod(named, paramTypes));
+      Assert.assertTrue(targetClass.getMethod(named, paramTypes).isPrivate());
+      Assert.assertEquals(targetClass.getMethod(named, paramTypes).getReturnType().toString(), "String");
+      Assert.assertNull(targetClass.getMethod(named, paramTypes).getAnnotation("Override"));
+      Assert.assertEquals(targetClass.getMethod(named, paramTypes).getBody(),
                "throw new UnsupportedOperationException(\"Not supported yet.\");");
 
    }
@@ -409,9 +409,9 @@ public class JavaNewMethodCommandTest
                         .getUnderlyingResourceObject());
    }
 
-   private void setMethodName(String methodName)
+   private void setNamed(String named)
    {
-      commandController.setValueFor("methodName", methodName);
+      commandController.setValueFor("named", named);
    }
 
    private void setReturnType(String returnType)

@@ -53,7 +53,7 @@ public class JavaNewMethodCommandImpl extends AbstractProjectCommand implements 
 
    @Inject
    @WithAttributes(label = "named", description = "The name of the method created", required = true)
-   private UIInput<String> methodName;
+   private UIInput<String> named;
 
    @Inject
    @WithAttributes(label = "return", description = "The return type of the method created", type = InputType.JAVA_CLASS_PICKER, required = true, defaultValue = "String")
@@ -83,7 +83,7 @@ public class JavaNewMethodCommandImpl extends AbstractProjectCommand implements 
    {
       setupTargetClass(builder.getUIContext());
       setupAccessType();
-      builder.add(targetClass).add(returnType).add(parameters).add(accessType).add(methodName);
+      builder.add(targetClass).add(returnType).add(parameters).add(accessType).add(named);
    }
 
    @Override
@@ -92,7 +92,7 @@ public class JavaNewMethodCommandImpl extends AbstractProjectCommand implements 
       JavaResource javaResource = targetClass.getValue();
       JavaClassSource targetclass = javaResource.getJavaType();
 
-      String name = methodName.getValue();
+      String name = named.getValue();
       String returntype = returnType.getValue();
       String parameterString = parameters.getValue();
       Visibility visibility = accessType.getValue();
