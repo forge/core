@@ -35,5 +35,11 @@ public class TestArchetypeCatalogFactory implements ArchetypeCatalogFactory
       archetypes.addArchetype(archetype);
       return archetypes;
    }
+   
+   @Override
+   public String toString()
+   {
+      return "A Test Archetype";
+   }
 
 }

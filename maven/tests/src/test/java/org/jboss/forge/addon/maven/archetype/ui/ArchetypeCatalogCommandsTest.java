@@ -1,18 +1,26 @@
 /**
- * Copyright 2014 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2015 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.maven.archetype;
+package org.jboss.forge.addon.maven.archetype.ui;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import org.apache.maven.archetype.catalog.Archetype;
-import org.apache.maven.archetype.catalog.ArchetypeCatalog;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.maven.archetype.TestArchetypeCatalogFactory;
+import org.jboss.forge.addon.shell.test.ShellTest;
+import org.jboss.forge.addon.ui.result.Failed;
+import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -23,16 +31,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
+ * Tests for ArchetypeCatalogCommands class
  * 
- * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-public class ArchetypeRegistryTest
+public class ArchetypeCatalogCommandsTest
 {
-
    @Deployment
    @Dependencies({
             @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
             @AddonDependency(name = "org.jboss.forge.addon:maven")
    })
    public static ForgeArchive getDeployment()
@@ -43,6 +52,7 @@ public class ArchetypeRegistryTest
                .addClass(TestArchetypeCatalogFactory.class)
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects")
                );
@@ -51,29 +61,14 @@ public class ArchetypeRegistryTest
    }
 
    @Inject
-   private ArchetypeCatalogFactoryRegistry archetypeRegistry;
+   ShellTest shellTest;
 
    @Test
-   public void testArchetypeCatalogFactory()
+   public void testArchetypeList() throws Exception
    {
-      ArchetypeCatalogFactory archetypeCatalogFactory = archetypeRegistry
-               .getArchetypeCatalogFactory("Test");
-      Assert.assertNotNull(archetypeCatalogFactory);
-      ArchetypeCatalog archetypes = archetypeCatalogFactory.getArchetypeCatalog();
-      Assert.assertNotNull(archetypes);
-      Assert.assertNotNull(archetypes.getArchetypes());
-      Assert.assertEquals(1, archetypes.getArchetypes().size());
-      Archetype expected = new Archetype();
-      expected.setGroupId("groupId");
-      expected.setArtifactId("artifactId");
-      expected.setVersion("1.0.0");
-      expected.setDescription("Description");
-      Assert.assertEquals(expected, archetypes.getArchetypes().get(0));
+      Result result = shellTest.execute("archetype-list", 5, TimeUnit.SECONDS);
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
+      Assert.assertThat(shellTest.getStdOut(), containsString("Test = A Test Archetype"));
    }
 
-   @Test
-   public void testHasArchetypeCatalogFactory()
-   {
-      Assert.assertTrue(archetypeRegistry.hasArchetypeCatalogFactories());
-   }
 }
