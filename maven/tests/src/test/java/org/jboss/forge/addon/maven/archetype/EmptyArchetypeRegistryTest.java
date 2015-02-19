@@ -9,8 +9,6 @@ package org.jboss.forge.addon.maven.archetype;
 
 import javax.inject.Inject;
 
-import org.apache.maven.archetype.catalog.Archetype;
-import org.apache.maven.archetype.catalog.ArchetypeCatalog;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -27,7 +25,7 @@ import org.junit.runner.RunWith;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-public class ArchetypeRegistryTest
+public class EmptyArchetypeRegistryTest
 {
 
     @Deployment
@@ -40,7 +38,6 @@ public class ArchetypeRegistryTest
         ForgeArchive archive = ShrinkWrap
             .create(ForgeArchive.class)
             .addBeansXML()
-            .addClass(TestArchetypeCatalogFactory.class)
             .addAsAddonDependencies(
                                     AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                                     AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
@@ -54,25 +51,7 @@ public class ArchetypeRegistryTest
     private ArchetypeCatalogFactoryRegistry archetypeRegistry;
 
     @Test
-    public void testArchetypeCatalogFactory()
-    {
-        ArchetypeCatalogFactory archetypeCatalogFactory = archetypeRegistry
-            .getArchetypeCatalogFactory("Test");
-        Assert.assertNotNull(archetypeCatalogFactory);
-        ArchetypeCatalog archetypes = archetypeCatalogFactory.getArchetypeCatalog();
-        Assert.assertNotNull(archetypes);
-        Assert.assertNotNull(archetypes.getArchetypes());
-        Assert.assertEquals(1, archetypes.getArchetypes().size());
-        Archetype expected = new Archetype();
-        expected.setGroupId("groupId");
-        expected.setArtifactId("artifactId");
-        expected.setVersion("1.0.0");
-        expected.setDescription("Description");
-        Assert.assertEquals(expected, archetypes.getArchetypes().get(0));
-    }
-
-    @Test
-    public void testHasArchetypeCatalogFactory() {
-        Assert.assertTrue(archetypeRegistry.hasArchetypeCatalogFactories());
+    public void testDoesNotHaveArchetypeCatalogFactories() {
+        Assert.assertFalse(archetypeRegistry.hasArchetypeCatalogFactories());
     }
 }

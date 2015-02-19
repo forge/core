@@ -36,98 +36,104 @@ import org.jboss.forge.furnace.util.Assert;
 @Singleton
 public class ArchetypeCatalogFactoryRegistryImpl implements ArchetypeCatalogFactoryRegistry
 {
-   private Map<String, ArchetypeCatalogFactory> factories = new TreeMap<>();
-   private final Logger log = Logger.getLogger(getClass().getName());
+    private Map<String, ArchetypeCatalogFactory> factories = new TreeMap<>();
+    private final Logger log = Logger.getLogger(getClass().getName());
 
-   @Inject
-   private Imported<ArchetypeCatalogFactory> services;
+    @Inject
+    private Imported<ArchetypeCatalogFactory> services;
 
-   @Inject
-   @Subset("maven.archetypes")
-   private Configuration archetypeConfiguration;
+    @Inject
+    @Subset("maven.archetypes")
+    private Configuration archetypeConfiguration;
 
-   /**
-    * Registers the {@link ArchetypeCatalogFactory} objects from the user {@link Configuration}
-    */
-   @PostConstruct
-   void initializeDefaultFactories()
-   {
-      Iterator<?> keys = archetypeConfiguration.getKeys();
-      while (keys.hasNext())
-      {
-         String name = keys.next().toString();
-         if (!name.isEmpty())
-         {
-            String url = archetypeConfiguration.getString(name);
-            try
+    /**
+     * Registers the {@link ArchetypeCatalogFactory} objects from the user
+     * {@link Configuration}
+     */
+    @PostConstruct
+    void initializeDefaultFactories()
+    {
+        Iterator<?> keys = archetypeConfiguration.getKeys();
+        while (keys.hasNext())
+        {
+            String name = keys.next().toString();
+            if (!name.isEmpty())
             {
-               addArchetypeCatalogFactory(name, new URL(url));
+                String url = archetypeConfiguration.getString(name);
+                try
+                {
+                    addArchetypeCatalogFactory(name, new URL(url));
+                } catch (MalformedURLException e)
+                {
+                    log.log(Level.SEVERE, "Malformed URL for " + name, e);
+                }
             }
-            catch (MalformedURLException e)
+        }
+    }
+
+    @PreDestroy
+    void destroy()
+    {
+        this.factories.clear();
+    }
+
+    @Override
+    public void addArchetypeCatalogFactory(String name, URL catalogURL)
+    {
+        addArchetypeCatalogFactory(new URLArchetypeCatalogFactory(name, catalogURL));
+    }
+
+    @Override
+    public void addArchetypeCatalogFactory(String name, URL catalogURL, String defaultRepositoryName)
+    {
+        addArchetypeCatalogFactory(new URLArchetypeCatalogFactory(name, catalogURL, defaultRepositoryName));
+    }
+
+    @Override
+    public void addArchetypeCatalogFactory(ArchetypeCatalogFactory factory)
+    {
+        Assert.notNull(factory, "Cannot add a null Archetype Catalog Factory");
+        Assert.notNull(factory.getName(), "Archetype Catalog Factory must have a name");
+        factories.put(factory.getName(), factory);
+    }
+
+    @Override
+    public Iterable<ArchetypeCatalogFactory> getArchetypeCatalogFactories()
+    {
+        Set<ArchetypeCatalogFactory> result = new LinkedHashSet<>();
+        for (ArchetypeCatalogFactory factory : services)
+        {
+            result.add(factory);
+        }
+        result.addAll(factories.values());
+        return Collections.unmodifiableCollection(result);
+    }
+
+    @Override
+    public ArchetypeCatalogFactory getArchetypeCatalogFactory(String name)
+    {
+        ArchetypeCatalogFactory result = null;
+        if (name != null)
+        {
+            for (ArchetypeCatalogFactory factory : getArchetypeCatalogFactories())
             {
-               log.log(Level.SEVERE, "Malformed URL for " + name, e);
+                if (name.equals(factory.getName()))
+                    return factory;
             }
-         }
-      }
-   }
+        }
+        return result;
+    }
 
-   @PreDestroy
-   void destroy()
-   {
-      this.factories.clear();
-   }
+    @Override
+    public void removeArchetypeCatalogFactory(String name)
+    {
+        factories.remove(name);
+    }
 
-   @Override
-   public void addArchetypeCatalogFactory(String name, URL catalogURL)
-   {
-      addArchetypeCatalogFactory(new URLArchetypeCatalogFactory(name, catalogURL));
-   }
-
-   @Override
-   public void addArchetypeCatalogFactory(String name, URL catalogURL, String defaultRepositoryName)
-   {
-      addArchetypeCatalogFactory(new URLArchetypeCatalogFactory(name, catalogURL, defaultRepositoryName));
-   }
-
-   @Override
-   public void addArchetypeCatalogFactory(ArchetypeCatalogFactory factory)
-   {
-      Assert.notNull(factory, "Cannot add a null Archetype Catalog Factory");
-      Assert.notNull(factory.getName(), "Archetype Catalog Factory must have a name");
-      factories.put(factory.getName(), factory);
-   }
-
-   @Override
-   public Iterable<ArchetypeCatalogFactory> getArchetypeCatalogFactories()
-   {
-      Set<ArchetypeCatalogFactory> result = new LinkedHashSet<>();
-      for (ArchetypeCatalogFactory factory : services)
-      {
-         result.add(factory);
-      }
-      result.addAll(factories.values());
-      return Collections.unmodifiableCollection(result);
-   }
-
-   @Override
-   public ArchetypeCatalogFactory getArchetypeCatalogFactory(String name)
-   {
-      ArchetypeCatalogFactory result = null;
-      if (name != null)
-      {
-         for (ArchetypeCatalogFactory factory : getArchetypeCatalogFactories())
-         {
-            if (name.equals(factory.getName()))
-               return factory;
-         }
-      }
-      return result;
-   }
-
-   @Override
-   public void removeArchetypeCatalogFactory(String name)
-   {
-      factories.remove(name);
-   }
+    @Override
+    public boolean hasArchetypeCatalogFactories()
+    {
+        return factories.size() > 0 && !services.isUnsatisfied();
+    }
 
 }
