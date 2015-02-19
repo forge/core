@@ -189,7 +189,19 @@ public class NoUIWizardControllerDecorator implements WizardCommandController
       return controller.getInputs();
    }
 
-   @Override
+    @Override
+    public InputComponent<?, ?> getInput(String inputName)
+    {
+        return getInputs().get(inputName);
+    }
+
+    @Override
+    public boolean hasInput(String inputName)
+    {
+        return getInputs().containsKey(inputName);
+    }
+
+    @Override
    public UICommandMetadata getMetadata()
    {
       return controller.getMetadata();
