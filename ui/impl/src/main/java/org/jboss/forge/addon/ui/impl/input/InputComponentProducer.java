@@ -257,6 +257,11 @@ public class InputComponentProducer implements InputComponentFactory
             InputComponents.setDefaultValueFor(converterFactory, (InputComponent<?, Object>) input,
                      atts.defaultValue());
          }
+         // Set Note
+         if (!atts.note().isEmpty())
+         {
+            input.setNote(atts.note());
+         }
       }
    }
 
@@ -288,6 +293,11 @@ public class InputComponentProducer implements InputComponentFactory
          {
             InputComponents.setDefaultValueFor(converterFactory, (InputComponent<?, Object>) input,
                      option.defaultValue());
+         }
+         // Set Note
+         if (!option.note().isEmpty())
+         {
+            input.setNote(option.note());
          }
       }
    }
