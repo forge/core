@@ -239,7 +239,19 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       return getCurrentController().getInputs();
    }
 
-   @Override
+    @Override
+    public InputComponent<?, ?> getInput(String inputName)
+    {
+        return getInputs().get(inputName);
+    }
+
+    @Override
+    public boolean hasInput(String inputName)
+    {
+        return getInputs().containsKey(inputName);
+    }
+
+    @Override
    public UICommandMetadata getMetadata()
    {
       return getCurrentController().getMetadata();

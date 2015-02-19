@@ -111,6 +111,18 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
       return uiBuilder.getInputs();
    }
 
+   @Override
+   public InputComponent<?, ?> getInput(String inputName)
+   {
+      return getInputs().get(inputName);
+   }
+
+   @Override
+   public boolean hasInput(String inputName)
+   {
+      return getInputs().containsKey(inputName);
+   }
+
    @SuppressWarnings("unchecked")
    @Override
    public CommandController setValueFor(String inputName, Object value)

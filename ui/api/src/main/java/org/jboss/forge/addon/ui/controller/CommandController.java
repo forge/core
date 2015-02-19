@@ -97,6 +97,20 @@ public interface CommandController extends AutoCloseable
    Map<String, InputComponent<?, ?>> getInputs();
 
    /**
+    * Returns a {@link InputComponent} instances for this command given an input name. May be <code>null</code>.
+    *
+    * @throws IllegalStateException if {@link #initialize()} has not been called before invoking this method.
+    */
+   InputComponent<?, ?> getInput(String inputName);
+
+   /**
+    * Returns true if the {@link InputComponent} instances exists for this command given an input name.
+    *
+    * @throws IllegalStateException if {@link #initialize()} has not been called before invoking this method.
+    */
+   boolean hasInput(String inputName);
+
+   /**
     * @return the result of the current {@link UICommand#getMetadata(UIContext)}. Does not require initialization.
     */
    UICommandMetadata getMetadata();
