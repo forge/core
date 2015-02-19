@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 import org.jboss.forge.addon.addons.ui.FurnaceAddonSetupStep;
 import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
+import org.jboss.forge.addon.projects.AbstractProjectType;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
@@ -18,7 +19,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class FurnaceAddonProjectType implements ProjectType
+public class FurnaceAddonProjectType extends AbstractProjectType
 {
    @Override
    public String getType()

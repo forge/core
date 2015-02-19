@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.projects.mock;
 
+import org.jboss.forge.addon.projects.AbstractProjectType;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
@@ -14,7 +15,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MockProjectType3 implements ProjectType
+public class MockProjectType3 extends AbstractProjectType
 {
    @Override
    public String getType()

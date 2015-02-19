@@ -1,11 +1,13 @@
 package org.jboss.forge.addon.projects;
 
+import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
  * Provides additional project configuration for use during new project creation.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public interface ProjectType
 {
@@ -29,4 +31,9 @@ public interface ProjectType
     * Defines the priority of this {@link ProjectType}. Lower values receive a higher priority.
     */
    int priority();
+   
+   /**
+    * Returns if this {@link ProjectType} is enabled in the current {@link UIContext} 
+    */
+   boolean isEnabled(UIContext context);
 }
