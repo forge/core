@@ -7,9 +7,7 @@
 
 package org.jboss.forge.addon.ui.controller;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 
 import java.util.List;
 
@@ -220,6 +218,10 @@ public class WizardCommandControllerTest
          controller.next().initialize();
          Assert.assertTrue("Should have added one input", controller.getInputs().size() == 1);
          Assert.assertTrue("Input inputOne not added", controller.getInputs().containsKey("inputOne"));
+         Assert.assertNotNull(controller.getInput("inputOne"));
+         Assert.assertTrue(controller.hasInput("inputOne"));
+         Assert.assertNull(controller.getInput("dummy"));
+         Assert.assertFalse(controller.hasInput("dummy"));
          Assert.assertTrue(controller.canMoveToPreviousStep());
          controller.previous();
          controller.setValueFor("chooseInputTwo", Boolean.TRUE);
