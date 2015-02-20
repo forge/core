@@ -33,9 +33,31 @@ public class ShellUtil
     * @param name
     * @return
     */
-   public static String shellifyName(String name)
+   private static String shellifyName(String name)
    {
       return COLONS.matcher(WHITESPACES.matcher(name.trim()).replaceAll("-")).replaceAll("");
+   }
+
+   /**
+    * Shellifies a command name
+    * 
+    * @param name
+    * @return
+    */
+   public static String shellifyCommandName(String name)
+   {
+      return shellifyName(name).toLowerCase();
+   }
+
+   /**
+    * Shellifies an option name
+    * 
+    * @param name
+    * @return
+    */
+   public static String shellifyOptionName(String name)
+   {
+      return shellifyName(name);
    }
 
    /**

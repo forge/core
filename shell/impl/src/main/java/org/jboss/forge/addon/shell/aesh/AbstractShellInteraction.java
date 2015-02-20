@@ -41,7 +41,7 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
       this.context = shellContext;
       this.controller = controller;
       this.metadata = controller.getMetadata();
-      this.name = ShellUtil.shellifyName(metadata.getName()).toLowerCase();
+      this.name = ShellUtil.shellifyCommandName(metadata.getName());
       this.commandLineUtil = commandLineUtil;
    }
 

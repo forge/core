@@ -76,7 +76,7 @@ class CommandLineUtil
    {
       UICommandMetadata metadata = (command instanceof WizardCommandController) ? ((WizardCommandController) command)
                .getInitialMetadata() : command.getMetadata();
-      String cmdName = ShellUtil.shellifyName(metadata.getName()).toLowerCase();
+      String cmdName = ShellUtil.shellifyCommandName(metadata.getName());
       String cmdDescription = metadata.getDescription();
       final ProcessedCommand parameter = new ProcessedCommand(cmdName, cmdDescription,
                (Class<? extends CommandValidator<?>>) null, null);
@@ -93,7 +93,7 @@ class CommandLineUtil
          {
             OptionBuilder optionBuilder = new OptionBuilder();
 
-            optionBuilder.name(ShellUtil.shellifyName(inputName))
+            optionBuilder.name(ShellUtil.shellifyOptionName(inputName))
                      .addDefaultValue(defaultValue == null ? null : defaultValue.toString())
                      .description(input.getLabel())
                      .hasMultipleValues(isMultiple)
@@ -144,7 +144,7 @@ class CommandLineUtil
       Map<String, InputComponent<?, ?>> populatedInputs = new LinkedHashMap<>();
       for (Entry<String, InputComponent<?, ?>> entry : inputs.entrySet())
       {
-         String name = ShellUtil.shellifyName(entry.getKey());
+         String name = ShellUtil.shellifyOptionName(entry.getKey());
          InputComponent<?, ?> input = entry.getValue();
          if (ARGUMENTS_INPUT_NAME.equals(name))
          {
