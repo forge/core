@@ -113,6 +113,7 @@
             </property>
          </activation>
          <modules>
+            <module>bom</module>
             <module>addon-manager/api</module>
             <module>addon-manager/spi</module>
             <module>addons/api</module>
