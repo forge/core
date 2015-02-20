@@ -8,6 +8,7 @@ package org.jboss.forge.addon.javaee.jpa;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -21,8 +22,11 @@ import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.javaee.jpa.ui.NewEntityCommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.shell.test.ShellTest;
+import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.Dependencies;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
@@ -30,6 +34,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -44,6 +49,8 @@ public class NewEntityCommandShellTest
 {
    @Deployment
    @Dependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:ui"),
+            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
             @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
             @AddonDependency(name = "org.jboss.forge.addon:maven"),
             @AddonDependency(name = "org.jboss.forge.addon:resources"),
@@ -59,7 +66,9 @@ public class NewEntityCommandShellTest
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:resources")
+                        AddonDependencyEntry.create("org.jboss.forge.addon:resources"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
                );
 
       return archive;
@@ -69,15 +78,45 @@ public class NewEntityCommandShellTest
    private ShellTest test;
 
    @Inject
+   private UITestHarness uiTestHarness;
+
+   @Inject
    private ProjectHelper projectHelper;
+
+   private Project project;
+
+   @Before
+   public void setUp()
+   {
+      project = projectHelper.createJavaLibraryProject();
+      projectHelper.installJPA_2_0(project);
+   }
+
+   @Test
+   public void checkCommandMetadata() throws Exception
+   {
+      CommandController controller = uiTestHarness.createCommandController(NewEntityCommand.class, project.getRoot());
+      controller.initialize();
+      // Checks the command metadata
+      assertTrue(controller.getCommand() instanceof NewEntityCommand);
+      UICommandMetadata metadata = controller.getMetadata();
+      assertEquals("JPA: New Entity", metadata.getName());
+      assertEquals("Java EE", metadata.getCategory().getName());
+      assertEquals("JPA", metadata.getCategory().getSubCategory().getName());
+      assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
+      assertEquals(4, controller.getInputs().size());
+      assertTrue(controller.hasInput("named"));
+      assertTrue(controller.hasInput("targetPackage"));
+      assertTrue(controller.hasInput("idStrategy"));
+      assertTrue(controller.hasInput("tableName"));
+      assertTrue(controller.getValueFor("targetPackage").toString().endsWith(".model"));
+   }
 
    @SuppressWarnings("unchecked")
    @Test
    public void testContainerInjection() throws Exception
    {
-      Project project = projectHelper.createJavaLibraryProject();
       test.getShell().setCurrentResource(project.getRoot());
-      projectHelper.installJPA_2_0(project);
       Result result = test
                .execute(("jpa-new-entity --named Customer --targetPackage org.lincoln --idStrategy AUTO --tableName CUSTOMER_TABLE"),
                         10, TimeUnit.SECONDS);

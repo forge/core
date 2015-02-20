@@ -7,9 +7,8 @@
 
 package org.jboss.forge.addon.javaee.jpa.ui;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 import javax.inject.Inject;
 import javax.persistence.MappedSuperclass;
@@ -22,6 +21,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
@@ -32,6 +32,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -66,7 +67,7 @@ public class NewMappedSuperclassCommandTest
    }
 
    @Inject
-   private UITestHarness testHarness;
+   private UITestHarness uiTestHarness;
 
    @Inject
    private ProjectHelper projectHelper;
@@ -74,12 +75,40 @@ public class NewMappedSuperclassCommandTest
    @Inject
    private FacetFactory facetFactory;
 
+   private Project project;
+
+   @Before
+   public void setUp()
+   {
+      project = projectHelper.createJavaLibraryProject();
+      projectHelper.installJPA_2_0(project);
+   }
+
+   @Test
+   public void checkCommandMetadata() throws Exception
+   {
+      CommandController controller = uiTestHarness.createCommandController(NewMappedSuperclassCommand.class,
+               project.getRoot());
+      controller.initialize();
+      // Checks the command metadata
+      assertTrue(controller.getCommand() instanceof NewMappedSuperclassCommand);
+      UICommandMetadata metadata = controller.getMetadata();
+      assertEquals("JPA: New Mapped Superclass", metadata.getName());
+      assertEquals("Java EE", metadata.getCategory().getName());
+      assertEquals("JPA", metadata.getCategory().getSubCategory().getName());
+      assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
+      assertEquals(3, controller.getInputs().size());
+      assertTrue(controller.hasInput("named"));
+      assertTrue(controller.hasInput("targetPackage"));
+      assertTrue(controller.hasInput("overwrite"));
+      assertTrue(controller.getValueFor("targetPackage").toString().endsWith(".model"));
+   }
+
    @Test
    public void testCreateMappedSuperclass() throws Exception
    {
-      Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      try (CommandController controller = testHarness.createCommandController(NewMappedSuperclassCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(NewMappedSuperclassCommand.class,
                project.getRoot()))
       {
          controller.initialize();
@@ -100,9 +129,8 @@ public class NewMappedSuperclassCommandTest
    @Test
    public void testCreateMappedSuperclassDefaultPackage() throws Exception
    {
-      Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      try (CommandController controller = testHarness.createCommandController(NewMappedSuperclassCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(NewMappedSuperclassCommand.class,
                project.getRoot()))
       {
          controller.initialize();
