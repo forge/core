@@ -59,7 +59,7 @@ public class NewMappedSuperclassCommand extends AbstractJavaSourceCommand<JavaCl
    {
       return Metadata.forCommand(getClass()).name("JPA: New " + getType())
                .description("Creates a new " + getType())
-               .category(Categories.create("JPA"));
+               .category(Categories.create("Java EE", "JPA"));
    }
 
    @Override

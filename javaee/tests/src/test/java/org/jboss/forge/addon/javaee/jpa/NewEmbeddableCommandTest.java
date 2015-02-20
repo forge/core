@@ -1,10 +1,10 @@
 package org.jboss.forge.addon.javaee.jpa;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +21,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
@@ -33,6 +34,7 @@ import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -64,17 +66,44 @@ public class NewEmbeddableCommandTest
    }
 
    @Inject
-   private UITestHarness testHarness;
+   private UITestHarness uiTestHarness;
 
    @Inject
    private ProjectHelper projectHelper;
 
+   private Project project;
+
+   @Before
+   public void setUp()
+   {
+      project = projectHelper.createJavaLibraryProject();
+      projectHelper.installJPA_2_0(project);
+   }
+
+   @Test
+   public void checkCommandMetadata() throws Exception
+   {
+      CommandController controller = uiTestHarness.createCommandController(NewEmbeddableCommand.class,
+               project.getRoot());
+      controller.initialize();
+      // Checks the command metadata
+      assertTrue(controller.getCommand() instanceof NewEmbeddableCommand);
+      UICommandMetadata metadata = controller.getMetadata();
+      assertEquals("JPA: New Embeddable", metadata.getName());
+      assertEquals("Java EE", metadata.getCategory().getName());
+      assertEquals("JPA", metadata.getCategory().getSubCategory().getName());
+      assertEquals(3, controller.getInputs().size());
+      assertTrue(controller.hasInput("targetLocation")); // TODO this should be false, fix the NewEmbeddableCommand
+      assertTrue(controller.hasInput("named"));
+      assertTrue(controller.hasInput("targetPackage"));
+      assertTrue(controller.getValueFor("targetPackage").toString().endsWith(".model"));
+   }
+
    @Test
    public void testCreateEmbeddable() throws Exception
    {
-      Project project = projectHelper.createJavaLibraryProject();
-      projectHelper.installJPA_2_0(project);
-      CommandController controller = testHarness.createCommandController(NewEmbeddableCommand.class, project.getRoot());
+      CommandController controller = uiTestHarness.createCommandController(NewEmbeddableCommand.class,
+               project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "MyEmbeddable");
       Assert.assertTrue(controller.isValid());
@@ -105,10 +134,17 @@ public class NewEmbeddableCommandTest
          }
       });
 
-      Assert.assertEquals(1, embeddables.size());
+      assertEquals(1, embeddables.size());
       JavaClass<?> embeddableEntity = embeddables.get(0);
-      Assert.assertTrue(embeddableEntity.hasAnnotation(Embeddable.class));
-      Assert.assertTrue(embeddableEntity.getName().equals("MyEmbeddable"));
+      assertEquals(0, embeddableEntity.getSyntaxErrors().size());
+      assertTrue(embeddableEntity.hasAnnotation(Embeddable.class));
+      assertTrue(embeddableEntity.hasInterface(Serializable.class));
+      assertEquals(org.jboss.forge.roaster.model.Visibility.PUBLIC, embeddableEntity.getVisibility());
+      assertEquals(0, embeddableEntity.getFields().size());
+      assertEquals(0, embeddableEntity.getMethods().size());
+      assertEquals(0, embeddableEntity.getMembers().size());
+      assertEquals(0, embeddableEntity.getProperties().size());
+      assertFalse(embeddableEntity.hasJavaDoc());
+      assertTrue(embeddableEntity.getName().equals("MyEmbeddable"));
    }
-
 }

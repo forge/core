@@ -10,6 +10,8 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 import javax.persistence.NamedQueries;
@@ -21,6 +23,7 @@ import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
@@ -32,6 +35,7 @@ import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -67,18 +71,43 @@ public class NewNamedQueryCommandTest
    }
 
    @Inject
-   private UITestHarness testHarness;
+   private UITestHarness uiTestHarness;
 
    @Inject
    private ProjectHelper projectHelper;
 
+    private Project project;
+
+    @Before
+    public void setUp()
+    {
+        project = projectHelper.createJavaLibraryProject();
+        projectHelper.installJPA_2_0(project);
+    }
+
+    @Test
+    public void checkCommandMetadata() throws Exception
+    {
+        CommandController controller = uiTestHarness.createCommandController(NewNamedQueryCommand.class,
+                project.getRoot());
+        controller.initialize();
+        // Checks the command metadata
+        assertTrue(controller.getCommand() instanceof NewNamedQueryCommand);
+        UICommandMetadata metadata = controller.getMetadata();
+        assertEquals("JPA: New Named Query", metadata.getName());
+        assertEquals("Java EE", metadata.getCategory().getName());
+        assertEquals("JPA", metadata.getCategory().getSubCategory().getName());
+        assertEquals(3, controller.getInputs().size());
+        assertTrue(controller.hasInput("named"));
+        assertTrue(controller.hasInput("query"));
+        assertTrue(controller.hasInput("targetEntity"));
+    }
+
    @Test
    public void testCreateNamedQuery() throws Exception
    {
-      Project project = projectHelper.createWebProject();
-      projectHelper.installJPA_2_0(project);
       JavaResource jpaEntity = projectHelper.createJPAEntity(project, "Customer");
-      try (CommandController controller = testHarness.createCommandController(NewNamedQueryCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(NewNamedQueryCommand.class,
                project.getRoot()))
       {
          controller.initialize();
