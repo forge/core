@@ -32,59 +32,60 @@ import com.google.common.base.Strings;
  */
 public class ArchetypeCatalogCommands
 {
-    @Inject
-    @Subset("maven.archetypes")
-    private Configuration configuration;
+   @Inject
+   @Subset("maven.archetypes")
+   private Configuration configuration;
 
-    @Inject
-    private ArchetypeCatalogFactoryRegistry archetypeRegistry;
+   @Inject
+   private ArchetypeCatalogFactoryRegistry archetypeRegistry;
 
-    @Command(value = "Archetype: Add", categories = {"Maven"})
-    public void addArchetype(
-                             @Option(value = "named", label = "Archetype catalog Name", required = true) String name,
-                             @Option(value = "url", label = "Archetype catalog URL", required = true) URLResource url)
-    {
-        configuration.setProperty(name, url.getFullyQualifiedName());
-        archetypeRegistry.addArchetypeCatalogFactory(name, url.getUnderlyingResourceObject());
-    }
+   @Command(value = "Archetype: Add", categories = { "Maven" }, help = "Adds an archetype catalog to the Forge configuration file")
+   public void addArchetype(
+            @Option(value = "named", label = "Archetype catalog Name", description = "The archetype catalog name to be used", required = true) String name,
+            @Option(value = "url", label = "Archetype catalog URL", description = "The archetype catalog URL to be used", required = true) URLResource url)
+   {
+      configuration.setProperty(name, url.getFullyQualifiedName());
+      archetypeRegistry.addArchetypeCatalogFactory(name, url.getUnderlyingResourceObject());
+   }
 
-    @Command(value = "Archetype: Remove", categories = {"Maven"})
-    public void removeArchetype(
-                                @Option(value = "named", label = "Archetype catalog name", required = true) String name)
-    {
-        configuration.clearProperty(name);
-        archetypeRegistry.removeArchetypeCatalogFactory(name);
-    }
+   @Command(value = "Archetype: Remove", categories = { "Maven" }, help = "Removes an archetype catalog from the Forge configuration file")
+   public void removeArchetype(
+            @Option(value = "named", label = "Archetype catalog name", description = "The archetype catalog name to be used", required = true) String name)
+   {
+      configuration.clearProperty(name);
+      archetypeRegistry.removeArchetypeCatalogFactory(name);
+   }
 
-    @Command(value = "Archetype: List", categories = {"Maven"}, enabled = NonGUIEnabledPredicate.class)
-    public void listArchetypes(@Option(value = "named", label = "Archetype catalog name") String name,
-                               UIOutput output)
-    {
-        PrintStream out = output.out();
-        if (Strings.isNullOrEmpty(name))
-        {
-            for (ArchetypeCatalogFactory factory : archetypeRegistry.getArchetypeCatalogFactories())
+   @Command(value = "Archetype: List", categories = { "Maven" }, enabled = NonGUIEnabledPredicate.class, help = "Lists the registered archetype catalogs from the Forge configuration file")
+   public void listArchetypes(
+            @Option(value = "named", label = "Archetype catalog name", description = "The archetype catalog name to be used") String name,
+            UIOutput output)
+   {
+      PrintStream out = output.out();
+      if (Strings.isNullOrEmpty(name))
+      {
+         for (ArchetypeCatalogFactory factory : archetypeRegistry.getArchetypeCatalogFactories())
+         {
+            String key = factory.getName();
+            String catalog = factory.toString();
+            out.println(key + " = " + catalog);
+         }
+      }
+      else
+      {
+         ArchetypeCatalogFactory archetypeCatalogFactory = archetypeRegistry
+                  .getArchetypeCatalogFactory(name);
+         if (archetypeCatalogFactory != null)
+         {
+            ArchetypeCatalog archetypeCatalog = archetypeCatalogFactory.getArchetypeCatalog();
+            if (archetypeCatalog != null)
             {
-                String key = factory.getName();
-                String catalog = factory.toString();
-                out.println(key + " = " + catalog);
+               for (Archetype archetype : archetypeCatalog.getArchetypes())
+               {
+                  out.println(archetype);
+               }
             }
-        }
-        else
-        {
-            ArchetypeCatalogFactory archetypeCatalogFactory = archetypeRegistry
-                .getArchetypeCatalogFactory(name);
-            if (archetypeCatalogFactory != null)
-            {
-                ArchetypeCatalog archetypeCatalog = archetypeCatalogFactory.getArchetypeCatalog();
-                if (archetypeCatalog != null)
-                {
-                    for (Archetype archetype : archetypeCatalog.getArchetypes())
-                    {
-                        out.println(archetype);
-                    }
-                }
-            }
-        }
-    }
+         }
+      }
+   }
 }
