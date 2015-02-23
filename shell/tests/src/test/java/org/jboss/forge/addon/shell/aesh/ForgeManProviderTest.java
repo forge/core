@@ -33,7 +33,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RunWith(Arquillian.class)
-public class ManProviderTest
+public class ForgeManProviderTest
 {
    @Deployment
    @Dependencies({
