@@ -31,10 +31,15 @@ import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Streams;
 
 /**
+ * {@link ManProvider} implementation
+ * 
  * @author <a href="mailto:stale.pedersen@jboss.org">Ståle W. Pedersen</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public class ForgeManProvider implements ManProvider
 {
@@ -43,16 +48,16 @@ public class ForgeManProvider implements ManProvider
    private final ShellImpl shell;
    private final CommandFactory manager;
 
-   private final Comparator<? super InputComponent<?, ?>> shortNameComparator = new Comparator<InputComponent<?, ?>>()
+   private final Comparator<? super InputComponent<?, ?>> SHORTNAME_COMPARATOR = new Comparator<InputComponent<?, ?>>()
    {
       @Override
       public int compare(InputComponent<?, ?> left, InputComponent<?, ?> right)
       {
-         return new Character(left.getShortName()).compareTo(right.getShortName());
+         return Character.valueOf(left.getShortName()).compareTo(right.getShortName());
       }
    };
 
-   private final Comparator<? super InputComponent<?, ?>> nameComparator = new Comparator<InputComponent<?, ?>>()
+   private final Comparator<? super InputComponent<?, ?>> NAME_COMPARATOR = new Comparator<InputComponent<?, ?>>()
    {
       @Override
       public int compare(InputComponent<?, ?> left, InputComponent<?, ?> right)
@@ -146,7 +151,7 @@ public class ForgeManProvider implements ManProvider
       StringBuilder result = new StringBuilder();
       result.append(manager.getCommandName(context, cmd)).append(" [-");
 
-      Collections.sort(inputs, shortNameComparator);
+      Collections.sort(inputs, SHORTNAME_COMPARATOR);
       for (InputComponent<?, ?> input : inputs)
       {
          if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME && Boolean.class.equals(input.getValueType()))
@@ -157,7 +162,7 @@ public class ForgeManProvider implements ManProvider
 
       result.append("] ");
 
-      Collections.sort(inputs, nameComparator);
+      Collections.sort(inputs, NAME_COMPARATOR);
       InputComponent<?, ?> arguments = null;
       for (InputComponent<?, ?> input : inputs)
       {
@@ -196,9 +201,9 @@ public class ForgeManProvider implements ManProvider
       if (UIWizard.class.isAssignableFrom(cmd.getMetadata(context).getType()))
          result.append(" (*multi-step wizard* - some options may not be auto-documented in this man page.)");
 
-      result.append("\n\n");
+      result.append(OperatingSystemUtils.getLineSeparator()).append(OperatingSystemUtils.getLineSeparator());
 
-      Collections.sort(inputs, shortNameComparator);
+      Collections.sort(inputs, SHORTNAME_COMPARATOR);
       InputComponent<?, ?> arguments = null;
       for (InputComponent<?, ?> input : inputs)
       {
@@ -215,7 +220,7 @@ public class ForgeManProvider implements ManProvider
                result.append("   ");
 
             result.append("--").append(input.getName()).append("*");
-            result.append("\n");
+            result.append(OperatingSystemUtils.getLineSeparator());
             result.append("        ");
 
             if (!input.getName().equals(input.getLabel()))
@@ -286,8 +291,7 @@ public class ForgeManProvider implements ManProvider
             {
                result.append(" defaults to: [" + input.getValue() + "]");
             }
-
-            result.append("\n\n");
+            result.append(OperatingSystemUtils.getLineSeparator()).append(OperatingSystemUtils.getLineSeparator());
          }
       }
 
