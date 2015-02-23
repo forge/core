@@ -13,6 +13,8 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
+import org.jboss.forge.addon.facets.constraints.FacetConstraints;
 import org.jboss.forge.addon.javaee.rest.RestFacet;
 import org.jboss.forge.addon.javaee.rest.config.RestConfigurationStrategy;
 import org.jboss.forge.addon.javaee.rest.config.RestConfigurationStrategyFactory;
@@ -40,6 +42,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
+@FacetConstraint(JavaSourceFacet.class)
 public class RestSetupWizardImpl extends AbstractJavaEECommand implements RestSetupWizard
 {
    @Override
