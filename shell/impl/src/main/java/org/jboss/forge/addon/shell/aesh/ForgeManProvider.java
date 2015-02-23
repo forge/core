@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 
 import org.jboss.aesh.console.helper.ManProvider;
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 import org.jboss.forge.addon.ui.command.CommandFactory;
@@ -47,7 +48,7 @@ public class ForgeManProvider implements ManProvider
 
    private final ShellImpl shell;
    private final CommandFactory manager;
-
+   private final ConverterFactory converterFactory;
    private final Comparator<? super InputComponent<?, ?>> SHORTNAME_COMPARATOR = new Comparator<InputComponent<?, ?>>()
    {
       @Override
@@ -66,10 +67,11 @@ public class ForgeManProvider implements ManProvider
       }
    };
 
-   public ForgeManProvider(ShellImpl shell, CommandFactory manager)
+   public ForgeManProvider(ShellImpl shell, CommandFactory manager, ConverterFactory converterFactory)
    {
       this.shell = shell;
       this.manager = manager;
+      this.converterFactory = converterFactory;
    }
 
    @Override
@@ -80,6 +82,10 @@ public class ForgeManProvider implements ManProvider
          UICommand cmd = manager.getCommandByName(context, command);
          if (cmd != null)
          {
+            if (!cmd.isEnabled(context))
+            {
+               return null;
+            }
             URL docLocation = cmd.getMetadata(context).getDocLocation();
             if (docLocation != null)
             {
@@ -240,14 +246,13 @@ public class ForgeManProvider implements ManProvider
             {
                result.append(" Valid choices: [");
                Iterable<?> valueChoices = ((SelectComponent) input).getValueChoices();
-               Converter itemLabelConverter = ((SelectComponent) input).getItemLabelConverter();
+               Converter itemLabelConverter = InputComponents.getItemLabelConverter(converterFactory,
+                        ((SelectComponent) input));
                for (Object choice : valueChoices)
                {
                   if (choice != null)
                   {
-                     Object itemLabel = choice.toString();
-                     if (itemLabelConverter != null)
-                        itemLabel = itemLabelConverter.convert(choice);
+                     Object itemLabel = itemLabelConverter.convert(choice);
                      result.append("\"" + itemLabel + "\" ");
                   }
                }

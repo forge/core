@@ -19,6 +19,7 @@ import org.jboss.aesh.console.man.Man;
 import org.jboss.aesh.extensions.grep.Grep;
 import org.jboss.aesh.extensions.less.aesh.Less;
 import org.jboss.aesh.extensions.more.aesh.More;
+import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.AeshUICommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
@@ -60,9 +61,10 @@ public class ForgeCommandRegistry implements CommandRegistry
       this.addonRegistry = addonRegistry;
       this.commandFactory = addonRegistry.getServices(CommandFactory.class).get();
       this.commandControllerFactory = addonRegistry.getServices(CommandControllerFactory.class).get();
-
+      ConverterFactory converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
+      
       // Use Aesh commands
-      Man manCommand = new Man(new ForgeManProvider(shell, commandFactory));
+      Man manCommand = new Man(new ForgeManProvider(shell, commandFactory, converterFactory));
       this.aeshCommandRegistry = new AeshCommandRegistryBuilder()
                .command(Grep.class)
                .command(Less.class)
