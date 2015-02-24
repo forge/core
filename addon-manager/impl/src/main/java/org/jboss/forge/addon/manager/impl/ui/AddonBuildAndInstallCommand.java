@@ -59,7 +59,7 @@ public class AddonBuildAndInstallCommand extends AbstractUICommand implements Ad
       Project project = Projects.getSelectedProject(projectFactory, builder.getUIContext());
       if (project != null)
       {
-         projectRoot.setDefaultValue(project.getRootDirectory());
+         projectRoot.setDefaultValue(project.getRoot().reify(DirectoryResource.class));
       }
       builder.add(projectRoot);
    }
