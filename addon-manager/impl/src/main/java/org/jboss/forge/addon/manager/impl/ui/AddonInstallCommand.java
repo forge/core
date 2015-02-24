@@ -43,7 +43,7 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
    private AddonDependencyResolver resolver;
 
    @Inject
-   @WithAttributes(label = "Coordinate", description = "The addon's \"groupId:artifactId,version\" coordinate", required = true)
+   @WithAttributes(label = "Coordinate", description = "The addon's \"groupId:artifactId,version\" coordinate", note = "The addon's \"groupId:artifactId,version\" coordinate", required = true)
    private UIInput<String> coordinate;
 
    @Inject
