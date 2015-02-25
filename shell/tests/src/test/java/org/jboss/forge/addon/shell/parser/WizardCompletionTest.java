@@ -19,8 +19,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.shell.mock.wizard.MockWizardBegin;
 import org.jboss.forge.addon.shell.mock.wizard.MockWizardStep;
 import org.jboss.forge.addon.shell.test.ShellTest;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -36,8 +36,8 @@ import org.junit.runner.RunWith;
 public class WizardCompletionTest
 {
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness")
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness")
    })
    public static ForgeArchive getDeployment()
    {

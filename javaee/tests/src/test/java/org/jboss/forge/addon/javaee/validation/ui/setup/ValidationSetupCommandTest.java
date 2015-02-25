@@ -15,8 +15,8 @@ import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -29,11 +29,11 @@ public class ValidationSetupCommandTest
 {
 
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:ui"),
-            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven")
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:ui"),
+            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
+            @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
    public static ForgeArchive getDeployment()
    {

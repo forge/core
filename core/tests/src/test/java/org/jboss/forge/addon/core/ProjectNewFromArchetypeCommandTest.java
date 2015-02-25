@@ -13,8 +13,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -26,11 +26,11 @@ import org.junit.runner.RunWith;
 public class ProjectNewFromArchetypeCommandTest
 {
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:projects"),
-            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness")
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
+            @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
+            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
+            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness")
    })
    public static ForgeArchive getDeployment()
    {

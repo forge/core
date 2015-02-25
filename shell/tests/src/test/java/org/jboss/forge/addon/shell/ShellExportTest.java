@@ -18,8 +18,8 @@ import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.annotation.Command;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -35,8 +35,8 @@ import org.junit.runner.RunWith;
 public class ShellExportTest
 {
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness")
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness")
    })
    public static ForgeArchive getDeployment()
    {

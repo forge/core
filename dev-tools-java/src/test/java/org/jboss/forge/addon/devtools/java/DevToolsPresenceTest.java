@@ -10,8 +10,8 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -23,9 +23,9 @@ import org.junit.runner.RunWith;
 public class DevToolsPresenceTest
 {
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:dev-tools-java"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:dev-tools-java"),
+            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi") })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)

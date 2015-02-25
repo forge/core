@@ -18,8 +18,8 @@ import org.jboss.forge.addon.shell.mock.wizard.subflow.FlowOneOneStep;
 import org.jboss.forge.addon.shell.mock.wizard.subflow.FlowOneStep;
 import org.jboss.forge.addon.shell.mock.wizard.subflow.FlowTwoStep;
 import org.jboss.forge.addon.shell.test.ShellTest;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -34,8 +34,8 @@ import org.junit.runner.RunWith;
 public class WizardSubFlowCompletionTest
 {
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness")
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness")
    })
    public static ForgeArchive getDeployment()
    {

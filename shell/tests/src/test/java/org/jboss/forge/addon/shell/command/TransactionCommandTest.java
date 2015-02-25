@@ -17,8 +17,8 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.shell.test.ShellTest;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
@@ -37,10 +37,10 @@ public class TransactionCommandTest
 {
 
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.addon:projects"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven")
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness"),
+            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
+            @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
    public static ForgeArchive getDeployment()
    {

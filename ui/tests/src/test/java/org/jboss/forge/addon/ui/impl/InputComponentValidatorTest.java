@@ -27,8 +27,8 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.validate.UIValidator;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -45,8 +45,8 @@ import org.junit.runner.RunWith;
 public class InputComponentValidatorTest
 {
    @Deployment
-   @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:ui"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
+   @AddonDeployments({ @AddonDeployment(name = "org.jboss.forge.addon:ui"),
+            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi") })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap

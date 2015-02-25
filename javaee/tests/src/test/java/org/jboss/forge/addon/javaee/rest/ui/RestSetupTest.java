@@ -24,8 +24,8 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.test.ShellTest;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -49,10 +49,10 @@ public class RestSetupTest
                      .setScopeType("provided");
 
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven")
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness"),
+            @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
+            @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
    public static ForgeArchive getDeployment()
    {

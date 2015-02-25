@@ -31,8 +31,8 @@ import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -48,14 +48,14 @@ public class GenerateEntitiesCommandTest
 {
 
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-            @AddonDependency(name = "org.jboss.forge.addon:projects"),
-            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
-            @AddonDependency(name = "org.jboss.forge.addon:ui"),
-            @AddonDependency(name = "org.jboss.forge.addon:database-tools"),
-            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven")
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
+            @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
+            @AddonDeployment(name = "org.jboss.forge.addon:ui"),
+            @AddonDeployment(name = "org.jboss.forge.addon:database-tools"),
+            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
    public static ForgeArchive getDeployment()
    {

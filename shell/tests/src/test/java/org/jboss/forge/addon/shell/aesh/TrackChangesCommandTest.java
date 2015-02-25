@@ -23,8 +23,8 @@ import org.jboss.forge.addon.resource.transaction.ResourceTransactionListener;
 import org.jboss.forge.addon.shell.mock.MockCommandExecutionListener;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Failed;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
@@ -40,8 +40,8 @@ import org.junit.runner.RunWith;
 public class TrackChangesCommandTest
 {
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness")
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness")
    })
    public static ForgeArchive getDeployment()
    {

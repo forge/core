@@ -15,8 +15,8 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Failed;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -30,12 +30,12 @@ import org.junit.runner.RunWith;
 public class ConfigCommandTest
 {
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.addon:configuration"),
-            @AddonDependency(name = "org.jboss.forge.addon:shell"),
-            @AddonDependency(name = "org.jboss.forge.addon:projects"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness"),
+            @AddonDeployment(name = "org.jboss.forge.addon:configuration"),
+            @AddonDeployment(name = "org.jboss.forge.addon:shell"),
+            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
+            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
    })
    public static ForgeArchive getDeployment()
    {

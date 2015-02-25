@@ -19,8 +19,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.Roaster;
@@ -34,10 +34,10 @@ import org.junit.runner.RunWith;
 public class JavaParserResourcesTest
 {
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-            @AddonDependency(name = "org.jboss.forge.addon:resources"),
-            @AddonDependency(name = "org.jboss.forge.addon:parser-java")
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
+            @AddonDeployment(name = "org.jboss.forge.addon:parser-java")
    })
    public static ForgeArchive getDeployment()
    {

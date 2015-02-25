@@ -26,8 +26,8 @@ import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.CompositeResult;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -45,10 +45,10 @@ import org.junit.runner.RunWith;
 public class FacesScaffoldTest
 {
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:scaffold-faces"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness")
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:scaffold-faces"),
+            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
+            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness")
    })
    public static ForgeArchive getDeployment()
    {

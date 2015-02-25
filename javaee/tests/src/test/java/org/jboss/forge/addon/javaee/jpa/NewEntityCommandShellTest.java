@@ -27,8 +27,8 @@ import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.model.JavaClass;
@@ -48,13 +48,13 @@ import org.junit.runner.RunWith;
 public class NewEntityCommandShellTest
 {
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:ui"),
-            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.addon:resources"),
-            @AddonDependency(name = "org.jboss.forge.addon:javaee")
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:ui"),
+            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness"),
+            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
+            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
+            @AddonDeployment(name = "org.jboss.forge.addon:javaee")
    })
    public static ForgeArchive getDeployment()
    {

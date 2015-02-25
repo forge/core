@@ -18,8 +18,8 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -31,9 +31,9 @@ import org.junit.runner.RunWith;
 public class TemplateTestCase
 {
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:templates"),
-            @AddonDependency(name = "org.jboss.forge.addon:resources") })
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:templates"),
+            @AddonDeployment(name = "org.jboss.forge.addon:resources") })
    public static ForgeArchive getDeployment()
    {
       String packagePath = TemplateTestCase.class.getPackage().getName().replace('.', '/');

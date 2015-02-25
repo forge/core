@@ -27,8 +27,8 @@ import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Lists;
@@ -42,9 +42,9 @@ import org.junit.runner.RunWith;
 public class NewProjectWizardTest
 {
     @Deployment
-    @Dependencies({
-                   @AddonDependency(name = "org.jboss.forge.addon:projects"),
-                   @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness")
+    @AddonDeployments({
+                   @AddonDeployment(name = "org.jboss.forge.addon:projects"),
+                   @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness")
     })
     public static ForgeArchive getDeployment()
     {

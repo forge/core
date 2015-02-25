@@ -15,8 +15,8 @@ import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.ui.hints.HintsLookup;
 import org.jboss.forge.addon.ui.hints.InputType;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -28,10 +28,10 @@ import org.junit.runner.RunWith;
 public class ParserHintsTest
 {
    @Deployment
-   @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:ui-spi"),
-            @AddonDependency(name = "org.jboss.forge.addon:environment"),
-            @AddonDependency(name = "org.jboss.forge.addon:resources"),
-            @AddonDependency(name = "org.jboss.forge.addon:parser-java") })
+   @AddonDeployments({ @AddonDeployment(name = "org.jboss.forge.addon:ui-spi"),
+            @AddonDeployment(name = "org.jboss.forge.addon:environment"),
+            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
+            @AddonDeployment(name = "org.jboss.forge.addon:parser-java") })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap

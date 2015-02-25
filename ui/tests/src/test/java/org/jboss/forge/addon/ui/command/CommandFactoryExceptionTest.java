@@ -23,8 +23,8 @@ import org.jboss.forge.addon.ui.example.commands.ExampleAnnotatedCommand;
 import org.jboss.forge.addon.ui.impl.mock.MockUIRuntime;
 import org.jboss.forge.addon.ui.test.impl.UIContextImpl;
 import org.jboss.forge.addon.ui.util.Selections;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Lists;
@@ -42,8 +42,8 @@ import org.junit.runner.RunWith;
 public class CommandFactoryExceptionTest
 {
    @Deployment
-   @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:ui"),
-            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness") })
+   @AddonDeployments({ @AddonDeployment(name = "org.jboss.forge.addon:ui"),
+            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness") })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap

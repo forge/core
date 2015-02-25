@@ -16,8 +16,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.database.tools.connections.ui.RemoveConnectionProfileCommand;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -31,11 +31,11 @@ public class RemoveConnectionProfileCommandTest
 {
 
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-            @AddonDependency(name = "org.jboss.forge.addon:ui"),
-            @AddonDependency(name = "org.jboss.forge.addon:database-tools"),
-            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness")
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDeployment(name = "org.jboss.forge.addon:ui"),
+            @AddonDeployment(name = "org.jboss.forge.addon:database-tools"),
+            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness")
    })
    public static ForgeArchive getDeployment()
    {

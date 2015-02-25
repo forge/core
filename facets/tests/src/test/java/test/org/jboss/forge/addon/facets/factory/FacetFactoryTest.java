@@ -15,8 +15,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.FacetNotFoundException;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -29,8 +29,8 @@ public class FacetFactoryTest
 {
 
    @Deployment
-   @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:facets"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
+   @AddonDeployments({ @AddonDeployment(name = "org.jboss.forge.addon:facets"),
+            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi") })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap

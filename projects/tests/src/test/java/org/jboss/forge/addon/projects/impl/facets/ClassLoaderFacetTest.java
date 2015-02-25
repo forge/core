@@ -19,8 +19,8 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.ClassLoaderFacet;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.Roaster;
@@ -38,11 +38,11 @@ import org.junit.runner.RunWith;
 public class ClassLoaderFacetTest
 {
    @Deployment
-   @Dependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:parser-java"),
-            @AddonDependency(name = "org.jboss.forge.addon:resources"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.addon:projects")
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:parser-java"),
+            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
+            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
+            @AddonDeployment(name = "org.jboss.forge.addon:projects")
    })
    public static ForgeArchive getDeployment()
    {

@@ -20,8 +20,8 @@ import org.jboss.forge.addon.ui.example.commands.ExampleAnnotatedCommand;
 import org.jboss.forge.addon.ui.impl.mock.MockUIContext;
 import org.jboss.forge.addon.ui.impl.mock.MockUIRuntime;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -38,8 +38,8 @@ import org.junit.runner.RunWith;
 public class CommandFactoryTest
 {
    @Deployment
-   @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:ui"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
+   @AddonDeployments({ @AddonDeployment(name = "org.jboss.forge.addon:ui"),
+            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi") })
    public static ForgeArchive getDeployment()
    {
       ForgeArchive archive = ShrinkWrap
