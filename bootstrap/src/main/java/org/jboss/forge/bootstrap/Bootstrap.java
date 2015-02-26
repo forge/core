@@ -243,7 +243,7 @@ public class Bootstrap
          for (AddonRepository repository : furnace.getRepositories())
          {
             System.out.println(repository.getRootDirectory().getCanonicalPath() + ":");
-            List<AddonId> addons = repository.listEnabled();
+            List<AddonId> addons = repository.listAll();
             for (AddonId addon : addons)
             {
                System.out.println(addon.toCoordinates());
@@ -282,7 +282,7 @@ public class Bootstrap
             if (addonIds.isEmpty())
             {
                String result = System.console().readLine(
-                        "There are no addons installed; install core addons now? [Y,n] ");
+                        "There are no addons installed/enabled; install core addons now? [Y,n] ");
                if (!"n".equalsIgnoreCase(result.trim()))
                {
                   install("core");
@@ -416,7 +416,7 @@ public class Bootstrap
          }
          REPOS: for (AddonRepository repository : furnace.getRepositories())
          {
-            for (AddonId id : repository.listEnabled())
+            for (AddonId id : repository.listAll())
             {
                if (coordinates.equals(id.getName()))
                {

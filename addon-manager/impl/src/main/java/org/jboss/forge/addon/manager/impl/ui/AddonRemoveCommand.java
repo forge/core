@@ -61,7 +61,8 @@ public class AddonRemoveCommand extends AbstractUICommand implements AddonComman
          // Avoid immutable repositories
          if (repository instanceof MutableAddonRepository)
          {
-            for (AddonId id : repository.listEnabled())
+            // allow removing addons that are not compatible with our Furnace version.
+            for (AddonId id : repository.listAll())
             {
                choices.add(id);
             }
