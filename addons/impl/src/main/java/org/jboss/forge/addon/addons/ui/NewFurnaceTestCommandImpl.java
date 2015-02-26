@@ -146,50 +146,47 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
       javaClass.addImport("org.jboss.arquillian.container.test.api.Deployment");
       javaClass.addImport("org.jboss.arquillian.junit.Arquillian");
       javaClass.addImport("org.jboss.forge.arquillian.AddonDependency");
-      javaClass.addImport("org.jboss.forge.arquillian.Dependencies");
-      javaClass.addImport("org.jboss.forge.arquillian.archive.ForgeArchive");
-      javaClass.addImport("org.jboss.forge.furnace.repositories.AddonDependencyEntry");
+      javaClass.addImport("org.jboss.forge.arquillian.AddonDependencies");
+      javaClass.addImport("org.jboss.forge.arquillian.archive.AddonArchive");
       javaClass.addImport("org.jboss.shrinkwrap.api.ShrinkWrap");
       javaClass.addImport("org.junit.runner.RunWith");
+      javaClass.addImport("org.junit.Assert");
+      javaClass.addImport("org.junit.Test");
 
       // Add Arquillian annotation
       javaClass.addAnnotation("RunWith").setLiteralValue("Arquillian.class");
 
       // Create getDeployment method
-      StringBuilder body = new StringBuilder(
-               "ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class).addBeansXML()");
       StringBuilder dependenciesAnnotationBody = new StringBuilder();
-      body.append(".addAsAddonDependencies(");
       AddonId furnaceContainerId = furnaceContainer.getValue();
-      addAddonDependency(project, body, dependenciesAnnotationBody, furnaceContainerId);
+      addAddonDependency(project, dependenciesAnnotationBody, furnaceContainerId);
       Iterator<AddonId> it = addonDependencies.getValue().iterator();
       if (it.hasNext())
       {
-         body.append(",");
          dependenciesAnnotationBody.append(",");
       }
       while (it.hasNext())
       {
          AddonId addonId = it.next();
-         addAddonDependency(project, body, dependenciesAnnotationBody, addonId);
+         addAddonDependency(project, dependenciesAnnotationBody, addonId);
          if (it.hasNext())
          {
-            body.append(",");
             dependenciesAnnotationBody.append(",");
          }
       }
-      body.append(")");
-      body.append(";");
-      body.append("return archive;");
       MethodSource<JavaClassSource> getDeployment = javaClass.addMethod().setName("getDeployment").setPublic()
                .setStatic(true)
-               .setBody(body.toString()).setReturnType("ForgeArchive");
+               .setBody("return ShrinkWrap.create(AddonArchive.class).addBeansXML();").setReturnType("AddonArchive");
       getDeployment.addAnnotation("Deployment");
       String annotationBody = dependenciesAnnotationBody.toString();
       if (annotationBody.length() > 0)
       {
-         getDeployment.addAnnotation("Dependencies").setLiteralValue("{" + annotationBody + "}");
+         getDeployment.addAnnotation("AddonDependencies").setLiteralValue("{" + annotationBody + "}");
       }
+
+      // Create test method
+      javaClass.addMethod().setName("testAddon").setPublic().setReturnTypeVoid()
+               .setBody("Assert.fail(\"Not yet implemented\");").addAnnotation("Test");
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.saveTestJavaSource(javaClass);
@@ -197,20 +194,18 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
       return Results.success("Test class " + javaClass.getQualifiedName() + " created");
    }
 
-   private void addAddonDependency(Project project, StringBuilder body, StringBuilder dependenciesAnnotationBody,
+   private void addAddonDependency(Project project, StringBuilder dependenciesAnnotationBody,
             AddonId addonId)
    {
       Dependency dependency = DependencyBuilder.create(addonId.getName()).setVersion(
-               addonId.getVersion().toString()).setClassifier(MavenAddonDependencyResolver.FORGE_ADDON_CLASSIFIER).setScopeType("test");
+               addonId.getVersion().toString()).setClassifier(MavenAddonDependencyResolver.FORGE_ADDON_CLASSIFIER)
+               .setScopeType("test");
       String name = addonId.getName();
       if (!dependencyInstaller.isInstalled(project, dependency))
       {
          dependencyInstaller.install(project, dependency);
       }
-      body.append("AddonDependencyEntry.create(\"").append(name);
-      dependenciesAnnotationBody.append("@AddonDependency(name = \"").append(name);
-      body.append("\")");
-      dependenciesAnnotationBody.append("\")");
+      dependenciesAnnotationBody.append("@AddonDependency(name = \"").append(name).append("\")");
    }
 
    @Override
