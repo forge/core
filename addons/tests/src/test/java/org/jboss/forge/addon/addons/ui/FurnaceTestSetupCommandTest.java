@@ -21,7 +21,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -45,9 +45,9 @@ public class FurnaceTestSetupCommandTest
             @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
             @AddonDeployment(name = "org.jboss.forge.addon:addons")
    })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      return ShrinkWrap.create(ForgeArchive.class).
+      return ShrinkWrap.create(AddonArchive.class).
                addBeansXML().
                addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),

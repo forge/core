@@ -12,9 +12,9 @@ import javax.validation.ValidationException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
+ * Test method validation using annotations
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
@@ -29,12 +30,14 @@ import org.junit.runner.RunWith;
 public class MethodValidatorTest
 {
    @Deployment
-   @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:bean-validation"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
-   public static ForgeArchive getDeployment()
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:bean-validation"),
+            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi")
+   })
+   public static AddonArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap
+               .create(AddonArchive.class)
                .addClass(ManagedObject.class)
                .addBeansXML()
                .addAsAddonDependencies(

@@ -17,8 +17,9 @@ import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.AddonDeployment;
+import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -33,13 +34,15 @@ import org.junit.runner.RunWith;
 public class ValidationUITest
 {
    @Deployment
-   @Dependencies({ @AddonDependency(name = "org.jboss.forge.addon:bean-validation"),
-            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
-   public static ForgeArchive getDeployment()
+   @AddonDeployments({
+            @AddonDeployment(name = "org.jboss.forge.addon:bean-validation"),
+            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi")
+   })
+   public static AddonArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap
+               .create(AddonArchive.class)
                .addBeansXML()
                .addClass(ValidationCommand.class)
                .addAsAddonDependencies(
