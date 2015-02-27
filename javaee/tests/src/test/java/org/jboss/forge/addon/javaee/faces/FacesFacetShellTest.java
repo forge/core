@@ -21,7 +21,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -44,9 +44,9 @@ public class FacesFacetShellTest
             @AddonDeployment(name = "org.jboss.forge.addon:projects"),
             @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      return ShrinkWrap.create(ForgeArchive.class)
+      return ShrinkWrap.create(AddonArchive.class)
                .addBeansXML()
                .addClass(ProjectHelper.class)
                .addAsAddonDependencies(

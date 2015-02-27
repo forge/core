@@ -42,7 +42,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
@@ -63,9 +63,9 @@ public class AddonProjectConfiguratorTest
             @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi"),
             @AddonDeployment(name = "org.jboss.forge.addon:addons")
    })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      return ShrinkWrap.create(ForgeArchive.class).
+      return ShrinkWrap.create(AddonArchive.class).
                addBeansXML().
                addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:addons"),

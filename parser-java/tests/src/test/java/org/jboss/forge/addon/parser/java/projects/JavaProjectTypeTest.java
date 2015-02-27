@@ -13,7 +13,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -33,9 +33,9 @@ public class JavaProjectTypeTest
             @AddonDeployment(name = "org.jboss.forge.addon:projects"),
             @AddonDeployment(name = "org.jboss.forge.addon:ui")
    })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),

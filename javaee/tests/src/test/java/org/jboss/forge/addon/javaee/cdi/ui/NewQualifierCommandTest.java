@@ -28,7 +28,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.model.JavaAnnotation;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -50,10 +50,10 @@ public class NewQualifierCommandTest
             @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
             @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
       return ShrinkWrap
-               .create(ForgeArchive.class)
+               .create(AddonArchive.class)
                .addClass(ProjectHelper.class)
                .addBeansXML()
                .addAsAddonDependencies(

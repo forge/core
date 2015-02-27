@@ -23,7 +23,7 @@ import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
@@ -44,10 +44,10 @@ public class MavenDependencyInstallerTest
             @AddonDeployment(name = "org.jboss.forge.addon:projects"),
             @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap
+               .create(AddonArchive.class)
                .add(new FileAsset(new File("src/test/resources/pom-template.xml")),
                         "org/jboss/forge/addon/maven/pom-template.xml")
                .addBeansXML()

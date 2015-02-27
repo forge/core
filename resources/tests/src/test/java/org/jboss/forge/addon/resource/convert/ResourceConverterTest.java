@@ -18,7 +18,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -31,10 +31,10 @@ public class ResourceConverterTest
    @Deployment
    @AddonDeployments({ @AddonDeployment(name = "org.jboss.forge.addon:convert"),
             @AddonDeployment(name = "org.jboss.forge.addon:resources") })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap
+               .create(AddonArchive.class)
                .addBeansXML()
                .addClass(ResourceConverterTest.class)
                .addAsAddonDependencies(

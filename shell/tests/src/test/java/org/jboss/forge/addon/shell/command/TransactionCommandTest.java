@@ -19,7 +19,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -42,10 +42,10 @@ public class TransactionCommandTest
             @AddonDeployment(name = "org.jboss.forge.addon:projects"),
             @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap
+               .create(AddonArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),

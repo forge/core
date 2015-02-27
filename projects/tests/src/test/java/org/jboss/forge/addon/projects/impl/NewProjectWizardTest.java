@@ -29,7 +29,7 @@ import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Lists;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
@@ -46,10 +46,10 @@ public class NewProjectWizardTest
                    @AddonDeployment(name = "org.jboss.forge.addon:projects"),
                    @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness")
     })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        ForgeArchive archive = ShrinkWrap
-            .create(ForgeArchive.class)
+        AddonArchive archive = ShrinkWrap
+            .create(AddonArchive.class)
             .addClass(MockProjectType.class)
             .addClass(MockDisabledProjectType.class)
             .addClass(MockBuildSystem.class)

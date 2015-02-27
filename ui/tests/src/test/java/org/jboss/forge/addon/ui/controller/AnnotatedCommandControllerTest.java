@@ -20,7 +20,7 @@ import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -39,10 +39,10 @@ public class AnnotatedCommandControllerTest
             @AddonDeployment(name = "org.jboss.forge.addon:ui-example"),
             @AddonDeployment(name = "org.jboss.forge.addon:ui"),
             @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi") })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap
+               .create(AddonArchive.class)
                .addClass(EnabledHandlerCommand.class)
                .addBeansXML()
                .addAsAddonDependencies(

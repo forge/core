@@ -15,7 +15,7 @@ import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -37,10 +37,10 @@ public class InputValidatorTests
             @AddonDeployment(name = "org.jboss.forge.addon:maven"),
             @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi")
    })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
       return ShrinkWrap
-               .create(ForgeArchive.class)
+               .create(AddonArchive.class)
                .addClass(TestCommand.class)
                .addBeansXML()
                .addAsAddonDependencies(

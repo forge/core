@@ -20,7 +20,7 @@ import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -34,10 +34,10 @@ public class TemplateTestCase
    @AddonDeployments({
             @AddonDeployment(name = "org.jboss.forge.addon:templates"),
             @AddonDeployment(name = "org.jboss.forge.addon:resources") })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
       String packagePath = TemplateTestCase.class.getPackage().getName().replace('.', '/');
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                .addBeansXML()
                .addClass(JavaBean.class)
                .addAsResource(TemplateTestCase.class.getResource("template.ftl"), packagePath + "/template.ftl")

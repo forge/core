@@ -29,7 +29,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaEnum;
@@ -55,9 +55,9 @@ public class JavaEnumConstCommandTest
             @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
             @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi")
    })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),

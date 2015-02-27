@@ -34,7 +34,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -50,10 +50,10 @@ public class ProjectDependencyCommandsTest
             @AddonDeployment(name = "org.jboss.forge.addon:maven"),
             @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness")
    })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap
+               .create(AddonArchive.class)
                .addClass(MockProjectType.class)
                .addClass(MockBuildSystem.class)
                .addBeansXML()

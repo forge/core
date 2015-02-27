@@ -22,7 +22,7 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.roaster.Roaster;
@@ -45,9 +45,9 @@ public class FacesOperationsTest
             @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
             @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      return ShrinkWrap.create(ForgeArchive.class)
+      return ShrinkWrap.create(AddonArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),

@@ -9,7 +9,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.text.Highlighter;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -23,9 +23,9 @@ public class HighlighterTestCase {
    @AddonDeployments({
             @AddonDeployment(name = "org.jboss.forge.addon:text"),
             @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi") })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),

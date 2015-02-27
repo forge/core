@@ -27,7 +27,7 @@ import org.jboss.forge.addon.scaffold.mock.MockProvider;
 import org.jboss.forge.addon.scaffold.util.ScaffoldUtil;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Test;
@@ -50,10 +50,10 @@ public class ForgePropertyStyleTest
             @AddonDeployment(name = "org.jboss.forge.addon:parser-java"),
             @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi")
    })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap
+               .create(AddonArchive.class)
                .addPackage(MockProvider.class.getPackage())
                .addPackage(ForgePropertyStyleTest.class.getPackage())
                .addClass(ProjectHelper.class)

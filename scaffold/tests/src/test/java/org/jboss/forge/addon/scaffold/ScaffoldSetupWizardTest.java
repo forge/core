@@ -15,7 +15,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.services.Imported;
@@ -39,10 +39,10 @@ public class ScaffoldSetupWizardTest
             @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi"),
             @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness")
    })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap
+               .create(AddonArchive.class)
                .addPackage(MockProvider.class.getPackage())
                .addClass(ProjectHelper.class)
                .addBeansXML()

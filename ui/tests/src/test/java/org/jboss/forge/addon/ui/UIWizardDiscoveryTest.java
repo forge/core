@@ -9,7 +9,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.spi.ExportedInstance;
 import org.jboss.forge.furnace.spi.ServiceRegistry;
@@ -27,10 +27,10 @@ public class UIWizardDiscoveryTest
    @Deployment
    @AddonDeployments({ @AddonDeployment(name = "org.jboss.forge.addon:ui"),
             @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi") })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
-      ForgeArchive archive = ShrinkWrap
-               .create(ForgeArchive.class)
+      AddonArchive archive = ShrinkWrap
+               .create(AddonArchive.class)
                .addClasses(MyFirstWizard.class)
                .addBeansXML()
                .addAsAddonDependencies(

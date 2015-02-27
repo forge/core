@@ -27,7 +27,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.JavaType;
@@ -49,10 +49,10 @@ public class NewEmbeddableCommandTest
             @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
             @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
-   public static ForgeArchive getDeployment()
+   public static AddonArchive getDeployment()
    {
       return ShrinkWrap
-               .create(ForgeArchive.class)
+               .create(AddonArchive.class)
                .addBeansXML()
                .addClass(ProjectHelper.class)
                .addAsAddonDependencies(
