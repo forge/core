@@ -7,9 +7,8 @@
 
 package org.jboss.forge.addon.javaee.validation.ui;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 import javax.inject.Inject;
 
@@ -20,6 +19,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
@@ -30,6 +30,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.model.JavaInterface;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -66,23 +67,55 @@ public class ValidationNewGroupCommandTest
    }
 
    @Inject
-   private UITestHarness testHarness;
+   private UITestHarness uiTestHarness;
 
    @Inject
    private ProjectHelper projectHelper;
 
+   private Project project;
+
+   @Before
+   public void setUp()
+   {
+      project = projectHelper.createJavaLibraryProject();
+      projectHelper.installValidation(project);
+   }
+
+   @Test
+   public void checkCommandMetadata() throws Exception
+   {
+      try (CommandController controller = uiTestHarness.createCommandController(ValidationNewGroupCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         // Checks the command metadata
+         assertTrue(controller.getCommand() instanceof ValidationNewGroupCommand);
+         UICommandMetadata metadata = controller.getMetadata();
+         assertEquals("Constraint: New Group", metadata.getName());
+         assertEquals("Java", metadata.getCategory().getName());
+         assertEquals("Bean Validation", metadata.getCategory().getSubCategory().getName());
+         assertEquals(3, controller.getInputs().size());
+         assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
+         assertTrue(controller.hasInput("named"));
+         assertTrue(controller.hasInput("targetPackage"));
+         assertTrue(controller.hasInput("overwrite"));
+         assertTrue(controller.getValueFor("targetPackage").toString().endsWith(".constraints"));
+      }
+   }
+
    @Test
    public void testCreateNewGroup() throws Exception
    {
-      Project project = projectHelper.createJavaLibraryProject();
-      CommandController controller = testHarness.createCommandController(ValidationNewGroupCommand.class,
-               project.getRoot());
-      controller.initialize();
-      controller.setValueFor("named", "MyBeanValidationGroup");
-      Assert.assertTrue(controller.isValid());
-      Assert.assertTrue(controller.canExecute());
-      Result result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      try (CommandController controller = uiTestHarness.createCommandController(ValidationNewGroupCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyBeanValidationGroup");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       String path = facet.getBasePackage() + ".constraints";
@@ -94,16 +127,17 @@ public class ValidationNewGroupCommandTest
    @Test
    public void testCreateNewGroupWithTargetPackage() throws Exception
    {
-      Project project = projectHelper.createJavaLibraryProject();
-      CommandController controller = testHarness.createCommandController(ValidationNewGroupCommand.class,
-               project.getRoot());
-      controller.initialize();
-      controller.setValueFor("named", "MyBeanValidationGroup");
-      controller.setValueFor("targetPackage", "org.jboss.forge.test");
-      Assert.assertTrue(controller.isValid());
-      Assert.assertTrue(controller.canExecute());
-      Result result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      try (CommandController controller = uiTestHarness.createCommandController(ValidationNewGroupCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyBeanValidationGroup");
+         controller.setValueFor("targetPackage", "org.jboss.forge.test");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyBeanValidationGroup");

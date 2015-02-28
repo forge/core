@@ -7,9 +7,8 @@
 
 package org.jboss.forge.addon.javaee.validation.ui;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 import javax.inject.Inject;
 import javax.validation.Constraint;
@@ -21,7 +20,9 @@ import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
@@ -32,6 +33,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.model.JavaAnnotation;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -46,6 +48,7 @@ public class ValidationNewAnnotationCommandTest
    @AddonDeployments({
             @AddonDeployment(name = "org.jboss.forge.addon:ui"),
             @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness"),
             @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
             @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
@@ -60,29 +63,66 @@ public class ValidationNewAnnotationCommandTest
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
                );
    }
 
    @Inject
-   private UITestHarness testHarness;
+   private UITestHarness uiTestHarness;
+
+   @Inject
+   private ShellTest shellTest;
 
    @Inject
    private ProjectHelper projectHelper;
 
+   private Project project;
+
+   @Before
+   public void setUp()
+   {
+      project = projectHelper.createJavaLibraryProject();
+      projectHelper.installValidation(project);
+   }
+
+   @Test
+   public void checkCommandMetadata() throws Exception
+   {
+      try (CommandController controller = uiTestHarness.createCommandController(ValidationNewAnnotationCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         // Checks the command metadata
+         assertTrue(controller.getCommand() instanceof ValidationNewAnnotationCommand);
+         UICommandMetadata metadata = controller.getMetadata();
+         assertEquals("Constraint: New Annotation", metadata.getName());
+         assertEquals("Java", metadata.getCategory().getName());
+         assertEquals("Bean Validation", metadata.getCategory().getSubCategory().getName());
+         assertEquals(3, controller.getInputs().size());
+         assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
+         assertTrue(controller.hasInput("named"));
+         assertTrue(controller.hasInput("targetPackage"));
+         assertTrue(controller.hasInput("overwrite"));
+         assertTrue(controller.getValueFor("targetPackage").toString().endsWith(".constraints"));
+      }
+   }
+
    @Test
    public void testCreateNewAnnotation() throws Exception
    {
-      Project project = projectHelper.createJavaLibraryProject();
-      CommandController controller = testHarness.createCommandController(ValidationNewAnnotationCommand.class, project.getRoot());
-      controller.initialize();
-      controller.setValueFor("named", "MyConstraint");
-      controller.setValueFor("targetPackage", "org.jboss.forge.test");
-      Assert.assertTrue(controller.isValid());
-      Assert.assertTrue(controller.canExecute());
-      Result result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      try (CommandController controller = uiTestHarness.createCommandController(ValidationNewAnnotationCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyConstraint");
+         controller.setValueFor("targetPackage", "org.jboss.forge.test");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyConstraint");
@@ -92,5 +132,4 @@ public class ValidationNewAnnotationCommandTest
       Assert.assertTrue(ann.hasAnnotation(Constraint.class));
       Assert.assertTrue(ann.hasAnnotation(ReportAsSingleViolation.class));
    }
-
 }
