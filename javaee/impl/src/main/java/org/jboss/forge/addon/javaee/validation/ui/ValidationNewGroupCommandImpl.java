@@ -6,10 +6,7 @@
  */
 package org.jboss.forge.addon.javaee.validation.ui;
 
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
 
@@ -17,7 +14,7 @@ import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
  *
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
-public class ValidationNewGroupCommandImpl extends AbstractJavaSourceCommand<JavaInterfaceSource> implements
+public class ValidationNewGroupCommandImpl extends AbstractValidationCommand<JavaInterfaceSource> implements
          ValidationNewGroupCommand
 {
 
@@ -26,31 +23,18 @@ public class ValidationNewGroupCommandImpl extends AbstractJavaSourceCommand<Jav
    {
       return Metadata.from(super.getMetadata(context), getClass())
                .name("Constraint: New Group")
-               .description("Create a Bean Validation group")
-               .category(Categories.create(super.getMetadata(context).getCategory(), "Bean Validation"));
+               .description("Create a Bean Validation group");
    }
 
    @Override
    protected String getType()
    {
-      return "Bean Validation Group";
+      return "Constraint Group";
    }
 
    @Override
    protected Class<JavaInterfaceSource> getSourceType()
    {
       return JavaInterfaceSource.class;
-   }
-
-   @Override
-   protected boolean isProjectRequired()
-   {
-      return true;
-   }
-
-   @Override
-   protected String calculateDefaultPackage(UIContext context)
-   {
-      return getSelectedProject(context).getFacet(JavaSourceFacet.class).getBasePackage() + ".constraints";
    }
 }

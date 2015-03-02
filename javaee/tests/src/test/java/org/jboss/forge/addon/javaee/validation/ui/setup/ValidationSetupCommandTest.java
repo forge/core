@@ -1,21 +1,27 @@
 package org.jboss.forge.addon.javaee.validation.ui.setup;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.addon.javaee.validation.ValidationFacet;
 import org.jboss.forge.addon.javaee.validation.ui.ValidationProviderSetupCommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.command.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDeployment;
@@ -36,6 +42,7 @@ public class ValidationSetupCommandTest
    @AddonDeployments({
             @AddonDeployment(name = "org.jboss.forge.addon:ui"),
             @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness"),
             @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
             @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
@@ -47,10 +54,11 @@ public class ValidationSetupCommandTest
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:maven")
                );
    }
 
@@ -59,6 +67,9 @@ public class ValidationSetupCommandTest
 
    @Inject
    private UITestHarness uiTestHarness;
+
+   @Inject
+   private ShellTest shellTest;
 
    private Project project;
 
@@ -89,6 +100,16 @@ public class ValidationSetupCommandTest
          assertTrue(controller.hasInput("traversableResolver"));
          assertTrue(controller.hasInput("constraintValidatorFactory"));
       }
+   }
+
+   @Test
+   public void checkCommandShell() throws Exception
+   {
+      shellTest.getShell().setCurrentResource(project.getRoot());
+      Result result = shellTest.execute(("constraint-setup"), 10, TimeUnit.SECONDS);
+
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
+      Assert.assertTrue(project.hasFacet(ValidationFacet.class));
    }
 
    @Test
