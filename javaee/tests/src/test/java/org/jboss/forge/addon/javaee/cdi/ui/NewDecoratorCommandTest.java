@@ -7,9 +7,8 @@
 
 package org.jboss.forge.addon.javaee.cdi.ui;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 import java.lang.annotation.Inherited;
 
@@ -23,6 +22,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
@@ -33,6 +33,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -67,26 +68,58 @@ public class NewDecoratorCommandTest
    }
 
    @Inject
-   private UITestHarness testHarness;
+   private UITestHarness uiTestHarness;
 
    @Inject
    private ProjectHelper projectHelper;
 
-   @Test
-   public void testCreateNewDecorat() throws Exception
+   private Project project;
+
+   @Before
+   public void setUp()
    {
-      Project project = projectHelper.createJavaLibraryProject();
+      project = projectHelper.createJavaLibraryProject();
       projectHelper.installCDI_1_0(project);
-      CommandController controller = testHarness.createCommandController(NewDecoratorCommand.class,
-               project.getRoot());
-      controller.initialize();
-      controller.setValueFor("named", "MyDecorator");
-      controller.setValueFor("targetPackage", "org.jboss.forge.test");
-      controller.setValueFor("delegate", "java.io.Serializable");
-      Assert.assertTrue(controller.isValid());
-      Assert.assertTrue(controller.canExecute());
-      Result result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+   }
+
+   @Test
+   public void checkCommandMetadata() throws Exception
+   {
+      try (CommandController controller = uiTestHarness.createCommandController(NewDecoratorCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         // Checks the command metadata
+         assertTrue(controller.getCommand() instanceof NewDecoratorCommand);
+         UICommandMetadata metadata = controller.getMetadata();
+         assertEquals("CDI: New Decorator", metadata.getName());
+         assertEquals("Java", metadata.getCategory().getName());
+         assertEquals("CDI", metadata.getCategory().getSubCategory().getName());
+         assertEquals(4, controller.getInputs().size());
+         assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
+         assertTrue(controller.hasInput("named"));
+         assertTrue(controller.hasInput("targetPackage"));
+         assertTrue(controller.hasInput("overwrite"));
+         assertTrue(controller.hasInput("delegate"));
+         assertTrue(controller.getValueFor("targetPackage").toString().endsWith("unknown"));
+      }
+   }
+
+   @Test
+   public void testCreateNewDecorator() throws Exception
+   {
+      try (CommandController controller = uiTestHarness.createCommandController(NewDecoratorCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyDecorator");
+         controller.setValueFor("targetPackage", "org.jboss.forge.test");
+         controller.setValueFor("delegate", "java.io.Serializable");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyDecorator");
