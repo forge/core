@@ -7,12 +7,7 @@
 
 package org.jboss.forge.addon.javaee.validation.ui;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.CONSTRUCTOR;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -23,12 +18,9 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.ReportAsSingleViolation;
 
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
 
@@ -37,7 +29,7 @@ import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
  *
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
-public class ValidationNewAnnotationCommandImpl extends AbstractJavaSourceCommand<JavaAnnotationSource> implements
+public class ValidationNewAnnotationCommandImpl extends AbstractValidationCommand<JavaAnnotationSource> implements
          ValidationNewAnnotationCommand
 {
    @Override
@@ -45,32 +37,19 @@ public class ValidationNewAnnotationCommandImpl extends AbstractJavaSourceComman
    {
       return Metadata.from(super.getMetadata(context), getClass())
                .name("Constraint: New Annotation")
-               .description("Create a Bean Validation constraint annotation")
-               .category(Categories.create(super.getMetadata(context).getCategory(), "Bean Validation"));
+               .description("Create a Bean Validation constraint annotation");
    }
 
    @Override
    protected String getType()
    {
-      return "Bean Validation Constraint Annotations";
-   }
-
-   @Override
-   protected boolean isProjectRequired()
-   {
-      return true;
+      return "Constraint Annotation";
    }
 
    @Override
    protected Class<JavaAnnotationSource> getSourceType()
    {
       return JavaAnnotationSource.class;
-   }
-
-   @Override
-   protected String calculateDefaultPackage(UIContext context)
-   {
-      return getSelectedProject(context).getFacet(JavaSourceFacet.class).getBasePackage() + ".constraints";
    }
 
    @Override

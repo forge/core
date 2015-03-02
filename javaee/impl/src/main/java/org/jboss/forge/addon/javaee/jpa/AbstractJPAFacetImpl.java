@@ -36,8 +36,6 @@ public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonD
          implements JPAFacet<DESCRIPTOR>
 {
 
-   public static final String DEFAULT_ENTITY_PACKAGE = "model";
-
    public AbstractJPAFacetImpl(DependencyInstaller installer)
    {
       super(installer);
