@@ -8,16 +8,21 @@
 package org.jboss.forge.addon.javaee.validation.ui;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_CONSTRAINT_PACKAGE;
 import static org.junit.Assert.*;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
+import org.jboss.forge.addon.javaee.validation.ValidationFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -35,18 +40,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Creates a new Bean Validation group
+ * Tests the creation of a new Bean Validation group
  *
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
 @RunWith(Arquillian.class)
 public class ValidationNewGroupCommandTest
 {
-
    @Deployment
    @AddonDeployments({
             @AddonDeployment(name = "org.jboss.forge.addon:ui"),
             @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness"),
             @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
             @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
@@ -54,20 +59,24 @@ public class ValidationNewGroupCommandTest
    {
       return ShrinkWrap
                .create(AddonArchive.class)
-               .addBeansXML()
                .addClass(ProjectHelper.class)
+               .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:maven")
                );
    }
 
    @Inject
    private UITestHarness uiTestHarness;
+
+   @Inject
+   private ShellTest shellTest;
 
    @Inject
    private ProjectHelper projectHelper;
@@ -90,17 +99,28 @@ public class ValidationNewGroupCommandTest
          controller.initialize();
          // Checks the command metadata
          assertTrue(controller.getCommand() instanceof ValidationNewGroupCommand);
+         assertTrue(controller.getCommand() instanceof AbstractValidationCommand);
          UICommandMetadata metadata = controller.getMetadata();
          assertEquals("Constraint: New Group", metadata.getName());
-         assertEquals("Java", metadata.getCategory().getName());
+         assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("Bean Validation", metadata.getCategory().getSubCategory().getName());
          assertEquals(3, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
-         assertTrue(controller.getValueFor("targetPackage").toString().endsWith(".constraints"));
+         assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_CONSTRAINT_PACKAGE));
       }
+   }
+
+   @Test
+   public void checkCommandShell() throws Exception
+   {
+      shellTest.getShell().setCurrentResource(project.getRoot());
+      Result result = shellTest.execute(("constraint-new-group --named Dummy"), 10, TimeUnit.SECONDS);
+
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
+      Assert.assertTrue(project.hasFacet(ValidationFacet.class));
    }
 
    @Test
@@ -118,7 +138,7 @@ public class ValidationNewGroupCommandTest
       }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      String path = facet.getBasePackage() + ".constraints";
+      String path = facet.getBasePackage() + "." + DEFAULT_CONSTRAINT_PACKAGE;
       JavaResource javaResource = facet.getJavaResource(path + ".MyBeanValidationGroup");
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaInterface.class)));

@@ -8,7 +8,10 @@
 package org.jboss.forge.addon.javaee.validation.ui;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_CONSTRAINT_PACKAGE;
 import static org.junit.Assert.*;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.validation.Constraint;
@@ -17,6 +20,7 @@ import javax.validation.ReportAsSingleViolation;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
+import org.jboss.forge.addon.javaee.validation.ValidationFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -38,6 +42,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
+ * Tests the creation of a new Bean Validation constraint annotation
  *
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
@@ -61,11 +66,11 @@ public class ValidationNewAnnotationCommandTest
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:maven")
                );
    }
 
@@ -96,17 +101,28 @@ public class ValidationNewAnnotationCommandTest
          controller.initialize();
          // Checks the command metadata
          assertTrue(controller.getCommand() instanceof ValidationNewAnnotationCommand);
+         assertTrue(controller.getCommand() instanceof AbstractValidationCommand);
          UICommandMetadata metadata = controller.getMetadata();
          assertEquals("Constraint: New Annotation", metadata.getName());
-         assertEquals("Java", metadata.getCategory().getName());
+         assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("Bean Validation", metadata.getCategory().getSubCategory().getName());
          assertEquals(3, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
-         assertTrue(controller.getValueFor("targetPackage").toString().endsWith(".constraints"));
+         assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_CONSTRAINT_PACKAGE));
       }
+   }
+
+   @Test
+   public void checkCommandShell() throws Exception
+   {
+      shellTest.getShell().setCurrentResource(project.getRoot());
+      Result result = shellTest.execute(("constraint-new-annotation --named Dummy"), 10, TimeUnit.SECONDS);
+
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
+      Assert.assertTrue(project.hasFacet(ValidationFacet.class));
    }
 
    @Test
