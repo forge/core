@@ -125,7 +125,7 @@ public class NewBeanCommandTest
    public void checkCommandShell() throws Exception
    {
       shellTest.getShell().setCurrentResource(project.getRoot());
-      Result result = shellTest.execute(("cdi-new-bean --named Dummy"), 10, TimeUnit.SECONDS);
+      Result result = shellTest.execute("cdi-new-bean --named Dummy", 10, TimeUnit.SECONDS);
 
       Assert.assertThat(result, not(instanceOf(Failed.class)));
       Assert.assertTrue(project.hasFacet(CDIFacet.class));

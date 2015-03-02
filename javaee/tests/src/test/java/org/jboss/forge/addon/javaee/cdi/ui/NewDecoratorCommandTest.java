@@ -11,6 +11,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import java.lang.annotation.Inherited;
+import java.util.concurrent.TimeUnit;
 
 import javax.decorator.Decorator;
 import javax.inject.Inject;
@@ -18,9 +19,11 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
+import org.jboss.forge.addon.javaee.cdi.CDIFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -48,6 +51,7 @@ public class NewDecoratorCommandTest
    @AddonDeployments({
             @AddonDeployment(name = "org.jboss.forge.addon:ui"),
             @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness"),
             @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
             @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
@@ -63,12 +67,16 @@ public class NewDecoratorCommandTest
                         AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness")
                );
    }
 
    @Inject
    private UITestHarness uiTestHarness;
+
+   @Inject
+   private ShellTest shellTest;
 
    @Inject
    private ProjectHelper projectHelper;
@@ -103,6 +111,18 @@ public class NewDecoratorCommandTest
          assertTrue(controller.hasInput("delegate"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith("unknown"));
       }
+   }
+
+   @Test
+   public void checkCommandShell() throws Exception
+   {
+      shellTest.getShell().setCurrentResource(project.getRoot());
+      shellTest.execute("cdi-new-bean --named DummyDelegate --targetPackage org.test", 10, TimeUnit.SECONDS);
+      Result result = shellTest.execute("cdi-new-decorator --named Dummy --delegate org.test.DummyDelegate", 10,
+               TimeUnit.SECONDS);
+
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
+      Assert.assertTrue(project.hasFacet(CDIFacet.class));
    }
 
    @Test
