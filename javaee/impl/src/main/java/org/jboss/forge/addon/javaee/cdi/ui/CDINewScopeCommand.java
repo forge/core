@@ -7,9 +7,7 @@
 
 package org.jboss.forge.addon.javaee.cdi.ui;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
@@ -20,19 +18,13 @@ import javax.enterprise.context.NormalScope;
 import javax.inject.Inject;
 import javax.inject.Scope;
 
-import org.jboss.forge.addon.javaee.cdi.CDIFacet;
-import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
-import org.jboss.forge.addon.ui.result.NavigationResult;
-import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
-import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
@@ -43,12 +35,12 @@ import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewScopeCommand extends AbstractJavaSourceCommand<JavaAnnotationSource> implements
-      PrerequisiteCommandsProvider
+public class CDINewScopeCommand extends AbstractCDICommand<JavaAnnotationSource>
 {
    @Inject
    @WithAttributes(label = "Pseudo Scope")
    private UIInput<Boolean> pseudo;
+
    @Inject
    @WithAttributes(label = "Passivating")
    private UIInput<Boolean> passivating;
@@ -58,8 +50,19 @@ public class NewScopeCommand extends AbstractJavaSourceCommand<JavaAnnotationSou
    {
       return Metadata.from(super.getMetadata(context), getClass())
                .name("CDI: New Scope")
-               .description("Creates a new CDI Scope annotation")
-               .category(Categories.create(super.getMetadata(context).getCategory(), "CDI"));
+               .description("Creates a new CDI Scope annotation");
+   }
+
+   @Override
+   protected String getType()
+   {
+      return "CDI Scope";
+   }
+
+   @Override
+   protected Class<JavaAnnotationSource> getSourceType()
+   {
+      return JavaAnnotationSource.class;
    }
 
    @Override
@@ -103,38 +106,5 @@ public class NewScopeCommand extends AbstractJavaSourceCommand<JavaAnnotationSou
       scope.addAnnotation(Target.class).setEnumValue(TYPE, METHOD, FIELD);
       scope.addAnnotation(Documented.class);
       return scope;
-   }
-
-   @Override
-   protected boolean isProjectRequired()
-   {
-      return true;
-   }
-
-   @Override
-   protected String getType()
-   {
-      return "CDI Scope";
-   }
-
-   @Override
-   protected Class<JavaAnnotationSource> getSourceType()
-   {
-      return JavaAnnotationSource.class;
-   }
-
-   @Override
-   public NavigationResult getPrerequisiteCommands(UIContext context)
-   {
-      NavigationResultBuilder builder = NavigationResultBuilder.create();
-      Project project = getSelectedProject(context);
-      if (project != null)
-      {
-         if (!project.hasFacet(CDIFacet.class))
-         {
-            builder.add(CDISetupCommand.class);
-         }
-      }
-      return builder.build();
    }
 }
