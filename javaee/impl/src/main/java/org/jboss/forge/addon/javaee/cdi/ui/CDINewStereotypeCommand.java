@@ -7,16 +7,10 @@
 
 package org.jboss.forge.addon.javaee.cdi.ui;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -25,19 +19,13 @@ import javax.enterprise.inject.Stereotype;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.forge.addon.javaee.cdi.CDIFacet;
-import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
-import org.jboss.forge.addon.ui.result.NavigationResult;
-import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
-import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
@@ -48,8 +36,7 @@ import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewStereotypeCommand extends AbstractJavaSourceCommand<JavaAnnotationSource> implements
-      PrerequisiteCommandsProvider
+public class CDINewStereotypeCommand extends AbstractCDICommand<JavaAnnotationSource>
 {
    @Inject
    @WithAttributes(label = "Inherited")
@@ -72,8 +59,19 @@ public class NewStereotypeCommand extends AbstractJavaSourceCommand<JavaAnnotati
    {
       return Metadata.from(super.getMetadata(context), getClass())
                .name("CDI: New Stereotype")
-               .description("Creates a new CDI Stereotype annotation")
-               .category(Categories.create(super.getMetadata(context).getCategory(), "CDI"));
+               .description("Creates a new CDI Stereotype annotation");
+   }
+
+   @Override
+   protected String getType()
+   {
+      return "CDI Stereotype";
+   }
+
+   @Override
+   protected Class<JavaAnnotationSource> getSourceType()
+   {
+      return JavaAnnotationSource.class;
    }
 
    @Override
@@ -107,38 +105,5 @@ public class NewStereotypeCommand extends AbstractJavaSourceCommand<JavaAnnotati
       stereotype.addAnnotation(Target.class).setEnumValue(types.toArray(new ElementType[types.size()]));
       stereotype.addAnnotation(Documented.class);
       return stereotype;
-   }
-
-   @Override
-   protected boolean isProjectRequired()
-   {
-      return true;
-   }
-
-   @Override
-   protected String getType()
-   {
-      return "CDI Stereotype";
-   }
-
-   @Override
-   protected Class<JavaAnnotationSource> getSourceType()
-   {
-      return JavaAnnotationSource.class;
-   }
-
-   @Override
-   public NavigationResult getPrerequisiteCommands(UIContext context)
-   {
-      NavigationResultBuilder builder = NavigationResultBuilder.create();
-      Project project = getSelectedProject(context);
-      if (project != null)
-      {
-         if (!project.hasFacet(CDIFacet.class))
-         {
-            builder.add(CDISetupCommand.class);
-         }
-      }
-      return builder.build();
    }
 }

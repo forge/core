@@ -34,8 +34,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  *
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
-public class NewDecoratorCommand extends AbstractJavaSourceCommand<JavaClassSource> implements
-         PrerequisiteCommandsProvider
+public class CDINewDecoratorCommand extends AbstractCDICommand<JavaClassSource>
 {
    @Inject
    @WithAttributes(label = "Interface to delegate", required = true)
@@ -46,9 +45,20 @@ public class NewDecoratorCommand extends AbstractJavaSourceCommand<JavaClassSour
    {
       return Metadata.from(super.getMetadata(context), getClass())
                .name("CDI: New Decorator")
-               .description("Creates a new CDI Decorator")
-               .category(Categories.create(super.getMetadata(context).getCategory(), "CDI"));
+               .description("Creates a new CDI Decorator");
    }
+
+    @Override
+    protected String getType()
+    {
+        return "CDI Decorator";
+    }
+
+    @Override
+    protected Class<JavaClassSource> getSourceType()
+    {
+        return JavaClassSource.class;
+    }
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
@@ -68,38 +78,5 @@ public class NewDecoratorCommand extends AbstractJavaSourceCommand<JavaClassSour
       field.addAnnotation(Delegate.class);
 
       return decorator;
-   }
-
-   @Override
-   protected boolean isProjectRequired()
-   {
-      return true;
-   }
-
-   @Override
-   protected String getType()
-   {
-      return "CDI Decorator";
-   }
-
-   @Override
-   protected Class<JavaClassSource> getSourceType()
-   {
-      return JavaClassSource.class;
-   }
-
-   @Override
-   public NavigationResult getPrerequisiteCommands(UIContext context)
-   {
-      NavigationResultBuilder builder = NavigationResultBuilder.create();
-      Project project = getSelectedProject(context);
-      if (project != null)
-      {
-         if (!project.hasFacet(CDIFacet.class))
-         {
-            builder.add(CDISetupCommand.class);
-         }
-      }
-      return builder.build();
    }
 }

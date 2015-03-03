@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.javaee.cdi.ui;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_CDI_PACKAGE;
 import static org.junit.Assert.*;
 
 import java.lang.annotation.Inherited;
@@ -45,7 +46,7 @@ import org.junit.runner.RunWith;
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
 @RunWith(Arquillian.class)
-public class NewInterceptorBindingCommandTest
+public class CDINewInterceptorBindingCommandTest
 {
    @Deployment
    @AddonDeployments({
@@ -93,22 +94,22 @@ public class NewInterceptorBindingCommandTest
    @Test
    public void checkCommandMetadata() throws Exception
    {
-      try (CommandController controller = uiTestHarness.createCommandController(NewInterceptorBindingCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewInterceptorBindingCommand.class,
                project.getRoot()))
       {
          controller.initialize();
          // Checks the command metadata
-         assertTrue(controller.getCommand() instanceof NewInterceptorBindingCommand);
+         assertTrue(controller.getCommand() instanceof CDINewInterceptorBindingCommand);
          UICommandMetadata metadata = controller.getMetadata();
          assertEquals("CDI: New Interceptor Binding", metadata.getName());
-         assertEquals("Java", metadata.getCategory().getName());
+         assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("CDI", metadata.getCategory().getSubCategory().getName());
          assertEquals(3, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
-         assertTrue(controller.getValueFor("targetPackage").toString().endsWith("unknown"));
+         assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_CDI_PACKAGE));
       }
    }
 
@@ -125,7 +126,7 @@ public class NewInterceptorBindingCommandTest
    @Test
    public void testCreateNewInterceptorBinding() throws Exception
    {
-      try (CommandController controller = uiTestHarness.createCommandController(NewInterceptorBindingCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewInterceptorBindingCommand.class,
                project.getRoot()))
       {
          controller.initialize();

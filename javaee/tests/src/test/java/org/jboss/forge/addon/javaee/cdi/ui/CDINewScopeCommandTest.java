@@ -8,17 +8,14 @@
 package org.jboss.forge.addon.javaee.cdi.ui;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_CDI_PACKAGE;
 import static org.junit.Assert.*;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import javax.enterprise.inject.Alternative;
-import javax.enterprise.inject.Stereotype;
+import javax.enterprise.context.NormalScope;
 import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.Scope;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -49,7 +46,7 @@ import org.junit.runner.RunWith;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-public class NewStereotypeCommandTest
+public class CDINewScopeCommandTest
 {
    @Deployment
    @AddonDeployments({
@@ -97,26 +94,24 @@ public class NewStereotypeCommandTest
    @Test
    public void checkCommandMetadata() throws Exception
    {
-      try (CommandController controller = uiTestHarness.createCommandController(NewStereotypeCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewScopeCommand.class,
                project.getRoot()))
       {
          controller.initialize();
          // Checks the command metadata
-         assertTrue(controller.getCommand() instanceof NewStereotypeCommand);
+         assertTrue(controller.getCommand() instanceof CDINewScopeCommand);
          UICommandMetadata metadata = controller.getMetadata();
-         assertEquals("CDI: New Stereotype", metadata.getName());
-         assertEquals("Java", metadata.getCategory().getName());
+         assertEquals("CDI: New Scope", metadata.getName());
+         assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("CDI", metadata.getCategory().getSubCategory().getName());
-         assertEquals(7, controller.getInputs().size());
+         assertEquals(5, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
-         assertTrue(controller.hasInput("alternative"));
-         assertTrue(controller.hasInput("withNamed"));
-         assertTrue(controller.hasInput("inherited"));
-         assertTrue(controller.hasInput("targetTypes"));
-         assertTrue(controller.getValueFor("targetPackage").toString().endsWith("unknown"));
+         assertTrue(controller.hasInput("pseudo"));
+         assertTrue(controller.hasInput("passivating"));
+         assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_CDI_PACKAGE));
       }
    }
 
@@ -124,22 +119,21 @@ public class NewStereotypeCommandTest
    public void checkCommandShell() throws Exception
    {
       shellTest.getShell().setCurrentResource(project.getRoot());
-      Result result = shellTest.execute("cdi-new-stereotype --named Dummy", 10, TimeUnit.SECONDS);
+      Result result = shellTest.execute("cdi-new-scope --named Dummy", 10, TimeUnit.SECONDS);
 
       Assert.assertThat(result, not(instanceOf(Failed.class)));
       Assert.assertTrue(project.hasFacet(CDIFacet.class));
    }
 
    @Test
-   public void testCreateNewStereotype() throws Exception
+   public void testCreateNewScope() throws Exception
    {
-      try (CommandController controller = uiTestHarness.createCommandController(NewStereotypeCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewScopeCommand.class,
                project.getRoot()))
       {
          controller.initialize();
-         controller.setValueFor("named", "MyStereotype");
+         controller.setValueFor("named", "MyScope");
          controller.setValueFor("targetPackage", "org.jboss.forge.test");
-         controller.setValueFor("targetTypes", Arrays.asList(ElementType.TYPE));
          Assert.assertTrue(controller.isValid());
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
@@ -147,27 +141,24 @@ public class NewStereotypeCommandTest
       }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyStereotype");
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyScope");
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaAnnotation.class)));
       JavaAnnotation<?> ann = javaResource.getJavaType();
-      Assert.assertTrue(ann.hasAnnotation(Stereotype.class));
-      Assert.assertFalse(ann.hasAnnotation(Inherited.class));
-      Assert.assertFalse(ann.hasAnnotation(Named.class));
-      Assert.assertFalse(ann.hasAnnotation(Alternative.class));
+      Assert.assertTrue(ann.hasAnnotation(NormalScope.class));
+      Assert.assertFalse(ann.hasAnnotation(Scope.class));
    }
 
    @Test
-   public void testCreateNewInheritedStereotype() throws Exception
+   public void testCreateNewPassivatingScope() throws Exception
    {
-      try (CommandController controller = uiTestHarness.createCommandController(NewStereotypeCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewScopeCommand.class,
                project.getRoot()))
       {
          controller.initialize();
-         controller.setValueFor("named", "MyStereotype");
+         controller.setValueFor("named", "MyPassivatingScope");
          controller.setValueFor("targetPackage", "org.jboss.forge.test");
-         controller.setValueFor("inherited", Boolean.TRUE);
-         controller.setValueFor("targetTypes", Arrays.asList(ElementType.TYPE));
+         controller.setValueFor("passivating", Boolean.TRUE);
          Assert.assertTrue(controller.isValid());
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
@@ -175,27 +166,25 @@ public class NewStereotypeCommandTest
       }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyStereotype");
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyPassivatingScope");
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaAnnotation.class)));
       JavaAnnotation<?> ann = javaResource.getJavaType();
-      Assert.assertTrue(ann.hasAnnotation(Stereotype.class));
-      Assert.assertTrue(ann.hasAnnotation(Inherited.class));
-      Assert.assertFalse(ann.hasAnnotation(Named.class));
-      Assert.assertFalse(ann.hasAnnotation(Alternative.class));
+      Assert.assertTrue(ann.hasAnnotation(NormalScope.class));
+      Assert.assertFalse(ann.hasAnnotation(Scope.class));
+      Assert.assertEquals("true", ann.getAnnotation(NormalScope.class).getLiteralValue("passivating"));
    }
 
    @Test
-   public void testCreateNewNamedStereotype() throws Exception
+   public void testCreateNewPseudoScope() throws Exception
    {
-      try (CommandController controller = uiTestHarness.createCommandController(NewStereotypeCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewScopeCommand.class,
                project.getRoot()))
       {
          controller.initialize();
-         controller.setValueFor("named", "MyStereotype");
+         controller.setValueFor("named", "MyPseudoScope");
          controller.setValueFor("targetPackage", "org.jboss.forge.test");
-         controller.setValueFor("withNamed", Boolean.TRUE);
-         controller.setValueFor("targetTypes", Arrays.asList(ElementType.TYPE));
+         controller.setValueFor("pseudo", Boolean.TRUE);
          Assert.assertTrue(controller.isValid());
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
@@ -203,41 +192,11 @@ public class NewStereotypeCommandTest
       }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyStereotype");
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyPseudoScope");
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaAnnotation.class)));
       JavaAnnotation<?> ann = javaResource.getJavaType();
-      Assert.assertTrue(ann.hasAnnotation(Stereotype.class));
-      Assert.assertFalse(ann.hasAnnotation(Inherited.class));
-      Assert.assertTrue(ann.hasAnnotation(Named.class));
-      Assert.assertFalse(ann.hasAnnotation(Alternative.class));
-   }
-
-   @Test
-   public void testCreateNewAlternativeStereotype() throws Exception
-   {
-      try (CommandController controller = uiTestHarness.createCommandController(NewStereotypeCommand.class,
-               project.getRoot()))
-      {
-         controller.initialize();
-         controller.setValueFor("named", "MyStereotype");
-         controller.setValueFor("targetPackage", "org.jboss.forge.test");
-         controller.setValueFor("alternative", Boolean.TRUE);
-         controller.setValueFor("targetTypes", Arrays.asList(ElementType.TYPE));
-         Assert.assertTrue(controller.isValid());
-         Assert.assertTrue(controller.canExecute());
-         Result result = controller.execute();
-         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
-      }
-
-      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyStereotype");
-      Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaAnnotation.class)));
-      JavaAnnotation<?> ann = javaResource.getJavaType();
-      Assert.assertTrue(ann.hasAnnotation(Stereotype.class));
-      Assert.assertFalse(ann.hasAnnotation(Inherited.class));
-      Assert.assertFalse(ann.hasAnnotation(Named.class));
-      Assert.assertTrue(ann.hasAnnotation(Alternative.class));
+      Assert.assertTrue(ann.hasAnnotation(Scope.class));
+      Assert.assertFalse(ann.hasAnnotation(NormalScope.class));
    }
 }

@@ -8,13 +8,16 @@
 package org.jboss.forge.addon.javaee.cdi.ui;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_CDI_PACKAGE;
 import static org.junit.Assert.*;
 
 import java.lang.annotation.Inherited;
 import java.util.concurrent.TimeUnit;
 
-import javax.decorator.Decorator;
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.interceptor.AroundInvoke;
+import javax.interceptor.Interceptor;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -45,7 +48,7 @@ import org.junit.runner.RunWith;
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
 @RunWith(Arquillian.class)
-public class NewDecoratorCommandTest
+public class CDINewInterceptorCommandTest
 {
    @Deployment
    @AddonDeployments({
@@ -93,23 +96,23 @@ public class NewDecoratorCommandTest
    @Test
    public void checkCommandMetadata() throws Exception
    {
-      try (CommandController controller = uiTestHarness.createCommandController(NewDecoratorCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewInterceptorCommand.class,
                project.getRoot()))
       {
          controller.initialize();
          // Checks the command metadata
-         assertTrue(controller.getCommand() instanceof NewDecoratorCommand);
+         assertTrue(controller.getCommand() instanceof CDINewInterceptorCommand);
          UICommandMetadata metadata = controller.getMetadata();
-         assertEquals("CDI: New Decorator", metadata.getName());
-         assertEquals("Java", metadata.getCategory().getName());
+         assertEquals("CDI: New Interceptor", metadata.getName());
+         assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("CDI", metadata.getCategory().getSubCategory().getName());
          assertEquals(4, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
-         assertTrue(controller.hasInput("delegate"));
-         assertTrue(controller.getValueFor("targetPackage").toString().endsWith("unknown"));
+         assertTrue(controller.hasInput("interceptorBinding"));
+         assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_CDI_PACKAGE));
       }
    }
 
@@ -117,8 +120,10 @@ public class NewDecoratorCommandTest
    public void checkCommandShell() throws Exception
    {
       shellTest.getShell().setCurrentResource(project.getRoot());
-      shellTest.execute("cdi-new-bean --named DummyDelegate --targetPackage org.test", 10, TimeUnit.SECONDS);
-      Result result = shellTest.execute("cdi-new-decorator --named Dummy --delegate org.test.DummyDelegate", 10,
+      shellTest.execute("cdi-new-interceptor-binding --named DummyInterceptorBinding --targetPackage org.test", 10,
+               TimeUnit.SECONDS);
+      Result result = shellTest.execute(
+               "cdi-new-interceptor --named Dummy --interceptorBinding org.test.DummyInterceptorBinding", 10,
                TimeUnit.SECONDS);
 
       Assert.assertThat(result, not(instanceOf(Failed.class)));
@@ -126,15 +131,15 @@ public class NewDecoratorCommandTest
    }
 
    @Test
-   public void testCreateNewDecorator() throws Exception
+   public void testCreateNewInterceptor() throws Exception
    {
-      try (CommandController controller = uiTestHarness.createCommandController(NewDecoratorCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewInterceptorCommand.class,
                project.getRoot()))
       {
          controller.initialize();
-         controller.setValueFor("named", "MyDecorator");
+         controller.setValueFor("named", "MyInterceptor");
          controller.setValueFor("targetPackage", "org.jboss.forge.test");
-         controller.setValueFor("delegate", "java.io.Serializable");
+         controller.setValueFor("interceptorBinding", "javax.inject.Named");
          Assert.assertTrue(controller.isValid());
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
@@ -142,13 +147,13 @@ public class NewDecoratorCommandTest
       }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyDecorator");
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyInterceptor");
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
-      JavaClass<?> ann = javaResource.getJavaType();
-      Assert.assertTrue(ann.hasAnnotation(Decorator.class));
-      Assert.assertTrue(ann.isAbstract());
-      Assert.assertTrue(ann.hasField("delegate"));
-      Assert.assertFalse(ann.hasAnnotation(Inherited.class));
+      JavaClass<?> interceptor = javaResource.getJavaType();
+      Assert.assertTrue(interceptor.hasAnnotation(Named.class));
+      Assert.assertTrue(interceptor.hasAnnotation(Interceptor.class));
+      Assert.assertTrue(interceptor.getMethods().get(0).hasAnnotation(AroundInvoke.class));
+      Assert.assertFalse(interceptor.hasAnnotation(Inherited.class));
    }
 }

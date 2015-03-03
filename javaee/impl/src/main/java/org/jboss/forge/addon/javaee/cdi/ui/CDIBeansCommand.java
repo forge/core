@@ -29,7 +29,7 @@ import org.jboss.shrinkwrap.descriptor.api.beans11.BeansDescriptor;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class BeansCommand
+public class CDIBeansCommand
 {
 
    @Inject
