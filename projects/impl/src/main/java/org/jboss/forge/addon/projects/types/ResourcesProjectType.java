@@ -28,7 +28,7 @@ public class ResourcesProjectType extends AbstractProjectType
    @Override
    public String getType()
    {
-      return "Java Resources";
+      return "Java Resources (JAR)";
    }
 
    @Override

@@ -24,7 +24,7 @@ public class FurnaceAddonProjectType extends AbstractProjectType
    @Override
    public String getType()
    {
-      return "Forge Addon";
+      return "Forge Addon (JAR)";
    }
 
    @Override

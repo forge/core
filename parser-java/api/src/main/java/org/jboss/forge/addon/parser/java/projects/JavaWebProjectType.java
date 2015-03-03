@@ -31,7 +31,7 @@ public class JavaWebProjectType extends AbstractProjectType
    @Override
    public String getType()
    {
-      return "Java Web Application";
+      return "Java Web Application (WAR)";
    }
 
    @Override

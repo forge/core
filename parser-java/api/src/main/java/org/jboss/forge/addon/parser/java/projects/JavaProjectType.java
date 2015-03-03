@@ -30,7 +30,7 @@ public class JavaProjectType extends AbstractProjectType
    @Override
    public String getType()
    {
-      return "Java Library";
+      return "Java Library (JAR)";
    }
 
    @Override
