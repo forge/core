@@ -6,8 +6,13 @@
  */
 package org.jboss.forge.addon.parser.java.projects;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
+
 import javax.inject.Inject;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.ProjectType;
@@ -15,7 +20,6 @@ import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,31 +51,16 @@ public class JavaProjectTypeTest
    }
 
    @Inject
-   private Imported<ProjectType> types;
+   private Iterable<ProjectType> types;
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testJavaProjectTypeExists()
    {
-      boolean foundJar = false;
-      boolean foundWar = false;
-      boolean foundEar = false;
-      for (ProjectType type : types)
-      {
-         if ("Java Enterprise Archive".equals(type.getType()))
-         {
-            foundEar = true;
-         }
-         else if ("Java Library".equals(type.getType()))
-         {
-            foundJar = true;
-         }
-         else if ("Java Web Application".equals(type.getType()))
-         {
-            foundWar = true;
-         }
-      }
-      Assert.assertTrue(foundEar);
-      Assert.assertTrue(foundJar);
-      Assert.assertTrue(foundWar);
+      Assert.assertThat(
+               types,
+               CoreMatchers.<ProjectType> hasItems(instanceOf(JavaEnterpriseProjectType.class),
+                        instanceOf(JavaProjectType.class),
+                        instanceOf(JavaWebProjectType.class)));
    }
 }

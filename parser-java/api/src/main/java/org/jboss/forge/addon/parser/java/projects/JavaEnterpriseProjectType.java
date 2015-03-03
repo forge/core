@@ -29,7 +29,7 @@ public class JavaEnterpriseProjectType extends AbstractProjectType
    @Override
    public String getType()
    {
-      return "Java Enterprise Archive";
+      return "Java Enterprise Archive (EAR)";
    }
 
    @Override

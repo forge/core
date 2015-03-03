@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.javaee.cdi.ui;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_CDI_PACKAGE;
 import static org.junit.Assert.*;
 
 import java.lang.annotation.Inherited;
@@ -45,7 +46,7 @@ import org.junit.runner.RunWith;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-public class NewQualifierCommandTest
+public class CDINewQualifierCommandTest
 {
    @Deployment
    @AddonDeployments({
@@ -93,15 +94,15 @@ public class NewQualifierCommandTest
    @Test
    public void checkCommandMetadata() throws Exception
    {
-      try (CommandController controller = uiTestHarness.createCommandController(NewQualifierCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewQualifierCommand.class,
                project.getRoot()))
       {
          controller.initialize();
          // Checks the command metadata
-         assertTrue(controller.getCommand() instanceof NewQualifierCommand);
+         assertTrue(controller.getCommand() instanceof CDINewQualifierCommand);
          UICommandMetadata metadata = controller.getMetadata();
          assertEquals("CDI: New Qualifier", metadata.getName());
-         assertEquals("Java", metadata.getCategory().getName());
+         assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("CDI", metadata.getCategory().getSubCategory().getName());
          assertEquals(4, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
@@ -109,7 +110,7 @@ public class NewQualifierCommandTest
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
          assertTrue(controller.hasInput("inherited"));
-         assertTrue(controller.getValueFor("targetPackage").toString().endsWith("unknown"));
+         assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_CDI_PACKAGE));
       }
    }
 
@@ -126,7 +127,7 @@ public class NewQualifierCommandTest
    @Test
    public void testCreateNewQualifier() throws Exception
    {
-      try (CommandController controller = uiTestHarness.createCommandController(NewQualifierCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewQualifierCommand.class,
                project.getRoot()))
       {
          controller.initialize();
@@ -150,7 +151,7 @@ public class NewQualifierCommandTest
    @Test
    public void testCreateNewQualifierInherited() throws Exception
    {
-      try (CommandController controller = uiTestHarness.createCommandController(NewQualifierCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewQualifierCommand.class,
                project.getRoot()))
       {
          controller.initialize();

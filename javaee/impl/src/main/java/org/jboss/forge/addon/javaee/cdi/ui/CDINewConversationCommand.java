@@ -37,7 +37,7 @@ import org.jboss.forge.roaster.model.source.MethodSource;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class NewConversationCommand extends AbstractUICommand
+public class CDINewConversationCommand extends AbstractUICommand
 {
    @Inject
    @WithAttributes(label = "Named", defaultValue = "")
