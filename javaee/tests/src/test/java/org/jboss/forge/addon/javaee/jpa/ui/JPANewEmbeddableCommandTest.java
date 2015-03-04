@@ -1,12 +1,14 @@
-package org.jboss.forge.addon.javaee.jpa;
+package org.jboss.forge.addon.javaee.jpa.ui;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_ENTITY_PACKAGE;
 import static org.junit.Assert.*;
 
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.persistence.Embeddable;
@@ -14,12 +16,13 @@ import javax.persistence.Embeddable;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
-import org.jboss.forge.addon.javaee.jpa.ui.NewEmbeddableCommand;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.visit.VisitContext;
+import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -39,13 +42,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class NewEmbeddableCommandTest
+public class JPANewEmbeddableCommandTest
 {
 
    @Deployment
    @AddonDeployments({
             @AddonDeployment(name = "org.jboss.forge.addon:ui"),
             @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness"),
             @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
             @AddonDeployment(name = "org.jboss.forge.addon:maven")
    })
@@ -61,12 +65,16 @@ public class NewEmbeddableCommandTest
                         AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness")
                );
    }
 
    @Inject
    private UITestHarness uiTestHarness;
+
+   @Inject
+   private ShellTest shellTest;
 
    @Inject
    private ProjectHelper projectHelper;
@@ -83,33 +91,48 @@ public class NewEmbeddableCommandTest
    @Test
    public void checkCommandMetadata() throws Exception
    {
-      CommandController controller = uiTestHarness.createCommandController(NewEmbeddableCommand.class,
-               project.getRoot());
-      controller.initialize();
-      // Checks the command metadata
-      assertTrue(controller.getCommand() instanceof NewEmbeddableCommand);
-      UICommandMetadata metadata = controller.getMetadata();
-      assertEquals("JPA: New Embeddable", metadata.getName());
-      assertEquals("Java EE", metadata.getCategory().getName());
-      assertEquals("JPA", metadata.getCategory().getSubCategory().getName());
-      assertEquals(3, controller.getInputs().size());
-      assertTrue(controller.hasInput("targetLocation")); // TODO this should be false, fix the NewEmbeddableCommand
-      assertTrue(controller.hasInput("named"));
-      assertTrue(controller.hasInput("targetPackage"));
-      assertTrue(controller.getValueFor("targetPackage").toString().endsWith(".model"));
+      try (CommandController controller = uiTestHarness.createCommandController(JPANewEmbeddableCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         // Checks the command metadata
+         assertTrue(controller.getCommand() instanceof JPANewEmbeddableCommand);
+         UICommandMetadata metadata = controller.getMetadata();
+         assertEquals("JPA: New Embeddable", metadata.getName());
+         assertEquals("Java EE", metadata.getCategory().getName());
+         assertEquals("JPA", metadata.getCategory().getSubCategory().getName());
+         assertEquals(3, controller.getInputs().size());
+         assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
+         assertTrue(controller.hasInput("named"));
+         assertTrue(controller.hasInput("targetPackage"));
+         assertTrue(controller.hasInput("overwrite"));
+         assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_ENTITY_PACKAGE));
+      }
+   }
+
+   @Test
+   public void checkCommandShell() throws Exception
+   {
+      shellTest.getShell().setCurrentResource(project.getRoot());
+      Result result = shellTest.execute(("jpa-new-embeddable --named Dummy"), 10, TimeUnit.SECONDS);
+
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
+      Assert.assertTrue(project.hasFacet(JPAFacet.class));
    }
 
    @Test
    public void testCreateEmbeddable() throws Exception
    {
-      CommandController controller = uiTestHarness.createCommandController(NewEmbeddableCommand.class,
-               project.getRoot());
-      controller.initialize();
-      controller.setValueFor("named", "MyEmbeddable");
-      Assert.assertTrue(controller.isValid());
-      Assert.assertTrue(controller.canExecute());
-      Result result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      try (CommandController controller = uiTestHarness.createCommandController(JPANewEmbeddableCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyEmbeddable");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
 

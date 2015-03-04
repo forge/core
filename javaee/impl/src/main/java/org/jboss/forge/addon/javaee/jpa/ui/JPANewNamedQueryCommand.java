@@ -50,7 +50,7 @@ import org.jboss.forge.roaster.model.source.JavaSource;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @FacetConstraint(JPAFacet.class)
-public class NewNamedQueryCommand extends AbstractJavaEECommand
+public class JPANewNamedQueryCommand extends AbstractJavaEECommand
 {
    @Inject
    @WithAttributes(label = "Query Name", description = "The name attribute of the @NamedQuery annotation", required = true)

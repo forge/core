@@ -4,10 +4,11 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.javaee.jpa;
+package org.jboss.forge.addon.javaee.jpa.ui;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
+import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_ENTITY_PACKAGE;
 import static org.junit.Assert.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import javax.persistence.Table;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
-import org.jboss.forge.addon.javaee.jpa.ui.NewEntityCommand;
+import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.controller.CommandController;
@@ -39,13 +40,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Tests the {@link NewEntityCommand} behavior
+ * Tests the {@link org.jboss.forge.addon.javaee.jpa.ui.JPANewEntityCommand} behavior
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-public class NewEntityCommandShellTest
+public class JPANewEntityCommandTest
 {
    @Deployment
    @AddonDeployments({
@@ -75,7 +76,7 @@ public class NewEntityCommandShellTest
    }
 
    @Inject
-   private ShellTest test;
+   private ShellTest shellTest;
 
    @Inject
    private UITestHarness uiTestHarness;
@@ -95,29 +96,33 @@ public class NewEntityCommandShellTest
    @Test
    public void checkCommandMetadata() throws Exception
    {
-      CommandController controller = uiTestHarness.createCommandController(NewEntityCommand.class, project.getRoot());
-      controller.initialize();
-      // Checks the command metadata
-      assertTrue(controller.getCommand() instanceof NewEntityCommand);
-      UICommandMetadata metadata = controller.getMetadata();
-      assertEquals("JPA: New Entity", metadata.getName());
-      assertEquals("Java EE", metadata.getCategory().getName());
-      assertEquals("JPA", metadata.getCategory().getSubCategory().getName());
-      assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
-      assertEquals(4, controller.getInputs().size());
-      assertTrue(controller.hasInput("named"));
-      assertTrue(controller.hasInput("targetPackage"));
-      assertTrue(controller.hasInput("idStrategy"));
-      assertTrue(controller.hasInput("tableName"));
-      assertTrue(controller.getValueFor("targetPackage").toString().endsWith(".model"));
+      try (CommandController controller = uiTestHarness.createCommandController(JPANewEntityCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         // Checks the command metadata
+         assertTrue(controller.getCommand() instanceof JPANewEntityCommand);
+         UICommandMetadata metadata = controller.getMetadata();
+         assertEquals("JPA: New Entity", metadata.getName());
+         assertEquals("Java EE", metadata.getCategory().getName());
+         assertEquals("JPA", metadata.getCategory().getSubCategory().getName());
+         assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
+         assertEquals(5, controller.getInputs().size());
+         assertTrue(controller.hasInput("named"));
+         assertTrue(controller.hasInput("targetPackage"));
+         assertTrue(controller.hasInput("idStrategy"));
+         assertTrue(controller.hasInput("tableName"));
+         assertTrue(controller.hasInput("overwrite"));
+         assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_ENTITY_PACKAGE));
+      }
    }
 
    @SuppressWarnings("unchecked")
    @Test
-   public void testContainerInjection() throws Exception
+   public void checkCommandShell() throws Exception
    {
-      test.getShell().setCurrentResource(project.getRoot());
-      Result result = test
+      shellTest.getShell().setCurrentResource(project.getRoot());
+      Result result = shellTest
                .execute(("jpa-new-entity --named Customer --targetPackage org.lincoln --idStrategy AUTO --tableName CUSTOMER_TABLE"),
                         10, TimeUnit.SECONDS);
 

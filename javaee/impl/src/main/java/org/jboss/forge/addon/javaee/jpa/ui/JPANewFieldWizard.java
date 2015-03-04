@@ -72,7 +72,7 @@ import org.jboss.forge.roaster.model.source.JavaSource;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, PrerequisiteCommandsProvider
+public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard, PrerequisiteCommandsProvider
 {
    @Inject
    @WithAttributes(label = "Target Entity", description = "The targetEntity which the field will be created", required = true, type = InputType.DROPDOWN)
@@ -617,7 +617,7 @@ public class NewFieldWizard extends AbstractJavaEECommand implements UIWizard, P
       }
       else
       {
-         return Results.navigateTo(NewFieldRelationshipWizardStep.class);
+         return Results.navigateTo(JPANewFieldRelationshipWizardStep.class);
       }
    }
 
