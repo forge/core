@@ -16,6 +16,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
 /**
@@ -105,6 +106,16 @@ public interface PersistenceOperations
    public JavaResource newEntity(DirectoryResource target, String entityName, String entityPackage,
             GenerationType idStrategy);
 
+    /**
+     * Given a {@link JavaClassSource} it decorates the source with code for an entity
+     *
+     * @param source source of the class to decorate
+     * @param idStrategy the ID strategy chosen for this entity
+     * @param tableName the table name chose for this entity
+     * @return the decorated java resource
+     */
+    public JavaClassSource newEntity(JavaClassSource source, GenerationType idStrategy, String tableName);
+
    /**
     * Creates a new {@link JavaResource} for an embeddable entity in the specified project. If a project is available,
     * use {@link PersistenceOperations#newEmbeddableEntity(Project, String, String)}
@@ -130,4 +141,11 @@ public interface PersistenceOperations
    public JavaResource newEmbeddableEntity(Project project, String entityName, String entityPackage)
             throws FileNotFoundException;
 
+    /**
+     * Given a {@link JavaClassSource} it decorates the source with code for an embeddable entity
+     *
+     * @param source source of the class to decorate
+     * @return the decorated java resource
+     */
+    public JavaClassSource newEmbeddableEntity(JavaClassSource source);
 }
