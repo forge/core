@@ -31,6 +31,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.util.Refactory;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
@@ -147,6 +148,12 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       return javaResource;
    }
 
+    @Override
+    public JavaClassSource newEmbeddableEntity(JavaClassSource source)
+    {
+        return createJavaEmbeddableClass(source.getName(), source.getPackage());
+    }
+
    @Override
    public JavaResource newEntity(Project project, String entityName, String entityPackage, GenerationType idStrategy)
             throws FileNotFoundException
@@ -160,6 +167,12 @@ public class PersistenceOperationsImpl implements PersistenceOperations
    {
       return newEntity(target, entityName, entityPackage, idStrategy, null);
    }
+
+    @Override
+    public JavaClassSource newEntity(JavaClassSource source, GenerationType idStrategy, String tableName)
+    {
+        return createJavaEntityClass(source.getName(), source.getPackage(), idStrategy, tableName);
+    }
 
    private JavaClassSource createJavaEmbeddableClass(String entityName, String entityPackage)
    {

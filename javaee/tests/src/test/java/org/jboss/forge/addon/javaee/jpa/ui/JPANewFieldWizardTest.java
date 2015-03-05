@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.javaee.jpa;
+package org.jboss.forge.addon.javaee.jpa.ui;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
@@ -15,8 +15,6 @@ import javax.persistence.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
-import org.jboss.forge.addon.javaee.jpa.ui.NewFieldWizard;
-import org.jboss.forge.addon.javaee.jpa.ui.RelationshipType;
 import org.jboss.forge.addon.parser.java.beans.FieldOperations;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -41,7 +39,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class NewFieldWizardTest
+public class JPANewFieldWizardTest
 {
 
    @Deployment
@@ -61,7 +59,7 @@ public class NewFieldWizardTest
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
-                       AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven")
                );
@@ -88,37 +86,38 @@ public class NewFieldWizardTest
    @Test
    public void checkCommandMetadata() throws Exception
    {
-      Project project = projectHelper.createJavaLibraryProject();
-      projectHelper.installJPA_2_0(project);
-      CommandController controller = uiTestHarness.createCommandController(NewFieldWizard.class, project.getRoot());
-      controller.initialize();
-      // Checks the command metadata
-      assertTrue(controller.getCommand() instanceof NewFieldWizard);
-      UICommandMetadata metadata = controller.getMetadata();
-      assertEquals("JPA: New Field", metadata.getName());
-      assertEquals("Java EE", metadata.getCategory().getName());
-      assertEquals("JPA", metadata.getCategory().getSubCategory().getName());
-      assertEquals(13, controller.getInputs().size());
-      assertTrue(controller.hasInput("named"));
-      assertTrue(controller.hasInput("targetEntity"));
-      assertTrue(controller.hasInput("not-nullable"));
-      assertTrue(controller.hasInput("not-updatable"));
-      assertTrue(controller.hasInput("not-insertable"));
-      assertTrue(controller.hasInput("type"));
-      assertTrue(controller.hasInput("relationshipType"));
-      assertTrue(controller.hasInput("lob"));
-      assertTrue(controller.hasInput("length"));
-      assertTrue(controller.hasInput("temporalType"));
-      assertTrue(controller.hasInput("columnName"));
-      assertTrue(controller.hasInput("enumType"));
-      assertTrue(controller.hasInput("transient"));
+      try (CommandController controller = uiTestHarness.createCommandController(JPANewFieldWizard.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         // Checks the command metadata
+         assertTrue(controller.getCommand() instanceof JPANewFieldWizard);
+         UICommandMetadata metadata = controller.getMetadata();
+         assertEquals("JPA: New Field", metadata.getName());
+         assertEquals("Java EE", metadata.getCategory().getName());
+         assertEquals("JPA", metadata.getCategory().getSubCategory().getName());
+         assertEquals(13, controller.getInputs().size());
+         assertTrue(controller.hasInput("named"));
+         assertTrue(controller.hasInput("targetEntity"));
+         assertTrue(controller.hasInput("not-nullable"));
+         assertTrue(controller.hasInput("not-updatable"));
+         assertTrue(controller.hasInput("not-insertable"));
+         assertTrue(controller.hasInput("type"));
+         assertTrue(controller.hasInput("relationshipType"));
+         assertTrue(controller.hasInput("lob"));
+         assertTrue(controller.hasInput("length"));
+         assertTrue(controller.hasInput("temporalType"));
+         assertTrue(controller.hasInput("columnName"));
+         assertTrue(controller.hasInput("enumType"));
+         assertTrue(controller.hasInput("transient"));
+      }
    }
 
    @Test
    public void testNewField() throws Exception
    {
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
-      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPANewFieldWizard.class,
                project.getRoot()))
       {
          controller.initialize();
@@ -148,7 +147,7 @@ public class NewFieldWizardTest
    public void testNewFieldWithNotNullableInsertableUpdatableTrue() throws Exception
    {
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
-      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPANewFieldWizard.class,
                project.getRoot()))
       {
          controller.initialize();
@@ -181,7 +180,7 @@ public class NewFieldWizardTest
    public void testNewFieldWithNotNullableInsertableUpdatableFalse() throws Exception
    {
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
-      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPANewFieldWizard.class,
                project.getRoot()))
       {
          controller.initialize();
@@ -214,7 +213,7 @@ public class NewFieldWizardTest
    public void testNewTransientField() throws Exception
    {
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
-      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPANewFieldWizard.class,
                project.getRoot()))
       {
          controller.initialize();
@@ -244,7 +243,7 @@ public class NewFieldWizardTest
       JavaClassSource javaSource = entity.getJavaType();
       beanOperations.addFieldTo(javaSource, "String", "firstName");
       entity.setContents(javaSource.toString());
-      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPANewFieldWizard.class,
                project.getRoot()))
       {
          controller.initialize();
@@ -272,7 +271,7 @@ public class NewFieldWizardTest
    {
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
       JavaResource otherEntity = projectHelper.createJPAEntity(project, "Account");
-      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPANewFieldWizard.class,
                project.getRoot()))
       {
          controller.initialize();
@@ -303,7 +302,7 @@ public class NewFieldWizardTest
    {
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
       JavaResource otherEntity = projectHelper.createJPAEmbeddable(project, "Account");
-      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPANewFieldWizard.class,
                project.getRoot()))
       {
          controller.initialize();
@@ -334,7 +333,7 @@ public class NewFieldWizardTest
    {
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
       JavaResource otherEntity = projectHelper.createJPAEntity(project, "Account");
-      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPANewFieldWizard.class,
                project.getRoot()))
       {
          controller.initialize();
@@ -369,7 +368,7 @@ public class NewFieldWizardTest
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
       JavaResource enumEntity = projectHelper.createEmptyEnum(project, "CustomerType");
 
-      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPANewFieldWizard.class,
                project.getRoot()))
       {
          controller.initialize();
@@ -400,7 +399,7 @@ public class NewFieldWizardTest
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
       JavaResource enumEntity = projectHelper.createEmptyEnum(project, "CustomerType");
 
-      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPANewFieldWizard.class,
                project.getRoot()))
       {
          controller.initialize();
@@ -433,7 +432,7 @@ public class NewFieldWizardTest
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
       JavaResource enumEntity = projectHelper.createEmptyEnum(project, "CustomerType");
 
-      try (WizardCommandController controller = uiTestHarness.createWizardController(NewFieldWizard.class,
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPANewFieldWizard.class,
                project.getRoot()))
       {
          controller.initialize();

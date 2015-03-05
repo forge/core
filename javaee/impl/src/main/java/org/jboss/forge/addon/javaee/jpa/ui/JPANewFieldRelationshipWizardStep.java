@@ -34,7 +34,7 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
-public class NewFieldRelationshipWizardStep extends AbstractJavaEECommand implements UIWizardStep
+public class JPANewFieldRelationshipWizardStep extends AbstractJavaEECommand implements UIWizardStep
 {
    @Inject
    @WithAttributes(label = "Fetch Type", description = "Whether the association should be lazily loaded or must be eagerly fetched", type = InputType.RADIO)

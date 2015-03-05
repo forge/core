@@ -1,0 +1,61 @@
+== scaffold
+:idprefix: id_ 
+
+This addon *exports services* for use in other addons. The Scaffold addon allows for code generation, specifically end-user UI generation.  
+
+=== Dependencies: None
+
+== Setup
+
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml] 
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>scaffold</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----      
+== Features
+
+Extensibility::
+ The scaffold addon introduces commands to generate UIs from JPA entities (`scaffold-generate-from-entities` and `scaffold-setup`) and extends these commands by using `ScaffoldProvider` implementations.
+ You may implement your own `ScaffoldProvider` to generate artifacts from the selected JPA entities.
++
+[source,java]
+----
+public class MyScaffoldProvider implements ScaffoldProvider {
+  @Override
+  public String getName() {
+     return "my-architecture";
+  }
+
+  @Override
+  public String getDescription() {
+     return "My excellent Home-grown architecture";
+  }
+  
+  @Override
+  public List<Resource<?>> setup(ScaffoldSetupContext setupContext) {
+      //TODO: Change pom.xml to add the necessary libs and create the index.html page
+  }
+  
+  @Override
+  public List<Resource<?>> setup(ScaffoldSetupContext setupContext) {
+      //TODO: Change pom.xml to add the necessary libs and create the index.html page
+  }
+  
+  @Override
+  public List<Resource<?>> generateFrom(ScaffoldGenerationContext generationContext) {
+    // Generate DAOs, BOs, Managers, etc.
+  }
+  ...
+}
+----
+
