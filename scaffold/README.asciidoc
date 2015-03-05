@@ -26,7 +26,7 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 
 Extensibility::
  The scaffold addon introduces commands to generate UIs from JPA entities (`scaffold-generate-from-entities` and `scaffold-setup`) and extends these commands by using `ScaffoldProvider` implementations.
- You may implement your own `ScaffoldProvider` to .
+ You may implement your own `ScaffoldProvider` to generate artifacts from the selected JPA entities.
 +
 [source,java]
 ----
