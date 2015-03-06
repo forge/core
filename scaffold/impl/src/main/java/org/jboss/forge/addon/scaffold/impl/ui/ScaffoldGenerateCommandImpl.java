@@ -114,7 +114,6 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
       attributeMap.put(ScaffoldGenerationContext.class, generationContext);
 
       NavigationResult setupFlow = null;
-      Project project = getSelectedProject(uiContext);
 
       // Verify if the selected provider is installed
       // If not, add the setup flow and inform the generation step to setup the scaffold.
