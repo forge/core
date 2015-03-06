@@ -56,7 +56,7 @@
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <version.furnace>${project.version}</version.furnace>
+      <version.furnace>2.15.1.Final</version.furnace>
    </properties>
 
    <dependencyManagement>
@@ -130,7 +130,7 @@
             <version>${version.furnace}</version>
          </dependency>
 
-         <!-- Test Harneses Dependencies -->
+         <!-- Test Harness Dependencies -->
          <dependency>
             <groupId>org.jboss.forge.furnace.test</groupId>
             <artifactId>furnace-test-harness</artifactId>
