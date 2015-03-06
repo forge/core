@@ -86,7 +86,7 @@ public class MavenResourceFacetTest
    public void testDefaultResourceDirectory() throws Exception
    {
       ResourcesFacet facet = project.getFacet(ResourcesFacet.class);
-      DirectoryResource expected = project.getRootDirectory().getChildDirectory(
+      DirectoryResource expected = project.getRoot().reify(DirectoryResource.class).getChildDirectory(
                "src" + File.separator + "main" + File.separator + "resources");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getResourceDirectory().getFullyQualifiedName());
    }
@@ -95,7 +95,7 @@ public class MavenResourceFacetTest
    public void testDefaultTestResourceDirectory() throws Exception
    {
       ResourcesFacet facet = project.getFacet(ResourcesFacet.class);
-      DirectoryResource expected = project.getRootDirectory().getChildDirectory(
+      DirectoryResource expected = project.getRoot().reify(DirectoryResource.class).getChildDirectory(
                "src" + File.separator + "test" + File.separator + "resources");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getTestResourceDirectory().getFullyQualifiedName());
    }
@@ -103,12 +103,12 @@ public class MavenResourceFacetTest
    @Test
    public void testCustomResourceDirectory() throws Exception
    {
-      MavenModelResource pom = project.getRootDirectory().getChild("pom.xml").reify(MavenModelResource.class);
+      MavenModelResource pom = project.getRoot().reify(DirectoryResource.class).getChild("pom.xml").reify(MavenModelResource.class);
 
       pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><resources><resource><directory>foo</directory></resource></resources></build></project>");
 
       ResourcesFacet facet = project.getFacet(ResourcesFacet.class);
-      DirectoryResource expected = project.getRootDirectory().getChildDirectory(
+      DirectoryResource expected = project.getRoot().reify(DirectoryResource.class).getChildDirectory(
                "foo");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getResourceDirectory().getFullyQualifiedName());
    }
@@ -117,13 +117,13 @@ public class MavenResourceFacetTest
    @Ignore("https://issues.jboss.org/browse/FORGE-1218")
    public void testCustomResourceDirectoryWithProperty() throws Exception
    {
-      MavenModelResource pom = project.getRootDirectory().getChild("pom.xml").reify(MavenModelResource.class);
+      MavenModelResource pom = project.getRoot().reify(DirectoryResource.class).getChild("pom.xml").reify(MavenModelResource.class);
 
       pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><resources><resource><directory>${project.basedir}"
                + File.separator + "foo</directory></resource></resources></build></project>");
 
       ResourcesFacet facet = project.getFacet(ResourcesFacet.class);
-      DirectoryResource expected = project.getRootDirectory().getChildDirectory(
+      DirectoryResource expected = project.getRoot().reify(DirectoryResource.class).getChildDirectory(
                "foo");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getResourceDirectory().getFullyQualifiedName());
    }
@@ -131,12 +131,12 @@ public class MavenResourceFacetTest
    @Test
    public void testCustomTestSourceDirectory() throws Exception
    {
-      MavenModelResource pom = project.getRootDirectory().getChild("pom.xml").reify(MavenModelResource.class);
+      MavenModelResource pom = project.getRoot().reify(DirectoryResource.class).getChild("pom.xml").reify(MavenModelResource.class);
 
       pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><testResources><testResource><directory>foo</directory></testResource></testResources></build></project>");
 
       ResourcesFacet facet = project.getFacet(ResourcesFacet.class);
-      DirectoryResource expected = project.getRootDirectory().getChildDirectory(
+      DirectoryResource expected = project.getRoot().reify(DirectoryResource.class).getChildDirectory(
                "foo");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getTestResourceDirectory().getFullyQualifiedName());
    }
@@ -145,13 +145,13 @@ public class MavenResourceFacetTest
    @Ignore("https://issues.jboss.org/browse/FORGE-1218")
    public void testCustomTestSourceDirectoryWithProperty() throws Exception
    {
-      MavenModelResource pom = project.getRootDirectory().getChild("pom.xml").reify(MavenModelResource.class);
+      MavenModelResource pom = project.getRoot().reify(DirectoryResource.class).getChild("pom.xml").reify(MavenModelResource.class);
 
       pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><testResources><testResource><directory>${project.basedir}"
                + File.separator + "foo</directory></testResource></testResources></build></project>");
 
       ResourcesFacet facet = project.getFacet(ResourcesFacet.class);
-      DirectoryResource expected = project.getRootDirectory().getChildDirectory(
+      DirectoryResource expected = project.getRoot().reify(DirectoryResource.class).getChildDirectory(
                "foo");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getTestResourceDirectory().getFullyQualifiedName());
    }

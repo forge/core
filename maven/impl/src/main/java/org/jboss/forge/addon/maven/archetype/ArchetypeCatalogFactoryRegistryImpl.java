@@ -11,9 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,13 +98,13 @@ public class ArchetypeCatalogFactoryRegistryImpl implements ArchetypeCatalogFact
    @Override
    public Iterable<ArchetypeCatalogFactory> getArchetypeCatalogFactories()
    {
-      Set<ArchetypeCatalogFactory> result = new LinkedHashSet<>();
+      Map<String, ArchetypeCatalogFactory> result = new TreeMap<>();
       for (ArchetypeCatalogFactory factory : services)
       {
-         result.add(factory);
+         result.put(factory.getName(), factory);
       }
-      result.addAll(factories.values());
-      return Collections.unmodifiableCollection(result);
+      result.putAll(factories);
+      return Collections.unmodifiableCollection(result.values());
    }
 
    @Override
