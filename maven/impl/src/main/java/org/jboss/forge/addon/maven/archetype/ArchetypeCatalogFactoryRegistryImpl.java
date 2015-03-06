@@ -101,7 +101,7 @@ public class ArchetypeCatalogFactoryRegistryImpl implements ArchetypeCatalogFact
    @Override
    public Iterable<ArchetypeCatalogFactory> getArchetypeCatalogFactories()
    {
-      Map<String, ArchetypeCatalogFactory> result = new LinkedHashMap<>();
+      Map<String, ArchetypeCatalogFactory> result = new TreeMap<>();
       for (ArchetypeCatalogFactory factory : services)
       {
          result.put(factory.getName(), factory);
