@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.javaee;
 
+import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_ENTITY_PACKAGE;
+
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -139,13 +141,13 @@ public class ProjectHelper
 
    public JavaResource createJPAEntity(Project project, String entityName) throws IOException
    {
-      String packageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + ".model";
+      String packageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + "." + DEFAULT_ENTITY_PACKAGE;
       return persistenceOperations.newEntity(project, entityName, packageName, GenerationType.AUTO);
    }
 
    public JavaResource createJPAEmbeddable(Project project, String entityName) throws IOException
    {
-      String packageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + ".model";
+      String packageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + "." + DEFAULT_ENTITY_PACKAGE;
       return persistenceOperations.newEmbeddableEntity(project, entityName, packageName);
    }
 
@@ -153,7 +155,7 @@ public class ProjectHelper
    {
       JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
       JavaEnumSource enumSource = Roaster.create(JavaEnumSource.class).setName(enumName);
-      String packageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + ".model";
+      String packageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + "." + DEFAULT_ENTITY_PACKAGE;
       enumSource.setPackage(packageName);
       return javaSourceFacet.saveJavaSource(enumSource);
    }
