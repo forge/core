@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss</groupId>
@@ -56,95 +57,18 @@
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <version.furnace>${project.version}</version.furnace>
+      <version.furnace>2.15.2.Final</version.furnace>
    </properties>
 
    <dependencyManagement>
       <dependencies>
-
-         <!-- CDI Container -->
-         <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${version.furnace}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>${version.furnace}</version>
-         </dependency>
-
-         <!-- Simple Container -->
-         <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>simple</artifactId>
-            <classifier>forge-addon</classifier>
-            <version>${version.furnace}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>simple-api</artifactId>
-            <version>${version.furnace}</version>
-         </dependency>
-
-         <!-- Furnace Runtime -->
+         <!-- Furnace BOM -->
          <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace</artifactId>
+            <artifactId>furnace-bom</artifactId>
             <version>${version.furnace}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace-api</artifactId>
-            <version>${version.furnace}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace-proxy</artifactId>
-            <version>${version.furnace}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace-se</artifactId>
-            <version>${version.furnace}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace-manager</artifactId>
-            <version>${version.furnace}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace-manager-api</artifactId>
-            <version>${version.furnace}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace-manager-spi</artifactId>
-            <version>${version.furnace}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace</groupId>
-            <artifactId>furnace-manager-resolver-maven</artifactId>
-            <version>${version.furnace}</version>
-         </dependency>
-
-         <!-- Test Harneses Dependencies -->
-         <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>furnace-test-harness</artifactId>
-            <version>${version.furnace}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>arquillian-furnace-classpath</artifactId>
-            <version>${version.furnace}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>arquillian-forge-core</artifactId>
-            <version>${version.furnace}</version>
+            <type>pom</type>
+            <scope>import</scope>
          </dependency>
 
          <!-- Forge Addon Dependencies -->
@@ -465,7 +389,7 @@
       <connection>scm:git:git://github.com/forge/core.git</connection>
       <developerConnection>scm:git:git@github.com:forge/core.git</developerConnection>
       <url>http://github.com/forge/core</url>
-     <tag>HEAD</tag>
-  </scm>
+      <tag>HEAD</tag>
+   </scm>
 
 </project>
