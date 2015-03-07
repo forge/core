@@ -1,24 +1,23 @@
-/**
- * Copyright 2014 Red Hat, Inc. and/or its affiliates.
+/*
+ * Copyright 2013 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.jboss.forge.addon.javaee.jpa.ui;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_ENTITY_PACKAGE;
+import static org.jboss.forge.addon.javaee.jpa.ui.LifecycleType.*;
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
-import javax.persistence.MappedSuperclass;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -35,6 +34,7 @@ import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,48 +42,48 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
+ * Tests the {@link JPANewEntityListenerCommand} behavior
  *
- * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
 @RunWith(Arquillian.class)
-public class JPANewMappedSuperclassCommandTest
+public class JPANewEntityListenerCommandTest
 {
    @Deployment
    @AddonDeployments({
             @AddonDeployment(name = "org.jboss.forge.addon:ui"),
             @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
             @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness"),
-            @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven")
+            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
+            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
+            @AddonDeployment(name = "org.jboss.forge.addon:javaee")
    })
    public static AddonArchive getDeployment()
    {
-      return ShrinkWrap
+      AddonArchive archive = ShrinkWrap
                .create(AddonArchive.class)
-               .addClass(ProjectHelper.class)
                .addBeansXML()
+               .addClass(ProjectHelper.class)
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:resources"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness")
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
                );
-   }
 
-   @Inject
-   private UITestHarness uiTestHarness;
+      return archive;
+   }
 
    @Inject
    private ShellTest shellTest;
 
    @Inject
-   private ProjectHelper projectHelper;
+   private UITestHarness uiTestHarness;
 
    @Inject
-   private FacetFactory facetFactory;
+   private ProjectHelper projectHelper;
 
    private Project project;
 
@@ -97,76 +97,89 @@ public class JPANewMappedSuperclassCommandTest
    @Test
    public void checkCommandMetadata() throws Exception
    {
-      try (CommandController controller = uiTestHarness.createCommandController(JPANewMappedSuperclassCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(JPANewEntityListenerCommand.class,
                project.getRoot()))
       {
          controller.initialize();
          // Checks the command metadata
-         assertTrue(controller.getCommand() instanceof JPANewMappedSuperclassCommand);
+         assertTrue(controller.getCommand() instanceof JPANewEntityListenerCommand);
+         assertTrue(controller.getCommand() instanceof AbstractJPACommand);
          UICommandMetadata metadata = controller.getMetadata();
-         assertEquals("JPA: New Mapped Superclass", metadata.getName());
+         assertEquals("JPA: New Entity Listener", metadata.getName());
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("JPA", metadata.getCategory().getSubCategory().getName());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
-         assertEquals(3, controller.getInputs().size());
+         assertEquals(4, controller.getInputs().size());
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
+         assertTrue(controller.hasInput("lifecycles"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_ENTITY_PACKAGE));
       }
    }
 
+   @SuppressWarnings("unchecked")
    @Test
    public void checkCommandShell() throws Exception
    {
       shellTest.getShell().setCurrentResource(project.getRoot());
-      Result result = shellTest.execute(("jpa-new-mapped-superclass --named Dummy"), 10, TimeUnit.SECONDS);
+      Result result = shellTest.execute("jpa-new-entity-listener --named Dummy --lifecycles PRE_PERSIST", 10,
+               TimeUnit.SECONDS);
 
       Assert.assertThat(result, not(instanceOf(Failed.class)));
       Assert.assertTrue(project.hasFacet(JPAFacet.class));
    }
 
    @Test
-   public void testCreateMappedSuperclass() throws Exception
+   public void testCreateEntityListener() throws Exception
    {
-      facetFactory.install(project, JavaSourceFacet.class);
-      try (CommandController controller = uiTestHarness.createCommandController(JPANewMappedSuperclassCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(JPANewEntityListenerCommand.class,
                project.getRoot()))
       {
          controller.initialize();
-         controller.setValueFor("named", "CreditCardType");
-         controller.setValueFor("targetPackage", "org.jboss.forge.test");
+         controller.setValueFor("named", "MyListener");
+         controller.setValueFor("lifecycles", Arrays.asList(POST_PERSIST));
          Assert.assertTrue(controller.isValid());
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
          Assert.assertThat(result, is(not(instanceOf(Failed.class))));
       }
+
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
-      Assert.assertTrue(javaResource.exists());
+      String packageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + "." + DEFAULT_ENTITY_PACKAGE;
+      JavaResource javaResource = facet.getJavaResource(packageName + ".MyListener");
+      Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
-      Assert.assertTrue(javaResource.getJavaType().hasAnnotation(MappedSuperclass.class));
+      JavaClass<?> listener = javaResource.getJavaType();
+      Assert.assertEquals(1, listener.getMethods().size());
+      Assert.assertTrue(listener.getMethods().get(0).isReturnTypeVoid());
+      Assert.assertEquals(1, listener.getMethods().get(0).getParameters().size());
+      Assert.assertEquals("object", listener.getMethods().get(0).getParameters().get(0).getName());
+      Assert.assertEquals("postPersist", listener.getMethods().get(0).getName());
+      Assert.assertEquals(Visibility.PRIVATE, listener.getMethods().get(0).getVisibility());
    }
 
    @Test
-   public void testCreateMappedSuperclassDefaultPackage() throws Exception
+   public void testCreateEntityListenerWithMultipleLifecycles() throws Exception
    {
-      facetFactory.install(project, JavaSourceFacet.class);
-      try (CommandController controller = uiTestHarness.createCommandController(JPANewMappedSuperclassCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(JPANewEntityListenerCommand.class,
                project.getRoot()))
       {
          controller.initialize();
-         controller.setValueFor("named", "CreditCardType");
+         controller.setValueFor("named", "MyListener");
+         controller.setValueFor("lifecycles", Arrays.asList(POST_PERSIST, PRE_REMOVE, POST_LOAD, PRE_UPDATE));
          Assert.assertTrue(controller.isValid());
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
          Assert.assertThat(result, is(not(instanceOf(Failed.class))));
       }
+
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       String packageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + "." + DEFAULT_ENTITY_PACKAGE;
-      JavaResource javaResource = facet.getJavaResource(packageName + ".CreditCardType");
-      Assert.assertTrue(javaResource.exists());
+      JavaResource javaResource = facet.getJavaResource(packageName + ".MyListener");
+      Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
-      Assert.assertTrue(javaResource.getJavaType().hasAnnotation(MappedSuperclass.class));
+      JavaClass<?> listener = javaResource.getJavaType();
+      Assert.assertEquals(4, listener.getMethods().size());
    }
 }
