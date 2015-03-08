@@ -20,7 +20,6 @@ import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
@@ -29,7 +28,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 public class JPANewEntityListenerCommand extends AbstractJPACommand<JavaClassSource>
 {
    @Inject
-   @WithAttributes(label = "Lifecyle", required = true)
+   @WithAttributes(label = "Lifecycle", required = true)
    private UISelectMany<LifecycleType> lifecycles;
 
    @Inject
@@ -65,8 +64,7 @@ public class JPANewEntityListenerCommand extends AbstractJPACommand<JavaClassSou
    public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source)
             throws Exception
    {
-      Collection<LifecycleType> lifecycles = Iterators.asList(this.lifecycles.getValue());
-      for (LifecycleType lifecyle : lifecycles)
+      for (LifecycleType lifecyle : lifecycles.getValue())
       {
          String methodName = inflector.lowerCamelCase(lifecyle.getAnnotation().getSimpleName());
          source.addMethod().setName(methodName).setParameters("Object object").setReturnTypeVoid()
