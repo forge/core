@@ -114,6 +114,11 @@ public class MavenModelResourceImpl extends XMLResourceImpl implements MavenMode
             stream = getResourceInputStream();
             currentModel = reader.read(stream);
             currentModel.setPomFile(getUnderlyingResourceObject());
+
+            // FORGE-2273: Making properties sortable
+            SortedProperties sortedProps = new SortedProperties();
+            sortedProps.putAll(currentModel.getProperties());
+            currentModel.setProperties(sortedProps);
          }
          catch (Exception e)
          {
