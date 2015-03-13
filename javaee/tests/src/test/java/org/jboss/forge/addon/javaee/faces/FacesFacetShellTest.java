@@ -19,10 +19,9 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.shell.test.ShellTest;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -38,27 +37,19 @@ import org.junit.runner.RunWith;
 public class FacesFacetShellTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness"),
-            @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
+            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
    })
    public static AddonArchive getDeployment()
    {
-      return ShrinkWrap.create(AddonArchive.class)
-               .addBeansXML()
-               .addClass(ProjectHelper.class)
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee")
-               );
+      return ShrinkWrap.create(AddonArchive.class).addBeansXML().addClass(ProjectHelper.class);
    }
 
    @Inject
-   private ShellTest shell;
+   private ShellTest shellTest;
 
    @Inject
    private ProjectHelper projectHelper;
@@ -66,15 +57,15 @@ public class FacesFacetShellTest
    @Before
    public void clearScreen() throws Exception
    {
-      shell.clearScreen();
+      shellTest.clearScreen();
    }
 
    @Test
    public void testFacesFacetAvailability() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
-      shell.getShell().setCurrentResource(project.getRoot());
-      shell.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
+      shellTest.getShell().setCurrentResource(project.getRoot());
+      shellTest.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
       Assert.assertTrue(project.hasFacet(FacesFacet.class));
       Assert.assertTrue(project.hasFacet(FacesFacet_2_0.class));
    }
@@ -83,21 +74,21 @@ public class FacesFacetShellTest
    public void testFacesFacetAvailabilityThroughShell() throws Exception
    {
       Project project = projectHelper.createJavaLibraryProject();
-      shell.getShell().setCurrentResource(project.getRoot());
-      shell.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
-      shell.execute("project-list-facets", 5, TimeUnit.SECONDS);
-      Assert.assertThat(shell.getStdOut(), containsString("FacesFacet"));
+      shellTest.getShell().setCurrentResource(project.getRoot());
+      shellTest.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
+      shellTest.execute("project-list-facets", 5, TimeUnit.SECONDS);
+      Assert.assertThat(shellTest.getStdOut(), containsString("FacesFacet"));
    }
 
    @Test
    public void testFacesFacetAvailabilityThroughShellOnly() throws Exception
    {
       File tmpDir = OperatingSystemUtils.createTempDir();
-      shell.execute("cd " + tmpDir.getAbsolutePath(), 5, TimeUnit.SECONDS);
-      shell.execute("project-new --named project" + System.nanoTime(), 10, TimeUnit.SECONDS);
-      shell.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
+      shellTest.execute("cd " + tmpDir.getAbsolutePath(), 5, TimeUnit.SECONDS);
+      shellTest.execute("project-new --named project" + System.nanoTime(), 10, TimeUnit.SECONDS);
+      shellTest.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
       clearScreen();
-      shell.execute("project-list-facets", 5, TimeUnit.SECONDS);
-      Assert.assertThat(shell.getStdOut(), containsString("FacesFacet"));
+      shellTest.execute("project-list-facets", 5, TimeUnit.SECONDS);
+      Assert.assertThat(shellTest.getStdOut(), containsString("FacesFacet"));
    }
 }

@@ -33,16 +33,16 @@ import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PropertiesCommon;
 import org.jboss.shrinkwrap.descriptor.api.persistence21.Property;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -51,25 +51,15 @@ import org.junit.runner.RunWith;
 public class JPASetupWizardTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:ui"),
-            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
    })
    public static AddonArchive getDeployment()
    {
-      return ShrinkWrap
-               .create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-               );
+      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
    }
 
    @Inject
@@ -87,10 +77,17 @@ public class JPASetupWizardTest
    @Inject
    private UITestHarness uiTestHarness;
 
+   private Project project;
+
+   @Before
+   public void setUp()
+   {
+      project = projectFactory.createTempProject();
+   }
+
    @Test
    public void testSetup() throws Exception
    {
-      Project project = projectFactory.createTempProject();
       try (WizardCommandController controller = uiTestHarness.createWizardController(JPASetupWizard.class,
                project.getRoot()))
       {
@@ -144,7 +141,6 @@ public class JPASetupWizardTest
    public void testSetupDuplicateUnitName() throws Exception
    {
       // Execute SUT
-      final Project project = projectFactory.createTempProject();
       try (WizardCommandController controller = uiTestHarness.createWizardController(JPASetupWizard.class,
                project.getRoot()))
       {
@@ -228,7 +224,6 @@ public class JPASetupWizardTest
    public void testSetupMetadata() throws Exception
    {
       // Execute SUT
-      Project project = projectFactory.createTempProject();
       try (WizardCommandController controller = uiTestHarness.createWizardController(JPASetupWizard.class,
                project.getRoot()))
       {
