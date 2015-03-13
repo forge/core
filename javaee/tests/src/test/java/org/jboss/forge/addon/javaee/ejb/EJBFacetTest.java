@@ -17,12 +17,12 @@ import org.jboss.forge.addon.facets.FacetIsAmbiguousException;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -34,19 +34,14 @@ import org.junit.runner.RunWith;
 public class EJBFacetTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
    })
    public static AddonArchive getDeployment()
    {
-      return ShrinkWrap.create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee")
-               );
+      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
    }
 
    @Inject
@@ -55,10 +50,17 @@ public class EJBFacetTest
    @Inject
    private FacetFactory facetFactory;
 
+   private Project project;
+
+   @Before
+   public void setUp()
+   {
+      project = projectFactory.createTempProject();
+   }
+
    @Test(expected = FacetIsAmbiguousException.class)
    public void testCannotInstallAmbiguousFacetType() throws Exception
    {
-      Project project = projectFactory.createTempProject();
       Assert.assertNotNull(project);
       facetFactory.install(project, EJBFacet.class);
    }
@@ -66,7 +68,6 @@ public class EJBFacetTest
    @Test
    public void testEJBDependency() throws Exception
    {
-      Project project = projectFactory.createTempProject();
       facetFactory.install(project, EJBFacet_3_1.class);
       DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);
       DependencyBuilder wrongDependency = DependencyBuilder.create("javax.ejb:ejb-api");
@@ -77,5 +78,4 @@ public class EJBFacetTest
       Assert.assertTrue("Dependency " + correctDependency + " should have been added",
                dependencyFacet.hasEffectiveManagedDependency(correctDependency));
    }
-
 }

@@ -7,9 +7,7 @@
 
 package org.jboss.forge.addon.javaee.ejb;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 
 import javax.ejb.MessageDriven;
 import javax.ejb.Stateless;
@@ -34,13 +32,13 @@ import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -51,30 +49,19 @@ import org.junit.runner.RunWith;
 public class NewEJBCommandTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:ui"),
-            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
    })
    public static AddonArchive getDeployment()
    {
-      return ShrinkWrap
-               .create(AddonArchive.class)
-               .addClass(ProjectHelper.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-               );
+      return ShrinkWrap.create(AddonArchive.class).addBeansXML().addClass(ProjectHelper.class);
    }
 
    @Inject
-   private UITestHarness testHarness;
+   private UITestHarness uiTestHarness;
 
    @Inject
    private ProjectHelper projectHelper;
@@ -82,12 +69,19 @@ public class NewEJBCommandTest
    @Inject
    private FacetFactory facetFactory;
 
+   private Project project;
+
+   @Before
+   public void setUp()
+   {
+      project = projectHelper.createJavaLibraryProject();
+   }
+
    @Test
    public void testCreateEJB() throws Exception
    {
-      Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      WizardCommandController controller = testHarness.createWizardController(NewEJBCommand.class, project.getRoot());
+      WizardCommandController controller = uiTestHarness.createWizardController(NewEJBCommand.class, project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "TestEJB");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");
@@ -110,9 +104,8 @@ public class NewEJBCommandTest
    @Test
    public void testCreateMDB() throws Exception
    {
-      Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      WizardCommandController controller = testHarness.createWizardController(NewEJBCommand.class,
+      WizardCommandController controller = uiTestHarness.createWizardController(NewEJBCommand.class,
                project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "TestEJB");
@@ -149,9 +142,8 @@ public class NewEJBCommandTest
    @Test
    public void testSetTransactionAttributeOnEJB() throws Exception
    {
-      Project project = projectHelper.createJavaLibraryProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      WizardCommandController controller = testHarness.createWizardController(NewEJBCommand.class, project.getRoot());
+      WizardCommandController controller = uiTestHarness.createWizardController(NewEJBCommand.class, project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "TestEJB");
       controller.setValueFor("type", EJBType.MESSAGEDRIVEN);
@@ -180,7 +172,8 @@ public class NewEJBCommandTest
       Assert.assertTrue(((JavaClass<?>) javaResource.getJavaType()).hasField("serialVersionUID"));
       Assert.assertNotNull(((JavaClass<?>) javaResource.getJavaType()).getMethod("onMessage", Message.class));
 
-      CommandController controller2 = testHarness.createCommandController(EJBSetClassTransactionAttributeCommand.class,
+      CommandController controller2 = uiTestHarness.createCommandController(
+               EJBSetClassTransactionAttributeCommand.class,
                project.getRoot());
 
       controller2.initialize();
@@ -196,7 +189,7 @@ public class NewEJBCommandTest
                ((JavaClass<?>) javaResource.getJavaType()).getAnnotation(TransactionAttribute.class).getEnumValue(
                         TransactionAttributeType.class));
 
-      CommandController controller3 = testHarness.createCommandController(
+      CommandController controller3 = uiTestHarness.createCommandController(
                EJBSetMethodTransactionAttributeCommand.class,
                project.getRoot());
 

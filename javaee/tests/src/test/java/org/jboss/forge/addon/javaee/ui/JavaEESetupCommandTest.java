@@ -21,10 +21,9 @@ import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,30 +37,19 @@ import org.junit.runner.RunWith;
 public class JavaEESetupCommandTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:ui"),
-            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
    })
    public static AddonArchive getDeployment()
    {
-      return ShrinkWrap
-               .create(AddonArchive.class)
-               .addClass(ProjectHelper.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-               );
+      return ShrinkWrap.create(AddonArchive.class).addBeansXML().addClass(ProjectHelper.class);
    }
 
    @Inject
-   private UITestHarness testHarness;
+   private UITestHarness uiTestHarness;
 
    @Inject
    private ProjectHelper projectHelper;
@@ -81,7 +69,8 @@ public class JavaEESetupCommandTest
    public void testJavaEE6Setup() throws Exception
    {
       Project project = projectHelper.createWebProject();
-      try (CommandController tester = testHarness.createCommandController(JavaEESetupCommand.class, project.getRoot()))
+      try (CommandController tester = uiTestHarness
+               .createCommandController(JavaEESetupCommand.class, project.getRoot()))
       {
          // Launch
          tester.initialize();
@@ -103,7 +92,8 @@ public class JavaEESetupCommandTest
    public void testJavaEE7Setup() throws Exception
    {
       Project project = projectHelper.createWebProject();
-      try (CommandController tester = testHarness.createCommandController(JavaEESetupCommand.class, project.getRoot()))
+      try (CommandController tester = uiTestHarness
+               .createCommandController(JavaEESetupCommand.class, project.getRoot()))
       {
          // Launch
          tester.initialize();
