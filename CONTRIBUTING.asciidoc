@@ -80,57 +80,6 @@ IMPORTANT: The above command assumes your remote repository is named 'origin'. Y
 
 == Building from source
 
-Building Forge 2.0 completely from sources would require you to build Furnace, Furnace-CDI, Furnace-Simple and then the Forge 2.0 codebase, <<.
-
-=== Building Furnace
-
-Furnace is the core runtime providing the modular classloading environment.
-
-Clone the repo (or your fork):
-----
-git clone git@github.com:forge/furnace.git
-----
-Use `https://github.com/forge/furnace.git` instead, if you do not have SSH access.
-
-Build:
-----
-mvn clean install
-----
-
-=== Building Furnace-CDI
-
-Furnace-CDI supports @Inject-based dependency injection of services into Furnace addons through CDI.
-
-Clone the repo:
-----
-git clone git@github.com:forge/furnace-cdi.git
-----
-Use `https://github.com/forge/furnace-cdi.git` instead, if you do not have access, or clone the repo and use the fork's URL.
-
-Build:
-----
-cd furnace-cdi/
-mvn clean install
-----
-
-=== Building Furnace-Simple
-
-Furnace-Simple is a Furnace container that provides lifecycle and service registry support for dependent addons. 
-
-Clone the repo:
-----
-git clone git@github.com:forge/furnace-simple.git
-----
-Use `https://github.com/forge/furnace-simple.git` instead, if you do not have SSH access.
-
-Build:
-----
-cd furnace-simple/
-mvn clean install
-----
-
-=== Building Forge 2.0
-
 Clone the repo (or your fork):
 ----
 git clone git@github.com:forge/core.git
@@ -228,20 +177,18 @@ org.jboss.tools.aesh.core
 org.jboss.tools.aesh.runtime
 org.jboss.tools.aesh.ui
 org.jboss.tools.forge.core
-org.jboss.tools.forge.core.ext
 org.jboss.tools.forge.m2e
 org.jboss.tools.forge.runtime
+org.jboss.tools.forge.runtime.ext
 org.jboss.tools.forge.ui
-org.jboss.tools.forge.ui.ext
 org.jboss.tools.forge.ui.notifications
-org.jboss.tools.forge2.runtime
 ----
 
-Right-click the org.jboss.tools.forge.ui.ext project, and choose Run As -> Eclipse Application. 
+Right-click the `org.jboss.tools.forge.ui project`, and choose Run As -> Eclipse Application. 
 
 IMPORTANT: If you are unable to run the project as an Eclipse application, the reason is that you don't have the Tycho M2 Provider installed. If that's the case, install it via this update site: http://repository.tesla.io:8081/nexus/content/sites/m2e.extras/m2eclipse-tycho/0.7.0/N/0.7.0.201309291400/
 
-Right click the org.jboss.tools.forge.ui.ext project, choose Run As -> Run Configurations.. and set the VM arguments to: -Xmx1024m -XX:MaxPermSize=256m
+Right click the `org.jboss.tools.forge.ui` project, choose Run As -> Run Configurations.. and set the VM arguments to: -Xmx1024m -XX:MaxPermSize=256m
 
 == Choosing issues to work on
 
@@ -255,7 +202,7 @@ If you're wondering what issues would be suitable when you're just getting start
 === Java,  Javascript and CSS files
 
       /**
-       * Copyright 2014 Red Hat, Inc. and/or its affiliates.
+       * Copyright 2015 Red Hat, Inc. and/or its affiliates.
        *
        * Licensed under the Eclipse Public License version 1.0, available at
        * http://www.eclipse.org/legal/epl-v10.html
@@ -264,7 +211,7 @@ If you're wondering what issues would be suitable when you're just getting start
 === HTML, XML, XSD and XHTML files
 
       <!--
-       ~ Copyright 2014 Red Hat, Inc. and/or its affiliates.
+       ~ Copyright 2015 Red Hat, Inc. and/or its affiliates.
        ~
        ~ Licensed under the Eclipse Public License version 1.0, available at
        ~ http://www.eclipse.org/legal/epl-v10.html
@@ -272,7 +219,7 @@ If you're wondering what issues would be suitable when you're just getting start
 
 === Properties files and Bash Scripts
 
-       # Copyright 2014 Red Hat, Inc. and/or its affiliates.
+       # Copyright 2015 Red Hat, Inc. and/or its affiliates.
        #
        # Licensed under the Eclipse Public License version 1.0, available at
        # http://www.eclipse.org/legal/epl-v10.html
@@ -280,7 +227,7 @@ If you're wondering what issues would be suitable when you're just getting start
 === SQL files
 
       --
-      -- Copyright 2014 Red Hat, Inc. and/or its affiliates.
+      -- Copyright 2015 Red Hat, Inc. and/or its affiliates.
       --
       -- Licensed under the Eclipse Public License version 1.0, available at
       -- http://www.eclipse.org/legal/epl-v10.html
@@ -290,7 +237,7 @@ If you're wondering what issues would be suitable when you're just getting start
 
 ----
 <%--
-Copyright 2014 Red Hat, Inc. and/or its affiliates.
+Copyright 2015 Red Hat, Inc. and/or its affiliates.
    
 Licensed under the Eclipse Public License version 1.0, available at
 http://www.eclipse.org/legal/epl-v10.html
