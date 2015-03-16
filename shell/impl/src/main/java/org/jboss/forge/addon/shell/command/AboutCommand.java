@@ -25,7 +25,7 @@ public class AboutCommand
    @Command(value = "version", help = "Displays the current Forge version.", enabled = NonGUIEnabledPredicate.class)
    public void showVersion(final UIOutput output)
    {
-      Version version = getForgeVersion();
+      Version version = Versions.getImplementationVersionFor(getClass());
       output.out().println(
                "JBoss Forge, version [ " + version + " ] - JBoss, by Red Hat, Inc. [ http://jboss.org/forge ]");
    }
@@ -43,25 +43,4 @@ public class AboutCommand
       output.out().println("");
       showVersion(output);
    }
-
-   /**
-    * Returns the Implementation version for the given {@link Class}
-    * 
-    * TODO: Use the {@link Versions} class when Forge is updated to Furnace 2.15.3.Final+
-    * 
-    * @param type the {@link Class} with the corresponding package
-    * @return {@link Version} representation from the {@link Package#getImplementationVersion()} returned from
-    *         {@link Class#getPackage()}
-    */
-   private Version getForgeVersion()
-   {
-      String version = getClass().getPackage().getImplementationVersion();
-      if (version != null)
-      {
-         return new SingleVersion(version);
-      }
-
-      return EmptyVersion.getInstance();
-   }
-
 }
