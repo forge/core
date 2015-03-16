@@ -6,6 +6,7 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.Coordinate;
+import org.jboss.forge.addon.manager.impl.utils.CoordinateUtils;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.Projects;
@@ -19,6 +20,7 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
+import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
@@ -96,7 +98,7 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
             String coordinate = (String) context.getCurrentInputComponent().getValue();
             try
             {
-               resolveCoordinate(coordinate);
+               CoordinateUtils.resolveCoordinate(coordinate,furnace.getVersion(),resolver);
             }
             catch (Exception e)
             {
@@ -112,7 +114,7 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
    @Override
    public Result execute(UIExecutionContext context)
    {
-      AddonId addonId = resolveCoordinate(coordinate.getValue());
+      AddonId addonId = CoordinateUtils.resolveCoordinate(coordinate.getValue(),furnace.getVersion(),resolver);
       try
       {
          addonManager.install(addonId).perform();
@@ -124,63 +126,5 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
       }
    }
 
-   // TODO this method needs to be abstracted into a utility
-   private AddonId resolveCoordinate(String addonCoordinates) throws IllegalArgumentException
-   {
-      Version runtimeAPIVersion = furnace.getVersion();
-      AddonId addon;
-      // This allows forge --install maven
-      if (addonCoordinates.contains(","))
-      {
-         if (addonCoordinates.contains(":"))
-         {
-            addon = AddonId.fromCoordinates(addonCoordinates);
-         }
-         else
-         {
-            addon = AddonId.fromCoordinates(FORGE_ADDON_GROUP_ID + addonCoordinates);
-         }
-      }
-      else
-      {
-         AddonId[] versions;
-         String coordinate;
-         if (addonCoordinates.contains(":"))
-         {
-            coordinate = addonCoordinates;
-            versions = resolver.resolveVersions(addonCoordinates).get();
-         }
-         else
-         {
-            coordinate = FORGE_ADDON_GROUP_ID + addonCoordinates;
-            versions = resolver.resolveVersions(coordinate).get();
-         }
-
-         if (versions.length == 0)
-         {
-            throw new IllegalArgumentException("No Artifact version found for " + coordinate);
-         }
-         else
-         {
-            AddonId selected = null;
-            for (int i = versions.length - 1; selected == null && i >= 0; i--)
-            {
-               String apiVersion = resolver.resolveAPIVersion(versions[i]).get();
-               if (apiVersion != null
-                        && Versions.isApiCompatible(runtimeAPIVersion, new SingleVersion(apiVersion)))
-               {
-                  selected = versions[i];
-               }
-            }
-            if (selected == null)
-            {
-               throw new IllegalArgumentException("No compatible addon API version found for " + coordinate
-                        + " for API " + runtimeAPIVersion);
-            }
-
-            addon = selected;
-         }
-      }
-      return addon;
-   }
+  
 }
