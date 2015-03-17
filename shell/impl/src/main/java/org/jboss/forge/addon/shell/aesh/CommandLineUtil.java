@@ -78,8 +78,8 @@ class CommandLineUtil
                .getInitialMetadata() : command.getMetadata();
       String cmdName = ShellUtil.shellifyCommandName(metadata.getName());
       String cmdDescription = metadata.getDescription();
-      final ProcessedCommand parameter = new ProcessedCommand(cmdName, cmdDescription,
-               (Class<? extends CommandValidator<?>>) null, null);
+      final ProcessedCommand parameter = new ProcessedCommand(cmdName, cmdDescription, null, new ForgeResultHandler(
+               shellContext, cmdName));
 
       for (Entry<String, InputComponent<?, ?>> entry : inputs.entrySet())
       {
