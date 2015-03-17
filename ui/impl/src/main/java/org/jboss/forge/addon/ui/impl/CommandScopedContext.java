@@ -31,7 +31,7 @@ public class CommandScopedContext implements Context, UIContextListener
 {
    private final static String COMPONENT_MAP_NAME = CommandScopedContext.class.getName() + ".componentInstanceMap";
    private final static String CREATIONAL_MAP_NAME = CommandScopedContext.class.getName() + ".creationalInstanceMap";
-   private static final LinkedList<UIContext> CONTEXT_STACK = new LinkedList<UIContext>();
+   static final LinkedList<UIContext> CONTEXT_STACK = new LinkedList<UIContext>();
 
    @Override
    public Class<? extends Annotation> getScope()

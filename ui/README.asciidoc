@@ -343,4 +343,28 @@ public class MyCommand extends AbstractProjectCommand implements PrerequisiteCom
 
 NOTE: The PrerequisiteCommandsProvider feature is implemented using a UICommandTransformer
 
+=== @Inject UIContextProvider for classes that need `UIContext`
 
+We highly recommend that operations involving `UIContext` start from UICommands. 
+However, some services might require the current `UIContext` and changing the API may not be possible.
+
+[source,java]
+----
+@Inject
+private UIContextProvider contextProvider;
+...
+// This may be null if no UI interaction started 
+UIContext context = contextProvider.getUIContext();
+----
+
+[TIP] 
+====
+If your addon uses a container that does not support "@Inject" annotations, services such as the `UIContextProvider` may also be 
+accessed via the `AddonRegistry`:
+
+----
+AddonRegistry registry = ...
+Imported<UIContextProvider> imported = registry.getServices(UIContextProvider.class);
+UIContextProvider factory = imported.get();
+----
+==== 
