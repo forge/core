@@ -23,6 +23,7 @@ import org.jboss.forge.addon.addons.facets.AddonSPIFacet;
 import org.jboss.forge.addon.addons.facets.AddonTestFacet;
 import org.jboss.forge.addon.addons.facets.DefaultFurnaceContainerFacet;
 import org.jboss.forge.addon.addons.facets.ForgeBOMFacet;
+import org.jboss.forge.addon.addons.facets.ForgeVersionFacet;
 import org.jboss.forge.addon.addons.facets.FurnacePluginFacet;
 import org.jboss.forge.addon.addons.facets.FurnaceVersionFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
@@ -77,7 +78,8 @@ public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
    {
       generateReadme(project);
       facetFactory.install(project, FurnaceVersionFacet.class);
-      project.getFacet(FurnaceVersionFacet.class).setVersion(forgeVersion.toString());
+      facetFactory.install(project, ForgeVersionFacet.class);
+      project.getFacet(ForgeVersionFacet.class).setVersion(forgeVersion.toString());
 
       facetFactory.install(project, ForgeBOMFacet.class);
       facetFactory.install(project, FurnacePluginFacet.class);
@@ -113,8 +115,8 @@ public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
       project.getFacet(PackagingFacet.class).setPackagingType("pom");
 
       facetFactory.install(project, AddonParentFacet.class);
-      project.getFacet(FurnaceVersionFacet.class).setVersion(forgeVersion.toString());
       facetFactory.install(project, ForgeBOMFacet.class);
+      project.getFacet(ForgeVersionFacet.class).setVersion(forgeVersion.toString());
 
       Project addonProject = createSubmoduleProject(project, "addon", projectName, AddonAddonFacet.class);
       Project apiProject = createSubmoduleProject(project, "api", projectName + "-api", AddonAPIFacet.class,
@@ -195,11 +197,17 @@ public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
             Dependency dependency = toDependency(addon);
             if (managed)
             {
-               dependencyInstaller.installManaged(project, dependency);
+               if (!dependencyInstaller.isManaged(project, dependency))
+               {
+                  dependencyInstaller.installManaged(project, dependency);
+               }
             }
             else
             {
-               dependencyInstaller.install(project, dependency);
+               if (!dependencyInstaller.isInstalled(project, dependency))
+               {
+                  dependencyInstaller.install(project, dependency);
+               }
             }
          }
    }

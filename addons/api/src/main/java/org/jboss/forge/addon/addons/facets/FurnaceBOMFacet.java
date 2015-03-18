@@ -18,19 +18,19 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 
 /**
- * Installs the BOM into the project
+ * Installs the Furnace BOM into the project
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@FacetConstraint({ ForgeVersionFacet.class })
-public class ForgeBOMFacet extends AbstractFacet<Project> implements ProjectFacet
+@FacetConstraint({ FurnaceVersionFacet.class })
+public class FurnaceBOMFacet extends AbstractFacet<Project> implements ProjectFacet
 {
    @Inject
    private DependencyInstaller installer;
 
-   public static Dependency FORGE_BOM_DEPENDENCY = DependencyBuilder.create()
-            .setGroupId("org.jboss.forge")
-            .setArtifactId("forge-bom")
+   public static Dependency FURNACE_BOM_DEPENDENCY = DependencyBuilder.create()
+            .setGroupId("org.jboss.forge.furnace")
+            .setArtifactId("furnace-bom")
             .setPackaging("pom")
             .setScopeType("import");
 
@@ -38,15 +38,15 @@ public class ForgeBOMFacet extends AbstractFacet<Project> implements ProjectFace
    public boolean install()
    {
       Dependency dependency = installer.installManaged(getFaceted(), DependencyBuilder
-               .create(FORGE_BOM_DEPENDENCY)
-               .setVersion(ForgeVersionFacet.VERSION_PROPERTY));
+               .create(FURNACE_BOM_DEPENDENCY)
+               .setVersion(FurnaceVersionFacet.VERSION_PROPERTY));
       return dependency != null;
    }
 
    @Override
    public boolean isInstalled()
    {
-      return installer.isManaged(origin, FORGE_BOM_DEPENDENCY);
+      return installer.isManaged(origin, FURNACE_BOM_DEPENDENCY);
    }
 
 }

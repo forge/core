@@ -52,8 +52,15 @@ public class AddonParentFacet extends AbstractFacet<Project> implements ProjectF
 
    private Dependency installManagedDependency(Dependency dependency)
    {
-      return installer.installManaged(origin, DependencyBuilder.create(dependency)
-               .setVersion(FurnaceVersionFacet.VERSION_PROPERTY));
+      if (!installer.isManaged(origin, dependency))
+      {
+         return installer.installManaged(origin, DependencyBuilder.create(dependency)
+                  .setVersion(FurnaceVersionFacet.VERSION_PROPERTY));
+      }
+      else
+      {
+         return dependency;
+      }
    }
 
 }
