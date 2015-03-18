@@ -9,6 +9,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
@@ -60,7 +61,7 @@ public class GitSetupCommandTest
    public void setup() throws Exception
    {
       project = projectFactory.createTempProject();
-      commandController = testHarness.createCommandController(GitSetupCommand.class, project.getRootDirectory());
+      commandController = testHarness.createCommandController(GitSetupCommand.class, project.getRoot());
       commandController.initialize();
    }
    
@@ -68,7 +69,7 @@ public class GitSetupCommandTest
    public void testGitSetup() throws Exception
    {
       Result result = commandController.execute();
-      assertTrue(project.getRootDirectory().getChildDirectory(".git").isDirectory());
+      assertTrue(project.getRoot().reify(DirectoryResource.class).getChildDirectory(".git").isDirectory());
       assertEquals("GIT has been installed.", result.getMessage());
    }
 
@@ -76,18 +77,18 @@ public class GitSetupCommandTest
    public void testGitSetupCalledTwice() throws Exception
    {
       commandController.execute();
-      assertTrue(project.getRootDirectory().getChildDirectory(".git").isDirectory());
+      assertTrue(project.getRoot().reify(DirectoryResource.class).getChildDirectory(".git").isDirectory());
       
       commandController.initialize();
       Result result = commandController.execute();
-      assertTrue(project.getRootDirectory().getChildDirectory(".git").isDirectory());
+      assertTrue(project.getRoot().reify(DirectoryResource.class).getChildDirectory(".git").isDirectory());
       assertEquals("GIT has been installed.", result.getMessage());
    }
 
    @After
    public void tearDown() throws Exception
    {
-      project.getRootDirectory().delete(true);
+      project.getRoot().delete(true);
    }
    
 }
