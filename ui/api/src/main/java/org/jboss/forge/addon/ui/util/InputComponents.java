@@ -238,7 +238,15 @@ public final class InputComponents
       }
       else
       {
-         result = value;
+         Converter<String, Object> valueConverter = (Converter<String, Object>) input.getValueConverter();
+         if (valueConverter != null && value instanceof String)
+         {
+            result = valueConverter.convert((String) value);
+         }
+         else
+         {
+            result = value;
+         }
       }
       return result;
    }
