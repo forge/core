@@ -14,12 +14,17 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.ui.command.ValidateRequiredCommand;
-import org.jboss.forge.addon.ui.controller.mock.*;
+import org.jboss.forge.addon.ui.controller.mock.ExampleCommand;
+import org.jboss.forge.addon.ui.controller.mock.ExampleNoUICommand;
+import org.jboss.forge.addon.ui.controller.mock.FlowExampleStep;
+import org.jboss.forge.addon.ui.controller.mock.FlowExampleWizard;
+import org.jboss.forge.addon.ui.controller.mock.MockPreStepsCommand;
 import org.jboss.forge.addon.ui.impl.mock.MockUIContext;
 import org.jboss.forge.addon.ui.impl.mock.MockUIRuntime;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.addon.ui.test.UITestHarness;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -36,8 +41,10 @@ import org.junit.runner.RunWith;
 public class CommandControllerTest
 {
    @Deployment
-   @AddonDeployments({ @AddonDeployment(name = "org.jboss.forge.addon:ui"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi") })
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:ui"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+   })
    public static AddonArchive getDeployment()
    {
       AddonArchive archive = ShrinkWrap
@@ -46,10 +53,7 @@ public class CommandControllerTest
                         ValidateRequiredCommand.class,
                         FlowExampleWizard.class, MockPreStepsCommand.class)
                .addPackage(MockUIRuntime.class.getPackage())
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));
+               .addBeansXML();
 
       return archive;
    }
