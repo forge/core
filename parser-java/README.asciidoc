@@ -14,17 +14,16 @@ types including classes, enums, interfaces, annotations, and package-info types.
 |no
 |yes
 
-
 |projects
 |no
 |yes
 
-|ui-spi
-|no
-|yes
-
 |ui
+|yes
 |no
+
+|convert
+|yes
 |no
 
 |org.jboss.forge.furnace.container:cdi

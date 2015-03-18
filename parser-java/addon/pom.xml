@@ -53,11 +53,9 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui-spi</artifactId>
+         <artifactId>convert</artifactId>
          <classifier>forge-addon</classifier>
-         <optional>true</optional>
-      </dependency>
-
+      </dependency>      
       <!-- Furnace Container -->
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>
