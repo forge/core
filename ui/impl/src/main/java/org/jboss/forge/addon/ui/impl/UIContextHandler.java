@@ -20,7 +20,7 @@ public class UIContextHandler implements UIContextProvider
    @Override
    public UIContext getUIContext()
    {
-      return CommandScopedContext.CONTEXT_STACK.peek();
+      return CommandScopedContext.getCurrentContext();
    }
 
 }

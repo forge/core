@@ -65,5 +65,6 @@ public class UIContextProviderTest
          Assert.assertNotNull(contextProvider.getUIContext());
          Assert.assertSame(contextProvider.getUIContext(), controller.getContext());
       }
+      Assert.assertNull(contextProvider.getUIContext());
    }
 }
