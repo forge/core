@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.ui.facets;
 
+import java.util.concurrent.Callable;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -60,5 +62,16 @@ public class HintsFacetTest
       input.setRequired(true);
       facet.setPromptInInteractiveMode(false);
       Assert.assertFalse(facet.isPromptInInteractiveMode());
+
+      // Using the Callable version
+      facet.setPromptInInteractiveMode(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return true;
+         }
+      });
+      Assert.assertTrue(facet.isPromptInInteractiveMode());
    }
 }

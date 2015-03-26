@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.ui.facets;
 
+import java.util.concurrent.Callable;
+
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
@@ -44,4 +46,12 @@ public interface HintsFacet extends Facet<InputComponent<?, ?>>
     */
    HintsFacet setPromptInInteractiveMode(boolean prompt);
 
+   /**
+    * Sets the associated {@link InputComponent} to prompt for values when in CLI interactive mode
+    * 
+    * @param prompt the {@link Callable} returning a {@link Boolean} if this {@link InputComponent} should prompt for
+    *           values regardless if it's required or not
+    * @return this {@link HintsFacet} instance for method chaining purposes
+    */
+   HintsFacet setPromptInInteractiveMode(Callable<Boolean> prompt);
 }
