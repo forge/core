@@ -61,7 +61,7 @@ public class ShellUIPromptImpl implements UIPrompt
    {
       try
       {
-         return promptInternal(message, true);
+         return promptInternal(message, true, false);
       }
       catch (InterruptedException e)
       {
@@ -74,7 +74,7 @@ public class ShellUIPromptImpl implements UIPrompt
    {
       try
       {
-         return promptInternal(message, false);
+         return promptInternal(message, false, false);
       }
       catch (InterruptedException e)
       {
@@ -164,7 +164,7 @@ public class ShellUIPromptImpl implements UIPrompt
       return input.getValue();
    }
 
-   private String promptInternal(String message, boolean echo) throws InterruptedException
+   private String promptInternal(String message, boolean echo, boolean required) throws InterruptedException
    {
       if (isAcceptDefaultsEnabled())
       {
@@ -172,8 +172,10 @@ public class ShellUIPromptImpl implements UIPrompt
       }
       PrintStream out = console.getShell().out();
       // prompts should begin with a blue '?'
-      String promptFlag = new TerminalString("?", new TerminalColor(Color.BLUE, Color.DEFAULT), new TerminalTextStyle(
-               CharacterType.BOLD)).toString();
+      String indicator = (required) ? "*" : "?";
+      String promptFlag = new TerminalString(indicator, new TerminalColor(Color.BLUE, Color.DEFAULT),
+               new TerminalTextStyle(
+                        CharacterType.BOLD)).toString();
       out.print(promptFlag + " " + message + " ");
       String output = readInput(out, echo);
       out.println();
@@ -187,7 +189,7 @@ public class ShellUIPromptImpl implements UIPrompt
          return defaultValue;
       }
       String suffix = (defaultValue) ? " [Y/n]:" : " [y/N]:";
-      String answer = promptInternal(message + suffix, true);
+      String answer = promptInternal(message + suffix, true, false);
       if (Strings.isNullOrEmpty(answer))
       {
          return defaultValue;
@@ -230,7 +232,7 @@ public class ShellUIPromptImpl implements UIPrompt
       String inputType = InputComponents.getInputType(input);
       if (InputType.SECRET.equals(inputType))
       {
-         value = promptInternal(label + description + defaultValueDescription + ": ", false);
+         value = promptInternal(label + description + defaultValueDescription + ": ", false, input.isRequired());
       }
       else if (input.getValueType() == Boolean.class)
       {
@@ -239,7 +241,7 @@ public class ShellUIPromptImpl implements UIPrompt
       }
       else
       {
-         value = promptInternal(label + description + defaultValueDescription + ": ", true);
+         value = promptInternal(label + description + defaultValueDescription + ": ", true, input.isRequired());
       }
       return value;
 
@@ -287,7 +289,7 @@ public class ShellUIPromptImpl implements UIPrompt
             out.println("Press <ENTER> to confirm, or <CTRL>+C to cancel.");
             String limit = items.size() == 1 ? "" : "-" + (items.size() - 1);
             String message = label + description + " [0" + limit + "]";
-            idx = Integer.parseInt(promptInternal(message, true));
+            idx = Integer.parseInt(promptInternal(message, true, select.isRequired()));
          }
          catch (NumberFormatException nfe)
          {
