@@ -21,6 +21,8 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
 /**
  * This is the parent interface of all inputs.
  * 
+ * The following facets are supported and automatically installed: {@link HintsFacet}
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */

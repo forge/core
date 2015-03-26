@@ -8,18 +8,40 @@
 package org.jboss.forge.addon.ui.facets;
 
 import org.jboss.forge.addon.facets.Facet;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
 
 /**
- * Hints facet
+ * Extends the {@link InputComponent} behavior with some orthogonal features (hints)
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
 public interface HintsFacet extends Facet<InputComponent<?, ?>>
 {
-   public abstract String getInputType();
+   /**
+    * @return the input type as defined in {@link InputType}
+    */
+   String getInputType();
 
-   public abstract HintsFacet setInputType(String type);
+   /**
+    * @param type the input type as defined in {@link InputType}
+    * @return this {@link HintsFacet} instance for method chaining purposes
+    */
+   HintsFacet setInputType(String type);
+
+   /**
+    * @return true if the associated {@link InputComponent} should prompt values when in CLI interactive mode regardless
+    *         if it's required or not
+    */
+   boolean isPromptInInteractiveMode();
+
+   /**
+    * Sets the associated {@link InputComponent} to prompt for values when in CLI interactive mode
+    * 
+    * @param prompt if this {@link InputComponent} should prompt for values regardless if it's required or not
+    * @return this {@link HintsFacet} instance for method chaining purposes
+    */
+   HintsFacet setPromptInInteractiveMode(boolean prompt);
 
 }

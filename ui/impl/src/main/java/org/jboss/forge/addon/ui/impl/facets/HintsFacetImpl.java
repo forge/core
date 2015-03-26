@@ -20,6 +20,7 @@ public class HintsFacetImpl extends AbstractFacet<InputComponent<?, ?>> implemen
 {
    private HintsLookup hintsLookup;
    private String inputType;
+   private Boolean promptInInteractiveMode;
 
    public HintsFacetImpl(InputComponent<?, ?> origin, Environment environment)
    {
@@ -58,6 +59,21 @@ public class HintsFacetImpl extends AbstractFacet<InputComponent<?, ?>> implemen
    public HintsFacet setInputType(String type)
    {
       inputType = type;
+      return this;
+   }
+
+   @Override
+   public boolean isPromptInInteractiveMode()
+   {
+      if (promptInInteractiveMode == null)
+         return (origin.isRequired() && !(origin.hasDefaultValue() || origin.hasValue()));
+      return promptInInteractiveMode;
+   }
+
+   @Override
+   public HintsFacet setPromptInInteractiveMode(boolean prompt)
+   {
+      this.promptInInteractiveMode = prompt;
       return this;
    }
 
