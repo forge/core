@@ -38,6 +38,7 @@ import org.jboss.forge.furnace.manager.request.InstallRequest;
 import org.jboss.forge.furnace.manager.request.RemoveRequest;
 import org.jboss.forge.furnace.util.Addons;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.versions.Versions;
 
 /**
  * Installs the addon via Git (needs the git addon installed)
@@ -119,8 +120,10 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       Coordinate buildCoordinate = project.getFacet(MetadataFacet.class).getOutputDependency().getCoordinate();
       try
       {
-         project.getFacet(PackagingFacet.class).createBuilder()
-                  .addArguments("clean", "install", "-Dversion.furnace=" + furnace.getVersion())
+         project.getFacet(PackagingFacet.class)
+                  .createBuilder()
+                  .addArguments("clean", "install", "-Dversion.furnace=" + furnace.getVersion(),
+                           "-Dversion.forge=" + Versions.getImplementationVersionFor(getClass()))
                   .runTests(false)
                   .build(output.out(), output.err());
       }
