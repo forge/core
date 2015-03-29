@@ -27,8 +27,8 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.validate.UIValidator;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -45,17 +45,16 @@ import org.junit.runner.RunWith;
 public class InputComponentValidatorTest
 {
    @Deployment
-   @AddonDeployments({ @AddonDeployment(name = "org.jboss.forge.addon:ui"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi") })
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:ui"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+   })
    public static AddonArchive getDeployment()
    {
       AddonArchive archive = ShrinkWrap
                .create(AddonArchive.class)
                .addBeansXML()
-               .addPackage(MockUIContext.class.getPackage())
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));
+               .addPackage(MockUIContext.class.getPackage());
 
       return archive;
    }
@@ -201,5 +200,5 @@ public class InputComponentValidatorTest
       Assert.assertThat(errors.size(), equalTo(1));
       Assert.assertThat(errors, hasItem("MSG"));
    }
-
+   
 }
