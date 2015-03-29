@@ -95,7 +95,7 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
             {
                resolveCoordinate(coordinate);
             }
-            catch (IllegalArgumentException e)
+            catch (Exception e)
             {
                context.addValidationError(context.getCurrentInputComponent(), "\"" + coordinate
                         + "\" is not a valid Addon coordinate");
