@@ -28,6 +28,7 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.manager.AddonManager;
 import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.furnace.versions.Versions;
@@ -80,7 +81,9 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
          public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
          {
             Set<String> items = new TreeSet<String>();
-            items.add("org.jboss.forge.addon:");
+            if (Strings.isNullOrEmpty(value)) {
+               items.add(FORGE_ADDON_GROUP_ID);
+            }
             return items;
          }
       });
