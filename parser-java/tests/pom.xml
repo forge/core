@@ -48,6 +48,13 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>shell-test-harness</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>test</scope>
+         <optional>true</optional>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>maven</artifactId>
          <classifier>forge-addon</classifier>
          <scope>test</scope>

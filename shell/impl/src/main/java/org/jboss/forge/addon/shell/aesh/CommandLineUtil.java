@@ -7,6 +7,7 @@
 package org.jboss.forge.addon.shell.aesh;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,11 +23,9 @@ import org.jboss.aesh.cl.exception.OptionParserException;
 import org.jboss.aesh.cl.internal.ProcessedCommand;
 import org.jboss.aesh.cl.internal.ProcessedOption;
 import org.jboss.aesh.cl.parser.CommandLineParser;
-import org.jboss.aesh.cl.validator.CommandValidator;
 import org.jboss.aesh.console.command.completer.CompleterInvocation;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.aesh.completion.OptionCompleterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
@@ -56,12 +55,10 @@ class CommandLineUtil
    private static final String ARGUMENTS_INPUT_NAME = "arguments";
 
    private final ConverterFactory converterFactory;
-   private final ResourceFactory resourceFactory;
 
    public CommandLineUtil(AddonRegistry addonRegistry)
    {
       this.converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
-      this.resourceFactory = addonRegistry.getServices(ResourceFactory.class).get();
    }
 
    public CommandLineParser generateParser(CommandController command, ShellContext shellContext,
@@ -163,9 +160,16 @@ class CommandLineUtil
                   List<Resource<?>> resources = new ArrayList<>();
                   for (String optionValue : resolvedOptionValues)
                   {
-                     ResourcePathResolver resolver = new ResourcePathResolver(resourceFactory, initialResource,
-                              optionValue);
-                     List<Resource<?>> resolved = resolver.resolve();
+                     List<Resource<?>> resolved = Collections.emptyList();
+                     try
+                     {
+                        resolved = initialResource.resolveChildren(optionValue);
+                     }
+                     catch (RuntimeException re)
+                     {
+                        logger.log(Level.FINER, "Error while resolving option value '" + optionValue + "' for "
+                                 + initialResource, re);
+                     }
                      resources.addAll(resolved);
                   }
                   InputComponents.setValueFor(converterFactory, input, resources);
@@ -181,9 +185,17 @@ class CommandLineUtil
                String optionValue = commandLine.getOptionValue(name);
                if (Resource.class.isAssignableFrom(input.getValueType()))
                {
-                  ResourcePathResolver resolver = new ResourcePathResolver(resourceFactory, initialResource,
-                           optionValue);
-                  List<Resource<?>> resolved = resolver.resolve();
+
+                  List<Resource<?>> resolved = Collections.emptyList();
+                  try
+                  {
+                     resolved = initialResource.resolveChildren(optionValue);
+                  }
+                  catch (RuntimeException re)
+                  {
+                     logger.log(Level.FINER, "Error while resolving option value '" + optionValue + "' for "
+                              + initialResource, re);
+                  }
                   if (resolved.size() > 0)
                   {
                      InputComponents.setValueFor(converterFactory, input, resolved.get(0));
