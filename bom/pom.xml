@@ -51,12 +51,12 @@
 
    <issueManagement>
       <system>jira</system>
-      <url>https://jira.jboss.org/jira/browse/FORGE</url>
+      <url>https://issues.jboss.org/browse/FORGE</url>
    </issueManagement>
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <version.furnace>2.15.3.Final</version.furnace>
+      <version.furnace>2.15.4.Final</version.furnace>
    </properties>
 
    <dependencyManagement>
