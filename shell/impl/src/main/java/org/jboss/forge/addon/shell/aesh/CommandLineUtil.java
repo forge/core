@@ -172,7 +172,14 @@ class CommandLineUtil
                      }
                      resources.addAll(resolved);
                   }
-                  InputComponents.setValueFor(converterFactory, input, resources);
+                  if (resources.size() > 0)
+                  {
+                     InputComponents.setValueFor(converterFactory, input, resources);
+                  }
+                  else
+                  {
+                     InputComponents.setValueFor(converterFactory, input, resolvedOptionValues);
+                  }
                }
                else
                {
