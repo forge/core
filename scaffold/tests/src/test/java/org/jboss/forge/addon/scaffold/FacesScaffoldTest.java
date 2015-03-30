@@ -26,10 +26,9 @@ import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.CompositeResult;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -45,23 +44,18 @@ import org.junit.runner.RunWith;
 public class FacesScaffoldTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:scaffold-faces"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
-            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:scaffold-faces"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
    })
    public static AddonArchive getDeployment()
    {
       AddonArchive archive = ShrinkWrap
                .create(AddonArchive.class)
                .addClass(ProjectHelper.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:scaffold-faces"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness")
-               );
+               .addBeansXML();
 
       return archive;
    }
