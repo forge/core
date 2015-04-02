@@ -16,10 +16,7 @@
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.furnace</groupId>
-         <artifactId>furnace-proxy</artifactId>
-      </dependency>
+      
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui-api</artifactId>
