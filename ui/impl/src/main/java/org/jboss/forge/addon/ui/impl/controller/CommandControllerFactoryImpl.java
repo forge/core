@@ -22,7 +22,6 @@ import org.jboss.forge.addon.ui.controller.SingleCommandController;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
 
 /**
@@ -92,7 +91,7 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
          if (tmpCommand == null)
          {
             log.warning(UICommandTransformer.class.getName() + " implementation "
-                     + Proxies.unwrapProxyClassName(transformer.getClass())
+                     + transformer.getClass().getName()
                      + " should not have returned null. Ignoring.");
          }
          else
