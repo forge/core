@@ -6,8 +6,6 @@ import java.util.Iterator;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.text.Highlighter;
@@ -29,9 +27,6 @@ import org.jboss.forge.addon.ui.util.Metadata;
  */
 public class CatCommand extends AbstractShellCommand
 {
-   @Inject
-   private ResourceFactory resourceFactory;
-
    @Inject
    private Highlighter highlighter;
 
@@ -76,7 +71,7 @@ public class CatCommand extends AbstractShellCommand
       while (it.hasNext())
       {
          final Resource<?> resource = it.hasNext() ?
-                  (new ResourcePathResolver(resourceFactory, currentResource, it.next()).resolve().get(0))
+                  (currentResource.resolveChildren(it.next()).get(0))
                   : currentResource;
 
          if (!resource.exists())
