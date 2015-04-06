@@ -86,6 +86,7 @@ public class CatCommand extends AbstractShellCommand
                if (color.getValue())
                {
                   highlighter.byFileName(resource.getName(), resource.getContents(), output.out());
+                  output.out().println();
                }
                else
                {
