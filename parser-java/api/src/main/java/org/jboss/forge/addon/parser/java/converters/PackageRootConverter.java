@@ -39,7 +39,7 @@ public class PackageRootConverter implements Converter<String, String>
    public String convert(String source)
    {
       final String result;
-      if (Strings.isNullOrEmpty(source))
+      if (Strings.isNullOrEmpty(source) || contextProvider.getUIContext() == null)
       {
          result = source;
       }
