@@ -7,21 +7,28 @@
 package org.jboss.forge.addon.manager.impl;
 
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.manager.AddonManager;
 import org.jboss.forge.furnace.manager.impl.AddonManagerImpl;
 import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * Produces {@link AddonManager} objects
  * 
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public class AddonManagerProducer
 {
+   @Inject
+   private AddonRegistry addonRegistry;
+
    @Produces
    public AddonManager produceAddonManager(Furnace furnace, AddonDependencyResolver resolver)
    {
-      return new AddonManagerImpl(furnace, resolver);
+      return new AddonManagerImpl(furnace, resolver, addonRegistry);
    }
 }
