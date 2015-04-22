@@ -35,12 +35,12 @@ import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.manager.maven.addon.MavenAddonDependencyResolver;
-import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -55,14 +55,7 @@ public class NewFurnaceTestCommandTest
 {
 
    @Deployment
-   @AddonDependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:parser-java"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.addon:projects"),
-            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.addon:addons"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-   })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
       return ShrinkWrap.create(AddonArchive.class).addBeansXML();
@@ -95,6 +88,7 @@ public class NewFurnaceTestCommandTest
       controller.initialize();
       controller.setValueFor("named", "MyTestCase");
       controller.setValueFor("packageName", "org.jboss.forge.test");
+      controller.setValueFor("reuseProjectAddons", false);
       UISelectMany<AddonId> component = (UISelectMany<AddonId>) controller.getInputs().get("addonDependencies");
       UISelectOne<AddonId> furnaceContainer = (UISelectOne<AddonId>) controller.getInputs().get("furnaceContainer");
       AddonId funaceContainerAddonId = furnaceContainer.getValueChoices().iterator().next();
@@ -125,9 +119,43 @@ public class NewFurnaceTestCommandTest
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getTestJavaResource("org.jboss.forge.test.MyTestCase");
       Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClassSource.class)));
       Assert.assertFalse(javaResource.getJavaType().hasSyntaxErrors());
 
+      Resource<?> finalArtifact = project.getFacet(PackagingFacet.class).getFinalArtifact();
+      Assert.assertFalse(finalArtifact.exists());
+      Assert.assertTrue(project.getFacet(PackagingFacet.class).createBuilder().runTests(false).build()
+               .exists());
+      Assert.assertTrue(finalArtifact.exists());
+   }
+
+   @Test
+   public void testCreateTestClassWithoutDependencies() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, JavaSourceFacet.class);
+      facetFactory.install(project, FurnaceVersionFacet.class);
+      project.getFacet(FurnaceVersionFacet.class).setVersion(furnace.getVersion().toString());
+      facetFactory.install(project, AddonTestFacet.class);
+
+      CommandController controller = testHarness.createCommandController(NewFurnaceTestCommand.class,
+               project.getRoot());
+      controller.initialize();
+      controller.setValueFor("named", "MyTestCase");
+      controller.setValueFor("packageName", "org.jboss.forge.test");
+      controller.setValueFor("reuseProjectAddons", true);
+      Assert.assertTrue(controller.canExecute());
+      Result result = controller.execute();
+      Assert.assertFalse(result instanceof Failed);
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getTestJavaResource("org.jboss.forge.test.MyTestCase");
+      Assert.assertNotNull(javaResource);
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClassSource.class)));
+      Assert.assertFalse(javaResource.getJavaType().hasSyntaxErrors());
+      JavaClassSource javaClass = javaResource.getJavaType();
+      MethodSource<JavaClassSource> getDeploymentMethod = javaClass.getMethod("getDeployment");
+      Assert.assertNotNull(getDeploymentMethod);
+      Assert.assertNull(getDeploymentMethod.getAnnotation("AddonDependencies").getLiteralValue());
       Resource<?> finalArtifact = project.getFacet(PackagingFacet.class).getFinalArtifact();
       Assert.assertFalse(finalArtifact.exists());
       Assert.assertTrue(project.getFacet(PackagingFacet.class).createBuilder().runTests(false).build()
