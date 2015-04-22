@@ -17,10 +17,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,21 +31,11 @@ import org.junit.runner.RunWith;
 public class AddonListCommandTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:text"),
-            @AddonDeployment(name = "org.jboss.forge.addon:addon-manager"),
-            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness")
-   })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
       AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:text"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:addon-manager"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
+               .addBeansXML();
 
       return archive;
    }
