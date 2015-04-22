@@ -10,10 +10,8 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,24 +21,18 @@ import org.junit.runner.RunWith;
 public class DevToolsPresenceTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:dev-tools-java"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi") })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
       AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:dev-tools-java")
-               );
+               .addBeansXML();
 
       return archive;
    }
 
    @Inject
    private RegisterAsServiceCommand command;
-   
+
    @Inject
    private JavaEqualsHashcodeCommand ehCommand;
 
@@ -49,7 +41,7 @@ public class DevToolsPresenceTest
    {
       Assert.assertNotNull(command);
       Assert.assertNotNull(command.toString());
-      
+
       Assert.assertNotNull(ehCommand);
       Assert.assertNotNull(ehCommand.toString());
    }

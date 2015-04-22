@@ -24,6 +24,7 @@ import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.AddonArchive;
@@ -40,16 +41,7 @@ import org.junit.runner.RunWith;
 public class JavaFormatSourcesCommandTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:parser-java"),
-            @AddonDeployment(name = "org.jboss.forge.addon:dev-tools-java"),
-            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi"),
-            @AddonDeployment(name = "org.jboss.forge.addon:configuration"),
-            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness")
-   })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
 
@@ -70,16 +62,7 @@ public class JavaFormatSourcesCommandTest
                         "org/jboss/forge/addon/devtools/java/eclipse_profile.xml")
                .add(new FileAsset(new File(
                         "src/test/resources/org/jboss/forge/addon/devtools/java/resources/forge_profile.xml")),
-                        "org/jboss/forge/addon/devtools/java/forge_profile.xml")
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:dev-tools-java"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:configuration"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:resources")
-               );
+                        "org/jboss/forge/addon/devtools/java/forge_profile.xml");
       return archive;
    }
 
