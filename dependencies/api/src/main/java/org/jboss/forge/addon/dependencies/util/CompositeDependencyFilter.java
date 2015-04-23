@@ -21,7 +21,7 @@ public class CompositeDependencyFilter implements Predicate<Dependency>
 {
    private Iterable<? extends Predicate<Dependency>> filters;
 
-   @SuppressWarnings("unchecked")
+   @SafeVarargs
    public CompositeDependencyFilter(Predicate<Dependency>... filters)
    {
       this.filters = Arrays.asList(filters);
