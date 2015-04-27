@@ -24,6 +24,8 @@ import org.jboss.forge.addon.dependencies.util.NonSnapshotDependencyFilter;
 import org.jboss.forge.addon.manager.impl.utils.DistributionDirectoryExistsPredicate;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.resource.ZipEntryResource;
+import org.jboss.forge.addon.resource.ZipResource;
 import org.jboss.forge.addon.ui.annotation.Command;
 import org.jboss.forge.addon.ui.annotation.predicate.NonGUIEnabledPredicate;
 import org.jboss.forge.addon.ui.input.UIPrompt;
@@ -119,12 +121,13 @@ public class DistributionCommand
       // wait.start("Update in progress. Please wait");
       Dependency dependency = resolver.resolveArtifact(DependencyQueryBuilder.create(forgeDistribution));
       Assert.notNull(dependency, "Artifact was not found");
-      resourceFactory.create(dependency.getArtifact().getUnderlyingResourceObject());
-      // Files.unzip(resource.getUnderlyingResourceObject(), forgeHome.getUnderlyingResourceObject());
-
+      ZipResource dependencyZip = resourceFactory.create(ZipResource.class,dependency.getArtifact().getUnderlyingResourceObject());
       DirectoryResource childDirectory = forgeHome.getChildDirectory(dependency.getCoordinate().getArtifactId() + "-"
                + dependency.getCoordinate().getVersion());
-
+      ZipEntryResource zipEntry = (ZipEntryResource)dependencyZip.listResources().get(0);
+      zipEntry.extract(childDirectory);
+      /*childDirectory.getChildDirectory(dependency.getCoordinate().getArtifactId() + "-"
+               + dependency.getCoordinate().getVersion());*/
       DirectoryResource updateDirectory = forgeHome.getChildDirectory(".update");
       if (updateDirectory.exists())
       {

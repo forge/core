@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.ui.command;
 
+import org.jboss.forge.furnace.addons.AddonId;
+
 /**
  * Responsible for providing {@link UICommand} instances.
  * 
@@ -17,4 +19,10 @@ public interface CommandProvider
     * Get all {@link UICommand} instances from this {@link CommandProvider}.
     */
    Iterable<UICommand> getCommands();
+   
+   /**
+    * Clear all the cached data for the given addon. 
+    * Mainly usable for testing purposes, when an addon is manually undeployed but it's annotated commands stay cached.
+    */
+   void addonUndeployed(AddonId addonId);
 }

@@ -48,6 +48,8 @@ public class UITestHarness
    private CommandControllerFactory factory;
 
    private UIProviderImpl providerImpl;
+   
+   private boolean isGui = true;
 
    private final Map<String, String> promptResults = new HashMap<>();
 
@@ -137,11 +139,11 @@ public class UITestHarness
    {
       if (providerImpl == null)
       {
-         providerImpl = new UIProviderImpl(true);
+         providerImpl = new UIProviderImpl(isGui);
       }
       return providerImpl;
    }
-
+   
    private UIContextImpl getUIContextInstance(Resource<?>... initialSelection)
    {
       Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
@@ -156,5 +158,15 @@ public class UITestHarness
    public Map<String, String> getPromptResults()
    {
       return this.promptResults;
+   }
+
+   public boolean isGui()
+   {
+      return isGui;
+   }
+
+   public void setGui(boolean isGui)
+   {
+      this.isGui = isGui;
    }
 }

@@ -152,6 +152,27 @@ goto runForge
 @REM Start Forge
 :runForge
 
+@REM If there is update prepared (.update directory), copy files from it
+if exist "%FORGE_HOME%\.update" (
+  rmdir /S/Q "%FORGE_HOME%\addons"
+  move /y "%FORGE_HOME%\.update\addons\*" "%FORGE_HOME%\addons\*"
+
+  rmdir /S/Q "%FORGE_HOME%\bin"
+  move /y "%FORGE_HOME%\.update\bin\*" "%FORGE_HOME%\bin\*"
+
+  rmdir /S/Q "%FORGE_HOME%\lib"
+  move /y "%FORGE_HOME%\.update\lib\*" "%FORGE_HOME%\lib\*"
+
+  rmdir /S/Q "%FORGE_HOME%\.update"
+  
+  cd ..
+  cd bin
+  echo "Restarting Forge to newer version."
+  CALL forge.bat %*
+  exit /b
+)
+
+
 if exist "%FORGE_HOME%\addons" set ADDONS_DIR=--immutableAddonDir "%FORGE_HOME%\addons" 
 set FORGE_MAIN_CLASS=org.jboss.forge.bootstrap.Bootstrap
 %FORGE_JAVA_EXE% %FORGE_DEBUG_ARGS% %FORGE_OPTS% "-Dforge.standalone=true" "-Dforge.home=%FORGE_HOME%" ^
