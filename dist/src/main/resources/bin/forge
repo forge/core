@@ -94,6 +94,22 @@ fi
 
 echo Using Forge at $FORGE_HOME
 
+# If there is update prepared (.update directory), copy files from it
+if [ -e "$FORGE_HOME/.update" ] ; then
+  rm -rf $FORGE_HOME/addons
+  mv $FORGE_HOME/.update/addons $FORGE_HOME/addons
+  rm -rf $FORGE_HOME/bin
+  mv $FORGE_HOME/.update/bin $FORGE_HOME/bin
+  rm -rf $FORGE_HOME/lib
+  mv $FORGE_HOME/.update/lib $FORGE_HOME/lib
+  rm -rf $FORGE_HOME/.update
+  cd ..
+  cd bin
+  echo "Restarting Forge to new version"
+  sh forge $QUOTED_ARGS
+  exit 0
+fi
+
 # For Cygwin, ensure paths are in UNIX format before anything is touched
 if $cygwin ; then
   [ -n "$FORGE_HOME" ] &&

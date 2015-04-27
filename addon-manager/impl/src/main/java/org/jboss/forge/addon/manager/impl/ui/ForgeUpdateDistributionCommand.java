@@ -24,6 +24,7 @@ import org.jboss.forge.addon.dependencies.util.NonSnapshotDependencyFilter;
 import org.jboss.forge.addon.manager.impl.utils.DistributionDirectoryExistsPredicate;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.addon.resource.zip.ZipFileResource;
 import org.jboss.forge.addon.ui.annotation.Command;
 import org.jboss.forge.addon.ui.annotation.predicate.NonGUIEnabledPredicate;
 import org.jboss.forge.addon.ui.input.UIPrompt;
@@ -43,7 +44,7 @@ import org.jboss.forge.furnace.versions.Versions;
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class DistributionCommand
+public class ForgeUpdateDistributionCommand
 {
    @Inject
    private DependencyResolver resolver;
@@ -51,8 +52,9 @@ public class DistributionCommand
    @Inject
    private ResourceFactory resourceFactory;
 
-   @Command(value = "Forge: Update Abort", help = "Aborts a previous forge update", categories = { "Forge", "Manage" }, enabled = {
-            NonGUIEnabledPredicate.class, DistributionDirectoryExistsPredicate.class })
+   @Command(value = "Forge: Update Abort", help = "Aborts a previous forge update", categories = { "Forge",
+            "Manage" }, enabled = {
+                     NonGUIEnabledPredicate.class, DistributionDirectoryExistsPredicate.class })
    public Result updateAbort() throws IOException
    {
       DirectoryResource forgeHome = getForgeHome();
@@ -75,7 +77,8 @@ public class DistributionCommand
       }
    }
 
-   @Command(value = "Forge: Update", help = "Update this forge installation", categories = { "Forge", "Manage" }, enabled = NonGUIEnabledPredicate.class)
+   @Command(value = "Forge: Update", help = "Update this forge installation", categories = { "Forge",
+            "Manage" }, enabled = NonGUIEnabledPredicate.class)
    public void update(UIOutput output, UIPrompt prompt, UIProgressMonitor monitor) throws IOException
    {
       PrintStream out = output.out();
@@ -116,22 +119,15 @@ public class DistributionCommand
    private void updateForge(final DirectoryResource forgeHome, final Coordinate forgeDistribution, UIOutput output)
             throws IOException
    {
-      // wait.start("Update in progress. Please wait");
       Dependency dependency = resolver.resolveArtifact(DependencyQueryBuilder.create(forgeDistribution));
       Assert.notNull(dependency, "Artifact was not found");
-      resourceFactory.create(dependency.getArtifact().getUnderlyingResourceObject());
-      // Files.unzip(resource.getUnderlyingResourceObject(), forgeHome.getUnderlyingResourceObject());
-
+      ZipFileResource dependencyZip = resourceFactory.create(ZipFileResource.class,
+               dependency.getArtifact().getUnderlyingResourceObject());
+      dependencyZip.extractTo(forgeHome);
       DirectoryResource childDirectory = forgeHome.getChildDirectory(dependency.getCoordinate().getArtifactId() + "-"
                + dependency.getCoordinate().getVersion());
-
       DirectoryResource updateDirectory = forgeHome.getChildDirectory(".update");
-      if (updateDirectory.exists())
-      {
-         updateDirectory.delete(true);
-      }
       childDirectory.renameTo(updateDirectory);
-      // wait.stop();
       output.success(output.out(), "Forge will now restart to complete the update...");
       System.exit(0);
    }
@@ -160,8 +156,7 @@ public class DistributionCommand
                               return version.compareTo(runtimeVersion) > 0 && version.getMajorVersion() == 2
                                        && version.getQualifier().equals("Final");
                            }
-                        }
-                        ));
+                        }));
       List<Coordinate> versions = resolver.resolveVersions(query);
       return versions.isEmpty() ? null : versions.get(versions.size() - 1);
    }

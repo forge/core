@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.ui.command.CommandProvider;
 import org.jboss.forge.addon.ui.command.UICommand;
+import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
@@ -26,6 +27,12 @@ public class AddonRegistryCommandProvider implements CommandProvider
    public Iterable<UICommand> getCommands()
    {
       return registry.getServices(UICommand.class);
+   }
+
+   @Override
+   public void addonUndeployed(AddonId addonId)
+   {
+      //don't do anything because this provider does not store any cache data
    }
 
 }
