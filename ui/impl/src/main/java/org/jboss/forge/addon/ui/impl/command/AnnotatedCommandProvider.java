@@ -97,6 +97,12 @@ public class AnnotatedCommandProvider implements CommandProvider
    public void addonDestroyed(@Observes PreShutdown shutdown)
    {
       AddonId id = shutdown.getAddon().getId();
-      extension.addonDestroyed(id);
+      addonUndeployed(id);
+   }
+
+   @Override
+   public void addonUndeployed(AddonId addonId)
+   {
+      extension.addonDestroyed(addonId);
    }
 }

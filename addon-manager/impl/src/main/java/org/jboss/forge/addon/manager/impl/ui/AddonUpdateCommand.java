@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
-
 import org.jboss.forge.addon.manager.impl.utils.CoordinateUtils;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
