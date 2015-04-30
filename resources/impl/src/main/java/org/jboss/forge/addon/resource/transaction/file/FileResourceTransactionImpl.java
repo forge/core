@@ -447,6 +447,21 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    }
 
    @Override
+   public File move(File src, File dest) throws IOException
+   {
+      assertSessionCreated();
+      try
+      {
+         session.moveFile(src, dest);
+         return dest;
+      }
+      catch (Exception e)
+      {
+         throw new ResourceTransactionException("Error while moving file from " + src + " to " + dest, e);
+      }
+   }
+
+   @Override
    public void setTransactionTimeout(int seconds)
    {
       if (seconds < 0)
