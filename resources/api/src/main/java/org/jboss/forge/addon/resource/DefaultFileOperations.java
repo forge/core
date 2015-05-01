@@ -17,12 +17,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import org.jboss.forge.furnace.util.Streams;
+import java.nio.file.StandardCopyOption;
 
 /**
  * Default implementation for {@link FileOperations} interface
@@ -176,35 +174,7 @@ public enum DefaultFileOperations implements FileOperations
       {
          throw new IOException("Destination '" + destFile + "' exists but is a directory");
       }
-
-      FileInputStream fis = null;
-      FileOutputStream fos = null;
-      FileChannel input = null;
-      FileChannel output = null;
-      try
-      {
-         fis = new FileInputStream(srcFile);
-         fos = new FileOutputStream(destFile);
-         input = fis.getChannel();
-         output = fos.getChannel();
-         long size = input.size();
-         long pos = 0;
-         long count = 0;
-         long FIFTY_MB = (1024L * 1024L) * 50L;
-         while (pos < size)
-         {
-            count = (size - pos) > FIFTY_MB ? FIFTY_MB : (size - pos);
-            pos += output.transferFrom(input, pos, count);
-         }
-      }
-      finally
-      {
-         Streams.closeQuietly(output);
-         Streams.closeQuietly(fos);
-         Streams.closeQuietly(input);
-         Streams.closeQuietly(fis);
-      }
-
+      Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
       if (srcFile.length() != destFile.length())
       {
          throw new IOException("Failed to copy full contents from '" +
