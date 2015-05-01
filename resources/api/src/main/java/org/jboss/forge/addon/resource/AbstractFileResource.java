@@ -390,7 +390,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    }
 
    @Override
-   public void move(FileResource<?> target)
+   public void moveTo(FileResource<?> target)
    {
       try
       {

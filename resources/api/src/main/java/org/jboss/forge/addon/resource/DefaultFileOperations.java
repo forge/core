@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.resource;
 
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,8 +23,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.jboss.forge.furnace.util.Streams;
-
-import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
 /**
  * Default implementation for {@link FileOperations} interface
@@ -166,7 +166,7 @@ public enum DefaultFileOperations implements FileOperations
    /**
     * Internal copy file method.
     *
-    * @param srcFile  the validated source file, must not be <code>null</code>
+    * @param srcFile the validated source file, must not be <code>null</code>
     * @param destFile the validated destination file, must not be <code>null</code>
     * @throws IOException if an error occurs
     */

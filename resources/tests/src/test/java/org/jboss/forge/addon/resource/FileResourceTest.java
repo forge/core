@@ -17,10 +17,9 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -36,18 +35,13 @@ import com.google.common.io.Files;
 public class FileResourceTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:resources") })
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:resources"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+   })
    public static AddonArchive getDeployment()
    {
-      AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:resources")
-               );
-
-      return archive;
+      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
    }
 
    @Inject
@@ -118,7 +112,7 @@ public class FileResourceTest
       FileResource<?> src = resourceFactory.create(FileResource.class, file);
       FileResource<?> newFile = resourceFactory.create(FileResource.class, dest);
 
-      src.move(newFile);
+      src.moveTo(newFile);
       Assert.assertNotNull(dest);
       Assert.assertTrue(dest.isFile());
       Assert.assertEquals(src.getUnderlyingResourceObject().getAbsolutePath(), dest.getAbsolutePath());
@@ -126,7 +120,8 @@ public class FileResourceTest
    }
 
    @Test
-   public void testMoveFileResourceToDirectory() throws IOException {
+   public void testMoveFileResourceToDirectory() throws IOException
+   {
       File file = File.createTempFile("fileresourcetest", ".tmp");
       file.deleteOnExit();
       file.createNewFile();
@@ -135,9 +130,9 @@ public class FileResourceTest
       folder.deleteOnExit();
       folder.mkdir();
 
-      FileResource<?> src = resourceFactory.create(FileResource.class, file);
+      FileResource<?> src = resourceFactory.create(file).reify(FileResource.class);
       DirectoryResource folderResource = resourceFactory.create(DirectoryResource.class, folder);
-      src.move(folderResource);
+      src.moveTo(folderResource);
 
       Assert.assertNotNull(src);
       Assert.assertTrue(src.getUnderlyingResourceObject().getAbsolutePath().contains(folder.getName()));
@@ -146,7 +141,8 @@ public class FileResourceTest
    }
 
    @Test
-   public void testMoveDirectoryResourceToDirectory() throws IOException {
+   public void testMoveDirectoryResourceToDirectory() throws IOException
+   {
       File folder = OperatingSystemUtils.createTempDir();
       folder.deleteOnExit();
       folder.mkdir();
@@ -157,7 +153,7 @@ public class FileResourceTest
 
       DirectoryResource folderResource = resourceFactory.create(DirectoryResource.class, folder);
       DirectoryResource folderResource2 = resourceFactory.create(DirectoryResource.class, folder2);
-      folderResource.move(folderResource2);
+      folderResource.moveTo(folderResource2);
 
       String absolutePathDirMoved = folderResource.getUnderlyingResourceObject().getAbsolutePath();
       Assert.assertEquals(absolutePathDirMoved, folder2.getAbsolutePath() + File.separator + folder.getName());
