@@ -388,4 +388,17 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
          throw new ResourceException("Error while creating OutputStream for Resource " + this, ioe);
       }
    }
+
+   @Override
+   public void move(FileResource<?> target)
+   {
+      try
+      {
+         this.file = getFileOperations().move(file, target.getUnderlyingResourceObject());
+      }
+      catch (IOException e)
+      {
+         throw new ResourceException("Error while moving Resource " + this, e);
+      }
+   }
 }
