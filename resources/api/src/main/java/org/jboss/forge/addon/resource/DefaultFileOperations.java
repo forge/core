@@ -7,20 +7,11 @@
 
 package org.jboss.forge.addon.resource;
 
-import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+import java.io.*;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
 /**
  * Default implementation for {@link FileOperations} interface
@@ -65,6 +56,44 @@ public enum DefaultFileOperations implements FileOperations
    public void deleteFileOnExit(File file)
    {
       file.deleteOnExit();
+   }
+
+   @Override
+   public boolean deleteFile(File file, boolean recursive)
+   {
+      if (recursive)
+      {
+         if (file == null)
+         {
+            return false;
+         }
+
+         try
+         {
+            Files.walkFileTree(file.toPath(), new SimpleFileVisitor<Path>()
+            {
+               @Override
+               public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
+               {
+                  Files.delete(file);
+                  return FileVisitResult.CONTINUE;
+               }
+
+               @Override
+               public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException
+               {
+                  Files.delete(dir);
+                  return FileVisitResult.CONTINUE;
+               }
+            });
+            return true;
+         }
+         catch (IOException e)
+         {
+            return false;
+         }
+      }
+      return this.deleteFile(file);
    }
 
    @Override
@@ -164,7 +193,7 @@ public enum DefaultFileOperations implements FileOperations
    /**
     * Internal copy file method.
     *
-    * @param srcFile the validated source file, must not be <code>null</code>
+    * @param srcFile  the validated source file, must not be <code>null</code>
     * @param destFile the validated destination file, must not be <code>null</code>
     * @throws IOException if an error occurs
     */

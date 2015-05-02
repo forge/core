@@ -33,6 +33,8 @@ public interface FileOperations
 
    boolean deleteFile(File file);
 
+   boolean deleteFile(File file, boolean recursive);
+
    void deleteFileOnExit(File file);
 
    boolean createNewFile(File file) throws IOException;
