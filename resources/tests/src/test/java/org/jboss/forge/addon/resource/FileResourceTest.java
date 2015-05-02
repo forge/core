@@ -148,8 +148,8 @@ public class FileResourceTest
       folder.mkdir();
 
       File folder2 = OperatingSystemUtils.createTempDir();
-      folder.deleteOnExit();
-      folder.mkdir();
+      folder2.deleteOnExit();
+      folder2.mkdir();
 
       DirectoryResource folderResource = resourceFactory.create(DirectoryResource.class, folder);
       DirectoryResource folderResource2 = resourceFactory.create(DirectoryResource.class, folder2);
@@ -159,6 +159,22 @@ public class FileResourceTest
       Assert.assertEquals(absolutePathDirMoved, folder2.getAbsolutePath() + File.separator + folder.getName());
       Assert.assertTrue(folderResource.isDirectory());
       Assert.assertTrue(folderResource.exists());
+   }
+
+   @Test(expected = ResourceException.class)
+   public void testMoveDirectoryResourceToFile() throws IOException
+   {
+      File file = File.createTempFile("fileresourcetest", ".tmp");
+      file.deleteOnExit();
+      file.createNewFile();
+
+      File folder = OperatingSystemUtils.createTempDir();
+      folder.deleteOnExit();
+      folder.mkdir();
+
+      DirectoryResource folderResource = resourceFactory.create(DirectoryResource.class, folder);
+      FileResource fileResource = resourceFactory.create(FileResource.class, file);
+      folderResource.moveTo(fileResource);
    }
 
 }
