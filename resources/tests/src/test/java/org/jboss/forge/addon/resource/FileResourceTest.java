@@ -177,4 +177,65 @@ public class FileResourceTest
       folderResource.moveTo(fileResource);
    }
 
+   @Test
+   public void testDeleteDirectoryNotRecursive() throws IOException
+   {
+      File folder = OperatingSystemUtils.createTempDir();
+      folder.deleteOnExit();
+      folder.mkdir();
+
+      DirectoryResource folderResource = resourceFactory.create(DirectoryResource.class, folder);
+
+      Assert.assertTrue(folderResource.isDirectory());
+      Assert.assertTrue(folderResource.exists());
+
+      folderResource.delete();
+
+      Assert.assertTrue(!folderResource.exists());
+   }
+
+   @Test
+   public void testDeleteDirectoryRecursive() throws IOException
+   {
+      File folder = OperatingSystemUtils.createTempDir();
+      folder.deleteOnExit();
+      folder.mkdir();
+
+      File folder2 = OperatingSystemUtils.createTempDir();
+      folder2.deleteOnExit();
+      folder2.mkdir();
+
+      File file = File.createTempFile("fileresourcetest", ".tmp");
+      file.deleteOnExit();
+      file.createNewFile();
+
+      File file2 = File.createTempFile("fileresourcetest2", ".tmp");
+      file2.deleteOnExit();
+      file2.createNewFile();
+
+      DirectoryResource folderResource = resourceFactory.create(DirectoryResource.class, folder);
+      FileResource<?> src = resourceFactory.create(file).reify(FileResource.class);
+      src.moveTo(folderResource);
+
+      DirectoryResource folderResource2 = resourceFactory.create(DirectoryResource.class, folder2);
+      FileResource<?> src2 = resourceFactory.create(file2).reify(FileResource.class);
+
+      folderResource2.moveTo(folderResource);
+      src2.moveTo(folderResource2);
+
+      Assert.assertTrue(folderResource.isDirectory());
+      Assert.assertTrue(folderResource.exists());
+      Assert.assertTrue(src.exists());
+
+      Assert.assertTrue(folderResource2.isDirectory());
+      Assert.assertTrue(folderResource2.exists());
+      Assert.assertTrue(src2.exists());
+
+      folderResource.delete(true);
+
+      Assert.assertTrue(!folderResource.exists());
+      Assert.assertTrue(!file.exists());
+      Assert.assertTrue(!folderResource2.exists());
+      Assert.assertTrue(!file2.exists());
+   }
 }
