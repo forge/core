@@ -21,6 +21,7 @@ public interface JavaEEFacet extends ProjectFacet
    public static final String DEFAULT_ENTITY_PACKAGE = "model";
    public static final String DEFAULT_CONSTRAINT_PACKAGE = "constraints";
    public static final String DEFAULT_CDI_PACKAGE = "beans";
+   public static final String DEFAULT_CDI_EXTENSIONS_PACKAGE = "beans.extensions";
 
    /**
     * Return the {@link Version} of the specification for which this facet represents.
