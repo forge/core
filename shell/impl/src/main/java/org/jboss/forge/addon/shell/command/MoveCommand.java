@@ -7,9 +7,21 @@
 
 package org.jboss.forge.addon.shell.command;
 
-import org.jboss.forge.addon.resource.*;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
-import org.jboss.forge.addon.ui.context.*;
+import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UISelection;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -18,10 +30,6 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.util.Lists;
-
-import javax.inject.Inject;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author <a href="danielsoro@gmail.com">Daniel Cunha (soro)</a>
@@ -69,13 +77,13 @@ public class MoveCommand extends AbstractShellCommand
       UISelection<Resource<?>> initialSelection = context.getUIContext().getInitialSelection();
       Resource<?> directory = initialSelection.get();
       Iterator<String> argIterator = arguments.getValue().iterator();
-      FileResource sourceResource = (FileResource) resolveFirstResource(directory, argIterator.next());
-      FileResource targetResource = (FileResource) resolveFirstResource(directory, argIterator.next());
+      FileResource<?> sourceResource = resolveFirstResource(directory, argIterator.next());
+      FileResource<?> targetResource = resolveFirstResource(directory, argIterator.next());
       sourceResource.moveTo(targetResource);
       return Results.success();
    }
 
-   private Resource<?> resolveFirstResource(Resource<?> resource, final String target)
+   private FileResource<?> resolveFirstResource(Resource<?> resource, final String target)
    {
 
       if (!isFile(resource) || !isDirectory(resource))
@@ -94,7 +102,7 @@ public class MoveCommand extends AbstractShellCommand
          throw new RuntimeException("no resources found under path: " + target);
       }
 
-      return results.get(0);
+      return results.get(0).reify(FileResource.class);
    }
 
    private boolean isFile(Resource<?> source)
