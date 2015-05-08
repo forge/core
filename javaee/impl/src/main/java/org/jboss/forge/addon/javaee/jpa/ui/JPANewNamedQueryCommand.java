@@ -19,6 +19,7 @@ import javax.persistence.NamedQuery;
 
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
+import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -64,13 +65,16 @@ public class JPANewNamedQueryCommand extends AbstractJavaEECommand
    @WithAttributes(label = "Target Entity", required = true, type = InputType.DROPDOWN)
    private UISelectOne<JavaResource> targetEntity;
 
+   @Inject
+   private PersistenceOperations persistenceOperations;
+
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
       UIContext context = builder.getUIContext();
       UISelection<Resource<?>> selection = context.getInitialSelection();
       Project project = getSelectedProject(builder);
-      List<JavaResource> entities = getProjectEntities(project);
+      List<JavaResource> entities = persistenceOperations.getProjectEntities(project);
       targetEntity.setValueChoices(entities);
       int idx = -1;
       if (!selection.isEmpty())
@@ -140,34 +144,6 @@ public class JPANewNamedQueryCommand extends AbstractJavaEECommand
    protected boolean isProjectRequired()
    {
       return true;
-   }
-
-   private List<JavaResource> getProjectEntities(Project project)
-   {
-      final List<JavaResource> entities = new ArrayList<>();
-      if (project != null)
-      {
-         project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
-         {
-            @Override
-            public void visit(VisitContext context, JavaResource resource)
-            {
-               try
-               {
-                  JavaSource<?> javaSource = resource.getJavaType();
-                  if (javaSource.hasAnnotation(Entity.class) || javaSource.hasAnnotation(MappedSuperclass.class))
-                  {
-                     entities.add(resource);
-                  }
-               }
-               catch (ResourceException | FileNotFoundException e)
-               {
-                  // ignore
-               }
-            }
-         });
-      }
-      return entities;
    }
 
 }

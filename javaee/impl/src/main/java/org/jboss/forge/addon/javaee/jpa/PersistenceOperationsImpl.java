@@ -10,24 +10,21 @@ package org.jboss.forge.addon.javaee.jpa;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Version;
+import javax.persistence.*;
 
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
+import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.forge.addon.resource.ResourceException;
+import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -252,5 +249,34 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       path = path.replace(".", File.separator) + ".java";
       JavaResource target = sourceDir.getChildOfType(JavaResource.class, path);
       return target;
+   }
+
+   public List<JavaResource> getProjectEntities(Project project)
+   {
+      final List<JavaResource> entities = new ArrayList<>();
+      if (project != null)
+      {
+         project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
+         {
+            @Override
+            public void visit(VisitContext context, JavaResource resource)
+            {
+               try
+               {
+                  JavaSource<?> javaSource = resource.getJavaType();
+                  if (javaSource.hasAnnotation(Entity.class) || javaSource.hasAnnotation(Embeddable.class)
+                          || javaSource.hasAnnotation(MappedSuperclass.class))
+                  {
+                     entities.add(resource);
+                  }
+               }
+               catch (ResourceException | FileNotFoundException e)
+               {
+                  // ignore
+               }
+            }
+         });
+      }
+      return entities;
    }
 }

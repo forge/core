@@ -30,9 +30,11 @@ import javax.persistence.Transient;
 
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
+import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.beans.FieldOperations;
+import org.jboss.forge.addon.parser.java.beans.ProjectOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
@@ -129,6 +131,12 @@ public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard
    @Inject
    private FieldOperations beanOperations;
 
+   @Inject
+   private PersistenceOperations persistenceOperations;
+
+   @Inject
+   private ProjectOperations projectOperations;
+
    @Override
    public Metadata getMetadata(UIContext context)
    {
@@ -161,7 +169,7 @@ public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard
             }
             if (project != null)
             {
-               for (JavaResource resource : getProjectEntities(project))
+               for (JavaResource resource : persistenceOperations.getProjectEntities(project))
                {
                   try
                   {
@@ -176,7 +184,7 @@ public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard
                   {
                   }
                }
-               for (JavaResource resource : getProjectEnums(project))
+               for (JavaResource resource : projectOperations.getProjectEnums(project))
                {
                   try
                   {
@@ -214,7 +222,7 @@ public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard
             final List<RelationshipType> options = new ArrayList<>();
             if (project != null)
             {
-               for (JavaResource resource : getProjectEntities(project))
+               for (JavaResource resource : persistenceOperations.getProjectEntities(project))
                {
                   try
                   {
@@ -310,14 +318,12 @@ public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard
             return !lob.getValue() && !transientField.getValue();
          }
       });
-      temporalType.setEnabled(new Callable<Boolean>()
-      {
+      temporalType.setEnabled(new Callable<Boolean>() {
          @Override
-         public Boolean call() throws Exception
-         {
+         public Boolean call() throws Exception {
             String typeValue = type.getValue();
             return !transientField.getValue()
-                     && (Date.class.getName().equals(typeValue) || Calendar.class.getName().equals(typeValue));
+                    && (Date.class.getName().equals(typeValue) || Calendar.class.getName().equals(typeValue));
          }
       });
 
@@ -355,7 +361,7 @@ public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard
    {
       UISelection<FileResource<?>> selection = context.getInitialSelection();
       Project project = getSelectedProject(context);
-      final List<JavaResource> entities = getProjectEntities(project);
+      final List<JavaResource> entities = persistenceOperations.getProjectEntities(project);
       targetEntity.setValueChoices(entities);
       int idx = -1;
       if (!selection.isEmpty())
@@ -366,63 +372,6 @@ public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard
       {
          targetEntity.setDefaultValue(entities.get(idx));
       }
-   }
-
-   private List<JavaResource> getProjectEntities(Project project)
-   {
-      final List<JavaResource> entities = new ArrayList<>();
-      if (project != null)
-      {
-         project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
-         {
-            @Override
-            public void visit(VisitContext context, JavaResource resource)
-            {
-               try
-               {
-                  JavaSource<?> javaSource = resource.getJavaType();
-                  if (javaSource.hasAnnotation(Entity.class) || javaSource.hasAnnotation(Embeddable.class)
-                           || javaSource.hasAnnotation(MappedSuperclass.class))
-                  {
-                     entities.add(resource);
-                  }
-               }
-               catch (ResourceException | FileNotFoundException e)
-               {
-                  // ignore
-               }
-            }
-         });
-      }
-      return entities;
-   }
-
-   private List<JavaResource> getProjectEnums(Project project)
-   {
-      final List<JavaResource> enums = new ArrayList<>();
-      if (project != null)
-      {
-         project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
-         {
-            @Override
-            public void visit(VisitContext context, JavaResource resource)
-            {
-               try
-               {
-                  JavaSource<?> javaSource = resource.getJavaType();
-                  if (javaSource.isEnum())
-                  {
-                     enums.add(resource);
-                  }
-               }
-               catch (ResourceException | FileNotFoundException e)
-               {
-                  // ignore
-               }
-            }
-         });
-      }
-      return enums;
    }
 
    private void setupRelationshipType()

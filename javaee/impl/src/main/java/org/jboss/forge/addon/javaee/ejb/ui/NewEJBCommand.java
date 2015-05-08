@@ -12,6 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
 import org.jboss.forge.addon.javaee.ejb.EJBOperations;
 import org.jboss.forge.addon.javaee.ejb.EJBType;
@@ -36,6 +37,8 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
+
+import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_SERVICE_PACKAGE;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -120,7 +123,7 @@ public class NewEJBCommand extends AbstractJavaEECommand implements UIWizard
 
    private String calculateServicePackage(Project project)
    {
-      return project.getFacet(JavaSourceFacet.class).getBasePackage() + ".service";
+      return project.getFacet(JavaSourceFacet.class).getBasePackage() + "." + DEFAULT_SERVICE_PACKAGE;
    }
 
    @Override
