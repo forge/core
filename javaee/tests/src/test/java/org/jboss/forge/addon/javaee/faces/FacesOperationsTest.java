@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.javaee.faces;
 
+import javax.faces.convert.FacesConverter;
+import javax.faces.validator.FacesValidator;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -102,6 +104,7 @@ public class FacesOperationsTest
       Assert.assertEquals("SampleConverter.java", converter.getName());
       Assert.assertEquals("SampleConverter", converter.getJavaType().getName());
       Assert.assertEquals("org.example", converter.getJavaType().getPackage());
+      Assert.assertTrue(converter.getJavaType().hasAnnotation(FacesConverter.class));
       Assert.assertTrue(converter.exists());
    }
 
@@ -122,6 +125,7 @@ public class FacesOperationsTest
       Assert.assertTrue(child instanceof JavaResource);
       Assert.assertEquals("SampleConverter", ((JavaResource) child).getJavaType().getName());
       Assert.assertEquals("org.example", ((JavaResource) child).getJavaType().getPackage());
+      Assert.assertTrue(converter.getJavaType().hasAnnotation(FacesConverter.class));
    }
 
    @Test
@@ -133,6 +137,7 @@ public class FacesOperationsTest
       Assert.assertEquals("SampleValidator.java", validator.getName());
       Assert.assertEquals("SampleValidator", validator.getJavaType().getName());
       Assert.assertEquals("org.example", validator.getJavaType().getPackage());
+      Assert.assertTrue(validator.getJavaType().hasAnnotation(FacesValidator.class));
       Assert.assertTrue(validator.exists());
    }
 
@@ -152,6 +157,7 @@ public class FacesOperationsTest
       Assert.assertTrue(child instanceof JavaResource);
       Assert.assertEquals("SampleValidator", ((JavaResource) child).getJavaType().getName());
       Assert.assertEquals("org.example", ((JavaResource) child).getJavaType().getPackage());
+      Assert.assertTrue(validator.getJavaType().hasAnnotation(FacesValidator.class));
    }
 
    @Test
