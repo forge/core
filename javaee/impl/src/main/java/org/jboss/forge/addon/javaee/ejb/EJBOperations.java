@@ -10,7 +10,7 @@ package org.jboss.forge.addon.javaee.ejb;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 
-import javax.ejb.ActivationConfigProperty;
+import javax.ejb.*;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.persistence.GenerationType;
@@ -22,6 +22,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
@@ -149,5 +150,20 @@ public class EJBOperations
       path = path.replace(".", "/") + ".java";
       JavaResource target = sourceDir.getChildOfType(JavaResource.class, path);
       return target;
+   }
+
+   /**
+    * Given a JavaType, this method checks if it's an EJB or not
+    * 
+    * @param javaType given type
+    * @return true if the type is an EJB
+    */
+   public boolean isEJB(JavaType<?> javaType)
+   {
+      return javaType.hasAnnotation(Stateless.class) ||
+               javaType.hasAnnotation(Stateful.class) ||
+               javaType.hasAnnotation(Singleton.class) ||
+               javaType.hasAnnotation(MessageDriven.class);
+
    }
 }

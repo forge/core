@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.javaee.faces.ui;
 
+import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_VALIDATOR_PACKAGE;
+
 import java.io.FileNotFoundException;
 
 import javax.faces.validator.FacesValidator;
@@ -114,7 +116,7 @@ public class FacesNewValidatorCommand extends AbstractFacesCommand
       });
       if (value[0] == null)
       {
-         value[0] = project.getFacet(JavaSourceFacet.class).getBasePackage() + ".validator";
+         value[0] = project.getFacet(JavaSourceFacet.class).getBasePackage() + "." + DEFAULT_VALIDATOR_PACKAGE;
       }
       return value[0];
    }
