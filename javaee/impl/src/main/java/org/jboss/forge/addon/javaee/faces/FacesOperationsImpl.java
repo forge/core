@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.faces.validator.FacesValidator;
 import javax.faces.validator.ValidatorException;
 
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -159,6 +160,7 @@ public class FacesOperationsImpl implements FacesOperations
       JavaClassSource source = Roaster.parse(JavaClassSource.class, getClass().getResourceAsStream("Validator.jv"));
       source.setName(converterName);
       source.setPackage(converterPackage);
+      source.addAnnotation(FacesValidator.class).setStringValue(converterPackage + "." + converterName);
       return source;
    }
 
