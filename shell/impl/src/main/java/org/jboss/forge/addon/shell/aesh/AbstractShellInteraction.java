@@ -13,6 +13,7 @@ import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.ui.ShellUIPromptImpl;
 import org.jboss.forge.addon.shell.util.ShellUtil;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 
@@ -110,7 +111,7 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
       {
          if (input.isEnabled())
          {
-            if (input.isRequired() && !(input.hasDefaultValue() || input.hasValue()))
+            if (input.getFacet(HintsFacet.class).isPromptInInteractiveMode())
             {
                return true;
             }

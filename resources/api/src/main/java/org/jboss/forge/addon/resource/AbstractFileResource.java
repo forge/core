@@ -1,20 +1,15 @@
 package org.jboss.forge.addon.resource;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.furnace.util.Assert;
-import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Streams;
+
+import java.io.*;
+import java.nio.charset.Charset;
 
 /**
  * A standard, built-in resource for representing files on the filesystem.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
@@ -77,7 +72,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    /**
     * Create a new {@link Resource} instance for the target file. The new {@link Resource} should be of the same type as
     * <b>this</b>.
-    * 
+    *
     * @param file The file to create the resource instance from.
     * @return A new resource.
     */
@@ -131,7 +126,7 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    {
       if (recursive)
       {
-         if (_deleteRecursive(file, true))
+         if (getFileOperations().deleteFile(file, recursive))
          {
             return true;
          }
@@ -142,11 +137,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       if ((listFiles != null) && (listFiles.length != 0))
       {
          throw new RuntimeException("directory not empty");
-      }
-
-      if (OperatingSystemUtils.isWindows())
-      {
-         System.gc(); // ensure no lingering handles that would prevent deletion
       }
 
       if (getFileOperations().deleteFile(file))
@@ -160,40 +150,6 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    public void deleteOnExit()
    {
       getFileOperations().deleteFileOnExit(file);
-   }
-
-   private boolean _deleteRecursive(final File file, final boolean collect)
-   {
-      if (collect && OperatingSystemUtils.isWindows())
-      {
-         System.gc(); // ensure no lingering handles that would prevent deletion
-      }
-
-      if (file == null)
-      {
-         return false;
-      }
-
-      File[] children = getFileOperations().listFiles(file);
-      if (children != null)
-      {
-         for (File sf : children)
-         {
-            if (getFileOperations().fileExistsAndIsDirectory(sf))
-            {
-               _deleteRecursive(sf, false);
-            }
-            else
-            {
-               if (!getFileOperations().deleteFile(sf))
-               {
-                  throw new RuntimeException("failed to delete: " + sf.getAbsolutePath());
-               }
-            }
-         }
-      }
-
-      return getFileOperations().deleteFile(file);
    }
 
    @Override
@@ -386,6 +342,19 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       catch (IOException ioe)
       {
          throw new ResourceException("Error while creating OutputStream for Resource " + this, ioe);
+      }
+   }
+
+   @Override
+   public void moveTo(FileResource<?> target)
+   {
+      try
+      {
+         this.file = getFileOperations().move(file, target.getUnderlyingResourceObject());
+      }
+      catch (IOException e)
+      {
+         throw new ResourceException("Error while moving Resource " + this, e);
       }
    }
 }

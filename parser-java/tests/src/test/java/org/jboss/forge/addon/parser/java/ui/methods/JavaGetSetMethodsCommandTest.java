@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.parser.java.ui;
+package org.jboss.forge.addon.parser.java.ui.methods;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -13,16 +13,15 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.parser.java.ui.methods.JavaGetSetMethodsCommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.addon.ui.util.InputComponents;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -31,34 +30,27 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Tests the {@link org.jboss.forge.addon.parser.java.ui.methods.JavaGetSetMethodsCommand} using two different types of tests according to the builder flag.
+ * Tests the {@link org.jboss.forge.addon.parser.java.ui.methods.JavaGetSetMethodsCommand} using two different types of
+ * tests according to the builder flag.
+ * 
  * @author <a href="mbriskar@redhat.com">Matej Briškár</a>
  */
 @RunWith(Arquillian.class)
+@SuppressWarnings("unchecked")
 public class JavaGetSetMethodsCommandTest
 {
 
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:parser-java"),
-            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:parser-java"),
+            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
    })
    public static AddonArchive getDeployment()
    {
-      return ShrinkWrap
-               .create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:parser-java"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-               );
+      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
    }
 
    @Inject
@@ -80,7 +72,7 @@ public class JavaGetSetMethodsCommandTest
    public void setup() throws Exception
    {
       createTempProject();
-      
+
    }
 
    @Test
@@ -88,21 +80,21 @@ public class JavaGetSetMethodsCommandTest
    {
       createTargetClass("public class Test{}");
       createCommandController();
-      
+
       commandController.initialize();
-      //properties field cannot have any value
+      // properties field cannot have any value
       assertFalse(commandController.isValid());
    }
-   
+
    @Test
    public void testNoPropertiesBuilder() throws Exception
    {
       createTargetClass("public class Test{}");
       createCommandController();
-      
+
       commandController.initialize();
       setBuilderPattern(true);
-      //properties field cannot have any value
+      // properties field cannot have any value
       assertFalse(commandController.isValid());
    }
 
@@ -117,19 +109,19 @@ public class JavaGetSetMethodsCommandTest
       commandController.setValueFor("properties", valueChoices);
       commandController.execute();
       reloadTargetClass();
-      
+
       assertNotNull(targetClass.getField("simpleString"));
       assertTrue(targetClass.getField("simpleString").isPrivate());
       assertNotNull(targetClass.getMethod("setSimpleString", String.class));
       assertNotNull(targetClass.getMethod("getSimpleString"));
    }
-   
+
    @Test
    public void testWithoutAccessorBuilder() throws Exception
    {
       createTargetClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;}}");
       createCommandController();
-      
+
       commandController.initialize();
       setBuilderPattern(true);
       UISelectMany<String> component = (UISelectMany<String>) commandController.getInputs().get("properties");
@@ -137,7 +129,7 @@ public class JavaGetSetMethodsCommandTest
       commandController.setValueFor("properties", valueChoices);
       commandController.execute();
       reloadTargetClass();
-      
+
       assertNotNull(targetClass.getField("simpleString"));
       assertTrue(targetClass.getField("simpleString").isPrivate());
       assertNotNull(targetClass.getMethod("getSimpleString"));
@@ -148,26 +140,26 @@ public class JavaGetSetMethodsCommandTest
    {
       createTargetClass("public class Test{private String simpleString; public String getSimpleString(){return simpleString;}}");
       createCommandController();
-      
+
       commandController.initialize();
       UISelectMany<String> component = (UISelectMany<String>) commandController.getInputs().get("properties");
       Iterable<String> valueChoices = component.getValueChoices();
       commandController.setValueFor("properties", valueChoices);
       commandController.execute();
       reloadTargetClass();
-      
+
       assertNotNull(targetClass.getField("simpleString"));
       assertTrue(targetClass.getField("simpleString").isPrivate());
       assertNotNull(targetClass.getMethod("setSimpleString", String.class));
       assertNotNull(targetClass.getMethod("getSimpleString"));
    }
-   
+
    @Test
    public void testWithoutMutatorBuilder() throws Exception
    {
       createTargetClass("public class Test{private String simpleString; public String getSimpleString(){return simpleString;}}");
       createCommandController();
-      
+
       commandController.initialize();
       setBuilderPattern(true);
       UISelectMany<String> component = (UISelectMany<String>) commandController.getInputs().get("properties");
@@ -175,39 +167,39 @@ public class JavaGetSetMethodsCommandTest
       commandController.setValueFor("properties", valueChoices);
       commandController.execute();
       reloadTargetClass();
-      
+
       assertNotNull(targetClass.getField("simpleString"));
       assertTrue(targetClass.getField("simpleString").isPrivate());
       assertNotNull(targetClass.getMethod("setSimpleString", String.class));
       assertNotNull(targetClass.getMethod("getSimpleString"));
    }
-   
+
    @Test
    public void testBadMutatorDefault() throws Exception
    {
       createTargetClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;}}");
       createCommandController();
-      
+
       commandController.initialize();
       UISelectMany<String> component = (UISelectMany<String>) commandController.getInputs().get("properties");
       Iterable<String> valueChoices = component.getValueChoices();
       commandController.setValueFor("properties", valueChoices);
       commandController.execute();
       reloadTargetClass();
-      
+
       assertNotNull(targetClass.getField("simpleString"));
       assertTrue(targetClass.getField("simpleString").isPrivate());
       assertNotNull(targetClass.getMethod("setSimpleString", String.class));
       assertNotNull(targetClass.getMethod("getSimpleString"));
-      assertEquals("void",targetClass.getMethod("setSimpleString", String.class).getReturnType().getName());
+      assertEquals("void", targetClass.getMethod("setSimpleString", String.class).getReturnType().getName());
    }
-   
+
    @Test
    public void testBadMutatorBuilder() throws Exception
    {
       createTargetClass("public class Test{private String simpleString; public void setSimpleString(String simple){simpleString=simple;}}");
       createCommandController();
-      
+
       commandController.initialize();
       setBuilderPattern(true);
       UISelectMany<String> component = (UISelectMany<String>) commandController.getInputs().get("properties");
@@ -215,40 +207,40 @@ public class JavaGetSetMethodsCommandTest
       commandController.setValueFor("properties", valueChoices);
       commandController.execute();
       reloadTargetClass();
-      
+
       assertNotNull(targetClass.getField("simpleString"));
       assertTrue(targetClass.getField("simpleString").isPrivate());
       assertNotNull(targetClass.getMethod("setSimpleString", String.class));
       assertNotNull(targetClass.getMethod("getSimpleString"));
-      assertEquals("Test",targetClass.getMethod("setSimpleString", String.class).getReturnType().getName());
+      assertEquals("Test", targetClass.getMethod("setSimpleString", String.class).getReturnType().getName());
    }
-   
+
    @Test
    public void testNoAccessorMutatorDefault() throws Exception
    {
       createTargetClass("public class Test{private String simpleString;}");
       createCommandController();
-      
+
       commandController.initialize();
       UISelectMany<String> component = (UISelectMany<String>) commandController.getInputs().get("properties");
       Iterable<String> valueChoices = component.getValueChoices();
       commandController.setValueFor("properties", valueChoices);
       commandController.execute();
       reloadTargetClass();
-      
-      assertEquals(1,targetClass.getFields().size());
-      assertEquals(2,targetClass.getMethods().size());
+
+      assertEquals(1, targetClass.getFields().size());
+      assertEquals(2, targetClass.getMethods().size());
       assertNotNull(targetClass.getMethod("setSimpleString", String.class));
       assertNotNull(targetClass.getMethod("getSimpleString"));
-      assertEquals("void",targetClass.getMethod("setSimpleString", String.class).getReturnType().getName());
+      assertEquals("void", targetClass.getMethod("setSimpleString", String.class).getReturnType().getName());
    }
-   
+
    @Test
    public void testNoAccessorMutatorBuilder() throws Exception
    {
       createTargetClass("public class Test{private String simpleString;}");
       createCommandController();
-      
+
       commandController.initialize();
       setBuilderPattern(true);
       UISelectMany<String> component = (UISelectMany<String>) commandController.getInputs().get("properties");
@@ -256,14 +248,14 @@ public class JavaGetSetMethodsCommandTest
       commandController.setValueFor("properties", valueChoices);
       commandController.execute();
       reloadTargetClass();
-      
-      assertEquals(1,targetClass.getFields().size());
-      assertEquals(2,targetClass.getMethods().size());
+
+      assertEquals(1, targetClass.getFields().size());
+      assertEquals(2, targetClass.getMethods().size());
       assertNotNull(targetClass.getMethod("setSimpleString", String.class));
       assertNotNull(targetClass.getMethod("getSimpleString"));
-      assertEquals("Test",targetClass.getMethod("setSimpleString", String.class).getReturnType().getName());
+      assertEquals("Test", targetClass.getMethod("setSimpleString", String.class).getReturnType().getName());
    }
-   
+
    private void createTempProject()
    {
       project = projectFactory.createTempProject();

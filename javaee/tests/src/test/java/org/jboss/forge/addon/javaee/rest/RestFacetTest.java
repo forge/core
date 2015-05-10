@@ -21,10 +21,9 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.xml.resources.XMLResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -41,18 +40,14 @@ import org.junit.runner.RunWith;
 public class RestFacetTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
    })
    public static AddonArchive getDeployment()
    {
-      return ShrinkWrap.create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee")
-               );
+      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
    }
 
    @Inject

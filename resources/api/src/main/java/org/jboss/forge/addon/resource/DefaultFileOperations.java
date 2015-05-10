@@ -1,27 +1,21 @@
 /**
  * Copyright 2013 Red Hat, Inc. and/or its affiliates.
- *
+ * <p/>
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
 package org.jboss.forge.addon.resource;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.channels.FileChannel;
+import java.io.*;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
-import org.jboss.forge.furnace.util.Streams;
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
 /**
  * Default implementation for {@link FileOperations} interface
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 public enum DefaultFileOperations implements FileOperations
@@ -62,6 +56,44 @@ public enum DefaultFileOperations implements FileOperations
    public void deleteFileOnExit(File file)
    {
       file.deleteOnExit();
+   }
+
+   @Override
+   public boolean deleteFile(File file, boolean recursive)
+   {
+      if (recursive)
+      {
+         if (file == null)
+         {
+            return false;
+         }
+
+         try
+         {
+            Files.walkFileTree(file.toPath(), new SimpleFileVisitor<Path>()
+            {
+               @Override
+               public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
+               {
+                  Files.delete(file);
+                  return FileVisitResult.CONTINUE;
+               }
+
+               @Override
+               public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException
+               {
+                  Files.delete(dir);
+                  return FileVisitResult.CONTINUE;
+               }
+            });
+            return true;
+         }
+         catch (IOException e)
+         {
+            return false;
+         }
+      }
+      return this.deleteFile(file);
    }
 
    @Override
@@ -145,10 +177,23 @@ public enum DefaultFileOperations implements FileOperations
       doCopyFile(srcFile, destFile);
    }
 
+   @Override
+   public File move(File source, File target) throws IOException
+   {
+      if (target.isDirectory())
+      {
+         Path path = Files.move(source.toPath(), Paths.get(target.getAbsolutePath(), source.getName()),
+                  ATOMIC_MOVE);
+         return path.toFile();
+      }
+      Path path = Files.move(source.toPath(), target.toPath(), ATOMIC_MOVE);
+      return path.toFile();
+   }
+
    /**
     * Internal copy file method.
-    * 
-    * @param srcFile the validated source file, must not be <code>null</code>
+    *
+    * @param srcFile  the validated source file, must not be <code>null</code>
     * @param destFile the validated destination file, must not be <code>null</code>
     * @throws IOException if an error occurs
     */
@@ -158,35 +203,7 @@ public enum DefaultFileOperations implements FileOperations
       {
          throw new IOException("Destination '" + destFile + "' exists but is a directory");
       }
-
-      FileInputStream fis = null;
-      FileOutputStream fos = null;
-      FileChannel input = null;
-      FileChannel output = null;
-      try
-      {
-         fis = new FileInputStream(srcFile);
-         fos = new FileOutputStream(destFile);
-         input = fis.getChannel();
-         output = fos.getChannel();
-         long size = input.size();
-         long pos = 0;
-         long count = 0;
-         long FIFTY_MB = (1024L * 1024L) * 50L;
-         while (pos < size)
-         {
-            count = (size - pos) > FIFTY_MB ? FIFTY_MB : (size - pos);
-            pos += output.transferFrom(input, pos, count);
-         }
-      }
-      finally
-      {
-         Streams.closeQuietly(output);
-         Streams.closeQuietly(fos);
-         Streams.closeQuietly(input);
-         Streams.closeQuietly(fis);
-      }
-
+      Files.copy(srcFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
       if (srcFile.length() != destFile.length())
       {
          throw new IOException("Failed to copy full contents from '" +

@@ -22,7 +22,7 @@ import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@FacetConstraint({ FurnaceVersionFacet.class })
+@FacetConstraint({ ForgeVersionFacet.class })
 public class ForgeBOMFacet extends AbstractFacet<Project> implements ProjectFacet
 {
    @Inject
@@ -39,7 +39,7 @@ public class ForgeBOMFacet extends AbstractFacet<Project> implements ProjectFace
    {
       Dependency dependency = installer.installManaged(getFaceted(), DependencyBuilder
                .create(FORGE_BOM_DEPENDENCY)
-               .setVersion(FurnaceVersionFacet.VERSION_PROPERTY));
+               .setVersion(ForgeVersionFacet.VERSION_PROPERTY));
       return dependency != null;
    }
 

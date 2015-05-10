@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -42,6 +43,7 @@ import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.manager.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
@@ -74,7 +76,11 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
    private UIInput<String> named;
 
    @Inject
-   @WithAttributes(label = "Furnace container", required = true, requiredMessage = "You must select one Furnace container")
+   @WithAttributes(label = "Use Addons from current project as dependencies (automatic discovery)", description = "This will create an empty @AddonDependencies and reuse the addons in the current project's pom.xml", defaultValue = "true")
+   private UIInput<Boolean> reuseProjectAddons;
+
+   @Inject
+   @WithAttributes(label = "Furnace container", requiredMessage = "You must select one Furnace container")
    private UISelectOne<AddonId> furnaceContainer;
 
    @Inject
@@ -87,7 +93,7 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
       configureAddonDependencies();
       Project project = getSelectedProject(builder.getUIContext());
       packageName.setDefaultValue(project.getFacet(JavaSourceFacet.class).getBasePackage());
-      builder.add(packageName).add(named).add(furnaceContainer).add(addonDependencies);
+      builder.add(packageName).add(named).add(reuseProjectAddons).add(furnaceContainer).add(addonDependencies);
    }
 
    private void configureAddonDependencies()
@@ -124,6 +130,17 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
       addonDependencies.setValueChoices(addonChoices);
       if (defaultDependency != null)
          addonDependencies.setDefaultValue(Arrays.asList(defaultDependency));
+      // Enable addon dependencies
+      Callable<Boolean> reuseProjectDepsCallable = new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            return !reuseProjectAddons.getValue();
+         }
+      };
+      furnaceContainer.setEnabled(reuseProjectDepsCallable).setRequired(reuseProjectDepsCallable);
+      addonDependencies.setEnabled(reuseProjectDepsCallable);
    }
 
    @Override
@@ -157,31 +174,37 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
       javaClass.addAnnotation("RunWith").setLiteralValue("Arquillian.class");
 
       // Create getDeployment method
-      StringBuilder dependenciesAnnotationBody = new StringBuilder();
-      AddonId furnaceContainerId = furnaceContainer.getValue();
-      addAddonDependency(project, dependenciesAnnotationBody, furnaceContainerId);
-      Iterator<AddonId> it = addonDependencies.getValue().iterator();
-      if (it.hasNext())
-      {
-         dependenciesAnnotationBody.append(",");
-      }
-      while (it.hasNext())
-      {
-         AddonId addonId = it.next();
-         addAddonDependency(project, dependenciesAnnotationBody, addonId);
-         if (it.hasNext())
-         {
-            dependenciesAnnotationBody.append(",");
-         }
-      }
       MethodSource<JavaClassSource> getDeployment = javaClass.addMethod().setName("getDeployment").setPublic()
                .setStatic(true)
                .setBody("return ShrinkWrap.create(AddonArchive.class).addBeansXML();").setReturnType("AddonArchive");
       getDeployment.addAnnotation("Deployment");
-      String annotationBody = dependenciesAnnotationBody.toString();
-      if (annotationBody.length() > 0)
+      AnnotationSource<JavaClassSource> addonDependenciesAnn = getDeployment.addAnnotation("AddonDependencies");
+
+      if (!reuseProjectAddons.getValue())
       {
-         getDeployment.addAnnotation("AddonDependencies").setLiteralValue("{" + annotationBody + "}");
+         StringBuilder dependenciesAnnotationBody = new StringBuilder();
+         AddonId furnaceContainerId = furnaceContainer.getValue();
+         addAddonDependency(project, dependenciesAnnotationBody, furnaceContainerId);
+         Iterator<AddonId> it = addonDependencies.getValue().iterator();
+         if (it.hasNext())
+         {
+            dependenciesAnnotationBody.append(",");
+         }
+         while (it.hasNext())
+         {
+            AddonId addonId = it.next();
+            addAddonDependency(project, dependenciesAnnotationBody, addonId);
+            if (it.hasNext())
+            {
+               dependenciesAnnotationBody.append(",");
+            }
+         }
+
+         String annotationBody = dependenciesAnnotationBody.toString();
+         if (annotationBody.length() > 0)
+         {
+            addonDependenciesAnn.setLiteralValue("{" + annotationBody + "}");
+         }
       }
 
       // Create test method

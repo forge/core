@@ -14,14 +14,12 @@ import java.util.logging.Logger;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.spi.ContainerLifecycleListener;
-import org.jboss.forge.furnace.versions.EmptyVersion;
-import org.jboss.forge.furnace.versions.SingleVersion;
-import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.furnace.versions.Versions;
 
 public class GreetingListener implements ContainerLifecycleListener
 {
    private final Logger logger = Logger.getLogger(getClass().getName());
+   private volatile boolean showProgress = true;
 
    @Override
    public void beforeStart(Furnace furnace) throws ContainerException
@@ -39,18 +37,19 @@ public class GreetingListener implements ContainerLifecycleListener
          out.println("                   |__/      ");
          out.println("");
          out.print("JBoss Forge, version [ ");
-         out.print(getForgeVersion());
+         out.print(Versions.getImplementationVersionFor(getClass()));
          out.print(" ] - JBoss, by Red Hat, Inc. [ http://forge.jboss.org ]");
          out.println();
          logger.info(sw.toString());
          System.out.println(sw.toString());
+         shellProgressInformation();
       }
    }
 
    @Override
    public void afterStart(Furnace furnace) throws ContainerException
    {
-      // Do nothing
+      showProgress = false;
    }
 
    @Override
@@ -77,23 +76,31 @@ public class GreetingListener implements ContainerLifecycleListener
       // Do nothing
    }
 
-   /**
-    * Returns the Implementation version for the given {@link Class}
-    * 
-    * TODO: Use the {@link Versions} class when Forge is updated to Furnace 2.15.3.Final+
-    * 
-    * @param type the {@link Class} with the corresponding package
-    * @return {@link Version} representation from the {@link Package#getImplementationVersion()} returned from
-    *         {@link Class#getPackage()}
-    */
-   private Version getForgeVersion()
+   private void shellProgressInformation()
    {
-      String version = getClass().getPackage().getImplementationVersion();
-      if (version != null)
+      new Thread()
       {
-         return new SingleVersion(version);
-      }
 
-      return EmptyVersion.getInstance();
+         @Override
+         public void run()
+         {
+            String anim = "|/-\\";
+            int x = 0;
+            while (showProgress)
+            {
+               x++;
+               String data = "\r" + anim.charAt(x % anim.length());
+               try
+               {
+                  System.out.write(data.getBytes());
+                  Thread.sleep(50);
+               }
+               catch (Exception e)
+               {
+                  break;
+               }
+            }
+         }
+      }.start();
    }
 }

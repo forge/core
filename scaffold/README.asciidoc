@@ -45,12 +45,7 @@ public class MyScaffoldProvider implements ScaffoldProvider {
   public List<Resource<?>> setup(ScaffoldSetupContext setupContext) {
       //TODO: Change pom.xml to add the necessary libs and create the index.html page
   }
-  
-  @Override
-  public List<Resource<?>> setup(ScaffoldSetupContext setupContext) {
-      //TODO: Change pom.xml to add the necessary libs and create the index.html page
-  }
-  
+
   @Override
   public List<Resource<?>> generateFrom(ScaffoldGenerationContext generationContext) {
     // Generate DAOs, BOs, Managers, etc.

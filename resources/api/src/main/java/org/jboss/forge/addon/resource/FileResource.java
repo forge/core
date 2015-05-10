@@ -108,10 +108,15 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>,
    /**
     * Get the last modified time-stamp of this resource.
     */
-   public long getLastModified();
+   long getLastModified();
 
    /**
     * Set the last modified time-stamp of this resource.
     */
-   public void setLastModified(long currentTimeMillis);
+   void setLastModified(long currentTimeMillis);
+
+   /**
+    * Move this {@link Resource} to the given {@link FileResource}
+    */
+   void moveTo(FileResource<?> target);
 }

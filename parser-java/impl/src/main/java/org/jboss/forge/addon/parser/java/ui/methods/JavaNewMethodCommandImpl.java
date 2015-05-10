@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.parser.java.ui.methods;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,10 +40,12 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.Extendable;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
+import org.jboss.forge.roaster.model.source.MethodHolderSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 public class JavaNewMethodCommandImpl extends AbstractProjectCommand implements JavaNewMethodCommand
@@ -52,15 +55,15 @@ public class JavaNewMethodCommandImpl extends AbstractProjectCommand implements 
    private UISelectOne<JavaResource> targetClass;
 
    @Inject
-   @WithAttributes(label = "named", description = "The name of the method created", required = true)
+   @WithAttributes(label = "Named", description = "The name of the method created", required = true)
    private UIInput<String> methodName;
 
    @Inject
-   @WithAttributes(label = "return", description = "The return type of the method created", type = InputType.JAVA_CLASS_PICKER, required = true, defaultValue = "String")
+   @WithAttributes(label = "Return", description = "The return type of the method created", type = InputType.JAVA_CLASS_PICKER, required = true, defaultValue = "String")
    private UIInput<String> returnType;
 
    @Inject
-   @WithAttributes(label = "parameters", description = "Parameters of the method created", required = false)
+   @WithAttributes(label = "Parameters", description = "Parameters of the method created", required = false)
    private UIInput<String> parameters;
 
    @Inject
@@ -90,7 +93,7 @@ public class JavaNewMethodCommandImpl extends AbstractProjectCommand implements 
    public Result execute(UIExecutionContext context) throws Exception
    {
       JavaResource javaResource = targetClass.getValue();
-      JavaClassSource targetclass = javaResource.getJavaType();
+      JavaSource<?> targetclass = javaResource.getJavaType();
 
       String name = methodName.getValue();
       String returntype = returnType.getValue();
@@ -100,26 +103,28 @@ public class JavaNewMethodCommandImpl extends AbstractProjectCommand implements 
       // Map to store the parameter names as keys and the corresponding parameter types as values.
       Map<String, String> parametersMap = new LinkedHashMap<>();
 
-      if (parameterString != null)
+      if (!Strings.isNullOrEmpty(parameterString))
       {
-         if (!parameterString.trim().equals(""))
-         {
-            String[] parametersArray = Strings.split(parameterString, ",");
+         String[] parametersArray = Strings.split(parameterString, ",");
 
-            for (String parameter : parametersArray)
-            {
-               parameter = parameter.trim();
-               String x[] = parameter.split(" ");
-               parametersMap.put(x[1], x[0]);
-            }
+         for (String parameter : parametersArray)
+         {
+            parameter = parameter.trim();
+            String x[] = parameter.split(" ");
+            parametersMap.put(x[1], x[0]);
          }
       }
 
       Object[] paramtypes = parametersMap.values().toArray();
       String[] parameterTypes = Arrays.copyOf(paramtypes, paramtypes.length, String[].class);
 
-      MethodSource<JavaClassSource> superClassMethod = inspectSuperClasses(context, targetclass.getSuperType(), name,
-               parameterTypes);
+      MethodSource<JavaClassSource> superClassMethod = null;
+      if (targetclass instanceof Extendable)
+      {
+         superClassMethod = inspectSuperClasses(context,
+                  ((Extendable) targetclass).getSuperType(), name,
+                  parameterTypes);
+      }
 
       /*
        * Implementation of method overriding rules:
@@ -159,26 +164,23 @@ public class JavaNewMethodCommandImpl extends AbstractProjectCommand implements 
       }
 
       // Checks for already existing same signature method declarations in the target class
-      if (targetclass.getMethod(name, parameterTypes) != null)
+      MethodHolderSource<?> methodHolder = (MethodHolderSource<?>) targetclass;
+      if (methodHolder.getMethod(name, parameterTypes) != null)
       {
          return Results.fail("Method was already present in the target class");
       }
 
-      MethodSource<JavaClassSource> newMethod = targetclass.addMethod();
+      MethodSource<?> newMethod = methodHolder.addMethod();
 
       newMethod.setName(name);
       newMethod.setReturnType(returntype);
       newMethod.setVisibility(visibility);
 
       // Adding parameters to the newly created function from the parametersMap
-      if (parameterString != null)
+      if (!Strings.isNullOrEmpty(parameterString))
       {
-
-         if (!parameterString.trim().equals(""))
-         {
-            for (Map.Entry<String, String> entry : parametersMap.entrySet())
-               newMethod.addParameter(entry.getValue(), entry.getKey());
-         }
+         for (Map.Entry<String, String> entry : parametersMap.entrySet())
+            newMethod.addParameter(entry.getValue(), entry.getKey());
       }
 
       if (!targetclass.isInterface())
@@ -249,7 +251,9 @@ public class JavaNewMethodCommandImpl extends AbstractProjectCommand implements 
    {
       UISelection<FileResource<?>> selection = context.getInitialSelection();
       Project project = getSelectedProject(context);
-      final List<JavaResource> entities = projectOperations.getProjectClasses(project);
+      final List<JavaResource> entities = new ArrayList<>();
+      entities.addAll(projectOperations.getProjectClasses(project));
+      entities.addAll(projectOperations.getProjectInterfaces(project));
       targetClass.setValueChoices(entities);
       int idx = -1;
 
@@ -263,7 +267,7 @@ public class JavaNewMethodCommandImpl extends AbstractProjectCommand implements 
       }
    }
 
-   private void setCurrentWorkingResource(UIExecutionContext context, JavaClassSource javaClass)
+   private void setCurrentWorkingResource(UIExecutionContext context, JavaSource<?> javaClass)
             throws FileNotFoundException
    {
       Project selectedProject = getSelectedProject(context);

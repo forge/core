@@ -17,6 +17,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.controller.mock.ExampleCommand;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.impl.mock.Career;
@@ -28,8 +30,8 @@ import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Callables;
@@ -42,18 +44,16 @@ import org.junit.runner.RunWith;
 public class UIInputInjectionTest
 {
    @Deployment
-   @AddonDeployments({ @AddonDeployment(name = "org.jboss.forge.addon:ui"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi") })
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:ui"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+   })
    public static AddonArchive getDeployment()
    {
       AddonArchive archive = ShrinkWrap
                .create(AddonArchive.class)
                .addBeansXML()
-               .addClasses(Career.class, Gender.class)
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));
-
+               .addClasses(Career.class, Gender.class);
       return archive;
    }
 

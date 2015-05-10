@@ -86,7 +86,7 @@ public class CommandScopedContext implements Context, UIContextListener
       }
    }
 
-   private UIContext getCurrentContext()
+   static UIContext getCurrentContext()
    {
       return CONTEXT_STACK.peek();
    }

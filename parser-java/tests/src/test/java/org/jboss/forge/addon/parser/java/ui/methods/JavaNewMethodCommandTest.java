@@ -7,6 +7,7 @@
 package org.jboss.forge.addon.parser.java.ui.methods;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 import javax.inject.Inject;
 
@@ -14,20 +15,23 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,26 +45,16 @@ public class JavaNewMethodCommandTest
 {
 
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:parser-java"),
-            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:parser-java"),
+            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
    })
    public static AddonArchive getDeployment()
    {
-      return ShrinkWrap
-               .create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:parser-java"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-               );
+      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
    }
 
    @Inject
@@ -68,9 +62,6 @@ public class JavaNewMethodCommandTest
 
    @Inject
    private UITestHarness testHarness;
-
-   @Inject
-   private FacetFactory facetFactory;
 
    private Project project;
 
@@ -83,7 +74,14 @@ public class JavaNewMethodCommandTest
    @Before
    public void setup() throws Exception
    {
-      createTempProject();
+      project = projectFactory.createTempProject(Arrays.<Class<? extends ProjectFacet>> asList(JavaSourceFacet.class));
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      if (commandController != null)
+         commandController.close();
    }
 
    @Test
@@ -95,7 +93,7 @@ public class JavaNewMethodCommandTest
       createCommandController();
       commandController.initialize();
       String methodName = "methodName";
-      setMethodName(methodName);
+      setMethodName(commandController, methodName);
 
       commandController.execute();
       reloadTargetClass();
@@ -118,8 +116,8 @@ public class JavaNewMethodCommandTest
       commandController.initialize();
 
       String methodName = "methodName";
-      setMethodName(methodName);
-      setReturnType("int");
+      setMethodName(commandController, methodName);
+      setReturnType(commandController, "int");
 
       commandController.execute();
       reloadTargetClass();
@@ -142,8 +140,8 @@ public class JavaNewMethodCommandTest
       commandController.initialize();
 
       String methodName = "methodName";
-      setMethodName(methodName);
-      setParameters("int a,String s,int c,int d");
+      setMethodName(commandController, methodName);
+      setParameters(commandController, "int a,String s,int c,int d");
 
       commandController.execute();
       reloadTargetClass();
@@ -168,10 +166,10 @@ public class JavaNewMethodCommandTest
       commandController.initialize();
 
       String methodName = "methodName";
-      setMethodName(methodName);
-      setParameters("int a,String s");
-      setReturnType("int");
-      setAccessType(Visibility.PUBLIC);
+      setMethodName(commandController, methodName);
+      setParameters(commandController, "int a,String s");
+      setReturnType(commandController, "int");
+      setAccessType(commandController, Visibility.PUBLIC);
 
       commandController.execute();
       reloadTargetClass();
@@ -203,8 +201,8 @@ public class JavaNewMethodCommandTest
       commandController.initialize();
 
       String methodName = "methodName";
-      setMethodName(methodName);
-      setAccessType(visibility);
+      setMethodName(commandController, methodName);
+      setAccessType(commandController, visibility);
 
       commandController.execute();
       reloadTargetClass();
@@ -226,7 +224,7 @@ public class JavaNewMethodCommandTest
       commandController.initialize();
 
       String name = "methodName";
-      setMethodName(name);
+      setMethodName(commandController, name);
 
       Result result = commandController.execute();
 
@@ -245,7 +243,7 @@ public class JavaNewMethodCommandTest
       commandController.initialize();
 
       String name = "methodName";
-      setMethodName(name);
+      setMethodName(commandController, name);
 
       Result result = commandController.execute();
 
@@ -264,8 +262,8 @@ public class JavaNewMethodCommandTest
       commandController.initialize();
 
       String methodName = "methodName";
-      setMethodName(methodName);
-      setParameters("int a,String s,int c,int d");
+      setMethodName(commandController, methodName);
+      setParameters(commandController, "int a,String s,int c,int d");
 
       commandController.execute();
       reloadTargetClass();
@@ -291,8 +289,8 @@ public class JavaNewMethodCommandTest
       commandController.initialize();
 
       String methodName = "methodName";
-      setMethodName(methodName);
-      setAccessType(Visibility.PRIVATE);
+      setMethodName(commandController, methodName);
+      setAccessType(commandController, Visibility.PRIVATE);
 
       Result result = commandController.execute();
 
@@ -311,9 +309,9 @@ public class JavaNewMethodCommandTest
       commandController.initialize();
 
       String methodName = "methodName";
-      setMethodName(methodName);
-      setAccessType(Visibility.PUBLIC);
-      setParameters("int a,String s,int c,int d");
+      setMethodName(commandController, methodName);
+      setAccessType(commandController, Visibility.PUBLIC);
+      setParameters(commandController, "int a,String s,int c,int d");
 
       commandController.execute();
       reloadTargetClass();
@@ -339,8 +337,8 @@ public class JavaNewMethodCommandTest
       commandController.initialize();
 
       String methodName = "methodName";
-      setMethodName(methodName);
-      setReturnType("long");
+      setMethodName(commandController, methodName);
+      setReturnType(commandController, "long");
 
       Result result = commandController.execute();
 
@@ -360,8 +358,8 @@ public class JavaNewMethodCommandTest
       commandController.initialize();
 
       String methodName = "methodName";
-      setMethodName(methodName);
-      setParameters("int a,String s,int c,int d");
+      setMethodName(commandController, methodName);
+      setParameters(commandController, "int a,String s,int c,int d");
 
       commandController.execute();
       reloadTargetClass();
@@ -374,19 +372,44 @@ public class JavaNewMethodCommandTest
       Assert.assertNull(targetClass.getMethod(methodName, paramTypes).getAnnotation("Override"));
       Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getBody(),
                "throw new UnsupportedOperationException(\"Not supported yet.\");");
-
    }
 
-   private void createTempProject()
+   @Test
+   public void testGenerateMethodInInterface() throws Exception
    {
-      project = projectFactory.createTempProject();
-      facetFactory.install(project, JavaSourceFacet.class);
+      JavaInterfaceSource iface = createTargetInterface("public interface Foo {}");
+      JavaResource javaResource = project.getFacet(JavaSourceFacet.class).getJavaResource(iface);
+
+      String methodName = "methodName";
+      String[] paramTypes = { "int", "String", "int", "int" };
+
+      try (CommandController commandController = testHarness.createCommandController(JavaNewMethodCommand.class,
+               javaResource))
+      {
+         commandController.initialize();
+         setMethodName(commandController, methodName);
+         setParameters(commandController, "int a,String s,int c,int d");
+         setReturnType(commandController, "String");
+         setAccessType(commandController, Visibility.PUBLIC);
+         commandController.execute();
+      }
+      iface = javaResource.getJavaType();
+      Assert.assertNotNull(iface.getMethod(methodName, paramTypes));
+      Assert.assertTrue(iface.getMethod(methodName, paramTypes).isPublic());
+      Assert.assertEquals(iface.getMethod(methodName, paramTypes).getReturnType().toString(), "String");
    }
 
    private void createTargetClass(String classString) throws FileNotFoundException
    {
       targetClass = Roaster.parse(JavaClassSource.class, classString);
       project.getFacet(JavaSourceFacet.class).saveJavaSource(targetClass);
+   }
+
+   private JavaInterfaceSource createTargetInterface(String interfaceString) throws FileNotFoundException
+   {
+      JavaInterfaceSource targetInterface = Roaster.parse(JavaInterfaceSource.class, interfaceString);
+      project.getFacet(JavaSourceFacet.class).saveJavaSource(targetInterface);
+      return targetInterface;
    }
 
    private void createTargetSuperClass(String classString) throws FileNotFoundException
@@ -397,7 +420,6 @@ public class JavaNewMethodCommandTest
 
    private void createCommandController() throws Exception
    {
-
       commandController = testHarness.createCommandController(JavaNewMethodCommand.class,
                project.getFacet(JavaSourceFacet.class).getJavaResource(targetClass));
    }
@@ -409,22 +431,22 @@ public class JavaNewMethodCommandTest
                         .getUnderlyingResourceObject());
    }
 
-   private void setMethodName(String methodName)
+   private static void setMethodName(CommandController commandController, String methodName)
    {
       commandController.setValueFor("methodName", methodName);
    }
 
-   private void setReturnType(String returnType)
+   private static void setReturnType(CommandController commandController, String returnType)
    {
       commandController.setValueFor("returnType", returnType);
    }
 
-   private void setAccessType(Visibility accessType)
+   private static void setAccessType(CommandController commandController, Visibility accessType)
    {
       commandController.setValueFor("accessType", accessType);
    }
 
-   private void setParameters(String parameters)
+   private static void setParameters(CommandController commandController, String parameters)
    {
       commandController.setValueFor("parameters", parameters);
 

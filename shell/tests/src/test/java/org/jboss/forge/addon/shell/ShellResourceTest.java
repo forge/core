@@ -25,10 +25,9 @@ import org.jboss.forge.addon.shell.mock.command.ResourceTestCommand;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -44,18 +43,16 @@ import org.junit.runner.RunWith;
 public class ShellResourceTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:shell-test-harness")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+
    })
    public static AddonArchive getDeployment()
    {
       AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                .addBeansXML()
-               .addClass(ResourceTestCommand.class)
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
+               .addClass(ResourceTestCommand.class);
 
       return archive;
    }
@@ -231,9 +228,9 @@ public class ShellResourceTest
       String userHomePath = OperatingSystemUtils.getUserHomePath();
       shellTest.execute("resourcecommand --singleFileResource ~", 10, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), containsString("Single File Resource: " + userHomePath));
-      
+
       shellTest.clearScreen();
-      
+
       shellTest.execute("resourcecommand --singleFileResource .", 10, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), containsString("Single File Resource: "
                + shellTest.getShell().getCurrentResource()));

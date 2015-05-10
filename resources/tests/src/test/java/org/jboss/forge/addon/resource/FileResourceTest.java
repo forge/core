@@ -1,6 +1,6 @@
 /**
  * Copyright 2013 Red Hat, Inc. and/or its affiliates.
- *
+ * <p/>
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
@@ -17,10 +17,10 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,25 +29,19 @@ import org.junit.runner.RunWith;
 import com.google.common.io.Files;
 
 /**
- * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
 public class FileResourceTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:resources") })
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:resources"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+   })
    public static AddonArchive getDeployment()
    {
-      AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:resources")
-               );
-
-      return archive;
+      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
    }
 
    @Inject
@@ -105,4 +99,143 @@ public class FileResourceTest
       Assert.assertEquals(fileResource, children.get(0));
    }
 
+   @Test
+   @SuppressWarnings("unchecked")
+   public void testMoveFileResource() throws IOException
+   {
+      File file = File.createTempFile("fileresourcetest", ".tmp");
+      file.deleteOnExit();
+
+      File dest = File.createTempFile("newFileResourcetest", ".tmp");
+      dest.deleteOnExit();
+
+      FileResource<?> src = resourceFactory.create(FileResource.class, file);
+      FileResource<?> newFile = resourceFactory.create(FileResource.class, dest);
+
+      src.moveTo(newFile);
+      Assert.assertNotNull(dest);
+      Assert.assertTrue(dest.isFile());
+      Assert.assertEquals(src.getUnderlyingResourceObject().getAbsolutePath(), dest.getAbsolutePath());
+      Assert.assertTrue(src.exists());
+   }
+
+   @Test
+   public void testMoveFileResourceToDirectory() throws IOException
+   {
+      File file = File.createTempFile("fileresourcetest", ".tmp");
+      file.deleteOnExit();
+      file.createNewFile();
+
+      File folder = OperatingSystemUtils.createTempDir();
+      folder.deleteOnExit();
+      folder.mkdir();
+
+      FileResource<?> src = resourceFactory.create(file).reify(FileResource.class);
+      DirectoryResource folderResource = resourceFactory.create(DirectoryResource.class, folder);
+      src.moveTo(folderResource);
+
+      Assert.assertNotNull(src);
+      Assert.assertTrue(src.getUnderlyingResourceObject().getAbsolutePath().contains(folder.getName()));
+      Assert.assertTrue(src.exists());
+      Assert.assertFalse(src.isDirectory());
+   }
+
+   @Test
+   public void testMoveDirectoryResourceToDirectory() throws IOException
+   {
+      File folder = OperatingSystemUtils.createTempDir();
+      folder.deleteOnExit();
+      folder.mkdir();
+
+      File folder2 = OperatingSystemUtils.createTempDir();
+      folder2.deleteOnExit();
+      folder2.mkdir();
+
+      DirectoryResource folderResource = resourceFactory.create(DirectoryResource.class, folder);
+      DirectoryResource folderResource2 = resourceFactory.create(DirectoryResource.class, folder2);
+      folderResource.moveTo(folderResource2);
+
+      String absolutePathDirMoved = folderResource.getUnderlyingResourceObject().getAbsolutePath();
+      Assert.assertEquals(absolutePathDirMoved, folder2.getAbsolutePath() + File.separator + folder.getName());
+      Assert.assertTrue(folderResource.isDirectory());
+      Assert.assertTrue(folderResource.exists());
+   }
+
+   @Test(expected = ResourceException.class)
+   public void testMoveDirectoryResourceToFile() throws IOException
+   {
+      File file = File.createTempFile("fileresourcetest", ".tmp");
+      file.deleteOnExit();
+      file.createNewFile();
+
+      File folder = OperatingSystemUtils.createTempDir();
+      folder.deleteOnExit();
+      folder.mkdir();
+
+      DirectoryResource folderResource = resourceFactory.create(DirectoryResource.class, folder);
+      FileResource fileResource = resourceFactory.create(FileResource.class, file);
+      folderResource.moveTo(fileResource);
+   }
+
+   @Test
+   public void testDeleteDirectoryNotRecursive() throws IOException
+   {
+      File folder = OperatingSystemUtils.createTempDir();
+      folder.deleteOnExit();
+      folder.mkdir();
+
+      DirectoryResource folderResource = resourceFactory.create(DirectoryResource.class, folder);
+
+      Assert.assertTrue(folderResource.isDirectory());
+      Assert.assertTrue(folderResource.exists());
+
+      folderResource.delete();
+
+      Assert.assertTrue(!folderResource.exists());
+   }
+
+   @Test
+   public void testDeleteDirectoryRecursive() throws IOException
+   {
+      File folder = OperatingSystemUtils.createTempDir();
+      folder.deleteOnExit();
+      folder.mkdir();
+
+      File folder2 = OperatingSystemUtils.createTempDir();
+      folder2.deleteOnExit();
+      folder2.mkdir();
+
+      File file = File.createTempFile("fileresourcetest", ".tmp");
+      file.deleteOnExit();
+      file.createNewFile();
+
+      File file2 = File.createTempFile("fileresourcetest2", ".tmp");
+      file2.deleteOnExit();
+      file2.createNewFile();
+
+      DirectoryResource folderResource = resourceFactory.create(DirectoryResource.class, folder);
+      FileResource<?> src = resourceFactory.create(file).reify(FileResource.class);
+      src.moveTo(folderResource);
+
+      DirectoryResource folderResource2 = resourceFactory.create(DirectoryResource.class, folder2);
+      FileResource<?> src2 = resourceFactory.create(file2).reify(FileResource.class);
+
+      folderResource2.moveTo(folderResource);
+      src2.moveTo(folderResource2);
+
+      Assert.assertTrue(folderResource.isDirectory());
+      Assert.assertTrue(folderResource.exists());
+      Assert.assertTrue(src.exists());
+
+      Assert.assertTrue(folderResource2.isDirectory());
+      Assert.assertTrue(folderResource2.exists());
+      Assert.assertTrue(src2.exists());
+
+      folderResource.delete(true);
+
+      Assert.assertTrue(!folderResource.exists());
+      Assert.assertTrue(!file.exists());
+      Assert.assertTrue(!folderResource2.exists());
+      Assert.assertTrue(!file2.exists());
+   }
 }

@@ -16,6 +16,7 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIContextProvider;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.InputComponentInjectionEnricher;
 import org.jboss.forge.addon.ui.input.SingleValued;
@@ -29,7 +30,7 @@ import org.jboss.forge.addon.ui.util.InputComponents;
 public class DefaultFacetComponentEnricher implements InputComponentInjectionEnricher
 {
    @Inject
-   private UIContextHandler contextHandler;
+   private UIContextProvider contextProvider;
 
    @Inject
    private ConverterFactory converterFactory;
@@ -41,7 +42,7 @@ public class DefaultFacetComponentEnricher implements InputComponentInjectionEnr
    @Override
    public void enrich(InjectionPoint injectionPoint, InputComponent<?, ?> input)
    {
-      UIContext context = contextHandler.getContext();
+      UIContext context = contextProvider.getUIContext();
       // Setting for Single valued components only at the moment
       if (input instanceof SingleValued && context != null)
       {

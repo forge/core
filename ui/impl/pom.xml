@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>ui-parent</artifactId>
-      <version>2.15.2-SNAPSHOT</version>
+      <version>2.16.1-SNAPSHOT</version>
    </parent>
 
    <artifactId>ui-impl</artifactId>
@@ -16,10 +16,7 @@
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.furnace</groupId>
-         <artifactId>furnace-proxy</artifactId>
-      </dependency>
+      
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui-api</artifactId>

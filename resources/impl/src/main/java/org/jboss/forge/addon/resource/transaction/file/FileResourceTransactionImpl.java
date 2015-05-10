@@ -1,25 +1,11 @@
 /**
  * Copyright 2013 Red Hat, Inc. and/or its affiliates.
- *
+ * <p/>
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
 package org.jboss.forge.addon.resource.transaction.file;
-
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.jboss.forge.addon.resource.FileOperations;
 import org.jboss.forge.addon.resource.Resource;
@@ -35,24 +21,22 @@ import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.xadisk.additional.XAFileInputStreamWrapper;
 import org.xadisk.additional.XAFileOutputStreamWrapper;
-import org.xadisk.bridge.proxies.interfaces.Session;
+import org.xadisk.bridge.proxies.interfaces.*;
 import org.xadisk.bridge.proxies.interfaces.XADiskBasicIOOperations.PermissionType;
-import org.xadisk.bridge.proxies.interfaces.XAFileInputStream;
-import org.xadisk.bridge.proxies.interfaces.XAFileOutputStream;
-import org.xadisk.bridge.proxies.interfaces.XAFileSystem;
-import org.xadisk.bridge.proxies.interfaces.XAFileSystemProxy;
 import org.xadisk.filesystem.FileSystemStateChangeEvent;
 import org.xadisk.filesystem.NativeSession;
-import org.xadisk.filesystem.exceptions.DirectoryNotEmptyException;
-import org.xadisk.filesystem.exceptions.FileAlreadyExistsException;
-import org.xadisk.filesystem.exceptions.FileNotExistsException;
-import org.xadisk.filesystem.exceptions.InsufficientPermissionOnFileException;
-import org.xadisk.filesystem.exceptions.NoTransactionAssociatedException;
+import org.xadisk.filesystem.exceptions.*;
 import org.xadisk.filesystem.standalone.StandaloneFileSystemConfiguration;
+
+import java.io.*;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Implementation of the {@link ResourceTransaction} interface for files
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -447,6 +431,21 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    }
 
    @Override
+   public File move(File src, File dest) throws IOException
+   {
+      assertSessionCreated();
+      try
+      {
+         session.moveFile(src, dest);
+         return dest;
+      }
+      catch (Exception e)
+      {
+         throw new ResourceTransactionException("Error while moving file from " + src + " to " + dest, e);
+      }
+   }
+
+   @Override
    public void setTransactionTimeout(int seconds)
    {
       if (seconds < 0)
@@ -466,6 +465,49 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    public void deleteFileOnExit(File file)
    {
       file.deleteOnExit();
+   }
+
+   @Override
+   public boolean deleteFile(File file, boolean recursive)
+   {
+      if (recursive)
+      {
+         return this.deleteRecursive(file);
+      }
+      return this.deleteFile(file);
+   }
+
+   private boolean deleteRecursive(File file)
+   {
+      if (OperatingSystemUtils.isWindows())
+      {
+         System.gc(); // ensure no lingering handles that would prevent deletion
+      }
+
+      if (file == null)
+      {
+         return false;
+      }
+
+      File[] children = this.listFiles(file);
+      if (children != null)
+      {
+         for (File sf : children)
+         {
+            if (this.fileExistsAndIsDirectory(sf))
+            {
+               deleteFile(sf, false);
+            }
+            else
+            {
+               if (!this.deleteFile(sf))
+               {
+                  throw new RuntimeException("failed to delete: " + sf.getAbsolutePath());
+               }
+            }
+         }
+      }
+      return this.deleteFile(file);
    }
 
    private void assertSessionCreated()

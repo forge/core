@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.javaee.faces;
 
+import javax.faces.convert.FacesConverter;
+import javax.faces.validator.FacesValidator;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -20,10 +22,9 @@ import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -41,19 +42,14 @@ import org.junit.runner.RunWith;
 public class FacesOperationsTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:javaee"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
    })
    public static AddonArchive getDeployment()
    {
-      return ShrinkWrap.create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee")
-               );
+      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
    }
 
    @Inject
@@ -108,6 +104,7 @@ public class FacesOperationsTest
       Assert.assertEquals("SampleConverter.java", converter.getName());
       Assert.assertEquals("SampleConverter", converter.getJavaType().getName());
       Assert.assertEquals("org.example", converter.getJavaType().getPackage());
+      Assert.assertTrue(converter.getJavaType().hasAnnotation(FacesConverter.class));
       Assert.assertTrue(converter.exists());
    }
 
@@ -128,6 +125,7 @@ public class FacesOperationsTest
       Assert.assertTrue(child instanceof JavaResource);
       Assert.assertEquals("SampleConverter", ((JavaResource) child).getJavaType().getName());
       Assert.assertEquals("org.example", ((JavaResource) child).getJavaType().getPackage());
+      Assert.assertTrue(converter.getJavaType().hasAnnotation(FacesConverter.class));
    }
 
    @Test
@@ -139,6 +137,7 @@ public class FacesOperationsTest
       Assert.assertEquals("SampleValidator.java", validator.getName());
       Assert.assertEquals("SampleValidator", validator.getJavaType().getName());
       Assert.assertEquals("org.example", validator.getJavaType().getPackage());
+      Assert.assertTrue(validator.getJavaType().hasAnnotation(FacesValidator.class));
       Assert.assertTrue(validator.exists());
    }
 
@@ -158,6 +157,7 @@ public class FacesOperationsTest
       Assert.assertTrue(child instanceof JavaResource);
       Assert.assertEquals("SampleValidator", ((JavaResource) child).getJavaType().getName());
       Assert.assertEquals("org.example", ((JavaResource) child).getJavaType().getPackage());
+      Assert.assertTrue(validator.getJavaType().hasAnnotation(FacesValidator.class));
    }
 
    @Test

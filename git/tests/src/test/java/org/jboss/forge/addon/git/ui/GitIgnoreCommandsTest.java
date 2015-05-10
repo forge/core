@@ -10,6 +10,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.git.gitignore.resources.GitIgnoreResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Result;
@@ -64,12 +65,12 @@ public class GitIgnoreCommandsTest
    {
       project = projectFactory.createTempProject();
       CommandController gitSetupCommandTester = testHarness.createCommandController(GitSetupCommand.class,
-               project.getRootDirectory());
+               project.getRoot());
       gitSetupCommandTester.initialize();
       gitSetupCommandTester.execute();
 
       CommandController gitIgnoreSetupTester = testHarness.createCommandController(GitIgnoreSetupCommand.class,
-               project.getRootDirectory());
+               project.getRoot());
       gitIgnoreSetupTester.initialize();
       gitIgnoreSetupTester.setValueFor("templateRepoDir", getCloneDir());
       gitIgnoreSetupTester.execute();
@@ -91,7 +92,7 @@ public class GitIgnoreCommandsTest
    public void testGitIgnoreUpdateRepo() throws Exception
    {
       CommandController gitIgnoreUpdateRepoTester = testHarness.createCommandController(
-               GitIgnoreUpdateRepoCommand.class, project.getRootDirectory());
+               GitIgnoreUpdateRepoCommand.class, project.getRoot());
       gitIgnoreUpdateRepoTester.initialize();
       Result result = gitIgnoreUpdateRepoTester.execute();
       assertTrue(result.getMessage().contains("Local gitignore repository updated"));
@@ -101,7 +102,7 @@ public class GitIgnoreCommandsTest
    public void testGitIgnoreListTemplates() throws Exception
    {
       CommandController gitIgnoreListTemplatesTester = testHarness.createCommandController(
-               GitIgnoreListTemplatesCommand.class, project.getRootDirectory());
+               GitIgnoreListTemplatesCommand.class, project.getRoot());
       gitIgnoreListTemplatesTester.initialize();
       Result result = gitIgnoreListTemplatesTester.execute();
       String listOutput = result.getMessage().substring(result.getMessage().indexOf("==="));
@@ -129,7 +130,7 @@ public class GitIgnoreCommandsTest
       executeGitIgnoreCreate();
 
       CommandController gitIgnoreAddPatternTester = testHarness.createCommandController(
-               GitIgnoreAddPatternCommand.class, project.getRootDirectory());
+               GitIgnoreAddPatternCommand.class, project.getRoot());
       gitIgnoreAddPatternTester.initialize();
       gitIgnoreAddPatternTester.setValueFor("pattern", "*.forge");
       gitIgnoreAddPatternTester.execute();
@@ -145,7 +146,7 @@ public class GitIgnoreCommandsTest
       executeGitIgnoreCreate();
 
       CommandController gitIgnoreRemovePatternTester = testHarness.createCommandController(
-               GitIgnoreRemovePatternCommand.class, project.getRootDirectory());
+               GitIgnoreRemovePatternCommand.class, project.getRoot());
       gitIgnoreRemovePatternTester.initialize();
       gitIgnoreRemovePatternTester.setValueFor("pattern", "target/");
       gitIgnoreRemovePatternTester.execute();
@@ -161,7 +162,7 @@ public class GitIgnoreCommandsTest
       executeGitIgnoreCreate();
 
       CommandController gitIgnoreListPatternsTester = testHarness.createCommandController(
-               GitIgnoreListPatternsCommand.class, project.getRootDirectory());
+               GitIgnoreListPatternsCommand.class, project.getRoot());
       gitIgnoreListPatternsTester.initialize();
       Result result = gitIgnoreListPatternsTester.execute();
 
@@ -171,19 +172,19 @@ public class GitIgnoreCommandsTest
 
    private Resource<?> getCloneDir()
    {
-      return project.getRootDirectory().getChild("gibo");
+      return project.getRoot().getChild("gibo");
    }
 
    private GitIgnoreResource gitIgnoreResource()
    {
-      return project.getRootDirectory()
+      return project.getRoot().reify(DirectoryResource.class)
                .getChildOfType(GitIgnoreResource.class, ".gitignore");
    }
 
    private void executeGitIgnoreCreate() throws Exception
    {
       CommandController gitIgnoreCreateTester = testHarness.createCommandController(GitIgnoreCreateCommand.class,
-               project.getRootDirectory());
+               project.getRoot());
       gitIgnoreCreateTester.initialize();
       gitIgnoreCreateTester.setValueFor("templates", "Eclipse Maven");
       gitIgnoreCreateTester.execute();
@@ -192,7 +193,7 @@ public class GitIgnoreCommandsTest
    @After
    public void tearDown() throws Exception
    {
-      project.getRootDirectory().delete(true);
+      project.getRoot().delete(true);
    }
 
 }

@@ -231,6 +231,22 @@ Your complete POM should now look something like this:
    <version>0.0.1-SNAPSHOT</version>
 
    <name>My First Addon</name>
+   
+   <properties>
+        <version.forge>2.15.2.Final</version.forge>
+   </properties>
+   
+   <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.forge</groupId>
+                <artifactId>forge-bom</artifactId>
+                <version>${version.forge}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
    <dependencies>
       <dependency>
@@ -513,7 +529,7 @@ package org.example;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -523,8 +539,8 @@ import org.junit.runner.RunWith;
 public class ExampleFurnaceTest {
 
    @Deployment
-   public static ForgeArchive getDeployment() {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class);
+   public static AddonArchive getDeployment() {
+      AddonArchive archive = ShrinkWrap.create(AddonArchive.class);
       return archive;
    }
 
@@ -536,7 +552,7 @@ public class ExampleFurnaceTest {
 ----
 
 Then you'll need to add some configuration so that your addon will be deployed to the test environment. This is done
-using the `@AddonDependency` annotation. You'll also need to add an addon dependency link from your test case
+using the `@AddonDeployment` annotation. You'll also need to add an addon dependency link from your test case
 to your addon (otherwise the test case will not be able to use any of your addon's classes or services.)
 
 [source,java]
@@ -545,11 +561,11 @@ to your addon (otherwise the test case will not be able to use any of your addon
 public class ExampleFurnaceTest {
 
    @Deployment
-   @Dependencies({
-       @AddonDependency(name = "org.example:example", version = "YOUR_VERSION")
+   @AddonDeployments({
+       @AddonDeployment(name = "org.example:example", version = "YOUR_VERSION")
    })
-   public static ForgeArchive getDeployment() {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+   public static AddonArchive getDeployment() {
+      AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
          .addBeansXML()
          .addAsAddonDependencies(
             AddonDependencyEntry.create("org.example:example", "YOUR_VERSION"),
@@ -564,7 +580,8 @@ public class ExampleFurnaceTest {
 }
 ----
 
-NOTE: The `@Dependencies` annotation is used to specify addons that must be deployed before the Addon-Under-Test is deployed in Furnace. The `AddonDependencyEntry.create(...)` method is used to specify addons that the Addon-Under-Test depends on.
+NOTE: The `@AddonDeployment` annotation is used to specify addons that must be deployed before the Addon-Under-Test is deployed in Furnace. The `AddonDependencyEntry.create(...)` method is used to specify addons that the Addon-Under-Test depends on.
+You can use the `@AddonDependency` annotation if you want to deploy AND make your Addon-Under-Test dependent on the specified addon. By using the `@AddonDependency` annotation you no longer need to specify `AddonDependencyEntry.create(...)` in your `AddonArchive`.
 
 Now that the test case deploys and depends on your addon, you may access services from it via injection:
 
@@ -574,11 +591,11 @@ Now that the test case deploys and depends on your addon, you may access service
 public class ExampleFurnaceTest {
 
    @Deployment
-   @Dependencies({
-       @AddonDependency(name = "org.example:example", version = "YOUR_VERSION")
+   @AddonDeployments({
+       @AddonDeployment(name = "org.example:example", version = "YOUR_VERSION")
    })
-   public static ForgeArchive getDeployment() {
-      ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+   public static AddonArchive getDeployment() {
+      AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
          .addBeansXML()
          .addAsAddonDependencies(
             AddonDependencyEntry.create("org.example:example", "YOUR_VERSION"),

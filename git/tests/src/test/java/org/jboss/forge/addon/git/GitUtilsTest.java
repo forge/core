@@ -22,6 +22,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.git.exceptions.CantMergeCommitException;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
@@ -72,7 +73,7 @@ public class GitUtilsTest
    {
       Project project = projectFactory.createTempProject();
 
-      Git repo = gitUtils.init(project.getRootDirectory());
+      Git repo = gitUtils.init(project.getRoot().reify(DirectoryResource.class));
       Assert.assertTrue(repo.getRepository().getDirectory().exists());
    }
 
@@ -81,7 +82,7 @@ public class GitUtilsTest
    {
       Project project = projectFactory.createTempProject();
 
-      Git repo = gitUtils.init(project.getRootDirectory());
+      Git repo = gitUtils.init(project.getRoot().reify(DirectoryResource.class));
       Map<String, Ref> tags = repo.getRepository().getTags();
       Assert.assertTrue(tags.isEmpty());
    }
@@ -94,7 +95,7 @@ public class GitUtilsTest
       String[] branchNames = { "master", "branch_two" };
 
       Project project = projectFactory.createTempProject();
-      Git repo = gitUtils.init(project.getRootDirectory());
+      Git repo = gitUtils.init(project.getRoot().reify(DirectoryResource.class));
 
       gitUtils.addAll(repo);
       gitUtils.commitAll(repo, commitMsgs[0]);
@@ -108,13 +109,13 @@ public class GitUtilsTest
    public void shouldReturnOneLogEntryForSingleCommit() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      Git repo = gitUtils.init(project.getRootDirectory());
+      Git repo = gitUtils.init(project.getRoot().reify(DirectoryResource.class));
       String commitMsg = "First commit";
 
       gitUtils.addAll(repo);
       gitUtils.commitAll(repo, "initial commit");
 
-      FileResource<?> file = (FileResource<?>) project.getRootDirectory().getChild("test.txt");
+      FileResource<?> file = (FileResource<?>) project.getRoot().getChild("test.txt");
       file.setContents("Foo bar baz contents").createNewFile();
       gitUtils.addAll(repo);
       gitUtils.commitAll(repo, commitMsg);
@@ -133,19 +134,19 @@ public class GitUtilsTest
       String[] commitMsgs = { "initial commit", "First commit", "Second commit" };
 
       Project project = projectFactory.createTempProject();
-      Git repo = gitUtils.init(project.getRootDirectory());
+      Git repo = gitUtils.init(project.getRoot().reify(DirectoryResource.class));
 
       gitUtils.addAll(repo);
       gitUtils.commitAll(repo, commitMsgs[0]);
 
-      FileResource<?> file1 = project.getRootDirectory().getChild("test.txt").reify(FileResource.class);
+      FileResource<?> file1 = project.getRoot().getChild("test.txt").reify(FileResource.class);
       isCreated = file1.createNewFile();
       Assert.assertTrue("file 1 was not created", isCreated);
       file1.setContents("Foo bar baz contents");
       gitUtils.addAll(repo);
       gitUtils.commitAll(repo, commitMsgs[1]);
 
-      FileResource<?> file2 = project.getRootDirectory().getChild("testTwo.txt").reify(FileResource.class);
+      FileResource<?> file2 = project.getRoot().getChild("testTwo.txt").reify(FileResource.class);
       isCreated = file2.createNewFile();
       Assert.assertTrue("file 2 was not created", isCreated);
       file2.setContents("Foo bar baz contents");
@@ -166,7 +167,7 @@ public class GitUtilsTest
    public void shouldThrowNoHeadExceptionWhenRepoHasNoCommits() throws Exception
    {
       Project project = projectFactory.createTempProject();
-      Git repo = gitUtils.init(project.getRootDirectory());
+      Git repo = gitUtils.init(project.getRoot().reify(DirectoryResource.class));
 
       try
       {
@@ -185,12 +186,12 @@ public class GitUtilsTest
       String[] commitMsgs = { "initial commit", "First commit" };
 
       Project project = projectFactory.createTempProject();
-      Git repo = gitUtils.init(project.getRootDirectory());
+      Git repo = gitUtils.init(project.getRoot().reify(DirectoryResource.class));
 
       gitUtils.addAll(repo);
       gitUtils.commitAll(repo, commitMsgs[0]);
 
-      FileResource<?> file1 = project.getRootDirectory().getChild("test.txt").reify(FileResource.class);
+      FileResource<?> file1 = project.getRoot().getChild("test.txt").reify(FileResource.class);
       isCreated = file1.createNewFile();
       Assert.assertTrue("file 1 was not created", isCreated);
       file1.setContents("Foo bar baz contents");
@@ -235,21 +236,21 @@ public class GitUtilsTest
       String[] files = { "test1.txt", "test2.txt" };
 
       Project project = projectFactory.createTempProject();
-      Git repo = gitUtils.init(project.getRootDirectory());
+      Git repo = gitUtils.init(project.getRoot().reify(DirectoryResource.class));
 
       gitUtils.addAll(repo);
       gitUtils.commitAll(repo, "initial commit");
 
       repo.branchCreate().setName(branchNames[1]).call();
 
-      FileResource<?> file0 = project.getRootDirectory().getChild(files[0]).reify(FileResource.class);
+      FileResource<?> file0 = project.getRoot().getChild(files[0]).reify(FileResource.class);
       file0.createNewFile();
       gitUtils.add(repo, files[0]);
       gitUtils.commit(repo, "file added on " + branchNames[0]);
 
       gitUtils.switchBranch(repo, branchNames[1]);
 
-      FileResource<?> file1 = project.getRootDirectory().getChild(files[1]).reify(FileResource.class);
+      FileResource<?> file1 = project.getRoot().getChild(files[1]).reify(FileResource.class);
       file1.createNewFile();
       gitUtils.add(repo, files[1]);
       gitUtils.commit(repo, "file added on " + branchNames[1]);
@@ -261,7 +262,7 @@ public class GitUtilsTest
       gitUtils.cherryPick(repo, branch2Ref);
 
       // assert file2 exists
-      Assert.assertTrue("file from cherry picked commit should exist", project.getRootDirectory().getChild(files[1])
+      Assert.assertTrue("file from cherry picked commit should exist", project.getRoot().getChild(files[1])
                .exists());
 
       // assert number of commits (on master). Should be 3, latest created by the merge from cherry pick
@@ -286,21 +287,21 @@ public class GitUtilsTest
       String[] files = { "test1.txt", "test2.txt" };
 
       Project project = projectFactory.createTempProject();
-      Git repo = gitUtils.init(project.getRootDirectory());
+      Git repo = gitUtils.init(project.getRoot().reify(DirectoryResource.class));
 
       gitUtils.addAll(repo);
       gitUtils.commitAll(repo, "initial commit");
 
       repo.branchCreate().setName(branchNames[1]).call();
 
-      FileResource<?> file0 = project.getRootDirectory().getChild(files[0]).reify(FileResource.class);
+      FileResource<?> file0 = project.getRoot().getChild(files[0]).reify(FileResource.class);
       file0.createNewFile();
       gitUtils.add(repo, files[0]);
       gitUtils.commit(repo, "file added on " + branchNames[0]);
 
       gitUtils.switchBranch(repo, branchNames[1]);
 
-      FileResource<?> file1 = project.getRootDirectory().getChild(files[1]).reify(FileResource.class);
+      FileResource<?> file1 = project.getRoot().getChild(files[1]).reify(FileResource.class);
       file1.createNewFile();
       gitUtils.add(repo, files[1]);
       gitUtils.commit(repo, "file added on " + branchNames[1]);
@@ -312,7 +313,7 @@ public class GitUtilsTest
       gitUtils.cherryPickNoMerge(repo, branch2Ref);
 
       // assert file2 exists
-      Assert.assertTrue("file from cherry picked commit should exist", project.getRootDirectory().getChild(files[1])
+      Assert.assertTrue("file from cherry picked commit should exist", project.getRoot().getChild(files[1])
                .exists());
 
       // assert number of commits (on master). Should be 2 (cherry pick produced no merge)
@@ -337,34 +338,34 @@ public class GitUtilsTest
       String[] files = { "test1.txt", "test2.txt" };
 
       Project project = projectFactory.createTempProject();
-      Git repo = gitUtils.init(project.getRootDirectory());
+      Git repo = gitUtils.init(project.getRoot().reify(DirectoryResource.class));
 
       gitUtils.addAll(repo);
       gitUtils.commitAll(repo, "initial commit");
 
-      FileResource<?> file0 = project.getRootDirectory().getChild(files[0]).reify(FileResource.class);
+      FileResource<?> file0 = project.getRoot().getChild(files[0]).reify(FileResource.class);
       file0.createNewFile();
       gitUtils.add(repo, files[0]);
       gitUtils.commit(repo, "file added on " + branchNames[0]);
 
       log = gitUtils.getLogForCurrentBranch(repo);
       Assert.assertEquals("wrong number of commits", 2, log.size());
-      Assert.assertTrue("file should exist", project.getRootDirectory().getChild(files[0]).exists());
+      Assert.assertTrue("file should exist", project.getRoot().getChild(files[0]).exists());
 
-      FileResource<?> file1 = project.getRootDirectory().getChild(files[1]).reify(FileResource.class);
+      FileResource<?> file1 = project.getRoot().getChild(files[1]).reify(FileResource.class);
       file1.createNewFile();
       gitUtils.add(repo, files[1]);
       gitUtils.commit(repo, "file added on " + branchNames[0]);
 
       log = gitUtils.getLogForCurrentBranch(repo);
       Assert.assertEquals("wrong number of commits", 3, log.size());
-      Assert.assertTrue("file should exist", project.getRootDirectory().getChild(files[1]).exists());
+      Assert.assertTrue("file should exist", project.getRoot().getChild(files[1]).exists());
 
       gitUtils.resetHard(repo, "HEAD^1");
       log = gitUtils.getLogForCurrentBranch(repo);
       Assert.assertEquals("wrong number of commits", 2, log.size());
-      Assert.assertTrue("file should exist", project.getRootDirectory().getChild(files[0]).exists());
-      Assert.assertFalse("file should not exist", project.getRootDirectory().getChild(files[1]).exists());
+      Assert.assertTrue("file should exist", project.getRoot().getChild(files[0]).exists());
+      Assert.assertFalse("file should not exist", project.getRoot().getChild(files[1]).exists());
    }
 
    @Test
@@ -376,7 +377,7 @@ public class GitUtilsTest
 
       String testBranchName = "testBranch";
       Project project = projectFactory.createTempProject();
-      Git repo = gitUtils.init(project.getRootDirectory());
+      Git repo = gitUtils.init(project.getRoot().reify(DirectoryResource.class));
 
       gitUtils.addAll(repo);
       gitUtils.commitAll(repo, "initial commit");
@@ -397,12 +398,12 @@ public class GitUtilsTest
       CherryPickResult cherryPickResult = null;
 
       Project project = projectFactory.createTempProject();
-      Git repo = gitUtils.init(project.getRootDirectory());
+      Git repo = gitUtils.init(project.getRoot().reify(DirectoryResource.class));
 
       gitUtils.addAll(repo);
       gitUtils.commitAll(repo, "initial commit");
 
-      FileResource<?> file0 = project.getRootDirectory().getChild(files[0]).reify(FileResource.class);
+      FileResource<?> file0 = project.getRoot().getChild(files[0]).reify(FileResource.class);
       file0.createNewFile();
       gitUtils.add(repo, files[0]);
       gitUtils.commit(repo, "file added on " + branchNames[0]);

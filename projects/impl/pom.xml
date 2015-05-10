@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>projects-parent</artifactId>
-      <version>2.15.2-SNAPSHOT</version>
+      <version>2.16.1-SNAPSHOT</version>
    </parent>
    <artifactId>projects-impl</artifactId>
    <name>Forge - Projects Impl</name>
@@ -15,6 +15,7 @@
       <dependency>
          <groupId>org.jboss.forge.furnace</groupId>
          <artifactId>furnace-proxy</artifactId>
+         <scope>provided</scope>
       </dependency>
 
       <dependency>

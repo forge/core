@@ -40,8 +40,8 @@ import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
@@ -59,20 +59,15 @@ public class AddonProjectConfiguratorTest
    private static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
 
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi"),
-            @AddonDeployment(name = "org.jboss.forge.addon:addons")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDependency(name = "org.jboss.forge.addon:addons"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.addon:javaee")
    })
    public static AddonArchive getDeployment()
    {
-      return ShrinkWrap.create(AddonArchive.class).
-               addBeansXML().
-               addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:addons"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:javaee"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
+      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
    }
 
    @Inject

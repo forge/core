@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.javaee.jpa;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 import javax.persistence.GenerationType;
 
@@ -148,4 +149,11 @@ public interface PersistenceOperations
      * @return the decorated java resource
      */
     public JavaClassSource newEmbeddableEntity(JavaClassSource source);
+
+    /**
+     * Returns the list of all the JPA entities of the project
+     * @param project the current project
+     * @return the list of all the entities of the project
+     */
+    public List<JavaResource> getProjectEntities(Project project);
 }
