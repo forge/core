@@ -18,16 +18,15 @@ import org.jboss.forge.furnace.versions.Version;
  */
 public interface JavaEEFacet extends ProjectFacet
 {
-   String DEFAULT_SERVICE_PACKAGE = "service";
-   String DEFAULT_VIEW_PACKAGE = "view";
-   String DEFAULT_CONVERTER_PACKAGE = "converter";
-   String DEFAULT_VALIDATOR_PACKAGE = "validator";
-   String DEFAULT_ENTITY_PACKAGE = "model";
-   String DEFAULT_CONSTRAINT_PACKAGE = "constraints";
-   String DEFAULT_CDI_PACKAGE = "beans";
-   String DEFAULT_SERVLET_PACKAGE = "web";
-   String DEFAULT_CDI_EXTENSIONS_PACKAGE = "beans.extensions";
-
+   /**
+    * @deprecated See {@link JavaEEPackageConstants} for new package name
+    */
+   @Deprecated
+   public static final String DEFAULT_ENTITY_PACKAGE = "model";
+   @Deprecated
+   public static final String DEFAULT_CONSTRAINT_PACKAGE = "constraints";
+   @Deprecated
+   public static final String DEFAULT_CDI_PACKAGE = "beans";
    /**
     * Return the {@link Version} of the specification for which this facet represents.
     */

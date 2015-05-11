@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.javaee.cdi.ui;
 
-import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_CDI_EXTENSIONS_PACKAGE;
+import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_CDI_EXTENSIONS_PACKAGE;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

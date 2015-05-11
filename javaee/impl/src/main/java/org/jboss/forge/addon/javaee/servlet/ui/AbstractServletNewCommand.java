@@ -1,6 +1,6 @@
 package org.jboss.forge.addon.javaee.servlet.ui;
 
-import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_SERVLET_PACKAGE;
+import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_SERVLET_PACKAGE;
 
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
