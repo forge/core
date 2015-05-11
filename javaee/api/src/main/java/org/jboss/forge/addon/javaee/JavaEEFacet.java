@@ -25,6 +25,7 @@ public interface JavaEEFacet extends ProjectFacet
    String DEFAULT_ENTITY_PACKAGE = "model";
    String DEFAULT_CONSTRAINT_PACKAGE = "constraints";
    String DEFAULT_CDI_PACKAGE = "beans";
+   String DEFAULT_SERVLET_PACKAGE = "web";
    String DEFAULT_CDI_EXTENSIONS_PACKAGE = "beans.extensions";
 
    /**
