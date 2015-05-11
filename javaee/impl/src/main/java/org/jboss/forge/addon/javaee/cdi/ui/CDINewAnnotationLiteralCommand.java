@@ -7,9 +7,13 @@
 
 package org.jboss.forge.addon.javaee.cdi.ui;
 
+import java.lang.reflect.Method;
+import java.net.URLClassLoader;
+
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.facets.ClassLoaderFacet;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -19,7 +23,6 @@ import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.jboss.forge.roaster.model.util.Types;
 
 /**
  * Creates a new CDI Annotation Literal class
@@ -28,7 +31,6 @@ import org.jboss.forge.roaster.model.util.Types;
  */
 public class CDINewAnnotationLiteralCommand extends AbstractCDICommand<JavaClassSource>
 {
-
    @Inject
    @WithAttributes(label = "Qualifier", type = InputType.JAVA_CLASS_PICKER, required = true)
    private UIInput<String> qualifier;
@@ -64,22 +66,38 @@ public class CDINewAnnotationLiteralCommand extends AbstractCDICommand<JavaClass
    public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource annotationLiteral)
             throws Exception
    {
-      String qualifierValue = qualifier.getValue();
-      annotationLiteral.addImport(qualifierValue);
-      annotationLiteral.addImport(javax.enterprise.util.AnnotationLiteral.class);
-      annotationLiteral.setSuperType("AnnotationLiteral<" + Types.toSimpleName(qualifierValue) + ">").addInterface(
-               qualifierValue);
-      // Field
-      annotationLiteral.addField().setPrivate().setFinal(true).setType("Class<?>").setName("value");
+      try (URLClassLoader loader = project.getFacet(ClassLoaderFacet.class).getClassLoader())
+      {
+         Class<?> qualifierClass = loader.loadClass(qualifier.getValue());
+         if (!qualifierClass.isAnnotation())
+         {
+            throw new Exception("Specified qualifier is not an annotation: " + qualifierClass);
+         }
+         annotationLiteral.addImport(qualifierClass);
+         annotationLiteral.addImport(javax.enterprise.util.AnnotationLiteral.class);
+         annotationLiteral.setSuperType("AnnotationLiteral<" + qualifierClass.getSimpleName() + ">").addInterface(
+                  qualifierClass);
 
-      // Constructor
-      MethodSource<JavaClassSource> constructor = annotationLiteral.addMethod().setConstructor(true).setPublic();
-      constructor.addParameter("Class<?>", "value");
-      constructor.setBody("this.value = value;");
+         StringBuilder constructorBody = new StringBuilder();
 
-      // value() method
-      annotationLiteral.addMethod().setPublic().setReturnType("Class<?>").setName("value")
-               .setBody("return value;").addAnnotation(Override.class);
+         MethodSource<JavaClassSource> constructor = annotationLiteral.addMethod().setConstructor(true).setPublic();
+         for (Method m : qualifierClass.getDeclaredMethods())
+         {
+            String name = m.getName();
+            // Workaround for Class<?> parameters
+            String type = m.getReturnType() == Class.class ? "Class<?>" : m.getReturnType().getName();
+            // Fields
+            annotationLiteral.addField().setPrivate().setFinal(true).setName(name).setType(type);
+            // Interface methods
+            annotationLiteral.addMethod().setPublic().setName(name).setReturnType(type)
+                     .setBody("return this." + name + ";");
+            constructor.addParameter(type, name);
+            constructorBody.append("this.").append(name).append("=").append(name).append(";")
+                     .append(System.lineSeparator());
+
+         }
+         constructor.setBody(constructorBody.toString());
+      }
       return annotationLiteral;
    }
 }
