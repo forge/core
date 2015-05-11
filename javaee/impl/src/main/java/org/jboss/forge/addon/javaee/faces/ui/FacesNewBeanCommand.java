@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.addon.javaee.faces.ui;
 
-import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_VIEW_PACKAGE;
+import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_FACES_PACKAGE;
 
 import javax.inject.Inject;
 
@@ -97,7 +97,7 @@ public class FacesNewBeanCommand extends AbstractFacesCommand implements Prerequ
 
    private String calculateBackingBeanPackage(Project project)
    {
-      return project.getFacet(JavaSourceFacet.class).getBasePackage() + "." + DEFAULT_VIEW_PACKAGE;
+      return project.getFacet(JavaSourceFacet.class).getBasePackage() + "." + DEFAULT_FACES_PACKAGE;
    }
 
    @Override

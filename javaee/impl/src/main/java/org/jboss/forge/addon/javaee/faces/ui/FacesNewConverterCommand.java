@@ -6,7 +6,7 @@
  */
 package org.jboss.forge.addon.javaee.faces.ui;
 
-import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_CONVERTER_PACKAGE;
+import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_FACES_CONVERTER_PACKAGE;
 
 import java.io.FileNotFoundException;
 
@@ -116,7 +116,7 @@ public class FacesNewConverterCommand extends AbstractFacesCommand
       });
       if (value[0] == null)
       {
-         value[0] = project.getFacet(JavaSourceFacet.class).getBasePackage() + "." + DEFAULT_CONVERTER_PACKAGE;
+         value[0] = project.getFacet(JavaSourceFacet.class).getBasePackage() + "." + DEFAULT_FACES_CONVERTER_PACKAGE;
       }
       return value[0];
    }

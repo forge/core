@@ -1,7 +1,9 @@
 package org.jboss.forge.addon.javaee.validation.ui;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_CONSTRAINT_PACKAGE;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_CONSTRAINT_PACKAGE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
