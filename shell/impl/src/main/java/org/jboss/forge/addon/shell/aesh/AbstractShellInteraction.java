@@ -46,7 +46,8 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
       this.commandLineUtil = commandLineUtil;
    }
 
-   protected abstract CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception;
+   protected abstract CommandLineParser getParser(ShellContext shellContext, String completeLine,
+            CommandAdapter command) throws Exception;
 
    /**
     * Called when a required input value is missing.

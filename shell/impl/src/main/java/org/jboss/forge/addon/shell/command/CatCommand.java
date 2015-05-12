@@ -70,8 +70,7 @@ public class CatCommand extends AbstractShellCommand
       UIOutput output = shell.getOutput();
       while (it.hasNext())
       {
-         final Resource<?> resource = it.hasNext() ?
-                  (currentResource.resolveChildren(it.next()).get(0))
+         final Resource<?> resource = it.hasNext() ? (currentResource.resolveChildren(it.next()).get(0))
                   : currentResource;
 
          if (!resource.exists())
