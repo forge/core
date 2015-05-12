@@ -75,7 +75,8 @@ public class CommandListCommand extends AbstractShellCommand
          display.add(command.category
                   + " > "
                   + new TerminalString(command.name, new TerminalColor(command.enabled ? Color.CYAN : Color.RED,
-                           Color.DEFAULT)).toString() + " - " + command.description);
+                           Color.DEFAULT)).toString()
+                  + " - " + command.description);
       }
       UIOutput output = uiContext.getProvider().getOutput();
       PrintStream out = output.out();

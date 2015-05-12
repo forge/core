@@ -30,7 +30,7 @@ public class OptionCompleterFactory
    {
       UISelection<Resource<?>> selection = context.getInitialSelection();
       Resource<?> selectedResource = selection.get();
-      
+
       File cwd = null;
       if (selectedResource instanceof FileResource)
       {

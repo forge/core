@@ -26,7 +26,7 @@ public class CdTokenHandlerFactoryImpl implements CdTokenHandlerFactory
    {
       manuallyRegisteredHandlers.clear();
    }
-   
+
    @Override
    public List<CdTokenHandler> getHandlers()
    {
@@ -55,7 +55,5 @@ public class CdTokenHandlerFactoryImpl implements CdTokenHandlerFactory
          }
       };
    }
-   
-   
 
 }

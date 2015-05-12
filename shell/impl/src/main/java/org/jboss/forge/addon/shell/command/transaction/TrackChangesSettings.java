@@ -67,8 +67,7 @@ public class TrackChangesSettings
          AutomaticTransactionCommandListener commandListener = new AutomaticTransactionCommandListener(
                   factory,
                   otherTransactionListener,
-                  aggregateChangeTxListener
-                  );
+                  aggregateChangeTxListener);
          registrations.add(shell.addCommandExecutionListener(commandListener));
          registrations.add(factory.addTransactionListener(aggregateChangeTxListener));
       }

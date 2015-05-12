@@ -40,26 +40,28 @@ public class ShellWizard extends AbstractShellInteraction
    }
 
    @Override
-   public CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception
+   public CommandLineParser getParser(ShellContext shellContext, String completeLine, CommandAdapter commandAdapter)
+            throws Exception
    {
       getController().initialize();
-      return populate(shellContext, completeLine, new LinkedHashMap<String, InputComponent<?, ?>>(),
+      return populate(commandAdapter, shellContext, completeLine, new LinkedHashMap<String, InputComponent<?, ?>>(),
                new LinkedHashMap<String, InputComponent<?, ?>>());
    }
 
-   private CommandLineParser populate(ShellContext shellContext, String line,
+   private CommandLineParser populate(CommandAdapter commandAdapter, ShellContext shellContext, String line,
             final Map<String, InputComponent<?, ?>> allInputs, Map<String, InputComponent<?, ?>> lastPage)
-            throws Exception
+                     throws Exception
    {
       WizardCommandController controller = getController();
       Map<String, InputComponent<?, ?>> pageInputs = new LinkedHashMap<>(controller.getInputs());
       allInputs.putAll(pageInputs);
-      CommandLineParser parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
+      CommandLineParser parser = commandLineUtil.generateParser(commandAdapter, controller, shellContext, allInputs);
       CommandLine cmdLine = parser.parse(line, true);
-      Map<String, InputComponent<?, ?>> populatedInputs = commandLineUtil.populateUIInputs(cmdLine, allInputs, shellContext);
+      Map<String, InputComponent<?, ?>> populatedInputs = commandLineUtil.populateUIInputs(cmdLine, allInputs,
+               shellContext);
 
       // Second pass to ensure disabled fields are set
-      parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
+      parser = commandLineUtil.generateParser(commandAdapter, controller, shellContext, allInputs);
       cmdLine = parser.parse(line, true);
       populatedInputs = commandLineUtil.populateUIInputs(cmdLine, allInputs, shellContext);
 
@@ -80,11 +82,11 @@ public class ShellWizard extends AbstractShellInteraction
       if (controller.canMoveToNextStep())
       {
          controller.next().initialize();
-         parser = populate(shellContext, line, allInputs, pageInputs);
+         parser = populate(commandAdapter, shellContext, line, allInputs, pageInputs);
       }
       else if (inputsChanged)
       {
-         parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
+         parser = commandLineUtil.generateParser(commandAdapter, controller, shellContext, allInputs);
       }
       return parser;
    }
@@ -125,7 +127,7 @@ public class ShellWizard extends AbstractShellInteraction
                {
                   output.error(output.out(), NON_INTERACTIVE_MODE_MESSAGE);
                   return false;
-               }               
+               }
                output.info(output.out(), INTERACTIVE_MODE_MESSAGE);
                interactiveModeEnabled = true;
             }

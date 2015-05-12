@@ -97,7 +97,8 @@ public class ForgeManProvider implements ManProvider
                {
                   log.log(Level.SEVERE,
                            "Could not open man page document stream URL [" + docLocation.toExternalForm()
-                                    + "] for command [" + cmd.getMetadata(context).getType().getName() + "].", e);
+                                    + "] for command [" + cmd.getMetadata(context).getType().getName() + "].",
+                           e);
                }
             }
             return buildDefaultManPage(cmd, context);

@@ -198,8 +198,7 @@ public class LsCommand extends AbstractShellCommand
 
       Comparator<TerminalString> posixFileNameTerminalComparator = new Comparator<TerminalString>()
       {
-         private PosixFileNameComparator posixFileNameComparator =
-                  new PosixFileNameComparator();
+         private PosixFileNameComparator posixFileNameComparator = new PosixFileNameComparator();
 
          @Override
          public int compare(TerminalString o1, TerminalString o2)
