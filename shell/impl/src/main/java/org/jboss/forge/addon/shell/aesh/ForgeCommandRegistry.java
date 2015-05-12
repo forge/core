@@ -7,10 +7,13 @@
 
 package org.jboss.forge.addon.shell.aesh;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.jboss.aesh.cl.parser.CommandLineParser;
+import org.jboss.aesh.console.command.Command;
 import org.jboss.aesh.console.command.CommandNotFoundException;
 import org.jboss.aesh.console.command.container.CommandContainer;
 import org.jboss.aesh.console.command.registry.AeshCommandRegistryBuilder;
@@ -19,6 +22,7 @@ import org.jboss.aesh.console.man.Man;
 import org.jboss.aesh.extensions.grep.Grep;
 import org.jboss.aesh.extensions.less.aesh.Less;
 import org.jboss.aesh.extensions.more.aesh.More;
+import org.jboss.aesh.parser.Parser;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.AeshUICommand;
@@ -33,6 +37,7 @@ import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.exception.ContainerException;
+import org.jboss.forge.furnace.util.Lists;
 
 /**
  * Forge implementation of {@link CommandRegistry}.
@@ -161,7 +166,7 @@ public class ForgeCommandRegistry implements CommandRegistry
    @Override
    public Set<String> getAllCommandNames()
    {
-      waitUntilStarted();
+      //waitUntilStarted();
 
       Set<String> allCommands = new TreeSet<>();
       allCommands.addAll(getForgeCommandNames());
@@ -190,6 +195,33 @@ public class ForgeCommandRegistry implements CommandRegistry
       {
          return commandFactory.getEnabledCommandNames(newShellContext);
       }
+   }
+
+   @Override
+   public List<String> findAllCommandNames(String line)
+   {      
+      List<String> names = new ArrayList<>();
+      names.addAll(aeshCommandRegistry.findAllCommandNames(line));
+      for(String command : getAllCommandNames()) {
+          if(command.startsWith(line))
+              names.add(command);
+      }
+      return names;
+   }
+
+   @Override
+   public void removeCommand(String name)
+   {
+      try
+      {
+         if (aeshCommandRegistry.getCommand(name, null) != null)
+            aeshCommandRegistry.removeCommand(name);
+      }
+      catch (CommandNotFoundException e)
+      {
+         throw new RuntimeException("Error while removing command: " + e.getMessage(), e);
+      }
+
    }
 
 }
