@@ -7,7 +7,7 @@
 package org.jboss.forge.addon.javaee.servlet.ui;
 
 /**
- * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
 public enum ServletMethod
 {

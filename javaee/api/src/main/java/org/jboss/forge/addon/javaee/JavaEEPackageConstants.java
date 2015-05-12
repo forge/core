@@ -27,5 +27,6 @@ public interface JavaEEPackageConstants
    // CDI
    String DEFAULT_CDI_PACKAGE = "beans";
    String DEFAULT_CDI_EXTENSIONS_PACKAGE = DEFAULT_CDI_PACKAGE + "." + "extensions";
-
+   // REST
+   String DEFAULT_REST_PACKAGE = "rest";
 }
