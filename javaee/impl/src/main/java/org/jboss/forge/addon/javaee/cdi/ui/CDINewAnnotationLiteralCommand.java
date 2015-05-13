@@ -8,14 +8,19 @@
 package org.jboss.forge.addon.javaee.cdi.ui;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.javaee.cdi.CDIOperations;
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.ClassLoaderFacet;
@@ -29,9 +34,12 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.util.Strings;
+import org.jboss.forge.roaster.model.source.AnnotationElementSource;
+import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
+import org.jboss.forge.roaster.model.util.Types;
 
 /**
  * Creates a new CDI Annotation Literal class
@@ -119,38 +127,73 @@ public class CDINewAnnotationLiteralCommand extends AbstractCDICommand<JavaClass
    public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource annotationLiteral)
             throws Exception
    {
+      String qualifierClassName = qualifier.getValue();
+      Map<String, String> nameTypeMap = extractQualifierMethods(project);
+      annotationLiteral.addImport(qualifierClassName);
+      annotationLiteral.addImport(javax.enterprise.util.AnnotationLiteral.class);
+      annotationLiteral.setSuperType("AnnotationLiteral<" + Types.toSimpleName(qualifierClassName) + ">").addInterface(
+               qualifierClassName);
+
+      StringBuilder constructorBody = new StringBuilder();
+
+      MethodSource<JavaClassSource> constructor = annotationLiteral.addMethod().setConstructor(true).setPublic();
+      for (Entry<String, String> entry : nameTypeMap.entrySet())
+      {
+         String name = entry.getKey();
+         String type = entry.getValue();
+         // Fields
+         annotationLiteral.addField().setPrivate().setFinal(true).setName(name).setType(type);
+         // Interface methods
+         annotationLiteral.addMethod().setPublic().setName(name).setReturnType(type)
+                  .setBody("return this." + name + ";");
+         constructor.addParameter(type, name);
+         constructorBody.append("this.").append(name).append("=").append(name).append(";")
+                  .append(System.lineSeparator());
+
+      }
+      constructor.setBody(constructorBody.toString());
+      return annotationLiteral;
+   }
+
+   private Map<String, String> extractQualifierMethods(Project project) throws IOException
+   {
+      Map<String, String> map = new LinkedHashMap<>();
+      String qualifierClassName = qualifier.getValue();
       try (URLClassLoader loader = project.getFacet(ClassLoaderFacet.class).getClassLoader())
       {
-         Class<?> qualifierClass = loader.loadClass(qualifier.getValue());
+         Class<?> qualifierClass = loader.loadClass(qualifierClassName);
          if (!qualifierClass.isAnnotation())
          {
-            throw new Exception("Specified qualifier is not an annotation: " + qualifierClass);
+            throw new RuntimeException("Specified qualifier is not an annotation: " + qualifierClassName);
          }
-         annotationLiteral.addImport(qualifierClass);
-         annotationLiteral.addImport(javax.enterprise.util.AnnotationLiteral.class);
-         annotationLiteral.setSuperType("AnnotationLiteral<" + qualifierClass.getSimpleName() + ">").addInterface(
-                  qualifierClass);
-
-         StringBuilder constructorBody = new StringBuilder();
-
-         MethodSource<JavaClassSource> constructor = annotationLiteral.addMethod().setConstructor(true).setPublic();
          for (Method m : qualifierClass.getDeclaredMethods())
          {
             String name = m.getName();
             // Workaround for Class<?> parameters
             String type = m.getReturnType() == Class.class ? "Class<?>" : m.getReturnType().getName();
-            // Fields
-            annotationLiteral.addField().setPrivate().setFinal(true).setName(name).setType(type);
-            // Interface methods
-            annotationLiteral.addMethod().setPublic().setName(name).setReturnType(type)
-                     .setBody("return this." + name + ";");
-            constructor.addParameter(type, name);
-            constructorBody.append("this.").append(name).append("=").append(name).append(";")
-                     .append(System.lineSeparator());
-
+            map.put(name, type);
          }
-         constructor.setBody(constructorBody.toString());
       }
-      return annotationLiteral;
+      catch (ClassNotFoundException cnfe)
+      {
+         // Fallback to existing classes in project
+         JavaResource javaResource = project.getFacet(JavaSourceFacet.class).getJavaResource(qualifierClassName);
+         if (javaResource.exists())
+         {
+            if (!javaResource.getJavaType().isAnnotation())
+            {
+               throw new RuntimeException("Specified qualifier is not an annotation: " + qualifierClassName);
+            }
+            JavaAnnotationSource ann = javaResource.getJavaType();
+            for (AnnotationElementSource elem : ann.getAnnotationElements())
+            {
+               String name = elem.getName();
+               // Workaround for Class<?> parameters
+               String type = "Class".equals(elem.getType().getName()) ? "Class<?>" : elem.getType().getName();
+               map.put(name, type);
+            }
+         }
+      }
+      return map;
    }
 }
