@@ -16,7 +16,7 @@ types including classes, enums, interfaces, annotations, and package-info types.
 
 |projects
 |no
-|yes
+|no
 
 |ui
 |yes
