@@ -8,6 +8,7 @@ import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.util.Categories;
@@ -22,10 +23,10 @@ public abstract class AbstractRestNewCommand<T extends JavaSource<?>> extends Ab
 {
 
    @Override
-   public Metadata getMetadata(UIContext context)
+   public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.from(super.getMetadata(context), getClass())
-               .category(Categories.create(Categories.create("Java EE"), "REST"));
+               .category(Categories.create(Categories.create("Java EE"), "JAX-RS"));
    }
 
    @Override

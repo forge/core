@@ -20,6 +20,7 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -44,7 +45,7 @@ public class RestNewEndpointCommand extends AbstractRestNewCommand<JavaClassSour
    private Inflector inflector;
 
    @Override
-   public Metadata getMetadata(UIContext context)
+   public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.from(super.getMetadata(context), getClass())
                .name("REST: New Endpoint")
