@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.javaee.cdi.ui;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -17,6 +18,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.enterprise.inject.Default;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -101,7 +104,7 @@ public class CDINewAnnotationLiteralCommandTest
    {
       shellTest.getShell().setCurrentResource(project.getRoot());
       Result result = shellTest
-               .execute("cdi-new-annotation-literal --named Dummy --qualifier javax.enterprise.inject.New", 10,
+               .execute("cdi-new-annotation-literal --named Dummy --qualifier javax.enterprise.inject.Default", 10,
                         TimeUnit.SECONDS);
 
       Assert.assertThat(result, not(instanceOf(Failed.class)));
@@ -117,7 +120,7 @@ public class CDINewAnnotationLiteralCommandTest
          controller.initialize();
          controller.setValueFor("named", "MyAnnotationLiteral");
          controller.setValueFor("targetPackage", "org.jboss.forge.test");
-         controller.setValueFor("qualifier", "javax.enterprise.inject.New");
+         controller.setValueFor("qualifier", "javax.enterprise.inject.Default");
          Assert.assertTrue(controller.isValid());
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
@@ -127,6 +130,10 @@ public class CDINewAnnotationLiteralCommandTest
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyAnnotationLiteral");
       Assert.assertNotNull(javaResource);
+      Assert.assertTrue(javaResource.exists());
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClassSource.class)));
+      JavaClassSource javaClass = javaResource.getJavaType();
+      Assert.assertThat(javaClass.getSuperType(), equalTo(AnnotationLiteral.class.getName()));
+      Assert.assertTrue(javaClass.hasInterface(Default.class));
    }
 }

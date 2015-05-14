@@ -24,6 +24,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.ClassLoaderFacet;
+import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -155,31 +156,17 @@ public class CDINewAnnotationLiteralCommand extends AbstractCDICommand<JavaClass
       return annotationLiteral;
    }
 
-   private Map<String, String> extractQualifierMethods(Project project) throws IOException
+   private Map<String, String> extractQualifierMethods(Project project) throws ClassNotFoundException
    {
-      Map<String, String> map = new LinkedHashMap<>();
+      Map<String, String> nameTypeMap = new LinkedHashMap<>();
       String qualifierClassName = qualifier.getValue();
-      try (URLClassLoader loader = project.getFacet(ClassLoaderFacet.class).getClassLoader())
+      boolean done = false;
+      try
       {
-         Class<?> qualifierClass = loader.loadClass(qualifierClassName);
-         if (!qualifierClass.isAnnotation())
-         {
-            throw new RuntimeException("Specified qualifier is not an annotation: " + qualifierClassName);
-         }
-         for (Method m : qualifierClass.getDeclaredMethods())
-         {
-            String name = m.getName();
-            // Workaround for Class<?> parameters
-            String type = m.getReturnType() == Class.class ? "Class<?>" : m.getReturnType().getName();
-            map.put(name, type);
-         }
-      }
-      catch (ClassNotFoundException cnfe)
-      {
-         // Fallback to existing classes in project
          JavaResource javaResource = project.getFacet(JavaSourceFacet.class).getJavaResource(qualifierClassName);
          if (javaResource.exists())
          {
+            done = true;
             if (!javaResource.getJavaType().isAnnotation())
             {
                throw new RuntimeException("Specified qualifier is not an annotation: " + qualifierClassName);
@@ -190,10 +177,37 @@ public class CDINewAnnotationLiteralCommand extends AbstractCDICommand<JavaClass
                String name = elem.getName();
                // Workaround for Class<?> parameters
                String type = "Class".equals(elem.getType().getName()) ? "Class<?>" : elem.getType().getName();
-               map.put(name, type);
+               nameTypeMap.put(name, type);
             }
          }
       }
-      return map;
+      catch (ResourceException | FileNotFoundException e)
+      {
+         // Do nothing
+      }
+      if (!done)
+      {
+         // Fallback to ClassLoaderFacet
+         try (URLClassLoader loader = project.getFacet(ClassLoaderFacet.class).getClassLoader())
+         {
+            Class<?> qualifierClass = loader.loadClass(qualifierClassName);
+            if (!qualifierClass.isAnnotation())
+            {
+               throw new RuntimeException("Specified qualifier is not an annotation: " + qualifierClassName);
+            }
+            for (Method m : qualifierClass.getDeclaredMethods())
+            {
+               String name = m.getName();
+               // Workaround for Class<?> parameters
+               String type = m.getReturnType() == Class.class ? "Class<?>" : m.getReturnType().getName();
+               nameTypeMap.put(name, type);
+            }
+         }
+         catch (IOException e)
+         {
+            // Ignored
+         }
+      }
+      return nameTypeMap;
    }
 }
