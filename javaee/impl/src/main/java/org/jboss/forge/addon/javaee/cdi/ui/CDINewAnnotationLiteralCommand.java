@@ -176,7 +176,8 @@ public class CDINewAnnotationLiteralCommand extends AbstractCDICommand<JavaClass
             {
                String name = elem.getName();
                // Workaround for Class<?> parameters
-               String type = "Class".equals(elem.getType().getName()) ? "Class<?>" : elem.getType().getName();
+               String type = "Class".equals(elem.getType().getName()) ? "Class<?>" : elem.getType()
+                        .getQualifiedName();
                nameTypeMap.put(name, type);
             }
          }
