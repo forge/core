@@ -18,7 +18,6 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.ext.Provider;
 
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -116,13 +115,6 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractRestNewComm
    protected Class<JavaClassSource> getSourceType()
    {
       return JavaClassSource.class;
-   }
-
-   @Override
-   protected String calculateDefaultPackage(UIContext context)
-   {
-      Project project = getSelectedProject(context);
-      return project.getFacet(JavaSourceFacet.class).getBasePackage() + ".rest";
    }
 
    @Override
