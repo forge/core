@@ -41,6 +41,7 @@ import org.jboss.forge.roaster.model.source.JavaSource;
  * This class contains CDI specific operations
  *
  * @author <a href="mailto:antonio.goncalves@gmail.com">Antonio Goncalves</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public class CDIOperations
 {
@@ -170,5 +171,25 @@ public class CDIOperations
          });
       }
       return qualifiers;
+   }
+
+   /**
+    * Returns all the possible event types from the given {@link Project}
+    */
+   public List<JavaResource> getProjectEventTypes(Project project)
+   {
+      final List<JavaResource> eventTypes = new ArrayList<>();
+      if (project != null)
+      {
+         project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
+         {
+            @Override
+            public void visit(VisitContext context, JavaResource resource)
+            {
+               eventTypes.add(resource);
+            }
+         });
+      }
+      return eventTypes;
    }
 }
