@@ -71,7 +71,6 @@ public class RestNewEndpointCommand extends AbstractRestNewCommand<JavaClassSour
       builder.add(methods).add(path);
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source)
             throws Exception

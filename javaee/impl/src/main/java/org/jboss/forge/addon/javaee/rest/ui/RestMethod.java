@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.javaee.rest.ui;
 
+import java.lang.annotation.Annotation;
+
 /**
  * @author <a href="mailto:antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
@@ -18,15 +20,15 @@ public enum RestMethod
 
    private String methodName;
 
-   private Class methodAnnotation;
+   private Class<? extends Annotation> methodAnnotation;
 
-   private RestMethod(String methodName, Class methodAnnotation)
+   private RestMethod(String methodName, Class<? extends Annotation> methodAnnotation)
    {
       this.methodName = methodName;
       this.methodAnnotation = methodAnnotation;
    }
 
-   public Class getMethodAnnotation()
+   public Class<? extends Annotation> getMethodAnnotation()
    {
       return methodAnnotation;
    }
