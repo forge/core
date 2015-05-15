@@ -7,7 +7,9 @@
 
 package org.jboss.forge.addon.javaee.rest.ui;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 
 import java.util.Arrays;
 
@@ -27,7 +29,6 @@ import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.roaster.model.Annotation;
 import org.jboss.forge.roaster.model.JavaClass;
@@ -45,12 +46,7 @@ import org.junit.runner.RunWith;
 public class RestEndpointFromEntityCommandTest
 {
    @Deployment
-   @AddonDependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-   })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
       return ShrinkWrap.create(AddonArchive.class).addBeansXML().addClass(ProjectHelper.class);

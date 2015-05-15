@@ -89,7 +89,7 @@ public class RestNewEndpointCommandTest
          UICommandMetadata metadata = controller.getMetadata();
          assertEquals("REST: New Endpoint", metadata.getName());
          assertEquals("Java EE", metadata.getCategory().getName());
-         assertEquals("REST", metadata.getCategory().getSubCategory().getName());
+         assertEquals("JAX-RS", metadata.getCategory().getSubCategory().getName());
          assertEquals(5, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
          assertTrue(controller.hasInput("named"));
@@ -132,7 +132,7 @@ public class RestNewEndpointCommandTest
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
       assertEquals(0, javaResource.getJavaType().getSyntaxErrors().size());
       assertTrue(javaResource.getJavaType().hasAnnotation(Path.class));
-      assertEquals("/myEndpoint", javaResource.getJavaType().getAnnotation(Path.class).getStringValue());
+      assertEquals("/my", javaResource.getJavaType().getAnnotation(Path.class).getStringValue());
    }
 
    @Test

@@ -34,7 +34,7 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 public class RestNewEndpointCommand extends AbstractRestNewCommand<JavaClassSource>
 {
    @Inject
-   @WithAttributes(label = "Methods", description = "REST methods to be defined")
+   @WithAttributes(label = "Methods", description = "REST methods to be defined", defaultValue = "GET")
    private UISelectMany<RestMethod> methods;
 
    @Inject
@@ -81,9 +81,9 @@ public class RestNewEndpointCommand extends AbstractRestNewCommand<JavaClassSour
       }
       else
       {
-         source.addAnnotation(Path.class).setStringValue("/" + inflector.lowerCamelCase(getNamed().getValue()));
+         source.addAnnotation(Path.class).setStringValue("/" + inflector.lowerCamelCase(getNamed().getValue().replace(
+                  "Endpoint", "")));
       }
-
       for (RestMethod method : methods.getValue())
       {
          MethodSource<?> doGet = source.addMethod().setPublic().setName(method.getMethodName())
