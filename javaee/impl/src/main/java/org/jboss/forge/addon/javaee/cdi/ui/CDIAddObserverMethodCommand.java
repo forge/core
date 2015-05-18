@@ -31,6 +31,7 @@ import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -43,6 +44,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
+import org.jboss.forge.roaster.model.source.ParameterSource;
 
 /**
  * 
@@ -63,6 +65,10 @@ public class CDIAddObserverMethodCommand extends AbstractJavaEECommand implement
    private UIInput<String> eventType;
 
    @Inject
+   @WithAttributes(label = "Qualifiers", description = "The qualifiers added to the injection point", type = InputType.JAVA_CLASS_PICKER)
+   private UIInputMany<String> qualifiers;
+
+   @Inject
    private ProjectOperations projectOperations;
 
    @Inject
@@ -75,7 +81,8 @@ public class CDIAddObserverMethodCommand extends AbstractJavaEECommand implement
       Project project = getSelectedProject(uiContext);
       setupTargetClass(uiContext, project);
       setupType();
-      builder.add(targetClass).add(named).add(eventType);
+      setupQualifiers();
+      builder.add(targetClass).add(named).add(eventType).add(qualifiers);
    }
 
    private void setupTargetClass(UIContext uiContext, Project project)
@@ -86,6 +93,46 @@ public class CDIAddObserverMethodCommand extends AbstractJavaEECommand implement
          targetClass.setDefaultValue((JavaResource) resource.get());
       }
       targetClass.setValueChoices(projectOperations.getProjectClasses(project));
+   }
+
+   private void setupQualifiers()
+   {
+      qualifiers.setCompleter(new UICompleter<String>()
+      {
+         @Override
+         public Iterable<String> getCompletionProposals(final UIContext context, final InputComponent<?, String> input,
+                  final String value)
+         {
+            final Project project = getSelectedProject(context);
+            final List<String> options = new ArrayList<>();
+            for (String type : CDIOperations.DEFAULT_QUALIFIERS)
+            {
+               if (Strings.isNullOrEmpty(value) || type.startsWith(value))
+               {
+                  options.add(type);
+               }
+            }
+            if (project != null)
+            {
+               for (JavaResource resource : cdiOperations.getProjectQualifiers(project))
+               {
+                  try
+                  {
+                     JavaSource<?> javaSource = resource.getJavaType();
+                     String qualifiedName = javaSource.getQualifiedName();
+                     if (Strings.isNullOrEmpty(value) || qualifiedName.startsWith(value))
+                     {
+                        options.add(qualifiedName);
+                     }
+                  }
+                  catch (FileNotFoundException ignored)
+                  {
+                  }
+               }
+            }
+            return options;
+         }
+      });
    }
 
    private void setupType()
@@ -177,10 +224,15 @@ public class CDIAddObserverMethodCommand extends AbstractJavaEECommand implement
    {
       JavaResource javaResource = targetClass.getValue();
       JavaClassSource javaClass = javaResource.getJavaType();
-      javaClass.addMethod().setPublic().setReturnTypeVoid().setName(named.getValue())
+      ParameterSource<JavaClassSource> parameter = javaClass.addMethod().setPublic().setReturnTypeVoid()
+               .setName(named.getValue())
                .setBody("")
-               .addParameter(eventType.getValue(), "event")
-               .addAnnotation(Observes.class);
+               .addParameter(eventType.getValue(), "event");
+      parameter.addAnnotation(Observes.class);
+      for (String qualifier : qualifiers.getValue())
+      {
+         parameter.addAnnotation(qualifier);
+      }
       javaResource.setContents(javaClass);
       return Results.success();
    }

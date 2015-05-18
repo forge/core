@@ -13,9 +13,12 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -88,7 +91,7 @@ public class CDIAddObserverMethodCommandTest
          assertEquals("CDI: Add Observer Method", metadata.getName());
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("CDI", metadata.getCategory().getSubCategory().getName());
-         assertEquals(3, controller.getInputs().size());
+         assertEquals(4, controller.getInputs().size());
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetClass"));
          assertTrue(controller.hasInput("eventType"));
@@ -110,7 +113,7 @@ public class CDIAddObserverMethodCommandTest
    }
 
    @Test
-   public void testCreateNewObserverMethodOnBean() throws Exception
+   public void testCreateNewObserverMethod() throws Exception
    {
       try (CommandController controller = uiTestHarness.createCommandController(CDINewBeanCommand.class,
                project.getRoot()))
@@ -151,6 +154,55 @@ public class CDIAddObserverMethodCommandTest
       Assert.assertTrue(parameter.hasAnnotation(Observes.class));
       Assert.assertEquals("java.lang.String", parameter.getType().getQualifiedName());
       Assert.assertEquals("event", parameter.getName());
+   }
 
+   @Test
+   public void testCreateNewObserverMethodWithQualifiers() throws Exception
+   {
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewBeanCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyBean");
+         controller.setValueFor("targetPackage", "org.jboss.forge.test.bean");
+         assertTrue(controller.isValid());
+         assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      }
+
+      try (CommandController controller = uiTestHarness.createCommandController(CDIAddObserverMethodCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "observe");
+         controller.setValueFor("targetClass", "org.jboss.forge.test.bean.MyBean");
+         controller.setValueFor("eventType", "java.lang.String");
+         controller.setValueFor("qualifiers",
+                  Arrays.asList("javax.enterprise.inject.Default", "javax.enterprise.inject.Any"));
+         assertTrue(controller.isValid());
+         assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      }
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.bean.MyBean");
+      Assert.assertNotNull(javaResource);
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      JavaClass<?> myBean = javaResource.getJavaType();
+      Assert.assertEquals(1, myBean.getMethods().size());
+      Assert.assertEquals(0, myBean.getInterfaces().size());
+      Method<?, ?> method = myBean.getMethods().get(0);
+      Assert.assertEquals("observe", method.getName());
+      Assert.assertEquals(1, method.getParameters().size());
+      Parameter<?> parameter = method.getParameters().get(0);
+      Assert.assertTrue(parameter.hasAnnotation(Observes.class));
+      Assert.assertEquals("java.lang.String", parameter.getType().getQualifiedName());
+      Assert.assertEquals("event", parameter.getName());
+      Assert.assertEquals(3, parameter.getAnnotations().size());
+      Assert.assertTrue(parameter.hasAnnotation(Observes.class));
+      Assert.assertTrue(parameter.hasAnnotation(Default.class));
+      Assert.assertTrue(parameter.hasAnnotation(Any.class));
    }
 }
