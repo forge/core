@@ -24,7 +24,6 @@ import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -39,12 +38,7 @@ import org.junit.runner.RunWith;
 public class CDIOperationsTest
 {
    @Deployment
-   @AddonDependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-   })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
       return ShrinkWrap.create(AddonArchive.class).addBeansXML().addClass(ProjectHelper.class);
@@ -66,6 +60,7 @@ public class CDIOperationsTest
    {
       project = projectHelper.createJavaLibraryProject();
       projectHelper.installCDI_1_0(project);
+      projectHelper.installJPA_2_0(project);
    }
 
    @Test
@@ -174,7 +169,7 @@ public class CDIOperationsTest
          Result result = controller.execute();
          Assert.assertThat(result, is(not(instanceOf(Failed.class))));
       }
-      Assert.assertEquals(1, cdiOperations.getProjectInjectableBeans(project).size());
+      Assert.assertEquals(1, cdiOperations.getProjectQualifiers(project).size());
 
       try (CommandController controller = uiTestHarness.createCommandController(CDINewBeanCommand.class,
                project.getRoot()))
@@ -187,7 +182,7 @@ public class CDIOperationsTest
          Result result = controller.execute();
          Assert.assertThat(result, is(not(instanceOf(Failed.class))));
       }
-      Assert.assertEquals(1, cdiOperations.getProjectInjectableBeans(project).size());
+      Assert.assertEquals(1, cdiOperations.getProjectQualifiers(project).size());
 
       try (CommandController controller = uiTestHarness.createCommandController(JPANewEntityCommand.class,
                project.getRoot()))
@@ -200,6 +195,6 @@ public class CDIOperationsTest
          Result result = controller.execute();
          Assert.assertThat(result, is(not(instanceOf(Failed.class))));
       }
-      Assert.assertEquals(1, cdiOperations.getProjectInjectableBeans(project).size());
+      Assert.assertEquals(1, cdiOperations.getProjectQualifiers(project).size());
    }
 }
