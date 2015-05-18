@@ -15,10 +15,8 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Streams;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.After;
@@ -36,23 +34,12 @@ public class GitIgnoreCommandsTest
    private Project project;
 
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
-            @AddonDeployment(name = "org.jboss.forge.addon:git")
-   })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
       AddonArchive archive = ShrinkWrap
                .create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:git"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-               );
+               .addBeansXML();
 
       return archive;
    }
@@ -148,12 +135,12 @@ public class GitIgnoreCommandsTest
       CommandController gitIgnoreRemovePatternTester = testHarness.createCommandController(
                GitIgnoreRemovePatternCommand.class, project.getRoot());
       gitIgnoreRemovePatternTester.initialize();
-      gitIgnoreRemovePatternTester.setValueFor("pattern", "target/");
+      gitIgnoreRemovePatternTester.setValueFor("pattern", ".metadata");
       gitIgnoreRemovePatternTester.execute();
 
       GitIgnoreResource gitignore = gitIgnoreResource();
       String content = Streams.toString(gitignore.getResourceInputStream());
-      assertFalse(content.contains("target/"));
+      assertFalse(content.contains(".metadata"));
    }
 
    @Test
