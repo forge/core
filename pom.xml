@@ -60,7 +60,7 @@
       <forge.release.codename>Two</forge.release.codename>
       <forge.release.version>${project.version}</forge.release.version>
 
-      <version.furnace>2.18.0.Final</version.furnace>
+      <version.furnace>2.18.1.Final</version.furnace>
       <version.junit>4.12</version.junit>
       <version.jboss-logmanager>1.4.1.Final</version.jboss-logmanager>
       <version.slf4j>1.6.1</version.slf4j>
