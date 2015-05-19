@@ -120,8 +120,8 @@ public class ForgeCommandRegistry implements CommandRegistry
       }
       try
       {
-         CommandLineParser parser = cmd.getParser(shellContext, completeLine == null ? name : completeLine);
          CommandAdapter command = new CommandAdapter(shell, shellContext, cmd);
+         CommandLineParser parser = cmd.getParser(shellContext, completeLine == null ? name : completeLine, command);
          return new ForgeCommandContainer(shellContext, parser, command);
       }
       catch (RuntimeException e)

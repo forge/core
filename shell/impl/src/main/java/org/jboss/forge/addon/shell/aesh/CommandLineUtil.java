@@ -63,21 +63,22 @@ class CommandLineUtil
       this.converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
    }
 
-   public CommandLineParser generateParser(CommandController command, ShellContext shellContext,
+   public CommandLineParser generateParser(CommandAdapter command, CommandController commandController, ShellContext shellContext,
             Map<String, InputComponent<?, ?>> inputs)
    {
-      ProcessedCommand processedCommand = generateCommand(command, shellContext, inputs);
+      ProcessedCommand processedCommand = generateCommand(command, commandController, shellContext, inputs);
       return new ForgeCommandLineParser(processedCommand, this, inputs, shellContext);
    }
 
-   private ProcessedCommand generateCommand(final CommandController command, final ShellContext shellContext,
+   private ProcessedCommand generateCommand(final CommandAdapter commandAdapter, final CommandController commandController, final ShellContext shellContext,
             final Map<String, InputComponent<?, ?>> inputs)
    {
-      UICommandMetadata metadata = (command instanceof WizardCommandController) ? ((WizardCommandController) command)
-               .getInitialMetadata() : command.getMetadata();
+      UICommandMetadata metadata = (commandController instanceof WizardCommandController) ? ((WizardCommandController) commandController)
+               .getInitialMetadata() : commandController.getMetadata();
       String cmdName = ShellUtil.shellifyCommandName(metadata.getName());
       String cmdDescription = metadata.getDescription();
       ProcessedCommandBuilder commandBuilder = new ProcessedCommandBuilder()
+               .command(commandAdapter)
                .name(cmdName)
                .description(cmdDescription)
                .resultHandler(new ForgeResultHandler(shellContext, cmdName));
