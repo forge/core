@@ -9,6 +9,7 @@ package org.jboss.forge.addon.ui.impl.output;
 
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.output.UIMessage;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  * 
@@ -22,6 +23,7 @@ public class UIMessageImpl implements UIMessage
 
    public UIMessageImpl(Severity severity, String description, InputComponent<?, ?> inputComponent)
    {
+      Assert.notNull(severity, "Severity should never be null");
       this.description = description;
       this.severity = severity;
       this.inputComponent = inputComponent;
