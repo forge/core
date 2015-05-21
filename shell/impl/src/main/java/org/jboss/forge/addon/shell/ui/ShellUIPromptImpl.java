@@ -166,10 +166,6 @@ public class ShellUIPromptImpl implements UIPrompt
 
    private String promptInternal(String message, boolean echo, boolean required) throws InterruptedException
    {
-      if (isAcceptDefaultsEnabled())
-      {
-         return null;
-      }
       PrintStream out = console.getShell().out();
       // prompts should begin with a blue '?'
       String indicator = (required) ? "*" : "?";
@@ -177,17 +173,21 @@ public class ShellUIPromptImpl implements UIPrompt
                new TerminalTextStyle(
                         CharacterType.BOLD)).toString();
       out.print(promptFlag + " " + message + " ");
-      String output = readInput(out, echo);
+      String output;
+      if (isAcceptDefaultsEnabled())
+      {
+         output = null;
+      }
+      else
+      {
+         output = readInput(out, echo);
+      }
       out.println();
       return output;
    }
 
    private boolean promptBooleanInternal(String message, boolean defaultValue) throws InterruptedException
    {
-      if (isAcceptDefaultsEnabled())
-      {
-         return defaultValue;
-      }
       String suffix = (defaultValue) ? " [Y/n]:" : " [y/N]:";
       String answer = promptInternal(message + suffix, true, false);
       if (Strings.isNullOrEmpty(answer))
