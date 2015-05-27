@@ -11,9 +11,13 @@ public class XMLResourceGenerator implements ResourceGenerator<XMLResource, File
    @Override
    public boolean handles(Class<?> type, Object resource)
    {
-      if (resource instanceof File && ((File) resource).getName().endsWith(".xml"))
+      if (resource instanceof File)
       {
-         return true;
+         File file = (File) resource;
+         if (file.getName().endsWith(".xml") || file.getName().endsWith(".xhtml"))
+         {
+            return true;
+         }
       }
       return false;
    }
