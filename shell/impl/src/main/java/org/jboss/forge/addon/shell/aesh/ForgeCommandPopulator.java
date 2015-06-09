@@ -10,11 +10,12 @@ package org.jboss.forge.addon.shell.aesh;
 import java.util.Map;
 
 import org.jboss.aesh.cl.CommandLine;
-import org.jboss.aesh.cl.exception.CommandLineParserException;
-import org.jboss.aesh.cl.parser.CommandPopulator;
+import org.jboss.aesh.cl.parser.CommandLineParserException;
+import org.jboss.aesh.cl.populator.CommandPopulator;
 import org.jboss.aesh.cl.validator.OptionValidatorException;
 import org.jboss.aesh.console.AeshContext;
 import org.jboss.aesh.console.InvocationProviders;
+import org.jboss.aesh.console.command.Command;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 
@@ -23,7 +24,7 @@ import org.jboss.forge.addon.ui.input.InputComponent;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class ForgeCommandPopulator implements CommandPopulator<Object>
+public class ForgeCommandPopulator implements CommandPopulator<Object, Command>
 {
    private final Map<String, InputComponent<?, ?>> inputs;
    private final CommandLineUtil commandLineUtil;
@@ -38,9 +39,13 @@ public class ForgeCommandPopulator implements CommandPopulator<Object>
    }
 
    @Override
-   public void populateObject(Object instance, CommandLine line, InvocationProviders invocationProviders,
-            AeshContext aeshContext, boolean validate) throws CommandLineParserException, OptionValidatorException
-   {
+   public void populateObject(CommandLine line, InvocationProviders invocationProviders, AeshContext aeshContext, boolean validate) throws CommandLineParserException, OptionValidatorException {
       commandLineUtil.populateUIInputs(line, inputs, context);
+
+   }
+
+   @Override
+   public Object getObject() {
+      return null;
    }
 }

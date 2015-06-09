@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.parser.CommandLineParser;
+import org.jboss.aesh.console.command.container.CommandContainer;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
@@ -40,21 +41,22 @@ public class ShellWizard extends AbstractShellInteraction
    }
 
    @Override
-   public CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception
+   public CommandLineParser getParser(ShellContext shellContext, ShellImpl shell, String completeLine) throws Exception
    {
       getController().initialize();
       return populate(shellContext, completeLine, new LinkedHashMap<String, InputComponent<?, ?>>(),
-               new LinkedHashMap<String, InputComponent<?, ?>>());
+               new LinkedHashMap<String, InputComponent<?, ?>>(), shell);
    }
 
    private CommandLineParser populate(ShellContext shellContext, String line,
-            final Map<String, InputComponent<?, ?>> allInputs, Map<String, InputComponent<?, ?>> lastPage)
+            final Map<String, InputComponent<?, ?>> allInputs, Map<String, InputComponent<?, ?>> lastPage, ShellImpl shell)
             throws Exception
    {
       WizardCommandController controller = getController();
       Map<String, InputComponent<?, ?>> pageInputs = new LinkedHashMap<>(controller.getInputs());
       allInputs.putAll(pageInputs);
-      CommandLineParser parser = commandLineUtil.generateParser(controller, shellContext, allInputs);
+      CommandContainer container = commandLineUtil.generateContainer(controller, shellContext, shell, this);
+      CommandLineParser parser = container.getParser();
       CommandLine cmdLine = parser.parse(line, true);
       Map<String, InputComponent<?, ?>> populatedInputs = commandLineUtil.populateUIInputs(cmdLine, allInputs, shellContext);
 
@@ -80,7 +82,7 @@ public class ShellWizard extends AbstractShellInteraction
       if (controller.canMoveToNextStep())
       {
          controller.next().initialize();
-         parser = populate(shellContext, line, allInputs, pageInputs);
+         parser = populate(shellContext, line, allInputs, pageInputs, shell);
       }
       else if (inputsChanged)
       {
