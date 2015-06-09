@@ -75,7 +75,8 @@ public class FieldOperations
     * @return The newly created field
     */
    public FieldSource<JavaClassSource> addFieldTo(final JavaClassSource targetClass, final String fieldType,
-            final String fieldName, Visibility visibility, boolean withGetter, boolean withSetter, boolean updateToString,
+            final String fieldName, Visibility visibility, boolean withGetter, boolean withSetter,
+            boolean updateToString,
             String... annotations)
    {
       if (targetClass.hasField(fieldName))
@@ -153,14 +154,13 @@ public class FieldOperations
 
    protected boolean canAddFieldToToString(Field<JavaClassSource> field)
    {
-      return !field.isStatic();
+      return !field.isStatic() && !field.isTransient() && !field.getType().isArray();
    }
 
    /**
-    * @param project   Project in which the fieldType will be searched
+    * @param project Project in which the fieldType will be searched
     * @param fieldType Full type of the field with package
-    * @return true if fieldType was found and is enum
-    *         false otherwise.
+    * @return true if fieldType was found and is enum false otherwise.
     * @throws IllegalArgumentException if fieldType or project is null
     */
    public boolean isFieldTypeEnum(Project project, String fieldType)
@@ -169,11 +169,10 @@ public class FieldOperations
    }
 
    /**
-    * @param project      Project in which the fieldType will be searched
-    * @param fieldType    Type of the field
+    * @param project Project in which the fieldType will be searched
+    * @param fieldType Type of the field
     * @param targetEntity Entity which package which will be used if fieldType doesn't have package specified
-    * @return true if fieldType was found and is enum
-    *         false otherwise.
+    * @return true if fieldType was found and is enum false otherwise.
     * @throws IllegalArgumentException if fieldType or project is null
     */
    public boolean isFieldTypeEnum(Project project, JavaClassSource targetEntity, String fieldType)
