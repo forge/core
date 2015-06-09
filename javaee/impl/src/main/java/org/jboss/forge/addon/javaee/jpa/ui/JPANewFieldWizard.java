@@ -19,11 +19,9 @@ import java.util.concurrent.Callable;
 import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Lob;
-import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -37,11 +35,9 @@ import org.jboss.forge.addon.parser.java.beans.FieldOperations;
 import org.jboss.forge.addon.parser.java.beans.ProjectOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
-import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceException;
-import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -318,12 +314,14 @@ public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard
             return !lob.getValue() && !transientField.getValue();
          }
       });
-      temporalType.setEnabled(new Callable<Boolean>() {
+      temporalType.setEnabled(new Callable<Boolean>()
+      {
          @Override
-         public Boolean call() throws Exception {
+         public Boolean call() throws Exception
+         {
             String typeValue = type.getValue();
             return !transientField.getValue()
-                    && (Date.class.getName().equals(typeValue) || Calendar.class.getName().equals(typeValue));
+                     && (Date.class.getName().equals(typeValue) || Calendar.class.getName().equals(typeValue));
          }
       });
 
@@ -421,7 +419,7 @@ public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard
       {
          if (lob.getValue())
          {
-            String fieldType = byte[].class.getName();
+            String fieldType = type.getValue();
             field = beanOperations.addFieldTo(targetEntity, fieldType, fieldNameStr, Lob.class.getName());
             field.addAnnotation(Column.class).setLiteralValue("length", String.valueOf(Integer.MAX_VALUE));
          }
