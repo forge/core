@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.building.ProjectBuilder;
@@ -30,12 +31,13 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
- *
+ * Executes Build commands
+ * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
+@FacetConstraint(PackagingFacet.class)
 public class BuildCommand extends AbstractProjectCommand
 {
-
    @Inject
    @WithAttributes(label = "Arguments")
    private UIInputMany<String> arguments;
