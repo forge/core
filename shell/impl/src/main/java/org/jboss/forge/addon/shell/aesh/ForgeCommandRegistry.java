@@ -97,6 +97,8 @@ public class ForgeCommandRegistry implements CommandRegistry
       catch (CommandNotFoundException cnfe)
       {
          // Not a forge command, fallback to aesh command
+         return aeshCommandRegistry.getCommand(name, completeLine);
+         /*
          CommandContainer nativeCommand = aeshCommandRegistry.getCommand(name, completeLine);
          AeshUICommand aeshCommand = new AeshUICommand(nativeCommand);
          SingleCommandController controller = commandControllerFactory.createSingleController(shellContext, shell,
@@ -112,6 +114,7 @@ public class ForgeCommandRegistry implements CommandRegistry
             // Do nothing
             throw new CommandNotFoundException(e.getMessage());
          }
+         */
       }
    }
 
@@ -120,7 +123,7 @@ public class ForgeCommandRegistry implements CommandRegistry
       List<String> names = new ArrayList<>();
       names.addAll(aeshCommandRegistry.findAllCommandNames(line));
       for(String command : getAllCommandNames()) {
-         if(command.startsWith(line))
+         if(command.startsWith(line) && !names.contains(command))
             names.add(command);
       }
       return names;

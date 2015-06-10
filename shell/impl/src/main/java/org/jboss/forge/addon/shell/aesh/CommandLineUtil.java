@@ -93,12 +93,6 @@ class CommandLineUtil
                .getInitialMetadata() : command.getMetadata();
       String cmdName = ShellUtil.shellifyCommandName(metadata.getName());
       String cmdDescription = metadata.getDescription();
-      //final ProcessedCommand parameter = new ProcessedCommand(cmdName, cmdDescription, null, new ForgeResultHandler(
-      //         shellContext, cmdName));
-      //final ProcessedCommandBuilder builder = new ProcessedCommandBuilder()
-      //        .name(cmdName)
-      //        .description(cmdDescription)
-      //        .resultHandler(new ForgeResultHandler(shellContext, cmdName));
 
       final CommandBuilder builder = new CommandBuilder()
               .name(cmdName)
