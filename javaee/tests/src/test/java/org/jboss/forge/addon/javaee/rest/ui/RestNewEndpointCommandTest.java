@@ -112,7 +112,7 @@ public class RestNewEndpointCommandTest
    }
 
    @Test
-   public void testCreateNewRestEndpoint() throws Exception
+   public void testCreateNewRestEndpointCalledEndpoint() throws Exception
    {
       try (CommandController controller = uiTestHarness.createCommandController(RestNewEndpointCommand.class,
                project.getRoot()))
@@ -133,6 +133,30 @@ public class RestNewEndpointCommandTest
       assertEquals(0, javaResource.getJavaType().getSyntaxErrors().size());
       assertTrue(javaResource.getJavaType().hasAnnotation(Path.class));
       assertEquals("/my", javaResource.getJavaType().getAnnotation(Path.class).getStringValue());
+   }
+
+   @Test
+   public void testCreateNewRestEndpoint() throws Exception
+   {
+      try (CommandController controller = uiTestHarness.createCommandController(RestNewEndpointCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyService");
+         controller.setValueFor("targetPackage", "org.jboss.forge.test");
+         assertTrue(controller.isValid());
+         assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      }
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyService");
+      Assert.assertNotNull(javaResource);
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      assertEquals(0, javaResource.getJavaType().getSyntaxErrors().size());
+      assertTrue(javaResource.getJavaType().hasAnnotation(Path.class));
+      assertEquals("/myService", javaResource.getJavaType().getAnnotation(Path.class).getStringValue());
    }
 
    @Test
