@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.javaee.jpa;
 
+import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_ENTITY_PACKAGE;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.List;
 import javax.persistence.Entity;
 
 import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
+import org.jboss.forge.addon.javaee.JavaEEPackageConstants;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
@@ -69,7 +72,7 @@ public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonD
    public String getEntityPackage()
    {
       JavaSourceFacet sourceFacet = getFaceted().getFacet(JavaSourceFacet.class);
-      return sourceFacet.getBasePackage() + "." + DEFAULT_ENTITY_PACKAGE;
+      return sourceFacet.getBasePackage() + "." + JavaEEPackageConstants.DEFAULT_ENTITY_PACKAGE;
    }
 
    @Override
@@ -77,7 +80,7 @@ public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonD
    {
       JavaSourceFacet sourceFacet = getFaceted().getFacet(JavaSourceFacet.class);
 
-      DirectoryResource entityRoot = sourceFacet.getBasePackageDirectory().getChildDirectory(DEFAULT_ENTITY_PACKAGE);
+      DirectoryResource entityRoot = sourceFacet.getBasePackageDirectory().getChildDirectory(JavaEEPackageConstants.DEFAULT_ENTITY_PACKAGE);
       if (!entityRoot.exists())
       {
          entityRoot.mkdirs();

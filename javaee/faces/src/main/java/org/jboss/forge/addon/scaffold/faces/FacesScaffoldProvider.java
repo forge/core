@@ -3,6 +3,8 @@
  */
 package org.jboss.forge.addon.scaffold.faces;
 
+import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_FACES_PACKAGE;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -21,7 +23,6 @@ import javax.persistence.OneToOne;
 
 import org.jboss.forge.addon.configuration.Configuration;
 import org.jboss.forge.addon.facets.FacetNotFoundException;
-import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
 import org.jboss.forge.addon.javaee.cdi.ui.CDISetupCommand;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
@@ -85,8 +86,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 import freemarker.template.Template;
-
-import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_VIEW_PACKAGE;
 
 /**
  * The scaffold provider for JSF 2.0
@@ -768,7 +767,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
          // Create the Backing Bean for this entity
          JavaClassSource viewBean = Roaster.parse(JavaClassSource.class,
                   this.templateProcessor.processTemplate(context, this.backingBeanTemplate));
-         viewBean.setPackage(java.getBasePackage() + "." + DEFAULT_VIEW_PACKAGE);
+         viewBean.setPackage(java.getBasePackage() + "." + DEFAULT_FACES_PACKAGE);
          result.add(ScaffoldUtil.createOrOverwrite(java.getJavaResource(viewBean), viewBean.toString()));
 
          // Set new context for view generation

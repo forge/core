@@ -25,6 +25,7 @@ import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -34,6 +35,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonRepository;
@@ -58,7 +60,7 @@ public class AddAddonDependencyCommandImpl extends AbstractProjectCommand implem
 
    @Inject
    @WithAttributes(label = "Addon Coordinates", description = "Addon coordinates to be added as a dependency for the selected project", required = true)
-   private UIInput<AddonId> addon;
+   private UIInput<String> addon;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
@@ -77,22 +79,36 @@ public class AddAddonDependencyCommandImpl extends AbstractProjectCommand implem
             }
          }
       }
-      addon.setCompleter(new UICompleter<AddonId>()
+      addon.setCompleter(new UICompleter<String>()
       {
-
          @Override
-         public Iterable<AddonId> getCompletionProposals(UIContext context, InputComponent<?, AddonId> input,
+         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input,
                   String value)
          {
-            List<AddonId> addons = new ArrayList<>();
+            List<String> addons = new ArrayList<>();
             for (AddonId addonId : addonChoices)
             {
-               if (Strings.isNullOrEmpty(value) || value.startsWith(addonId.toCoordinates()))
+               if (Strings.isNullOrEmpty(value) || addonId.toCoordinates().startsWith(value))
                {
-                  addons.add(addonId);
+                  addons.add(addonId.toCoordinates());
                }
             }
             return addons;
+         }
+      }).addValidator(new UIValidator()
+      {
+         @Override
+         public void validate(UIValidationContext context)
+         {
+            String value = (String) context.getCurrentInputComponent().getValue();
+            try
+            {
+               AddonId.fromCoordinates(value);
+            }
+            catch (Exception e)
+            {
+               context.addValidationError(addon, e.getMessage());
+            }
          }
       });
       builder.add(addon);
@@ -102,7 +118,7 @@ public class AddAddonDependencyCommandImpl extends AbstractProjectCommand implem
    public Result execute(UIExecutionContext context) throws Exception
    {
       Project project = getSelectedProject(context);
-      AddonId addonId = addon.getValue();
+      AddonId addonId = AddonId.fromCoordinates(addon.getValue());
       configurator.installSelectedAddons(project, Collections.singleton(addonId), false);
       return Results.success("Addon " + addonId + " added as a dependency to project "
                + project.getFacet(MetadataFacet.class).getProjectName());

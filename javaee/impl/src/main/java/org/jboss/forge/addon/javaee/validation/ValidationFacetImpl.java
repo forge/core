@@ -108,7 +108,7 @@ public class ValidationFacetImpl extends AbstractJavaEEFacet implements Validati
    private void createDefaultConfig(FileResource<?> descriptor)
    {
       ValidationConfigurationDescriptor descriptorContents = Descriptors
-               .create(ValidationConfigurationDescriptor.class);
+               .create(ValidationConfigurationDescriptor.class).version("1.1");
       descriptor.setContents(descriptorContents.exportAsString());
    }
 }

@@ -7,10 +7,19 @@
 package org.jboss.forge.addon.javaee.jpa.ui;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.Lob;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -26,7 +35,6 @@ import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.roaster.model.Field;
 import org.jboss.forge.roaster.model.JavaClass;
@@ -42,12 +50,7 @@ public class JPANewFieldWizardTest
 {
 
    @Deployment
-   @AddonDependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-   })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
       return ShrinkWrap.create(AddonArchive.class).addBeansXML().addClass(ProjectHelper.class);
@@ -446,4 +449,67 @@ public class JPANewFieldWizardTest
       Assert.assertFalse(field.getAnnotation(Enumerated.class).getValues().isEmpty());
       Assert.assertEquals(EnumType.STRING, field.getAnnotation(Enumerated.class).getEnumValue(EnumType.class));
    }
+
+   @Test
+   public void testLobFieldWithByteArrayType() throws Exception
+   {
+      JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPANewFieldWizard.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         Assert.assertTrue(controller.isEnabled());
+         controller.setValueFor("targetEntity", entity);
+         Assert.assertFalse(controller.canExecute());
+         controller.setValueFor("named", "blob_field");
+         controller.setValueFor("type", "byte[]");
+         controller.setValueFor("lob", Boolean.TRUE);
+         Assert.assertFalse(controller.canMoveToNextStep());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertFalse(result instanceof Failed);
+         Assert.assertEquals("Field blob_field created", result.getMessage());
+      }
+
+      JavaClass<?> javaClass = entity.getJavaType();
+      Assert.assertTrue(javaClass.hasField("blob_field"));
+      final Field<?> field = javaClass.getField("blob_field");
+      Assert.assertEquals("byte[]", field.getType().getName());
+      Assert.assertTrue(field.hasAnnotation(Column.class));
+      Assert.assertEquals(String.valueOf(Integer.MAX_VALUE),
+               field.getAnnotation(Column.class).getLiteralValue("length"));
+      Assert.assertTrue(field.hasAnnotation(Lob.class));
+   }
+
+   @Test
+   public void testLobFieldWithStringType() throws Exception
+   {
+      JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPANewFieldWizard.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         Assert.assertTrue(controller.isEnabled());
+         controller.setValueFor("targetEntity", entity);
+         Assert.assertFalse(controller.canExecute());
+         controller.setValueFor("named", "clob_field");
+         controller.setValueFor("type", "String");
+         controller.setValueFor("lob", Boolean.TRUE);
+         Assert.assertFalse(controller.canMoveToNextStep());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertFalse(result instanceof Failed);
+         Assert.assertEquals("Field clob_field created", result.getMessage());
+      }
+
+      JavaClass<?> javaClass = entity.getJavaType();
+      Assert.assertTrue(javaClass.hasField("clob_field"));
+      final Field<?> field = javaClass.getField("clob_field");
+      Assert.assertEquals("String", field.getType().getName());
+      Assert.assertTrue(field.hasAnnotation(Column.class));
+      Assert.assertEquals(String.valueOf(Integer.MAX_VALUE),
+               field.getAnnotation(Column.class).getLiteralValue("length"));
+      Assert.assertTrue(field.hasAnnotation(Lob.class));
+   }
+
 }

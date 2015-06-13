@@ -7,7 +7,15 @@
 
 package org.jboss.forge.addon.javaee.jpa.ui;
 
-import javax.persistence.*;
+import java.lang.annotation.Annotation;
+
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
+import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 
 public enum LifecycleType
 {
@@ -19,14 +27,14 @@ public enum LifecycleType
    POST_REMOVE(PostRemove.class),
    POST_LOAD(PostLoad.class);
 
-   private LifecycleType(Class annotation)
+   private LifecycleType(Class<? extends Annotation> annotation)
    {
       this.annotation = annotation;
    }
 
-   private Class annotation;
+   private Class<? extends Annotation> annotation;
 
-   public Class getAnnotation()
+   public Class<? extends Annotation> getAnnotation()
    {
       return annotation;
    }

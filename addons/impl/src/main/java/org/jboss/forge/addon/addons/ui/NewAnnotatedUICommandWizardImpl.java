@@ -43,7 +43,7 @@ public class NewAnnotatedUICommandWizardImpl extends AbstractProjectCommand impl
 
    @Inject
    @WithAttributes(label = "Command name", required = true)
-   private UIInput<String> commandName;
+   private UIInput<String> named;
 
    @Inject
    @WithAttributes(label = "Categories", required = false)
@@ -61,7 +61,7 @@ public class NewAnnotatedUICommandWizardImpl extends AbstractProjectCommand impl
    public void initializeUI(UIBuilder builder) throws Exception
    {
       categories.setDefaultValue(new ArrayList<String>());
-      builder.add(commandName).add(categories);
+      builder.add(named).add(categories);
    }
 
    @Override
@@ -69,7 +69,7 @@ public class NewAnnotatedUICommandWizardImpl extends AbstractProjectCommand impl
    {
       JavaResource javaResource = (JavaResource) context.getUIContext().getInitialSelection().get();
       JavaClassSource commandClass = javaResource.getJavaType();
-      commandClass = createCommand(commandClass, commandName.getValue(), categories.getValue());
+      commandClass = createCommand(commandClass, named.getValue(), categories.getValue());
       javaResource.setContents(commandClass);
       return Results.success("Annotated UICommand created");
    }

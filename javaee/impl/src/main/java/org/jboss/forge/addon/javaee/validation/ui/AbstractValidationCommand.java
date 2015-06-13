@@ -1,6 +1,6 @@
 package org.jboss.forge.addon.javaee.validation.ui;
 
-import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_CONSTRAINT_PACKAGE;
+import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_CONSTRAINT_PACKAGE;
 
 import org.jboss.forge.addon.javaee.validation.ValidationFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;

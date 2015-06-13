@@ -240,7 +240,7 @@ public class JPAFieldOperationsImpl extends FieldOperations implements JPAFieldO
          entityClass.addImport(fieldEntityClass);
       }
 
-      FieldSource<JavaClassSource> localField = addFieldTo(entityClass, fieldEntityClass.getName(), fieldName,
+      addFieldTo(entityClass, fieldEntityClass.getName(), fieldName,
                Embedded.class.getName());
       java.saveJavaSource(entityClass);
    }

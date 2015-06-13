@@ -21,7 +21,6 @@ import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.output.UIMessage;
-import org.jboss.forge.addon.ui.output.UIMessage.Severity;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.CompositeResult;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -74,7 +73,24 @@ class CommandAdapter implements Command<CommandInvocation>
       }
       if (!failure)
       {
-         if (interaction.getController().isValid())
+         UIOutput output = shell.getOutput();
+         for (UIMessage message : interaction.getController().validate())
+         {
+            switch (message.getSeverity())
+            {
+            case ERROR:
+               failure = true;
+               output.error(output.err(), message.getDescription());
+               break;
+            case INFO:
+               output.info(output.out(), message.getDescription());
+               break;
+            case WARN:
+               output.warn(output.out(), message.getDescription());
+               break;
+            }
+         }
+         if (!failure)
          {
             Result commandResult = null;
             try
@@ -94,19 +110,6 @@ class CommandAdapter implements Command<CommandInvocation>
                if (result instanceof Resource<?>)
                {
                   shell.setCurrentResource((Resource<?>) result);
-               }
-            }
-         }
-         else
-         {
-            List<UIMessage> messages = interaction.getController().validate();
-            UIOutput output = shell.getOutput();
-            for (UIMessage message : messages)
-            {
-               if (message.getSeverity() == Severity.ERROR)
-               {
-                  failure = true;
-                  output.error(output.err(), message.getDescription());
                }
             }
          }

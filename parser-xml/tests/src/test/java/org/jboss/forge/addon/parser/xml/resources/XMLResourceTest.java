@@ -18,10 +18,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -33,22 +31,12 @@ import org.junit.runner.RunWith;
 public class XMLResourceTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
-            @AddonDeployment(name = "org.jboss.forge.addon:parser-xml")
-   })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
-      AddonArchive archive = ShrinkWrap
+      return ShrinkWrap
                .create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:parser-xml"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:resources")
-               );
-
-      return archive;
+               .addBeansXML();
    }
 
    @Inject
@@ -77,4 +65,16 @@ public class XMLResourceTest
       Assert.assertThat(newResource, is(instanceOf(XMLResource.class)));
       Assert.assertEquals(resource, newResource);
    }
+
+   @Test
+   public void testXHTMLResourceCreation() throws Exception
+   {
+      Node node = XMLParser.parse("<test/>");
+      XMLResource resource = factory.create(XMLResource.class, File.createTempFile("forge", ".xhtml"));
+      Assert.assertNotNull(resource);
+      resource.createNewFile();
+      resource.setContents(node);
+      Assert.assertEquals("test", resource.getXmlSource().getName());
+   }
+
 }

@@ -31,7 +31,8 @@ public class AddonClassifierFacet extends AbstractFacet<Project> implements Proj
 {
    private static final CoordinateBuilder JAR_PLUGIN_COORDINATE = CoordinateBuilder.create()
             .setGroupId("org.apache.maven.plugins")
-            .setArtifactId("maven-jar-plugin");
+            .setArtifactId("maven-jar-plugin")
+            .setVersion("2.6");
 
    @Override
    public boolean install()

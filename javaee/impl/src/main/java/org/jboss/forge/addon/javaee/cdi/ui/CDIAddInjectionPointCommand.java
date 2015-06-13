@@ -33,6 +33,7 @@ import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.input.UISelectOne;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
@@ -76,7 +77,7 @@ public class CDIAddInjectionPointCommand extends AbstractJavaEECommand implement
    private CDIOperations cdiOperations;
 
    @Override
-   public Metadata getMetadata(UIContext context)
+   public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.from(super.getMetadata(context), getClass()).name("CDI: Add Injection Point")
                .description("Adds a new injection point field to a bean")

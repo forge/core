@@ -18,22 +18,14 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.ext.Provider;
 
-import org.jboss.forge.addon.javaee.rest.RestFacet;
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
-import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
-import org.jboss.forge.addon.ui.result.NavigationResult;
-import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
-import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.util.Lists;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
@@ -47,8 +39,7 @@ import org.jboss.forge.roaster.model.source.MethodSource;
  * @see https://issues.jboss.org/browse/FORGE-1929
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class CrossOriginResourceSharingFilterCommand extends AbstractJavaSourceCommand<JavaClassSource> implements
-         PrerequisiteCommandsProvider
+public class CrossOriginResourceSharingFilterCommand extends AbstractRestNewCommand<JavaClassSource>
 {
 
    @Inject
@@ -108,11 +99,10 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractJavaSourceC
    }
 
    @Override
-   public UICommandMetadata getMetadata(UIContext context)
+   public Metadata getMetadata(UIContext context)
    {
       return Metadata.from(super.getMetadata(context), getClass()).name("REST: New " + getType())
-               .description("Generate a " + getType())
-               .category(Categories.create("Java EE", "JAX-RS"));
+               .description("Generate a " + getType());
    }
 
    @Override
@@ -128,13 +118,6 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractJavaSourceC
    }
 
    @Override
-   protected String calculateDefaultPackage(UIContext context)
-   {
-      Project project = getSelectedProject(context);
-      return project.getFacet(JavaSourceFacet.class).getBasePackage() + ".rest";
-   }
-
-   @Override
    public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source)
             throws Exception
    {
@@ -143,8 +126,6 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractJavaSourceC
       source.addInterface(ContainerResponseFilter.class);
       MethodSource<JavaClassSource> method = source.addMethod().setName("filter").setPublic().setReturnTypeVoid();
       method.addAnnotation(Override.class);
-      // FIXME java.lang.Override shouldn't be imported
-      source.removeImport(Override.class);
       method.addParameter(ContainerRequestContext.class, "request");
       method.addParameter(ContainerResponseContext.class, "response");
       StringBuilder body = new StringBuilder();
@@ -173,20 +154,5 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractJavaSourceC
       }
       method.setBody(body.toString());
       return source;
-   }
-
-   @Override
-   public NavigationResult getPrerequisiteCommands(UIContext context)
-   {
-      NavigationResultBuilder builder = NavigationResultBuilder.create();
-      Project project = getSelectedProject(context);
-      if (project != null)
-      {
-         if (!project.hasFacet(RestFacet.class))
-         {
-            builder.add(RestSetupWizard.class);
-         }
-      }
-      return builder.build();
    }
 }

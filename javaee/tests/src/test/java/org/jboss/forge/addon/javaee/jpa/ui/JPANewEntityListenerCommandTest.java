@@ -9,7 +9,7 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_ENTITY_PACKAGE;
+import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_ENTITY_PACKAGE;
 import static org.jboss.forge.addon.javaee.jpa.ui.LifecycleType.POST_LOAD;
 import static org.jboss.forge.addon.javaee.jpa.ui.LifecycleType.POST_PERSIST;
 import static org.jboss.forge.addon.javaee.jpa.ui.LifecycleType.PRE_REMOVE;

@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.javaee;
 
-import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_ENTITY_PACKAGE;
+import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_ENTITY_PACKAGE;
 
 import java.io.IOException;
 

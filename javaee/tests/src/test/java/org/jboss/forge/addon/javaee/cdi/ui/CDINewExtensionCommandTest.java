@@ -12,7 +12,7 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_CDI_EXTENSIONS_PACKAGE;
+import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_CDI_EXTENSIONS_PACKAGE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

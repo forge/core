@@ -31,7 +31,7 @@ public class ShellUIProgressMonitor extends DefaultUIProgressMonitor
    public void beginTask(String name, int totalWork)
    {
       super.beginTask(name, totalWork);
-      String message = String.format("%s \t[%d/%d] ...", name, getCurrentWork(), getTotalWork());
+      String message = String.format("%s \t[%d/%d] ...", name, getCurrentWork() + 1, getTotalWork());
       ShellMessages.info(out, message);
    }
 
@@ -39,7 +39,7 @@ public class ShellUIProgressMonitor extends DefaultUIProgressMonitor
    public void subTask(String name)
    {
       super.subTask(name);
-      String message = String.format("%s:%s \t[%d/%d] ...", getTaskName(), name, getCurrentWork(), getTotalWork());
+      String message = String.format("%s:%s \t[%d/%d] ...", getTaskName(), name, getCurrentWork() + 1, getTotalWork());
       ShellMessages.info(out, message);
    }
 
@@ -47,7 +47,7 @@ public class ShellUIProgressMonitor extends DefaultUIProgressMonitor
    public void setTaskName(String name)
    {
       super.setTaskName(name);
-      String message = String.format("%s \t[%d/%d] ...", name, getCurrentWork(), getTotalWork());
+      String message = String.format("%s \t[%d/%d] ...", name, getCurrentWork() + 1, getTotalWork());
       ShellMessages.info(out, message);
    }
 }

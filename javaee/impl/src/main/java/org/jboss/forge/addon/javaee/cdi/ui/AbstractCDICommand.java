@@ -1,12 +1,8 @@
 package org.jboss.forge.addon.javaee.cdi.ui;
 
-import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_CDI_PACKAGE;
-import static org.jboss.forge.addon.javaee.JavaEEFacet.DEFAULT_CONSTRAINT_PACKAGE;
+import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_CDI_PACKAGE;
 
-import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
-import org.jboss.forge.addon.javaee.validation.ValidationFacet;
-import org.jboss.forge.addon.javaee.validation.ui.ValidationProviderSetupCommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
@@ -45,18 +41,18 @@ public abstract class AbstractCDICommand<T extends JavaSource<?>> extends Abstra
                + DEFAULT_CDI_PACKAGE;
    }
 
-    @Override
-    public NavigationResult getPrerequisiteCommands(UIContext context)
-    {
-        NavigationResultBuilder builder = NavigationResultBuilder.create();
-        Project project = getSelectedProject(context);
-        if (project != null)
-        {
-            if (!project.hasFacet(CDIFacet.class))
-            {
-                builder.add(CDISetupCommand.class);
-            }
-        }
-        return builder.build();
-    }
+   @Override
+   public NavigationResult getPrerequisiteCommands(UIContext context)
+   {
+      NavigationResultBuilder builder = NavigationResultBuilder.create();
+      Project project = getSelectedProject(context);
+      if (project != null)
+      {
+         if (!project.hasFacet(CDIFacet.class))
+         {
+            builder.add(CDISetupCommand.class);
+         }
+      }
+      return builder.build();
+   }
 }
