@@ -207,7 +207,7 @@ public class CDINewConversationCommand extends AbstractUICommand
       return Metadata.from(super.getMetadata(context), getClass())
                .name("CDI: New Conversation")
                .description("Creates a conversation block in the specified method")
-               .category(Categories.create(super.getMetadata(context).getCategory(), "CDI"));
+               .category(Categories.create("Java EE", "CDI"));
    }
 
    @Override
