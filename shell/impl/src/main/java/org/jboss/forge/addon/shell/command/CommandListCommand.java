@@ -9,6 +9,8 @@ package org.jboss.forge.addon.shell.command;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
@@ -60,17 +62,20 @@ public class CommandListCommand extends AbstractShellCommand
       Shell shell = (Shell) uiContext.getProvider();
       TerminalSize terminalSize = shell.getConsole().getShell().getSize();
       List<String> display = new ArrayList<>();
-
-      Iterable<UICommand> commands = commandFactory.getCommands();
-      for (UICommand command : commands)
+      Set<CommandInfo> commandInfos = new TreeSet<>();
+      for (UICommand command : commandFactory.getCommands())
       {
          UICommandMetadata metadata = command.getMetadata(uiContext);
          String name = commandFactory.getCommandName(uiContext, command);
          boolean enabled = command.isEnabled(uiContext);
-         display.add(metadata.getCategory()
+         commandInfos.add(new CommandInfo(metadata.getCategory().toString(), name, metadata.getDescription(), enabled));
+      }
+      for (CommandInfo command : commandInfos)
+      {
+         display.add(command.category
                   + " > "
-                  + new TerminalString(name, new TerminalColor(enabled ? Color.CYAN : Color.RED,
-                           Color.DEFAULT)).toString() + " - " + metadata.getDescription());
+                  + new TerminalString(command.name, new TerminalColor(command.enabled ? Color.CYAN : Color.RED,
+                           Color.DEFAULT)).toString() + " - " + command.description);
       }
       UIOutput output = uiContext.getProvider().getOutput();
       PrintStream out = output.out();
@@ -78,5 +83,71 @@ public class CommandListCommand extends AbstractShellCommand
                terminalSize.getHeight(), terminalSize.getWidth()));
 
       return Results.success();
+   }
+
+   private static class CommandInfo implements Comparable<CommandInfo>
+   {
+      final String category;
+      final String name;
+      final String description;
+      final boolean enabled;
+
+      CommandInfo(String category, String name, String description, boolean enabled)
+      {
+         super();
+         this.category = category;
+         this.name = name;
+         this.description = description;
+         this.enabled = enabled;
+      }
+
+      @Override
+      public int compareTo(CommandInfo o)
+      {
+         int compareTo = this.category.compareTo(o.category);
+         if (compareTo == 0)
+         {
+            compareTo = this.name.compareTo(o.name);
+         }
+         return compareTo;
+      }
+
+      @Override
+      public int hashCode()
+      {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((category == null) ? 0 : category.hashCode());
+         result = prime * result + ((name == null) ? 0 : name.hashCode());
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj)
+      {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         CommandInfo other = (CommandInfo) obj;
+         if (category == null)
+         {
+            if (other.category != null)
+               return false;
+         }
+         else if (!category.equals(other.category))
+            return false;
+         if (name == null)
+         {
+            if (other.name != null)
+               return false;
+         }
+         else if (!name.equals(other.name))
+            return false;
+         return true;
+      }
+
    }
 }
