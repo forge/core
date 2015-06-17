@@ -22,6 +22,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -62,6 +63,7 @@ public class ClientTest
    }
 
    @Test
+   @Ignore("Use a local HTTP server")
    public void testGetRequest()
    {
       Client client = clientFactory.createClient();
