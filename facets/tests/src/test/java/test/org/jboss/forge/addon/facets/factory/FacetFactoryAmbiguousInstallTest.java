@@ -13,10 +13,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.FacetIsAmbiguousException;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,8 +25,7 @@ public class FacetFactoryAmbiguousInstallTest
 {
 
    @Deployment
-   @AddonDeployments({ @AddonDeployment(name = "org.jboss.forge.addon:facets"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi") })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
       AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
@@ -41,10 +38,6 @@ public class FacetFactoryAmbiguousInstallTest
                         MockAmbiguousFacet_2.class,
                         MockAmbiguousDependentFacet.class,
                         MockSpecificDependentFacet.class
-               )
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:facets"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
                );
       return archive;
    }
