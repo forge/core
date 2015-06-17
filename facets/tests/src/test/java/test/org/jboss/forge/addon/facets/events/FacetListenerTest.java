@@ -20,6 +20,7 @@ import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.FacetListener;
 import org.jboss.forge.addon.facets.events.FacetEvent;
 import org.jboss.forge.addon.facets.events.FacetInstalled;
+import org.jboss.forge.addon.facets.events.FacetRegistered;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
@@ -34,7 +35,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-public class FacetInstalledTest
+public class FacetListenerTest
 {
    @Deployment
    @AddonDependencies
@@ -82,7 +83,7 @@ public class FacetInstalledTest
    }
 
    @Test
-   public void testFacetAlreadyInstalledShouldNotFireEvents()
+   public void testFacetAlreadyInstalledShouldFireRegisterEvents()
    {
       final List<FacetEvent> facetEvents = new ArrayList<>();
       ListenerRegistration<FacetListener> registration = facetFactory
@@ -100,7 +101,10 @@ public class FacetInstalledTest
          MockFaceted faceted = new MockFaceted();
          MockAlreadyInstalledFacet facet = facetFactory.install(faceted, MockAlreadyInstalledFacet.class);
          Assert.assertNotNull(facet);
-         Assert.assertTrue(facetEvents.isEmpty());
+         Assert.assertEquals(1, facetEvents.size());
+         FacetEvent event = facetEvents.get(0);
+         Assert.assertThat(event, instanceOf(FacetRegistered.class));
+         Assert.assertSame(facet, event.getFacet());
       }
       finally
       {
