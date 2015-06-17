@@ -161,3 +161,8 @@ registration = factory.addFacetListener(new FacetListener(){
 registration.removeListener();
 ----
 * The event is also fired using Furnace's event architecture, so it's possible to listen for events using the add-on container implementation.  
+
+[IMPORTANT] 
+====
+`Project` objects are invalidated when the pom.xml changes and facets are re-calculated when this happens. For this reason, a FacetListener *MUST*
+be idempotent and perform a no-op on repeatable `FacetRegistered` events. 
