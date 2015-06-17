@@ -82,7 +82,7 @@ public class FacetInstalledTest
    }
 
    @Test
-   public void testAlreadyInstallFacetsShouldNotFireEvents()
+   public void testFacetAlreadyInstalledShouldNotFireEvents()
    {
       final List<FacetEvent> facetEvents = new ArrayList<>();
       ListenerRegistration<FacetListener> registration = facetFactory

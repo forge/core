@@ -20,4 +20,10 @@ public class FacetInstalledImpl extends AbstractFacetEvent implements FacetInsta
    {
       super(facet);
    }
+
+   @Override
+   public String toString()
+   {
+      return "FacetInstalled [" + getFacet() + "]";
+   }
 }

@@ -214,13 +214,8 @@ public class FacetFactoryImpl implements FacetFactory
       else if (FacetInspector.isConstraintSatisfied(faceted, requiredFacets) && filter.accept(facet))
          try
          {
-            boolean installed = facet.isInstalled();
             result = ((MutableFaceted<FACETTYPE>) faceted).install(facet);
-            // Fire only if Facet#install() was called
-            if (!installed && facet.isInstalled())
-            {
-               fireFacetInstalled(facet);
-            }
+            fireFacetInstalled(facet);
          }
          catch (Exception e)
          {
