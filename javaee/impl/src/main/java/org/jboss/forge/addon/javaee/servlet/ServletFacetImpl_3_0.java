@@ -48,7 +48,7 @@ public class ServletFacetImpl_3_0 extends AbstractServletFacet<WebAppDescriptor>
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
       Map<Dependency, List<Dependency>> map = new LinkedHashMap<>();
-      map.put(JAVAX_SERVLET_API, Arrays.asList(JAVAX_SERVLET_API, JAVAEE7, JAVAEE6));
+      map.put(JAVAX_SERVLET_API, Arrays.asList(JAVAX_SERVLET_API, JAVAEE6));
       return map;
    }
 
