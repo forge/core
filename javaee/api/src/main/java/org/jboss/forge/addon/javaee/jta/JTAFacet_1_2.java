@@ -6,14 +6,13 @@
  */
 package org.jboss.forge.addon.javaee.jta;
 
-import org.jboss.forge.addon.javaee.JavaEEFacet;
 
 /**
- * Installs the required JMS libraries
+ * Installs the required JTA libraries
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public interface JTAFacet_1_2 extends JavaEEFacet
+public interface JTAFacet_1_2 extends JTAFacet
 {
 }

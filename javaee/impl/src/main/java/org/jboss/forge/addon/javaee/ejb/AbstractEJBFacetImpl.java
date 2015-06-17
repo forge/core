@@ -17,4 +17,10 @@ public abstract class AbstractEJBFacetImpl extends AbstractJavaEEFacet implement
       super(installer);
    }
 
+   @Override
+   public String getSpecName()
+   {
+      return "EJB";
+   }
+
 }

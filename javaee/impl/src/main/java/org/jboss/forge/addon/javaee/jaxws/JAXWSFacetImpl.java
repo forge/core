@@ -48,6 +48,12 @@ public class JAXWSFacetImpl extends AbstractJavaEEFacet implements JAXWSFacet
    }
 
    @Override
+   public String getSpecName()
+   {
+      return "JAX-WS";
+   }
+
+   @Override
    public Version getSpecVersion()
    {
       return new SingleVersion("2.2");

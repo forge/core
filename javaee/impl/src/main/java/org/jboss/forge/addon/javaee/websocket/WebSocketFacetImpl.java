@@ -39,6 +39,12 @@ public class WebSocketFacetImpl extends AbstractJavaEEFacet implements WebSocket
    }
 
    @Override
+   public String getSpecName()
+   {
+      return "WebSocket";
+   }
+
+   @Override
    public Version getSpecVersion()
    {
       return new SingleVersion("1.0");

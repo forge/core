@@ -37,5 +37,10 @@ public interface JavaEEFacet extends ProjectFacet
    /**
     * Return the {@link Version} of the specification for which this facet represents.
     */
-   public Version getSpecVersion();
+   Version getSpecVersion();
+
+   /**
+    * Return the specification name for which this facet represents.
+    */
+   String getSpecName();
 }

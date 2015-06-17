@@ -20,4 +20,11 @@ public abstract class AbstractJTAFacetImpl extends AbstractJavaEEFacet implement
    {
       super(installer);
    }
+
+   @Override
+   public String getSpecName()
+   {
+      return "JTA";
+   }
+
 }
