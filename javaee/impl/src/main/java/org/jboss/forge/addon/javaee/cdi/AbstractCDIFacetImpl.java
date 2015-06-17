@@ -39,6 +39,12 @@ public abstract class AbstractCDIFacetImpl<DESCRIPTOR extends Descriptor> extend
       super(installer);
    }
 
+   @Override
+   public String getSpecName()
+   {
+      return "CDI";
+   }
+
    /**
     * Return the initial content to be used in creation of new descriptors.
     */

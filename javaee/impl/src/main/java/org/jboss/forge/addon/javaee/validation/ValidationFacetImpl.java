@@ -41,6 +41,12 @@ public class ValidationFacetImpl extends AbstractJavaEEFacet implements Validati
    }
 
    @Override
+   public String getSpecName()
+   {
+      return "Bean Validation";
+   }
+
+   @Override
    public boolean install()
    {
       if (!isInstalled())

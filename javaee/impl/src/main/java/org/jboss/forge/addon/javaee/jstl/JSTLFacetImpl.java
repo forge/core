@@ -40,6 +40,12 @@ public class JSTLFacetImpl extends AbstractJavaEEFacet implements JSTLFacet
    }
 
    @Override
+   public String getSpecName()
+   {
+      return "JSTL";
+   }
+
+   @Override
    public Version getSpecVersion()
    {
       return new SingleVersion("1.2");

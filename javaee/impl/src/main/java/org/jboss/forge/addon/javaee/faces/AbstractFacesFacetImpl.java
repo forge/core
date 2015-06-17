@@ -64,6 +64,12 @@ public abstract class AbstractFacesFacetImpl<DESCRIPTOR extends Descriptor> exte
    }
 
    @Override
+   public String getSpecName()
+   {
+      return "JavaServer Faces";
+   }
+
+   @Override
    public boolean isInstalled()
    {
       boolean active = false;

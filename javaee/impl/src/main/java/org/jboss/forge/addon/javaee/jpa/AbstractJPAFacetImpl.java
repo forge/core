@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.javaee.jpa;
 
-import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_ENTITY_PACKAGE;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -42,6 +40,12 @@ public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonD
    public AbstractJPAFacetImpl(DependencyInstaller installer)
    {
       super(installer);
+   }
+
+   @Override
+   public String getSpecName()
+   {
+      return "JPA";
    }
 
    @Override
@@ -80,7 +84,8 @@ public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonD
    {
       JavaSourceFacet sourceFacet = getFaceted().getFacet(JavaSourceFacet.class);
 
-      DirectoryResource entityRoot = sourceFacet.getBasePackageDirectory().getChildDirectory(JavaEEPackageConstants.DEFAULT_ENTITY_PACKAGE);
+      DirectoryResource entityRoot = sourceFacet.getBasePackageDirectory().getChildDirectory(
+               JavaEEPackageConstants.DEFAULT_ENTITY_PACKAGE);
       if (!entityRoot.exists())
       {
          entityRoot.mkdirs();

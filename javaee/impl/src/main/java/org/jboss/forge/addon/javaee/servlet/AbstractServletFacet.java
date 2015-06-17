@@ -38,6 +38,12 @@ public abstract class AbstractServletFacet<DESCRIPTOR extends WebAppCommonDescri
    }
 
    @Override
+   public String getSpecName()
+   {
+      return "Servlet";
+   }
+
+   @Override
    public boolean isInstalled()
    {
       Project project = getFaceted();

@@ -36,6 +36,12 @@ public class JavaEE6FacetImpl extends AbstractJavaEEFacet implements JavaEE6Face
    }
 
    @Override
+   public String getSpecName()
+   {
+      return "Java EE";
+   }
+
+   @Override
    public Version getSpecVersion()
    {
       return new SingleVersion("6");

@@ -28,6 +28,12 @@ public abstract class AbstractRestFacet extends AbstractJavaEEFacet implements R
    }
 
    @Override
+   public String getSpecName()
+   {
+      return "JAX-RS";
+   }
+
+   @Override
    public boolean isInstalled()
    {
       return super.isInstalled() && getConfigurationStrategy() != null;
