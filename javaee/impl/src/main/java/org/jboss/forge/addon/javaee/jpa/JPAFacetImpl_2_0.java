@@ -48,7 +48,7 @@ public class JPAFacetImpl_2_0 extends AbstractJPAFacetImpl<PersistenceDescriptor
    @Override
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
-      return Collections.singletonMap(JAVAX_PERSISTENCE, Arrays.asList(JAVAX_PERSISTENCE));
+      return Collections.singletonMap(JAVAX_PERSISTENCE, Arrays.asList(JAVAX_PERSISTENCE, JAVAEE6));
    }
 
    @Override
