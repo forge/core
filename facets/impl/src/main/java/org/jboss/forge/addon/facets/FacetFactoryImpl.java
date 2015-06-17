@@ -17,12 +17,16 @@ import java.util.logging.Logger;
 
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.facets.constraints.FacetInspector;
+import org.jboss.forge.addon.facets.events.FacetInstalled;
+import org.jboss.forge.addon.facets.events.FacetInstalledImpl;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Predicate;
+import org.jboss.forge.furnace.util.Sets;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -32,6 +36,8 @@ public class FacetFactoryImpl implements FacetFactory
    private static final Logger log = Logger.getLogger(FacetFactoryImpl.class.getName());
 
    private AddonRegistry registry;
+
+   private final Set<FacetListener> listeners = Sets.getConcurrentSet(FacetListener.class);
 
    @Override
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> FACETTYPE create(
@@ -208,7 +214,13 @@ public class FacetFactoryImpl implements FacetFactory
       else if (FacetInspector.isConstraintSatisfied(faceted, requiredFacets) && filter.accept(facet))
          try
          {
+            boolean installed = facet.isInstalled();
             result = ((MutableFaceted<FACETTYPE>) faceted).install(facet);
+            // Fire only if Facet#install() was called
+            if (!installed && facet.isInstalled())
+            {
+               fireFacetInstalled(facet);
+            }
          }
          catch (Exception e)
          {
@@ -242,6 +254,39 @@ public class FacetFactoryImpl implements FacetFactory
 
       Set<Class<FACETTYPE>> seen = new LinkedHashSet<>();
       return register(seen, origin, facet);
+   }
+
+   @Override
+   public ListenerRegistration<FacetListener> addFacetListener(final FacetListener listener)
+   {
+      listeners.add(listener);
+      return new ListenerRegistration<FacetListener>()
+      {
+         @Override
+         public FacetListener removeListener()
+         {
+            listeners.remove(listener);
+            return listener;
+         }
+      };
+   }
+
+   private <FACET extends Facet<?>> void fireFacetInstalled(FACET facet)
+   {
+      FacetInstalled event = new FacetInstalledImpl(facet);
+      for (FacetListener listener : getFacetListeners())
+      {
+         try
+         {
+            listener.processEvent(event);
+         }
+         catch (Exception e)
+         {
+            log.log(Level.WARNING, "Error while firing FacetInstalledEvent", e);
+         }
+      }
+      // Fire event using Furnace's event architecture
+      getAddonRegistry().getEventManager().fireEvent(event);
    }
 
    @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -327,5 +372,16 @@ public class FacetFactoryImpl implements FacetFactory
          this.registry = furnace.getAddonRegistry();
       }
       return registry;
+   }
+
+   private Set<FacetListener> getFacetListeners()
+   {
+      Set<FacetListener> set = new HashSet<>();
+      for (FacetListener service : getAddonRegistry().getServices(FacetListener.class))
+      {
+         set.add(service);
+      }
+      set.addAll(listeners);
+      return set;
    }
 }
