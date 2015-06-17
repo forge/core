@@ -17,7 +17,6 @@ import java.util.logging.Logger;
 
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.facets.constraints.FacetInspector;
-import org.jboss.forge.addon.facets.events.FacetEventListener;
 import org.jboss.forge.addon.facets.events.FacetInstalled;
 import org.jboss.forge.addon.facets.events.FacetInstalledImpl;
 import org.jboss.forge.furnace.Furnace;
@@ -38,7 +37,7 @@ public class FacetFactoryImpl implements FacetFactory
 
    private AddonRegistry registry;
 
-   private final Set<FacetEventListener> eventListeners = Sets.getConcurrentSet(FacetEventListener.class);
+   private final Set<FacetListener> listeners = Sets.getConcurrentSet(FacetListener.class);
 
    @Override
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> FACETTYPE create(
@@ -258,15 +257,15 @@ public class FacetFactoryImpl implements FacetFactory
    }
 
    @Override
-   public ListenerRegistration<FacetEventListener> addFacetEventListener(final FacetEventListener listener)
+   public ListenerRegistration<FacetListener> addFacetListener(final FacetListener listener)
    {
-      eventListeners.add(listener);
-      return new ListenerRegistration<FacetEventListener>()
+      listeners.add(listener);
+      return new ListenerRegistration<FacetListener>()
       {
          @Override
-         public FacetEventListener removeListener()
+         public FacetListener removeListener()
          {
-            eventListeners.remove(listener);
+            listeners.remove(listener);
             return listener;
          }
       };
@@ -275,7 +274,7 @@ public class FacetFactoryImpl implements FacetFactory
    private <FACET extends Facet<?>> void fireFacetInstalled(FACET facet)
    {
       FacetInstalled event = new FacetInstalledImpl(facet);
-      for (FacetEventListener listener : getFacetEventListeners())
+      for (FacetListener listener : getFacetListeners())
       {
          try
          {
@@ -375,14 +374,14 @@ public class FacetFactoryImpl implements FacetFactory
       return registry;
    }
 
-   private Set<FacetEventListener> getFacetEventListeners()
+   private Set<FacetListener> getFacetListeners()
    {
-      Set<FacetEventListener> set = new HashSet<>();
-      for (FacetEventListener service : getAddonRegistry().getServices(FacetEventListener.class))
+      Set<FacetListener> set = new HashSet<>();
+      for (FacetListener service : getAddonRegistry().getServices(FacetListener.class))
       {
          set.add(service);
       }
-      set.addAll(eventListeners);
+      set.addAll(listeners);
       return set;
    }
 }

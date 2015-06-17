@@ -17,8 +17,8 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.facets.FacetListener;
 import org.jboss.forge.addon.facets.events.FacetEvent;
-import org.jboss.forge.addon.facets.events.FacetEventListener;
 import org.jboss.forge.addon.facets.events.FacetInstalled;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
@@ -55,8 +55,8 @@ public class FacetInstalledTest
    public void testFacetInstalled()
    {
       final List<FacetEvent> facetEvents = new ArrayList<>();
-      ListenerRegistration<FacetEventListener> registration = facetFactory
-               .addFacetEventListener(new FacetEventListener()
+      ListenerRegistration<FacetListener> registration = facetFactory
+               .addFacetListener(new FacetListener()
                {
 
                   @Override
@@ -85,8 +85,8 @@ public class FacetInstalledTest
    public void testAlreadyInstallFacetsShouldNotFireEvents()
    {
       final List<FacetEvent> facetEvents = new ArrayList<>();
-      ListenerRegistration<FacetEventListener> registration = facetFactory
-               .addFacetEventListener(new FacetEventListener()
+      ListenerRegistration<FacetListener> registration = facetFactory
+               .addFacetListener(new FacetListener()
                {
 
                   @Override
