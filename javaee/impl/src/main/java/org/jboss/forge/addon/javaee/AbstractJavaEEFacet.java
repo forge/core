@@ -32,7 +32,7 @@ public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> impleme
    // Version is statically set
    protected static final Dependency JAVAEE6 =
             DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0").setScopeType("import")
-                     .setPackaging("pom").setVersion("3.0.2.Final");
+                     .setPackaging("pom").setVersion("3.0.3.Final");
 
    protected static final Dependency JAVAEE7 =
             DependencyBuilder.create().setGroupId("javax").setArtifactId("javaee-api").setVersion("7.0")
