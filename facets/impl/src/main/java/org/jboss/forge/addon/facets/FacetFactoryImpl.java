@@ -19,6 +19,7 @@ import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.facets.constraints.FacetInspector;
 import org.jboss.forge.addon.facets.events.FacetEvent;
 import org.jboss.forge.addon.facets.events.FacetInstalledImpl;
+import org.jboss.forge.addon.facets.events.FacetRegisteredImpl;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
@@ -216,7 +217,10 @@ public class FacetFactoryImpl implements FacetFactory
          {
             result = ((MutableFaceted<FACETTYPE>) faceted).install(facet);
             // Firing Facet installed event
-            fireFacetEvent(new FacetInstalledImpl(facet));
+            if (result)
+            {
+               fireFacetEvent(new FacetInstalledImpl(facet));
+            }
          }
          catch (Exception e)
          {
@@ -349,6 +353,10 @@ public class FacetFactoryImpl implements FacetFactory
          try
          {
             result = ((MutableFaceted<FACETTYPE>) faceted).register(facet);
+            if (result)
+            {
+               fireFacetEvent(new FacetRegisteredImpl(facet));
+            }
          }
          catch (Exception e)
          {
