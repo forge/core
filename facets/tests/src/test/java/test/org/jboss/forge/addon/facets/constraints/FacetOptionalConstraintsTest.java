@@ -12,10 +12,8 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -28,21 +26,14 @@ import test.org.jboss.forge.addon.facets.factory.MockFaceted;
 public class FacetOptionalConstraintsTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:facets"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi")
-   })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
       AddonArchive archive = ShrinkWrap
                .create(AddonArchive.class)
                .addPackages(true, FacetM.class.getPackage())
                .addClasses(MockFaceted.class, MockFacet.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:facets"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
+               .addBeansXML();
       return archive;
    }
 
