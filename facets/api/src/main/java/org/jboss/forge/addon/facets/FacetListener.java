@@ -5,9 +5,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.facets.events;
+package org.jboss.forge.addon.facets;
 
-import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.facets.events.FacetEvent;
 
 /**
  * A listener for {@link FacetEvent} events.
@@ -15,9 +15,9 @@ import org.jboss.forge.addon.facets.FacetFactory;
  * This should be used when an explicit bind to {@link FacetFactory} is needed
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- * @see FacetFactory#addFacetEventListener(FacetEventListener)
+ * @see FacetFactory#addFacetListener(FacetListener)
  */
-public interface FacetEventListener
+public interface FacetListener
 {
    void processEvent(FacetEvent event);
 }

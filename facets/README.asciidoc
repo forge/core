@@ -138,16 +138,16 @@ Facet Event Support::
    
 These events can be listened by:
 
-* Classes that implement the `FacetEventListener` interface are automatically bound to `FacetFactory`;
-* In cases where auto-discovery is not possible, `FacetFactory` provides an `addFacetEventListener(FacetEventListener)` method for explicit registration.
+* Classes that implement the `FacetListener` interface are automatically bound to `FacetFactory`;
+* In cases where auto-discovery is not possible, `FacetFactory` provides an `addFacetListener(FacetListener)` method for explicit registration.
 
 [source,java]
 ----
 @Inject 
 private FacetFactory factory;
 ...
-ListenerRegistration<FacetEventListener> registration = null;
-registration = factory.addFacetEventListener(new FacetEventListener(){
+ListenerRegistration<FacetListener> registration = null;
+registration = factory.addFacetListener(new FacetListener(){
 	@Override
 	public void processEvent(FacetEvent event) {   
 		// Do something
