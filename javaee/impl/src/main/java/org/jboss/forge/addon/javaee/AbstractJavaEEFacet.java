@@ -16,12 +16,9 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
-import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
-import org.jboss.forge.furnace.versions.Version;
 
 /**
  * A base facet implementation for Facets which require Java EE library APIs to be installed.
@@ -30,7 +27,7 @@ import org.jboss.forge.furnace.versions.Version;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> implements ProjectFacet
+public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> implements JavaEEFacet
 {
    // Version is statically set
    protected static final Dependency JAVAEE6 =
@@ -48,11 +45,6 @@ public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> impleme
    {
       this.installer = installer;
    }
-
-   /**
-    * Return the version of the relevant specification handled by this {@link Facet}.
-    */
-   abstract public Version getSpecVersion();
 
    /**
     * Return a {@link Map} where KEY represents a {@link Dependency} to be installed if none of the VALUE
@@ -127,6 +119,12 @@ public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> impleme
    protected DependencyInstaller getInstaller()
    {
       return installer;
+   }
+
+   @Override
+   public String toString()
+   {
+      return String.format("%s %s", getSpecName(), getSpecVersion());
    }
 
 }
