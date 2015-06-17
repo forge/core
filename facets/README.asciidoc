@@ -134,6 +134,9 @@ Facet Event Support::
 |FacetInstalled
 |Fired when a facet is installed in a faceted
 
+|FacetRegistered
+|Fired when a facet is registered in a faceted. Facets may be registered when their installation requirements have already been met.
+
 |===
    
 You may observe these events by registering a `FacetListener`:
