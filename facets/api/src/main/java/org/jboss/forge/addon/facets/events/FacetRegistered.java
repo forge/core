@@ -11,7 +11,9 @@ import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.facets.Faceted;
 
 /**
- * An event describing the installation of a {@link Facet} on a {@link Faceted}
+ * An event describing the registration of a {@link Facet} on a {@link Faceted}.
+ * 
+ * Facets may be registered when their installation requirements have already been met
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
