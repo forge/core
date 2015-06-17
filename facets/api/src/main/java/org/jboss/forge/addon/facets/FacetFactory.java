@@ -6,6 +6,9 @@
  */
 package org.jboss.forge.addon.facets;
 
+import org.jboss.forge.addon.facets.events.FacetEvent;
+import org.jboss.forge.addon.facets.events.FacetEventListener;
+import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Predicate;
 
 /**
@@ -121,4 +124,11 @@ public interface FacetFactory
     */
    public <FACETEDTYPE extends Faceted<?>, FACETTYPE extends Facet<FACETEDTYPE>> boolean register(
             FACETEDTYPE origin, FACETTYPE facet) throws IllegalArgumentException;
+
+   /**
+    * Add a {@link FacetEventListener} to be notified when {@link FacetEvent} events occur.
+    * 
+    * @see FacetEventListener
+    */
+   public ListenerRegistration<FacetEventListener> addFacetEventListener(FacetEventListener listener);
 }
