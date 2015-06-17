@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.facets.constraints.FacetInspector;
-import org.jboss.forge.addon.facets.events.FacetInstalled;
+import org.jboss.forge.addon.facets.events.FacetEvent;
 import org.jboss.forge.addon.facets.events.FacetInstalledImpl;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
@@ -215,7 +215,8 @@ public class FacetFactoryImpl implements FacetFactory
          try
          {
             result = ((MutableFaceted<FACETTYPE>) faceted).install(facet);
-            fireFacetInstalled(facet);
+            // Firing Facet installed event
+            fireFacetEvent(new FacetInstalledImpl(facet));
          }
          catch (Exception e)
          {
@@ -266,18 +267,17 @@ public class FacetFactoryImpl implements FacetFactory
       };
    }
 
-   private <FACET extends Facet<?>> void fireFacetInstalled(FACET facet)
+   private void fireFacetEvent(FacetEvent event)
    {
-      FacetInstalled event = new FacetInstalledImpl(facet);
       for (FacetListener listener : getFacetListeners())
       {
          try
          {
             listener.processEvent(event);
          }
-         catch (Exception e)
+         catch (Throwable e)
          {
-            log.log(Level.WARNING, "Error while firing FacetInstalledEvent", e);
+            log.log(Level.WARNING, "Error while firing " + event, e);
          }
       }
       // Fire event using Furnace's event architecture
