@@ -9,7 +9,7 @@ package org.jboss.forge.addon.javaee.rest;
 
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.facets.constraints.FacetConstraints;
-import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
+import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 
 /**
@@ -17,7 +17,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
  */
 @FacetConstraints({
          @FacetConstraint(JavaSourceFacet.class),
-         @FacetConstraint(ServletFacet_3_0.class)
+         @FacetConstraint(ServletFacet_3_1.class)
 })
 public interface RestFacet_2_0 extends RestFacet
 {
