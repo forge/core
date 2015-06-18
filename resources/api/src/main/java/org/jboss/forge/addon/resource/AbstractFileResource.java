@@ -1,11 +1,15 @@
 package org.jboss.forge.addon.resource;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Streams;
-
-import java.io.*;
-import java.nio.charset.Charset;
 
 /**
  * A standard, built-in resource for representing files on the filesystem.
@@ -355,6 +359,19 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       catch (IOException e)
       {
          throw new ResourceException("Error while moving Resource " + this, e);
+      }
+   }
+
+   @Override
+   public OutputStream getResourceOutputStream(boolean append)
+   {
+      try
+      {
+         return getFileOperations().createOutputStream(file, append);
+      }
+      catch (IOException ioe)
+      {
+         throw new ResourceException("Error while creating OutputStream for Resource " + this, ioe);
       }
    }
 }

@@ -7,6 +7,20 @@
 
 package org.jboss.forge.addon.resource.transaction.file;
 
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.jboss.forge.addon.resource.FileOperations;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
@@ -21,18 +35,20 @@ import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.xadisk.additional.XAFileInputStreamWrapper;
 import org.xadisk.additional.XAFileOutputStreamWrapper;
-import org.xadisk.bridge.proxies.interfaces.*;
+import org.xadisk.bridge.proxies.interfaces.Session;
 import org.xadisk.bridge.proxies.interfaces.XADiskBasicIOOperations.PermissionType;
+import org.xadisk.bridge.proxies.interfaces.XAFileInputStream;
+import org.xadisk.bridge.proxies.interfaces.XAFileOutputStream;
+import org.xadisk.bridge.proxies.interfaces.XAFileSystem;
+import org.xadisk.bridge.proxies.interfaces.XAFileSystemProxy;
 import org.xadisk.filesystem.FileSystemStateChangeEvent;
 import org.xadisk.filesystem.NativeSession;
-import org.xadisk.filesystem.exceptions.*;
+import org.xadisk.filesystem.exceptions.DirectoryNotEmptyException;
+import org.xadisk.filesystem.exceptions.FileAlreadyExistsException;
+import org.xadisk.filesystem.exceptions.FileNotExistsException;
+import org.xadisk.filesystem.exceptions.InsufficientPermissionOnFileException;
+import org.xadisk.filesystem.exceptions.NoTransactionAssociatedException;
 import org.xadisk.filesystem.standalone.StandaloneFileSystemConfiguration;
-
-import java.io.*;
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Implementation of the {@link ResourceTransaction} interface for files
@@ -399,17 +415,24 @@ public class FileResourceTransactionImpl implements ResourceTransaction, FileOpe
    @Override
    public OutputStream createOutputStream(File f) throws IOException
    {
+      return createOutputStream(f, false);
+   }
+
+   @Override
+   public OutputStream createOutputStream(File file, boolean append) throws IOException
+   {
       assertSessionCreated();
       try
       {
          // This is the behavior of append = false in FileOutputStream
-         session.truncateFile(f, 0L);
-         XAFileOutputStream xaStream = session.createXAFileOutputStream(f, false);
+         if (!append)
+            session.truncateFile(file, 0L);
+         XAFileOutputStream xaStream = session.createXAFileOutputStream(file, false);
          return new XAFileOutputStreamWrapper(xaStream);
       }
       catch (Exception e)
       {
-         throw new ResourceTransactionException("Error while creating output stream for " + f, e);
+         throw new ResourceTransactionException("Error while creating output stream for " + file, e);
       }
    }
 
