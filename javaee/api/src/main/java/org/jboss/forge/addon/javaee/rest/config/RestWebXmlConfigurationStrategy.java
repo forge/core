@@ -9,11 +9,11 @@ package org.jboss.forge.addon.javaee.rest.config;
 
 import java.util.List;
 
-import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
+import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.furnace.util.Assert;
-import org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor;
-import org.jboss.shrinkwrap.descriptor.api.webcommon30.ServletMappingType;
+import org.jboss.shrinkwrap.descriptor.api.webapp.WebAppCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webcommon.ServletMappingCommonType;
 
 /**
  * Configures the Rest facet through the web.xml
@@ -38,13 +38,14 @@ public class RestWebXmlConfigurationStrategy implements RestConfigurationStrateg
       return path;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public void install(Project project)
    {
       if (!installedInWebXML(project))
       {
-         ServletFacet_3_0 servlet = project.getFacet(ServletFacet_3_0.class);
-         WebAppDescriptor config = servlet.getConfig();
+         ServletFacet servlet = project.getFacet(ServletFacet.class);
+         WebAppCommonDescriptor config = (WebAppCommonDescriptor) servlet.getConfig();
 
          config.createServlet().servletName(JAXRS_SERVLET).loadOnStartup(1);
          String urlPattern = path;
@@ -62,15 +63,17 @@ public class RestWebXmlConfigurationStrategy implements RestConfigurationStrateg
       return getServletPath(project) != null;
    }
 
+   @SuppressWarnings("unchecked")
    static String getServletPath(Project project)
    {
       String servletPath = null;
-      if (project.hasFacet(ServletFacet_3_0.class))
+      if (project.hasFacet(ServletFacet.class))
       {
-         ServletFacet_3_0 servlet = project.getFacet(ServletFacet_3_0.class);
-         WebAppDescriptor config = servlet.getConfig();
-         List<ServletMappingType<WebAppDescriptor>> allServletMapping = config.getAllServletMapping();
-         for (ServletMappingType<WebAppDescriptor> servletMappingType : allServletMapping)
+         ServletFacet servlet = project.getFacet(ServletFacet.class);
+         WebAppCommonDescriptor config = (WebAppCommonDescriptor) servlet.getConfig();
+
+         List<ServletMappingCommonType> allServletMapping = config.getAllServletMapping();
+         for (ServletMappingCommonType servletMappingType : allServletMapping)
          {
             if (JAXRS_SERVLET.equals(servletMappingType.getServletName()))
             {
