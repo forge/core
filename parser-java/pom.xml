@@ -21,7 +21,7 @@
    </modules>
 
    <properties>
-      <version.roaster>2.13.2.Final</version.roaster>
+      <version.roaster>2.14.0.Final</version.roaster>
    </properties>
 
    <dependencyManagement>
@@ -38,13 +38,10 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.roaster</groupId>
-            <artifactId>roaster-api</artifactId>
+            <artifactId>roaster-bom</artifactId>
             <version>${version.roaster}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.roaster</groupId>
-            <artifactId>roaster-jdt</artifactId>
-            <version>${version.roaster}</version>
+            <type>pom</type>
+            <scope>import</scope>
          </dependency>
       </dependencies>
    </dependencyManagement>
