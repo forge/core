@@ -71,21 +71,21 @@ public class FacesScaffoldTest
    {
       shellTest.execute("project-new --named demo" + System.currentTimeMillis(), 5, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-entity --named Customer", 5, TimeUnit.SECONDS);
-      shellTest.execute("jpa-new-field --named firstName", 5, TimeUnit.SECONDS);
-      Result result = shellTest.execute("scaffold-setup", 5, TimeUnit.SECONDS);
+      shellTest.execute("jpa-new-field --named firstName", 10, TimeUnit.SECONDS);
+      Result result = shellTest.execute("scaffold-setup", 10, TimeUnit.SECONDS);
       Assert.assertThat(result, is(instanceOf(CompositeResult.class)));
    }
 
    @Test
    public void shouldCreateOneErrorPageForEachErrorCode() throws Exception
    {
-      shellTest.execute("project-new --named demo" + System.currentTimeMillis(), 5, TimeUnit.SECONDS);
-      shellTest.execute("servlet-setup --servletVersion 3.1", 5, TimeUnit.SECONDS);
-      shellTest.execute("jpa-new-entity --named Customer", 5, TimeUnit.SECONDS);
-      shellTest.execute("jpa-new-field --named firstName", 5, TimeUnit.SECONDS);
-      shellTest.execute("jpa-new-entity --named Publisher", 5, TimeUnit.SECONDS);
-      shellTest.execute("jpa-new-field --named firstName", 5, TimeUnit.SECONDS);
-      Assert.assertThat(shellTest.execute("scaffold-setup", 5, TimeUnit.SECONDS), not(instanceOf(Failed.class)));
+      shellTest.execute("project-new --named demo" + System.currentTimeMillis(), 10, TimeUnit.SECONDS);
+      shellTest.execute("servlet-setup --servletVersion 3.1", 10, TimeUnit.SECONDS);
+      shellTest.execute("jpa-new-entity --named Customer", 10, TimeUnit.SECONDS);
+      shellTest.execute("jpa-new-field --named firstName", 10, TimeUnit.SECONDS);
+      shellTest.execute("jpa-new-entity --named Publisher", 10, TimeUnit.SECONDS);
+      shellTest.execute("jpa-new-field --named firstName", 10, TimeUnit.SECONDS);
+      Assert.assertThat(shellTest.execute("scaffold-setup", 10, TimeUnit.SECONDS), not(instanceOf(Failed.class)));
       Project project = projectFactory.findProject(shellTest.getShell().getCurrentResource());
       Assert.assertTrue(project.hasFacet(ServletFacet_3_1.class));
       ServletFacet_3_1 servletFacet = project.getFacet(ServletFacet_3_1.class);
