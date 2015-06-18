@@ -51,4 +51,11 @@ public interface WriteableResource<T extends WriteableResource<T, R>, R> extends
     */
    OutputStream getResourceOutputStream();
 
+   /**
+    * Returns the {@link OutputStream} for this {@link WriteableResource}
+    * 
+    * @param append true if the {@link OutputStream} should append to the existing contents, false if it should
+    *           overwrite
+    */
+   OutputStream getResourceOutputStream(boolean append);
 }

@@ -18,7 +18,6 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -35,10 +34,7 @@ import com.google.common.io.Files;
 public class FileResourceTest
 {
    @Deployment
-   @AddonDependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:resources"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-   })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
       return ShrinkWrap.create(AddonArchive.class).addBeansXML();
@@ -46,6 +42,34 @@ public class FileResourceTest
 
    @Inject
    private ResourceFactory resourceFactory;
+
+   @Test
+   public void testAppendableOutputStream() throws IOException
+   {
+      File file = File.createTempFile("fileresourcetest", ".tmp");
+      file.deleteOnExit();
+      FileResource<?> fileResource = resourceFactory.create(file).reify(FileResource.class);
+      Assert.assertNotNull(fileResource);
+      Assert.assertNull(fileResource.reify(DirectoryResource.class));
+      try (OutputStream os = fileResource.getResourceOutputStream(false))
+      {
+         os.write("HELLO".getBytes());
+         os.flush();
+      }
+      Assert.assertEquals("HELLO", fileResource.getContents());
+      try (OutputStream os = fileResource.getResourceOutputStream(true))
+      {
+         os.write(" WORLD".getBytes());
+         os.flush();
+      }
+      Assert.assertEquals("HELLO WORLD", fileResource.getContents());
+      try (OutputStream os = fileResource.getResourceOutputStream())
+      {
+         os.write("GOODBYE".getBytes());
+         os.flush();
+      }
+      Assert.assertEquals("GOODBYE", fileResource.getContents());
+   }
 
    @Test
    @SuppressWarnings("unchecked")

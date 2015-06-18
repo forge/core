@@ -45,7 +45,10 @@ public interface FileOperations
 
    OutputStream createOutputStream(File file) throws IOException;
 
+   OutputStream createOutputStream(File file, boolean append) throws IOException;
+
    InputStream createInputStream(File file) throws IOException;
 
    File move(File source, File target) throws IOException;
+
 }

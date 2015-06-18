@@ -7,11 +7,23 @@
 
 package org.jboss.forge.addon.resource;
 
-import java.io.*;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 
 /**
  * Default implementation for {@link FileOperations} interface
@@ -121,6 +133,12 @@ public enum DefaultFileOperations implements FileOperations
    }
 
    @Override
+   public OutputStream createOutputStream(File file, boolean append) throws IOException
+   {
+      return new FileOutputStream(file, append);
+   }
+
+   @Override
    public InputStream createInputStream(File file) throws IOException
    {
       return new BufferedInputStream(new FileInputStream(file));
@@ -193,7 +211,7 @@ public enum DefaultFileOperations implements FileOperations
    /**
     * Internal copy file method.
     *
-    * @param srcFile  the validated source file, must not be <code>null</code>
+    * @param srcFile the validated source file, must not be <code>null</code>
     * @param destFile the validated destination file, must not be <code>null</code>
     * @throws IOException if an error occurs
     */
