@@ -228,6 +228,12 @@ public class AeshUICommand implements UICommand
          return commandLineParser.parse(lines,ignoreRequirements);
       }
 
+      @Override
+      public List getAllNames()
+      {
+         return commandLineParser.getAllNames();
+      }
+
    }
 
 }

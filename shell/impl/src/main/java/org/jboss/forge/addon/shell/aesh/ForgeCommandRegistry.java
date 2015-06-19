@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.jboss.aesh.cl.parser.CommandLineParser;
+import org.jboss.aesh.complete.CompleteOperation;
 import org.jboss.aesh.console.command.Command;
 import org.jboss.aesh.console.command.CommandNotFoundException;
 import org.jboss.aesh.console.command.container.CommandContainer;
@@ -67,7 +68,7 @@ public class ForgeCommandRegistry implements CommandRegistry
       this.commandFactory = addonRegistry.getServices(CommandFactory.class).get();
       this.commandControllerFactory = addonRegistry.getServices(CommandControllerFactory.class).get();
       ConverterFactory converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
-      
+
       // Use Aesh commands
       Man manCommand = new Man(new ForgeManProvider(shell, commandFactory, converterFactory));
       this.aeshCommandRegistry = new AeshCommandRegistryBuilder()
@@ -83,7 +84,7 @@ public class ForgeCommandRegistry implements CommandRegistry
    public CommandContainer getCommand(String name, String completeLine) throws CommandNotFoundException
    {
       waitUntilStarted();
-      
+
       ShellContextImpl shellContext = shell.createUIContext();
       try
       {
@@ -166,7 +167,7 @@ public class ForgeCommandRegistry implements CommandRegistry
    @Override
    public Set<String> getAllCommandNames()
    {
-      //waitUntilStarted();
+      // waitUntilStarted();
 
       Set<String> allCommands = new TreeSet<>();
       allCommands.addAll(getForgeCommandNames());
@@ -198,18 +199,6 @@ public class ForgeCommandRegistry implements CommandRegistry
    }
 
    @Override
-   public List<String> findAllCommandNames(String line)
-   {      
-      List<String> names = new ArrayList<>();
-      names.addAll(aeshCommandRegistry.findAllCommandNames(line));
-      for(String command : getAllCommandNames()) {
-          if(command.startsWith(line))
-              names.add(command);
-      }
-      return names;
-   }
-
-   @Override
    public void removeCommand(String name)
    {
       try
@@ -222,6 +211,21 @@ public class ForgeCommandRegistry implements CommandRegistry
          throw new RuntimeException("Error while removing command: " + e.getMessage(), e);
       }
 
+   }
+
+   @Override
+   public void completeCommandName(CompleteOperation completeOperation)
+   {
+      List<String> names = new ArrayList<>();
+      for (String commandName : getAllCommandNames())
+      {
+         if (commandName.startsWith(completeOperation.getBuffer()))
+         {
+            names.add(commandName);
+         }            
+      }
+      completeOperation.addCompletionCandidates(names);
+      aeshCommandRegistry.completeCommandName(completeOperation);
    }
 
 }
