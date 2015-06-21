@@ -96,7 +96,15 @@ public class ${entityTable}Endpoint
       {
       	return Response.status(Status.BAD_REQUEST).build();
       }
+      <#if idIsPrimitive>
+      if (id != entity.${getIdStatement})
+      <#else>
+      if (id == null)
+      {
+      	return Response.status(Status.BAD_REQUEST).build();
+      }
       if (!id.equals(entity.${getIdStatement}))
+      </#if>
       {
       	return Response.status(Status.CONFLICT).entity(entity).build();
       }

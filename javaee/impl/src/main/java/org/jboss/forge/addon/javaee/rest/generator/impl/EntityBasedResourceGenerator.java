@@ -29,6 +29,7 @@ import org.jboss.forge.addon.templates.TemplateFactory;
 import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.util.Types;
 
 /**
  * A JAX-RS resource generator that uses JPA entities directly in the created REST resources.
@@ -73,6 +74,7 @@ public class EntityBasedResourceGenerator implements RestResourceGenerator
       map.put("idClause", idClause);
       map.put("orderClause", orderClause);
       map.put("resourcePath", resourcePath);
+      map.put("idIsPrimitive", Types.isPrimitive(idType));
 
       Resource<URL> templateResource = resourceFactory.create(getClass().getResource("Endpoint.jv"));
       Template processor = templateFactory.create(templateResource, FreemarkerTemplate.class);

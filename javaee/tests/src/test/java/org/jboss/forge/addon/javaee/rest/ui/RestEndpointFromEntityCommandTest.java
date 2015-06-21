@@ -33,6 +33,9 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.roaster.model.Annotation;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.Method;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.PropertySource;
+import org.jboss.forge.roaster.model.util.Refactory;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -82,7 +85,46 @@ public class RestEndpointFromEntityCommandTest
       JavaResource restResource = facet.getJavaResource("unknown.rest.CustomerEndpoint");
       Assert.assertTrue(restResource.exists());
       Assert.assertThat(restResource.getJavaType(), is(instanceOf(JavaClass.class)));
-      JavaClass<?> restClass = restResource.getJavaType();
+      JavaClassSource restClass = restResource.getJavaType();
+      Assert.assertFalse(restClass.hasSyntaxErrors());
+      Method<?, ?> method = restClass.getMethod("create", "unknown.model.Customer");
+      Annotation<?> consumes = method.getAnnotation(Consumes.class);
+      Assert.assertEquals(MediaType.APPLICATION_JSON, consumes.getStringValue());
+   }
+
+   @Test
+   public void testCreateRESTForPrimitiveType() throws Exception
+   {
+      Project project = projectHelper.createWebProject();
+      projectHelper.installJAXRS_2_0(project, RestConfigurationStrategyFactory.createUsingWebXml("/rest"));
+      projectHelper.installJPA_2_0(project);
+      projectHelper.installEJB_3_2(project);
+      project = projectHelper.refreshProject(project);
+      JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
+      JavaClassSource javaClass = entity.getJavaType();
+      PropertySource<JavaClassSource> idProperty = javaClass.getProperty("id");
+      idProperty.setType("long");
+      javaClass.removeMethod(javaClass.getMethod("equals", Object.class));
+      javaClass.removeMethod(javaClass.getMethod("hashCode"));
+      Refactory.createHashCodeAndEquals(javaClass, idProperty.getField());
+      entity.setContents(javaClass);
+      try (CommandController controller = uiTestHarness.createCommandController(RestEndpointFromEntityCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("targets", Arrays.asList(entity.getJavaType()));
+         controller.setValueFor("persistenceUnit", "unit");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      }
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource restResource = facet.getJavaResource("unknown.rest.CustomerEndpoint");
+      Assert.assertTrue(restResource.exists());
+      Assert.assertThat(restResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      JavaClassSource restClass = restResource.getJavaType();
+      Assert.assertFalse(restClass.hasSyntaxErrors());
       Method<?, ?> method = restClass.getMethod("create", "unknown.model.Customer");
       Annotation<?> consumes = method.getAnnotation(Consumes.class);
       Assert.assertEquals(MediaType.APPLICATION_JSON, consumes.getStringValue());

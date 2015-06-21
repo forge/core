@@ -48,6 +48,7 @@ import org.jboss.forge.roaster.model.Method;
 import org.jboss.forge.roaster.model.Property;
 import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.util.Types;
 
 /**
  * A JAX-RS resource generator that creates root and nested DTOs for JPA entities, and references these DTOs in the
@@ -96,6 +97,7 @@ public class RootAndNestedDTOResourceGenerator implements RestResourceGenerator
       map.put("idClause", idClause);
       map.put("orderClause", orderClause);
       map.put("resourcePath", resourcePath);
+      map.put("idIsPrimitive", Types.isPrimitive(idType));
 
       Resource<URL> templateResource = resourceFactory.create(getClass().getResource("EndpointWithDTO.jv"));
       Template processor = templateFactory.create(templateResource, FreemarkerTemplate.class);
