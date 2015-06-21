@@ -21,7 +21,6 @@ import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -37,13 +36,7 @@ import org.junit.runner.RunWith;
 public class CDIBeansCommandsTest
 {
    @Deployment
-   @AddonDependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-   })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
       return ShrinkWrap.create(AddonArchive.class).addBeansXML().addClass(ProjectHelper.class);
