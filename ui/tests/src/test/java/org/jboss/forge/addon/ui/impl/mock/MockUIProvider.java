@@ -28,6 +28,12 @@ public class MockUIProvider implements UIProvider
    }
 
    @Override
+   public String getName()
+   {
+      return "Mock";
+   }
+
+   @Override
    public boolean isGUI()
    {
       return graphical;

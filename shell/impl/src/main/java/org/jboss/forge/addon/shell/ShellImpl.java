@@ -341,4 +341,10 @@ public class ShellImpl implements Shell, UIRuntime
          desktop = new DefaultUIDesktop();
       return desktop;
    }
+
+   @Override
+   public String getName()
+   {
+      return "Shell";
+   }
 }

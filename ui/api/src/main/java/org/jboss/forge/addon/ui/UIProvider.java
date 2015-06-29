@@ -13,6 +13,11 @@ import org.jboss.forge.addon.ui.output.UIOutput;
 public interface UIProvider
 {
    /**
+    * Returns a human-friendly name of this {@link UIProvider}
+    */
+   String getName();
+
+   /**
     * Returns true if this {@link UIProvider} is running a Graphical User Interface.
     */
    boolean isGUI();
