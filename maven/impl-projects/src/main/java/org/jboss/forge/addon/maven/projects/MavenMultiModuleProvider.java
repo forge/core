@@ -54,7 +54,12 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
             Model pom = projectMavenFacet.getModel();
 
             Parent projectParent = new Parent();
-            projectParent.setGroupId(parentPom.getGroupId());
+            String groupId = parentPom.getGroupId();
+            if (groupId == null)
+            {
+               groupId = parentPom.getParent().getGroupId();
+            }
+            projectParent.setGroupId(groupId);
             projectParent.setArtifactId(parentPom.getArtifactId());
 
             String version = resolveVersion(parentPom);

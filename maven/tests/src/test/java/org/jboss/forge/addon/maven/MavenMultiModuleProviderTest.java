@@ -1,16 +1,16 @@
-package org.jboss.forge.addon.maven;
-
 /*
  * Copyright 2012 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
+package org.jboss.forge.addon.maven;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.maven.model.Model;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.maven.projects.MavenBuildSystem;
@@ -20,12 +20,8 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,38 +31,17 @@ import org.junit.runner.RunWith;
 public class MavenMultiModuleProviderTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi"),
-            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:ui"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven")
-   })
+   @AddonDependencies
    public static AddonArchive getDeployment()
    {
-      AddonArchive archive = ShrinkWrap
-               .create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects")
-               );
-
-      return archive;
+      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
    }
-
-   @Inject
-   private ResourceFactory factory;
-
-   @Inject
-   private Furnace forge;
 
    @Inject
    private ProjectFactory projectFactory;
 
    @Inject
-   private MavenBuildSystem locator;
+   private MavenBuildSystem buildSystem;
 
    @Test
    public void testInjectionNotNull()
@@ -77,20 +52,17 @@ public class MavenMultiModuleProviderTest
    @Test
    public void testCreateNestedProject() throws Exception
    {
-      DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
-               DirectoryResource.class);
-      DirectoryResource projectDir = addonDir.createTempResource();
-      Project parentProject = projectFactory.createProject(projectDir, locator);
+      Project parentProject = projectFactory.createTempProject(buildSystem);
       Assert.assertNotNull(parentProject);
-      
+
       parentProject.getFacet(PackagingFacet.class).setPackagingType("pom");
-      
+
       MetadataFacet metadata = parentProject.getFacet(MetadataFacet.class);
       metadata.setProjectName("parent");
       metadata.setProjectGroupName("com.project.parent");
 
       DirectoryResource subProjectDir = parentProject.getRoot().reify(DirectoryResource.class).getChildDirectory("sub");
-      projectFactory.createProject(subProjectDir, locator);
+      projectFactory.createProject(subProjectDir, buildSystem);
 
       MavenFacet mavenFacet = parentProject.getFacet(MavenFacet.class);
       List<String> modules = mavenFacet.getModel().getModules();
@@ -101,10 +73,7 @@ public class MavenMultiModuleProviderTest
    @Test
    public void testCreateNestedProjectWithParentThatHasInheritedVersion() throws Exception
    {
-      DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
-               DirectoryResource.class);
-      DirectoryResource projectDir = addonDir.createTempResource();
-      Project parentProject = projectFactory.createProject(projectDir, locator);
+      Project parentProject = projectFactory.createTempProject(buildSystem);
       Assert.assertNotNull(parentProject);
 
       MetadataFacet metadata = parentProject.getFacet(MetadataFacet.class);
@@ -114,10 +83,11 @@ public class MavenMultiModuleProviderTest
 
       DirectoryResource intermediateProjectDir = parentProject.getRoot().reify(DirectoryResource.class)
                .getChildDirectory("intermediate");
-      Project intermediateProject = projectFactory.createProject(intermediateProjectDir, locator);
+      Project intermediateProject = projectFactory.createProject(intermediateProjectDir, buildSystem);
 
       MavenFacet parentMavenFacet = parentProject.getFacet(MavenFacet.class);
-      List<String> modules = parentMavenFacet.getModel().getModules();
+      Model parentModel = parentMavenFacet.getModel();
+      List<String> modules = parentModel.getModules();
       Assert.assertFalse(modules.isEmpty());
       Assert.assertEquals("intermediate", modules.get(0));
 
@@ -126,15 +96,19 @@ public class MavenMultiModuleProviderTest
 
       DirectoryResource subProjectDir = intermediateProject.getRoot().reify(DirectoryResource.class)
                .getChildDirectory("sub");
-      Project subProject = projectFactory.createProject(subProjectDir, locator);
+      Project subProject = projectFactory.createProject(subProjectDir, buildSystem);
 
       MavenFacet intermediateMavenFacet = intermediateProject.getFacet(MavenFacet.class);
-      List<String> intermediateModules = intermediateMavenFacet.getModel().getModules();
+      Model intermediateModel = intermediateMavenFacet.getModel();
+      Assert.assertEquals(parentModel.getGroupId(), intermediateModel.getParent().getGroupId());
+      List<String> intermediateModules = intermediateModel.getModules();
       Assert.assertFalse(intermediateModules.isEmpty());
       Assert.assertEquals("sub", intermediateModules.get(0));
 
       String version = subProject.getFacet(MetadataFacet.class).getProjectVersion();
       Assert.assertEquals(parentProject.getFacet(MetadataFacet.class).getProjectVersion(), version);
+      Model subModel = subProject.getFacet(MavenFacet.class).getModel();
+      Assert.assertEquals(parentModel.getGroupId(), subModel.getParent().getGroupId());
 
    }
 }
