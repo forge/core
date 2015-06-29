@@ -26,7 +26,9 @@ import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 
 /**
- * Adds the Setup steps on {@link AbstractJavaEECommand}
+ * Adds the {@link NavigationResult} steps provided by
+ * {@link PrerequisiteCommandsProvider#getPrerequisiteCommands(UIContext)} as the first steps to be executed only if the
+ * requested {@link UICommand} implements the {@link PrerequisiteCommandsProvider} interface
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
