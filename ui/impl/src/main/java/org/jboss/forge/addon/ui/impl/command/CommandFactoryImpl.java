@@ -247,6 +247,12 @@ public class CommandFactoryImpl implements CommandFactory
       }
 
       @Override
+      public String getName()
+      {
+         return delegate.getName();
+      }
+
+      @Override
       public boolean isGUI()
       {
          return gui;
@@ -262,7 +268,7 @@ public class CommandFactoryImpl implements CommandFactory
       {
          return delegate.getOutput();
       }
-      
+
       @Override
       public UIDesktop getDesktop()
       {

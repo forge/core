@@ -28,6 +28,12 @@ public class UIProviderImpl implements UIProvider
    }
 
    @Override
+   public String getName()
+   {
+      return "Test Provider";
+   }
+
+   @Override
    public boolean isGUI()
    {
       return graphical;
