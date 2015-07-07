@@ -65,7 +65,12 @@ public abstract class AbstractJPAFacetImpl<DESCRIPTOR extends PersistenceCommonD
    @Override
    public boolean isInstalled()
    {
-      return super.isInstalled() && getConfigFile().exists();
+      FileResource<?> configFile = getConfigFile();
+      if (!configFile.exists())
+      {
+         return false;
+      }
+      return getSpecVersion().toString().equals(getConfig().getVersion());
    }
 
    /*

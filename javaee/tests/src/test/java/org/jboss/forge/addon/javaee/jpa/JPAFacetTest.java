@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class PersistenceFacetTest
+public class JPAFacetTest
 {
    @Deployment
    @AddonDependencies({
