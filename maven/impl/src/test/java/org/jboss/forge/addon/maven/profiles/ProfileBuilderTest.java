@@ -13,8 +13,8 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.maven.model.Profile;
-import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.dependencies.DependencyRepository;
+import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.junit.Test;
 
 public class ProfileBuilderTest

@@ -12,8 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
-import org.jboss.forge.addon.ui.UIDesktop;
-
 /**
  * Default implementation of {@link UIDesktop}
  * 

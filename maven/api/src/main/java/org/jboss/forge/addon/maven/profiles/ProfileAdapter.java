@@ -9,9 +9,9 @@ package org.jboss.forge.addon.maven.profiles;
 
 import org.apache.maven.model.Activation;
 import org.apache.maven.model.Repository;
-import org.jboss.forge.addon.maven.dependencies.MavenDependencyAdapter;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.DependencyRepository;
+import org.jboss.forge.addon.maven.dependencies.MavenDependencyAdapter;
 
 public class ProfileAdapter extends org.apache.maven.model.Profile
 {

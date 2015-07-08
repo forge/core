@@ -12,7 +12,6 @@ import org.jboss.forge.addon.addons.ui.FurnaceAddonSetupStep;
 import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.AbstractProjectType;
 import org.jboss.forge.addon.projects.ProjectFacet;
-import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**

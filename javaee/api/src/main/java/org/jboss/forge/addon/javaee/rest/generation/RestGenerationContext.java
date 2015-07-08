@@ -7,11 +7,11 @@
 
 package org.jboss.forge.addon.javaee.rest.generation;
 
+import java.util.List;
+
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.text.Inflector;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-
-import java.util.List;
 
 /**
  * Parameters for REST resource generation

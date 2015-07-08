@@ -1,6 +1,8 @@
 package org.jboss.forge.addon.javaee.jpa.dao;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 
 import java.util.Arrays;
 

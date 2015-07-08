@@ -1,10 +1,10 @@
 package org.jboss.forge.addon.scaffold.spi;
 
-import org.jboss.forge.addon.resource.Resource;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.jboss.forge.addon.resource.Resource;
 
 public class ResourceCollection
 {

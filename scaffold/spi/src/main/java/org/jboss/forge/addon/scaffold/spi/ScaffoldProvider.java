@@ -9,7 +9,6 @@ package org.jboss.forge.addon.scaffold.spi;
 import java.util.List;
 
 import org.jboss.forge.addon.facets.Facet;
-import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.result.NavigationResult;

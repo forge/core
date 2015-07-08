@@ -12,7 +12,6 @@ import java.util.Arrays;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.util.RelatedClassComparator;
 import org.junit.Assert;
 import org.junit.Test;
 

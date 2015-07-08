@@ -8,8 +8,8 @@
 package org.jboss.forge.addon.parser.java.resources;
 
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.resource.visit.ResourceVisitor;
+import org.jboss.forge.addon.resource.visit.VisitContext;
 
 /**
  * @author Rudy De Busscher Called for each Java file which is found in the project.

@@ -7,6 +7,15 @@
 
 package org.jboss.forge.addon.shell.command;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.shell.test.ShellTest;
@@ -20,11 +29,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.util.concurrent.TimeUnit;
-
-import static org.hamcrest.CoreMatchers.*;
 
 /**
  * @author <a href="mailto:md.benhassine@gmail.com">Mahmoud Ben Hassine</a>

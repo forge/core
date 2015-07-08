@@ -12,7 +12,6 @@ import java.util.Iterator;
 import org.jboss.forge.addon.dependencies.DependencyNode;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyNodeBuilder;
-import org.jboss.forge.addon.dependencies.collection.DependencyNodeUtil;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -7,7 +7,9 @@
 
 package org.jboss.forge.addon.javaee.validation.ui;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import javax.inject.Inject;
 import javax.validation.constraints.Pattern;

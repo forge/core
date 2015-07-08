@@ -6,6 +6,10 @@
  */
 package org.jboss.forge.addon.shell.mock.wizard;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -18,9 +22,6 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.util.Lists;
-
-import javax.inject.Inject;
-import java.util.List;
 
 /**
  * @author Vineet Reynolds

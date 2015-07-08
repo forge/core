@@ -7,11 +7,11 @@
 
 package org.jboss.forge.addon.shell;
 
+import java.io.PrintStream;
+
 import org.jboss.aesh.terminal.Color;
 import org.jboss.aesh.terminal.TerminalColor;
 import org.jboss.aesh.terminal.TerminalString;
-
-import java.io.PrintStream;
 
 /**
  * Used to generate properly formatted status messages.

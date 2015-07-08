@@ -10,8 +10,8 @@ package org.jboss.forge.addon.maven.profiles;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.dependencies.DependencyRepository;
+import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.junit.Test;
 
 public class ProfileAdapterTest

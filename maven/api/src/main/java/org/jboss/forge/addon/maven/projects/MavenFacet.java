@@ -12,9 +12,9 @@ import java.util.Map;
 
 import org.apache.maven.model.Model;
 import org.jboss.forge.addon.maven.resources.MavenModelResource;
-import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
+import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 
 /**

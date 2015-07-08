@@ -7,13 +7,13 @@
 
 package org.jboss.forge.addon.javaee.jpa;
 
-import org.jboss.forge.addon.parser.java.resources.JavaResource;
-import org.jboss.forge.addon.projects.Project;
+import java.io.FileNotFoundException;
 
 import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 
-import java.io.FileNotFoundException;
+import org.jboss.forge.addon.parser.java.resources.JavaResource;
+import org.jboss.forge.addon.projects.Project;
 
 /**
  * Interface for JPA-oriented field operations.

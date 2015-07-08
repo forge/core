@@ -10,8 +10,6 @@ package org.jboss.forge.addon.convert;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jboss.forge.addon.convert.CompositeConverter;
-import org.jboss.forge.addon.convert.Converter;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,13 +1,12 @@
 package org.jboss.forge.addon.javaee.validation.ui;
 
+import javax.validation.Payload;
+
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-
-import javax.validation.Payload;
 
 /**
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>

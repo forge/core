@@ -6,13 +6,30 @@
  */
 package org.jboss.forge.addon.scaffold.metawidget.inspector;
 
-import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.*;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.EMBEDDABLE;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.INVERSE_FIELD;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.JPA_MANY_TO_MANY;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.JPA_MANY_TO_ONE;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.JPA_ONE_TO_MANY;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.JPA_ONE_TO_ONE;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.JPA_REL_TYPE;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.N_TO_MANY;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.ONE_TO_ONE;
+import static org.jboss.forge.addon.scaffold.metawidget.inspector.ForgeInspectionResultConstants.OWNING_FIELD;
 import static org.junit.Assert.assertEquals;
-import static org.metawidget.inspector.InspectionResultConstants.*;
+import static org.metawidget.inspector.InspectionResultConstants.ENTITY;
+import static org.metawidget.inspector.InspectionResultConstants.NAME;
+import static org.metawidget.inspector.InspectionResultConstants.PROPERTY;
+import static org.metawidget.inspector.InspectionResultConstants.TRUE;
+import static org.metawidget.inspector.InspectionResultConstants.TYPE;
 
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.Embedded;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.junit.Test;
 import org.metawidget.util.XmlUtils;

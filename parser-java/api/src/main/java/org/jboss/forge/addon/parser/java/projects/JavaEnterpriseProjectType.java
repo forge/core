@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.jboss.forge.addon.projects.AbstractProjectType;
 import org.jboss.forge.addon.projects.ProjectFacet;
-import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.EnterpriseResourcesFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;

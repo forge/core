@@ -10,8 +10,6 @@ package org.jboss.forge.addon.shell.command;
 import org.jboss.forge.addon.ui.annotation.Command;
 import org.jboss.forge.addon.ui.annotation.predicate.NonGUIEnabledPredicate;
 import org.jboss.forge.addon.ui.output.UIOutput;
-import org.jboss.forge.furnace.versions.EmptyVersion;
-import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.furnace.versions.Versions;
 

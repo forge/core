@@ -15,8 +15,6 @@ import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.dao.DaoGenerationContext;
 import org.jboss.forge.addon.javaee.jpa.dao.DaoResourceGenerator;
 import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
-import org.jboss.forge.addon.javaee.rest.generation.RestGenerationContext;
-import org.jboss.forge.addon.javaee.rest.generation.RestResourceGenerator;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
