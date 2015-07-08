@@ -9,17 +9,19 @@ package org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.*;
+import java.awt.Color;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.scaffold.ProjectHelper;
 import org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.ForgePropertyStyle.ForgeProperty;
 import org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.MockAnnotationComplex.anEnum;
@@ -33,8 +35,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.metawidget.inspector.impl.propertystyle.Property;
-
-import javax.inject.Inject;
 
 @RunWith(Arquillian.class)
 public class ForgePropertyStyleTest

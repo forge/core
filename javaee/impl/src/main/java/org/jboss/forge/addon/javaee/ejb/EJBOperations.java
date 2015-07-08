@@ -10,7 +10,11 @@ package org.jboss.forge.addon.javaee.ejb;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 
-import javax.ejb.*;
+import javax.ejb.ActivationConfigProperty;
+import javax.ejb.MessageDriven;
+import javax.ejb.Singleton;
+import javax.ejb.Stateful;
+import javax.ejb.Stateless;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.persistence.GenerationType;

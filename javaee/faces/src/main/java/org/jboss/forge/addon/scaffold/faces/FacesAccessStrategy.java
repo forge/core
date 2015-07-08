@@ -8,10 +8,10 @@ package org.jboss.forge.addon.scaffold.faces;
 
 import java.util.List;
 
+import org.jboss.forge.addon.javaee.faces.FacesFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.scaffold.spi.AccessStrategy;
-import org.jboss.forge.addon.javaee.faces.FacesFacet;
 
 /**
  * Faces Scaffold Access Strategy

@@ -7,7 +7,9 @@
 
 package org.jboss.forge.addon.javaee.ejb;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 
 import javax.ejb.MessageDriven;
 import javax.ejb.Stateless;

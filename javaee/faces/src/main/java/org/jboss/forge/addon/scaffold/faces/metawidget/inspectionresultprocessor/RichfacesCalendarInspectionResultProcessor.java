@@ -8,6 +8,7 @@ package org.jboss.forge.addon.scaffold.faces.metawidget.inspectionresultprocesso
 
 import static org.metawidget.inspector.InspectionResultConstants.DATETIME_PATTERN;
 import static org.metawidget.inspector.InspectionResultConstants.DATETIME_TYPE;
+
 import java.util.Map;
 
 import org.metawidget.inspectionresultprocessor.impl.BaseInspectionResultProcessor;

@@ -7,13 +7,13 @@
 
 package org.jboss.forge.addon.shell.command;
 
+import java.io.IOException;
+
 import org.jboss.forge.addon.ui.annotation.Command;
 import org.jboss.forge.addon.ui.annotation.Option;
 import org.jboss.forge.addon.ui.annotation.predicate.NonGUIEnabledPredicate;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.furnace.util.Strings;
-
-import java.io.IOException;
 
 /**
  * 

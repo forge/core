@@ -7,8 +7,15 @@
 
 package org.jboss.forge.addon.scaffold;
 
+import static org.jboss.forge.addon.scaffold.mock.MockProvider.PROVIDER_DESCRIPTION;
+import static org.jboss.forge.addon.scaffold.mock.MockProvider.PROVIDER_NAME;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -31,10 +38,6 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.jboss.forge.addon.scaffold.mock.MockProvider.PROVIDER_DESCRIPTION;
-import static org.jboss.forge.addon.scaffold.mock.MockProvider.PROVIDER_NAME;
-import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
 public class ScaffoldAddonTest

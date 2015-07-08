@@ -7,7 +7,9 @@
 
 package org.jboss.forge.addon.javaee.rest.ui;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 
 import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;

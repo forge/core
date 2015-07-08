@@ -3,9 +3,6 @@ package org.jboss.forge.addon.database.tools.connections;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManager;
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManagerProvider;
-
 @Singleton
 public class ConnectionProfileManagerProviderImpl implements ConnectionProfileManagerProvider
 {

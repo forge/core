@@ -2,11 +2,6 @@ package org.jboss.forge.addon.resource;
 
 import java.util.List;
 
-import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFacet;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.VirtualResource;
-
 public class MockStringResource extends VirtualResource<String>
 {
    private String value;

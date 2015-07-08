@@ -7,6 +7,11 @@
 
 package org.jboss.forge.addon.javaee.rest.ui;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.persistence.Id;
 import javax.ws.rs.core.MediaType;
@@ -50,11 +55,6 @@ import org.jboss.forge.roaster.model.Member;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Generates REST endpoints from JPA Entities

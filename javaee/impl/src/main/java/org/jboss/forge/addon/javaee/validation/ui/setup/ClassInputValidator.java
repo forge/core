@@ -6,9 +6,9 @@
  */
 package org.jboss.forge.addon.javaee.validation.ui.setup;
 
+import org.jboss.forge.addon.parser.java.utils.JLSValidator;
 import org.jboss.forge.addon.parser.java.utils.ResultType;
 import org.jboss.forge.addon.parser.java.utils.ValidationResult;
-import org.jboss.forge.addon.parser.java.utils.JLSValidator;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.validate.UIValidator;

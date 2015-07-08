@@ -16,8 +16,8 @@ import org.jboss.forge.addon.dependencies.DependencyRepository;
 import org.jboss.forge.addon.dependencies.DependencyResolver;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.dependencies.collection.DependencyNodeUtil;
-import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

@@ -6,11 +6,11 @@
  */
 package org.jboss.forge.addon.scaffold.mock;
 
+import java.util.List;
+
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.VirtualResource;
-
-import java.util.List;
 
 public class ScaffoldableResource extends VirtualResource<Scaffoldable>
 {

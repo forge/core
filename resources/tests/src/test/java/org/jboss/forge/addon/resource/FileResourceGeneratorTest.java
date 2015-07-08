@@ -1,8 +1,6 @@
 package org.jboss.forge.addon.resource;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.util.UUID;
@@ -16,7 +14,6 @@ import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
-import org.jboss.forge.furnace.util.Streams;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;

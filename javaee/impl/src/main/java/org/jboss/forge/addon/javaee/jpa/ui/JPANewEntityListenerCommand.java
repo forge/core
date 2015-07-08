@@ -8,8 +8,6 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 
 import static org.jboss.forge.roaster.model.Visibility.PRIVATE;
 
-import java.util.Collection;
-
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.projects.Project;

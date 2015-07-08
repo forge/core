@@ -7,12 +7,12 @@
 
 package org.jboss.forge.addon.scaffold.spi;
 
-import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.resource.Resource;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.resource.Resource;
 
 /**
  * A context object for the scaffold generation.

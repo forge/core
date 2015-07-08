@@ -8,7 +8,6 @@
 package org.jboss.forge.addon.maven.archetype;
 
 import java.util.Iterator;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -20,7 +19,6 @@ import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Lists;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;

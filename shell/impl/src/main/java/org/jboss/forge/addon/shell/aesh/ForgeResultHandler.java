@@ -14,8 +14,6 @@ import java.util.logging.Logger;
 import org.jboss.aesh.cl.result.ResultHandler;
 import org.jboss.aesh.console.command.CommandResult;
 import org.jboss.forge.addon.shell.ui.ShellContext;
-import org.jboss.forge.addon.ui.command.UICommand;
-import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIOutput;
 
 /**

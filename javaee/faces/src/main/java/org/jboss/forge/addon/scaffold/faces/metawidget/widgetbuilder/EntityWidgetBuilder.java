@@ -12,12 +12,12 @@ import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeIns
 import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeInspectionResultConstants.REVERSE_PRIMARY_KEY;
 import static org.metawidget.inspector.InspectionResultConstants.ENTITY;
 import static org.metawidget.inspector.InspectionResultConstants.INVERSE_RELATIONSHIP;
+import static org.metawidget.inspector.InspectionResultConstants.LARGE;
 import static org.metawidget.inspector.InspectionResultConstants.NAME;
 import static org.metawidget.inspector.InspectionResultConstants.PARAMETERIZED_TYPE;
 import static org.metawidget.inspector.InspectionResultConstants.REQUIRED;
 import static org.metawidget.inspector.InspectionResultConstants.TRUE;
 import static org.metawidget.inspector.InspectionResultConstants.TYPE;
-import static org.metawidget.inspector.InspectionResultConstants.LARGE;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_CONVERTER_ID;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_LOOKUP;
 

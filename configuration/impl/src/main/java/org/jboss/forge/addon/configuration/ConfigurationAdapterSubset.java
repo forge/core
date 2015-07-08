@@ -6,11 +6,12 @@
 */
 package org.jboss.forge.addon.configuration;
 
-import org.apache.commons.configuration.HierarchicalConfiguration;
-
-import javax.enterprise.inject.Vetoed;
 import java.util.Collections;
 import java.util.Iterator;
+
+import javax.enterprise.inject.Vetoed;
+
+import org.apache.commons.configuration.HierarchicalConfiguration;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

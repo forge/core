@@ -14,7 +14,6 @@ import org.jboss.forge.addon.maven.projects.archetype.ui.ArchetypeSelectionWizar
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.AbstractProjectType;
 import org.jboss.forge.addon.projects.ProjectFacet;
-import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 

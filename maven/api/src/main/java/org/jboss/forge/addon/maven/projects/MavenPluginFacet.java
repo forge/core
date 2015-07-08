@@ -15,8 +15,8 @@ import org.jboss.forge.addon.dependencies.util.Dependencies;
 import org.jboss.forge.addon.maven.plugins.MavenPlugin;
 import org.jboss.forge.addon.maven.plugins.MavenPluginBuilder;
 import org.jboss.forge.addon.maven.profiles.Profile;
-import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 
 /**
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>

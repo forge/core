@@ -7,7 +7,6 @@
 package org.jboss.forge.addon.ui.util;
 
 import org.jboss.forge.addon.ui.metadata.UICategory;
-import org.jboss.forge.addon.ui.util.Categories;
 import org.junit.Assert;
 import org.junit.Test;
 

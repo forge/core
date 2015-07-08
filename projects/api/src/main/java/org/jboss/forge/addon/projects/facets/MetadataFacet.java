@@ -10,9 +10,9 @@ package org.jboss.forge.addon.projects.facets;
 import java.util.Map;
 
 import org.jboss.forge.addon.dependencies.Dependency;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
-import org.jboss.forge.addon.projects.Project;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

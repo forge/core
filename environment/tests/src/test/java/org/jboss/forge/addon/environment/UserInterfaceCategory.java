@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.environment;
 
-import org.jboss.forge.addon.environment.Category;
-
 public interface UserInterfaceCategory extends Category
 {
 

@@ -2,7 +2,6 @@ package org.jboss.forge.addon.manager.impl.utils;
 
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
-import org.jboss.forge.furnace.versions.EmptyVersion;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.furnace.versions.Versions;

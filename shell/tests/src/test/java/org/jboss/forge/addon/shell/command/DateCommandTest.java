@@ -1,6 +1,9 @@
 package org.jboss.forge.addon.shell.command;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
