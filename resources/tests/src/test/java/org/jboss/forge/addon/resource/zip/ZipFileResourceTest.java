@@ -148,9 +148,9 @@ public class ZipFileResourceTest
 
       List<Resource<?>> children = resource.listResources();
       Assert.assertEquals(3, children.size());
-      Assert.assertEquals(tmpDir.getName() + '/', children.get(0).getName());
-      Assert.assertEquals(tmpDir.getName() + '/' + child1.getName(), children.get(1).getName());
-      Assert.assertEquals(tmpDir.getName() + '/' + child2.getName(), children.get(2).getName());
+      Assert.assertEquals(tmpDir.getName() + File.separatorChar, children.get(0).getName());
+      Assert.assertEquals(tmpDir.getName() + File.separatorChar + child1.getName(), children.get(1).getName());
+      Assert.assertEquals(tmpDir.getName() + File.separatorChar + child2.getName(), children.get(2).getName());
    }
 
    @Test
@@ -171,8 +171,8 @@ public class ZipFileResourceTest
 
       List<Resource<?>> children = resource.listResources();
       Assert.assertEquals(2, children.size());
-      Assert.assertEquals("my-new-directory/" + child1.getName(), children.get(0).getName());
-      Assert.assertEquals("my-new-directory/" + child2.getName(), children.get(1).getName());
+      Assert.assertEquals("my-new-directory" + File.separatorChar + child1.getName(), children.get(0).getName());
+      Assert.assertEquals("my-new-directory" + File.separatorChar + child2.getName(), children.get(1).getName());
 
    }
 
