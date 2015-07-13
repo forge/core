@@ -73,7 +73,7 @@ public class ZipFileResourceImpl extends AbstractFileResource<ZipFileResource>im
       {
          throw new ResourceException("Error while fetching file header", e);
       }
-      return (fileHeader == null) ? null : new ZipFileResourceEntry(getResourceFactory(), this, fileHeader);
+      return (fileHeader == null) ? null : new ZipFileResourceEntryImpl(getResourceFactory(), this, fileHeader);
    }
 
    @Override
@@ -86,7 +86,7 @@ public class ZipFileResourceImpl extends AbstractFileResource<ZipFileResource>im
          List<FileHeader> fileHeaders = zipFile.getFileHeaders();
          for (FileHeader fileHeader : fileHeaders)
          {
-            entries.add(new ZipFileResourceEntry(getResourceFactory(), this, fileHeader));
+            entries.add(new ZipFileResourceEntryImpl(getResourceFactory(), this, fileHeader));
          }
       }
       catch (ZipException e)
