@@ -10,6 +10,7 @@ package org.jboss.forge.addon.resource.zip;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -173,7 +174,99 @@ public class ZipFileResourceTest
       Assert.assertEquals(2, children.size());
       Assert.assertEquals("my-new-directory" + File.separatorChar + child1.getName(), children.get(0).getName());
       Assert.assertEquals("my-new-directory" + File.separatorChar + child2.getName(), children.get(1).getName());
+   }
 
+   @Test
+   public void testExtractZipFileResourceEntry() throws Exception
+   {
+      File tmpDir = OperatingSystemUtils.createTempDir();
+      tmpDir.deleteOnExit();
+      File child1 = new File(tmpDir, "child1.txt");
+      child1.deleteOnExit();
+      Files.write(child1.toPath(), "Child 1".getBytes());
+      File child2 = new File(tmpDir, "child2.txt");
+      child2.deleteOnExit();
+      Files.write(child2.toPath(), "Child 2".getBytes());
+
+      DirectoryResource directoryResource = resourceFactory.create(DirectoryResource.class, tmpDir);
+      DirectoryResource newDirectoryResource = resourceFactory.create(DirectoryResource.class,
+               OperatingSystemUtils.createTempDir());
+      ZipFileResource resource = createTempZipFileResource();
+      resource.add("my-new-directory", directoryResource);
+
+      List<Resource<?>> children = resource.listResources();
+      Assert.assertEquals(2, children.size());
+
+      ZipFileResourceEntry entry = (ZipFileResourceEntry) children.get(1);
+      entry.extractTo(newDirectoryResource);
+
+      List<Resource<?>> newChildren = newDirectoryResource.listResources();
+      Assert.assertEquals(1, newChildren.size());
+      Assert.assertThat(newChildren.get(0), is(instanceOf(DirectoryResource.class)));
+      Assert.assertEquals("my-new-directory", newChildren.get(0).getName());
+   }
+
+   @Test
+   public void testExtractZipFileResourceEntryCustomName() throws Exception
+   {
+      File tmpDir = OperatingSystemUtils.createTempDir();
+      tmpDir.deleteOnExit();
+      File child1 = new File(tmpDir, "child1.txt");
+      child1.deleteOnExit();
+      Files.write(child1.toPath(), "Child 1".getBytes());
+      File child2 = new File(tmpDir, "child2.txt");
+      child2.deleteOnExit();
+      Files.write(child2.toPath(), "Child 2".getBytes());
+
+      DirectoryResource directoryResource = resourceFactory.create(DirectoryResource.class, tmpDir);
+      DirectoryResource newDirectoryResource = resourceFactory.create(DirectoryResource.class,
+               OperatingSystemUtils.createTempDir());
+      ZipFileResource resource = createTempZipFileResource();
+      resource.add("my-new-directory", directoryResource);
+
+      List<Resource<?>> children = resource.listResources();
+      Assert.assertEquals(2, children.size());
+
+      ZipFileResourceEntry entry = (ZipFileResourceEntry) children.get(1);
+      entry.extractTo(newDirectoryResource, "new-file.txt");
+
+      List<Resource<?>> newChildren = newDirectoryResource.listResources();
+      Assert.assertEquals(1, newChildren.size());
+      Assert.assertThat(newChildren.get(0), is(instanceOf(FileResource.class)));
+      Assert.assertThat(newChildren.get(0), is(not(instanceOf(DirectoryResource.class))));
+      Assert.assertEquals("new-file.txt", newChildren.get(0).getName());
+   }
+
+   @Test
+   public void testExtractZipFileResourceEntryCustomDirectoryName() throws Exception
+   {
+      File tmpDir = OperatingSystemUtils.createTempDir();
+      tmpDir.deleteOnExit();
+      File child = new File(tmpDir, "child");
+      child.mkdir();
+      child.deleteOnExit();
+      File child2 = new File(child, "grandchild.txt");
+      child2.deleteOnExit();
+      Files.write(child2.toPath(), "Child 2".getBytes());
+
+      DirectoryResource directoryResource = resourceFactory.create(DirectoryResource.class, tmpDir);
+
+      DirectoryResource newDirectoryResource = resourceFactory.create(DirectoryResource.class,
+               OperatingSystemUtils.createTempDir());
+      ZipFileResource resource = createTempZipFileResource();
+      resource.add("my-new-directory", directoryResource);
+
+      List<Resource<?>> children = resource.listResources();
+      Assert.assertEquals(1, children.size());
+
+      ZipFileResourceEntry entry = (ZipFileResourceEntry) children.get(0);
+      entry.extractTo(newDirectoryResource, "new-file.txt");
+
+      List<Resource<?>> newChildren = newDirectoryResource.listResources();
+      Assert.assertEquals(1, newChildren.size());
+      Assert.assertThat(newChildren.get(0), is(instanceOf(FileResource.class)));
+      Assert.assertThat(newChildren.get(0), is(not(instanceOf(DirectoryResource.class))));
+      Assert.assertEquals("new-file.txt", newChildren.get(0).getName());
    }
 
    private ZipFileResource createTempZipFileResource() throws IOException
