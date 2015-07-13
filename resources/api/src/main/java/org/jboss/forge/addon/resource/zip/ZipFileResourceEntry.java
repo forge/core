@@ -33,4 +33,9 @@ public interface ZipFileResourceEntry extends Resource<String>
     * @param newName the new file name
     */
    void extractTo(DirectoryResource directoryResource, String newName);
+
+   /**
+    * @return <code>true</code> if this {@link ZipFileResourceEntry} is a directory
+    */
+   boolean isDirectory();
 }

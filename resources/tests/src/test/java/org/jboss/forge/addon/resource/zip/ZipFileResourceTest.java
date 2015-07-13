@@ -159,6 +159,7 @@ public class ZipFileResourceTest
 
       List<Resource<?>> children = resource.listResources();
       Assert.assertEquals(3, children.size());
+      Assert.assertTrue(((ZipFileResourceEntry) children.get(0)).isDirectory());
       Assert.assertEquals(tmpDir.getName() + File.separatorChar, children.get(0).getName());
       Assert.assertEquals(tmpDir.getName() + File.separatorChar + child1.getName(), children.get(1).getName());
       Assert.assertEquals(tmpDir.getName() + File.separatorChar + child2.getName(), children.get(2).getName());
@@ -182,6 +183,8 @@ public class ZipFileResourceTest
 
       List<Resource<?>> children = resource.listResources();
       Assert.assertEquals(2, children.size());
+      Assert.assertFalse(((ZipFileResourceEntry) children.get(0)).isDirectory());
+      Assert.assertFalse(((ZipFileResourceEntry) children.get(1)).isDirectory());
       Assert.assertEquals("my-new-directory" + File.separatorChar + child1.getName(), children.get(0).getName());
       Assert.assertEquals("my-new-directory" + File.separatorChar + child2.getName(), children.get(1).getName());
    }
