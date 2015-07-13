@@ -186,7 +186,7 @@ public class ZipFileResourceImpl extends AbstractFileResource<ZipFileResource>im
          {
             for (Resource child : resource.listResources())
             {
-               add(name + '/' + child.getName(), child);
+               add(name + File.separatorChar + child.getName(), child);
             }
          }
          else
