@@ -68,6 +68,16 @@ public class ZipFileResourceTest
    }
 
    @Test
+   public void testJarResource() throws Exception
+   {
+      File file = File.createTempFile("zipresource", ".jar");
+      file.deleteOnExit();
+      Resource<File> resource = resourceFactory.create(ZipFileResource.class, file);
+      Assert.assertNotNull(resource);
+      Assert.assertThat(resource, is(instanceOf(ZipFileResource.class)));
+   }
+
+   @Test
    public void testZipResourceAddFile() throws Exception
    {
       ZipFileResource resource = createTempZipFileResource();
