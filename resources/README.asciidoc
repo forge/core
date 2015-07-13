@@ -249,3 +249,17 @@ Collection [
     ResourceCreated: <FileResource<?>>
 ]
 ----
+
+Built-in support for zip files::
+ The resources API provides a built-in support for zip files through the `ZipFileResource` object:
++
+[source:java]
+----
+   ...
+   ZipFileResource resource = resourceFactory.create(ZipFileResource.class, new File("file.zip"));
+   DirectoryResource outputDir = ...;
+   // Extract the zip contents to the specified directory
+   resource.extractTo(outputDir);
+----
++
+ 
