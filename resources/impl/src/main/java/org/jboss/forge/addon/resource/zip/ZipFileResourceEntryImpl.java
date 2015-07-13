@@ -124,6 +124,12 @@ public class ZipFileResourceEntryImpl extends VirtualResource<String>implements 
       }
    }
 
+   @Override
+   public boolean isDirectory()
+   {
+      return fileHeader.isDirectory();
+   }
+
    private ZipFile getZipFile()
    {
       ZipFileResourceImpl impl = (ZipFileResourceImpl) getParent();
