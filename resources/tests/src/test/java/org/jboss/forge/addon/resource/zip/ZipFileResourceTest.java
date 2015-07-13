@@ -13,7 +13,9 @@ import static org.hamcrest.CoreMatchers.is;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -67,11 +69,7 @@ public class ZipFileResourceTest
    @Test
    public void testZipResourceAddFile() throws Exception
    {
-      ZipFileResource resource = resourceFactory.create(File.createTempFile("zipresource", ".zip"))
-               .reify(ZipFileResource.class);
-      Assert.assertNotNull(resource);
-      resource.delete();
-      resource.deleteOnExit();
+      ZipFileResource resource = createTempZipFileResource();
       FileResource internalResource = resourceFactory.create(FileResource.class, File.createTempFile("tmp", ".txt"));
       internalResource.deleteOnExit();
       internalResource.setContents("Hello World");
@@ -85,11 +83,7 @@ public class ZipFileResourceTest
    @Test
    public void testZipResourceAddResource() throws Exception
    {
-      ZipFileResource resource = resourceFactory.create(File.createTempFile("zipresource", ".zip"))
-               .reify(ZipFileResource.class);
-      Assert.assertNotNull(resource);
-      resource.delete();
-      resource.deleteOnExit();
+      ZipFileResource resource = createTempZipFileResource();
       FileResource internalResource = resourceFactory.create(FileResource.class, File.createTempFile("tmp", ".txt"));
       internalResource.deleteOnExit();
       internalResource.setContents("Hello World");
@@ -103,10 +97,7 @@ public class ZipFileResourceTest
    @Test
    public void testZipResourceExtract() throws Exception
    {
-      ZipFileResource resource = resourceFactory.create(File.createTempFile("zipresource", ".zip"))
-               .reify(ZipFileResource.class);
-      resource.delete();
-      resource.deleteOnExit();
+      ZipFileResource resource = createTempZipFileResource();
       FileResource internalResource = resourceFactory.create(FileResource.class, File.createTempFile("tmp", ".txt"));
       internalResource.deleteOnExit();
       internalResource.setContents("Hello World");
@@ -137,6 +128,61 @@ public class ZipFileResourceTest
       Assert.assertEquals(1, children.size());
       Assert.assertEquals("content.txt", children.get(0).getName());
       Assert.assertThat(children.get(0).getContents(), equalTo("Hello World\n"));
+   }
+
+   @Test
+   public void testZipFileResourceAddDirectory() throws Exception
+   {
+      File tmpDir = OperatingSystemUtils.createTempDir();
+      tmpDir.deleteOnExit();
+      File child1 = new File(tmpDir, "child1.txt");
+      child1.deleteOnExit();
+      Files.write(child1.toPath(), "Child 1".getBytes());
+      File child2 = new File(tmpDir, "child2.txt");
+      child2.deleteOnExit();
+      Files.write(child2.toPath(), "Child 2".getBytes());
+
+      DirectoryResource directoryResource = resourceFactory.create(DirectoryResource.class, tmpDir);
+      ZipFileResource resource = createTempZipFileResource();
+      resource.add(directoryResource);
+
+      List<Resource<?>> children = resource.listResources();
+      Assert.assertEquals(3, children.size());
+      Assert.assertEquals(tmpDir.getName() + '/', children.get(0).getName());
+      Assert.assertEquals(tmpDir.getName() + '/' + child1.getName(), children.get(1).getName());
+      Assert.assertEquals(tmpDir.getName() + '/' + child2.getName(), children.get(2).getName());
+   }
+
+   @Test
+   public void testZipFileResourceAddCustomDirectoryName() throws Exception
+   {
+      File tmpDir = OperatingSystemUtils.createTempDir();
+      tmpDir.deleteOnExit();
+      File child1 = new File(tmpDir, "child1.txt");
+      child1.deleteOnExit();
+      Files.write(child1.toPath(), "Child 1".getBytes());
+      File child2 = new File(tmpDir, "child2.txt");
+      child2.deleteOnExit();
+      Files.write(child2.toPath(), "Child 2".getBytes());
+
+      DirectoryResource directoryResource = resourceFactory.create(DirectoryResource.class, tmpDir);
+      ZipFileResource resource = createTempZipFileResource();
+      resource.add("my-new-directory", directoryResource);
+
+      List<Resource<?>> children = resource.listResources();
+      Assert.assertEquals(2, children.size());
+      Assert.assertEquals("my-new-directory/" + child1.getName(), children.get(0).getName());
+      Assert.assertEquals("my-new-directory/" + child2.getName(), children.get(1).getName());
+
+   }
+
+   private ZipFileResource createTempZipFileResource() throws IOException
+   {
+      ZipFileResource resource = resourceFactory.create(File.createTempFile("zipresource", ".zip"))
+               .reify(ZipFileResource.class);
+      resource.delete();
+      resource.deleteOnExit();
+      return resource;
    }
 
 }

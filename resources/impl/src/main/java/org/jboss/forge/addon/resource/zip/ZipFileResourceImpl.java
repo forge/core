@@ -8,6 +8,8 @@
 package org.jboss.forge.addon.resource.zip;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -139,14 +141,30 @@ public class ZipFileResourceImpl extends AbstractFileResource<ZipFileResource>im
    {
       Assert.notNull(resources, "You cannot add null resources to a zip file");
       ArrayList<File> files = new ArrayList<>(resources.length);
+      ArrayList<File> directories = new ArrayList<>(resources.length);
+
       for (FileResource<?> resource : resources)
       {
-         files.add(resource.getUnderlyingResourceObject());
+         if (resource.isDirectory())
+         {
+            directories.add(resource.getUnderlyingResourceObject());
+         }
+         else
+         {
+            files.add(resource.getUnderlyingResourceObject());
+         }
       }
       try
       {
          ZipParameters parameters = new ZipParameters();
-         getZipFile().addFiles(files, parameters);
+         for (File directory : directories)
+         {
+            getZipFile().addFolder(directory, parameters);
+         }
+         if (files.size() > 0)
+         {
+            getZipFile().addFiles(files, parameters);
+         }
       }
       catch (ZipException e)
       {
@@ -164,10 +182,23 @@ public class ZipFileResourceImpl extends AbstractFileResource<ZipFileResource>im
       {
          ZipParameters parameters = new ZipParameters();
          parameters.setFileNameInZip(name);
-         parameters.setSourceExternalStream(true);
-         getZipFile().addStream(resource.getResourceInputStream(), parameters);
+         if (resource instanceof DirectoryResource)
+         {
+            for (Resource child : resource.listResources())
+            {
+               add(name + '/' + child.getName(), child);
+            }
+         }
+         else
+         {
+            parameters.setSourceExternalStream(true);
+            try (InputStream stream = resource.getResourceInputStream())
+            {
+               getZipFile().addStream(stream, parameters);
+            }
+         }
       }
-      catch (ZipException e)
+      catch (IOException | ZipException e)
       {
          throw new ResourceException("Error while adding files to zip file", e);
       }
