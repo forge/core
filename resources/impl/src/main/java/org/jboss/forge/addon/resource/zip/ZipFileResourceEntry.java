@@ -88,6 +88,12 @@ public class ZipFileResourceEntry extends VirtualResource<ZipFileResource>
       return Collections.emptyList();
    }
 
+   @Override
+   public String toString()
+   {
+      return getName();
+   }
+
    private ZipFile getZipFile()
    {
       ZipFileResourceImpl impl = (ZipFileResourceImpl) getParent();
