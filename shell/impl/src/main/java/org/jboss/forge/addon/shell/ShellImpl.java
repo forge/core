@@ -77,6 +77,8 @@ public class ShellImpl implements Shell, UIRuntime
    private final AeshConsole console;
    private final UIOutput output;
    private UIDesktop desktop;
+   private boolean embedded;
+   private String name = "Shell";
    private final List<CommandExecutionListener> executionListeners = new LinkedList<>();
    private final List<CommandNotFoundListener> commandNotFoundListeners = new LinkedList<>();
 
@@ -91,8 +93,7 @@ public class ShellImpl implements Shell, UIRuntime
       File history = new File(forgeHome, "history");
       File alias = new File(forgeHome, "alias");
       File export = new File(forgeHome, "export");
-      final ForgeCommandRegistry registry =
-               new ForgeCommandRegistry(furnace, this, addonRegistry);
+      final ForgeCommandRegistry registry = new ForgeCommandRegistry(furnace, this, addonRegistry);
       // Register DidYouMeanListener
       commandNotFoundListeners.add(new DidYouMeanCommandNotFoundListener(registry));
       SettingsBuilder newSettings = new SettingsBuilder(settings)
@@ -345,6 +346,28 @@ public class ShellImpl implements Shell, UIRuntime
    @Override
    public String getName()
    {
-      return "Shell";
+      return name;
+   }
+
+   @Override
+   public boolean isEmbedded()
+   {
+      return embedded;
+   }
+
+   /**
+    * @param name the name to set
+    */
+   public void setName(String name)
+   {
+      this.name = name;
+   }
+
+   /**
+    * @param embedded the embedded to set
+    */
+   public void setEmbedded(boolean embedded)
+   {
+      this.embedded = embedded;
    }
 }

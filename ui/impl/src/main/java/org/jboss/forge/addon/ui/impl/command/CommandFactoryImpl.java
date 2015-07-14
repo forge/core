@@ -274,6 +274,12 @@ public class CommandFactoryImpl implements CommandFactory
       {
          return delegate.getDesktop();
       }
+
+      @Override
+      public boolean isEmbedded()
+      {
+         return delegate.isEmbedded();
+      }
    }
 
 }

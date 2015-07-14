@@ -25,10 +25,22 @@ public class ShellHandleSettings
    private PrintStream stdOut;
    private PrintStream stdErr;
    private Terminal terminal;
+   private String name;
    private UIDesktop desktop;
 
    public ShellHandleSettings()
    {
+   }
+
+   public String name()
+   {
+      return name;
+   }
+
+   public ShellHandleSettings name(String name)
+   {
+      this.name = name;
+      return this;
    }
 
    public File currentResource()
