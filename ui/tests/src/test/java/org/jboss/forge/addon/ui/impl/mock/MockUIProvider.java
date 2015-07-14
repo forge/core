@@ -55,4 +55,10 @@ public class MockUIProvider implements UIProvider
    {
       return new DefaultUIDesktop();
    }
+
+   @Override
+   public boolean isEmbedded()
+   {
+      return false;
+   }
 }

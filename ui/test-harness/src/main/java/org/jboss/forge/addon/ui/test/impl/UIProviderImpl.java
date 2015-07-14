@@ -56,4 +56,10 @@ public class UIProviderImpl implements UIProvider
       return new DefaultUIDesktop();
    }
 
+   @Override
+   public boolean isEmbedded()
+   {
+      return false;
+   }
+
 }

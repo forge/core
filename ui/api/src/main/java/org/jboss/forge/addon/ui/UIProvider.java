@@ -13,22 +13,28 @@ import org.jboss.forge.addon.ui.output.UIOutput;
 public interface UIProvider
 {
    /**
-    * Returns a human-friendly name of this {@link UIProvider}
+    * @return a human-friendly name of this {@link UIProvider}
     */
    String getName();
 
    /**
-    * Returns true if this {@link UIProvider} is running a Graphical User Interface.
+    * @return <code>true</code> if this {@link UIProvider} is running a Graphical User Interface.
     */
    boolean isGUI();
 
    /**
-    * Returns the output object used to display messages during a UI interaction
+    * @return <code>true</code> if this {@link UIProvider} is being executed in an embedded environment (eg: as a Shell
+    *         in IDE or as part of an application)
+    */
+   boolean isEmbedded();
+
+   /**
+    * @return the {@link UIOutput} used to display messages during a UI interaction
     */
    UIOutput getOutput();
 
    /**
-    * Returns the desktop associated with this UI.
+    * @return the {@link UIDesktop} associated with this {@link UIProvider}.
     */
    UIDesktop getDesktop();
 }
