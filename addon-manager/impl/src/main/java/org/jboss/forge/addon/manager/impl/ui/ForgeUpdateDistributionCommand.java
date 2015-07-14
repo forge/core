@@ -26,6 +26,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.zip.ZipFileResource;
 import org.jboss.forge.addon.ui.annotation.Command;
+import org.jboss.forge.addon.ui.annotation.predicate.NonEmbeddedPredicate;
 import org.jboss.forge.addon.ui.annotation.predicate.NonGUIEnabledPredicate;
 import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.output.UIOutput;
@@ -54,7 +55,8 @@ public class ForgeUpdateDistributionCommand
 
    @Command(value = "Forge: Update Abort", help = "Aborts a previous forge update", categories = { "Forge",
             "Manage" }, enabled = {
-                     NonGUIEnabledPredicate.class, DistributionDirectoryExistsPredicate.class })
+                     NonGUIEnabledPredicate.class, NonEmbeddedPredicate.class,
+                     DistributionDirectoryExistsPredicate.class })
    public Result updateAbort() throws IOException
    {
       DirectoryResource forgeHome = getForgeHome();
@@ -78,7 +80,7 @@ public class ForgeUpdateDistributionCommand
    }
 
    @Command(value = "Forge: Update", help = "Update this forge installation", categories = { "Forge",
-            "Manage" }, enabled = NonGUIEnabledPredicate.class)
+            "Manage" }, enabled = { NonGUIEnabledPredicate.class, NonEmbeddedPredicate.class })
    public void update(UIOutput output, UIPrompt prompt, UIProgressMonitor monitor) throws IOException
    {
       PrintStream out = output.out();
