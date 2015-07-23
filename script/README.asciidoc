@@ -38,11 +38,10 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 ----
 
 == Features
-javax.script compatible:: 
- Invoke script using the javax.script API:
- 
- [source,java]
- ----
+JSR-223 (javax.script) compatible:: 
+Invoke script using the javax.script API:
+[source,java]
+----
  	// Using ScriptEngineManager
 	ScriptEngineManager manager = new ScriptEngineManager(getClass().getClassLoader());
     ScriptEngine engine = manager.getEngineByExtension("fsh");
@@ -56,5 +55,13 @@ javax.script compatible::
 	// Ready to execute 	
 	ScriptContext scriptContext = ScriptContextBuilder.create().currentResource(currentResource).stdout(output.out()).stderr(output.err()).build();
  	Result result = (Result) engine.eval("touch foo.txt", scriptContext);
- 	
- ----
+----
+Support ScriptFileResource::
+You can use `ResourceFactory` to get a handle on a `ScriptFileResource` and evaluate it, be it a Forge script or any JSR-223 compatible implementation. 
+[source,java]
+----
+      // it could be a JavaScript file or any other JSR-223 compatible engine.
+      ScriptFileResource scriptResource = resourceFactory.create(ScriptFileResource.class, new File("forge.fsh"));
+      ScriptContext context = ScriptContextBuilder.create().currentResource(tmpDir).build();
+      scriptResource.eval(context);
+----
