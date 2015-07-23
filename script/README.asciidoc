@@ -12,7 +12,7 @@ This addon provides *standalone* functionality. Development tools for Java Progr
 |no
 |no
 
-|ui
+|resources
 |no
 |no
 
