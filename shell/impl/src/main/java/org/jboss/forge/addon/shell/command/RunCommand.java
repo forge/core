@@ -71,8 +71,7 @@ public class RunCommand extends AbstractShellCommand
    ResourceFactory resourceFactory;
 
    @Inject
-   @WithAttributes(label = "Timeout (seconds)", defaultValue = "500", required = false,
-            description = "Set the timeout after which this script should abort if execution has not completed.")
+   @WithAttributes(label = "Timeout (seconds)", defaultValue = "500", required = false, description = "Set the timeout after which this script should abort if execution has not completed.")
    private UIInput<Integer> timeout;
 
    @Inject
@@ -170,7 +169,7 @@ public class RunCommand extends AbstractShellCommand
 
                   PrintStream stdout = new UncloseablePrintStream(output.out());
                   PrintStream stderr = new UncloseablePrintStream(output.err());
-                  
+
                   Shell currentShell = (Shell) uiContext.getProvider();
                   final TerminalSize terminalSize = currentShell.getConsole().getShell().getSize();
                   ForgeTerminal terminal = new ForgeTerminal(
@@ -285,7 +284,7 @@ public class RunCommand extends AbstractShellCommand
       return result.toString();
    }
 
-   public Result execute(Shell shell, BufferedWriter stdin, String line, int quantity, TimeUnit unit, long startTime)
+   private Result execute(Shell shell, BufferedWriter stdin, String line, int quantity, TimeUnit unit, long startTime)
             throws TimeoutException
    {
       Assert.notNull(line, "Line to execute cannot be null.");
@@ -340,7 +339,7 @@ public class RunCommand extends AbstractShellCommand
       return result;
    }
 
-   public class ScriptCommandListener extends AbstractCommandExecutionListener implements CommandNotFoundListener
+   private class ScriptCommandListener extends AbstractCommandExecutionListener implements CommandNotFoundListener
    {
       Result result;
 
@@ -389,14 +388,6 @@ public class RunCommand extends AbstractShellCommand
          synchronized (this)
          {
             return result;
-         }
-      }
-
-      public void reset()
-      {
-         synchronized (this)
-         {
-            result = null;
          }
       }
    }
