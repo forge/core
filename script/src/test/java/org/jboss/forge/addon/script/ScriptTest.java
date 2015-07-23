@@ -59,6 +59,7 @@ public class ScriptTest
       Resource<File> tmpDir = resourceFactory.create(OperatingSystemUtils.createTempDir());
       ScriptContext context = ScriptContextBuilder.create().currentResource(tmpDir).build();
       ScriptEngine scriptEngine = factory.getScriptEngine();
+      Assert.assertThat(tmpDir.getChild("newfile.txt").exists(), is(false));
       scriptEngine.eval("touch newfile.txt", context);
       Assert.assertThat(tmpDir.getChild("newfile.txt").exists(), is(true));
    }
