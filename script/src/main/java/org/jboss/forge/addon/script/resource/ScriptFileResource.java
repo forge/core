@@ -13,7 +13,7 @@ import javax.script.ScriptException;
 import org.jboss.forge.addon.resource.FileResource;
 
 /**
- * Handles a JBoss Forge script and provides operations related to it
+ * Handles a script file and provides operations related to it
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
