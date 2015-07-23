@@ -44,7 +44,7 @@ Invoke script using the javax.script API:
 ----
  	// Using ScriptEngineManager
 	ScriptEngineManager manager = new ScriptEngineManager(getClass().getClassLoader());
-    ScriptEngine engine = manager.getEngineByExtension("fsh");
+  	ScriptEngine engine = manager.getEngineByExtension("fsh");
  	
  	// or fetching from the AddonRegistry
  	@Inject
