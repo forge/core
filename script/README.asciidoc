@@ -1,0 +1,60 @@
+== script
+:idprefix: id_ 
+
+This addon provides *standalone* functionality. Development tools for Java Programming Language.
+        
+=== Depends on
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|shell
+|no
+|no
+
+|ui
+|no
+|no
+
+|org.jboss.forge.furnace.container:simple
+|no
+|no
+|===
+
+== Setup
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml 
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>script</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----
+
+== Features
+javax.script compatible:: 
+ Invoke script using the javax.script API:
+ 
+ [source,java]
+ ----
+ 	// Using ScriptEngineManager
+	ScriptEngineManager manager = new ScriptEngineManager(getClass().getClassLoader());
+    ScriptEngine engine = manager.getEngineByExtension("fsh");
+ 	
+ 	// or fetching from the AddonRegistry
+ 	@Inject
+ 	ForgeScriptEngineFactory factory;
+ 	//and
+ 	ScriptEngine engine = factory.getScriptEngine();
+
+	// Ready to execute 	
+	ScriptContext scriptContext = ScriptContextBuilder.create().currentResource(currentResource).stdout(output.out()).stderr(output.err()).build();
+ 	Result result = (Result) engine.eval("touch foo.txt", scriptContext);
+ 	
+ ----
