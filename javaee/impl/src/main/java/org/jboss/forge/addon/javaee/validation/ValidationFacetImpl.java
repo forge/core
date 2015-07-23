@@ -75,7 +75,7 @@ public class ValidationFacetImpl extends AbstractJavaEEFacet implements Validati
    @Override
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
-      return Collections.singletonMap(JAVAX_VALIDATION_API, Arrays.asList(JAVAX_VALIDATION_API));
+      return Collections.singletonMap(JAVAX_VALIDATION_API, Arrays.asList(JAVAX_VALIDATION_API, JAVAEE7));
    }
 
    /*

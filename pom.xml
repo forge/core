@@ -93,6 +93,7 @@
             <module>rest-client</module>
             <module>ui</module>
             <module>scaffold</module>
+            <module>script</module>            
             <module>shell</module>
             <module>templates</module>
             <module>text</module>
@@ -121,6 +122,7 @@
             <module>convert/api</module>
             <module>configuration/api</module>
             <module>dependencies/api</module>
+            <module>dev-tools-java</module>
             <module>environment/api</module>
             <module>facets/api</module>
             <module>git/api</module>
@@ -136,6 +138,7 @@
             <module>ui/spi</module>
             <module>ui/test-harness</module>
             <module>scaffold/api</module>
+            <module>script</module>
             <module>shell/api</module>
             <module>templates/api</module>
             <module>text</module>

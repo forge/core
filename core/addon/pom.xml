@@ -39,6 +39,11 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>database-tools</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>dependencies</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
@@ -55,6 +60,11 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>facets</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>git</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
@@ -89,17 +99,17 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>scaffold</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>scaffold-faces</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>script</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
@@ -114,12 +124,7 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>database-tools</artifactId>
-         <classifier>forge-addon</classifier>
-      </dependency>
-      <dependency>
-         <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>git</artifactId>
+         <artifactId>ui</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
    </dependencies>
