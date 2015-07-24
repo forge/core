@@ -7,8 +7,10 @@
 
 package org.jboss.forge.addon.script.resource;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -24,6 +26,7 @@ import org.jboss.forge.addon.script.ScriptContextBuilder;
 import org.jboss.forge.addon.script.impl.ForgeScriptEngineFactory;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -75,16 +78,16 @@ public class ScriptFileResourceTest
    @Test
    public void testScriptFileResourceJavascript() throws Exception
    {
+      Assume.assumeThat(System.getProperty("java.version"), startsWith("1.8"));
       File file = File.createTempFile("script", ".js");
-      Files.write(file.toPath(), "var a = 1;".getBytes());
+      Files.write(file.toPath(), "1+1".getBytes());
       file.deleteOnExit();
 
       Resource<File> resource = resourceFactory.create(file);
       Assert.assertThat(resource, instanceOf(ScriptFileResource.class));
       ScriptFileResource scriptResource = (ScriptFileResource) resource;
-      ScriptContext context = ScriptContextBuilder.create().build();
-      scriptResource.eval(context);
-      Assert.assertEquals(1.0D, context.getAttribute("a"));
+      Object result = scriptResource.eval();
+      Assert.assertThat(result, instanceOf(Integer.class));
+      Assert.assertThat((Integer) result, equalTo(2));
    }
-
 }
