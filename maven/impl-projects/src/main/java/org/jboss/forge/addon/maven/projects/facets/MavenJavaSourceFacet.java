@@ -28,6 +28,8 @@ import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.ResourceFilter;
 import org.jboss.forge.addon.resource.visit.ResourceVisit;
 import org.jboss.forge.furnace.util.Strings;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaPackageInfoSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
@@ -35,7 +37,7 @@ import org.jboss.forge.roaster.model.source.JavaSource;
  */
 @Dependent
 @FacetConstraint(MavenFacet.class)
-public class MavenJavaSourceFacet extends AbstractFacet<Project> implements JavaSourceFacet
+public class MavenJavaSourceFacet extends AbstractFacet<Project>implements JavaSourceFacet
 {
    @Override
    public List<DirectoryResource> getSourceDirectories()
@@ -241,6 +243,52 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project> implements Java
             return type instanceof JavaResource;
          }
       });
+   }
+
+   @Override
+   public DirectoryResource savePackage(String packageName, boolean createPackageInfo)
+   {
+      DirectoryResource child = getPackage(packageName);
+      if (!child.exists())
+      {
+         child.mkdirs();
+      }
+      if (createPackageInfo)
+      {
+         JavaPackageInfoSource packageInfo = Roaster.create(JavaPackageInfoSource.class).setPackage(packageName);
+         JavaResource resource = child.getChild("package-info.java").reify(JavaResource.class);
+         resource.setContents(packageInfo);
+      }
+      return child;
+   }
+
+   @Override
+   public DirectoryResource saveTestPackage(String packageName, boolean createPackageInfo)
+   {
+      DirectoryResource child = getTestPackage(packageName);
+      if (!child.exists())
+      {
+         child.mkdirs();
+      }
+      if (createPackageInfo)
+      {
+         JavaPackageInfoSource packageInfo = Roaster.create(JavaPackageInfoSource.class).setPackage(packageName);
+         JavaResource resource = child.getChild("package-info.java").reify(JavaResource.class);
+         resource.setContents(packageInfo);
+      }
+      return child;
+   }
+
+   @Override
+   public DirectoryResource getPackage(String packageName)
+   {
+      return getSourceDirectory().getChildDirectory(packageName.replace('.', File.separatorChar));
+   }
+
+   @Override
+   public DirectoryResource getTestPackage(String packageName)
+   {
+      return getTestSourceDirectory().getChildDirectory(packageName.replace('.', File.separatorChar));
    }
 
 }
