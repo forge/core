@@ -129,4 +129,42 @@ public interface JavaSourceFacet extends ProjectFacet
     */
    void visitJavaTestSources(JavaResourceVisitor visitor);
 
+   /**
+    * Create a package in the specified path under the {@link DirectoryResource} returned in
+    * {@link #getSourceDirectory()}
+    * 
+    * @param packageName the package name to be created
+    * @param createPackageInfo create a package-info.java file under this package?
+    * @return a {@link DirectoryResource} with the path for the new package
+    */
+   DirectoryResource savePackage(String packageName, boolean createPackageInfo);
+
+   /**
+    * Create a package in the specified path under the {@link DirectoryResource} returned in
+    * {@link #getTestSourceDirectory()}
+    * 
+    * @param packageName the package name to be created
+    * @param createPackageInfo create a package-info.java file under this package?
+    * @return a {@link DirectoryResource} with the path for the new package
+    */
+   DirectoryResource saveTestPackage(String packageName, boolean createPackageInfo);
+
+   /**
+    * Return the package in the specified path under the {@link DirectoryResource} returned in
+    * {@link #getSourceDirectory()}
+    * 
+    * @param packageName the package name to be created
+    * @return a {@link DirectoryResource} with the package path
+    */
+   DirectoryResource getPackage(String packageName);
+
+   /**
+    * Returns the package in the specified path under the {@link DirectoryResource} returned in
+    * {@link #getTestSourceDirectory()}
+    * 
+    * @param packageName the package name to be created
+    * @return a {@link DirectoryResource} with the package path
+    */
+   DirectoryResource getTestPackage(String packageName);
+
 }

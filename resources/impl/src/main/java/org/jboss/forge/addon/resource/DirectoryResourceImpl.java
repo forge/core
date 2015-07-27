@@ -22,7 +22,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResource> implements DirectoryResource
+public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResource>implements DirectoryResource
 {
    private volatile List<Resource<?>> listCache;
 
@@ -99,7 +99,7 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
       DirectoryResourceImpl child = getChildDirectory(name);
       if (!child.exists())
       {
-         child.mkdir();
+         child.mkdirs();
       }
       return child;
    }
