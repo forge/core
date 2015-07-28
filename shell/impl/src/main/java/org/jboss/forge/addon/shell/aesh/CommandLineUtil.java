@@ -17,16 +17,21 @@ import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.activation.OptionActivator;
-import org.jboss.aesh.cl.builder.OptionBuilder;
+import org.jboss.aesh.cl.builder.CommandBuilder;
 import org.jboss.aesh.cl.completer.OptionCompleter;
-import org.jboss.aesh.cl.exception.OptionParserException;
 import org.jboss.aesh.cl.internal.ProcessedCommand;
+import org.jboss.aesh.cl.internal.ProcessedCommandBuilder;
 import org.jboss.aesh.cl.internal.ProcessedOption;
+import org.jboss.aesh.cl.internal.ProcessedOptionBuilder;
 import org.jboss.aesh.cl.parser.CommandLineParser;
+import org.jboss.aesh.cl.parser.CommandLineParserException;
+import org.jboss.aesh.cl.parser.OptionParserException;
 import org.jboss.aesh.console.command.completer.CompleterInvocation;
+import org.jboss.aesh.console.command.container.CommandContainer;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.util.ResourcePathResolver;
+import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.aesh.completion.OptionCompleterFactory;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.shell.util.ShellUtil;
@@ -64,19 +69,42 @@ class CommandLineUtil
    public CommandLineParser generateParser(CommandController command, ShellContext shellContext,
             Map<String, InputComponent<?, ?>> inputs)
    {
-      ProcessedCommand processedCommand = generateCommand(command, shellContext, inputs);
-      return new ForgeCommandLineParser(processedCommand, this, inputs, shellContext);
+      CommandContainer processedCommand = generateCommand(command, shellContext, inputs);
+      return processedCommand.getParser();
+      //return new ForgeCommandLineParser(processedCommand, this, inputs, shellContext);
    }
 
-   private ProcessedCommand generateCommand(final CommandController command, final ShellContext shellContext,
-            final Map<String, InputComponent<?, ?>> inputs)
+   public CommandContainer generateContainer(CommandController command, ShellContext shellContext, ShellImpl shell,
+                                             AbstractShellInteraction shellInteraction) throws Exception {
+      shellInteraction.getController().initialize();
+      return generateCommand(command, shellContext, shellInteraction.getController().getInputs(), shellInteraction, shell);
+   }
+
+   private CommandContainer generateCommand(final CommandController command, final ShellContext shellContext,
+                                            final Map<String, InputComponent<?, ?>> inputs)
+   {
+      return generateCommand(command, shellContext, inputs, null, null);
+   }
+
+   private CommandContainer generateCommand(final CommandController command, final ShellContext shellContext,
+            final Map<String, InputComponent<?, ?>> inputs, AbstractShellInteraction shellInteraction, ShellImpl shell)
    {
       UICommandMetadata metadata = (command instanceof WizardCommandController) ? ((WizardCommandController) command)
                .getInitialMetadata() : command.getMetadata();
       String cmdName = ShellUtil.shellifyCommandName(metadata.getName());
       String cmdDescription = metadata.getDescription();
-      final ProcessedCommand parameter = new ProcessedCommand(cmdName, cmdDescription, null, new ForgeResultHandler(
-               shellContext, cmdName));
+
+      final CommandBuilder builder = new CommandBuilder()
+              .name(cmdName)
+              .description(cmdDescription)
+              .resultHandler(new ForgeResultHandler(shellContext, cmdName))
+              .populator(new ForgeCommandPopulator(this, inputs, shellContext));
+
+
+      if(shellInteraction != null && shell != null) {
+         CommandAdapter commandAdapter = new CommandAdapter(shell, shellContext, shellInteraction);
+         builder.command(commandAdapter);
+      }
 
       for (Entry<String, InputComponent<?, ?>> entry : inputs.entrySet())
       {
@@ -88,7 +116,7 @@ class CommandLineUtil
                   .isAssignableFrom(input.getValueType()) && !boolean.class.isAssignableFrom(input.getValueType()));
          try
          {
-            OptionBuilder optionBuilder = new OptionBuilder();
+            ProcessedOptionBuilder optionBuilder = new ProcessedOptionBuilder();
 
             optionBuilder.name(ShellUtil.shellifyOptionName(inputName))
                      .addDefaultValue(defaultValue == null ? null : defaultValue.toString())
@@ -120,11 +148,11 @@ class CommandLineUtil
             ProcessedOption option = optionBuilder.create();
             if (ARGUMENTS_INPUT_NAME.equals(input.getName()))
             {
-               parameter.setArgument(option);
+               builder.argument(option);
             }
             else
             {
-               parameter.addOption(option);
+               builder.addOption(option);
             }
          }
          catch (OptionParserException e)
@@ -132,7 +160,7 @@ class CommandLineUtil
             logger.log(Level.SEVERE, "Error while parsing command option", e);
          }
       }
-      return parameter;
+         return builder.create();
    }
 
    public Map<String, InputComponent<?, ?>> populateUIInputs(CommandLine commandLine,

@@ -7,18 +7,28 @@
 
 package org.jboss.forge.addon.shell.aesh;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.jboss.aesh.cl.builder.CommandBuilder;
 import org.jboss.aesh.cl.parser.CommandLineParser;
+import org.jboss.aesh.console.command.Command;
 import org.jboss.aesh.console.command.CommandNotFoundException;
+import org.jboss.aesh.console.command.container.AeshCommandContainer;
+import org.jboss.aesh.console.command.container.AeshCommandContainerBuilder;
 import org.jboss.aesh.console.command.container.CommandContainer;
+import org.jboss.aesh.console.command.container.CommandContainerBuilder;
 import org.jboss.aesh.console.command.registry.AeshCommandRegistryBuilder;
 import org.jboss.aesh.console.command.registry.CommandRegistry;
 import org.jboss.aesh.console.man.Man;
 import org.jboss.aesh.extensions.grep.Grep;
 import org.jboss.aesh.extensions.less.aesh.Less;
 import org.jboss.aesh.extensions.more.aesh.More;
+import org.jboss.aesh.parser.Parser;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.AeshUICommand;
@@ -87,6 +97,8 @@ public class ForgeCommandRegistry implements CommandRegistry
       catch (CommandNotFoundException cnfe)
       {
          // Not a forge command, fallback to aesh command
+         return aeshCommandRegistry.getCommand(name, completeLine);
+         /*
          CommandContainer nativeCommand = aeshCommandRegistry.getCommand(name, completeLine);
          AeshUICommand aeshCommand = new AeshUICommand(nativeCommand);
          SingleCommandController controller = commandControllerFactory.createSingleController(shellContext, shell,
@@ -94,15 +106,27 @@ public class ForgeCommandRegistry implements CommandRegistry
          try
          {
             controller.initialize();
+            ShellSingleCommand cmd = new ShellSingleCommand(controller, shellContext, getCommandLineUtil());
+            return getCommandLineUtil().generateContainer(cmd.getController(), shellContext, shell, cmd);
          }
          catch (Exception e)
          {
             // Do nothing
+            throw new CommandNotFoundException(e.getMessage());
          }
-         ShellSingleCommand cmd = new ShellSingleCommand(controller, shellContext, getCommandLineUtil());
-         CommandAdapter commandAdapter = new CommandAdapter(shell, shellContext, cmd);
-         return new ForgeCommandContainer(shellContext, aeshCommand.getCommandLineParser(), commandAdapter);
+         */
       }
+   }
+
+   @Override
+   public List<String> findAllCommandNames(String line) {
+      List<String> names = new ArrayList<>();
+      names.addAll(aeshCommandRegistry.findAllCommandNames(line));
+      for(String command : getAllCommandNames()) {
+         if(command.startsWith(line) && !names.contains(command))
+            names.add(command);
+      }
+      return names;
    }
 
    private CommandContainer getForgeCommand(ShellContextImpl shellContext, String name, String completeLine)
@@ -115,9 +139,12 @@ public class ForgeCommandRegistry implements CommandRegistry
       }
       try
       {
-         CommandLineParser parser = cmd.getParser(shellContext, completeLine == null ? name : completeLine);
-         CommandAdapter command = new CommandAdapter(shell, shellContext, cmd);
-         return new ForgeCommandContainer(shellContext, parser, command);
+         if(cmd instanceof ShellWizard) {
+            CommandLineParser parser = cmd.getParser(shellContext, shell, completeLine == null ? name : completeLine);
+            return new AeshCommandContainer(parser);
+         }
+         else
+            return getCommandLineUtil().generateContainer(cmd.getController(), shellContext, shell, cmd);
       }
       catch (RuntimeException e)
       {
@@ -169,8 +196,20 @@ public class ForgeCommandRegistry implements CommandRegistry
       return allCommands;
    }
 
+   @Override
+   public void removeCommand(String name) {
+      try {
+         if (aeshCommandRegistry.getCommand(name, null) != null)
+            aeshCommandRegistry.removeCommand(name);
+      }
+      catch (CommandNotFoundException e) {
+         throw new RuntimeException("Error while removing command: " + e.getMessage(), e);
+      }
+   }
+
    public void waitUntilStarted()
    {
+      /*
       while (furnace.getStatus().isStarting())
       {
          try
@@ -181,6 +220,13 @@ public class ForgeCommandRegistry implements CommandRegistry
          {
             throw new ContainerException("Interrputed while waiting for STARTED state.", e);
          }
+      }
+      */
+      try {
+         Thread.sleep(200);
+      }
+      catch(InterruptedException e) {
+         e.printStackTrace();
       }
    }
 

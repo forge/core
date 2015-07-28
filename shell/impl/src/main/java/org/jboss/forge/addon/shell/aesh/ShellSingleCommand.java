@@ -38,7 +38,7 @@ public class ShellSingleCommand extends AbstractShellInteraction
    }
 
    @Override
-   public CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception
+   public CommandLineParser getParser(ShellContext shellContext, ShellImpl shell, String completeLine) throws Exception
    {
       if (this.commandLineParser == null)
       {

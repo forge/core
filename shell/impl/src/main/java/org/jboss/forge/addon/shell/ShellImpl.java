@@ -318,7 +318,7 @@ public class ShellImpl implements Shell, UIRuntime
                CommandContainer exitCommand = registry.getCommand("exit", "");
                // print a new line so we exit nicely
                console.getShell().out().println();
-               exitCommand.getCommand().execute(
+               exitCommand.getParser().getCommand().execute(
                         new AeshCommandInvocation((AeshConsoleImpl) ShellImpl.this.console, ControlOperator.NONE, 1,
                                  null));
             }
