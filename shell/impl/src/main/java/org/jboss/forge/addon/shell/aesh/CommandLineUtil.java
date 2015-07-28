@@ -17,12 +17,14 @@ import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.CommandLine;
 import org.jboss.aesh.cl.activation.OptionActivator;
-import org.jboss.aesh.cl.builder.OptionBuilder;
 import org.jboss.aesh.cl.completer.OptionCompleter;
-import org.jboss.aesh.cl.exception.OptionParserException;
 import org.jboss.aesh.cl.internal.ProcessedCommand;
+import org.jboss.aesh.cl.internal.ProcessedCommandBuilder;
 import org.jboss.aesh.cl.internal.ProcessedOption;
+import org.jboss.aesh.cl.internal.ProcessedOptionBuilder;
 import org.jboss.aesh.cl.parser.CommandLineParser;
+import org.jboss.aesh.cl.parser.CommandLineParserException;
+import org.jboss.aesh.cl.parser.OptionParserException;
 import org.jboss.aesh.console.command.completer.CompleterInvocation;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.Resource;
@@ -61,23 +63,25 @@ class CommandLineUtil
       this.converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
    }
 
-   public CommandLineParser generateParser(CommandController command, ShellContext shellContext,
+   public CommandLineParser generateParser(CommandAdapter command, CommandController commandController, ShellContext shellContext,
             Map<String, InputComponent<?, ?>> inputs)
    {
-      ProcessedCommand processedCommand = generateCommand(command, shellContext, inputs);
+      ProcessedCommand processedCommand = generateCommand(command, commandController, shellContext, inputs);
       return new ForgeCommandLineParser(processedCommand, this, inputs, shellContext);
    }
 
-   private ProcessedCommand generateCommand(final CommandController command, final ShellContext shellContext,
+   private ProcessedCommand generateCommand(final CommandAdapter commandAdapter, final CommandController commandController, final ShellContext shellContext,
             final Map<String, InputComponent<?, ?>> inputs)
    {
-      UICommandMetadata metadata = (command instanceof WizardCommandController) ? ((WizardCommandController) command)
-               .getInitialMetadata() : command.getMetadata();
+      UICommandMetadata metadata = (commandController instanceof WizardCommandController) ? ((WizardCommandController) commandController)
+               .getInitialMetadata() : commandController.getMetadata();
       String cmdName = ShellUtil.shellifyCommandName(metadata.getName());
       String cmdDescription = metadata.getDescription();
-      final ProcessedCommand parameter = new ProcessedCommand(cmdName, cmdDescription, null, new ForgeResultHandler(
-               shellContext, cmdName));
-
+      ProcessedCommandBuilder commandBuilder = new ProcessedCommandBuilder()
+               .command(commandAdapter)
+               .name(cmdName)
+               .description(cmdDescription)
+               .resultHandler(new ForgeResultHandler(shellContext, cmdName));
       for (Entry<String, InputComponent<?, ?>> entry : inputs.entrySet())
       {
          final String inputName = entry.getKey();
@@ -88,7 +92,7 @@ class CommandLineUtil
                   .isAssignableFrom(input.getValueType()) && !boolean.class.isAssignableFrom(input.getValueType()));
          try
          {
-            OptionBuilder optionBuilder = new OptionBuilder();
+            ProcessedOptionBuilder optionBuilder = new ProcessedOptionBuilder();
 
             optionBuilder.name(ShellUtil.shellifyOptionName(inputName))
                      .addDefaultValue(defaultValue == null ? null : defaultValue.toString())
@@ -120,11 +124,11 @@ class CommandLineUtil
             ProcessedOption option = optionBuilder.create();
             if (ARGUMENTS_INPUT_NAME.equals(input.getName()))
             {
-               parameter.setArgument(option);
+               commandBuilder.argument(option);
             }
             else
             {
-               parameter.addOption(option);
+               commandBuilder.addOption(option);
             }
          }
          catch (OptionParserException e)
@@ -132,7 +136,14 @@ class CommandLineUtil
             logger.log(Level.SEVERE, "Error while parsing command option", e);
          }
       }
-      return parameter;
+      try
+      {
+         return commandBuilder.create();
+      }
+      catch (CommandLineParserException e)
+      {
+         throw new RuntimeException("Error while parsing command: " + e.getMessage(), e);
+      }
    }
 
    public Map<String, InputComponent<?, ?>> populateUIInputs(CommandLine commandLine,

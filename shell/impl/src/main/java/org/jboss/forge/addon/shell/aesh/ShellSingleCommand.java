@@ -38,12 +38,12 @@ public class ShellSingleCommand extends AbstractShellInteraction
    }
 
    @Override
-   public CommandLineParser getParser(ShellContext shellContext, String completeLine) throws Exception
+   public CommandLineParser getParser(ShellContext shellContext, String completeLine, CommandAdapter command) throws Exception
    {
       if (this.commandLineParser == null)
       {
          controller.initialize();
-         this.commandLineParser = commandLineUtil.generateParser(this.controller, shellContext, controller.getInputs());
+         this.commandLineParser = commandLineUtil.generateParser(command, this.controller, shellContext, controller.getInputs());
       }
       return this.commandLineParser;
    }
