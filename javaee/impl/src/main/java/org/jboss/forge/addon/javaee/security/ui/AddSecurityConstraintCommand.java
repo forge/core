@@ -1,5 +1,11 @@
 package org.jboss.forge.addon.javaee.security.ui;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.Callable;
+
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.security.TransportGuarantee;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
@@ -17,12 +23,6 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.Callable;
 
 /**
  * Adds a security constraint to a web resource collection.
@@ -72,7 +72,8 @@ public class AddSecurityConstraintCommand extends AbstractJavaEECommand
       final List<String> roles = servletFacet.getSecurityRoles();
       httpMethods.setCompleter(new UICompleter<String>()
       {
-         @Override public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input,
+         @Override
+         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input,
                   String value)
          {
             return Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS");
@@ -80,7 +81,8 @@ public class AddSecurityConstraintCommand extends AbstractJavaEECommand
       });
       securityRoles.setCompleter(new UICompleter<String>()
       {
-         @Override public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input,
+         @Override
+         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input,
                   String value)
          {
             return roles;
@@ -89,7 +91,8 @@ public class AddSecurityConstraintCommand extends AbstractJavaEECommand
       enableUserDataConstraint.setDefaultValue(false);
       transportGuarantee.setEnabled(new Callable<Boolean>()
       {
-         @Override public Boolean call() throws Exception
+         @Override
+         public Boolean call() throws Exception
          {
             return enableUserDataConstraint.getValue();
          }
@@ -101,7 +104,7 @@ public class AddSecurityConstraintCommand extends AbstractJavaEECommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      ServletFacet servletFacet = getSelectedProject(context).getFacet(ServletFacet.class);
+      ServletFacet<?> servletFacet = getSelectedProject(context).getFacet(ServletFacet.class);
 
       if (securityRoles.getValue().iterator().hasNext())
       {

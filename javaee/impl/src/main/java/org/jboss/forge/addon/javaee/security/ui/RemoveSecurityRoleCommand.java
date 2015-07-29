@@ -1,5 +1,7 @@
 package org.jboss.forge.addon.javaee.security.ui;
 
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
@@ -13,8 +15,6 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-
-import javax.inject.Inject;
 
 /**
  * Removes a security role from the current project.
@@ -65,7 +65,7 @@ public class RemoveSecurityRoleCommand extends AbstractJavaEECommand
                .category(Categories.create(super.getMetadata(context).getCategory().getName(), "Security"));
    }
 
-   private ServletFacet getServletFacet(UIContext uiContext)
+   private ServletFacet<?> getServletFacet(UIContext uiContext)
    {
       return getSelectedProject(uiContext).getFacet(ServletFacet.class);
    }
