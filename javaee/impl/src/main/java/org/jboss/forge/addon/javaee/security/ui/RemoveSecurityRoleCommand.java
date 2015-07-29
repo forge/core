@@ -54,7 +54,7 @@ public class RemoveSecurityRoleCommand extends AbstractJavaEECommand
    @Override
    public boolean isEnabled(UIContext context)
    {
-      return getServletFacet(context).getSecurityRoles().size() > 0;
+      return super.isEnabled(context) && getServletFacet(context).getSecurityRoles().size() > 0;
    }
 
    @Override
