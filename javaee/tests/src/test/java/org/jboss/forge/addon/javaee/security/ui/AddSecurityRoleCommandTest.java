@@ -1,5 +1,10 @@
 package org.jboss.forge.addon.javaee.security.ui;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
+import java.util.List;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_2_5;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
@@ -9,11 +14,6 @@ import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 
 @RunWith(Arquillian.class)
 public class AddSecurityRoleCommandTest extends AbstractSecurityCommandTest
@@ -27,7 +27,8 @@ public class AddSecurityRoleCommandTest extends AbstractSecurityCommandTest
       addSecurityRole("manager");
 
       org.jboss.shrinkwrap.descriptor.api.webapp25.WebAppDescriptor webXml = servletFacet.getConfig();
-      List<org.jboss.shrinkwrap.descriptor.api.javaee5.SecurityRoleType<org.jboss.shrinkwrap.descriptor.api.webapp25.WebAppDescriptor>> securityRoles = webXml.getAllSecurityRole();
+      List<org.jboss.shrinkwrap.descriptor.api.javaee5.SecurityRoleType<org.jboss.shrinkwrap.descriptor.api.webapp25.WebAppDescriptor>> securityRoles = webXml
+               .getAllSecurityRole();
       assertEquals(2, securityRoles.size());
       assertEquals("developer", securityRoles.get(0).getRoleName());
       assertEquals("manager", securityRoles.get(1).getRoleName());
@@ -40,7 +41,8 @@ public class AddSecurityRoleCommandTest extends AbstractSecurityCommandTest
       addSecurityRole("developer");
 
       org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor webXml = servletFacet.getConfig();
-      List<org.jboss.shrinkwrap.descriptor.api.javaee6.SecurityRoleType<org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor>> securityRoles = webXml.getAllSecurityRole();
+      List<org.jboss.shrinkwrap.descriptor.api.javaee6.SecurityRoleType<org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor>> securityRoles = webXml
+               .getAllSecurityRole();
       assertEquals(1, securityRoles.size());
       assertEquals("developer", securityRoles.get(0).getRoleName());
    }
@@ -52,7 +54,8 @@ public class AddSecurityRoleCommandTest extends AbstractSecurityCommandTest
       addSecurityRole("developer");
 
       org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor webXml = servletFacet.getConfig();
-      List<org.jboss.shrinkwrap.descriptor.api.javaee7.SecurityRoleType<org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor>> securityRoles = webXml.getAllSecurityRole();
+      List<org.jboss.shrinkwrap.descriptor.api.javaee7.SecurityRoleType<org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor>> securityRoles = webXml
+               .getAllSecurityRole();
       assertEquals(1, securityRoles.size());
       assertEquals("developer", securityRoles.get(0).getRoleName());
    }
@@ -63,7 +66,7 @@ public class AddSecurityRoleCommandTest extends AbstractSecurityCommandTest
                .createCommandController(AddSecurityRoleCommand.class, project.getRoot()))
       {
          commandController.initialize();
-         commandController.setValueFor("roleName", roleName);
+         commandController.setValueFor("named", roleName);
          Result result = commandController.execute();
          assertFalse(result instanceof Failed);
       }
