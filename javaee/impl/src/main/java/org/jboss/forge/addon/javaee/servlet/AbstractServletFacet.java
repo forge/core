@@ -7,13 +7,8 @@
 
 package org.jboss.forge.addon.javaee.servlet;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
+import org.jboss.forge.addon.javaee.security.TransportGuarantee;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
@@ -21,7 +16,17 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFilter;
+import org.jboss.shrinkwrap.descriptor.api.javaee.SecurityRoleCommonType;
 import org.jboss.shrinkwrap.descriptor.api.webapp.WebAppCommonDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.webcommon.AuthConstraintCommonType;
+import org.jboss.shrinkwrap.descriptor.api.webcommon.SecurityConstraintCommonType;
+import org.jboss.shrinkwrap.descriptor.api.webcommon.UserDataConstraintCommonType;
+import org.jboss.shrinkwrap.descriptor.api.webcommon.WebResourceCollectionCommonType;
+
+import javax.inject.Inject;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
@@ -74,16 +79,6 @@ public abstract class AbstractServletFacet<DESCRIPTOR extends WebAppCommonDescri
       return (FileResource<?>) webRoot.getChild("WEB-INF" + File.separator + "web.xml");
    }
 
-   /**
-    * List all servlet resource files.
-    */
-   @Override
-   public List<Resource<?>> getResources()
-   {
-      DirectoryResource webRoot = getFaceted().getFacet(WebResourcesFacet.class).getWebRootDirectory();
-      return listChildrenRecursively(webRoot);
-   }
-
    private List<Resource<?>> listChildrenRecursively(final DirectoryResource webRoot)
    {
       return listChildrenRecursively(webRoot, new ResourceFilter()
@@ -109,6 +104,16 @@ public abstract class AbstractServletFacet<DESCRIPTOR extends WebAppCommonDescri
       return getFaceted().getFacet(WebResourcesFacet.class).getWebRootDirectory().getChildDirectory("WEB-INF");
    }
 
+   /**
+    * List all servlet resource files.
+    */
+   @Override
+   public List<Resource<?>> getResources()
+   {
+      DirectoryResource webRoot = getFaceted().getFacet(WebResourcesFacet.class).getWebRootDirectory();
+      return listChildrenRecursively(webRoot);
+   }
+
    private List<Resource<?>> listChildrenRecursively(final DirectoryResource current, final ResourceFilter filter)
    {
       List<Resource<?>> result = new ArrayList<>();
@@ -126,6 +131,122 @@ public abstract class AbstractServletFacet<DESCRIPTOR extends WebAppCommonDescri
          }
       }
       return result;
+   }
+
+   @Override
+   public void addLoginConfig(String authMethod, String realmName)
+   {
+      DESCRIPTOR webXml = getConfig();
+      webXml.getOrCreateLoginConfig().authMethod(authMethod).realmName(realmName);
+      saveConfig(webXml);
+   }
+
+   @Override
+   public void addSecurityRole(String roleName)
+   {
+      DESCRIPTOR webXml = getConfig();
+      webXml.createSecurityRole().roleName(roleName);
+      saveConfig(webXml);
+   }
+
+   @Override
+   public List<String> getSecurityRoles()
+   {
+      List<SecurityRoleCommonType<?, ?>> securityRoles = getConfig().getAllSecurityRole();
+      List<String> roleNames = new ArrayList<>(securityRoles.size());
+      for (SecurityRoleCommonType<?, ?> securityRole : securityRoles)
+      {
+         roleNames.add(securityRole.getRoleName());
+      }
+      return roleNames;
+   }
+
+   @Override
+   public boolean removeSecurityRole(String roleName)
+   {
+      boolean roleRemoved = false;
+      DESCRIPTOR webXml = getConfig();
+
+      List<SecurityRoleCommonType> initialRoles = new ArrayList<>(webXml.getAllSecurityRole());
+      webXml.removeAllSecurityRole();
+
+      for (SecurityRoleCommonType role : initialRoles)
+      {
+         if (!role.getRoleName().equals(roleName))
+         {
+            webXml.createSecurityRole().roleName(role.getRoleName());
+         } else {
+            roleRemoved = true;
+         }
+      }
+
+      saveConfig(webXml);
+      return roleRemoved;
+   }
+
+   @Override
+   public void addSecurityConstraint(String displayName, String webResourceName, String webResourceDescription,
+            Iterable<String> httpMethods, Iterable<String> urlPatterns, Iterable<String> securityRoles,
+            TransportGuarantee transportGuarantee)
+   {
+      DESCRIPTOR webXml = getConfig();
+
+      SecurityConstraintCommonType securityConstraint = webXml.createSecurityConstraint();
+      List<String> httpMethodsList = convertIterableToList(httpMethods);
+      List<String> urlPatternsList = convertIterableToList(urlPatterns);
+      if (displayName != null)
+      {
+         securityConstraint.displayName(displayName);
+      }
+
+      WebResourceCollectionCommonType resourceCollection = securityConstraint.createWebResourceCollection();
+      resourceCollection.webResourceName(webResourceName);
+
+      if (webResourceDescription != null)
+      {
+         resourceCollection.description(webResourceDescription);
+      }
+
+      if (!httpMethodsList.isEmpty())
+      {
+         resourceCollection.httpMethod(httpMethodsList.toArray(new String[httpMethodsList.size()]));
+      }
+
+      if (!urlPatternsList.isEmpty())
+      {
+         resourceCollection.urlPattern(urlPatternsList.toArray(new String[urlPatternsList.size()]));
+      }
+
+      List<String> securityRolesList = convertIterableToList(convertIterableToList(securityRoles));
+      if (securityRolesList != null)
+      {
+         AuthConstraintCommonType authConstraint = securityConstraint.getOrCreateAuthConstraint();
+         authConstraint.roleName(securityRolesList.toArray(new String[securityRolesList.size()]));
+      }
+
+      if (transportGuarantee != null)
+      {
+         UserDataConstraintCommonType userDataConstraint = securityConstraint.getOrCreateUserDataConstraint();
+         userDataConstraint.transportGuarantee(transportGuarantee.name());
+      }
+
+      saveConfig(webXml);
+   }
+
+   private static List<String> convertIterableToList(Iterable<String> httpMethods)
+   {
+      if (httpMethods instanceof List)
+      {
+         return (List<String>) httpMethods;
+      }
+
+      List<String> methodsList = new ArrayList<>();
+      for (String httpMethod : httpMethods)
+      {
+         methodsList.add(httpMethod);
+      }
+
+      return methodsList;
    }
 
 }
