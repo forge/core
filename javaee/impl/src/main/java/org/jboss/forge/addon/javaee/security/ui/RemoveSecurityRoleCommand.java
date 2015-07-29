@@ -26,7 +26,7 @@ public class RemoveSecurityRoleCommand extends AbstractJavaEECommand
 {
    @Inject
    @WithAttributes(label = "Role to remove", required = true, requiredMessage = "You should enter the role to be removed")
-   private UISelectOne<String> roleName;
+   private UISelectOne<String> named;
 
    @Override
    protected boolean isProjectRequired()
@@ -37,14 +37,14 @@ public class RemoveSecurityRoleCommand extends AbstractJavaEECommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      roleName.setValueChoices(getServletFacet(builder.getUIContext()).getSecurityRoles());
-      builder.add(roleName);
+      named.setValueChoices(getServletFacet(builder.getUIContext()).getSecurityRoles());
+      builder.add(named);
    }
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      String roleToBeRemoved = roleName.getValue();
+      String roleToBeRemoved = named.getValue();
       if (getServletFacet(context.getUIContext()).removeSecurityRole(roleToBeRemoved))
          return Results.success("Role " + roleToBeRemoved + " was removed successfully");
       else

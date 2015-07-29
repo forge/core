@@ -1,5 +1,11 @@
 package org.jboss.forge.addon.javaee.security.ui;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_2_5;
@@ -11,14 +17,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.shrinkwrap.descriptor.api.javaee.SecurityRoleCommonType;
 import org.jboss.shrinkwrap.descriptor.api.webapp.WebAppCommonDescriptor;
 import org.junit.Test;
-import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.RunWith;
-
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class RemoveSecurityRoleCommandTest extends AbstractSecurityCommandTest
@@ -77,7 +76,7 @@ public class RemoveSecurityRoleCommandTest extends AbstractSecurityCommandTest
                .createCommandController(RemoveSecurityRoleCommand.class, project.getRoot()))
       {
          commandController.initialize();
-         commandController.setValueFor("roleName", roleName);
+         commandController.setValueFor("named", roleName);
          Result result = commandController.execute();
          if (isResultSuccess)
             assertFalse(result instanceof Failed);
@@ -93,7 +92,8 @@ public class RemoveSecurityRoleCommandTest extends AbstractSecurityCommandTest
       assertEquals("developer", securityRoles.get(0).getRoleName());
    }
 
-   private List getSecurityRoles(ServletFacet<?> servletFacet)
+   @SuppressWarnings("unchecked")
+   private List<SecurityRoleCommonType> getSecurityRoles(ServletFacet<?> servletFacet)
    {
       WebAppCommonDescriptor webXml = servletFacet.getConfig();
       return webXml.getAllSecurityRole();

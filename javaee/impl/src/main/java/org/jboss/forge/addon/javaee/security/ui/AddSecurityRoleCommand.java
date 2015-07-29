@@ -30,7 +30,7 @@ public class AddSecurityRoleCommand extends AbstractJavaEECommand
 
    @Inject
    @WithAttributes(label = "Role name", required = true, requiredMessage = "You should enter the role name")
-   private UIInput<String> roleName;
+   private UIInput<String> named;
 
    @Override
    protected boolean isProjectRequired()
@@ -41,14 +41,14 @@ public class AddSecurityRoleCommand extends AbstractJavaEECommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(roleName);
+      builder.add(named);
    }
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
       ServletFacet servletFacet = getSelectedProject(context).getFacet(ServletFacet.class);
-      String roleName = this.roleName.getValue();
+      String roleName = this.named.getValue();
       servletFacet.addSecurityRole(roleName);
       return Results.success("Security role " + roleName + " was created");
    }
