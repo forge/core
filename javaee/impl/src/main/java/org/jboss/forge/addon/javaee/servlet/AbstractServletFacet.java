@@ -143,12 +143,26 @@ public abstract class AbstractServletFacet<DESCRIPTOR extends WebAppCommonDescri
       saveConfig(webXml);
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public void addSecurityRole(String roleName)
    {
       DESCRIPTOR webXml = getConfig();
-      webXml.createSecurityRole().roleName(roleName);
-      saveConfig(webXml);
+      boolean exists = false;
+      List<SecurityRoleCommonType<?, ?>> allSecurityRole = webXml.getAllSecurityRole();
+      for (SecurityRoleCommonType<?, ?> securityRoleCommonType : allSecurityRole)
+      {
+         if (roleName.equals(securityRoleCommonType.getRoleName()))
+         {
+            exists = true;
+            break;
+         }
+      }
+      if (!exists)
+      {
+         webXml.createSecurityRole().roleName(roleName);
+         saveConfig(webXml);
+      }
    }
 
    @SuppressWarnings("unchecked")
