@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.javaee.websocket;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ import org.jboss.forge.furnace.versions.Version;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class WebSocketFacetImpl extends AbstractJavaEEFacet implements WebSocketFacet
+public class WebSocketFacetImpl_1_0 extends AbstractJavaEEFacet implements WebSocketFacet_1_0
 {
 
    private static final Dependency JAVAX_WEBSOCKETS_API = DependencyBuilder.create(
@@ -33,7 +34,7 @@ public class WebSocketFacetImpl extends AbstractJavaEEFacet implements WebSocket
             .setScopeType("provided");
 
    @Inject
-   public WebSocketFacetImpl(DependencyInstaller installer)
+   public WebSocketFacetImpl_1_0(DependencyInstaller installer)
    {
       super(installer);
    }
@@ -56,6 +57,12 @@ public class WebSocketFacetImpl extends AbstractJavaEEFacet implements WebSocket
       Map<Dependency, List<Dependency>> result = new HashMap<Dependency, List<Dependency>>();
       result.put(JAVAX_WEBSOCKETS_API, Arrays.asList(JAVAX_WEBSOCKETS_API, JAVAEE7));
       return result;
+   }
+
+   @Override
+   protected Iterable<Dependency> getRequiredManagedDependenciesFor(Dependency dependency)
+   {
+      return Collections.emptyList();
    }
 
 }
