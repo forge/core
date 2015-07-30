@@ -58,11 +58,12 @@ public class WebSocketSetupWizardImpl extends AbstractJavaEECommand implements W
    @Override
    public Result execute(final UIExecutionContext context) throws Exception
    {
-      if (facetFactory.install(getSelectedProject(context), webSocketVersion.getValue()))
+      WebSocketFacet facet = webSocketVersion.getValue();
+      if (facetFactory.install(getSelectedProject(context), facet))
       {
-         return Results.success("WebSocket API has been installed.");
+         return Results.success(String.format("WebSocket API %s has been installed.", facet.getSpecVersion()));
       }
-      return Results.fail("Could not install WebSocket API.");
+      return Results.fail(String.format("Could not install WebSocket API %s", facet.getSpecVersion()));
    }
 
    @Override
