@@ -7,17 +7,16 @@
 
 package org.jboss.forge.addon.javaee.cdi.ui;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_CDI_PACKAGE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
+import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
+import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.context.NormalScope;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
@@ -43,7 +42,6 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -120,8 +118,8 @@ public class CDINewBeanCommandTest
       shellTest.getShell().setCurrentResource(project.getRoot());
       Result result = shellTest.execute("cdi-new-bean --named Dummy", 10, TimeUnit.SECONDS);
 
-      Assert.assertThat(result, not(instanceOf(Failed.class)));
-      Assert.assertTrue(project.hasFacet(CDIFacet.class));
+      assertThat(result, not(instanceOf(Failed.class)));
+      assertTrue(project.hasFacet(CDIFacet.class));
    }
 
    @Test
@@ -137,16 +135,72 @@ public class CDINewBeanCommandTest
          assertTrue(controller.isValid());
          assertTrue(controller.canExecute());
          Result result = controller.execute();
-         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+         assertThat(result, is(not(instanceOf(Failed.class))));
       }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyServiceBean");
-      Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      assertNotNull(javaResource);
+      assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
       assertTrue(javaResource.getJavaType().hasAnnotation(SessionScoped.class));
-      Assert.assertFalse(javaResource.getJavaType().hasAnnotation(Named.class));
-      Assert.assertFalse(javaResource.getJavaType().hasAnnotation(Alternative.class));
+      assertFalse(javaResource.getJavaType().hasAnnotation(Named.class));
+      assertFalse(javaResource.getJavaType().hasAnnotation(Alternative.class));
+      assertTrue(((JavaClass<?>) javaResource.getJavaType()).hasInterface(Serializable.class));
+      assertTrue(((JavaClass<?>) javaResource.getJavaType()).hasField("serialVersionUID"));
+   }
+
+   @Test
+   public void testCreateNewRequestScopedBean() throws Exception
+   {
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewBeanCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyRequestScopedBean");
+         controller.setValueFor("targetPackage", "org.jboss.forge.test");
+         controller.setValueFor("scoped", BeanScope.REQUEST.name());
+         assertTrue(controller.isValid());
+         assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         assertThat(result, is(not(instanceOf(Failed.class))));
+      }
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyRequestScopedBean");
+      assertNotNull(javaResource);
+      assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      assertTrue(javaResource.getJavaType().hasAnnotation(RequestScoped.class));
+      assertFalse(javaResource.getJavaType().hasAnnotation(Named.class));
+      assertFalse(javaResource.getJavaType().hasAnnotation(Alternative.class));
+      assertFalse(((JavaClass<?>) javaResource.getJavaType()).hasInterface(Serializable.class));
+      assertFalse(((JavaClass<?>) javaResource.getJavaType()).hasField("serialVersionUID"));
+   }
+
+   @Test
+   public void testCreateNewConversationScopedBean() throws Exception
+   {
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewBeanCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyConversationScopedBean");
+         controller.setValueFor("targetPackage", "org.jboss.forge.test");
+         controller.setValueFor("scoped", BeanScope.CONVERSATION.name());
+         assertTrue(controller.isValid());
+         assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         assertThat(result, is(not(instanceOf(Failed.class))));
+      }
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyConversationScopedBean");
+      assertNotNull(javaResource);
+      assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      assertTrue(javaResource.getJavaType().hasAnnotation(ConversationScoped.class));
+      assertFalse(javaResource.getJavaType().hasAnnotation(Named.class));
+      assertFalse(javaResource.getJavaType().hasAnnotation(Alternative.class));
+      assertTrue(((JavaClass<?>) javaResource.getJavaType()).hasInterface(Serializable.class));
+      assertTrue(((JavaClass<?>) javaResource.getJavaType()).hasField("serialVersionUID"));
    }
 
    @Test
@@ -164,16 +218,18 @@ public class CDINewBeanCommandTest
          assertTrue(controller.isValid());
          assertTrue(controller.canExecute());
          Result result = controller.execute();
-         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+         assertThat(result, is(not(instanceOf(Failed.class))));
       }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyServiceBean");
-      Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      assertNotNull(javaResource);
+      assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
       assertTrue(javaResource.getJavaType().hasAnnotation(SessionScoped.class));
       assertTrue(javaResource.getJavaType().hasAnnotation(Named.class));
       assertTrue(javaResource.getJavaType().hasAnnotation(Alternative.class));
+      assertTrue(((JavaClass<?>) javaResource.getJavaType()).hasInterface(Serializable.class));
+      assertTrue(((JavaClass<?>) javaResource.getJavaType()).hasField("serialVersionUID"));
    }
 
    @Test
@@ -190,15 +246,17 @@ public class CDINewBeanCommandTest
          assertTrue(controller.isValid());
          assertTrue(controller.canExecute());
          Result result = controller.execute();
-         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+         assertThat(result, is(not(instanceOf(Failed.class))));
       }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyServiceBean");
-      Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
-      Assert.assertFalse(javaResource.getJavaType().hasAnnotation(Named.class));
-      Assert.assertFalse(javaResource.getJavaType().hasAnnotation(Alternative.class));
+      assertNotNull(javaResource);
+      assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      assertFalse(javaResource.getJavaType().hasAnnotation(Named.class));
+      assertFalse(javaResource.getJavaType().hasAnnotation(Alternative.class));
+      assertFalse(((JavaClass<?>) javaResource.getJavaType()).hasInterface(Serializable.class));
+      assertFalse(((JavaClass<?>) javaResource.getJavaType()).hasField("serialVersionUID"));
    }
 
    @Test
@@ -214,16 +272,18 @@ public class CDINewBeanCommandTest
          assertTrue(controller.isValid());
          assertTrue(controller.canExecute());
          Result result = controller.execute();
-         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+         assertThat(result, is(not(instanceOf(Failed.class))));
       }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyServiceBean");
-      Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
-      Assert.assertFalse(javaResource.getJavaType().hasAnnotation(SessionScoped.class));
+      assertNotNull(javaResource);
+      assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      assertFalse(javaResource.getJavaType().hasAnnotation(SessionScoped.class));
       assertTrue(javaResource.getJavaType().hasAnnotation(Named.class));
-      Assert.assertFalse(javaResource.getJavaType().hasAnnotation(Alternative.class));
+      assertFalse(javaResource.getJavaType().hasAnnotation(Alternative.class));
+      assertFalse(((JavaClass<?>) javaResource.getJavaType()).hasInterface(Serializable.class));
+      assertFalse(((JavaClass<?>) javaResource.getJavaType()).hasField("serialVersionUID"));
    }
 
    @Test
@@ -240,19 +300,21 @@ public class CDINewBeanCommandTest
          controller.setValueFor("named", "MyCustomServiceBean");
          controller.setValueFor("targetPackage", "org.jboss.forge.test");
          controller.setValueFor("scoped", BeanScope.CUSTOM.name());
-         Assert.assertFalse(controller.isValid());
+         assertFalse(controller.isValid());
          controller.setValueFor("customScopeAnnotation", ann.getQualifiedName());
          assertTrue(controller.isValid());
          assertTrue(controller.canExecute());
          Result result = controller.execute();
-         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+         assertThat(result, is(not(instanceOf(Failed.class))));
       }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyCustomServiceBean");
-      Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
-      Assert.assertFalse(javaResource.getJavaType().hasAnnotation(Named.class));
-      Assert.assertFalse(javaResource.getJavaType().hasAnnotation(Alternative.class));
+      assertNotNull(javaResource);
+      assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      assertFalse(javaResource.getJavaType().hasAnnotation(Named.class));
+      assertFalse(javaResource.getJavaType().hasAnnotation(Alternative.class));
+      assertFalse(((JavaClass<?>) javaResource.getJavaType()).hasInterface(Serializable.class));
+      assertFalse(((JavaClass<?>) javaResource.getJavaType()).hasField("serialVersionUID"));
    }
 }
