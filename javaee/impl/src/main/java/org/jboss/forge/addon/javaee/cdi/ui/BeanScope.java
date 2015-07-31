@@ -11,22 +11,28 @@ package org.jboss.forge.addon.javaee.cdi.ui;
  */
 public enum BeanScope
 {
-   DEPENDENT(""),
-   APPLICATION("javax.enterprise.context.ApplicationScoped"),
-   SESSION("javax.enterprise.context.SessionScoped"),
-   CONVERSATION("javax.enterprise.context.ConversationScoped"),
-   REQUEST("javax.enterprise.context.RequestScoped"),
-   CUSTOM(null);
+   DEPENDENT("", false),
+   APPLICATION("javax.enterprise.context.ApplicationScoped", true),
+   SESSION("javax.enterprise.context.SessionScoped", true),
+   CONVERSATION("javax.enterprise.context.ConversationScoped", true),
+   REQUEST("javax.enterprise.context.RequestScoped", false),
+   CUSTOM(null, false);
 
    private String annotation;
+   private boolean serializable;
 
-   private BeanScope(String annotation)
+   private BeanScope(String annotation, boolean serializable)
    {
       this.annotation = annotation;
+      this.serializable = serializable;
    }
 
    public String getAnnotation()
    {
       return annotation;
+   }
+
+   public boolean isSerializable() {
+      return serializable;
    }
 }
