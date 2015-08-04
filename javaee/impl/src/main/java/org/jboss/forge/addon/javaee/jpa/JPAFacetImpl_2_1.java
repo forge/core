@@ -28,7 +28,7 @@ import org.jboss.shrinkwrap.descriptor.api.persistence21.PersistenceDescriptor;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class JPAFacetImpl_2_1 extends AbstractJPAFacetImpl<PersistenceDescriptor> implements JPAFacet_2_1
+public class JPAFacetImpl_2_1 extends AbstractJPAFacetImpl<PersistenceDescriptor>implements JPAFacet_2_1
 {
    private final Dependency JAVAX_PERSISTENCE = DependencyBuilder
             .create("org.hibernate.javax.persistence:hibernate-jpa-2.1-api").setScopeType("provided");
@@ -69,7 +69,7 @@ public class JPAFacetImpl_2_1 extends AbstractJPAFacetImpl<PersistenceDescriptor
    {
       PersistenceDescriptor descriptorContents = Descriptors.create(PersistenceDescriptor.class)
                .version("2.1");
-      descriptor.setContents(descriptorContents.exportAsString());
+      saveConfig(descriptorContents);
    }
 
    @Override
