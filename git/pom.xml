@@ -20,7 +20,7 @@
    </modules>
 
    <properties>
-      <version.jgit>3.6.1.201501031845-r</version.jgit>
+      <version.jgit>4.0.1.201506240215-r</version.jgit>
    </properties>
 
    <dependencyManagement>
