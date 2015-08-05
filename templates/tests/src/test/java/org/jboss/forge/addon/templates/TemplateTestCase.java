@@ -10,8 +10,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.Collections;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.resource.FileResource;
@@ -21,9 +19,12 @@ import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.AddonArchive;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -42,20 +43,26 @@ public class TemplateTestCase
                .addClass(JavaBean.class)
                .addAsResource(TemplateTestCase.class.getResource("template.ftl"), packagePath + "/template.ftl")
                .addAsResource(TemplateTestCase.class.getResource("includes.ftl"), packagePath + "/includes.ftl")
+               .addAsServiceProvider("org.jboss.forge.furnace.container.simple.Service",
+                        TemplateTestCase.class.getName())
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:simple"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:templates"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:resources")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.addon:resources"));
 
       return archive;
    }
 
-   @Inject
    private ResourceFactory resourceFactory;
-
-   @Inject
    private TemplateFactory templateFactory;
+
+   @Before
+   public void setUp()
+   {
+      AddonRegistry addonRegistry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
+      this.resourceFactory = addonRegistry.getServices(ResourceFactory.class).get();
+      this.templateFactory = addonRegistry.getServices(TemplateFactory.class).get();
+   }
 
    @Test
    public void testProcessorFactoryInjection() throws Exception
