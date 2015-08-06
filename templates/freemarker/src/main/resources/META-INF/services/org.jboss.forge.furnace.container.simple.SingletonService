@@ -1,3 +1,1 @@
 org.jboss.forge.addon.templates.freemarker.FreemarkerTemplateGenerator
-# This should be moved to templates-impl. Bug in simple container
-org.jboss.forge.addon.templates.TemplateFactoryImpl
