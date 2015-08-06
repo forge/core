@@ -5,7 +5,6 @@ import java.io.OutputStream;
 import org.jboss.forge.addon.text.highlight.Encoder;
 import org.jboss.forge.addon.text.highlight.Scanner;
 import org.jboss.forge.addon.text.highlight.Syntax;
-import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.services.Imported;
 
@@ -13,7 +12,8 @@ public class Highlighter
 {
    private Imported<Scanner> importedScanners;
 
-   public Highlighter() {
+   public Highlighter()
+   {
       Syntax.builtIns();
    }
 
@@ -24,11 +24,14 @@ public class Highlighter
          throw new IllegalArgumentException("contentType must be specified");
       }
       Imported<Scanner> scanners = resolveScanners();
-      for(Scanner scanner : scanners) {
-         if(scanner.getType().getName().equalsIgnoreCase(contentType)) {
+      for (Scanner scanner : scanners)
+      {
+         if (scanner.getType().getName().equalsIgnoreCase(contentType))
+         {
             try
             {
-               execute(scanner, content, out);;
+               execute(scanner, content, out);
+               ;
             }
             finally
             {
@@ -47,11 +50,14 @@ public class Highlighter
          throw new IllegalArgumentException("contentType must be specified");
       }
       Imported<Scanner> scanners = resolveScanners();
-      for(Scanner scanner : scanners) {
-         if(scanner.getType().supports(fileName)) {
+      for (Scanner scanner : scanners)
+      {
+         if (scanner.getType().supports(fileName))
+         {
             try
             {
-               execute(scanner, content, out);;
+               execute(scanner, content, out);
+               ;
             }
             finally
             {
@@ -79,18 +85,17 @@ public class Highlighter
       }
 
       Syntax.Builder.create()
-         .encoderType(Encoder.Type.TERMINAL)
-         .output(out)
-         .scanner(scanner)
-         .execute(content);
+               .encoderType(Encoder.Type.TERMINAL)
+               .output(out)
+               .scanner(scanner)
+               .execute(content);
    }
 
-   private Imported<Scanner> resolveScanners() {
-      if(importedScanners == null)
+   private Imported<Scanner> resolveScanners()
+   {
+      if (importedScanners == null)
       {
-         Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
-         if(furnace != null)
-            this.importedScanners = furnace.getAddonRegistry().getServices(Scanner.class);
+         importedScanners = SimpleContainer.getServices(getClass().getClassLoader(), Scanner.class);
       }
       return importedScanners;
    }

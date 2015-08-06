@@ -18,13 +18,6 @@
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
-
-      <dependency>
-         <groupId>org.jboss.forge.furnace.container</groupId>
-         <artifactId>cdi</artifactId>
-         <classifier>forge-addon</classifier>
-         <scope>test</scope>
-      </dependency>
       <dependency>
          <groupId>org.jboss.forge.furnace.test</groupId>
          <artifactId>furnace-test-harness</artifactId>
