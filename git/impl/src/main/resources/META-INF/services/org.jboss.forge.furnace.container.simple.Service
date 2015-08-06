@@ -1,0 +1,17 @@
+org.jboss.forge.addon.git.GitUtilsImpl
+org.jboss.forge.addon.git.facet.GitAPIFacetImpl
+org.jboss.forge.addon.git.facet.GitFacetImpl
+org.jboss.forge.addon.git.facet.GitIgnoreFacetImpl
+org.jboss.forge.addon.git.gitignore.GitIgnoreConfig
+org.jboss.forge.addon.git.gitignore.resources.GitIgnoreResourceGenerator
+org.jboss.forge.addon.git.ui.GitCheckoutCommandImpl
+org.jboss.forge.addon.git.ui.GitCloneCommandImpl
+org.jboss.forge.addon.git.ui.GitIgnoreAddPatternCommandImpl
+org.jboss.forge.addon.git.ui.GitIgnoreCreateCommandImpl
+org.jboss.forge.addon.git.ui.GitIgnoreEditCommandImpl
+org.jboss.forge.addon.git.ui.GitIgnoreListPatternsCommandImpl
+org.jboss.forge.addon.git.ui.GitIgnoreListTemplatesCommandImpl
+org.jboss.forge.addon.git.ui.GitIgnoreRemovePatternCommandImpl
+org.jboss.forge.addon.git.ui.GitIgnoreSetupCommandImpl
+org.jboss.forge.addon.git.ui.GitIgnoreUpdateRepoCommandImpl
+org.jboss.forge.addon.git.ui.GitSetupCommandImpl

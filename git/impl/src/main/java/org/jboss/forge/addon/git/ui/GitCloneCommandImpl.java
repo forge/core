@@ -7,11 +7,8 @@
 
 package org.jboss.forge.addon.git.ui;
 
-import javax.inject.Inject;
-
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
-import org.jboss.forge.addon.git.GitUtils;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -19,7 +16,6 @@ import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -32,16 +28,8 @@ import org.jboss.forge.addon.ui.util.Metadata;
 public class GitCloneCommandImpl extends AbstractGitCommand implements GitCloneCommand
 {
 
-   @Inject
-   @WithAttributes(label = "URI", description = "Git repository URI", required = true)
    private UIInput<String> uri;
-
-   @Inject
-   @WithAttributes(label = "Target directory", required = true)
    private UIInput<DirectoryResource> targetDirectory;
-
-   @Inject
-   private GitUtils gitUtils;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -53,6 +41,10 @@ public class GitCloneCommandImpl extends AbstractGitCommand implements GitCloneC
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      this.uri = getInputComponentFactory().createInput("uri", String.class).setLabel("URI")
+               .setDescription("Git repository URI").setRequired(true);
+      this.targetDirectory = getInputComponentFactory().createInput("targetDirectory", DirectoryResource.class)
+               .setLabel("Target directory").setRequired(true);
       builder.add(uri).add(targetDirectory);
    }
 
@@ -74,7 +66,7 @@ public class GitCloneCommandImpl extends AbstractGitCommand implements GitCloneC
       }
       finally
       {
-         gitUtils.close(clone);
+         getGitUtils().close(clone);
       }
       context.getUIContext().setSelection(cloneFolder);
       return Results.success();

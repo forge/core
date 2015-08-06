@@ -1,50 +1,31 @@
 package org.jboss.forge.addon.git.ui;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.git.facet.GitFacet;
 import org.jboss.forge.addon.git.facet.GitIgnoreFacet;
 import org.jboss.forge.addon.git.gitignore.GitIgnoreConfig;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 @FacetConstraint({ GitFacet.class })
 public class GitIgnoreSetupCommandImpl extends AbstractGitCommand implements GitIgnoreSetupCommand
 {
-
-   @Inject
-   @WithAttributes(label = "Checkout directory", description = "Where should the gitignore" +
-            " template repository be installed at?")
-   private UIInput<FileResource<?>> templateRepoDir;
-
-   @Inject
-   @WithAttributes(label = "Repository", description = "Do you want to provide a different repository" +
-            " location for gitignore templates?")
+   private UIInput<FileResource> templateRepoDir;
    private UIInput<String> repository;
 
-   @Inject
-   private GitIgnoreConfig config;
-
-   @Inject
-   private ResourceFactory factory;
-
-   @Inject
-   private FacetFactory facetFactory;
-
-   @Inject
-   private GitIgnoreFacet facet;
+   private GitIgnoreConfig gitIgnoreConfig;
+   FacetFactory facetFactory;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -59,15 +40,21 @@ public class GitIgnoreSetupCommandImpl extends AbstractGitCommand implements Git
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      templateRepoDir.setDefaultValue(getDefaultCheckoutDir());
-      repository.setDefaultValue(config.defaultRemoteRepository());
+      templateRepoDir = getInputComponentFactory().createInput("templateRepoDir", FileResource.class)
+               .setLabel("Checkout directory")
+               .setDescription("Where should the gitignore template repository be installed at?")
+               .setDefaultValue(getDefaultCheckoutDir());
+      repository = getInputComponentFactory().createInput("repository", String.class)
+               .setLabel("Repository")
+               .setDescription("Do you want to provide a different repository location for gitignore templates?")
+               .setDefaultValue(getGitIgnoreConfig().defaultRemoteRepository());
 
       builder.add(templateRepoDir).add(repository);
    }
 
    private FileResource<?> getDefaultCheckoutDir()
    {
-      return (FileResource<?>) factory.create(config.defaultLocalRepository());
+      return (FileResource<?>) getResourceFactory().create(getGitIgnoreConfig().defaultLocalRepository());
    }
 
    @Override
@@ -98,14 +85,21 @@ public class GitIgnoreSetupCommandImpl extends AbstractGitCommand implements Git
          checkoutDir.mkdirs();
       }
 
-      config.setLocalRepository(checkoutDir.getFullyQualifiedName());
-      config.setRemoteRepository(repository.getValue());
+      getGitIgnoreConfig().setLocalRepository(checkoutDir.getFullyQualifiedName());
+      getGitIgnoreConfig().setRemoteRepository(repository.getValue());
 
-      if (facetFactory.install(getSelectedProject(context), facet))
+      getFacetFactory().install(getSelectedProject(context), GitIgnoreFacet.class);
+      return Results.success("GITIGNORE has been installed.");
+   }
+
+   private GitIgnoreConfig getGitIgnoreConfig()
+   {
+      if (gitIgnoreConfig == null)
       {
-         return Results.success("GITIGNORE has been installed.");
+         AddonRegistry addonRegistry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
+         gitIgnoreConfig = addonRegistry.getServices(GitIgnoreConfig.class).get();
       }
-      return Results.fail("Could not install GITIGNORE.");
+      return gitIgnoreConfig;
    }
 
 }
