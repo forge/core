@@ -9,8 +9,6 @@ package org.jboss.forge.addon.script.ui;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-
 import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -24,6 +22,8 @@ import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -38,29 +38,27 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class RunCommandTest
 {
+   @SuppressWarnings("deprecation")
    @Deployment
    @AddonDependencies
    public static AddonArchive getDeployment()
    {
-      AddonArchive archive = ShrinkWrap
+      return ShrinkWrap
                .create(AddonArchive.class)
                .addClasses(ThrowExceptionCommand.class)
-               .addBeansXML();
-
-      return archive;
+               .addAsServiceProvider(Service.class, RunCommandTest.class, ThrowExceptionCommand.class);
    }
 
    private static final int COMMAND_TIMEOUT = 5000;
 
-   @Inject
    private ShellTest shellTest;
-
-   @Inject
    private ResourceFactory resourceFactory;
 
    @Before
    public void setUp() throws Exception
    {
+      shellTest = SimpleContainer.getServices(getClass().getClassLoader(), ShellTest.class).get();
+      resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class).get();
       shellTest.clearScreen();
    }
 

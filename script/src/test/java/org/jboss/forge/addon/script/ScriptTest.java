@@ -12,7 +12,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 
 import java.io.File;
 
-import javax.inject.Inject;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -21,8 +20,10 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.script.impl.ForgeScriptEngineFactory;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -33,16 +34,20 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ScriptTest
 {
-   @Inject
-   private ForgeScriptEngineFactory factory;
+   protected ForgeScriptEngineFactory engineFactory;
+   protected ResourceFactory resourceFactory;
 
-   @Inject
-   private ResourceFactory resourceFactory;
+   @Before
+   public void setUp()
+   {
+      engineFactory = SimpleContainer.getServices(getClass().getClassLoader(), ForgeScriptEngineFactory.class).get();
+      resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class).get();
+   }
 
    @Test
    public void testLookupScriptEngineFactoryThroughContainer() throws Exception
    {
-      Assert.assertThat(factory, notNullValue());
+      Assert.assertThat(engineFactory, notNullValue());
    }
 
    @Test
@@ -58,7 +63,7 @@ public class ScriptTest
    {
       Resource<File> tmpDir = resourceFactory.create(OperatingSystemUtils.createTempDir());
       ScriptContext context = ScriptContextBuilder.create().currentResource(tmpDir).build();
-      ScriptEngine scriptEngine = factory.getScriptEngine();
+      ScriptEngine scriptEngine = engineFactory.getScriptEngine();
       Assert.assertThat(tmpDir.getChild("newfile.txt").exists(), is(false));
       scriptEngine.eval("touch newfile.txt", context);
       Assert.assertThat(tmpDir.getChild("newfile.txt").exists(), is(true));
