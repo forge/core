@@ -7,6 +7,10 @@
 
 package org.jboss.forge.addon.ui.impl;
 
+import static org.hamcrest.CoreMatchers.hasItems;
+
+import java.lang.annotation.ElementType;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -168,6 +172,14 @@ public class InputComponentFactoryTest
       Assert.assertNotNull(input);
       input.setDefaultValue((String) null);
       Assert.assertFalse(input.hasDefaultValue());
+   }
+
+   @Test
+   public void testCreateUISelectOneWithValueChoicesByDefault() throws Exception
+   {
+      UISelectOne<ElementType> input = factory.createSelectOne("foo", 'f', ElementType.class);
+      Assert.assertNotNull(input);
+      Assert.assertThat(input.getValueChoices(), hasItems(ElementType.values()));
    }
 
 }
