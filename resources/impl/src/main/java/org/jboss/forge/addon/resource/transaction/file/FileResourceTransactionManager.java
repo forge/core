@@ -13,13 +13,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Produces;
-import javax.inject.Singleton;
-
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.transaction.ResourceTransactionListener;
-import org.jboss.forge.furnace.container.cdi.events.Local;
 import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 
@@ -27,7 +22,6 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@Singleton
 public class FileResourceTransactionManager
 {
    private final Logger logger = Logger.getLogger(getClass().getName());
@@ -36,7 +30,7 @@ public class FileResourceTransactionManager
 
    private final List<ResourceTransactionListener> listeners = new CopyOnWriteArrayList<>();
 
-   public void shutdown(@Observes @Local PreShutdown shutdown)
+   public void shutdown(PreShutdown shutdown)
    {
       if (transaction != null)
          try
@@ -49,7 +43,6 @@ public class FileResourceTransactionManager
          }
    }
 
-   @Produces
    public FileResourceTransactionImpl getCurrentTransaction(ResourceFactory resourceFactory)
    {
       if (transaction == null)

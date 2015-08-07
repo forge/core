@@ -7,46 +7,27 @@
 
 package org.jboss.forge.addon.resource.hints;
 
-import javax.inject.Inject;
-
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.hints.HintsLookup;
 import org.jboss.forge.addon.ui.hints.InputType;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 public class ResourceHintsTest
 {
-   @Deployment
-   @AddonDeployments({ @AddonDeployment(name = "org.jboss.forge.addon:ui-spi"),
-            @AddonDeployment(name = "org.jboss.forge.addon:environment"),
-            @AddonDeployment(name = "org.jboss.forge.addon:resources") })
-   public static AddonArchive getDeployment()
-   {
-      AddonArchive archive = ShrinkWrap
-               .create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:resources"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-spi")
-               );
-
-      return archive;
-   }
-
-   @Inject
    private Environment environment;
+
+   @Before
+   public void setUp() throws Exception
+   {
+      this.environment = SimpleContainer.getServices(getClass().getClassLoader(), Environment.class).get();
+   }
 
    @Test
    public void testNotNull() throws Exception

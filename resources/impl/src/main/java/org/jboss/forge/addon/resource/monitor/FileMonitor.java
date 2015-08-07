@@ -9,35 +9,28 @@ package org.jboss.forge.addon.resource.monitor;
 
 import java.io.IOException;
 
-import javax.enterprise.event.Observes;
-import javax.inject.Singleton;
-
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceFilter;
-import org.jboss.forge.furnace.container.cdi.events.Local;
-import org.jboss.forge.furnace.event.PostStartup;
-import org.jboss.forge.furnace.event.PreShutdown;
 
 /**
  * This {@link FileMonitor} uses commons-io to listen for changes in files
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@Singleton
 public class FileMonitor
 {
    private FileWatcher watcher;
 
-   void init(@Observes @Local PostStartup postStartup) throws Exception
+   void init() throws Exception
    {
       watcher = new FileWatcher();
       watcher.start();
    }
 
-   void destroy(@Observes @Local PreShutdown preShutdown) throws Exception
+   void destroy()
    {
       if (watcher != null)
       {
@@ -51,7 +44,14 @@ public class FileMonitor
    {
       if (watcher == null)
       {
-         throw new IllegalStateException("File Monitor is not started yet");
+         try
+         {
+            init();
+         }
+         catch (Exception e)
+         {
+            throw new IllegalStateException("Error while initializing FileMonitor", e);
+         }
       }
       DirectoryResource dirResource = resource.reify(DirectoryResource.class);
       ResourceFilter filter = resourceFilter;

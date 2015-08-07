@@ -19,8 +19,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -29,10 +27,13 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Streams;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -49,13 +50,19 @@ public class ZipFileResourceTest
    @AddonDependencies
    public static AddonArchive getDeployment() throws Exception
    {
-      AddonArchive addonArchive = ShrinkWrap.create(AddonArchive.class).addBeansXML()
-               .addAsResource(ZipFileResourceTest.class.getResource("encrypted.zip"), "encrypted.zip");
+      AddonArchive addonArchive = ShrinkWrap.create(AddonArchive.class)
+               .addAsResource(ZipFileResourceTest.class.getResource("encrypted.zip"), "encrypted.zip")
+               .addAsServiceProvider(Service.class, ZipFileResourceTest.class);
       return addonArchive;
    }
 
-   @Inject
    private ResourceFactory resourceFactory;
+
+   @Before
+   public void setUp()
+   {
+      this.resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class).get();
+   }
 
    @Test
    public void testZipResource() throws Exception

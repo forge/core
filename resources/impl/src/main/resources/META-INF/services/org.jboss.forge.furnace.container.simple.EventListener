@@ -1,0 +1,2 @@
+org.jboss.forge.addon.resource.hints.InputTypeHintsRegistrant
+org.jboss.forge.addon.resource.transaction.file.FileResourceEventListener
