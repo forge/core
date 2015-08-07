@@ -13,6 +13,7 @@ import java.util.Map;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 
 /**
  * Implementation of the {@link UIBuilder} interface
@@ -21,13 +22,14 @@ import org.jboss.forge.addon.ui.input.InputComponent;
  */
 public class UIBuilderImpl implements UIBuilder
 {
-
    private final UIContext context;
+   private final InputComponentFactory inputComponentFactory;
    private Map<String, InputComponent<?, ?>> inputs = new LinkedHashMap<>();
 
-   public UIBuilderImpl(UIContext context)
+   public UIBuilderImpl(UIContext context, InputComponentFactory inputComponentFactory)
    {
       this.context = context;
+      this.inputComponentFactory = inputComponentFactory;
    }
 
    @Override
@@ -46,5 +48,11 @@ public class UIBuilderImpl implements UIBuilder
    public Map<String, InputComponent<?, ?>> getInputs()
    {
       return inputs;
+   }
+
+   @Override
+   public InputComponentFactory getInputComponentFactory()
+   {
+      return inputComponentFactory;
    }
 }
