@@ -9,13 +9,12 @@ package org.jboss.forge.addon.git.facet;
 
 import static org.jboss.forge.addon.git.constants.GitConstants.GIT_DIRECTORY;
 
-import javax.inject.Inject;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.InitCommand;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.jboss.forge.addon.facets.AbstractFacet;
-import org.jboss.forge.addon.git.GitUtils;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
@@ -24,19 +23,17 @@ import org.jboss.forge.addon.resource.FileResource;
  * @author <a href="mailto:jevgeni.zelenkov@gmail.com">Jevgeni Zelenkov</a>
  * 
  */
-public class GitFacetImpl extends AbstractFacet<Project> implements GitFacet
+public class GitFacetImpl extends AbstractFacet<Project>implements GitFacet
 {
-
-   @Inject
-   private GitUtils gitUtils;
+   static final Logger logger = Logger.getLogger(GitFacetImpl.class.getName());
 
    @Override
    public boolean install()
    {
       Project project = getFaceted();
       // init git repo
-      final DirectoryResource rootDirectory = project.getRootDirectory();
-      FileResource<?> gitDir = rootDirectory.getChildDirectory(GIT_DIRECTORY).reify(FileResource.class);
+      DirectoryResource rootDirectory = project.getRoot().reify(DirectoryResource.class);
+      FileResource<?> gitDir = rootDirectory.getChild(GIT_DIRECTORY).reify(FileResource.class);
       if (!gitDir.exists())
       {
          InitCommand init = Git.init();
@@ -44,10 +41,11 @@ public class GitFacetImpl extends AbstractFacet<Project> implements GitFacet
 
          try
          {
-            gitUtils.close(init.call());
+            init.call().close();
          }
-         catch (GitAPIException e)
+         catch (Exception e)
          {
+            logger.log(Level.SEVERE, "Error while initializing directory", e);
          }
       }
 
@@ -57,7 +55,8 @@ public class GitFacetImpl extends AbstractFacet<Project> implements GitFacet
    @Override
    public boolean isInstalled()
    {
-      return getFaceted().getRootDirectory().getChildDirectory(GIT_DIRECTORY).exists();
+      DirectoryResource root = getFaceted().getRoot().reify(DirectoryResource.class);
+      return root != null && root.getChildDirectory(GIT_DIRECTORY).exists();
    }
 
 }

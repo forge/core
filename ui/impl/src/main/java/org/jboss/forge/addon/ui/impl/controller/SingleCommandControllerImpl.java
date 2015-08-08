@@ -23,6 +23,7 @@ import org.jboss.forge.addon.ui.impl.context.UIBuilderImpl;
 import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIMessage;
@@ -40,12 +41,14 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 class SingleCommandControllerImpl extends AbstractCommandController implements SingleCommandController
 {
    private UIBuilderImpl uiBuilder;
-   private ConverterFactory converterFactory;
+   private final ConverterFactory converterFactory;
+   private final InputComponentFactory inputComponentFactory;
 
    SingleCommandControllerImpl(AddonRegistry addonRegistry, UIRuntime runtime, UICommand command, UIContext context)
    {
       super(addonRegistry, runtime, command, context);
       this.converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
+      this.inputComponentFactory = addonRegistry.getServices(InputComponentFactory.class).get();
    }
 
    @Override
@@ -53,7 +56,7 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
    {
       if (!isInitialized())
       {
-         uiBuilder = new UIBuilderImpl(context);
+         uiBuilder = new UIBuilderImpl(context, inputComponentFactory);
          initialCommand.initializeUI(uiBuilder);
       }
    }
@@ -123,7 +126,6 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
       return getInputs().containsKey(inputName);
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public CommandController setValueFor(String inputName, Object value)
    {
@@ -132,7 +134,7 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
       {
          throw new IllegalArgumentException("Input named '" + inputName + "' does not exist");
       }
-      InputComponents.setValueFor(getConverterFactory(), (InputComponent<?, Object>) input, value);
+      InputComponents.setValueFor(getConverterFactory(), input, value);
       return this;
    }
 

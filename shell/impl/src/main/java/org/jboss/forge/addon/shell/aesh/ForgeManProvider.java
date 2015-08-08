@@ -28,6 +28,7 @@ import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.util.InputComponents;
@@ -49,6 +50,7 @@ public class ForgeManProvider implements ManProvider
    private final ShellImpl shell;
    private final CommandFactory manager;
    private final ConverterFactory converterFactory;
+   private final InputComponentFactory inputComponentFactory;
    private final Comparator<? super InputComponent<?, ?>> SHORTNAME_COMPARATOR = new Comparator<InputComponent<?, ?>>()
    {
       @Override
@@ -67,11 +69,13 @@ public class ForgeManProvider implements ManProvider
       }
    };
 
-   public ForgeManProvider(ShellImpl shell, CommandFactory manager, ConverterFactory converterFactory)
+   public ForgeManProvider(ShellImpl shell, CommandFactory manager, ConverterFactory converterFactory,
+            InputComponentFactory inputComponentFactory)
    {
       this.shell = shell;
       this.manager = manager;
       this.converterFactory = converterFactory;
+      this.inputComponentFactory = inputComponentFactory;
    }
 
    @Override
@@ -129,6 +133,12 @@ public class ForgeManProvider implements ManProvider
             {
                inputs.add(input);
                return this;
+            }
+
+            @Override
+            public InputComponentFactory getInputComponentFactory()
+            {
+               return inputComponentFactory;
             }
          });
 

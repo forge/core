@@ -14,15 +14,13 @@ import static org.jboss.forge.addon.git.constants.GitConstants.REPOSITORY_KEY;
 
 import java.io.File;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.configuration.Configuration;
 import org.jboss.forge.addon.configuration.ConfigurationFactory;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 public class GitIgnoreConfig
 {
-
-   @Inject
    private ConfigurationFactory configFactory;
 
    public String defaultRemoteRepository()
@@ -67,7 +65,17 @@ public class GitIgnoreConfig
 
    private Configuration userConfig()
    {
-      return configFactory.getUserConfiguration();
+      return getConfigFactory().getUserConfiguration();
+   }
+
+   private ConfigurationFactory getConfigFactory()
+   {
+      if (configFactory == null)
+      {
+         AddonRegistry addonRegistry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
+         configFactory = addonRegistry.getServices(ConfigurationFactory.class).get();
+      }
+      return configFactory;
    }
 
 }

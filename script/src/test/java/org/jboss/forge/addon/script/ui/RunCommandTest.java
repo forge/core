@@ -9,8 +9,11 @@ package org.jboss.forge.addon.script.ui;
 
 import java.util.concurrent.TimeUnit;
 
+<<<<<<< HEAD
 import javax.inject.Inject;
 
+=======
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
 import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -24,6 +27,11 @@ import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
+<<<<<<< HEAD
+=======
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -38,29 +46,49 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class RunCommandTest
 {
+<<<<<<< HEAD
+=======
+   @SuppressWarnings("deprecation")
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
    @Deployment
    @AddonDependencies
    public static AddonArchive getDeployment()
    {
+<<<<<<< HEAD
       AddonArchive archive = ShrinkWrap
                .create(AddonArchive.class)
                .addClasses(ThrowExceptionCommand.class)
                .addBeansXML();
 
       return archive;
+=======
+      return ShrinkWrap
+               .create(AddonArchive.class)
+               .addClasses(ThrowExceptionCommand.class)
+               .addAsServiceProvider(Service.class, RunCommandTest.class, ThrowExceptionCommand.class);
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
    }
 
    private static final int COMMAND_TIMEOUT = 5000;
 
+<<<<<<< HEAD
    @Inject
    private ShellTest shellTest;
 
    @Inject
+=======
+   private ShellTest shellTest;
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
    private ResourceFactory resourceFactory;
 
    @Before
    public void setUp() throws Exception
    {
+<<<<<<< HEAD
+=======
+      shellTest = SimpleContainer.getServices(getClass().getClassLoader(), ShellTest.class).get();
+      resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class).get();
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
       shellTest.clearScreen();
    }
 

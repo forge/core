@@ -79,8 +79,8 @@ public class AnnotatedCommandProvider implements CommandProvider
       Imported<?> service = registry.getServices(method.getDeclaringClass());
       if (service.isUnsatisfied())
       {
-         // Class may not be loaded yet
-         logger.log(Level.SEVERE, "Error while finding " + method.getDeclaringClass() + " as a service");
+         // Class may not have been loaded yet
+         logger.log(Level.FINE, "Error while finding " + method.getDeclaringClass() + " as a service");
          return null;
       }
       Object instance = service.get();

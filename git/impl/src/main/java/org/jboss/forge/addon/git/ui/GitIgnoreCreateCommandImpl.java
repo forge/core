@@ -3,8 +3,6 @@ package org.jboss.forge.addon.git.ui;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.git.facet.GitFacet;
 import org.jboss.forge.addon.git.facet.GitIgnoreFacet;
@@ -18,7 +16,6 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -28,13 +25,13 @@ import org.jboss.forge.furnace.util.Strings;
 public class GitIgnoreCreateCommandImpl extends AbstractGitCommand implements GitIgnoreCreateCommand
 {
 
-   @Inject
-   @WithAttributes(label = "From templates", required = true)
    private UIInput<String> templates;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      this.templates = getInputComponentFactory().createInput("templates", String.class).setLabel("From templates")
+               .setRequired(true);
       templates.setCompleter(new GitIgnoreTemplateCompleter(getSelectedProject(builder.getUIContext())));
       builder.add(templates);
    }

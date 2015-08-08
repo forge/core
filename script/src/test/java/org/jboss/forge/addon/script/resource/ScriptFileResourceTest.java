@@ -15,7 +15,10 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import java.io.File;
 import java.nio.file.Files;
 
+<<<<<<< HEAD
 import javax.inject.Inject;
+=======
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
 import javax.script.ScriptContext;
 
 import org.jboss.arquillian.junit.Arquillian;
@@ -24,9 +27,17 @@ import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.script.ScriptContextBuilder;
 import org.jboss.forge.addon.script.impl.ForgeScriptEngineFactory;
+<<<<<<< HEAD
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.junit.Assert;
 import org.junit.Assume;
+=======
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.Before;
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -37,11 +48,23 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ScriptFileResourceTest
 {
+<<<<<<< HEAD
    @Inject
    private ResourceFactory resourceFactory;
 
    @Inject
    private ForgeScriptEngineFactory engineFactory;
+=======
+   private ForgeScriptEngineFactory engineFactory;
+   private ResourceFactory resourceFactory;
+
+   @Before
+   public void setUp()
+   {
+      engineFactory = SimpleContainer.getServices(getClass().getClassLoader(), ForgeScriptEngineFactory.class).get();
+      resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class).get();
+   }
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
 
    @Test
    public void testScriptFileResource() throws Exception

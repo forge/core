@@ -37,7 +37,7 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
 
 /**
- * Produces UIInput objects
+ * Produces {@link InputComponent} objects
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
@@ -83,7 +83,6 @@ public class InputComponentProducer implements InputComponentFactory
                : withAttributes.name();
       char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
       UISelectOne<T> input = createSelectOne(paramName, shortName, valueType);
-      setupSelectComponent(input);
       preconfigureInput(input, withAttributes);
       for (InputComponentInjectionEnricher enricher : enrichers)
       {
@@ -116,7 +115,6 @@ public class InputComponentProducer implements InputComponentFactory
                : withAttributes.name();
       char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
       UISelectMany<T> input = createSelectMany(paramName, shortName, valueType);
-      setupSelectComponent(input);
       preconfigureInput(input, withAttributes);
       for (InputComponentInjectionEnricher enricher : enrichers)
       {
@@ -220,6 +218,7 @@ public class InputComponentProducer implements InputComponentFactory
    public <T> UISelectOne<T> createSelectOne(String name, char shortName, Class<T> valueType)
    {
       UISelectOneImpl<T> input = new UISelectOneImpl<>(name, shortName, valueType);
+      setupSelectComponent(input);
       configureRequiredFacets(input);
       return input;
    }
@@ -228,6 +227,7 @@ public class InputComponentProducer implements InputComponentFactory
    public <T> UISelectMany<T> createSelectMany(String name, char shortName, Class<T> valueType)
    {
       UISelectManyImpl<T> input = new UISelectManyImpl<>(name, shortName, valueType);
+      setupSelectComponent(input);
       configureRequiredFacets(input);
       return input;
    }

@@ -6,7 +6,6 @@ import java.util.Iterator;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.text.Highlighter;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -23,7 +22,10 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 /**
+ * Concatenate files and print in the standard output
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public class CatCommand extends AbstractShellCommand
 {
@@ -61,13 +63,13 @@ public class CatCommand extends AbstractShellCommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      Shell shell = (Shell) context.getUIContext().getProvider();
-      Resource<?> currentResource = shell.getCurrentResource();
+      UIContext uiContext = context.getUIContext();
+      Resource<?> currentResource = (Resource<?>) uiContext.getInitialSelection().get();
       Iterator<String> it = arguments.getValue() == null ? Collections.<String> emptyList().iterator() : arguments
                .getValue().iterator();
 
       Result result = Results.success();
-      UIOutput output = shell.getOutput();
+      UIOutput output = uiContext.getProvider().getOutput();
       while (it.hasNext())
       {
          final Resource<?> resource = it.hasNext() ? (currentResource.resolveChildren(it.next()).get(0))
@@ -84,8 +86,16 @@ public class CatCommand extends AbstractShellCommand
             {
                if (color.getValue())
                {
-                  highlighter.byFileName(resource.getName(), resource.getContents(), output.out());
-                  output.out().println();
+                  try
+                  {
+                     highlighter.byFileName(resource.getName(), resource.getContents(), output.out());
+                     output.out().println();
+                  }
+                  catch (IllegalArgumentException iae)
+                  {
+                     output.warn(output.err(), "Error while rendering output in color: " + iae.getMessage());
+                     output.out().println(resource.getContents());
+                  }
                }
                else
                {

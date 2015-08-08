@@ -9,6 +9,7 @@ package org.jboss.forge.addon.ui.context;
 
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 
 /**
  * Allows {@link UICommand} objects to specify the order of the displayed fields
@@ -24,7 +25,14 @@ public interface UIBuilder extends UIContextProvider
     * Implementations should call this method in order to make the {@link InputComponent} available in the UI
     * 
     * @param input
-    * @return
+    * @return this same instance, to allow method chaining
     */
    UIBuilder add(InputComponent<?, ?> input);
+
+   /**
+    * Returns the {@link InputComponentFactory} service to allow creation of inputs ad-hoc.
+    * 
+    * @return {@link InputComponentFactory} service
+    */
+   InputComponentFactory getInputComponentFactory();
 }

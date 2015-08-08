@@ -33,6 +33,7 @@ import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.CommandControllerFactory;
 import org.jboss.forge.addon.ui.controller.SingleCommandController;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.exception.ContainerException;
@@ -65,9 +66,13 @@ public class ForgeCommandRegistry implements CommandRegistry
       this.commandFactory = addonRegistry.getServices(CommandFactory.class).get();
       this.commandControllerFactory = addonRegistry.getServices(CommandControllerFactory.class).get();
       ConverterFactory converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
+<<<<<<< HEAD
+=======
+      InputComponentFactory inputComponentFactory = addonRegistry.getServices(InputComponentFactory.class).get();
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
 
       // Use Aesh commands
-      Man manCommand = new Man(new ForgeManProvider(shell, commandFactory, converterFactory));
+      Man manCommand = new Man(new ForgeManProvider(shell, commandFactory, converterFactory, inputComponentFactory));
       this.aeshCommandRegistry = new AeshCommandRegistryBuilder()
                .command(Grep.class)
                .command(Less.class)

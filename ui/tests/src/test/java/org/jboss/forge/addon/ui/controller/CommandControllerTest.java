@@ -142,6 +142,7 @@ public class CommandControllerTest
       }
    }
 
+   @SuppressWarnings("resource")
    @Test
    public void testPreStepsCommand() throws Exception
    {

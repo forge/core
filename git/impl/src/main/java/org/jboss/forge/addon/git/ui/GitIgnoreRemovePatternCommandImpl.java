@@ -1,7 +1,5 @@
 package org.jboss.forge.addon.git.ui;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.git.gitignore.resources.GitIgnoreResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -10,7 +8,6 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -18,8 +15,6 @@ import org.jboss.forge.addon.ui.util.Metadata;
 public class GitIgnoreRemovePatternCommandImpl extends AbstractGitCommand implements GitIgnoreRemovePatternCommand
 {
 
-   @Inject
-   @WithAttributes(label = "Pattern", required = true)
    private UIInput<String> pattern;
 
    @Override
@@ -38,6 +33,8 @@ public class GitIgnoreRemovePatternCommandImpl extends AbstractGitCommand implem
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      this.pattern = getInputComponentFactory().createInput("pattern", String.class).setLabel("Pattern")
+               .setRequired(true);
       pattern.setCompleter(new GitIgnorePatternCompleter(gitIgnoreResource(builder.getUIContext())));
       builder.add(pattern);
    }

@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.javaee.cdi.ui;
 
+import java.io.Serializable;
 import java.util.concurrent.Callable;
 
 import javax.enterprise.inject.Alternative;
@@ -100,6 +101,12 @@ public class CDINewBeanCommand extends AbstractCDICommand<JavaClassSource>
       else if (BeanScope.DEPENDENT != scopedValue)
       {
          source.addAnnotation(scopedValue.getAnnotation());
+         if (scopedValue.isSerializable())
+         {
+            source.addInterface(Serializable.class);
+            source.addField().setPrivate().setStatic(true).setFinal(true).setName("serialVersionUID").setType("long")
+                     .setLiteralInitializer("1L");
+         }
       }
       if (withNamed.getValue())
       {

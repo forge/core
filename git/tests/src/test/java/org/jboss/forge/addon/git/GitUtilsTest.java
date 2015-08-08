@@ -11,25 +11,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.eclipse.jgit.api.CherryPickResult;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.lib.Ref;
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.git.exceptions.CantMergeCommitException;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -41,33 +36,18 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class GitUtilsTest
 {
-   
-   @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:git"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi")
-   })
-   public static AddonArchive getDeployment()
-   {
-      return ShrinkWrap
-               .create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:configuration"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:git")
-               );
-   } 
-   
-   @Inject
+
    private ProjectFactory projectFactory;
-   
-   @Inject
    private GitUtils gitUtils;
- 
+
+   @Before
+   public void setUp()
+   {
+      AddonRegistry addonRegistry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
+      this.projectFactory = addonRegistry.getServices(ProjectFactory.class).get();
+      this.gitUtils = addonRegistry.getServices(GitUtils.class).get();
+   }
+
    @Test
    public void testCreateRepo() throws Exception
    {
@@ -173,7 +153,8 @@ public class GitUtilsTest
       {
          gitUtils.getLogForCurrentBranch(repo);
          Assert.fail("Expected " + NoHeadException.class);
-      } catch (NoHeadException nhe)
+      }
+      catch (NoHeadException nhe)
       {
          // expected
       }
@@ -411,15 +392,18 @@ public class GitUtilsTest
       commits = gitUtils.getLogForCurrentBranch(repo);
       Assert.assertEquals("Wrong number of commits in log", 2, commits.size());
       cherryPickResult = gitUtils.cherryPickNoMerge(repo, repo.getRepository().getRef(branchNames[0]));
-      Assert.assertEquals("Wrong cherrypick status", CherryPickResult.CherryPickStatus.OK, cherryPickResult.getStatus());
+      Assert.assertEquals("Wrong cherrypick status", CherryPickResult.CherryPickStatus.OK,
+               cherryPickResult.getStatus());
       gitUtils.resetHard(repo, "HEAD^1");
 
       commits = gitUtils.getLogForCurrentBranch(repo);
       Assert.assertEquals("Wrong number of commits in log", 1, commits.size());
-      try {         
+      try
+      {
          gitUtils.cherryPickNoMerge(repo, repo.getRepository().getRef(branchNames[0]));
          Assert.fail("Expected exception: " + CantMergeCommitException.class);
-      } catch (CantMergeCommitException cmce)
+      }
+      catch (CantMergeCommitException cmce)
       {
          // Expected
       }

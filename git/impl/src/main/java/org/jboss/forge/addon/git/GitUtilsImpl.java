@@ -82,7 +82,7 @@ public class GitUtilsImpl implements GitUtils
    @Override
    public Ref checkout(final Git git, final String remote, final boolean createBranch,
             final SetupUpstreamMode mode, final boolean force)
-            throws GitAPIException
+                     throws GitAPIException
    {
       CheckoutCommand checkout = git.checkout();
       checkout.setCreateBranch(createBranch);
@@ -291,8 +291,7 @@ public class GitUtilsImpl implements GitUtils
       RevCommit newHead = null;
       List<Ref> cherryPickedRefs = new LinkedList<Ref>();
 
-      RevWalk revWalk = new RevWalk(repo);
-      try
+      try (RevWalk revWalk = new RevWalk(repo))
       {
          // get the head commit
          Ref headRef = repo.getRef(Constants.HEAD);
@@ -359,13 +358,9 @@ public class GitUtilsImpl implements GitUtils
          throw new JGitInternalException(
                   MessageFormat.format(
                            JGitText.get().exceptionCaughtDuringExecutionOfCherryPickCommand,
-                           e), e);
+                           e),
+                  e);
       }
-      finally
-      {
-         revWalk.release();
-      }
-
       return new CherryPickResult(newHead, cherryPickedRefs);
    }
 

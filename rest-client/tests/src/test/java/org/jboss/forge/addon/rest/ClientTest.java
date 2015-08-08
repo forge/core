@@ -10,18 +10,16 @@ package org.jboss.forge.addon.rest;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 
-import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.junit.Assert;
+<<<<<<< HEAD
+=======
+import org.junit.Before;
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,24 +31,13 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ClientTest
 {
-   @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:rest-client"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi") })
-   public static AddonArchive getDeployment()
-   {
-      AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:rest-client")
-               );
-
-      return archive;
-   }
-
-   @Inject
    ClientFactory clientFactory;
+
+   @Before
+   public void setUp()
+   {
+      clientFactory = SimpleContainer.getServices(getClass().getClassLoader(), ClientFactory.class).get();
+   }
 
    @Test
    public void testClientImplementationAvailable() throws Exception
