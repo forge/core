@@ -32,7 +32,7 @@ public abstract class AbstractFacesCommand<T extends JavaSource<?>> extends Abst
    @Override
    public Metadata getMetadata(UIContext context) {
       return Metadata.from(super.getMetadata(context), getClass())
-              .category(Categories.create(Categories.create("Java EE"), "CDI"));
+              .category(Categories.create(Categories.create("Java EE"), "JSF"));
    }
 
    @Override

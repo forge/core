@@ -8,7 +8,6 @@ package org.jboss.forge.addon.javaee.faces.ui;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.javaee.faces.FacesOperations;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;

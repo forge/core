@@ -8,14 +8,14 @@
 package org.jboss.forge.addon.javaee.faces.ui;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_FACES_PACKAGE;
+import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_FACES_VALIDATOR_PACKAGE;
 import static org.junit.Assert.*;
 
-import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
+import javax.faces.validator.FacesValidator;
+import javax.faces.validator.Validator;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -44,7 +44,7 @@ import org.junit.runner.RunWith;
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
 @RunWith(Arquillian.class)
-public class FacesNewBeanCommandTest
+public class FacesNewValidatorCommandTest
 {
    @Deployment
    @AddonDependencies({
@@ -81,15 +81,15 @@ public class FacesNewBeanCommandTest
    @Test
    public void checkCommandMetadata() throws Exception
    {
-      try (CommandController controller = uiTestHarness.createCommandController(FacesNewBeanCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(FacesNewValidatorCommand.class,
                project.getRoot()))
       {
          controller.initialize();
          // Checks the command metadata
-         assertTrue(controller.getCommand() instanceof FacesNewBeanCommand);
+         assertTrue(controller.getCommand() instanceof FacesNewValidatorCommand);
          assertTrue(controller.getCommand() instanceof AbstractFacesCommand);
          UICommandMetadata metadata = controller.getMetadata();
-         assertEquals("Faces: New Bean", metadata.getName());
+         assertEquals("Faces: New Validator", metadata.getName());
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("JSF", metadata.getCategory().getSubCategory().getName());
          assertEquals(3, controller.getInputs().size());
@@ -97,7 +97,7 @@ public class FacesNewBeanCommandTest
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
-         assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_FACES_PACKAGE));
+         assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_FACES_VALIDATOR_PACKAGE));
       }
    }
 
@@ -105,20 +105,20 @@ public class FacesNewBeanCommandTest
    public void checkCommandShell() throws Exception
    {
       shellTest.getShell().setCurrentResource(project.getRoot());
-      Result result = shellTest.execute("faces-new-bean --named Dummy", 10, TimeUnit.SECONDS);
+      Result result = shellTest.execute("faces-new-validator --named Dummy", 10, TimeUnit.SECONDS);
 
       assertThat(result, not(instanceOf(Failed.class)));
       assertTrue(project.hasFacet(FacesFacet.class));
    }
 
    @Test
-   public void testCreateNewBean() throws Exception
+   public void testCreateNewValidator() throws Exception
    {
-      try (CommandController controller = uiTestHarness.createCommandController(FacesNewBeanCommand.class,
+      try (CommandController controller = uiTestHarness.createCommandController(FacesNewValidatorCommand.class,
                project.getRoot()))
       {
          controller.initialize();
-         controller.setValueFor("named", "MyFacesBean");
+         controller.setValueFor("named", "MyFacesValidator");
          controller.setValueFor("targetPackage", "org.jboss.forge.test");
          assertTrue(controller.isValid());
          assertTrue(controller.canExecute());
@@ -127,12 +127,14 @@ public class FacesNewBeanCommandTest
       }
 
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyFacesBean");
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyFacesValidator");
       assertNotNull(javaResource);
       assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
-      assertFalse(javaResource.getJavaType().hasAnnotation(Named.class));
-      assertFalse(((JavaClass<?>) javaResource.getJavaType()).hasInterface(Serializable.class));
+      assertTrue(javaResource.getJavaType().hasAnnotation(FacesValidator.class));
+      assertEquals("org.jboss.forge.test.MyFacesValidator",
+               javaResource.getJavaType().getAnnotation(FacesValidator.class).getStringValue());
+      assertTrue(((JavaClass<?>) javaResource.getJavaType()).hasInterface(Validator.class));
       assertEquals(0, ((JavaClass<?>) javaResource.getJavaType()).getFields().size());
-      assertEquals(0, ((JavaClass<?>) javaResource.getJavaType()).getMethods().size());
+      assertEquals(1, ((JavaClass<?>) javaResource.getJavaType()).getMethods().size());
    }
 }
