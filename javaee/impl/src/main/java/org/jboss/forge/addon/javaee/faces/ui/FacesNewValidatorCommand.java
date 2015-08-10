@@ -6,11 +6,17 @@
  */
 package org.jboss.forge.addon.javaee.faces.ui;
 
+import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_FACES_CONVERTER_PACKAGE;
 import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_FACES_VALIDATOR_PACKAGE;
 
 import java.io.FileNotFoundException;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
+import javax.faces.validator.Validator;
+import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.javaee.faces.FacesOperations;
@@ -32,119 +38,60 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
+import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class FacesNewValidatorCommand extends AbstractFacesCommand
+public class FacesNewValidatorCommand extends AbstractFacesCommand<JavaClassSource>
 {
-
-   @Inject
-   @WithAttributes(label = "Validator name", required = true)
-   private UIInput<String> named;
-
-   @Inject
-   @WithAttributes(label = "Target package", type = InputType.JAVA_PACKAGE_PICKER)
-   private UIInput<String> targetPackage;
-
-   @Inject
-   @WithAttributes(label = "Target Directory", required = true)
-   private UIInput<DirectoryResource> targetLocation;
-
-   @Inject
-   private FacesOperations facesOperations;
-
    @Override
    public Metadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("Faces: New Validator")
-               .description("Create a new JSF Validator Type")
-               .category(Categories.create(super.getMetadata(context).getCategory(), "JSF"));
+      return Metadata.from(super.getMetadata(context), getClass())
+               .name("Faces: New Validator")
+               .description("Create a new JSF Validator");
    }
 
    @Override
-   public void initializeUI(UIBuilder builder) throws Exception
+   protected String getType()
    {
-      Project project = getSelectedProject(builder.getUIContext());
-      if (project == null)
-      {
-         UISelection<FileResource<?>> currentSelection = builder.getUIContext().getInitialSelection();
-         if (!currentSelection.isEmpty())
-         {
-            FileResource<?> resource = currentSelection.get();
-            if (resource instanceof DirectoryResource)
-            {
-               targetLocation.setDefaultValue((DirectoryResource) resource);
-            }
-            else
-            {
-               targetLocation.setDefaultValue(resource.getParent());
-            }
-         }
-      }
-      else if (project.hasFacet(JavaSourceFacet.class))
-      {
-         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-         targetLocation.setDefaultValue(facet.getSourceDirectory()).setEnabled(false);
-         targetPackage.setValue(calculateValidatorPackage(project));
-      }
-      builder.add(targetLocation);
-      builder.add(targetPackage).add(named);
-   }
-
-   private String calculateValidatorPackage(Project project)
-   {
-      final String[] value = new String[1];
-      project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
-      {
-         @Override
-         public void visit(VisitContext context, JavaResource javaResource)
-         {
-            try
-            {
-               JavaSource<?> javaSource = javaResource.getJavaType();
-               if (javaSource.hasAnnotation(FacesValidator.class))
-               {
-                  value[0] = javaSource.getPackage();
-               }
-            }
-            catch (FileNotFoundException ignore)
-            {
-            }
-         }
-      });
-      if (value[0] == null)
-      {
-         value[0] = project.getFacet(JavaSourceFacet.class).getBasePackage() + "." + DEFAULT_FACES_VALIDATOR_PACKAGE;
-      }
-      return value[0];
+      return "JSF Converter";
    }
 
    @Override
-   public Result execute(UIExecutionContext context) throws Exception
+   protected Class<JavaClassSource> getSourceType()
    {
-      String entityName = named.getValue();
-      String entityPackage = targetPackage.getValue();
-      DirectoryResource targetDir = targetLocation.getValue();
-      UIContext uiContext = context.getUIContext();
-      Project project = getSelectedProject(uiContext);
-      JavaResource javaResource;
-      if (project == null)
-      {
-         javaResource = facesOperations.newValidator(targetDir, entityName, entityPackage);
-      }
-      else
-      {
-         javaResource = facesOperations.newValidator(project, entityName, entityPackage);
-      }
-      uiContext.setSelection(javaResource);
-      return Results.success("Validator " + javaResource + " created");
+      return JavaClassSource.class;
    }
 
    @Override
-   protected boolean isProjectRequired()
+   protected String calculateDefaultPackage(UIContext context)
    {
-      return true;
+      return getSelectedProject(context).getFacet(JavaSourceFacet.class).getBasePackage() + "."
+              + DEFAULT_FACES_VALIDATOR_PACKAGE;
+   }
+
+   @Override
+   public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source)
+            throws Exception
+   {
+      // Class
+      source.addInterface(Validator.class);
+      source.addImport(FacesMessage.class);
+      source.addAnnotation(FacesValidator.class).setStringValue(getTargetPackage().getValue() + "." + getNamed().getValue());
+
+      // Methods
+      MethodSource<?> validateMethod = source.addMethod().setPublic().setName("validate").setReturnTypeVoid();
+      validateMethod.addThrows(ValidatorException.class);
+      validateMethod.addParameter(FacesContext.class, "context").setFinal(true);
+      validateMethod.addParameter(UIComponent.class, "component").setFinal(true);
+      validateMethod.addParameter(Object.class, "value").setFinal(true);
+      validateMethod.setBody("throw new ValidatorException(new FacesMessage(\"Validator not yet implemented.\"));")
+              .addAnnotation(Override.class);
+
+      return source;
    }
 }
