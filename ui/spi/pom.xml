@@ -23,10 +23,11 @@
          <classifier>forge-addon</classifier>
       </dependency>
       
-      
+      <!-- Furnace container -->
       <dependency>
-         <groupId>org.jboss.forge.furnace</groupId>
-         <artifactId>furnace-api</artifactId>
+         <groupId>org.jboss.forge.furnace.container</groupId>
+         <artifactId>simple</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
    </dependencies>
