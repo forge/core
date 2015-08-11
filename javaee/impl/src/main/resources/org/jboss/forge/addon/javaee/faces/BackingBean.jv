@@ -1,9 +1,0 @@
-package com.test.view;
-
-import javax.inject.Named;
-
-@Named
-public class ValueBean
-{
-
-}
