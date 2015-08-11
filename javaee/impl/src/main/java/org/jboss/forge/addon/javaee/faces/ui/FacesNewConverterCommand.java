@@ -8,24 +8,24 @@ package org.jboss.forge.addon.javaee.faces.ui;
 
 import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_FACES_CONVERTER_PACKAGE;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
+import org.jboss.forge.addon.javaee.faces.FacesOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class FacesNewConverterCommand extends AbstractFacesCommand<JavaClassSource>
 {
+   @Inject
+   private FacesOperations facesOperations;
+
    @Override
    public Metadata getMetadata(UIContext context)
    {
@@ -57,26 +57,6 @@ public class FacesNewConverterCommand extends AbstractFacesCommand<JavaClassSour
    public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source)
             throws Exception
    {
-      // Class
-      source.addInterface(Converter.class).addAnnotation(FacesConverter.class);
-
-      // Methods
-      MethodSource<?> getAsObject = source.addMethod().setPublic().setName("getAsObject")
-               .setReturnType(Object.class);
-      getAsObject.addParameter(FacesContext.class, "context").setFinal(true);
-      getAsObject.addParameter(UIComponent.class, "component").setFinal(true);
-      getAsObject.addParameter(String.class, "value").setFinal(true);
-      getAsObject.setBody("throw new UnsupportedOperationException(\"not yet implemented\");")
-               .addAnnotation(Override.class);
-
-      MethodSource<?> getAsString = source.addMethod().setPublic().setName("getAsString")
-               .setReturnType(String.class);
-      getAsString.addParameter(FacesContext.class, "context").setFinal(true);
-      getAsString.addParameter(UIComponent.class, "component").setFinal(true);
-      getAsString.addParameter(Object.class, "value").setFinal(true);
-      getAsString.setBody("return value.toString();")
-               .addAnnotation(Override.class);
-
-      return source;
+      return facesOperations.newConverter(source);
    }
 }

@@ -8,6 +8,7 @@ package org.jboss.forge.addon.javaee.faces.ui;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.javaee.faces.FacesOperations;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -21,6 +22,9 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  */
 public class FacesNewBeanCommand extends AbstractFacesCommand<JavaClassSource>
 {
+   @Inject
+   private FacesOperations facesOperations;
+
    @Override
    public Metadata getMetadata(UIContext context)
    {
@@ -45,7 +49,6 @@ public class FacesNewBeanCommand extends AbstractFacesCommand<JavaClassSource>
    public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source)
             throws Exception
    {
-      source.addAnnotation(Inject.class);
-      return source;
+      return facesOperations.newBackingBean(source);
    }
 }
