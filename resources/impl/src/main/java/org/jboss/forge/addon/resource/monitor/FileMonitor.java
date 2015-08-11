@@ -8,19 +8,24 @@
 package org.jboss.forge.addon.resource.monitor;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceFilter;
+import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.container.simple.EventListener;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
+import org.jboss.forge.furnace.event.PreShutdown;
 
 /**
  * This {@link FileMonitor} uses commons-io to listen for changes in files
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class FileMonitor
+public class FileMonitor implements EventListener
 {
    private FileWatcher watcher;
 
@@ -36,6 +41,19 @@ public class FileMonitor
       {
          watcher.stop();
          watcher = null;
+      }
+   }
+
+   @Override
+   public synchronized void handleEvent(Object event, Annotation... qualifiers)
+   {
+      if (event instanceof PreShutdown)
+      {
+         Addon addon = SimpleContainer.getAddon(getClass().getClassLoader());
+         if (addon.equals(((PreShutdown) event).getAddon()))
+         {
+            destroy();
+         }
       }
    }
 
