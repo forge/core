@@ -8,17 +8,16 @@
 package org.jboss.forge.addon.resource.monitor;
 
 import java.io.IOException;
-
-import javax.enterprise.event.Observes;
-import javax.inject.Singleton;
+import java.lang.annotation.Annotation;
 
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceFilter;
-import org.jboss.forge.furnace.container.cdi.events.Local;
-import org.jboss.forge.furnace.event.PostStartup;
+import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.container.simple.EventListener;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.event.PreShutdown;
 
 /**
@@ -26,18 +25,17 @@ import org.jboss.forge.furnace.event.PreShutdown;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@Singleton
-public class FileMonitor
+public class FileMonitor implements EventListener
 {
    private FileWatcher watcher;
 
-   void init(@Observes @Local PostStartup postStartup) throws Exception
+   void init() throws Exception
    {
       watcher = new FileWatcher();
       watcher.start();
    }
 
-   void destroy(@Observes @Local PreShutdown preShutdown) throws Exception
+   void destroy()
    {
       if (watcher != null)
       {
@@ -46,12 +44,32 @@ public class FileMonitor
       }
    }
 
+   @Override
+   public synchronized void handleEvent(Object event, Annotation... qualifiers)
+   {
+      if (event instanceof PreShutdown)
+      {
+         Addon addon = SimpleContainer.getAddon(getClass().getClassLoader());
+         if (addon.equals(((PreShutdown) event).getAddon()))
+         {
+            destroy();
+         }
+      }
+   }
+
    public ResourceMonitor registerMonitor(final ResourceFactory resourceFactory, final FileResource<?> resource,
             final ResourceFilter resourceFilter)
    {
       if (watcher == null)
       {
-         throw new IllegalStateException("File Monitor is not started yet");
+         try
+         {
+            init();
+         }
+         catch (Exception e)
+         {
+            throw new IllegalStateException("Error while initializing FileMonitor", e);
+         }
       }
       DirectoryResource dirResource = resource.reify(DirectoryResource.class);
       ResourceFilter filter = resourceFilter;

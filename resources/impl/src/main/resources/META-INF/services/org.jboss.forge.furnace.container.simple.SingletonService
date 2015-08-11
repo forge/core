@@ -1,0 +1,9 @@
+org.jboss.forge.addon.resource.ResourceFactoryImpl
+org.jboss.forge.addon.resource.FileResourceGenerator
+org.jboss.forge.addon.resource.URLResourceGenerator
+org.jboss.forge.addon.resource.converter.DirectoryResourceConverterGenerator
+org.jboss.forge.addon.resource.converter.FileResourceConverterGenerator
+org.jboss.forge.addon.resource.converter.ResourceConverterGenerator
+org.jboss.forge.addon.resource.monitor.FileMonitor
+org.jboss.forge.addon.resource.transaction.file.FileResourceTransactionManager
+org.jboss.forge.addon.resource.zip.ZipFileResourceGenerator

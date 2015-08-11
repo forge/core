@@ -11,21 +11,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.archive.AddonArchive;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import com.google.common.io.Files;
 
 /**
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
@@ -33,15 +28,13 @@ import com.google.common.io.Files;
 @RunWith(Arquillian.class)
 public class FileResourceTest
 {
-   @Deployment
-   @AddonDependencies
-   public static AddonArchive getDeployment()
-   {
-      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
-   }
-
-   @Inject
    private ResourceFactory resourceFactory;
+
+   @Before
+   public void setUp()
+   {
+      this.resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class).get();
+   }
 
    @Test
    public void testAppendableOutputStream() throws IOException
@@ -94,8 +87,8 @@ public class FileResourceTest
          os.write("CONTENT".getBytes());
          os.flush();
       }
-      String fileContent = Files.readFirstLine(file, Charset.defaultCharset());
-      Assert.assertEquals("CONTENT", fileContent);
+      List<String> fileContent = Files.readAllLines(file.toPath(), Charset.defaultCharset());
+      Assert.assertEquals("CONTENT", fileContent.get(0));
    }
 
    @Test

@@ -9,11 +9,10 @@ package org.jboss.forge.addon.resource.converter;
 
 import java.io.File;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.convert.AbstractConverter;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 /**
  * Converts a {@link File} object to a {@link Resource}
@@ -26,7 +25,12 @@ public class ResourceConverter extends AbstractConverter<Object, Resource>
 {
    private final ResourceFactory resourceFactory;
 
-   @Inject
+   public ResourceConverter()
+   {
+      super(Object.class, Resource.class);
+      this.resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class).get();
+   }
+
    public ResourceConverter(ResourceFactory resourceFactory)
    {
       super(Object.class, Resource.class);

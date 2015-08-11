@@ -40,7 +40,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class FileWatcher implements Runnable
+class FileWatcher implements Runnable
 {
    private static Logger log = Logger.getLogger(FileWatcher.class.getName());
 

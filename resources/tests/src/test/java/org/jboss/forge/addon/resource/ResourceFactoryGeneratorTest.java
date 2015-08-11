@@ -1,15 +1,16 @@
 package org.jboss.forge.addon.resource;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.AddonArchive;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -25,9 +26,9 @@ public class ResourceFactoryGeneratorTest
    {
       AddonArchive archive = ShrinkWrap
                .create(AddonArchive.class)
-               .addBeansXML()
+               .addAsServiceProvider(Service.class, ResourceFactoryGeneratorTest.class)
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:simple"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:resources"),
                         AddonDependencyEntry.create("mockstring", "1"));
 
@@ -39,17 +40,21 @@ public class ResourceFactoryGeneratorTest
    {
       AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                .addClasses(MockStringResource.class, MockStringResourceGenerator.class)
-               .addBeansXML()
+               .addAsServiceProvider(Service.class, MockStringResourceGenerator.class)
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:resources")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:simple"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:resources"));
 
       return archive;
    }
 
-   @Inject
    private ResourceFactory factory;
+
+   @Before
+   public void setUp()
+   {
+      this.factory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class).get();
+   }
 
    @Test
    public void testCreateResourceFromAddon() throws Exception

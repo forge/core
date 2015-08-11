@@ -15,9 +15,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import javax.inject.Inject;
-
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
@@ -26,14 +23,11 @@ import org.jboss.forge.addon.resource.events.ResourceCreated;
 import org.jboss.forge.addon.resource.events.ResourceDeleted;
 import org.jboss.forge.addon.resource.events.ResourceEvent;
 import org.jboss.forge.addon.resource.events.ResourceModified;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -45,28 +39,21 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class ResourceTransactionTest
 {
-   @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:facets"),
-            @AddonDeployment(name = "org.jboss.forge.addon:resources") })
-   public static AddonArchive getDeployment()
-   {
-      AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:facets"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:resources")
-               );
-
-      return archive;
-   }
-
-   @Inject
    private ResourceFactory resourceFactory;
 
-   @Inject
-   private ResourceTransaction injectedTransaction;
+   @Before
+   public void setUp()
+   {
+      this.resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class).get();
+   }
+
+   @After
+   public void tearDown()
+   {
+      ResourceTransaction transaction = resourceFactory.getTransaction();
+      if (transaction.isStarted())
+         transaction.rollback();
+   }
 
    @Test
    @SuppressWarnings("unchecked")
@@ -245,13 +232,6 @@ public class ResourceTransactionTest
       Assert.assertFalse(transaction.isStarted());
    }
 
-   @Test
-   public void testResourceTransactionInjection() throws Exception
-   {
-      Assert.assertNotNull(injectedTransaction);
-      Assert.assertFalse(injectedTransaction.isStarted());
-   }
-
    /**
     * @param tempDir
     * @return
@@ -266,13 +246,4 @@ public class ResourceTransactionTest
       }
       return file;
    }
-
-   @After
-   public void tearDown()
-   {
-      ResourceTransaction transaction = resourceFactory.getTransaction();
-      if (transaction.isStarted())
-         transaction.rollback();
-   }
-
 }

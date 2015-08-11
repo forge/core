@@ -7,11 +7,10 @@
 
 package org.jboss.forge.addon.resource.converter;
 
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.convert.ConverterGenerator;
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 /**
  * Generates {@link DirectoryResourceConverter}
@@ -21,9 +20,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
  */
 public class DirectoryResourceConverterGenerator implements ConverterGenerator
 {
-
-   @Inject
-   private Instance<DirectoryResourceConverter> converter;
+   private DirectoryResourceConverter directoryResourceConverter;
 
    @Override
    public boolean handles(Class<?> source, Class<?> target)
@@ -34,7 +31,13 @@ public class DirectoryResourceConverterGenerator implements ConverterGenerator
    @Override
    public DirectoryResourceConverter generateConverter(Class<?> source, Class<?> target)
    {
-      return converter.get();
+      if (directoryResourceConverter == null)
+      {
+         ResourceFactory resourceFactory = SimpleContainer
+                  .getServices(getClass().getClassLoader(), ResourceFactory.class).get();
+         directoryResourceConverter = new DirectoryResourceConverter(resourceFactory);
+      }
+      return directoryResourceConverter;
    }
 
    @Override
