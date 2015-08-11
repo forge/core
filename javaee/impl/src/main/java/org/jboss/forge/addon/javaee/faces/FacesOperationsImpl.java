@@ -17,7 +17,7 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
-import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
@@ -35,7 +35,7 @@ public class FacesOperationsImpl implements FacesOperations
    public JavaClassSource newBackingBean(JavaClassSource source)
    {
       // Class
-      source.addAnnotation(Inject.class);
+      source.addAnnotation(Named.class);
       return source;
    }
 
