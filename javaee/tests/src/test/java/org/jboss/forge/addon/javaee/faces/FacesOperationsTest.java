@@ -14,7 +14,6 @@ import javax.faces.validator.Validator;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -23,13 +22,9 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,17 +39,6 @@ import static org.junit.Assert.assertTrue;
 @RunWith(Arquillian.class)
 public class FacesOperationsTest
 {
-   @Deployment
-   @AddonDependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:javaee"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-   })
-   public static AddonArchive getDeployment()
-   {
-      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
-   }
-
    @Inject
    private ProjectFactory projectFactory;
 
@@ -115,5 +99,4 @@ public class FacesOperationsTest
       Assert.assertEquals(1, source.getMethods().size());
       Assert.assertEquals(method.toSignature(), source.getMethods().get(0).toSignature());
    }
-
 }
