@@ -45,6 +45,15 @@
          <scope>test</scope>
       </dependency>
       <dependency>
+<<<<<<< HEAD
+         <groupId>org.jboss.forge.furnace.container</groupId>
+         <artifactId>cdi</artifactId>
+         <classifier>forge-addon</classifier>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
+=======
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>shell-test-harness</artifactId>
          <classifier>forge-addon</classifier>

@@ -66,7 +66,10 @@ public class ForgeCommandRegistry implements CommandRegistry
       this.commandFactory = addonRegistry.getServices(CommandFactory.class).get();
       this.commandControllerFactory = addonRegistry.getServices(CommandControllerFactory.class).get();
       ConverterFactory converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
+<<<<<<< HEAD
+=======
       InputComponentFactory inputComponentFactory = addonRegistry.getServices(InputComponentFactory.class).get();
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
 
       // Use Aesh commands
       Man manCommand = new Man(new ForgeManProvider(shell, commandFactory, converterFactory, inputComponentFactory));

@@ -56,7 +56,11 @@
 
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+<<<<<<< HEAD
+      <version.furnace>2.20.1.Final</version.furnace>
+=======
       <version.furnace>2.20.2-SNAPSHOT</version.furnace>
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
    </properties>
 
    <dependencyManagement>

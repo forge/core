@@ -16,7 +16,10 @@ import javax.ws.rs.core.MediaType;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.junit.Assert;
+<<<<<<< HEAD
+=======
 import org.junit.Before;
+>>>>>>> 72e8c873ad9b11f291f20c2ef5205d009904579a
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
