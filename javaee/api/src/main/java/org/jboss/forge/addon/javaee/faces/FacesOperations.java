@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 
 import javax.faces.validator.Validator;
 
+import org.jboss.forge.addon.javaee.cdi.ui.BeanScope;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -31,7 +32,7 @@ public interface FacesOperations
     * @param source the current source to decorate
     * @return the decorated {@link JavaResource}
     */
-   JavaClassSource newBackingBean(JavaClassSource source);
+   JavaClassSource newBackingBean(JavaClassSource source, BeanScope scope);
 
    /**
     * Creates a new JSF Converter

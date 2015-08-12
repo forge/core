@@ -26,6 +26,7 @@ import javax.inject.Named;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
+import org.jboss.forge.addon.javaee.cdi.ui.BeanScope;
 import org.jboss.forge.addon.javaee.faces.FacesFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -98,10 +99,11 @@ public class FacesNewBeanCommandTest
          assertEquals("Faces: New Bean", metadata.getName());
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("JSF", metadata.getCategory().getSubCategory().getName());
-         assertEquals(3, controller.getInputs().size());
+         assertEquals(4, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
+         assertTrue(controller.hasInput("scoped"));
          assertTrue(controller.hasInput("overwrite"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_FACES_PACKAGE));
       }
@@ -140,5 +142,83 @@ public class FacesNewBeanCommandTest
       assertFalse(((JavaClass<?>) javaResource.getJavaType()).hasInterface(Serializable.class));
       assertEquals(0, ((JavaClass<?>) javaResource.getJavaType()).getFields().size());
       assertEquals(0, ((JavaClass<?>) javaResource.getJavaType()).getMethods().size());
+   }
+
+   @Test
+   public void testCreateNewBeanRequestScoped() throws Exception
+   {
+      try (CommandController controller = uiTestHarness.createCommandController(FacesNewBeanCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyFacesBeanRequest");
+         controller.setValueFor("targetPackage", "org.jboss.forge.test");
+         controller.setValueFor("scoped", BeanScope.REQUEST.name());
+         assertTrue(controller.isValid());
+         assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         assertThat(result, is(not(instanceOf(Failed.class))));
+      }
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyFacesBeanRequest");
+      assertNotNull(javaResource);
+      assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      assertTrue(javaResource.getJavaType().hasAnnotation(Named.class));
+      assertFalse(((JavaClass<?>) javaResource.getJavaType()).hasInterface(Serializable.class));
+      assertEquals(0, ((JavaClass<?>) javaResource.getJavaType()).getFields().size());
+      assertEquals(0, ((JavaClass<?>) javaResource.getJavaType()).getMethods().size());
+   }
+
+   @Test
+   public void testCreateNewBeanSessionScoped() throws Exception
+   {
+      try (CommandController controller = uiTestHarness.createCommandController(FacesNewBeanCommand.class,
+              project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyFacesBeanSession");
+         controller.setValueFor("targetPackage", "org.jboss.forge.test");
+         controller.setValueFor("scoped", BeanScope.SESSION.name());
+         assertTrue(controller.isValid());
+         assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         assertThat(result, is(not(instanceOf(Failed.class))));
+      }
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyFacesBeanSession");
+      assertNotNull(javaResource);
+      assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      assertTrue(javaResource.getJavaType().hasAnnotation(Named.class));
+      assertTrue(((JavaClass<?>) javaResource.getJavaType()).hasInterface(Serializable.class));
+      assertEquals(1, ((JavaClass<?>) javaResource.getJavaType()).getFields().size());
+      assertEquals(0, ((JavaClass<?>) javaResource.getJavaType()).getMethods().size());
+   }
+
+   @Test
+   public void testCreateNewBeanConversationScoped() throws Exception
+   {
+      try (CommandController controller = uiTestHarness.createCommandController(FacesNewBeanCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyFacesBeanConversation");
+         controller.setValueFor("targetPackage", "org.jboss.forge.test");
+         controller.setValueFor("scoped", BeanScope.CONVERSATION.name());
+         assertTrue(controller.isValid());
+         assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         assertThat(result, is(not(instanceOf(Failed.class))));
+      }
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyFacesBeanConversation");
+      assertNotNull(javaResource);
+      assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      assertTrue(javaResource.getJavaType().hasAnnotation(Named.class));
+      assertTrue(((JavaClass<?>) javaResource.getJavaType()).hasInterface(Serializable.class));
+      assertEquals(2, ((JavaClass<?>) javaResource.getJavaType()).getFields().size());
+      assertEquals(2, ((JavaClass<?>) javaResource.getJavaType()).getMethods().size());
    }
 }

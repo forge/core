@@ -8,7 +8,9 @@
 package org.jboss.forge.addon.javaee.faces;
 
 import java.io.FileNotFoundException;
+import java.io.Serializable;
 
+import javax.enterprise.context.Conversation;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -17,8 +19,10 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
+import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.forge.addon.javaee.cdi.ui.BeanScope;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -32,10 +36,35 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 public class FacesOperationsImpl implements FacesOperations
 {
    @Override
-   public JavaClassSource newBackingBean(JavaClassSource source)
+   public JavaClassSource newBackingBean(JavaClassSource source, BeanScope scope)
    {
       // Class
       source.addAnnotation(Named.class);
+
+      // Scope
+      if (BeanScope.DEPENDENT != scope)
+      {
+         source.addAnnotation(scope.getAnnotation());
+         if (scope.isSerializable())
+         {
+            source.addInterface(Serializable.class);
+            source.addField().setPrivate().setStatic(true).setFinal(true).setName("serialVersionUID").setType("long")
+                     .setLiteralInitializer("1L");
+
+            if (BeanScope.CONVERSATION == scope)
+            {
+               // Field
+               source.addField().setName("conversation").setType(Conversation.class).addAnnotation(Inject.class);
+               // Methods
+               source.addMethod().setPublic().setName("begin").setReturnType(String.class)
+                        .setBody("conversation.begin();\n" + "return null;");
+               source.addMethod().setPublic().setName("end").setReturnType(String.class)
+                        .setBody("conversation.end();\n" + "return null;");
+            }
+
+         }
+      }
+
       return source;
    }
 
