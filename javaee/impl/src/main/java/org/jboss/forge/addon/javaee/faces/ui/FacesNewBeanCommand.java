@@ -8,10 +8,14 @@ package org.jboss.forge.addon.javaee.faces.ui;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.javaee.cdi.ui.BeanScope;
 import org.jboss.forge.addon.javaee.faces.FacesOperations;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.input.UISelectOne;
+import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
@@ -22,6 +26,10 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  */
 public class FacesNewBeanCommand extends AbstractFacesCommand<JavaClassSource>
 {
+   @Inject
+   @WithAttributes(label = "Scope", defaultValue = "DEPENDENT")
+   private UISelectOne<BeanScope> scoped;
+
    @Inject
    private FacesOperations facesOperations;
 
@@ -46,9 +54,15 @@ public class FacesNewBeanCommand extends AbstractFacesCommand<JavaClassSource>
    }
 
    @Override
+   public void initializeUI(UIBuilder builder) throws Exception
+   {
+      super.initializeUI(builder);
+      builder.add(scoped);
+   }
+   @Override
    public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source)
             throws Exception
    {
-      return facesOperations.newBackingBean(source);
+      return facesOperations.newBackingBean(source, scoped.getValue());
    }
 }

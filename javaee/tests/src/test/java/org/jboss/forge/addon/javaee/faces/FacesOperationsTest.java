@@ -16,6 +16,7 @@ import javax.inject.Named;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.javaee.cdi.ui.BeanScope;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -55,7 +56,7 @@ public class FacesOperationsTest
    public void testCreateBackingBean() throws Exception
    {
       JavaClassSource source = Roaster.create(JavaClassSource.class);
-      source = operations.newBackingBean(source);
+      source = operations.newBackingBean(source, BeanScope.DEPENDENT);
       Assert.assertTrue(source.hasAnnotation(Named.class));
    }
 
