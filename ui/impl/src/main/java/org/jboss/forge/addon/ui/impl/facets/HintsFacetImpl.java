@@ -19,7 +19,7 @@ import org.jboss.forge.furnace.util.Callables;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class HintsFacetImpl extends AbstractFacet<InputComponent<?, ?>> implements HintsFacet
+public class HintsFacetImpl extends AbstractFacet<InputComponent<?, ?>>implements HintsFacet
 {
    private HintsLookup hintsLookup;
    private String inputType;
@@ -87,4 +87,10 @@ public class HintsFacetImpl extends AbstractFacet<InputComponent<?, ?>> implemen
       return this;
    }
 
+   @Override
+   public String toString()
+   {
+      return "HintsFacetImpl [inputType=" + getInputType() + ", promptInInteractiveMode="
+               + isPromptInInteractiveMode() + "]";
+   }
 }
