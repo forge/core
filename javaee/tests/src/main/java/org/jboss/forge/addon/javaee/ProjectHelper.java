@@ -19,6 +19,7 @@ import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_0;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet_3_2;
 import org.jboss.forge.addon.javaee.faces.FacesFacet_2_2;
+import org.jboss.forge.addon.javaee.jaxws.JAXWSFacet;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_0;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
@@ -137,6 +138,14 @@ public class ProjectHelper
    public CDIFacet_1_1 installCDI_1_1(Project project)
    {
       return facetFactory.install(project, CDIFacet_1_1.class);
+   }
+
+   /**
+    * Installs the {@link JAXWSFacet} facet
+    */
+   public JAXWSFacet installJAXWSFacet(Project project)
+   {
+      return facetFactory.install(project, JAXWSFacet.class);
    }
 
    /**
