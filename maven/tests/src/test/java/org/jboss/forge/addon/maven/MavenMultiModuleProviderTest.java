@@ -8,8 +8,6 @@ package org.jboss.forge.addon.maven;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.maven.model.Model;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -21,27 +19,44 @@ import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
 public class MavenMultiModuleProviderTest
 {
+   private ProjectFactory projectFactory;
+   private MavenBuildSystem buildSystem;
+
    @Deployment
-   @AddonDependencies
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:resources"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:simple")
+   })
    public static AddonArchive getDeployment()
    {
-      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
+      AddonArchive archive = ShrinkWrap
+               .create(AddonArchive.class)
+               .addAsServiceProvider(Service.class, MavenMultiModuleProviderTest.class);
+
+      return archive;
    }
 
-   @Inject
-   private ProjectFactory projectFactory;
-
-   @Inject
-   private MavenBuildSystem buildSystem;
+   @Before
+   public void setUp()
+   {
+      projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
+      buildSystem = SimpleContainer.getServices(getClass().getClassLoader(), MavenBuildSystem.class).get();
+   }
 
    @Test
    public void testInjectionNotNull()

@@ -1,0 +1,3 @@
+org.jboss.forge.addon.maven.archetype.ArchetypeCatalogFactoryRegistryImpl
+org.jboss.forge.addon.maven.dependencies.MavenDependencyResolver
+org.jboss.forge.addon.maven.resources.MavenResourceGenerator

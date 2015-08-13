@@ -9,8 +9,6 @@ package org.jboss.forge.addon.maven.projects.facets;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Profile;
@@ -25,10 +23,11 @@ import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -54,33 +53,28 @@ public class MavenPluginFacetTest
             .setVersion("1.0.0.Final");
 
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:resources"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:simple")
    })
    public static AddonArchive getDeployment()
    {
       AddonArchive archive = ShrinkWrap
                .create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects")
-               );
+               .addAsServiceProvider(Service.class, MavenPluginFacetTest.class);
 
       return archive;
    }
 
    private Project project;
-
-   @Inject
    private ProjectFactory projectFactory;
 
    @Before
    public void setUp()
    {
+      projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
       project = projectFactory.createTempProject();
    }
 

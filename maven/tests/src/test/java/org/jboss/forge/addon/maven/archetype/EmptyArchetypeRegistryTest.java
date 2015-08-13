@@ -7,16 +7,16 @@
 
 package org.jboss.forge.addon.maven.archetype;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,31 +27,34 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class EmptyArchetypeRegistryTest
 {
+   @Deployment
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:simple")
+   })
+   public static AddonArchive getDeployment()
+   {
+      AddonArchive archive = ShrinkWrap
+               .create(AddonArchive.class)
+               .addClass(TestArchetypeCatalogFactory.class)
+               .addAsServiceProvider(Service.class, EmptyArchetypeRegistryTest.class);
 
-    @Deployment
-    @AddonDeployments({
-                   @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-                   @AddonDeployment(name = "org.jboss.forge.addon:maven")
-    })
-    public static AddonArchive getDeployment()
-    {
-        AddonArchive archive = ShrinkWrap
-            .create(AddonArchive.class)
-            .addBeansXML()
-            .addAsAddonDependencies(
-                                    AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                                    AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                                    AddonDependencyEntry.create("org.jboss.forge.addon:projects")
-            );
+      return archive;
+   }
 
-        return archive;
-    }
+   private ArchetypeCatalogFactoryRegistry archetypeRegistry;
 
-    @Inject
-    private ArchetypeCatalogFactoryRegistry archetypeRegistry;
+   @Before
+   public void setUp()
+   {
+      archetypeRegistry = SimpleContainer
+               .getServices(getClass().getClassLoader(), ArchetypeCatalogFactoryRegistry.class).get();
+   }
 
-    @Test
-    public void testDoesNotHaveArchetypeCatalogFactories() {
-        Assert.assertFalse(archetypeRegistry.hasArchetypeCatalogFactories());
-    }
+   @Test
+   public void testDoesNotHaveArchetypeCatalogFactories()
+   {
+      Assert.assertFalse(archetypeRegistry.hasArchetypeCatalogFactories());
+   }
 }

@@ -34,14 +34,15 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UINavigationContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.Strings;
 
 /**
@@ -51,15 +52,7 @@ import org.jboss.forge.furnace.util.Strings;
  */
 public class ArchetypeCatalogSelectionWizardStep extends AbstractUICommand implements UIWizardStep
 {
-   @Inject
-   private ArchetypeCatalogFactoryRegistry archetypeRegistry;
-
-   @Inject
-   @WithAttributes(label = "Catalog", required = true)
    private UISelectOne<ArchetypeCatalogFactory> catalog;
-
-   @Inject
-   @WithAttributes(label = "Archetype", required = true)
    private UISelectOne<Archetype> archetype;
 
    @Inject
@@ -81,54 +74,62 @@ public class ArchetypeCatalogSelectionWizardStep extends AbstractUICommand imple
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      ArchetypeCatalogFactoryRegistry archetypeRegistry = SimpleContainer
+               .getServices(getClass().getClassLoader(), ArchetypeCatalogFactoryRegistry.class).get();
+      InputComponentFactory factory = builder.getInputComponentFactory();
       // List of catalogs
-      catalog.setItemLabelConverter(new Converter<ArchetypeCatalogFactory, String>()
-      {
-         @Override
-         public String convert(ArchetypeCatalogFactory source)
-         {
-            return (source != null) ? source.getName() : null;
-         }
-      }).setValueChoices(archetypeRegistry.getArchetypeCatalogFactories());
+      catalog = factory.createSelectOne("catalog", ArchetypeCatalogFactory.class)
+               .setLabel("Catalog")
+               .setRequired(true)
+               .setItemLabelConverter(new Converter<ArchetypeCatalogFactory, String>()
+               {
+                  @Override
+                  public String convert(ArchetypeCatalogFactory source)
+                  {
+                     return (source != null) ? source.getName() : null;
+                  }
+               }).setValueChoices(archetypeRegistry.getArchetypeCatalogFactories());
 
       // List of Archetypes
-      archetype.setItemLabelConverter(new Converter<Archetype, String>()
-      {
-         @Override
-         public String convert(Archetype source)
-         {
-            if (source == null)
-            {
-               return null;
-            }
-            return source.getGroupId() + ":" + source.getArtifactId() + ":" + source.getVersion();
-         }
-      }).setValueChoices(new Callable<Iterable<Archetype>>()
-      {
-         @Override
-         public Iterable<Archetype> call() throws Exception
-         {
-            Set<Archetype> result = new LinkedHashSet<>();
-            if (catalog.hasValue())
-            {
-               ArchetypeCatalogFactory catalogFactory = catalog.getValue();
-               ArchetypeCatalog archetypes = catalogFactory.getArchetypeCatalog();
-               if (archetypes != null)
+      archetype = factory.createSelectOne("archetype", Archetype.class)
+               .setLabel("Archetype")
+               .setRequired(true).setItemLabelConverter(new Converter<Archetype, String>()
                {
-                  result.addAll(archetypes.getArchetypes());
-               }
-            }
-            return result;
-         }
-      }).setDescription(new Callable<String>()
-      {
-         @Override
-         public String call() throws Exception
-         {
-            Archetype value = archetype.getValue();
-            return value == null ? null : value.getDescription();
-         }
-      });
+                  @Override
+                  public String convert(Archetype source)
+                  {
+                     if (source == null)
+                     {
+                        return null;
+                     }
+                     return source.getGroupId() + ":" + source.getArtifactId() + ":" + source.getVersion();
+                  }
+               }).setValueChoices(new Callable<Iterable<Archetype>>()
+               {
+                  @Override
+                  public Iterable<Archetype> call() throws Exception
+                  {
+                     Set<Archetype> result = new LinkedHashSet<>();
+                     if (catalog.hasValue())
+                     {
+                        ArchetypeCatalogFactory catalogFactory = catalog.getValue();
+                        ArchetypeCatalog archetypes = catalogFactory.getArchetypeCatalog();
+                        if (archetypes != null)
+                        {
+                           result.addAll(archetypes.getArchetypes());
+                        }
+                     }
+                     return result;
+                  }
+               }).setDescription(new Callable<String>()
+               {
+                  @Override
+                  public String call() throws Exception
+                  {
+                     Archetype value = archetype.getValue();
+                     return value == null ? null : value.getDescription();
+                  }
+               });
       builder.add(catalog).add(archetype);
    }
 
@@ -161,7 +162,7 @@ public class ArchetypeCatalogSelectionWizardStep extends AbstractUICommand imple
       File fileRoot = project.getRoot().reify(DirectoryResource.class).getUnderlyingResourceObject();
       ArchetypeHelper archetypeHelper = new ArchetypeHelper(artifact.getResourceInputStream(), fileRoot,
                metadataFacet.getProjectGroupName(), metadataFacet.getProjectName(), metadataFacet.getProjectVersion());
-      JavaSourceFacet facet = (JavaSourceFacet) project.getFacet(JavaSourceFacet.class);
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       archetypeHelper.setPackageName(facet.getBasePackage());
       archetypeHelper.execute();
       return Results.success();

@@ -12,8 +12,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.inject.Vetoed;
-
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
@@ -28,7 +26,6 @@ import org.jboss.forge.furnace.util.Streams;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Vetoed
 public class MavenModelResourceImpl extends XMLResourceImpl implements MavenModelResource
 {
    private Model currentModel;

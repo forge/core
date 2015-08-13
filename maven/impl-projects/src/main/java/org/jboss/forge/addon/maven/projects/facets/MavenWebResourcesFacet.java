@@ -11,8 +11,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.Dependent;
-
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
@@ -33,9 +31,8 @@ import org.jboss.forge.addon.resource.ResourceFilter;
 import org.jboss.forge.addon.resource.visit.ResourceVisit;
 import org.jboss.forge.addon.resource.visit.ResourceVisitor;
 
-@Dependent
 @FacetConstraint({ MavenFacet.class, PackagingFacet.class })
-public class MavenWebResourcesFacet extends AbstractFacet<Project> implements WebResourcesFacet
+public class MavenWebResourcesFacet extends AbstractFacet<Project>implements WebResourcesFacet
 {
 
    @Override

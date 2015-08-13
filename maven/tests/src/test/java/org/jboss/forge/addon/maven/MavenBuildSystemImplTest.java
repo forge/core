@@ -9,8 +9,6 @@ package org.jboss.forge.addon.maven;
 
 import java.io.File;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.maven.projects.MavenBuildSystem;
@@ -23,15 +21,17 @@ import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.Iterators;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -39,10 +39,11 @@ import org.junit.runner.RunWith;
 public class MavenBuildSystemImplTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:resources"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:simple")
    })
    public static AddonArchive getDeployment()
    {
@@ -50,24 +51,20 @@ public class MavenBuildSystemImplTest
                .create(AddonArchive.class)
                .add(new FileAsset(new File("src/test/resources/pom-template.xml")),
                         "org/jboss/forge/addon/maven/pom-template.xml")
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects")
-               );
+               .addAsServiceProvider(Service.class, MavenBuildSystemImplTest.class);
 
       return archive;
    }
 
-   @Inject
    private ResourceFactory factory;
-
-   @Inject
-   private Furnace forge;
-
-   @Inject
    private MavenBuildSystem buildSystem;
+
+   @Before
+   public void setUp()
+   {
+      factory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class).get();
+      buildSystem = SimpleContainer.getServices(getClass().getClassLoader(), MavenBuildSystem.class).get();
+   }
 
    @Test
    public void testInjectionNotNull()
@@ -94,9 +91,8 @@ public class MavenBuildSystemImplTest
    @Test
    public void testFindProject() throws Exception
    {
-      DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
-               DirectoryResource.class);
-      DirectoryResource projectDir = addonDir.createTempResource();
+      DirectoryResource projectDir = factory.create(OperatingSystemUtils.createTempDir())
+               .reify(DirectoryResource.class);
       FileResource<?> pomFile = projectDir.getChild("pom.xml").reify(FileResource.class);
       Assert.assertFalse(buildSystem.containsProject(projectDir));
       pomFile.createNewFile();
@@ -110,9 +106,8 @@ public class MavenBuildSystemImplTest
    @Test
    public void testEnabledFacets() throws Exception
    {
-      DirectoryResource addonDir = factory.create(forge.getRepositories().get(0).getRootDirectory()).reify(
-               DirectoryResource.class);
-      DirectoryResource projectDir = addonDir.createTempResource();
+      DirectoryResource projectDir = factory.create(OperatingSystemUtils.createTempDir())
+               .reify(DirectoryResource.class);
       Project project = buildSystem.createProject(projectDir);
       boolean hasFacets = project.hasFacet(MavenFacet.class)
                && project.hasFacet(MavenPluginFacet.class)

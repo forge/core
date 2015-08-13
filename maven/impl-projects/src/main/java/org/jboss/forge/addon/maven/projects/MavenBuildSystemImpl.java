@@ -12,8 +12,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
@@ -25,6 +23,7 @@ import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 /**
  * Implementation of the {@link MavenBuildSystem} interface
@@ -36,9 +35,6 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
 {
    private static final Logger log = Logger.getLogger(MavenBuildSystemImpl.class.getName());
 
-   @Inject
-   private FacetFactory factory;
-
    @Override
    public String getType()
    {
@@ -49,7 +45,7 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
    public Project createProject(final Resource<?> target)
    {
       Project project = new MavenProject(target);
-
+      FacetFactory factory = SimpleContainer.getServices(getClass().getClassLoader(), FacetFactory.class).get();
       try
       {
          factory.install(project, MavenFacetImpl.class);

@@ -17,7 +17,6 @@ import org.jboss.forge.addon.dependencies.DependencyQuery;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
-import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.util.Predicate;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,7 +41,7 @@ public class MavenDependencyResolverTest
    @Before
    public void setUp()
    {
-      resolver = new MavenDependencyResolver(new FileResourceFactory(), new MavenContainer());
+      resolver = new MavenDependencyResolver(new FileResourceFactory());
    }
 
    @Test

@@ -19,7 +19,7 @@ import org.jboss.forge.addon.resource.VirtualResource;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MavenDependencyResourceImpl extends VirtualResource<Dependency>
+public class MavenDependencyResourceImpl extends VirtualResource<Dependency>implements MavenDependencyResource
 {
    private final Dependency dependency;
 

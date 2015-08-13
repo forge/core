@@ -9,10 +9,6 @@ package org.jboss.forge.addon.maven.projects.facets;
 import java.io.File;
 import java.util.Collections;
 
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.ProjectBuildingException;
@@ -32,24 +28,16 @@ import org.jboss.forge.addon.projects.events.PackagingChanged;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.Strings;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Dependent
 @FacetConstraint(MavenFacet.class)
-public class MavenPackagingFacet extends AbstractFacet<Project> implements PackagingFacet
+public class MavenPackagingFacet extends AbstractFacet<Project>implements PackagingFacet
 {
-   @Inject
-   private Event<PackagingChanged> event;
-
-   @Inject
-   private ResourceFactory factory;
-
-   @Inject
-   private Environment environment;
-
    @Override
    public void setPackagingType(final String type)
    {
@@ -61,8 +49,8 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
          Model pom = mavenFacet.getModel();
          pom.setPackaging(type);
          mavenFacet.setModel(pom);
-
-         event.fire(new PackagingChanged(getFaceted(), oldType, type));
+         Addon addon = SimpleContainer.getAddon(getClass().getClassLoader());
+         addon.getEventManager().fireEvent(new PackagingChanged(getFaceted(), oldType, type));
       }
    }
 
@@ -114,7 +102,9 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
          {
             throw new IllegalStateException("Project final artifact name is not configured");
          }
-         return factory.create(new File(directory.trim(), finalName + "."
+         ResourceFactory resourceFactory = SimpleContainer
+                  .getServices(getClass().getClassLoader(), ResourceFactory.class).get();
+         return resourceFactory.create(new File(directory.trim(), finalName + "."
                   + getPackagingType().toLowerCase()));
       }
       catch (Exception e)
@@ -133,6 +123,7 @@ public class MavenPackagingFacet extends AbstractFacet<Project> implements Packa
    @Override
    public ProjectBuilder createBuilder()
    {
+      Environment environment = SimpleContainer.getServices(getClass().getClassLoader(), Environment.class).get();
       return new MavenProjectBuilder(environment, getFaceted());
    }
 

@@ -10,8 +10,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.Dependent;
-
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.jboss.forge.addon.facets.AbstractFacet;
@@ -35,7 +33,6 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Dependent
 @FacetConstraint(MavenFacet.class)
 public class MavenJavaSourceFacet extends AbstractFacet<Project>implements JavaSourceFacet
 {

@@ -10,8 +10,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import javax.enterprise.inject.Vetoed;
-
 import org.jboss.forge.addon.resource.AbstractFileResource;
 import org.jboss.forge.addon.resource.DefaultFileOperations;
 import org.jboss.forge.addon.resource.FileOperations;
@@ -28,7 +26,6 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Vetoed
 class FileResourceFactory implements ResourceFactory
 {
    @Override

@@ -10,8 +10,6 @@ package org.jboss.forge.addon.maven.projects.facets;
 import java.io.File;
 import java.util.Arrays;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.maven.resources.MavenModelResource;
@@ -21,10 +19,11 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,33 +35,28 @@ public class MavenWebResourceFacetTest
 {
 
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:resources"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:simple")
    })
    public static AddonArchive getDeployment()
    {
       AddonArchive archive = ShrinkWrap
                .create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects")
-               );
+               .addAsServiceProvider(Service.class, MavenWebResourceFacetTest.class);
 
       return archive;
    }
 
    private Project project;
-
-   @Inject
    private ProjectFactory projectFactory;
 
    @Before
    public void setUp()
    {
+      projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
       project = projectFactory
                .createTempProject(Arrays.<Class<? extends ProjectFacet>> asList(WebResourcesFacet.class));
    }
@@ -99,11 +93,13 @@ public class MavenWebResourceFacetTest
    @Test
    public void testCustomWebResourceFolder() throws Exception
    {
-      MavenModelResource pom = project.getRoot().reify(DirectoryResource.class).getChild("pom.xml").reify(MavenModelResource.class);
+      MavenModelResource pom = project.getRoot().reify(DirectoryResource.class).getChild("pom.xml")
+               .reify(MavenModelResource.class);
 
-      pom.setContents("<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-war-plugin</artifactId><version>2.1-beta-1</version><configuration>"
-               + "<warSourceDirectory>foo</warSourceDirectory>"
-               + "</configuration></plugin></plugins></build></project>");
+      pom.setContents(
+               "<project><modelVersion>4.0.0</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-war-plugin</artifactId><version>2.1-beta-1</version><configuration>"
+                        + "<warSourceDirectory>foo</warSourceDirectory>"
+                        + "</configuration></plugin></plugins></build></project>");
 
       WebResourcesFacet facet = project.getFacet(WebResourcesFacet.class);
       DirectoryResource expected = project.getRoot().reify(DirectoryResource.class).getChildDirectory("foo");

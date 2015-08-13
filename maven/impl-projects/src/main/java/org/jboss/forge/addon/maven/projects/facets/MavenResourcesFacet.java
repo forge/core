@@ -10,8 +10,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.Dependent;
-
 import org.apache.maven.model.Build;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
@@ -31,9 +29,8 @@ import org.jboss.forge.addon.resource.visit.ResourceVisitor;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-@Dependent
 @FacetConstraint(MavenFacet.class)
-public class MavenResourcesFacet extends AbstractFacet<Project> implements ResourcesFacet
+public class MavenResourcesFacet extends AbstractFacet<Project>implements ResourcesFacet
 {
    @Override
    public List<DirectoryResource> getResourceDirectories()

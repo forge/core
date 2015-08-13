@@ -16,13 +16,9 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jboss.forge.addon.configuration.Configuration;
-import org.jboss.forge.addon.configuration.Subset;
+import org.jboss.forge.furnace.container.simple.AbstractEventListener;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 
@@ -31,25 +27,28 @@ import org.jboss.forge.furnace.util.Assert;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@Singleton
-public class ArchetypeCatalogFactoryRegistryImpl implements ArchetypeCatalogFactoryRegistry
+public class ArchetypeCatalogFactoryRegistryImpl extends AbstractEventListener
+         implements ArchetypeCatalogFactoryRegistry
 {
    private Map<String, ArchetypeCatalogFactory> factories = new TreeMap<>();
    private final Logger log = Logger.getLogger(getClass().getName());
 
-   @Inject
    private Imported<ArchetypeCatalogFactory> services;
 
-   @Inject
-   @Subset("maven.archetypes")
-   private Configuration archetypeConfiguration;
+   private Configuration getArchetypeConfiguration()
+   {
+      return SimpleContainer.getServices(getClass().getClassLoader(), Configuration.class).get()
+               .subset("maven.archetypes");
+   }
 
    /**
     * Registers the {@link ArchetypeCatalogFactory} objects from the user {@link Configuration}
     */
-   @PostConstruct
-   void initializeDefaultFactories()
+   @Override
+   protected void handleThisPostStartup()
    {
+      services = SimpleContainer.getServices(getClass().getClassLoader(), ArchetypeCatalogFactory.class);
+      Configuration archetypeConfiguration = getArchetypeConfiguration();
       Iterator<?> keys = archetypeConfiguration.getKeys();
       while (keys.hasNext())
       {
@@ -69,8 +68,8 @@ public class ArchetypeCatalogFactoryRegistryImpl implements ArchetypeCatalogFact
       }
    }
 
-   @PreDestroy
-   void destroy()
+   @Override
+   protected void handleThisPreShutdown()
    {
       this.factories.clear();
    }

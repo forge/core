@@ -12,8 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.apache.maven.settings.Settings;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
@@ -47,6 +45,7 @@ import org.jboss.forge.addon.dependencies.builder.DependencyNodeBuilder;
 import org.jboss.forge.addon.maven.util.MavenConvertUtils;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.manager.maven.MavenOperationException;
 import org.jboss.forge.furnace.manager.maven.util.MavenRepositories;
@@ -55,15 +54,16 @@ import org.jboss.forge.furnace.util.Strings;
 
 public class MavenDependencyResolver implements DependencyResolver
 {
-   private final MavenContainer container;
-   private final ResourceFactory factory;
+   private final MavenContainer container = new MavenContainer();
+   private ResourceFactory resourceFactory;
 
-   @Inject
-   public MavenDependencyResolver(ResourceFactory factory, MavenContainer container)
+   public MavenDependencyResolver()
    {
-      super();
-      this.container = container;
-      this.factory = factory;
+   }
+
+   public MavenDependencyResolver(ResourceFactory resourceFactory)
+   {
+      this.resourceFactory = resourceFactory;
    }
 
    @Override
@@ -102,6 +102,7 @@ public class MavenDependencyResolver implements DependencyResolver
          throw new RuntimeException(e);
       }
       DependencyNode root = artifacts.getRoot();
+      ResourceFactory factory = getResourceFactory();
       for (DependencyNode node : root.getChildren())
       {
          Dependency d = MavenConvertUtils.convertToDependency(factory, node);
@@ -192,7 +193,7 @@ public class MavenDependencyResolver implements DependencyResolver
          Artifact artifact = resolvedArtifact.getArtifact();
 
          @SuppressWarnings("unchecked")
-         FileResource<?> artifactResource = factory.create(FileResource.class, artifact.getFile());
+         FileResource<?> artifactResource = getResourceFactory().create(FileResource.class, artifact.getFile());
 
          return DependencyBuilder.create()
                   .setArtifact(artifactResource)
@@ -247,7 +248,8 @@ public class MavenDependencyResolver implements DependencyResolver
          DependencyRequest dr = new DependencyRequest(collectRequest, null);
 
          DependencyResult result = system.resolveDependencies(session, dr);
-         DependencyNodeBuilder hierarchy = MavenConvertUtils.toDependencyNode(factory, null, result.getRoot());
+         DependencyNodeBuilder hierarchy = MavenConvertUtils.toDependencyNode(getResourceFactory(), null,
+                  result.getRoot());
          return hierarchy;
       }
       catch (Exception e)
@@ -288,5 +290,14 @@ public class MavenDependencyResolver implements DependencyResolver
       {
          throw new DependencyException("Unable to resolve any artifacts for query [" + query + "]", e);
       }
+   }
+
+   private ResourceFactory getResourceFactory()
+   {
+      if (resourceFactory == null)
+      {
+         resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class).get();
+      }
+      return resourceFactory;
    }
 }

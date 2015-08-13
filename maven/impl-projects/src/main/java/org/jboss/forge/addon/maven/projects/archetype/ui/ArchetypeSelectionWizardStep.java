@@ -9,8 +9,6 @@ package org.jboss.forge.addon.maven.projects.archetype.ui;
 
 import java.io.File;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.DependencyRepository;
 import org.jboss.forge.addon.dependencies.DependencyResolver;
@@ -27,14 +25,15 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.Strings;
 
 /**
@@ -44,24 +43,10 @@ import org.jboss.forge.furnace.util.Strings;
  */
 public class ArchetypeSelectionWizardStep extends AbstractUICommand implements UIWizardStep
 {
-   @Inject
-   @WithAttributes(label = "Archetype Group Id", required = true)
    private UIInput<String> archetypeGroupId;
-
-   @Inject
-   @WithAttributes(label = "Archetype Artifact Id", required = true)
    private UIInput<String> archetypeArtifactId;
-
-   @Inject
-   @WithAttributes(label = "Archetype Version", required = true)
    private UIInput<String> archetypeVersion;
-
-   @Inject
-   @WithAttributes(label = "Archetype repository URL")
    private UIInput<String> archetypeRepository;
-
-   @Inject
-   private DependencyResolver resolver;
 
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
@@ -79,6 +64,18 @@ public class ArchetypeSelectionWizardStep extends AbstractUICommand implements U
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      InputComponentFactory inputFactory = builder.getInputComponentFactory();
+      archetypeGroupId = inputFactory.createInput("archetypeGroupId", String.class).setLabel("Archetype Group Id")
+               .setRequired(true);
+      archetypeArtifactId = inputFactory.createInput("archetypeArtifactId", String.class)
+               .setLabel("Archetype Artifact Id")
+               .setRequired(true);
+      archetypeVersion = inputFactory.createInput("archetypeVersion", String.class)
+               .setLabel("Archetype Version")
+               .setRequired(true);
+      archetypeRepository = inputFactory.createInput("archetypeRepository", String.class)
+               .setLabel("Archetype repository URL")
+               .setRequired(true);
       builder.add(archetypeGroupId).add(archetypeArtifactId).add(archetypeVersion).add(archetypeRepository);
    }
 
@@ -105,13 +102,15 @@ public class ArchetypeSelectionWizardStep extends AbstractUICommand implements U
       {
          depQuery.setRepositories(new DependencyRepository("archetype", repository));
       }
+      DependencyResolver resolver = SimpleContainer.getServices(getClass().getClassLoader(), DependencyResolver.class)
+               .get();
       Dependency resolvedArtifact = resolver.resolveArtifact(depQuery);
       FileResource<?> artifact = resolvedArtifact.getArtifact();
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
       File fileRoot = project.getRoot().reify(DirectoryResource.class).getUnderlyingResourceObject();
       ArchetypeHelper archetypeHelper = new ArchetypeHelper(artifact.getResourceInputStream(), fileRoot,
                metadataFacet.getProjectGroupName(), metadataFacet.getProjectName(), metadataFacet.getProjectVersion());
-      JavaSourceFacet facet = (JavaSourceFacet) project.getFacet(JavaSourceFacet.class);
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
       archetypeHelper.setPackageName(facet.getBasePackage());
       archetypeHelper.execute();
       return Results.success();

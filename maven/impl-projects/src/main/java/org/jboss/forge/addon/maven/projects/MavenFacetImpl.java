@@ -7,11 +7,14 @@
 package org.jboss.forge.addon.maven.projects;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Writer;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,9 +27,9 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
-
+import org.apache.maven.cli.CliRequest;
 import org.apache.maven.cli.MavenCli;
+import org.apache.maven.cli.logging.impl.UnsupportedSlf4jBindingConfiguration;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.building.ModelProblem;
 import org.apache.maven.model.building.ModelProblem.Severity;
@@ -34,6 +37,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
+import org.codehaus.plexus.classworlds.ClassWorld;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.maven.projects.util.NativeSystemCall;
 import org.jboss.forge.addon.maven.resources.MavenModelResource;
@@ -41,6 +45,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Strings;
@@ -51,29 +56,25 @@ import org.jboss.forge.furnace.util.Strings;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFacet, MavenFacet
+public class MavenFacetImpl extends AbstractFacet<Project>implements ProjectFacet, MavenFacet
 {
    private static final Logger log = Logger.getLogger(MavenFacetImpl.class.getName());
 
-   @Inject
-   private ResourceFactory factory;
-
-   @Inject
-   private MavenBuildManager buildManager;
+   private static final MavenBuildManager BUILD_MANAGER = new MavenBuildManager();
 
    public ProjectBuildingRequest getRequest()
    {
-      return buildManager.getProjectBuildingRequest();
+      return BUILD_MANAGER.getProjectBuildingRequest();
    }
 
    public ProjectBuildingRequest getOfflineRequest()
    {
-      return buildManager.getProjectBuildingRequest(isInstalled());
+      return BUILD_MANAGER.getProjectBuildingRequest(isInstalled());
    }
 
    public ProjectBuildingRequest getBuildingRequest(final boolean offline)
    {
-      return buildManager.getProjectBuildingRequest(offline);
+      return BUILD_MANAGER.getProjectBuildingRequest(offline);
    }
 
    @Override
@@ -143,7 +144,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       }
       finally
       {
-         buildManager.evictFromCache(modelResource);
+         BUILD_MANAGER.evictFromCache(modelResource);
       }
    }
 
@@ -152,7 +153,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
     */
    public synchronized ProjectBuildingResult getProjectBuildingResult() throws ProjectBuildingException
    {
-      return buildManager.getProjectBuildingResult(getModelResource());
+      return BUILD_MANAGER.getProjectBuildingResult(getModelResource());
    }
 
    @Override
@@ -170,7 +171,8 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       }
       catch (Exception e)
       {
-         log.log(Level.WARNING, "Failed to resolve properties in [" + getModelResource().getFullyQualifiedName() + "].");
+         log.log(Level.WARNING,
+                  "Failed to resolve properties in [" + getModelResource().getFullyQualifiedName() + "].");
          log.log(Level.FINE, "Failed to resolve properties in Project [" + getModelResource().getFullyQualifiedName()
                   + "].", e);
       }
@@ -262,13 +264,54 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       try
       {
          globalLogger.addHandler(outHandler);
-         int returnCode = new MavenCli().doMain(params, getFaceted().getRoot().getFullyQualifiedName(), out, err);
-         return returnCode == 0;
+         PrintStream oldout = System.out;
+         PrintStream olderr = System.err;
+         try
+         {
+            System.setOut(out);
+            System.setErr(err);
+            CliRequest cliRequest = createCliRequest(params, getFaceted().getRoot().getFullyQualifiedName());
+            int returnCode = new MavenCli().doMain(cliRequest);
+            return returnCode == 0;
+         }
+         finally
+         {
+            System.setOut(oldout);
+            System.setErr(olderr);
+         }
       }
       finally
       {
          globalLogger.removeHandler(outHandler);
       }
+   }
+
+   // Horrible hack. Bad Maven API
+   CliRequest createCliRequest(String[] params, String workingDirectory)
+   {
+      CliRequest cliRequest = null;
+      try
+      {
+         Constructor<CliRequest> constructor = CliRequest.class.getDeclaredConstructor(String[].class,
+                  ClassWorld.class);
+         // This is package-private
+         constructor.setAccessible(true);
+         cliRequest = constructor.newInstance(params, null);
+
+         Field workingDirectoryField = CliRequest.class.getDeclaredField("workingDirectory");
+         workingDirectoryField.setAccessible(true);
+         workingDirectoryField.set(cliRequest, workingDirectory);
+
+         // This is the reason why we now call MavenCli.doMain(CliRequest)
+         Field multiModuleProjectDirectoryField = CliRequest.class.getDeclaredField("multiModuleProjectDirectory");
+         multiModuleProjectDirectoryField.setAccessible(true);
+         multiModuleProjectDirectoryField.set(cliRequest, new File(workingDirectory));
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException("Error while creating CliRequest", e);
+      }
+      return cliRequest;
    }
 
    @Override
@@ -327,7 +370,9 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    @Override
    public DirectoryResource getLocalRepositoryDirectory()
    {
-      return factory.create(buildManager.getLocalRepositoryDirectory()).reify(DirectoryResource.class);
+      ResourceFactory resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class)
+               .get();
+      return resourceFactory.create(BUILD_MANAGER.getLocalRepositoryDirectory()).reify(DirectoryResource.class);
    }
 
    @Override
@@ -384,15 +429,12 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       {
          if (super.isLoggable(record))
          {
-            switch (record.getMessage())
+            // Skip annoying SLF4J logging messages
+            if (UnsupportedSlf4jBindingConfiguration.class.getName().equals(record.getLoggerName()))
             {
-            // Avoid unwanted warning messages
-            case "setRootLoggerLevel: operation not supported":
-            case "reset(): operation not supported":
-               break;
-            default:
-               return true;
+               return false;
             }
+            return true;
          }
          return false;
       }
@@ -409,5 +451,4 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
          // Never close
       }
    }
-
 }

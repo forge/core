@@ -9,8 +9,6 @@ package org.jboss.forge.addon.maven.projects.archetype;
 
 import java.util.Arrays;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.maven.archetype.ArchetypeCatalogFactoryRegistry;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.maven.projects.archetype.ui.ArchetypeCatalogSelectionWizardStep;
@@ -20,6 +18,7 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 /**
  * Maven Archetype project type
@@ -29,45 +28,44 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 public class MavenArchetypeCatalogProjectType extends AbstractProjectType
 {
 
-    @Inject
-    private ArchetypeCatalogFactoryRegistry catalogRegistry;
-    
-    @Override
-    public String getType()
-    {
-        return "From Archetype Catalog";
-    }
+   @Override
+   public String getType()
+   {
+      return "From Archetype Catalog";
+   }
 
-    @Override
-    public Class<? extends UIWizardStep> getSetupFlow()
-    {
-        return ArchetypeCatalogSelectionWizardStep.class;
-    }
+   @Override
+   public Class<? extends UIWizardStep> getSetupFlow()
+   {
+      return ArchetypeCatalogSelectionWizardStep.class;
+   }
 
-    @Override
-    public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
-    {
-        return Arrays
-            .<Class<? extends ProjectFacet>> asList(MetadataFacet.class, JavaSourceFacet.class,
-                                                    MavenFacet.class);
-    }
+   @Override
+   public Iterable<Class<? extends ProjectFacet>> getRequiredFacets()
+   {
+      return Arrays
+               .<Class<? extends ProjectFacet>> asList(MetadataFacet.class, JavaSourceFacet.class,
+                        MavenFacet.class);
+   }
 
-    @Override
-    public int priority()
-    {
-        return 10001;
-    }
+   @Override
+   public int priority()
+   {
+      return 10001;
+   }
 
-    @Override
-    public String toString()
-    {
-        return "from-archetype-catalog";
-    }
+   @Override
+   public String toString()
+   {
+      return "from-archetype-catalog";
+   }
 
-    @Override
-    public boolean isEnabled(UIContext context)
-    {
-        return catalogRegistry.hasArchetypeCatalogFactories();
-    }
+   @Override
+   public boolean isEnabled(UIContext context)
+   {
+      ArchetypeCatalogFactoryRegistry catalogRegistry = SimpleContainer
+               .getServices(getClass().getClassLoader(), ArchetypeCatalogFactoryRegistry.class).get();
+      return catalogRegistry.hasArchetypeCatalogFactories();
+   }
 
 }

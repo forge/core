@@ -10,14 +10,13 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.inject.Inject;
-
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectAssociationProvider;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.Strings;
 
 /**
@@ -28,14 +27,13 @@ import org.jboss.forge.furnace.util.Strings;
  */
 public class MavenMultiModuleProvider implements ProjectAssociationProvider
 {
-   @Inject
-   private ProjectFactory projectFactory;
-
    @Override
    public void associate(final Project project, final Resource<?> parentResource)
    {
       if (canAssociate(project, parentResource))
       {
+         ProjectFactory projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class)
+                  .get();
          Project parent = projectFactory.findProject(parentResource);
          MavenFacet parentMavenFacet = parent.getFacet(MavenFacet.class);
          Model parentPom = parentMavenFacet.getModel();

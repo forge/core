@@ -10,8 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import javax.enterprise.context.Dependent;
-
 import org.apache.maven.model.Model;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
@@ -26,9 +24,8 @@ import org.jboss.forge.furnace.util.Assert;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@Dependent
 @FacetConstraint(MavenFacet.class)
-public class MavenJavaCompilerFacet extends AbstractFacet<Project> implements JavaCompilerFacet
+public class MavenJavaCompilerFacet extends AbstractFacet<Project>implements JavaCompilerFacet
 {
 
    static final String MAVEN_COMPILER_SOURCE_KEY = "maven.compiler.source";
@@ -80,7 +77,8 @@ public class MavenJavaCompilerFacet extends AbstractFacet<Project> implements Ja
       maven.setModel(pom);
    }
 
-   @Override public CompilerVersion getSourceCompilerVersion()
+   @Override
+   public CompilerVersion getSourceCompilerVersion()
    {
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getModel();
@@ -88,7 +86,8 @@ public class MavenJavaCompilerFacet extends AbstractFacet<Project> implements Ja
       return sourceVersion != null ? CompilerVersion.getValue(sourceVersion) : DEFAULT_COMPILER_VERSION;
    }
 
-   @Override public CompilerVersion getTargetCompilerVersion()
+   @Override
+   public CompilerVersion getTargetCompilerVersion()
    {
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       Model pom = maven.getModel();

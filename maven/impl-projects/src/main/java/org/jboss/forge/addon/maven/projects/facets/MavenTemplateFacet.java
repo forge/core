@@ -8,8 +8,6 @@ package org.jboss.forge.addon.maven.projects.facets;
 
 import java.io.File;
 
-import javax.enterprise.context.Dependent;
-
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
@@ -23,9 +21,8 @@ import org.jboss.forge.addon.templates.facets.TemplateFacet;
  * 
  * @author Vineet Reynolds
  */
-@Dependent
 @FacetConstraint(MavenFacet.class)
-public class MavenTemplateFacet extends AbstractFacet<Project> implements TemplateFacet
+public class MavenTemplateFacet extends AbstractFacet<Project>implements TemplateFacet
 {
 
    @Override

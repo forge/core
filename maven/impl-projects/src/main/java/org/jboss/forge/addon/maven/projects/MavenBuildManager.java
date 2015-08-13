@@ -13,9 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequest;
@@ -42,6 +39,7 @@ import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.addon.resource.events.ResourceEvent;
 import org.jboss.forge.addon.resource.monitor.ResourceListener;
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.util.Assert;
 
@@ -50,20 +48,13 @@ import org.jboss.forge.furnace.util.Assert;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@Singleton
 public class MavenBuildManager
 {
    // TODO: Replace this with a Cache implementation
    private Map<MavenModelResource, ProjectBuildingResult> cache = new WeakHashMap<>();
-
-   @Inject
-   private PlexusContainer plexus;
-
-   @Inject
-   private MavenContainer container;
-
-   @Inject
+   private MavenContainer container = new MavenContainer();
    private Environment environment;
+   private PlexusContainer plexus;
 
    private ProjectBuilder builder;
 
@@ -122,7 +113,7 @@ public class MavenBuildManager
 
    ProjectBuildingRequest getProjectBuildingRequest()
    {
-      return getProjectBuildingRequest(Network.isOffline(environment));
+      return getProjectBuildingRequest(Network.isOffline(getEnvironment()));
    }
 
    ProjectBuildingRequest getProjectBuildingRequest(final boolean offline)
@@ -135,10 +126,10 @@ public class MavenBuildManager
          // TODO this reference to the M2_REPO should probably be centralized
 
          MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
-         MavenExecutionRequestPopulator populator = plexus.lookup(MavenExecutionRequestPopulator.class);
+         MavenExecutionRequestPopulator populator = getPlexus().lookup(MavenExecutionRequestPopulator.class);
          populator.populateFromSettings(executionRequest, container.getSettings());
          populator.populateDefaults(executionRequest);
-         RepositorySystem system = plexus.lookup(RepositorySystem.class);
+         RepositorySystem system = getPlexus().lookup(RepositorySystem.class);
          ProjectBuildingRequest request = executionRequest.getProjectBuildingRequest();
 
          ArtifactRepository localRepository = RepositoryUtils.toArtifactRepository("local",
@@ -215,7 +206,7 @@ public class MavenBuildManager
    private ProjectBuilder getBuilder()
    {
       if (builder == null)
-         builder = plexus.lookup(ProjectBuilder.class);
+         builder = getPlexus().lookup(ProjectBuilder.class);
       return builder;
    }
 
@@ -227,6 +218,25 @@ public class MavenBuildManager
    void evictFromCache(MavenModelResource pom)
    {
       cache.remove(pom);
+   }
+
+   /**
+    * @return the plexus
+    */
+   private PlexusContainer getPlexus()
+   {
+      if (plexus == null)
+         plexus = SimpleContainer.getServices(getClass().getClassLoader(), PlexusContainer.class).get();
+      return plexus;
+   }
+
+   private Environment getEnvironment()
+   {
+      if (environment == null)
+      {
+         environment = SimpleContainer.getServices(getClass().getClassLoader(), Environment.class).get();
+      }
+      return environment;
    }
 
 }

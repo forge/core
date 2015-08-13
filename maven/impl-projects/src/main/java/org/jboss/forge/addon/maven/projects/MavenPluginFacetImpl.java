@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.enterprise.context.Dependent;
-
 import org.apache.maven.model.Build;
 import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Model;
@@ -38,8 +36,7 @@ import org.jboss.forge.furnace.util.Strings;
  * @author <a href="mailto:paul.bakker.nl@gmail.com">Paul Bakker</a>
  */
 
-@Dependent
-public class MavenPluginFacetImpl extends AbstractFacet<Project> implements MavenPluginFacet
+public class MavenPluginFacetImpl extends AbstractFacet<Project>implements MavenPluginFacet
 {
    private static final String DEFAULT_GROUPID = "org.apache.maven.plugins";
 

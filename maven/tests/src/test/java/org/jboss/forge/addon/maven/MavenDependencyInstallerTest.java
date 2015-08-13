@@ -10,8 +10,6 @@ package org.jboss.forge.addon.maven;
 import java.io.File;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.dependencies.Coordinate;
@@ -21,13 +19,15 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -39,10 +39,11 @@ import org.junit.runner.RunWith;
 public class MavenDependencyInstallerTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:resources"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:simple")
    })
    public static AddonArchive getDeployment()
    {
@@ -50,21 +51,20 @@ public class MavenDependencyInstallerTest
                .create(AddonArchive.class)
                .add(new FileAsset(new File("src/test/resources/pom-template.xml")),
                         "org/jboss/forge/addon/maven/pom-template.xml")
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects")
-               );
+               .addAsServiceProvider(Service.class, MavenDependencyInstallerTest.class);
 
       return archive;
    }
 
-   @Inject
    private ProjectFactory projectFactory;
-
-   @Inject
    private DependencyInstaller installer;
+
+   @Before
+   public void setUp()
+   {
+      projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
+      installer = SimpleContainer.getServices(getClass().getClassLoader(), DependencyInstaller.class).get();
+   }
 
    @Test
    public void testDependencyManagementWithProjectProperties()
