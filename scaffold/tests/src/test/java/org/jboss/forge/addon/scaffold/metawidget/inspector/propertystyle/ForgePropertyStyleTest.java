@@ -16,8 +16,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -26,12 +24,16 @@ import org.jboss.forge.addon.scaffold.ProjectHelper;
 import org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.ForgePropertyStyle.ForgeProperty;
 import org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.MockAnnotationComplex.anEnum;
 import org.jboss.forge.addon.scaffold.mock.MockProvider;
+import org.jboss.forge.addon.scaffold.mock.ScaffoldableResourceGenerator;
+import org.jboss.forge.addon.scaffold.mock.ScaffoldedResourceGenerator;
 import org.jboss.forge.addon.scaffold.util.ScaffoldUtil;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.metawidget.inspector.impl.propertystyle.Property;
@@ -39,16 +41,13 @@ import org.metawidget.inspector.impl.propertystyle.Property;
 @RunWith(Arquillian.class)
 public class ForgePropertyStyleTest
 {
-   @Inject
-   private ProjectHelper projectHelper;
-
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:scaffold"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
-            @AddonDeployment(name = "org.jboss.forge.addon:parser-java"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:scaffold"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.addon:parser-java"),
+            @AddonDependency(name = "org.jboss.forge.furnace.container:simple")
    })
    public static AddonArchive getDeployment()
    {
@@ -59,16 +58,18 @@ public class ForgePropertyStyleTest
                .addClass(ProjectHelper.class)
                .addAsResources(ForgePropertyStyle.class.getPackage(), "ManuallyGeneratedClass.java",
                         "ManuallyGeneratedSubclass.java", "MockAnnotatedClass.java")
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:scaffold"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:parser-java"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
+               .addAsServiceProvider(Service.class, ForgePropertyStyleTest.class, ScaffoldableResourceGenerator.class,
+                        ScaffoldedResourceGenerator.class, ProjectHelper.class, MockProvider.class);
 
       return archive;
+   }
+
+   private ProjectHelper projectHelper;
+
+   @Before
+   public void setUp()
+   {
+      projectHelper = SimpleContainer.getServices(getClass().getClassLoader(), ProjectHelper.class).get();
    }
 
    @Test
@@ -80,7 +81,8 @@ public class ForgePropertyStyleTest
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       ScaffoldUtil
                .createOrOverwrite(
-                        java.getJavaResource("org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/MockAnnotatedClass.java"),
+                        java.getJavaResource(
+                                 "org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/MockAnnotatedClass.java"),
                         getClass()
                                  .getResourceAsStream(
                                           "/org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/MockAnnotatedClass.java"));
@@ -140,14 +142,16 @@ public class ForgePropertyStyleTest
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       ScaffoldUtil
                .createOrOverwrite(
-                        java.getJavaResource("org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedClass.java"),
+                        java.getJavaResource(
+                                 "org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedClass.java"),
                         getClass()
                                  .getResourceAsStream(
                                           "/org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedClass.java"));
 
       ForgePropertyStyle propertyStyle = new ForgePropertyStyle(new ForgePropertyStyleConfig().setProject(project));
       Map<String, Property> properties = propertyStyle
-               .getProperties("org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.ManuallyGeneratedClass");
+               .getProperties(
+                        "org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.ManuallyGeneratedClass");
 
       Property property = properties.get("normalField");
       assertEquals("normalField", ((ForgeProperty) property).getName());
@@ -176,20 +180,23 @@ public class ForgePropertyStyleTest
       JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       ScaffoldUtil
                .createOrOverwrite(
-                        java.getJavaResource("org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedClass.java"),
+                        java.getJavaResource(
+                                 "org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedClass.java"),
                         getClass()
                                  .getResourceAsStream(
                                           "/org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedClass.java"));
       ScaffoldUtil
                .createOrOverwrite(
-                        java.getJavaResource("org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedSubclass.java"),
+                        java.getJavaResource(
+                                 "org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedSubclass.java"),
                         getClass()
                                  .getResourceAsStream(
                                           "/org/jboss/forge/addon/scaffold/metawidget/inspector/propertystyle/ManuallyGeneratedSubclass.java"));
 
       ForgePropertyStyle propertyStyle = new ForgePropertyStyle(new ForgePropertyStyleConfig().setProject(project));
       Map<String, Property> properties = propertyStyle
-               .getProperties("org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.ManuallyGeneratedSubclass");
+               .getProperties(
+                        "org.jboss.forge.addon.scaffold.metawidget.inspector.propertystyle.ManuallyGeneratedSubclass");
 
       Property property = properties.get("normalField");
       assertEquals("normalField", ((ForgeProperty) property).getName());

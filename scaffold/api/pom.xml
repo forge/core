@@ -10,11 +10,6 @@
    <name>Forge - Scaffold API</name>
    <dependencies>
       <dependency>
-         <groupId>org.jboss.forge.furnace.container</groupId>
-         <artifactId>cdi-api</artifactId>
-         <scope>provided</scope>
-      </dependency>
-      <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>scaffold-spi</artifactId>
          <classifier>forge-addon</classifier>

@@ -9,8 +9,6 @@ package org.jboss.forge.addon.scaffold.mock;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.scaffold.spi.AccessStrategy;
@@ -18,6 +16,7 @@ import org.jboss.forge.addon.scaffold.spi.ScaffoldGenerationContext;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldProvider;
 import org.jboss.forge.addon.scaffold.spi.ScaffoldSetupContext;
 import org.jboss.forge.addon.ui.result.NavigationResult;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 public class MockProvider implements ScaffoldProvider
 {
@@ -27,9 +26,6 @@ public class MockProvider implements ScaffoldProvider
 
    private static boolean isSetup;
    private static boolean isGenerated;
-
-   @Inject
-   private ResourceFactory resourceFactory;
 
    @Override
    public String getName()
@@ -61,6 +57,8 @@ public class MockProvider implements ScaffoldProvider
    {
       isGenerated = false;
       List<Resource<?>> result = new ArrayList<Resource<?>>();
+      ResourceFactory resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class)
+               .get();
       for (Resource<?> resource : generationContext.getResources())
       {
          Scaffoldable scaffoldable = ((ScaffoldableResource) resource).getUnderlyingResourceObject();

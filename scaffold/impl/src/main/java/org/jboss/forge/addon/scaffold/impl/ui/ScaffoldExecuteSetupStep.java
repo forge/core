@@ -2,8 +2,6 @@ package org.jboss.forge.addon.scaffold.impl.ui;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
@@ -20,12 +18,10 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 public class ScaffoldExecuteSetupStep extends AbstractProjectCommand implements UIWizardStep
 {
-
-   @Inject
-   private ProjectFactory factory;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -83,7 +79,7 @@ public class ScaffoldExecuteSetupStep extends AbstractProjectCommand implements 
    @Override
    protected ProjectFactory getProjectFactory()
    {
-      return factory;
+      return SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
    }
 
 }

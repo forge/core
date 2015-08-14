@@ -1,0 +1,4 @@
+org.jboss.forge.addon.scaffold.impl.ui.ScaffoldExecuteGenerationStep
+org.jboss.forge.addon.scaffold.impl.ui.ScaffoldExecuteSetupStep
+org.jboss.forge.addon.scaffold.impl.ui.ScaffoldGenerateCommandImpl
+org.jboss.forge.addon.scaffold.impl.ui.ScaffoldSetupWizardImpl

@@ -6,12 +6,11 @@
  */
 package org.jboss.forge.addon.scaffold;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.parser.java.projects.JavaProjectType;
 import org.jboss.forge.addon.parser.java.projects.JavaWebProjectType;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 /**
  * Helps with the configuration of a project
@@ -20,20 +19,16 @@ import org.jboss.forge.addon.projects.ProjectFactory;
  */
 public class ProjectHelper
 {
-   @Inject
-   private ProjectFactory projectFactory;
-
-   @Inject
-   private JavaWebProjectType javaWebProjectType;
-
-   @Inject
-   private JavaProjectType javaProjectType;
 
    /**
     * Creates a project installing the required facets from {@link JavaWebProjectType#getRequiredFacets()}
     */
    public Project createWebProject()
    {
+      ProjectFactory projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class)
+               .get();
+      JavaWebProjectType javaWebProjectType = SimpleContainer
+               .getServices(getClass().getClassLoader(), JavaWebProjectType.class).get();
       return projectFactory.createTempProject(javaWebProjectType.getRequiredFacets());
    }
 
@@ -42,6 +37,10 @@ public class ProjectHelper
     */
    public Project createJavaLibraryProject()
    {
+      ProjectFactory projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class)
+               .get();
+      JavaProjectType javaProjectType = SimpleContainer
+               .getServices(getClass().getClassLoader(), JavaProjectType.class).get();
       return projectFactory.createTempProject(javaProjectType.getRequiredFacets());
    }
 

@@ -13,8 +13,6 @@ import static org.hamcrest.CoreMatchers.not;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
@@ -29,8 +27,11 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -48,23 +49,26 @@ public class FacesScaffoldTest
             @AddonDependency(name = "org.jboss.forge.addon:scaffold-faces"),
             @AddonDependency(name = "org.jboss.forge.addon:maven"),
             @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+            @AddonDependency(name = "org.jboss.forge.furnace.container:simple")
    })
    public static AddonArchive getDeployment()
    {
       AddonArchive archive = ShrinkWrap
                .create(AddonArchive.class)
-               .addClass(ProjectHelper.class)
-               .addBeansXML();
+               .addAsServiceProvider(Service.class, FacesScaffoldTest.class);
 
       return archive;
    }
 
-   @Inject
    ProjectFactory projectFactory;
-
-   @Inject
    ShellTest shellTest;
+
+   @Before
+   public void setUp()
+   {
+      projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
+      shellTest = SimpleContainer.getServices(getClass().getClassLoader(), ShellTest.class).get();
+   }
 
    @Test
    public void testScaffoldSetup() throws Exception
