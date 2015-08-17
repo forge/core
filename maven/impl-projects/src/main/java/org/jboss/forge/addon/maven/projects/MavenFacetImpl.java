@@ -35,7 +35,6 @@ import org.apache.maven.model.building.ModelProblem;
 import org.apache.maven.model.building.ModelProblem.Severity;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.jboss.forge.addon.facets.AbstractFacet;
@@ -61,21 +60,6 @@ public class MavenFacetImpl extends AbstractFacet<Project>implements ProjectFace
    private static final Logger log = Logger.getLogger(MavenFacetImpl.class.getName());
 
    private static final MavenBuildManager BUILD_MANAGER = new MavenBuildManager();
-
-   public ProjectBuildingRequest getRequest()
-   {
-      return BUILD_MANAGER.getProjectBuildingRequest();
-   }
-
-   public ProjectBuildingRequest getOfflineRequest()
-   {
-      return BUILD_MANAGER.getProjectBuildingRequest(isInstalled());
-   }
-
-   public ProjectBuildingRequest getBuildingRequest(final boolean offline)
-   {
-      return BUILD_MANAGER.getProjectBuildingRequest(offline);
-   }
 
    @Override
    public boolean install()
