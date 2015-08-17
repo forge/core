@@ -38,30 +38,6 @@
             <classifier>forge-addon</classifier>
             <version>${project.version}</version>
          </dependency>
-
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>dependencies</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>ui</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>ui-api</artifactId>
-            <version>${project.version}</version>
-         </dependency>
-         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>projects</artifactId>
-            <version>${project.version}</version>
-            <classifier>forge-addon</classifier>
-         </dependency>
       </dependencies>
    </dependencyManagement>
 
