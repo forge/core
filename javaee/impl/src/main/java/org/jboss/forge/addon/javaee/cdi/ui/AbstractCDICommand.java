@@ -2,10 +2,13 @@ package org.jboss.forge.addon.javaee.cdi.ui;
 
 import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_CDI_PACKAGE;
 
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.result.NavigationResult;
@@ -20,6 +23,8 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 public abstract class AbstractCDICommand<T extends JavaSource<?>> extends AbstractJavaSourceCommand<T>
          implements PrerequisiteCommandsProvider
 {
+   @Inject
+   private ProjectFactory projectFactory;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -54,5 +59,11 @@ public abstract class AbstractCDICommand<T extends JavaSource<?>> extends Abstra
          }
       }
       return builder.build();
+   }
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return projectFactory;
    }
 }

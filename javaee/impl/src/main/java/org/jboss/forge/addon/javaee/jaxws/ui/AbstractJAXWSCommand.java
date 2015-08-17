@@ -8,11 +8,14 @@ package org.jboss.forge.addon.javaee.jaxws.ui;
 
 import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_SOAP_PACKAGE;
 
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.javaee.jaxws.JAXWSFacet;
 import org.jboss.forge.addon.javaee.jaxws.ui.setup.JAXWSSetupWizard;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.result.NavigationResult;
@@ -28,6 +31,8 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 public abstract class AbstractJAXWSCommand<T extends JavaSource<?>> extends AbstractJavaSourceCommand<T>
          implements PrerequisiteCommandsProvider
 {
+   @Inject
+   private ProjectFactory projectFactory;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -62,6 +67,12 @@ public abstract class AbstractJAXWSCommand<T extends JavaSource<?>> extends Abst
          }
       }
       return builder.build();
-
    }
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return projectFactory;
+   }
+
 }

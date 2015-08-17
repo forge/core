@@ -7,16 +7,27 @@
 
 package org.jboss.forge.addon.parser.java.ui;
 
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * @author <a href="mailto:antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
-public class JavaExceptionCommandImpl extends AbstractJavaSourceCommand<JavaClassSource> implements
+public class JavaExceptionCommandImpl extends AbstractJavaSourceCommand<JavaClassSource>implements
          JavaExceptionCommand
 {
+   @Inject
+   private ProjectFactory projectFactory;
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return projectFactory;
+   }
 
    @Override
    public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source)

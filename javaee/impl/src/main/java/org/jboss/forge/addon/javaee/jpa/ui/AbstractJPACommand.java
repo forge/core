@@ -4,6 +4,7 @@ import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_ENTITY
 
 import java.io.FileNotFoundException;
 
+import javax.inject.Inject;
 import javax.persistence.Entity;
 
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
@@ -13,6 +14,7 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -28,6 +30,9 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 public abstract class AbstractJPACommand<T extends JavaSource<?>> extends AbstractJavaSourceCommand<T>
          implements PrerequisiteCommandsProvider
 {
+
+   @Inject
+   private ProjectFactory projectFactory;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -86,4 +91,11 @@ public abstract class AbstractJPACommand<T extends JavaSource<?>> extends Abstra
       }
       return builder.build();
    }
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return projectFactory;
+   }
+
 }

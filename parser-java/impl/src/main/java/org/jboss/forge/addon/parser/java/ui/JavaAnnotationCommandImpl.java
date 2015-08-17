@@ -7,13 +7,26 @@
 
 package org.jboss.forge.addon.parser.java.ui;
 
+import javax.inject.Inject;
+
+import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaAnnotationCommandImpl extends AbstractJavaSourceCommand<JavaAnnotationSource> implements JavaAnnotationCommand
+public class JavaAnnotationCommandImpl extends AbstractJavaSourceCommand<JavaAnnotationSource>
+         implements JavaAnnotationCommand
 {
+   @Inject
+   private ProjectFactory projectFactory;
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return projectFactory;
+   }
+
    @Override
    protected Class<JavaAnnotationSource> getSourceType()
    {

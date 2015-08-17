@@ -7,14 +7,26 @@
 
 package org.jboss.forge.addon.parser.java.ui;
 
+import javax.inject.Inject;
+
+import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.roaster.model.source.JavaEnumSource;
 
 /**
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class JavaEnumCommandImpl extends AbstractJavaSourceCommand<JavaEnumSource> implements JavaEnumCommand
+public class JavaEnumCommandImpl extends AbstractJavaSourceCommand<JavaEnumSource>implements JavaEnumCommand
 {
+   @Inject
+   private ProjectFactory projectFactory;
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return projectFactory;
+   }
+
    @Override
    protected Class<JavaEnumSource> getSourceType()
    {

@@ -2,10 +2,13 @@ package org.jboss.forge.addon.javaee.rest.ui;
 
 import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_REST_PACKAGE;
 
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.javaee.rest.RestFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -21,6 +24,9 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 public abstract class AbstractRestNewCommand<T extends JavaSource<?>> extends AbstractJavaSourceCommand<T>
          implements PrerequisiteCommandsProvider
 {
+
+   @Inject
+   private ProjectFactory projectFactory;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -56,4 +62,11 @@ public abstract class AbstractRestNewCommand<T extends JavaSource<?>> extends Ab
       }
       return builder.build();
    }
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return projectFactory;
+   }
+
 }

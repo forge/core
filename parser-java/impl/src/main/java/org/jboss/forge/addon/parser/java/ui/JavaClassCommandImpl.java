@@ -7,13 +7,25 @@
 
 package org.jboss.forge.addon.parser.java.ui;
 
+import javax.inject.Inject;
+
+import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaClassCommandImpl extends AbstractJavaSourceCommand<JavaClassSource> implements JavaClassCommand
+public class JavaClassCommandImpl extends AbstractJavaSourceCommand<JavaClassSource>implements JavaClassCommand
 {
+   @Inject
+   private ProjectFactory projectFactory;
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return projectFactory;
+   }
+
    @Override
    protected Class<JavaClassSource> getSourceType()
    {

@@ -2,10 +2,13 @@ package org.jboss.forge.addon.javaee.validation.ui;
 
 import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_CONSTRAINT_PACKAGE;
 
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.javaee.validation.ValidationFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.result.NavigationResult;
@@ -20,6 +23,8 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 public abstract class AbstractValidationCommand<T extends JavaSource<?>> extends AbstractJavaSourceCommand<T>
          implements PrerequisiteCommandsProvider
 {
+   @Inject
+   private ProjectFactory projectFactory;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -32,6 +37,12 @@ public abstract class AbstractValidationCommand<T extends JavaSource<?>> extends
    protected boolean isProjectRequired()
    {
       return true;
+   }
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return projectFactory;
    }
 
    @Override

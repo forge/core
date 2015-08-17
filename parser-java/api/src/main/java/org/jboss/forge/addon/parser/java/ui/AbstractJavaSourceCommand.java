@@ -13,8 +13,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.facets.constraints.FacetConstraintType;
 import org.jboss.forge.addon.facets.constraints.FacetConstraints;
@@ -22,7 +20,6 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.visit.VisitContext;
@@ -30,12 +27,13 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
@@ -57,24 +55,23 @@ import org.jboss.forge.roaster.model.util.Types;
 })
 public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>> extends AbstractProjectCommand
 {
-   @Inject
-   private ProjectFactory projectFactory;
-
-   @Inject
-   @WithAttributes(label = "Package Name", type = InputType.JAVA_PACKAGE_PICKER, description = "The package name where this type will be created")
    private UIInput<String> targetPackage;
-
-   @Inject
-   @WithAttributes(label = "Type Name", required = true, description = "The type name")
    private UIInput<String> named;
-
-   @Inject
-   @WithAttributes(label = "Overwrite", description = "The overwrite flag that is used if the class already exists.", defaultValue = "false")
    private UIInput<Boolean> overwrite;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      targetPackage = factory.createInput("targetPackage", String.class).setLabel("Package Name")
+               .setDescription("The package name where this type will be created");
+      targetPackage.getFacet(HintsFacet.class).setInputType(InputType.JAVA_PACKAGE_PICKER);
+
+      named = factory.createInput("named", String.class).setLabel("Type Name").setRequired(true)
+               .setDescription("The type name");
+
+      overwrite = factory.createInput("overwrite", Boolean.class).setLabel("Overwrite")
+               .setDescription("The overwrite flag that is used if the class already exists.").setDefaultValue(false);
       Project project = getSelectedProject(builder);
       final JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
       // Setup named
@@ -287,11 +284,4 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
       }
       return packageName;
    }
-
-   @Override
-   protected ProjectFactory getProjectFactory()
-   {
-      return projectFactory;
-   }
-
 }
