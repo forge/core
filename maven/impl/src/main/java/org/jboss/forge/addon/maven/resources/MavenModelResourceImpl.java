@@ -20,7 +20,6 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.jboss.forge.addon.parser.xml.resources.AbstractXMLResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.furnace.util.Streams;
 
 /**
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
@@ -104,11 +103,9 @@ public class MavenModelResourceImpl extends AbstractXMLResource implements Maven
    {
       if (currentModel == null)
       {
-         InputStream stream = null;
-         try
+         try (InputStream stream = getResourceInputStream())
          {
             MavenXpp3Reader reader = new MavenXpp3Reader();
-            stream = getResourceInputStream();
             currentModel = reader.read(stream);
             currentModel.setPomFile(getUnderlyingResourceObject());
 
@@ -120,10 +117,6 @@ public class MavenModelResourceImpl extends AbstractXMLResource implements Maven
          catch (Exception e)
          {
             throw new RuntimeException(e);
-         }
-         finally
-         {
-            Streams.closeQuietly(stream);
          }
       }
    }
