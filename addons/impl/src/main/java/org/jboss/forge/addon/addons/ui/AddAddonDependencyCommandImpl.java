@@ -13,10 +13,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.addons.facets.AddonClassifierFacet;
-import org.jboss.forge.addon.addons.project.AddonProjectConfiguratorImpl;
+import org.jboss.forge.addon.addons.project.AddonProjectConfigurator;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -27,10 +25,10 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
@@ -38,6 +36,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.util.Strings;
 
@@ -49,24 +48,20 @@ import org.jboss.forge.furnace.util.Strings;
 @FacetConstraint(AddonClassifierFacet.class)
 public class AddAddonDependencyCommandImpl extends AbstractProjectCommand implements AddAddonDependencyCommand
 {
-   @Inject
-   private ProjectFactory projectFactory;
-
-   @Inject
-   private AddonProjectConfiguratorImpl configurator;
-
-   @Inject
-   private Furnace furnace;
-
-   @Inject
-   @WithAttributes(label = "Addon Coordinates", description = "Addon coordinates to be added as a dependency for the selected project", required = true)
    private UIInput<String> addon;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      AddonProjectConfigurator configurator = SimpleContainer
+               .getServices(getClass().getClassLoader(), AddonProjectConfigurator.class).get();
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      addon = factory.createInput("addon", String.class).setLabel("Addon Coordinates")
+               .setDescription("Addon coordinates to be added as a dependency for the selected project")
+               .setRequired(true);
       final Set<AddonId> addonChoices = new TreeSet<>();
       Project project = getSelectedProject(builder);
+      Furnace furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
       for (AddonRepository repository : furnace.getRepositories())
       {
          for (AddonId id : repository.listEnabled())
@@ -117,6 +112,8 @@ public class AddAddonDependencyCommandImpl extends AbstractProjectCommand implem
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
+      AddonProjectConfigurator configurator = SimpleContainer
+               .getServices(getClass().getClassLoader(), AddonProjectConfigurator.class).get();
       Project project = getSelectedProject(context);
       AddonId addonId = AddonId.fromCoordinates(addon.getValue());
       configurator.installSelectedAddons(project, Collections.singleton(addonId), false);
@@ -142,7 +139,7 @@ public class AddAddonDependencyCommandImpl extends AbstractProjectCommand implem
    @Override
    protected ProjectFactory getProjectFactory()
    {
-      return projectFactory;
+      return SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
    }
 
 }

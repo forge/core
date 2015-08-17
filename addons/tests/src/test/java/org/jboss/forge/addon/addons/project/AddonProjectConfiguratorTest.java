@@ -11,9 +11,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Collections;
 
-import javax.inject.Inject;
-
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.addons.facets.AddonAPIFacet;
 import org.jboss.forge.addon.addons.facets.AddonImplFacet;
@@ -40,14 +37,12 @@ import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.versions.Version;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,26 +52,17 @@ public class AddonProjectConfiguratorTest
 {
    private static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
 
-   @Deployment
-   @AddonDependencies({
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-            @AddonDependency(name = "org.jboss.forge.addon:addons"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.addon:javaee")
-   })
-   public static AddonArchive getDeployment()
-   {
-      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
-   }
-
-   @Inject
    private AddonProjectConfigurator configurator;
-
-   @Inject
    private ProjectFactory projectFactory;
-
-   @Inject
    private Furnace furnace;
+
+   @Before
+   public void setUp()
+   {
+      projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
+      configurator = SimpleContainer.getServices(getClass().getClassLoader(), AddonProjectConfigurator.class).get();
+      furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
+   }
 
    @Test
    public void testComplexAddonProject() throws FileNotFoundException, FacetNotFoundException

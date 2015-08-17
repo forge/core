@@ -1,0 +1,15 @@
+org.jboss.forge.addon.addons.facets.AddonAddonFacet
+org.jboss.forge.addon.addons.facets.AddonAPIFacet
+org.jboss.forge.addon.addons.facets.AddonClassifierFacet
+org.jboss.forge.addon.addons.facets.AddonImplFacet
+org.jboss.forge.addon.addons.facets.AddonParentFacet
+org.jboss.forge.addon.addons.facets.AddonSPIFacet
+org.jboss.forge.addon.addons.facets.AddonTestFacet
+org.jboss.forge.addon.addons.facets.DefaultFurnaceContainerAPIFacet
+org.jboss.forge.addon.addons.facets.DefaultFurnaceContainerFacet
+org.jboss.forge.addon.addons.facets.ForgeBOMFacet
+org.jboss.forge.addon.addons.facets.ForgeVersionFacet
+org.jboss.forge.addon.addons.facets.FurnaceAPIFacet
+org.jboss.forge.addon.addons.facets.FurnaceBOMFacet
+org.jboss.forge.addon.addons.facets.FurnacePluginFacet
+org.jboss.forge.addon.addons.facets.FurnaceVersionFacet

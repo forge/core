@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.addons.facets.AddonAPIFacet;
 import org.jboss.forge.addon.addons.facets.AddonAddonFacet;
 import org.jboss.forge.addon.addons.facets.AddonClassifierFacet;
@@ -44,6 +42,7 @@ import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.Streams;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.roaster.Roaster;
@@ -60,22 +59,11 @@ public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
 {
    private static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
 
-   @Inject
-   private FacetFactory facetFactory;
-
-   @Inject
-   private ProjectFactory projectFactory;
-
-   @Inject
-   private DependencyInstaller dependencyInstaller;
-
-   @Inject
-   private MavenBuildSystem buildSystem;
-
    @Override
    public void setupSimpleAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
             throws FileNotFoundException, FacetNotFoundException
    {
+      FacetFactory facetFactory = getFacetFactory();
       generateReadme(project);
       facetFactory.install(project, FurnaceVersionFacet.class);
       facetFactory.install(project, ForgeVersionFacet.class);
@@ -107,6 +95,8 @@ public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
    public void setupComplexAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
             throws FileNotFoundException, FacetNotFoundException
    {
+      FacetFactory facetFactory = getFacetFactory();
+      DependencyInstaller dependencyInstaller = getDependencyInstaller();
       generateReadme(project);
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
       String projectName = metadata.getProjectName();
@@ -191,6 +181,7 @@ public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
    @Override
    public void installSelectedAddons(final Project project, Iterable<AddonId> addons, boolean managed)
    {
+      DependencyInstaller dependencyInstaller = getDependencyInstaller();
       if (addons != null)
          for (AddonId addon : addons)
          {
@@ -228,6 +219,7 @@ public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
    @Override
    public boolean dependsOnAddon(final Project project, AddonId addonId)
    {
+      DependencyInstaller dependencyInstaller = getDependencyInstaller();
       Dependency dependency = toDependency(addonId);
       return dependencyInstaller.isInstalled(project, dependency);
    }
@@ -235,6 +227,8 @@ public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
    private Project createSubmoduleProject(final Project parent, String moduleName, String artifactId,
             Class<? extends ProjectFacet>... requiredProjectFacets)
    {
+      ProjectFactory projectFactory = getProjectFactory();
+      MavenBuildSystem buildSystem = getBuildSystem();
       DirectoryResource location = parent.getRoot().reify(DirectoryResource.class)
                .getOrCreateChildDirectory(moduleName);
 
@@ -246,5 +240,37 @@ public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
       MetadataFacet metadata = project.getFacet(MetadataFacet.class);
       metadata.setProjectName(artifactId);
       return project;
+   }
+
+   /**
+    * @return the facetFactory
+    */
+   private FacetFactory getFacetFactory()
+   {
+      return SimpleContainer.getServices(getClass().getClassLoader(), FacetFactory.class).get();
+   }
+
+   /**
+    * @return the projectFactory
+    */
+   private ProjectFactory getProjectFactory()
+   {
+      return SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
+   }
+
+   /**
+    * @return the dependencyInstaller
+    */
+   private DependencyInstaller getDependencyInstaller()
+   {
+      return SimpleContainer.getServices(getClass().getClassLoader(), DependencyInstaller.class).get();
+   }
+
+   /**
+    * @return the buildSystem
+    */
+   private MavenBuildSystem getBuildSystem()
+   {
+      return SimpleContainer.getServices(getClass().getClassLoader(), MavenBuildSystem.class).get();
    }
 }

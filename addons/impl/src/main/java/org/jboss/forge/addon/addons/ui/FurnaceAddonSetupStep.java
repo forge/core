@@ -10,8 +10,6 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.addons.project.AddonProjectConfigurator;
 import org.jboss.forge.addon.addons.project.FurnaceAddonProjectType;
 import org.jboss.forge.addon.projects.Project;
@@ -20,11 +18,11 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UINavigationContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
@@ -33,6 +31,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.furnace.versions.Versions;
@@ -49,23 +48,9 @@ public class FurnaceAddonSetupStep extends AbstractUICommand implements UIWizard
    private static final String DEFAULT_CONTAINER_NAME = "org.jboss.forge.furnace.container:cdi";
    private static final String DEFAULT_DEPENDENCY_NAME = "org.jboss.forge.addon:core";
 
-   @Inject
-   @WithAttributes(label = "Furnace container", required = true, requiredMessage = "You must select one Furnace container")
    private UISelectOne<AddonId> furnaceContainer;
-
-   @Inject
-   @WithAttributes(label = "Create API, Impl, SPI, Tests, and Addon modules")
    private UIInput<Boolean> splitProjects;
-
-   @Inject
-   @WithAttributes(label = "Depend on these addons")
    private UISelectMany<AddonId> addons;
-
-   @Inject
-   private Furnace furnace;
-
-   @Inject
-   private AddonProjectConfigurator addonProjectFactory;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -78,6 +63,13 @@ public class FurnaceAddonSetupStep extends AbstractUICommand implements UIWizard
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      furnaceContainer = factory.createSelectOne("furnaceContainer", AddonId.class).setLabel("Furnace container")
+               .setRequired(true).setRequiredMessage("You must select one Furnace container");
+      splitProjects = factory.createInput("splitProjects", Boolean.class)
+               .setLabel("Create API, Impl, SPI, Tests, and Addon modules");
+      addons = factory.createSelectMany("addons", AddonId.class).setLabel("Depend on these addons");
+
       configureAddonDependencies();
 
       builder.add(furnaceContainer).add(splitProjects).add(addons);
@@ -89,6 +81,7 @@ public class FurnaceAddonSetupStep extends AbstractUICommand implements UIWizard
       Set<AddonId> containerChoices = new TreeSet<>();
       AddonId defaultContainer = null;
       AddonId defaultDependency = null;
+      Furnace furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
       for (AddonRepository repository : furnace.getRepositories())
       {
          for (AddonId id : repository.listEnabled())
@@ -122,6 +115,8 @@ public class FurnaceAddonSetupStep extends AbstractUICommand implements UIWizard
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
+      AddonProjectConfigurator addonProjectFactory = SimpleContainer
+               .getServices(getClass().getClassLoader(), AddonProjectConfigurator.class).get();
       final Project project = (Project) context.getUIContext().getAttributeMap().get(Project.class);
       Set<AddonId> dependencyAddons = new TreeSet<>();
       if (addons.hasValue() || addons.hasDefaultValue())

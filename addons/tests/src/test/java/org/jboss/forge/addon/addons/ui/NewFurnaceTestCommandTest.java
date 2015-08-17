@@ -12,9 +12,6 @@ import static org.hamcrest.CoreMatchers.is;
 
 import java.util.Iterator;
 
-import javax.inject.Inject;
-
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.addons.facets.AddonTestFacet;
 import org.jboss.forge.addon.addons.facets.FurnaceVersionFacet;
@@ -34,15 +31,14 @@ import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -54,24 +50,19 @@ import org.junit.runner.RunWith;
 public class NewFurnaceTestCommandTest
 {
 
-   @Deployment
-   @AddonDependencies
-   public static AddonArchive getDeployment()
-   {
-      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
-   }
-
-   @Inject
    private ProjectFactory projectFactory;
-
-   @Inject
    private FacetFactory facetFactory;
-
-   @Inject
    private UITestHarness testHarness;
-
-   @Inject
    private Furnace furnace;
+
+   @Before
+   public void setUp()
+   {
+      projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
+      facetFactory = SimpleContainer.getServices(getClass().getClassLoader(), FacetFactory.class).get();
+      testHarness = SimpleContainer.getServices(getClass().getClassLoader(), UITestHarness.class).get();
+      furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
+   }
 
    @SuppressWarnings("unchecked")
    @Test

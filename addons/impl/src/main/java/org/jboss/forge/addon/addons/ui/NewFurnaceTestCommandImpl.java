@@ -13,8 +13,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.addons.facets.AddonTestFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
@@ -28,18 +26,20 @@ import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.roaster.Roaster;
@@ -58,38 +58,28 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
    private static final String DEFAULT_CONTAINER_NAME = "org.jboss.forge.furnace.container:cdi";
    private static final String DEFAULT_DEPENDENCY_NAME = "org.jboss.forge.addon:core";
 
-   @Inject
-   private ProjectFactory projectFactory;
-
-   @Inject
-   private Furnace furnace;
-
-   @Inject
-   private DependencyInstaller dependencyInstaller;
-
-   @Inject
-   @WithAttributes(label = "Package Name", type = InputType.JAVA_PACKAGE_PICKER)
    private UIInput<String> packageName;
-
-   @Inject
-   @WithAttributes(label = "Test Class Name", required = true)
    private UIInput<String> named;
-
-   @Inject
-   @WithAttributes(label = "Use Addons from current project as dependencies (automatic discovery)", description = "This will create an empty @AddonDependencies and reuse the addons in the current project's pom.xml", defaultValue = "true")
    private UIInput<Boolean> reuseProjectAddons;
-
-   @Inject
-   @WithAttributes(label = "Furnace container", requiredMessage = "You must select one Furnace container")
    private UISelectOne<AddonId> furnaceContainer;
-
-   @Inject
-   @WithAttributes(label = "Dependency addons", description = "Addons this test depends upon")
    private UISelectMany<AddonId> addonDependencies;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      packageName = factory.createInput("packageName", String.class).setLabel("Package Name");
+      packageName.getFacet(HintsFacet.class).setInputType(InputType.JAVA_PACKAGE_PICKER);
+      named = factory.createInput("named", String.class).setLabel("Test Class Name").setRequired(true);
+      reuseProjectAddons = factory.createInput("reuseProjectAddons", Boolean.class)
+               .setLabel("Use Addons from current project as dependencies (automatic discovery)")
+               .setDescription(
+                        "This will create an empty @AddonDependencies and reuse the addons in the current project's pom.xml")
+               .setDefaultValue(true);
+      furnaceContainer = factory.createSelectOne("furnaceContainer", AddonId.class).setLabel("Furnace container")
+               .setRequiredMessage("You must select one Furnace container");
+      addonDependencies = factory.createSelectMany("addonDependencies", AddonId.class).setLabel("Dependency addons")
+               .setDescription("Addons this test depends upon");
       configureAddonDependencies();
       Project project = getSelectedProject(builder.getUIContext());
       packageName.setDefaultValue(project.getFacet(JavaSourceFacet.class).getBasePackage());
@@ -102,6 +92,7 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
       Set<AddonId> containerChoices = new TreeSet<>();
       AddonId defaultContainer = null;
       AddonId defaultDependency = null;
+      Furnace furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
       for (AddonRepository repository : furnace.getRepositories())
       {
          for (AddonId id : repository.listEnabled())
@@ -220,6 +211,8 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
    private void addAddonDependency(Project project, StringBuilder dependenciesAnnotationBody,
             AddonId addonId)
    {
+      DependencyInstaller dependencyInstaller = SimpleContainer
+               .getServices(getClass().getClassLoader(), DependencyInstaller.class).get();
       Dependency dependency = DependencyBuilder.create(addonId.getName()).setVersion(
                addonId.getVersion().toString()).setClassifier(MavenAddonDependencyResolver.FORGE_ADDON_CLASSIFIER)
                .setScopeType("test");
@@ -240,7 +233,7 @@ public class NewFurnaceTestCommandImpl extends AbstractProjectCommand implements
    @Override
    protected ProjectFactory getProjectFactory()
    {
-      return projectFactory;
+      return SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
    }
 
 }

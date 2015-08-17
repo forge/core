@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.addons.facets;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
@@ -20,6 +18,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
@@ -32,7 +31,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
          @FacetConstraint({ JavaSourceFacet.class, DependencyFacet.class, DefaultFurnaceContainerFacet.class }),
          @FacetConstraint(value = { FurnaceVersionFacet.class }, type = FacetConstraintType.OPTIONAL)
 })
-public class AddonTestFacet extends AbstractFacet<Project> implements ProjectFacet
+public class AddonTestFacet extends AbstractFacet<Project>implements ProjectFacet
 {
    public static Dependency FURNACE_TEST_HARNESS_DEPENDENCY = DependencyBuilder.create()
             .setGroupId("org.jboss.forge.furnace.test")
@@ -42,9 +41,6 @@ public class AddonTestFacet extends AbstractFacet<Project> implements ProjectFac
             .setGroupId("org.jboss.forge.furnace.test")
             .setArtifactId("arquillian-furnace-classpath")
             .setScopeType("test");
-
-   @Inject
-   private DependencyInstaller installer;
 
    @Override
    public boolean install()
@@ -56,7 +52,8 @@ public class AddonTestFacet extends AbstractFacet<Project> implements ProjectFac
          {
             version = FurnaceVersionFacet.VERSION_PROPERTY;
          }
-
+         DependencyInstaller installer = SimpleContainer
+                  .getServices(getClass().getClassLoader(), DependencyInstaller.class).get();
          installer.install(getFaceted(), DependencyBuilder.create(FURNACE_TEST_HARNESS_DEPENDENCY).setVersion(version));
          installer.install(getFaceted(), DependencyBuilder.create(FURNACE_TEST_ADAPTER_DEPENDENCY).setVersion(version));
       }
@@ -77,6 +74,8 @@ public class AddonTestFacet extends AbstractFacet<Project> implements ProjectFac
    @Override
    public boolean isInstalled()
    {
+      DependencyInstaller installer = SimpleContainer
+               .getServices(getClass().getClassLoader(), DependencyInstaller.class).get();
       return installer.isInstalled(origin, FURNACE_TEST_HARNESS_DEPENDENCY)
                && installer.isInstalled(origin, FURNACE_TEST_ADAPTER_DEPENDENCY);
    }

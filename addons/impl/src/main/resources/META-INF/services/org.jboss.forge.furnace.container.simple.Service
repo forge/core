@@ -1,0 +1,8 @@
+org.jboss.forge.addon.addons.project.AddonProjectConfiguratorImpl
+org.jboss.forge.addon.addons.project.FurnaceAddonProjectType
+org.jboss.forge.addon.addons.ui.AddAddonDependencyCommandImpl
+org.jboss.forge.addon.addons.ui.FurnaceAddonSetupStep
+org.jboss.forge.addon.addons.ui.NewAnnotatedUICommandWizardImpl
+org.jboss.forge.addon.addons.ui.NewFurnaceTestCommandImpl
+org.jboss.forge.addon.addons.ui.NewFurnaceTestSetupCommandImpl
+org.jboss.forge.addon.addons.ui.NewUICommandWizardImpl

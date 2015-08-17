@@ -9,23 +9,23 @@ package org.jboss.forge.addon.addons.ui;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -33,14 +33,9 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class NewUICommandWizardImpl extends AbstractJavaSourceCommand<JavaClassSource> implements NewUICommandWizard
+public class NewUICommandWizardImpl extends AbstractJavaSourceCommand<JavaClassSource>implements NewUICommandWizard
 {
-   @Inject
-   @WithAttributes(label = "Command name", required = false)
    private UIInput<String> commandName;
-
-   @Inject
-   @WithAttributes(label = "Categories", required = false)
    private UIInputMany<String> categories;
 
    @Override
@@ -54,7 +49,10 @@ public class NewUICommandWizardImpl extends AbstractJavaSourceCommand<JavaClassS
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      InputComponentFactory factory = builder.getInputComponentFactory();
       super.initializeUI(builder);
+      commandName = factory.createInput("commandName", String.class).setLabel("Command name");
+      categories = factory.createInputMany("categories", String.class).setLabel("Categories");
       categories.setDefaultValue(new ArrayList<String>());
       builder.add(commandName).add(categories);
    }
@@ -171,5 +169,11 @@ public class NewUICommandWizardImpl extends AbstractJavaSourceCommand<JavaClassS
          }
       }
       return builder.toString();
+   }
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
    }
 }

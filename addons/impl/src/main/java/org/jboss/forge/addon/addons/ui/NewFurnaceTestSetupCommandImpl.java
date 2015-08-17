@@ -11,8 +11,6 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.addons.facets.AddonTestFacet;
 import org.jboss.forge.addon.addons.facets.FurnaceVersionFacet;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
@@ -25,15 +23,16 @@ import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 
 /**
@@ -43,24 +42,17 @@ import org.jboss.forge.furnace.repositories.AddonRepository;
  */
 public class NewFurnaceTestSetupCommandImpl extends AbstractProjectCommand implements NewFurnaceTestSetupCommand
 {
-
-   @Inject
-   private ProjectFactory projectFactory;
-
-   @Inject
-   private FacetFactory facetFactory;
-
-   @Inject
-   private Furnace furnace;
-
-   @Inject
-   @WithAttributes(label = "Dependency addons", description = "Addons this test depends upon")
    private UISelectMany<AddonId> addonDependencies;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      addonDependencies = factory.createSelectMany("addonDependencies", AddonId.class).setLabel("Dependency addons")
+               .setDescription("Addons this test depends upon");
+
       Set<AddonId> choices = new TreeSet<>();
+      Furnace furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
       for (AddonRepository repository : furnace.getRepositories())
       {
          for (AddonId id : repository.listEnabled())
@@ -82,12 +74,13 @@ public class NewFurnaceTestSetupCommandImpl extends AbstractProjectCommand imple
                .category(Categories.create("Forge", "Generate"));
    }
 
-   @Inject
-   private DependencyInstaller dependencyInstaller;
-
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
+      Furnace furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
+      FacetFactory facetFactory = SimpleContainer.getServices(getClass().getClassLoader(), FacetFactory.class).get();
+      DependencyInstaller dependencyInstaller = SimpleContainer
+               .getServices(getClass().getClassLoader(), DependencyInstaller.class).get();
       UIContext uiContext = context.getUIContext();
       Project project = getSelectedProject(uiContext);
 
@@ -118,7 +111,7 @@ public class NewFurnaceTestSetupCommandImpl extends AbstractProjectCommand imple
    @Override
    protected ProjectFactory getProjectFactory()
    {
-      return projectFactory;
+      return SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
    }
 
 }

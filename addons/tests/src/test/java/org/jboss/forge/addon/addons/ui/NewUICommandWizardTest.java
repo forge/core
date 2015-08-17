@@ -6,9 +6,6 @@
  */
 package org.jboss.forge.addon.addons.ui;
 
-import javax.inject.Inject;
-
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.addons.facets.AddonTestFacet;
 import org.jboss.forge.addon.addons.facets.FurnaceVersionFacet;
@@ -18,12 +15,10 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -35,31 +30,19 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class NewUICommandWizardTest
 {
-   @Deployment
-   @AddonDependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:parser-java"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.addon:projects"),
-            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.addon:addons"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
-   })
-   public static AddonArchive getDeployment()
-   {
-      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
-   }
-
-   @Inject
    private ProjectFactory projectFactory;
-
-   @Inject
    private FacetFactory facetFactory;
-
-   @Inject
    private UITestHarness testHarness;
-
-   @Inject
    private Furnace furnace;
+
+   @Before
+   public void setUp()
+   {
+      projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
+      facetFactory = SimpleContainer.getServices(getClass().getClassLoader(), FacetFactory.class).get();
+      testHarness = SimpleContainer.getServices(getClass().getClassLoader(), UITestHarness.class).get();
+      furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
+   }
 
    @Test
    public void testDefaultCommandNameBasedOnTypeNameUpperCaseWithCommandSuffix() throws Exception
