@@ -8,20 +8,14 @@
 package org.jboss.forge.addon.parser.xml.resources;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Collections;
-import java.util.List;
 
-import org.jboss.forge.addon.resource.AbstractFileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.parser.xml.Node;
-import org.jboss.forge.parser.xml.XMLParser;
 
 /**
  * @author <a href="mailto:koen.aers@gmail.com">Koen Aers</a>
  */
-public class XMLResourceImpl extends AbstractFileResource<XMLResource> implements XMLResource
+public class XMLResourceImpl extends AbstractXMLResource
 {
    public XMLResourceImpl(final ResourceFactory factory, final File file)
    {
@@ -29,28 +23,8 @@ public class XMLResourceImpl extends AbstractFileResource<XMLResource> implement
    }
 
    @Override
-   public XMLResource setContents(Node node)
-   {
-      setContents(XMLParser.toXMLString(node));
-      return this;
-   }
-
-   @Override
-   public Node getXmlSource() throws FileNotFoundException
-   {
-      return XMLParser.parse(getResourceInputStream());
-   }
-
-   @Override
    public Resource<File> createFrom(File file)
    {
       return new XMLResourceImpl(getResourceFactory(), file);
    }
-
-   @Override
-   protected List<Resource<?>> doListResources()
-   {
-      return Collections.emptyList();
-   }
-
 }
