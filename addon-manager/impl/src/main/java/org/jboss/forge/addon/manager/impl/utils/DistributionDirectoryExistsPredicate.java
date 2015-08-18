@@ -22,7 +22,10 @@ public class DistributionDirectoryExistsPredicate implements Predicate<UIContext
    @Override
    public boolean accept(UIContext type)
    {
-      File updateDir = new File(OperatingSystemUtils.getForgeHomeDir(), ".update");
+      File forgeHomeDir = OperatingSystemUtils.getForgeHomeDir();
+      if (forgeHomeDir == null)
+         return false;
+      File updateDir = new File(forgeHomeDir, ".update");
       return updateDir.exists();
    }
 

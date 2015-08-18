@@ -51,13 +51,15 @@ public class LoggingConfigurationLocator implements ConfigurationLocator
    {
       // First look for the property
       final String propLoc = System.getProperty("logging.configuration");
-      if (propLoc != null) try
-      {
-         return new URL(propLoc).openStream();
-      } catch (IOException e)
-      {
-         System.err.printf("Unable to read the logging configuration from '%s' (%s)%n", propLoc, e);
-      }
+      if (propLoc != null)
+         try
+         {
+            return new URL(propLoc).openStream();
+         }
+         catch (IOException e)
+         {
+            System.err.printf("Unable to read the logging configuration from '%s' (%s)%n", propLoc, e);
+         }
       File[] files = null;
       // Second attempt to find the configuration in the users .forge directory
       final File userForgeDir = OperatingSystemUtils.getUserForgeDir();
@@ -73,7 +75,7 @@ public class LoggingConfigurationLocator implements ConfigurationLocator
       // Finally default to $FORGE_HOME/logging.properties
       final File forgeHomeDir = OperatingSystemUtils.getForgeHomeDir();
       // Look for a logging.properties file
-      if (forgeHomeDir.isDirectory())
+      if (forgeHomeDir != null && forgeHomeDir.isDirectory())
       {
          files = forgeHomeDir.listFiles(LOGGING_CONFIG_FILTER);
       }

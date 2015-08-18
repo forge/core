@@ -29,7 +29,7 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui</artifactId>
          <classifier>forge-addon</classifier>
-         <optional>true</optional>
+         <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
