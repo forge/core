@@ -9,14 +9,8 @@ package org.jboss.forge.addon.parser.xml;
 
 import javax.inject.Inject;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.parser.xml.Node;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,23 +18,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class XMLSourceFactoryTest
 {
-   @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
-            @AddonDeployment(name = "org.jboss.forge.addon:parser-xml")
-   })
-   public static AddonArchive getDeployment()
-   {
-      AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:parser-xml")
-               );
-
-      return archive;
-   }
-
    @Inject
    private XMLSourceFactory factory;
 

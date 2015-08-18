@@ -14,15 +14,11 @@ import java.io.File;
 
 import javax.inject.Inject;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,15 +26,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class XMLResourceTest
 {
-   @Deployment
-   @AddonDependencies
-   public static AddonArchive getDeployment()
-   {
-      return ShrinkWrap
-               .create(AddonArchive.class)
-               .addBeansXML();
-   }
-
    @Inject
    private ResourceFactory factory;
 
