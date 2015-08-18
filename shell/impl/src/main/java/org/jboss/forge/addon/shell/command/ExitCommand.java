@@ -36,9 +36,11 @@ public class ExitCommand extends AbstractShellCommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      Shell shell = (Shell) context.getUIContext().getProvider();
+      UIContext uiContext = context.getUIContext();
+      Shell shell = (Shell) uiContext.getProvider();
       shell.getConsole().stop();
       forge.stop();
+      uiContext.getAttributeMap().put("org.jboss.forge.exit", Boolean.TRUE);
       return Results.success();
    }
 }

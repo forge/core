@@ -91,12 +91,15 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
       try
       {
          Result result = initialCommand.execute(executionContext);
-         firePostCommandExecuted(executionContext, listeners, initialCommand, result);
+         // If exiting, don't do anything
+         if (!Boolean.TRUE.equals(context.getAttributeMap().get("org.jboss.forge.exit")))
+            firePostCommandExecuted(executionContext, listeners, initialCommand, result);
          return result;
       }
       catch (Exception e)
       {
-         firePostCommandFailure(executionContext, listeners, initialCommand, e);
+         if (!Boolean.TRUE.equals(context.getAttributeMap().get("org.jboss.forge.exit")))
+            firePostCommandFailure(executionContext, listeners, initialCommand, e);
          throw e;
       }
    }
