@@ -1,6 +1,7 @@
 package org.jboss.forge.addon.shell.command;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
 
 import java.io.File;
@@ -35,11 +36,11 @@ public class CatCommandTest
       shellTest.clearScreen();
    }
 
-   @Test(timeout = 1000)
+   @Test
    public void testCatCommandInvalidArgument() throws Exception
    {
       Result result = shellTest.execute("cat foo bar", 5, TimeUnit.SECONDS);
-      Assert.assertTrue(result instanceof Failed);
+      Assert.assertThat(result, instanceOf(Failed.class));
       String err = shellTest.getStdErr();
       Assert.assertThat(err, containsString("cat: foo: No such file or directory"));
       Assert.assertThat(err, containsString("cat: bar: No such file or directory"));
