@@ -19,63 +19,61 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.database.tools.jpa.HibernateDialect;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.input.ValueChangeListener;
 import org.jboss.forge.addon.ui.input.events.ValueChangeEvent;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.validate.UIValidator;
 
 public abstract class AbstractConnectionProfileDetailsPage implements UICommand
 {
    private static final Logger log = Logger.getLogger(AbstractConnectionProfileDetailsPage.class.getName());
 
-   @Inject
-   @WithAttributes(label = "JDBC URL", description = "The jdbc url for the database tables", required = true)
    protected UIInput<String> jdbcUrl;
-
-   @Inject
-   @WithAttributes(label = "User Name", description = "The user name for the database connection", required = true)
    protected UIInput<String> userName;
-
-   @Inject
-   @WithAttributes(label = "User Password", description = "The password for the database connection", required = false, defaultValue = "", type = InputType.SECRET)
    protected UIInput<String> userPassword;
-
-   @Inject
-   @WithAttributes(label = "Save User Password?", description = "Should the connection password be saved?")
    protected UIInput<Boolean> saveUserPassword;
-
-   @Inject
-   @WithAttributes(label = "Hibernate Dialect", description = "The Hibernate dialect to use", required = true)
    protected UISelectOne<HibernateDialect> hibernateDialect;
-
-   @Inject
-   @WithAttributes(label = "Driver Location", description = "The location of the jar file that contains the JDBC driver", required = true)
-   protected UIInput<FileResource<?>> driverLocation;
-
-   @Inject
-   @WithAttributes(label = "Driver Class", description = "The class name of the JDBC driver", required = true)
-   protected UISelectOne<Class<?>> driverClass;
-
-   @Inject
-   @WithAttributes(label = "Verify Database Connection", description = "Attempt to connect to the database and verify connectivity")
+   protected UIInput<FileResource> driverLocation;
+   protected UISelectOne<Class> driverClass;
    private UIInput<Boolean> verifyConnection;
 
    private boolean connectionStale;
-   private List<Class<?>> driverClasses = null;
+   private List<Class> driverClasses = null;
 
+   @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      jdbcUrl = factory.createInput("jdbcUrl", String.class).setLabel("JDBC URL")
+               .setDescription("The jdbc url for the database tables").setRequired(true);
+      userName = factory.createInput("userName", String.class).setLabel("User Name")
+               .setDescription("The user name for the database connection").setRequired(true);
+      userPassword = factory.createInput("userPassword", String.class).setLabel("User Password")
+               .setDescription("The password for the database connection").setDefaultValue("");
+      userPassword.getFacet(HintsFacet.class).setInputType(InputType.SECRET);
+      saveUserPassword = factory.createInput("saveUserPassword", Boolean.class).setLabel("Save User Password?")
+               .setDescription("Should the connection password be saved?");
+      hibernateDialect = factory.createSelectOne("hibernateDialect", HibernateDialect.class)
+               .setLabel("Hibernate Dialect")
+               .setDescription("The Hibernate dialect to use").setRequired(true);
+      driverLocation = factory.createInput("driverLocation", FileResource.class)
+               .setLabel("Driver Location")
+               .setDescription("The location of the jar file that contains the JDBC driver").setRequired(true);
+      driverClass = factory.createSelectOne("driverClass", Class.class).setLabel("Driver Class")
+               .setDescription("The class name of the JDBC driver").setRequired(true);
+      verifyConnection = factory.createInput("verifyConnection", Boolean.class).setLabel("Verify Database Connection")
+               .setDescription("Attempt to connect to the database and verify connectivity");
+
       jdbcUrl.addValueChangeListener(new ConnectionStaleValueChangeListener());
       userName.addValueChangeListener(new ConnectionStaleValueChangeListener());
       userPassword.addValueChangeListener(new ConnectionStaleValueChangeListener());
@@ -106,14 +104,13 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
       }).addValueChangeListener(
                new CompositeValueChangeListener(
                         new ConnectionStaleValueChangeListener(),
-                        new DriverNamesStaleValueChangeListener())
-               );
+                        new DriverNamesStaleValueChangeListener()));
 
       driverClass.setValueChoices(new LocateDriverClassNamesCallable())
-               .setItemLabelConverter(new Converter<Class<?>, String>()
+               .setItemLabelConverter(new Converter<Class, String>()
                {
                   @Override
-                  public String convert(Class<?> source)
+                  public String convert(Class source)
                   {
                      if (source != null)
                         return source.getName();
@@ -121,13 +118,13 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
                         return "";
                   }
                })
-               .setDefaultValue(new Callable<Class<?>>()
+               .setDefaultValue(new Callable<Class>()
                {
                   @Override
-                  public Class<?> call() throws Exception
+                  public Class call() throws Exception
                   {
                      Class<?> result = null;
-                     Iterator<Class<?>> iterator = driverClass.getValueChoices().iterator();
+                     Iterator<Class> iterator = driverClass.getValueChoices().iterator();
                      if (iterator.hasNext())
                      {
                         result = iterator.next();
@@ -221,10 +218,10 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
       return result;
    }
 
-   private final class LocateDriverClassNamesCallable implements Callable<Iterable<Class<?>>>
+   private final class LocateDriverClassNamesCallable implements Callable<Iterable<Class>>
    {
       @Override
-      public Iterable<Class<?>> call() throws Exception
+      public Iterable<Class> call() throws Exception
       {
          if (driverClasses == null)
          {
@@ -234,7 +231,7 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
             {
                return Collections.emptyList();
             }
-            File file = (File) resource.getUnderlyingResourceObject();
+            File file = resource.getUnderlyingResourceObject();
             if (resource != null && resource.exists())
             {
                try (JarFile jarFile = new JarFile(file);)

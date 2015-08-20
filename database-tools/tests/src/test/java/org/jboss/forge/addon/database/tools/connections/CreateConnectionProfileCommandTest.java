@@ -10,8 +10,6 @@ package org.jboss.forge.addon.database.tools.connections;
 import java.util.ArrayList;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.database.tools.connections.ui.CreateConnectionProfileCommand;
@@ -26,21 +24,22 @@ import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.AddonArchive;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@Ignore
 @RunWith(Arquillian.class)
 public class CreateConnectionProfileCommandTest
 {
 
    @Deployment
    @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDeployment(name = "org.jboss.forge.furnace.container:simple"),
             @AddonDeployment(name = "org.jboss.forge.addon:ui"),
             @AddonDeployment(name = "org.jboss.forge.addon:configuration"),
             @AddonDeployment(name = "org.jboss.forge.addon:projects"),
@@ -53,25 +52,31 @@ public class CreateConnectionProfileCommandTest
    {
       AddonArchive archive = ShrinkWrap
                .create(AddonArchive.class)
-               .addBeansXML()
+               .addClass(MockConnectionProfileManagerImpl.class)
+               .addAsServiceProvider(Service.class, CreateConnectionProfileCommandTest.class)
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:simple"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:database-tools"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:dependencies"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"))
-               .addClass(MockConnectionProfileManagerImpl.class);
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"));
       return archive;
    }
 
-   @Inject
+   private ConnectionProfileManagerProvider provider;
    private ConnectionProfileManager manager;
-
-   @Inject
    private UITestHarness testHarness;
-
-   @Inject
    private DependencyResolver resolver;
+
+   @Before
+   public void setUp()
+   {
+      provider = SimpleContainer.getServices(getClass().getClassLoader(), ConnectionProfileManagerProvider.class).get();
+      manager = new MockConnectionProfileManagerImpl();
+      provider.setConnectionProfileManager(manager);
+      testHarness = SimpleContainer.getServices(getClass().getClassLoader(), UITestHarness.class).get();
+      resolver = SimpleContainer.getServices(getClass().getClassLoader(), DependencyResolver.class).get();
+   }
 
    @Test
    public void testConnectionProfileManager() throws Exception

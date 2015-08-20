@@ -5,12 +5,10 @@ import java.util.Properties;
 
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.ui.cdi.CommandScoped;
 
 /**
  * @author <a href="lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@CommandScoped
 public class GenerateEntitiesCommandDescriptor
 {
    private String targetPackage = "";

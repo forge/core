@@ -1,32 +1,27 @@
 package org.jboss.forge.addon.database.tools.connections.ui;
 
+import java.util.Arrays;
 import java.util.Map;
-
-import javax.inject.Inject;
 
 import org.jboss.forge.addon.database.tools.connections.AbstractConnectionProfileDetailsPage;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
+import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManager;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManagerProvider;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 public class CreateConnectionProfileCommandImpl extends AbstractConnectionProfileDetailsPage implements
          CreateConnectionProfileCommand
 {
-
-   @Inject
-   private ConnectionProfileManagerProvider provider;
-
-   @Inject
-   @WithAttributes(label = "Connection Name", description = "The name you want to give to this database connection.", required = true)
    private UIInput<String> name;
 
    @Override
@@ -40,6 +35,10 @@ public class CreateConnectionProfileCommandImpl extends AbstractConnectionProfil
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      name = factory.createInput("name", String.class).setLabel("Connection Name")
+               .setDescription("The name you want to give to this database connection.").setRequired(true);
+
       builder.add(name);
       super.initializeUI(builder);
    }
@@ -47,8 +46,10 @@ public class CreateConnectionProfileCommandImpl extends AbstractConnectionProfil
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      Map<String, ConnectionProfile> connectionProfiles = provider.getConnectionProfileManager()
-               .loadConnectionProfiles();
+      ConnectionProfileManagerProvider provider = SimpleContainer
+               .getServices(getClass().getClassLoader(), ConnectionProfileManagerProvider.class).get();
+      ConnectionProfileManager manager = provider.getConnectionProfileManager();
+      Map<String, ConnectionProfile> connectionProfiles = manager.loadConnectionProfiles();
       ConnectionProfile connectionProfile = new ConnectionProfile();
       connectionProfile.setName(name.getValue());
       connectionProfile.setDialect(hibernateDialect.getValue().getClassName());
@@ -58,8 +59,7 @@ public class CreateConnectionProfileCommandImpl extends AbstractConnectionProfil
       connectionProfile.setUser(userName.getValue());
       connectionProfile.setSavePassword(saveUserPassword.getValue());
       connectionProfile.setPassword(userPassword.getValue());
-      connectionProfiles.put(name.getValue(), connectionProfile);
-      provider.getConnectionProfileManager().saveConnectionProfiles(connectionProfiles.values());
+      manager.saveConnectionProfiles(Arrays.asList(connectionProfile));
       return Results.success("Connection profile " + connectionProfile.getName() + " has been saved successfully");
    }
 

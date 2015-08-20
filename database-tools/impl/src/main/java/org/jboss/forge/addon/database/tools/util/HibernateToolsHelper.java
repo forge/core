@@ -14,7 +14,7 @@ import org.jboss.forge.furnace.util.ClassLoaders;
 
 public class HibernateToolsHelper
 {
-   public void buildMappings(URL[] urls, final String driverName, final JDBCMetaDataConfiguration result)
+   public static void buildMappings(URL[] urls, final String driverName, final JDBCMetaDataConfiguration result)
             throws Exception
    {
       ClassLoaders.executeIn(urls, new Callable<Void>()
@@ -32,11 +32,11 @@ public class HibernateToolsHelper
       });
    }
 
-   public URL[] getDriverUrls(FileResource<?> resource)
+   public static URL[] getDriverUrls(FileResource<?> resource)
    {
       try
       {
-         File file = (File) resource.getUnderlyingResourceObject();
+         File file = resource.getUnderlyingResourceObject();
          ArrayList<URL> result = new ArrayList<URL>(1);
          result.add(file.toURI().toURL());
          return result.toArray(new URL[1]);

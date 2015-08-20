@@ -4,9 +4,8 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.configuration.Configuration;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.forge.parser.xml.XMLParser;
@@ -23,12 +22,10 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
    private final static String CONFIG_KEY_SAVE_PASSWORD = "save-password";
    private final static String CONFIG_KEY_ENCRYPTED_PASSWORD = "encrypted-password";
 
-   @Inject
-   private Configuration config;
-
    @Override
    public Map<String, ConnectionProfile> loadConnectionProfiles()
    {
+      Configuration config = SimpleContainer.getServices(getClass().getClassLoader(), Configuration.class).get();
       Map<String, ConnectionProfile> result = new LinkedHashMap<String, ConnectionProfile>();
       String connectionProfiles = config.getString("connection-profiles");
       if (connectionProfiles != null)
@@ -62,6 +59,7 @@ public class ConnectionProfileManagerImpl implements ConnectionProfileManager
    @Override
    public void saveConnectionProfiles(Collection<ConnectionProfile> connectionProfiles)
    {
+      Configuration config = SimpleContainer.getServices(getClass().getClassLoader(), Configuration.class).get();
       Node root = new Node("connection-profiles");
       for (ConnectionProfile descriptor : connectionProfiles)
       {

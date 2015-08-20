@@ -4,11 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Priority;
-import javax.enterprise.inject.Alternative;
-
-@Alternative
-@Priority(Integer.MAX_VALUE)
 public class MockConnectionProfileManagerImpl implements ConnectionProfileManager
 {
 

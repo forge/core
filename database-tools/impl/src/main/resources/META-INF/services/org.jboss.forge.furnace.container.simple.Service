@@ -1,0 +1,6 @@
+org.jboss.forge.addon.database.tools.connections.ConnectionProfileManagerImpl
+org.jboss.forge.addon.database.tools.connections.ui.CreateConnectionProfileCommandImpl
+org.jboss.forge.addon.database.tools.connections.ui.RemoveConnectionProfileCommandImpl
+org.jboss.forge.addon.database.tools.generate.ConnectionProfileDetailsStep
+org.jboss.forge.addon.database.tools.generate.DatabaseTableSelectionStep
+org.jboss.forge.addon.database.tools.generate.GenerateEntitiesCommand

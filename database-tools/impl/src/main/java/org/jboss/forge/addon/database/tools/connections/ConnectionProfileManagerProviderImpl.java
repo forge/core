@@ -1,14 +1,9 @@
 package org.jboss.forge.addon.database.tools.connections;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
-@Singleton
 public class ConnectionProfileManagerProviderImpl implements ConnectionProfileManagerProvider
 {
-   @Inject
-   private ConnectionProfileManager defaultManager;
-
    private ConnectionProfileManager connectionProfileManager;
 
    @Override
@@ -26,7 +21,7 @@ public class ConnectionProfileManagerProviderImpl implements ConnectionProfileMa
       }
       else
       {
-         return defaultManager;
+         return SimpleContainer.getServices(getClass().getClassLoader(), ConnectionProfileManager.class).get();
       }
    }
 

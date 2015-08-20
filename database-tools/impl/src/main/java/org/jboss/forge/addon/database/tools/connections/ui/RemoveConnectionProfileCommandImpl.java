@@ -2,20 +2,19 @@ package org.jboss.forge.addon.database.tools.connections.ui;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManagerProvider;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UISelectMany;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 public class RemoveConnectionProfileCommandImpl extends AbstractUICommand implements RemoveConnectionProfileCommand
 {
@@ -24,15 +23,8 @@ public class RemoveConnectionProfileCommandImpl extends AbstractUICommand implem
    private static final String COMMAND_NAME = "Connection: Remove Profile";
    private static final String COMMAND_DESCRIPTION = "Command to remove a database connection profile.";
 
-   @Inject
-   private ConnectionProfileManagerProvider provider;
-
    private Map<String, ConnectionProfile> profiles;
 
-   @Inject
-   @WithAttributes(
-            label = "Connection Name",
-            description = "The name of the database connection profiles you want to remove.")
    private UISelectMany<String> names;
 
    @Override
@@ -48,6 +40,11 @@ public class RemoveConnectionProfileCommandImpl extends AbstractUICommand implem
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      names = factory.createSelectMany("names", String.class).setLabel("Connection Name")
+               .setDescription("The name of the database connection profiles you want to remove.");
+      ConnectionProfileManagerProvider provider = SimpleContainer
+               .getServices(getClass().getClassLoader(), ConnectionProfileManagerProvider.class).get();
       profiles = provider.getConnectionProfileManager().loadConnectionProfiles();
       names.setValueChoices(profiles.keySet());
       builder.add(names);
@@ -56,6 +53,8 @@ public class RemoveConnectionProfileCommandImpl extends AbstractUICommand implem
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
+      ConnectionProfileManagerProvider provider = SimpleContainer
+               .getServices(getClass().getClassLoader(), ConnectionProfileManagerProvider.class).get();
       Iterable<String> selection = names.getValue();
       StringBuffer sb = new StringBuffer();
       for (String name : selection)
@@ -73,10 +72,9 @@ public class RemoveConnectionProfileCommandImpl extends AbstractUICommand implem
       if (removedProfiles.contains(", "))
       {
          int lastIndex = removedProfiles.lastIndexOf(',');
-         removedProfiles =
-                  removedProfiles.substring(0, lastIndex) +
-                           " and" +
-                           removedProfiles.substring(lastIndex + 1);
+         removedProfiles = removedProfiles.substring(0, lastIndex) +
+                  " and" +
+                  removedProfiles.substring(lastIndex + 1);
          message += "s " + removedProfiles + " have";
       }
       else

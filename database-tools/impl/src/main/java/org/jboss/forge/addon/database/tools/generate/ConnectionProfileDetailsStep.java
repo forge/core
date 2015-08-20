@@ -2,11 +2,10 @@ package org.jboss.forge.addon.database.tools.generate;
 
 import java.io.File;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.database.tools.connections.AbstractConnectionProfileDetailsPage;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManager;
+import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManagerProvider;
 import org.jboss.forge.addon.database.tools.jpa.HibernateDialect;
 import org.jboss.forge.addon.database.tools.util.HibernateToolsHelper;
 import org.jboss.forge.addon.resource.FileResource;
@@ -22,20 +21,11 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 public class ConnectionProfileDetailsStep extends AbstractConnectionProfileDetailsPage implements UIWizardStep
 {
-   @Inject
-   private ConnectionProfileManager manager;
-
-   @Inject
    private GenerateEntitiesCommandDescriptor descriptor;
-
-   @Inject
-   private ResourceFactory factory;
-
-   @Inject
-   private HibernateToolsHelper helper;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -54,6 +44,11 @@ public class ConnectionProfileDetailsStep extends AbstractConnectionProfileDetai
    public void initializeUI(UIBuilder builder) throws Exception
    {
       super.initializeUI(builder);
+      descriptor = (GenerateEntitiesCommandDescriptor) builder.getUIContext().getAttributeMap()
+               .get(GenerateEntitiesCommandDescriptor.class);
+      ConnectionProfileManagerProvider provider = SimpleContainer
+               .getServices(getClass().getClassLoader(), ConnectionProfileManagerProvider.class).get();
+      ConnectionProfileManager manager = provider.getConnectionProfileManager();
       ConnectionProfile cp = manager.loadConnectionProfiles().get(descriptor.getConnectionProfileName());
       if (cp != null)
       {
@@ -61,7 +56,9 @@ public class ConnectionProfileDetailsStep extends AbstractConnectionProfileDetai
          userName.setValue(cp.getUser());
          userPassword.setValue(cp.getPassword());
          hibernateDialect.setValue(HibernateDialect.fromClassName(cp.getDialect()));
-         driverLocation.setValue((FileResource<?>) (FileResource<?>) factory.create(new File(cp.getPath())));
+         ResourceFactory factory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class)
+                  .get();
+         driverLocation.setValue((FileResource<?>) factory.create(new File(cp.getPath())));
 
          for (Class<?> driver : driverClass.getValueChoices())
          {
@@ -88,11 +85,11 @@ public class ConnectionProfileDetailsStep extends AbstractConnectionProfileDetai
    {
       if (driverLocation.getValue() != null)
       {
-         descriptor.setUrls(helper.getDriverUrls(driverLocation.getValue()));
+         descriptor.setUrls(HibernateToolsHelper.getDriverUrls(driverLocation.getValue()));
       }
       if (driverClass.getValue() != null)
       {
-    	  descriptor.setDriverClass(driverClass.getValue().getName());
+         descriptor.setDriverClass(driverClass.getValue().getName());
       }
       descriptor.setConnectionProperties(createConnectionProperties());
    }

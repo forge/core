@@ -11,8 +11,6 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
-
 import org.hibernate.cfg.JDBCMetaDataConfiguration;
 import org.hibernate.cfg.reveng.DefaultReverseEngineeringStrategy;
 import org.hibernate.cfg.reveng.ReverseEngineeringSettings;
@@ -32,9 +30,9 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
@@ -49,17 +47,9 @@ public class DatabaseTableSelectionStep implements UIWizardStep
 {
    private static final Logger logger = Logger.getLogger(DatabaseTableSelectionStep.class.getName());
 
-   @Inject
-   @WithAttributes(
-            label = "Database Tables",
-            description = "The database tables for which to generate entities. Use '*' to select all tables")
    private UISelectMany<String> databaseTables;
 
-   @Inject
    private GenerateEntitiesCommandDescriptor descriptor;
-
-   @Inject
-   private HibernateToolsHelper helper;
 
    private JDBCMetaDataConfiguration jmdc;
 
@@ -89,6 +79,11 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      descriptor = (GenerateEntitiesCommandDescriptor) builder.getUIContext().getAttributeMap()
+               .get(GenerateEntitiesCommandDescriptor.class);
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      databaseTables = factory.createSelectMany("databaseTables", String.class).setLabel("Database Tables")
+               .setDescription("The database tables for which to generate entities. Use '*' to select all tables");
       databaseTables.setValueChoices(new Callable<Iterable<String>>()
       {
          @Override
@@ -104,7 +99,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
                jmdc.setReverseEngineeringStrategy(createReverseEngineeringStrategy());
                try
                {
-                  helper.buildMappings(descriptor.getUrls(), descriptor.getDriverClass(), jmdc);
+                  HibernateToolsHelper.buildMappings(descriptor.getUrls(), descriptor.getDriverClass(), jmdc);
                   Iterator<Table> iterator = jmdc.getTableMappings();
                   while (iterator.hasNext())
                   {
@@ -230,12 +225,11 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    private ReverseEngineeringStrategy createReverseEngineeringStrategy()
    {
       ReverseEngineeringStrategy strategy = new DefaultReverseEngineeringStrategy();
-      ReverseEngineeringSettings revengsettings =
-               new ReverseEngineeringSettings(strategy)
-                        .setDefaultPackageName(descriptor.getTargetPackage())
-                        .setDetectManyToMany(true)
-                        .setDetectOneToOne(true)
-                        .setDetectOptimisticLock(true);
+      ReverseEngineeringSettings revengsettings = new ReverseEngineeringSettings(strategy)
+               .setDefaultPackageName(descriptor.getTargetPackage())
+               .setDetectManyToMany(true)
+               .setDetectOneToOne(true)
+               .setDetectOptimisticLock(true);
       strategy.setSettings(revengsettings);
       return strategy;
    }

@@ -9,16 +9,17 @@ package org.jboss.forge.addon.database.tools.connections;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.AddonArchive;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -27,7 +28,7 @@ public class ConnectionProfileManagerTest
 {
    @Deployment
    @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi"),
+            @AddonDeployment(name = "org.jboss.forge.furnace.container:simple"),
             @AddonDeployment(name = "org.jboss.forge.addon:ui"),
             @AddonDeployment(name = "org.jboss.forge.addon:configuration"),
             @AddonDeployment(name = "org.jboss.forge.addon:projects"),
@@ -37,16 +38,20 @@ public class ConnectionProfileManagerTest
    {
       AddonArchive archive = ShrinkWrap
                .create(AddonArchive.class)
-               .addBeansXML()
+               .addAsServiceProvider(Service.class, ConnectionProfileManagerTest.class)
                .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:database-tools")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:simple"),
+                        AddonDependencyEntry.create("org.jboss.forge.addon:database-tools"));
       return archive;
    }
 
-   @Inject
    private ConnectionProfileManager manager;
+
+   @Before
+   public void setUp()
+   {
+      manager = SimpleContainer.getServices(getClass().getClassLoader(), ConnectionProfileManager.class).get();
+   }
 
    @Test
    public void testConnectionProfileHelper() throws Exception
