@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Inject;
 import javax.persistence.CascadeType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
@@ -55,6 +55,7 @@ import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Field;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
@@ -135,7 +136,6 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    private static final String PAGINATOR = "/resources/scaffold/paginator.xhtml";
    private static final String SCAFFOLD_PAGINATOR = "/scaffold/faces/paginator.xhtml";
 
-   protected FreemarkerTemplateProcessor templateProcessor;
    protected Template backingBeanTemplate;
    protected int backingBeanTemplateQbeMetawidgetIndent;
    protected int backingBeanTemplateRmEntityMetawidgetIndent;
@@ -162,15 +162,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    protected StaticJavaMetawidget qbeMetawidget;
    protected StaticJavaMetawidget rmEntityMetawidget;
 
-   private Configuration config;
    private Project project;
-
-   @Inject
-   public FacesScaffoldProvider(final Configuration config, final FreemarkerTemplateProcessor templateProcessor)
-   {
-      this.config = config;
-      this.templateProcessor = templateProcessor;
-   }
 
    private void setProject(Project project)
    {
@@ -209,8 +201,9 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       setProject(project);
       String targetDir = setupContext.getTargetDirectory();
       targetDir = targetDir == null ? "" : targetDir;
-      if (project.hasAllFacets(WebResourcesFacet.class, DependencyFacet.class, JPAFacet.class, EJBFacet.class,
-               CDIFacet.class, ServletFacet.class, FacesFacet.class))
+      if (project.hasAllFacets(
+               Arrays.asList(WebResourcesFacet.class, DependencyFacet.class, JPAFacet.class, EJBFacet.class,
+                        CDIFacet.class, ServletFacet.class, FacesFacet.class)))
       {
          WebResourcesFacet web = project.getFacet(WebResourcesFacet.class);
          boolean areResourcesInstalled = web.getWebResource(targetDir + INDEX_HTML).exists()
@@ -297,7 +290,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
          JavaClassSource entity = (JavaClassSource) javaSource;
          String targetDir = generationContext.getTargetDirectory();
          targetDir = (targetDir == null) ? "" : targetDir;
-         config.setProperty(FacesScaffoldProvider.class.getName() + "_targetDir", targetDir);
+         getConfig().setProperty(FacesScaffoldProvider.class.getName() + "_targetDir", targetDir);
          Resource<?> template = (Resource<?>) generationContext.getAttribute("pageTemplate");
          List<Resource<?>> generatedResourcesForEntity = this.generateFromEntity(targetDir, template, entity);
 
@@ -380,13 +373,13 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       // Basic pages
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(targetDir + INDEX_HTML),
-               this.templateProcessor.processTemplate(context, indexWelcomeTemplate)));
+               FreemarkerTemplateProcessor.processTemplate(context, indexWelcomeTemplate)));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(targetDir + INDEX_XHTML),
-               this.templateProcessor.processTemplate(context, indexTemplate)));
+               FreemarkerTemplateProcessor.processTemplate(context, indexTemplate)));
 
       result.add(ScaffoldUtil.createOrOverwrite(web.getWebResource(ERROR_XHTML),
-               this.templateProcessor.processTemplate(context, errorTemplate)));
+               FreemarkerTemplateProcessor.processTemplate(context, errorTemplate)));
 
       // Static resources
 
@@ -459,36 +452,36 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    {
       if (this.backingBeanTemplate == null)
       {
-         this.backingBeanTemplate = this.templateProcessor.getTemplate(BACKING_BEAN_TEMPLATE);
+         this.backingBeanTemplate = FreemarkerTemplateProcessor.getTemplate(BACKING_BEAN_TEMPLATE);
          String template = this.backingBeanTemplate.toString();
          this.backingBeanTemplateQbeMetawidgetIndent = parseIndent(template, "${qbeMetawidget}");
          this.backingBeanTemplateRmEntityMetawidgetIndent = parseIndent(template, "${rmEntityMetawidget}");
       }
       if (this.viewUtilsTemplate == null)
       {
-         this.viewUtilsTemplate = this.templateProcessor.getTemplate(VIEW_UTILS_TEMPLATE);
+         this.viewUtilsTemplate = FreemarkerTemplateProcessor.getTemplate(VIEW_UTILS_TEMPLATE);
       }
       if (this.taglibTemplate == null)
       {
-         this.taglibTemplate = this.templateProcessor.getTemplate(TAGLIB_TEMPLATE);
+         this.taglibTemplate = FreemarkerTemplateProcessor.getTemplate(TAGLIB_TEMPLATE);
       }
       if (this.viewTemplate == null)
       {
-         this.viewTemplate = this.templateProcessor.getTemplate(VIEW_TEMPLATE);
+         this.viewTemplate = FreemarkerTemplateProcessor.getTemplate(VIEW_TEMPLATE);
          String template = this.viewTemplate.toString();
          this.viewTemplateNamespaces = parseNamespaces(template);
          this.viewTemplateEntityMetawidgetIndent = parseIndent(template, "${metawidget}");
       }
       if (this.createTemplate == null)
       {
-         this.createTemplate = this.templateProcessor.getTemplate(CREATE_TEMPLATE);
+         this.createTemplate = FreemarkerTemplateProcessor.getTemplate(CREATE_TEMPLATE);
          String template = this.createTemplate.toString();
          this.createTemplateNamespaces = parseNamespaces(template);
          this.createTemplateEntityMetawidgetIndent = parseIndent(template, "${metawidget}");
       }
       if (this.searchTemplate == null)
       {
-         this.searchTemplate = this.templateProcessor.getTemplate(SEARCH_TEMPLATE);
+         this.searchTemplate = FreemarkerTemplateProcessor.getTemplate(SEARCH_TEMPLATE);
          String template = this.searchTemplate.toString();
          this.searchTemplateNamespaces = parseNamespaces(template);
          this.searchTemplateSearchMetawidgetIndent = parseIndent(template, "${searchMetawidget}");
@@ -496,21 +489,21 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       }
       if (this.navigationTemplate == null)
       {
-         this.navigationTemplate = this.templateProcessor.getTemplate(NAVIGATION_TEMPLATE);
+         this.navigationTemplate = FreemarkerTemplateProcessor.getTemplate(NAVIGATION_TEMPLATE);
          String template = navigationTemplate.toString();
          this.navigationTemplateIndent = parseIndent(template, "${navigation}");
       }
       if (this.errorTemplate == null)
       {
-         this.errorTemplate = this.templateProcessor.getTemplate(ERROR_TEMPLATE);
+         this.errorTemplate = FreemarkerTemplateProcessor.getTemplate(ERROR_TEMPLATE);
       }
       if (this.indexTemplate == null)
       {
-         this.indexTemplate = this.templateProcessor.getTemplate(INDEX_TEMPLATE);
+         this.indexTemplate = FreemarkerTemplateProcessor.getTemplate(INDEX_TEMPLATE);
       }
       if (this.indexWelcomeTemplate == null)
       {
-         this.indexWelcomeTemplate = this.templateProcessor.getTemplate(INDEX_HTML_TEMPLATE);
+         this.indexWelcomeTemplate = FreemarkerTemplateProcessor.getTemplate(INDEX_HTML_TEMPLATE);
       }
    }
 
@@ -635,7 +628,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       {
          return ScaffoldUtil.createOrOverwrite((FileResource<?>) getTemplateStrategy()
                   .getDefaultTemplate(),
-                  this.templateProcessor.processTemplate(context, navigationTemplate));
+                  FreemarkerTemplateProcessor.processTemplate(context, navigationTemplate));
       }
       finally
       {
@@ -694,7 +687,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
    private void resetMetaWidgets()
    {
-      ForgeConfigReader configReader = new ForgeConfigReader(this.config, this.project);
+      ForgeConfigReader configReader = new ForgeConfigReader(getConfig(), this.project);
 
       this.entityMetawidget = new StaticHtmlMetawidget();
       this.entityMetawidget.setConfigReader(configReader);
@@ -717,6 +710,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       this.rmEntityMetawidget.setConfig(SCAFFOLD_META_WIDGET_REMOVE_ENTITY);
    }
 
+   @SuppressWarnings("unchecked")
    private List<Resource<?>> generateFromEntity(String targetDir, final Resource<?> template,
             final JavaClassSource entity)
    {
@@ -766,7 +760,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
          // Create the Backing Bean for this entity
          JavaClassSource viewBean = Roaster.parse(JavaClassSource.class,
-                  this.templateProcessor.processTemplate(context, this.backingBeanTemplate));
+                  FreemarkerTemplateProcessor.processTemplate(context, this.backingBeanTemplate));
          viewBean.setPackage(java.getBasePackage() + "." + DEFAULT_FACES_PACKAGE);
          result.add(ScaffoldUtil.createOrOverwrite(java.getJavaResource(viewBean), viewBean.toString()));
 
@@ -789,7 +783,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
          result.add(ScaffoldUtil.createOrOverwrite(
                   web.getWebResource(targetDir + "/" + ccEntity + "/create.xhtml"),
-                  this.templateProcessor.processTemplate(context, this.createTemplate)));
+                  FreemarkerTemplateProcessor.processTemplate(context, this.createTemplate)));
 
          // Generate view
          this.entityMetawidget.setReadOnly(true);
@@ -797,7 +791,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
          result.add(ScaffoldUtil.createOrOverwrite(
                   web.getWebResource(targetDir + "/" + ccEntity + "/view.xhtml"),
-                  this.templateProcessor.processTemplate(context, this.viewTemplate)));
+                  FreemarkerTemplateProcessor.processTemplate(context, this.viewTemplate)));
 
          // Generate search
          this.searchMetawidget.setValue(StaticFacesUtils.wrapExpression(beanName + ".example"));
@@ -809,21 +803,21 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
          result.add(ScaffoldUtil.createOrOverwrite(
                   web.getWebResource(targetDir + "/" + ccEntity + "/search.xhtml"),
-                  this.templateProcessor.processTemplate(context, this.searchTemplate)));
+                  FreemarkerTemplateProcessor.processTemplate(context, this.searchTemplate)));
 
          // Generate navigation
          result.add(generateNavigation(targetDir));
 
          // Need ViewUtils and forge.taglib.xml for forgeview:asList
          JavaClassSource viewUtils = Roaster.parse(JavaClassSource.class,
-                  this.templateProcessor.processTemplate(context, this.viewUtilsTemplate));
+                  FreemarkerTemplateProcessor.processTemplate(context, this.viewUtilsTemplate));
          viewUtils.setPackage(viewBean.getPackage());
          result.add(ScaffoldUtil.createOrOverwrite(java.getJavaResource(viewUtils), viewUtils.toString()));
 
          context.put("viewPackage", viewBean.getPackage());
          result.add(ScaffoldUtil.createOrOverwrite(
                   web.getWebResource("WEB-INF/classes/META-INF/forge.taglib.xml"),
-                  this.templateProcessor.processTemplate(context, this.taglibTemplate)));
+                  FreemarkerTemplateProcessor.processTemplate(context, this.taglibTemplate)));
 
          createInitializers(entity);
       }
@@ -1007,5 +1001,13 @@ public class FacesScaffoldProvider implements ScaffoldProvider
          }
       }
       servletConfig.createErrorPage().errorCode(errorCode).location(errorLocation);
+   }
+
+   /**
+    * @return the config
+    */
+   private Configuration getConfig()
+   {
+      return SimpleContainer.getServices(getClass().getClassLoader(), Configuration.class).get();
    }
 }

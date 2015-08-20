@@ -22,26 +22,19 @@ import freemarker.template.TemplateException;
 public class FreemarkerTemplateProcessor
 {
 
-   private freemarker.template.Configuration freemarkerConfig;
+   private static freemarker.template.Configuration freemarkerConfig;
 
-   public FreemarkerTemplateProcessor()
-   {
-      freemarkerConfig = new freemarker.template.Configuration();
-      freemarkerConfig.setClassForTemplateLoading(getClass(), "/");
-      freemarkerConfig.setObjectWrapper(new DefaultObjectWrapper());
-   }
-   
    /**
     * Provides a {@link Template} representation of a Freemarker template present at a specified location.
     * 
     * @param templateLocation The location of the template relative to the classpath
     * @return The Freemarker {@link Template} instance for the specified location
     */
-   public Template getTemplate(String templateLocation)
+   public static Template getTemplate(String templateLocation)
    {
       try
       {
-         Template templateFile = freemarkerConfig.getTemplate(templateLocation);
+         Template templateFile = getFreemarkerConfig().getTemplate(templateLocation);
          return templateFile;
       }
       catch (IOException ioEx)
@@ -57,12 +50,12 @@ public class FreemarkerTemplateProcessor
     * @param templateLocation The location of the template relative to the classpath
     * @return The text output after successfully processing the template
     */
-   public String processTemplate(Map<Object, Object> map, String templateLocation)
+   public static String processTemplate(Map<Object, Object> map, String templateLocation)
    {
       Writer output = new StringWriter();
       try
       {
-         Template templateFile = freemarkerConfig.getTemplate(templateLocation);
+         Template templateFile = getFreemarkerConfig().getTemplate(templateLocation);
          templateFile.process(map, output);
          output.flush();
       }
@@ -76,7 +69,7 @@ public class FreemarkerTemplateProcessor
       }
       return output.toString();
    }
-   
+
    /**
     * Processes the provided data model with the specified Freemarker template
     * 
@@ -84,7 +77,7 @@ public class FreemarkerTemplateProcessor
     * @param template The Freemarker {@link Template} to be processed.
     * @return The text output after successfully processing the template
     */
-   public String processTemplate(Map<Object, Object> map, Template template)
+   public static String processTemplate(Map<Object, Object> map, Template template)
    {
       Writer output = new StringWriter();
       try
@@ -101,6 +94,20 @@ public class FreemarkerTemplateProcessor
          throw new RuntimeException(templateEx);
       }
       return output.toString();
+   }
+
+   /**
+    * @return the freemarkerConfig
+    */
+   private static freemarker.template.Configuration getFreemarkerConfig()
+   {
+      if (freemarkerConfig == null)
+      {
+         freemarkerConfig = new freemarker.template.Configuration();
+         freemarkerConfig.setClassForTemplateLoading(FreemarkerTemplateProcessor.class, "/");
+         freemarkerConfig.setObjectWrapper(new DefaultObjectWrapper());
+      }
+      return freemarkerConfig;
    }
 
 }

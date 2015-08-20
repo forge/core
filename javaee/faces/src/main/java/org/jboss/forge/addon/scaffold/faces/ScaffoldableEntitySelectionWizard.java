@@ -3,15 +3,13 @@ package org.jboss.forge.addon.scaffold.faces;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
+import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -23,39 +21,93 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.util.Refactory;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 
-public class ScaffoldableEntitySelectionWizard implements UIWizardStep
+public class ScaffoldableEntitySelectionWizard extends AbstractProjectCommand implements UIWizardStep
 {
-   @Inject
-   @WithAttributes(label = "Facelet Template", description = "The Facelets template file to be used in the generated facelets.")
-   private UIInput<FileResource<?>> pageTemplate;
-
-   @Inject
-   @WithAttributes(label = "Targets", required = true, description = "The JPA entities to use as the basis for generating the scaffold.")
+   private UIInput<FileResource> pageTemplate;
    private UISelectMany<JavaClassSource> targets;
-
-   @Inject
-   @WithAttributes(label = "Use custom template when generating pages", required = false, description = "Enabling this will allow the generated scaffold to use the specified Facelet template.")
    private UIInput<Boolean> useCustomTemplate;
-
-   @Inject
-   @WithAttributes(label = "Generate missing .equals() and .hashCode() methods", required = false, description = "If enabled, entities missing an .equals() or .hashCode() method will be updated to provide them")
    private UIInput<Boolean> generateEqualsAndHashCode;
 
-   @Inject
-   private ProjectFactory projectFactory;
+   @Override
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   public void initializeUI(final UIBuilder builder) throws Exception
+   {
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      pageTemplate = factory.createInput("pageTemplate", FileResource.class).setLabel("Facelet Template")
+               .setDescription("The Facelets template file to be used in the generated facelets.");
+      targets = factory.createSelectMany("targets", JavaClassSource.class).setLabel("Targets").setRequired(true)
+               .setDescription("The JPA entities to use as the basis for generating the scaffold.");
+      useCustomTemplate = factory.createInput("useCustomTemplate", Boolean.class)
+               .setLabel("Use custom template when generating pages").setDescription(
+                        "Enabling this will allow the generated scaffold to use the specified Facelet template.");
+      generateEqualsAndHashCode = factory.createInput("generateEqualsAndHashCode", Boolean.class)
+               .setLabel("Generate missing .equals() and .hashCode() methods").setDescription(
+                        "If enabled, entities missing an .equals() or .hashCode() method will be updated to provide them");
+
+      UIContext uiContext = builder.getUIContext();
+
+      Project project = getSelectedProject(builder);
+
+      JPAFacet<PersistenceCommonDescriptor> persistenceFacet = project.getFacet(JPAFacet.class);
+      targets.setValueChoices(persistenceFacet.getAllEntities());
+      targets.setItemLabelConverter(new Converter<JavaClassSource, String>()
+      {
+         @Override
+         public String convert(JavaClassSource source)
+         {
+            return source == null ? null : source.getQualifiedName();
+         }
+      });
+
+      builder.add(targets);
+      if (uiContext.getProvider().isGUI())
+      {
+         useCustomTemplate.setDefaultValue(false);
+         pageTemplate.setEnabled(new Callable<Boolean>()
+         {
+            @Override
+            public Boolean call() throws Exception
+            {
+               return useCustomTemplate.getValue();
+            }
+         });
+         builder.add(useCustomTemplate).add(pageTemplate);
+      }
+      else
+      {
+         builder.add(pageTemplate);
+      }
+      generateEqualsAndHashCode.setEnabled(new Callable<Boolean>()
+      {
+         @Override
+         public Boolean call() throws Exception
+         {
+            for (JavaClassSource javaSource : targets.getValue())
+            {
+               if (!javaSource.hasMethodSignature("hashCode") || !javaSource.hasMethodSignature("equals", Object.class))
+               {
+                  return true;
+               }
+            }
+            return false;
+         }
+      });
+      builder.add(generateEqualsAndHashCode);
+   }
 
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
@@ -107,60 +159,6 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
    }
 
    @Override
-   @SuppressWarnings({ "unchecked", "rawtypes" })
-   public void initializeUI(final UIBuilder builder) throws Exception
-   {
-      UIContext uiContext = builder.getUIContext();
-      Project project = getSelectedProject(uiContext);
-
-      JPAFacet<PersistenceCommonDescriptor> persistenceFacet = project.getFacet(JPAFacet.class);
-      targets.setValueChoices(persistenceFacet.getAllEntities());
-      targets.setItemLabelConverter(new Converter<JavaClassSource, String>()
-      {
-         @Override
-         public String convert(JavaClassSource source)
-         {
-            return source == null ? null : source.getQualifiedName();
-         }
-      });
-
-      builder.add(targets);
-      if (uiContext.getProvider().isGUI())
-      {
-         useCustomTemplate.setDefaultValue(false);
-         pageTemplate.setEnabled(new Callable<Boolean>()
-         {
-            @Override
-            public Boolean call() throws Exception
-            {
-               return useCustomTemplate.getValue();
-            }
-         });
-         builder.add(useCustomTemplate).add(pageTemplate);
-      }
-      else
-      {
-         builder.add(pageTemplate);
-      }
-      generateEqualsAndHashCode.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
-            for (JavaClassSource javaSource : targets.getValue())
-            {
-               if (!javaSource.hasMethodSignature("hashCode") || !javaSource.hasMethodSignature("equals", Object.class))
-               {
-                  return true;
-               }
-            }
-            return false;
-         }
-      });
-      builder.add(generateEqualsAndHashCode);
-   }
-
-   @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
       for (JavaClassSource javaSource : targets.getValue())
@@ -178,13 +176,15 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
                }
                else
                {
-                  Refactory.createHashCode(javaSource, (FieldSource<?>[]) javaSource.getFields().toArray(new FieldSource[javaSource.getFields().size()]));
+                  Refactory.createHashCode(javaSource,
+                           javaSource.getFields().toArray(new FieldSource[javaSource.getFields().size()]));
                }
-              
+
             }
          }
-         
-         if(!javaSource.hasMethodSignature("equals", Object.class)) {
+
+         if (!javaSource.hasMethodSignature("equals", Object.class))
+         {
             if (generateEqualsAndHashCode.getValue())
             {
                if (javaSource.getField("id") != null)
@@ -193,13 +193,13 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
                }
                else
                {
-                  Refactory.createEquals(javaSource, (FieldSource<?>[]) javaSource.getFields().toArray(new FieldSource[javaSource.getFields().size()]));
+                  Refactory.createEquals(javaSource,
+                           javaSource.getFields().toArray(new FieldSource[javaSource.getFields().size()]));
                }
             }
          }
          javaSourceFacet.saveJavaSource(javaSource);
-         
-         
+
       }
 
       return null;
@@ -255,9 +255,16 @@ public class ScaffoldableEntitySelectionWizard implements UIWizardStep
       }
    }
 
-   private Project getSelectedProject(UIContext uiContext)
+   @Override
+   protected ProjectFactory getProjectFactory()
    {
-      return Projects.getSelectedProject(projectFactory, uiContext);
+      return SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return true;
    }
 
 }

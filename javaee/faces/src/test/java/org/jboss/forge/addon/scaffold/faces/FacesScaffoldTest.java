@@ -5,31 +5,27 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.scaffold;
+package org.jboss.forge.addon.scaffold.faces;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.scaffold.faces.FacesScaffoldProvider;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.CompositeResult;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,36 +40,22 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class FacesScaffoldTest
 {
-   @Deployment
-   @AddonDependencies({
-            @AddonDependency(name = "org.jboss.forge.addon:scaffold-faces"),
-            @AddonDependency(name = "org.jboss.forge.addon:maven"),
-            @AddonDependency(name = "org.jboss.forge.addon:shell-test-harness"),
-            @AddonDependency(name = "org.jboss.forge.furnace.container:simple")
-   })
-   public static AddonArchive getDeployment()
-   {
-      AddonArchive archive = ShrinkWrap
-               .create(AddonArchive.class)
-               .addAsServiceProvider(Service.class, FacesScaffoldTest.class);
-
-      return archive;
-   }
-
    ProjectFactory projectFactory;
    ShellTest shellTest;
+   Project project;
 
    @Before
    public void setUp()
    {
       projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
       shellTest = SimpleContainer.getServices(getClass().getClassLoader(), ShellTest.class).get();
+      project = projectFactory.createTempProject(Arrays.<Class<? extends ProjectFacet>> asList(JavaSourceFacet.class));
+      shellTest.getShell().setCurrentResource(project.getRoot());
    }
 
    @Test
    public void testScaffoldSetup() throws Exception
    {
-      shellTest.execute("project-new --named demo" + System.currentTimeMillis(), 5, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-entity --named Customer", 5, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-field --named firstName", 10, TimeUnit.SECONDS);
       Result result = shellTest.execute("scaffold-setup", 10, TimeUnit.SECONDS);
@@ -83,13 +65,13 @@ public class FacesScaffoldTest
    @Test
    public void shouldCreateOneErrorPageForEachErrorCode() throws Exception
    {
-      shellTest.execute("project-new --named demo" + System.currentTimeMillis(), 10, TimeUnit.SECONDS);
       shellTest.execute("servlet-setup --servletVersion 3.1", 10, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-entity --named Customer", 10, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-field --named firstName", 10, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-entity --named Publisher", 10, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-field --named firstName", 10, TimeUnit.SECONDS);
-      Assert.assertThat(shellTest.execute("scaffold-setup", 10, TimeUnit.SECONDS), not(instanceOf(Failed.class)));
+      Assert.assertThat(shellTest.execute("scaffold-setup", 10, TimeUnit.SECONDS),
+               not(instanceOf(Failed.class)));
       Project project = projectFactory.findProject(shellTest.getShell().getCurrentResource());
       Assert.assertTrue(project.hasFacet(ServletFacet_3_1.class));
       ServletFacet_3_1 servletFacet = project.getFacet(ServletFacet_3_1.class);
@@ -97,16 +79,25 @@ public class FacesScaffoldTest
 
       String entityPackageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + ".model";
       Result scaffoldGenerate1 = shellTest
-               .execute(("scaffold-generate --webRoot /admin --targets " + entityPackageName + ".Customer"), 10,
+               .execute(("scaffold-generate --webRoot /admin --targets " + entityPackageName
+                        + ".Customer"), 10,
                         TimeUnit.SECONDS);
       Assert.assertThat(scaffoldGenerate1, not(instanceOf(Failed.class)));
 
       Assert.assertEquals(2, servletFacet.getConfig().getAllErrorPage().size());
 
       Result scaffoldGenerate2 = shellTest
-               .execute(("scaffold-generate --webRoot /admin --targets " + entityPackageName + ".Publisher"), 10,
+               .execute(("scaffold-generate --webRoot /admin --targets " + entityPackageName
+                        + ".Publisher"), 10,
                         TimeUnit.SECONDS);
       Assert.assertThat(scaffoldGenerate2, not(instanceOf(Failed.class)));
       Assert.assertEquals(2, servletFacet.getConfig().getAllErrorPage().size());
+   }
+
+   @After
+   public void tearDown()
+   {
+      if (project != null)
+         project.getRoot().delete(true);
    }
 }
