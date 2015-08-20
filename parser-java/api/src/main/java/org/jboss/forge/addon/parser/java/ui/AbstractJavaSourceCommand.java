@@ -16,6 +16,7 @@ import java.util.concurrent.Callable;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.facets.constraints.FacetConstraintType;
 import org.jboss.forge.addon.facets.constraints.FacetConstraints;
+import org.jboss.forge.addon.parser.java.converters.PackageRootConverter;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
@@ -66,6 +67,7 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
       targetPackage = factory.createInput("targetPackage", String.class).setLabel("Package Name")
                .setDescription("The package name where this type will be created");
       targetPackage.getFacet(HintsFacet.class).setInputType(InputType.JAVA_PACKAGE_PICKER);
+      targetPackage.setValueConverter(new PackageRootConverter(getProjectFactory(), builder));
 
       named = factory.createInput("named", String.class).setLabel("Type Name").setRequired(true)
                .setDescription("The type name");
