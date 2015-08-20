@@ -10,6 +10,7 @@ package org.jboss.forge.addon.ui.impl.input;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
 
 import javax.enterprise.inject.Produces;
@@ -316,6 +317,11 @@ public class InputComponentProducer implements InputComponentFactory
       else if (Boolean.class == valueType || boolean.class == valueType)
       {
          choices = Arrays.asList(Boolean.TRUE, Boolean.FALSE);
+      }
+      else if (String.class == valueType || Integer.class == valueType)
+      {
+         // Optimization: Don't attempt to lookup for java.lang types
+         choices = Collections.emptyList();
       }
       else
       {
