@@ -5,6 +5,7 @@ org.jboss.forge.addon.maven.projects.MavenPluginFacetImpl
 org.jboss.forge.addon.maven.projects.archetype.MavenArchetypeCatalogProjectType
 org.jboss.forge.addon.maven.projects.archetype.MavenArchetypeProjectType
 org.jboss.forge.addon.maven.projects.archetype.ui.ArchetypeAddCommand
+org.jboss.forge.addon.maven.projects.archetype.ui.ArchetypeCatalogSelectionWizardStep
 org.jboss.forge.addon.maven.projects.archetype.ui.ArchetypeListCommand
 org.jboss.forge.addon.maven.projects.archetype.ui.ArchetypeRemoveCommand
 org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet

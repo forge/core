@@ -12,8 +12,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import javax.inject.Inject;
-
 import org.apache.maven.archetype.catalog.Archetype;
 import org.apache.maven.archetype.catalog.ArchetypeCatalog;
 import org.jboss.forge.addon.convert.Converter;
@@ -54,9 +52,6 @@ public class ArchetypeCatalogSelectionWizardStep extends AbstractUICommand imple
 {
    private UISelectOne<ArchetypeCatalogFactory> catalog;
    private UISelectOne<Archetype> archetype;
-
-   @Inject
-   private DependencyResolver resolver;
 
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
@@ -156,6 +151,8 @@ public class ArchetypeCatalogSelectionWizardStep extends AbstractUICommand imple
             depQuery.setRepositories(new DependencyRepository("archetype", repository));
          }
       }
+      DependencyResolver resolver = SimpleContainer.getServices(getClass().getClassLoader(), DependencyResolver.class)
+               .get();
       Dependency resolvedArtifact = resolver.resolveArtifact(depQuery);
       FileResource<?> artifact = resolvedArtifact.getArtifact();
       MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
