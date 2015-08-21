@@ -154,7 +154,7 @@ public class Bootstrap
             }
             else if ("--version".equals(args[i]) || "-v".equals(args[i]))
             {
-               System.out.println("Forge version " + AddonRepositoryImpl.getRuntimeAPIVersion());
+               System.out.println("Forge version " + Versions.getImplementationVersionFor(getClass()));
                exitAfter = true;
             }
             else
@@ -191,10 +191,12 @@ public class Bootstrap
       sb.append("The fastest way to build applications, share your software, and enjoy doing it. \n");
       sb.append("\n");
       sb.append("-i, --install [[groupId:]addon[,version]]\n");
-      sb.append("\t install the required addons and exit. ex: `forge -i core-addon-x` or `forge -i org.example.addon:example,1.0.0` \n");
+      sb.append(
+               "\t install the required addons and exit. ex: `forge -i core-addon-x` or `forge -i org.example.addon:example,1.0.0` \n");
 
       sb.append("-r, --remove [[groupId:]addon[,version]]\n");
-      sb.append("\t remove the required addons and exit. ex: `forge -r core-addon-x` or `forge -r org.example.addon:example,1.0.0` \n");
+      sb.append(
+               "\t remove the required addons and exit. ex: `forge -r core-addon-x` or `forge -r org.example.addon:example,1.0.0` \n");
 
       sb.append("-l, --list\n");
       sb.append("\t list installed addons and exit \n");
