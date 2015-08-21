@@ -62,8 +62,17 @@ public class ShellInitializer
       }
       else if (Boolean.getBoolean("forge.standalone"))
       {
-         Settings settings = new SettingsBuilder().create();
-         this.shell = shellFactory.createShell(OperatingSystemUtils.getWorkingDir(), settings);
+         // Starting the shell in a separate thread
+         // TODO: Remove when asynchronous events are supported
+         new Thread()
+         {
+            @Override
+            public void run()
+            {
+               Settings settings = new SettingsBuilder().create();
+               ShellInitializer.this.shell = shellFactory.createShell(OperatingSystemUtils.getWorkingDir(), settings);
+            }
+         }.start();
       }
    }
 
