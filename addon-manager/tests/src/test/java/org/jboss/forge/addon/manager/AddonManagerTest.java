@@ -13,21 +13,17 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.inject.Inject;
-
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.AddonManager;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.util.Addons;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -81,21 +77,15 @@ public class AddonManagerTest
       }
    }
 
-   @Deployment
-   @AddonDependencies
-   public static AddonArchive getDeployment()
-   {
-      AddonArchive archive = ShrinkWrap
-               .create(AddonArchive.class)
-               .addBeansXML();
-      return archive;
-   }
-
-   @Inject
    private AddonRegistry registry;
-
-   @Inject
    private AddonManager addonManager;
+
+   @Before
+   public void setUp()
+   {
+      registry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
+      addonManager = registry.getServices(AddonManager.class).get();
+   }
 
    @Test
    public void testInstallingAddonWithNoDependency() throws InterruptedException, TimeoutException

@@ -3,8 +3,6 @@ package org.jboss.forge.addon.manager.impl.ui;
 import java.io.File;
 import java.io.IOException;
 
-import javax.inject.Inject;
-
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -22,8 +20,8 @@ import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 import org.jboss.forge.addon.ui.result.Result;
@@ -33,6 +31,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.AddonManager;
 import org.jboss.forge.furnace.manager.request.InstallRequest;
 import org.jboss.forge.furnace.manager.request.RemoveRequest;
@@ -47,35 +46,9 @@ import org.jboss.forge.furnace.versions.Versions;
  */
 public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements AddonCommandConstants
 {
-   @Inject
-   private AddonManager addonManager;
-
-   @Inject
-   @WithAttributes(shortName = 'u', label = "GIT Repository URL", description = "The git repository location", required = true)
    private UIInput<URLResource> url;
-
-   @Inject
-   @WithAttributes(shortName = 'c', label = "Coordinate", description = "The coordinates of this addon if multiple addons are available")
    private UIInput<String> coordinate;
-
-   @Inject
-   @WithAttributes(shortName = 'r', label = "Branch/Tag", description = "The branch/tag (ref) to use if different from default")
    private UIInput<String> ref;
-
-   @Inject
-   private ProjectFactory projectFactory;
-
-   @Inject
-   private AddonRegistry registry;
-
-   @Inject
-   private GitUtils gitUtils;
-
-   @Inject
-   private ResourceFactory resourceFactory;
-
-   @Inject
-   private Furnace furnace;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -91,12 +64,25 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      url = factory.createInput("url", 'u', URLResource.class).setLabel("GIT Repository URL")
+               .setDescription("The git repository location").setRequired(true);
+      coordinate = factory.createInput("coordinate", 'c', String.class).setLabel("Coordinate")
+               .setDescription("The coordinates of this addon if multiple addons are available");
+      ref = factory.createInput("ref", 'r', String.class).setLabel("Branch/Tag")
+               .setDescription("The branch/tag (ref) to use if different from default");
       builder.add(url).add(ref).add(coordinate);
    }
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
+      Furnace furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
+      AddonRegistry registry = furnace.getAddonRegistry();
+      AddonManager addonManager = registry.getServices(AddonManager.class).get();
+      ProjectFactory projectFactory = registry.getServices(ProjectFactory.class).get();
+      ResourceFactory resourceFactory = registry.getServices(ResourceFactory.class).get();
+      GitUtils gitUtils = registry.getServices(GitUtils.class).get();
       // TODO: Option to save sources?
       File tempDir = OperatingSystemUtils.createTempDir();
       DirectoryResource projectRoot = resourceFactory.create(DirectoryResource.class, tempDir);
@@ -107,7 +93,7 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       progressMonitor.subTask("Cloning repository in " + tempDir);
 
       // Clone repository
-      cloneTo(projectRoot);
+      cloneTo(gitUtils, projectRoot);
 
       progressMonitor.worked(1);
       progressMonitor.subTask("Installing project into local repository");
@@ -169,7 +155,7 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       }
    }
 
-   private void cloneTo(DirectoryResource projectRoot) throws GitAPIException, IOException
+   private void cloneTo(GitUtils gitUtils, DirectoryResource projectRoot) throws GitAPIException, IOException
    {
       Git git = null;
       try
@@ -182,12 +168,8 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
             // No need to checkout if the branch name is the same
             if (!currentBranch.equals(refName))
             {
-               git.checkout().
-                        setCreateBranch(true).
-                        setName(refName).
-                        setUpstreamMode(SetupUpstreamMode.TRACK).
-                        setStartPoint("origin/" + refName).
-                        call();
+               git.checkout().setCreateBranch(true).setName(refName).setUpstreamMode(SetupUpstreamMode.TRACK)
+                        .setStartPoint("origin/" + refName).call();
             }
          }
       }

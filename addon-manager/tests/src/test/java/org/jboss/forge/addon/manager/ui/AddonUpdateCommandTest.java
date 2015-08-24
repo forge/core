@@ -12,9 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.inject.Inject;
-
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.manager.impl.ui.AddonCommandConstants;
 import org.jboss.forge.addon.manager.impl.ui.AddonUpdateCommand;
@@ -23,16 +20,15 @@ import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.AddonManager;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,21 +79,18 @@ public class AddonUpdateCommandTest
       }
    }
 
-   @Deployment
-   @AddonDependencies
-   public static AddonArchive getDeployment()
-   {
-      return ShrinkWrap.create(AddonArchive.class).addBeansXML();
-   }
-
-   @Inject
-   private UITestHarness uiTestHarness;
-
-   @Inject
    private Furnace furnace;
-
-   @Inject
+   private UITestHarness uiTestHarness;
    private AddonManager addonManager;
+
+   @Before
+   public void setUp()
+   {
+      furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
+      uiTestHarness = SimpleContainer.getServices(getClass().getClassLoader(), UITestHarness.class).get();
+      addonManager = SimpleContainer.getServices(getClass().getClassLoader(), AddonManager.class).get();
+
+   }
 
    private static final String ADDON_NAME_TO_UPDATE = "test:no_dep";
 

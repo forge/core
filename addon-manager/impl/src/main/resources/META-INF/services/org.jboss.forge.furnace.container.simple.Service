@@ -1,0 +1,9 @@
+org.jboss.forge.addon.manager.impl.AddonManagerProducer
+org.jboss.forge.addon.manager.impl.ui.AddonBuildAndInstallCommand
+org.jboss.forge.addon.manager.impl.ui.AddonGitBuildAndInstallCommand
+org.jboss.forge.addon.manager.impl.ui.AddonInstallCommand
+org.jboss.forge.addon.manager.impl.ui.AddonListCommand
+org.jboss.forge.addon.manager.impl.ui.AddonRemoveCommand
+org.jboss.forge.addon.manager.impl.ui.AddonUpdateCommand
+org.jboss.forge.addon.manager.impl.ui.update.ForgeUpdateAbortCommand
+org.jboss.forge.addon.manager.impl.ui.update.ForgeUpdateCommand

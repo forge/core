@@ -1,10 +1,8 @@
 package org.jboss.forge.addon.manager.impl.ui;
 
-import java.util.Iterator;
+import java.io.PrintStream;
 import java.util.Set;
 import java.util.TreeSet;
-
-import javax.inject.Inject;
 
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -17,13 +15,11 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 
 public class AddonListCommand extends AbstractUICommand implements AddonCommandConstants
 {
-
-   @Inject
-   private Furnace furnace;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -42,28 +38,19 @@ public class AddonListCommand extends AbstractUICommand implements AddonCommandC
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
+      Furnace furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
       Set<AddonId> choices = new TreeSet<>();
       for (AddonRepository repository : furnace.getRepositories())
       {
-         for (AddonId id : repository.listEnabled())
-         {
-            choices.add(id);
-         }
-      }
-
-      Iterator<AddonId> iterator = choices.iterator();
-      StringBuilder builder = new StringBuilder();
-      while (iterator.hasNext())
-      {
-         AddonId addonId = iterator.next();
-         builder.append(addonId.toCoordinates());
-
-         if (iterator.hasNext())
-            builder.append("\n");
+         choices.addAll(repository.listEnabled());
       }
       UIOutput output = context.getUIContext().getProvider().getOutput();
-      output.out().println("Currently installed addons:");
-      output.out().println(builder.toString());
+      PrintStream out = output.out();
+      out.println("Currently installed addons:");
+      for (AddonId addonId : choices)
+      {
+         out.println(addonId.toCoordinates());
+      }
       return Results.success();
    }
 

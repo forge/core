@@ -52,7 +52,7 @@ public class CoordinateUtils
             {
                String apiVersion = resolver.resolveAPIVersion(versions[i]).get();
                if (apiVersion != null
-                        && Versions.isApiCompatible(specificationVersion, new SingleVersion(apiVersion)))
+                        && Versions.isApiCompatible(specificationVersion, SingleVersion.valueOf(apiVersion)))
                {
                   selected = versions[i];
                }
@@ -69,5 +69,4 @@ public class CoordinateUtils
       return addon;
    }
 
-  
 }

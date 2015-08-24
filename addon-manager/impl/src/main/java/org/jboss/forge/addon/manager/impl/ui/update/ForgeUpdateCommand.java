@@ -5,13 +5,11 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.manager.impl.ui;
+package org.jboss.forge.addon.manager.impl.ui.update;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.Dependency;
@@ -21,18 +19,22 @@ import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.dependencies.util.CompositeDependencyFilter;
 import org.jboss.forge.addon.dependencies.util.NonSnapshotDependencyFilter;
-import org.jboss.forge.addon.manager.impl.utils.DistributionDirectoryExistsPredicate;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.zip.ZipFileResource;
-import org.jboss.forge.addon.ui.annotation.Command;
-import org.jboss.forge.addon.ui.annotation.predicate.NonEmbeddedPredicate;
-import org.jboss.forge.addon.ui.annotation.predicate.NonGUIEnabledPredicate;
+import org.jboss.forge.addon.ui.UIProvider;
+import org.jboss.forge.addon.ui.command.AbstractUICommand;
+import org.jboss.forge.addon.ui.context.UIBuilder;
+import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.UIPrompt;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIOutput;
-import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.util.Categories;
+import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Predicate;
@@ -45,55 +47,31 @@ import org.jboss.forge.furnace.versions.Versions;
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class ForgeUpdateDistributionCommand
+public class ForgeUpdateCommand extends AbstractUICommand
 {
-   @Inject
-   private DependencyResolver resolver;
-
-   @Inject
-   private ResourceFactory resourceFactory;
-
-   @Command(value = "Forge: Update Abort", help = "Aborts a previous forge update", categories = { "Forge",
-            "Manage" }, enabled = {
-                     NonGUIEnabledPredicate.class, NonEmbeddedPredicate.class,
-                     DistributionDirectoryExistsPredicate.class })
-   public Result updateAbort() throws IOException
+   @Override
+   public void initializeUI(UIBuilder builder) throws Exception
    {
-      DirectoryResource forgeHome = getForgeHome();
-      DirectoryResource updateDirectory = forgeHome.getChildDirectory(".update");
-      if (updateDirectory.exists())
-      {
-         if (updateDirectory.delete(true))
-         {
-            return Results
-                     .success("Update files were deleted. Run 'forge-update' if you want to update this installation again.");
-         }
-         else
-         {
-            return Results.fail("Could not abort. Try to run 'forge-update-abort' again");
-         }
-      }
-      else
-      {
-         return Results.success("No update files found");
-      }
+      // No inputs
    }
 
-   @Command(value = "Forge: Update", help = "Update this forge installation", categories = { "Forge",
-            "Manage" }, enabled = { NonGUIEnabledPredicate.class, NonEmbeddedPredicate.class })
-   public void update(UIOutput output, UIPrompt prompt, UIProgressMonitor monitor) throws IOException
+   @Override
+   public Result execute(UIExecutionContext context) throws Exception
    {
+      DependencyResolver resolver = SimpleContainer.getServices(getClass().getClassLoader(), DependencyResolver.class)
+               .get();
+      UIProvider provider = context.getUIContext().getProvider();
+      UIOutput output = provider.getOutput();
+      UIPrompt prompt = context.getPrompt();
       PrintStream out = output.out();
       DirectoryResource forgeHome = getForgeHome();
       DirectoryResource updateDir = forgeHome.getChildDirectory(".update");
       if (updateDir.exists())
       {
-         output.warn(
-                  out,
+         return Results.fail(
                   "There is an update pending. Restart Forge for the update to take effect. To abort this update, type 'forge-update-abort'");
-         return;
       }
-      Coordinate forgeDistribution = getLatestAvailableDistribution();
+      Coordinate forgeDistribution = getLatestAvailableDistribution(resolver);
       if (forgeDistribution == null)
       {
          output.info(out, "Forge is up to date! Enjoy!");
@@ -106,10 +84,27 @@ public class ForgeUpdateDistributionCommand
             updateForge(forgeHome, forgeDistribution, output);
          }
       }
+      return Results.success();
+   }
+
+   @Override
+   public boolean isEnabled(UIContext context)
+   {
+      UIProvider provider = context.getProvider();
+      return !provider.isEmbedded() && !provider.isGUI();
+   }
+
+   @Override
+   public UICommandMetadata getMetadata(UIContext context)
+   {
+      return Metadata.forCommand(getClass()).name("Forge: Update").description("Update this forge installation")
+               .category(Categories.create("Forge", "Manage"));
    }
 
    private DirectoryResource getForgeHome()
    {
+      ResourceFactory resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class)
+               .get();
       DirectoryResource forgeHome = resourceFactory.create(DirectoryResource.class,
                OperatingSystemUtils.getForgeHomeDir());
       return forgeHome;
@@ -121,6 +116,10 @@ public class ForgeUpdateDistributionCommand
    private void updateForge(final DirectoryResource forgeHome, final Coordinate forgeDistribution, UIOutput output)
             throws IOException
    {
+      DependencyResolver resolver = SimpleContainer
+               .getServices(getClass().getClassLoader(), DependencyResolver.class).get();
+      ResourceFactory resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class)
+               .get();
       Dependency dependency = resolver.resolveArtifact(DependencyQueryBuilder.create(forgeDistribution));
       Assert.notNull(dependency, "Artifact was not found");
       ZipFileResource dependencyZip = resourceFactory.create(ZipFileResource.class,
@@ -137,7 +136,7 @@ public class ForgeUpdateDistributionCommand
    /**
     * Returns the latest available distribution
     */
-   private Coordinate getLatestAvailableDistribution()
+   private Coordinate getLatestAvailableDistribution(DependencyResolver resolver)
    {
       final Version runtimeVersion = Versions.getImplementationVersionFor(getClass());
 
@@ -154,7 +153,7 @@ public class ForgeUpdateDistributionCommand
                            @Override
                            public boolean accept(Dependency dependency)
                            {
-                              Version version = new SingleVersion(dependency.getCoordinate().getVersion());
+                              Version version = SingleVersion.valueOf(dependency.getCoordinate().getVersion());
                               return version.compareTo(runtimeVersion) > 0 && version.getMajorVersion() == 2
                                        && version.getQualifier().equals("Final");
                            }

@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.Projects;
@@ -15,33 +13,22 @@ import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UISelectMany;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.AddonManager;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 
 public class AddonRemoveCommand extends AbstractUICommand implements AddonCommandConstants
 {
-
-   @Inject
-   private Furnace furnace;
-
-   @Inject
-   private AddonManager manager;
-
-   @Inject
-   @WithAttributes(label = "Installed addons", description = "The installed addons in mutable addon repositories that may be removed", required = true, requiredMessage = "The specified addon coordinates were not found within any configured furnace repository")
    private UISelectMany<AddonId> addons;
-
-   @Inject
-   private ProjectFactory projectFactory;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -55,6 +42,14 @@ public class AddonRemoveCommand extends AbstractUICommand implements AddonComman
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      addons = factory.createSelectMany("addons", AddonId.class).setLabel("Installed addons")
+               .setDescription("The installed addons in mutable addon repositories that may be removed")
+               .setRequired(true).setRequiredMessage(
+                        "The specified addon coordinates were not found within any configured furnace repository");
+      Furnace furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
+      ProjectFactory projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class)
+               .get();
       Set<AddonId> choices = new TreeSet<>();
       for (AddonRepository repository : furnace.getRepositories())
       {
@@ -86,6 +81,7 @@ public class AddonRemoveCommand extends AbstractUICommand implements AddonComman
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
+      AddonManager manager = SimpleContainer.getServices(getClass().getClassLoader(), AddonManager.class).get();
       Iterable<AddonId> value = addons.getValue();
       Iterator<AddonId> iterator = value.iterator();
       StringBuilder builder = new StringBuilder();

@@ -22,6 +22,11 @@ provides services and ui-commands to perform addon installation and removal task
 |no
 |yes
 
+|git
+|no
+|no
+
+
 |org.jboss.forge.furnace.container:cdi
 |no
 |no

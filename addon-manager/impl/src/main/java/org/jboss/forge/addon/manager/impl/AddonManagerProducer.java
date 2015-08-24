@@ -6,11 +6,10 @@
  */
 package org.jboss.forge.addon.manager.impl;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.container.simple.Producer;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.AddonManager;
 import org.jboss.forge.furnace.manager.impl.AddonManagerImpl;
 import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
@@ -21,14 +20,14 @@ import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class AddonManagerProducer
+public class AddonManagerProducer implements Producer<AddonManager>
 {
-   @Inject
-   private AddonRegistry addonRegistry;
-
-   @Produces
-   public AddonManager produceAddonManager(Furnace furnace, AddonDependencyResolver resolver)
+   @Override
+   public AddonManager get()
    {
+      Furnace furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
+      AddonRegistry addonRegistry = furnace.getAddonRegistry();
+      AddonDependencyResolver resolver = addonRegistry.getServices(AddonDependencyResolver.class).get();
       return new AddonManagerImpl(furnace, resolver, addonRegistry);
    }
 }

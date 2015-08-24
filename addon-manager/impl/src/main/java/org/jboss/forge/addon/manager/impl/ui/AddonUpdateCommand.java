@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.inject.Inject;
 import org.jboss.forge.addon.manager.impl.utils.CoordinateUtils;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -12,10 +11,10 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIPrompt;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
@@ -24,6 +23,7 @@ import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.AddonManager;
 import org.jboss.forge.furnace.manager.request.InstallRequest;
 import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
@@ -33,18 +33,7 @@ import org.jboss.forge.furnace.versions.Versions;
 
 public class AddonUpdateCommand extends AbstractUICommand implements AddonCommandConstants
 {
-   @Inject
-   private AddonManager addonManager;
-
-   @Inject
-   private AddonDependencyResolver resolver;
-
-   @Inject
-   @WithAttributes(label = "Name", description = "The addon's \"groupId:artifactId\" name", required = true)
    private UIInput<String> named;
-
-   @Inject
-   private Furnace furnace;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -59,10 +48,15 @@ public class AddonUpdateCommand extends AbstractUICommand implements AddonComman
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      final Furnace furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      named = factory.createInput("named", String.class).setLabel("Name")
+               .setDescription("The addon's \"groupId:artifactId\" name").setRequired(true);
       named.setCompleter(new UICompleter<String>()
       {
          @Override
-         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
+         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input,
+                  String value)
          {
             Set<String> items = new TreeSet<String>();
             Set<Addon> addons = furnace.getAddonRegistry().getAddons();
@@ -113,6 +107,10 @@ public class AddonUpdateCommand extends AbstractUICommand implements AddonComman
    @Override
    public Result execute(UIExecutionContext context)
    {
+      final Furnace furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
+      AddonManager addonManager = SimpleContainer.getServices(getClass().getClassLoader(), AddonManager.class).get();
+      AddonDependencyResolver resolver = SimpleContainer
+               .getServices(getClass().getClassLoader(), AddonDependencyResolver.class).get();
       AddonId addonId = CoordinateUtils.resolveCoordinate(named.getValue(),
                Versions.getSpecificationVersionFor(this.getClass()), resolver);
       AddonId maxAddonId = addonId;
