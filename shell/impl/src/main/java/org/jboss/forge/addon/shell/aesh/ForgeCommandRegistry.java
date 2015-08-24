@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.shell.aesh;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -166,6 +167,8 @@ public class ForgeCommandRegistry implements CommandRegistry
    @Override
    public Set<String> getAllCommandNames()
    {
+      if (!furnace.getStatus().isStarted())
+         return Collections.emptySet();
       Set<String> allCommands = new TreeSet<>();
       allCommands.addAll(getForgeCommandNames());
       allCommands.addAll(aeshCommandRegistry.getAllCommandNames());
