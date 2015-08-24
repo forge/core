@@ -58,7 +58,7 @@ public class CDIFacetImpl_1_1 extends AbstractCDIFacetImpl<BeansDescriptor> impl
    @Override
    public Version getSpecVersion()
    {
-      return new SingleVersion("1.1");
+      return SingleVersion.valueOf("1.1");
    }
 
    @Override

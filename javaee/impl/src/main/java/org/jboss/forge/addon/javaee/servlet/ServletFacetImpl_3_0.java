@@ -40,7 +40,7 @@ public class ServletFacetImpl_3_0 extends AbstractServletFacet<WebAppDescriptor>
    @Override
    public Version getSpecVersion()
    {
-      return new SingleVersion("3.0");
+      return SingleVersion.valueOf("3.0");
    }
 
    @Override

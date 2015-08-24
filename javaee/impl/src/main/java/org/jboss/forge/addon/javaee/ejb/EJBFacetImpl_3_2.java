@@ -37,7 +37,7 @@ public class EJBFacetImpl_3_2 extends AbstractEJBFacetImpl implements EJBFacet_3
    @Override
    public Version getSpecVersion()
    {
-      return new SingleVersion("3.2");
+      return SingleVersion.valueOf("3.2");
    }
 
    @Override

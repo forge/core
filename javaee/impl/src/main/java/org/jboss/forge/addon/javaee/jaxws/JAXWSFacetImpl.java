@@ -55,7 +55,7 @@ public class JAXWSFacetImpl extends AbstractJavaEEFacet implements JAXWSFacet
    @Override
    public Version getSpecVersion()
    {
-      return new SingleVersion("2.2");
+      return SingleVersion.valueOf("2.2");
    }
 
    @Override

@@ -106,7 +106,7 @@ public class InputComponentValuesInjectionTest
    public void testSetValueInSelectManyForInterface()
    {
       UISelectMany<Version> versions = inputFactory.createSelectMany("versions", Version.class);
-      List<Version> versionList = Arrays.<Version> asList(new SingleVersion("1.0.0"), new SingleVersion("2.0.0"));
+      List<Version> versionList = Arrays.<Version> asList(SingleVersion.valueOf("1.0.0"), SingleVersion.valueOf("2.0.0"));
       versions.setValueChoices(versionList);
       InputComponents.setValueFor(converterFactory, versions, Arrays.asList("1.0.0", "2.0.0"));
       Iterator<Version> value = versions.getValue().iterator();

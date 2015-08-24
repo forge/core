@@ -47,7 +47,7 @@ public class JMSFacetImpl extends AbstractJavaEEFacet implements JMSFacet
    @Override
    public Version getSpecVersion()
    {
-      return new SingleVersion("1.1");
+      return SingleVersion.valueOf("1.1");
    }
 
    @Override

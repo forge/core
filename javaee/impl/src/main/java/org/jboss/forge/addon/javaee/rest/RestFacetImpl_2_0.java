@@ -54,6 +54,6 @@ public class RestFacetImpl_2_0 extends AbstractRestFacet implements RestFacet_2_
    @Override
    public Version getSpecVersion()
    {
-      return new SingleVersion("2.0");
+      return SingleVersion.valueOf("2.0");
    }
 }

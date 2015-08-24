@@ -39,7 +39,7 @@ public class JTAFacetImpl_1_2 extends AbstractJTAFacetImpl implements JTAFacet_1
    @Override
    public Version getSpecVersion()
    {
-      return new SingleVersion("1.2");
+      return SingleVersion.valueOf("1.2");
    }
 
    @Override

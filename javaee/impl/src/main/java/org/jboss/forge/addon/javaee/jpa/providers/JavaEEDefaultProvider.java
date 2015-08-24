@@ -48,7 +48,7 @@ public class JavaEEDefaultProvider implements PersistenceProvider
    {
       unit.excludeUnlistedClasses(Boolean.FALSE);
       PersistenceCommonDescriptor descriptor = (PersistenceCommonDescriptor) unit.up();
-      if (new SingleVersion(descriptor.getVersion()).compareTo(new SingleVersion("2.1")) >= 0)
+      if (SingleVersion.valueOf(descriptor.getVersion()).compareTo(SingleVersion.valueOf("2.1")) >= 0)
       {
          PropertiesCommon properties = unit.getOrCreateProperties();
          String schemaGenerationPropertyValue = getSchemaGenerationPropertyValue(ds.getSchemaGenerationType());

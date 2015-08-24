@@ -42,7 +42,7 @@ public class FacesFacetImpl_2_0 extends AbstractFacesFacetImpl<WebFacesConfigDes
    @Override
    public Version getSpecVersion()
    {
-      return new SingleVersion("2.0");
+      return SingleVersion.valueOf("2.0");
    }
 
    @Override

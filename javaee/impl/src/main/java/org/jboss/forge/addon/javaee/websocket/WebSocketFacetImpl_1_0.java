@@ -48,7 +48,7 @@ public class WebSocketFacetImpl_1_0 extends AbstractJavaEEFacet implements WebSo
    @Override
    public Version getSpecVersion()
    {
-      return new SingleVersion("1.0");
+      return SingleVersion.valueOf("1.0");
    }
 
    @Override
