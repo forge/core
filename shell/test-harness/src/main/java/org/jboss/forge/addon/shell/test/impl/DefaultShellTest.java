@@ -16,11 +16,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jboss.aesh.console.AeshConsoleImpl;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
@@ -32,57 +27,56 @@ import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ShellFactory;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.furnace.container.cdi.events.Local;
-import org.jboss.forge.furnace.event.PreShutdown;
+import org.jboss.forge.furnace.container.simple.AbstractEventListener;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.util.Callables;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Singleton
-public class DefaultShellTest implements ShellTest
+public class DefaultShellTest extends AbstractEventListener implements ShellTest
 {
    private static final String LINE_SEPARATOR = OperatingSystemUtils.getLineSeparator();
    private final TestCommandListener listener = new TestCommandListener();
    private final TestStreams provider = new TestStreams();
 
-   @Inject
-   private ShellFactory factory;
    private Shell shell;
 
-   private final Callable<?> nullCallable = new Callable<Void>()
-   {
-      @Override
-      public Void call() throws Exception
-      {
-         return null;
-      }
-   };
+   private final Callable<?> nullCallable = Callables.returning(null);
 
    @Override
    public Shell getShell()
    {
       if (shell == null)
       {
+         ShellFactory factory = SimpleContainer.getServices(getClass().getClassLoader(), ShellFactory.class).get();
          shell = factory.createShell(OperatingSystemUtils.getTempDirectory(), provider.getSettings());
          shell.addCommandExecutionListener(listener);
       }
       return shell;
    }
 
-   @PostConstruct
-   public void init()
+   @Override
+   protected void handleThisPostStartup()
    {
       getShell();
    }
 
-   public void teardown(@Observes @Local PreShutdown event) throws Exception
+   @Override
+   protected void handleThisPreShutdown()
    {
       if (shell != null)
       {
-         shell.close();
+         try
+         {
+            shell.close();
+         }
+         catch (Exception ignored)
+         {
+         }
          shell = null;
       }
    }
@@ -320,7 +314,8 @@ public class DefaultShellTest implements ShellTest
          }
          catch (InterruptedException e)
          {
-            throw new RuntimeException("Interrupted while waiting for buffer value to change from [" + buffer + "].", e);
+            throw new RuntimeException("Interrupted while waiting for buffer value to change from [" + buffer + "].",
+                     e);
          }
       }
    }
