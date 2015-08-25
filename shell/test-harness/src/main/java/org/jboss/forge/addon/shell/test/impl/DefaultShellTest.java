@@ -84,7 +84,7 @@ public class DefaultShellTest extends AbstractEventListener implements ShellTest
    @Override
    public String getBuffer()
    {
-      AeshConsoleImpl console = (AeshConsoleImpl) shell.getConsole();
+      AeshConsoleImpl console = (AeshConsoleImpl) getShell().getConsole();
       return console.getBuffer();
    }
 
@@ -460,7 +460,7 @@ public class DefaultShellTest extends AbstractEventListener implements ShellTest
             @Override
             public String call() throws Exception
             {
-               AeshConsoleImpl console = (AeshConsoleImpl) shell.getConsole();
+               AeshConsoleImpl console = (AeshConsoleImpl) getShell().getConsole();
                console.getInputProcessor().resetBuffer();
                provider.getStdOut().reset();
                provider.getStdErr().reset();
