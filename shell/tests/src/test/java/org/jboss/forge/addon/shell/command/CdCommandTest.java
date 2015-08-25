@@ -30,6 +30,7 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -60,8 +61,7 @@ public class CdCommandTest
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:resources"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));
 
       return archive;
    }
@@ -74,6 +74,12 @@ public class CdCommandTest
 
    @Inject
    private CdTokenHandlerFactory handlerFactory;
+
+   @Before
+   public void setUp() throws Exception
+   {
+      shellTest.clearScreen();
+   }
 
    @Test
    public void testCDProject() throws Exception
