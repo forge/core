@@ -6,10 +6,17 @@
  */
 package org.jboss.forge.addon.javaee.websocket.ui;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_WEBSOCKET_PACKAGE;
-import static org.jboss.forge.addon.javaee.websocket.ui.WebSocketMethodType.*;
-import static org.junit.Assert.*;
+import static org.jboss.forge.addon.javaee.websocket.ui.WebSocketMethodType.ON_CLOSE;
+import static org.jboss.forge.addon.javaee.websocket.ui.WebSocketMethodType.ON_ERROR;
+import static org.jboss.forge.addon.javaee.websocket.ui.WebSocketMethodType.ON_MESSAGE;
+import static org.jboss.forge.addon.javaee.websocket.ui.WebSocketMethodType.ON_OPEN;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +43,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,6 +86,12 @@ public class WebSocketNewServerEndpointCommandTest
    {
       project = projectHelper.createJavaLibraryProject();
       projectHelper.installWebSocket_1_1(project);
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test

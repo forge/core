@@ -26,6 +26,7 @@ import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
@@ -59,6 +60,12 @@ public class RunCommandTest
       shellTest = SimpleContainer.getServices(getClass().getClassLoader(), ShellTest.class).get();
       resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class).get();
       shellTest.clearScreen();
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test

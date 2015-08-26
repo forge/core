@@ -10,7 +10,6 @@ package org.jboss.forge.addon.shell.parser;
 import static org.hamcrest.CoreMatchers.nullValue;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -55,8 +54,7 @@ public class CoreCommandTest
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));
 
       return archive;
    }
@@ -66,6 +64,12 @@ public class CoreCommandTest
 
    @Inject
    private ResourceFactory resourceFactory;
+
+   @After
+   public void tearDown() throws Exception
+   {
+      test.close();
+   }
 
    @Test
    public void testEscapes() throws Exception
@@ -100,11 +104,4 @@ public class CoreCommandTest
       Assert.assertEquals(shell.getCurrentResource(), child);
       currentResource.delete(true);
    }
-
-   @After
-   public void after() throws IOException
-   {
-      test.clearScreen();
-   }
-
 }

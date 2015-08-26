@@ -24,6 +24,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,14 +52,19 @@ public class CopyCommandTest
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:resources"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));
 
       return archive;
    }
 
    @Inject
    ShellTest shell;
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shell.close();
+   }
 
    @Test
    public void testCopyFileToFolder() throws Exception

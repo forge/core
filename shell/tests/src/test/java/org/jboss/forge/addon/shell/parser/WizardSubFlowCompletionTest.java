@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.addon.shell.parser;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -44,8 +43,7 @@ public class WizardSubFlowCompletionTest
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));
 
       return archive;
    }
@@ -54,9 +52,9 @@ public class WizardSubFlowCompletionTest
    private ShellTest test;
 
    @After
-   public void after() throws IOException
+   public void tearDown() throws Exception
    {
-      test.clearScreen();
+      test.close();
    }
 
    @Test

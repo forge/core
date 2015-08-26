@@ -16,6 +16,7 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +35,12 @@ public class CatCommandTest
    public void setUp() throws Exception
    {
       shellTest.clearScreen();
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test

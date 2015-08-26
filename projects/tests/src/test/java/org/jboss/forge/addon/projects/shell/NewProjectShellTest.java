@@ -6,7 +6,6 @@ import static org.hamcrest.CoreMatchers.not;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -51,8 +50,7 @@ public class NewProjectShellTest
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"));
 
       return archive;
    }
@@ -61,9 +59,9 @@ public class NewProjectShellTest
    private ShellTest test;
 
    @After
-   public void after() throws IOException
+   public void after() throws Exception
    {
-      test.clearScreen();
+      test.close();
    }
 
    @Test

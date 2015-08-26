@@ -29,6 +29,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,8 +51,7 @@ public class TrackChangesCommandTest
                .addClass(MockCommandExecutionListener.class)
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));
 
       return archive;
    }
@@ -63,6 +63,12 @@ public class TrackChangesCommandTest
 
    @Inject
    private ShellTest test;
+
+   @After
+   public void tearDown() throws Exception
+   {
+      test.close();
+   }
 
    @Test(timeout = 10000)
    public void testTransactionTrackChanges() throws Exception

@@ -95,9 +95,10 @@ public class FacesScaffoldTest
    }
 
    @After
-   public void tearDown()
+   public void tearDown() throws Exception
    {
       if (project != null)
          project.getRoot().delete(true);
+      shellTest.close();
    }
 }

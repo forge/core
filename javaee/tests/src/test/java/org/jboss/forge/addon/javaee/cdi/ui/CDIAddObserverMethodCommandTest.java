@@ -40,6 +40,7 @@ import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.Method;
 import org.jboss.forge.roaster.model.Parameter;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,6 +77,12 @@ public class CDIAddObserverMethodCommandTest
    {
       project = projectHelper.createJavaLibraryProject();
       projectHelper.installCDI_1_0(project);
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test

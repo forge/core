@@ -26,6 +26,7 @@ import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,6 +58,12 @@ public class ValidationSetupCommandTest
    public void setUp()
    {
       project = projectFactory.createTempProject();
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test

@@ -21,6 +21,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,6 +53,12 @@ public class AddonListCommandTest
    public void setUp()
    {
       test = SimpleContainer.getServices(getClass().getClassLoader(), ShellTest.class).get();
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      test.close();
    }
 
    @Test

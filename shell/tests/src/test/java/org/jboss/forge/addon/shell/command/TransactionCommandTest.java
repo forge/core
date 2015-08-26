@@ -23,6 +23,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -51,14 +52,19 @@ public class TransactionCommandTest
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"));
 
       return archive;
    }
 
    @Inject
    private ShellTest shellTest;
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
+   }
 
    @Test
    @Ignore("FORGE-1461")

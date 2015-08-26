@@ -29,6 +29,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,6 +79,12 @@ public class JavaFormatSourcesCommandTest
    public void setup() throws Exception
    {
       commandController = testHarness.createCommandController(JavaFormatSourcesCommand.class);
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    // Runs the test on the command specifying the format sources and the format profile.

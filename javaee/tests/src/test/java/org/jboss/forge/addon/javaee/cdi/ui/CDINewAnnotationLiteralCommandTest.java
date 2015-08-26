@@ -39,6 +39,7 @@ import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,6 +75,12 @@ public class CDINewAnnotationLiteralCommandTest
    {
       project = projectHelper.createJavaLibraryProject();
       projectHelper.installCDI_1_0(project);
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test

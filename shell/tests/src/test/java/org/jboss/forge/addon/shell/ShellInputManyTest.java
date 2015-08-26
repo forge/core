@@ -8,7 +8,6 @@ package org.jboss.forge.addon.shell;
 
 import static org.hamcrest.CoreMatchers.containsString;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -45,8 +44,7 @@ public class ShellInputManyTest
                .addBeansXML()
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));
 
       return archive;
    }
@@ -55,9 +53,9 @@ public class ShellInputManyTest
    private ShellTest test;
 
    @After
-   public void after() throws IOException
+   public void after() throws Exception
    {
-      test.clearScreen();
+      test.close();
    }
 
    @Test

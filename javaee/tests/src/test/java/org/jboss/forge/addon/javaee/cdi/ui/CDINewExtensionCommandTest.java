@@ -80,9 +80,10 @@ public class CDINewExtensionCommandTest
    }
 
    @After
-   public void tearDown()
+   public void tearDown() throws Exception
    {
       project.getRoot().delete(true);
+      shellTest.close();
    }
 
    @Test

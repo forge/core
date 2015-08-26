@@ -47,8 +47,7 @@ public class ForgeManProviderTest
                .addClass(MockCommandExecutionListener.class)
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));
 
       return archive;
    }
@@ -57,6 +56,12 @@ public class ForgeManProviderTest
 
    @Inject
    private ShellTest test;
+
+   @After
+   public void tearDown() throws Exception
+   {
+      test.close();
+   }
 
    @Test(timeout = 10000)
    public void testManOutput() throws Exception
@@ -94,11 +99,5 @@ public class ForgeManProviderTest
       Assert.assertThat(out, containsString("target location"));
       Assert.assertThat(out, containsString("[FileResource]"));
       Assert.assertFalse(listener.getResult() instanceof Failed);
-   }
-
-   @After
-   public void clearScreen() throws Exception
-   {
-      test.clearScreen();
    }
 }

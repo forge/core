@@ -56,8 +56,7 @@ public class ConfigCommandTest
                         AddonDependencyEntry.create("org.jboss.forge.addon:configuration"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:shell")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.addon:shell"));
 
       return archive;
    }
@@ -176,5 +175,6 @@ public class ConfigCommandTest
    {
       userConfig.clearProperty("key1");
       userConfig.clearProperty("key2");
+      test.close();
    }
 }

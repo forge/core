@@ -28,6 +28,7 @@ import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,13 +40,13 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class RestSetupTest
 {
-   private static final Dependency JAVAEE6 =
-            DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0").setScopeType("import")
-                     .setPackaging("pom").setVersion("3.0.2.Final");
+   private static final Dependency JAVAEE6 = DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0")
+            .setScopeType("import")
+            .setPackaging("pom").setVersion("3.0.2.Final");
 
-   private static final Dependency JAVAEE7 =
-            DependencyBuilder.create().setGroupId("javax").setArtifactId("javaee-api").setVersion("7.0")
-                     .setScopeType("provided");
+   private static final Dependency JAVAEE7 = DependencyBuilder.create().setGroupId("javax").setArtifactId("javaee-api")
+            .setVersion("7.0")
+            .setScopeType("provided");
 
    @Deployment
    @AddonDependencies({
@@ -56,7 +57,7 @@ public class RestSetupTest
    })
    public static AddonArchive getDeployment()
    {
-      return ShrinkWrap.create(AddonArchive.class).addBeansXML();//.addClass(ProjectHelper.class);
+      return ShrinkWrap.create(AddonArchive.class).addBeansXML();// .addClass(ProjectHelper.class);
    }
 
    @Inject
@@ -64,6 +65,12 @@ public class RestSetupTest
 
    @Inject
    private ProjectFactory projectFactory;
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shell.close();
+   }
 
    @Test
    public void testProjectSetup() throws Exception

@@ -30,6 +30,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,6 +73,12 @@ public class ValidationNewPayloadCommandTest
    {
       project = projectHelper.createJavaLibraryProject();
       projectHelper.installValidation(project);
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test

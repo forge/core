@@ -25,6 +25,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,6 +61,12 @@ public class ArchetypeCatalogCommandsTest
    public void setUp()
    {
       this.shellTest = SimpleContainer.getServices(getClass().getClassLoader(), ShellTest.class).get();
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test

@@ -27,6 +27,7 @@ import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,8 +59,7 @@ public class LsCommandTest
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:resources"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));
 
       return archive;
    }
@@ -69,6 +69,12 @@ public class LsCommandTest
 
    @Inject
    private ProjectFactory projectFactory;
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
+   }
 
    @Test
    public void testLsCommand() throws Exception

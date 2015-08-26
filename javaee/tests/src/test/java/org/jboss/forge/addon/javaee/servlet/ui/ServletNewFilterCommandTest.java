@@ -7,9 +7,15 @@
 
 package org.jboss.forge.addon.javaee.servlet.ui;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_SERVLET_PACKAGE;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +39,7 @@ import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,6 +75,12 @@ public class ServletNewFilterCommandTest
    {
       project = projectHelper.createJavaLibraryProject();
       projectHelper.installServlet_3_1(project);
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test

@@ -26,6 +26,7 @@ import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,8 +51,7 @@ public class SystemPropertiesCommandTest
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:shell-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));
 
       return archive;
    }
@@ -59,13 +59,19 @@ public class SystemPropertiesCommandTest
    @Inject
    private ShellTest shellTest;
 
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
+   }
+
    @Test
    public void testListSystemProperties() throws Exception
    {
       Result result = shellTest.execute("system-property-get", 5, TimeUnit.SECONDS);
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
       String out = shellTest.getStdOut();
-      //assert that console output contains some predefined system properties
+      // assert that console output contains some predefined system properties
       Assert.assertThat(out, containsString("user.name"));
       Assert.assertThat(out, containsString("user.home"));
       Assert.assertThat(out, containsString("java.version"));
@@ -89,12 +95,12 @@ public class SystemPropertiesCommandTest
       Assert.assertThat(shellTest.getStdOut(), containsString("bar"));
    }
 
-    @Test
-    public void testGetUnknownSystemProperty() throws Exception
-    {
-        Result result = shellTest.execute("system-property-get --named blah", 5, TimeUnit.SECONDS);
-        Assert.assertThat(result, is(not(instanceOf(Failed.class))));
-        Assert.assertEquals(result.getMessage(), null);
-    }
+   @Test
+   public void testGetUnknownSystemProperty() throws Exception
+   {
+      Result result = shellTest.execute("system-property-get --named blah", 5, TimeUnit.SECONDS);
+      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      Assert.assertEquals(result.getMessage(), null);
+   }
 
 }

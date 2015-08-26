@@ -42,6 +42,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,6 +84,12 @@ public class FacesNewBeanCommandTest
       project = projectHelper.createJavaLibraryProject();
       projectHelper.installFaces_2_2(project);
       projectHelper.installCDI_1_0(project);
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test
@@ -174,7 +181,7 @@ public class FacesNewBeanCommandTest
    public void testCreateNewBeanSessionScoped() throws Exception
    {
       try (CommandController controller = uiTestHarness.createCommandController(FacesNewBeanCommand.class,
-              project.getRoot()))
+               project.getRoot()))
       {
          controller.initialize();
          controller.setValueFor("named", "MyFacesBeanSession");

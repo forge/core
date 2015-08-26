@@ -34,6 +34,7 @@ import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.AnnotationSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -85,7 +86,12 @@ public class JavaAddAnnotationCommandTest
    public void setup() throws Exception
    {
       createTempProject();
+   }
 
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test

@@ -42,6 +42,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,6 +85,12 @@ public class JPANewEntityListenerCommandTest
    {
       project = projectHelper.createJavaLibraryProject();
       projectHelper.installJPA_2_0(project);
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test

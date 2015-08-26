@@ -23,6 +23,7 @@ import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,6 +53,12 @@ public class CDIBeansCommandsTest
    public void before() throws IOException
    {
       shellTest.clearScreen();
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test

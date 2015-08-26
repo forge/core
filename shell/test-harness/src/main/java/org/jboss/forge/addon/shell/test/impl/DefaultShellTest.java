@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -35,6 +36,7 @@ import org.jboss.forge.furnace.container.cdi.events.Local;
 import org.jboss.forge.furnace.event.PreShutdown;
 import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.util.Callables;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
@@ -50,14 +52,7 @@ public class DefaultShellTest implements ShellTest
    private ShellFactory factory;
    private Shell shell;
 
-   private final Callable<?> nullCallable = new Callable<Void>()
-   {
-      @Override
-      public Void call() throws Exception
-      {
-         return null;
-      }
-   };
+   private final Callable<?> nullCallable = Callables.returning(null);
 
    @Override
    public Shell getShell()
@@ -81,6 +76,7 @@ public class DefaultShellTest implements ShellTest
       close();
    }
 
+   @PreDestroy
    @Override
    public void close() throws Exception
    {

@@ -7,9 +7,15 @@
 
 package org.jboss.forge.addon.javaee.cdi.ui;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_CDI_PACKAGE;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +48,7 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -82,6 +89,12 @@ public class CDINewBeanCommandTest
    {
       project = projectHelper.createJavaLibraryProject();
       projectHelper.installCDI_1_0(project);
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test

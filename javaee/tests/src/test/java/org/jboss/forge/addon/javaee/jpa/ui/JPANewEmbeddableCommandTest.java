@@ -39,6 +39,7 @@ import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,6 +78,12 @@ public class JPANewEmbeddableCommandTest
    {
       project = projectHelper.createJavaLibraryProject();
       projectHelper.installJPA_2_0(project);
+   }
+
+   @After
+   public void tearDown() throws Exception
+   {
+      shellTest.close();
    }
 
    @Test
