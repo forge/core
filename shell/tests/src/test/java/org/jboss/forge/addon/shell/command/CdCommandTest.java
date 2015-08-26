@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.shell.command;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -110,7 +111,9 @@ public class CdCommandTest
          @Override
          public List<Resource<?>> getNewCurrentResources(UIContext current, String token)
          {
-            return Projects.getSelectedProject(projectFactory, current).getRoot().getChild("src").listResources();
+            if ("#/".equals(token))
+               return Projects.getSelectedProject(projectFactory, current).getRoot().getChild("src").listResources();
+            return Collections.emptyList();
          }
       };
 
