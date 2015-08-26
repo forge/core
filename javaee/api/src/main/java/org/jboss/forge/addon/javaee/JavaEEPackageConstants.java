@@ -31,4 +31,6 @@ public interface JavaEEPackageConstants
    String DEFAULT_REST_PACKAGE = "rest";
    // SOAP
    String DEFAULT_SOAP_PACKAGE = "soap";
+   // WebSocket
+   String DEFAULT_WEBSOCKET_PACKAGE = "ws";
 }
