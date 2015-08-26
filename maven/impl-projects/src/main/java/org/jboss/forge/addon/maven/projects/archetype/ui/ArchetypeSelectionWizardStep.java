@@ -74,8 +74,7 @@ public class ArchetypeSelectionWizardStep extends AbstractUICommand implements U
                .setLabel("Archetype Version")
                .setRequired(true);
       archetypeRepository = inputFactory.createInput("archetypeRepository", String.class)
-               .setLabel("Archetype repository URL")
-               .setRequired(true);
+               .setLabel("Archetype repository URL");
       builder.add(archetypeGroupId).add(archetypeArtifactId).add(archetypeVersion).add(archetypeRepository);
    }
 

@@ -8,6 +8,7 @@ org.jboss.forge.addon.maven.projects.archetype.ui.ArchetypeAddCommand
 org.jboss.forge.addon.maven.projects.archetype.ui.ArchetypeCatalogSelectionWizardStep
 org.jboss.forge.addon.maven.projects.archetype.ui.ArchetypeListCommand
 org.jboss.forge.addon.maven.projects.archetype.ui.ArchetypeRemoveCommand
+org.jboss.forge.addon.maven.projects.archetype.ui.ArchetypeSelectionWizardStep
 org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet
 org.jboss.forge.addon.maven.projects.facets.MavenEnterpriseResourcesFacet
 org.jboss.forge.addon.maven.projects.facets.MavenJavaCompilerFacet
