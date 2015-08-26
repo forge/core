@@ -16,8 +16,6 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.spi.command.CdTokenHandler;
 import org.jboss.forge.addon.shell.spi.command.CdTokenHandlerFactory;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
@@ -41,9 +39,6 @@ import org.jboss.forge.addon.ui.util.Metadata;
 public class CdCommand extends AbstractShellCommand
 {
    private static final Logger log = Logger.getLogger(CdCommand.class.getName());
-
-   @Inject
-   private ResourceFactory resourceFactory;
 
    @Inject
    private CdTokenHandlerFactory tokenHandlerFactory;
@@ -100,7 +95,7 @@ public class CdCommand extends AbstractShellCommand
             Resource<?> currentResource = (Resource<?>) uiContext.getInitialSelection().get();
             try
             {
-               newResource = new ResourcePathResolver(resourceFactory, currentResource, token).resolve();
+               newResource = currentResource.resolveChildren(token);
             }
             catch (RuntimeException re)
             {

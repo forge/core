@@ -23,8 +23,8 @@
    </modules>
 
    <properties>
-      <version.aesh>0.63</version.aesh>
-      <version.aesh.extensions>0.63</version.aesh.extensions>
+      <version.aesh>0.64</version.aesh>
+      <version.aesh.extensions>0.64</version.aesh.extensions>
    </properties>
 
    <dependencyManagement>
