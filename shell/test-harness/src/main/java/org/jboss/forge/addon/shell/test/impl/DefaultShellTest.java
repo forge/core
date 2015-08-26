@@ -19,7 +19,6 @@ import java.util.concurrent.TimeoutException;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import org.jboss.aesh.console.AeshConsoleImpl;
 import org.jboss.aesh.console.settings.Settings;
@@ -41,7 +40,6 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Singleton
 public class DefaultShellTest implements ShellTest
 {
    private static final String LINE_SEPARATOR = OperatingSystemUtils.getLineSeparator();
@@ -79,6 +77,12 @@ public class DefaultShellTest implements ShellTest
    }
 
    public void teardown(@Observes @Local PreShutdown event) throws Exception
+   {
+      close();
+   }
+
+   @Override
+   public void close() throws Exception
    {
       if (shell != null)
       {
@@ -320,7 +324,8 @@ public class DefaultShellTest implements ShellTest
          }
          catch (InterruptedException e)
          {
-            throw new RuntimeException("Interrupted while waiting for buffer value to change from [" + buffer + "].", e);
+            throw new RuntimeException("Interrupted while waiting for buffer value to change from [" + buffer + "].",
+                     e);
          }
       }
    }

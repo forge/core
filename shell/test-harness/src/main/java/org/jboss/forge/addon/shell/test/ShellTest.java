@@ -23,7 +23,7 @@ import org.jboss.forge.addon.ui.result.Result;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface ShellTest
+public interface ShellTest extends AutoCloseable
 {
    /**
     * Get the {@link Console} buffer object.
