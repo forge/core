@@ -31,7 +31,7 @@ public class DateCommand
          }
          catch (IllegalArgumentException iae)
          {
-            return Results.fail("Illegal date pattern: " + pattern);
+            return Results.fail("Illegal date pattern: " + pattern, iae);
          }
       }
       else
