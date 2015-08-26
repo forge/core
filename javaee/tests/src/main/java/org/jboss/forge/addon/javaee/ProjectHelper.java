@@ -29,6 +29,7 @@ import org.jboss.forge.addon.javaee.servlet.ServletFacet_2_5;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.javaee.validation.ValidationFacet;
+import org.jboss.forge.addon.javaee.websocket.WebSocketFacet_1_1;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.projects.JavaProjectType;
 import org.jboss.forge.addon.parser.java.projects.JavaWebProjectType;
@@ -138,6 +139,14 @@ public class ProjectHelper
    public CDIFacet_1_1 installCDI_1_1(Project project)
    {
       return facetFactory.install(project, CDIFacet_1_1.class);
+   }
+
+   /**
+    * Installs the {@link WebSocketFacet_1_1} facet
+    */
+   public WebSocketFacet_1_1 installWebSocket_1_1(Project project)
+   {
+      return facetFactory.install(project, WebSocketFacet_1_1.class);
    }
 
    /**
