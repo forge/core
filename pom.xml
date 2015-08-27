@@ -76,6 +76,7 @@
             <module>bom</module>
             <module>addon-manager</module>
             <module>addons</module>
+            <module>bean-validation</module>
             <module>convert</module>
             <module>configuration</module>
             <module>database-tools</module>
@@ -98,11 +99,41 @@
             <module>templates</module>
             <module>text</module>
             <module>git</module>
-
             <module>core</module>
-            <module>bean-validation</module>
             <module>bootstrap</module>
             <module>dist</module>
+         </modules>
+      </profile>
+      <profile>
+         <id>ci</id>
+         <modules>
+            <module>bom</module>
+            <module>addon-manager</module>
+            <module>addons</module>
+            <module>bean-validation</module>
+            <module>convert</module>
+            <module>configuration</module>
+            <module>database-tools</module>
+            <module>dependencies</module>
+            <module>dev-tools-java</module>
+            <module>environment</module>
+            <module>facets</module>
+            <module>javaee</module>
+            <module>maven</module>
+            <module>projects</module>
+            <module>parser-java</module>
+            <module>parser-json</module>
+            <module>parser-xml</module>
+            <module>resources</module>
+            <module>rest-client</module>
+            <module>ui</module>
+            <module>scaffold</module>
+            <module>script</module>            
+            <module>shell</module>
+            <module>templates</module>
+            <module>text</module>
+            <module>git</module>
+            <module>core</module>
          </modules>
       </profile>
       <profile>
