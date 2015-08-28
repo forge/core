@@ -13,7 +13,7 @@ public class PropertiesScanner implements Scanner
 {
 
    private static final Pattern COMMENT = Pattern.compile("^(#|!).*");
-   private static final Pattern KEY = Pattern.compile("((\\w)|(\\\\\\s))+(?=\\s?+(=|:))");
+   private static final Pattern KEY = Pattern.compile("((\\w)|(\\\\\\s)|(\\.))+(?=\\s?+(=|:))");
    private static final Pattern OPERATOR = Pattern.compile("=|:");
    private static final Pattern SPACE = Pattern.compile("\\s+");
    private static final Pattern VALUE = Pattern.compile(".*");
@@ -24,14 +24,14 @@ public class PropertiesScanner implements Scanner
 
    public enum State
    {
-      initial,
-      value
+      initial, value
    }
 
    public static final Type TYPE = new Type("PROPERTIES", "\\.(properties)$");
 
    @Override
-   public Type getType() {
+   public Type getType()
+   {
       return TYPE;
    }
 
