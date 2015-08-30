@@ -3,7 +3,8 @@ sudo: false
 jdk:
   - oraclejdk8
 
+install: mvn clean install -Pci -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
+script: mvn install -Pci
+
 notifications:
   irc: chat.freenode.net#forge
-
-script: mvn clean install -Pci
