@@ -4,7 +4,7 @@ jdk:
   - oraclejdk8
 
 install: mvn clean install -Pci -Dmaven.test.skip=true -Dmaven.javadoc.skip=true
-script: mvn install -Pci
+script: mvn test -Pci -Dmaven.javadoc.skip=true -Dsource.skip=true
 
 notifications:
   irc: chat.freenode.net#forge
