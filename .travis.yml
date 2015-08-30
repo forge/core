@@ -5,3 +5,5 @@ jdk:
 
 notifications:
   irc: chat.freenode.net#forge
+
+script: mvn clean install -Pci
