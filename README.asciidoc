@@ -2,6 +2,8 @@
 
 The fastest way to build applications, share your software, and enjoy doing it.
 
+image:https://travis-ci.org/forge/core.svg?branch=master["Build Status", link="https://travis-ci.org/forge/core"]
+image:http://img.shields.io/:license-EPL-blue.svg["License", link="https://www.eclipse.org/legal/epl-v10.html"]
 
 What's new and noteworthy?
 --------------------------
