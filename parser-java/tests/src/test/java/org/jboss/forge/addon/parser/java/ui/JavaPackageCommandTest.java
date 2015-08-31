@@ -7,9 +7,7 @@
 
 package org.jboss.forge.addon.parser.java.ui;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 
 import javax.inject.Inject;
 
@@ -19,13 +17,12 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -45,32 +42,56 @@ public class JavaPackageCommandTest
    @Inject
    private FacetFactory facetFactory;
 
+   private Project project;
+
+   @Before
+   public void setUp()
+   {
+      project = projectFactory.createTempProject();
+      facetFactory.install(project, JavaSourceFacet.class);
+   }
+
    @Test
    public void testCreatePackage() throws Exception
    {
-      Project project = projectFactory.createTempProject();
-      facetFactory.install(project, JavaSourceFacet.class);
-      CommandController controller = getInitializedController(JavaPackageCommand.class, project.getRoot());
-      Assert.assertTrue(controller.isValid());
-      Assert.assertTrue(controller.canExecute());
-      Result result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      try (CommandController controller = testHarness.createCommandController(JavaPackageCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "org.example.mynewpackage");
+         controller.setValueFor("createPackageInfo", "true");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
 
-      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      DirectoryResource packageResource = facet.getPackage("org.example.mynewpackage");
-      Assert.assertNotNull(packageResource);
-      Assert.assertThat(packageResource.exists(), is(true));
-      Assert.assertThat(packageResource.getChild("package-info.java").exists(), is(true));
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         DirectoryResource packageResource = facet.getPackage("org.example.mynewpackage");
+         Assert.assertNotNull(packageResource);
+         Assert.assertThat(packageResource.exists(), is(true));
+         Assert.assertThat(packageResource.getChild("package-info.java").exists(), is(true));
+      }
    }
 
-   private CommandController getInitializedController(Class<? extends UICommand> clazz, Resource<?>... initialSelection)
-            throws Exception
+   @Test
+   public void testCreatePackageWithTilde() throws Exception
    {
-      CommandController controller = testHarness.createCommandController(clazz, initialSelection);
-      controller.initialize();
-      controller.setValueFor("named", "org.example.mynewpackage");
-      controller.setValueFor("createPackageInfo", "true");
-      return controller;
-   }
+      try (CommandController controller = testHarness.createCommandController(JavaPackageCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "~.mynewpackagewithtilde");
+         controller.setValueFor("createPackageInfo", "true");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
 
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         DirectoryResource packageResource = facet.getPackage("unknown.mynewpackagewithtilde");
+         Assert.assertNotNull(packageResource);
+         Assert.assertThat(packageResource.exists(), is(true));
+         Assert.assertThat(packageResource.getChild("package-info.java").exists(), is(true));
+      }
+   }
 }

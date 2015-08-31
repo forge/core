@@ -10,6 +10,7 @@ package org.jboss.forge.addon.parser.java.ui;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
+import org.jboss.forge.addon.parser.java.converters.PackageRootConverter;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
@@ -56,6 +57,7 @@ public class JavaPackageCommandImpl extends AbstractProjectCommand implements Ja
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      named.setValueConverter(new PackageRootConverter(getProjectFactory(), builder));
       builder.add(named).add(createPackageInfo).add(testFolder);
    }
 
