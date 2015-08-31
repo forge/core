@@ -238,7 +238,7 @@ class CommandLineUtil
       return populatedInputs;
    }
 
-   private List<String> resolveWildcardSelectOptionValues(CommandLine commandLine, String name,
+   private List<String> resolveWildcardSelectOptionValues(CommandLine<?> commandLine, String name,
             InputComponent<?, ?> input)
    {
       List<String> optionValues = commandLine.getOptionValues(name);

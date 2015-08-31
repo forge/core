@@ -46,11 +46,11 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @Vetoed
+@SuppressWarnings("unchecked")
 public class AeshUICommand implements UICommand
 {
    private final CommandLineParser commandLineParser;
 
-   @SuppressWarnings("unchecked")
    public AeshUICommand(CommandContainer container)
    {
       this.commandLineParser = container.getParser();
@@ -134,6 +134,7 @@ public class AeshUICommand implements UICommand
       {
          return new CommandPopulator()
          {
+            @Override
             public void populateObject(CommandLine line, InvocationProviders invocationProviders,
                      AeshContext aeshContext, boolean validate)
                               throws CommandLineParserException, OptionValidatorException
