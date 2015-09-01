@@ -26,7 +26,6 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -54,12 +53,6 @@ public class FacesFacetShellTest
 
    @Inject
    private ProjectHelper projectHelper;
-
-   @Before
-   public void clearScreen() throws Exception
-   {
-      shellTest.clearScreen();
-   }
 
    @After
    public void tearDown() throws Exception
@@ -94,7 +87,7 @@ public class FacesFacetShellTest
       shellTest.execute("cd " + tmpDir.getAbsolutePath(), 5, TimeUnit.SECONDS);
       shellTest.execute("project-new --named project" + System.nanoTime(), 10, TimeUnit.SECONDS);
       shellTest.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
-      clearScreen();
+      shellTest.clearScreen();
       shellTest.execute("project-list-facets", 5, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), containsString("FacesFacet"));
    }
