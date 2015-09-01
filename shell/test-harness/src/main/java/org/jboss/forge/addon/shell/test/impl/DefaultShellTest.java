@@ -393,8 +393,8 @@ public class DefaultShellTest implements ShellTest
             inputStream = new PipedInputStream(stdin);
             settings = new SettingsBuilder()
                      .inputStream(inputStream)
-                     .outputStream(new PrintStream(stdout))
-                     .outputStreamError(new PrintStream(stderr))
+                     .outputStream(new PrintStream(stdout,true))
+                     .outputStreamError(new PrintStream(stderr,true))
                      .name("test")
                      .logging(true)
                      .setExportUsesSystemEnvironment(true)
