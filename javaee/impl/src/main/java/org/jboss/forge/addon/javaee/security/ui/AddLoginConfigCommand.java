@@ -1,5 +1,9 @@
 package org.jboss.forge.addon.javaee.security.ui;
 
+import java.util.Arrays;
+
+import javax.inject.Inject;
+
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
@@ -15,9 +19,6 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-
-import javax.inject.Inject;
-import java.util.Arrays;
 
 /**
  * Adds a login config to the current project.
@@ -60,12 +61,11 @@ public class AddLoginConfigCommand extends AbstractJavaEECommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      ServletFacet servletFacet = getSelectedProject(context).getFacet(ServletFacet.class);
+      ServletFacet<?> servletFacet = getSelectedProject(context).getFacet(ServletFacet.class);
       servletFacet.addLoginConfig(authMethod.getValue(), securityRealm.getValue());
       return Results.success("Security realm " + securityRealm.getValue() + " and authentication method " +
                authMethod.getValue() + " were configured");
    }
-
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
