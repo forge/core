@@ -65,7 +65,7 @@ public class FacesFacetShellTest
    {
       Project project = projectHelper.createJavaLibraryProject();
       shellTest.getShell().setCurrentResource(project.getRoot());
-      shellTest.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
+      shellTest.execute("faces-setup --facesVersion 2.0", 15, TimeUnit.SECONDS);
       Assert.assertTrue(project.hasFacet(FacesFacet.class));
       Assert.assertTrue(project.hasFacet(FacesFacet_2_0.class));
    }
@@ -75,8 +75,8 @@ public class FacesFacetShellTest
    {
       Project project = projectHelper.createJavaLibraryProject();
       shellTest.getShell().setCurrentResource(project.getRoot());
-      shellTest.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
-      shellTest.execute("project-list-facets", 5, TimeUnit.SECONDS);
+      shellTest.execute("faces-setup --facesVersion 2.0", 15, TimeUnit.SECONDS);
+      shellTest.execute("project-list-facets", 15, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), containsString("FacesFacet"));
    }
 
@@ -84,11 +84,11 @@ public class FacesFacetShellTest
    public void testFacesFacetAvailabilityThroughShellOnly() throws Exception
    {
       File tmpDir = OperatingSystemUtils.createTempDir();
-      shellTest.execute("cd " + tmpDir.getAbsolutePath(), 5, TimeUnit.SECONDS);
+      shellTest.execute("cd " + tmpDir.getAbsolutePath(), 15, TimeUnit.SECONDS);
       shellTest.execute("project-new --named project" + System.nanoTime(), 10, TimeUnit.SECONDS);
-      shellTest.execute("faces-setup --facesVersion 2.0", 5, TimeUnit.SECONDS);
+      shellTest.execute("faces-setup --facesVersion 2.0", 15, TimeUnit.SECONDS);
       shellTest.clearScreen();
-      shellTest.execute("project-list-facets", 5, TimeUnit.SECONDS);
+      shellTest.execute("project-list-facets", 15, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), containsString("FacesFacet"));
    }
 }
