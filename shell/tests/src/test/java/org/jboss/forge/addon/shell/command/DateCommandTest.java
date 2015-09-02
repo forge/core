@@ -72,7 +72,7 @@ public class DateCommandTest
    @Test
    public void testDateCommandWithDefaultPattern() throws Exception
    {
-      Result result = shellTest.execute("date", 5, TimeUnit.SECONDS);
+      Result result = shellTest.execute("date", 15, TimeUnit.SECONDS);
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
    }
 
@@ -80,7 +80,7 @@ public class DateCommandTest
    public void testDateCommandWithLegalPattern() throws Exception
    {
       String formattedDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-      Result result = shellTest.execute("date --pattern yyyyMMdd", 5, TimeUnit.SECONDS);
+      Result result = shellTest.execute("date --pattern yyyyMMdd", 15, TimeUnit.SECONDS);
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
       String out = shellTest.getStdOut();
       Assert.assertThat(out, containsString(formattedDate));
@@ -89,7 +89,7 @@ public class DateCommandTest
    @Test
    public void testDateCommandWithIllegalPattern() throws Exception
    {
-      Result result = shellTest.execute("date --pattern foo", 5, TimeUnit.SECONDS);
+      Result result = shellTest.execute("date --pattern foo", 15, TimeUnit.SECONDS);
       Assert.assertTrue(result instanceof Failed);
       String out = shellTest.getStdErr();
       Assert.assertThat(out, containsString("Illegal date pattern: foo"));

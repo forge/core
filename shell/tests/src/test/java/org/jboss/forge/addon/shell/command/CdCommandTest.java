@@ -94,16 +94,16 @@ public class CdCommandTest
    {
       Project project = projectFactory.createTempProject();
       String projectPath = project.getRoot().getFullyQualifiedName();
-      shellTest.execute("cd " + projectPath, 5, TimeUnit.SECONDS);
+      shellTest.execute("cd " + projectPath, 15, TimeUnit.SECONDS);
       shellTest.clearScreen();
-      shellTest.execute("pwd", 5, TimeUnit.SECONDS);
+      shellTest.execute("pwd", 15, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString(projectPath));
 
-      shellTest.execute("mkdir abc", 5, TimeUnit.SECONDS);
-      shellTest.execute("cd abc", 5, TimeUnit.SECONDS);
-      shellTest.execute("cd ~~", 5, TimeUnit.SECONDS);
+      shellTest.execute("mkdir abc", 15, TimeUnit.SECONDS);
+      shellTest.execute("cd abc", 15, TimeUnit.SECONDS);
+      shellTest.execute("cd ~~", 15, TimeUnit.SECONDS);
       shellTest.clearScreen();
-      shellTest.execute("pwd", 5, TimeUnit.SECONDS);
+      shellTest.execute("pwd", 15, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString(projectPath));
    }
 
@@ -130,16 +130,16 @@ public class CdCommandTest
       {
          Assert.assertTrue(handlerFactory.getHandlers().contains(handler));
 
-         shellTest.execute("cd " + projectPath, 5, TimeUnit.SECONDS);
+         shellTest.execute("cd " + projectPath, 15, TimeUnit.SECONDS);
          shellTest.clearScreen();
-         shellTest.execute("pwd", 5, TimeUnit.SECONDS);
+         shellTest.execute("pwd", 15, TimeUnit.SECONDS);
          Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString(projectPath));
 
-         shellTest.execute("mkdir abc", 5, TimeUnit.SECONDS);
-         shellTest.execute("cd abc", 5, TimeUnit.SECONDS);
-         shellTest.execute("cd #/", 5, TimeUnit.SECONDS);
+         shellTest.execute("mkdir abc", 15, TimeUnit.SECONDS);
+         shellTest.execute("cd abc", 15, TimeUnit.SECONDS);
+         shellTest.execute("cd #/", 15, TimeUnit.SECONDS);
          shellTest.clearScreen();
-         shellTest.execute("pwd", 5, TimeUnit.SECONDS);
+         shellTest.execute("pwd", 15, TimeUnit.SECONDS);
          Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString(projectPath));
       }
       finally

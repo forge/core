@@ -46,7 +46,7 @@ public class CatCommandTest
    @Test
    public void testCatCommandInvalidArgument() throws Exception
    {
-      Result result = shellTest.execute("cat foo bar", 5, TimeUnit.SECONDS);
+      Result result = shellTest.execute("cat foo bar", 15, TimeUnit.SECONDS);
       Assert.assertThat(result, instanceOf(Failed.class));
       String err = shellTest.getStdErr();
       Assert.assertThat(err, containsString("cat: foo: No such file or directory"));
@@ -63,7 +63,7 @@ public class CatCommandTest
       FileResource<?> source = project.getRoot().getChild(target.getName()).reify(FileResource.class);
       source.setContents("public void test() {}");
 
-      shellTest.execute("cat " + source.getFullyQualifiedName(), 5, TimeUnit.SECONDS);
+      shellTest.execute("cat " + source.getFullyQualifiedName(), 15, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), containsString("test()"));
    }
 
@@ -77,7 +77,7 @@ public class CatCommandTest
       FileResource<?> source = project.getRoot().getChild(target.getName()).reify(FileResource.class);
       source.setContents("public void test() {}");
 
-      shellTest.execute("cat " + source.getFullyQualifiedName() + " --color", 5, TimeUnit.SECONDS);
+      shellTest.execute("cat " + source.getFullyQualifiedName() + " --color", 15, TimeUnit.SECONDS);
       // the string should be colors, so there are color codes between the statements
       Assert.assertThat(shellTest.getStdOut(), not(containsString("public void")));
    }
@@ -93,7 +93,7 @@ public class CatCommandTest
       FileResource<?> source = project.getRoot().getChild(target.getName()).reify(FileResource.class);
       source.setContents("public void test() {}");
 
-      shellTest.execute("cat " + source.getFullyQualifiedName() + " --color", 5, TimeUnit.SECONDS);
+      shellTest.execute("cat " + source.getFullyQualifiedName() + " --color", 15, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdErr(), containsString("Error while rendering output in color"));
       // the string should not be colored
       Assert.assertThat(shellTest.getStdOut(), containsString("public void"));

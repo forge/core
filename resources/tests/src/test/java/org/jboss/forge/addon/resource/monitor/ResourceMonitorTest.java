@@ -124,7 +124,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 1;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 15, TimeUnit.SECONDS);
       final FileResource<?> childFile = childDir.getChild("child_file.txt").reify(FileResource.class);
 
       waitForMonitor(new Callable<Void>()
@@ -143,7 +143,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 2;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 15, TimeUnit.SECONDS);
 
       waitForMonitor(new Callable<Void>()
       {
@@ -161,7 +161,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 3;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 15, TimeUnit.SECONDS);
 
       Assert.assertEquals(3, eventCollector.size());
       Iterator<ResourceEvent> iterator = eventCollector.iterator();
@@ -208,7 +208,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 1;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 15, TimeUnit.SECONDS);
       final FileResource<?> childFile = childDir.getChild("child_file.txt").reify(FileResource.class);
 
       waitForMonitor(new Callable<Void>()
@@ -227,7 +227,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 2;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 15, TimeUnit.SECONDS);
 
       waitForMonitor(new Callable<Void>()
       {
@@ -245,7 +245,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 4;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 15, TimeUnit.SECONDS);
 
       Assert.assertEquals(4, eventCollector.size());
       Iterator<ResourceEvent> iterator = eventCollector.iterator();
@@ -366,7 +366,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 1;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 15, TimeUnit.SECONDS);
 
       waitForMonitor(new Callable<Void>()
       {
@@ -384,7 +384,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 2;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 15, TimeUnit.SECONDS);
 
       Assert.assertEquals(2, eventCollector.size());
       Iterator<ResourceEvent> iterator = eventCollector.iterator();
@@ -439,7 +439,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 1;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 15, TimeUnit.SECONDS);
 
       waitForMonitor(new Callable<Void>()
       {
@@ -458,7 +458,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 3;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 15, TimeUnit.SECONDS);
 
       Assert.assertEquals(3, eventCollector.size());
       Iterator<ResourceEvent> iterator = eventCollector.iterator();
@@ -513,7 +513,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 1;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 15, TimeUnit.SECONDS);
 
       waitForMonitor(new Callable<Void>()
       {
@@ -531,7 +531,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 2;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 15, TimeUnit.SECONDS);
 
       Assert.assertEquals(2, eventCollector.size());
       Iterator<ResourceEvent> iterator = eventCollector.iterator();
@@ -584,7 +584,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 1;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 15, TimeUnit.SECONDS);
 
       waitForMonitor(new Callable<Void>()
       {
@@ -602,7 +602,7 @@ public class ResourceMonitorTest
          {
             return eventCollector.size() == 2;
          }
-      }, 5, TimeUnit.SECONDS);
+      }, 15, TimeUnit.SECONDS);
 
       Assert.assertEquals(2, eventCollector.size());
       Iterator<ResourceEvent> iterator = eventCollector.iterator();

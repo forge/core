@@ -71,9 +71,9 @@ public class TransactionCommandTest
    public void testProjectCreationInsideTransaction() throws Exception
    {
       File tempDir = OperatingSystemUtils.createTempDir();
-      shellTest.execute("cd " + tempDir.getAbsolutePath(), 5, TimeUnit.SECONDS);
-      shellTest.execute("transaction-start", 5, TimeUnit.SECONDS);
-      shellTest.execute("project-new --named demo", 5, TimeUnit.SECONDS);
+      shellTest.execute("cd " + tempDir.getAbsolutePath(), 15, TimeUnit.SECONDS);
+      shellTest.execute("transaction-start", 15, TimeUnit.SECONDS);
+      shellTest.execute("project-new --named demo", 15, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), containsString("Project named 'demo' has been created."));
       shellTest.execute("build", 1, TimeUnit.MINUTES);
       Assert.assertThat(shellTest.getStdOut(), containsString("Build Success"));

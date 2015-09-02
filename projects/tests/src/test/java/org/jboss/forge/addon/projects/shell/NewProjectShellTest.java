@@ -113,8 +113,8 @@ public class NewProjectShellTest
    @Ignore("Until shell is fixed")
    public void testCompletionFlow() throws Exception
    {
-      test.waitForCompletion("project-new ", "project-n", 5, TimeUnit.SECONDS);
-      test.waitForCompletion("project-new --", "", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("project-new ", "project-n", 15, TimeUnit.SECONDS);
+      test.waitForCompletion("project-new --", "", 15, TimeUnit.SECONDS);
 
       String stdout = test.waitForCompletion(5, TimeUnit.SECONDS);
       Assert.assertThat(stdout, containsString("--named"));
@@ -133,10 +133,10 @@ public class NewProjectShellTest
       Assert.assertThat(stdout, containsString("Maven - Resources"));
 
       stdout = test.waitForCompletion("project-new --named lincoln --type Maven\\ -\\ Java ",
-               "J", 5, TimeUnit.SECONDS);
+               "J", 15, TimeUnit.SECONDS);
 
       stdout = test.waitForCompletion("project-new --named lincoln --type Maven\\ -\\ Java --",
-               "--", 5, TimeUnit.SECONDS);
+               "--", 15, TimeUnit.SECONDS);
 
       Assert.assertThat(stdout, containsString("--topLevelPackage"));
       Assert.assertThat(stdout, containsString("--targetLocation"));

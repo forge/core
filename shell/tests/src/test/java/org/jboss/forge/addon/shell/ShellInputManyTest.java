@@ -63,23 +63,23 @@ public class ShellInputManyTest
    {
       // Verify autocomplete for parameter works
       test.clearScreen();
-      test.waitForCompletion("mock-command-inputmany ", "mock", 5, TimeUnit.SECONDS);
-      test.waitForCompletion("mock-command-inputmany --values ", "--v", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("mock-command-inputmany ", "mock", 15, TimeUnit.SECONDS);
+      test.waitForCompletion("mock-command-inputmany --values ", "--v", 15, TimeUnit.SECONDS);
       Assert.assertEquals("mock-command-inputmany --values ", test.getBuffer());
 
       test.clearScreen();
 
       // Verify that command execution works for one argument
-      Result result = test.execute("mock-command-inputmany --values one", 5, TimeUnit.SECONDS);
+      Result result = test.execute("mock-command-inputmany --values one", 15, TimeUnit.SECONDS);
       Assert.assertEquals("Command executed with input values : one ", result.getMessage());
 
       // Verify that command execution works for multiple arguments
-      result = test.execute("mock-command-inputmany --values one two three", 5, TimeUnit.SECONDS);
+      result = test.execute("mock-command-inputmany --values one two three", 15, TimeUnit.SECONDS);
       Assert.assertEquals("Command executed with input values : one two three ", result.getMessage());
 
       // Verify that command execution fails for no arguments
       test.clearScreen();
-      test.waitForStdErrChanged("mock-command-inputmany --values\n", 5, TimeUnit.SECONDS);
+      test.waitForStdErrChanged("mock-command-inputmany --values\n", 15, TimeUnit.SECONDS);
       Assert.assertThat(test.getStdErr(),
                containsString("Must specify at least one value for --values before continuing."));
    }

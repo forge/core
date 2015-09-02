@@ -84,7 +84,7 @@ public class TouchCommandTest
       Resource<?> child = temp.getChild("foo.txt");
       Assert.assertFalse(child.exists());
 
-      Result result = shellTest.execute("touch foo.txt", 5, TimeUnit.SECONDS);
+      Result result = shellTest.execute("touch foo.txt", 15, TimeUnit.SECONDS);
       Assert.assertFalse(result instanceof Failed);
 
       Assert.assertTrue(child.exists());
@@ -104,7 +104,7 @@ public class TouchCommandTest
       long lastModified = child.getLastModified();
       Thread.sleep(1000);
 
-      Result result = shellTest.execute("touch foo.txt", 5, TimeUnit.SECONDS);
+      Result result = shellTest.execute("touch foo.txt", 15, TimeUnit.SECONDS);
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
       Assert.assertThat(result.getMessage(), is(not(equalTo(""))));
 

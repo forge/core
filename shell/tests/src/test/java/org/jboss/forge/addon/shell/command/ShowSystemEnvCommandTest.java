@@ -69,7 +69,7 @@ public class ShowSystemEnvCommandTest
    public void testShowSystemEnvLinuxOrOSX() throws Exception
    {
       Assume.assumeTrue(OperatingSystemUtils.isLinux() || OperatingSystemUtils.isOSX());
-      shellTest.execute("echo $PATH", 5, TimeUnit.SECONDS);
+      shellTest.execute("echo $PATH", 15, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), containsString("/usr"));
    }
 
@@ -77,7 +77,7 @@ public class ShowSystemEnvCommandTest
    public void testShowSystemEnvWindows() throws Exception
    {
       Assume.assumeTrue(OperatingSystemUtils.isWindows());
-      shellTest.execute("echo $PATH", 5, TimeUnit.SECONDS);
+      shellTest.execute("echo $PATH", 15, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), containsString("System32"));
    }
 

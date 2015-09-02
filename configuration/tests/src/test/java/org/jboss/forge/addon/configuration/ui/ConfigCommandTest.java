@@ -129,7 +129,7 @@ public class ConfigCommandTest
       test.getShell().setCurrentResource(project.getRoot());
       test.execute("config-set --key key2 --value projectValue2 --local", 15, TimeUnit.MINUTES);
       test.execute("config-set --key key3 --value projectValue3 --local", 15, TimeUnit.SECONDS);
-      assertFalse(test.execute("config-list", 5, TimeUnit.SECONDS) instanceof Failed);
+      assertFalse(test.execute("config-list", 15, TimeUnit.SECONDS) instanceof Failed);
       assertThat(test.getStdOut(), containsString("key2=project: [projectValue2]"));
       assertThat(test.getStdOut(), containsString("key3=project: [projectValue3]"));
    }

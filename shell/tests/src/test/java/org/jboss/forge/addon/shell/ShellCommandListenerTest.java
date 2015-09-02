@@ -64,7 +64,7 @@ public class ShellCommandListenerTest
       MockCommandExecutionListener listener = new MockCommandExecutionListener();
       shell.addCommandExecutionListener(listener);
 
-      test.execute("command-list", 5, TimeUnit.SECONDS);
+      test.execute("command-list", 15, TimeUnit.SECONDS);
       Assert.assertTrue(listener.isPreExecuted());
       Assert.assertTrue(listener.isPostExecuted());
    }

@@ -57,9 +57,9 @@ public class MoveCommandTest
       File tmpDir = OperatingSystemUtils.createTempDir();
       String testFolder = "testFolder";
       String file = "moveFile";
-      shell.execute("cd " + tmpDir.getAbsolutePath(), 5, TimeUnit.SECONDS);
-      shell.execute("mkdir " + testFolder, 5, TimeUnit.SECONDS);
-      shell.execute("touch " + file, 5, TimeUnit.SECONDS);
+      shell.execute("cd " + tmpDir.getAbsolutePath(), 15, TimeUnit.SECONDS);
+      shell.execute("mkdir " + testFolder, 15, TimeUnit.SECONDS);
+      shell.execute("touch " + file, 15, TimeUnit.SECONDS);
 
       File testFolderFile = new File(tmpDir, testFolder);
       File fileSource = new File(tmpDir, file);
@@ -67,7 +67,7 @@ public class MoveCommandTest
 
       Assert.assertTrue(fileSource.exists());
       Assert.assertFalse(fileTarget.exists());
-      shell.execute("mv " + file + " " + testFolder, 5, TimeUnit.SECONDS);
+      shell.execute("mv " + file + " " + testFolder, 15, TimeUnit.SECONDS);
       Assert.assertTrue(fileTarget.exists());
       Assert.assertFalse(fileSource.exists());
    }
@@ -80,8 +80,8 @@ public class MoveCommandTest
       String file = "moveFile";
       String nonExisting = "newNoneExisting";
 
-      shell.execute("cd " + tmpDir.getAbsolutePath(), 5, TimeUnit.SECONDS);
-      shell.execute("touch " + file, 5, TimeUnit.SECONDS);
+      shell.execute("cd " + tmpDir.getAbsolutePath(), 15, TimeUnit.SECONDS);
+      shell.execute("touch " + file, 15, TimeUnit.SECONDS);
 
       File fileSource = new File(tmpDir, file);
       File fileTarget = new File(tmpDir, nonExisting);
@@ -89,7 +89,7 @@ public class MoveCommandTest
       Assert.assertTrue(fileSource.exists());
       Assert.assertFalse(fileTarget.exists());
 
-      shell.execute("mv " + file + " " + nonExisting, 5, TimeUnit.SECONDS);
+      shell.execute("mv " + file + " " + nonExisting, 15, TimeUnit.SECONDS);
       Assert.assertFalse(fileSource.exists());
       Assert.assertTrue(fileTarget.exists());
    }
@@ -98,22 +98,22 @@ public class MoveCommandTest
    public void testMoveFileWithRelativePathToNewFile() throws Exception
    {
       File tmpDir = OperatingSystemUtils.createTempDir();
-      shell.execute("cd " + tmpDir.getAbsolutePath(), 5, TimeUnit.SECONDS);
+      shell.execute("cd " + tmpDir.getAbsolutePath(), 15, TimeUnit.SECONDS);
 
       String testFolder = "testFolder";
       String file = "moveFile";
       String nonExisting = "newNoneExisting";
 
-      shell.execute("mkdir " + testFolder, 5, TimeUnit.SECONDS);
+      shell.execute("mkdir " + testFolder, 15, TimeUnit.SECONDS);
       String relativePath = testFolder + File.separator + file;
-      shell.execute("touch " + relativePath, 5, TimeUnit.SECONDS);
+      shell.execute("touch " + relativePath, 15, TimeUnit.SECONDS);
 
       File fileSource = new File(tmpDir, relativePath);
       File fileTarget = new File(tmpDir, nonExisting);
 
       Assert.assertTrue(fileSource.exists());
       Assert.assertFalse(fileTarget.exists());
-      shell.execute("mv " + relativePath + " " + nonExisting, 5, TimeUnit.SECONDS);
+      shell.execute("mv " + relativePath + " " + nonExisting, 15, TimeUnit.SECONDS);
       Assert.assertFalse(fileSource.exists());
       Assert.assertTrue(fileTarget.exists());
    }
@@ -122,23 +122,23 @@ public class MoveCommandTest
    public void testMoveFileWithRelativePathToExistingFolder() throws Exception
    {
       File tmpDir = OperatingSystemUtils.createTempDir();
-      shell.execute("cd " + tmpDir.getAbsolutePath(), 5, TimeUnit.SECONDS);
+      shell.execute("cd " + tmpDir.getAbsolutePath(), 15, TimeUnit.SECONDS);
 
       String testFolder = "testFolder";
       String targetFolder = "targetFolder";
       String file = "moveFile";
 
-      shell.execute("mkdir " + testFolder, 5, TimeUnit.SECONDS);
-      shell.execute("mkdir " + targetFolder, 5, TimeUnit.SECONDS);
+      shell.execute("mkdir " + testFolder, 15, TimeUnit.SECONDS);
+      shell.execute("mkdir " + targetFolder, 15, TimeUnit.SECONDS);
       String relativePath = testFolder.concat(File.separator).concat(file);
-      shell.execute("touch " + relativePath, 5, TimeUnit.SECONDS);
+      shell.execute("touch " + relativePath, 15, TimeUnit.SECONDS);
 
       File fileSource = new File(tmpDir, relativePath);
       File fileTarget = new File(new File(tmpDir, targetFolder), file);
 
       Assert.assertTrue(fileSource.exists());
       Assert.assertFalse(fileTarget.exists());
-      shell.execute("mv " + relativePath + " " + targetFolder, 5, TimeUnit.SECONDS);
+      shell.execute("mv " + relativePath + " " + targetFolder, 15, TimeUnit.SECONDS);
       Assert.assertFalse(fileSource.exists());
       Assert.assertTrue(fileTarget.exists());
    }
@@ -147,15 +147,15 @@ public class MoveCommandTest
    public void testMovePathToFile() throws Exception
    {
       File tmpDir = OperatingSystemUtils.createTempDir();
-      shell.execute("cd " + tmpDir.getAbsolutePath(), 5, TimeUnit.SECONDS);
+      shell.execute("cd " + tmpDir.getAbsolutePath(), 15, TimeUnit.SECONDS);
 
       String testFolder = "testFolder";
       String file = "moveFile";
 
-      shell.execute("mkdir " + testFolder, 5, TimeUnit.SECONDS);
-      shell.execute("touch " + file, 5, TimeUnit.SECONDS);
+      shell.execute("mkdir " + testFolder, 15, TimeUnit.SECONDS);
+      shell.execute("touch " + file, 15, TimeUnit.SECONDS);
 
-      Result execute = shell.execute("mv " + testFolder + " " + file, 5, TimeUnit.SECONDS);
+      Result execute = shell.execute("mv " + testFolder + " " + file, 15, TimeUnit.SECONDS);
       Assert.assertTrue(execute instanceof Failed);
    }
 }

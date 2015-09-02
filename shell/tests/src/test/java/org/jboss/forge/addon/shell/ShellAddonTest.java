@@ -90,11 +90,11 @@ public class ShellAddonTest
       test.getStdIn().flush();
       System.out.println("OUT:" + test.getStdOut());
       System.out.println("ERR:" + test.getStdErr());
-      test.waitForStdOutChanged("\n", 5, TimeUnit.SECONDS);
+      test.waitForStdOutChanged("\n", 15, TimeUnit.SECONDS);
       System.out.println("OUT:" + test.getStdOut());
       System.out.println("ERR:" + test.getStdErr());
 
-      test.waitForStdOutChanged("list-services\n", 5, TimeUnit.SECONDS);
+      test.waitForStdOutChanged("list-services\n", 15, TimeUnit.SECONDS);
       System.out.println("OUT:" + test.getStdOut());
       System.out.println("ERR:" + test.getStdErr());
    }
@@ -103,7 +103,7 @@ public class ShellAddonTest
    @Ignore("Until ShellTest is used properly")
    public void testDidYouMean() throws Exception
    {
-      test.waitForStdOutChanged("cde\n", 5, TimeUnit.SECONDS);
+      test.waitForStdOutChanged("cde\n", 15, TimeUnit.SECONDS);
       Assert.assertThat(test.getStdOut(), CoreMatchers.containsString("Did you mean this?"));
    }
 }

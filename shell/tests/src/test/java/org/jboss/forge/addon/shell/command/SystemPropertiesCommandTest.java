@@ -68,7 +68,7 @@ public class SystemPropertiesCommandTest
    @Test
    public void testListSystemProperties() throws Exception
    {
-      Result result = shellTest.execute("system-property-get", 5, TimeUnit.SECONDS);
+      Result result = shellTest.execute("system-property-get", 15, TimeUnit.SECONDS);
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
       String out = shellTest.getStdOut();
       // assert that console output contains some predefined system properties
@@ -81,7 +81,7 @@ public class SystemPropertiesCommandTest
    @Test
    public void testSetSystemProperty() throws Exception
    {
-      Result result = shellTest.execute("system-property-set --named foo --value bar", 5, TimeUnit.SECONDS);
+      Result result = shellTest.execute("system-property-set --named foo --value bar", 15, TimeUnit.SECONDS);
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
       Assert.assertEquals("bar", System.getProperty("foo"));
    }
@@ -90,7 +90,7 @@ public class SystemPropertiesCommandTest
    public void testGetSystemProperty() throws Exception
    {
       System.setProperty("foo", "bar");
-      Result result = shellTest.execute("system-property-get --named foo", 5, TimeUnit.SECONDS);
+      Result result = shellTest.execute("system-property-get --named foo", 15, TimeUnit.SECONDS);
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
       Assert.assertThat(shellTest.getStdOut(), containsString("bar"));
    }
@@ -98,7 +98,7 @@ public class SystemPropertiesCommandTest
    @Test
    public void testGetUnknownSystemProperty() throws Exception
    {
-      Result result = shellTest.execute("system-property-get --named blah", 5, TimeUnit.SECONDS);
+      Result result = shellTest.execute("system-property-get --named blah", 15, TimeUnit.SECONDS);
       Assert.assertThat(result, is(not(instanceOf(Failed.class))));
       Assert.assertEquals(result.getMessage(), null);
    }

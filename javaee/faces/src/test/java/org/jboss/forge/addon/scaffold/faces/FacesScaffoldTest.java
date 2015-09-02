@@ -56,7 +56,7 @@ public class FacesScaffoldTest
    @Test
    public void testScaffoldSetup() throws Exception
    {
-      shellTest.execute("jpa-new-entity --named Customer", 5, TimeUnit.SECONDS);
+      shellTest.execute("jpa-new-entity --named Customer", 15, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-field --named firstName", 10, TimeUnit.SECONDS);
       Result result = shellTest.execute("scaffold-setup", 10, TimeUnit.SECONDS);
       Assert.assertThat(result, is(instanceOf(CompositeResult.class)));

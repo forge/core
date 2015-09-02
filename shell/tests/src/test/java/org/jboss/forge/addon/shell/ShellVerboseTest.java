@@ -73,13 +73,13 @@ public class ShellVerboseTest
    {
       shellTest.execute("export VERBOSE=false");
       Thread.sleep(500);
-      Result result = shellTest.execute("throw-exception", 5, TimeUnit.SECONDS);
+      Result result = shellTest.execute("throw-exception", 15, TimeUnit.SECONDS);
       Assert.assertThat(result, instanceOf(Failed.class));
       Assert.assertThat(shellTest.getStdErr(), not(containsString("Cause Exception")));
       shellTest.clearScreen();
       shellTest.execute("export VERBOSE=true");
       Thread.sleep(500);
-      shellTest.execute("throw-exception", 5, TimeUnit.SECONDS);
+      shellTest.execute("throw-exception", 15, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdErr(), containsString("Cause Exception"));
    }
 

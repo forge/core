@@ -112,7 +112,7 @@ public class ShellResourceTest
    @Test(timeout = 10000)
    public void testChangeDirCommandCompletion() throws TimeoutException
    {
-      shellTest.waitForCompletion("cd ", "cd", 5, TimeUnit.SECONDS);
+      shellTest.waitForCompletion("cd ", "cd", 15, TimeUnit.SECONDS);
    }
 
    @Test(timeout = 10000)

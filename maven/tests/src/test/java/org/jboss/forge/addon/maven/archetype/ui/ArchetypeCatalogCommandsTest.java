@@ -72,7 +72,7 @@ public class ArchetypeCatalogCommandsTest
    @Test
    public void testArchetypeList() throws Exception
    {
-      Result result = shellTest.execute("archetype-list", 5, TimeUnit.SECONDS);
+      Result result = shellTest.execute("archetype-list", 15, TimeUnit.SECONDS);
       Assert.assertThat(result, not(instanceOf(Failed.class)));
       Assert.assertThat(shellTest.getStdOut(), containsString("Test = A Test Archetype"));
    }

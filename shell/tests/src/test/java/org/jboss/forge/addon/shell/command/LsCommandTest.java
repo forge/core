@@ -81,10 +81,10 @@ public class LsCommandTest
    {
       Project project = projectFactory.createTempProject();
       String projectPath = project.getRoot().getFullyQualifiedName();
-      shellTest.execute("cd " + projectPath, 5, TimeUnit.SECONDS);
-      shellTest.execute("touch file.txt", 5, TimeUnit.SECONDS);
+      shellTest.execute("cd " + projectPath, 15, TimeUnit.SECONDS);
+      shellTest.execute("touch file.txt", 15, TimeUnit.SECONDS);
       shellTest.clearScreen();
-      shellTest.execute("ls *file*", 5, TimeUnit.SECONDS);
+      shellTest.execute("ls *file*", 15, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), CoreMatchers.containsString("file.txt"));
    }
 
@@ -93,7 +93,7 @@ public class LsCommandTest
    {
       Project project = projectFactory.createTempProject();
       String projectPath = project.getRoot().getFullyQualifiedName();
-      shellTest.execute("cd " + projectPath, 5, TimeUnit.SECONDS);
+      shellTest.execute("cd " + projectPath, 15, TimeUnit.SECONDS);
       shellTest.clearScreen();
       Result result = shellTest.execute(
                "ls foo" + File.separator + "jee-example-app-1.0.0.ear", 5,

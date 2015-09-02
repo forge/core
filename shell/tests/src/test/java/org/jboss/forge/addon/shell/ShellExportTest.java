@@ -65,7 +65,7 @@ public class ShellExportTest
    {
       shellTest.execute("export A_VARIABLE=123");
       shellTest.clearScreen();
-      Result result = shellTest.execute("echo-export", 5, TimeUnit.SECONDS);
+      Result result = shellTest.execute("echo-export", 15, TimeUnit.SECONDS);
       Assert.assertThat(result.getMessage(), CoreMatchers.containsString("123"));
    }
 

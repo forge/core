@@ -64,7 +64,7 @@ public class StatefulCompletionTest
    public void testCommandAutocompleteNoArguments() throws Exception
    {
       test.clearScreen();
-      test.waitForCompletion("mock-command ", "mock", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("mock-command ", "mock", 15, TimeUnit.SECONDS);
       test.waitForCompletion(5000, TimeUnit.SECONDS);
       Assert.assertEquals("mock-command --", test.getBuffer());
       String stdout = test.waitForCompletion(5, TimeUnit.SECONDS);
@@ -74,14 +74,14 @@ public class StatefulCompletionTest
       Assert.assertThat(stdout, containsString("--values"));
 
       test.clearScreen();
-      test.waitForCompletion("mock-command --proceed ", "mock-command --pro", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("mock-command --proceed ", "mock-command --pro", 15, TimeUnit.SECONDS);
    }
 
    @Test
    public void testCommandAutocompleteNoOptions() throws Exception
    {
       test.clearScreen();
-      test.waitForCompletion("no-opts-command ", "no-opts-", 5, TimeUnit.SECONDS);
+      test.waitForCompletion("no-opts-command ", "no-opts-", 15, TimeUnit.SECONDS);
       Assert.assertEquals("no-opts-command ", test.getBuffer());
    }
 
