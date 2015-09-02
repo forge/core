@@ -238,6 +238,7 @@
             <inherited>true</inherited>
             <configuration>
                <preparationGoals>clean install</preparationGoals>
+               <releaseProfiles>release</releaseProfiles>               
             </configuration>
          </plugin>
       </plugins>
