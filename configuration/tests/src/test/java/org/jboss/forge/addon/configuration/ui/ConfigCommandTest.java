@@ -93,7 +93,8 @@ public class ConfigCommandTest
    public void testConfigSetProperty() throws Exception
    {
       assertFalse(test.execute("config-set --key key1 --value userValue1", 5, TimeUnit.SECONDS) instanceof Failed);
-      assertFalse(test.execute("config-list", 5, TimeUnit.SECONDS) instanceof Failed);
+      test.clearScreen();
+      assertFalse(test.execute("config-list", 15, TimeUnit.SECONDS) instanceof Failed);
       assertThat(test.getStdOut(), containsString("key1=user: [userValue1]"));
    }
 
