@@ -84,7 +84,7 @@ public class ConfigCommandTest
    public void testConfigList() throws Exception
    {
       addPropsToUserConfig();
-      test.execute("config-list", 5, TimeUnit.SECONDS);
+      test.execute("config-list", 15, TimeUnit.SECONDS);
       assertThat(test.getStdOut(), containsString("key1=user: [userValue1]"));
       assertThat(test.getStdOut(), containsString("key2=user: [userValue2]"));
    }
@@ -92,7 +92,7 @@ public class ConfigCommandTest
    @Test
    public void testConfigSetProperty() throws Exception
    {
-      assertFalse(test.execute("config-set --key key1 --value userValue1", 5, TimeUnit.SECONDS) instanceof Failed);
+      assertFalse(test.execute("config-set --key key1 --value userValue1", 15, TimeUnit.SECONDS) instanceof Failed);
       test.clearScreen();
       assertFalse(test.execute("config-list", 15, TimeUnit.SECONDS) instanceof Failed);
       assertThat(test.getStdOut(), containsString("key1=user: [userValue1]"));
@@ -105,7 +105,7 @@ public class ConfigCommandTest
       Configuration projectConfig = project.getFacet(ConfigurationFacet.class).getConfiguration();
       addPropsToProjectConfig(projectConfig);
       test.getShell().setCurrentResource(project.getRoot());
-      test.execute("config-list", 5, TimeUnit.SECONDS);
+      test.execute("config-list", 15, TimeUnit.SECONDS);
       assertThat(test.getStdOut(), containsString("key2=project: [projectValue2]"));
       assertThat(test.getStdOut(), containsString("key3=project: [projectValue3]"));
    }
@@ -113,12 +113,12 @@ public class ConfigCommandTest
    @Test
    public void testConfigClear() throws Exception
    {
-      assertFalse(test.execute("config-set --key key1 --value userValue1", 5, TimeUnit.SECONDS) instanceof Failed);
-      assertFalse(test.execute("config-list", 5, TimeUnit.SECONDS) instanceof Failed);
+      assertFalse(test.execute("config-set --key key1 --value userValue1", 15, TimeUnit.SECONDS) instanceof Failed);
+      assertFalse(test.execute("config-list", 15, TimeUnit.SECONDS) instanceof Failed);
       assertThat(test.getStdOut(), containsString("key1=user: [userValue1]"));
       test.clearScreen();
-      assertFalse(test.execute("config-clear --key key1", 5, TimeUnit.SECONDS) instanceof Failed);
-      assertFalse(test.execute("config-list", 5, TimeUnit.SECONDS) instanceof Failed);
+      assertFalse(test.execute("config-clear --key key1", 15, TimeUnit.SECONDS) instanceof Failed);
+      assertFalse(test.execute("config-list", 15, TimeUnit.SECONDS) instanceof Failed);
       assertThat(test.getStdOut(), not(containsString("key1=user: [userValue1]")));
    }
 
@@ -127,8 +127,8 @@ public class ConfigCommandTest
    {
       Project project = projectFactory.createTempProject();
       test.getShell().setCurrentResource(project.getRoot());
-      test.execute("config-set --key key2 --value projectValue2 --local", 5, TimeUnit.MINUTES);
-      test.execute("config-set --key key3 --value projectValue3 --local", 5, TimeUnit.SECONDS);
+      test.execute("config-set --key key2 --value projectValue2 --local", 15, TimeUnit.MINUTES);
+      test.execute("config-set --key key3 --value projectValue3 --local", 15, TimeUnit.SECONDS);
       assertFalse(test.execute("config-list", 5, TimeUnit.SECONDS) instanceof Failed);
       assertThat(test.getStdOut(), containsString("key2=project: [projectValue2]"));
       assertThat(test.getStdOut(), containsString("key3=project: [projectValue3]"));
@@ -142,7 +142,7 @@ public class ConfigCommandTest
       Configuration projectConfig = project.getFacet(ConfigurationFacet.class).getConfiguration();
       addPropsToProjectConfig(projectConfig);
       test.getShell().setCurrentResource(project.getRoot());
-      test.execute("config-list", 5, TimeUnit.SECONDS);
+      test.execute("config-list", 15, TimeUnit.SECONDS);
       assertThat(test.getStdOut(), containsString("key1=user: [userValue1]"));
       assertThat(test.getStdOut(), containsString("key2=user: [userValue2], project: [projectValue2]"));
       assertThat(test.getStdOut(), containsString("key3=project: [projectValue3]"));
