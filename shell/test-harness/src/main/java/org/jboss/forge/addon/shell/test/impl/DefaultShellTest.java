@@ -25,6 +25,7 @@ import org.jboss.aesh.console.AeshConsoleImpl;
 import org.jboss.aesh.console.settings.Settings;
 import org.jboss.aesh.console.settings.SettingsBuilder;
 import org.jboss.aesh.edit.KeyOperation;
+import org.jboss.aesh.edit.actions.Action;
 import org.jboss.aesh.edit.actions.Operation;
 import org.jboss.aesh.terminal.Key;
 import org.jboss.aesh.terminal.TestTerminal;
@@ -45,6 +46,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 public class DefaultShellTest implements ShellTest
 {
    private static final String LINE_SEPARATOR = OperatingSystemUtils.getLineSeparator();
+   private static final KeyOperation completeChar = new KeyOperation(Key.CTRL_I, Operation.COMPLETE, Action.COMPLETE);
    private final TestCommandListener listener = new TestCommandListener();
    private final TestStreams provider = new TestStreams();
 
@@ -393,8 +395,8 @@ public class DefaultShellTest implements ShellTest
             inputStream = new PipedInputStream(stdin);
             settings = new SettingsBuilder()
                      .inputStream(inputStream)
-                     .outputStream(new PrintStream(stdout,true))
-                     .outputStreamError(new PrintStream(stderr,true))
+                     .outputStream(new PrintStream(stdout, true))
+                     .outputStreamError(new PrintStream(stderr, true))
                      .name("test")
                      .logging(true)
                      .setExportUsesSystemEnvironment(true)
@@ -432,8 +434,6 @@ public class DefaultShellTest implements ShellTest
    {
       getStdIn().write(string.getBytes());
    }
-
-   private final KeyOperation completeChar = new KeyOperation(Key.CTRL_I, Operation.COMPLETE);
 
    @Override
    public void sendCompletionSignal() throws IOException
