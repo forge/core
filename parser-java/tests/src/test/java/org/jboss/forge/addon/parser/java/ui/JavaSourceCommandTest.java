@@ -11,6 +11,8 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 
+import java.io.Serializable;
+
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -34,6 +36,7 @@ import org.jboss.forge.roaster.model.JavaAnnotation;
 import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.JavaEnum;
 import org.jboss.forge.roaster.model.JavaInterface;
+import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -82,24 +85,26 @@ public class JavaSourceCommandTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      CommandController controller = getInitializedController(JavaNewAnnotationCommand.class, project.getRoot());
-      Assert.assertTrue(controller.isValid());
-      Assert.assertTrue(controller.canExecute());
-      Result result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      try (CommandController controller = getInitializedController(JavaNewAnnotationCommand.class, project.getRoot()))
+      {
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
 
-      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
-      Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaAnnotation.class)));
-
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
+         Assert.assertNotNull(javaResource);
+         Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaAnnotation.class)));
+      }
       // overwriting the annotation file
-      controller = getInitializedController(JavaNewAnnotationCommand.class, project.getRoot());
-      Assert.assertFalse(controller.isValid());
-      controller.setValueFor("overwrite", "true");
-      Assert.assertTrue(controller.isValid());
-      result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      try (CommandController controller = getInitializedController(JavaNewAnnotationCommand.class, project.getRoot()))
+      {
+         Assert.assertFalse(controller.isValid());
+         controller.setValueFor("overwrite", "true");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertThat(controller.execute(), is(not(instanceOf(Failed.class))));
+      }
    }
 
    @Test
@@ -107,24 +112,26 @@ public class JavaSourceCommandTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      CommandController controller = getInitializedController(JavaNewEnumCommand.class, project.getRoot());
-      Assert.assertTrue(controller.isValid());
-      Assert.assertTrue(controller.canExecute());
-      Result result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      try (CommandController controller = getInitializedController(JavaNewEnumCommand.class, project.getRoot()))
+      {
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
 
-      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
-      Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaEnum.class)));
-
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
+         Assert.assertNotNull(javaResource);
+         Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaEnum.class)));
+      }
       // overwriting the enum file
-      controller = getInitializedController(JavaNewEnumCommand.class, project.getRoot());
-      Assert.assertFalse(controller.isValid());
-      controller.setValueFor("overwrite", "true");
-      Assert.assertTrue(controller.isValid());
-      result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      try (CommandController controller = getInitializedController(JavaNewEnumCommand.class, project.getRoot()))
+      {
+         Assert.assertFalse(controller.isValid());
+         controller.setValueFor("overwrite", "true");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertThat(controller.execute(), is(not(instanceOf(Failed.class))));
+      }
    }
 
    @Test
@@ -132,24 +139,99 @@ public class JavaSourceCommandTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      CommandController controller = getInitializedController(JavaNewClassCommand.class, project.getRoot());
-      Assert.assertTrue(controller.isValid());
-      Assert.assertTrue(controller.canExecute());
-      Result result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      try (CommandController controller = getInitializedController(JavaNewClassCommand.class, project.getRoot()))
+      {
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
 
-      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
-      Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
-
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
+         Assert.assertNotNull(javaResource);
+         Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      }
       // overwriting the class file
-      controller = getInitializedController(JavaNewClassCommand.class, project.getRoot());
-      Assert.assertFalse(controller.isValid());
-      controller.setValueFor("overwrite", "true");
-      Assert.assertTrue(controller.isValid());
-      result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      try (CommandController controller = getInitializedController(JavaNewClassCommand.class, project.getRoot()))
+      {
+         Assert.assertFalse(controller.isValid());
+         controller.setValueFor("overwrite", "true");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertThat(controller.execute(), is(not(instanceOf(Failed.class))));
+      }
+   }
+
+   @Test
+   public void testCreateClassAbstract() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, JavaSourceFacet.class);
+      try (CommandController controller = getInitializedController(JavaNewClassCommand.class, project.getRoot()))
+      {
+         controller.setValueFor("abstract", true);
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
+         Assert.assertNotNull(javaResource);
+         JavaType<?> javaType = javaResource.getJavaType();
+         Assert.assertThat(javaType, is(instanceOf(JavaClass.class)));
+         JavaClass<?> javaClass = (JavaClass<?>) javaType;
+         Assert.assertThat(javaClass.isAbstract(), is(true));
+         Assert.assertThat(javaClass.isFinal(), is(false));
+      }
+   }
+
+   @Test
+   public void testCreateClassFinal() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, JavaSourceFacet.class);
+      try (CommandController controller = getInitializedController(JavaNewClassCommand.class, project.getRoot()))
+      {
+         controller.setValueFor("final", true);
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
+         Assert.assertNotNull(javaResource);
+         JavaType<?> javaType = javaResource.getJavaType();
+         Assert.assertThat(javaType, is(instanceOf(JavaClass.class)));
+         JavaClass<?> javaClass = (JavaClass<?>) javaType;
+         Assert.assertThat(javaClass.isAbstract(), is(false));
+         Assert.assertThat(javaClass.isFinal(), is(true));
+      }
+   }
+
+   @Test
+   public void testCreateClassSerializable() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, JavaSourceFacet.class);
+      try (CommandController controller = getInitializedController(JavaNewClassCommand.class, project.getRoot()))
+      {
+         controller.setValueFor("serializable", true);
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
+         Assert.assertNotNull(javaResource);
+         JavaType<?> javaType = javaResource.getJavaType();
+         Assert.assertThat(javaType, is(instanceOf(JavaClass.class)));
+         JavaClass<?> javaClass = (JavaClass<?>) javaType;
+         Assert.assertThat(javaClass.isAbstract(), is(false));
+         Assert.assertThat(javaClass.isFinal(), is(false));
+         Assert.assertThat(javaClass.hasInterface(Serializable.class), is(true));
+      }
    }
 
    @Test
@@ -158,21 +240,23 @@ public class JavaSourceCommandTest
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
 
-      CommandController controller = testHarness.createCommandController(JavaNewExceptionCommand.class,
-               project.getRoot());
-      controller.initialize();
-      controller.setValueFor("named", "MyException");
-      controller.setValueFor("targetPackage", "org.jboss.forge.test");
+      try (CommandController controller = testHarness.createCommandController(JavaNewExceptionCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyException");
+         controller.setValueFor("targetPackage", "org.jboss.forge.test");
 
-      Assert.assertTrue(controller.isValid());
-      Assert.assertTrue(controller.canExecute());
-      Result result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
 
-      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyException");
-      Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyException");
+         Assert.assertNotNull(javaResource);
+         Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      }
    }
 
    @Test
@@ -180,24 +264,26 @@ public class JavaSourceCommandTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      CommandController controller = getInitializedController(JavaNewInterfaceCommand.class, project.getRoot());
-      Assert.assertTrue(controller.isValid());
-      Assert.assertTrue(controller.canExecute());
-      Result result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      try (CommandController controller = getInitializedController(JavaNewInterfaceCommand.class, project.getRoot()))
+      {
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
 
-      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
-      Assert.assertNotNull(javaResource);
-      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaInterface.class)));
-
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
+         Assert.assertNotNull(javaResource);
+         Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaInterface.class)));
+      }
       // overwriting the interface file
-      controller = getInitializedController(JavaNewInterfaceCommand.class, project.getRoot());
-      Assert.assertFalse(controller.isValid());
-      controller.setValueFor("overwrite", "true");
-      Assert.assertTrue(controller.isValid());
-      result = controller.execute();
-      Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      try (CommandController controller = getInitializedController(JavaNewInterfaceCommand.class, project.getRoot()))
+      {
+         Assert.assertFalse(controller.isValid());
+         controller.setValueFor("overwrite", "true");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertThat(controller.execute(), is(not(instanceOf(Failed.class))));
+      }
    }
 
    private CommandController getInitializedController(Class<? extends UICommand> clazz, Resource<?>... initialSelection)
