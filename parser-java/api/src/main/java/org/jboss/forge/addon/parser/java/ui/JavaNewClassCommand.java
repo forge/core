@@ -10,9 +10,8 @@ package org.jboss.forge.addon.parser.java.ui;
 import org.jboss.forge.addon.ui.command.UICommand;
 
 /**
- * 
- * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface JavaEnumConstantCommand extends UICommand
+public interface JavaNewClassCommand extends UICommand
 {
 }

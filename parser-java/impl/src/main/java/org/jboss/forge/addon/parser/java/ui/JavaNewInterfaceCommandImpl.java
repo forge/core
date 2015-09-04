@@ -10,12 +10,13 @@ package org.jboss.forge.addon.parser.java.ui;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaClassCommandImpl extends AbstractJavaSourceCommand<JavaClassSource>implements JavaClassCommand
+public class JavaNewInterfaceCommandImpl extends AbstractJavaSourceCommand<JavaInterfaceSource>implements
+         JavaNewInterfaceCommand
 {
    @Inject
    private ProjectFactory projectFactory;
@@ -27,14 +28,14 @@ public class JavaClassCommandImpl extends AbstractJavaSourceCommand<JavaClassSou
    }
 
    @Override
-   protected Class<JavaClassSource> getSourceType()
+   protected Class<JavaInterfaceSource> getSourceType()
    {
-      return JavaClassSource.class;
+      return JavaInterfaceSource.class;
    }
 
    @Override
    protected String getType()
    {
-      return "Class";
+      return "Interface";
    }
 }

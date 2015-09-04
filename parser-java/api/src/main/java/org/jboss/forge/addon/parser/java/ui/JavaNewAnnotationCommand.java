@@ -12,6 +12,6 @@ import org.jboss.forge.addon.ui.command.UICommand;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface JavaInterfaceCommand extends UICommand
+public interface JavaNewAnnotationCommand extends UICommand
 {
 }

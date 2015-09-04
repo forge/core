@@ -63,8 +63,7 @@ public class JavaSourceCommandTest
                         AddonDependencyEntry.create("org.jboss.forge.addon:parser-java"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"));
 
       return archive;
    }
@@ -83,7 +82,7 @@ public class JavaSourceCommandTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      CommandController controller = getInitializedController(JavaAnnotationCommand.class, project.getRoot());
+      CommandController controller = getInitializedController(JavaNewAnnotationCommand.class, project.getRoot());
       Assert.assertTrue(controller.isValid());
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
@@ -95,7 +94,7 @@ public class JavaSourceCommandTest
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaAnnotation.class)));
 
       // overwriting the annotation file
-      controller = getInitializedController(JavaAnnotationCommand.class, project.getRoot());
+      controller = getInitializedController(JavaNewAnnotationCommand.class, project.getRoot());
       Assert.assertFalse(controller.isValid());
       controller.setValueFor("overwrite", "true");
       Assert.assertTrue(controller.isValid());
@@ -108,7 +107,7 @@ public class JavaSourceCommandTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      CommandController controller = getInitializedController(JavaEnumCommand.class, project.getRoot());
+      CommandController controller = getInitializedController(JavaNewEnumCommand.class, project.getRoot());
       Assert.assertTrue(controller.isValid());
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
@@ -120,7 +119,7 @@ public class JavaSourceCommandTest
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaEnum.class)));
 
       // overwriting the enum file
-      controller = getInitializedController(JavaEnumCommand.class, project.getRoot());
+      controller = getInitializedController(JavaNewEnumCommand.class, project.getRoot());
       Assert.assertFalse(controller.isValid());
       controller.setValueFor("overwrite", "true");
       Assert.assertTrue(controller.isValid());
@@ -133,7 +132,7 @@ public class JavaSourceCommandTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      CommandController controller = getInitializedController(JavaClassCommand.class, project.getRoot());
+      CommandController controller = getInitializedController(JavaNewClassCommand.class, project.getRoot());
       Assert.assertTrue(controller.isValid());
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
@@ -145,7 +144,7 @@ public class JavaSourceCommandTest
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
 
       // overwriting the class file
-      controller = getInitializedController(JavaClassCommand.class, project.getRoot());
+      controller = getInitializedController(JavaNewClassCommand.class, project.getRoot());
       Assert.assertFalse(controller.isValid());
       controller.setValueFor("overwrite", "true");
       Assert.assertTrue(controller.isValid());
@@ -159,7 +158,8 @@ public class JavaSourceCommandTest
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
 
-      CommandController controller = testHarness.createCommandController(JavaExceptionCommand.class, project.getRoot());
+      CommandController controller = testHarness.createCommandController(JavaNewExceptionCommand.class,
+               project.getRoot());
       controller.initialize();
       controller.setValueFor("named", "MyException");
       controller.setValueFor("targetPackage", "org.jboss.forge.test");
@@ -180,7 +180,7 @@ public class JavaSourceCommandTest
    {
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, JavaSourceFacet.class);
-      CommandController controller = getInitializedController(JavaInterfaceCommand.class, project.getRoot());
+      CommandController controller = getInitializedController(JavaNewInterfaceCommand.class, project.getRoot());
       Assert.assertTrue(controller.isValid());
       Assert.assertTrue(controller.canExecute());
       Result result = controller.execute();
@@ -192,7 +192,7 @@ public class JavaSourceCommandTest
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaInterface.class)));
 
       // overwriting the interface file
-      controller = getInitializedController(JavaInterfaceCommand.class, project.getRoot());
+      controller = getInitializedController(JavaNewInterfaceCommand.class, project.getRoot());
       Assert.assertFalse(controller.isValid());
       controller.setValueFor("overwrite", "true");
       Assert.assertTrue(controller.isValid());

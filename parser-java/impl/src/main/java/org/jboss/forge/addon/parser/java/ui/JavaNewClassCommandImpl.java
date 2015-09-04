@@ -10,13 +10,12 @@ package org.jboss.forge.addon.parser.java.ui;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaAnnotationCommandImpl extends AbstractJavaSourceCommand<JavaAnnotationSource>
-         implements JavaAnnotationCommand
+public class JavaNewClassCommandImpl extends AbstractJavaSourceCommand<JavaClassSource>implements JavaNewClassCommand
 {
    @Inject
    private ProjectFactory projectFactory;
@@ -28,14 +27,14 @@ public class JavaAnnotationCommandImpl extends AbstractJavaSourceCommand<JavaAnn
    }
 
    @Override
-   protected Class<JavaAnnotationSource> getSourceType()
+   protected Class<JavaClassSource> getSourceType()
    {
-      return JavaAnnotationSource.class;
+      return JavaClassSource.class;
    }
 
    @Override
    protected String getType()
    {
-      return "Annotation";
+      return "Class";
    }
 }

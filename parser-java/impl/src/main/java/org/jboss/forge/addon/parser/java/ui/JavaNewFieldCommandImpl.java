@@ -40,7 +40,7 @@ import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
-public class JavaFieldCommandImpl extends AbstractProjectCommand implements JavaFieldCommand
+public class JavaNewFieldCommandImpl extends AbstractProjectCommand implements JavaNewFieldCommand
 {
 
    @Inject

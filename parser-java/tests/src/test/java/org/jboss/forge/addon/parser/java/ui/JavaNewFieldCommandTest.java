@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class JavaFieldCommandTest
+public class JavaNewFieldCommandTest
 {
 
    @Deployment
@@ -52,8 +52,7 @@ public class JavaFieldCommandTest
                         AddonDependencyEntry.create("org.jboss.forge.addon:parser-java"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"));
    }
 
    @Inject
@@ -185,7 +184,7 @@ public class JavaFieldCommandTest
 
    private void createCommandController() throws Exception
    {
-      commandController = testHarness.createCommandController(JavaFieldCommand.class,
+      commandController = testHarness.createCommandController(JavaNewFieldCommand.class,
                project.getFacet(JavaSourceFacet.class).getJavaResource(targetClass));
    }
 

@@ -45,7 +45,7 @@ import org.junit.runner.RunWith;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-public class JavaEnumConstCommandTest
+public class JavaNewEnumConstCommandTest
 {
    @Deployment
    @AddonDeployments({
@@ -64,8 +64,7 @@ public class JavaEnumConstCommandTest
                         AddonDependencyEntry.create("org.jboss.forge.addon:parser-java"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"));
 
       return archive;
    }
@@ -93,7 +92,7 @@ public class JavaEnumConstCommandTest
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaEnum.class)));
 
-      CommandController controller = testHarness.createCommandController(JavaEnumConstantCommand.class,
+      CommandController controller = testHarness.createCommandController(JavaNewEnumConstantCommand.class,
                javaResource);
       controller.initialize();
       controller.setValueFor("arguments", Arrays.asList("VISA", "AMERICAN_EXPRESS", "MASTERCARD"));

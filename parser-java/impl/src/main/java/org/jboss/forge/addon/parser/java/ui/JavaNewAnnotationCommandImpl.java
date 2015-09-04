@@ -10,13 +10,13 @@ package org.jboss.forge.addon.parser.java.ui;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
+import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaInterfaceCommandImpl extends AbstractJavaSourceCommand<JavaInterfaceSource>implements
-         JavaInterfaceCommand
+public class JavaNewAnnotationCommandImpl extends AbstractJavaSourceCommand<JavaAnnotationSource>
+         implements JavaNewAnnotationCommand
 {
    @Inject
    private ProjectFactory projectFactory;
@@ -28,14 +28,14 @@ public class JavaInterfaceCommandImpl extends AbstractJavaSourceCommand<JavaInte
    }
 
    @Override
-   protected Class<JavaInterfaceSource> getSourceType()
+   protected Class<JavaAnnotationSource> getSourceType()
    {
-      return JavaInterfaceSource.class;
+      return JavaAnnotationSource.class;
    }
 
    @Override
    protected String getType()
    {
-      return "Interface";
+      return "Annotation";
    }
 }

@@ -7,7 +7,9 @@
 
 package org.jboss.forge.addon.parser.java.ui;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 
 import javax.inject.Inject;
 
@@ -31,7 +33,7 @@ import org.junit.runner.RunWith;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-public class JavaPackageCommandTest
+public class JavaNewPackageCommandTest
 {
    @Inject
    private UITestHarness testHarness;
@@ -54,7 +56,7 @@ public class JavaPackageCommandTest
    @Test
    public void testCreatePackage() throws Exception
    {
-      try (CommandController controller = testHarness.createCommandController(JavaPackageCommand.class,
+      try (CommandController controller = testHarness.createCommandController(JavaNewPackageCommand.class,
                project.getRoot()))
       {
          controller.initialize();
@@ -76,7 +78,7 @@ public class JavaPackageCommandTest
    @Test
    public void testCreatePackageWithTilde() throws Exception
    {
-      try (CommandController controller = testHarness.createCommandController(JavaPackageCommand.class,
+      try (CommandController controller = testHarness.createCommandController(JavaNewPackageCommand.class,
                project.getRoot()))
       {
          controller.initialize();

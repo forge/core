@@ -17,8 +17,8 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 /**
  * @author <a href="mailto:antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
-public class JavaExceptionCommandImpl extends AbstractJavaSourceCommand<JavaClassSource>implements
-         JavaExceptionCommand
+public class JavaNewExceptionCommandImpl extends AbstractJavaSourceCommand<JavaClassSource>implements
+         JavaNewExceptionCommand
 {
    @Inject
    private ProjectFactory projectFactory;

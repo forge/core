@@ -10,8 +10,8 @@ package org.jboss.forge.addon.parser.java.ui;
 import org.jboss.forge.addon.ui.command.UICommand;
 
 /**
- * @author <a href="mailto:antonio.goncalves@gmail.com">Antonio Goncalves</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface JavaExceptionCommand extends UICommand
+public interface JavaNewInterfaceCommand extends UICommand
 {
 }

@@ -16,7 +16,7 @@ import org.jboss.forge.roaster.model.source.JavaEnumSource;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class JavaEnumCommandImpl extends AbstractJavaSourceCommand<JavaEnumSource>implements JavaEnumCommand
+public class JavaNewEnumCommandImpl extends AbstractJavaSourceCommand<JavaEnumSource>implements JavaNewEnumCommand
 {
    @Inject
    private ProjectFactory projectFactory;

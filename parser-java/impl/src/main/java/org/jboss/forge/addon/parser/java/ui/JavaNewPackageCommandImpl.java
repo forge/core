@@ -32,7 +32,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 @FacetConstraint(JavaSourceFacet.class)
-public class JavaPackageCommandImpl extends AbstractProjectCommand implements JavaPackageCommand
+public class JavaNewPackageCommandImpl extends AbstractProjectCommand implements JavaNewPackageCommand
 {
    @Inject
    @WithAttributes(label = "Package Name", description = "The package name to be created in this project", required = true)
