@@ -8,7 +8,7 @@ image:http://img.shields.io/:license-EPL-blue.svg["License", link="https://www.e
 What's new and noteworthy?
 --------------------------
 
-- *Addons*: What were previously called "Plugins" in Forge 1, are now "Addons" in Forge 2. This decision was made to clear up confusing verbiage like, "Plugin X has N Plugins" (due to the org.jboss.forge.plugins.Plugin interface.)
+- *Addons*: What were previously called "Plugins" in Forge 1, are now "Addons" in Forge 2. This decision was made to clear up confusing verbiage like, "Plugin X has N Plugins" (due to the org.jboss.forge.plugins.Plugin interface in Forge 1.x.)
 
 - *Modular Container fully rewritten*: The Forge runtime is now a fully functional Java module system based on JBoss Modules (The same engine behind link:http://www.wildfly.org[WildFly] and link:http://www.jboss.org/products/eap/overview/[JBoss EAP]). This means you may now pick-and-choose which addons are important for you.
 
