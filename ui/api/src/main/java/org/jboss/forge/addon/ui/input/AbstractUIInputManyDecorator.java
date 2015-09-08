@@ -45,9 +45,9 @@ public abstract class AbstractUIInputManyDecorator<VALUETYPE> implements UIInput
       if (delegate == null)
       {
          delegate = createDelegate();
+         Assert.notNull(delegate, "Delegate cannot be null");
+         Assert.isTrue(delegate != this, "Decorator cannot delegate to itself");
       }
-      Assert.notNull(delegate, "Delegate cannot be null");
-      Assert.isTrue(delegate != this, "Decorator cannot delegate to itself");
       return delegate;
    }
 

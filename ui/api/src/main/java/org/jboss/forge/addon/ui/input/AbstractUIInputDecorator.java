@@ -43,9 +43,9 @@ public abstract class AbstractUIInputDecorator<VALUETYPE> implements UIInput<VAL
       if (delegate == null)
       {
          delegate = createDelegate();
+         Assert.notNull(delegate, "Delegate cannot be null");
+         Assert.isTrue(delegate != this, "Decorator cannot delegate to itself");
       }
-      Assert.notNull(delegate, "Delegate cannot be null");
-      Assert.isTrue(delegate != this, "Decorator cannot delegate to itself");
       return delegate;
    }
 
