@@ -368,3 +368,47 @@ Imported<UIContextProvider> imported = registry.getServices(UIContextProvider.cl
 UIContextProvider factory = imported.get();
 ----
 ==== 
+
+=== Specializing inputs
+
+The UI addon provide an easy way to reuse the settings for the existing inputs by providing decorators for each `InputComponent` type:
+
+[source,java]
+----
+public interface TargetPackage extends UIInput<String> 
+{
+}
+----
+
+Implement this interface by doing: 
+
+[source,java]
+----
+public class TargetPackageImpl extends AbstractUIInputDecorator<String> implements TargetPackage
+{
+   @Inject
+   @WithAttributes(label = "Target Package", type = InputType.JAVA_PACKAGE_PICKER)
+   private UIInput<String> targetPackage;
+
+   @Override
+   protected UIInput<String> createDelegate()
+   {
+      return targetPackage;
+   }
+}
+
+----
+
+And in the command class: 
+
+[source,java]
+----
+@Inject
+private TargetPackage targetPackage;
+...
+
+public void initializeUI(UIBuilder builder) 
+{
+	builder.add(targetPackage);  
+}
+----
