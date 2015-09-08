@@ -16,6 +16,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
 import org.jboss.forge.addon.javaee.cdi.CDIOperations;
+import org.jboss.forge.addon.javaee.cdi.ui.input.Qualifiers;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.beans.ProjectOperations;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -31,7 +32,6 @@ import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
-import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -65,8 +65,7 @@ public class CDIAddObserverMethodCommand extends AbstractJavaEECommand implement
    private UIInput<String> eventType;
 
    @Inject
-   @WithAttributes(label = "Qualifiers", description = "The qualifiers added to the injection point", type = InputType.JAVA_CLASS_PICKER)
-   private UIInputMany<String> qualifiers;
+   private Qualifiers qualifiers;
 
    @Inject
    private ProjectOperations projectOperations;
@@ -81,7 +80,6 @@ public class CDIAddObserverMethodCommand extends AbstractJavaEECommand implement
       Project project = getSelectedProject(uiContext);
       setupTargetClass(uiContext, project);
       setupType();
-      setupQualifiers();
       builder.add(targetClass).add(named).add(eventType).add(qualifiers);
    }
 
@@ -93,46 +91,6 @@ public class CDIAddObserverMethodCommand extends AbstractJavaEECommand implement
          targetClass.setDefaultValue((JavaResource) resource.get());
       }
       targetClass.setValueChoices(projectOperations.getProjectClasses(project));
-   }
-
-   private void setupQualifiers()
-   {
-      qualifiers.setCompleter(new UICompleter<String>()
-      {
-         @Override
-         public Iterable<String> getCompletionProposals(final UIContext context, final InputComponent<?, String> input,
-                  final String value)
-         {
-            final Project project = getSelectedProject(context);
-            final List<String> options = new ArrayList<>();
-            for (String type : CDIOperations.DEFAULT_QUALIFIERS)
-            {
-               if (Strings.isNullOrEmpty(value) || type.startsWith(value))
-               {
-                  options.add(type);
-               }
-            }
-            if (project != null)
-            {
-               for (JavaResource resource : cdiOperations.getProjectQualifiers(project))
-               {
-                  try
-                  {
-                     JavaSource<?> javaSource = resource.getJavaType();
-                     String qualifiedName = javaSource.getQualifiedName();
-                     if (Strings.isNullOrEmpty(value) || qualifiedName.startsWith(value))
-                     {
-                        options.add(qualifiedName);
-                     }
-                  }
-                  catch (FileNotFoundException ignored)
-                  {
-                  }
-               }
-            }
-            return options;
-         }
-      });
    }
 
    private void setupType()
