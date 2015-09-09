@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -49,6 +50,9 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
 {
    private static final Logger log = Logger.getLogger(NewProjectWizardImpl.class.getName());
+
+   @Inject
+   private FacetFactory facetFactory;
 
    @Inject
    private ProjectFactory projectFactory;
@@ -382,17 +386,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       {
          ProjectType value = type.getValue();
 
-         Project project = null;
-         if (value != null)
-         {
-            project = projectFactory.createProject(targetDir, buildSystem.getValue(),
-                     value.getRequiredFacets());
-         }
-         else
-         {
-            project = projectFactory.createProject(targetDir, buildSystem.getValue());
-         }
-
+         Project project = projectFactory.createProject(targetDir, buildSystem.getValue());
          if (project != null)
          {
             UIContext uiContext = context.getUIContext();
@@ -410,7 +404,19 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
             {
                packagingFacet.setFinalName(named.getValue());
             }
+            // Install the required facets
+            if (value != null)
+            {
 
+               Iterable<Class<? extends ProjectFacet>> requiredFacets = value.getRequiredFacets();
+               if (requiredFacets != null)
+               {
+                  for (Class<? extends ProjectFacet> facet : requiredFacets)
+                  {
+                     facetFactory.install(project, facet);
+                  }
+               }
+            }
             uiContext.setSelection(project.getRoot());
             uiContext.getAttributeMap().put(Project.class, project);
          }

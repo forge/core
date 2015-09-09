@@ -138,12 +138,10 @@ public class MavenJavaSourceFacet extends AbstractFacet<Project>implements JavaS
    @Override
    public boolean install()
    {
-      if (!this.isInstalled())
+      for (DirectoryResource folder : this.getSourceDirectories())
       {
-         for (DirectoryResource folder : this.getSourceDirectories())
-         {
-            folder.mkdirs();
-         }
+         folder.mkdirs();
+         savePackage(getBasePackage(), false);
       }
       return isInstalled();
    }

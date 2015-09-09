@@ -7,12 +7,16 @@
 
 package org.jboss.forge.addon.maven.projects.facets;
 
+import static org.hamcrest.CoreMatchers.is;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -20,6 +24,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,4 +78,15 @@ public class MavenJavaSourceFacetTest
       JavaSourceFacet facet = facetFactory.install(project, JavaSourceFacet.class);
       facet.getJavaResource("");
    }
+
+   @Test
+   public void testBasePackageCreatedOnFacetInstall() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      JavaSourceFacet facet = facetFactory.install(project, JavaSourceFacet.class);
+      String projectGroupName = project.getFacet(MetadataFacet.class).getProjectGroupName();
+      DirectoryResource pkg = facet.getPackage(projectGroupName);
+      Assert.assertThat(pkg.exists(), is(true));
+   }
+
 }
