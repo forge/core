@@ -122,7 +122,7 @@ public class JavaNewMethodCommandImpl extends AbstractProjectCommand implements 
       if (targetclass instanceof Extendable)
       {
          superClassMethod = inspectSuperClasses(context,
-                  ((Extendable) targetclass).getSuperType(), name,
+                  ((Extendable<?>) targetclass).getSuperType(), name,
                   parameterTypes);
       }
 
