@@ -512,4 +512,35 @@ public class JPANewFieldWizardTest
       Assert.assertTrue(field.hasAnnotation(Lob.class));
    }
 
+   @Test
+   public void testPackageWildcardInTypeField() throws Exception
+   {
+      JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
+      projectHelper.createEmptyEnum(project, "CustomerType");
+
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPANewFieldWizard.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         Assert.assertTrue(controller.isEnabled());
+         controller.setValueFor("targetEntity", entity);
+         Assert.assertFalse(controller.canExecute());
+         controller.setValueFor("named", "customerType");
+         controller.setValueFor("type", "~.model.CustomerType");
+         Assert.assertFalse(controller.canMoveToNextStep());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertFalse(result instanceof Failed);
+         Assert.assertEquals("Field customerType created", result.getMessage());
+      }
+
+      JavaClass<?> javaClass = entity.getJavaType();
+      Assert.assertTrue(javaClass.hasField("customerType"));
+      final Field<?> field = javaClass.getField("customerType");
+      Assert.assertEquals("CustomerType", field.getType().getName());
+      Assert.assertFalse(field.hasAnnotation(Column.class));
+      Assert.assertTrue(field.hasAnnotation(Enumerated.class));
+      Assert.assertTrue(field.getAnnotation(Enumerated.class).getValues().isEmpty());
+   }
+
 }

@@ -33,6 +33,7 @@ import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.beans.FieldOperations;
 import org.jboss.forge.addon.parser.java.beans.ProjectOperations;
+import org.jboss.forge.addon.parser.java.converters.PackageRootConverter;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -347,7 +348,7 @@ public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard
                      && beanOperations.isFieldTypeEnum(project, targetEntityType, type.getValue());
          }
       });
-
+      type.setValueConverter(new PackageRootConverter(getProjectFactory(), builder));
       builder.add(targetEntity).add(named).add(type).add(temporalType).add(columnName).add(length)
                .add(notNullable).add(notInsertable).add(notUpdatable)
                .add(relationshipType)
@@ -509,7 +510,7 @@ public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard
     */
    private void setCurrentWorkingResource(UIExecutionContext context, JavaResource javaResource,
             Field<JavaClassSource> field)
-            throws FileNotFoundException
+                     throws FileNotFoundException
    {
       Project selectedProject = getSelectedProject(context);
       if (selectedProject != null)
