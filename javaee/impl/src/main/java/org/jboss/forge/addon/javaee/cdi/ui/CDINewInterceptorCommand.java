@@ -12,6 +12,7 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
+import org.jboss.forge.addon.parser.java.converters.PackageRootConverter;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -44,6 +45,7 @@ public class CDINewInterceptorCommand extends AbstractCDICommand<JavaClassSource
    public void initializeUI(UIBuilder builder) throws Exception
    {
       super.initializeUI(builder);
+      interceptorBinding.setValueConverter(new PackageRootConverter(getProjectFactory(), builder));
       builder.add(interceptorBinding);
    }
 
@@ -73,7 +75,8 @@ public class CDINewInterceptorCommand extends AbstractCDICommand<JavaClassSource
                         "try {\n" +
                                  "            return ic.proceed();\n" +
                                  "        } finally {\n" +
-                                 "        }").addAnnotation(AroundInvoke.class);
+                                 "        }")
+               .addAnnotation(AroundInvoke.class);
       return interceptor;
    }
 }

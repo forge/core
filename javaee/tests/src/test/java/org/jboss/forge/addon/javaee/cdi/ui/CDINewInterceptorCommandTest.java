@@ -154,4 +154,43 @@ public class CDINewInterceptorCommandTest
       Assert.assertTrue(interceptor.getMethods().get(0).hasAnnotation(AroundInvoke.class));
       Assert.assertFalse(interceptor.hasAnnotation(Inherited.class));
    }
+
+   @Test
+   public void testCreateNewInterceptorUsingPackageWildcard() throws Exception
+   {
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewInterceptorBindingCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyInterceptorBinding");
+         controller.setValueFor("targetPackage", "~.interceptors");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      }
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewInterceptorCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyInterceptor");
+         controller.setValueFor("targetPackage", "org.jboss.forge.test");
+         controller.setValueFor("interceptorBinding", "~.interceptors.MyInterceptorBinding");
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      }
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyInterceptor");
+      Assert.assertNotNull(javaResource);
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      JavaClass<?> interceptor = javaResource.getJavaType();
+      Assert.assertTrue(interceptor.hasAnnotation(facet.getBasePackage() + ".interceptors.MyInterceptorBinding"));
+      Assert.assertTrue(interceptor.hasAnnotation(Interceptor.class));
+      Assert.assertTrue(interceptor.getMethods().get(0).hasAnnotation(AroundInvoke.class));
+      Assert.assertFalse(interceptor.hasAnnotation(Inherited.class));
+   }
+
 }
