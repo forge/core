@@ -240,4 +240,10 @@ public class ForgeTerminal implements Terminal, Shell
       stdOut = output;
    }
 
+   @Override
+   public boolean hasInput()
+   {
+      return inputSession.hasInput();
+   }
+
 }
