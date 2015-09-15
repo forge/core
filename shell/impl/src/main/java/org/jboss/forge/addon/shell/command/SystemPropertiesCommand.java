@@ -23,21 +23,18 @@ public class SystemPropertiesCommand
 {
 
    @Command(value = "system-property-get", help = "Get one or all system properties", enabled = NonGUIEnabledPredicate.class)
-   public String getSystemProperty(
+   public void getSystemProperty(
             @Option(value = "named", description = "The property name") final String propertyName,
             final UIOutput output) throws IOException
    {
       if (!Strings.isNullOrEmpty(propertyName))
       {
-         return System.getProperty(propertyName);
+         output.out().println(System.getProperty(propertyName));
       }
       else
       {
          System.getProperties().store(output.out(), null);
       }
-
-      return Strings.EMPTY;
-
    }
 
    @Command(value = "system-property-set", help = "Set a system property", enabled = NonGUIEnabledPredicate.class)
