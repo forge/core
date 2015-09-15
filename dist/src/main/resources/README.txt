@@ -6,6 +6,6 @@
                    |___/      
  
 Welcome to JBoss Forge
-http://jboss.org/forge
+http://forge.jboss.org/
 
-Go to above link for Documentations, Plugins, and Additional Information
+Go to above link for Documentations, Add-ons, and Additional Information
