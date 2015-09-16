@@ -216,19 +216,18 @@
 
    <build>
       <plugins>
-         <!-- Ignoring unused plugin execution -->
+         <!-- Create jandex index for faster performance -->
          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>buildnumber-maven-plugin</artifactId>
-            <inherited>true</inherited>
+            <groupId>org.jboss.jandex</groupId>
+            <artifactId>jandex-maven-plugin</artifactId>
+            <version>1.0.3</version>
             <executions>
                <execution>
-                  <id>get-build-timestamp</id>
-                  <phase>none</phase>
-               </execution>
-               <execution>
-                  <id>get-scm-revision</id>
-                  <phase>none</phase>
+                  <id>make-index</id>
+                  <goals>
+                     <goal>jandex</goal>
+                  </goals>
+                  <inherited>true</inherited>
                </execution>
             </executions>
          </plugin>
@@ -404,6 +403,19 @@
                            </pluginExecutionFilter>
                            <action>
                               <ignore />
+                           </action>
+                        </pluginExecution>
+                        <pluginExecution>
+                           <pluginExecutionFilter>
+                              <groupId>org.jboss.jandex</groupId>
+                              <artifactId>jandex-maven-plugin</artifactId>
+                              <versionRange>[1.0.3,)</versionRange>
+                              <goals>
+                                 <goal>jandex</goal>
+                              </goals>
+                           </pluginExecutionFilter>
+                           <action>
+                              <ignore></ignore>
                            </action>
                         </pluginExecution>
                      </pluginExecutions>
