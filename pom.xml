@@ -9,7 +9,7 @@
 
    <groupId>org.jboss.forge</groupId>
    <artifactId>forge-parent</artifactId>
-   <version>2.19.2-SNAPSHOT</version>
+   <version>2.19.2.Final</version>
    <packaging>pom</packaging>
 
    <name>Forge - Parent</name>
@@ -415,7 +415,7 @@
                               </goals>
                            </pluginExecutionFilter>
                            <action>
-                              <ignore></ignore>
+                              <ignore />
                            </action>
                         </pluginExecution>
                      </pluginExecutions>
@@ -450,7 +450,7 @@
       <connection>${forge.scm.connection}</connection>
       <developerConnection>${forge.developer.connection}</developerConnection>
       <url>${forge.scm.url}</url>
-      <tag>HEAD</tag>
+      <tag>2.19.2.Final</tag>
    </scm>
 </project>
 
