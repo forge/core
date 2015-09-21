@@ -31,6 +31,8 @@ public class Metadata implements UICommandMetadata
    private String description;
    private UICategory category;
    private URL docLocation;
+   private boolean deprecated;
+   private String deprecatedMessage;
 
    private final Class<?> type;
 
@@ -61,7 +63,7 @@ public class Metadata implements UICommandMetadata
    {
       this.type = type2;
       docLocation(getDocLocationFor(type2)).name(type2.getName()).category(Categories.createDefault())
-               .description(UICommandMetadata.NO_DESCRIPTION);
+               .description(UICommandMetadata.NO_DESCRIPTION).deprecated(type.getAnnotation(Deprecated.class) != null);
    }
 
    /**
@@ -97,6 +99,24 @@ public class Metadata implements UICommandMetadata
    public Metadata docLocation(URL docLocation)
    {
       this.docLocation = docLocation;
+      return this;
+   }
+
+   /**
+    * Set the deprecated flag for this command
+    */
+   public Metadata deprecated(boolean deprecated)
+   {
+      this.deprecated = deprecated;
+      return this;
+   }
+
+   /**
+    * Set the deprecated message for this command
+    */
+   public Metadata deprecatedMessage(String deprecatedMessage)
+   {
+      this.deprecatedMessage = deprecatedMessage;
       return this;
    }
 
@@ -142,11 +162,20 @@ public class Metadata implements UICommandMetadata
    @Override
    public String toString()
    {
-      return "Metadata [" +
-               "name: " + name +
-               ", description: " + description +
-               ", category: " + category +
-               ", docLocation: " + docLocation + "]";
+      return "Metadata [name=" + name + ", description=" + description + ", category=" + category + ", docLocation="
+               + docLocation + ", deprecated=" + deprecated + ", deprecatedMessage=" + deprecatedMessage + "]";
+   }
+
+   @Override
+   public boolean isDeprecated()
+   {
+      return deprecated;
+   }
+
+   @Override
+   public String getDeprecatedMessage()
+   {
+      return deprecatedMessage;
    }
 
    @Override

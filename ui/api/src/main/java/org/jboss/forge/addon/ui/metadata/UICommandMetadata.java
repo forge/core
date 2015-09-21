@@ -49,4 +49,16 @@ public interface UICommandMetadata
     */
    URL getDocLocation();
 
+   /**
+    * Returns if this command is discouraged from using, typically because it is dangerous, or because a better
+    * alternative exists
+    */
+   boolean isDeprecated();
+
+   /**
+    * Returns a deprecated message to be displayed when {@link UICommandMetadata#isDeprecated()} returns
+    * <code>true</code>.
+    */
+   String getDeprecatedMessage();
+
 }
