@@ -31,6 +31,7 @@ import org.jboss.forge.addon.ui.output.UIMessage.Severity;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.util.InputComponents;
+import org.jboss.forge.addon.ui.validate.UIValidationListener;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
@@ -165,15 +166,27 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
    {
       assertInitialized();
       UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
-      for (InputComponent<?, ?> inputComponent : getInputs().values())
+      // Call UIExternalValidators
+      for (UIValidationListener validator : addonRegistry.getServices(UIValidationListener.class))
       {
-         validationContext.setCurrentInputComponent(inputComponent);
-         inputComponent.validate(validationContext);
+         validator.preValidate(validationContext, getCommand());
       }
-      validationContext.setCurrentInputComponent(null);
+      if (!containsErrorMessage(validationContext.getMessages()))
+      {
+         for (InputComponent<?, ?> inputComponent : getInputs().values())
+         {
+            validationContext.setCurrentInputComponent(inputComponent);
+            inputComponent.validate(validationContext);
+         }
+         validationContext.setCurrentInputComponent(null);
+      }
       if (!containsErrorMessage(validationContext.getMessages()))
       {
          initialCommand.validate(validationContext);
+      }
+      for (UIValidationListener validator : addonRegistry.getServices(UIValidationListener.class))
+      {
+         validator.postValidate(validationContext, getCommand());
       }
       return validationContext.getMessages();
    }

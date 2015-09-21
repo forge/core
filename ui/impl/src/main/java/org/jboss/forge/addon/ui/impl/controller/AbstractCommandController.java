@@ -22,6 +22,7 @@ import org.jboss.forge.addon.ui.impl.context.UIValidationContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.addon.ui.validate.UIValidationListener;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.util.Assert;
 
@@ -66,7 +67,17 @@ public abstract class AbstractCommandController implements CommandController
       Assert.notNull(input, "InputComponent must not be null.");
       Assert.isTrue(getInputs().values().contains(input), "InputComponent must belong to this command.");
       UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
+      validationContext.setCurrentInputComponent(input);
+      // Notify validator listeners
+      for (UIValidationListener validator : addonRegistry.getServices(UIValidationListener.class))
+      {
+         validator.preValidate(validationContext, getCommand());
+      }
       input.validate(validationContext);
+      for (UIValidationListener validator : addonRegistry.getServices(UIValidationListener.class))
+      {
+         validator.postValidate(validationContext, getCommand());
+      }
       return validationContext.getMessages();
    }
 
