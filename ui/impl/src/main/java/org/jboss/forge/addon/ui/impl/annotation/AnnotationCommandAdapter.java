@@ -64,7 +64,8 @@ public class AnnotationCommandAdapter implements UICommand
          name = method.getName();
       }
       return Metadata.forCommand(method.getDeclaringClass()).name(name).description(ann.help())
-               .category(Categories.create(ann.categories()));
+               .category(Categories.create(ann.categories()))
+               .deprecated(method.getAnnotation(Deprecated.class) != null);
    }
 
    @Override
