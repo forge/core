@@ -16,8 +16,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.ui.UIDesktop;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -38,9 +36,6 @@ import org.jboss.forge.addon.ui.util.Metadata;
  */
 public class EditCommand extends AbstractShellCommand
 {
-   @Inject
-   ResourceFactory resourceFactory;
-
    @Inject
    @WithAttributes(label = "Arguments", type = InputType.FILE_PICKER)
    private UIInputMany<String> arguments;
@@ -68,8 +63,7 @@ public class EditCommand extends AbstractShellCommand
       if (it.hasNext())
       {
          String newPath = it.next();
-         final List<Resource<?>> newResource = new ResourcePathResolver(resourceFactory, currentResource, newPath)
-                  .resolve();
+         final List<Resource<?>> newResource = currentResource.resolveChildren(newPath);
          if (newResource.isEmpty() || !newResource.get(0).exists())
          {
             result = Results.fail(newPath + ": No such file or directory");

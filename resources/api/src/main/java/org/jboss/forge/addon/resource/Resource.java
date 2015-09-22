@@ -136,7 +136,6 @@ public interface Resource<T> extends Faceted<ResourceFacet>
    /**
     * Resolve children resources from this {@link Resource} given a specific path.
     * 
-    * @see ResourcePathResolver
     * @see ResourcePathResolver#resolve()
     */
    List<Resource<?>> resolveChildren(String path);

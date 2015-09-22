@@ -20,7 +20,6 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.URLResource;
-import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.ui.UIDesktop;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -70,8 +69,7 @@ public class OpenCommand extends AbstractShellCommand
       if (it.hasNext())
       {
          String newPath = it.next();
-         final List<Resource<?>> newResource = new ResourcePathResolver(resourceFactory, currentResource, newPath)
-                  .resolve();
+         final List<Resource<?>> newResource = currentResource.resolveChildren(newPath);
          if (newResource.isEmpty() || !newResource.get(0).exists())
          {
             result = Results.fail(newPath + ": resource does not exist or cannot be accessed");

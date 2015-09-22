@@ -17,8 +17,6 @@ import org.jboss.forge.addon.parser.java.resources.JavaFieldResource;
 import org.jboss.forge.addon.parser.java.resources.JavaMethodResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.util.ShellUtil;
@@ -41,10 +39,6 @@ import org.jboss.forge.addon.ui.util.Metadata;
 @SuppressWarnings("rawtypes")
 public class LsCommand extends AbstractShellCommand
 {
-
-   @Inject
-   private ResourceFactory resourceFactory;
-
    @Inject
    @WithAttributes(label = "Arguments", type = InputType.FILE_PICKER)
    private UIInputMany<String> arguments;
@@ -80,7 +74,7 @@ public class LsCommand extends AbstractShellCommand
          boolean searching = (value.matches(".*(\\?|\\*)+.*"));
          try
          {
-            resourceList = new ResourcePathResolver(resourceFactory, currentResource, value).resolve();
+            resourceList = currentResource.resolveChildren(value);
          }
          catch (RuntimeException re)
          {

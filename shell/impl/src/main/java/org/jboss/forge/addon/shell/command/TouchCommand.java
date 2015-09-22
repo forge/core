@@ -13,8 +13,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -34,9 +32,6 @@ import org.jboss.forge.addon.ui.util.Metadata;
  */
 public class TouchCommand extends AbstractShellCommand
 {
-   @Inject
-   ResourceFactory resourceFactory;
-
    @Inject
    @WithAttributes(label = "Arguments", type = InputType.FILE_PICKER, required = true)
    private UIInputMany<String> arguments;
@@ -60,7 +55,7 @@ public class TouchCommand extends AbstractShellCommand
       Resource<?> currentResource = (Resource<?>) context.getUIContext().getInitialSelection().get();
       for (String path : arguments.getValue())
       {
-         List<Resource<?>> resources = new ResourcePathResolver(resourceFactory, currentResource, path).resolve();
+         List<Resource<?>> resources = currentResource.resolveChildren(path);
          if (resources.isEmpty())
          {
             return Results.fail(path + ": path could not be resolved");

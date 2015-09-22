@@ -15,7 +15,6 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
 import org.jboss.forge.addon.shell.ui.ShellContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -62,7 +61,7 @@ public class MkdirCommand extends AbstractShellCommand
       Resource<?> currentResource = (Resource<?>) context.getUIContext().getInitialSelection().get();
       for (String path : arguments.getValue())
       {
-         List<Resource<?>> resources = new ResourcePathResolver(resourceFactory, currentResource, path).resolve();
+         List<Resource<?>> resources = currentResource.resolveChildren(path);
          for (Resource<?> resource : resources)
          {
             if (resource.exists())

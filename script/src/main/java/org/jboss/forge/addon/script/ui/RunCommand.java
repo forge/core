@@ -16,8 +16,6 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 
 import org.jboss.forge.addon.resource.Resource;
-import org.jboss.forge.addon.resource.ResourceFactory;
-import org.jboss.forge.addon.resource.util.ResourcePathResolver;
 import org.jboss.forge.addon.script.ScriptContextBuilder;
 import org.jboss.forge.addon.script.impl.ForgeScriptEngineFactory;
 import org.jboss.forge.addon.shell.ui.AbstractShellCommand;
@@ -47,7 +45,6 @@ import org.jboss.forge.furnace.util.Streams;
  */
 public class RunCommand extends AbstractShellCommand
 {
-   private ResourceFactory resourceFactory;
    private ScriptEngine scriptEngine;
 
    private UIInput<Integer> timeout;
@@ -67,7 +64,6 @@ public class RunCommand extends AbstractShellCommand
       AddonRegistry addonRegistry = SimpleContainer.getFurnace(this.getClass().getClassLoader()).getAddonRegistry();
 
       InputComponentFactory inputFactory = addonRegistry.getServices(InputComponentFactory.class).get();
-      this.resourceFactory = addonRegistry.getServices(ResourceFactory.class).get();
 
       this.timeout = inputFactory.createInput("timeout", Integer.class);
       this.timeout.setDefaultValue(500).setLabel("Timeout (seconds)")
@@ -144,7 +140,7 @@ public class RunCommand extends AbstractShellCommand
          Resource<?> selectedResource = currentResource;
          ALL: for (String path : arguments.getValue())
          {
-            List<Resource<?>> resources = new ResourcePathResolver(resourceFactory, currentResource, path).resolve();
+            List<Resource<?>> resources = currentResource.resolveChildren(path);
             for (Resource<?> resource : resources)
             {
                if (resource.exists())
