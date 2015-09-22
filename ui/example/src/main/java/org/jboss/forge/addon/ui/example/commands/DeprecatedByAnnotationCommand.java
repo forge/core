@@ -37,7 +37,7 @@ public class DeprecatedByAnnotationCommand extends AbstractUICommand
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      return Results.success("Command 'deprecated-command' successfully executed");
+      return Results.success("Command 'deprecated-by-annotation' successfully executed");
    }
 
 }
