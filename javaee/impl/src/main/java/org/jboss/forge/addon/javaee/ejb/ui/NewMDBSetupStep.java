@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.javaee.ejb.EJBOperations;
 import org.jboss.forge.addon.javaee.ejb.JMSDestinationType;
-import org.jboss.forge.addon.javaee.facets.JMSFacet;
+import org.jboss.forge.addon.javaee.jms.JMSFacet;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;

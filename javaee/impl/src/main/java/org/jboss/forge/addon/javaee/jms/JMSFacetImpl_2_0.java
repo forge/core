@@ -16,24 +16,23 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
-import org.jboss.forge.addon.javaee.facets.JMSFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 
 /**
- * Implementation of {@link JMSFacet}
+ * Implementation of {@link JMSFacet_2_0}
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public class JMSFacetImpl extends AbstractJavaEEFacet implements JMSFacet
+public class JMSFacetImpl_2_0 extends AbstractJavaEEFacet implements JMSFacet_2_0
 {
-   private static final Dependency JBOSS_JMS_API = DependencyBuilder
-            .create("org.jboss.spec.javax.jms:jboss-jms-api_1.1_spec");
+   private static final Dependency JMS_API = DependencyBuilder
+            .create("javax.jms:javax.jms-api:2.0.1");
 
    @Inject
-   public JMSFacetImpl(DependencyInstaller installer)
+   public JMSFacetImpl_2_0(DependencyInstaller installer)
    {
       super(installer);
    }
@@ -47,14 +46,14 @@ public class JMSFacetImpl extends AbstractJavaEEFacet implements JMSFacet
    @Override
    public Version getSpecVersion()
    {
-      return SingleVersion.valueOf("1.1");
+      return SingleVersion.valueOf("2.0");
    }
 
    @Override
    protected Map<Dependency, List<Dependency>> getRequiredDependencyOptions()
    {
       Map<Dependency, List<Dependency>> result = new HashMap<>();
-      result.put(JBOSS_JMS_API, Arrays.asList(JBOSS_JMS_API));
+      result.put(JMS_API, Arrays.asList(JMS_API, JAVAEE7));
       return result;
    }
 }

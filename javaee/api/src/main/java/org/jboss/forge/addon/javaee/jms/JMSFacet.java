@@ -4,18 +4,14 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.javaee.facets;
-
-import org.jboss.forge.addon.javaee.JavaEEFacet;
+package org.jboss.forge.addon.javaee.jms;
 
 /**
  * Installs the required JMS libraries
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
- * @deprecated use {@link org.jboss.forge.addon.javaee.jms.JMSFacet} instead
  */
-@Deprecated
-public interface JMSFacet extends JavaEEFacet
+public interface JMSFacet extends org.jboss.forge.addon.javaee.facets.JMSFacet
 {
 }

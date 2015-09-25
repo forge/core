@@ -25,7 +25,7 @@ import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.javaee.ejb.ui.EJBSetClassTransactionAttributeCommand;
 import org.jboss.forge.addon.javaee.ejb.ui.EJBSetMethodTransactionAttributeCommand;
 import org.jboss.forge.addon.javaee.ejb.ui.NewEJBCommand;
-import org.jboss.forge.addon.javaee.facets.JMSFacet;
+import org.jboss.forge.addon.javaee.jms.JMSFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
