@@ -80,11 +80,18 @@ public class DefaultShellTest implements ShellTest
 
    @PreDestroy
    @Override
-   public void close() throws Exception
+   public void close()
    {
       if (shell != null)
       {
-         shell.close();
+         try
+         {
+            shell.close();
+         }
+         catch (Exception e)
+         {
+            e.printStackTrace();
+         }
          shell = null;
       }
    }
