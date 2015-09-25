@@ -356,4 +356,31 @@ public abstract class AbstractUISelectOneDecorator<VALUETYPE> implements UISelec
       getDelegate().setItemLabelConverter(converter);
       return this;
    }
+
+   @Override
+   public UISelectOne<VALUETYPE> setDeprecated(boolean deprecated)
+   {
+      getDelegate().setDeprecated(deprecated);
+      return this;
+   }
+
+   @Override
+   public boolean isDeprecated()
+   {
+      return getDelegate().isDeprecated();
+   }
+
+   @Override
+   public UISelectOne<VALUETYPE> setDeprecatedMessage(String message)
+   {
+      getDelegate().setDeprecatedMessage(message);
+      return this;
+   }
+
+   @Override
+   public String getDeprecatedMessage()
+   {
+      return getDelegate().getDeprecatedMessage();
+   }
+
 }

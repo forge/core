@@ -193,4 +193,29 @@ public interface InputComponent<IMPLTYPE, VALUETYPE> extends MutableFaceted<Hint
     * @return the note to be displayed below the input in GUIs
     */
    String getNote();
+
+   /**
+    * @return if this input is discouraged from using, typically because it is dangerous, or because a better
+    *         alternative exists
+    */
+   boolean isDeprecated();
+
+   /**
+    * A deprecated input is discouraged from using, typically because it is dangerous, or because a better alternative
+    * exists
+    * 
+    * @param deprecated the flag indicating that this {@link InputComponent} is deprecated
+    */
+   IMPLTYPE setDeprecated(boolean deprecated);
+
+   /**
+    * @return a deprecated message to be displayed when {@link InputComponent#isDeprecated()} returns <code>true</code>.
+    */
+   String getDeprecatedMessage();
+
+   /**
+    * @param message The deprecated message to be displayed when {@link InputComponent#isDeprecated()} returns
+    *           <code>true</code>.
+    */
+   IMPLTYPE setDeprecatedMessage(String message);
 }

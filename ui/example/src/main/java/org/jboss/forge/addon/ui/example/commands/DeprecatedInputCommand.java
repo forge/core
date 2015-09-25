@@ -23,7 +23,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class DeprecatedCommand extends AbstractUICommand
+public class DeprecatedInputCommand extends AbstractUICommand
 {
 
    @Inject
@@ -39,8 +39,7 @@ public class DeprecatedCommand extends AbstractUICommand
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(getClass()).name("deprecated-command").deprecated(true)
-               .deprecatedMessage("Do not use this command anymore");
+      return Metadata.forCommand(getClass()).name("deprecated-input");
    }
 
    @Override

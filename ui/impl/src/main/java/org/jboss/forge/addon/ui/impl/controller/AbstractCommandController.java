@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.ui.impl.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -71,12 +72,12 @@ public abstract class AbstractCommandController implements CommandController
       // Notify validator listeners
       for (UIValidationListener validator : addonRegistry.getServices(UIValidationListener.class))
       {
-         validator.preValidate(validationContext, getCommand());
+         validator.preValidate(validationContext, getCommand(), Collections.<InputComponent<?, ?>> singleton(input));
       }
       input.validate(validationContext);
       for (UIValidationListener validator : addonRegistry.getServices(UIValidationListener.class))
       {
-         validator.postValidate(validationContext, getCommand());
+         validator.postValidate(validationContext, getCommand(), Collections.<InputComponent<?, ?>> singleton(input));
       }
       return validationContext.getMessages();
    }

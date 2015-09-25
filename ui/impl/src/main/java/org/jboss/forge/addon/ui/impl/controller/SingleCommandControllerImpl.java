@@ -166,10 +166,9 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
    {
       assertInitialized();
       UIValidationContextImpl validationContext = new UIValidationContextImpl(context);
-      // Call UIExternalValidators
       for (UIValidationListener validator : addonRegistry.getServices(UIValidationListener.class))
       {
-         validator.preValidate(validationContext, getCommand());
+         validator.preValidate(validationContext, getCommand(), getInputs().values());
       }
       if (!containsErrorMessage(validationContext.getMessages()))
       {
@@ -186,7 +185,7 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
       }
       for (UIValidationListener validator : addonRegistry.getServices(UIValidationListener.class))
       {
-         validator.postValidate(validationContext, getCommand());
+         validator.postValidate(validationContext, getCommand(), getInputs().values());
       }
       return validationContext.getMessages();
    }

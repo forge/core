@@ -358,4 +358,31 @@ public abstract class AbstractUISelectManyDecorator<VALUETYPE> implements UISele
       getDelegate().setItemLabelConverter(converter);
       return this;
    }
+
+   @Override
+   public UISelectMany<VALUETYPE> setDeprecated(boolean deprecated)
+   {
+      getDelegate().setDeprecated(deprecated);
+      return this;
+   }
+
+   @Override
+   public boolean isDeprecated()
+   {
+      return getDelegate().isDeprecated();
+   }
+
+   @Override
+   public UISelectMany<VALUETYPE> setDeprecatedMessage(String message)
+   {
+      getDelegate().setDeprecatedMessage(message);
+      return this;
+   }
+
+   @Override
+   public String getDeprecatedMessage()
+   {
+      return getDelegate().getDeprecatedMessage();
+   }
+
 }

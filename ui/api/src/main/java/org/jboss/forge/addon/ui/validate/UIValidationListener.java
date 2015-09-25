@@ -7,9 +7,12 @@
 
 package org.jboss.forge.addon.ui.validate;
 
+import java.util.Collection;
+
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.input.InputComponent;
 
 /**
  * Listen for UI commands/inputs validations. Instances of this class will be called by the {@link CommandController}
@@ -23,19 +26,20 @@ import org.jboss.forge.addon.ui.controller.CommandController;
 public interface UIValidationListener
 {
    /**
-    * Perform validation with the given {@link UIValidationContext} and the {@link UICommand}
+    * Called <b>before</b> {@link UICommand#validate(UIValidationContext)} is invoked
     * 
     * @param context the {@link UIValidationContext} object that holds validation errors
-    * @param command the {@link UICommand} instance that was
+    * @param command the {@link UICommand} instance
+    * @param the inputs for the initialized {@link UICommand}
     */
-   void preValidate(UIValidationContext context, UICommand command);
+   void preValidate(UIValidationContext context, UICommand command, Collection<InputComponent<?, ?>> inputs);
 
    /**
-    * Perform validation with the given {@link UIValidationContext} and the {@link UICommand} after the validation in
-    * the command was performed
+    * Called <b>after</b> {@link UICommand#validate(UIValidationContext)} is invoked
     * 
     * @param context the {@link UIValidationContext} object that holds validation errors
-    * @param command the {@link UICommand} instance that was
+    * @param command the {@link UICommand} instance
+    * @param the inputs for the initialized {@link UICommand}
     */
-   void postValidate(UIValidationContext context, UICommand command);
+   void postValidate(UIValidationContext context, UICommand command, Collection<InputComponent<?, ?>> inputs);
 }

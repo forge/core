@@ -55,6 +55,9 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    private Callable<String> requiredMessage;
    private Converter<String, VALUETYPE> valueConverter;
 
+   private boolean deprecated;
+   private String deprecatedMessage;
+
    public AbstractInputComponent(String name, char shortName, Class<VALUETYPE> type)
    {
       Assert.notNull(name, "Name is required");
@@ -258,6 +261,32 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    public String getNote()
    {
       return Callables.call(note);
+   }
+
+   @Override
+   public boolean isDeprecated()
+   {
+      return deprecated;
+   }
+
+   @Override
+   public IMPLTYPE setDeprecated(boolean deprecated)
+   {
+      this.deprecated = deprecated;
+      return (IMPLTYPE) this;
+   }
+
+   @Override
+   public String getDeprecatedMessage()
+   {
+      return deprecatedMessage;
+   }
+
+   @Override
+   public IMPLTYPE setDeprecatedMessage(String message)
+   {
+      this.deprecatedMessage = message;
+      return (IMPLTYPE) this;
    }
 
    protected Set<ValueChangeListener> getValueChangeListeners()

@@ -74,9 +74,19 @@ public @interface WithAttributes
     * The default value for this {@link InputComponent}.
     */
    String defaultValue() default "";
-   
+
    /**
     * The note for this {@link InputComponent}.
     */
    String note() default "";
+
+   /**
+    * Is this {@link InputComponent} deprecated?
+    */
+   boolean deprecated() default false;
+
+   /**
+    * The deprecated message for this {@link InputComponent}
+    */
+   String deprecatedMessage() default "";
 }

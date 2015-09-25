@@ -80,4 +80,13 @@ public @interface Option
     */
    String note() default "";
 
+   /**
+    * Is this {@link InputComponent} deprecated?
+    */
+   boolean deprecated() default false;
+
+   /**
+    * The deprecated message for this {@link InputComponent}
+    */
+   String deprecatedMessage() default "";
 }

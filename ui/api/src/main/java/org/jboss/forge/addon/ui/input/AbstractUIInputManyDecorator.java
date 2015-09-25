@@ -339,4 +339,29 @@ public abstract class AbstractUIInputManyDecorator<VALUETYPE> implements UIInput
       return this;
    }
 
+   @Override
+   public UIInputMany<VALUETYPE> setDeprecated(boolean deprecated)
+   {
+      getDelegate().setDeprecated(deprecated);
+      return this;
+   }
+
+   @Override
+   public boolean isDeprecated()
+   {
+      return getDelegate().isDeprecated();
+   }
+
+   @Override
+   public UIInputMany<VALUETYPE> setDeprecatedMessage(String message)
+   {
+      getDelegate().setDeprecatedMessage(message);
+      return this;
+   }
+
+   @Override
+   public String getDeprecatedMessage()
+   {
+      return getDelegate().getDeprecatedMessage();
+   }
 }

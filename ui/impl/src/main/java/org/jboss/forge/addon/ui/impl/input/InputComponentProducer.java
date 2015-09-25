@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 
 import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -65,7 +66,8 @@ public class InputComponentProducer implements InputComponentFactory
    public <T> UISelectOne<T> produceSelectOne(InjectionPoint injectionPoint)
    {
       String name = injectionPoint.getMember().getName();
-      Type type = injectionPoint.getAnnotated().getBaseType();
+      Annotated annotated = injectionPoint.getAnnotated();
+      Type type = annotated.getBaseType();
       Class<T> valueType;
       if (type instanceof ParameterizedType)
       {
@@ -79,11 +81,12 @@ public class InputComponentProducer implements InputComponentFactory
          // FORGE-1781: Using String if parameter type is not defined
          valueType = (Class<T>) String.class;
       }
-      WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+      WithAttributes withAttributes = annotated.getAnnotation(WithAttributes.class);
       String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
                : withAttributes.name();
       char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
       UISelectOne<T> input = createSelectOne(paramName, shortName, valueType);
+      input.setDeprecated(annotated.isAnnotationPresent(Deprecated.class));
       preconfigureInput(input, withAttributes);
       for (InputComponentInjectionEnricher enricher : enrichers)
       {
@@ -96,7 +99,8 @@ public class InputComponentProducer implements InputComponentFactory
    public <T> UISelectMany<T> produceSelectMany(InjectionPoint injectionPoint)
    {
       String name = injectionPoint.getMember().getName();
-      Type type = injectionPoint.getAnnotated().getBaseType();
+      Annotated annotated = injectionPoint.getAnnotated();
+      Type type = annotated.getBaseType();
       Class<T> valueType;
       if (type instanceof ParameterizedType)
       {
@@ -111,11 +115,12 @@ public class InputComponentProducer implements InputComponentFactory
          valueType = (Class<T>) String.class;
       }
 
-      WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+      WithAttributes withAttributes = annotated.getAnnotation(WithAttributes.class);
       String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
                : withAttributes.name();
       char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
       UISelectMany<T> input = createSelectMany(paramName, shortName, valueType);
+      input.setDeprecated(annotated.isAnnotationPresent(Deprecated.class));
       preconfigureInput(input, withAttributes);
       for (InputComponentInjectionEnricher enricher : enrichers)
       {
@@ -128,7 +133,8 @@ public class InputComponentProducer implements InputComponentFactory
    public <T> UIInput<T> produceInput(InjectionPoint injectionPoint)
    {
       String name = injectionPoint.getMember().getName();
-      Type type = injectionPoint.getAnnotated().getBaseType();
+      Annotated annotated = injectionPoint.getAnnotated();
+      Type type = annotated.getBaseType();
 
       Class<T> valueType;
       if (type instanceof ParameterizedType)
@@ -143,11 +149,12 @@ public class InputComponentProducer implements InputComponentFactory
          // FORGE-1781: Using String if parameter type is not defined
          valueType = (Class<T>) String.class;
       }
-      WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+      WithAttributes withAttributes = annotated.getAnnotation(WithAttributes.class);
       String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
                : withAttributes.name();
       char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
       UIInput<T> input = createInput(paramName, shortName, valueType);
+      input.setDeprecated(annotated.isAnnotationPresent(Deprecated.class));
       preconfigureInput(input, withAttributes);
       for (InputComponentInjectionEnricher enricher : enrichers)
       {
@@ -160,7 +167,8 @@ public class InputComponentProducer implements InputComponentFactory
    public <T> UIInputMany<T> produceInputMany(InjectionPoint injectionPoint)
    {
       String name = injectionPoint.getMember().getName();
-      Type type = injectionPoint.getAnnotated().getBaseType();
+      Annotated annotated = injectionPoint.getAnnotated();
+      Type type = annotated.getBaseType();
       Class<T> valueType;
       if (type instanceof ParameterizedType)
       {
@@ -175,11 +183,12 @@ public class InputComponentProducer implements InputComponentFactory
          valueType = (Class<T>) String.class;
       }
 
-      WithAttributes withAttributes = injectionPoint.getAnnotated().getAnnotation(WithAttributes.class);
+      WithAttributes withAttributes = annotated.getAnnotation(WithAttributes.class);
       String paramName = (withAttributes == null || withAttributes.name().trim().isEmpty()) ? name
                : withAttributes.name();
       char shortName = (withAttributes == null) ? InputComponents.DEFAULT_SHORT_NAME : withAttributes.shortName();
       UIInputMany<T> input = createInputMany(paramName, shortName, valueType);
+      input.setDeprecated(annotated.isAnnotationPresent(Deprecated.class));
       preconfigureInput(input, withAttributes);
       for (InputComponentInjectionEnricher enricher : enrichers)
       {
@@ -245,6 +254,8 @@ public class InputComponentProducer implements InputComponentFactory
          input.setRequired(atts.required());
          input.setRequiredMessage(atts.requiredMessage());
          input.setDescription(atts.description());
+         input.setDeprecated(atts.deprecated());
+         input.setDeprecatedMessage(atts.deprecatedMessage());
 
          // Set input type
          if (!InputType.DEFAULT.equals(atts.type()))
@@ -282,6 +293,8 @@ public class InputComponentProducer implements InputComponentFactory
          input.setRequired(option.required());
          input.setRequiredMessage(option.requiredMessage());
          input.setDescription(option.description());
+         input.setDeprecated(option.deprecated());
+         input.setDeprecatedMessage(option.deprecatedMessage());
 
          // Set input type
          if (!InputType.DEFAULT.equals(option.type()))

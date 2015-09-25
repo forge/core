@@ -130,7 +130,7 @@ public abstract class AbstractShellInteraction implements Comparable<AbstractShe
       ShellUIPromptImpl prompt = shell.createPrompt(context);
       for (InputComponent<?, ?> input : inputs)
       {
-         if (input.isEnabled())
+         if (input.isEnabled() && !input.isDeprecated())
          {
             boolean requiredInputMissing = input.isRequired() && !(input.hasDefaultValue() || input.hasValue());
             Object obj = prompt.promptValueFrom(input);
