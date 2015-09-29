@@ -64,7 +64,7 @@ public class ShellInitializer
       {
          // Starting the shell in a separate thread
          // TODO: Remove when asynchronous events are supported
-         new Thread()
+         new Thread("Shell async initializer")
          {
             @Override
             public void run()
