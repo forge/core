@@ -173,8 +173,7 @@ public final class InputComponents
    }
 
    /**
-    * Returns the converted value that matches the input. Throws {@link IllegalArgumentException} if input is a
-    * {@link SelectComponent} and the value cannot be converted
+    * Returns the converted value that matches the input.
     */
    public static Object convertToUIInputValue(final ConverterFactory converterFactory,
             final InputComponent<?, ?> input, final Object value)
@@ -245,7 +244,38 @@ public final class InputComponents
          }
          else
          {
-            result = value;
+            if (input instanceof SelectComponent)
+            {
+               SelectComponent<?, Object> selectComponent = (SelectComponent<?, Object>) input;
+               Iterable<Object> valueChoices = selectComponent.getValueChoices();
+               final Converter<Object, ?> selectConverter;
+               if (String.class.isAssignableFrom(sourceType))
+               {
+                  selectConverter = getItemLabelConverter(converterFactory, selectComponent);
+               }
+               else
+               {
+                  selectConverter = converterFactory.getConverter(targetType, sourceType);
+               }
+               Object chosenObj = null;
+               if (valueChoices != null)
+               {
+                  for (Object valueChoice : valueChoices)
+                  {
+                     Object convertedObj = selectConverter.convert(valueChoice);
+                     if (convertedObj.equals(value))
+                     {
+                        chosenObj = valueChoice;
+                        break;
+                     }
+                  }
+               }
+               result = chosenObj;
+            }
+            else
+            {
+               result = value;
+            }
          }
       }
       return result;
