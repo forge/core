@@ -13,7 +13,6 @@ import org.jboss.forge.addon.ui.command.UICommand;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@Deprecated
-public interface JavaNewEnumConstantCommand extends UICommand
+public interface JavaAddEnumConstantCommand extends UICommand
 {
 }
