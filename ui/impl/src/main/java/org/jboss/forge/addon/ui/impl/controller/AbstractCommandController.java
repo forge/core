@@ -53,12 +53,14 @@ public abstract class AbstractCommandController implements CommandController
 
    protected void assertInitialized()
    {
-      Assert.isTrue(isInitialized(), "Controller must be initialized.");
+      if (!isInitialized())
+         throw new IllegalStateException("Controller must be initialized.");
    }
 
    protected void assertValid()
    {
-      Assert.isTrue(isValid(), "Controller is not in valid state.");
+      if (!isValid())
+         throw new IllegalStateException("Controller is not in valid state: " + validate());
    }
 
    @Override

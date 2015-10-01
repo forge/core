@@ -50,7 +50,7 @@ public class RemoveSecurityRoleCommandTest extends AbstractSecurityCommandTest
       assertDeveloperRoleIsTheOnlyOne(servletFacet);
    }
 
-   @Test(expected = IllegalArgumentException.class)
+   @Test(expected = IllegalStateException.class)
    public void testRemovingNonExistingRole() throws Exception
    {
       ServletFacet_3_1 servletFacet = installServlet(ServletFacet_3_1.class);
