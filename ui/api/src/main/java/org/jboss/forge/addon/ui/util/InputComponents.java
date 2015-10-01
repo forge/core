@@ -248,22 +248,12 @@ public final class InputComponents
             {
                SelectComponent<?, Object> selectComponent = (SelectComponent<?, Object>) input;
                Iterable<Object> valueChoices = selectComponent.getValueChoices();
-               final Converter<Object, ?> selectConverter;
-               if (String.class.isAssignableFrom(sourceType))
-               {
-                  selectConverter = getItemLabelConverter(converterFactory, selectComponent);
-               }
-               else
-               {
-                  selectConverter = converterFactory.getConverter(targetType, sourceType);
-               }
                Object chosenObj = null;
                if (valueChoices != null)
                {
                   for (Object valueChoice : valueChoices)
                   {
-                     Object convertedObj = selectConverter.convert(valueChoice);
-                     if (convertedObj.equals(value))
+                     if (valueChoice.equals(value))
                      {
                         chosenObj = valueChoice;
                         break;
