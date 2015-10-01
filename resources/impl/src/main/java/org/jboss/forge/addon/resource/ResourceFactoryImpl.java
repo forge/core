@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.resource;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.jboss.forge.addon.resource.monitor.FileMonitor;
@@ -14,8 +16,8 @@ import org.jboss.forge.addon.resource.transaction.ResourceTransactionListener;
 import org.jboss.forge.addon.resource.transaction.file.FileResourceTransactionImpl;
 import org.jboss.forge.addon.resource.transaction.file.FileResourceTransactionManager;
 import org.jboss.forge.addon.resource.util.RelatedClassComparator;
+import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
-import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
 
@@ -26,12 +28,14 @@ import org.jboss.forge.furnace.util.Assert;
  * @author Mike Brock <cbrock@redhat.com>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ResourceFactoryImpl implements ResourceFactory
 {
-   private Imported<ResourceGenerator> generators;
+   @SuppressWarnings("rawtypes")
+   private final Set<ResourceGenerator> generators = new HashSet<>();
+   private volatile long version = -1;
 
    @Override
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    public <E, T extends Resource<E>> T create(final Class<T> type, final E underlyingResource)
    {
       T result = null;
@@ -48,15 +52,31 @@ public class ResourceFactoryImpl implements ResourceFactory
                generated.put(resourceType, generator);
             }
          }
-      }
-      if (generated.size() > 0)
-      {
-         result = (T) generated.lastEntry().getValue().getResource(this, type, underlyingResource);
+         if (generated.size() > 0)
+         {
+            result = (T) generated.lastEntry().getValue().getResource(this, type, underlyingResource);
+         }
       }
       return result;
    }
 
+   @SuppressWarnings("rawtypes")
+   private Iterable<ResourceGenerator> getGenerators()
+   {
+      if (getAddonRegistry().getVersion() != version)
+      {
+         version = getAddonRegistry().getVersion();
+         generators.clear();
+         for (ResourceGenerator generator : getAddonRegistry().getServices(ResourceGenerator.class))
+         {
+            generators.add(generator);
+         }
+      }
+      return generators;
+   }
+
    @Override
+   @SuppressWarnings("unchecked")
    public <E> Resource<E> create(E underlyingResource)
    {
       return create(Resource.class, underlyingResource);
@@ -108,12 +128,9 @@ public class ResourceFactoryImpl implements ResourceFactory
       return getTransactionManager().addTransactionListener(listener);
    }
 
-   private Imported<ResourceGenerator> getGenerators()
+   private AddonRegistry getAddonRegistry()
    {
-      if (generators == null)
-         generators = SimpleContainer.getServices(getClass().getClassLoader(),
-                  ResourceGenerator.class);
-      return generators;
+      return SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
    }
 
    private FileMonitor getFileMonitor()
