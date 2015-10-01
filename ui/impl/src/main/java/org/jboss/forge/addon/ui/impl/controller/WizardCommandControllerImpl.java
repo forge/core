@@ -40,6 +40,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.addon.ui.wizard.WizardExecutionListener;
 import org.jboss.forge.furnace.addons.AddonRegistry;
+import org.jboss.forge.furnace.util.Assert;
 
 /**
  *
@@ -125,7 +126,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    {
       assertInitialized();
       assertValid();
-      refreshFlow();
+      Assert.isTrue(canExecute(), "Controller cannot be executed");
       UIProgressMonitor progressMonitor = runtime.createProgressMonitor(context);
       UIPrompt prompt = runtime.createPrompt(context);
       UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor, prompt);
