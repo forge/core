@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2015 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -22,8 +22,8 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
-import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -35,21 +35,19 @@ import org.jboss.forge.roaster.model.source.JavaEnumSource;
 /**
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
- * @deprecated Replaced with {@link JavaAddEnumConstantCommandImpl}
  */
-@Deprecated
-public class JavaNewEnumConstantCommandImpl extends AbstractProjectCommand implements JavaNewEnumConstantCommand
+public class JavaAddEnumConstantCommandImpl extends AbstractProjectCommand implements JavaAddEnumConstantCommand
 {
    @Inject
    private ProjectFactory projectFactory;
 
    @Inject
    @WithAttributes(label = "Enum Class", required = true)
-   private UISelectOne<JavaResource> enumClass;
+   private UIInput<JavaResource> targetClass;
 
    @Inject
-   @WithAttributes(label = "Enum Constants", required = true)
-   private UIInputMany<String> arguments;
+   @WithAttributes(label = "Enum Constant", required = true)
+   private UIInputMany<String> named;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
@@ -58,20 +56,20 @@ public class JavaNewEnumConstantCommandImpl extends AbstractProjectCommand imple
       // Project project = getSelectedProject(context);
       UISelection<Resource<?>> initialSelection = context.getInitialSelection();
       Resource<?> resource = initialSelection.get();
-      if (resource instanceof JavaResource)
+      if (resource instanceof JavaResource && ((JavaResource) resource).getJavaType().isEnum())
       {
-         enumClass.setDefaultValue((JavaResource) resource);
+         targetClass.setDefaultValue((JavaResource) resource);
       }
-      builder.add(enumClass).add(arguments);
+
+      builder.add(targetClass).add(named);
    }
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(getClass()).name("Java: New Enum Const")
-               .description("Creates a new Java Enum constant")
-               .category(Categories.create("Java"))
-               .deprecatedMessage("Use 'java-add-enum-const --named' instead");
+      return Metadata.forCommand(getClass()).name("Java: Add Enum Const")
+               .description("Adds an Enum constant to an Enum class")
+               .category(Categories.create("Java"));
    }
 
    @Override
@@ -80,30 +78,30 @@ public class JavaNewEnumConstantCommandImpl extends AbstractProjectCommand imple
       super.validate(validator);
       try
       {
-         if (enumClass.hasValue() && !(enumClass.getValue().getJavaType() instanceof JavaEnumSource))
+         if (targetClass.hasValue() && !(targetClass.getValue().getJavaType() instanceof JavaEnumSource))
          {
-            validator.addValidationError(enumClass, "Enum class must be a valid enum");
+            validator.addValidationError(targetClass, "Enum class must be a valid enum");
          }
       }
       catch (FileNotFoundException e)
       {
-         validator.addValidationError(enumClass, "Enum specified not found");
+         validator.addValidationError(targetClass, "Enum specified not found");
       }
    }
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      JavaResource resource = enumClass.getValue();
+      JavaResource resource = targetClass.getValue();
       JavaEnumSource source = resource.getJavaType();
       Project project = getSelectedProject(context.getUIContext());
       JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      for (String enumConstant : arguments.getValue())
+      for (String name : named.getValue())
       {
-         source.addEnumConstant(enumConstant);
+         source.addEnumConstant(name);
       }
       facet.saveJavaSource(source);
-      return Results.success(String.format("Enum constants %s created in %s", arguments.getValue(),
+      return Results.success(String.format("Enum constant(s) '%s' added in %s", named.getValue(),
                source.getQualifiedName()));
    }
 
