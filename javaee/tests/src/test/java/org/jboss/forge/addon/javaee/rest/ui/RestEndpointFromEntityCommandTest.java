@@ -20,11 +20,13 @@ import javax.ws.rs.core.MediaType;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
+import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
 import org.jboss.forge.addon.javaee.rest.config.RestConfigurationStrategyFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.controller.CommandController;
+import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
@@ -66,8 +68,14 @@ public class RestEndpointFromEntityCommandTest
    {
       Project project = projectHelper.createWebProject();
       projectHelper.installJAXRS_2_0(project, RestConfigurationStrategyFactory.createUsingWebXml("/rest"));
-      projectHelper.installJPA_2_0(project);
       projectHelper.installEJB_3_2(project);
+      // Execute JPA:Setup
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPASetupWizard.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.execute();
+      }
       project = projectHelper.refreshProject(project);
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
       try (CommandController controller = uiTestHarness.createCommandController(RestEndpointFromEntityCommand.class,
@@ -75,7 +83,6 @@ public class RestEndpointFromEntityCommandTest
       {
          controller.initialize();
          controller.setValueFor("targets", Arrays.asList(entity.getJavaType()));
-         controller.setValueFor("persistenceUnit", "unit");
          Assert.assertTrue(controller.isValid());
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
@@ -97,7 +104,14 @@ public class RestEndpointFromEntityCommandTest
    {
       Project project = projectHelper.createWebProject();
       projectHelper.installJAXRS_2_0(project, RestConfigurationStrategyFactory.createUsingWebXml("/rest"));
-      projectHelper.installJPA_2_0(project);
+      // Execute JPA:Setup
+      // Execute JPA:Setup
+      try (WizardCommandController controller = uiTestHarness.createWizardController(JPASetupWizard.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.execute();
+      }
       projectHelper.installEJB_3_2(project);
       project = projectHelper.refreshProject(project);
       JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
@@ -113,7 +127,6 @@ public class RestEndpointFromEntityCommandTest
       {
          controller.initialize();
          controller.setValueFor("targets", Arrays.asList(entity.getJavaType()));
-         controller.setValueFor("persistenceUnit", "unit");
          Assert.assertTrue(controller.isValid());
          Assert.assertTrue(controller.canExecute());
          Result result = controller.execute();
