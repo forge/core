@@ -125,6 +125,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    {
       assertInitialized();
       assertValid();
+      refreshFlow();
       UIProgressMonitor progressMonitor = runtime.createProgressMonitor(context);
       UIPrompt prompt = runtime.createPrompt(context);
       UIExecutionContextImpl executionContext = new UIExecutionContextImpl(context, progressMonitor, prompt);
@@ -239,19 +240,19 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       return getCurrentController().getInputs();
    }
 
-    @Override
-    public InputComponent<?, ?> getInput(String inputName)
-    {
-        return getInputs().get(inputName);
-    }
+   @Override
+   public InputComponent<?, ?> getInput(String inputName)
+   {
+      return getInputs().get(inputName);
+   }
 
-    @Override
-    public boolean hasInput(String inputName)
-    {
-        return getInputs().containsKey(inputName);
-    }
+   @Override
+   public boolean hasInput(String inputName)
+   {
+      return getInputs().containsKey(inputName);
+   }
 
-    @Override
+   @Override
    public UICommandMetadata getMetadata()
    {
       return getCurrentController().getMetadata();
