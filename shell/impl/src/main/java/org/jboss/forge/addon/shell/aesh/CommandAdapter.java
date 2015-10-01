@@ -103,13 +103,17 @@ class CommandAdapter implements Command<CommandInvocation>
                commandResult = Results.fail(e.getMessage(), e);
             }
             failure = displayResult(commandResult);
-            UISelection<?> selection = interaction.getContext().getSelection();
-            if (selection != null && !selection.isEmpty())
+            // If Exit was not called
+            if (!Boolean.TRUE.equals(attributeMap.get("org.jboss.forge.exit")))
             {
-               Object result = selection.get();
-               if (result instanceof Resource<?>)
+               UISelection<?> selection = interaction.getContext().getSelection();
+               if (selection != null && !selection.isEmpty())
                {
-                  shell.setCurrentResource((Resource<?>) result);
+                  Object result = selection.get();
+                  if (result instanceof Resource<?>)
+                  {
+                     shell.setCurrentResource((Resource<?>) result);
+                  }
                }
             }
          }
