@@ -50,7 +50,7 @@ public class RemoveSecurityRoleCommandTest extends AbstractSecurityCommandTest
       assertDeveloperRoleIsTheOnlyOne(servletFacet);
    }
 
-   @Test
+   @Test(expected = IllegalArgumentException.class)
    public void testRemovingNonExistingRole() throws Exception
    {
       ServletFacet_3_1 servletFacet = installServlet(ServletFacet_3_1.class);
@@ -59,7 +59,7 @@ public class RemoveSecurityRoleCommandTest extends AbstractSecurityCommandTest
       assertEquals(2, getSecurityRoles(servletFacet).size());
    }
 
-   private void addInitialRoles(ServletFacet servletFacet)
+   private void addInitialRoles(ServletFacet<?> servletFacet)
    {
       servletFacet.addSecurityRole("manager");
       servletFacet.addSecurityRole("developer");
@@ -85,6 +85,7 @@ public class RemoveSecurityRoleCommandTest extends AbstractSecurityCommandTest
       }
    }
 
+   @SuppressWarnings("rawtypes")
    private void assertDeveloperRoleIsTheOnlyOne(ServletFacet<?> servletFacet)
    {
       List<SecurityRoleCommonType> securityRoles = getSecurityRoles(servletFacet);
@@ -92,7 +93,7 @@ public class RemoveSecurityRoleCommandTest extends AbstractSecurityCommandTest
       assertEquals("developer", securityRoles.get(0).getRoleName());
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    private List<SecurityRoleCommonType> getSecurityRoles(ServletFacet<?> servletFacet)
    {
       WebAppCommonDescriptor webXml = servletFacet.getConfig();
