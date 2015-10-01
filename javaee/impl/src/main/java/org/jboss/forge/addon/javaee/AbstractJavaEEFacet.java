@@ -27,16 +27,16 @@ import org.jboss.forge.addon.projects.facets.DependencyFacet;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> implements JavaEEFacet
+public abstract class AbstractJavaEEFacet extends AbstractFacet<Project>implements JavaEEFacet
 {
    // Version is statically set
-   protected static final Dependency JAVAEE6 =
-            DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0").setScopeType("import")
-                     .setPackaging("pom").setVersion("3.0.3.Final");
+   protected static final Dependency JAVAEE6 = DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0")
+            .setScopeType("import")
+            .setPackaging("pom").setVersion("3.0.3.Final");
 
-   protected static final Dependency JAVAEE7 =
-            DependencyBuilder.create().setGroupId("javax").setArtifactId("javaee-api").setVersion("7.0")
-                     .setScopeType("provided");
+   protected static final Dependency JAVAEE7 = DependencyBuilder.create().setGroupId("javax")
+            .setArtifactId("javaee-api").setVersion("7.0")
+            .setScopeType("provided");
 
    private final DependencyInstaller installer;
 
@@ -113,6 +113,43 @@ public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> impleme
          if (!satisfied)
             return false;
       }
+      return true;
+   }
+
+   @Override
+   public int hashCode()
+   {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((getSpecName() == null) ? 0 : getSpecName().hashCode());
+      result = prime * result + ((getSpecVersion() == null) ? 0 : getSpecVersion().hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      AbstractJavaEEFacet other = (AbstractJavaEEFacet) obj;
+      if (getSpecName() == null)
+      {
+         if (other.getSpecName() != null)
+            return false;
+      }
+      else if (!getSpecName().equals(other.getSpecName()))
+         return false;
+      if (getSpecVersion() == null)
+      {
+         if (other.getSpecVersion() != null)
+            return false;
+      }
+      else if (!getSpecVersion().equals(other.getSpecVersion()))
+         return false;
       return true;
    }
 
