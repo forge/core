@@ -61,8 +61,7 @@ public class ProjectDependencyCommandsTest
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"));
 
       return archive;
    }
@@ -79,10 +78,10 @@ public class ProjectDependencyCommandsTest
    @Inject
    private DependencyInstaller installer;
 
-   private static final String COORDINATES = "org.jboss.forge.addon:projects-api:2.0.0.Final";
-   private static final String COORDINATES2 = "org.jboss.forge.addon:projects-impl:2.0.0.Final";
-   private static final Dependency DEPENDENCY = DependencyBuilder.create(COORDINATES);
-   private static final Dependency DEPENDENCY2 = DependencyBuilder.create(COORDINATES2);
+   private static final String COORDINATES = "org.jboss.forge.addon:projects-api:";
+   private static final String COORDINATES2 = "org.jboss.forge.addon:projects-impl:";
+   private static final Dependency DEPENDENCY = DependencyBuilder.create(COORDINATES).setVersion("2.0.0.Final");
+   private static final Dependency DEPENDENCY2 = DependencyBuilder.create(COORDINATES2).setVersion("2.0.0.Final");
 
    @Test
    public void testAddDependency() throws Exception
@@ -97,13 +96,13 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY2));
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
-         CommandController command = testHarness.createCommandController(AddDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", COORDINATES);
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         command.execute();
+         try (CommandController command = testHarness.createCommandController(AddDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", COORDINATES);
+            command.execute();
+         }
 
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectDependency(DEPENDENCY));
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
@@ -131,13 +130,13 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY2));
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
-         CommandController command = testHarness.createCommandController(AddDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         command.execute();
+         try (CommandController command = testHarness.createCommandController(AddDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
+            command.execute();
+         }
 
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectDependency(DEPENDENCY));
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
@@ -164,14 +163,13 @@ public class ProjectDependencyCommandsTest
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
 
-         CommandController command = testHarness.createCommandController(AddDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", COORDINATES + ":test");
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         command.execute();
-
+         try (CommandController command = testHarness.createCommandController(AddDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", COORDINATES + ":test");
+            command.execute();
+         }
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectDependency(DEPENDENCY));
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
@@ -199,14 +197,13 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY2));
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
-         CommandController command = testHarness.createCommandController(AddManagedDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", COORDINATES);
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         command.execute();
-
+         try (CommandController command = testHarness.createCommandController(AddManagedDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", COORDINATES);
+            command.execute();
+         }
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(DEPENDENCY));
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
@@ -233,13 +230,13 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY2));
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
-         CommandController command = testHarness.createCommandController(AddManagedDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         command.execute();
+         try (CommandController command = testHarness.createCommandController(AddManagedDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
+            command.execute();
+         }
 
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(DEPENDENCY));
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
@@ -269,14 +266,14 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY2));
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
-         CommandController command = testHarness.createCommandController(RemoveDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", DEPENDENCY);
-         command.setValueFor("removeManaged", "true");
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         command.execute();
+         try (CommandController command = testHarness.createCommandController(RemoveDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", COORDINATES);
+            command.setValueFor("removeManaged", "true");
+            command.execute();
+         }
 
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(DEPENDENCY));
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
@@ -307,15 +304,14 @@ public class ProjectDependencyCommandsTest
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY2));
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
-         CommandController command = testHarness.createCommandController(RemoveDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", Arrays.asList(DEPENDENCY, DEPENDENCY2));
-         command.setValueFor("removeManaged", "false");
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         command.execute();
-
+         try (CommandController command = testHarness.createCommandController(RemoveDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
+            command.setValueFor("removeManaged", "false");
+            command.execute();
+         }
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(DEPENDENCY));
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
@@ -344,15 +340,14 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY2));
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
-         CommandController command = testHarness.createCommandController(RemoveManagedDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", DEPENDENCY);
-         command.setValueFor("removeUnmanaged", "true");
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         command.execute();
-
+         try (CommandController command = testHarness.createCommandController(RemoveManagedDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", DEPENDENCY);
+            command.setValueFor("removeUnmanaged", "true");
+            command.execute();
+         }
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(DEPENDENCY));
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
@@ -382,14 +377,14 @@ public class ProjectDependencyCommandsTest
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY2));
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
-         CommandController command = testHarness.createCommandController(RemoveManagedDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", Arrays.asList(DEPENDENCY, DEPENDENCY2));
-         command.setValueFor("removeUnmanaged", "false");
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         command.execute();
+         try (CommandController command = testHarness.createCommandController(RemoveManagedDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", Arrays.asList(DEPENDENCY, DEPENDENCY2));
+            command.setValueFor("removeUnmanaged", "false");
+            command.execute();
+         }
 
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectDependency(DEPENDENCY));
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
@@ -416,14 +411,14 @@ public class ProjectDependencyCommandsTest
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
 
-         CommandController command = testHarness.createCommandController(HasDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", COORDINATES);
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         Result result = command.execute();
-         Assert.assertFalse(result instanceof Failed);
+         try (CommandController command = testHarness.createCommandController(HasDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", COORDINATES);
+            Result result = command.execute();
+            Assert.assertFalse(result instanceof Failed);
+         }
       }
       finally
       {
@@ -444,14 +439,14 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY2));
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
-         CommandController command = testHarness.createCommandController(HasDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", COORDINATES);
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         Result result = command.execute();
-         Assert.assertTrue(result instanceof Failed);
+         try (CommandController command = testHarness.createCommandController(HasDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", COORDINATES);
+            Result result = command.execute();
+            Assert.assertTrue(result instanceof Failed);
+         }
       }
       finally
       {
@@ -475,14 +470,14 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY2));
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
-         CommandController command = testHarness.createCommandController(HasDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         Result result = command.execute();
-         Assert.assertTrue(result instanceof Failed);
+         try (CommandController command = testHarness.createCommandController(HasDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
+            Result result = command.execute();
+            Assert.assertTrue(result instanceof Failed);
+         }
       }
       finally
       {
@@ -502,14 +497,14 @@ public class ProjectDependencyCommandsTest
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
          Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
 
-         CommandController command = testHarness.createCommandController(HasManagedDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", COORDINATES);
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         Result result = command.execute();
-         Assert.assertFalse(result instanceof Failed);
+         try (CommandController command = testHarness.createCommandController(HasManagedDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", COORDINATES);
+            Result result = command.execute();
+            Assert.assertFalse(result instanceof Failed);
+         }
       }
       finally
       {
@@ -527,14 +522,14 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY));
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY));
 
-         CommandController command = testHarness.createCommandController(HasManagedDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", COORDINATES);
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         Result result = command.execute();
-         Assert.assertTrue(result instanceof Failed);
+         try (CommandController command = testHarness.createCommandController(HasManagedDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", COORDINATES);
+            Result result = command.execute();
+            Assert.assertTrue(result instanceof Failed);
+         }
       }
       finally
       {
@@ -557,14 +552,14 @@ public class ProjectDependencyCommandsTest
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectManagedDependency(DEPENDENCY2));
          Assert.assertFalse(project.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(DEPENDENCY2));
 
-         CommandController command = testHarness.createCommandController(HasManagedDependenciesCommand.class,
-                  project.getRoot());
-         command.initialize();
-         command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
-         Assert.assertTrue(command.isValid());
-         Assert.assertTrue(command.canExecute());
-         Result result = command.execute();
-         Assert.assertTrue(result instanceof Failed);
+         try (CommandController command = testHarness.createCommandController(HasManagedDependenciesCommand.class,
+                  project.getRoot()))
+         {
+            command.initialize();
+            command.setValueFor("arguments", Arrays.asList(COORDINATES, COORDINATES2));
+            Result result = command.execute();
+            Assert.assertTrue(result instanceof Failed);
+         }
       }
       finally
       {

@@ -10,7 +10,7 @@ package org.jboss.forge.addon.dependencies.builder;
 import java.util.Map;
 
 import org.jboss.forge.addon.dependencies.Coordinate;
-import org.jboss.forge.addon.dependencies.Dependency;
+import org.jboss.forge.furnace.util.Strings;
 
 public class CoordinateBuilder implements Coordinate
 {
@@ -240,37 +240,42 @@ public class CoordinateBuilder implements Coordinate
    }
 
    /**
-    * Convenience method which should be used to convert a {@link Dependency} object into its id representation, for
+    * Convenience method which should be used to convert a {@link Coordinate} object into its id representation, for
     * example: "groupId:artifactId:::version", "groupId:artifactId:packaging::version" or
     * "groupId:artifactId:packaging:classifier:version"
-    * 
-    * @see {@link Dependency#toCoordinates()}
     */
-   private String toId()
-   {
-      StringBuilder gav = new StringBuilder(getGroupId()).append(":").append(getArtifactId());
-      gav.append(":");
-      if (getPackaging() != null)
-      {
-         gav.append(getPackaging());
-      }
-      gav.append(":");
-      if (getClassifier() != null)
-      {
-         gav.append(getClassifier());
-      }
-      gav.append(":");
-      if (getVersion() != null)
-      {
-         gav.append(getVersion());
-      }
-      return gav.toString();
-   }
-
    @Override
    public String toString()
    {
-      return toId();
+      StringBuilder gav = new StringBuilder(getGroupId()).append(":").append(getArtifactId());
+      if (Strings.isNullOrEmpty(getClassifier())
+               && (Strings.isNullOrEmpty(getPackaging()) || "jar".equalsIgnoreCase(getPackaging())))
+      {
+         gav.append(":");
+         if (getVersion() != null)
+         {
+            gav.append(getVersion());
+         }
+      }
+      else
+      {
+         gav.append(":");
+         if (!Strings.isNullOrEmpty(getPackaging()))
+         {
+            gav.append(getPackaging());
+         }
+         if (!Strings.isNullOrEmpty(getClassifier()))
+         {
+            gav.append(":");
+            gav.append(getClassifier());
+         }
+         gav.append(":");
+         if (getVersion() != null)
+         {
+            gav.append(getVersion());
+         }
+      }
+      return gav.toString();
    }
 
 }

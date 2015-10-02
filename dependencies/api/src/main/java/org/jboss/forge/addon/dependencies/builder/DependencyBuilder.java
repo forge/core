@@ -53,9 +53,8 @@ public class DependencyBuilder implements Dependency
    }
 
    /**
-    * @param identifier of the form "groupId:artifactId", "groupId:artifactId:version",
-    *           "groupId:artifactId:scope, "groupId
-    *           :artifactId:version:scope", "groupId:artifactId:version:scope:packaging"
+    * @param identifier of the form "groupId:artifactId", "groupId:artifactId:version", "groupId:artifactId:scope, "
+    *           groupId :artifactId:version:scope", "groupId:artifactId:version:scope:packaging"
     * 
     *           For classifier specification, see {@link #setClassifier(String)}
     */
