@@ -244,7 +244,9 @@ public final class InputComponents
          }
          else
          {
-            if (input instanceof SelectComponent)
+            // FORGE-2493: By setting the system property 'org.jboss.forge.ui.select_one_lenient_value' to true will
+            // allow UISelectOne to set values outside of its value choices. (pre-2.20.0.Final behavior)
+            if (input instanceof SelectComponent && !Boolean.getBoolean("org.jboss.forge.ui.select_one_lenient_value"))
             {
                SelectComponent<?, Object> selectComponent = (SelectComponent<?, Object>) input;
                Iterable<Object> valueChoices = selectComponent.getValueChoices();
