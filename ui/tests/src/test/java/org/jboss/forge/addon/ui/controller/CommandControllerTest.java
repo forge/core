@@ -103,7 +103,7 @@ public class CommandControllerTest
       Assert.assertEquals("Hello, Forge", result.getMessage());
    }
 
-   @Test(expected = IllegalArgumentException.class)
+   @Test(expected = IllegalStateException.class)
    public void testInitialized() throws Exception
    {
       CommandController controller = controllerFactory.createSingleController(new MockUIContext(), new MockUIRuntime(),
