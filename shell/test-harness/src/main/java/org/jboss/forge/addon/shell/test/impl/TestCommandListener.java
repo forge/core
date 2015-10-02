@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.shell.test.impl;
 
+import javax.enterprise.inject.Vetoed;
+
 import org.jboss.forge.addon.ui.command.AbstractCommandExecutionListener;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -15,6 +17,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.addon.ui.wizard.WizardExecutionListener;
 
+@Vetoed
 public class TestCommandListener extends AbstractCommandExecutionListener implements WizardExecutionListener
 {
    boolean isWizard;
