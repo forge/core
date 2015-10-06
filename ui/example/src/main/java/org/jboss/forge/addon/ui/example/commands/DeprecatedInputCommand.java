@@ -30,10 +30,13 @@ public class DeprecatedInputCommand extends AbstractUICommand
    @Deprecated
    private UIInput<String> deprecatedInput;
 
+   @Inject
+   private UIInput<String> nonDeprecatedInput;
+
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(deprecatedInput);
+      builder.add(deprecatedInput).add(nonDeprecatedInput);
    }
 
    @Override
@@ -46,7 +49,8 @@ public class DeprecatedInputCommand extends AbstractUICommand
    public Result execute(UIExecutionContext context) throws Exception
    {
       return Results
-               .success("Command 'deprecated-command' successfully executed with input " + deprecatedInput.getValue());
+               .success("Command 'deprecated-command' successfully executed with input " + deprecatedInput.getValue()
+                        + " and " + nonDeprecatedInput.getValue());
    }
 
 }

@@ -36,5 +36,23 @@ public enum OptionRenderers implements OptionRenderer
       {
          return STYLE;
       }
+   },
+   DEPRECATED
+   {
+      private TerminalTextStyle STYLE = new TerminalTextStyle(CharacterType.CROSSED_OUT);
+      private TerminalColor COLOR = new TerminalColor(42, Color.DEFAULT);
+
+      @Override
+      public TerminalColor getColor()
+      {
+         return COLOR;
+      }
+
+      @Override
+      public TerminalTextStyle getTextType()
+      {
+         return STYLE;
+      }
+
    }
 }

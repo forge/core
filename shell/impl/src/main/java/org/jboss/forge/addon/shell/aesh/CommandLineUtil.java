@@ -109,12 +109,17 @@ class CommandLineUtil
             {
                optionBuilder.renderer(OptionRenderers.REQUIRED);
             }
+            if (input.isDeprecated())
+            {
+               optionBuilder.renderer(OptionRenderers.DEPRECATED);
+            }
             OptionCompleter<CompleterInvocation> completer = OptionCompleterFactory.getCompletionFor(
                      input, shellContext, converterFactory);
             optionBuilder.completer(completer);
             optionBuilder.activator(new OptionActivator()
             {
                @Override
+               @SuppressWarnings("rawtypes")
                public boolean isActivated(ProcessedCommand processedCommand)
                {
                   return input.isEnabled();
