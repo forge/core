@@ -208,12 +208,15 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
          }
          if (!buildable)
          {
-            log.log(Level.FINE,
-                     "ProjectType ["
-                              + projectType.getType()
-                              + "] "
-                              + "deactivated because it cannot be built with any registered ProjectProvider instances ["
-                              + buildSystems + "].");
+            if (log.isLoggable(Level.FINE))
+            {
+               log.log(Level.FINE,
+                        "ProjectType ["
+                                 + projectType.getType()
+                                 + "] "
+                                 + "deactivated because it cannot be built with any registered ProjectProvider instances ["
+                                 + buildSystems + "].");
+            }
          }
       }
 

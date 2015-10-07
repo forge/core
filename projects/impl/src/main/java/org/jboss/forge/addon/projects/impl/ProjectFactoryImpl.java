@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.event.Observes;
@@ -383,7 +384,10 @@ public class ProjectFactoryImpl implements ProjectFactory
          {
             if (facet != null && factory.register(result, facet))
             {
-               log.fine("Registered Facet [" + facet + "] into Project [" + result + "]");
+               if (log.isLoggable(Level.FINE))
+               {
+                  log.fine("Registered Facet [" + facet + "] into Project [" + result + "]");
+               }
             }
          }
       }

@@ -167,12 +167,18 @@ class FileWatcher implements Runnable
             ResourceMonitorImpl resourceMonitor = keys.get(key);
             if (resourceMonitor == null)
             {
-               log.finest("WatchKey not recognized " + name + " - " + key.watchable() + "> " + kind);
+               if (log.isLoggable(Level.FINEST))
+               {
+                  log.finest("WatchKey not recognized " + name + " - " + key.watchable() + "> " + kind);
+               }
                continue;
             }
             Path resourcePath = resourceMonitor.getResourcePath();
             Path child = resourcePath.resolve(name);
-            log.log(Level.FINE, String.format("%s: %s %s %s\n", event.kind().name(), child, key, keys.keySet()));
+            if (log.isLoggable(Level.FINE))
+            {
+               log.log(Level.FINE, String.format("%s: %s %s %s\n", event.kind().name(), child, key, keys.keySet()));
+            }
             if (kind == ENTRY_CREATE)
             {
                try

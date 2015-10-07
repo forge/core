@@ -80,7 +80,10 @@ public class AnnotatedCommandProvider implements CommandProvider
       if (service.isUnsatisfied())
       {
          // Class may not have been loaded yet
-         logger.log(Level.FINE, "Error while finding " + method.getDeclaringClass() + " as a service");
+         if (logger.isLoggable(Level.FINE))
+         {
+            logger.log(Level.FINE, "Error while finding " + method.getDeclaringClass() + " as a service");
+         }
          return null;
       }
       Object instance = service.get();
