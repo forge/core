@@ -154,8 +154,9 @@ public class ForgeUpdateCommand extends AbstractUICommand
                            public boolean accept(Dependency dependency)
                            {
                               Version version = SingleVersion.valueOf(dependency.getCoordinate().getVersion());
-                              return version.compareTo(runtimeVersion) > 0 && version.getMajorVersion() == 2
-                                       && version.getQualifier().equals("Final");
+                              return version.compareTo(runtimeVersion) > 0 
+                                       && version.getMajorVersion() == runtimeVersion.getMajorVersion()
+                                       && "Final".equals(version.getQualifier());
                            }
                         }));
       List<Coordinate> versions = resolver.resolveVersions(query);
