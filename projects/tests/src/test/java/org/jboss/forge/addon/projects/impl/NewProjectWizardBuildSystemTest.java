@@ -9,8 +9,6 @@ package org.jboss.forge.addon.projects.impl;
 
 import java.io.File;
 
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.mock.MockBuildSystem;
@@ -20,13 +18,15 @@ import org.jboss.forge.addon.projects.ui.NewProjectWizard;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.addon.ui.util.InputComponents;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -34,9 +34,10 @@ import org.junit.runner.RunWith;
 public class NewProjectWizardBuildSystemTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:projects"),
-            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.furnace.container:simple"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects"),
+            @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness")
    })
    public static AddonArchive getDeployment()
    {
@@ -45,26 +46,27 @@ public class NewProjectWizardBuildSystemTest
                .addClass(MockProjectTypeNoRequiredFacets.class)
                .addClass(MockProjectTypeNullRequiredFacets.class)
                .addClass(MockBuildSystem.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-               );
+               .addAsServiceProvider(Service.class, NewProjectWizardBuildSystemTest.class,
+                        MockProjectTypeNoRequiredFacets.class,
+                        MockProjectTypeNullRequiredFacets.class, MockBuildSystem.class);
 
       return archive;
    }
 
-   @Inject
    private UITestHarness testHarness;
+
+   @Before
+   public void setUp()
+   {
+      testHarness = SimpleContainer.getServices(getClass().getClassLoader(), UITestHarness.class).get();
+   }
 
    @Test
    public void testProjectTypeWithNoBuildSystemRequirements() throws Exception
    {
       File tempDir = OperatingSystemUtils.createTempDir();
-      try
+      try (WizardCommandController wizard = testHarness.createWizardController(NewProjectWizard.class))
       {
-         WizardCommandController wizard = testHarness.createWizardController(NewProjectWizard.class);
          wizard.initialize();
          Assert.assertFalse(wizard.canMoveToNextStep());
          wizard.setValueFor("named", "test");
@@ -83,9 +85,8 @@ public class NewProjectWizardBuildSystemTest
    public void testProjectTypeWithNullBuildSystemRequirements() throws Exception
    {
       File tempDir = OperatingSystemUtils.createTempDir();
-      try
+      try (WizardCommandController wizard = testHarness.createWizardController(NewProjectWizard.class))
       {
-         WizardCommandController wizard = testHarness.createWizardController(NewProjectWizard.class);
          wizard.initialize();
          Assert.assertFalse(wizard.canMoveToNextStep());
          wizard.setValueFor("named", "test");

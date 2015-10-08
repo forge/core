@@ -1,7 +1,5 @@
 package org.jboss.forge.addon.projects.ui.repositories;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -10,17 +8,32 @@ import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 @FacetConstraint(DependencyFacet.class)
 public class AddRepositoryCommandImpl extends AbstractProjectCommand implements AddRepositoryCommand
 {
+   private UIInput<String> named;
+   private UIInput<String> url;
+
+   @Override
+   public void initializeUI(UIBuilder builder) throws Exception
+   {
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      named = factory.createInput("named", String.class).setLabel("Repository Name").setRequired(true)
+               .setDescription("The repository name");
+      url = factory.createInput("url", String.class).setLabel("Repository URL").setRequired(true)
+               .setDescription("The repository URL");
+      builder.add(named).add(url);
+   }
+
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
@@ -28,23 +41,6 @@ public class AddRepositoryCommandImpl extends AbstractProjectCommand implements 
                .description("Add a repository to the current project descriptor.")
                .name("Project: Add Repository")
                .category(Categories.create("Project", "Manage"));
-   }
-
-   @Inject
-   private ProjectFactory factory;
-
-   @Inject
-   @WithAttributes(label = "Repository Name", required = true, description = "The repository name")
-   private UIInput<String> named;
-
-   @Inject
-   @WithAttributes(label = "Repository URL", required = true, description = "The repository URL")
-   private UIInput<String> url;
-
-   @Override
-   public void initializeUI(UIBuilder builder) throws Exception
-   {
-      builder.add(named).add(url);
    }
 
    @Override
@@ -77,6 +73,7 @@ public class AddRepositoryCommandImpl extends AbstractProjectCommand implements 
    @Override
    protected ProjectFactory getProjectFactory()
    {
-      return factory;
+      return SimpleContainer
+               .getServices(getClass().getClassLoader(), ProjectFactory.class).get();
    }
 }

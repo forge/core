@@ -1,0 +1,3 @@
+org.jboss.forge.addon.projects.impl.DependencyInstallerImpl
+org.jboss.forge.addon.projects.impl.InMemoryProjectCache
+org.jboss.forge.addon.projects.impl.ProjectFactoryImpl

@@ -1,7 +1,5 @@
 package org.jboss.forge.addon.projects.ui.dependencies;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
@@ -12,18 +10,33 @@ import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 @FacetConstraint(DependencyFacet.class)
 public class HasDependenciesCommandImpl extends AbstractProjectCommand implements HasDependenciesCommand
 {
+   private UIInputMany<Dependency> arguments;
+   private UIInput<Boolean> effective;
+
+   @Override
+   public void initializeUI(UIBuilder builder) throws Exception
+   {
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      arguments = factory.createInputMany("arguments", 'd', Dependency.class).setLabel("Coordinates").setRequired(true)
+               .setDescription(
+                        "The coordinates of the arguments to be checked [groupId :artifactId {:version :scope :packaging}]");
+      effective = factory.createInput("effective", 'e', Boolean.class).setLabel("Effective");
+      builder.add(arguments).add(effective);
+   }
+
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
@@ -31,26 +44,6 @@ public class HasDependenciesCommandImpl extends AbstractProjectCommand implement
                .description("Check one or more arguments in the current project.")
                .name("Project: Has Dependencies")
                .category(Categories.create("Project", "Manage"));
-   }
-
-   @Inject
-   private ProjectFactory factory;
-
-   @Inject
-   @WithAttributes(shortName = 'd', label = "Coordinates", required = true,
-            description = "The coordinates of the arguments to be checked [groupId :artifactId {:version :scope :packaging}]")
-   private UIInputMany<Dependency> arguments;
-
-   @Inject
-   @WithAttributes(shortName = 'e', label = "Effective", required = false,
-            description = "", defaultValue = "")
-   private UIInput<Boolean> effective;
-
-   @Override
-   public void initializeUI(UIBuilder builder) throws Exception
-   {
-      builder.add(arguments);
-      builder.add(effective);
    }
 
    @Override
@@ -67,19 +60,27 @@ public class HasDependenciesCommandImpl extends AbstractProjectCommand implement
          {
             numberOfGavs++;
             DependencyBuilder dep = DependencyBuilder.create(gav);
-            if(effective.getValue()) {
-               if(deps.hasEffectiveDependency(gav)) {
+            if (effective.getValue())
+            {
+               if (deps.hasEffectiveDependency(gav))
+               {
                   numberOfGavsFound++;
                }
-            } else {
-               if(deps.hasDirectDependency(dep)) {
+            }
+            else
+            {
+               if (deps.hasDirectDependency(dep))
+               {
                   numberOfGavsFound++;
                }
             }
          }
-         if(numberOfGavs == numberOfGavsFound) {
+         if (numberOfGavs == numberOfGavsFound)
+         {
             return Results.success("All arguments found");
-         } else {
+         }
+         else
+         {
             return Results.fail("Missing " + (numberOfGavs - numberOfGavsFound));
          }
       }
@@ -95,6 +96,7 @@ public class HasDependenciesCommandImpl extends AbstractProjectCommand implement
    @Override
    protected ProjectFactory getProjectFactory()
    {
-      return factory;
+      return SimpleContainer
+               .getServices(getClass().getClassLoader(), ProjectFactory.class).get();
    }
 }

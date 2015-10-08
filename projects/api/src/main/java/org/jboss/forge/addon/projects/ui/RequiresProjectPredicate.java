@@ -7,11 +7,10 @@
 
 package org.jboss.forge.addon.projects.ui;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.ui.context.UIContext;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.Predicate;
 
 /**
@@ -21,12 +20,11 @@ import org.jboss.forge.furnace.util.Predicate;
  */
 public class RequiresProjectPredicate implements Predicate<UIContext>
 {
-   @Inject
-   private ProjectFactory projectFactory;
-
    @Override
    public boolean accept(UIContext context)
    {
+      ProjectFactory projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class)
+               .get();
       return Projects.containsProject(projectFactory, context);
    }
 }

@@ -1,62 +1,50 @@
 package org.jboss.forge.addon.projects.impl.facets;
 
-/*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
- *
- * Licensed under the Eclipse Public License version 1.0, available at
- * http://www.eclipse.org/legal/epl-v10.html
- */
-
-import javax.inject.Inject;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
+import org.jboss.forge.addon.projects.mock.facets.ProjectFacetA;
+import org.jboss.forge.addon.projects.mock.facets.ProjectFacetB;
+import org.jboss.forge.addon.projects.mock.facets.ProjectFacetC;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.container.simple.Service;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@Ignore
 @RunWith(Arquillian.class)
 public class ProjectFacetConstraintsTest
 {
    @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:resources"),
-            @AddonDeployment(name = "org.jboss.forge.addon:maven"),
-            @AddonDeployment(name = "org.jboss.forge.addon:projects")
+   @AddonDependencies({
+            @AddonDependency(name = "org.jboss.forge.furnace.container:simple"),
+            @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.addon:projects")
    })
    public static AddonArchive getDeployment()
    {
-      AddonArchive archive = ShrinkWrap
+      return ShrinkWrap
                .create(AddonArchive.class)
                .addClasses(ProjectFacetA.class, ProjectFacetB.class, ProjectFacetC.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:projects")
-               );
-
-      return archive;
+               .addAsServiceProvider(Service.class, ProjectFacetConstraintsTest.class, ProjectFacetA.class,
+                        ProjectFacetB.class, ProjectFacetC.class);
    }
 
-   @Inject
-   private ProjectFactory projectFactory;
-   @Inject
    private FacetFactory facetFactory;
+   private ProjectFactory projectFactory;
 
-   @Test
-   public void testInjectionNotNull()
+   @Before
+   public void setUp()
    {
-      Assert.assertNotNull(projectFactory);
+      projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
+      facetFactory = SimpleContainer.getServices(getClass().getClassLoader(), FacetFactory.class).get();
    }
 
    @Test
@@ -67,7 +55,7 @@ public class ProjectFacetConstraintsTest
 
       Assert.assertTrue(project.hasFacet(ProjectFacetA.class));
       Assert.assertTrue(project.hasFacet(ProjectFacetB.class));
-      Assert.assertTrue(project.hasFacet(ProjectFacetC.class));
+      Assert.assertFalse(project.hasFacet(ProjectFacetC.class));
    }
 
    @Test
@@ -76,8 +64,9 @@ public class ProjectFacetConstraintsTest
       Project project = projectFactory.createTempProject();
       facetFactory.install(project, ProjectFacetB.class);
 
+      Assert.assertFalse(project.hasFacet(ProjectFacetA.class));
       Assert.assertTrue(project.hasFacet(ProjectFacetB.class));
-      Assert.assertTrue(project.hasFacet(ProjectFacetC.class));
+      Assert.assertFalse(project.hasFacet(ProjectFacetC.class));
    }
 
 }

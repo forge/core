@@ -7,8 +7,6 @@
 
 package org.jboss.forge.addon.projects.ui;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -21,6 +19,7 @@ import org.jboss.forge.addon.ui.input.SingleValued;
 import org.jboss.forge.addon.ui.input.inject.InputComponentInjectionEnricher;
 import org.jboss.forge.addon.ui.input.inject.InputComponentInjectionPoint;
 import org.jboss.forge.addon.ui.util.InputComponents;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 /**
  * Sets the default value of the component to the one set in the current project, if any
@@ -29,19 +28,12 @@ import org.jboss.forge.addon.ui.util.InputComponents;
  */
 public class DefaultFacetComponentEnricher implements InputComponentInjectionEnricher
 {
-   @Inject
-   private UIContextProvider contextProvider;
-
-   @Inject
-   private ConverterFactory converterFactory;
-
-   @Inject
-   private ProjectFactory projectFactory;
-
    @SuppressWarnings("unchecked")
    @Override
    public void enrich(InputComponentInjectionPoint injectionPoint, InputComponent<?, ?> input)
    {
+      UIContextProvider contextProvider = SimpleContainer
+               .getServices(getClass().getClassLoader(), UIContextProvider.class).get();
       UIContext context = contextProvider.getUIContext();
       // Setting for Single valued components only at the moment
       if (input instanceof SingleValued && context != null)
@@ -50,9 +42,13 @@ public class DefaultFacetComponentEnricher implements InputComponentInjectionEnr
          if (ProjectFacet.class.isAssignableFrom(valueType))
          {
             Class<? extends ProjectFacet> projectFacet = (Class<? extends ProjectFacet>) valueType;
+            ProjectFactory projectFactory = SimpleContainer
+                     .getServices(getClass().getClassLoader(), ProjectFactory.class).get();
             Project project = Projects.getSelectedProject(projectFactory, context);
             if (project != null && project.hasFacet(projectFacet))
             {
+               ConverterFactory converterFactory = SimpleContainer
+                        .getServices(getClass().getClassLoader(), ConverterFactory.class).get();
                InputComponents.setDefaultValueFor(converterFactory, (InputComponent<?, Object>) input,
                         project.getFacet(projectFacet));
             }

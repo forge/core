@@ -31,7 +31,7 @@ import org.jboss.forge.addon.resource.Resource;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @FacetConstraint(DependencyFacet.class)
-class ClassLoaderFacetImpl extends AbstractFacet<Project> implements
+public class ClassLoaderFacetImpl extends AbstractFacet<Project> implements
          ClassLoaderFacet
 {
    private static final Logger log = Logger

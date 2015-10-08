@@ -9,8 +9,6 @@ package org.jboss.forge.addon.projects.impl;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.inject.Singleton;
-
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.spi.ProjectCache;
 import org.jboss.forge.addon.resource.Resource;
@@ -21,7 +19,6 @@ import org.jboss.forge.furnace.util.Assert;
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Singleton
 public class InMemoryProjectCache implements ProjectCache
 {
    private final Map<String, Project> projects = new ConcurrentHashMap<>();

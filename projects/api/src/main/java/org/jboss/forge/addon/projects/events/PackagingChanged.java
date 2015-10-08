@@ -6,8 +6,6 @@
  */
 package org.jboss.forge.addon.projects.events;
 
-import javax.enterprise.inject.Vetoed;
-
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 
@@ -16,7 +14,6 @@ import org.jboss.forge.addon.projects.facets.PackagingFacet;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@Vetoed
 public class PackagingChanged
 {
    private final String previousType;

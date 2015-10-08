@@ -11,8 +11,6 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.projects.Project;
@@ -32,11 +30,11 @@ import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.SingleValued;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
@@ -44,6 +42,7 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
@@ -51,48 +50,13 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
 {
    private static final Logger log = Logger.getLogger(NewProjectWizardImpl.class.getName());
 
-   @Inject
-   private FacetFactory facetFactory;
-
-   @Inject
-   private ProjectFactory projectFactory;
-
-   @Inject
-   private ResourceFactory resourceFactory;
-
-   @Inject
-   private Imported<ProjectProvider> buildSystems;
-
-   @Inject
-   @WithAttributes(label = "Project name", required = true)
    private UIInput<String> named;
-
-   @Inject
-   @WithAttributes(label = "Top level package")
    private UIInput<String> topLevelPackage;
-
-   @Inject
-   @WithAttributes(label = "Version")
    private UIInput<String> version;
-
-   @Inject
-   @WithAttributes(label = "Final name")
    private UIInput<String> finalName;
-
-   @Inject
-   @WithAttributes(label = "Project location")
    private UIInput<DirectoryResource> targetLocation;
-
-   @Inject
-   @WithAttributes(label = "Overwrite existing project location")
    private UIInput<Boolean> overwrite;
-
-   @Inject
-   @WithAttributes(label = "Project type", required = true)
    private UISelectOne<ProjectType> type;
-
-   @Inject
-   @WithAttributes(label = "Build system", required = true)
    private UISelectOne<ProjectProvider> buildSystem;
 
    @Override
@@ -105,28 +69,36 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
    @Override
    public boolean isEnabled(UIContext context)
    {
-      return buildSystem.getValueChoices().iterator().hasNext();
+      return !SimpleContainer.getServices(getClass().getClassLoader(), ProjectProvider.class).isUnsatisfied();
    }
 
    @Override
    public void initializeUI(final UIBuilder builder) throws Exception
    {
       UIContext uiContext = builder.getUIContext();
-      configureProjectNamedInput();
-      configureVersionInput();
-      configureTargetLocationInput(uiContext);
-      configureOverwriteInput();
-      configureProjectTypeInput(uiContext);
-      configureTopLevelPackageInput();
-      configureBuildSystemInput(uiContext);
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      configureProjectNamedInput(factory);
+      configureTopLevelPackageInput(factory);
+      configureVersionInput(factory);
+      configureFinalName(factory);
+      configureTargetLocationInput(factory, uiContext);
+      configureOverwriteInput(factory);
+      configureBuildSystemInput(factory, uiContext);
+      configureProjectTypeInput(factory, uiContext);
 
       builder.add(named).add(topLevelPackage).add(version).add(finalName).add(targetLocation)
                .add(overwrite).add(type)
                .add(buildSystem);
    }
 
-   private void configureProjectNamedInput()
+   private void configureFinalName(InputComponentFactory factory)
    {
+      finalName = factory.createInput("finalName", String.class).setLabel("Final name");
+   }
+
+   private void configureProjectNamedInput(InputComponentFactory factory)
+   {
+      named = factory.createInput("named", String.class).setLabel("Project name").setRequired(true);
       named.addValidator(new UIValidator()
       {
          @Override
@@ -139,13 +111,15 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       });
    }
 
-   private void configureVersionInput()
+   private void configureVersionInput(InputComponentFactory factory)
    {
+      version = factory.createInput("version", String.class);
       version.setDefaultValue("1.0.0-SNAPSHOT");
    }
 
-   private void configureTargetLocationInput(final UIContext uiContext)
+   private void configureTargetLocationInput(InputComponentFactory factory, final UIContext uiContext)
    {
+      targetLocation = factory.createInput("targetLocation", DirectoryResource.class).setLabel("Project location");
       UISelection<Resource<?>> currentSelection = uiContext.getInitialSelection();
       if (!currentSelection.isEmpty())
       {
@@ -158,13 +132,16 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
 
       if (!targetLocation.hasDefaultValue())
       {
+         ResourceFactory resourceFactory = SimpleContainer
+                  .getServices(getClass().getClassLoader(), ResourceFactory.class).get();
          targetLocation.setDefaultValue(resourceFactory.create(DirectoryResource.class,
                   OperatingSystemUtils.getUserHomeDir()));
       }
    }
 
-   private void configureOverwriteInput()
+   private void configureOverwriteInput(InputComponentFactory factory)
    {
+      overwrite = factory.createInput("overwrite", Boolean.class).setLabel("Overwrite existing project location");
       overwrite.setDefaultValue(false).setEnabled(new Callable<Boolean>()
       {
          @Override
@@ -178,8 +155,9 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       });
    }
 
-   private void configureProjectTypeInput(final UIContext uiContext)
+   private void configureProjectTypeInput(InputComponentFactory factory, final UIContext uiContext)
    {
+      type = factory.createSelectOne("type", ProjectType.class).setLabel("Project type").setRequired(true);
       if (uiContext.getProvider().isGUI())
       {
          type.setItemLabelConverter(new Converter<ProjectType, String>()
@@ -197,7 +175,8 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       for (ProjectType projectType : type.getValueChoices())
       {
          boolean buildable = false;
-         for (ProjectProvider buildSystem : buildSystems)
+         for (ProjectProvider buildSystem : SimpleContainer.getServices(getClass().getClassLoader(),
+                  ProjectProvider.class))
          {
             if (projectType.isEnabled(uiContext) && isProjectTypeBuildable(projectType, buildSystem))
             {
@@ -215,7 +194,8 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
                                  + projectType.getType()
                                  + "] "
                                  + "deactivated because it cannot be built with any registered ProjectProvider instances ["
-                                 + buildSystems + "].");
+                                 + SimpleContainer.getServices(getClass().getClassLoader(), ProjectProvider.class)
+                                 + "].");
             }
          }
       }
@@ -236,8 +216,9 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       type.setValueChoices(projectTypes);
    }
 
-   private void configureTopLevelPackageInput()
+   private void configureTopLevelPackageInput(InputComponentFactory factory)
    {
+      topLevelPackage = factory.createInput("topLevelPackage", String.class).setLabel("Top level package");
       topLevelPackage.setDefaultValue(new Callable<String>()
       {
          @Override
@@ -258,9 +239,12 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       });
    }
 
-   private void configureBuildSystemInput(final UIContext uiContext)
+   private void configureBuildSystemInput(InputComponentFactory factory, final UIContext uiContext)
    {
-      buildSystem.setRequired(true);
+      final Imported<ProjectProvider> buildSystems = SimpleContainer.getServices(getClass().getClassLoader(),
+               ProjectProvider.class);
+      buildSystem = factory.createSelectOne("buildSystem", ProjectProvider.class).setLabel("Build system")
+               .setRequired(true);
       buildSystem.setItemLabelConverter(new Converter<ProjectProvider, String>()
       {
          @Override
@@ -388,7 +372,8 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       if (targetDir.mkdirs() || overwrite.getValue())
       {
          ProjectType value = type.getValue();
-
+         ProjectFactory projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class)
+                  .get();
          Project project = projectFactory.createProject(targetDir, buildSystem.getValue());
          if (project != null)
          {
@@ -414,6 +399,8 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
                Iterable<Class<? extends ProjectFacet>> requiredFacets = value.getRequiredFacets();
                if (requiredFacets != null)
                {
+                  FacetFactory facetFactory = SimpleContainer
+                           .getServices(getClass().getClassLoader(), FacetFactory.class).get();
                   for (Class<? extends ProjectFacet> facet : requiredFacets)
                   {
                      facetFactory.install(project, facet);

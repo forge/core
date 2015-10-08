@@ -1,7 +1,5 @@
 package org.jboss.forge.addon.projects.ui.dependencies;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
@@ -13,17 +11,30 @@ import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 @FacetConstraint(DependencyFacet.class)
 public class AddDependenciesCommandImpl extends AbstractProjectCommand implements AddDependenciesCommand
 {
+   private UIInputMany<Dependency> arguments;
+
+   @Override
+   public void initializeUI(UIBuilder builder) throws Exception
+   {
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      arguments = factory.createInputMany("arguments", 'd', Dependency.class).setLabel("Coordinates").setRequired(true)
+               .setDescription(
+                        "The coordinates of the arguments to be added [groupId :artifactId {:version :scope :packaging}]");
+      builder.add(arguments);
+   }
+
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
@@ -31,23 +42,6 @@ public class AddDependenciesCommandImpl extends AbstractProjectCommand implement
                .description("Add one or more arguments to the current project.")
                .name("Project: Add Dependencies")
                .category(Categories.create("Project", "Manage"));
-   }
-
-   @Inject
-   private ProjectFactory factory;
-
-   @Inject
-   private DependencyInstaller installer;
-
-   @Inject
-   @WithAttributes(shortName = 'd', label = "Coordinates", required = true,
-            description = "The coordinates of the arguments to be added [groupId :artifactId {:version :scope :packaging}]")
-   private UIInputMany<Dependency> arguments;
-
-   @Override
-   public void initializeUI(UIBuilder builder) throws Exception
-   {
-      builder.add(arguments);
    }
 
    @Override
@@ -59,6 +53,8 @@ public class AddDependenciesCommandImpl extends AbstractProjectCommand implement
       if (arguments.hasValue())
       {
          int count = 0;
+         DependencyInstaller installer = SimpleContainer
+                  .getServices(getClass().getClassLoader(), DependencyInstaller.class).get();
          for (Dependency gav : arguments.getValue())
          {
             Dependency existingDep = deps.getEffectiveManagedDependency(DependencyBuilder.create(gav).setVersion(null));
@@ -77,7 +73,7 @@ public class AddDependenciesCommandImpl extends AbstractProjectCommand implement
                }
             }
 
-            this.installer.install(project, gav);
+            installer.install(project, gav);
             count++;
          }
 
@@ -95,6 +91,7 @@ public class AddDependenciesCommandImpl extends AbstractProjectCommand implement
    @Override
    protected ProjectFactory getProjectFactory()
    {
-      return factory;
+      return SimpleContainer
+               .getServices(getClass().getClassLoader(), ProjectFactory.class).get();
    }
 }

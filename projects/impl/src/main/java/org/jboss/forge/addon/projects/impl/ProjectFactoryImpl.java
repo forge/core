@@ -16,10 +16,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jboss.forge.addon.facets.Facet;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.projects.Project;
@@ -37,8 +33,8 @@ import org.jboss.forge.addon.resource.events.ResourceEvent;
 import org.jboss.forge.addon.resource.monitor.ResourceListener;
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.container.cdi.events.Local;
-import org.jboss.forge.furnace.event.PreShutdown;
+import org.jboss.forge.furnace.container.simple.AbstractEventListener;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
@@ -46,31 +42,27 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Predicate;
 
 /**
+ * Default implementation of {@link ProjectFactory}
+ * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-@Singleton
-public class ProjectFactoryImpl implements ProjectFactory
+public class ProjectFactoryImpl extends AbstractEventListener implements ProjectFactory
 {
    private static final Logger log = Logger.getLogger(ProjectFactoryImpl.class.getName());
 
-   @Inject
-   private AddonRegistry registry;
-
-   @Inject
+   private AddonRegistry addonRegistry;
    private ResourceFactory resourceFactory;
-
-   @Inject
-   private FacetFactory factory;
-
-   @Inject
+   private FacetFactory facetFactory;
    private Imported<ProjectListener> builtInListeners;
-
-   @Inject
    private Imported<ProjectCache> caches;
 
    private final List<ListenerRegistration<ResourceListener>> listeners = new ArrayList<>();
+   private final Set<ProjectProvider> providers = new HashSet<>();
+   private long version = -1;
 
-   void shutdown(@Observes @Local PreShutdown event)
+   @Override
+   protected void handleThisPreShutdown()
    {
       invalidateCaches();
       for (ListenerRegistration<ResourceListener> registration : listeners)
@@ -98,9 +90,6 @@ public class ProjectFactoryImpl implements ProjectFactory
          return true;
       }
    };
-
-   private final Set<ProjectProvider> providers = new HashSet<>();
-   private long version = -1;
 
    @Override
    public Project findProject(Resource<?> target)
@@ -143,11 +132,12 @@ public class ProjectFactoryImpl implements ProjectFactory
 
    private Iterable<ProjectProvider> getProviders()
    {
-      if (registry.getVersion() != version)
+      AddonRegistry addonRegistry = getAddonRegistry();
+      if (addonRegistry.getVersion() != version)
       {
-         version = registry.getVersion();
+         version = addonRegistry.getVersion();
          providers.clear();
-         for (ProjectProvider provider : registry.getServices(ProjectProvider.class))
+         for (ProjectProvider provider : addonRegistry.getServices(ProjectProvider.class))
          {
             providers.add(provider);
          }
@@ -198,30 +188,21 @@ public class ProjectFactoryImpl implements ProjectFactory
             Predicate<Project> filter)
    {
       Project result = null;
-
+      Imported<ProjectCache> caches = getCaches();
       if (projectProvider.containsProject(target))
       {
          boolean cached = false;
-         Iterator<ProjectCache> cacheIterator = caches.iterator();
-         while (cacheIterator.hasNext())
+         for (ProjectCache cache : caches)
          {
-            ProjectCache cache = cacheIterator.next();
-            try
+            result = cache.get(target);
+            if (result != null && !filter.accept(result))
             {
-               result = cache.get(target);
-               if (result != null && !filter.accept(result))
-               {
-                  result = null;
-               }
-               if (result != null)
-               {
-                  cached = true;
-                  break;
-               }
+               result = null;
             }
-            finally
+            if (result != null)
             {
-               caches.release(cache);
+               cached = true;
+               break;
             }
          }
          if (result == null)
@@ -254,7 +235,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    {
       Assert.notNull(target, "Target project directory must not be null.");
       Assert.notNull(projectProvider, "Build system type must not be null.");
-
+      FacetFactory facetFactory = getFacetFactory();
       if (facetTypes != null)
          Assert.isTrue(
                   isBuildable(projectProvider, facetTypes),
@@ -270,15 +251,13 @@ public class ProjectFactoryImpl implements ProjectFactory
          Resource<?> parent = result.getRoot().getParent();
          if (parent != null)
          {
-            Imported<ProjectAssociationProvider> buildSystemInstances = registry
-                     .getServices(ProjectAssociationProvider.class);
-            for (ProjectAssociationProvider provider : buildSystemInstances)
+            for (ProjectAssociationProvider provider : getAddonRegistry()
+                     .getServices(ProjectAssociationProvider.class))
             {
                if (provider.canAssociate(result, parent))
                {
                   provider.associate(result, parent);
                }
-               buildSystemInstances.release(provider);
             }
          }
       }
@@ -291,10 +270,10 @@ public class ProjectFactoryImpl implements ProjectFactory
             {
                if (!ProvidedProjectFacet.class.isAssignableFrom(facetType))
                {
-                  Iterable<? extends ProjectFacet> facets = factory.createFacets(result, facetType);
+                  Iterable<? extends ProjectFacet> facets = facetFactory.createFacets(result, facetType);
                   for (ProjectFacet projectFacet : facets)
                   {
-                     if (factory.install(result, projectFacet, notProvidedProjectFacetFilter))
+                     if (facetFactory.install(result, projectFacet, notProvidedProjectFacetFilter))
                      {
                         break;
                      }
@@ -377,12 +356,13 @@ public class ProjectFactoryImpl implements ProjectFactory
 
    private void registerAvailableFacets(Project result)
    {
-      for (Class<ProjectFacet> type : registry.getExportedTypes(ProjectFacet.class))
+      FacetFactory facetFactory = getFacetFactory();
+      for (Class<ProjectFacet> type : getAddonRegistry().getExportedTypes(ProjectFacet.class))
       {
-         Iterable<ProjectFacet> facets = factory.createFacets(result, type);
+         Iterable<ProjectFacet> facets = facetFactory.createFacets(result, type);
          for (ProjectFacet facet : facets)
          {
-            if (facet != null && factory.register(result, facet))
+            if (facet != null && facetFactory.register(result, facet))
             {
                if (log.isLoggable(Level.FINE))
                {
@@ -395,16 +375,10 @@ public class ProjectFactoryImpl implements ProjectFactory
 
    private void cacheProject(final Project project)
    {
+      final Imported<ProjectCache> caches = getCaches();
       for (ProjectCache cache : caches)
       {
-         try
-         {
-            cache.store(project);
-         }
-         finally
-         {
-            caches.release(cache);
-         }
+         cache.store(project);
       }
       // If under a transaction, don't start monitoring
       DirectoryResource rootDirectory = project.getRoot().reify(DirectoryResource.class);
@@ -418,14 +392,7 @@ public class ProjectFactoryImpl implements ProjectFactory
             {
                for (ProjectCache cache : caches)
                {
-                  try
-                  {
-                     cache.evict(project);
-                  }
-                  finally
-                  {
-                     caches.release(cache);
-                  }
+                  cache.evict(project);
                }
                monitor.cancel();
             }
@@ -436,7 +403,7 @@ public class ProjectFactoryImpl implements ProjectFactory
 
    private void fireProjectCreated(Project project)
    {
-      for (ProjectListener listener : builtInListeners)
+      for (ProjectListener listener : getBuiltInListeners())
       {
          listener.projectCreated(project);
       }
@@ -455,21 +422,14 @@ public class ProjectFactoryImpl implements ProjectFactory
    @Override
    public Project createTempProject(Iterable<Class<? extends ProjectFacet>> facetTypes) throws IllegalStateException
    {
-      Imported<ProjectProvider> buildSystems = registry.getServices(ProjectProvider.class);
+      Imported<ProjectProvider> buildSystems = getAddonRegistry().getServices(ProjectProvider.class);
       if (buildSystems.isAmbiguous())
          throw new IllegalStateException(
                   "Cannot create generic temporary project in environment where multiple build systems are available. "
                            + "A single build system must be selected.");
 
       ProjectProvider buildSystem = buildSystems.get();
-      try
-      {
-         return createTempProject(buildSystem, facetTypes);
-      }
-      finally
-      {
-         buildSystems.release(buildSystem);
-      }
+      return createTempProject(buildSystem, facetTypes);
    }
 
    @Override
@@ -482,7 +442,7 @@ public class ProjectFactoryImpl implements ProjectFactory
    public Project createTempProject(ProjectProvider buildSystem, Iterable<Class<? extends ProjectFacet>> facetTypes)
    {
       File rootDirectory = OperatingSystemUtils.createTempDir();
-      DirectoryResource addonDir = resourceFactory.create(DirectoryResource.class, rootDirectory);
+      DirectoryResource addonDir = getResourceFactory().create(DirectoryResource.class, rootDirectory);
       DirectoryResource projectDir = addonDir.createTempResource();
       projectDir.deleteOnExit();
       Project project = createProject(projectDir, buildSystem, facetTypes);
@@ -584,14 +544,52 @@ public class ProjectFactoryImpl implements ProjectFactory
    {
       for (ProjectCache cache : caches)
       {
-         try
-         {
-            cache.invalidate();
-         }
-         finally
-         {
-            caches.release(cache);
-         }
+         cache.invalidate();
       }
+   }
+
+   private AddonRegistry getAddonRegistry()
+   {
+      if (addonRegistry == null)
+      {
+         addonRegistry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
+      }
+      return addonRegistry;
+   }
+
+   private FacetFactory getFacetFactory()
+   {
+      if (facetFactory == null)
+      {
+         facetFactory = SimpleContainer.getServices(getClass().getClassLoader(), FacetFactory.class).get();
+      }
+      return facetFactory;
+   }
+
+   private ResourceFactory getResourceFactory()
+   {
+      if (resourceFactory == null)
+      {
+         resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class).get();
+      }
+      return resourceFactory;
+   }
+
+   private Imported<ProjectCache> getCaches()
+   {
+      if (caches == null)
+      {
+         caches = SimpleContainer.getServices(getClass().getClassLoader(), ProjectCache.class);
+      }
+      return caches;
+   }
+
+   private Imported<ProjectListener> getBuiltInListeners()
+   {
+      if (builtInListeners == null)
+      {
+         builtInListeners = SimpleContainer.getServices(getClass().getClassLoader(), ProjectListener.class);
+      }
+      return builtInListeners;
    }
 }

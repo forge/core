@@ -9,8 +9,6 @@ package org.jboss.forge.addon.projects.ui;
 
 import java.io.PrintStream;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.Projects;
@@ -23,6 +21,7 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 /**
  * Prematurely builds the {@link Project} (if exists) and warns if it is valid
@@ -31,12 +30,11 @@ import org.jboss.forge.addon.ui.result.Result;
  */
 public class ProjectBuildStatusListener extends AbstractCommandExecutionListener
 {
-   @Inject
-   private ProjectFactory projectFactory;
-
    @Override
    public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
    {
+      ProjectFactory projectFactory = SimpleContainer
+               .getServices(getClass().getClassLoader(), ProjectFactory.class).get();
       UIContext uiContext = context.getUIContext();
       Project project = Projects.getSelectedProject(projectFactory, uiContext.getSelection());
       if (project != null && project.hasFacet(PackagingFacet.class))

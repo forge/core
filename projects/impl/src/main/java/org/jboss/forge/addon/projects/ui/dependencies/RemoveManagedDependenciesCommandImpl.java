@@ -1,7 +1,5 @@
 package org.jboss.forge.addon.projects.ui.dependencies;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.projects.Project;
@@ -11,19 +9,40 @@ import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 @FacetConstraint(DependencyFacet.class)
 public class RemoveManagedDependenciesCommandImpl extends AbstractProjectCommand implements
          RemoveManagedDependenciesCommand
 {
+   private UISelectMany<Dependency> arguments;
+   private UIInput<Boolean> removeUnmanaged;
+
+   @Override
+   public void initializeUI(UIBuilder builder) throws Exception
+   {
+      Project project = getSelectedProject(builder.getUIContext());
+      InputComponentFactory factory = builder.getInputComponentFactory();
+      arguments = factory.createSelectMany("arguments", 'd', Dependency.class).setLabel("Coordinates").setRequired(true)
+               .setDescription(
+                        "The coordinates of the managed arguments to be removed [groupId :artifactId {:version :scope :packaging}]");
+      removeUnmanaged = factory.createInput("removeUnmanaged", 'r', Boolean.class).setLabel("Remove managed arguments")
+               .setDefaultValue(false)
+               .setDescription(
+                        "Also remove any related arguments from the current project if they are now un-managed, if possible.");
+
+      arguments.setValueChoices(project.getFacet(DependencyFacet.class).getManagedDependencies());
+      builder.add(arguments).add(removeUnmanaged);
+   }
+
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
@@ -31,27 +50,6 @@ public class RemoveManagedDependenciesCommandImpl extends AbstractProjectCommand
                .description("Remove one or more managed arguments from the current project.")
                .name("Project: Remove Managed Dependencies")
                .category(Categories.create("Project", "Manage"));
-   }
-
-   @Inject
-   private ProjectFactory factory;
-
-   @Inject
-   @WithAttributes(shortName = 'd', label = "Coordinates", required = true,
-            description = "The coordinates of the managed arguments to be removed [groupId :artifactId {:version :scope :packaging}]")
-   private UISelectMany<Dependency> arguments;
-
-   @Inject
-   @WithAttributes(shortName = 'r', label = "Remove un-managed arguments", defaultValue = "false", required = false,
-            description = "Also remove any related arguments from the current project if they are now un-managed, if possible.")
-   private UIInput<Boolean> removeUnmanaged;
-
-   @Override
-   public void initializeUI(UIBuilder builder) throws Exception
-   {
-      Project project = getSelectedProject(builder.getUIContext());
-      arguments.setValueChoices(project.getFacet(DependencyFacet.class).getManagedDependencies());
-      builder.add(arguments).add(removeUnmanaged);
    }
 
    @Override
@@ -87,6 +85,7 @@ public class RemoveManagedDependenciesCommandImpl extends AbstractProjectCommand
    @Override
    protected ProjectFactory getProjectFactory()
    {
-      return factory;
+      return SimpleContainer
+               .getServices(getClass().getClassLoader(), ProjectFactory.class).get();
    }
 }

@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.projects.impl.facets;
+package org.jboss.forge.addon.projects.mock.facets;
 
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
@@ -6,7 +6,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 
 @FacetConstraint(ProjectFacetB.class)
-public class ProjectFacetA extends AbstractFacet<Project> implements ProjectFacet
+public class ProjectFacetC extends AbstractFacet<Project> implements ProjectFacet
 {
    @Override
    public boolean install()
