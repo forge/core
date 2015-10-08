@@ -25,14 +25,16 @@ import org.jboss.forge.addon.ui.annotation.Option;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.impl.facets.HintsFacetImpl;
+import org.jboss.forge.addon.ui.impl.input.inject.DefaultInputComponentInjectionPoint;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.InputComponentFactory;
-import org.jboss.forge.addon.ui.input.InputComponentInjectionEnricher;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
+import org.jboss.forge.addon.ui.input.inject.InputComponentInjectionEnricher;
+import org.jboss.forge.addon.ui.input.inject.InputComponentInjectionPoint;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.addons.AddonRegistry;
@@ -45,12 +47,13 @@ import org.jboss.forge.furnace.services.Imported;
  * 
  */
 @Singleton
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "deprecation" })
 public class InputComponentProducer implements InputComponentFactory
 {
    private final AddonRegistry addonRegistry;
    private final Environment environment;
    private final ConverterFactory converterFactory;
+   private final Imported<org.jboss.forge.addon.ui.input.InputComponentInjectionEnricher> deprecatedEnrichers;
    private final Imported<InputComponentInjectionEnricher> enrichers;
 
    @Inject
@@ -60,6 +63,8 @@ public class InputComponentProducer implements InputComponentFactory
       this.environment = addonRegistry.getServices(Environment.class).get();
       this.converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
       this.enrichers = addonRegistry.getServices(InputComponentInjectionEnricher.class);
+      this.deprecatedEnrichers = addonRegistry
+               .getServices(org.jboss.forge.addon.ui.input.InputComponentInjectionEnricher.class);
    }
 
    @Produces
@@ -88,10 +93,7 @@ public class InputComponentProducer implements InputComponentFactory
       UISelectOne<T> input = createSelectOne(paramName, shortName, valueType);
       input.setDeprecated(annotated.isAnnotationPresent(Deprecated.class));
       preconfigureInput(input, withAttributes);
-      for (InputComponentInjectionEnricher enricher : enrichers)
-      {
-         enricher.enrich(injectionPoint, input);
-      }
+      enrichInput(injectionPoint, input);
       return input;
    }
 
@@ -122,10 +124,7 @@ public class InputComponentProducer implements InputComponentFactory
       UISelectMany<T> input = createSelectMany(paramName, shortName, valueType);
       input.setDeprecated(annotated.isAnnotationPresent(Deprecated.class));
       preconfigureInput(input, withAttributes);
-      for (InputComponentInjectionEnricher enricher : enrichers)
-      {
-         enricher.enrich(injectionPoint, input);
-      }
+      enrichInput(injectionPoint, input);
       return input;
    }
 
@@ -156,10 +155,7 @@ public class InputComponentProducer implements InputComponentFactory
       UIInput<T> input = createInput(paramName, shortName, valueType);
       input.setDeprecated(annotated.isAnnotationPresent(Deprecated.class));
       preconfigureInput(input, withAttributes);
-      for (InputComponentInjectionEnricher enricher : enrichers)
-      {
-         enricher.enrich(injectionPoint, input);
-      }
+      enrichInput(injectionPoint, input);
       return input;
    }
 
@@ -190,11 +186,32 @@ public class InputComponentProducer implements InputComponentFactory
       UIInputMany<T> input = createInputMany(paramName, shortName, valueType);
       input.setDeprecated(annotated.isAnnotationPresent(Deprecated.class));
       preconfigureInput(input, withAttributes);
-      for (InputComponentInjectionEnricher enricher : enrichers)
-      {
-         enricher.enrich(injectionPoint, input);
-      }
+      enrichInput(injectionPoint, input);
       return input;
+   }
+
+   @Override
+   public <T> UIInput<T> createInput(String name, Class<T> valueType)
+   {
+      return createInput(name, InputComponents.DEFAULT_SHORT_NAME, valueType);
+   }
+
+   @Override
+   public <T> UIInputMany<T> createInputMany(String name, Class<T> valueType)
+   {
+      return createInputMany(name, InputComponents.DEFAULT_SHORT_NAME, valueType);
+   }
+
+   @Override
+   public <T> UISelectOne<T> createSelectOne(String name, Class<T> valueType)
+   {
+      return createSelectOne(name, InputComponents.DEFAULT_SHORT_NAME, valueType);
+   }
+
+   @Override
+   public <T> UISelectMany<T> createSelectMany(String name, Class<T> valueType)
+   {
+      return createSelectMany(name, InputComponents.DEFAULT_SHORT_NAME, valueType);
    }
 
    private <T> Class<T> resolveRealType(Type type)
@@ -344,33 +361,22 @@ public class InputComponentProducer implements InputComponentFactory
       selectComponent.setValueChoices(choices);
    }
 
+   private <T> void enrichInput(InjectionPoint injectionPoint, InputComponent<?, ?> input)
+   {
+      for (org.jboss.forge.addon.ui.input.InputComponentInjectionEnricher enricher : deprecatedEnrichers)
+      {
+         enricher.enrich(injectionPoint, input);
+      }
+      InputComponentInjectionPoint inputInjectionPoint = DefaultInputComponentInjectionPoint.of(injectionPoint);
+      for (InputComponentInjectionEnricher enricher : enrichers)
+      {
+         enricher.enrich(inputInjectionPoint, input);
+      }
+   }
+
    private void configureRequiredFacets(InputComponent<?, ?> input)
    {
       HintsFacetImpl hintsFacet = new HintsFacetImpl(input, environment);
       input.install(hintsFacet);
-   }
-
-   @Override
-   public <T> UIInput<T> createInput(String name, Class<T> valueType)
-   {
-      return createInput(name, InputComponents.DEFAULT_SHORT_NAME, valueType);
-   }
-
-   @Override
-   public <T> UIInputMany<T> createInputMany(String name, Class<T> valueType)
-   {
-      return createInputMany(name, InputComponents.DEFAULT_SHORT_NAME, valueType);
-   }
-
-   @Override
-   public <T> UISelectOne<T> createSelectOne(String name, Class<T> valueType)
-   {
-      return createSelectOne(name, InputComponents.DEFAULT_SHORT_NAME, valueType);
-   }
-
-   @Override
-   public <T> UISelectMany<T> createSelectMany(String name, Class<T> valueType)
-   {
-      return createSelectMany(name, InputComponents.DEFAULT_SHORT_NAME, valueType);
    }
 }

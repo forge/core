@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.parser.java.ui.converters;
 
-import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.parser.java.converters.PackageRootConverter;
@@ -15,7 +14,8 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.input.InputComponentInjectionEnricher;
+import org.jboss.forge.addon.ui.input.inject.InputComponentInjectionEnricher;
+import org.jboss.forge.addon.ui.input.inject.InputComponentInjectionPoint;
 import org.jboss.forge.furnace.services.Imported;
 
 /**
@@ -34,7 +34,7 @@ public class PackageRootEnricher implements InputComponentInjectionEnricher
 
    @SuppressWarnings("unchecked")
    @Override
-   public void enrich(InjectionPoint injectionPoint, InputComponent<?, ?> input)
+   public void enrich(InputComponentInjectionPoint injectionPoint, InputComponent<?, ?> input)
    {
       String inputType = input.getFacet(HintsFacet.class).getInputType();
       if (InputType.JAVA_PACKAGE_PICKER.equals(inputType) && String.class == input.getValueType())

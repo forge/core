@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.projects.ui;
 
-import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.ConverterFactory;
@@ -18,8 +17,9 @@ import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIContextProvider;
 import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.input.InputComponentInjectionEnricher;
 import org.jboss.forge.addon.ui.input.SingleValued;
+import org.jboss.forge.addon.ui.input.inject.InputComponentInjectionEnricher;
+import org.jboss.forge.addon.ui.input.inject.InputComponentInjectionPoint;
 import org.jboss.forge.addon.ui.util.InputComponents;
 
 /**
@@ -40,7 +40,7 @@ public class DefaultFacetComponentEnricher implements InputComponentInjectionEnr
 
    @SuppressWarnings("unchecked")
    @Override
-   public void enrich(InjectionPoint injectionPoint, InputComponent<?, ?> input)
+   public void enrich(InputComponentInjectionPoint injectionPoint, InputComponent<?, ?> input)
    {
       UIContext context = contextProvider.getUIContext();
       // Setting for Single valued components only at the moment

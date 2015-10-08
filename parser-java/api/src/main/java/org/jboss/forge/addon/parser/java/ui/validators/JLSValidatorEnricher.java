@@ -7,12 +7,11 @@
 
 package org.jboss.forge.addon.parser.java.ui.validators;
 
-import javax.enterprise.inject.spi.InjectionPoint;
-
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.input.InputComponentInjectionEnricher;
+import org.jboss.forge.addon.ui.input.inject.InputComponentInjectionEnricher;
+import org.jboss.forge.addon.ui.input.inject.InputComponentInjectionPoint;
 
 /**
  * 
@@ -22,7 +21,7 @@ public class JLSValidatorEnricher implements InputComponentInjectionEnricher
 {
 
    @Override
-   public void enrich(InjectionPoint injectionPoint, InputComponent<?, ?> input)
+   public void enrich(InputComponentInjectionPoint injectionPoint, InputComponent<?, ?> input)
    {
       String inputType = input.getFacet(HintsFacet.class).getInputType();
       if (inputType != null)

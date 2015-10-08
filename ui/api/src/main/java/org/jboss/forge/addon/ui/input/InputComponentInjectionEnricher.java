@@ -13,7 +13,10 @@ import javax.enterprise.inject.spi.InjectionPoint;
  * Enriches an injected {@link InputComponent}
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @deprecated This interface declares a strong dependency on CDI. Please use
+ *             {@link org.jboss.forge.addon.ui.input.inject.InputComponentInjectionEnricher} instead
  */
+@Deprecated
 public interface InputComponentInjectionEnricher
 {
    public void enrich(InjectionPoint injectionPoint, InputComponent<?, ?> input);
