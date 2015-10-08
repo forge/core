@@ -19,6 +19,7 @@ import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import javax.enterprise.inject.spi.WithAnnotations;
 
 import org.jboss.forge.addon.ui.annotation.Command;
 import org.jboss.forge.furnace.addons.AddonId;
@@ -27,7 +28,7 @@ public class AnnotatedCommandExtension implements Extension
 {
    private static final Map<AddonId, Set<Method>> annotationMethods = new ConcurrentHashMap<>();
 
-   public <T> void observeAnnotationMethods(@Observes ProcessAnnotatedType<T> bean, final BeanManager beanManager)
+   public <T> void observeAnnotationMethods(@WithAnnotations(Command.class) @Observes ProcessAnnotatedType<T> bean, final BeanManager beanManager)
    {
       AnnotatedType<T> annotatedType = bean.getAnnotatedType();
       AddonId addonId = AddonId.fromCoordinates(Thread.currentThread().getName());
