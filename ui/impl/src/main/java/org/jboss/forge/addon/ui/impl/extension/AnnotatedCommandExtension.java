@@ -28,7 +28,8 @@ public class AnnotatedCommandExtension implements Extension
 {
    private static final Map<AddonId, Set<Method>> annotationMethods = new ConcurrentHashMap<>();
 
-   public <T> void observeAnnotationMethods(@WithAnnotations(Command.class) @Observes ProcessAnnotatedType<T> bean, final BeanManager beanManager)
+   public <T> void observeAnnotationMethods(@WithAnnotations(Command.class) @Observes ProcessAnnotatedType<T> bean,
+            final BeanManager beanManager)
    {
       AnnotatedType<T> annotatedType = bean.getAnnotatedType();
       AddonId addonId = AddonId.fromCoordinates(Thread.currentThread().getName());
