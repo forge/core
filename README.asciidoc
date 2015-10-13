@@ -2,7 +2,7 @@
 
 The fastest way to build applications, share your software, and enjoy doing it.
 
-image:https://forge.ci.cloudbees.com/job/forge-core/badge/icon["Build Status", link="https://forge.ci.cloudbees.com/job/forge-core/"]
+image:https://forge.ci.cloudbees.com/job/forge-core-3/badge/icon["Build Status", link="https://forge.ci.cloudbees.com/job/forge-core-3/"]
 image:http://img.shields.io/:license-EPL-blue.svg["License", link="https://www.eclipse.org/legal/epl-v10.html"]
 
 What's new and noteworthy?
