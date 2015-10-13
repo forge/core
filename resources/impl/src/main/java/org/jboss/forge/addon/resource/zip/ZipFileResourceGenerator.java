@@ -8,7 +8,6 @@
 package org.jboss.forge.addon.resource.zip;
 
 import java.io.File;
-import java.io.File;
 
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
