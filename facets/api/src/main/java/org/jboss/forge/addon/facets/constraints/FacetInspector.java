@@ -144,8 +144,7 @@ public abstract class FacetInspector
     * Inspect the given {@link Class} for all {@link FacetConstraintType#REQUIRED} dependency {@link Facet} types. This
     * method inspects the entire constraint tree.
     */
-   public static <FACETEDTYPE extends Faceted<FACETTYPE>, FACETTYPE extends Facet<FACETEDTYPE>> Set<Class<FACETTYPE>> getAllRequiredFacets(
-            final Class<FACETTYPE> inspectedType)
+   public static <FACETTYPE extends Facet<?>> Set<Class<FACETTYPE>> getAllRequiredFacets(final Class<?> inspectedType)
    {
       Set<Class<FACETTYPE>> seen = new LinkedHashSet<Class<FACETTYPE>>();
       return getAllRelatedFacets(seen, inspectedType, FacetConstraintType.REQUIRED);
