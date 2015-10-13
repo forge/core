@@ -57,7 +57,30 @@ public class ShellUtil
     */
    public static String shellifyOptionName(String name)
    {
-      return shellifyName(name);
+      String shellName = shellifyName(name);
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < shellName.length(); i++)
+      {
+         char c = shellName.charAt(i);
+         if (Character.isUpperCase(c))
+         {
+            if (i > 0)
+            {
+               char previousChar = shellName.charAt(i - 1);
+               char nextChar = (i + 1 < shellName.length()) ? shellName.charAt(i + 1) : '\0';
+               if (previousChar != '-' && (!Character.isUpperCase(previousChar) || Character.isLowerCase(nextChar)))
+               {
+                  sb.append('-');
+               }
+            }
+            sb.append(Character.toLowerCase(c));
+         }
+         else
+         {
+            sb.append(c);
+         }
+      }
+      return sb.toString();
    }
 
    /**
