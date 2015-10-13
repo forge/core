@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
@@ -60,7 +59,6 @@ public class AddonUpdateCommandTest
    @AfterClass
    public static void clearRemoteRepository()
    {
-
       if (previousUserSettings == null)
       {
          System.clearProperty(MavenContainer.ALT_USER_SETTINGS_XML_LOCATION);
@@ -97,7 +95,7 @@ public class AddonUpdateCommandTest
    @Test
    public void testUpdateAddon() throws Exception
    {
-      AddonId exampleId = AddonId.fromCoordinates(ADDON_NAME_TO_UPDATE + ",1.0.0.Final");
+      AddonId exampleId = AddonId.fromCoordinates(ADDON_NAME_TO_UPDATE + ",3.0.0.Final");
       addonManager.deploy(exampleId).perform();
 
       try (CommandController controller = uiTestHarness.createCommandController(AddonUpdateCommand.class))
@@ -107,7 +105,6 @@ public class AddonUpdateCommandTest
          assertEquals(AddonCommandConstants.ADDON_UPDATE_COMMAND_NAME, metadata.getName());
          assertEquals(1, controller.getInputs().size());
          controller.setValueFor("named", exampleId.getName());
-         assertTrue(controller.canExecute());
          Result result = controller.execute();
          Assert.assertThat(result, allOf(notNullValue(), not(instanceOf(Failed.class))));
       }
