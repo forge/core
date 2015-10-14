@@ -47,13 +47,12 @@ import org.jboss.forge.furnace.services.Imported;
  * 
  */
 @Singleton
-@SuppressWarnings({ "unchecked", "deprecation" })
+@SuppressWarnings("unchecked")
 public class InputComponentProducer implements InputComponentFactory
 {
    private final AddonRegistry addonRegistry;
    private final Environment environment;
    private final ConverterFactory converterFactory;
-   private final Imported<org.jboss.forge.addon.ui.input.InputComponentInjectionEnricher> deprecatedEnrichers;
    private final Imported<InputComponentInjectionEnricher> enrichers;
 
    @Inject
@@ -63,8 +62,6 @@ public class InputComponentProducer implements InputComponentFactory
       this.environment = addonRegistry.getServices(Environment.class).get();
       this.converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
       this.enrichers = addonRegistry.getServices(InputComponentInjectionEnricher.class);
-      this.deprecatedEnrichers = addonRegistry
-               .getServices(org.jboss.forge.addon.ui.input.InputComponentInjectionEnricher.class);
    }
 
    @Produces
@@ -363,10 +360,6 @@ public class InputComponentProducer implements InputComponentFactory
 
    private <T> void enrichInput(InjectionPoint injectionPoint, InputComponent<?, ?> input)
    {
-      for (org.jboss.forge.addon.ui.input.InputComponentInjectionEnricher enricher : deprecatedEnrichers)
-      {
-         enricher.enrich(injectionPoint, input);
-      }
       InputComponentInjectionPoint inputInjectionPoint = DefaultInputComponentInjectionPoint.of(injectionPoint);
       for (InputComponentInjectionEnricher enricher : enrichers)
       {
