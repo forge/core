@@ -1,27 +1,19 @@
-== JBoss Forge 2
+== JBoss Forge 3
 
 The fastest way to build applications, share your software, and enjoy doing it.
 
-image:https://forge.ci.cloudbees.com/job/forge-core-3/badge/icon["Build Status", link="https://forge.ci.cloudbees.com/job/forge-core-3/"]
+image:https://forge.ci.cloudbees.com/job/forge-core-3.x/badge/icon["Build Status", link="https://forge.ci.cloudbees.com/job/forge-core-3.x/"]
 image:http://img.shields.io/:license-EPL-blue.svg["License", link="https://www.eclipse.org/legal/epl-v10.html"]
 
 What's new and noteworthy?
 --------------------------
 
-- *Addons*: What were previously called "Plugins" in Forge 1, are now "Addons" in Forge 2. This decision was made to clear up confusing verbiage like, "Plugin X has N Plugins" (due to the org.jboss.forge.plugins.Plugin interface in Forge 1.x.)
+- *JDK 8*: Forge 3 now runs on JDK 8 as its minimum requirement. Hello lambdas!
 
-- *Modular Container fully rewritten*: The Forge runtime is now a fully functional Java module system based on JBoss Modules (The same engine behind link:http://www.wildfly.org[WildFly] and link:http://www.jboss.org/products/eap/overview/[JBoss EAP]). This means you may now pick-and-choose which addons are important for you.
+- *Unix-like option names*: The shell option names are now more unix-like: Eg: `--targetPackage` is now `--target-package`.
 
-- *Smaller, leaner, and faster*: Forge 2 now sports a slimmer four megabyte download size, and starts up in under three seconds. (Compared to upwards of 10+ seconds for Forge 1)
-
-- *Better IDE Integration*: Forge 2 addons have been de-coupled from the command line, meaning you can create addons that run as wizards in the IDE, as well as commands in the shell - the same code works in both environments.
-
-We are currently in the process of migrating Forge 1 to Forge 2, so expect to find some Forge 1 functionality missing in the early versions of Forge 2.
-
-See the JavaDocs link:http://docs.jboss.org/forge/javadoc/2.8.1-SNAPSHOT/[here]
-
-== Download Forge 2:
-Forge 2 is packaged inside an Eclipse plugin and also as a standalone ZIP file. They are independent of each other.
+== Download Forge 3:
+Forge 3 is packaged inside an Eclipse plugin and also as a standalone ZIP file. They are independent of each other.
 
 - Eclipse Update Site - http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/
 - Command line tools
@@ -235,7 +227,7 @@ Your complete POM should now look something like this:
    <name>My First Addon</name>
    
    <properties>
-        <version.forge>2.15.2.Final</version.forge>
+        <version.forge>3.0.0.Alpha1</version.forge>
    </properties>
    
    <dependencyManagement>
