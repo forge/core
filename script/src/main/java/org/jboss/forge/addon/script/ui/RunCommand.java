@@ -125,14 +125,25 @@ public class RunCommand extends AbstractShellCommand
             }
          });
          executor.shutdown();
-         int returnCode = process.waitFor();
-         if (returnCode == 0)
+         try
          {
-            result = Results.success();
+            int returnCode = process.waitFor();
+            if (returnCode == 0)
+            {
+               result = Results.success();
+            }
+            else
+            {
+               result = Results.fail("Error while executing native command. See output for more details");
+            }
          }
-         else
+         catch (InterruptedException ie)
          {
-            result = Results.fail("Error while executing native command. See output for more details");
+            result = Results.success("Command execution interrupted");
+         }
+         finally
+         {
+            process.destroy();
          }
       }
       else
