@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -82,6 +84,7 @@ public class ShellImpl implements Shell, UIRuntime
    private final List<CommandExecutionListener> executionListeners = new LinkedList<>();
    private final List<CommandNotFoundListener> commandNotFoundListeners = new LinkedList<>();
 
+   private ExecutorService taskExecutorService = Executors.newCachedThreadPool();
    private final static Logger log = Logger.getLogger(ShellImpl.class.getName());
 
    public ShellImpl(Furnace furnace, Resource<?> initialResource, Settings settings, AddonRegistry addonRegistry)
@@ -166,6 +169,7 @@ public class ShellImpl implements Shell, UIRuntime
    @Override
    public void close()
    {
+      this.taskExecutorService.shutdown();
       this.executionListeners.clear();
       this.commandNotFoundListeners.clear();
       this.console.stop();
@@ -357,6 +361,14 @@ public class ShellImpl implements Shell, UIRuntime
    public boolean isEmbedded()
    {
       return embedded;
+   }
+
+   /**
+    * @return the taskExecutor
+    */
+   public ExecutorService getTaskExecutorService()
+   {
+      return taskExecutorService;
    }
 
    /**

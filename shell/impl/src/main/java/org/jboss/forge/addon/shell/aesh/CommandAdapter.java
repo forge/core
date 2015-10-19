@@ -19,6 +19,7 @@ import org.jboss.aesh.console.command.invocation.CommandInvocation;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.ShellImpl;
 import org.jboss.forge.addon.shell.ui.ShellContext;
+import org.jboss.forge.addon.shell.util.Wait;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.output.UIOutput;
@@ -93,8 +94,9 @@ class CommandAdapter implements Command<CommandInvocation>
          if (!failure)
          {
             Result commandResult = null;
-            try
+            try (Wait wait = new Wait(output.out()))
             {
+               shell.getTaskExecutorService().submit(wait);
                commandResult = interaction.getController().execute();
             }
             catch (Exception e)
