@@ -36,38 +36,37 @@ public class CoordinateBuilder implements Coordinate
       CoordinateBuilder builder = CoordinateBuilder.create();
       // groupId:artifactId:packaging:classifier:version
       String[] split = coordinates.split("\\:");
-      if (split.length == 0)
+      switch (split.length)
       {
-         throw new IllegalArgumentException(
-                  "Malformed coordinate. Should be groupId:artifactId:[packaging]:[classifier]:[version]");
-      }
-      if (split.length > 0)
-      {
+      case 1:
          builder.setGroupId(split[0]);
-      }
-      if (split.length > 1)
-      {
+         break;
+      case 2:
+         builder.setGroupId(split[0]);
          builder.setArtifactId(split[1]);
-      }
-      if (split.length == 3)
-      {
-         // The last one is the version, otherwise, continue parsing
+         break;
+      case 3:
+         builder.setGroupId(split[0]);
+         builder.setArtifactId(split[1]);
          builder.setVersion(split[2]);
-      }
-      else
-      {
-         if (split.length > 2)
-         {
-            builder.setPackaging(split[2]);
-         }
-         if (split.length > 3)
-         {
-            builder.setClassifier(split[3]);
-         }
-         if (split.length > 4)
-         {
-            builder.setVersion(split[4]);
-         }
+         break;
+      case 4:
+         builder.setGroupId(split[0]);
+         builder.setArtifactId(split[1]);
+         builder.setPackaging(split[2]);
+         builder.setVersion(split[3]);
+         break;
+      case 5:
+         builder.setGroupId(split[0]);
+         builder.setArtifactId(split[1]);
+         builder.setPackaging(split[2]);
+         builder.setClassifier(split[3]);
+         builder.setVersion(split[4]);
+         break;
+      default:
+         throw new IllegalArgumentException(
+                  "Malformed coordinate (" + coordinates
+                           + "). Should be groupId:artifactId:[packaging]:[classifier]:[version]");
       }
       return builder;
    }
