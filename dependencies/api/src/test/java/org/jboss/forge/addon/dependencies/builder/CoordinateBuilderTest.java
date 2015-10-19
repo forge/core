@@ -45,4 +45,17 @@ public class CoordinateBuilderTest
       Assert.assertEquals(coordinates, coord.toString());
    }
 
+   @Test
+   public void testCreateCoordinateWithClassifierFromString()
+   {
+      String coordinates = "org.wildfly:wildfly-dist:zip:9.0.0.Final";
+      CoordinateBuilder coord = CoordinateBuilder.create(coordinates);
+      Assert.assertEquals("org.wildfly", coord.getGroupId());
+      Assert.assertEquals("wildfly-dist", coord.getArtifactId());
+      Assert.assertEquals("zip", coord.getPackaging());
+      Assert.assertNull(coord.getClassifier());
+      Assert.assertEquals("9.0.0.Final", coord.getVersion());
+      Assert.assertEquals(coordinates, coord.toString());
+   }
+
 }
