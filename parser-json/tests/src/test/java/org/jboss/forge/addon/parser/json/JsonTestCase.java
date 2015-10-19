@@ -55,8 +55,7 @@ public class JsonTestCase
                .addAsAddonDependencies(
                         AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:parser-json"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:resources")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.addon:resources"));
       return archive;
    }
 
@@ -159,5 +158,18 @@ public class JsonTestCase
       Assert.assertNotNull(jsonObject);
       Assert.assertEquals("George", jsonObject.getString("firstName"));
       Assert.assertEquals("Gastaldi", jsonObject.getString("lastName"));
+   }
+
+   // FORGE-2500
+   @Test
+   public void testJsonResourceDataWriteEmptyArrayString() throws Exception
+   {
+      File tmpFile = File.createTempFile("parser_json_test", ".json");
+      tmpFile.deleteOnExit();
+      Resource<File> resource = resourceFactory.create(tmpFile);
+      Assert.assertThat(resource, CoreMatchers.instanceOf(JsonResource.class));
+      JsonResource jsonResource = resource.reify(JsonResource.class);
+      jsonResource.setContents("[]"); // Json.createArrayBuilder().build().toString()
+      Assert.assertTrue(jsonResource.getJsonArray().isEmpty());
    }
 }

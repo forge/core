@@ -90,7 +90,7 @@ public class JsonResourceImpl extends AbstractFileResource<JsonResource> impleme
       {
          try (JsonReader reader = Json.createReader(data))
          {
-            setContents(reader.readObject());
+            setContents(reader.read());
          }
       }
       catch (Exception e)
