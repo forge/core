@@ -27,7 +27,7 @@ import org.jboss.forge.addon.projects.facets.DependencyFacet;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  *
  */
-public abstract class AbstractJavaEEFacet extends AbstractFacet<Project>implements JavaEEFacet
+public abstract class AbstractJavaEEFacet extends AbstractFacet<Project> implements JavaEEFacet
 {
    // Version is statically set
    protected static final Dependency JAVAEE6 = DependencyBuilder.create("org.jboss.spec:jboss-javaee-6.0")
@@ -97,6 +97,10 @@ public abstract class AbstractJavaEEFacet extends AbstractFacet<Project>implemen
 
    protected boolean dependencyRequirementsMet()
    {
+      if (!origin.hasFacet(DependencyFacet.class))
+      {
+         return false;
+      }
       DependencyFacet deps = origin.getFacet(DependencyFacet.class);
       for (Entry<Dependency, List<Dependency>> group : getRequiredDependencyOptions().entrySet())
       {

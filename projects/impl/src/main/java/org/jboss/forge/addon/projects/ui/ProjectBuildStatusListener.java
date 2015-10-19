@@ -41,7 +41,7 @@ public class ProjectBuildStatusListener extends AbstractCommandExecutionListener
       {
          PackagingFacet facet = project.getFacet(PackagingFacet.class);
          BuildResult buildResult = facet.getBuildResult();
-         if (!buildResult.isSuccess())
+         if (buildResult != null && !buildResult.isSuccess())
          {
             UIOutput output = uiContext.getProvider().getOutput();
             PrintStream err = output.err();
