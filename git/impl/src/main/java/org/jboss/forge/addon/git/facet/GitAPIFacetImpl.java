@@ -10,8 +10,10 @@ package org.jboss.forge.addon.git.facet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
+import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
@@ -19,7 +21,8 @@ import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
  * @author <a href="mailto:jevgeni.zelenkov@gmail.com">Jevgeni Zelenkov</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class GitAPIFacetImpl extends AbstractFacet<Project>implements GitAPIFacet
+@FacetConstraint(DependencyFacet.class)
+public class GitAPIFacetImpl extends AbstractFacet<Project> implements GitAPIFacet
 {
    private static final Dependency GIT_DEPENDENCY = DependencyBuilder.create()
             .setGroupId("org.eclipse.jgit")
