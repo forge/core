@@ -20,6 +20,8 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonStructure;
 import javax.json.JsonWriter;
+import javax.json.JsonWriterFactory;
+import javax.json.stream.JsonGenerator;
 
 import org.jboss.forge.addon.resource.AbstractFileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -115,9 +117,10 @@ public class JsonResourceImpl extends AbstractFileResource<JsonResource> impleme
                throw new IOException("Failed to create file: " + getUnderlyingResourceObject());
             }
          }
-
+         JsonWriterFactory writerFactory = Json
+                  .createWriterFactory(Collections.singletonMap(JsonGenerator.PRETTY_PRINTING, true));
          try (OutputStream out = getFileOperations().createOutputStream(getUnderlyingResourceObject());
-                  JsonWriter writer = Json.createWriter(out))
+                  JsonWriter writer = writerFactory.createWriter(out))
          {
             writer.write(structure);
          }
