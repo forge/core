@@ -8,7 +8,9 @@
 package org.jboss.forge.addon.parser.json.resource;
 
 import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonStructure;
 
 import org.jboss.forge.addon.resource.FileResource;
@@ -37,6 +39,16 @@ public interface JsonResource extends FileResource<JsonResource>
     * Return the {@link JsonObject} representing the underlying Json data
     */
    JsonObject getJsonObject();
+
+   /**
+    * Return a {@link JsonObjectBuilder} pre-populated with the underlying Json data
+    */
+   JsonObjectBuilder getJsonObjectBuilder();
+
+   /**
+    * Return a {@link JsonArrayBuilder} pre-populated with the underlying Json data
+    */
+   JsonArrayBuilder getJsonArrayBuilder();
 
    /**
     * Sets the content to this {@link JsonStructure} (could be an array or object)
