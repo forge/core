@@ -95,7 +95,7 @@ public class AddonUpdateCommandTest
    @Test
    public void testUpdateAddon() throws Exception
    {
-      AddonId exampleId = AddonId.fromCoordinates(ADDON_NAME_TO_UPDATE + ",3.0.0.Final");
+      AddonId exampleId = AddonId.fromCoordinates(ADDON_NAME_TO_UPDATE + ",1.0.0.Final");
       addonManager.deploy(exampleId).perform();
 
       try (CommandController controller = uiTestHarness.createCommandController(AddonUpdateCommand.class))
