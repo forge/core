@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.jboss.forge.addon.manager.impl.utils.CoordinateUtils;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -29,7 +28,6 @@ import org.jboss.forge.furnace.manager.request.InstallRequest;
 import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
 import org.jboss.forge.furnace.manager.spi.Response;
 import org.jboss.forge.furnace.repositories.AddonRepository;
-import org.jboss.forge.furnace.versions.Versions;
 
 public class AddonUpdateCommand extends AbstractUICommand implements AddonCommandConstants
 {
@@ -111,8 +109,11 @@ public class AddonUpdateCommand extends AbstractUICommand implements AddonComman
       AddonManager addonManager = SimpleContainer.getServices(getClass().getClassLoader(), AddonManager.class).get();
       AddonDependencyResolver resolver = SimpleContainer
                .getServices(getClass().getClassLoader(), AddonDependencyResolver.class).get();
-      AddonId addonId = CoordinateUtils.resolveCoordinate(named.getValue(),
-               Versions.getSpecificationVersionFor(this.getClass()), resolver);
+
+      Set<Addon> addons = furnace.getAddonRegistry().getAddons();
+      AddonId addonId = addons.stream().map(a -> a.getId()).filter(a -> a.getName().equals(named.getValue()))
+               .findFirst().get();
+      String addonAPIVersion = resolver.resolveAPIVersion(addonId).get();
       AddonId maxAddonId = addonId;
       try
       {
@@ -120,7 +121,8 @@ public class AddonUpdateCommand extends AbstractUICommand implements AddonComman
 
          for (AddonId id : resolveVersions.get())
          {
-            if (id.getVersion().compareTo(maxAddonId.getVersion()) > 0)
+            if (id.getVersion().compareTo(maxAddonId.getVersion()) > 0
+                     && addonAPIVersion.equals(resolver.resolveAPIVersion(id).get()))
             {
                maxAddonId = id;
             }

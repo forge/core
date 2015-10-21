@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,7 +19,6 @@ import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.AddonManager;
@@ -109,23 +107,10 @@ public class AddonUpdateCommandTest
          Assert.assertThat(result, allOf(notNullValue(), not(instanceOf(Failed.class))));
       }
 
-      boolean found = false;
       String desiredAddonIdName = ADDON_NAME_TO_UPDATE;
-      for (Addon addon : furnace.getAddonRegistry().getAddons())
-      {
-         if (addon.getId().getName().equals(desiredAddonIdName))
-         {
-            // Version should be higher than 1.0.0.Final
-            if (addon.getId().getVersion().compareTo(exampleId.getVersion()) > 0)
-            {
-               found = true;
-               break;
-            }
-         }
-      }
-      if (!found)
-      {
-         fail("Addon was not updated");
-      }
+      boolean found = furnace.getAddonRegistry().getAddons().stream()
+               .anyMatch((addon) -> (addon.getId().getName().equals(desiredAddonIdName)
+                        && addon.getId().getVersion().compareTo(exampleId.getVersion()) > 0));
+      Assert.assertTrue("Addon was not updated", found);
    }
 }
