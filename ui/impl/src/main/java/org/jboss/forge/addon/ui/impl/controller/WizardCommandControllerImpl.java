@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,10 +38,12 @@ import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.NavigationResultEntry;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.result.navigation.NavigationResultTransformer;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.addon.ui.wizard.WizardExecutionListener;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.util.Lists;
 
 /**
  *
@@ -525,25 +528,31 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
 
    private NavigationResultEntry[] getNextFrom(UICommand command)
    {
-      NavigationResultEntry[] result = null;
+      NavigationResult next = null;
+      UINavigationContextImpl navigationContext = new UINavigationContextImpl(context, initialCommand, command);
       if (command instanceof UIWizard)
       {
-         NavigationResult next;
          try
          {
-            next = ((UIWizard) command).next(new UINavigationContextImpl(context));
+            next = ((UIWizard) command).next(navigationContext);
          }
          catch (Exception e)
          {
             logger.log(Level.SEVERE, "Cannot fetch the next steps from " + command, e);
             next = null;
          }
-         if (next != null)
+      }
+      // Transform the existing NavigationResult
+      Set<NavigationResultTransformer> transformers = new TreeSet<>((o1, o2) -> o2.priority() - o1.priority());
+      transformers.addAll(Lists.toList(addonRegistry.getServices(NavigationResultTransformer.class)));
+      for (NavigationResultTransformer transformer : transformers)
+      {
+         if (transformer.handles(navigationContext))
          {
-            result = next.getNext();
+            next = transformer.transform(navigationContext, next);
          }
       }
-      return result;
+      return next == null ? null : next.getNext();
    }
 
    private static class WizardStepEntry

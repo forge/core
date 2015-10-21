@@ -412,3 +412,37 @@ public void initializeUI(UIBuilder builder)
 	builder.add(targetPackage);  
 }
 ----
+
+=== NavigationResultTransformer feature
+
+If you need to add a new step to an existing command, you should implement a `NavigationResultTransformer`. Forge will automatically pick any published `NavigationResultTransformer` service.
+
+[source,java]
+----
+import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
+import org.jboss.forge.addon.ui.context.UINavigationContext;
+import org.jboss.forge.addon.ui.result.NavigationResult;
+import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
+import org.jboss.forge.addon.ui.result.navigation.NavigationResultTransformer;
+
+public class JPANavigationResultTransformer implements NavigationResultTransformer {
+
+	@Override
+	public boolean handles(UINavigationContext context) {
+		// Is this command the 'JPA: Setup' wizard? 
+		return context.getCurrentCommand() instanceof JPASetupWizard;
+	}
+
+	@Override
+	public NavigationResult transform(UINavigationContext context, NavigationResult currentFlow) {
+		// Add my new wizard step to the end of the flow
+		return NavigationResultBuilder.create(currentFlow).add(MyCustomWizardStep.class).build();
+	}
+
+	@Override
+	public int priority() {
+		return 100;
+	}
+}
+----
+

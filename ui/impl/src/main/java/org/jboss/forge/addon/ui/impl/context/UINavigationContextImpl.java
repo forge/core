@@ -22,10 +22,14 @@ public class UINavigationContextImpl implements UINavigationContext
 {
 
    private final UIContext context;
+   private final UICommand initialCommand;
+   private final UICommand currentCommand;
 
-   public UINavigationContextImpl(UIContext context)
+   public UINavigationContextImpl(UIContext context, UICommand initialCommand, UICommand currentCommand)
    {
       this.context = context;
+      this.initialCommand = initialCommand;
+      this.currentCommand = currentCommand;
    }
 
    @Override
@@ -39,5 +43,17 @@ public class UINavigationContextImpl implements UINavigationContext
    public NavigationResult navigateTo(Class<? extends UICommand> next, Class<? extends UICommand>... additional)
    {
       return Results.navigateTo(next, additional);
+   }
+
+   @Override
+   public UICommand getInitialCommand()
+   {
+      return initialCommand;
+   }
+
+   @Override
+   public UICommand getCurrentCommand()
+   {
+      return currentCommand;
    }
 }

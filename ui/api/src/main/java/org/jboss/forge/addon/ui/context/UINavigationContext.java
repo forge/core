@@ -21,4 +21,13 @@ public interface UINavigationContext extends UIContextProvider
    NavigationResult navigateTo(Class<? extends UICommand> next,
             Class<? extends UICommand>... additional);
 
+   /**
+    * The initial command that originated this navigation flow
+    */
+   UICommand getInitialCommand();
+
+   /**
+    * The current command in this navigation flow
+    */
+   UICommand getCurrentCommand();
 }
