@@ -403,7 +403,10 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
                            .getServices(getClass().getClassLoader(), FacetFactory.class).get();
                   for (Class<? extends ProjectFacet> facet : requiredFacets)
                   {
-                     facetFactory.install(project, facet);
+                     if (!project.hasFacet(facet))
+                     {
+                        facetFactory.install(project, facet);
+                     }
                   }
                }
             }
