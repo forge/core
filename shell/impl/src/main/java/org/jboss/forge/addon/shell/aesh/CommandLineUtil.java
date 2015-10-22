@@ -26,6 +26,8 @@ import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.aesh.cl.parser.CommandLineParserException;
 import org.jboss.aesh.cl.parser.OptionParserException;
 import org.jboss.aesh.console.command.completer.CompleterInvocation;
+import org.jboss.forge.addon.configuration.Configuration;
+import org.jboss.forge.addon.configuration.ConfigurationFactory;
 import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.util.ResourcePathResolver;
@@ -52,15 +54,24 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
  */
 class CommandLineUtil
 {
+   /**
+    * System property to set the option style for the UI
+    */
+   private static final String OPTION_STYLE_PROPERTY = "org.jboss.forge.ui.shell_option_style";
+   private static final String DASHED_OPTION_STYLE = "dashed";
+
    private static final Logger logger = Logger.getLogger(CommandLineUtil.class.getName());
 
    private static final String ARGUMENTS_INPUT_NAME = "arguments";
 
    private final ConverterFactory converterFactory;
+   private Configuration userConfig;
 
    public CommandLineUtil(AddonRegistry addonRegistry)
    {
       this.converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
+      ConfigurationFactory configFactory = addonRegistry.getServices(ConfigurationFactory.class).get();
+      this.userConfig = configFactory.getUserConfiguration();
    }
 
    public CommandLineParser<?> generateParser(CommandAdapter command, CommandController commandController,
@@ -97,8 +108,7 @@ class CommandLineUtil
          try
          {
             ProcessedOptionBuilder optionBuilder = new ProcessedOptionBuilder();
-
-            optionBuilder.name(ShellUtil.shellifyOptionName(inputName))
+            optionBuilder.name(toOptionName(inputName))
                      .addDefaultValue(defaultValue == null ? null : defaultValue.toString())
                      .description(input.getLabel())
                      .hasMultipleValues(isMultiple)
@@ -161,7 +171,7 @@ class CommandLineUtil
       Map<String, InputComponent<?, ?>> populatedInputs = new LinkedHashMap<>();
       for (Entry<String, InputComponent<?, ?>> entry : inputs.entrySet())
       {
-         String name = ShellUtil.shellifyOptionName(entry.getKey());
+         String name = toOptionName(entry.getKey());
          InputComponent<?, ?> input = entry.getValue();
          if (ARGUMENTS_INPUT_NAME.equals(name))
          {
@@ -279,5 +289,14 @@ class CommandLineUtil
          resolvedOptionValues = optionValues;
       }
       return resolvedOptionValues;
+   }
+
+   private String toOptionName(String name)
+   {
+      String optionNameStyle = userConfig.getString(OPTION_STYLE_PROPERTY);
+      return DASHED_OPTION_STYLE.equals(optionNameStyle)
+               ? ShellUtil.shellifyOptionNameDashed(name)
+               : ShellUtil.shellifyOptionName(name);
+
    }
 }

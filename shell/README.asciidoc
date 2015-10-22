@@ -26,6 +26,10 @@ This addon provides *standalone* functionality and *exports services* for use in
 |yes
 |no
 
+|configuration
+|yes
+|no
+
 |org.jboss.forge.furnace.container:cdi
 |no
 |no

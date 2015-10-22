@@ -18,42 +18,42 @@ import org.junit.Test;
 public class ShellUtilTest
 {
    /**
-    * Test method for {@link org.jboss.forge.addon.shell.util.ShellUtil#shellifyOptionName(java.lang.String)}.
+    * Test method for {@link org.jboss.forge.addon.shell.util.ShellUtil#shellifyOptionNameDashed(java.lang.String)}.
     */
    @Test
    public void testShellifyOptionName()
    {
-      assertEquals("target-package", ShellUtil.shellifyOptionName("targetPackage", ShellUtil.UNIX_OPTION_STYLE));
+      assertEquals("target-package", ShellUtil.shellifyOptionNameDashed("targetPackage"));
    }
 
    @Test
    public void testShellifyOptionNameWithMultipleCapitalWords()
    {
-      assertEquals("java-ee-version", ShellUtil.shellifyOptionName("javaEEVersion", ShellUtil.UNIX_OPTION_STYLE));
+      assertEquals("java-ee-version", ShellUtil.shellifyOptionNameDashed("javaEEVersion"));
    }
 
    @Test
    public void testShellifyOptionNameMultipleWords()
    {
-      assertEquals("ship-a-release", ShellUtil.shellifyOptionName("shipARelease", ShellUtil.UNIX_OPTION_STYLE));
+      assertEquals("ship-a-release", ShellUtil.shellifyOptionNameDashed("shipARelease"));
    }
 
    @Test
    public void testShellifyOptionNameWithSingleSpace()
    {
-      assertEquals("another-parameter", ShellUtil.shellifyOptionName("Another Parameter", ShellUtil.UNIX_OPTION_STYLE));
+      assertEquals("another-parameter", ShellUtil.shellifyOptionNameDashed("Another Parameter"));
    }
 
    @Test
    public void testShellifyOptionNameWithMultipleSpaces()
    {
-      assertEquals("java-ee-version", ShellUtil.shellifyOptionName("Java EE Version", ShellUtil.UNIX_OPTION_STYLE));
+      assertEquals("java-ee-version", ShellUtil.shellifyOptionNameDashed("Java EE Version"));
    }
 
    @Test
    public void testShellifyOptionNameEndingWithCapitals()
    {
-      assertEquals("java-ee", ShellUtil.shellifyOptionName("javaEE", ShellUtil.UNIX_OPTION_STYLE));
+      assertEquals("java-ee", ShellUtil.shellifyOptionNameDashed("javaEE"));
    }
 
 }
