@@ -63,15 +63,15 @@ class CommandLineUtil
       this.converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
    }
 
-   public CommandLineParser generateParser(CommandAdapter command, CommandController commandController,
+   public CommandLineParser<?> generateParser(CommandAdapter command, CommandController commandController,
             ShellContext shellContext,
             Map<String, InputComponent<?, ?>> inputs)
    {
-      ProcessedCommand processedCommand = generateCommand(command, commandController, shellContext, inputs);
+      ProcessedCommand<?> processedCommand = generateCommand(command, commandController, shellContext, inputs);
       return new ForgeCommandLineParser(processedCommand, this, inputs, shellContext);
    }
 
-   private ProcessedCommand generateCommand(final CommandAdapter commandAdapter,
+   private ProcessedCommand<?> generateCommand(final CommandAdapter commandAdapter,
             final CommandController commandController, final ShellContext shellContext,
             final Map<String, InputComponent<?, ?>> inputs)
    {
@@ -155,7 +155,7 @@ class CommandLineUtil
       }
    }
 
-   public Map<String, InputComponent<?, ?>> populateUIInputs(CommandLine commandLine,
+   public Map<String, InputComponent<?, ?>> populateUIInputs(CommandLine<?> commandLine,
             Map<String, InputComponent<?, ?>> inputs, UIContext context)
    {
       Map<String, InputComponent<?, ?>> populatedInputs = new LinkedHashMap<>();

@@ -33,10 +33,10 @@ import org.jboss.forge.addon.shell.ui.ShellContextImpl;
 class ForgeCommandContainer implements CommandContainer
 {
    private final ShellContextImpl context;
-   private final CommandLineParser parser;
+   private final CommandLineParser<?> parser;
    private final Command<CommandInvocation> command;
 
-   ForgeCommandContainer(ShellContextImpl context, CommandLineParser parser,
+   ForgeCommandContainer(ShellContextImpl context, CommandLineParser<?> parser,
             Command<CommandInvocation> command)
    {
       this.context = context;
@@ -51,7 +51,7 @@ class ForgeCommandContainer implements CommandContainer
    }
 
    @Override
-   public CommandLineParser getParser()
+   public CommandLineParser<?> getParser()
    {
       return parser;
    }
