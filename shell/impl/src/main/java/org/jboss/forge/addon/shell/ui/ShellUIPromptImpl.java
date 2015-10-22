@@ -216,6 +216,10 @@ public class ShellUIPromptImpl implements UIPrompt
       {
          description = " (" + description + ")";
       }
+      else
+      {
+         description = "";
+      }
       String defaultValueDescription;
       if (componentValue instanceof Collection)
       {
