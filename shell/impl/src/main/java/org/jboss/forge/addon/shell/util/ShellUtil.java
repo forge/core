@@ -23,6 +23,11 @@ import org.jboss.forge.addon.resource.FileResource;
  */
 public class ShellUtil
 {
+   /**
+    * System property to set the option style for the UI
+    */
+   public static final String OPTION_STYLE_PROPERTY = "org.jboss.forge.ui.shell_option_style";
+   public static final String UNIX_OPTION_STYLE = "unix";
 
    private static final Pattern WHITESPACES = Pattern.compile("\\W+");
    private static final Pattern COLONS = Pattern.compile("\\:");
@@ -57,30 +62,49 @@ public class ShellUtil
     */
    public static String shellifyOptionName(String name)
    {
-      String shellName = shellifyName(name);
-      StringBuilder sb = new StringBuilder();
-      for (int i = 0; i < shellName.length(); i++)
+      return shellifyOptionName(name, System.getProperty(OPTION_STYLE_PROPERTY));
+   }
+
+   /**
+    * Shellifies an option name using the provided style
+    * 
+    * @param name
+    * @param style
+    * @return
+    */
+   public static String shellifyOptionName(String name, String style)
+   {
+      if (UNIX_OPTION_STYLE.equals(style))
       {
-         char c = shellName.charAt(i);
-         if (Character.isUpperCase(c))
+         String shellName = shellifyName(name);
+         StringBuilder sb = new StringBuilder();
+         for (int i = 0; i < shellName.length(); i++)
          {
-            if (i > 0)
+            char c = shellName.charAt(i);
+            if (Character.isUpperCase(c))
             {
-               char previousChar = shellName.charAt(i - 1);
-               char nextChar = (i + 1 < shellName.length()) ? shellName.charAt(i + 1) : '\0';
-               if (previousChar != '-' && (!Character.isUpperCase(previousChar) || Character.isLowerCase(nextChar)))
+               if (i > 0)
                {
-                  sb.append('-');
+                  char previousChar = shellName.charAt(i - 1);
+                  char nextChar = (i + 1 < shellName.length()) ? shellName.charAt(i + 1) : '\0';
+                  if (previousChar != '-' && (!Character.isUpperCase(previousChar) || Character.isLowerCase(nextChar)))
+                  {
+                     sb.append('-');
+                  }
                }
+               sb.append(Character.toLowerCase(c));
             }
-            sb.append(Character.toLowerCase(c));
+            else
+            {
+               sb.append(c);
+            }
          }
-         else
-         {
-            sb.append(c);
-         }
+         return sb.toString();
       }
-      return sb.toString();
+      else
+      {
+         return shellifyName(name);
+      }
    }
 
    /**

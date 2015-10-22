@@ -23,37 +23,37 @@ public class ShellUtilTest
    @Test
    public void testShellifyOptionName()
    {
-      assertEquals("target-package", ShellUtil.shellifyOptionName("targetPackage"));
+      assertEquals("target-package", ShellUtil.shellifyOptionName("targetPackage", ShellUtil.UNIX_OPTION_STYLE));
    }
 
    @Test
    public void testShellifyOptionNameWithMultipleCapitalWords()
    {
-      assertEquals("java-ee-version", ShellUtil.shellifyOptionName("javaEEVersion"));
+      assertEquals("java-ee-version", ShellUtil.shellifyOptionName("javaEEVersion", ShellUtil.UNIX_OPTION_STYLE));
    }
 
    @Test
    public void testShellifyOptionNameMultipleWords()
    {
-      assertEquals("ship-a-release", ShellUtil.shellifyOptionName("shipARelease"));
+      assertEquals("ship-a-release", ShellUtil.shellifyOptionName("shipARelease", ShellUtil.UNIX_OPTION_STYLE));
    }
 
    @Test
    public void testShellifyOptionNameWithSingleSpace()
    {
-      assertEquals("another-parameter", ShellUtil.shellifyOptionName("Another Parameter"));
+      assertEquals("another-parameter", ShellUtil.shellifyOptionName("Another Parameter", ShellUtil.UNIX_OPTION_STYLE));
    }
 
    @Test
    public void testShellifyOptionNameWithMultipleSpaces()
    {
-      assertEquals("java-ee-version", ShellUtil.shellifyOptionName("Java EE Version"));
+      assertEquals("java-ee-version", ShellUtil.shellifyOptionName("Java EE Version", ShellUtil.UNIX_OPTION_STYLE));
    }
 
    @Test
    public void testShellifyOptionNameEndingWithCapitals()
    {
-      assertEquals("java-ee", ShellUtil.shellifyOptionName("javaEE"));
+      assertEquals("java-ee", ShellUtil.shellifyOptionName("javaEE", ShellUtil.UNIX_OPTION_STYLE));
    }
 
 }
