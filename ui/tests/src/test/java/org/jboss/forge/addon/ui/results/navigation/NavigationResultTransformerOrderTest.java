@@ -43,7 +43,7 @@ public class NavigationResultTransformerOrderTest
    private UITestHarness uiTestHarness;
 
    @Test
-   public void shouldHaveLastNameCommandAsNextStep() throws Exception
+   public void shouldHaveAddedAddressCommandAsLastStep() throws Exception
    {
       try (WizardCommandController controller = uiTestHarness.createWizardController(FirstNameWizard.class))
       {
