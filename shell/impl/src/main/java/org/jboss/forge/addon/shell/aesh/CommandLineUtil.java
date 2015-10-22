@@ -16,7 +16,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.CommandLine;
-import org.jboss.aesh.cl.activation.OptionActivator;
 import org.jboss.aesh.cl.completer.OptionCompleter;
 import org.jboss.aesh.cl.internal.ProcessedCommand;
 import org.jboss.aesh.cl.internal.ProcessedCommandBuilder;
@@ -126,15 +125,7 @@ class CommandLineUtil
             OptionCompleter<CompleterInvocation> completer = OptionCompleterFactory.getCompletionFor(
                      input, shellContext, converterFactory);
             optionBuilder.completer(completer);
-            optionBuilder.activator(new OptionActivator()
-            {
-               @Override
-               @SuppressWarnings("rawtypes")
-               public boolean isActivated(ProcessedCommand processedCommand)
-               {
-                  return input.isEnabled();
-               }
-            }).valueSeparator(' ');
+            optionBuilder.activator((cmd) -> input.isEnabled()).valueSeparator(' ');
 
             if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
             {

@@ -9,6 +9,7 @@ package org.jboss.forge.bootstrap.listener;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.Furnace;
@@ -78,29 +79,24 @@ public class GreetingListener implements ContainerLifecycleListener
 
    private void shellProgressInformation()
    {
-      new Thread()
-      {
-
-         @Override
-         public void run()
+      ForkJoinPool commonPool = ForkJoinPool.commonPool();
+      commonPool.submit(() -> {
+         String anim = "|/-\\";
+         int x = 0;
+         while (showProgress)
          {
-            String anim = "|/-\\";
-            int x = 0;
-            while (showProgress)
+            x++;
+            String data = "\r" + anim.charAt(x % anim.length());
+            try
             {
-               x++;
-               String data = "\r" + anim.charAt(x % anim.length());
-               try
-               {
-                  System.out.write(data.getBytes());
-                  Thread.sleep(50);
-               }
-               catch (Exception e)
-               {
-                  break;
-               }
+               System.out.write(data.getBytes());
+               Thread.sleep(50);
+            }
+            catch (Exception e)
+            {
+               break;
             }
          }
-      }.start();
+      });
    }
 }

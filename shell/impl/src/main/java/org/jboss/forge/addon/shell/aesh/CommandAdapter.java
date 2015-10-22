@@ -10,6 +10,7 @@ package org.jboss.forge.addon.shell.aesh;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -96,7 +97,8 @@ class CommandAdapter implements Command<CommandInvocation>
             Result commandResult = null;
             try (Wait wait = new Wait(output.out()))
             {
-               shell.getTaskExecutorService().submit(wait);
+               // Execute wait in parallel
+               ForkJoinPool.commonPool().submit(wait);
                commandResult = interaction.getController().execute();
             }
             catch (Exception e)
