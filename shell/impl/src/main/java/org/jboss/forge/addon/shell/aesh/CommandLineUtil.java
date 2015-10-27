@@ -284,7 +284,7 @@ class CommandLineUtil
 
    private String toOptionName(String name)
    {
-      String optionNameStyle = userConfig.getString(OPTION_STYLE_PROPERTY);
+      String optionNameStyle = userConfig.getString(OPTION_STYLE_PROPERTY, DASHED_OPTION_STYLE);
       return DASHED_OPTION_STYLE.equals(optionNameStyle)
                ? ShellUtil.shellifyOptionNameDashed(name)
                : ShellUtil.shellifyOptionName(name);
