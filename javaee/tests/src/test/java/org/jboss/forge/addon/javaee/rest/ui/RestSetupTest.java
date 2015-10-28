@@ -78,7 +78,7 @@ public class RestSetupTest
       Project tempProject = projectFactory.createTempProject(Arrays
                .<Class<? extends ProjectFacet>> asList(JavaSourceFacet.class));
       shell.getShell().setCurrentResource(tempProject.getRoot());
-      shell.execute("rest-setup --jaxrsVersion 2.0", 15, TimeUnit.SECONDS);
+      shell.execute("rest-setup --jaxrs-version 2.0", 15, TimeUnit.SECONDS);
       Resource<?> currentResource = shell.getShell().getCurrentResource();
       Project project = projectFactory.findProject(currentResource);
       Assert.assertTrue(project.hasFacet(RestFacet_2_0.class));
@@ -90,8 +90,8 @@ public class RestSetupTest
       Project tempProject = projectFactory.createTempProject(Arrays
                .<Class<? extends ProjectFacet>> asList(JavaSourceFacet.class));
       shell.getShell().setCurrentResource(tempProject.getRoot());
-      shell.execute("javaee-setup --javaEEVersion 7", 15, TimeUnit.SECONDS);
-      shell.execute("rest-setup --jaxrsVersion 2.0", 5, TimeUnit.MINUTES);
+      shell.execute("javaee-setup --java-ee-version 7", 15, TimeUnit.SECONDS);
+      shell.execute("rest-setup --jaxrs-version 2.0", 5, TimeUnit.MINUTES);
       Resource<?> currentResource = shell.getShell().getCurrentResource();
       Project project = projectFactory.findProject(currentResource);
       DependencyFacet dependencyFacet = project.getFacet(DependencyFacet.class);

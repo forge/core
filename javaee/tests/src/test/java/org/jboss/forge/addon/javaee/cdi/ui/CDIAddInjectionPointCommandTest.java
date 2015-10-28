@@ -105,9 +105,9 @@ public class CDIAddInjectionPointCommandTest
    public void checkCommandShell() throws Exception
    {
       shellTest.getShell().setCurrentResource(project.getRoot());
-      shellTest.execute("cdi-new-bean --named DummyBean --targetPackage org.test", 10, TimeUnit.SECONDS);
+      shellTest.execute("cdi-new-bean --named DummyBean --target-package org.test", 10, TimeUnit.SECONDS);
       Result result = shellTest.execute(
-               "cdi-add-injection-point --named dummy --type java.lang.String --targetClass org.test.DummyBean", 10,
+               "cdi-add-injection-point --named dummy --type java.lang.String --target-class org.test.DummyBean", 10,
                TimeUnit.SECONDS);
 
       Assert.assertThat(result, not(instanceOf(Failed.class)));

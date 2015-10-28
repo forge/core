@@ -114,7 +114,7 @@ public class CDINewExtensionCommandTest
    public void checkCommandShell() throws Exception
    {
       shellTest.getShell().setCurrentResource(project.getRoot());
-      Result result = shellTest.execute("cdi-new-extension --named DummyExtension --targetPackage org.test", 10,
+      Result result = shellTest.execute("cdi-new-extension --named DummyExtension --target-package org.test", 10,
                TimeUnit.SECONDS);
 
       Assert.assertThat(result, not(instanceOf(Failed.class)));
@@ -137,7 +137,7 @@ public class CDINewExtensionCommandTest
    {
       shellTest.getShell().setCurrentResource(project.getRoot());
       Result result = shellTest.execute(
-               "cdi-new-extension --named DummyExtension --targetPackage org.test --enable=false", 10,
+               "cdi-new-extension --named DummyExtension --target-package org.test --enable=false", 10,
                TimeUnit.SECONDS);
 
       Assert.assertThat(result, not(instanceOf(Failed.class)));

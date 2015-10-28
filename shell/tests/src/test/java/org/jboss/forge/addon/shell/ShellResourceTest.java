@@ -233,12 +233,12 @@ public class ShellResourceTest
    public void testResolveResources() throws Exception
    {
       String userHomePath = OperatingSystemUtils.getUserHomePath();
-      shellTest.execute("resourcecommand --singleFileResource ~", 10, TimeUnit.SECONDS);
+      shellTest.execute("resourcecommand --single-file-resource ~", 10, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), containsString("Single File Resource: " + userHomePath));
 
       shellTest.clearScreen();
 
-      shellTest.execute("resourcecommand --singleFileResource .", 10, TimeUnit.SECONDS);
+      shellTest.execute("resourcecommand --single-file-resource .", 10, TimeUnit.SECONDS);
       Assert.assertThat(shellTest.getStdOut(), containsString("Single File Resource: "
                + shellTest.getShell().getCurrentResource()));
    }

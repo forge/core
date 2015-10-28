@@ -96,8 +96,8 @@ public class CommandCompletionTest
    @Test
    public void testValuesWithSpaceCompletion() throws Exception
    {
-      test.waitForCompletion("foocommand --valueWithSpaces Value\\ ",
-               "foocommand --valueWithSpaces Value",
+      test.waitForCompletion("foocommand --value-with-spaces Value\\ ",
+               "foocommand --value-with-spaces Value",
                QUANTITY, TimeUnit.SECONDS);
       String stdOut = test.waitForCompletion(QUANTITY, TimeUnit.SECONDS);
       Assert.assertThat(
@@ -109,7 +109,7 @@ public class CommandCompletionTest
    @Test
    public void testValuesWithSpaceCompletionWithSlash() throws Exception
    {
-      test.write("foocommand --valueWithSpaces Value\\");
+      test.write("foocommand --value-with-spaces Value\\");
       test.sendCompletionSignal();
       test.waitForBufferChanged(new Callable<Object>()
       {
@@ -140,7 +140,7 @@ public class CommandCompletionTest
    @Test
    public void testUISelectManyWithEnum() throws Exception
    {
-      test.waitForCompletion("foocommand --manyCareer ME", "foocommand --manyCareer M",
+      test.waitForCompletion("foocommand --many-career ME", "foocommand --many-career M",
                QUANTITY, TimeUnit.SECONDS);
       String stdOut = test.waitForCompletion(QUANTITY, TimeUnit.SECONDS);
       Assert.assertThat(stdOut,
@@ -150,7 +150,7 @@ public class CommandCompletionTest
    @Test
    public void testUISelectManyWithEnumWildcard() throws Exception
    {
-      test.waitForCompletion("foocommand --manyCareer ME", "foocommand --manyCareer M",
+      test.waitForCompletion("foocommand --many-career ME", "foocommand --many-career M",
                QUANTITY, TimeUnit.SECONDS);
       String stdOut = test.waitForCompletion(QUANTITY, TimeUnit.SECONDS);
       Assert.assertThat(stdOut,

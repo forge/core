@@ -118,10 +118,10 @@ public class CDINewInterceptorCommandTest
    public void checkCommandShell() throws Exception
    {
       shellTest.getShell().setCurrentResource(project.getRoot());
-      shellTest.execute("cdi-new-interceptor-binding --named DummyInterceptorBinding --targetPackage org.test", 10,
+      shellTest.execute("cdi-new-interceptor-binding --named DummyInterceptorBinding --target-package org.test", 10,
                TimeUnit.SECONDS);
       Result result = shellTest.execute(
-               "cdi-new-interceptor --named Dummy --interceptorBinding org.test.DummyInterceptorBinding", 10,
+               "cdi-new-interceptor --named Dummy --interceptor-binding org.test.DummyInterceptorBinding", 10,
                TimeUnit.SECONDS);
 
       Assert.assertThat(result, not(instanceOf(Failed.class)));

@@ -65,7 +65,7 @@ public class FacesScaffoldTest
    @Test
    public void shouldCreateOneErrorPageForEachErrorCode() throws Exception
    {
-      shellTest.execute("servlet-setup --servletVersion 3.1", 10, TimeUnit.SECONDS);
+      shellTest.execute("servlet-setup --servlet-version 3.1", 10, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-entity --named Customer", 10, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-field --named firstName", 10, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-entity --named Publisher", 10, TimeUnit.SECONDS);
@@ -79,7 +79,7 @@ public class FacesScaffoldTest
 
       String entityPackageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + ".model";
       Result scaffoldGenerate1 = shellTest
-               .execute(("scaffold-generate --webRoot /admin --targets " + entityPackageName
+               .execute(("scaffold-generate --web-root /admin --targets " + entityPackageName
                         + ".Customer"), 10,
                         TimeUnit.SECONDS);
       Assert.assertThat(scaffoldGenerate1, not(instanceOf(Failed.class)));
@@ -87,7 +87,7 @@ public class FacesScaffoldTest
       Assert.assertEquals(2, servletFacet.getConfig().getAllErrorPage().size());
 
       Result scaffoldGenerate2 = shellTest
-               .execute(("scaffold-generate --webRoot /admin --targets " + entityPackageName
+               .execute(("scaffold-generate --web-root /admin --targets " + entityPackageName
                         + ".Publisher"), 10,
                         TimeUnit.SECONDS);
       Assert.assertThat(scaffoldGenerate2, not(instanceOf(Failed.class)));

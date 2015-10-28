@@ -117,7 +117,7 @@ public class JPANewEntityCommandTest
    {
       shellTest.getShell().setCurrentResource(project.getRoot());
       Result result = shellTest
-               .execute(("jpa-new-entity --named Customer --targetPackage org.lincoln --idStrategy AUTO --tableName CUSTOMER_TABLE"),
+               .execute(("jpa-new-entity --named Customer --target-package org.lincoln --id-strategy AUTO --table-name CUSTOMER_TABLE"),
                         10, TimeUnit.SECONDS);
 
       Assert.assertThat(result, not(instanceOf(Failed.class)));

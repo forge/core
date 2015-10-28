@@ -65,8 +65,8 @@ public class NewProjectShellTest
 
       Result result = test.execute(("project-new " +
                "--named lincoln " +
-               "--topLevelPackage org.lincoln " +
-               "--targetLocation " + target.getAbsolutePath() + " " +
+               "--top-level-package org.lincoln " +
+               "--target-location " + target.getAbsolutePath() + " " +
                "--type jar " +
                "--overwrite " +
                "--version 1.0.0-SNAPSHOT"), 10, TimeUnit.SECONDS);
@@ -86,7 +86,7 @@ public class NewProjectShellTest
 
       Result result = test.execute(("project-new " +
                "--named lincoln-three " +
-               "--targetLocation " + target.getAbsolutePath() + " " +
+               "--target-location " + target.getAbsolutePath() + " " +
                "--type jar " +
                "--version 1.0.0-SNAPSHOT"), 10, TimeUnit.SECONDS);
 

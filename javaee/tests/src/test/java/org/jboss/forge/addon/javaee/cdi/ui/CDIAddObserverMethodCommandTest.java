@@ -109,9 +109,9 @@ public class CDIAddObserverMethodCommandTest
    public void checkCommandShell() throws Exception
    {
       shellTest.getShell().setCurrentResource(project.getRoot());
-      shellTest.execute("cdi-new-bean --named DummyBean --targetPackage org.test", 10, TimeUnit.SECONDS);
+      shellTest.execute("cdi-new-bean --named DummyBean --target-package org.test", 10, TimeUnit.SECONDS);
       Result result = shellTest.execute(
-               "cdi-add-observer-method --named dummy --eventType java.lang.String --targetClass org.test.DummyBean",
+               "cdi-add-observer-method --named dummy --event-type java.lang.String --target-class org.test.DummyBean",
                10,
                TimeUnit.SECONDS);
 

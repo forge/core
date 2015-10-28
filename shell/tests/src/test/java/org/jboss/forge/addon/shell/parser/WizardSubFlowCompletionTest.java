@@ -60,14 +60,15 @@ public class WizardSubFlowCompletionTest
    @Test
    public void testWizardInitialStepAutocomplete() throws Exception
    {
-      // flow --name george --flowOneInput xyz --flowOneOneInput abc --flowTwoInput 42
+      // flow --name george --flow-one-input xyz --flow-one-one-input abc --flow-two-input 42
       int timeoutQuantity = 5;
       test.waitForCompletion("flow ", "fl", timeoutQuantity, TimeUnit.SECONDS);
       test.waitForCompletion("flow --name ", "--", timeoutQuantity, TimeUnit.SECONDS);
-      test.waitForCompletion("flow --name george --flowOneInput ", "george --", timeoutQuantity, TimeUnit.SECONDS);
-      test.waitForCompletion("flow --name george --flowOneInput xyz --flowOneOneInput ", "xyz --", timeoutQuantity,
+      test.waitForCompletion("flow --name george --flow-one-input ", "george --", timeoutQuantity, TimeUnit.SECONDS);
+      test.waitForCompletion("flow --name george --flow-one-input xyz --flow-one-one-input ", "xyz --", timeoutQuantity,
                TimeUnit.SECONDS);
-      test.waitForCompletion("flow --name george --flowOneInput xyz --flowOneOneInput abc --flowTwoInput ", "abc --",
+      test.waitForCompletion("flow --name george --flow-one-input xyz --flow-one-one-input abc --flow-two-input ",
+               "abc --",
                timeoutQuantity, TimeUnit.SECONDS);
    }
 }

@@ -349,11 +349,11 @@ public class JavaAddAnnotationCommandTest
    public void testAddAnnotationFromShell() throws Exception
    {
       shellTest.getShell().setCurrentResource(project.getRoot());
-      shellTest.execute("java-new-class --named MyClass --targetPackage org.demo.classes", 15, TimeUnit.SECONDS);
+      shellTest.execute("java-new-class --named MyClass --target-package org.demo.classes", 15, TimeUnit.SECONDS);
       JavaResource javaResource = project.getFacet(JavaSourceFacet.class).getJavaResource("org.demo.classes.MyClass");
       Assert.assertTrue(javaResource.exists());
       Result result = shellTest.execute(
-               "java-add-annotation --annotation java.lang.annotation.Documented --targetClass org.test.MyClass", 5,
+               "java-add-annotation --annotation java.lang.annotation.Documented --target-class org.test.MyClass", 5,
                TimeUnit.SECONDS);
       Assert.assertThat(result, not(instanceOf(Failed.class)));
       JavaType<?> javaType = javaResource.getJavaType();
