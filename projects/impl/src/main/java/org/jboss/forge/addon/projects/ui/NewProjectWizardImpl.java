@@ -113,7 +113,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
 
    private void configureVersionInput(InputComponentFactory factory)
    {
-      version = factory.createInput("version", String.class);
+      version = factory.createInput("version", String.class).setLabel("Version");
       version.setDefaultValue("1.0.0-SNAPSHOT");
    }
 
