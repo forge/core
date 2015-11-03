@@ -21,7 +21,7 @@
    </modules>
 
    <properties>
-      <version.roaster>2.17.1.Final</version.roaster>
+      <version.roaster>2.17.2.Final</version.roaster>
    </properties>
 
    <dependencyManagement>
