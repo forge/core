@@ -2,6 +2,8 @@ package org.jboss.forge.addon.manager.impl.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
@@ -22,6 +24,7 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 import org.jboss.forge.addon.ui.result.Result;
@@ -36,6 +39,7 @@ import org.jboss.forge.furnace.manager.AddonManager;
 import org.jboss.forge.furnace.manager.request.InstallRequest;
 import org.jboss.forge.furnace.manager.request.RemoveRequest;
 import org.jboss.forge.furnace.util.Addons;
+import org.jboss.forge.furnace.util.Lists;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.versions.Versions;
 
@@ -47,7 +51,7 @@ import org.jboss.forge.furnace.versions.Versions;
 public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements AddonCommandConstants
 {
    private UIInput<URLResource> url;
-   private UIInput<String> coordinate;
+   private UIInputMany<String> coordinate;
    private UIInput<String> ref;
 
    @Override
@@ -67,7 +71,7 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       InputComponentFactory factory = builder.getInputComponentFactory();
       url = factory.createInput("url", 'u', URLResource.class).setLabel("GIT Repository URL")
                .setDescription("The git repository location").setRequired(true);
-      coordinate = factory.createInput("coordinate", 'c', String.class).setLabel("Coordinate")
+      coordinate = factory.createInputMany("coordinate", 'c', String.class).setLabel("Coordinate")
                .setDescription("The coordinates of this addon if multiple addons are available");
       ref = factory.createInput("ref", 'r', String.class).setLabel("Branch/Tag")
                .setDescription("The branch/tag (ref) to use if different from default");
@@ -88,7 +92,8 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       DirectoryResource projectRoot = resourceFactory.create(DirectoryResource.class, tempDir);
       UIProgressMonitor progressMonitor = context.getProgressMonitor();
       UIOutput output = context.getUIContext().getProvider().getOutput();
-      progressMonitor.beginTask("Installing Addon from Git", 4);
+      progressMonitor.beginTask("Installing Addon from Git",
+               3 + Math.max(1, Lists.toList(coordinate.getValue()).size()));
 
       progressMonitor.subTask("Cloning repository in " + tempDir);
 
@@ -118,40 +123,46 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
          return Results.fail("Unable to execute project build", e);
       }
       progressMonitor.worked(1);
-      AddonId id = null;
+      List<AddonId> ids = new ArrayList<>();
       try
       {
          if (coordinate.hasValue())
          {
-            try
+            for (String c : coordinate.getValue())
             {
-               id = AddonId.fromCoordinates(coordinate.getValue());
-            }
-            catch (IllegalArgumentException e)
-            {
-               id = AddonId.from(coordinate.getValue(), buildCoordinate.getVersion());
+               try
+               {
+                  ids.add(AddonId.fromCoordinates(c));
+               }
+               catch (IllegalArgumentException e)
+               {
+                  ids.add(AddonId.from(c, buildCoordinate.getVersion()));
+               }
             }
          }
          else
          {
-            id = AddonId.from(buildCoordinate.getGroupId() + ":" + buildCoordinate.getArtifactId(),
-                     buildCoordinate.getVersion());
+            ids.add(AddonId.from(buildCoordinate.getGroupId() + ":" + buildCoordinate.getArtifactId(),
+                     buildCoordinate.getVersion()));
          }
-         progressMonitor.subTask("Removing previous addon installation (" + id + ")");
-         RemoveRequest removeRequest = addonManager.remove(id);
-         removeRequest.perform();
-         Addons.waitUntilStopped(registry.getAddon(id));
-         progressMonitor.worked(1);
+         for (AddonId id : ids)
+         {
+            progressMonitor.subTask("Removing previous addon installation (" + id + ")");
+            RemoveRequest removeRequest = addonManager.remove(id);
+            removeRequest.perform();
+            Addons.waitUntilStopped(registry.getAddon(id));
+            progressMonitor.worked(1);
 
-         progressMonitor.subTask("Installing addon (" + id + ")");
-         InstallRequest installRequest = addonManager.install(id);
-         installRequest.perform();
+            progressMonitor.subTask("Installing addon (" + id + ")");
+            InstallRequest installRequest = addonManager.install(id);
+            installRequest.perform();
+         }
          progressMonitor.done();
-         return Results.success("Addon " + id + " was installed successfully.");
+         return Results.success("Addon(s) " + ids + " installed successfully.");
       }
       catch (Throwable t)
       {
-         return Results.fail("Addon " + id + " could not be installed: " + t.getMessage(), t);
+         return Results.fail("Addon(s) " + ids + " could not be installed: " + t.getMessage(), t);
       }
    }
 
