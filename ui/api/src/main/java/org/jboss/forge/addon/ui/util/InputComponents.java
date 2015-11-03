@@ -291,7 +291,8 @@ public final class InputComponents
       {
          ret = false;
       }
-      else if ((input instanceof ManyValued) && (value instanceof Iterable) && !((Iterable) value).iterator().hasNext())
+      else if (!input.getValueType().isInstance(value) && value instanceof Iterable
+               && !((Iterable) value).iterator().hasNext())
       {
          ret = false;
       }
