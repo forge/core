@@ -9,8 +9,10 @@ package org.jboss.forge.addon.ui.input;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,6 +41,9 @@ public class InputComponentsTest
    private UISelectOne<String> values;
 
    @Inject
+   private UIInputMany<Path> paths;
+
+   @Inject
    private ConverterFactory converterFactory;
 
    @Test
@@ -52,9 +57,22 @@ public class InputComponentsTest
    @Test
    public void testUIInputManyFileSingleList()
    {
+      Assert.assertThat(InputComponents.hasValue(files), is(false));
       InputComponents.setValueFor(converterFactory, files, OperatingSystemUtils.getTempDirectory());
+      Assert.assertThat(InputComponents.hasValue(files), is(true));
       List<File> list = Lists.toList(files.getValue());
       Assert.assertThat(list.size(), equalTo(1));
       Assert.assertThat(list, hasItem(OperatingSystemUtils.getTempDirectory()));
+   }
+
+   @Test
+   public void testUIInputManyPathSingleList()
+   {
+      Assert.assertThat(InputComponents.hasValue(paths), is(false));
+      InputComponents.setValueFor(converterFactory, paths, OperatingSystemUtils.getTempDirectory().toPath());
+      Assert.assertThat(InputComponents.hasValue(paths), is(true));
+      List<Path> list = Lists.toList(paths.getValue());
+      Assert.assertThat(list.size(), equalTo(1));
+      Assert.assertThat(list, hasItem(OperatingSystemUtils.getTempDirectory().toPath()));
    }
 }

@@ -137,7 +137,7 @@ public final class InputComponents
       if (value != null)
       {
          List<Object> convertedValuesList = new ArrayList<>();
-         if (value instanceof Iterable)
+         if (value instanceof Iterable && !input.getValueType().isInstance(value))
          {
             for (Object itValue : (Iterable) value)
             {
@@ -291,7 +291,7 @@ public final class InputComponents
       {
          ret = false;
       }
-      else if (value instanceof Iterable && !((Iterable) value).iterator().hasNext())
+      else if ((input instanceof ManyValued) && (value instanceof Iterable) && !((Iterable) value).iterator().hasNext())
       {
          ret = false;
       }
