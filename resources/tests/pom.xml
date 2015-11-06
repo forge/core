@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>resources-parent</artifactId>
-      <version>3.0.0.Alpha1</version>
+      <version>3.0.0-SNAPSHOT</version>
    </parent>
    <artifactId>resources-tests</artifactId>
    <name>Forge - Resources Addon Tests</name>
