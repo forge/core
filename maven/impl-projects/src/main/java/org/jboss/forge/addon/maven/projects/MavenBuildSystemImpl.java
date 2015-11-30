@@ -8,20 +8,33 @@ package org.jboss.forge.addon.maven.projects;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet;
+import org.jboss.forge.addon.maven.projects.facets.MavenEnterpriseResourcesFacet;
+import org.jboss.forge.addon.maven.projects.facets.MavenJavaCompilerFacet;
+import org.jboss.forge.addon.maven.projects.facets.MavenJavaSourceFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet;
+import org.jboss.forge.addon.maven.projects.facets.MavenResourcesFacet;
 import org.jboss.forge.addon.maven.projects.facets.MavenWebResourcesFacet;
+import org.jboss.forge.addon.parser.java.facets.JavaCompilerFacet;
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.projects.AbstractProjectProvider;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
+import org.jboss.forge.addon.projects.facets.EnterpriseResourcesFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
+import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
@@ -31,9 +44,22 @@ import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class MavenBuildSystemImpl implements MavenBuildSystem
+public class MavenBuildSystemImpl extends AbstractProjectProvider implements MavenBuildSystem
 {
    private static final Logger log = Logger.getLogger(MavenBuildSystemImpl.class.getName());
+   private Map<Class<? extends ProjectFacet>, Class<? extends ProjectFacet>> facets = new IdentityHashMap<>();
+
+   public MavenBuildSystemImpl()
+   {
+      facets.put(DependencyFacet.class, MavenDependencyFacet.class);
+      facets.put(JavaCompilerFacet.class, MavenJavaCompilerFacet.class);
+      facets.put(JavaSourceFacet.class, MavenJavaSourceFacet.class);
+      facets.put(MetadataFacet.class, MavenMetadataFacet.class);
+      facets.put(PackagingFacet.class, MavenPackagingFacet.class);
+      facets.put(ResourcesFacet.class, MavenResourcesFacet.class);
+      facets.put(WebResourcesFacet.class, MavenWebResourcesFacet.class);
+      facets.put(EnterpriseResourcesFacet.class, MavenEnterpriseResourcesFacet.class);
+   }
 
    @Override
    public String getType()
@@ -100,6 +126,12 @@ public class MavenBuildSystemImpl implements MavenBuildSystem
    public int priority()
    {
       return 0;
+   }
+
+   @Override
+   public Class<? extends ProjectFacet> resolveProjectFacet(Class<? extends ProjectFacet> facet)
+   {
+      return facets.getOrDefault(facet, facet);
    }
 
    @Override

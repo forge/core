@@ -38,4 +38,14 @@ public interface ProjectProvider
     * Returns the priority of this {@link ProjectProvider}. Lower values receive a higher priority.
     */
    int priority();
+
+   /**
+    * Return the {@link ProjectFacet} subclass supported by this {@link ProjectProvider}
+    * 
+    * @param facet the {@link ProjectFacet} class
+    * @return a {@link ProjectFacet} class as a subclass of the given facet parameter. Returns the facet class specified
+    *         in the parameter if the facet cannot be resolved.
+    * @since 3.0
+    */
+   Class<? extends ProjectFacet> resolveProjectFacet(Class<? extends ProjectFacet> facet);
 }

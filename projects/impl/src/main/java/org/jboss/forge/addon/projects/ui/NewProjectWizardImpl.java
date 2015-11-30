@@ -2,7 +2,6 @@ package org.jboss.forge.addon.projects.ui;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -160,14 +158,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       type = factory.createSelectOne("type", ProjectType.class).setLabel("Project type").setRequired(true);
       if (uiContext.getProvider().isGUI())
       {
-         type.setItemLabelConverter(new Converter<ProjectType, String>()
-         {
-            @Override
-            public String convert(ProjectType source)
-            {
-               return source == null ? null : source.getType();
-            }
-         });
+         type.setItemLabelConverter((source) -> source.getType());
       }
 
       // Add Project types
@@ -199,16 +190,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
             }
          }
       }
-
-      Collections.sort(projectTypes, new Comparator<ProjectType>()
-      {
-         @Override
-         public int compare(ProjectType left, ProjectType right)
-         {
-            return new Integer(left.priority()).compareTo(right.priority());
-         }
-      });
-
+      Collections.sort(projectTypes, (left, right) -> left.priority() - right.priority());
       if (!projectTypes.isEmpty())
       {
          type.setDefaultValue(projectTypes.get(0));
@@ -244,16 +226,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       final Imported<ProjectProvider> buildSystems = SimpleContainer.getServices(getClass().getClassLoader(),
                ProjectProvider.class);
       buildSystem = factory.createSelectOne("buildSystem", ProjectProvider.class).setLabel("Build system")
-               .setRequired(true);
-      buildSystem.setItemLabelConverter(new Converter<ProjectProvider, String>()
-      {
-         @Override
-         public String convert(ProjectProvider source)
-         {
-            return source == null ? null : source.getType();
-         }
-      });
-
+               .setRequired(true).setItemLabelConverter((source) -> source.getType());
       buildSystem.setValueChoices(new Callable<Iterable<ProjectProvider>>()
       {
          @Override
@@ -273,14 +246,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
                   result.add(buildSystemType);
             }
 
-            Collections.sort(result, new Comparator<ProjectProvider>()
-            {
-               @Override
-               public int compare(ProjectProvider left, ProjectProvider right)
-               {
-                  return new Integer(left.priority()).compareTo(right.priority());
-               }
-            });
+            Collections.sort(result, (left, right) -> left.priority() - right.priority());
 
             return result;
          }
@@ -374,7 +340,8 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
          ProjectType value = type.getValue();
          ProjectFactory projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class)
                   .get();
-         Project project = projectFactory.createProject(targetDir, buildSystem.getValue());
+         ProjectProvider buildSystemValue = buildSystem.getValue();
+         Project project = projectFactory.createProject(targetDir, buildSystemValue);
          if (project != null)
          {
             UIContext uiContext = context.getUIContext();
@@ -395,7 +362,6 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
             // Install the required facets
             if (value != null)
             {
-
                Iterable<Class<? extends ProjectFacet>> requiredFacets = value.getRequiredFacets();
                if (requiredFacets != null)
                {
@@ -403,9 +369,10 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
                            .getServices(getClass().getClassLoader(), FacetFactory.class).get();
                   for (Class<? extends ProjectFacet> facet : requiredFacets)
                   {
-                     if (!project.hasFacet(facet))
+                     Class<? extends ProjectFacet> buildSystemFacet = buildSystemValue.resolveProjectFacet(facet);
+                     if (!project.hasFacet(buildSystemFacet))
                      {
-                        facetFactory.install(project, facet);
+                        facetFactory.install(project, buildSystemFacet);
                      }
                   }
                }

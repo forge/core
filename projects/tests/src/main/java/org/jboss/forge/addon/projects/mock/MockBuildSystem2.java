@@ -8,8 +8,8 @@ package org.jboss.forge.addon.projects.mock;
 
 import java.util.Arrays;
 
+import org.jboss.forge.addon.projects.AbstractProjectProvider;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.Resource;
@@ -17,7 +17,7 @@ import org.jboss.forge.addon.resource.Resource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class MockBuildSystem2 implements ProjectProvider
+public class MockBuildSystem2 extends AbstractProjectProvider
 {
 
    @Override
@@ -55,5 +55,4 @@ public class MockBuildSystem2 implements ProjectProvider
    {
       return 0;
    }
-
 }
