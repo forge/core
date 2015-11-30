@@ -49,18 +49,6 @@ public class MavenBuildSystemImpl extends AbstractProjectProvider implements Mav
    private static final Logger log = Logger.getLogger(MavenBuildSystemImpl.class.getName());
    private Map<Class<? extends ProjectFacet>, Class<? extends ProjectFacet>> facets = new IdentityHashMap<>();
 
-   public MavenBuildSystemImpl()
-   {
-      facets.put(DependencyFacet.class, MavenDependencyFacet.class);
-      facets.put(JavaCompilerFacet.class, MavenJavaCompilerFacet.class);
-      facets.put(JavaSourceFacet.class, MavenJavaSourceFacet.class);
-      facets.put(MetadataFacet.class, MavenMetadataFacet.class);
-      facets.put(PackagingFacet.class, MavenPackagingFacet.class);
-      facets.put(ResourcesFacet.class, MavenResourcesFacet.class);
-      facets.put(WebResourcesFacet.class, MavenWebResourcesFacet.class);
-      facets.put(EnterpriseResourcesFacet.class, MavenEnterpriseResourcesFacet.class);
-   }
-
    @Override
    public String getType()
    {
@@ -131,6 +119,17 @@ public class MavenBuildSystemImpl extends AbstractProjectProvider implements Mav
    @Override
    public Class<? extends ProjectFacet> resolveProjectFacet(Class<? extends ProjectFacet> facet)
    {
+      if (facets.isEmpty())
+      {
+         facets.put(DependencyFacet.class, MavenDependencyFacet.class);
+         facets.put(JavaCompilerFacet.class, MavenJavaCompilerFacet.class);
+         facets.put(JavaSourceFacet.class, MavenJavaSourceFacet.class);
+         facets.put(MetadataFacet.class, MavenMetadataFacet.class);
+         facets.put(PackagingFacet.class, MavenPackagingFacet.class);
+         facets.put(ResourcesFacet.class, MavenResourcesFacet.class);
+         facets.put(WebResourcesFacet.class, MavenWebResourcesFacet.class);
+         facets.put(EnterpriseResourcesFacet.class, MavenEnterpriseResourcesFacet.class);
+      }
       return facets.getOrDefault(facet, facet);
    }
 
