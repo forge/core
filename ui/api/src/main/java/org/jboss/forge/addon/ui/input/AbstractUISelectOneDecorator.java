@@ -383,4 +383,9 @@ public abstract class AbstractUISelectOneDecorator<VALUETYPE> implements UISelec
       return getDelegate().getDeprecatedMessage();
    }
 
+   @Override
+   public int getSelectedIndex()
+   {
+      return getDelegate().getSelectedIndex();
+   }
 }

@@ -7,6 +7,7 @@
 package org.jboss.forge.addon.ui.impl.input;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -14,6 +15,7 @@ import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.ValueChangeListener;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.util.Callables;
+import org.jboss.forge.furnace.util.Lists;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -75,6 +77,19 @@ public class UISelectManyImpl<VALUETYPE> extends AbstractUISelectInputComponent<
    public boolean hasValue()
    {
       return value != null && value.iterator().hasNext();
+   }
+
+   @Override
+   public int[] getSelectedIndexes()
+   {
+      List<VALUETYPE> valueChoices = Lists.toList(getValueChoices());
+      List<VALUETYPE> thisValue = Lists.toList(getValue());
+      int[] indexes = new int[thisValue.size()];
+      for (int i = 0; i < thisValue.size(); i++)
+      {
+         indexes[i] = valueChoices.indexOf(thisValue.get(i));
+      }
+      return indexes;
    }
 
    @Override

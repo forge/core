@@ -14,6 +14,7 @@ import static org.hamcrest.CoreMatchers.is;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -39,6 +40,9 @@ public class InputComponentsTest
 
    @Inject
    private UISelectOne<String> values;
+
+   @Inject
+   private UISelectMany<String> manyValues;
 
    @Inject
    private UIInputMany<Path> paths;
@@ -74,5 +78,23 @@ public class InputComponentsTest
       List<Path> list = Lists.toList(paths.getValue());
       Assert.assertThat(list.size(), equalTo(1));
       Assert.assertThat(list, hasItem(OperatingSystemUtils.getTempDirectory().toPath()));
+   }
+
+   public void testUISelectOneIndex()
+   {
+      values.setValueChoices(Arrays.asList("A", "B", "C"));
+      values.setValue("B");
+      Assert.assertEquals(1, values.getSelectedIndex());
+      values.setValue(null);
+      Assert.assertEquals(-1, values.getSelectedIndex());
+   }
+
+   public void testUISelectManyIndexes()
+   {
+      manyValues.setValueChoices(Arrays.asList("A", "B", "C"));
+      manyValues.setValue(Arrays.asList("B", "C"));
+      Assert.assertArrayEquals(new int[] { 1, 2 }, manyValues.getSelectedIndexes());
+      manyValues.setValue(Collections.emptyList());
+      Assert.assertArrayEquals(new int[0], manyValues.getSelectedIndexes());
    }
 }

@@ -385,4 +385,9 @@ public abstract class AbstractUISelectManyDecorator<VALUETYPE> implements UISele
       return getDelegate().getDeprecatedMessage();
    }
 
+   @Override
+   public int[] getSelectedIndexes()
+   {
+      return getDelegate().getSelectedIndexes();
+   }
 }

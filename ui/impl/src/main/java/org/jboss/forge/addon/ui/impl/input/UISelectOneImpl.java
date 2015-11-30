@@ -13,6 +13,7 @@ import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.input.ValueChangeListener;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.util.Callables;
+import org.jboss.forge.furnace.util.Lists;
 import org.jboss.forge.furnace.util.Strings;
 
 /**
@@ -82,6 +83,12 @@ public class UISelectOneImpl<VALUETYPE> extends AbstractUISelectInputComponent<U
          return !Strings.isNullOrEmpty((String) value);
       }
       return value != null;
+   }
+
+   @Override
+   public int getSelectedIndex()
+   {
+      return Lists.toList(getValueChoices()).indexOf(getValue());
    }
 
    @Override
