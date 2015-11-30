@@ -77,10 +77,6 @@ public class BuildCommand extends AbstractProjectCommand
          }
          builder.addArguments(args.toArray(new String[args.size()]));
       }
-      else
-      {
-         builder.addArguments("clean", "install");
-      }
 
       if (notest.getValue())
       {

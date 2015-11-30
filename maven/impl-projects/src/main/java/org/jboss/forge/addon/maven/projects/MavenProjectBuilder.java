@@ -69,12 +69,15 @@ public class MavenProjectBuilder implements ProjectBuilder
    public Resource<?> build(PrintStream out, PrintStream err) throws BuildException
    {
       List<String> selected = new ArrayList<>();
-      selected.addAll(Arrays.asList("clean", "package"));
 
       if ((args != null) && (!args.isEmpty()))
       {
-         selected.clear();
          selected.addAll(args);
+      }
+      else
+      {
+         selected.add("clean");
+         selected.add("install");
       }
 
       if (Network.isOffline(environment))
