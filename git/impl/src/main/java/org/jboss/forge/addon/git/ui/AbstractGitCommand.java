@@ -15,7 +15,6 @@ import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 abstract class AbstractGitCommand extends AbstractProjectCommand
@@ -49,8 +48,7 @@ abstract class AbstractGitCommand extends AbstractProjectCommand
    {
       if (projectFactory == null)
       {
-         AddonRegistry addonRegistry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
-         projectFactory = addonRegistry.getServices(ProjectFactory.class).get();
+         projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
       }
       return projectFactory;
    }
@@ -76,8 +74,8 @@ abstract class AbstractGitCommand extends AbstractProjectCommand
    {
       if (inputComponentFactory == null)
       {
-         AddonRegistry addonRegistry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
-         inputComponentFactory = addonRegistry.getServices(InputComponentFactory.class).get();
+         inputComponentFactory = SimpleContainer.getServices(getClass().getClassLoader(), InputComponentFactory.class)
+                  .get();
       }
       return inputComponentFactory;
    }
@@ -86,8 +84,7 @@ abstract class AbstractGitCommand extends AbstractProjectCommand
    {
       if (gitUtils == null)
       {
-         AddonRegistry addonRegistry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
-         gitUtils = addonRegistry.getServices(GitUtils.class).get();
+         gitUtils = SimpleContainer.getServices(getClass().getClassLoader(), GitUtils.class).get();
       }
       return gitUtils;
    }
@@ -96,8 +93,7 @@ abstract class AbstractGitCommand extends AbstractProjectCommand
    {
       if (resourceFactory == null)
       {
-         AddonRegistry addonRegistry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
-         resourceFactory = addonRegistry.getServices(ResourceFactory.class).get();
+         resourceFactory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class).get();
       }
       return resourceFactory;
    }
@@ -106,8 +102,7 @@ abstract class AbstractGitCommand extends AbstractProjectCommand
    {
       if (facetFactory == null)
       {
-         AddonRegistry addonRegistry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
-         facetFactory = addonRegistry.getServices(FacetFactory.class).get();
+         facetFactory = SimpleContainer.getServices(getClass().getClassLoader(), FacetFactory.class).get();
       }
       return facetFactory;
    }
