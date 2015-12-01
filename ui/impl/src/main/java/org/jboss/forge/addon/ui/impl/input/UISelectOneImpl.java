@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.input.ValueChangeListener;
+import org.jboss.forge.addon.ui.input.events.ValueChangeEvent;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.furnace.util.Callables;
 import org.jboss.forge.furnace.util.Lists;
@@ -88,7 +89,24 @@ public class UISelectOneImpl<VALUETYPE> extends AbstractUISelectInputComponent<U
    @Override
    public int getSelectedIndex()
    {
-      return Lists.toList(getValueChoices()).indexOf(getValue());
+      return getIndexFor(getValue());
+   }
+
+   private int getIndexFor(Object value)
+   {
+      return Lists.toList(getValueChoices()).indexOf(value);
+   }
+
+   @Override
+   protected void fireValueChangeListeners(Object newValue)
+   {
+      int[] oldSelectedIndexes = new int[] { getSelectedIndex() };
+      int[] newSelectedIndexes = new int[] { getIndexFor(newValue) };
+      ValueChangeEvent evt = new ValueChangeEvent(this, getValue(), newValue, oldSelectedIndexes, newSelectedIndexes);
+      for (ValueChangeListener listener : getValueChangeListeners())
+      {
+         listener.valueChanged(evt);
+      }
    }
 
    @Override

@@ -84,6 +84,15 @@ public class ValueChangeListenerTest
       assertExpectedValues("Default Value", "Value 1", valueEventList.get(0));
       assertExpectedValues("Value 1", "Value 2", valueEventList.get(1));
       assertExpectedValues("Value 2", "Value 3", valueEventList.get(2));
+
+      Assert.assertArrayEquals(new int[0], valueEventList.get(0).getOldSelectedIndexes());
+      Assert.assertArrayEquals(new int[0], valueEventList.get(0).getNewSelectedIndexes());
+
+      Assert.assertArrayEquals(new int[0], valueEventList.get(1).getOldSelectedIndexes());
+      Assert.assertArrayEquals(new int[0], valueEventList.get(1).getNewSelectedIndexes());
+
+      Assert.assertArrayEquals(new int[0], valueEventList.get(2).getOldSelectedIndexes());
+      Assert.assertArrayEquals(new int[0], valueEventList.get(2).getNewSelectedIndexes());
    }
 
    @Test
@@ -102,6 +111,15 @@ public class ValueChangeListenerTest
       assertExpectedValues(Arrays.asList("Default Value"), Arrays.asList("Value 1"), valueEventList.get(0));
       assertExpectedValues(Arrays.asList("Value 1"), Arrays.asList("Value 2"), valueEventList.get(1));
       assertExpectedValues(Arrays.asList("Value 2"), Arrays.asList("Value 3"), valueEventList.get(2));
+
+      Assert.assertArrayEquals(new int[0], valueEventList.get(0).getOldSelectedIndexes());
+      Assert.assertArrayEquals(new int[0], valueEventList.get(0).getNewSelectedIndexes());
+
+      Assert.assertArrayEquals(new int[0], valueEventList.get(1).getOldSelectedIndexes());
+      Assert.assertArrayEquals(new int[0], valueEventList.get(1).getNewSelectedIndexes());
+
+      Assert.assertArrayEquals(new int[0], valueEventList.get(2).getOldSelectedIndexes());
+      Assert.assertArrayEquals(new int[0], valueEventList.get(2).getNewSelectedIndexes());
    }
 
    @Test
@@ -121,6 +139,15 @@ public class ValueChangeListenerTest
       assertExpectedValues("Default Value", "Value 1", valueEventList.get(0));
       assertExpectedValues("Value 1", "Value 2", valueEventList.get(1));
       assertExpectedValues("Value 2", "Value 3", valueEventList.get(2));
+
+      Assert.assertArrayEquals(new int[] { 0 }, valueEventList.get(0).getOldSelectedIndexes());
+      Assert.assertArrayEquals(new int[] { 1 }, valueEventList.get(0).getNewSelectedIndexes());
+
+      Assert.assertArrayEquals(new int[] { 1 }, valueEventList.get(1).getOldSelectedIndexes());
+      Assert.assertArrayEquals(new int[] { 2 }, valueEventList.get(1).getNewSelectedIndexes());
+
+      Assert.assertArrayEquals(new int[] { 2 }, valueEventList.get(2).getOldSelectedIndexes());
+      Assert.assertArrayEquals(new int[] { 3 }, valueEventList.get(2).getNewSelectedIndexes());
    }
 
    @Test
@@ -134,13 +161,21 @@ public class ValueChangeListenerTest
       selectMany.addValueChangeListener(new CollectValueChangeListener(valueEventList));
       selectMany.setValue(Arrays.asList("Value 1"));
       selectMany.setValue(Arrays.asList("Value 2"));
-      selectMany.setValue(Arrays.asList("Value 3"));
-      selectMany.setValue(Arrays.asList("Value 3"));
+      selectMany.setValue(Arrays.asList("Value 2", "Value 3"));
 
       Assert.assertEquals(3, valueEventList.size());
       assertExpectedValues(Arrays.asList("Default Value"), Arrays.asList("Value 1"), valueEventList.get(0));
       assertExpectedValues(Arrays.asList("Value 1"), Arrays.asList("Value 2"), valueEventList.get(1));
-      assertExpectedValues(Arrays.asList("Value 2"), Arrays.asList("Value 3"), valueEventList.get(2));
+      assertExpectedValues(Arrays.asList("Value 2"), Arrays.asList("Value 2", "Value 3"), valueEventList.get(2));
+
+      Assert.assertArrayEquals(new int[] { 0 }, valueEventList.get(0).getOldSelectedIndexes());
+      Assert.assertArrayEquals(new int[] { 1 }, valueEventList.get(0).getNewSelectedIndexes());
+
+      Assert.assertArrayEquals(new int[] { 1 }, valueEventList.get(1).getOldSelectedIndexes());
+      Assert.assertArrayEquals(new int[] { 2 }, valueEventList.get(1).getNewSelectedIndexes());
+
+      Assert.assertArrayEquals(new int[] { 2 }, valueEventList.get(2).getOldSelectedIndexes());
+      Assert.assertArrayEquals(new int[] { 2, 3 }, valueEventList.get(2).getNewSelectedIndexes());
    }
 
    private void assertExpectedValues(Iterable<?> oldValue, Iterable<?> newValue, ValueChangeEvent evt)
