@@ -2,7 +2,7 @@
 
 The fastest way to build applications, share your software, and enjoy doing it.
 
-image:https://forge.ci.cloudbees.com/job/forge-core-3.x/badge/icon["Build Status", link="https://forge.ci.cloudbees.com/job/forge-core-3.x/"]
+image:https://forge.ci.cloudbees.com/job/forge-core/badge/icon["Build Status", link="https://forge.ci.cloudbees.com/job/forge-core/"]
 image:http://img.shields.io/:license-EPL-blue.svg["License", link="https://www.eclipse.org/legal/epl-v10.html"]
 
 What's new and noteworthy?
@@ -73,16 +73,16 @@ If you wish to remove any addon, you can use the following command:
     forge --remove groupId:artifactId,version
 ----
 
-== Get Started with the Forge 2 Eclipse Plugin:
+== Get Started with the Eclipse Plugin:
 
 ____
-Forge 2 is known to work with Eclipse Luna (Eclipse 4.4) or higher versions. Older versions of Eclipse are not supported.
+Forge 3 is known to work with Eclipse Mars (Eclipse 4.5) or higher versions. Older versions of Eclipse are not supported.
 ____
 
 - Install the **JBoss Tools Usage Reporting** plugin, available in http://download.jboss.org/jbosstools/updates/development/luna/ and restart Eclipse
-- Install the Forge 2 Eclipse Plugin from http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/ and restart Eclipse
+- Install the Forge Eclipse Plugin from http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/ and restart Eclipse
 
-This plugin starts the Forge 2 Container and your installed addons, so you can use them directly in your workspace
+This plugin starts the Forge Container and your installed addons, so you can use them directly in your workspace
 
 - Press Ctrl + 4 to show the installed addons that you may interact with (these addons use the UI addon, hence providing a user interface - see Developing an UI Addon for more details).
 
