@@ -18,12 +18,7 @@ public interface JavaCompilerFacet extends ProjectFacet
 {
    public enum CompilerVersion
    {
-      JAVA_1_3("1.3"),
-      JAVA_1_4("1.4"),
-      JAVA_1_5("1.5"),
-      JAVA_1_6("1.6"),
-      JAVA_1_7("1.7"),
-      JAVA_1_8("1.8");
+      JAVA_1_3("1.3"), JAVA_1_4("1.4"), JAVA_1_5("1.5"), JAVA_1_6("1.6"), JAVA_1_7("1.7"), JAVA_1_8("1.8");
 
       String text;
 
@@ -51,7 +46,7 @@ public interface JavaCompilerFacet extends ProjectFacet
       }
    }
 
-   public static final CompilerVersion DEFAULT_COMPILER_VERSION = CompilerVersion.JAVA_1_7;
+   public static final CompilerVersion DEFAULT_COMPILER_VERSION = CompilerVersion.JAVA_1_8;
 
    public void setSourceCompilerVersion(CompilerVersion version);
 
