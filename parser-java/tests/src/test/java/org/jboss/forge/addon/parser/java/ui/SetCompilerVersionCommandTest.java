@@ -47,8 +47,7 @@ public class SetCompilerVersionCommandTest
                         AddonDependencyEntry.create("org.jboss.forge.addon:parser-java"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
                         AddonDependencyEntry.create("org.jboss.forge.addon:maven"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-               );
+                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"));
    }
 
    @Inject
@@ -124,6 +123,7 @@ public class SetCompilerVersionCommandTest
    {
       commandController.initialize();
       commandController.setValueFor("sourceVersion", CompilerVersion.JAVA_1_8);
+      commandController.setValueFor("targetVersion", CompilerVersion.JAVA_1_7);
       assertFalse(commandController.isValid());
    }
 
