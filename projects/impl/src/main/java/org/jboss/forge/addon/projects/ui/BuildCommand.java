@@ -83,7 +83,7 @@ public class BuildCommand extends AbstractProjectCommand
          builder.runTests(false);
       }
 
-      if (profile.getValue() != null)
+      if (profile.hasValue())
       {
          builder.addArguments("-P" + profile.getValue());
       }
