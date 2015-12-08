@@ -105,7 +105,6 @@ public class RestEndpointFromEntityCommandTest
       Project project = projectHelper.createWebProject();
       projectHelper.installJAXRS_2_0(project, RestConfigurationStrategyFactory.createUsingWebXml("/rest"));
       // Execute JPA:Setup
-      // Execute JPA:Setup
       try (WizardCommandController controller = uiTestHarness.createWizardController(JPASetupWizard.class,
                project.getRoot()))
       {

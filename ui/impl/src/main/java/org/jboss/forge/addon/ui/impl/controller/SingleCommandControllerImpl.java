@@ -35,6 +35,7 @@ import org.jboss.forge.addon.ui.validate.UIValidationListener;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 
 /**
+ * Default implementation of the {@link SingleCommandController} interface
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -133,10 +134,12 @@ class SingleCommandControllerImpl extends AbstractCommandController implements S
    @Override
    public CommandController setValueFor(String inputName, Object value)
    {
-      InputComponent<?, ?> input = getInputs().get(inputName);
+      Map<String, InputComponent<?, ?>> inputs = getInputs();
+      InputComponent<?, ?> input = inputs.get(inputName);
       if (input == null)
       {
-         throw new IllegalArgumentException("Input named '" + inputName + "' does not exist");
+         throw new IllegalArgumentException(
+                  "Input named '" + inputName + "' does not exist. Valid values: " + inputs.keySet());
       }
       InputComponents.setValueFor(getConverterFactory(), input, value);
       return this;

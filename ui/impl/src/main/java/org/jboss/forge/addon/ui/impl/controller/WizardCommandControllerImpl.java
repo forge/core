@@ -46,7 +46,6 @@ import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Lists;
 
 /**
- *
  * Implementation for the {@link WizardCommandController} interface
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
