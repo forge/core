@@ -84,16 +84,15 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    /**
     * Refreshes the current flow so it's possible to eagerly fetch all the steps
     */
-   private void refreshFlow()
+   private synchronized void refreshFlow()
    {
       try
       {
          initialize();
       }
-      catch (Exception e1)
+      catch (Exception e)
       {
-         // TODO Auto-generated catch block
-         e1.printStackTrace();
+         logger.log(Level.SEVERE, "Error while initializing wizard", e);
       }
       int currentFlowPointer = this.flowPointer;
       this.flowPointer = 0;
@@ -105,6 +104,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
          }
          catch (Exception e)
          {
+            logger.log(Level.SEVERE, "Error while moving to the next wizard step", e);
             break;
          }
       }
@@ -339,7 +339,6 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       return true;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public WizardCommandController next() throws Exception
    {
@@ -376,8 +375,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
                }
                else
                {
-                  UICommandMetadata metadata = subflow.peek().controller.getCommand().getMetadata(context);
-                  command = createCommand((Class<? extends UICommand>) metadata.getType());
+                  command = subflow.peek().controller.getCommand();
                }
             }
             else
@@ -405,7 +403,8 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    /**
     * Remove stale pages in case of navigational changes
     */
-   private void cleanSubsequentStalePages()
+
+   private synchronized void cleanSubsequentStalePages()
    {
       // FIXME: Workaround until FORGE-1704 is fixed
       if (flowPointer == 0)
@@ -511,12 +510,6 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    private UICommand createCommand(NavigationResultEntry entry)
    {
       UICommand command = entry.getCommand(addonRegistry, context);
-      return command;
-   }
-
-   private UICommand createCommand(Class<? extends UICommand> commandClass)
-   {
-      UICommand command = addonRegistry.getServices(commandClass).get();
       return command;
    }
 

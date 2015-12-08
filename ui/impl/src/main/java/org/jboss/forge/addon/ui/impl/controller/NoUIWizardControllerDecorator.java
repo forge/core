@@ -94,9 +94,9 @@ public class NoUIWizardControllerDecorator implements WizardCommandController
                }
             }
          }
-         catch (Exception ignored)
+         catch (Exception e)
          {
-
+            log.log(Level.SEVERE, "Error while navigating to previous step", e);
          }
          finally
          {
@@ -189,19 +189,19 @@ public class NoUIWizardControllerDecorator implements WizardCommandController
       return controller.getInputs();
    }
 
-    @Override
-    public InputComponent<?, ?> getInput(String inputName)
-    {
-        return getInputs().get(inputName);
-    }
+   @Override
+   public InputComponent<?, ?> getInput(String inputName)
+   {
+      return getInputs().get(inputName);
+   }
 
-    @Override
-    public boolean hasInput(String inputName)
-    {
-        return getInputs().containsKey(inputName);
-    }
+   @Override
+   public boolean hasInput(String inputName)
+   {
+      return getInputs().containsKey(inputName);
+   }
 
-    @Override
+   @Override
    public UICommandMetadata getMetadata()
    {
       return controller.getMetadata();
