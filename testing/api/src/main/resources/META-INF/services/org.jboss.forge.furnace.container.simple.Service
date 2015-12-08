@@ -1,0 +1,2 @@
+org.jboss.forge.addon.testing.facet.JUnitTestingFacet
+org.jboss.forge.addon.testing.facet.TestNGTestingFacet

@@ -1,0 +1,81 @@
+== testing
+:idprefix: id_ 
+
+This addon provides *standalone* functionality, and *exports services* for use in other addons.
+
+You can use it for setting up a test framework in a project.
+
+=== Depends on
+[options="header"]
+|===
+|Addon |Exported |Optional
+
+|dependencies
+|yes
+|no
+
+|ui
+|yes
+|no
+
+|projects
+|yes
+|no
+
+|org.jboss.forge.furnace.container:simple
+|no
+|no
+
+|===
+
+=== Add configuration to pom.xml
+
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>testing</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----
+
+== Features
+
+All the features exported by the testing addon are in the `TestingFacet` interface.
+The addon provides implementation of this interface for the supported test frameworks.
+At the moment these are JUnit and TestNG.
+
+In order to obtain a reference to the respective framework facet, you need to simply inject it.
+For example here is how you would do it for JUnit:
+
+[source,java]
+----
+@Inject
+private JUnitTestingFacet jUnitTestingFacet;
+----
+
+[TIP]
+====
+If your addon uses a container that does not support "@Inject" annotations, you can access the `TestingFacet` via the `AddonRegistry`:
+----
+JUnitTestingFacet facet = Facetfactory.create(project,JUnitTestingFacet.class)
+----
+====
+
+Installing testing framework::
+Allows for adding the necessary dependencies to your project descriptor
+
+[source,java]
+----
+@Inject
+private FacetFactory facetFactory;
+@Inject
+private JUnitTestingFacet jUnitTestingFacet;
+
+public void installJUnit(String junitVersion) {
+    jUnitTestingFacet.setFrameworkVersion(junitVersion);
+    facetFactory.install(project, jUnitTestingFacet);
+}
+----
