@@ -92,24 +92,29 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       }
       catch (Exception e)
       {
-         logger.log(Level.SEVERE, "Error while initializing wizard", e);
+         throw new IllegalStateException("Error while initializing wizard", e);
       }
       int currentFlowPointer = this.flowPointer;
-      this.flowPointer = 0;
-      while (canMoveToNextStep())
+      try
       {
-         try
+         this.flowPointer = 0;
+         while (canMoveToNextStep())
          {
-            next().initialize();
+            try
+            {
+               next().initialize();
+            }
+            catch (Exception e)
+            {
+               throw new IllegalStateException("Error while moving to the next wizard step", e);
+            }
          }
-         catch (Exception e)
-         {
-            logger.log(Level.SEVERE, "Error while moving to the next wizard step", e);
-            break;
-         }
+         cleanSubsequentStalePages();
       }
-      cleanSubsequentStalePages();
-      this.flowPointer = currentFlowPointer;
+      finally
+      {
+         this.flowPointer = currentFlowPointer;
+      }
    }
 
    @Override
