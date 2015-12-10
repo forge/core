@@ -97,7 +97,7 @@ public class MavenJavaSourceFacetTest
    {
       Project project = projectFactory.createTempProject();
       JavaSourceFacet facet = facetFactory.install(project, JavaSourceFacet.class);
-      String data = "public class Foo{String name;int bar}";
+      String data = "public class Foo{String name;\n\n\n\n\n\tint bar}";
       JavaClassSource clazz = Roaster.parse(JavaClassSource.class, data);
       JavaResource resource = facet.saveJavaSourceUnformatted(clazz);
       Assert.assertEquals(data, resource.getContents());

@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.parser.java.facets;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 
@@ -84,7 +85,7 @@ public interface JavaSourceFacet extends ProjectFacet
    default JavaResource saveJavaSourceUnformatted(JavaSource<?> source)
    {
       JavaResource javaResource = getJavaResource(source);
-      javaResource.setContents(source.toUnformattedString());
+      javaResource.setContents(new ByteArrayInputStream(source.toUnformattedString().getBytes()), null);
       return javaResource;
    }
 
@@ -110,7 +111,7 @@ public interface JavaSourceFacet extends ProjectFacet
    default JavaResource saveTestJavaSourceUnformatted(JavaSource<?> source)
    {
       JavaResource javaResource = getTestJavaResource(source);
-      javaResource.setContents(source.toUnformattedString());
+      javaResource.setContents(new ByteArrayInputStream(source.toUnformattedString().getBytes()), null);
       return javaResource;
    }
 
