@@ -12,6 +12,7 @@ import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.furnace.util.Assert;
 
 /**
+ * Default implementation of {@link UIMessage}
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
