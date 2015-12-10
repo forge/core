@@ -58,8 +58,8 @@ public class JavaResourceImpl extends AbstractFileResource<JavaResource> impleme
             String formatterProfilePath)
    {
       super(factory, file);
-      this.formatterProfilePath = formatterProfilePath;
       this.formatterProfileName = formatterProfileName;
+      this.formatterProfilePath = formatterProfilePath;
    }
 
    @Override

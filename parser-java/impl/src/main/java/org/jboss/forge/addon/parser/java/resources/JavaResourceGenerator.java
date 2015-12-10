@@ -30,7 +30,7 @@ public class JavaResourceGenerator implements ResourceGenerator<JavaResource, Fi
    public <T extends Resource<File>> T getResource(ResourceFactory factory, Class<JavaResource> type, File resource)
    {
       // TODO: Formatter may be set in project-level configuration.
-      String formatterProfileName = userConfig.getString(JavaResource.FORMATTER_PROFILE_PATH_KEY);
+      String formatterProfileName = userConfig.getString(JavaResource.FORMATTER_PROFILE_NAME_KEY);
       String formatterProfilePath = userConfig.getString(JavaResource.FORMATTER_PROFILE_PATH_KEY);
       return (T) new JavaResourceImpl(factory, resource, formatterProfileName, formatterProfilePath);
    }
