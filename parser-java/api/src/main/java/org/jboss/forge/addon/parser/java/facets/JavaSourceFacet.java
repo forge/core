@@ -73,6 +73,22 @@ public interface JavaSourceFacet extends ProjectFacet
    JavaResource saveJavaSource(JavaSource<?> source);
 
    /**
+    * Create or update a Java file <b>without formatting</b> in the primary source directory:
+    * {@link #getSourceDirectory()} - use information in the given
+    * {@link org.jboss.forge.roaster.model.source.JavaSource} to determine the appropriate package; packages will be
+    * created if necessary.
+    * 
+    * @param source
+    * @return
+    */
+   default JavaResource saveJavaSourceUnformatted(JavaSource<?> source)
+   {
+      JavaResource javaResource = getJavaResource(source);
+      javaResource.setContents(source.toUnformattedString());
+      return javaResource;
+   }
+
+   /**
     * Create or update a Java file in the primary test source directory: {@link #getTestSourceDirectory()} - use
     * information in the given {@link org.jboss.forge.roaster.model.source.JavaSource} to determine the appropriate
     * package; packages will be created if necessary.
@@ -81,6 +97,22 @@ public interface JavaSourceFacet extends ProjectFacet
     * @return The created or updated {@link JavaResource}
     */
    JavaResource saveTestJavaSource(JavaSource<?> source);
+
+   /**
+    * Create or update a Java file <b>without formatting</b> in the primary test source directory:
+    * {@link #getTestSourceDirectory()} - use information in the given
+    * {@link org.jboss.forge.roaster.model.source.JavaSource} to determine the appropriate package; packages will be
+    * created if necessary.
+    *
+    * @param source The java class to create
+    * @return The created or updated {@link JavaResource}
+    */
+   default JavaResource saveTestJavaSourceUnformatted(JavaSource<?> source)
+   {
+      JavaResource javaResource = getTestJavaResource(source);
+      javaResource.setContents(source.toUnformattedString());
+      return javaResource;
+   }
 
    /**
     * Return the {@link JavaClass} at the given path relative to {@link #getSourceDirectory()}.

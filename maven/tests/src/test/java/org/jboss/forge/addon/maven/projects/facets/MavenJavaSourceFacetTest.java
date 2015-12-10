@@ -13,6 +13,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
@@ -23,6 +24,8 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
+import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Before;
@@ -87,6 +90,28 @@ public class MavenJavaSourceFacetTest
       String projectGroupName = project.getFacet(MetadataFacet.class).getProjectGroupName();
       DirectoryResource pkg = facet.getPackage(projectGroupName);
       Assert.assertThat(pkg.exists(), is(true));
+   }
+
+   @Test
+   public void testSaveJavaSourceUnformatted() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      JavaSourceFacet facet = facetFactory.install(project, JavaSourceFacet.class);
+      String data = "public class Foo{String name;int bar}";
+      JavaClassSource clazz = Roaster.parse(JavaClassSource.class, data);
+      JavaResource resource = facet.saveJavaSourceUnformatted(clazz);
+      Assert.assertEquals(data, resource.getContents());
+   }
+
+   @Test
+   public void testSaveTestJavaSourceUnformatted() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      JavaSourceFacet facet = facetFactory.install(project, JavaSourceFacet.class);
+      String data = "public class Foo{String name;int bar}";
+      JavaClassSource clazz = Roaster.parse(JavaClassSource.class, data);
+      JavaResource resource = facet.saveTestJavaSourceUnformatted(clazz);
+      Assert.assertEquals(data, resource.getContents());
    }
 
 }
