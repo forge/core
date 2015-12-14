@@ -38,7 +38,7 @@ public class ConfigurationAdapterSubset extends ConfigurationAdapter
    }
 
    @Override
-   public Iterator<?> getKeys()
+   public Iterator<String> getKeys()
    {
       synchronized (parent)
       {
@@ -64,7 +64,7 @@ public class ConfigurationAdapterSubset extends ConfigurationAdapter
          }
          catch (IllegalArgumentException e)
          {
-            //do nothing;
+            // do nothing;
          }
       }
    }
@@ -84,4 +84,4 @@ public class ConfigurationAdapterSubset extends ConfigurationAdapter
          }
       }
    }
-} 
+}

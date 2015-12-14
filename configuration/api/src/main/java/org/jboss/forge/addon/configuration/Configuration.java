@@ -142,7 +142,7 @@ public interface Configuration
     * @return An Iterator of keys that match the prefix.
     * @see #getKeys()
     */
-   Iterator<?> getKeys(String prefix);
+   Iterator<String> getKeys(String prefix);
 
    /**
     * Get the list of the keys contained in the configuration. The returned iterator can be used to obtain all defined
@@ -153,7 +153,7 @@ public interface Configuration
     * 
     * @return An Iterator.
     */
-   Iterator<?> getKeys();
+   Iterator<String> getKeys();
 
    /**
     * Get a list of {@link Properties} associated with the given configuration key. This method expects the given key to

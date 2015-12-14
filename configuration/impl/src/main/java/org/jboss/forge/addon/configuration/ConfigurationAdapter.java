@@ -90,7 +90,7 @@ public class ConfigurationAdapter implements Configuration
    }
 
    @Override
-   public Iterator<?> getKeys(final String prefix)
+   public Iterator<String> getKeys(final String prefix)
    {
       // FORGE-1971: getDelegate().getKeys(prefix) returns an empty string as the key
       List<String> list = Iterators.asList(getDelegate().getKeys(prefix));
@@ -99,7 +99,7 @@ public class ConfigurationAdapter implements Configuration
    }
 
    @Override
-   public Iterator<?> getKeys()
+   public Iterator<String> getKeys()
    {
       // FORGE-1971: getDelegate().getKeys() returns an empty string as the key
       List<String> list = Iterators.asList(getDelegate().getKeys());
