@@ -1,6 +1,10 @@
 org.jboss.forge.addon.projects.impl.DependencyInstallerImpl
+org.jboss.forge.addon.projects.impl.GenericProjectProviderImpl
 org.jboss.forge.addon.projects.impl.facets.ClassLoaderFacetImpl
+org.jboss.forge.addon.projects.impl.facets.GenericMetadataFacetImpl
+org.jboss.forge.addon.projects.impl.facets.GenericProjectFacetImpl
 org.jboss.forge.addon.projects.shell.ProjectRootCdTokenHandler
+org.jboss.forge.addon.projects.types.GenericProjectType
 org.jboss.forge.addon.projects.types.ParentProjectType
 org.jboss.forge.addon.projects.types.ResourcesProjectType
 org.jboss.forge.addon.projects.ui.BuildCommand
