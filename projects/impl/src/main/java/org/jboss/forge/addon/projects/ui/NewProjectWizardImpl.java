@@ -277,16 +277,16 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       }
       else
       {
-         OUTER_LOOP: for (Class<? extends ProvidedProjectFacet> required : requiredFacets)
+         for (Class<? extends ProvidedProjectFacet> required : requiredFacets)
          {
+            result = false;
             for (Class<? extends ProvidedProjectFacet> provided : buildSystem.getProvidedFacetTypes())
             {
                if (provided.isAssignableFrom(required))
-               {
                   result = true;
-                  break OUTER_LOOP;
-               }
             }
+            if (!result)
+               break;
          }
       }
       return result;
