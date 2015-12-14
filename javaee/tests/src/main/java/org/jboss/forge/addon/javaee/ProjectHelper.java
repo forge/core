@@ -30,6 +30,7 @@ import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.javaee.validation.ValidationFacet;
 import org.jboss.forge.addon.javaee.websocket.WebSocketFacet_1_1;
+import org.jboss.forge.addon.maven.projects.MavenBuildSystem;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.projects.JavaProjectType;
 import org.jboss.forge.addon.parser.java.projects.JavaWebProjectType;
@@ -61,12 +62,15 @@ public class ProjectHelper
    @Inject
    private PersistenceOperations persistenceOperations;
 
+   @Inject
+   private MavenBuildSystem mavenBuildSystem;
+
    /**
     * Creates a project installing the required facets from {@link JavaWebProjectType#getRequiredFacets()}
     */
    public Project createWebProject()
    {
-      return projectFactory.createTempProject(javaWebProjectType.getRequiredFacets());
+      return projectFactory.createTempProject(mavenBuildSystem, javaWebProjectType.getRequiredFacets());
    }
 
    /**
@@ -74,7 +78,7 @@ public class ProjectHelper
     */
    public Project createJavaLibraryProject()
    {
-      return projectFactory.createTempProject(javaProjectType.getRequiredFacets());
+      return projectFactory.createTempProject(mavenBuildSystem, javaProjectType.getRequiredFacets());
    }
 
    /**
@@ -198,6 +202,6 @@ public class ProjectHelper
 
    public Project refreshProject(Project project)
    {
-      return projectFactory.findProject(project.getRoot());
+      return projectFactory.findProject(project.getRoot(), mavenBuildSystem);
    }
 }
