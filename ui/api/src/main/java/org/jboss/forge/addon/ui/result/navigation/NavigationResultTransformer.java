@@ -22,7 +22,8 @@ public interface NavigationResultTransformer
     * If this {@link NavigationResultTransformer} applies to the specified {@link UINavigationContext}
     * 
     * @param context the {@link UINavigationContext} to be used
-    * @return <code>true</code> if {@link CommandFlowEnricher#next(UINavigationContext)} should be called
+    * @return <code>true</code> if {@link NavigationResultTransformer#transform(UINavigationContext, NavigationResult)}
+    *         should be called
     */
    boolean handles(UINavigationContext context);
 
