@@ -58,4 +58,9 @@ public abstract class AbstractGenericProjectProvider extends AbstractProjectProv
       return false;
    }
 
+   @Override
+   public int priority()
+   {
+      return Integer.MAX_VALUE;
+   }
 }
