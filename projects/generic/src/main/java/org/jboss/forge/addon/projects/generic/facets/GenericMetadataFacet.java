@@ -7,19 +7,18 @@
 
 package org.jboss.forge.addon.projects.generic.facets;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
 
+import org.jboss.forge.addon.configuration.Configuration;
+import org.jboss.forge.addon.configuration.facets.ConfigurationFacet;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.generic.GenericProjectProvider;
-import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 /**
@@ -27,27 +26,26 @@ import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
+@FacetConstraint(ConfigurationFacet.class)
 public class GenericMetadataFacet extends AbstractFacet<Project> implements MetadataFacet
 {
-   /**
-    * The file that contains the metadata
-    */
-   public static final String PROJECT_METADATA_FILE_NAME = ".forge-metadata.properties";
+   private static final String PROJECT_NAME_KEY = "generic-project-name";
+   private static final String PROJECT_VERSION_KEY = "generic-project-version";
+   private static final String PROJECT_GROUP_NAME_KEY = "generic-project-groupName";
+   private static final String PROPERTIES_SUBSET_KEY = "generic-project-properties";
 
-   private FileResource<?> metadataFile;
+   private Configuration configuration;
 
    @Override
    public String getProjectName()
    {
-      return getMetadata().getProperty("name");
+      return getConfiguration().getString(PROJECT_NAME_KEY);
    }
 
    @Override
    public MetadataFacet setProjectName(String name)
    {
-      Properties metadata = getMetadata();
-      metadata.setProperty("name", name);
-      store(metadata);
+      getConfiguration().setProperty(PROJECT_NAME_KEY, name);
       return this;
    }
 
@@ -60,7 +58,7 @@ public class GenericMetadataFacet extends AbstractFacet<Project> implements Meta
    @Override
    public String getProjectGroupName()
    {
-      return getMetadata().getProperty("groupName");
+      return getConfiguration().getString(PROJECT_GROUP_NAME_KEY);
    }
 
    @Override
@@ -72,24 +70,20 @@ public class GenericMetadataFacet extends AbstractFacet<Project> implements Meta
    @Override
    public MetadataFacet setProjectGroupName(String groupId)
    {
-      Properties metadata = getMetadata();
-      metadata.setProperty("groupName", groupId);
-      store(metadata);
+      getConfiguration().setProperty(PROJECT_GROUP_NAME_KEY, groupId);
       return this;
    }
 
    @Override
    public String getProjectVersion()
    {
-      return getMetadata().getProperty("version");
+      return getConfiguration().getString(PROJECT_VERSION_KEY);
    }
 
    @Override
    public MetadataFacet setProjectVersion(String version)
    {
-      Properties metadata = getMetadata();
-      metadata.setProperty("version", version);
-      store(metadata);
+      getConfiguration().setProperty(PROJECT_VERSION_KEY, version);
       return this;
    }
 
@@ -105,11 +99,12 @@ public class GenericMetadataFacet extends AbstractFacet<Project> implements Meta
       return getDirectProperties();
    }
 
-   @SuppressWarnings({ "rawtypes", "unchecked" })
    @Override
    public Map<String, String> getDirectProperties()
    {
-      Map map = getMetadata();
+      Configuration subset = getConfiguration().subset(PROPERTIES_SUBSET_KEY);
+      Map<String, String> map = new LinkedHashMap<>();
+      subset.getKeys().forEachRemaining((key) -> map.put(key, subset.getString(key)));
       return map;
    }
 
@@ -128,18 +123,17 @@ public class GenericMetadataFacet extends AbstractFacet<Project> implements Meta
    @Override
    public MetadataFacet setDirectProperty(String name, String value)
    {
-      Properties metadata = getMetadata();
-      metadata.setProperty(name, value);
-      store(metadata);
+      Configuration subset = getConfiguration().subset(PROPERTIES_SUBSET_KEY);
+      subset.setProperty(name, value);
       return this;
    }
 
    @Override
    public String removeDirectProperty(String name)
    {
-      Properties metadata = getMetadata();
-      String value = (String) metadata.remove(name);
-      store(metadata);
+      Configuration subset = getConfiguration().subset(PROPERTIES_SUBSET_KEY);
+      String value = subset.getString(name);
+      subset.clearProperty(name);
       return value;
    }
 
@@ -155,56 +149,29 @@ public class GenericMetadataFacet extends AbstractFacet<Project> implements Meta
       return isInstalled();
    }
 
-   private void store(Properties props)
+   private Configuration getConfiguration()
    {
-      try (OutputStream os = getMetadataFile().getResourceOutputStream())
+      if (configuration == null)
       {
-         props.store(os, null);
+         configuration = getFaceted().getFacet(ConfigurationFacet.class).getConfiguration();
       }
-      catch (IOException e)
-      {
-         throw new RuntimeException("Error while updating metadata", e);
-      }
-   }
-
-   private Properties getMetadata()
-   {
-      Properties props = new Properties();
-      try (InputStream is = getMetadataFile().getResourceInputStream())
-      {
-         props.load(is);
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException("Error while loading metadata", e);
-      }
-      return props;
-   }
-
-   public FileResource<?> getMetadataFile()
-   {
-      if (metadataFile == null)
-      {
-         metadataFile = getFaceted().getRoot().getChild(PROJECT_METADATA_FILE_NAME)
-                  .reify(FileResource.class);
-      }
-      return metadataFile;
+      return configuration;
    }
 
    @Override
    public boolean install()
    {
-      FileResource<?> metadataFile = getMetadataFile();
-      if (!metadataFile.exists())
-      {
-         metadataFile.createNewFile();
-      }
-      return isInstalled();
+      return true;
    }
 
    @Override
    public boolean isInstalled()
    {
-      return getMetadataFile().exists();
+      return isInstalled(getConfiguration());
+   }
+
+   public static boolean isInstalled(Configuration configuration)
+   {
+      return configuration.containsKey(PROJECT_NAME_KEY);
    }
 }

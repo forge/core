@@ -10,9 +10,12 @@ package org.jboss.forge.addon.projects.generic.facets;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
+import org.jboss.forge.addon.projects.generic.GenericProjectProvider;
+import org.jboss.forge.addon.projects.generic.GenericProjectType;
 
 /**
- * This facet is needed so Generic projects are not supported by any other build system
+ * Generic projects should not supported by any other build system. This should be used only in
+ * {@link GenericProjectProvider} and {@link GenericProjectType}
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */

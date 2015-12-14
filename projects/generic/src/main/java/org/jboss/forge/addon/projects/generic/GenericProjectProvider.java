@@ -11,6 +11,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jboss.forge.addon.configuration.ConfigurationFactory;
+import org.jboss.forge.addon.configuration.facets.ConfigurationFacet;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.projects.AbstractProjectProvider;
 import org.jboss.forge.addon.projects.Project;
@@ -18,6 +20,7 @@ import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.generic.facets.GenericMetadataFacet;
 import org.jboss.forge.addon.projects.generic.facets.GenericProjectFacet;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
@@ -56,12 +59,19 @@ public class GenericProjectProvider extends AbstractProjectProvider
    @Override
    public boolean containsProject(final Resource<?> target)
    {
+      boolean result = false;
       if (target.exists())
       {
-         Resource<?> projectMetadata = target.getChild(GenericMetadataFacet.PROJECT_METADATA_FILE_NAME);
-         return projectMetadata != null && projectMetadata.exists();
+         FileResource<?> projectMetadata = target.getChild(ConfigurationFacet.CONFIGURATION_FILE)
+                  .reify(FileResource.class);
+         if (projectMetadata != null && projectMetadata.exists())
+         {
+            ConfigurationFactory configFactory = SimpleContainer
+                     .getServices(getClass().getClassLoader(), ConfigurationFactory.class).get();
+            result = GenericMetadataFacet.isInstalled(configFactory.getConfiguration(projectMetadata));
+         }
       }
-      return false;
+      return result;
    }
 
    @Override
