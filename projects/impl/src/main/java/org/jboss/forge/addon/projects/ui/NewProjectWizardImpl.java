@@ -349,15 +349,17 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
             metadataFacet.setProjectName(named.getValue());
             metadataFacet.setProjectVersion(version.getValue());
             metadataFacet.setProjectGroupName(topLevelPackage.getValue());
-
-            PackagingFacet packagingFacet = project.getFacet(PackagingFacet.class);
-            if (finalName.hasValue())
+            if (project.hasFacet(PackagingFacet.class))
             {
-               packagingFacet.setFinalName(finalName.getValue());
-            }
-            else
-            {
-               packagingFacet.setFinalName(named.getValue());
+               PackagingFacet packagingFacet = project.getFacet(PackagingFacet.class);
+               if (finalName.hasValue())
+               {
+                  packagingFacet.setFinalName(finalName.getValue());
+               }
+               else
+               {
+                  packagingFacet.setFinalName(named.getValue());
+               }
             }
             // Install the required facets
             if (value != null)
