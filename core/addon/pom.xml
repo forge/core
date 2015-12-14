@@ -94,6 +94,11 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
+         <artifactId>projects-generic</artifactId>
+         <classifier>forge-addon</classifier>
+      </dependency>      
+      <dependency>
+         <groupId>org.jboss.forge.addon</groupId>
          <artifactId>resources</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>

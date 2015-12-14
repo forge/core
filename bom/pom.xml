@@ -253,6 +253,12 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>projects-generic</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>         
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>rest-client</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>

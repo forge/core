@@ -5,23 +5,19 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.projects.impl.facets;
+package org.jboss.forge.addon.projects.generic.facets;
 
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectProvider;
-import org.jboss.forge.addon.projects.facets.generic.GenericProjectFacet;
-import org.jboss.forge.addon.projects.types.GenericProjectType;
+import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 
 /**
- * This facet is needed so other {@link ProjectProvider} implementations (Maven, Gradle) won't support the
- * {@link GenericProjectType}
+ * This facet is needed so Generic projects are not supported by any other build system
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class GenericProjectFacetImpl extends AbstractFacet<Project> implements GenericProjectFacet
+public class GenericProjectFacet extends AbstractFacet<Project> implements ProvidedProjectFacet
 {
-
    @Override
    public boolean install()
    {
@@ -33,5 +29,4 @@ public class GenericProjectFacetImpl extends AbstractFacet<Project> implements G
    {
       return false;
    }
-
 }

@@ -12,8 +12,8 @@ import java.util.Arrays;
 import org.jboss.forge.addon.projects.AbstractProjectType;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectType;
-import org.jboss.forge.addon.projects.facets.generic.GenericMetadataFacet;
-import org.jboss.forge.addon.projects.facets.generic.GenericProjectFacet;
+import org.jboss.forge.addon.projects.generic.facets.GenericMetadataFacet;
+import org.jboss.forge.addon.projects.generic.facets.GenericProjectFacet;
 
 /**
  * A skeleton class for generic {@link ProjectType} implementations

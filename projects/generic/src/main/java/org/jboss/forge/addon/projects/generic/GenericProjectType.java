@@ -5,10 +5,9 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.projects.types;
+package org.jboss.forge.addon.projects.generic;
 
 import org.jboss.forge.addon.projects.ProjectType;
-import org.jboss.forge.addon.projects.generic.AbstractGenericProjectType;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**

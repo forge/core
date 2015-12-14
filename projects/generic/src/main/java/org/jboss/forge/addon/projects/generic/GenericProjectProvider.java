@@ -16,8 +16,8 @@ import org.jboss.forge.addon.projects.AbstractProjectProvider;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
-import org.jboss.forge.addon.projects.facets.generic.GenericMetadataFacet;
-import org.jboss.forge.addon.projects.facets.generic.GenericProjectFacet;
+import org.jboss.forge.addon.projects.generic.facets.GenericMetadataFacet;
+import org.jboss.forge.addon.projects.generic.facets.GenericProjectFacet;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
@@ -26,8 +26,14 @@ import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public abstract class AbstractGenericProjectProvider extends AbstractProjectProvider
+public class GenericProjectProvider extends AbstractProjectProvider
 {
+   @Override
+   public String getType()
+   {
+      return "None";
+   }
+
    @Override
    public Iterable<Class<? extends ProvidedProjectFacet>> getProvidedFacetTypes()
    {

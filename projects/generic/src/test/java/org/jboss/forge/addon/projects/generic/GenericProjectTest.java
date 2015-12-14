@@ -1,3 +1,4 @@
+package org.jboss.forge.addon.projects.generic;
 /*
  * Copyright 2015 Red Hat, Inc. and/or its affiliates.
  *
@@ -5,17 +6,13 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.projects.impl;
-
 import static org.hamcrest.CoreMatchers.instanceOf;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
-import org.jboss.forge.addon.projects.facets.generic.GenericMetadataFacet;
-import org.jboss.forge.addon.projects.generic.GenericProject;
-import org.jboss.forge.addon.projects.generic.GenericProjectProvider;
+import org.jboss.forge.addon.projects.generic.facets.GenericMetadataFacet;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.junit.Assert;
 import org.junit.Before;

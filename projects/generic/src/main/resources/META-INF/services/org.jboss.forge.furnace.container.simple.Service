@@ -1,0 +1,4 @@
+org.jboss.forge.addon.projects.generic.GenericProjectProvider
+org.jboss.forge.addon.projects.generic.GenericProjectType
+org.jboss.forge.addon.projects.generic.facets.GenericMetadataFacet
+org.jboss.forge.addon.projects.generic.facets.GenericProjectFacet

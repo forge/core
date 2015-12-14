@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.projects.impl.facets;
+package org.jboss.forge.addon.projects.generic.facets;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,18 +18,22 @@ import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
-import org.jboss.forge.addon.projects.facets.generic.GenericMetadataFacet;
 import org.jboss.forge.addon.projects.generic.GenericProjectProvider;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 /**
- * Default {@link GenericMetadataFacet} implementation
+ * Generic implementation for {@link MetadataFacet}
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class GenericMetadataFacetImpl extends AbstractFacet<Project> implements GenericMetadataFacet
+public class GenericMetadataFacet extends AbstractFacet<Project> implements MetadataFacet
 {
+   /**
+    * The file that contains the metadata
+    */
+   public static final String PROJECT_METADATA_FILE_NAME = ".forge-metadata.properties";
+
    private FileResource<?> metadataFile;
 
    @Override
