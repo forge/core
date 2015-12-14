@@ -13,6 +13,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.parser.java.beans.FieldOperations;
 import org.jboss.forge.addon.parser.java.beans.ProjectOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -40,6 +41,7 @@ import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
+@FacetConstraint(JavaSourceFacet.class)
 public class JavaNewFieldCommandImpl extends AbstractProjectCommand implements JavaNewFieldCommand
 {
 
@@ -90,7 +92,8 @@ public class JavaNewFieldCommandImpl extends AbstractProjectCommand implements J
    {
       setupTargetClass(builder.getUIContext());
       setupAccessType();
-      builder.add(targetClass).add(named).add(type).add(accessType).add(generateGetter).add(generateSetter).add(updateToString);
+      builder.add(targetClass).add(named).add(type).add(accessType).add(generateGetter).add(generateSetter)
+               .add(updateToString);
    }
 
    @Override
@@ -160,7 +163,7 @@ public class JavaNewFieldCommandImpl extends AbstractProjectCommand implements J
 
    private void setCurrentWorkingResource(UIExecutionContext context, JavaResource javaResource,
             Field<JavaClassSource> field)
-            throws FileNotFoundException
+                     throws FileNotFoundException
    {
       Project selectedProject = getSelectedProject(context);
       if (selectedProject != null)

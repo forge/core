@@ -9,6 +9,7 @@ import javax.inject.Inject;
 import javax.persistence.Id;
 
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
 import org.jboss.forge.addon.javaee.ejb.ui.EJBSetupWizardImpl;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
@@ -46,6 +47,7 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
  * @author <a href="salem.elrahal@gmail.com">Salem Elrahal</a>
  *
  */
+@FacetConstraint(JavaSourceFacet.class)
 public class DaoFromEntityCommand extends AbstractJavaEECommand implements PrerequisiteCommandsProvider
 {
 

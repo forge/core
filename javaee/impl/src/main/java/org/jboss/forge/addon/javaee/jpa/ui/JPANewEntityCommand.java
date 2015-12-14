@@ -9,7 +9,9 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 import javax.inject.Inject;
 import javax.persistence.GenerationType;
 
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -24,6 +26,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@FacetConstraint(JavaSourceFacet.class)
 public class JPANewEntityCommand extends AbstractJPACommand<JavaClassSource>
 {
    @Inject
@@ -69,6 +72,7 @@ public class JPANewEntityCommand extends AbstractJPACommand<JavaClassSource>
       builder.add(idStrategy).add(tableName);
    }
 
+   @Override
    public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source)
             throws Exception
    {

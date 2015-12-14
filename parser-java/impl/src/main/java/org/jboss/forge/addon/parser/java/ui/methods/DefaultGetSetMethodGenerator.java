@@ -7,13 +7,10 @@ import org.jboss.forge.roaster.model.source.PropertySource;
 
 public class DefaultGetSetMethodGenerator implements GetSetMethodGenerator
 {
-
-   
-
    @Override
    public MethodSource<JavaClassSource> createAccessor(PropertySource<JavaClassSource> property)
    {
-       return property.createAccessor();
+      return property.createAccessor();
    }
 
    @Override
@@ -34,7 +31,7 @@ public class DefaultGetSetMethodGenerator implements GetSetMethodGenerator
    {
       Type<JavaClassSource> returnType = method.getReturnType();
       return returnType.getName().equals("void");
-     
+
    }
 
 }

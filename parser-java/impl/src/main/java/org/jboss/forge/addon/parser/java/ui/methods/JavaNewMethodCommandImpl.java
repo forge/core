@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.parser.java.beans.ProjectOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -48,6 +49,7 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodHolderSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
+@FacetConstraint(JavaSourceFacet.class)
 public class JavaNewMethodCommandImpl extends AbstractProjectCommand implements JavaNewMethodCommand
 {
    @Inject

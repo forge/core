@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.parser.java.beans.ProjectOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -34,9 +35,9 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
 
+@FacetConstraint(JavaSourceFacet.class)
 public class JavaGetSetMethodsCommandImpl extends AbstractProjectCommand implements JavaGetSetMethodsCommand
 {
-
    @Inject
    @WithAttributes(label = "Target Class", description = "The class where the field will be created", required = true, type = InputType.DROPDOWN)
    private UISelectOne<JavaResource> targetClass;
@@ -80,7 +81,7 @@ public class JavaGetSetMethodsCommandImpl extends AbstractProjectCommand impleme
             return strings;
          }
       });
-     properties.setEnabled(new Callable<Boolean>()
+      properties.setEnabled(new Callable<Boolean>()
       {
          @Override
          public Boolean call()
@@ -106,13 +107,15 @@ public class JavaGetSetMethodsCommandImpl extends AbstractProjectCommand impleme
          generator = new DefaultGetSetMethodGenerator();
       }
       List<PropertySource<JavaClassSource>> selectedProperties = new ArrayList<>();
-      if(properties == null || properties.getValue() == null) {
+      if (properties == null || properties.getValue() == null)
+      {
          return Results.fail("No properties were selected");
       }
-      for(String selectedProperty : properties.getValue()) {
+      for (String selectedProperty : properties.getValue())
+      {
          selectedProperties.add(targetClass.getProperty(selectedProperty));
       }
-      
+
       for (PropertySource<JavaClassSource> property : selectedProperties)
       {
          MethodSource<JavaClassSource> accessor = targetClass
@@ -125,7 +128,8 @@ public class JavaGetSetMethodsCommandImpl extends AbstractProjectCommand impleme
          {
             if (!generator.isCorrectAccessor(accessor, property))
             {
-               if(promptToFixMethod(context,accessor.getName(),property.getName())) {
+               if (promptToFixMethod(context, accessor.getName(), property.getName()))
+               {
                   targetClass.removeMethod(accessor);
                   generator.createMutator(property);
                }
@@ -142,7 +146,8 @@ public class JavaGetSetMethodsCommandImpl extends AbstractProjectCommand impleme
          {
             if (!generator.isCorrectMutator(mutator, property))
             {
-               if(promptToFixMethod(context,mutator.getName(),property.getName())) {
+               if (promptToFixMethod(context, mutator.getName(), property.getName()))
+               {
                   targetClass.removeMethod(mutator);
                   generator.createMutator(property);
                }
@@ -153,13 +158,14 @@ public class JavaGetSetMethodsCommandImpl extends AbstractProjectCommand impleme
       return Results.success("Mutators and accessors were generated successfully");
 
    }
-   
-   private boolean promptToFixMethod(UIExecutionContext context, String methodName, String propertyName) {
+
+   private boolean promptToFixMethod(UIExecutionContext context, String methodName, String propertyName)
+   {
       UIPrompt prompt = context.getPrompt();
       return prompt.promptBoolean("Method '" + methodName + "'already exists for property"
-                + propertyName + " . Method is not following the selected pattern."
-                + " Should it be fixed?");
-      
+               + propertyName + " . Method is not following the selected pattern."
+               + " Should it be fixed?");
+
    }
 
    private void setupTargetClass(UIContext context)

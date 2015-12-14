@@ -27,6 +27,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.jboss.forge.addon.convert.Converter;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.javaee.jpa.ui.setup.JPASetupWizard;
@@ -71,6 +72,7 @@ import org.jboss.forge.roaster.model.source.JavaSource;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
+@FacetConstraint(JavaSourceFacet.class)
 public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard, PrerequisiteCommandsProvider
 {
    @Inject
