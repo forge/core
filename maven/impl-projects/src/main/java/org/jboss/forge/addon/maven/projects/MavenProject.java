@@ -9,7 +9,6 @@ package org.jboss.forge.addon.maven.projects;
 
 import org.jboss.forge.addon.projects.AbstractProject;
 import org.jboss.forge.addon.projects.ProjectFacet;
-import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 
 class MavenProject extends AbstractProject
@@ -25,14 +24,6 @@ class MavenProject extends AbstractProject
    public boolean supports(ProjectFacet type)
    {
       return true;
-   }
-
-   @Override
-   public DirectoryResource getRootDirectory()
-   {
-      if (root instanceof DirectoryResource)
-         return (DirectoryResource) root;
-      throw new IllegalStateException("Project root [" + root + "] is not an instance of DirectoryResource");
    }
 
    @Override

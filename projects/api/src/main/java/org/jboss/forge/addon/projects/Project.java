@@ -37,7 +37,13 @@ public interface Project extends Faceted<ProjectFacet>
     * Get the {@link DirectoryResource} representing the root directory of this {@link Project}.
     */
    @Deprecated
-   DirectoryResource getRootDirectory();
+   default DirectoryResource getRootDirectory()
+   {
+      Resource<?> root = getRoot();
+      if (root instanceof DirectoryResource)
+         return (DirectoryResource) root;
+      throw new IllegalStateException("Project root [" + root + "] is not an instance of DirectoryResource");
+   }
 
    /**
     * Get the {@link Resource} representing the root of this {@link Project}.

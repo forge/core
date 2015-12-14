@@ -10,7 +10,6 @@ package org.jboss.forge.addon.projects.generic;
 import org.jboss.forge.addon.projects.AbstractProject;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
-import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 
 /**
@@ -25,14 +24,6 @@ public class GenericProject extends AbstractProject
    public GenericProject(Resource<?> projectRoot)
    {
       this.root = projectRoot;
-   }
-
-   @Override
-   public DirectoryResource getRootDirectory()
-   {
-      if (root instanceof DirectoryResource)
-         return (DirectoryResource) root;
-      throw new IllegalStateException("Project root [" + root + "] is not an instance of DirectoryResource");
    }
 
    @Override
