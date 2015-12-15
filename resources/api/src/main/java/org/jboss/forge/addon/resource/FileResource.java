@@ -119,4 +119,44 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>,
     * Move this {@link Resource} to the given {@link FileResource}
     */
    void moveTo(FileResource<?> target);
+
+   /**
+    * Sets a file as writable
+    */
+   default void setWritable(boolean writable)
+   {
+      setWritable(writable, true);
+   }
+
+   /**
+    * Sets a file as writable
+    */
+   void setWritable(boolean writable, boolean ownerOnly);
+
+   /**
+    * Sets a file as readable
+    */
+   default void setReadable(boolean readable)
+   {
+      setReadable(readable, true);
+   }
+
+   /**
+    * Sets a file as readable
+    */
+   void setReadable(boolean readable, boolean owner);
+
+   /**
+    * Sets a file as executable
+    */
+   default void setExecutable(boolean executable)
+   {
+      setExecutable(executable, true);
+   }
+
+   /**
+    * Sets a file as executable
+    */
+   void setExecutable(boolean executable, boolean owner);
+
 }

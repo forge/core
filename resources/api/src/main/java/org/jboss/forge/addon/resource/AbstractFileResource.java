@@ -290,15 +290,33 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
    }
 
    @Override
+   public void setExecutable(boolean executable, boolean ownerOnly)
+   {
+      this.file.setExecutable(executable, ownerOnly);
+   }
+
+   @Override
    public boolean isReadable()
    {
       return (this.file.canRead() && !getFileOperations().fileExistsAndIsDirectory(file));
    }
 
    @Override
+   public void setReadable(boolean readable, boolean ownerOnly)
+   {
+      this.file.setReadable(readable, ownerOnly);
+   }
+
+   @Override
    public boolean isWritable()
    {
       return (this.file.canWrite() && !getFileOperations().fileExistsAndIsDirectory(file));
+   }
+
+   @Override
+   public void setWritable(boolean writable, boolean ownerOnly)
+   {
+      this.file.setWritable(writable, ownerOnly);
    }
 
    @Override

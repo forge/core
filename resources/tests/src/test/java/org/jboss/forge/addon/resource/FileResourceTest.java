@@ -255,4 +255,23 @@ public class FileResourceTest
       Assert.assertTrue(!folderResource2.exists());
       Assert.assertTrue(!file2.exists());
    }
+
+   @Test
+   public void testFileResourceAttributes() throws Exception
+   {
+      File file = File.createTempFile("fileresourcetest", ".tmp");
+      file.deleteOnExit();
+      FileResource<?> resource = resourceFactory.create(file).reify(FileResource.class);
+      Assert.assertFalse(resource.isExecutable());
+      resource.setExecutable(true);
+      Assert.assertTrue(resource.isExecutable());
+
+      Assert.assertTrue(resource.isWritable());
+      resource.setWritable(false);
+      Assert.assertFalse(resource.isWritable());
+
+      Assert.assertTrue(resource.isReadable());
+      resource.setReadable(false);
+      Assert.assertFalse(resource.isReadable());
+   }
 }
