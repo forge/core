@@ -24,5 +24,8 @@ public interface UIWizard extends UICommand
    /**
     * Returns the next {@link UIWizardStep}, or null if this is the last {@link UICommand} in the flow.
     */
-   public NavigationResult next(UINavigationContext context) throws Exception;
+   default NavigationResult next(UINavigationContext context) throws Exception
+   {
+      return null;
+   }
 }

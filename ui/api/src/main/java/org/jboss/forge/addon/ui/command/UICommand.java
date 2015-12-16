@@ -52,7 +52,10 @@ public interface UICommand
     * @param builder The builder on which the UI should be built upon. Never null
     * @throws Exception if anything wrong happens
     */
-   void initializeUI(UIBuilder builder) throws Exception;
+   default void initializeUI(UIBuilder builder) throws Exception
+   {
+
+   }
 
    /**
     * Validate the current {@link UICommand}.
