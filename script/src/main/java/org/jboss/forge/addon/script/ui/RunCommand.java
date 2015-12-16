@@ -107,23 +107,9 @@ public class RunCommand extends AbstractShellCommand
          final Process process = processBuilder.start();
          ExecutorService executor = Executors.newFixedThreadPool(2);
          // Read std out
-         executor.submit(new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               Streams.write(process.getInputStream(), output.out());
-            }
-         });
+         executor.submit(() -> Streams.write(process.getInputStream(), output.out()));
          // Read std err
-         executor.submit(new Runnable()
-         {
-            @Override
-            public void run()
-            {
-               Streams.write(process.getErrorStream(), output.err());
-            }
-         });
+         executor.submit(() -> Streams.write(process.getErrorStream(), output.err()));
          executor.shutdown();
          try
          {
