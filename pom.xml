@@ -238,8 +238,10 @@
             <artifactId>maven-release-plugin</artifactId>
             <inherited>true</inherited>
             <configuration>
+               <arguments>-DskipTests</arguments>
                <preparationGoals>clean install</preparationGoals>
                <releaseProfiles>release</releaseProfiles>
+               <tagNameFormat>@{project.version}</tagNameFormat>
             </configuration>
          </plugin>
       </plugins>
