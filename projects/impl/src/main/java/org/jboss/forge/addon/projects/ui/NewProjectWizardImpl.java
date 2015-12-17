@@ -421,7 +421,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
    {
       if (type.getValue() != null)
       {
-         return Results.navigateTo(type.getValue().getSetupFlow());
+         return type.getValue().next(context);
       }
       else
       {
