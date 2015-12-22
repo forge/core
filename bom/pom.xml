@@ -57,6 +57,7 @@
    <properties>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <version.furnace>2.22.9.Final</version.furnace>
+      <version.slf4j.addon>1.7.13</version.slf4j.addon>
    </properties>
 
    <dependencyManagement>
@@ -392,6 +393,11 @@
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>git-api</artifactId>
             <version>${project.version}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>slf4j</artifactId>
+            <classifier>forge-addon</classifier>
          </dependency>
       </dependencies>
    </dependencyManagement>
