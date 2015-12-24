@@ -62,10 +62,10 @@ public class GenericProjectProvider extends AbstractProjectProvider
       boolean result = false;
       if (target.exists())
       {
-         FileResource<?> projectMetadata = target.getChild(ConfigurationFacet.CONFIGURATION_FILE)
-                  .reify(FileResource.class);
-         if (projectMetadata != null && projectMetadata.exists())
+         Resource<?> child = target.getChild(ConfigurationFacet.CONFIGURATION_FILE);
+         if (child instanceof FileResource && child.exists())
          {
+            FileResource<?> projectMetadata = child.reify(FileResource.class);
             ConfigurationFactory configFactory = SimpleContainer
                      .getServices(getClass().getClassLoader(), ConfigurationFactory.class).get();
             result = GenericMetadataFacet.isInstalled(configFactory.getConfiguration(projectMetadata));
