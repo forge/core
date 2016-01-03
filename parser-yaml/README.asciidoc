@@ -1,0 +1,47 @@
+== parser-yaml
+:idprefix: id_
+This addon provides *standalone* functionality, and *exports services* for use in other addons.
+It enables parsing of YAML using the link:http://snakeyaml.org[SnakeYAML] project
+
+=== Depends on
+[options="header"]
+|===
+|Addon |Exported |Optional
+|resources
+|no
+|no
+
+|simple
+|yes
+|no
+
+|===
+
+== Setup
+This Addon requires the following installation steps.
+
+=== Add configuration to pom.xml
+To use this addon, you must add it as a dependency in the *pom.xml* of your `forge-addon` classified artifact:
+[source,xml]
+----
+<dependency>
+   <groupId>org.jboss.forge.addon</groupId>
+   <artifactId>parser-yaml</artifactId>
+   <classifier>forge-addon</classifier>
+   <version>${version}</version>
+</dependency>
+----
+== Features
+YAMLResource for YAML files::
+Allows easy manipulation of YAML data
++
+[source,java]
+----
+@Inject private ResourceFactory factory;
+YAMLResource resource = factory.createResource(new File("data.yaml")).reify(YAMLResource.class);
+Map<String,Object> model = resource.getModel();
+// Manipulate model
+...
+// save it
+resource.setContents(model);
+----

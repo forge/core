@@ -92,6 +92,7 @@
             <module>parser-java</module>
             <module>parser-json</module>
             <module>parser-xml</module>
+            <module>parser-yaml</module>
             <module>resources</module>
             <module>rest-client</module>
             <module>ui</module>
@@ -126,6 +127,7 @@
             <module>parser-java</module>
             <module>parser-json</module>
             <module>parser-xml</module>
+            <module>parser-yaml</module>
             <module>resources</module>
             <module>rest-client</module>
             <module>ui</module>
@@ -165,6 +167,7 @@
             <module>parser-java/api</module>
             <module>parser-json/api</module>
             <module>parser-xml/api</module>
+            <module>parser-yaml</module>
             <module>resources/api</module>
             <module>rest-client</module>
             <module>ui/api</module>
