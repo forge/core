@@ -10,6 +10,7 @@ package org.jboss.forge.addon.parser.yaml.resource;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -23,10 +24,10 @@ import org.jboss.forge.addon.resource.ResourceException;
 public interface YamlResource extends FileResource<YamlResource>
 {
    /**
-    * @return the YAML {@link Map} representation of the underlying {@link File}.
+    * @return an {@link Optional} YAML {@link Map} representation of the underlying {@link File}
     * @throws ResourceException if the {@link File} cannot be read properly
     */
-   Map<String, Object> getModel();
+   Optional<Map<String, Object>> getModel();
 
    /**
     * @return A list of YAML {@link Map} of the underlying {@link File} when it contains several documents.

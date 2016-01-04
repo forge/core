@@ -9,7 +9,6 @@ package org.jboss.forge.addon.parser.yaml.resource;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public class YamlResourceTest
    public void testEmptyYamlShouldNotReturnNull() throws Exception
    {
       YamlResource resource = resourceFactory.create(YamlResource.class, yamlFile);
-      Assert.assertThat(resource.getModel(), notNullValue());
+      Assert.assertThat(resource.getModel().isPresent(), is(true));
    }
 
    @Test
@@ -63,7 +62,7 @@ public class YamlResourceTest
    {
       YamlResource resource = resourceFactory.create(YamlResource.class, yamlFile);
       resource.setContents("name: George\nnumber: 42");
-      Map<String, Object> model = resource.getModel();
+      Map<String, Object> model = resource.getModel().get();
       Assert.assertThat(model.get("name"), is("George"));
       Assert.assertThat(model.get("number"), is(42));
    }

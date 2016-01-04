@@ -15,9 +15,9 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.jboss.forge.addon.resource.AbstractFileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -45,7 +45,7 @@ public abstract class AbstractYamlResource extends AbstractFileResource<YamlReso
 
    @SuppressWarnings("unchecked")
    @Override
-   public Map<String, Object> getModel()
+   public Optional<Map<String, Object>> getModel()
    {
       // https://bitbucket.org/asomov/snakeyaml/wiki/Documentation
       Map<String, Object> map = null;
@@ -58,7 +58,7 @@ public abstract class AbstractYamlResource extends AbstractFileResource<YamlReso
       {
          throw new ResourceException("Error while reading YAML file", e);
       }
-      return map == null ? new LinkedHashMap<>() : map;
+      return Optional.ofNullable(map);
    }
 
    @SuppressWarnings("unchecked")
@@ -71,7 +71,8 @@ public abstract class AbstractYamlResource extends AbstractFileResource<YamlReso
       {
          for (Object obj : yaml.loadAll(reader))
          {
-            result.add((Map<String, Object>) obj);
+            if (obj != null)
+               result.add((Map<String, Object>) obj);
          }
       }
       catch (IOException e)
