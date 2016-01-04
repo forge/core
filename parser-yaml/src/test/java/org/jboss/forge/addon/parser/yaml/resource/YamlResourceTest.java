@@ -44,10 +44,10 @@ public class YamlResourceTest
    }
 
    @Test
-   public void testEmptyYamlShouldNotReturnNull() throws Exception
+   public void testEmptyYamlShouldNotBePresent() throws Exception
    {
       YamlResource resource = resourceFactory.create(YamlResource.class, yamlFile);
-      Assert.assertThat(resource.getModel().isPresent(), is(true));
+      Assert.assertThat(resource.getModel().isPresent(), is(false));
    }
 
    @Test

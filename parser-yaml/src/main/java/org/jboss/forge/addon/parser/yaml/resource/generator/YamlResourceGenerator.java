@@ -28,8 +28,10 @@ public class YamlResourceGenerator implements ResourceGenerator<YamlResource, Fi
          // Do not handle non-file resources (yet)
          return false;
       }
-      String fileName = ((File) resource).getName().toLowerCase();
-      if (type == YamlResource.class || (fileName.endsWith(".yaml") || fileName.endsWith(".yml")))
+      File fileResource = (File) resource;
+      String fileName = fileResource.getName().toLowerCase();
+      if (!fileResource.isDirectory()
+               && (type == YamlResource.class || (fileName.endsWith(".yaml") || fileName.endsWith(".yml"))))
       {
          return true;
       }
