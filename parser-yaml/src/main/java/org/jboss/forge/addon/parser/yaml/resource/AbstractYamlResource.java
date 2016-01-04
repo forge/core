@@ -15,6 +15,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public abstract class AbstractYamlResource extends AbstractFileResource<YamlReso
       {
          throw new ResourceException("Error while reading YAML file", e);
       }
-      return map;
+      return map == null ? new LinkedHashMap<>() : map;
    }
 
    @SuppressWarnings("unchecked")
