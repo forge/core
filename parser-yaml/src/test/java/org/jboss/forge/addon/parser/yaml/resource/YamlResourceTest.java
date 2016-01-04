@@ -111,6 +111,22 @@ public class YamlResourceTest
       Assert.assertEquals("name: George\nnumber: 42\n---\nname: Lincoln\nnumber: 24\n", resource.getContents());
    }
 
+   @Test
+   public void testAnyFileAsYamlResource() throws Exception
+   {
+      File tmpFile = null;
+      try
+      {
+         tmpFile = File.createTempFile("tmp", "");
+         Resource<File> resource = resourceFactory.create(YamlResource.class, tmpFile);
+         Assert.assertThat(resource, instanceOf(YamlResource.class));
+      }
+      finally
+      {
+         tmpFile.delete();
+      }
+   }
+
    @After
    public void tearDown()
    {

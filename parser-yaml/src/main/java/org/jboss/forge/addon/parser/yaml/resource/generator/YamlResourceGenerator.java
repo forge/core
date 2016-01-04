@@ -23,7 +23,13 @@ public class YamlResourceGenerator implements ResourceGenerator<YamlResource, Fi
    @Override
    public boolean handles(Class<?> type, Object resource)
    {
-      if (resource instanceof File && ((File) resource).getName().toLowerCase().endsWith(".yaml"))
+      if (!(resource instanceof File))
+      {
+         // Do not handle non-file resources (yet)
+         return false;
+      }
+      String fileName = ((File) resource).getName().toLowerCase();
+      if (type == YamlResource.class || (fileName.endsWith(".yaml") || fileName.endsWith(".yml")))
       {
          return true;
       }
