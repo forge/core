@@ -71,7 +71,7 @@ public abstract class AbstractYamlResource extends AbstractFileResource<YamlReso
       {
          for (Object obj : yaml.loadAll(reader))
          {
-            if (obj != null)
+            if (obj instanceof Map)
                result.add((Map<String, Object>) obj);
          }
       }
