@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -18,6 +19,8 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
  */
 public class Commands
 {
+   private static final Pattern WHITESPACES = Pattern.compile("\\W+");
+   private static final Pattern COLONS = Pattern.compile("\\:");
    private static final Logger log = Logger.getLogger(Commands.class.getName());
 
    /**
@@ -69,5 +72,73 @@ public class Commands
                   + "`getMetadata(UIContext ctx)` of type [" + command + "].", e);
       }
       return result;
+   }
+
+   /**
+    * "Shellifies" a name (that is, makes the name shell-friendly) by replacing spaces with "-" and removing colons
+    *
+    * @param name
+    * @return
+    */
+   private static String shellifyName(String name)
+   {
+      return COLONS.matcher(WHITESPACES.matcher(name.trim()).replaceAll("-")).replaceAll("");
+   }
+
+   /**
+    * Shellifies a command name
+    * 
+    * @param name
+    * @return
+    */
+   public static String shellifyCommandName(String name)
+   {
+      return shellifyName(name).toLowerCase();
+   }
+
+   /**
+    * Shellifies an option name
+    * 
+    * @param name
+    * @return
+    */
+   public static String shellifyOptionName(String name)
+   {
+      return shellifyName(name);
+   }
+
+   /**
+    * Shellifies an option name using the provided style
+    * 
+    * @param name
+    * @param style
+    * @return
+    */
+   public static String shellifyOptionNameDashed(String name)
+   {
+      String shellName = shellifyName(name);
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < shellName.length(); i++)
+      {
+         char c = shellName.charAt(i);
+         if (Character.isUpperCase(c))
+         {
+            if (i > 0)
+            {
+               char previousChar = shellName.charAt(i - 1);
+               char nextChar = (i + 1 < shellName.length()) ? shellName.charAt(i + 1) : '\0';
+               if (previousChar != '-' && (!Character.isUpperCase(previousChar) || Character.isLowerCase(nextChar)))
+               {
+                  sb.append('-');
+               }
+            }
+            sb.append(Character.toLowerCase(c));
+         }
+         else
+         {
+            sb.append(c);
+         }
+      }
+      return sb.toString();
    }
 }
