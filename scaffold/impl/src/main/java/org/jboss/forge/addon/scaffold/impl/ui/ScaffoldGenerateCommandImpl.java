@@ -7,10 +7,8 @@
 
 package org.jboss.forge.addon.scaffold.impl.ui;
 
-import java.util.Iterator;
 import java.util.Map;
 
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
@@ -59,21 +57,12 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
 
       Imported<ScaffoldProvider> scaffoldProviders = SimpleContainer.getServices(getClass().getClassLoader(),
                ScaffoldProvider.class);
-      Iterator<ScaffoldProvider> scaffolds = scaffoldProviders.iterator();
-      if (scaffolds.hasNext())
+      if (!scaffoldProviders.isUnsatisfied() && !scaffoldProviders.isAmbiguous())
       {
-         provider.setDefaultValue(scaffolds.next());
+         provider.setDefaultValue(scaffoldProviders.get());
       }
       provider.setValueChoices(scaffoldProviders);
-      provider.setItemLabelConverter(new Converter<ScaffoldProvider, String>()
-      {
-
-         @Override
-         public String convert(ScaffoldProvider source)
-         {
-            return source == null ? null : source.getName();
-         }
-      });
+      provider.setItemLabelConverter((source) -> source.getName());
       builder.add(provider).add(webRoot);
    }
 
