@@ -10,12 +10,13 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
+import org.jboss.forge.addon.javaee.validation.ValidationFacet;
 import org.jboss.forge.addon.javaee.validation.ValidationOperations;
 import org.jboss.forge.addon.javaee.validation.provider.ValidationProvider;
 import org.jboss.forge.addon.javaee.validation.providers.JavaEEValidatorProvider;
 import org.jboss.forge.addon.javaee.validation.ui.ValidationProviderSetupCommand;
+import org.jboss.forge.addon.projects.stacks.annotations.StackConstraint;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -29,6 +30,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
+@StackConstraint(ValidationFacet.class)
 public class ValidationProviderSetupCommandImpl extends AbstractJavaEECommand implements ValidationProviderSetupCommand
 {
    @Inject
@@ -82,14 +84,7 @@ public class ValidationProviderSetupCommandImpl extends AbstractJavaEECommand im
       constraintValidatorFactory.addValidator(new ClassInputValidator(constraintValidatorFactory));
 
       providedScope.setDefaultValue(true);
-      Callable<Boolean> dependencyNotProvided = new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
-            return !providedScope.getValue();
-         }
-      };
+      Callable<Boolean> dependencyNotProvided = () -> !providedScope.getValue();
 
       messageInterpolator.setEnabled(dependencyNotProvided);
       traversableResolver.setEnabled(dependencyNotProvided);
@@ -119,14 +114,7 @@ public class ValidationProviderSetupCommandImpl extends AbstractJavaEECommand im
 
    private void initProviders()
    {
-      providers.setItemLabelConverter(new Converter<ValidationProvider, String>()
-      {
-         @Override
-         public String convert(ValidationProvider source)
-         {
-            return source != null ? source.getName() : null;
-         }
-      });
+      providers.setItemLabelConverter((source) -> source.getName());
       providers.setDefaultValue(defaultProvider);
    }
 

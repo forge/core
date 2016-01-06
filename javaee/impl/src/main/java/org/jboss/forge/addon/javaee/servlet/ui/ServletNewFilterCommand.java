@@ -17,7 +17,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 
+import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.stacks.annotations.StackConstraint;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -30,6 +32,7 @@ import org.jboss.forge.roaster.model.source.MethodSource;
  *
  * @author <a href="mailto:antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
+@StackConstraint(ServletFacet.class)
 public class ServletNewFilterCommand extends AbstractServletNewCommand<JavaClassSource>
 {
 

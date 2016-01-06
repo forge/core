@@ -8,13 +8,14 @@
 package org.jboss.forge.addon.javaee.facets;
 
 import org.jboss.forge.addon.javaee.JavaEEFacet;
+import org.jboss.forge.addon.projects.stacks.StackFacet;
 
 /**
  * A common interface for the JavaEE spec facets
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public interface JavaEESpecFacet extends JavaEEFacet
+public interface JavaEESpecFacet extends JavaEEFacet, StackFacet
 {
 
 }
