@@ -113,8 +113,8 @@ public class FacetedTest
    {
       MockFaceted faceted = new MockFaceted();
       MockFacet facet = new MockFacet(faceted);
-      Assert.assertFalse(faceted.getOptionalFacet(MockFacet.class).isPresent());
+      Assert.assertFalse(faceted.getFacetAsOptional(MockFacet.class).isPresent());
       faceted.install(facet);
-      Assert.assertTrue(faceted.getOptionalFacet(MockFacet.class).isPresent());
+      Assert.assertTrue(faceted.getFacetAsOptional(MockFacet.class).isPresent());
    }
 }

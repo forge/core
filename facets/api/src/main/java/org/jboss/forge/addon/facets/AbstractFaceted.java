@@ -57,7 +57,7 @@ public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Mut
    }
 
    @Override
-   public <F extends FACETTYPE> Optional<F> getOptionalFacet(Class<F> type)
+   public <F extends FACETTYPE> Optional<F> getFacetAsOptional(Class<F> type)
    {
       return Optional.<F> ofNullable(safeGetFacet(type));
    }
