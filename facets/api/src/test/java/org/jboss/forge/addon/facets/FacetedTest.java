@@ -107,4 +107,14 @@ public class FacetedTest
       Assert.assertTrue(faceted.supports(new MockFacet(faceted)));
       Assert.assertFalse(faceted.supports(new MockFacet2(faceted)));
    }
+
+   @Test
+   public void testOptional()
+   {
+      MockFaceted faceted = new MockFaceted();
+      MockFacet facet = new MockFacet(faceted);
+      Assert.assertFalse(faceted.getOptionalFacet(MockFacet.class).isPresent());
+      faceted.install(facet);
+      Assert.assertTrue(faceted.getOptionalFacet(MockFacet.class).isPresent());
+   }
 }

@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.facets;
 
+import java.util.Optional;
+
 /**
  * @author <a href="http://community.jboss.org/people/kenfinni">Ken Finnigan</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -34,6 +36,14 @@ public interface Faceted<FACETTYPE extends Facet<?>>
     * {@link Facet} of that type is installed.
     */
    <F extends FACETTYPE> F getFacet(Class<F> type) throws FacetNotFoundException;
+
+   /**
+    * Return the instance of the requested {@link Facet} type as an {@link Optional}.
+    * 
+    * @param type the requested {@link Facet} type
+    * @return an {@link Optional} for the given facet
+    */
+   <F extends FACETTYPE> Optional<F> getOptionalFacet(Class<F> type);
 
    /**
     * Return a {@link Iterable} of the currently installed {@link Facet}s. Return an empty list if no facets of that
