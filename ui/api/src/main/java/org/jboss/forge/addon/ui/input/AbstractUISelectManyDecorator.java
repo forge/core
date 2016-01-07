@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.ui.input;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -285,6 +286,12 @@ public abstract class AbstractUISelectManyDecorator<VALUETYPE> implements UISele
    public <F extends HintsFacet> F getFacet(Class<F> type) throws FacetNotFoundException
    {
       return getDelegate().getFacet(type);
+   }
+
+   @Override
+   public <F extends HintsFacet> Optional<F> getFacetAsOptional(Class<F> type)
+   {
+      return getDelegate().getFacetAsOptional(type);
    }
 
    @Override

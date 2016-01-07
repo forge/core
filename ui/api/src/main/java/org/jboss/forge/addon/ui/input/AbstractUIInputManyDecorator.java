@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.ui.input;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -291,6 +292,12 @@ public abstract class AbstractUIInputManyDecorator<VALUETYPE> implements UIInput
    public Iterable<HintsFacet> getFacets()
    {
       return getDelegate().getFacets();
+   }
+
+   @Override
+   public <F extends HintsFacet> Optional<F> getFacetAsOptional(Class<F> type)
+   {
+      return getDelegate().getFacetAsOptional(type);
    }
 
    @Override

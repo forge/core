@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.ui.input;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -264,6 +265,12 @@ public abstract class AbstractUISelectOneDecorator<VALUETYPE> implements UISelec
    public boolean hasFacet(Class<? extends HintsFacet> type)
    {
       return getDelegate().hasFacet(type);
+   }
+
+   @Override
+   public <F extends HintsFacet> Optional<F> getFacetAsOptional(Class<F> type)
+   {
+      return getDelegate().getFacetAsOptional(type);
    }
 
    @Override
