@@ -19,22 +19,6 @@ import org.jboss.forge.furnace.versions.Version;
 public interface JavaEEFacet extends ProjectFacet
 {
    /**
-    * @deprecated Use {@link JavaEEPackageConstants#DEFAULT_ENTITY_PACKAGE} instead
-    */
-   @Deprecated
-   public static final String DEFAULT_ENTITY_PACKAGE = JavaEEPackageConstants.DEFAULT_ENTITY_PACKAGE;
-   /**
-    * @deprecated Use {@link JavaEEPackageConstants#DEFAULT_CONSTRAINT_PACKAGE} instead
-    */
-   @Deprecated
-   public static final String DEFAULT_CONSTRAINT_PACKAGE = JavaEEPackageConstants.DEFAULT_CONSTRAINT_PACKAGE;
-   /**
-    * @deprecated Use {@link JavaEEPackageConstants#DEFAULT_CDI_PACKAGE} instead
-    */
-   @Deprecated
-   public static final String DEFAULT_CDI_PACKAGE = JavaEEPackageConstants.DEFAULT_CDI_PACKAGE;
-
-   /**
     * Return the {@link Version} of the specification for which this facet represents.
     */
    Version getSpecVersion();
