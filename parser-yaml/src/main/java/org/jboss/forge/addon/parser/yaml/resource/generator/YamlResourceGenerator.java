@@ -15,7 +15,8 @@ import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.ResourceGenerator;
 
 /**
- *
+ * Default {@link ResourceGenerator} implementation for {@link YamlResource}
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public class YamlResourceGenerator implements ResourceGenerator<YamlResource, File>

@@ -10,10 +10,12 @@ package org.jboss.forge.addon.parser.yaml.resource.generator;
 import java.io.File;
 
 import org.jboss.forge.addon.parser.yaml.resource.AbstractYamlResource;
+import org.jboss.forge.addon.parser.yaml.resource.YamlResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 
 /**
- *
+ * Default implementation of {@link YamlResource}
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 class YamlResourceImpl extends AbstractYamlResource
