@@ -16,8 +16,10 @@ import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.facets.JavaEE6Facet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
+import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 
@@ -26,6 +28,7 @@ import org.jboss.forge.furnace.versions.Version;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
+@FacetConstraint(DependencyFacet.class)
 public class JavaEE6FacetImpl extends AbstractJavaEEFacet implements JavaEE6Facet
 {
 
@@ -56,4 +59,12 @@ public class JavaEE6FacetImpl extends AbstractJavaEEFacet implements JavaEE6Face
       return result;
    }
 
+   @Override
+   public boolean uninstall()
+   {
+      DependencyFacet facet = getFaceted().getFacet(DependencyFacet.class);
+      facet.removeDependency(JAVAEE6);
+      facet.removeManagedDependency(JAVAEE6);
+      return true;
+   }
 }
