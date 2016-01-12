@@ -9,6 +9,7 @@ package org.jboss.forge.addon.ui.impl.command;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -87,7 +88,7 @@ public class CommandFactoryImpl implements CommandFactory
          name = metadata.getName();
          if (!context.getProvider().isGUI())
          {
-            name = shellifyName(name);
+            name = Commands.shellifyCommandName(name);
          }
       }
       catch (Exception e)
@@ -135,7 +136,8 @@ public class CommandFactoryImpl implements CommandFactory
             {
                provider.setGUI(false);
                String commandName = getCommandName(delegatingContext, cmd);
-               if (Strings.compare(name, commandName) || Strings.compare(name, shellifyName(commandName)))
+               if (Strings.compare(name, commandName)
+                        || Strings.compare(name, Commands.shellifyCommandName(commandName)))
                {
                   return cmd;
                }
@@ -144,7 +146,8 @@ public class CommandFactoryImpl implements CommandFactory
             {
                provider.setGUI(true);
                String commandName = getCommandName(delegatingContext, cmd);
-               if (Strings.compare(name, commandName) || Strings.compare(name, shellifyName(commandName)))
+               if (Strings.compare(name, commandName)
+                        || Strings.compare(name, Commands.shellifyCommandName(commandName)))
                {
                   return cmd;
                }
@@ -160,14 +163,7 @@ public class CommandFactoryImpl implements CommandFactory
       {
          version = registry.getVersion();
          cache.clear();
-         getCommands(new Operation()
-         {
-            @Override
-            public void execute(UICommand command)
-            {
-               cache.add(command);
-            }
-         });
+         getCommands((command) -> cache.add(command));
       }
       return cache;
    }
@@ -175,18 +171,11 @@ public class CommandFactoryImpl implements CommandFactory
    private Iterable<UICommand> getCommandsFromSource()
    {
       final Set<UICommand> result = Sets.getConcurrentSet();
-      getCommands(new Operation()
-      {
-         @Override
-         public void execute(UICommand command)
-         {
-            result.add(command);
-         }
-      });
+      getCommands((command) -> result.add(command));
       return result;
    }
 
-   private void getCommands(Operation operation)
+   private void getCommands(Consumer<UICommand> operation)
    {
       Imported<CommandProvider> instances = registry.getServices(CommandProvider.class);
       for (CommandProvider provider : instances)
@@ -200,7 +189,7 @@ public class CommandFactoryImpl implements CommandFactory
                UICommand command = iterator.next();
                if (!(command instanceof UIWizardStep))
                {
-                  operation.execute(command);
+                  operation.accept(command);
                }
             }
             catch (Exception e)
@@ -210,24 +199,6 @@ public class CommandFactoryImpl implements CommandFactory
          }
          instances.release(provider);
       }
-   }
-
-   /**
-    * "Shellifies" a name (that is, makes the name shell-friendly) by replacing spaces with "-" and removing colons
-    */
-   private static String shellifyName(String name)
-   {
-      return name != null ? name.trim().toLowerCase().replaceAll("\\W+", "-").replaceAll("\\:", "") : null;
-   }
-
-   /**
-    * 
-    * Strategy for operation to be performed when iterating through Commands
-    *
-    */
-   interface Operation
-   {
-      void execute(UICommand command);
    }
 
    /**
