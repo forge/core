@@ -433,6 +433,7 @@
             <version>1.6.3</version>
             <extensions>true</extensions>
             <configuration>
+               <autoReleaseAfterClose>true</autoReleaseAfterClose>            
                <serverId>ossrh</serverId>
                <nexusUrl>https://oss.sonatype.org/</nexusUrl>
             </configuration>
