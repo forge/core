@@ -32,7 +32,10 @@ public class ShellContextImpl extends AbstractUIContext implements ShellContext
       this.shell = shell;
       this.initialSelection = Selections.from(currentResource);
       this.listeners = listeners;
-      init();
+      for (UIContextListener listener : listeners)
+      {
+         listener.contextInitialized(this);
+      }
    }
 
    @SuppressWarnings("unchecked")
@@ -46,14 +49,6 @@ public class ShellContextImpl extends AbstractUIContext implements ShellContext
    public Shell getProvider()
    {
       return shell;
-   }
-
-   public void init()
-   {
-      for (UIContextListener listener : listeners)
-      {
-         listener.contextInitialized(this);
-      }
    }
 
    @Override
@@ -84,5 +79,4 @@ public class ShellContextImpl extends AbstractUIContext implements ShellContext
       Object verboseFlag = getAttributeMap().get("VERBOSE");
       return (verboseFlag != null && "true".equalsIgnoreCase(verboseFlag.toString()));
    }
-
 }

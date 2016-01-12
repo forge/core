@@ -79,14 +79,13 @@ class ForgeCommandContainer implements CommandContainer
             AeshContext aeshContext, CommandInvocation commandInvocation) throws CommandLineParserException,
                      OptionValidatorException, CommandValidatorException, IOException, InterruptedException
    {
-      CommandLine commandLine = parser.parse(line, false);
+      CommandLine<?> commandLine = parser.parse(line, false);
       commandLine.getParser()
                .getCommandPopulator()
                .populateObject(commandLine, invocationProviders, aeshContext, true);
       if (commandLine.getParser().getProcessedCommand().getValidator() != null
                && !commandLine.hasOptionWithOverrideRequired())
          parser.getProcessedCommand().getValidator().validate(command);
-
       CommandResult result = command.execute(commandInvocation);
 
       return new CommandContainerResult(commandLine.getParser().getProcessedCommand().getResultHandler(), result);

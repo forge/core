@@ -19,12 +19,12 @@ public interface ShellContext extends UIContext
    Shell getProvider();
 
    /**
-    * If it's in interactive mode
+    * @return <code>true</code> if it's in interactive mode
     */
    boolean isInteractive();
 
    /**
-    * If should display errors
+    * @return <code>true</code> if should display errors
     */
    boolean isVerbose();
 }
