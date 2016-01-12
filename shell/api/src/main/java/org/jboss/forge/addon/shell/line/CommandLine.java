@@ -25,4 +25,12 @@ public interface CommandLine
     * @return the parsed options from the command line
     */
    List<CommandOption> getOptions();
+
+   /**
+    * @return <code>true</code> if any parameter is set
+    */
+   default boolean hasParameters()
+   {
+      return getArgument() != null || getOptions().size() > 0;
+   }
 }

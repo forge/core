@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.shell;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 
@@ -88,15 +89,27 @@ public class ShellCommandLineTest
             ref.set(uiContext.getCommandLine());
          }
       });
-      shellTest.execute("foocommand --name George --help HALP", 10, TimeUnit.SECONDS);
-      CommandLine commandLine = ref.get();
-      Assert.assertThat(commandLine, notNullValue());
-      Assert.assertThat(commandLine.getArgument(), nullValue());
-      List<CommandOption> options = commandLine.getOptions();
-      Assert.assertThat(options.size(), equalTo(2));
-      Assert.assertThat(options.get(0).getName(), equalTo("name"));
-      Assert.assertThat(options.get(0).getValue(), equalTo("George"));
-      Assert.assertThat(options.get(1).getName(), equalTo("help"));
-      Assert.assertThat(options.get(1).getValue(), equalTo("HALP"));
+      {
+         shellTest.execute("foocommand --name George --help HALP", 10, TimeUnit.SECONDS);
+         CommandLine commandLine = ref.get();
+         Assert.assertThat(commandLine, notNullValue());
+         Assert.assertThat(commandLine.hasParameters(), is(true));
+         Assert.assertThat(commandLine.getArgument(), nullValue());
+         List<CommandOption> options = commandLine.getOptions();
+         Assert.assertThat(options.size(), equalTo(2));
+         Assert.assertThat(options.get(0).getName(), equalTo("name"));
+         Assert.assertThat(options.get(0).getValue(), equalTo("George"));
+         Assert.assertThat(options.get(1).getName(), equalTo("help"));
+         Assert.assertThat(options.get(1).getValue(), equalTo("HALP"));
+      }
+      {
+         shellTest.execute("foocommand", 10, TimeUnit.SECONDS);
+         CommandLine commandLine = ref.get();
+         Assert.assertThat(commandLine, notNullValue());
+         Assert.assertThat(commandLine.hasParameters(), is(false));
+         Assert.assertThat(commandLine.getArgument(), nullValue());
+         List<CommandOption> options = commandLine.getOptions();
+         Assert.assertThat(options.size(), equalTo(0));
+      }
    }
 }
