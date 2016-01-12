@@ -1,6 +1,7 @@
 package org.jboss.forge.addon.shell.ui;
 
 import org.jboss.forge.addon.shell.Shell;
+import org.jboss.forge.addon.shell.line.CommandLine;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
@@ -27,4 +28,9 @@ public interface ShellContext extends UIContext
     * @return <code>true</code> if should display errors
     */
    boolean isVerbose();
+
+   /**
+    * @return the {@link CommandLine} used in this command execution
+    */
+   CommandLine getCommandLine();
 }

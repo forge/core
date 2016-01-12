@@ -9,6 +9,8 @@ package org.jboss.forge.addon.shell.ui;
 
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.Shell;
+import org.jboss.forge.addon.shell.aesh.line.CommandLineImpl;
+import org.jboss.forge.addon.shell.line.CommandLine;
 import org.jboss.forge.addon.ui.context.AbstractUIContext;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIContextListener;
@@ -78,5 +80,13 @@ public class ShellContextImpl extends AbstractUIContext implements ShellContext
    {
       Object verboseFlag = getAttributeMap().get("VERBOSE");
       return (verboseFlag != null && "true".equalsIgnoreCase(verboseFlag.toString()));
+   }
+
+   @Override
+   public CommandLine getCommandLine()
+   {
+      org.jboss.aesh.cl.CommandLine<?> cmdLine = (org.jboss.aesh.cl.CommandLine<?>) getAttributeMap()
+               .get(org.jboss.aesh.cl.CommandLine.class);
+      return new CommandLineImpl(cmdLine);
    }
 }

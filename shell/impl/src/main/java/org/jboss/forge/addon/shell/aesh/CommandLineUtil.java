@@ -159,6 +159,8 @@ class CommandLineUtil
    public Map<String, InputComponent<?, ?>> populateUIInputs(CommandLine<?> commandLine,
             Map<String, InputComponent<?, ?>> inputs, UIContext context)
    {
+      // Added command line to UIContext.getAttributeMap
+      context.getAttributeMap().put(CommandLine.class, commandLine);
       Map<String, InputComponent<?, ?>> populatedInputs = new LinkedHashMap<>();
       for (Entry<String, InputComponent<?, ?>> entry : inputs.entrySet())
       {

@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.addon.shell.mock.command;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.inject.Inject;
@@ -17,9 +16,6 @@ import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
-import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
@@ -94,29 +90,11 @@ public class FooCommand implements UICommand
    public void initializeUI(UIBuilder builder) throws Exception
    {
       valueWithSpaces.setValueChoices(Arrays.asList("Value 1", "Value 2", "Value 10", "Value 100"));
-      help.setCompleter(new UICompleter<String>()
-      {
-         @Override
-         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
-         {
-            if (value == null || value.length() == 0)
-            {
-               ArrayList<String> list = new ArrayList<>();
-               list.add("HELP");
-               list.add("HALP");
-               return list;
-            }
-            return null;
-         }
-      });
+      help.setCompleter(
+               (context, input, value) -> (value == null || value.isEmpty()) ? Arrays.asList("HELP", "HALP") : null);
 
       builder.add(name).add(help).add(bool).add(bar).add(bar2).add(targetLocation).add(valueWithSpaces).add(career)
                .add(manyCareer).add(disabledOption).add(arguments);
-   }
-
-   @Override
-   public void validate(UIValidationContext context)
-   {
    }
 
    @Override
