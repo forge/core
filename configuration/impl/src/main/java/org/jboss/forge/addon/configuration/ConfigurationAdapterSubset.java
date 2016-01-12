@@ -11,8 +11,6 @@ import java.util.Iterator;
 
 import javax.enterprise.inject.Vetoed;
 
-import org.apache.commons.configuration.HierarchicalConfiguration;
-
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:danielsoro@gmail.com">Daniel Cunha (soro)</a>
@@ -20,21 +18,14 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 @Vetoed
 public class ConfigurationAdapterSubset extends ConfigurationAdapter
 {
-   private final HierarchicalConfiguration parent;
+   private final org.apache.commons.configuration.Configuration parent;
    private final String prefix;
 
-   public ConfigurationAdapterSubset(HierarchicalConfiguration delegate, String prefix)
+   public ConfigurationAdapterSubset(org.apache.commons.configuration.Configuration delegate, String prefix)
    {
+      super(delegate.subset(prefix));
       this.parent = delegate;
       this.prefix = prefix;
-
-      synchronized (delegate)
-      {
-         if (delegate.containsKey(prefix))
-            setDelegate(delegate.configurationAt(prefix, true));
-         else
-            setDelegate((HierarchicalConfiguration) delegate.subset(prefix));
-      }
    }
 
    @Override
@@ -44,7 +35,7 @@ public class ConfigurationAdapterSubset extends ConfigurationAdapter
       {
          try
          {
-            return parent.configurationAt(prefix).getKeys();
+            return parent.subset(prefix).getKeys();
          }
          catch (IllegalArgumentException e)
          {
@@ -60,7 +51,7 @@ public class ConfigurationAdapterSubset extends ConfigurationAdapter
       {
          try
          {
-            parent.configurationAt(prefix).clearProperty(key);
+            parent.subset(prefix).clearProperty(key);
          }
          catch (IllegalArgumentException e)
          {
@@ -76,7 +67,7 @@ public class ConfigurationAdapterSubset extends ConfigurationAdapter
       {
          try
          {
-            parent.configurationAt(prefix).setProperty(key, value);
+            parent.subset(prefix).setProperty(key, value);
          }
          catch (IllegalArgumentException e)
          {
