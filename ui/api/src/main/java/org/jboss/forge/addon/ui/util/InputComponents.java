@@ -10,6 +10,7 @@ package org.jboss.forge.addon.ui.util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.forge.addon.convert.CompositeConverter;
 import org.jboss.forge.addon.convert.Converter;
@@ -23,6 +24,7 @@ import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.input.SingleValued;
 import org.jboss.forge.addon.ui.input.UICompleter;
+import org.jboss.forge.furnace.util.Sets;
 import org.jboss.forge.furnace.util.Strings;
 
 /**
@@ -213,6 +215,7 @@ public final class InputComponents
          }
          else
          {
+
             Converter<String, Object> valueConverter = (Converter<String, Object>) input.getValueConverter();
             if (valueConverter != null)
             {
@@ -237,6 +240,7 @@ public final class InputComponents
       }
       else
       {
+
          Converter<String, Object> valueConverter = (Converter<String, Object>) input.getValueConverter();
          if (valueConverter != null && value instanceof String)
          {
@@ -249,23 +253,33 @@ public final class InputComponents
             if (input instanceof SelectComponent && !Boolean.getBoolean("org.jboss.forge.ui.select_one_lenient_value"))
             {
                SelectComponent<?, Object> selectComponent = (SelectComponent<?, Object>) input;
-               Iterable<Object> valueChoices = selectComponent.getValueChoices();
-               Converter<Object, String> selectConverter = getItemLabelConverter(converterFactory, selectComponent);
-               String valueLabel = selectConverter.convert(value);
-               Object chosenObj = null;
-               if (valueChoices != null)
+               Set<Object> valueChoices = Sets.toSet(selectComponent.getValueChoices());
+               // Check if the value is contained in the valueChoices set
+               if (valueChoices != null && valueChoices.contains(value))
                {
-                  for (Object valueChoice : valueChoices)
+                  result = value;
+               }
+               else
+               {
+                  // equals()/hashCode may not have been implemented. Trying to compare from the String representation
+                  Object chosenObj = null;
+                  if (valueChoices != null)
                   {
-                     String convertedObj = selectConverter.convert(valueChoice);
-                     if (convertedObj.equals(valueLabel))
+                     Converter<Object, String> selectConverter = getItemLabelConverter(converterFactory,
+                              selectComponent);
+                     String valueLabel = selectConverter.convert(value);
+                     for (Object valueChoice : valueChoices)
                      {
-                        chosenObj = valueChoice;
-                        break;
+                        String convertedObj = selectConverter.convert(valueChoice);
+                        if (convertedObj.equals(valueLabel))
+                        {
+                           chosenObj = valueChoice;
+                           break;
+                        }
                      }
                   }
+                  result = chosenObj;
                }
-               result = chosenObj;
             }
             else
             {
