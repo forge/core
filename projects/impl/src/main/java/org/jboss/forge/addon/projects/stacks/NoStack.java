@@ -18,11 +18,11 @@ import org.jboss.forge.furnace.util.Lists;
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class NullStack implements Stack
+public class NoStack implements Stack
 {
-   public static final NullStack INSTANCE = new NullStack();
+   public static final NoStack INSTANCE = new NoStack();
 
-   private NullStack()
+   private NoStack()
    {
    }
 

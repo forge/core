@@ -20,7 +20,7 @@ import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
-import org.jboss.forge.addon.projects.stacks.NullStackFacet;
+import org.jboss.forge.addon.projects.stacks.NoStackFacet;
 import org.jboss.forge.addon.projects.stacks.StackFacet;
 import org.jboss.forge.addon.projects.stacks.StackFacetComparator;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -276,7 +276,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
 
    private void configureStack(InputComponentFactory factory, final UIContext context)
    {
-      NullStackFacet defaultStack = SimpleContainer.getServices(getClass().getClassLoader(), NullStackFacet.class)
+      NoStackFacet defaultStack = SimpleContainer.getServices(getClass().getClassLoader(), NoStackFacet.class)
                .get();
       Imported<StackFacet> stacks = SimpleContainer.getServices(getClass().getClassLoader(), StackFacet.class);
       final List<StackFacet> list = Lists.toList(stacks);
@@ -289,7 +289,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
                         .collect(Collectors.toSet()))
                .setDefaultValue(defaultStack)
                .setItemLabelConverter((facet) -> context.getProvider().isGUI() ? facet.getStack().getName()
-                        : Commands.shellifyOptionNameDashed(facet.getStack().getName()));
+                        : Commands.shellifyOptionValue(facet.getStack().getName()));
    }
 
    private boolean isProjectTypeBuildable(ProjectType type, ProjectProvider buildSystem)

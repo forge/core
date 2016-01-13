@@ -16,7 +16,7 @@ import org.jboss.forge.addon.projects.ProjectType;
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class NullStackFacet extends AbstractFacet<Project> implements StackFacet
+public class NoStackFacet extends AbstractFacet<Project> implements StackFacet
 {
    @Override
    public boolean install()
@@ -33,7 +33,7 @@ public class NullStackFacet extends AbstractFacet<Project> implements StackFacet
    @Override
    public Stack getStack()
    {
-      return NullStack.INSTANCE;
+      return NoStack.INSTANCE;
    }
 
    @Override
@@ -41,11 +41,4 @@ public class NullStackFacet extends AbstractFacet<Project> implements StackFacet
    {
       return true;
    }
-
-   @Override
-   public int priority()
-   {
-      return Integer.MIN_VALUE;
-   }
-
 }

@@ -1,7 +1,7 @@
 org.jboss.forge.addon.projects.impl.DependencyInstallerImpl
 org.jboss.forge.addon.projects.impl.facets.ClassLoaderFacetImpl
 org.jboss.forge.addon.projects.shell.ProjectRootCdTokenHandler
-org.jboss.forge.addon.projects.stacks.NullStackFacet
+org.jboss.forge.addon.projects.stacks.NoStackFacet
 org.jboss.forge.addon.projects.types.ParentProjectType
 org.jboss.forge.addon.projects.types.ResourcesProjectType
 org.jboss.forge.addon.projects.ui.BuildCommand

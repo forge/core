@@ -18,12 +18,7 @@ public class StackFacetComparator implements Comparator<StackFacet>
    @Override
    public int compare(StackFacet o1, StackFacet o2)
    {
-      int result = o2.priority() - o1.priority();
-      if (result == 0)
-      {
-         result = o2.getStack().getName().compareTo(o1.getStack().getName());
-      }
-      return result;
+      return o2.getStack().getName().compareTo(o1.getStack().getName());
    }
 
 }

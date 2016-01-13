@@ -108,6 +108,17 @@ public class Commands
    }
 
    /**
+    * Shellifies an option value
+    * 
+    * @param value
+    * @return
+    */
+   public static String shellifyOptionValue(String value)
+   {
+      return COLONS.matcher(WHITESPACES.matcher(value.trim()).replaceAll("_")).replaceAll("").toUpperCase();
+   }
+
+   /**
     * Shellifies an option name using the provided style
     * 
     * @param name

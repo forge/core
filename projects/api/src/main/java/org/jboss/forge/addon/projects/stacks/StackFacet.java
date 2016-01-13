@@ -24,13 +24,6 @@ public interface StackFacet extends ProjectFacet
    Stack getStack();
 
    /**
-    * @return The priority this {@link StackFacet} has related to other {@link StackFacet}s.
-    * 
-    *         Lower values receive a higher priority
-    */
-   int priority();
-
-   /**
     * Does this {@link StackFacet} support the given {@link ProjectType} in the New Project wizard?
     * 
     * @param projectType the project type chosen in the NewProjectWizard

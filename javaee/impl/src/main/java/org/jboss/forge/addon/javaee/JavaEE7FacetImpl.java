@@ -83,12 +83,6 @@ public class JavaEE7FacetImpl extends AbstractJavaEEFacet implements JavaEE7Face
    }
 
    @Override
-   public int priority()
-   {
-      return 1;
-   }
-
-   @Override
    public boolean uninstall()
    {
       DependencyFacet facet = getFaceted().getFacet(DependencyFacet.class);

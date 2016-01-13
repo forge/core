@@ -72,12 +72,6 @@ public class JavaEE6FacetImpl extends AbstractJavaEEFacet implements JavaEE6Face
    }
 
    @Override
-   public int priority()
-   {
-      return 1;
-   }
-
-   @Override
    public boolean supports(ProjectType projectType)
    {
       Set<Class<? extends ProjectFacet>> facets = Sets.toSet(projectType.getRequiredFacets());
