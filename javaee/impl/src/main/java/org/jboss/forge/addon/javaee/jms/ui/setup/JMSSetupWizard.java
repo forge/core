@@ -55,7 +55,11 @@ public class JMSSetupWizard extends AbstractJavaEECommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(jmsVersion);
+      Project project = getSelectedProject(builder);
+      if (filterValueChoicesFromStack(project, jmsVersion))
+      {
+         builder.add(jmsVersion);
+      }
    }
 
    @Override
