@@ -2,10 +2,10 @@ package org.jboss.forge.addon.facets;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * 
@@ -20,10 +20,9 @@ public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Mut
    @Override
    public boolean hasFacet(Class<? extends FACETTYPE> type)
    {
-      return getFacetAsOptional(type).isPresent();
+      return safeGetFacet(type) != null;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public boolean hasAllFacets(Class<? extends FACETTYPE>... facetDependencies)
    {
@@ -46,15 +45,21 @@ public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Mut
    @Override
    public <F extends FACETTYPE> F getFacet(Class<F> type) throws FacetNotFoundException
    {
-      return getFacetAsOptional(type)
-               .orElseThrow(() -> new FacetNotFoundException("No Facet of type [" + type + "] is installed."));
+      F facet = safeGetFacet(type);
+      if (facet == null)
+      {
+         throw new FacetNotFoundException("No Facet of type [" + type + "] is installed.");
+      }
+      else
+      {
+         return facet;
+      }
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public <F extends FACETTYPE> Optional<F> getFacetAsOptional(Class<F> type)
    {
-      return (Optional<F>) facets.stream().filter((facet) -> type.isInstance(facet)).findFirst();
+      return Optional.<F> ofNullable(safeGetFacet(type));
    }
 
    @Override
@@ -107,7 +112,37 @@ public abstract class AbstractFaceted<FACETTYPE extends Facet<?>> implements Mut
    @SuppressWarnings("unchecked")
    public <F extends FACETTYPE> Iterable<F> getFacets(Class<F> type)
    {
-      return (Set<F>) facets.stream().filter((facet) -> type.isInstance(facet)).collect(Collectors.toSet());
+      Set<F> result = new HashSet<F>();
+      for (FACETTYPE facet : facets)
+      {
+         if (type.isInstance(facet))
+         {
+            result.add((F) facet);
+         }
+      }
+      return result;
+   }
+
+   /**
+    * Returns the installed facet that is an instance of the provided type argument, null otherwise.
+    * 
+    * It does not throw any exception
+    * 
+    * @param type the facet type
+    * @return the Facet if found, otherwise, null
+    */
+   @SuppressWarnings("unchecked")
+   private <F extends FACETTYPE> F safeGetFacet(Class<F> type)
+
+   {
+      for (FACETTYPE facet : facets)
+      {
+         if (type.isInstance(facet))
+         {
+            return (F) facet;
+         }
+      }
+      return null;
    }
 
    @Override
