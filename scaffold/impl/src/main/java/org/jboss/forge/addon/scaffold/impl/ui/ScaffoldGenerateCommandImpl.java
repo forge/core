@@ -20,7 +20,6 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UINavigationContext;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
@@ -64,12 +63,6 @@ public class ScaffoldGenerateCommandImpl extends AbstractProjectCommand implemen
       provider.setValueChoices(scaffoldProviders);
       provider.setItemLabelConverter((source) -> source.getName());
       builder.add(provider).add(webRoot);
-   }
-
-   @Override
-   public void validate(UIValidationContext validator)
-   {
-      super.validate(validator);
    }
 
    @Override

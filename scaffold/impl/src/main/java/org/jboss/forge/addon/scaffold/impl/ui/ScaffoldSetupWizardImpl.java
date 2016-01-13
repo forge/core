@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.scaffold.impl.ui;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jboss.forge.addon.convert.Converter;
@@ -55,10 +54,9 @@ public class ScaffoldSetupWizardImpl extends AbstractProjectCommand implements S
                         "The web root path where the scaffolding will be placed/accessible from the client browser (default '/').");
       Imported<ScaffoldProvider> scaffoldProviders = SimpleContainer.getServices(getClass().getClassLoader(),
                ScaffoldProvider.class);
-      Iterator<ScaffoldProvider> scaffolds = scaffoldProviders.iterator();
-      if (scaffolds.hasNext())
+      if (!scaffoldProviders.isUnsatisfied() && !scaffoldProviders.isAmbiguous())
       {
-         provider.setDefaultValue(scaffolds.next());
+         provider.setDefaultValue(scaffoldProviders.get());
       }
       provider.setValueChoices(scaffoldProviders);
       provider.setItemLabelConverter(new Converter<ScaffoldProvider, String>()
