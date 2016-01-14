@@ -7,7 +7,11 @@
 
 package org.jboss.forge.addon.projects;
 
+import java.util.Optional;
+
 import org.jboss.forge.addon.facets.Faceted;
+import org.jboss.forge.addon.projects.stacks.Stack;
+import org.jboss.forge.addon.projects.stacks.StackFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 
@@ -49,4 +53,19 @@ public interface Project extends Faceted<ProjectFacet>
     * Get the {@link Resource} representing the root of this {@link Project}.
     */
    Resource<?> getRoot();
+
+   /**
+    * A project may have a stack associated with it
+    * 
+    * @return an {@link Optional} containing the associated stack
+    */
+   default Optional<Stack> getStack()
+   {
+      Stack stack = null;
+      if (hasFacet(StackFacet.class))
+      {
+         stack = getFacet(StackFacet.class).getStack();
+      }
+      return Optional.ofNullable(stack);
+   }
 }
