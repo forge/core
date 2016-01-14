@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.javaee.cdi.ui;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -16,6 +17,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.annotation.Inherited;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -27,6 +29,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
+import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_0;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -104,12 +107,13 @@ public class CDINewInterceptorCommandTest
          assertEquals("CDI: New Interceptor", metadata.getName());
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("CDI", metadata.getCategory().getSubCategory().getName());
-         assertEquals(4, controller.getInputs().size());
+         assertEquals(5, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
          assertTrue(controller.hasInput("interceptorBinding"));
+         assertTrue(controller.hasInput("enabled"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_CDI_PACKAGE));
       }
    }
@@ -153,6 +157,41 @@ public class CDINewInterceptorCommandTest
       Assert.assertTrue(interceptor.hasAnnotation(Interceptor.class));
       Assert.assertTrue(interceptor.getMethods().get(0).hasAnnotation(AroundInvoke.class));
       Assert.assertFalse(interceptor.hasAnnotation(Inherited.class));
+      CDIFacet_1_0 cdiFacet = project.getFacet(CDIFacet_1_0.class);
+      List<String> allClazz = cdiFacet.getConfig().getOrCreateInterceptors().getAllClazz();
+      Assert.assertThat(allClazz.size(), is(0));
+   }
+
+   @Test
+   public void testCreateNewEnabledInterceptor() throws Exception
+   {
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewInterceptorCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyInterceptor");
+         controller.setValueFor("targetPackage", "org.jboss.forge.test");
+         controller.setValueFor("interceptorBinding", "javax.inject.Named");
+         controller.setValueFor("enabled", true);
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      }
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyInterceptor");
+      Assert.assertNotNull(javaResource);
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      JavaClass<?> interceptor = javaResource.getJavaType();
+      Assert.assertTrue(interceptor.hasAnnotation(Named.class));
+      Assert.assertTrue(interceptor.hasAnnotation(Interceptor.class));
+      Assert.assertTrue(interceptor.getMethods().get(0).hasAnnotation(AroundInvoke.class));
+      Assert.assertFalse(interceptor.hasAnnotation(Inherited.class));
+      CDIFacet_1_0 cdiFacet = project.getFacet(CDIFacet_1_0.class);
+      List<String> allClazz = cdiFacet.getConfig().getOrCreateInterceptors().getAllClazz();
+      Assert.assertThat(allClazz.size(), is(1));
+      Assert.assertThat(allClazz.get(0), equalTo("org.jboss.forge.test.MyInterceptor"));
    }
 
    @Test
