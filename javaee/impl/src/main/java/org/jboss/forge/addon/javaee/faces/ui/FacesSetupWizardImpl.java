@@ -16,6 +16,7 @@ import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
+import org.jboss.forge.addon.projects.stacks.annotations.StackConstraint;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -34,6 +35,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  */
 @SuppressWarnings("rawtypes")
 @FacetConstraint({ DependencyFacet.class, JavaSourceFacet.class })
+@StackConstraint(FacesFacet.class)
 public class FacesSetupWizardImpl extends AbstractJavaEECommand implements FacesSetupWizard
 {
 
@@ -55,7 +57,11 @@ public class FacesSetupWizardImpl extends AbstractJavaEECommand implements Faces
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(facesVersion);
+      Project project = getSelectedProject(builder);
+      if (filterValueChoicesFromStack(project, facesVersion))
+      {
+         builder.add(facesVersion);
+      }
    }
 
    @Override

@@ -17,6 +17,7 @@ import org.jboss.forge.addon.javaee.faces.FacesOperations;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.stacks.annotations.StackConstraint;
 import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -37,6 +38,7 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@StackConstraint(FacesFacet.class)
 public class FacesNewValidatorMethodCommand extends AbstractJavaEECommand implements PrerequisiteCommandsProvider
 {
 

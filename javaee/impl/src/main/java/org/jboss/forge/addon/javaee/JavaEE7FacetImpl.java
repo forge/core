@@ -20,6 +20,7 @@ import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.facets.JavaEE7Facet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
+import org.jboss.forge.addon.projects.stacks.Stack;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 
@@ -31,7 +32,6 @@ import org.jboss.forge.furnace.versions.Version;
 @FacetConstraint(DependencyFacet.class)
 public class JavaEE7FacetImpl extends AbstractJavaEEFacet implements JavaEE7Facet
 {
-
    @Inject
    public JavaEE7FacetImpl(DependencyInstaller installer)
    {
@@ -62,6 +62,12 @@ public class JavaEE7FacetImpl extends AbstractJavaEEFacet implements JavaEE7Face
    protected Iterable<Dependency> getRequiredManagedDependenciesFor(Dependency dependency)
    {
       return Collections.emptySet();
+   }
+
+   @Override
+   public Stack getStack()
+   {
+      return JavaEE7Facet.STACK;
    }
 
    @Override

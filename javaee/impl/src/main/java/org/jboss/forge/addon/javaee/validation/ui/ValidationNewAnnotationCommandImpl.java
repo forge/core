@@ -23,7 +23,9 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.ReportAsSingleViolation;
 
+import org.jboss.forge.addon.javaee.validation.ValidationFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.stacks.annotations.StackConstraint;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -34,6 +36,7 @@ import org.jboss.forge.roaster.model.source.JavaAnnotationSource;
  *
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
+@StackConstraint(ValidationFacet.class)
 public class ValidationNewAnnotationCommandImpl extends AbstractValidationCommand<JavaAnnotationSource> implements
          ValidationNewAnnotationCommand
 {
@@ -60,7 +63,7 @@ public class ValidationNewAnnotationCommandImpl extends AbstractValidationComman
    @Override
    public JavaAnnotationSource decorateSource(UIExecutionContext context, Project project,
             JavaAnnotationSource constraint)
-            throws Exception
+                     throws Exception
    {
       // Constraint annotation header
       constraint.addAnnotation(Constraint.class).setLiteralValue("validatedBy", "{}");

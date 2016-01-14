@@ -2,7 +2,9 @@ package org.jboss.forge.addon.javaee.validation.ui;
 
 import javax.validation.Payload;
 
+import org.jboss.forge.addon.javaee.validation.ValidationFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.stacks.annotations.StackConstraint;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -11,7 +13,9 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 /**
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
-public class ValidationNewPayloadCommandImpl extends AbstractValidationCommand<JavaClassSource> implements ValidationNewPayloadCommand
+@StackConstraint(ValidationFacet.class)
+public class ValidationNewPayloadCommandImpl extends AbstractValidationCommand<JavaClassSource>
+         implements ValidationNewPayloadCommand
 {
    @Override
    public Metadata getMetadata(UIContext context)
@@ -33,9 +37,11 @@ public class ValidationNewPayloadCommandImpl extends AbstractValidationCommand<J
       return JavaClassSource.class;
    }
 
-    @Override
-    public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source) throws Exception {
-        source.addInterface(Payload.class);
-        return source;
-    }
+   @Override
+   public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source)
+            throws Exception
+   {
+      source.addInterface(Payload.class);
+      return source;
+   }
 }

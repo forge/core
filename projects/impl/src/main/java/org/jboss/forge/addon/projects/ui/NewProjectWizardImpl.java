@@ -1,6 +1,7 @@
 package org.jboss.forge.addon.projects.ui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.projects.Project;
@@ -19,6 +21,9 @@ import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
+import org.jboss.forge.addon.projects.stacks.NoStackFacet;
+import org.jboss.forge.addon.projects.stacks.StackFacet;
+import org.jboss.forge.addon.projects.stacks.StackFacetComparator;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
@@ -37,11 +42,13 @@ import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
+import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.util.Lists;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
@@ -56,6 +63,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
    private UIInput<Boolean> overwrite;
    private UISelectOne<ProjectType> type;
    private UISelectOne<ProjectProvider> buildSystem;
+   private UISelectOne<StackFacet> stack;
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -83,10 +91,10 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       configureOverwriteInput(factory);
       configureBuildSystemInput(factory, uiContext);
       configureProjectTypeInput(factory, uiContext);
-
+      configureStack(factory, uiContext);
       builder.add(named).add(topLevelPackage).add(version).add(finalName).add(targetLocation)
                .add(overwrite).add(type)
-               .add(buildSystem);
+               .add(buildSystem).add(stack);
    }
 
    private void configureFinalName(InputComponentFactory factory)
@@ -267,6 +275,25 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       });
    }
 
+   private void configureStack(InputComponentFactory factory, final UIContext context)
+   {
+      NoStackFacet defaultStack = SimpleContainer.getServices(getClass().getClassLoader(), NoStackFacet.class)
+               .get();
+      Imported<StackFacet> stacks = SimpleContainer.getServices(getClass().getClassLoader(), StackFacet.class);
+      final List<StackFacet> list = Lists.toList(stacks);
+      Collections.sort(list, new StackFacetComparator());
+      stack = factory.createSelectOne("stack", StackFacet.class)
+               .setLabel("Stack")
+               .setDescription("The technology stack to be used in this project")
+               .setValueChoices(() -> list.stream()
+                        .filter((stackFacet) -> (type.hasValue() || type.hasDefaultValue())
+                                 && type.getValue().supports(stackFacet.getStack()))
+                        .collect(Collectors.toSet()))
+               .setDefaultValue(defaultStack)
+               .setItemLabelConverter((facet) -> context.getProvider().isGUI() ? facet.getStack().getName()
+                        : Commands.shellifyOptionValue(facet.getStack().getName()));
+   }
+
    private boolean isProjectTypeBuildable(ProjectType type, ProjectProvider buildSystem)
    {
       boolean result = false;
@@ -362,13 +389,13 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
                }
             }
             // Install the required facets
+            FacetFactory facetFactory = SimpleContainer
+                     .getServices(getClass().getClassLoader(), FacetFactory.class).get();
             if (value != null)
             {
                Iterable<Class<? extends ProjectFacet>> requiredFacets = value.getRequiredFacets();
                if (requiredFacets != null)
                {
-                  FacetFactory facetFactory = SimpleContainer
-                           .getServices(getClass().getClassLoader(), FacetFactory.class).get();
                   for (Class<? extends ProjectFacet> facet : requiredFacets)
                   {
                      Class<? extends ProjectFacet> buildSystemFacet = buildSystemValue.resolveProjectFacet(facet);
@@ -376,6 +403,23 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
                      {
                         facetFactory.install(project, buildSystemFacet);
                      }
+                     facetFactory.install(project, stack.getValue());
+
+                  }
+               }
+            }
+            // Install the selected facet
+            if (stack.hasValue())
+            {
+               StackFacet stackFacet = stack.getValue();
+               if (!(stackFacet instanceof NoStackFacet))
+               {
+                  if (facetFactory.install(project, stackFacet))
+                  {
+                     result = Results.aggregate(
+                              Arrays.asList(result,
+                                       Results.success("Stack '" + stackFacet.getStack().getName()
+                                                + "' installed in project")));
                   }
                }
             }
@@ -419,9 +463,10 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
-      if (type.getValue() != null)
+      ProjectType nextStep = type.getValue();
+      if (nextStep != null)
       {
-         return type.getValue().next(context);
+         return nextStep.next(context);
       }
       else
       {

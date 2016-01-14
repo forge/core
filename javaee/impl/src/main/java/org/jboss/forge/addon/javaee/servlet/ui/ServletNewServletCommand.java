@@ -17,7 +17,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.stacks.annotations.StackConstraint;
 import org.jboss.forge.addon.text.Inflector;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -35,6 +37,7 @@ import org.jboss.forge.roaster.model.source.MethodSource;
  *
  * @author <a href="mailto:antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
+@StackConstraint(ServletFacet.class)
 public class ServletNewServletCommand extends AbstractServletNewCommand<JavaClassSource>
 {
    @Inject
@@ -99,8 +102,9 @@ public class ServletNewServletCommand extends AbstractServletNewCommand<JavaClas
          doGet.addParameter(HttpServletRequest.class, "request");
          doGet.addParameter(HttpServletResponse.class, "response");
          doGet.addThrows(ServletException.class).addThrows(IOException.class);
-         doGet.setBody("response.getWriter().println(\"Method " + method.getMethodName() + "\" invoked);").addAnnotation(
-                  Override.class);
+         doGet.setBody("response.getWriter().println(\"Method " + method.getMethodName() + "\" invoked);")
+                  .addAnnotation(
+                           Override.class);
       }
 
       return source;

@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.javaee.validation.ui;
 
+import org.jboss.forge.addon.javaee.validation.ValidationFacet;
+import org.jboss.forge.addon.projects.stacks.annotations.StackConstraint;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
@@ -14,6 +16,7 @@ import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
  *
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
+@StackConstraint(ValidationFacet.class)
 public class ValidationNewGroupCommandImpl extends AbstractValidationCommand<JavaInterfaceSource> implements
          ValidationNewGroupCommand
 {

@@ -13,8 +13,10 @@ import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
+import org.jboss.forge.addon.projects.stacks.annotations.StackConstraint;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -29,6 +31,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @FacetConstraint({ DependencyFacet.class, ResourcesFacet.class })
+@StackConstraint({ CDIFacet.class })
 public class CDISetupCommandImpl extends AbstractJavaEECommand implements CDISetupCommand
 {
    @Override
@@ -50,7 +53,11 @@ public class CDISetupCommandImpl extends AbstractJavaEECommand implements CDISet
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(cdiVersion);
+      Project project = getSelectedProject(builder);
+      if (filterValueChoicesFromStack(project, cdiVersion))
+      {
+         builder.add(cdiVersion);
+      }
    }
 
    @Override
@@ -68,5 +75,4 @@ public class CDISetupCommandImpl extends AbstractJavaEECommand implements CDISet
    {
       return true;
    }
-
 }

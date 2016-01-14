@@ -66,12 +66,13 @@ public class FacesScaffoldTest
    public void shouldCreateOneErrorPageForEachErrorCode() throws Exception
    {
       shellTest.execute("servlet-setup --servlet-version 3.1", 10, TimeUnit.SECONDS);
+      shellTest.execute("jpa-setup", 10, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-entity --named Customer", 10, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-field --named firstName", 10, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-entity --named Publisher", 10, TimeUnit.SECONDS);
       shellTest.execute("jpa-new-field --named firstName", 10, TimeUnit.SECONDS);
-      Assert.assertThat(shellTest.execute("scaffold-setup", 10, TimeUnit.SECONDS),
-               not(instanceOf(Failed.class)));
+      Result result = shellTest.execute("scaffold-setup --provider Faces", 10, TimeUnit.SECONDS);
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
       Project project = projectFactory.findProject(shellTest.getShell().getCurrentResource());
       Assert.assertTrue(project.hasFacet(ServletFacet_3_1.class));
       ServletFacet_3_1 servletFacet = project.getFacet(ServletFacet_3_1.class);

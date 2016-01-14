@@ -20,6 +20,7 @@ import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.facets.JavaEE6Facet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
+import org.jboss.forge.addon.projects.stacks.Stack;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 
@@ -57,6 +58,12 @@ public class JavaEE6FacetImpl extends AbstractJavaEEFacet implements JavaEE6Face
       Dependency JAVAEE6_PROVIDED = DependencyBuilder.create(JAVAEE6).setScopeType("provided");
       result.put(JAVAEE6_PROVIDED, Arrays.asList(JAVAEE6_PROVIDED));
       return result;
+   }
+
+   @Override
+   public Stack getStack()
+   {
+      return JavaEE6Facet.STACK;
    }
 
    @Override
