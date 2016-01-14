@@ -87,7 +87,8 @@ public class JavaNewMethodCommandTest
    public void testGenerateMethodWithDefaults() throws Exception
    {
 
-      createTargetClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;}}");
+      createTargetClass(
+               "public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;}}");
 
       createCommandController();
       commandController.initialize();
@@ -109,7 +110,8 @@ public class JavaNewMethodCommandTest
    public void testGenerateMethodWithNameAndReturn() throws Exception
    {
 
-      createTargetClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;}}");
+      createTargetClass(
+               "public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;}}");
 
       createCommandController();
       commandController.initialize();
@@ -133,7 +135,8 @@ public class JavaNewMethodCommandTest
    public void testGenerateFieldWithNameAndParameter() throws Exception
    {
 
-      createTargetClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;}}");
+      createTargetClass(
+               "public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;}}");
 
       createCommandController();
       commandController.initialize();
@@ -159,7 +162,8 @@ public class JavaNewMethodCommandTest
    public void testGenerateFieldWithNameReturnParameterAndAcess() throws Exception
    {
 
-      createTargetClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;}}");
+      createTargetClass(
+               "public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;}}");
 
       createCommandController();
       commandController.initialize();
@@ -194,7 +198,8 @@ public class JavaNewMethodCommandTest
 
    private void testVisibility(Visibility visibility) throws FileNotFoundException, Exception
    {
-      createTargetClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;}}");
+      createTargetClass(
+               "public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;}}");
 
       createCommandController();
       commandController.initialize();
@@ -217,7 +222,8 @@ public class JavaNewMethodCommandTest
    @Test
    public void testMethodAlreadyExists() throws Exception
    {
-      createTargetClass("public class Test{private String simpleString;public Test setSimpleString(String simple){simpleString = simple;}private String methodName(){int a;}}");
+      createTargetClass(
+               "public class Test{private String simpleString;public Test setSimpleString(String simple){simpleString = simple;}private String methodName(){int a;}}");
 
       createCommandController();
       commandController.initialize();
@@ -235,8 +241,10 @@ public class JavaNewMethodCommandTest
    @Test
    public void testFinalSuperClassMethodExists() throws Exception
    {
-      createTargetClass("public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
-      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} final String methodName(){int a;}}");
+      createTargetClass(
+               "public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
+      createTargetSuperClass(
+               "public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} final String methodName(){int a;}}");
 
       createCommandController();
       commandController.initialize();
@@ -254,8 +262,10 @@ public class JavaNewMethodCommandTest
    @Test
    public void testNotFinalSuperClassMethodExists() throws Exception
    {
-      createTargetClass("public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
-      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} String methodName(int a,String s,int c,int d){int a;}}");
+      createTargetClass(
+               "public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
+      createTargetSuperClass(
+               "public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} String methodName(int a,String s,int c,int d){int a;}}");
 
       createCommandController();
       commandController.initialize();
@@ -281,8 +291,10 @@ public class JavaNewMethodCommandTest
    @Test
    public void testHigherAccessSuperClassMethodExists() throws Exception
    {
-      createTargetClass("public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
-      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} public String methodName(){int a;}}");
+      createTargetClass(
+               "public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
+      createTargetSuperClass(
+               "public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} public String methodName(){int a;}}");
 
       createCommandController();
       commandController.initialize();
@@ -301,8 +313,10 @@ public class JavaNewMethodCommandTest
    @Test
    public void testLowerAccessSuperClassMethodExists() throws Exception
    {
-      createTargetClass("public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
-      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} String methodName(int a,String s,int c,int d){int a;}}");
+      createTargetClass(
+               "public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
+      createTargetSuperClass(
+               "public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} String methodName(int a,String s,int c,int d){int a;}}");
 
       createCommandController();
       commandController.initialize();
@@ -329,8 +343,10 @@ public class JavaNewMethodCommandTest
    @Test
    public void testDifferentReturnSuperClassMethodExists() throws Exception
    {
-      createTargetClass("public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
-      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} public int methodName(){int a;}}");
+      createTargetClass(
+               "public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
+      createTargetSuperClass(
+               "public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} public int methodName(){int a;}}");
 
       createCommandController();
       commandController.initialize();
@@ -350,8 +366,10 @@ public class JavaNewMethodCommandTest
    @Test
    public void testPrivateAndFinalSuperClassMethodExists() throws Exception
    {
-      createTargetClass("public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
-      createTargetSuperClass("public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} private final String methodName(int a,String s,int c,int d){int a;}}");
+      createTargetClass(
+               "public class subTest extends Test {private String simpleString; public subTest setSimpleString(String simple){simpleString=simple;}}");
+      createTargetSuperClass(
+               "public class Test{private String simpleString; public Test setSimpleString(String simple){simpleString=simple;} private final String methodName(int a,String s,int c,int d){int a;}}");
 
       createCommandController();
       commandController.initialize();
@@ -432,7 +450,7 @@ public class JavaNewMethodCommandTest
 
    private static void setMethodName(CommandController commandController, String methodName)
    {
-      commandController.setValueFor("methodName", methodName);
+      commandController.setValueFor("named", methodName);
    }
 
    private static void setReturnType(CommandController commandController, String returnType)
