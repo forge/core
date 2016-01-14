@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.javaee.cdi.ui;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -16,6 +17,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.annotation.Inherited;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.decorator.Decorator;
@@ -25,6 +27,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet;
+import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_0;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
@@ -103,12 +106,13 @@ public class CDINewDecoratorCommandTest
          assertEquals("CDI: New Decorator", metadata.getName());
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("CDI", metadata.getCategory().getSubCategory().getName());
-         assertEquals(4, controller.getInputs().size());
+         assertEquals(5, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
          assertTrue(controller.hasInput("delegate"));
+         assertTrue(controller.hasInput("enabled"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_CDI_PACKAGE));
       }
    }
@@ -150,5 +154,40 @@ public class CDINewDecoratorCommandTest
       Assert.assertTrue(ann.isAbstract());
       Assert.assertTrue(ann.hasField("delegate"));
       Assert.assertFalse(ann.hasAnnotation(Inherited.class));
+      CDIFacet_1_0 cdiFacet = project.getFacet(CDIFacet_1_0.class);
+      List<String> allClazz = cdiFacet.getConfig().getOrCreateDecorators().getAllClazz();
+      Assert.assertThat(allClazz.size(), is(0));
+   }
+
+   @Test
+   public void testCreateNewEnabledDecorator() throws Exception
+   {
+      try (CommandController controller = uiTestHarness.createCommandController(CDINewDecoratorCommand.class,
+               project.getRoot()))
+      {
+         controller.initialize();
+         controller.setValueFor("named", "MyDecorator");
+         controller.setValueFor("targetPackage", "org.jboss.forge.test");
+         controller.setValueFor("delegate", "java.io.Serializable");
+         controller.setValueFor("enabled", true);
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+      }
+
+      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+      JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.MyDecorator");
+      Assert.assertNotNull(javaResource);
+      Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+      JavaClass<?> ann = javaResource.getJavaType();
+      Assert.assertTrue(ann.hasAnnotation(Decorator.class));
+      Assert.assertTrue(ann.isAbstract());
+      Assert.assertTrue(ann.hasField("delegate"));
+      Assert.assertFalse(ann.hasAnnotation(Inherited.class));
+      CDIFacet_1_0 cdiFacet = project.getFacet(CDIFacet_1_0.class);
+      List<String> allClazz = cdiFacet.getConfig().getOrCreateDecorators().getAllClazz();
+      Assert.assertThat(allClazz.size(), is(1));
+      Assert.assertThat(allClazz.get(0), equalTo("org.jboss.forge.test.MyDecorator"));
    }
 }
