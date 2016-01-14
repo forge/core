@@ -19,6 +19,7 @@ import org.jboss.forge.addon.javaee.rest.RestFacet_2_0;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.javaee.validation.ValidationFacet;
 import org.jboss.forge.addon.javaee.websocket.WebSocketFacet;
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.stacks.Stack;
 import org.jboss.forge.addon.projects.stacks.StackFacet;
 
@@ -34,6 +35,7 @@ public interface JavaEE7Facet extends JavaEESpecFacet
     */
    public static final Stack STACK = stack("Java EE 7")
             .includes(JavaEE7Facet.class)
+            .includes(JavaSourceFacet.class)
             .includes(CDIFacet_1_1.class)
             .includes(EJBFacet_3_2.class)
             .includes(FacesFacet_2_2.class)

@@ -1,5 +1,7 @@
 package org.jboss.forge.addon.projects;
 
+import org.jboss.forge.addon.projects.stacks.Stack;
+import org.jboss.forge.addon.projects.stacks.StackSupport;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.result.NavigationResult;
@@ -12,7 +14,7 @@ import org.jboss.forge.addon.ui.wizard.UIWizardStep;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public interface ProjectType
+public interface ProjectType extends StackSupport
 {
    /**
     * Return the human-readable name for this {@link ProjectType}. This should be relatively unique.
@@ -63,5 +65,19 @@ public interface ProjectType
    default boolean isEnabled(UIContext context)
    {
       return true;
+   }
+
+   @Override
+   default boolean supports(Stack stack)
+   {
+      // By default, check if the required facets are supported by the given stack
+      for (Class<? extends ProjectFacet> requiredFacet : getRequiredFacets())
+      {
+         if (stack.supports(requiredFacet))
+         {
+            return true;
+         }
+      }
+      return false;
    }
 }

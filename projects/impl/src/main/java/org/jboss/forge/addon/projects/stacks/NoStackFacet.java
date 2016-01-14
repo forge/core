@@ -9,7 +9,6 @@ package org.jboss.forge.addon.projects.stacks;
 
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.ProjectType;
 
 /**
  * This is a {@link StackFacet} implementation placeholder
@@ -34,11 +33,5 @@ public class NoStackFacet extends AbstractFacet<Project> implements StackFacet
    public Stack getStack()
    {
       return NoStack.INSTANCE;
-   }
-
-   @Override
-   public boolean supports(ProjectType projectType)
-   {
-      return true;
    }
 }

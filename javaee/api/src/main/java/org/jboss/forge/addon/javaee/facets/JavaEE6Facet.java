@@ -18,6 +18,7 @@ import org.jboss.forge.addon.javaee.jta.JTAFacet_1_1;
 import org.jboss.forge.addon.javaee.rest.RestFacet_1_1;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_0;
 import org.jboss.forge.addon.javaee.validation.ValidationFacet;
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.stacks.Stack;
 import org.jboss.forge.addon.projects.stacks.StackFacet;
 
@@ -33,6 +34,7 @@ public interface JavaEE6Facet extends JavaEESpecFacet
     */
    public static final Stack STACK = stack("Java EE 6")
             .includes(JavaEE6Facet.class)
+            .includes(JavaSourceFacet.class)
             .includes(CDIFacet_1_0.class)
             .includes(EJBFacet_3_1.class)
             .includes(FacesFacet_2_0.class)

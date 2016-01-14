@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -19,13 +18,9 @@ import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.facets.JavaEE6Facet;
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.projects.ProjectFacet;
-import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.stacks.Stack;
-import org.jboss.forge.furnace.util.Sets;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 
@@ -69,13 +64,6 @@ public class JavaEE6FacetImpl extends AbstractJavaEEFacet implements JavaEE6Face
    public Stack getStack()
    {
       return JavaEE6Facet.STACK;
-   }
-
-   @Override
-   public boolean supports(ProjectType projectType)
-   {
-      Set<Class<? extends ProjectFacet>> facets = Sets.toSet(projectType.getRequiredFacets());
-      return facets.contains(JavaSourceFacet.class);
    }
 
    @Override
