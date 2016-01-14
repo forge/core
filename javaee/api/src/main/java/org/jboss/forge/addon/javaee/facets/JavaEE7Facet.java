@@ -33,6 +33,7 @@ public interface JavaEE7Facet extends JavaEESpecFacet
     * The {@link Stack} associated with this {@link StackFacet}
     */
    public static final Stack STACK = stack("Java EE 7")
+            .includes(JavaEE7Facet.class)
             .includes(CDIFacet_1_1.class)
             .includes(EJBFacet_3_2.class)
             .includes(FacesFacet_2_2.class)

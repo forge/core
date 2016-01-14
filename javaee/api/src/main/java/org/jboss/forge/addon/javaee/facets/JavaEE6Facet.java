@@ -32,6 +32,7 @@ public interface JavaEE6Facet extends JavaEESpecFacet
     * The {@link Stack} associated with this {@link StackFacet}
     */
    public static final Stack STACK = stack("Java EE 6")
+            .includes(JavaEE6Facet.class)
             .includes(CDIFacet_1_0.class)
             .includes(EJBFacet_3_1.class)
             .includes(FacesFacet_2_0.class)
