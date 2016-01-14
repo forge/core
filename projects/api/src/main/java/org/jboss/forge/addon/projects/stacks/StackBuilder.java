@@ -7,7 +7,7 @@
 
 package org.jboss.forge.addon.projects.stacks;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -22,7 +22,8 @@ import org.jboss.forge.furnace.util.Assert;
 public class StackBuilder implements Stack
 {
    private final String name;
-   private Set<Class<? extends ProjectFacet>> facets = new LinkedHashSet<>();
+   private Set<Class<? extends ProjectFacet>> includedFacets = new HashSet<>();
+   private Set<Class<? extends ProjectFacet>> excludedFacets = new HashSet<>();
 
    private StackBuilder(String name)
    {
@@ -43,26 +44,33 @@ public class StackBuilder implements Stack
 
    public StackBuilder includes(Class<? extends ProjectFacet> facet)
    {
-      facets.add(facet);
+      includedFacets.add(facet);
       return this;
    }
 
    public StackBuilder includes(Stack stack)
    {
-      facets.addAll(stack.getIncludedFacets());
+      includedFacets.addAll(stack.getIncludedFacets());
+      excludedFacets.addAll(stack.getExcludedFacets());
       return this;
    }
 
    public StackBuilder excludes(Class<? extends ProjectFacet> facet)
    {
-      facets.remove(facet);
+      excludedFacets.add(facet);
       return this;
    }
 
    @Override
    public Set<Class<? extends ProjectFacet>> getIncludedFacets()
    {
-      return facets;
+      return includedFacets;
+   }
+
+   @Override
+   public Set<Class<? extends ProjectFacet>> getExcludedFacets()
+   {
+      return excludedFacets;
    }
 
    @Override
@@ -70,7 +78,6 @@ public class StackBuilder implements Stack
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((facets == null) ? 0 : facets.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       return result;
    }
@@ -85,13 +92,6 @@ public class StackBuilder implements Stack
       if (getClass() != obj.getClass())
          return false;
       StackBuilder other = (StackBuilder) obj;
-      if (facets == null)
-      {
-         if (other.facets != null)
-            return false;
-      }
-      else if (!facets.equals(other.facets))
-         return false;
       if (name == null)
       {
          if (other.name != null)

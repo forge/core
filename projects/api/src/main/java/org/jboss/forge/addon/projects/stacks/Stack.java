@@ -42,9 +42,11 @@ public interface Stack
     */
    default boolean supports(Class<? extends ProjectFacet> facet)
    {
+      Set<Class<? extends ProjectFacet>> excludedFacets = getExcludedFacets();
       return getIncludedFacets()
                .stream()
-               .anyMatch((includedFacet) -> facet.isAssignableFrom(includedFacet));
+               .anyMatch((includedFacet) -> facet.isAssignableFrom(includedFacet)
+                        && !excludedFacets.contains(includedFacet));
    }
 
    /**
@@ -54,7 +56,7 @@ public interface Stack
     */
    default boolean matches(Class<? extends ProjectFacet> facet)
    {
-      return getIncludedFacets().contains(facet);
+      return getIncludedFacets().contains(facet) && !getExcludedFacets().contains(facet);
    }
 
    /**
@@ -64,8 +66,9 @@ public interface Stack
     */
    default <T extends ProjectFacet> Set<T> filter(Class<T> type, Iterable<T> facets)
    {
+      Set<Class<? extends ProjectFacet>> excludedFacets = getExcludedFacets();
       Set<Class<? extends ProjectFacet>> sameTypeFacets = getIncludedFacets().stream()
-               .filter((f) -> type.isAssignableFrom(f))
+               .filter((f) -> type.isAssignableFrom(f) && !excludedFacets.contains(f))
                .collect(Collectors.toSet());
       Set<T> result = new LinkedHashSet<>();
       for (T facet : facets)
@@ -88,4 +91,11 @@ public interface Stack
     * @return the facets included in this stack. Never <code>null</code>.
     */
    Set<Class<? extends ProjectFacet>> getIncludedFacets();
+
+   /**
+    * This method is supposed to be used by the auxiliary methods.
+    * 
+    * @return the facets excluded in this stack. Never <code>null</code>.
+    */
+   Set<Class<? extends ProjectFacet>> getExcludedFacets();
 }

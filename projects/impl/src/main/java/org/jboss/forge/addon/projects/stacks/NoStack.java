@@ -55,4 +55,10 @@ public class NoStack implements Stack
    {
       return Collections.emptySet();
    }
+
+   @Override
+   public Set<Class<? extends ProjectFacet>> getExcludedFacets()
+   {
+      return Collections.emptySet();
+   }
 }
