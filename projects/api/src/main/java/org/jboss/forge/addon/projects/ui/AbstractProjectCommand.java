@@ -7,6 +7,7 @@
 
 package org.jboss.forge.addon.projects.ui;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.jboss.forge.addon.facets.constraints.FacetInspector;
@@ -15,7 +16,6 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.projects.stacks.Stack;
-import org.jboss.forge.addon.projects.stacks.StackFacet;
 import org.jboss.forge.addon.projects.stacks.StackInspector;
 import org.jboss.forge.addon.projects.stacks.annotations.StackConstraints;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
@@ -103,11 +103,11 @@ public abstract class AbstractProjectCommand extends AbstractUICommand
    protected <T extends ProjectFacet> boolean filterValueChoicesFromStack(Project project, UISelectOne<T> select)
    {
       boolean result = true;
+      Optional<Stack> stackOptional = project.getStack();
       // Filtering only supported facets
-      if (project.hasFacet(StackFacet.class))
+      if (stackOptional.isPresent())
       {
-         StackFacet stackFacet = project.getFacet(StackFacet.class);
-         Stack stack = stackFacet.getStack();
+         Stack stack = stackOptional.get();
          Iterable<T> valueChoices = select.getValueChoices();
          Set<T> filter = stack.filter(select.getValueType(), valueChoices);
          select.setValueChoices(filter);

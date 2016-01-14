@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import org.jboss.forge.addon.facets.Faceted;
 import org.jboss.forge.addon.projects.stacks.Stack;
+import org.jboss.forge.addon.projects.stacks.StackBuilder;
 import org.jboss.forge.addon.projects.stacks.StackFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -61,11 +62,14 @@ public interface Project extends Faceted<ProjectFacet>
     */
    default Optional<Stack> getStack()
    {
-      Stack stack = null;
-      if (hasFacet(StackFacet.class))
+      boolean exists = false;
+      StackBuilder builder = StackBuilder.stack("Project Stack");
+      for (StackFacet facet : getFacets(StackFacet.class))
       {
-         stack = getFacet(StackFacet.class).getStack();
+         exists = true;
+         Stack stack = facet.getStack();
+         builder.includes(stack);
       }
-      return Optional.ofNullable(stack);
+      return exists ? Optional.of(builder) : Optional.empty();
    }
 }

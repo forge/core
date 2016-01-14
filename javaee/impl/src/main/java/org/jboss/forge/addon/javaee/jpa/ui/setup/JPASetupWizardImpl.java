@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.javaee.jpa.ui.setup;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
@@ -19,10 +20,12 @@ import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.PersistenceMetaModelFacet;
 import org.jboss.forge.addon.javaee.jpa.PersistenceProvider;
 import org.jboss.forge.addon.javaee.jpa.containers.JBossEAP6Container;
+import org.jboss.forge.addon.javaee.jpa.containers.WildflyContainer;
 import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.stacks.Stack;
 import org.jboss.forge.addon.projects.stacks.annotations.StackConstraint;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -62,6 +65,9 @@ public class JPASetupWizardImpl extends AbstractJavaEECommand implements JPASetu
    private JBossEAP6Container defaultContainer;
 
    @Inject
+   private WildflyContainer wildFlyContainer;
+
+   @Inject
    private HibernateProvider defaultProvider;
 
    @Inject
@@ -82,19 +88,19 @@ public class JPASetupWizardImpl extends AbstractJavaEECommand implements JPASetu
    public void initializeUI(UIBuilder builder) throws Exception
    {
       UIContext uiContext = builder.getUIContext();
-      if (initJpaVersion(uiContext))
+      Project project = getSelectedProject(builder);
+      if (initJpaVersion(project, uiContext))
       {
          builder.add(jpaVersion);
       }
-      initContainers(uiContext);
+      initContainers(project, uiContext);
       initProviders();
       initConfigureMetadata();
       builder.add(container).add(provider).add(configureMetadata);
    }
 
-   private boolean initJpaVersion(UIContext context)
+   private boolean initJpaVersion(Project project, UIContext context)
    {
-      final Project project = getSelectedProject(context);
       if (project.hasFacet(JPAFacet.class))
       {
          // If JPA is already installed, do not ask for JPA Version
@@ -107,20 +113,28 @@ public class JPASetupWizardImpl extends AbstractJavaEECommand implements JPASetu
       }
    }
 
-   private void initContainers(UIContext context)
+   private void initContainers(Project project, UIContext context)
    {
       final boolean isGUI = context.getProvider().isGUI();
       container.setItemLabelConverter((source) -> source.getName(isGUI));
-      // Ordering items:
+      // Ordering items
       TreeSet<PersistenceContainer> treeSet = new TreeSet<>(
                (o1, o2) -> String.valueOf(o1.getName(isGUI)).compareTo(o2.getName(isGUI)));
-      Iterable<PersistenceContainer> valueChoices = container.getValueChoices();
-      for (PersistenceContainer persistenceContainer : valueChoices)
+      Optional<Stack> stack = project.getStack();
+      for (PersistenceContainer persistenceContainer : container.getValueChoices())
       {
-         treeSet.add(persistenceContainer);
+         if (!stack.isPresent() || persistenceContainer.supports(stack.get()))
+            treeSet.add(persistenceContainer);
       }
       container.setValueChoices(treeSet);
-      container.setDefaultValue(defaultContainer);
+      if (treeSet.contains(defaultContainer))
+      {
+         container.setDefaultValue(defaultContainer);
+      }
+      else if (treeSet.contains(wildFlyContainer))
+      {
+         container.setDefaultValue(wildFlyContainer);
+      }
    }
 
    private void initProviders()

@@ -18,7 +18,6 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PropertiesCommon;
  */
 public class CustomJDBCContainer implements PersistenceContainer
 {
-
    @Override
    @SuppressWarnings("rawtypes")
    public PersistenceUnitCommon setupConnection(PersistenceUnitCommon unit,

@@ -12,7 +12,7 @@ import org.jboss.forge.addon.javaee.jpa.DatabaseType;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class JBossAS7Container extends JavaEEDefaultContainer
+public class JBossAS7Container extends JavaEE6Container
 {
    private static final String EXAMPLE_DS = "java:jboss/datasources/ExampleDS";
 

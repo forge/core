@@ -1,9 +1,11 @@
 package org.jboss.forge.addon.javaee.jpa.containers;
 
+import org.jboss.forge.addon.javaee.JavaEEFacet;
 import org.jboss.forge.addon.javaee.jpa.JPADataSource;
 import org.jboss.forge.addon.javaee.jpa.PersistenceContainer;
 import org.jboss.forge.addon.javaee.jpa.providers.Hibernate4Provider;
 import org.jboss.forge.addon.javaee.jpa.providers.HibernateProvider;
+import org.jboss.forge.addon.projects.stacks.Stack;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PropertyCommon;
 
@@ -57,5 +59,11 @@ public class WebLogic12cContainer implements PersistenceContainer
    public String getName(boolean isGUI)
    {
       return isGUI ? "Oracle Weblogic 12c" : "WEBLOGIC_12C";
+   }
+
+   @Override
+   public boolean supports(Stack stack)
+   {
+      return stack.supports(JavaEEFacet.class);
    }
 }

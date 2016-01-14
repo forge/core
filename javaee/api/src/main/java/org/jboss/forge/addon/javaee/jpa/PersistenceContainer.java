@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.javaee.jpa;
 
+import org.jboss.forge.addon.projects.stacks.Stack;
+import org.jboss.forge.addon.projects.stacks.StackSupport;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
 
 /**
@@ -15,7 +17,7 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public interface PersistenceContainer
+public interface PersistenceContainer extends StackSupport
 {
    /**
     * Return the name of this container
@@ -38,4 +40,11 @@ public interface PersistenceContainer
     * @return true if this {@link PersistenceContainer} requires a DataSource to function properly
     */
    boolean isDataSourceRequired();
+
+   @Override
+   default boolean supports(Stack stack)
+   {
+      return true;
+   }
+
 }

@@ -1,6 +1,7 @@
 package org.jboss.forge.addon.projects.ui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -408,9 +409,19 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
                }
             }
             // Install the selected facet
-            if (stack.hasValue() && stack.isEnabled())
+            if (stack.hasValue())
             {
-               facetFactory.install(project, stack.getValue());
+               StackFacet stackFacet = stack.getValue();
+               if (!(stackFacet instanceof NoStackFacet))
+               {
+                  if (facetFactory.install(project, stackFacet))
+                  {
+                     result = Results.aggregate(
+                              Arrays.asList(result,
+                                       Results.success("Stack '" + stackFacet.getStack().getName()
+                                                + "' installed in project")));
+                  }
+               }
             }
             uiContext.setSelection(project.getRoot());
             uiContext.getAttributeMap().put(Project.class, project);

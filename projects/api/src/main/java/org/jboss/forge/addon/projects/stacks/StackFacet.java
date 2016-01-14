@@ -7,11 +7,11 @@
 
 package org.jboss.forge.addon.projects.stacks;
 
-import org.jboss.forge.addon.facets.Facet;
+import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 
 /**
- * A {@link StackFacet} represents a set of {@link Facet}s allowed in a project
+ * A {@link StackFacet} is used to associate a {@link Project} to a given {@link Stack}
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
