@@ -55,6 +55,13 @@ public class StackBuilder implements Stack
       return this;
    }
 
+   public StackBuilder excludes(Stack stack)
+   {
+      excludedFacets.addAll(stack.getIncludedFacets());
+      excludedFacets.addAll(stack.getExcludedFacets());
+      return this;
+   }
+
    public StackBuilder excludes(Class<? extends ProjectFacet> facet)
    {
       excludedFacets.add(facet);

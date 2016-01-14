@@ -66,4 +66,18 @@ public class StackBuilderTest
       Assert.assertTrue(stack.supports(ProjectFacetC.class));
    }
 
+   @Test
+   public void testExcludesStack()
+   {
+      Stack anotherStack = StackBuilder.stack("Another Test Stack")
+               .includes(ProjectFacetC.class);
+      Stack stack = StackBuilder.stack("Test Stack")
+               .includes(ProjectFacetA.class)
+               .includes(anotherStack)
+               .includes(ProjectFacetB.class)
+               .excludes(anotherStack);
+      Assert.assertTrue(stack.supports(ProjectFacetA.class));
+      Assert.assertTrue(stack.supports(ProjectFacetB.class));
+      Assert.assertFalse(stack.supports(ProjectFacetC.class));
+   }
 }
