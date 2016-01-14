@@ -65,7 +65,7 @@ public class StackListCommand implements UICommand
       }
       for (StackFacet stackFacet : facets)
       {
-         out.printf("%s: %s%n", stackFacet.getStack().getName(), stackFacet.getStack().getBundledFacets());
+         out.printf("%s: %s%n", stackFacet.getStack().getName(), stackFacet.getStack().getIncludedFacets());
       }
       return Results.success();
    }

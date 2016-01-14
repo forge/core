@@ -42,7 +42,7 @@ public interface Stack
     */
    default boolean supports(Class<? extends ProjectFacet> facet)
    {
-      return getBundledFacets()
+      return getIncludedFacets()
                .stream()
                .anyMatch((includedFacet) -> facet.isAssignableFrom(includedFacet));
    }
@@ -54,7 +54,7 @@ public interface Stack
     */
    default boolean matches(Class<? extends ProjectFacet> facet)
    {
-      return getBundledFacets().contains(facet);
+      return getIncludedFacets().contains(facet);
    }
 
    /**
@@ -64,7 +64,7 @@ public interface Stack
     */
    default <T extends ProjectFacet> Set<T> filter(Class<T> type, Iterable<T> facets)
    {
-      Set<Class<? extends ProjectFacet>> sameTypeFacets = getBundledFacets().stream()
+      Set<Class<? extends ProjectFacet>> sameTypeFacets = getIncludedFacets().stream()
                .filter((f) -> type.isAssignableFrom(f))
                .collect(Collectors.toSet());
       Set<T> result = new LinkedHashSet<>();
@@ -87,5 +87,5 @@ public interface Stack
     * 
     * @return the facets included in this stack. Never <code>null</code>.
     */
-   Set<Class<? extends ProjectFacet>> getBundledFacets();
+   Set<Class<? extends ProjectFacet>> getIncludedFacets();
 }

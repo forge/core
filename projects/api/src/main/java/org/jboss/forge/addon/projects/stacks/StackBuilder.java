@@ -49,7 +49,7 @@ public class StackBuilder implements Stack
 
    public StackBuilder includes(Stack stack)
    {
-      facets.addAll(stack.getBundledFacets());
+      facets.addAll(stack.getIncludedFacets());
       return this;
    }
 
@@ -60,7 +60,7 @@ public class StackBuilder implements Stack
    }
 
    @Override
-   public Set<Class<? extends ProjectFacet>> getBundledFacets()
+   public Set<Class<? extends ProjectFacet>> getIncludedFacets()
    {
       return facets;
    }

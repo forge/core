@@ -51,7 +51,7 @@ public class NoStack implements Stack
    }
 
    @Override
-   public Set<Class<? extends ProjectFacet>> getBundledFacets()
+   public Set<Class<? extends ProjectFacet>> getIncludedFacets()
    {
       return Collections.emptySet();
    }
