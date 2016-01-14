@@ -8,6 +8,7 @@
 package org.jboss.forge.addon.projects;
 
 import java.util.Optional;
+import java.util.Set;
 
 import org.jboss.forge.addon.facets.Faceted;
 import org.jboss.forge.addon.projects.stacks.Stack;
@@ -15,6 +16,7 @@ import org.jboss.forge.addon.projects.stacks.StackBuilder;
 import org.jboss.forge.addon.projects.stacks.StackFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.Resource;
+import org.jboss.forge.furnace.util.Sets;
 
 /**
  * Describes a set of {@link Resource} instances that represent a unit of work.
@@ -62,14 +64,28 @@ public interface Project extends Faceted<ProjectFacet>
     */
    default Optional<Stack> getStack()
    {
-      boolean exists = false;
-      StackBuilder builder = StackBuilder.stack("Project Stack");
-      for (StackFacet facet : getFacets(StackFacet.class))
+      Optional<Stack> result;
+      Set<StackFacet> facets = Sets.toSet(getFacets(StackFacet.class));
+      int size = facets.size();
+      if (size == 0)
       {
-         exists = true;
-         Stack stack = facet.getStack();
-         builder.includes(stack);
+         result = Optional.empty();
       }
-      return exists ? Optional.of(builder) : Optional.empty();
+      else if (size == 1)
+      {
+         result = Optional.of(facets.iterator().next().getStack());
+      }
+      else
+      {
+         // Several stacks detected, sum them all
+         StackBuilder builder = StackBuilder.stack("Project Stack");
+         for (StackFacet facet : facets)
+         {
+            Stack stack = facet.getStack();
+            builder.includes(stack);
+         }
+         result = Optional.of(builder);
+      }
+      return result;
    }
 }
