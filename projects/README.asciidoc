@@ -66,6 +66,42 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 ----      
 == Features
 
+Stacks:: Starting from Forge 3.0.0.Beta2, projects can now be created targetting a specific stack (JavaEE 6, JavaEE 7, etc). The _Project: New wizard_ automatically lists all the available *StackFacet* implementations allowing the user to choose during project creation.
+
+[options="header"]
+|===
+|Class |Functionality
+
+|Stack
+|A Stack references multiple _ProjectFacet_ classes. Commands can use this information to 
+
+|StackFacet
+|A Stack is associated with a project through a StackFacet. Implementations can decide how to install it (by looking up the project dependencies, by reading a configuration file, etc) and *must* provide a Stack.
+
+|StackBuilder
+|The preferred way to build Stack objects
+
+|@StackConstraint
+|Commands can be annotated with _@StackConstraint_ to automatically be enabled only if the specified facets are supported by the current project.
+
+|===
+
+[TIP] 
+====
+To get a reference to the _Stack_ enabled in the project:
+
+[source,java]
+----
+Project project = ...
+Optional<Stack> stack = project.getStack();
+stack.ifPresent((stack) -> System.out.println("Stack: "+stack));
+// or
+if (stack.isPresent()) {
+   Stack stackObj = stack.get();
+   boolean supportsJpa = stackObj.supports(JPAFacet.class);
+}
+----
+====
 
 ProjectFactory service for simple project location and creation::
  The `ProjectFactory` provides an entry-point API for all Project operations: both creation of new, and location and modification of existing projects:
