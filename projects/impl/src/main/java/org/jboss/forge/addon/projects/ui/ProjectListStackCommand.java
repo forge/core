@@ -11,8 +11,10 @@ import java.io.PrintStream;
 import java.util.Collections;
 
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.Projects;
+import org.jboss.forge.addon.projects.stacks.Stack;
 import org.jboss.forge.addon.projects.stacks.StackFacet;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -31,7 +33,7 @@ import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class StackListCommand implements UICommand
+public class ProjectListStackCommand implements UICommand
 {
    private UIInput<Boolean> all;
 
@@ -39,7 +41,7 @@ public class StackListCommand implements UICommand
    public void initializeUI(UIBuilder builder) throws Exception
    {
       all = builder.getInputComponentFactory().createInput("all", Boolean.class)
-               .setDescription("Show all available stacks");
+               .setLabel("Show all available stacks").setDescription("Show all available stacks");
       builder.add(all);
    }
 
@@ -65,7 +67,19 @@ public class StackListCommand implements UICommand
       }
       for (StackFacet stackFacet : facets)
       {
-         out.printf("%s: %s%n", stackFacet.getStack().getName(), stackFacet.getStack().getIncludedFacets());
+         Stack stack = stackFacet.getStack();
+         out.printf("- %s %n", stack.getName());
+
+         out.println("\t -> Includes: ");
+         for (Class<? extends ProjectFacet> facet : stack.getIncludedFacets())
+         {
+            out.printf("\t\t - %s %n", facet.getName());
+         }
+         out.println("\t -> Excludes: ");
+         for (Class<? extends ProjectFacet> facet : stack.getExcludedFacets())
+         {
+            out.printf("\t\t - %s %n", facet.getName());
+         }
       }
       return Results.success();
    }

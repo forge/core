@@ -9,7 +9,7 @@ org.jboss.forge.addon.projects.ui.DefaultFacetComponentEnricher
 org.jboss.forge.addon.projects.ui.NewProjectWizardImpl
 org.jboss.forge.addon.projects.ui.ProjectBuildStatusListener
 org.jboss.forge.addon.projects.ui.ProjectListFacetsCommand
-org.jboss.forge.addon.projects.ui.StackListCommand
+org.jboss.forge.addon.projects.ui.ProjectListStackCommand
 org.jboss.forge.addon.projects.ui.dependencies.AddDependenciesCommandImpl
 org.jboss.forge.addon.projects.ui.dependencies.AddManagedDependenciesCommandImpl
 org.jboss.forge.addon.projects.ui.dependencies.HasDependenciesCommandImpl
