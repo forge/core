@@ -3,7 +3,6 @@ package org.jboss.forge.addon.scaffold.faces;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
@@ -64,27 +63,12 @@ public class ScaffoldableEntitySelectionWizard extends AbstractProjectCommand im
 
       JPAFacet<PersistenceCommonDescriptor> persistenceFacet = project.getFacet(JPAFacet.class);
       targets.setValueChoices(persistenceFacet.getAllEntities());
-      targets.setItemLabelConverter(new Converter<JavaClassSource, String>()
-      {
-         @Override
-         public String convert(JavaClassSource source)
-         {
-            return source == null ? null : source.getQualifiedName();
-         }
-      });
-
+      targets.setItemLabelConverter(source -> source.getQualifiedName());
       builder.add(targets);
       if (uiContext.getProvider().isGUI())
       {
          useCustomTemplate.setDefaultValue(false);
-         pageTemplate.setEnabled(new Callable<Boolean>()
-         {
-            @Override
-            public Boolean call() throws Exception
-            {
-               return useCustomTemplate.getValue();
-            }
-         });
+         pageTemplate.setEnabled(() -> useCustomTemplate.getValue());
          builder.add(useCustomTemplate).add(pageTemplate);
       }
       else
