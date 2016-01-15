@@ -166,6 +166,11 @@ class CommandLineUtil
       {
          String name = toOptionName(entry.getKey());
          InputComponent<?, ?> input = entry.getValue();
+         if (!input.isEnabled())
+         {
+            // If the input is disabled, carry on
+            continue;
+         }
          if (ARGUMENTS_INPUT_NAME.equals(name))
          {
             InputComponents.setValueFor(converterFactory, input, commandLine.getArgument().getValues());
