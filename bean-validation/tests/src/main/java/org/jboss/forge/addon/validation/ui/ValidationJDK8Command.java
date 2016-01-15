@@ -9,7 +9,6 @@ package org.jboss.forge.addon.validation.ui;
 
 import javax.inject.Inject;
 
-import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -26,7 +25,6 @@ public class ValidationJDK8Command extends AbstractUICommand
 {
    @Inject
    @WithAttributes(label = "Name")
-   @UnwrapValidatedValue
    private UIInput<@NotFoo String> name;
 
    @Override

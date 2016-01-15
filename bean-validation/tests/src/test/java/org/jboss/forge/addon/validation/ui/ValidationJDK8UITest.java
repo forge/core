@@ -21,7 +21,6 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -30,7 +29,6 @@ import org.junit.runner.RunWith;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
 @RunWith(Arquillian.class)
-@Ignore("HV-1022")
 public class ValidationJDK8UITest
 {
    @Deployment
@@ -64,7 +62,7 @@ public class ValidationJDK8UITest
          Assert.assertFalse("Controller should not be valid", controller.isValid());
          List<UIMessage> messages = controller.validate();
          Assert.assertEquals("An error should have been captured", 1, messages.size());
-         Assert.assertEquals("My Error Message", messages.get(0).getDescription());
+         Assert.assertEquals("Name: My Error Message", messages.get(0).getDescription());
       }
    }
 }
