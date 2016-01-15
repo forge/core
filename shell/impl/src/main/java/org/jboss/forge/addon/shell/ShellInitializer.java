@@ -1,6 +1,7 @@
 package org.jboss.forge.addon.shell;
 
 import java.io.ByteArrayInputStream;
+import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -63,16 +64,10 @@ public class ShellInitializer
       else if (Boolean.getBoolean("forge.standalone"))
       {
          // Starting the shell in a separate thread
-         // TODO: Remove when asynchronous events are supported
-         new Thread("Shell async initializer")
-         {
-            @Override
-            public void run()
-            {
-               Settings settings = new SettingsBuilder().create();
-               ShellInitializer.this.shell = shellFactory.createShell(OperatingSystemUtils.getWorkingDir(), settings);
-            }
-         }.start();
+         ForkJoinPool.commonPool().submit(() -> {
+            Settings settings = new SettingsBuilder().create();
+            ShellInitializer.this.shell = shellFactory.createShell(OperatingSystemUtils.getWorkingDir(), settings);
+         });
       }
    }
 

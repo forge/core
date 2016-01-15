@@ -9,6 +9,7 @@ package org.jboss.forge.addon.projects.ui;
 
 import java.io.PrintStream;
 import java.util.Collections;
+import java.util.List;
 
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
@@ -16,6 +17,7 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.projects.stacks.Stack;
 import org.jboss.forge.addon.projects.stacks.StackFacet;
+import org.jboss.forge.addon.projects.stacks.StackFacetComparator;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -28,6 +30,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
+import org.jboss.forge.furnace.util.Lists;
 
 /**
  *
@@ -52,17 +55,22 @@ public class ProjectListStackCommand implements UICommand
                .get();
       UIOutput output = context.getUIContext().getProvider().getOutput();
       PrintStream out = output.out();
-      Iterable<StackFacet> facets = Collections.emptyList();
+      Iterable<StackFacet> facets = Collections.emptySet();
       if (all.getValue())
       {
-         facets = SimpleContainer.getServices(getClass().getClassLoader(), StackFacet.class);
+         List<StackFacet> allList = Lists
+                  .toList(SimpleContainer.getServices(getClass().getClassLoader(), StackFacet.class));
+         Collections.sort(allList, new StackFacetComparator());
+         facets = allList;
       }
       else
       {
          Project project = Projects.getSelectedProject(projectFactory, context.getUIContext());
          if (project != null)
          {
-            facets = project.getFacets(StackFacet.class);
+            List<StackFacet> facetList = Lists.toList(project.getFacets(StackFacet.class));
+            Collections.sort(facetList, new StackFacetComparator());
+            facets = facetList;
          }
       }
       for (StackFacet stackFacet : facets)
