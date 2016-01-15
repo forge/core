@@ -32,7 +32,7 @@ import org.jboss.forge.addon.resource.visit.ResourceVisit;
 import org.jboss.forge.addon.resource.visit.ResourceVisitor;
 
 @FacetConstraint({ MavenFacet.class, PackagingFacet.class })
-public class MavenWebResourcesFacet extends AbstractFacet<Project>implements WebResourcesFacet
+public class MavenWebResourcesFacet extends AbstractFacet<Project> implements WebResourcesFacet
 {
 
    @Override
@@ -94,7 +94,7 @@ public class MavenWebResourcesFacet extends AbstractFacet<Project>implements Web
          MavenPluginFacet plugins = getFaceted().getFacet(MavenPluginFacet.class);
          Coordinate mvnWarPluginDep = CoordinateBuilder.create().setGroupId("org.apache.maven.plugins")
                   .setArtifactId("maven-war-plugin")
-                  .setVersion("2.4");
+                  .setVersion("2.6");
 
          MavenPlugin plugin;
          if (!plugins.hasPlugin(mvnWarPluginDep))

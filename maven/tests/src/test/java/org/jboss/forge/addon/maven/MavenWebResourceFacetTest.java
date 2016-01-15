@@ -93,7 +93,7 @@ public class MavenWebResourceFacetTest
       MavenModelResource pom = project.getRoot().reify(DirectoryResource.class).getChild("pom.xml")
                .reify(MavenModelResource.class);
       pom.setContents(
-               "<project><modelVersion>4.0.0.</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><plugins><plugin><artifactId>maven-war-plugin</artifactId><version>2.4</version><configuration><warSourceDirectory>WebContent</warSourceDirectory><failOnMissingWebXml>false</failOnMissingWebXml></configuration></plugin></plugins></build></project>");
+               "<project><modelVersion>4.0.0.</modelVersion><groupId>com.test</groupId><artifactId>testme</artifactId><version>1.0</version><build><plugins><plugin><artifactId>maven-war-plugin</artifactId><version>2.6</version><configuration><warSourceDirectory>WebContent</warSourceDirectory><failOnMissingWebXml>false</failOnMissingWebXml></configuration></plugin></plugins></build></project>");
       DirectoryResource expected = project.getRoot().reify(DirectoryResource.class).getChildDirectory(
                "WebContent");
       Assert.assertEquals(expected.getFullyQualifiedName(), facet.getWebRootDirectory().getFullyQualifiedName());
