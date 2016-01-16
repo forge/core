@@ -15,6 +15,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.ui.AbstractJavaSourceCommand;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.stacks.annotations.StackConstraint;
 import org.jboss.forge.addon.ui.command.PrerequisiteCommandsProvider;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.result.NavigationResult;
@@ -27,6 +28,7 @@ import org.jboss.forge.roaster.model.source.JavaSource;
  * @author <a href="mailto:antonio.goncalves@gmail.com">Antonio Goncalves</a>
  * 
  */
+@StackConstraint(WebSocketFacet.class)
 public abstract class AbstractWebsocketCommand<T extends JavaSource<?>> extends AbstractJavaSourceCommand<T>
          implements PrerequisiteCommandsProvider
 {
