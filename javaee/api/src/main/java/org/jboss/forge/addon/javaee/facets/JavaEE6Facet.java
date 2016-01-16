@@ -12,6 +12,7 @@ import static org.jboss.forge.addon.projects.stacks.StackBuilder.stack;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_0;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet_3_1;
 import org.jboss.forge.addon.javaee.faces.FacesFacet_2_0;
+import org.jboss.forge.addon.javaee.jaxws.JAXWSFacet;
 import org.jboss.forge.addon.javaee.jms.JMSFacet_1_1;
 import org.jboss.forge.addon.javaee.jpa.JPAFacet_2_0;
 import org.jboss.forge.addon.javaee.jta.JTAFacet_1_1;
@@ -38,6 +39,7 @@ public interface JavaEE6Facet extends JavaEESpecFacet
             .includes(CDIFacet_1_0.class)
             .includes(EJBFacet_3_1.class)
             .includes(FacesFacet_2_0.class)
+            .includes(JAXWSFacet.class)
             .includes(JMSFacet_1_1.class)
             .includes(JPAFacet_2_0.class)
             .includes(JTAFacet_1_1.class)
