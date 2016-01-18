@@ -1,5 +1,7 @@
 package org.jboss.forge.addon.projects.impl;
 
+import static org.hamcrest.CoreMatchers.hasItems;
+
 /*
  * Copyright 2012 Red Hat, Inc. and/or its affiliates.
  *
@@ -13,6 +15,8 @@ import static org.hamcrest.CoreMatchers.is;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -199,8 +203,9 @@ public class NewProjectWizardTest
          Assert.assertThat(inputs.get("type"), instanceOf(UISelectOne.class));
          UISelectOne<ProjectType> projectTypes = (UISelectOne<ProjectType>) inputs.get("type");
          List<ProjectType> list = Lists.toList(projectTypes.getValueChoices());
-         Assert.assertEquals(1, list.size());
-         Assert.assertEquals("mock", list.get(0).getType());
+         Assert.assertEquals(2, list.size());
+         Set<String> typeNames = list.stream().map(type -> type.getType()).collect(Collectors.toSet());
+         Assert.assertThat(typeNames, hasItems("mock", "mock-stacks-disabled"));
       }
    }
 
