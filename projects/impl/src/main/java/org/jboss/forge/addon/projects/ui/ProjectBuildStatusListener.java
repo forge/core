@@ -22,6 +22,7 @@ import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
+import org.jboss.forge.furnace.services.Imported;
 
 /**
  * Prematurely builds the {@link Project} (if exists) and warns if it is valid
@@ -33,8 +34,14 @@ public class ProjectBuildStatusListener extends AbstractCommandExecutionListener
    @Override
    public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
    {
-      ProjectFactory projectFactory = SimpleContainer
-               .getServices(getClass().getClassLoader(), ProjectFactory.class).get();
+      Imported<ProjectFactory> services = SimpleContainer
+               .getServices(getClass().getClassLoader(), ProjectFactory.class);
+      if (services.isUnsatisfied())
+      {
+         // ProjectFactory is not available, ignore
+         return;
+      }
+      ProjectFactory projectFactory = services.get();
       UIContext uiContext = context.getUIContext();
       Project project = Projects.getSelectedProject(projectFactory, uiContext.getSelection());
       if (project != null && project.hasFacet(PackagingFacet.class))
