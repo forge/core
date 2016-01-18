@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>javaee-parent</artifactId>
-      <version>3.0.0.Beta3</version>
+      <version>3.0.0-SNAPSHOT</version>
    </parent>
    <artifactId>scaffold-faces</artifactId>
    <name>Forge - Faces Scaffold provider</name>
