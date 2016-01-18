@@ -1,13 +1,13 @@
 = JBoss Forge Contributing Guide
 
-If you're looking for a development guide for Forge 2.0, first read https://github.com/forge/core/blob/master/README.asciidoc[this document].
+If you're looking for a development guide for Forge, first read https://github.com/forge/core/blob/master/README.asciidoc[this document].
 
 == First Steps
 
 === Prerequisites
 
-* Java 7+
-* Maven 3.1.0+
+* Java 8+
+* Maven 3.2.5+
 * Git
 
 === Git Workflow
@@ -91,18 +91,20 @@ Build:
 mvn clean install
 ----
 
-The Forge 2 distribution will be present in the `dist/target` directory. Unzip and extract to get started:
+TIP:: If you want to run the build without running all tests, use `mvn clean install -DskipTests`
+
+The Forge 3 distribution will be present in the `dist/target` directory. Unzip and extract to get started:
 
 ----
-unzip dist/target/forge-distribution-<release_version>.zip -d ~
+unzip dist/target/forge-distribution-<release_version>-offline.zip -d ~
 export FORGE_HOME=~/forge-distribution-<release_version>
 export PATH=$FORGE_HOME/bin:$PATH
 forge
 ----
 
-=== Building the JBoss Tools plugins for Forge 2
+=== Building the JBoss Tools plugins for Forge 3
 
-JBoss Tools for Forge 2 will allow you to run Forge inside Eclipse. Build this only when you need to run Forge in Eclipse. The Forge-Core distribution is sufficient for the CLI mode.
+JBoss Tools for Forge 3 will allow you to run Forge inside Eclipse. Build this only when you need to run Forge in Eclipse. The Forge-Core distribution is sufficient for the CLI mode.
 
 Clone the repo (or your fork):
 ----
@@ -157,7 +159,7 @@ Include the https://github.com/jbosstools/jbosstools-devdoc/blob/master/building
 mvn --settings ~/.m2/jbosstools.xml clean verify
 ----
 
-The Forge 2.0 artifacts from your local .m2 repository would be included in the JBoss Tools plugins for Forge. You can install them in an Eclipse Kepler installation, by adding `$JBOSSTOOLS_FORGE_DIR/site/target/forge.site-1.2.0-SNAPSHOT.zip` as an update site.
+The Forge artifacts from your local .m2 repository would be included in the JBoss Tools plugins for Forge. You can install them in an Eclipse Kepler installation, by adding `$JBOSSTOOLS_FORGE_DIR/site/target/forge.site-1.2.0-SNAPSHOT.zip` as an update site.
 
 Note, you may need to run `git clean -fdx` to clean the target directories of older snapshot artifacts.
 
@@ -168,7 +170,7 @@ mvn -U --settings ~/.m2/jbosstools.xml clean verify
 
 === Run:
 
-This section applies when you do not wish to build and install the Eclipse plugin in an installation, but just work on the Forge 2 sources and run it as an Eclipse application. This useful when you're working on the Forge 2 sources instead of your own addons.
+This section applies when you do not wish to build and install the Eclipse plugin in an installation, but just work on the Forge sources and run it as an Eclipse application. This useful when you're working on the Forge sources instead of your own addons.
 
 Import the following projects from the plugins/ module into your Eclipse workspace:
 
@@ -202,7 +204,7 @@ If you're wondering what issues would be suitable when you're just getting start
 === Java,  Javascript and CSS files
 
       /**
-       * Copyright 2015 Red Hat, Inc. and/or its affiliates.
+       * Copyright 2016 Red Hat, Inc. and/or its affiliates.
        *
        * Licensed under the Eclipse Public License version 1.0, available at
        * http://www.eclipse.org/legal/epl-v10.html
@@ -211,7 +213,7 @@ If you're wondering what issues would be suitable when you're just getting start
 === HTML, XML, XSD and XHTML files
 
       <!--
-       ~ Copyright 2015 Red Hat, Inc. and/or its affiliates.
+       ~ Copyright 2016 Red Hat, Inc. and/or its affiliates.
        ~
        ~ Licensed under the Eclipse Public License version 1.0, available at
        ~ http://www.eclipse.org/legal/epl-v10.html
@@ -219,7 +221,7 @@ If you're wondering what issues would be suitable when you're just getting start
 
 === Properties files and Bash Scripts
 
-       # Copyright 2015 Red Hat, Inc. and/or its affiliates.
+       # Copyright 2016 Red Hat, Inc. and/or its affiliates.
        #
        # Licensed under the Eclipse Public License version 1.0, available at
        # http://www.eclipse.org/legal/epl-v10.html
@@ -227,7 +229,7 @@ If you're wondering what issues would be suitable when you're just getting start
 === SQL files
 
       --
-      -- Copyright 2015 Red Hat, Inc. and/or its affiliates.
+      -- Copyright 2016 Red Hat, Inc. and/or its affiliates.
       --
       -- Licensed under the Eclipse Public License version 1.0, available at
       -- http://www.eclipse.org/legal/epl-v10.html
@@ -237,7 +239,7 @@ If you're wondering what issues would be suitable when you're just getting start
 
 ----
 <%--
-Copyright 2015 Red Hat, Inc. and/or its affiliates.
+Copyright 2016 Red Hat, Inc. and/or its affiliates.
    
 Licensed under the Eclipse Public License version 1.0, available at
 http://www.eclipse.org/legal/epl-v10.html
