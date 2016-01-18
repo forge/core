@@ -16,6 +16,7 @@ import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.ModuleFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
+import org.jboss.forge.addon.projects.stacks.Stack;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
@@ -58,5 +59,11 @@ public class ParentProjectType extends AbstractProjectType
    public String toString()
    {
       return "parent";
+   }
+
+   @Override
+   public boolean supports(Stack stack)
+   {
+      return false;
    }
 }

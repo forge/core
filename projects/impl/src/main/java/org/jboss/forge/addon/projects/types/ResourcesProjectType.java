@@ -15,6 +15,7 @@ import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
+import org.jboss.forge.addon.projects.stacks.Stack;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
@@ -56,6 +57,12 @@ public class ResourcesProjectType extends AbstractProjectType
    public int priority()
    {
       return 1000;
+   }
+
+   @Override
+   public boolean supports(Stack stack)
+   {
+      return false;
    }
 
 }

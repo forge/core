@@ -50,6 +50,7 @@ import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Lists;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.forge.furnace.util.Sets;
 
 public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
 {
@@ -289,6 +290,8 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
                         .filter((stackFacet) -> (type.hasValue() || type.hasDefaultValue())
                                  && type.getValue().supports(stackFacet.getStack()))
                         .collect(Collectors.toSet()))
+               // Enable stack field only if any stack is available
+               .setEnabled(() -> Sets.toSet(stack.getValueChoices()).size() > 1)
                .setDefaultValue(defaultStack)
                .setItemLabelConverter((facet) -> context.getProvider().isGUI() ? facet.getStack().getName()
                         : Commands.shellifyOptionValue(facet.getStack().getName()));
@@ -409,7 +412,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
                }
             }
             // Install the selected facet
-            if (stack.hasValue())
+            if (stack.isEnabled() && stack.hasValue())
             {
                StackFacet stackFacet = stack.getValue();
                if (!(stackFacet instanceof NoStackFacet))

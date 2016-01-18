@@ -15,6 +15,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.AbstractProjectType;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.projects.stacks.Stack;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 
 /**
@@ -54,6 +55,12 @@ public class MavenArchetypeProjectType extends AbstractProjectType
    public String toString()
    {
       return "from-archetype";
+   }
+
+   @Override
+   public boolean supports(Stack stack)
+   {
+      return false;
    }
 
 }

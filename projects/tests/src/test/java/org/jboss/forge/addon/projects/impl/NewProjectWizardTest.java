@@ -8,6 +8,7 @@ package org.jboss.forge.addon.projects.impl;
  */
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 
 import java.io.File;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.jboss.forge.addon.projects.ProjectType;
 import org.jboss.forge.addon.projects.mock.MockBuildSystem;
 import org.jboss.forge.addon.projects.mock.MockDisabledProjectType;
 import org.jboss.forge.addon.projects.mock.MockProjectType;
+import org.jboss.forge.addon.projects.mock.MockStacksDisabledProjectType;
 import org.jboss.forge.addon.projects.ui.NewProjectWizard;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
@@ -54,8 +56,12 @@ public class NewProjectWizardTest
                .addClass(MockProjectType.class)
                .addClass(MockDisabledProjectType.class)
                .addClass(MockBuildSystem.class)
-               .addAsServiceProvider(Service.class, NewProjectWizardTest.class, MockProjectType.class,
-                        MockDisabledProjectType.class, MockBuildSystem.class);
+               .addClass(MockStacksDisabledProjectType.class)
+               .addAsServiceProvider(Service.class, NewProjectWizardTest.class,
+                        MockProjectType.class,
+                        MockStacksDisabledProjectType.class,
+                        MockDisabledProjectType.class,
+                        MockBuildSystem.class);
 
       return archive;
    }
@@ -195,6 +201,19 @@ public class NewProjectWizardTest
          List<ProjectType> list = Lists.toList(projectTypes.getValueChoices());
          Assert.assertEquals(1, list.size());
          Assert.assertEquals("mock", list.get(0).getType());
+      }
+   }
+
+   @Test
+   public void testStackIsDisabledForUnsupportedProjectType() throws Exception
+   {
+      try (WizardCommandController wizard = testHarness.createWizardController(NewProjectWizard.class))
+      {
+         wizard.initialize();
+         Map<String, InputComponent<?, ?>> inputs = wizard.getInputs();
+         wizard.setValueFor("type", "mock-stacks-disabled");
+         Assert.assertThat(wizard.getValueFor("type"), instanceOf(MockStacksDisabledProjectType.class));
+         Assert.assertThat(inputs.get("stack").isEnabled(), is(false));
       }
    }
 

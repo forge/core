@@ -16,6 +16,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.AbstractProjectType;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.projects.stacks.Stack;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
@@ -68,4 +69,9 @@ public class MavenArchetypeCatalogProjectType extends AbstractProjectType
       return catalogRegistry.hasArchetypeCatalogFactories();
    }
 
+   @Override
+   public boolean supports(Stack stack)
+   {
+      return false;
+   }
 }
