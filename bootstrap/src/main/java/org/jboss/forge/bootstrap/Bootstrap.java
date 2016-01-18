@@ -24,7 +24,7 @@ import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.impl.addons.AddonRepositoryImpl;
 import org.jboss.forge.furnace.manager.impl.AddonManagerImpl;
 import org.jboss.forge.furnace.manager.maven.addon.MavenAddonDependencyResolver;
-import org.jboss.forge.furnace.manager.request.AddonActionRequest;
+import org.jboss.forge.furnace.manager.request.InstallRequest;
 import org.jboss.forge.furnace.manager.request.RemoveRequest;
 import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
 import org.jboss.forge.furnace.repositories.AddonRepository;
@@ -358,19 +358,22 @@ public class Bootstrap
             }
          }
 
-         AddonActionRequest request = addonManager.install(addon);
+         InstallRequest request = addonManager.install(addon);
          System.out.println(request);
-         if (!batchMode)
+         if (request.getActions().size() > 0)
          {
-            String result = System.console().readLine("Confirm installation [Y/n]? ");
-            if ("n".equalsIgnoreCase(result.trim()))
+            if (!batchMode)
             {
-               System.out.println("Installation aborted.");
-               return;
+               String result = System.console().readLine("Confirm installation [Y/n]? ");
+               if ("n".equalsIgnoreCase(result.trim()))
+               {
+                  System.out.println("Installation aborted.");
+                  return;
+               }
             }
+            request.perform();
+            System.out.println("Installation completed successfully.");
          }
-         request.perform();
-         System.out.println("Installation completed successfully.");
          System.out.println();
       }
       catch (Exception e)
