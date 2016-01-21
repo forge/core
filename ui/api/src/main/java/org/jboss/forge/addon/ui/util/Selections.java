@@ -11,7 +11,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
+import org.jboss.forge.addon.ui.context.UIRegion;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.furnace.util.Lists;
 
@@ -44,8 +47,14 @@ public final class Selections
       }
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
    public static <SELECTIONTYPE> UISelection<SELECTIONTYPE> from(Iterable<SELECTIONTYPE> type)
+   {
+      return from(null, type);
+   }
+
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   public static <SELECTIONTYPE> UISelection<SELECTIONTYPE> from(Function<SELECTIONTYPE, UIRegion> regions,
+            Iterable<SELECTIONTYPE> type)
    {
       if (type == null || Lists.toList(type).isEmpty())
       {
@@ -53,7 +62,7 @@ public final class Selections
       }
       else
       {
-         return new SelectionImpl(type);
+         return new SelectionImpl(regions, type);
       }
    }
 
@@ -63,25 +72,42 @@ public final class Selections
       return (UISelection<SELECTIONTYPE>) EmptySelection.INSTANCE;
    }
 
+   @SuppressWarnings("unchecked")
    private static class SelectionImpl<SELECTIONTYPE> implements UISelection<SELECTIONTYPE>
    {
       private final List<SELECTIONTYPE> selection;
+      private final Function<SELECTIONTYPE, UIRegion> regions;
 
-      @SuppressWarnings("unchecked")
-      public SelectionImpl(SELECTIONTYPE... type)
+      public SelectionImpl(Function<SELECTIONTYPE, UIRegion> regions, SELECTIONTYPE... type)
       {
          if (type != null)
             this.selection = Arrays.asList(type);
          else
             selection = Collections.emptyList();
+         this.regions = regions;
+      }
+
+      public SelectionImpl(Function<SELECTIONTYPE, UIRegion> regions, Iterable<SELECTIONTYPE> type)
+      {
+         if (type != null)
+         {
+            this.selection = Lists.toList(type);
+         }
+         else
+         {
+            selection = Collections.emptyList();
+         }
+         this.regions = regions;
+      }
+
+      public SelectionImpl(SELECTIONTYPE... type)
+      {
+         this(null, type);
       }
 
       public SelectionImpl(Iterable<SELECTIONTYPE> type)
       {
-         if (type != null)
-            this.selection = Lists.toList(type);
-         else
-            selection = Collections.emptyList();
+         this(null, type);
       }
 
       @Override
@@ -106,6 +132,12 @@ public final class Selections
       public boolean isEmpty()
       {
          return selection.isEmpty();
+      }
+
+      @Override
+      public Optional<UIRegion> getSelectedRegionFor(SELECTIONTYPE resource)
+      {
+         return Optional.ofNullable(regions == null ? null : regions.apply(resource));
       }
    }
 
@@ -134,6 +166,12 @@ public final class Selections
       public boolean isEmpty()
       {
          return true;
+      }
+
+      @Override
+      public Optional<UIRegion> getSelectedRegionFor(Object resource)
+      {
+         return Optional.empty();
       }
    }
 }
