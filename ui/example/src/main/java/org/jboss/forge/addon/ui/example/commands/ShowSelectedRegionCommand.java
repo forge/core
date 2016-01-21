@@ -38,6 +38,12 @@ public class ShowSelectedRegionCommand implements UICommand
    }
 
    @Override
+   public boolean isEnabled(UIContext context)
+   {
+      return context.getInitialSelection().size() > 0;
+   }
+
+   @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
       UIContext uiContext = context.getUIContext();
