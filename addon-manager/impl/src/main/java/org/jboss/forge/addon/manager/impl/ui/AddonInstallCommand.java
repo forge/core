@@ -88,12 +88,9 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
             String coordinate = (String) context.getCurrentInputComponent().getValue();
             try
             {
-               Furnace furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
-               AddonDependencyResolver resolver = SimpleContainer
-                        .getServices(getClass().getClassLoader(), AddonDependencyResolver.class).get();
-               CoordinateUtils.resolveCoordinate(coordinate, furnace.getVersion(), resolver);
+               AddonId.fromCoordinates(coordinate);
             }
-            catch (Exception e)
+            catch (IllegalArgumentException e)
             {
                context.addValidationError(context.getCurrentInputComponent(), "\"" + coordinate
                         + "\" is not a valid Addon coordinate");
