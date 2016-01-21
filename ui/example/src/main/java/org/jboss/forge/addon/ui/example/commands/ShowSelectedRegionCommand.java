@@ -67,11 +67,11 @@ public class ShowSelectedRegionCommand implements UICommand
                   UIRegion region = optionalRegion.get();
                   String msg = String.format("Column: %s, Line: %s, Start: %s, End: %s", region.getColumnNumber(),
                            region.getLineNumber(), region.getStartPosition(), region.getEndPosition());
-                  output.info(out, msg);
+                  return Results.success(msg);
                }
                else
                {
-                  output.warn(out, "No selected region found");
+                  return Results.fail("No selected region found");
                }
             }
          }
