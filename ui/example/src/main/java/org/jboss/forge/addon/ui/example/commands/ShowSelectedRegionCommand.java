@@ -61,12 +61,14 @@ public class ShowSelectedRegionCommand implements UICommand
             {
                PrintStream out = output.out();
                output.info(out, "Selected Resource: " + resource);
-               Optional<UIRegion> optionalRegion = selection.getSelectedRegionFor(resource);
+               Optional<UIRegion<Object>> optionalRegion = selection.getRegion();
                if (optionalRegion.isPresent())
                {
-                  UIRegion region = optionalRegion.get();
-                  String msg = String.format("Column: %s, Line: %s, Start: %s, End: %s", region.getColumnNumber(),
-                           region.getLineNumber(), region.getStartPosition(), region.getEndPosition());
+                  UIRegion<Object> region = optionalRegion.get();
+                  String msg = String.format("Start Line: %s, End Line: %s, Start: %s, End: %s, Text: %s",
+                           region.getStartLine(),
+                           region.getEndLine(), region.getStartPosition(), region.getEndPosition(),
+                           region.getText().orElseGet(() -> "Empty"));
                   return Results.success(msg);
                }
                else

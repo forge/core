@@ -7,12 +7,14 @@
 
 package org.jboss.forge.addon.ui.context;
 
+import java.util.Optional;
+
 /**
  * Provides location information about an element in the source file
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public interface UIRegion
+public interface UIRegion<SELECTIONTYPE>
 {
    /**
     * Returns the character index into the original source file indicating where the source fragment corresponding to
@@ -31,27 +33,36 @@ public interface UIRegion
    int getEndPosition();
 
    /**
-    * Returns the line number corresponding to the given source character position in the original source string. The
-    * initial line of the compilation unit is numbered 1, and each line extends through the last character of the
-    * end-of-line delimiter. The very last line extends through the end of the source string and has no line delimiter.
-    * For example, the source string <code>class A\n{\n}</code> has 3 lines corresponding to inclusive character ranges
-    * [0,7], [8,9], and [10,10]. Returns -1 for a character position that does not correspond to any source line, or -2
-    * if no line number information is available for this compilation unit.
+    * Returns number of the line containing the offset of the selected text. If the underlying text has been changed
+    * between the creation of this selection object and the call of this method, the value returned might differ from
+    * what it would have been at the point of creation.
     *
-    * @return the 1-based line number, or <code>-1</code> if the character position does not correspond to a source line
-    *         in the original source file or <code>-2</code> if line number information is not known for this
-    *         compilation unit
+    * @return the start line of this selection or -1 if there is no valid line information
     */
-   int getLineNumber();
+   int getStartLine();
 
    /**
-    * Returns the column number corresponding to the given source character position in the original source string.
-    * Column number are zero-based. Return <code>-1</code> if it is beyond the valid range or <code>-2</code> if the
-    * column number information is unknown.
+    * Returns the number of the line containing the last character of the selected text. If the underlying text has been
+    * changed between the creation of this selection object and the call of this method, the value returned might differ
+    * from what it would have been at the point of creation.
     *
-    * @return the 0-based column number, or <code>-1</code> if the character position does not correspond to a source
-    *         line in the original source file or <code>-2</code> if column number information is unknown for this
-    *         compilation unit
+    * @return the end line of this selection or -1 if there is no valid line information
     */
-   int getColumnNumber();
+   int getEndLine();
+
+   /**
+    * Returns the selected text. If the underlying text has been changed between the creation of this selection object
+    * and the call of this method, the value returned might differ from what it would have been at the point of
+    * creation.
+    *
+    * @return an {@link Optional} containing the selected text. May be empty if there is no valid text information
+    */
+   Optional<String> getText();
+
+   /**
+    * Returns the selected resource that this {@link UIRegion} belongs to.
+    * 
+    * @return the resource that this {@link UIRegion} belongs to.
+    */
+   SELECTIONTYPE getResource();
 }

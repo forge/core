@@ -44,10 +44,9 @@ public interface UISelection<SELECTIONTYPE> extends Iterable<SELECTIONTYPE>
    boolean isEmpty();
 
    /**
-    * Returns the selected {@link UIRegion} for the given type
+    * Returns the selected {@link UIRegion} for the first element
     * 
-    * @param resource the resource (must be present in this {@link UISelection})
     * @return an {@link Optional} with the selected {@link UIRegion} for the UI
     */
-   Optional<UIRegion> getSelectedRegionFor(SELECTIONTYPE resource);
+   Optional<UIRegion<SELECTIONTYPE>> getRegion();
 }

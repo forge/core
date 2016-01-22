@@ -76,9 +76,9 @@ public final class Selections
    private static class SelectionImpl<SELECTIONTYPE> implements UISelection<SELECTIONTYPE>
    {
       private final List<SELECTIONTYPE> selection;
-      private final Function<SELECTIONTYPE, UIRegion> regions;
+      private final Function<SELECTIONTYPE, UIRegion<SELECTIONTYPE>> regions;
 
-      public SelectionImpl(Function<SELECTIONTYPE, UIRegion> regions, SELECTIONTYPE... type)
+      public SelectionImpl(Function<SELECTIONTYPE, UIRegion<SELECTIONTYPE>> regions, SELECTIONTYPE... type)
       {
          if (type != null)
             this.selection = Arrays.asList(type);
@@ -87,7 +87,7 @@ public final class Selections
          this.regions = regions;
       }
 
-      public SelectionImpl(Function<SELECTIONTYPE, UIRegion> regions, Iterable<SELECTIONTYPE> type)
+      public SelectionImpl(Function<SELECTIONTYPE, UIRegion<SELECTIONTYPE>> regions, Iterable<SELECTIONTYPE> type)
       {
          if (type != null)
          {
@@ -135,9 +135,9 @@ public final class Selections
       }
 
       @Override
-      public Optional<UIRegion> getSelectedRegionFor(SELECTIONTYPE resource)
+      public Optional<UIRegion<SELECTIONTYPE>> getRegion()
       {
-         return Optional.ofNullable(regions == null ? null : regions.apply(resource));
+         return Optional.ofNullable(regions.apply(get()));
       }
    }
 
@@ -169,7 +169,7 @@ public final class Selections
       }
 
       @Override
-      public Optional<UIRegion> getSelectedRegionFor(Object resource)
+      public Optional<UIRegion<Object>> getRegion()
       {
          return Optional.empty();
       }
