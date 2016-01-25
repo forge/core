@@ -121,6 +121,18 @@ public class ArchetypeHelper
    {
       outputDir.mkdirs();
 
+      // some archetypes might not use maven or use the maven source layout so lets remove
+      // the pom.xml and src folder if its already been pre-created
+      // as these will be created if necessary via the archetype jar's contents
+      File pom = new File(outputDir, "pom.xml");
+      if (pom.isFile() && pom.exists()) {
+         pom.delete();
+      }
+      File src = new File(outputDir, "src");
+      if (src.isDirectory() && src.exists()) {
+         recursiveDelete(src);
+      }
+
       if (packageName == null || packageName.length() == 0)
       {
          packageName = groupId + "." + artifactId;
@@ -239,7 +251,6 @@ public class ArchetypeHelper
       info("Using replace properties: " + replaceProperties);
 
       // now lets replace all the properties in the pom.xml
-      File pom = new File(outputDir, "pom.xml");
       if (!replaceProperties.isEmpty())
       {
          String text;
@@ -453,5 +464,29 @@ public class ArchetypeHelper
       answer = text.replaceAll(Pattern.quote("${" + name + "}"), value);
       answer = answer.replaceAll(Pattern.quote("$" + name), value);
       return answer;
+   }
+
+   /**
+    * Recursively deletes the given file whether its a file or directory returning the number
+    * of files deleted
+    */
+   public static int recursiveDelete(File file) {
+       int answer = 0;
+       if (file.isDirectory())
+       {
+           File[] files = file.listFiles();
+           if (files != null)
+           {
+               for (File child : files)
+               {
+                   answer += recursiveDelete(child);
+               }
+           }
+       }
+       if (file.delete())
+       {
+           answer += 1;
+       }
+       return answer;
    }
 }
