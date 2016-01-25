@@ -239,9 +239,9 @@ public class ArchetypeHelper
       info("Using replace properties: " + replaceProperties);
 
       // now lets replace all the properties in the pom.xml
+      File pom = new File(outputDir, "pom.xml");
       if (!replaceProperties.isEmpty())
       {
-         File pom = new File(outputDir, "pom.xml");
          String text;
          try (FileInputStream fis = new FileInputStream(pom))
          {
@@ -259,7 +259,7 @@ public class ArchetypeHelper
       }
 
       // now lets create the default directories
-      if (createDefaultDirectories)
+      if (createDefaultDirectories && pom.exists())
       {
          File srcDir = new File(outputDir, "src");
          File mainDir = new File(srcDir, "main");
