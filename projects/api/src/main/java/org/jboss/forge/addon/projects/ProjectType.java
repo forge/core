@@ -27,7 +27,7 @@ public interface ProjectType extends StackSupport
     * 
     * 
     * The default implementation returns <code>null</code>. Implementations are encouraged to override the
-    * {@link #getSetupFlow()} method instead.
+    * {@link #next(UINavigationContext)} method instead.
     * 
     */
    default Class<? extends UIWizardStep> getSetupFlow()
