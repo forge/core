@@ -41,18 +41,11 @@ import org.jboss.forge.furnace.util.Strings;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class ArchetypeSelectionWizardStep extends AbstractUICommand implements UIWizardStep
-{
+public class ArchetypeSelectionWizardStep extends ArchetypeSelectionWizardStepSupport {
    private UIInput<String> archetypeGroupId;
    private UIInput<String> archetypeArtifactId;
    private UIInput<String> archetypeVersion;
    private UIInput<String> archetypeRepository;
-
-   @Override
-   public NavigationResult next(UINavigationContext context) throws Exception
-   {
-      return null;
-   }
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -81,7 +74,7 @@ public class ArchetypeSelectionWizardStep extends AbstractUICommand implements U
    @Override
    public void validate(UIValidationContext validator)
    {
-      String repository = archetypeRepository.getValue();
+      String repository = getArchetypeRepository();
       if (!Strings.isNullOrEmpty(repository) && !Strings.isURL(repository))
       {
          validator.addValidationError(archetypeRepository, "Archetype repository must be a valid URL");
@@ -89,29 +82,22 @@ public class ArchetypeSelectionWizardStep extends AbstractUICommand implements U
    }
 
    @Override
-   public Result execute(UIExecutionContext context) throws Exception
-   {
-      UIContext uiContext = context.getUIContext();
-      Project project = (Project) uiContext.getAttributeMap().get(Project.class);
-      String coordinate = archetypeGroupId.getValue() + ":" + archetypeArtifactId.getValue() + ":"
-               + archetypeVersion.getValue();
-      DependencyQueryBuilder depQuery = DependencyQueryBuilder.create(coordinate);
-      String repository = archetypeRepository.getValue();
-      if (repository != null)
-      {
-         depQuery.setRepositories(new DependencyRepository("archetype", repository));
-      }
-      DependencyResolver resolver = SimpleContainer.getServices(getClass().getClassLoader(), DependencyResolver.class)
-               .get();
-      Dependency resolvedArtifact = resolver.resolveArtifact(depQuery);
-      FileResource<?> artifact = resolvedArtifact.getArtifact();
-      MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
-      File fileRoot = project.getRoot().reify(DirectoryResource.class).getUnderlyingResourceObject();
-      ArchetypeHelper archetypeHelper = new ArchetypeHelper(artifact.getResourceInputStream(), fileRoot,
-               metadataFacet.getProjectGroupName(), metadataFacet.getProjectName(), metadataFacet.getProjectVersion());
-      JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
-      archetypeHelper.setPackageName(facet.getBasePackage());
-      archetypeHelper.execute();
-      return Results.success();
+   protected String getArchetypeRepository() {
+      return archetypeRepository.getValue();
+   }
+
+   @Override
+   protected String getArchetypeVersion() {
+      return archetypeVersion.getValue();
+   }
+
+   @Override
+   protected String getArchetypeArtifactId() {
+      return archetypeArtifactId.getValue();
+   }
+
+   @Override
+   protected String getArchetypeGroupId() {
+      return archetypeGroupId.getValue();
    }
 }
