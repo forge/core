@@ -1,6 +1,6 @@
 /**
  * Copyright 2016 Red Hat, Inc. and/or its affiliates.
- *
+ * <p/>
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
@@ -31,7 +31,8 @@ import java.io.File;
 /**
  * Base class for a wizard step which on execution creates an archetype
  */
-public abstract class ArchetypeSelectionWizardStepSupport extends AbstractUICommand implements UIWizardStep {
+public abstract class AbstractArchetypeSelectionWizardStep extends AbstractUICommand implements UIWizardStep
+{
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
@@ -51,7 +52,8 @@ public abstract class ArchetypeSelectionWizardStepSupport extends AbstractUIComm
       {
          depQuery.setRepositories(new DependencyRepository("archetype", repository));
       }
-      DependencyResolver resolver = SimpleContainer.getServices(ArchetypeSelectionWizardStepSupport.class.getClassLoader(), DependencyResolver.class)
+      DependencyResolver resolver = SimpleContainer
+               .getServices(AbstractArchetypeSelectionWizardStep.class.getClassLoader(), DependencyResolver.class)
                .get();
       Dependency resolvedArtifact = resolver.resolveArtifact(depQuery);
       FileResource<?> artifact = resolvedArtifact.getArtifact();

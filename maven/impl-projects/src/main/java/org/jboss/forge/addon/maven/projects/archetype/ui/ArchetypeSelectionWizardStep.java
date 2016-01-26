@@ -1,47 +1,28 @@
 /**
  * Copyright 2014 Red Hat, Inc. and/or its affiliates.
- *
+ * <p/>
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
 package org.jboss.forge.addon.maven.projects.archetype.ui;
 
-import java.io.File;
-
-import org.jboss.forge.addon.dependencies.Dependency;
-import org.jboss.forge.addon.dependencies.DependencyRepository;
-import org.jboss.forge.addon.dependencies.DependencyResolver;
-import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
-import org.jboss.forge.addon.maven.projects.archetype.ArchetypeHelper;
-import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
-import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.facets.MetadataFacet;
-import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
-import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.result.NavigationResult;
-import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.Strings;
 
 /**
  * Displays a list of archetypes to choose from
- * 
+ *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class ArchetypeSelectionWizardStep extends ArchetypeSelectionWizardStepSupport {
+public class ArchetypeSelectionWizardStep extends AbstractArchetypeSelectionWizardStep
+{
    private UIInput<String> archetypeGroupId;
    private UIInput<String> archetypeArtifactId;
    private UIInput<String> archetypeVersion;
@@ -82,22 +63,26 @@ public class ArchetypeSelectionWizardStep extends ArchetypeSelectionWizardStepSu
    }
 
    @Override
-   protected String getArchetypeRepository() {
+   protected String getArchetypeRepository()
+   {
       return archetypeRepository.getValue();
    }
 
    @Override
-   protected String getArchetypeVersion() {
+   protected String getArchetypeVersion()
+   {
       return archetypeVersion.getValue();
    }
 
    @Override
-   protected String getArchetypeArtifactId() {
+   protected String getArchetypeArtifactId()
+   {
       return archetypeArtifactId.getValue();
    }
 
    @Override
-   protected String getArchetypeGroupId() {
+   protected String getArchetypeGroupId()
+   {
       return archetypeGroupId.getValue();
    }
 }
