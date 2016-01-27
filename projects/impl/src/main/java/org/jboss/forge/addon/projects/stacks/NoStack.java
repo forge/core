@@ -8,11 +8,10 @@
 package org.jboss.forge.addon.projects.stacks;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.jboss.forge.addon.projects.ProjectFacet;
-import org.jboss.forge.furnace.util.Lists;
+import org.jboss.forge.furnace.util.Sets;
 
 /**
  *
@@ -47,7 +46,7 @@ public class NoStack implements Stack
    @Override
    public <T extends ProjectFacet> Set<T> filter(Class<T> type, Iterable<T> facets)
    {
-      return new HashSet<>(Lists.toList(facets));
+      return Sets.toSet(facets);
    }
 
    @Override
