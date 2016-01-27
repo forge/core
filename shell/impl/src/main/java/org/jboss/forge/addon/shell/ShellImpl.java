@@ -53,8 +53,10 @@ import org.jboss.forge.addon.ui.UIRuntime;
 import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIContextListener;
+import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
+import org.jboss.forge.addon.ui.util.Selections;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.services.Imported;
@@ -222,7 +224,8 @@ public class ShellImpl implements Shell, UIRuntime
    public ShellContextImpl createUIContext()
    {
       Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
-      ShellContextImpl shellContextImpl = new ShellContextImpl(this, currentResource, listeners);
+      UISelection<?> initialSelection = Selections.from(currentResource);
+      ShellContextImpl shellContextImpl = new ShellContextImpl(this, initialSelection, listeners);
       for (CommandExecutionListener listener : executionListeners)
       {
          shellContextImpl.addCommandExecutionListener(listener);

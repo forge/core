@@ -7,7 +7,6 @@
 
 package org.jboss.forge.addon.shell.ui;
 
-import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.shell.Shell;
 import org.jboss.forge.addon.shell.aesh.line.CommandLineImpl;
 import org.jboss.forge.addon.shell.line.CommandLine;
@@ -15,7 +14,6 @@ import org.jboss.forge.addon.ui.context.AbstractUIContext;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIContextListener;
 import org.jboss.forge.addon.ui.context.UISelection;
-import org.jboss.forge.addon.ui.util.Selections;
 
 /**
  * Implementation of {@link UIContext}
@@ -28,11 +26,10 @@ public class ShellContextImpl extends AbstractUIContext implements ShellContext
    private final UISelection<?> initialSelection;
    private final Iterable<UIContextListener> listeners;
 
-   @SuppressWarnings("unchecked")
-   public ShellContextImpl(Shell shell, Resource<?> currentResource, Iterable<UIContextListener> listeners)
+   public ShellContextImpl(Shell shell, UISelection<?> initialSelection, Iterable<UIContextListener> listeners)
    {
       this.shell = shell;
-      this.initialSelection = Selections.from(currentResource);
+      this.initialSelection = initialSelection;
       this.listeners = listeners;
       for (UIContextListener listener : listeners)
       {
