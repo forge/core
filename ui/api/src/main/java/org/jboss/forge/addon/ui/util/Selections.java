@@ -137,7 +137,7 @@ public final class Selections
       @Override
       public Optional<UIRegion<SELECTIONTYPE>> getRegion()
       {
-         return Optional.ofNullable(regions.apply(get()));
+         return regions == null ? Optional.empty() : Optional.ofNullable(regions.apply(get()));
       }
    }
 
