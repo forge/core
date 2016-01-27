@@ -71,11 +71,15 @@ public interface ProjectType extends StackSupport
    default boolean supports(Stack stack)
    {
       // By default, check if the required facets are supported by the given stack
-      for (Class<? extends ProjectFacet> requiredFacet : getRequiredFacets())
+      Iterable<Class<? extends ProjectFacet>> requiredFacets = getRequiredFacets();
+      if (stack != null && requiredFacets != null)
       {
-         if (stack.supports(requiredFacet))
+         for (Class<? extends ProjectFacet> requiredFacet : requiredFacets)
          {
-            return true;
+            if (stack.supports(requiredFacet))
+            {
+               return true;
+            }
          }
       }
       return false;
