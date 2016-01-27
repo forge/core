@@ -120,10 +120,11 @@ public abstract class AbstractProjectCommand extends AbstractUICommand
          {
             result = false;
          }
-         else if (!filter.contains(select.getValue()))
-         {
-            select.setDefaultValue((T) null);
-         }
+         // FIXME: JBIDE-21584: Contains return false because of proxy class
+         // else if (!filter.contains(select.getValue()))
+         // {
+         // select.setDefaultValue((T) null);
+         // }
       }
       return result;
    }
