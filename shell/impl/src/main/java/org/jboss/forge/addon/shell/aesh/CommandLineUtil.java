@@ -220,7 +220,6 @@ class CommandLineUtil
                String optionValue = commandLine.getOptionValue(name);
                if (Resource.class.isAssignableFrom(input.getValueType()))
                {
-
                   List<Resource<?>> resolved = Collections.emptyList();
                   try
                   {
@@ -231,7 +230,7 @@ class CommandLineUtil
                      logger.log(Level.FINER, "Error while resolving option value '" + optionValue + "' for "
                               + initialResource, re);
                   }
-                  if (resolved.size() > 0)
+                  if (resolved.size() > 0 && resolved.get(0).exists())
                   {
                      InputComponents.setValueFor(converterFactory, input, resolved.get(0));
                   }

@@ -9,6 +9,7 @@ package org.jboss.forge.addon.shell.mock.command;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -34,10 +35,13 @@ public class ResourceTestCommand extends AbstractUICommand
    @Inject
    private UIInputMany<FileResource<?>> manyFileResource;
 
+   @Inject
+   private UIInput<JavaResource> javaResource;
+
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      builder.add(singleFileResource).add(manyFileResource);
+      builder.add(singleFileResource).add(manyFileResource).add(javaResource);
    }
 
    @Override
@@ -52,6 +56,7 @@ public class ResourceTestCommand extends AbstractUICommand
       UIOutput output = context.getUIContext().getProvider().getOutput();
       output.info(output.out(), "Single File Resource: " + singleFileResource.getValue());
       output.info(output.out(), "Many File Resource: " + manyFileResource.getValue());
+      output.info(output.out(), "Java Resource: " + javaResource.getValue());
       return Results.success();
    }
 }

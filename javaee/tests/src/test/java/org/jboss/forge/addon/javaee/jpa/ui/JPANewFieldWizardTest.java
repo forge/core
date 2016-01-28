@@ -7,9 +7,13 @@
 package org.jboss.forge.addon.javaee.jpa.ui;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.persistence.Column;
@@ -27,6 +31,7 @@ import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.parser.java.beans.FieldOperations;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -48,7 +53,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class JPANewFieldWizardTest
 {
-
    @Deployment
    @AddonDependencies
    public static AddonArchive getDeployment()
@@ -64,6 +68,9 @@ public class JPANewFieldWizardTest
 
    @Inject
    private FieldOperations beanOperations;
+
+   @Inject
+   private ShellTest shellTest;
 
    private Project project;
 
@@ -541,6 +548,19 @@ public class JPANewFieldWizardTest
       Assert.assertFalse(field.hasAnnotation(Column.class));
       Assert.assertTrue(field.hasAnnotation(Enumerated.class));
       Assert.assertTrue(field.getAnnotation(Enumerated.class).getValues().isEmpty());
+   }
+
+   @Test
+   public void testShell() throws Exception
+   {
+      JavaResource entity = projectHelper.createJPAEntity(project, "Customer");
+      shellTest.getShell().setCurrentResource(project.getRoot());
+      Result result = shellTest.execute(
+               "jpa-new-field --named firstName --target-entity " + entity.getJavaType().getQualifiedName(), 10,
+               TimeUnit.SECONDS);
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
+      JavaClassSource javaClassSource = entity.getJavaType();
+      Assert.assertThat(javaClassSource.hasField("firstName"), is(true));
    }
 
 }

@@ -10,6 +10,7 @@ package org.jboss.forge.addon.resource.util;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
  */
 public class ResourcePathResolver
 {
+   private static final Pattern WILDCARDS_PATTERN = Pattern.compile(".*(\\?|\\*)+.*");
    private int cursor;
    private final int length;
 
@@ -163,7 +165,7 @@ public class ResourcePathResolver
             boolean first = --cursor == 0;
             tk = capture();
 
-            if (tk.matches(".*(\\?|\\*)+.*"))
+            if (WILDCARDS_PATTERN.matcher(tk).matches())
             {
                boolean startDot = tk.startsWith(".");
                String regex = pathspecToRegEx(tk.startsWith(slashString) ? tk.substring(1) : tk);
@@ -178,7 +180,7 @@ public class ResourcePathResolver
                   p = Pattern.compile(Pattern.quote(regex));
                }
 
-               List<Resource<?>> res = new LinkedList<>();
+               List<Resource<?>> res = new ArrayList<>();
 
                for (Resource<?> child : r.listResources())
                {
