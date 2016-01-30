@@ -1,6 +1,6 @@
 == JBoss Forge 3
 
-image::https://avatars2.githubusercontent.com/u/711249[]
+image::https://avatars2.githubusercontent.com/u/711249?s=200[]
 
 The fastest way to build applications, share your software, and enjoy doing it.
 
