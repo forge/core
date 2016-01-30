@@ -1,5 +1,7 @@
 == JBoss Forge 3
 
+image::https://avatars2.githubusercontent.com/u/711249[]
+
 The fastest way to build applications, share your software, and enjoy doing it.
 
 image:https://forge.ci.cloudbees.com/job/forge-core/badge/icon["Build Status", link="https://forge.ci.cloudbees.com/job/forge-core/"]
