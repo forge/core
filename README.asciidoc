@@ -4,6 +4,7 @@ The fastest way to build applications, share your software, and enjoy doing it.
 
 image:https://forge.ci.cloudbees.com/job/forge-core/badge/icon["Build Status", link="https://forge.ci.cloudbees.com/job/forge-core/"]
 image:http://img.shields.io/:license-EPL-blue.svg["License", link="https://www.eclipse.org/legal/epl-v10.html"]
+image:https://maven-badges.herokuapp.com/maven-central/org.jboss.forge/forge-distribution/badge.svg["Maven Central", link="https://maven-badges.herokuapp.com/maven-central/org.jboss.forge/forge-distribution"]
 
 What's new and noteworthy?
 --------------------------
