@@ -96,6 +96,7 @@ public class ProjectListStackCommand implements UICommand
    public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(getClass()).name("Project: List Stacks")
-               .category(Categories.create("Project", "Stack"));
+               .category(Categories.create("Project", "Stack"))
+               .description("Lists the stacks associated with the current project");
    }
 }
