@@ -16,7 +16,6 @@ import javax.inject.Inject;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.javaee.AbstractJavaEEFacet;
-import org.jboss.forge.addon.javaee.facets.JSTLFacet;
 import org.jboss.forge.addon.javaee.jta.JTAFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.furnace.versions.SingleVersion;

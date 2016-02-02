@@ -6,12 +6,14 @@
  */
 package org.jboss.forge.addon.javaee.jms;
 
+import org.jboss.forge.addon.javaee.JavaEEFacet;
+
 /**
  * Installs the required JMS libraries
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  * 
  */
-public interface JMSFacet extends org.jboss.forge.addon.javaee.facets.JMSFacet
+public interface JMSFacet extends JavaEEFacet
 {
 }
