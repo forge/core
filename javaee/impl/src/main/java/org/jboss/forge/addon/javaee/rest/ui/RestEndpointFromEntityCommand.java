@@ -108,25 +108,28 @@ public class RestEndpointFromEntityCommand extends AbstractJavaEECommand impleme
    {
       UIContext context = builder.getUIContext();
       Project project = getSelectedProject(context);
-      JPAFacet<PersistenceCommonDescriptor> persistenceFacet = project.getFacet(JPAFacet.class);
-      JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
-      List<JavaClassSource> allEntities = persistenceFacet.getAllEntities();
       List<JavaClassSource> supportedEntities = new ArrayList<>();
-      for (JavaClassSource entity : allEntities)
+      List<String> persistenceUnits = new ArrayList<>();
+      JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
+      if (project.hasFacet(JPAFacet.class))
       {
-         if (isEntityWithSimpleKey(entity))
+         JPAFacet<PersistenceCommonDescriptor> persistenceFacet = project.getFacet(JPAFacet.class);
+         List<JavaClassSource> allEntities = persistenceFacet.getAllEntities();
+         for (JavaClassSource entity : allEntities)
          {
-            supportedEntities.add(entity);
+            if (isEntityWithSimpleKey(entity))
+            {
+               supportedEntities.add(entity);
+            }
+         }
+         List<PersistenceUnitCommon> allUnits = persistenceFacet.getConfig().getAllPersistenceUnit();
+         for (PersistenceUnitCommon persistenceUnit : allUnits)
+         {
+            persistenceUnits.add(persistenceUnit.getName());
          }
       }
       targets.setValueChoices(supportedEntities);
       targets.setItemLabelConverter((source) -> source.getQualifiedName());
-      List<String> persistenceUnits = new ArrayList<>();
-      List<PersistenceUnitCommon> allUnits = persistenceFacet.getConfig().getAllPersistenceUnit();
-      for (PersistenceUnitCommon persistenceUnit : allUnits)
-      {
-         persistenceUnits.add(persistenceUnit.getName());
-      }
       if (!persistenceUnits.isEmpty())
       {
          persistenceUnit.setValueChoices(persistenceUnits).setDefaultValue(persistenceUnits.get(0));
