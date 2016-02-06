@@ -1,5 +1,8 @@
 package org.jboss.forge.addon.javaee.security.ui;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_2_5;
@@ -13,9 +16,6 @@ import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
 @RunWith(Arquillian.class)
 public class AddLoginConfigCommandTest extends AbstractSecurityCommandTest
 {
@@ -26,8 +26,9 @@ public class AddLoginConfigCommandTest extends AbstractSecurityCommandTest
       ServletFacet_2_5 servletFacet = addLoginConfig("myRealm", "BASIC", ServletFacet_2_5.class);
       org.jboss.shrinkwrap.descriptor.api.webapp25.WebAppDescriptor webXml = servletFacet.getConfig();
       assertEquals(1, webXml.getAllLoginConfig().size());
-      org.jboss.shrinkwrap.descriptor.api.webapp25.LoginConfigType<org.jboss.shrinkwrap.descriptor.api.webapp25.WebAppDescriptor> loginConfig = webXml.getAllLoginConfig().get(
-               0);
+      org.jboss.shrinkwrap.descriptor.api.webapp25.LoginConfigType<org.jboss.shrinkwrap.descriptor.api.webapp25.WebAppDescriptor> loginConfig = webXml
+               .getAllLoginConfig().get(
+                        0);
       assertEquals("BASIC", loginConfig.getAuthMethod());
       assertEquals("myRealm", loginConfig.getRealmName());
    }
@@ -38,7 +39,8 @@ public class AddLoginConfigCommandTest extends AbstractSecurityCommandTest
       ServletFacet_3_0 servletFacet = addLoginConfig("myRealm", "FORM", ServletFacet_3_0.class);
       org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor webXml = servletFacet.getConfig();
       assertEquals(1, webXml.getAllLoginConfig().size());
-      LoginConfigType<org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor> loginConfig = webXml.getAllLoginConfig().get(0);
+      LoginConfigType<org.jboss.shrinkwrap.descriptor.api.webapp30.WebAppDescriptor> loginConfig = webXml
+               .getAllLoginConfig().get(0);
       assertEquals("FORM", loginConfig.getAuthMethod());
       assertEquals("myRealm", loginConfig.getRealmName());
    }
@@ -49,8 +51,9 @@ public class AddLoginConfigCommandTest extends AbstractSecurityCommandTest
       ServletFacet_3_1 servletFacet = addLoginConfig("myRealm", "BASIC", ServletFacet_3_1.class);
       org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor webXml = servletFacet.getConfig();
       assertEquals(1, webXml.getAllLoginConfig().size());
-      org.jboss.shrinkwrap.descriptor.api.webcommon31.LoginConfigType<org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor> loginConfig = webXml.getAllLoginConfig().get(
-               0);
+      org.jboss.shrinkwrap.descriptor.api.webcommon31.LoginConfigType<org.jboss.shrinkwrap.descriptor.api.webapp31.WebAppDescriptor> loginConfig = webXml
+               .getAllLoginConfig().get(
+                        0);
       assertEquals("BASIC", loginConfig.getAuthMethod());
       assertEquals("myRealm", loginConfig.getRealmName());
    }
@@ -61,9 +64,9 @@ public class AddLoginConfigCommandTest extends AbstractSecurityCommandTest
       project.getRoot().delete(true);
    }
 
-   private <T extends ServletFacet> T addLoginConfig(String realm, String authenticationMethod,
+   private <T extends ServletFacet<?>> T addLoginConfig(String realm, String authenticationMethod,
             Class<T> servletFacetClass)
-            throws Exception
+                     throws Exception
    {
       T servletFacet = installServlet(servletFacetClass);
       try (CommandController commandController = testHarness

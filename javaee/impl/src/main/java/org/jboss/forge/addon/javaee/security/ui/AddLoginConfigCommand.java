@@ -1,6 +1,7 @@
 package org.jboss.forge.addon.javaee.security.ui;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -10,8 +11,6 @@ import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -46,15 +45,8 @@ public class AddLoginConfigCommand extends AbstractJavaEECommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      authMethod.setCompleter(new UICompleter<String>()
-      {
-         @Override
-         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input,
-                  String value)
-         {
-            return Arrays.asList("BASIC", "DIGEST", "FORM", "CLIENT_CERT");
-         }
-      });
+      List<String> loginMethods = Arrays.asList("BASIC", "DIGEST", "FORM", "CLIENT_CERT");
+      authMethod.setCompleter((context, input, value) -> loginMethods);
       builder.add(securityRealm).add(authMethod);
    }
 
@@ -70,7 +62,7 @@ public class AddLoginConfigCommand extends AbstractJavaEECommand
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("Security: Add login config")
+      return Metadata.from(super.getMetadata(context), getClass()).name("Security: Add Login Config")
                .description("Adds a login config element to the current project")
                .category(Categories.create(super.getMetadata(context).getCategory().getName(), "Security"));
    }
