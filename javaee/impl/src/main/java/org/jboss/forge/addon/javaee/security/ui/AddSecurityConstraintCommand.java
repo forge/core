@@ -2,7 +2,6 @@ package org.jboss.forge.addon.javaee.security.ui;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
@@ -13,8 +12,6 @@ import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.input.InputComponent;
-import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -58,7 +55,7 @@ public class AddSecurityConstraintCommand extends AbstractJavaEECommand
    private UIInputMany<String> securityRoles;
 
    @Inject
-   @WithAttributes(label = "Enable user data constraint", shortName = 'u', description = "Establish a requirement to access the constrained request over a protected transport layer")
+   @WithAttributes(label = "Enable user data constraint", shortName = 'c', description = "Establish a requirement to access the constrained request over a protected transport layer")
    private UIInput<Boolean> enableUserDataConstraint;
 
    @Inject
@@ -70,33 +67,11 @@ public class AddSecurityConstraintCommand extends AbstractJavaEECommand
    {
       ServletFacet<?> servletFacet = getSelectedProject(builder.getUIContext()).getFacet(ServletFacet.class);
       final List<String> roles = servletFacet.getSecurityRoles();
-      httpMethods.setCompleter(new UICompleter<String>()
-      {
-         @Override
-         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input,
-                  String value)
-         {
-            return Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS");
-         }
-      });
-      securityRoles.setCompleter(new UICompleter<String>()
-      {
-         @Override
-         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input,
-                  String value)
-         {
-            return roles;
-         }
-      });
+      final List<String> methods = Arrays.asList("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS");
+      httpMethods.setCompleter((context, input, value) -> methods);
+      securityRoles.setCompleter((context, input, value) -> roles);
       enableUserDataConstraint.setDefaultValue(false);
-      transportGuarantee.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
-            return enableUserDataConstraint.getValue();
-         }
-      });
+      transportGuarantee.setEnabled(() -> enableUserDataConstraint.getValue());
       builder.add(displayName).add(webResourceName).add(description).add(urlPatterns).add(httpMethods)
                .add(securityRoles).add(enableUserDataConstraint).add(transportGuarantee);
    }

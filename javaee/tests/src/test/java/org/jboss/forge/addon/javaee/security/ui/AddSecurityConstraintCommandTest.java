@@ -1,5 +1,13 @@
 package org.jboss.forge.addon.javaee.security.ui;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.javaee.security.TransportGuarantee;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet_2_5;
@@ -8,18 +16,8 @@ import org.jboss.forge.addon.javaee.servlet.ServletFacet_3_1;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
-import org.jboss.forge.addon.ui.result.Results;
 import org.junit.Test;
-import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.RunWith;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class AddSecurityConstraintCommandTest extends AbstractSecurityCommandTest
