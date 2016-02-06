@@ -1,5 +1,7 @@
 package org.jboss.forge.addon.javaee.security.ui;
 
+import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.forge.addon.javaee.ProjectHelper;
 import org.jboss.forge.addon.javaee.servlet.ServletFacet;
@@ -13,8 +15,6 @@ import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Before;
-
-import javax.inject.Inject;
 
 public abstract class AbstractSecurityCommandTest
 {
@@ -41,18 +41,24 @@ public abstract class AbstractSecurityCommandTest
    }
 
    @Before
-   public void setup() {
+   public void setup()
+   {
       project = projectHelper.createWebProject();
    }
 
    @SuppressWarnings("unchecked")
-   protected <T extends ServletFacet> T installServlet(Class<T> servletFacetClass)
+   protected <T extends ServletFacet<?>> T installServlet(Class<T> servletFacetClass)
    {
-      if (servletFacetClass.equals(ServletFacet_2_5.class)) {
+      if (servletFacetClass.equals(ServletFacet_2_5.class))
+      {
          return (T) projectHelper.installServlet_2_5(project);
-      } else if (servletFacetClass.equals(ServletFacet_3_0.class)) {
+      }
+      else if (servletFacetClass.equals(ServletFacet_3_0.class))
+      {
          return (T) projectHelper.installServlet_3_0(project);
-      } else if (servletFacetClass.equals(ServletFacet_3_1.class)) {
+      }
+      else if (servletFacetClass.equals(ServletFacet_3_1.class))
+      {
          return (T) projectHelper.installServlet_3_1(project);
       }
       throw new IllegalArgumentException("Only supported Servlet implementations are 2.5, 3.0, 3.1");
