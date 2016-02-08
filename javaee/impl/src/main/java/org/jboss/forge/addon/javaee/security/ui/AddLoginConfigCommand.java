@@ -29,7 +29,7 @@ public class AddLoginConfigCommand extends AbstractJavaEECommand
 {
 
    @Inject
-   @WithAttributes(label = "Security realm", required = true)
+   @WithAttributes(label = "Security realm")
    private UIInput<String> securityRealm;
 
    @Inject

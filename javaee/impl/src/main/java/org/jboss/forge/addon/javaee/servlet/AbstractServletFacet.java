@@ -10,6 +10,8 @@ package org.jboss.forge.addon.javaee.servlet;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -23,9 +25,11 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFilter;
 import org.jboss.forge.furnace.util.Lists;
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.shrinkwrap.descriptor.api.javaee.SecurityRoleCommonType;
 import org.jboss.shrinkwrap.descriptor.api.webapp.WebAppCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.webcommon.AuthConstraintCommonType;
+import org.jboss.shrinkwrap.descriptor.api.webcommon.LoginConfigCommonType;
 import org.jboss.shrinkwrap.descriptor.api.webcommon.SecurityConstraintCommonType;
 import org.jboss.shrinkwrap.descriptor.api.webcommon.UserDataConstraintCommonType;
 import org.jboss.shrinkwrap.descriptor.api.webcommon.WebResourceCollectionCommonType;
@@ -139,7 +143,15 @@ public abstract class AbstractServletFacet<DESCRIPTOR extends WebAppCommonDescri
    public void addLoginConfig(String authMethod, String realmName)
    {
       DESCRIPTOR webXml = getConfig();
-      webXml.getOrCreateLoginConfig().authMethod(authMethod).realmName(realmName);
+      LoginConfigCommonType loginConfig = webXml.getOrCreateLoginConfig();
+      if (!Strings.isNullOrEmpty(authMethod))
+      {
+         loginConfig.authMethod(authMethod);
+      }
+      if (!Strings.isNullOrEmpty(realmName))
+      {
+         loginConfig.realmName(realmName);
+      }
       saveConfig(webXml);
    }
 
@@ -148,17 +160,10 @@ public abstract class AbstractServletFacet<DESCRIPTOR extends WebAppCommonDescri
    public void addSecurityRole(String roleName)
    {
       DESCRIPTOR webXml = getConfig();
-      boolean exists = false;
       List<SecurityRoleCommonType<?, ?>> allSecurityRole = webXml.getAllSecurityRole();
-      for (SecurityRoleCommonType<?, ?> securityRoleCommonType : allSecurityRole)
-      {
-         if (roleName.equals(securityRoleCommonType.getRoleName()))
-         {
-            exists = true;
-            break;
-         }
-      }
-      if (!exists)
+      Optional<SecurityRoleCommonType<?, ?>> existingRole = allSecurityRole.stream()
+               .filter(role -> roleName.equals(role.getRoleName())).findFirst();
+      if (!existingRole.isPresent())
       {
          webXml.createSecurityRole().roleName(roleName);
          saveConfig(webXml);
@@ -170,12 +175,10 @@ public abstract class AbstractServletFacet<DESCRIPTOR extends WebAppCommonDescri
    public List<String> getSecurityRoles()
    {
       List<SecurityRoleCommonType<?, ?>> securityRoles = getConfig().getAllSecurityRole();
-      List<String> roleNames = new ArrayList<>(securityRoles.size());
-      for (SecurityRoleCommonType<?, ?> securityRole : securityRoles)
-      {
-         roleNames.add(securityRole.getRoleName());
-      }
-      return roleNames;
+      return securityRoles
+               .stream()
+               .map(securityRole -> securityRole.getRoleName())
+               .collect(Collectors.toList());
    }
 
    @SuppressWarnings("unchecked")
