@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>git-parent</artifactId>
-      <version>3.0.0-SNAPSHOT</version>
+      <version>3.0.0.Beta5</version>
    </parent>
    <artifactId>git-tests</artifactId>
    <name>Forge - Git Addon Tests</name>
