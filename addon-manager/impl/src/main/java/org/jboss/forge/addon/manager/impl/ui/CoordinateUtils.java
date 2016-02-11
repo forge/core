@@ -1,4 +1,4 @@
-package org.jboss.forge.addon.manager.impl.utils;
+package org.jboss.forge.addon.manager.impl.ui;
 
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
@@ -8,7 +8,7 @@ import org.jboss.forge.furnace.versions.Versions;
 
 public class CoordinateUtils
 {
-   private static final String FORGE_ADDON_GROUP_ID = "org.jboss.forge.addon:";
+   static final String FORGE_ADDON_GROUP_ID = "org.jboss.forge.addon:";
 
    public static AddonId resolveCoordinate(String addonCoordinates, Version specificationVersion,
             AddonDependencyResolver resolver) throws IllegalArgumentException
@@ -57,16 +57,17 @@ public class CoordinateUtils
                   selected = versions[i];
                }
             }
-            if (selected == null)
+            if (selected != null)
             {
-               throw new IllegalArgumentException("No compatible addon API version found for " + coordinate
-                        + " for API " + specificationVersion);
+               addon = selected;
+            }
+            else
+            {
+               addon = versions[versions.length - 1];
             }
 
-            addon = selected;
          }
       }
       return addon;
    }
-
 }

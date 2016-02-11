@@ -1,10 +1,10 @@
 package org.jboss.forge.addon.manager.impl.ui;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.jboss.forge.addon.dependencies.Coordinate;
-import org.jboss.forge.addon.manager.impl.utils.CoordinateUtils;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.Projects;
@@ -13,16 +13,13 @@ import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.InputComponentFactory;
-import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
@@ -33,8 +30,6 @@ import org.jboss.forge.furnace.versions.Version;
 
 public class AddonInstallCommand extends AbstractUICommand implements AddonCommandConstants
 {
-   private static final String FORGE_ADDON_GROUP_ID = "org.jboss.forge.addon:";
-
    private UIInput<String> coordinate;
 
    @Override
@@ -64,41 +59,19 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
          coordinate.setDefaultValue(AddonId.from(c.getGroupId() + ":" + c.getArtifactId(), c.getVersion())
                   .toCoordinates());
       }
-
-      coordinate.setCompleter(new UICompleter<String>()
-      {
-         @Override
-         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input,
-                  String value)
+      List<String> defaultCoords = Arrays.asList(CoordinateUtils.FORGE_ADDON_GROUP_ID);
+      coordinate.setCompleter((UIContext context, InputComponent<?, String> input,
+               String value) -> {
+         Iterable<String> items = Collections.emptySet();
+         if (Strings.isNullOrEmpty(value))
          {
-            Set<String> items = new TreeSet<String>();
-            if (Strings.isNullOrEmpty(value))
-            {
-               items.add(FORGE_ADDON_GROUP_ID);
-            }
-            return items;
+            items = defaultCoords;
          }
-      });
-
-      coordinate.addValidator(new UIValidator()
-      {
-         @Override
-         public void validate(UIValidationContext context)
-         {
-            String coordinate = (String) context.getCurrentInputComponent().getValue();
-            try
-            {
-               AddonId.fromCoordinates(coordinate);
-            }
-            catch (IllegalArgumentException e)
-            {
-               context.addValidationError(context.getCurrentInputComponent(), "\"" + coordinate
-                        + "\" is not a valid Addon coordinate");
-            }
-         }
+         return items;
       });
 
       builder.add(coordinate);
+
    }
 
    @Override
@@ -117,7 +90,8 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
       }
       catch (Throwable t)
       {
-         return Results.fail("Addon " + addonId.toCoordinates() + " could not be installed.", t);
+         return Results.fail(
+                  "Addon " + addonId.toCoordinates() + " could not be installed: " + t.getCause().getMessage(), t);
       }
    }
 

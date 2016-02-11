@@ -350,11 +350,12 @@ public class Bootstrap
                }
                if (selected == null)
                {
-                  throw new IllegalArgumentException("No compatible addon API version found for " + coordinate
-                           + " for API " + runtimeAPIVersion);
+                  addon = versions[0];
                }
-
-               addon = selected;
+               else
+               {
+                  addon = selected;
+               }
             }
          }
 
