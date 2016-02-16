@@ -533,7 +533,8 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
       // (prefer /faces/error.xhtml)
 
-      String errorLocation = getAccessStrategy().getWebPaths(web.getWebResource(ERROR_XHTML)).get(1);
+      List<String> webPaths = getAccessStrategy().getWebPaths(web.getWebResource(ERROR_XHTML));
+      String errorLocation = webPaths.size() > 1 ? webPaths.get(1) : "/faces/error.xhtml";
       createErrorPageEntry(servletConfig, errorLocation, "404");
       createErrorPageEntry(servletConfig, errorLocation, "500");
 

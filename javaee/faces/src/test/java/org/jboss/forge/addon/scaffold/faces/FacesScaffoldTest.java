@@ -95,6 +95,20 @@ public class FacesScaffoldTest
       Assert.assertEquals(2, servletFacet.getConfig().getAllErrorPage().size());
    }
 
+   @Test
+   public void shouldScaffoldEntity() throws Exception
+   {
+      shellTest.execute("javaee-setup --java-ee-version 7", 10, TimeUnit.SECONDS);
+      shellTest.execute("jpa-setup", 10, TimeUnit.SECONDS);
+      shellTest.execute("jpa-new-entity --named Customer", 10, TimeUnit.SECONDS);
+      shellTest.execute("jpa-new-field --named firstName", 10, TimeUnit.SECONDS);
+      Project project = projectFactory.findProject(shellTest.getShell().getCurrentResource());
+      String entityPackageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + ".model";
+      Result result = shellTest.execute(
+               "scaffold-generate --provider Faces --targets " + entityPackageName + ".Customer", 10, TimeUnit.SECONDS);
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
+   }
+
    @After
    public void tearDown() throws Exception
    {
