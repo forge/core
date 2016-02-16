@@ -41,7 +41,7 @@ public class FurnaceAddonProjectType extends AbstractProjectType
    @Override
    public String toString()
    {
-      return "addon";
+      return "forge-addon";
    }
 
    @Override
