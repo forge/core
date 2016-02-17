@@ -51,11 +51,11 @@ public class JPASetupWizardImpl extends AbstractJavaEECommand implements JPASetu
 
    @Inject
    @WithAttributes(shortName = 'c', label = "Container", required = true)
-   private UISelectOne<PersistenceContainer> container;
+   private UISelectOne<PersistenceContainer> jpaContainer;
 
    @Inject
    @WithAttributes(shortName = 'p', label = "Provider", required = true)
-   private UISelectOne<PersistenceProvider> provider;
+   private UISelectOne<PersistenceProvider> jpaProvider;
 
    @Inject
    @WithAttributes(shortName = 'm', label = "Install a JPA 2 metamodel generator?")
@@ -96,7 +96,7 @@ public class JPASetupWizardImpl extends AbstractJavaEECommand implements JPASetu
       initContainers(project, uiContext);
       initProviders();
       initConfigureMetadata();
-      builder.add(container).add(provider).add(configureMetadata);
+      builder.add(jpaContainer).add(jpaProvider).add(configureMetadata);
    }
 
    private boolean initJpaVersion(Project project, UIContext context)
@@ -116,31 +116,31 @@ public class JPASetupWizardImpl extends AbstractJavaEECommand implements JPASetu
    private void initContainers(Project project, UIContext context)
    {
       final boolean isGUI = context.getProvider().isGUI();
-      container.setItemLabelConverter((source) -> source.getName(isGUI));
+      jpaContainer.setItemLabelConverter((source) -> source.getName(isGUI));
       // Ordering items
       TreeSet<PersistenceContainer> treeSet = new TreeSet<>(
                (o1, o2) -> String.valueOf(o1.getName(isGUI)).compareTo(o2.getName(isGUI)));
       Optional<Stack> stack = project.getStack();
-      for (PersistenceContainer persistenceContainer : container.getValueChoices())
+      for (PersistenceContainer persistenceContainer : jpaContainer.getValueChoices())
       {
          if (!stack.isPresent() || persistenceContainer.supports(stack.get()))
             treeSet.add(persistenceContainer);
       }
-      container.setValueChoices(treeSet);
+      jpaContainer.setValueChoices(treeSet);
       if (treeSet.contains(defaultContainer))
       {
-         container.setDefaultValue(defaultContainer);
+         jpaContainer.setDefaultValue(defaultContainer);
       }
       else if (treeSet.contains(wildFlyContainer))
       {
-         container.setDefaultValue(wildFlyContainer);
+         jpaContainer.setDefaultValue(wildFlyContainer);
       }
    }
 
    private void initProviders()
    {
-      provider.setItemLabelConverter((source) -> source.getName());
-      provider.setDefaultValue(defaultProvider);
+      jpaProvider.setItemLabelConverter((source) -> source.getName());
+      jpaProvider.setDefaultValue(defaultProvider);
    }
 
    private void initConfigureMetadata()
@@ -185,8 +185,8 @@ public class JPASetupWizardImpl extends AbstractJavaEECommand implements JPASetu
    {
       Map<Object, Object> attributeMap = context.getAttributeMap();
       attributeMap.put(JPAFacet.class, jpaVersion.getValue());
-      attributeMap.put(PersistenceProvider.class, provider.getValue());
-      attributeMap.put(PersistenceContainer.class, container.getValue());
+      attributeMap.put(PersistenceProvider.class, jpaProvider.getValue());
+      attributeMap.put(PersistenceContainer.class, jpaContainer.getValue());
       attributeMap.put("ConfigureMetadata", configureMetadata.getValue());
    }
 

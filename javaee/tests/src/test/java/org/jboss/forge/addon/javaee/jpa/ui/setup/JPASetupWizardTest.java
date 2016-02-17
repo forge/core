@@ -96,8 +96,8 @@ public class JPASetupWizardTest
          Assert.assertFalse(controller.canMoveToPreviousStep());
          // Setting UI values
          controller.setValueFor("jpaVersion", "2.1");
-         controller.setValueFor("provider", defaultProvider);
-         controller.setValueFor("container", customJTAProvider);
+         controller.setValueFor("jpaProvider", defaultProvider);
+         controller.setValueFor("jpaContainer", customJTAProvider);
          Assert.assertTrue(controller.canMoveToNextStep());
 
          controller.next().initialize();
@@ -148,8 +148,8 @@ public class JPASetupWizardTest
 
          Assert.assertFalse(controller.canMoveToPreviousStep());
          // Setting UI values
-         controller.setValueFor("provider", defaultProvider);
-         controller.setValueFor("container", eap6Container);
+         controller.setValueFor("jpaProvider", defaultProvider);
+         controller.setValueFor("jpaContainer", eap6Container);
          Assert.assertTrue(controller.canMoveToNextStep());
 
          controller.next().initialize();
@@ -173,8 +173,8 @@ public class JPASetupWizardTest
 
          Assert.assertFalse(tester2.canMoveToPreviousStep());
          // Setting UI values
-         tester2.setValueFor("provider", defaultProvider);
-         tester2.setValueFor("container", eap6Container);
+         tester2.setValueFor("jpaProvider", defaultProvider);
+         tester2.setValueFor("jpaContainer", eap6Container);
          Assert.assertTrue(tester2.canMoveToNextStep());
 
          tester2.next().initialize();
@@ -197,8 +197,8 @@ public class JPASetupWizardTest
          tester3.initialize();
          Assert.assertFalse(tester3.canMoveToPreviousStep());
          // Setting UI values
-         tester3.setValueFor("provider", defaultProvider);
-         tester3.setValueFor("container", eap6Container);
+         tester3.setValueFor("jpaProvider", defaultProvider);
+         tester3.setValueFor("jpaContainer", eap6Container);
 
          Assert.assertTrue(tester3.canMoveToNextStep());
          tester3.next().initialize();
@@ -231,8 +231,8 @@ public class JPASetupWizardTest
 
          Assert.assertFalse(controller.canMoveToPreviousStep());
          // Setting UI values
-         controller.setValueFor("provider", defaultProvider);
-         controller.setValueFor("container", customJTAProvider);
+         controller.setValueFor("jpaProvider", defaultProvider);
+         controller.setValueFor("jpaContainer", customJTAProvider);
          controller.setValueFor("configureMetadata", Boolean.TRUE);
          Assert.assertTrue(controller.canMoveToNextStep());
 
