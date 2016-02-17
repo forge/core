@@ -25,12 +25,12 @@ import org.jboss.forge.addon.ui.input.InputComponent;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class ForgeCommandPopulator<C extends Command> implements CommandPopulator<Object, C>
+public class ForgeCommandPopulator<C extends Command<?>> implements CommandPopulator<Object, C>
 {
    private final Map<String, InputComponent<?, ?>> inputs;
    private final CommandLineUtil commandLineUtil;
    private final ShellContext context;
-   private CommandLineParser commandLineParser;
+   private CommandLineParser<?> commandLineParser;
 
    public ForgeCommandPopulator(CommandLineUtil commandLineUtil, Map<String, InputComponent<?, ?>> inputs,
             ShellContext shellContext)

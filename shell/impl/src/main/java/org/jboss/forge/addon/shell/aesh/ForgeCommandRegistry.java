@@ -81,7 +81,7 @@ public class ForgeCommandRegistry implements CommandRegistry
    }
 
    @Override
-   public CommandContainer getCommand(String name, String completeLine) throws CommandNotFoundException
+   public CommandContainer<?> getCommand(String name, String completeLine) throws CommandNotFoundException
    {
       waitUntilStarted();
 
@@ -93,7 +93,7 @@ public class ForgeCommandRegistry implements CommandRegistry
       catch (CommandNotFoundException cnfe)
       {
          // Not a forge command, fallback to aesh command
-         CommandContainer nativeCommand = aeshCommandRegistry.getCommand(name, completeLine);
+         CommandContainer<?> nativeCommand = aeshCommandRegistry.getCommand(name, completeLine);
          AeshUICommand aeshCommand = new AeshUICommand(nativeCommand);
          SingleCommandController controller = commandControllerFactory.createSingleController(shellContext, shell,
                   aeshCommand);
@@ -111,7 +111,7 @@ public class ForgeCommandRegistry implements CommandRegistry
       }
    }
 
-   private CommandContainer getForgeCommand(ShellContextImpl shellContext, String name, String completeLine)
+   private CommandContainer<?> getForgeCommand(ShellContextImpl shellContext, String name, String completeLine)
             throws CommandNotFoundException
    {
       AbstractShellInteraction cmd = findCommand(shellContext, name);
@@ -122,7 +122,7 @@ public class ForgeCommandRegistry implements CommandRegistry
       try
       {
          CommandAdapter command = new CommandAdapter(shell, shellContext, cmd);
-         CommandLineParser parser = cmd.getParser(shellContext, completeLine == null ? name : completeLine, command);
+         CommandLineParser<?> parser = cmd.getParser(shellContext, completeLine == null ? name : completeLine, command);
          return new ForgeCommandContainer(shellContext, parser, command);
       }
       catch (RuntimeException e)

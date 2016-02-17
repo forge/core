@@ -40,7 +40,7 @@ public class ShellWizard extends AbstractShellInteraction
    }
 
    @Override
-   public CommandLineParser getParser(ShellContext shellContext, String completeLine, CommandAdapter commandAdapter)
+   public CommandLineParser<?> getParser(ShellContext shellContext, String completeLine, CommandAdapter commandAdapter)
             throws Exception
    {
       getController().initialize();
@@ -48,15 +48,15 @@ public class ShellWizard extends AbstractShellInteraction
                new LinkedHashMap<String, InputComponent<?, ?>>());
    }
 
-   private CommandLineParser populate(CommandAdapter commandAdapter, ShellContext shellContext, String line,
+   private CommandLineParser<?> populate(CommandAdapter commandAdapter, ShellContext shellContext, String line,
             final Map<String, InputComponent<?, ?>> allInputs, Map<String, InputComponent<?, ?>> lastPage)
                      throws Exception
    {
       WizardCommandController controller = getController();
       Map<String, InputComponent<?, ?>> pageInputs = new LinkedHashMap<>(controller.getInputs());
       allInputs.putAll(pageInputs);
-      CommandLineParser parser = commandLineUtil.generateParser(commandAdapter, controller, shellContext, allInputs);
-      CommandLine cmdLine = parser.parse(line, true);
+      CommandLineParser<?> parser = commandLineUtil.generateParser(commandAdapter, controller, shellContext, allInputs);
+      CommandLine<?> cmdLine = parser.parse(line, true);
       Map<String, InputComponent<?, ?>> populatedInputs = commandLineUtil.populateUIInputs(cmdLine, allInputs,
                shellContext);
 

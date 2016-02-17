@@ -26,7 +26,7 @@ import org.jboss.forge.addon.ui.output.UIOutput;
 public class ShellSingleCommand extends AbstractShellInteraction
 {
    private final CommandController controller;
-   private CommandLineParser commandLineParser;
+   private CommandLineParser<?> commandLineParser;
 
    /**
     * Creates a new {@link ShellSingleCommand} based on the shell and initial selection
@@ -38,7 +38,7 @@ public class ShellSingleCommand extends AbstractShellInteraction
    }
 
    @Override
-   public CommandLineParser getParser(ShellContext shellContext, String completeLine, CommandAdapter command)
+   public CommandLineParser<?> getParser(ShellContext shellContext, String completeLine, CommandAdapter command)
             throws Exception
    {
       if (this.commandLineParser == null)
