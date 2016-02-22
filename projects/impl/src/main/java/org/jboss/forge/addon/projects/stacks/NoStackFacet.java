@@ -34,4 +34,10 @@ public class NoStackFacet extends AbstractFacet<Project> implements StackFacet
    {
       return NoStack.INSTANCE;
    }
+
+   @Override
+   public String toString()
+   {
+      return "None";
+   }
 }
