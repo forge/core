@@ -101,6 +101,7 @@
             <module>shell</module>
             <module>templates</module>
             <module>text</module>
+            <module>testing</module>
             <module>git</module>
             <module>core</module>
             <module>bootstrap</module>
@@ -136,6 +137,7 @@
             <module>shell</module>
             <module>templates</module>
             <module>text</module>
+            <module>testing</module>
             <module>git</module>
             <module>core</module>
          </modules>
@@ -178,6 +180,7 @@
             <module>shell/api</module>
             <module>templates/api</module>
             <module>text</module>
+            <module>testing/api</module>
          </modules>
       </profile>
    </profiles>
