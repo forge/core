@@ -47,22 +47,16 @@ All the features exported by the testing addon are in the `TestingFacet` interfa
 The addon provides implementation of this interface for the supported test frameworks.
 At the moment these are JUnit and TestNG.
 
-In order to obtain a reference to the respective framework facet, you need to simply inject it.
+In order to obtain a reference to the respective framework facet, you need to install it using the `FacetFactory`.
 For example here is how you would do it for JUnit:
 
 [source,java]
 ----
 @Inject
-private JUnitTestingFacet jUnitTestingFacet;
+private FacetFactory facetFactory;
+...
+facetFactory.install(project,JUnitTestingFacet.class);
 ----
-
-[TIP]
-====
-If your addon uses a container that does not support "@Inject" annotations, you can access the `TestingFacet` via the `AddonRegistry`:
-----
-JUnitTestingFacet facet = Facetfactory.create(project,JUnitTestingFacet.class)
-----
-====
 
 Installing testing framework::
 Allows for adding the necessary dependencies to your project descriptor
@@ -71,10 +65,9 @@ Allows for adding the necessary dependencies to your project descriptor
 ----
 @Inject
 private FacetFactory facetFactory;
-@Inject
-private JUnitTestingFacet jUnitTestingFacet;
 
 public void installJUnit(String junitVersion) {
+    JUnitTestingFacet jUnitTestingFacet = facetFactory.create(project,JUnitTestingFacet.class)
     jUnitTestingFacet.setFrameworkVersion(junitVersion);
     facetFactory.install(project, jUnitTestingFacet);
 }
