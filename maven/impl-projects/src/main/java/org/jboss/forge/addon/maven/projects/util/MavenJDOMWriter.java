@@ -287,14 +287,14 @@ public class MavenJDOMWriter
          StringBuilder starter = new StringBuilder(lineSeparator);
          for (int i = 0; i < counter.getDepth(); i++)
          {
-            starter.append("    ");
+            starter.append("  ");
          }
          lastText = factory.text(starter.toString());
       }
       if (parent.getContentSize() == 0)
       {
          Text finalText = (Text) lastText.clone();
-         finalText.setText(finalText.getText().substring(0, finalText.getText().length() - "    ".length()));
+         finalText.setText(finalText.getText().substring(0, finalText.getText().length() - "  ".length()));
          parent.addContent(contentIndex, finalText);
       }
       parent.addContent(contentIndex, child);
