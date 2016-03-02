@@ -23,6 +23,7 @@
 
    <properties>
       <version.maven>3.3.9</version.maven>
+      <version.maven.archetypes>2.4</version.maven.archetypes>
    </properties>
 
    <dependencyManagement>

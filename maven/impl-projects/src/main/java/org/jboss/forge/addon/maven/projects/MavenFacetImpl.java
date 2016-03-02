@@ -9,10 +9,10 @@ package org.jboss.forge.addon.maven.projects;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
-import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -38,6 +38,7 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.maven.projects.util.MavenJDOMWriter;
 import org.jboss.forge.addon.maven.projects.util.NativeSystemCall;
 import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.addon.projects.Project;
@@ -48,6 +49,9 @@ import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Strings;
+import org.jdom.Document;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 
 /**
  * Implementation of {@link MavenFacet}
@@ -55,7 +59,7 @@ import org.jboss.forge.furnace.util.Strings;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class MavenFacetImpl extends AbstractFacet<Project>implements ProjectFacet, MavenFacet
+public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFacet, MavenFacet
 {
    private static final Logger log = Logger.getLogger(MavenFacetImpl.class.getName());
 
@@ -114,12 +118,25 @@ public class MavenFacetImpl extends AbstractFacet<Project>implements ProjectFace
    @Override
    public void setModel(final Model pom)
    {
-      MavenXpp3Writer writer = new MavenXpp3Writer();
-      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       MavenModelResource modelResource = getModelResource();
-      try (Writer fw = new OutputStreamWriter(outputStream))
+      Document document;
+      try (InputStream is = modelResource.getResourceInputStream())
       {
-         writer.write(fw, pom);
+         document = new SAXBuilder().build(is);
+      }
+      catch (JDOMException e)
+      {
+         throw new RuntimeException("Could not parse POM file: " + modelResource.getFullyQualifiedName(), e);
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException("Could not read POM file: " + modelResource.getFullyQualifiedName(), e);
+      }
+      MavenJDOMWriter writer = new MavenJDOMWriter();
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      try (OutputStreamWriter os = new OutputStreamWriter(outputStream))
+      {
+         writer.write(pom, document, os);
          modelResource.setContents(outputStream.toString());
       }
       catch (IOException e)

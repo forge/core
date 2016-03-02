@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
@@ -95,6 +96,13 @@
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
+      <dependency>
+         <groupId>org.jdom</groupId>
+         <artifactId>jdom</artifactId>
+         <version>1.1</version>
+      </dependency>
+
+
 
       <!-- testing -->
       <dependency>
@@ -150,9 +158,7 @@
                            <destFileName>golang-example-archetype.jar</destFileName>
                         </artifactItem>
                      </artifactItems>
-                     <!--
-                                            <outputDirectory>${project.build.directory}/wars</outputDirectory>
-                     -->
+                     <!-- <outputDirectory>${project.build.directory}/wars</outputDirectory> -->
                      <overWriteReleases>false</overWriteReleases>
                      <overWriteSnapshots>true</overWriteSnapshots>
                   </configuration>
