@@ -136,7 +136,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
       try (OutputStreamWriter os = new OutputStreamWriter(outputStream))
       {
-         writer.write(pom, document, os);
+         writer.write(pom, document, "UTF-8", os);
          modelResource.setContents(outputStream.toString());
       }
       catch (IOException e)

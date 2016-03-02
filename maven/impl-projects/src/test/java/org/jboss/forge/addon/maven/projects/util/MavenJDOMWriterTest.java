@@ -39,7 +39,7 @@ public class MavenJDOMWriterTest
       Document document = saxBuilder.build(new StringReader(pom));
       MavenJDOMWriter writer = new MavenJDOMWriter();
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      writer.write(model, document, new OutputStreamWriter(baos));
+      writer.write(model, document, "UTF-8", new OutputStreamWriter(baos));
       Assert.assertEquals(pom.replace("myartifactid", "mytest").trim(), baos.toString().trim());
    }
 

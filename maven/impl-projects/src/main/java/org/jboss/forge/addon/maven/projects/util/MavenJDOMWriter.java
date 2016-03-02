@@ -2183,11 +2183,11 @@ public class MavenJDOMWriter
     * @param writer
     * @param document
     */
-   public void write(Model project, Document document, OutputStreamWriter writer)
+   public void write(Model project, Document document, String encoding, OutputStreamWriter writer)
             throws java.io.IOException
    {
       Format format = Format.getRawFormat();
-      format.setEncoding(writer.getEncoding()).setLineSeparator(System.getProperty("line.separator"));
+      format.setEncoding(encoding).setLineSeparator(System.getProperty("line.separator"));
       write(project, document, writer, format);
    } // -- void write(Model, Document, OutputStreamWriter)
 
