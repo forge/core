@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.maven.projects.facets;
 
+import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.maven.model.Model;
@@ -21,6 +23,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.container.simple.Service;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
+import org.jboss.forge.furnace.util.Streams;
 import org.jboss.forge.parser.xml.Node;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
@@ -47,6 +50,7 @@ public class MavenFacetTest
    {
       AddonArchive archive = ShrinkWrap
                .create(AddonArchive.class)
+               .addAsResource(Paths.get("src/test/resources/pom-template.xml").toFile(), "templates/pom-template.xml")
                .addAsServiceProvider(Service.class, MavenFacetTest.class);
 
       return archive;
@@ -84,5 +88,23 @@ public class MavenFacetTest
       Assert.assertEquals("C", propEntries.get(2).getName());
       Assert.assertEquals("D", propEntries.get(3).getName());
       Assert.assertEquals("E", propEntries.get(4).getName());
+   }
+
+   @Test
+   public void testPreservePOMFormat() throws Exception
+   {
+      String pom;
+      try (InputStream is = getClass().getClassLoader().getResourceAsStream("templates/pom-template.xml"))
+      {
+         pom = Streams.toString(is);
+      }
+      Project project = projectFactory.createTempProject();
+      MavenFacet facet = project.getFacet(MavenFacet.class);
+      MavenModelResource modelResource = facet.getModelResource();
+      modelResource.setContents(pom);
+      Model model = modelResource.getCurrentModel();
+      model.setArtifactId("mytest");
+      facet.setModel(model);
+      Assert.assertEquals(pom.replace("myartifactid", "mytest").trim(), modelResource.getContents().trim());
    }
 }

@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 
 import org.apache.maven.model.ActivationFile;
 import org.apache.maven.model.ActivationOS;
@@ -117,7 +117,7 @@ public class MavenJDOMWriter
     * @param name
     * @param parent
     */
-   protected Element findAndReplaceProperties(Counter counter, Element parent, String name, Map props)
+   protected Element findAndReplaceProperties(Counter counter, Element parent, String name, Properties props)
    {
       boolean shouldExist = props != null && !props.isEmpty();
       Element element = updateElement(counter, parent, name, shouldExist);
@@ -125,12 +125,12 @@ public class MavenJDOMWriter
       {
          Counter innerCounter = new Counter(counter.getDepth() + 1);
          // while ( it.hasNext() )
-         for (Map.Entry<String, String> entry : ((Map<String, String>) props).entrySet())
-         {
-            String key = entry.getKey();
-            findAndReplaceSimpleElement(innerCounter, element, key, entry.getValue(), null);
-         }
          List lst = new ArrayList(props.keySet());
+         for (Object key : lst)
+         {
+            String strKey = key.toString();
+            findAndReplaceSimpleElement(innerCounter, element, strKey, props.getProperty(strKey), null);
+         }
          Iterator it = element.getChildren().iterator();
          while (it.hasNext())
          {
