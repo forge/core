@@ -5,7 +5,8 @@
    <artifactId>projects-impl</artifactId>
    <groupId>org.example</groupId>
    <name>Forge - Projects Impl</name>
-
+   
+   <!-- Project dependencies go here -->
    <dependencies>
    </dependencies>
 </project>
