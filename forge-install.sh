@@ -52,7 +52,7 @@ rm -rf $INSTALLER_DIR
 mkdir $INSTALLER_DIR
 mkdir $INSTALL_DIR
 echo "Downloading Forge"
-curl --location --fail --progress-bar https://repository.jboss.org/nexus/service/local/artifact/maven/redirect\?r\=releases\&g\=org.jboss.forge\&a\=forge-distribution\&v\=LATEST\&e\=zip\&c\=offline > $INSTALLER_DIR/forge_installer.zip 
+curl --location --fail --progress-bar https://oss.sonatype.org/service/local/artifact/maven/redirect\?r\=releases\&g\=org.jboss.forge\&a\=forge-distribution\&v\=LATEST\&e\=zip\&c\=offline > $INSTALLER_DIR/forge_installer.zip 
 test -f $INSTALLER_DIR/forge_installer.zip 
 unzip $INSTALLER_DIR/forge_installer.zip  -d $INSTALL_DIR
 PACKAGE="$(ls $INSTALL_DIR)"
