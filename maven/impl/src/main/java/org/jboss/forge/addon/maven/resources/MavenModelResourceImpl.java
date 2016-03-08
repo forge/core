@@ -58,34 +58,33 @@ public class MavenModelResourceImpl extends AbstractXMLResource implements Maven
    @Override
    protected List<Resource<?>> doListResources()
    {
+      Model model = getCurrentModel();
       List<Resource<?>> children = new ArrayList<>();
-      listDependencies(children);
-      listProfiles(children);
-      listRepositories(children);
+      listDependencies(model, children);
+      listProfiles(model, children);
+      listRepositories(model, children);
       return children;
    }
 
-   private void listRepositories(List<Resource<?>> children)
+   private void listRepositories(Model model, List<Resource<?>> children)
    {
-      List<Repository> repositories = getCurrentModel().getRepositories();
+      List<Repository> repositories = model.getRepositories();
       for (Repository repository : repositories)
       {
          children.add(new MavenRepositoryResourceImpl(getResourceFactory(), getParent(), repository));
       }
    }
 
-   private void listDependencies(List<Resource<?>> children)
+   private void listDependencies(Model model, List<Resource<?>> children)
    {
-      Model model = getCurrentModel();
       for (Dependency dep : model.getDependencies())
       {
          children.add(new MavenDependencyResourceImpl(getResourceFactory(), this, dep));
       }
    }
 
-   private void listProfiles(List<Resource<?>> children)
+   private void listProfiles(Model model, List<Resource<?>> children)
    {
-      Model model = getCurrentModel();
       List<Profile> profiles = model.getProfiles();
       for (Profile profile : profiles)
       {
