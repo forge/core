@@ -8,7 +8,10 @@
 package org.jboss.forge.addon.maven.resources;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +20,13 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.jboss.forge.addon.maven.util.MavenJDOMWriter;
 import org.jboss.forge.addon.parser.xml.resources.AbstractXMLResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jdom.Document;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
 
 /**
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
@@ -90,7 +97,36 @@ public class MavenModelResourceImpl extends AbstractXMLResource implements Maven
    public Model getCurrentModel()
    {
       initialize();
-      return currentModel;
+      return currentModel.clone();
+   }
+
+   @Override
+   public MavenModelResource setCurrentModel(final Model pom)
+   {
+      Document document;
+      try (InputStream is = getResourceInputStream())
+      {
+         document = new SAXBuilder().build(is);
+      }
+      catch (JDOMException e)
+      {
+         throw new RuntimeException("Could not parse POM file: " + getFullyQualifiedName(), e);
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException("Could not read POM file: " + getFullyQualifiedName(), e);
+      }
+      MavenJDOMWriter writer = new MavenJDOMWriter();
+      try (OutputStream resourceOutputStream = getResourceOutputStream();
+               OutputStreamWriter os = new OutputStreamWriter(resourceOutputStream))
+      {
+         writer.write(pom, document, "UTF-8", os);
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException("Could not write POM file: " + getFullyQualifiedName(), e);
+      }
+      return this;
    }
 
    @Override
@@ -101,7 +137,7 @@ public class MavenModelResourceImpl extends AbstractXMLResource implements Maven
 
    private void initialize()
    {
-      if (currentModel == null)
+      if (isStale() || currentModel == null)
       {
          try (InputStream stream = getResourceInputStream())
          {
@@ -117,6 +153,10 @@ public class MavenModelResourceImpl extends AbstractXMLResource implements Maven
          catch (Exception e)
          {
             throw new RuntimeException(e);
+         }
+         finally
+         {
+            refresh();
          }
       }
    }

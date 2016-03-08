@@ -9,9 +9,7 @@ package org.jboss.forge.addon.maven.projects;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -38,7 +36,6 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.jboss.forge.addon.facets.AbstractFacet;
-import org.jboss.forge.addon.maven.projects.util.MavenJDOMWriter;
 import org.jboss.forge.addon.maven.projects.util.NativeSystemCall;
 import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.addon.projects.Project;
@@ -49,9 +46,6 @@ import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Strings;
-import org.jdom.Document;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 
 /**
  * Implementation of {@link MavenFacet}
@@ -119,29 +113,9 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    public void setModel(final Model pom)
    {
       MavenModelResource modelResource = getModelResource();
-      Document document;
-      try (InputStream is = modelResource.getResourceInputStream())
+      try
       {
-         document = new SAXBuilder().build(is);
-      }
-      catch (JDOMException e)
-      {
-         throw new RuntimeException("Could not parse POM file: " + modelResource.getFullyQualifiedName(), e);
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException("Could not read POM file: " + modelResource.getFullyQualifiedName(), e);
-      }
-      MavenJDOMWriter writer = new MavenJDOMWriter();
-      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-      try (OutputStreamWriter os = new OutputStreamWriter(outputStream))
-      {
-         writer.write(pom, document, "UTF-8", os);
-         modelResource.setContents(outputStream.toString());
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException("Could not write POM file: " + modelResource.getFullyQualifiedName(), e);
+         modelResource.setCurrentModel(pom);
       }
       finally
       {

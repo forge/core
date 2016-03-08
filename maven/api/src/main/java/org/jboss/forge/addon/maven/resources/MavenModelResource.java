@@ -24,5 +24,14 @@ public interface MavenModelResource extends XMLResource
    /**
     * Get the current project {@link Model}
     */
-   public Model getCurrentModel();
+   Model getCurrentModel();
+
+   /**
+    * Sets the current project {@link Model}
+    * 
+    * @param model the {@link Model} to be written to disk
+    * @return this {@link MavenModelResource} instance
+    */
+   MavenModelResource setCurrentModel(Model model);
+
 }

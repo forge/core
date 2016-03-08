@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.forge.addon.maven.projects.util;
+package org.jboss.forge.addon.maven.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
@@ -27,7 +27,6 @@ import org.junit.Test;
  */
 public class MavenJDOMWriterTest
 {
-
    @Test
    public void testKeepComments() throws Exception
    {
