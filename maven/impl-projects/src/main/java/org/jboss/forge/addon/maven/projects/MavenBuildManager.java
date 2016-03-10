@@ -36,8 +36,6 @@ import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.maven.environment.Network;
 import org.jboss.forge.addon.maven.projects.util.RepositoryUtils;
 import org.jboss.forge.addon.maven.resources.MavenModelResource;
-import org.jboss.forge.addon.resource.events.ResourceEvent;
-import org.jboss.forge.addon.resource.monitor.ResourceListener;
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
@@ -100,14 +98,9 @@ public class MavenBuildManager
    private void monitorResource(final MavenModelResource pomResource)
    {
       final ResourceMonitor monitor = pomResource.monitor();
-      monitor.addResourceListener(new ResourceListener()
-      {
-         @Override
-         public void processEvent(ResourceEvent event)
-         {
-            cache.remove(pomResource);
-            monitor.cancel();
-         }
+      monitor.addResourceListener((event) -> {
+         cache.remove(pomResource);
+         monitor.cancel();
       });
    }
 
