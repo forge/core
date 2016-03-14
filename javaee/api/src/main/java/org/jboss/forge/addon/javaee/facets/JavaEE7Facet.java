@@ -10,6 +10,7 @@ package org.jboss.forge.addon.javaee.facets;
 import static org.jboss.forge.addon.projects.stacks.StackBuilder.stack;
 
 import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
+import org.jboss.forge.addon.javaee.concurrency.ConcurrencyFacet_1_0;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet_3_2;
 import org.jboss.forge.addon.javaee.faces.FacesFacet_2_2;
 import org.jboss.forge.addon.javaee.jaxws.JAXWSFacet;
@@ -38,6 +39,7 @@ public interface JavaEE7Facet extends JavaEESpecFacet
             .includes(JavaEE7Facet.class)
             .includes(JavaSourceFacet.class)
             .includes(CDIFacet_1_1.class)
+            .includes(ConcurrencyFacet_1_0.class)
             .includes(EJBFacet_3_2.class)
             .includes(FacesFacet_2_2.class)
             .includes(JAXWSFacet.class)
