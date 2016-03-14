@@ -19,7 +19,7 @@ import org.jboss.forge.addon.ui.input.InputComponent;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ForgeCommandLineParser extends AeshCommandLineParser
 {
    private final CommandPopulator commandPopulator;
