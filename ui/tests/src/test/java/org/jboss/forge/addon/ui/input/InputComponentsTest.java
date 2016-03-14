@@ -48,6 +48,9 @@ public class InputComponentsTest
    private UIInputMany<Path> paths;
 
    @Inject
+   private UIInput<Integer> integerInput;
+
+   @Inject
    private ConverterFactory converterFactory;
 
    @Test
@@ -80,6 +83,7 @@ public class InputComponentsTest
       Assert.assertThat(list, hasItem(OperatingSystemUtils.getTempDirectory().toPath()));
    }
 
+   @Test
    public void testUISelectOneIndex()
    {
       values.setValueChoices(Arrays.asList("A", "B", "C"));
@@ -89,6 +93,7 @@ public class InputComponentsTest
       Assert.assertEquals(-1, values.getSelectedIndex());
    }
 
+   @Test
    public void testUISelectManyIndexes()
    {
       manyValues.setValueChoices(Arrays.asList("A", "B", "C"));
@@ -96,5 +101,15 @@ public class InputComponentsTest
       Assert.assertArrayEquals(new int[] { 1, 2 }, manyValues.getSelectedIndexes());
       manyValues.setValue(Collections.emptyList());
       Assert.assertArrayEquals(new int[0], manyValues.getSelectedIndexes());
+   }
+
+   @Test
+   public void testUIInputIntegerWithEmptyStringValue()
+   {
+      Assert.assertNull(integerInput.getValue());
+      InputComponents.setValueFor(converterFactory, integerInput, "");
+      Assert.assertNull(integerInput.getValue());
+      InputComponents.setValueFor(converterFactory, integerInput, "123");
+      Assert.assertThat(integerInput.getValue(), equalTo(123));
    }
 }
