@@ -18,7 +18,6 @@ import org.jboss.forge.addon.convert.ConverterFactory;
 import org.jboss.forge.addon.convert.ConverterGenerator;
 import org.jboss.forge.addon.convert.exception.ConverterNotFoundException;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.services.Imported;
 
 /**
  * Default implementation of the {@link ConverterFactory} interface
@@ -51,8 +50,7 @@ public class ConverterFactoryImpl implements ConverterFactory
    public <S, T> Converter<S, T> getConverter(Class<S> source, Class<T> target)
    {
       Converter<S, T> result = null;
-      Imported<ConverterGenerator> instances = registry.getServices(ConverterGenerator.class);
-      for (ConverterGenerator generator : instances)
+      for (ConverterGenerator generator : registry.getServices(ConverterGenerator.class))
       {
          if (generator.handles(source, target))
          {
@@ -120,12 +118,12 @@ public class ConverterFactoryImpl implements ConverterFactory
       else if (source.isPrimitive())
       {
          // source is primitive
-         return target == primitiveToWrapperMap.get(source);
+         return primitiveToWrapperMap.get(source) == target;
       }
       else
       {
          // target is primitive
-         return primitiveToWrapperMap.get(target) == source;
+         return source == primitiveToWrapperMap.get(target);
       }
    }
 }
