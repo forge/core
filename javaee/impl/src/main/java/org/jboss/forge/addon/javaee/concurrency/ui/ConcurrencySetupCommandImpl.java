@@ -63,6 +63,12 @@ public class ConcurrencySetupCommandImpl extends AbstractJavaEECommand
    }
 
    @Override
+   public boolean isEnabled(UIContext context)
+   {
+      return super.isEnabled(context) && !getSelectedProject(context).hasFacet(ConcurrencyFacet.class);
+   }
+
+   @Override
    public Result execute(final UIExecutionContext context) throws Exception
    {
       ConcurrencyFacet value = concurrencyVersion.getValue();

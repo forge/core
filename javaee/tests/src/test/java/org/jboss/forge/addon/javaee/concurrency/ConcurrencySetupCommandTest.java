@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
-public class ConcurrencySetupWizardTest
+public class ConcurrencySetupCommandTest
 {
    @Deployment
    @AddonDependencies({

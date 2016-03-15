@@ -28,7 +28,7 @@ import org.jboss.forge.furnace.versions.Version;
 public class ConcurrencyFacetImpl_1_0 extends AbstractConcurrencyFacet
 {
    private static final Dependency CONCURRENCY_API = DependencyBuilder
-            .create("org.jboss.spec.javax.enterprise.concurrent:jboss-concurrency-api_1.0_spec:1.0")
+            .create("org.jboss.spec.javax.enterprise.concurrent:jboss-concurrency-api_1.0_spec:1.0.0.Final")
             .setScopeType("provided");
 
    @Inject
