@@ -60,10 +60,10 @@
       <forge.scm.connection>scm:git:git://github.com/forge/core.git</forge.scm.connection>
       <forge.developer.connection>scm:git:git@github.com:forge/core.git</forge.developer.connection>
       <forge.scm.url>http://github.com/forge/core</forge.scm.url>
-      <forge.release.codename>Two</forge.release.codename>
+      <forge.release.codename>Three</forge.release.codename>
       <forge.release.version>${project.version}</forge.release.version>
 
-      <version.furnace>2.23.3.Final</version.furnace>
+      <version.furnace>2.23.4.Final</version.furnace>
       <version.junit>4.12</version.junit>
       <version.jboss-logmanager>1.4.1.Final</version.jboss-logmanager>
    </properties>
