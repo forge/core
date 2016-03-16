@@ -82,7 +82,7 @@ public class GitUtilsImpl implements GitUtils
    @Override
    public Ref checkout(final Git git, final String remote, final boolean createBranch,
             final SetupUpstreamMode mode, final boolean force)
-                     throws GitAPIException
+            throws GitAPIException
    {
       CheckoutCommand checkout = git.checkout();
       checkout.setCreateBranch(createBranch);
@@ -294,7 +294,7 @@ public class GitUtilsImpl implements GitUtils
       try (RevWalk revWalk = new RevWalk(repo))
       {
          // get the head commit
-         Ref headRef = repo.getRef(Constants.HEAD);
+         Ref headRef = repo.findRef(Constants.HEAD);
          if (headRef == null)
             throw new NoHeadException(
                      JGitText.get().commitOnRepoWithoutHEADCurrentlyNotSupported);
