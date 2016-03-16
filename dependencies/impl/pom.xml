@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>dependencies-parent</artifactId>
-      <version>3.0.1.Final</version>
+      <version>3.0.2-SNAPSHOT</version>
    </parent>
    <artifactId>dependencies-impl</artifactId>
    <name>Forge - Dependencies Impl</name>
