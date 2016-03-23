@@ -18,7 +18,7 @@ What's new and noteworthy?
 == Download Forge 3:
 Forge 3 is packaged inside an Eclipse plugin and also as a standalone ZIP file. They are independent of each other.
 
-- Eclipse Update Site - http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/
+- Eclipse Update Site - http://download.jboss.org/jbosstools/mars/snapshots/updates/
 - Command line tools
 
 === Get Started with the Command line tools:
@@ -26,9 +26,9 @@ Forge 3 is packaged inside an Eclipse plugin and also as a standalone ZIP file. 
 Getting started with the command line tools is easy:
 
 * Download a distribution
-.. Download link:https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=LATEST&e=zip&c=offline[JBoss Forge - Offline (Recommended)]
+.. Download link:https://oss.sonatype.org/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=LATEST&e=zip&c=offline[JBoss Forge - Offline (Recommended)]
 ... This ZIP contains the Forge runtime + Core Addons
-.. Download link:https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=LATEST&e=zip[JBoss Forge - No Addons]
+.. Download link:https://oss.sonatype.org/service/local/artifact/maven/redirect?r=releases&g=org.jboss.forge&a=forge-distribution&v=LATEST&e=zip[JBoss Forge - No Addons]
 ... This ZIP contains the Forge runtime only
 
 * Extract the ZIP to a directory and navigate to forge-distribution-VERSION/bin directory
@@ -83,7 +83,7 @@ Forge 3 is known to work with Eclipse Mars (Eclipse 4.5) or higher versions. Old
 ____
 
 - Install the **JBoss Tools Usage Reporting** plugin, available in http://download.jboss.org/jbosstools/updates/development/mars/ and restart Eclipse
-- Install the Forge Eclipse Plugin from http://download.jboss.org/jbosstools/builds/staging/jbosstools-forge_master/all/repo/ and restart Eclipse
+- Install the Forge Eclipse Plugin from http://download.jboss.org/jbosstools/mars/snapshots/updates// and restart Eclipse
 
 This plugin starts the Forge Container and your installed addons, so you can use them directly in your workspace
 
