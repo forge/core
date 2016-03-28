@@ -13,6 +13,7 @@ org.jboss.forge.addon.maven.projects.facets.MavenDependencyFacet
 org.jboss.forge.addon.maven.projects.facets.MavenEnterpriseResourcesFacet
 org.jboss.forge.addon.maven.projects.facets.MavenJavaCompilerFacet
 org.jboss.forge.addon.maven.projects.facets.MavenJavaSourceFacet
+org.jboss.forge.addon.maven.projects.facets.MavenJavaTargetFacet
 org.jboss.forge.addon.maven.projects.facets.MavenMetadataFacet
 org.jboss.forge.addon.maven.projects.facets.MavenModuleFacet
 org.jboss.forge.addon.maven.projects.facets.MavenPackagingFacet
