@@ -40,8 +40,6 @@ import org.jboss.forge.roaster.model.util.Strings;
 public class JavaFormatSourcesCommand extends AbstractUICommand
 {
 
-   private final InputComponentFactory inputFactory;
-
    private UIInput<XMLResource> profilepath;
 
    @SuppressWarnings("rawtypes")
@@ -56,7 +54,6 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
    public JavaFormatSourcesCommand()
    {
       Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
-      this.inputFactory = furnace.getAddonRegistry().getServices(InputComponentFactory.class).get();
       this.userConfig = furnace.getAddonRegistry().getServices(Configuration.class).get();
       this.resourceFactory = furnace.getAddonRegistry().getServices(ResourceFactory.class).get();
    }
@@ -75,6 +72,7 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      InputComponentFactory inputFactory = builder.getInputComponentFactory();
       sources = inputFactory.createInputMany("sources", 's', FileResource.class);
       sources.setDescription("The folder or file where the java sources will be formatted");
 
@@ -114,7 +112,7 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
          UISelection<Resource> us = context.getUIContext().getInitialSelection();
          Resource<?> rs = us.get();
 
-         FileResource<?> fr = (FileResource) rs.reify(FileResource.class);
+         FileResource<?> fr = rs.reify(FileResource.class);
          fileResourceList.add(fr);
       }
 

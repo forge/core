@@ -53,8 +53,6 @@ public class JavaEqualsHashcodeCommand extends AbstractProjectCommand
 
    private UISelectMany<String> fields;
 
-   private InputComponentFactory inputFactory;
-
    private ProjectFactory projectFactory;
 
    private ProjectOperations projectOperations;
@@ -62,7 +60,6 @@ public class JavaEqualsHashcodeCommand extends AbstractProjectCommand
    public JavaEqualsHashcodeCommand()
    {
       Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
-      this.inputFactory = furnace.getAddonRegistry().getServices(InputComponentFactory.class).get();
       this.projectFactory = furnace.getAddonRegistry().getServices(ProjectFactory.class).get();
       this.projectOperations = furnace.getAddonRegistry().getServices(ProjectOperations.class).get();
    }
@@ -78,6 +75,7 @@ public class JavaEqualsHashcodeCommand extends AbstractProjectCommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      InputComponentFactory inputFactory = builder.getInputComponentFactory();
       UIContext uiContext = builder.getUIContext();
       Project project = getSelectedProject(uiContext);
       targetClass = inputFactory.createSelectOne("targetClass", JavaResource.class);
@@ -95,7 +93,7 @@ public class JavaEqualsHashcodeCommand extends AbstractProjectCommand
       fields = inputFactory.createSelectMany("fields", String.class);
       fields.setDescription("Fields, which should be used in the hashCode/equals method generation");
       fields.setRequired(true).setRequiredMessage("At least one field should be selected");
-      
+
       fields.setValueChoices(new Callable<Iterable<String>>()
       {
          @Override

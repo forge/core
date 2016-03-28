@@ -45,8 +45,6 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 @FacetConstraint({ JavaSourceFacet.class, ResourcesFacet.class })
 public class RegisterAsServiceCommand extends AbstractProjectCommand
 {
-   private final InputComponentFactory inputFactory;
-
    private UIInput<JavaResource> type;
    private UIInput<String> serviceType;
 
@@ -55,7 +53,6 @@ public class RegisterAsServiceCommand extends AbstractProjectCommand
    public RegisterAsServiceCommand()
    {
       Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
-      this.inputFactory = furnace.getAddonRegistry().getServices(InputComponentFactory.class).get();
       this.projectFactory = furnace.getAddonRegistry().getServices(ProjectFactory.class).get();
    }
 
@@ -70,6 +67,7 @@ public class RegisterAsServiceCommand extends AbstractProjectCommand
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
+      InputComponentFactory inputFactory = builder.getInputComponentFactory();
       type = inputFactory.createInput("type", JavaResource.class);
       type.getFacet(HintsFacet.class).setInputType(InputType.JAVA_CLASS_PICKER);
       type.setRequired(true);
@@ -84,7 +82,8 @@ public class RegisterAsServiceCommand extends AbstractProjectCommand
       serviceType.setCompleter(new UICompleter<String>()
       {
          @Override
-         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
+         public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input,
+                  String value)
          {
             Set<String> result = new LinkedHashSet<>();
             if (type.getValue() != null)
