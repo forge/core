@@ -20,7 +20,6 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
-import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -45,7 +44,7 @@ import org.jboss.forge.roaster.model.util.SerialVersionUIDComputer;
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-@FacetConstraint({ JavaSourceFacet.class, ResourcesFacet.class })
+@FacetConstraint({ JavaSourceFacet.class })
 public class JavaGenerateSerialVersionUIDCommand extends AbstractProjectCommand
 {
    private static final String SERIAL_VERSION_FIELD_NAME = "serialVersionUID";
