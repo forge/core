@@ -31,6 +31,7 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
+import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
@@ -194,7 +195,7 @@ public class ForgeManProvider implements ManProvider
             {
                result.append("-").append(input.getShortName()).append(" ");
             }
-            result.append("--").append(input.getName()).append("] ");
+            result.append("--").append(Commands.shellifyOptionName(input.getName())).append("] ");
             result.append(input.getValueType().getSimpleName()).append(" ");
          }
       }
@@ -236,7 +237,7 @@ public class ForgeManProvider implements ManProvider
             else
                result.append("   ");
 
-            result.append("--").append(input.getName()).append("*");
+            result.append("--").append(Commands.shellifyOptionName(input.getName())).append("*");
             result.append(OperatingSystemUtils.getLineSeparator());
             result.append("        ");
 
