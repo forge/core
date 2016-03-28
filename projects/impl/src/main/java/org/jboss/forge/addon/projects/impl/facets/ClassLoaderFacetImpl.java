@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -50,7 +51,7 @@ public class ClassLoaderFacetImpl extends AbstractFacet<Project> implements
    }
 
    @Override
-   public URLClassLoader getClassLoader()
+   public URLClassLoader getClassLoader(List<? extends FileResource<?>> compiledResources)
    {
       Project project = getFaceted();
       DependencyFacet facet = project.getFacet(DependencyFacet.class);
@@ -75,17 +76,9 @@ public class ClassLoaderFacetImpl extends AbstractFacet<Project> implements
             }
          }
       }
-      // Add project build
-      PackagingFacet packagingFacet = project.getFacet(PackagingFacet.class);
-      Resource<?> finalArtifact = packagingFacet.getFinalArtifact();
-      if (!finalArtifact.exists())
+      for (FileResource<?> compiledResource : compiledResources)
       {
-         // Force build
-         finalArtifact = packagingFacet.createBuilder().quiet(true).build();
-      }
-      if (finalArtifact instanceof FileResource)
-      {
-         File artifact = ((FileResource<?>) finalArtifact).getUnderlyingResourceObject();
+         File artifact = compiledResource.getUnderlyingResourceObject();
          try
          {
             urls.add(artifact.toURI().toURL());
@@ -99,6 +92,21 @@ public class ClassLoaderFacetImpl extends AbstractFacet<Project> implements
       // Project Classloader. May introduce memory leaks if not closed properly
       URLClassLoader urlClassLoader = URLClassLoader.newInstance(urls.toArray(new URL[urls.size()]));
       return urlClassLoader;
+   }
+
+   @Override
+   public URLClassLoader getClassLoader()
+   {
+      // Add project build
+      PackagingFacet packagingFacet = getFaceted().getFacet(PackagingFacet.class);
+      Resource<?> finalArtifact = packagingFacet.getFinalArtifact();
+      if (!finalArtifact.exists())
+      {
+         // Force build
+         finalArtifact = packagingFacet.createBuilder().quiet(true).build();
+      }
+
+      return getClassLoader(Arrays.<FileResource<?>> asList(finalArtifact.reify(FileResource.class)));
    }
 
 }
