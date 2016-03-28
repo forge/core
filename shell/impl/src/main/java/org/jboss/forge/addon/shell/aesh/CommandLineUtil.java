@@ -288,7 +288,7 @@ class CommandLineUtil
       return resolvedOptionValues;
    }
 
-   private String toOptionName(String name)
+   public String toOptionName(String name)
    {
       String optionNameStyle = userConfig.getString(OPTION_STYLE_PROPERTY, DASHED_OPTION_STYLE);
       return DASHED_OPTION_STYLE.equals(optionNameStyle)

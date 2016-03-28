@@ -54,7 +54,6 @@ public class ForgeCommandRegistry implements CommandRegistry
 
    private final CommandFactory commandFactory;
    private final CommandRegistry aeshCommandRegistry;
-   private final AddonRegistry addonRegistry;
 
    private CommandLineUtil commandLineUtil;
    private final CommandControllerFactory commandControllerFactory;
@@ -63,14 +62,15 @@ public class ForgeCommandRegistry implements CommandRegistry
    {
       this.furnace = furnace;
       this.shell = shell;
-      this.addonRegistry = addonRegistry;
       this.commandFactory = addonRegistry.getServices(CommandFactory.class).get();
       this.commandControllerFactory = addonRegistry.getServices(CommandControllerFactory.class).get();
+      this.commandLineUtil = new CommandLineUtil(addonRegistry);
       ConverterFactory converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
       InputComponentFactory inputComponentFactory = addonRegistry.getServices(InputComponentFactory.class).get();
 
       // Use Aesh commands
-      Man manCommand = new Man(new ForgeManProvider(shell, commandFactory, converterFactory, inputComponentFactory));
+      Man manCommand = new Man(
+               new ForgeManProvider(shell, commandFactory, converterFactory, inputComponentFactory, commandLineUtil));
       this.aeshCommandRegistry = new AeshCommandRegistryBuilder()
                .command(Grep.class)
                .command(Less.class)
@@ -105,7 +105,7 @@ public class ForgeCommandRegistry implements CommandRegistry
          {
             // Do nothing
          }
-         ShellSingleCommand cmd = new ShellSingleCommand(controller, shellContext, getCommandLineUtil());
+         ShellSingleCommand cmd = new ShellSingleCommand(controller, shellContext, commandLineUtil);
          CommandAdapter commandAdapter = new CommandAdapter(shell, shellContext, cmd);
          return new ForgeCommandContainer(shellContext, aeshCommand.getCommandLineParser(), commandAdapter);
       }
@@ -138,30 +138,20 @@ public class ForgeCommandRegistry implements CommandRegistry
    private AbstractShellInteraction findCommand(ShellContext shellContext, String commandName)
    {
       AbstractShellInteraction result = null;
-      CommandLineUtil cmdLineUtil = getCommandLineUtil();
       UICommand cmd = commandFactory.getNewCommandByName(shellContext, commandName);
       if (cmd != null && cmd.isEnabled(shellContext))
       {
          CommandController controller = commandControllerFactory.createController(shellContext, shell, cmd);
          if (controller instanceof WizardCommandController)
          {
-            result = new ShellWizard((WizardCommandController) controller, shellContext, cmdLineUtil, this);
+            result = new ShellWizard((WizardCommandController) controller, shellContext, commandLineUtil, this);
          }
          else
          {
-            result = new ShellSingleCommand(controller, shellContext, cmdLineUtil);
+            result = new ShellSingleCommand(controller, shellContext, commandLineUtil);
          }
       }
       return result;
-   }
-
-   private CommandLineUtil getCommandLineUtil()
-   {
-      if (commandLineUtil == null)
-      {
-         commandLineUtil = new CommandLineUtil(addonRegistry);
-      }
-      return commandLineUtil;
    }
 
    @Override

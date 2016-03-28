@@ -31,7 +31,6 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
-import org.jboss.forge.addon.ui.util.Commands;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
@@ -52,31 +51,21 @@ public class ForgeManProvider implements ManProvider
    private final CommandFactory manager;
    private final ConverterFactory converterFactory;
    private final InputComponentFactory inputComponentFactory;
-   private final Comparator<? super InputComponent<?, ?>> SHORTNAME_COMPARATOR = new Comparator<InputComponent<?, ?>>()
-   {
-      @Override
-      public int compare(InputComponent<?, ?> left, InputComponent<?, ?> right)
-      {
-         return Character.valueOf(left.getShortName()).compareTo(right.getShortName());
-      }
-   };
+   private final CommandLineUtil commandLineUtil;
+   private final Comparator<? super InputComponent<?, ?>> SHORTNAME_COMPARATOR = (left, right) -> Character
+            .valueOf(left.getShortName()).compareTo(right.getShortName());
 
-   private final Comparator<? super InputComponent<?, ?>> NAME_COMPARATOR = new Comparator<InputComponent<?, ?>>()
-   {
-      @Override
-      public int compare(InputComponent<?, ?> left, InputComponent<?, ?> right)
-      {
-         return left.getName().compareTo(right.getName());
-      }
-   };
+   private final Comparator<? super InputComponent<?, ?>> NAME_COMPARATOR = (left, right) -> left.getName()
+            .compareTo(right.getName());
 
    public ForgeManProvider(ShellImpl shell, CommandFactory manager, ConverterFactory converterFactory,
-            InputComponentFactory inputComponentFactory)
+            InputComponentFactory inputComponentFactory, CommandLineUtil commandLineUtil)
    {
       this.shell = shell;
       this.manager = manager;
       this.converterFactory = converterFactory;
       this.inputComponentFactory = inputComponentFactory;
+      this.commandLineUtil = commandLineUtil;
    }
 
    @Override
@@ -195,7 +184,7 @@ public class ForgeManProvider implements ManProvider
             {
                result.append("-").append(input.getShortName()).append(" ");
             }
-            result.append("--").append(Commands.shellifyOptionName(input.getName())).append("] ");
+            result.append("--").append(commandLineUtil.toOptionName(input.getName())).append("] ");
             result.append(input.getValueType().getSimpleName()).append(" ");
          }
       }
@@ -237,7 +226,7 @@ public class ForgeManProvider implements ManProvider
             else
                result.append("   ");
 
-            result.append("--").append(Commands.shellifyOptionName(input.getName())).append("*");
+            result.append("--").append(commandLineUtil.toOptionName(input.getName())).append("*");
             result.append(OperatingSystemUtils.getLineSeparator());
             result.append("        ");
 
