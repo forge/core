@@ -49,7 +49,6 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
  */
 public class PersistenceOperationsImpl implements PersistenceOperations
 {
-
    @Inject
    private FacetFactory facetFactory;
 
@@ -153,11 +152,11 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       return javaResource;
    }
 
-    @Override
-    public JavaClassSource newEmbeddableEntity(JavaClassSource source)
-    {
-        return createJavaEmbeddableClass(source.getName(), source.getPackage());
-    }
+   @Override
+   public JavaClassSource newEmbeddableEntity(JavaClassSource source)
+   {
+      return createJavaEmbeddableClass(source.getName(), source.getPackage());
+   }
 
    @Override
    public JavaResource newEntity(Project project, String entityName, String entityPackage, GenerationType idStrategy)
@@ -173,11 +172,11 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       return newEntity(target, entityName, entityPackage, idStrategy, null);
    }
 
-    @Override
-    public JavaClassSource newEntity(JavaClassSource source, GenerationType idStrategy, String tableName)
-    {
-        return createJavaEntityClass(source.getName(), source.getPackage(), idStrategy, tableName);
-    }
+   @Override
+   public JavaClassSource newEntity(JavaClassSource source, GenerationType idStrategy, String tableName)
+   {
+      return createJavaEntityClass(source.getName(), source.getPackage(), idStrategy, tableName);
+   }
 
    private JavaClassSource createJavaEmbeddableClass(String entityName, String entityPackage)
    {
@@ -203,6 +202,9 @@ public class PersistenceOperationsImpl implements PersistenceOperations
                .setPublic()
                .addAnnotation(Entity.class).getOrigin()
                .addInterface(Serializable.class);
+      // Add serialVersionUID = 1L initially. It can be re-generated with the Java: Generate SerialVersionUID command
+      javaClass.addField("private static final long serialVersionUID = 1L");
+
       if (tableName != null && !tableName.isEmpty())
       {
          javaClass.addAnnotation(Table.class).setStringValue("name", tableName);
@@ -231,6 +233,7 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       return javaClass;
    }
 
+   @Override
    @SuppressWarnings({ "rawtypes", "unchecked" })
    public PersistenceUnitCommon getExistingPersistenceUnit(Project project, String unitName)
    {
@@ -259,6 +262,7 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       return target;
    }
 
+   @Override
    public List<JavaResource> getProjectEntities(Project project)
    {
       final List<JavaResource> entities = new ArrayList<>();
@@ -273,7 +277,7 @@ public class PersistenceOperationsImpl implements PersistenceOperations
                {
                   JavaSource<?> javaSource = resource.getJavaType();
                   if (javaSource.hasAnnotation(Entity.class) || javaSource.hasAnnotation(Embeddable.class)
-                          || javaSource.hasAnnotation(MappedSuperclass.class))
+                           || javaSource.hasAnnotation(MappedSuperclass.class))
                   {
                      entities.add(resource);
                   }

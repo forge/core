@@ -77,15 +77,21 @@ public class ProjectOperations
       final List<JavaResource> enums = new ArrayList<>();
       if (project != null)
       {
-         project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor() {
+         project.getFacet(JavaSourceFacet.class).visitJavaSources(new JavaResourceVisitor()
+         {
             @Override
-            public void visit(VisitContext context, JavaResource resource) {
-               try {
+            public void visit(VisitContext context, JavaResource resource)
+            {
+               try
+               {
                   JavaSource<?> javaSource = resource.getJavaType();
-                  if (javaSource.isEnum()) {
+                  if (javaSource.isEnum())
+                  {
                      enums.add(resource);
                   }
-               } catch (ResourceException | FileNotFoundException e) {
+               }
+               catch (ResourceException | FileNotFoundException e)
+               {
                   // ignore
                }
             }
