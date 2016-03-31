@@ -39,7 +39,7 @@ public class AddDependenciesCommandImpl extends AbstractProjectCommand implement
    public UICommandMetadata getMetadata(UIContext context)
    {
       return Metadata.forCommand(AddDependenciesCommandImpl.class)
-               .description("Add one or more arguments to the current project.")
+               .description("Add one or more dependencies to the current project.")
                .name("Project: Add Dependencies")
                .category(Categories.create("Project", "Manage"));
    }
