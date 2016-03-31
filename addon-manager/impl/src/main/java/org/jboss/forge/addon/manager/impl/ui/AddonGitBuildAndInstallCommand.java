@@ -15,10 +15,10 @@ import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.building.BuildException;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
+import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.resource.URLResource;
-import org.jboss.forge.addon.ui.command.AbstractUICommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -48,7 +48,7 @@ import org.jboss.forge.furnace.versions.Versions;
  *
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements AddonCommandConstants
+public class AddonGitBuildAndInstallCommand extends AbstractProjectCommand implements AddonCommandConstants
 {
    private UIInput<URLResource> url;
    private UIInputMany<String> coordinate;
@@ -84,7 +84,7 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       Furnace furnace = SimpleContainer.getFurnace(getClass().getClassLoader());
       AddonRegistry registry = furnace.getAddonRegistry();
       AddonManager addonManager = registry.getServices(AddonManager.class).get();
-      ProjectFactory projectFactory = registry.getServices(ProjectFactory.class).get();
+      ProjectFactory projectFactory = getProjectFactory();
       ResourceFactory resourceFactory = registry.getServices(ResourceFactory.class).get();
       GitUtils gitUtils = registry.getServices(GitUtils.class).get();
       // TODO: Option to save sources?
@@ -157,6 +157,8 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
             InstallRequest installRequest = addonManager.install(id);
             installRequest.perform();
          }
+         // Invalidate project cache
+         projectFactory.invalidateCaches();
          progressMonitor.done();
          return Results.success("Addon(s) " + ids + " installed successfully.");
       }
@@ -188,5 +190,17 @@ public class AddonGitBuildAndInstallCommand extends AbstractUICommand implements
       {
          gitUtils.close(git);
       }
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return false;
+   }
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
    }
 }

@@ -9,7 +9,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;
-import org.jboss.forge.addon.ui.command.AbstractUICommand;
+import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -28,7 +28,7 @@ import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.forge.furnace.versions.Version;
 
-public class AddonInstallCommand extends AbstractUICommand implements AddonCommandConstants
+public class AddonInstallCommand extends AbstractProjectCommand implements AddonCommandConstants
 {
    private UIInput<String> coordinate;
 
@@ -86,6 +86,8 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
       try
       {
          addonManager.install(addonId).perform();
+         // Invalidate project cache
+         getProjectFactory().invalidateCaches();
          return Results.success("Addon " + addonId.toCoordinates() + " was installed successfully.");
       }
       catch (Throwable t)
@@ -93,6 +95,18 @@ public class AddonInstallCommand extends AbstractUICommand implements AddonComma
          return Results.fail(
                   "Addon " + addonId.toCoordinates() + " could not be installed: " + t.getCause().getMessage(), t);
       }
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return false;
+   }
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
    }
 
 }

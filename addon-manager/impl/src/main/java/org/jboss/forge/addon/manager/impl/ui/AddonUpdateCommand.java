@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.jboss.forge.addon.ui.command.AbstractUICommand;
+import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -29,7 +30,7 @@ import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
 import org.jboss.forge.furnace.manager.spi.Response;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 
-public class AddonUpdateCommand extends AbstractUICommand implements AddonCommandConstants
+public class AddonUpdateCommand extends AbstractProjectCommand implements AddonCommandConstants
 {
    private UIInput<String> named;
 
@@ -151,6 +152,8 @@ public class AddonUpdateCommand extends AbstractUICommand implements AddonComman
             if (prompt.promptBoolean(installRequest.toString() + "\n Do you want to proceed?"))
             {
                installRequest.perform();
+               // Invalidate project cache
+               getProjectFactory().invalidateCaches();
                return Results.success("Addon " + maxAddonId.toCoordinates() + " was installed successfully.");
             }
             else
@@ -165,4 +168,15 @@ public class AddonUpdateCommand extends AbstractUICommand implements AddonComman
       }
    }
 
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return false;
+   }
 }

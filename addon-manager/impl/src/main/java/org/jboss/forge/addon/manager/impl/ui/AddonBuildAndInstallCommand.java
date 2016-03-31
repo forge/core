@@ -84,6 +84,8 @@ public class AddonBuildAndInstallCommand extends AbstractProjectCommand implemen
          Addons.waitUntilStopped(registry.getAddon(id));
          InstallRequest installRequest = addonManager.install(id);
          installRequest.perform();
+         // Invalidate project cache
+         getProjectFactory().invalidateCaches();
          return Results.success("Addon " + coordinate.toString() + " was installed successfully.");
       }
       catch (Throwable t)
