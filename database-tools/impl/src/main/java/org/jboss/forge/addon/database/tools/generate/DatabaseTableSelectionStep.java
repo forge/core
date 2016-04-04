@@ -6,15 +6,17 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
-import java.util.concurrent.Callable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.hibernate.cfg.JDBCMetaDataConfiguration;
 import org.hibernate.cfg.reveng.DefaultReverseEngineeringStrategy;
 import org.hibernate.cfg.reveng.ReverseEngineeringSettings;
 import org.hibernate.cfg.reveng.ReverseEngineeringStrategy;
+import org.hibernate.cfg.reveng.SchemaSelection;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
 import org.hibernate.mapping.Table;
@@ -24,16 +26,16 @@ import org.hibernate.tool.hbm2x.pojo.ComponentPOJOClass;
 import org.hibernate.tool.hbm2x.pojo.EntityPOJOClass;
 import org.hibernate.tool.hbm2x.pojo.POJOClass;
 import org.jboss.forge.addon.database.tools.util.HibernateToolsHelper;
+import org.jboss.forge.addon.database.tools.util.JDBCUtils;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
-import org.jboss.forge.addon.ui.context.UINavigationContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UISelectMany;
+import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
-import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -45,23 +47,15 @@ import org.jboss.forge.furnace.util.Lists;
  */
 public class DatabaseTableSelectionStep implements UIWizardStep
 {
-   private static final Logger logger = Logger.getLogger(DatabaseTableSelectionStep.class.getName());
-
+   private UISelectOne<String> databaseCatalog;
+   private UISelectOne<String> databaseSchema;
    private UISelectMany<String> databaseTables;
 
-   private GenerateEntitiesCommandDescriptor descriptor;
+   private Set<String> catalogValueChoices;
+   private Set<String> schemaValueChoices;
+   private Set<String> tableValueChoices;
 
-   private JDBCMetaDataConfiguration jmdc;
-
-   private List<String> tables;
-   private Properties currentConnectionProperties;
    private Throwable exception;
-
-   @Override
-   public NavigationResult next(UINavigationContext context) throws Exception
-   {
-      return null;
-   }
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -71,63 +65,47 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    }
 
    @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return true;
-   }
-
-   @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
-      descriptor = (GenerateEntitiesCommandDescriptor) builder.getUIContext().getAttributeMap()
-               .get(GenerateEntitiesCommandDescriptor.class);
+      UIContext context = builder.getUIContext();
       InputComponentFactory factory = builder.getInputComponentFactory();
-      databaseTables = factory.createSelectMany("databaseTables", String.class).setLabel("Database Tables")
-               .setDescription("The database tables for which to generate entities. Use '*' to select all tables");
-      databaseTables.setValueChoices(new Callable<Iterable<String>>()
-      {
-         @Override
-         public Iterable<String> call() throws Exception
-         {
-            if (!descriptor.getConnectionProperties().equals(currentConnectionProperties))
-            {
-               tables = new ArrayList<>();
-               exception = null;
-               currentConnectionProperties = descriptor.getConnectionProperties();
-               jmdc = new JDBCMetaDataConfiguration();
-               jmdc.setProperties(descriptor.getConnectionProperties());
-               jmdc.setReverseEngineeringStrategy(createReverseEngineeringStrategy());
-               try
-               {
-                  HibernateToolsHelper.buildMappings(descriptor.getUrls(), descriptor.getDriverClass(), jmdc);
-                  Iterator<Table> iterator = jmdc.getTableMappings();
-                  while (iterator.hasNext())
-                  {
-                     Table table = iterator.next();
-                     tables.add(table.getName());
-                  }
-               }
-               catch (Exception e)
-               {
-                  logger.log(Level.SEVERE, "Error while fetching database tables", e);
-                  exception = e;
-                  while (exception.getCause() != null)
-                  {
-                     exception = exception.getCause();
-                  }
-               }
-            }
-            return tables;
-         }
-      });
-      builder.add(databaseTables);
+
+      databaseCatalog = factory.createSelectOne("databaseCatalog", String.class)
+               .setLabel("Database Catalog")
+               .setDescription("The database catalog for which to generate entities.")
+               .setDefaultValue(() -> {
+                  Iterator<String> it = databaseCatalog.getValueChoices().iterator();
+                  return it.hasNext() ? it.next() : null;
+               })
+               .setValueChoices(() -> catalogValueChoices);
+
+      databaseCatalog.addValueChangeListener((event) -> updateValueChoices(context));
+
+      databaseSchema = factory.createSelectOne("databaseSchema", String.class)
+               .setLabel("Database Schema")
+               .setDescription("The database schema for which to generate entities.")
+               .setDefaultValue(() -> {
+                  Iterator<String> it = databaseSchema.getValueChoices().iterator();
+                  return it.hasNext() ? it.next() : null;
+               })
+               .setValueChoices(() -> schemaValueChoices);
+
+      databaseSchema.addValueChangeListener((event) -> updateValueChoices(context));
+
+      databaseTables = factory.createSelectMany("databaseTables", String.class)
+               .setLabel("Database Tables")
+               .setDescription("The database tables for which to generate entities. Use '*' to select all tables")
+               .setValueChoices(() -> tableValueChoices);
+      updateValueChoices(context);
+      builder.add(databaseCatalog).add(databaseSchema).add(databaseTables);
    }
 
-   @Override
-   public Result execute(UIExecutionContext context)
+   private boolean connectionInfoHasChanged(UIContext context)
    {
-      Collection<String> entities = exportSelectedEntities();
-      return Results.success(entities.size() + " entities were generated in " + descriptor.getTargetPackage());
+      Map<Object, Object> attributeMap = context.getAttributeMap();
+      GenerateEntitiesCommandDescriptor descriptor = getDescriptor(context);
+      Properties currentConnectionProperties = (Properties) attributeMap.get("DatabaseTableProperties");
+      return !Objects.equals(descriptor.getConnectionProperties(), currentConnectionProperties);
    }
 
    @Override
@@ -149,6 +127,69 @@ public class DatabaseTableSelectionStep implements UIWizardStep
       {
          context.addValidationError(databaseTables, "At least one database table must be specified");
       }
+   }
+
+   @Override
+   public Result execute(UIExecutionContext context) throws Exception
+   {
+      GenerateEntitiesCommandDescriptor descriptor = getDescriptor(context.getUIContext());
+      Collection<String> entities = exportSelectedEntities(descriptor);
+      return Results.success(entities.size() + " entities were generated in " + descriptor.getTargetPackage());
+   }
+
+   private Collection<String> exportSelectedEntities(GenerateEntitiesCommandDescriptor descriptor) throws Exception
+   {
+      String catalog = databaseCatalog.getValue();
+      String schema = databaseSchema.getValue();
+      Collection<String> selectedTableNames = Lists.toList(databaseTables.getValue());
+      JavaSourceFacet java = descriptor.getSelectedProject().getFacet(JavaSourceFacet.class);
+      JDBCMetaDataConfiguration jmdc = new JDBCMetaDataConfiguration();
+      jmdc.setProperties(descriptor.getConnectionProperties());
+      jmdc.setReverseEngineeringStrategy(
+               createReverseEngineeringStrategy(descriptor, catalog, schema, selectedTableNames));
+      HibernateToolsHelper.buildMappings(descriptor.getUrls(), descriptor.getDriverClass(), jmdc);
+      POJOExporter pj = new POJOExporter(jmdc, java.getSourceDirectory().getUnderlyingResourceObject())
+      {
+         @Override
+         protected void exportPOJO(Map<String, Object> additionalContext, POJOClass element)
+         {
+            if (isSelected(selectedTableNames, element))
+            {
+               super.exportPOJO(additionalContext, element);
+            }
+         }
+      };
+      Properties pojoProperties = new Properties();
+      pojoProperties.setProperty("jdk5", "true");
+      pojoProperties.setProperty("ejb3", "true");
+      pj.setProperties(pojoProperties);
+      pj.setArtifactCollector(new ArtifactCollector());
+      pj.start();
+      return selectedTableNames;
+   }
+
+   private ReverseEngineeringStrategy createReverseEngineeringStrategy(GenerateEntitiesCommandDescriptor descriptor,
+            String catalog, String schema, Collection<String> selectedTableNames)
+   {
+      ReverseEngineeringStrategy strategy = new DefaultReverseEngineeringStrategy()
+      {
+         @Override
+         public List<org.hibernate.cfg.reveng.SchemaSelection> getSchemaSelections()
+         {
+            return selectedTableNames
+                     .stream()
+                     .map((table) -> new SchemaSelection(catalog, schema, table))
+                     .collect(Collectors.toList());
+         }
+      };
+
+      ReverseEngineeringSettings revengsettings = new ReverseEngineeringSettings(strategy)
+               .setDefaultPackageName(descriptor.getTargetPackage())
+               .setDetectManyToMany(true)
+               .setDetectOneToOne(true)
+               .setDetectOptimisticLock(true);
+      strategy.setSettings(revengsettings);
+      return strategy;
    }
 
    private boolean isSelected(Collection<String> selection, POJOClass element)
@@ -197,41 +238,60 @@ public class DatabaseTableSelectionStep implements UIWizardStep
       return result;
    }
 
-   private Collection<String> exportSelectedEntities()
+   @SuppressWarnings("unchecked")
+   private synchronized List<DatabaseTable> getTables(UIContext context)
    {
-      final Collection<String> selectedTableNames = Lists.toList(databaseTables.getValue());
-      JavaSourceFacet java = descriptor.getSelectedProject().getFacet(JavaSourceFacet.class);
-      POJOExporter pj = new POJOExporter(jmdc, java.getSourceDirectory().getUnderlyingResourceObject())
+      List<DatabaseTable> allTables = new ArrayList<>();
+      Map<Object, Object> attributeMap = context.getAttributeMap();
+      List<DatabaseTable> tables = (List<DatabaseTable>) attributeMap
+               .get(DatabaseTable.class.getName());
+      if (tables == null || connectionInfoHasChanged(context))
       {
-         @Override
-         @SuppressWarnings("rawtypes")
-         protected void exportPOJO(Map additionalContext, POJOClass element)
+         GenerateEntitiesCommandDescriptor descriptor = getDescriptor(context);
+         try
          {
-            if (isSelected(selectedTableNames, element))
-            {
-               super.exportPOJO(additionalContext, element);
-            }
+            tables = JDBCUtils.getTables(descriptor);
          }
-      };
-      Properties pojoProperties = new Properties();
-      pojoProperties.setProperty("jdk5", "true");
-      pojoProperties.setProperty("ejb3", "true");
-      pj.setProperties(pojoProperties);
-      pj.setArtifactCollector(new ArtifactCollector());
-      pj.start();
-      return selectedTableNames;
+         catch (Exception e)
+         {
+            exception = e;
+         }
+         attributeMap.put(DatabaseTable.class.getName(), tables);
+         attributeMap.put("DatabaseTableProperties", descriptor.getConnectionProperties());
+      }
+      allTables.addAll(tables);
+      return allTables;
    }
 
-   private ReverseEngineeringStrategy createReverseEngineeringStrategy()
+   private GenerateEntitiesCommandDescriptor getDescriptor(UIContext context)
    {
-      ReverseEngineeringStrategy strategy = new DefaultReverseEngineeringStrategy();
-      ReverseEngineeringSettings revengsettings = new ReverseEngineeringSettings(strategy)
-               .setDefaultPackageName(descriptor.getTargetPackage())
-               .setDetectManyToMany(true)
-               .setDetectOneToOne(true)
-               .setDetectOptimisticLock(true);
-      strategy.setSettings(revengsettings);
-      return strategy;
+      Map<Object, Object> attributeMap = context.getAttributeMap();
+      return (GenerateEntitiesCommandDescriptor) attributeMap.get(GenerateEntitiesCommandDescriptor.class);
    }
 
+   private void updateValueChoices(UIContext context)
+   {
+      List<DatabaseTable> tables = getTables(context);
+      // Update Catalogs
+      catalogValueChoices = tables
+               .stream()
+               .map((item) -> item.getCatalog())
+               .filter(Objects::nonNull)
+               .collect(Collectors.toCollection(TreeSet::new));
+      // Update schemas
+      schemaValueChoices = tables
+               .stream()
+               .filter((item) -> Objects.equals(item.getCatalog(), databaseCatalog.getValue()))
+               .map((item) -> item.getSchema())
+               .filter(Objects::nonNull)
+               .collect(Collectors.toCollection(TreeSet::new));
+      // Update tables
+      tableValueChoices = tables
+               .stream()
+               .filter(item -> Objects.equals(item.getCatalog(), databaseCatalog.getValue()))
+               .filter(item -> Objects.equals(item.getSchema(), databaseSchema.getValue()))
+               .map((item) -> item.getName())
+               .filter(Objects::nonNull)
+               .collect(Collectors.toCollection(TreeSet::new));
+   }
 }

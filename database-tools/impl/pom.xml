@@ -69,6 +69,14 @@
                <artifactId>slf4j-api</artifactId>
                <groupId>org.slf4j</groupId>
             </exclusion>
+            <exclusion>
+               <artifactId>ant</artifactId>
+               <groupId>ant</groupId>
+            </exclusion>
+            <exclusion>
+               <artifactId>geronimo-jta_1.1_spec</artifactId>
+               <groupId>org.apache.geronimo.specs</groupId>
+            </exclusion>
          </exclusions>
       </dependency>
       <dependency>

@@ -35,12 +35,6 @@ public class ConnectionProfileDetailsStep extends AbstractConnectionProfileDetai
    }
 
    @Override
-   public boolean isEnabled(UIContext context)
-   {
-      return true;
-   }
-
-   @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
       super.initializeUI(builder);

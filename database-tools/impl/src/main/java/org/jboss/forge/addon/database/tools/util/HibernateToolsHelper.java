@@ -1,11 +1,9 @@
 package org.jboss.forge.addon.database.tools.util;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
 import org.hibernate.cfg.JDBCMetaDataConfiguration;
@@ -24,9 +22,16 @@ public class HibernateToolsHelper
          {
             Driver driver = (Driver) Class.forName(driverName, true, Thread.currentThread().getContextClassLoader())
                      .newInstance();
-            DriverManager.registerDriver(new DelegatingDriver(driver));
-            result.readFromJDBC();
-            result.buildMappings();
+            DelegatingDriver delegatingDriver = new DelegatingDriver(driver);
+            try
+            {
+               DriverManager.registerDriver(delegatingDriver);
+               result.readFromJDBC();
+            }
+            finally
+            {
+               DriverManager.deregisterDriver(delegatingDriver);
+            }
             return null;
          }
       });
@@ -36,10 +41,7 @@ public class HibernateToolsHelper
    {
       try
       {
-         File file = resource.getUnderlyingResourceObject();
-         ArrayList<URL> result = new ArrayList<URL>(1);
-         result.add(file.toURI().toURL());
-         return result.toArray(new URL[1]);
+         return new URL[] { resource.getUnderlyingResourceObject().toURI().toURL() };
       }
       catch (MalformedURLException e)
       {

@@ -34,6 +34,7 @@ import org.jboss.forge.addon.ui.input.ValueChangeListener;
 import org.jboss.forge.addon.ui.input.events.ValueChangeEvent;
 import org.jboss.forge.addon.ui.validate.UIValidator;
 
+@SuppressWarnings("rawtypes")
 public abstract class AbstractConnectionProfileDetailsPage implements UICommand
 {
    private static final Logger log = Logger.getLogger(AbstractConnectionProfileDetailsPage.class.getName());
@@ -69,7 +70,8 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
       driverLocation = factory.createInput("driverLocation", FileResource.class)
                .setLabel("Driver Location")
                .setDescription("The location of the jar file that contains the JDBC driver").setRequired(true);
-      driverClass = factory.createSelectOne("driverClass", Class.class).setLabel("Driver Class")
+      driverClass = factory.createSelectOne("driverClass", Class.class)
+               .setLabel("Driver Class")
                .setDescription("The class name of the JDBC driver").setRequired(true);
       verifyConnection = factory.createInput("verifyConnection", Boolean.class).setLabel("Verify Database Connection")
                .setDescription("Attempt to connect to the database and verify connectivity");
@@ -107,23 +109,13 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
                         new DriverNamesStaleValueChangeListener()));
 
       driverClass.setValueChoices(new LocateDriverClassNamesCallable())
-               .setItemLabelConverter(new Converter<Class, String>()
-               {
-                  @Override
-                  public String convert(Class source)
-                  {
-                     if (source != null)
-                        return source.getName();
-                     else
-                        return "";
-                  }
-               })
+               .setItemLabelConverter((source) -> source.getName())
                .setDefaultValue(new Callable<Class>()
                {
                   @Override
                   public Class call() throws Exception
                   {
-                     Class<?> result = null;
+                     Class result = null;
                      Iterator<Class> iterator = driverClass.getValueChoices().iterator();
                      if (iterator.hasNext())
                      {
