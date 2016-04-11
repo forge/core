@@ -542,9 +542,12 @@ public class ProjectFactoryImpl extends AbstractEventListener implements Project
    @Override
    public void invalidateCaches()
    {
-      for (ProjectCache cache : caches)
+      if (caches != null)
       {
-         cache.invalidate();
+         for (ProjectCache cache : caches)
+         {
+            cache.invalidate();
+         }
       }
    }
 
