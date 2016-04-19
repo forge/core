@@ -50,7 +50,7 @@ public class BuildCommand extends AbstractProjectCommand
       notest = factory.createInput("notest", Boolean.class).setLabel("No Test");
       quiet = factory.createInput("quiet", 'q', Boolean.class).setLabel("Quiet").setDescription("Quiet output");
       profile = factory.createInput("profile", String.class);
-      builder.add(arguments).add(notest).add(profile).add(quiet);
+      builder.add(arguments).add(profile).add(notest).add(quiet);
    }
 
    @Override
