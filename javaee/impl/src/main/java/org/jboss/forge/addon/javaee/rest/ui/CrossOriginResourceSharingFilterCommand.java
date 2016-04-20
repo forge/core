@@ -15,7 +15,6 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.ext.Provider;
 
 import org.jboss.forge.addon.projects.Project;
@@ -60,12 +59,14 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractRestNewComm
 
    // @Inject
    // @WithAttributes(label = "Access-Control-Expose-Headers", description =
-   // "The Access-Control-Expose-Headers header indicates which headers are safe to expose to the API of a CORS API specification.")
+   // "The Access-Control-Expose-Headers header indicates which headers are safe to expose to the API of a CORS API
+   // specification.")
    // private UIInputMany<String> accessControlExposeHeaders;
    //
    // @Inject
    // @WithAttributes(label = "Access-Control-Max-Age", defaultValue = "151200", description =
-   // "The Access-Control-Max-Age header indicates how long the results of a preflight request can be cached in a preflight result cache.")
+   // "The Access-Control-Max-Age header indicates how long the results of a preflight request can be cached in a
+   // preflight result cache.")
    // private UIInput<Integer> accessControlMaxAge;
    //
    // @Inject
@@ -75,12 +76,14 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractRestNewComm
    //
    // @Inject
    // @WithAttributes(label = "Access-Control-Request-Method", description =
-   // "The Access-Control-Request-Method header indicates which method will be used in the actual request as part of the preflight request")
+   // "The Access-Control-Request-Method header indicates which method will be used in the actual request as part of the
+   // preflight request")
    // private UIInput<String> accessControlRequestMethod;
    //
    // @Inject
    // @WithAttributes(label = "Access-Control-Request-Headers", description =
-   // "The Access-Control-Request-Headers header indicates which headers will be used in the actual request as part of the preflight request")
+   // "The Access-Control-Request-Headers header indicates which headers will be used in the actual request as part of
+   // the preflight request")
    // private UIInputMany<String> accessControlRequestHeaders;
 
    @Override
@@ -122,7 +125,6 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractRestNewComm
             throws Exception
    {
       source.addAnnotation(Provider.class);
-      source.addAnnotation(PreMatching.class);
       source.addInterface(ContainerResponseFilter.class);
       MethodSource<JavaClassSource> method = source.addMethod().setName("filter").setPublic().setReturnTypeVoid();
       method.addAnnotation(Override.class);
