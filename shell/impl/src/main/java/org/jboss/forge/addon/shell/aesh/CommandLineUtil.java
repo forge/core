@@ -12,11 +12,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.aesh.cl.CommandLine;
-import org.jboss.aesh.cl.completer.OptionCompleter;
 import org.jboss.aesh.cl.internal.ProcessedCommand;
 import org.jboss.aesh.cl.internal.ProcessedCommandBuilder;
 import org.jboss.aesh.cl.internal.ProcessedOption;
@@ -24,7 +24,6 @@ import org.jboss.aesh.cl.internal.ProcessedOptionBuilder;
 import org.jboss.aesh.cl.parser.CommandLineParser;
 import org.jboss.aesh.cl.parser.CommandLineParserException;
 import org.jboss.aesh.cl.parser.OptionParserException;
-import org.jboss.aesh.console.command.completer.CompleterInvocation;
 import org.jboss.forge.addon.configuration.Configuration;
 import org.jboss.forge.addon.configuration.ConfigurationFactory;
 import org.jboss.forge.addon.convert.ConverterFactory;
@@ -108,11 +107,15 @@ class CommandLineUtil
          {
             ProcessedOptionBuilder optionBuilder = new ProcessedOptionBuilder();
             optionBuilder.name(toOptionName(inputName))
-                     .addDefaultValue(defaultValue == null ? null : defaultValue.toString())
+                     .addDefaultValue(Objects.toString(defaultValue, null))
                      .description(input.getLabel())
                      .hasMultipleValues(isMultiple)
                      .hasValue(hasValue)
-                     .type(input.getValueType());
+                     .type(input.getValueType())
+                     .valueSeparator(' ')
+                     .activator(cmd -> input.isEnabled())
+                     .completer(OptionCompleterFactory.getCompletionFor(
+                              input, shellContext, converterFactory));
 
             if (input.isRequired() && !input.hasDefaultValue() && !input.hasValue())
             {
@@ -122,11 +125,6 @@ class CommandLineUtil
             {
                optionBuilder.renderer(OptionRenderers.DEPRECATED);
             }
-            OptionCompleter<CompleterInvocation> completer = OptionCompleterFactory.getCompletionFor(
-                     input, shellContext, converterFactory);
-            optionBuilder.completer(completer);
-            optionBuilder.activator((cmd) -> input.isEnabled()).valueSeparator(' ');
-
             if (input.getShortName() != InputComponents.DEFAULT_SHORT_NAME)
             {
                optionBuilder.shortName(input.getShortName());
