@@ -215,8 +215,21 @@ public abstract class AbstractServletFacet<DESCRIPTOR extends WebAppCommonDescri
       DESCRIPTOR webXml = getConfig();
 
       SecurityConstraintCommonType securityConstraint = webXml.createSecurityConstraint();
-      List<String> httpMethodsList = Lists.toList(httpMethods);
-      List<String> urlPatternsList = Lists.toList(urlPatterns);
+      List<String> httpMethodsList = new ArrayList<>();
+      if (httpMethods != null)
+      {
+         httpMethodsList.addAll(Lists.toList(httpMethods));
+      }
+      List<String> urlPatternsList = new ArrayList<>();
+      if (urlPatterns != null)
+      {
+         urlPatternsList.addAll(Lists.toList(urlPatterns));
+      }
+      List<String> securityRolesList = new ArrayList<>();
+      if (securityRoles != null)
+      {
+         securityRolesList.addAll(Lists.toList(securityRoles));
+      }
       if (displayName != null)
       {
          securityConstraint.displayName(displayName);
@@ -240,13 +253,11 @@ public abstract class AbstractServletFacet<DESCRIPTOR extends WebAppCommonDescri
          resourceCollection.urlPattern(urlPatternsList.toArray(new String[urlPatternsList.size()]));
       }
 
-      List<String> securityRolesList = Lists.toList(securityRoles);
-      if (securityRolesList != null)
+      if (!securityRolesList.isEmpty())
       {
          AuthConstraintCommonType authConstraint = securityConstraint.getOrCreateAuthConstraint();
          authConstraint.roleName(securityRolesList.toArray(new String[securityRolesList.size()]));
       }
-
       if (transportGuarantee != null)
       {
          UserDataConstraintCommonType userDataConstraint = securityConstraint.getOrCreateUserDataConstraint();

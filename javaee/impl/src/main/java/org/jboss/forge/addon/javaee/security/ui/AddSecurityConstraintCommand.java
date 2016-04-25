@@ -12,8 +12,10 @@ import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UIInputMany;
+import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
@@ -59,8 +61,8 @@ public class AddSecurityConstraintCommand extends AbstractJavaEECommand
    private UIInput<Boolean> enableUserDataConstraint;
 
    @Inject
-   @WithAttributes(label = "Transport guarantee", shortName = 't', description = "The type of requirement for used data constraint")
-   private UIInput<TransportGuarantee> transportGuarantee;
+   @WithAttributes(label = "Transport guarantee", shortName = 't', description = "The type of requirement for used data constraint", type = InputType.DROPDOWN)
+   private UISelectOne<TransportGuarantee> transportGuarantee;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
