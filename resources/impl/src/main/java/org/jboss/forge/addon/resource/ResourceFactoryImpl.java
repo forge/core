@@ -39,8 +39,7 @@ public class ResourceFactoryImpl implements ResourceFactory
    public <E, T extends Resource<E>> T create(final Class<T> type, final E underlyingResource)
    {
       T result = null;
-      TreeMap<Class<?>, ResourceGenerator> generated = new TreeMap<>(
-               new RelatedClassComparator());
+      TreeMap<Class<?>, ResourceGenerator> generated = new TreeMap<>(new RelatedClassComparator());
 
       for (ResourceGenerator generator : getGenerators())
       {
@@ -65,11 +64,14 @@ public class ResourceFactoryImpl implements ResourceFactory
    {
       if (getAddonRegistry().getVersion() != version)
       {
-         version = getAddonRegistry().getVersion();
-         generators.clear();
-         for (ResourceGenerator generator : getAddonRegistry().getServices(ResourceGenerator.class))
+         synchronized (generators)
          {
-            generators.add(generator);
+            version = getAddonRegistry().getVersion();
+            generators.clear();
+            for (ResourceGenerator generator : getAddonRegistry().getServices(ResourceGenerator.class))
+            {
+               generators.add(generator);
+            }
          }
       }
       return generators;
