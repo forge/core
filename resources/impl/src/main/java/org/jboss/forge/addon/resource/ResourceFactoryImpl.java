@@ -6,7 +6,6 @@
  */
 package org.jboss.forge.addon.resource;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -20,6 +19,7 @@ import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.util.Sets;
 
 /**
  * Implementation of {@link ResourceFactory}
@@ -28,14 +28,13 @@ import org.jboss.forge.furnace.util.Assert;
  * @author Mike Brock <cbrock@redhat.com>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ResourceFactoryImpl implements ResourceFactory
 {
-   @SuppressWarnings("rawtypes")
-   private final Set<ResourceGenerator> generators = new HashSet<>();
+   private final Set<ResourceGenerator> generators = Sets.getConcurrentSet();
    private volatile long version = -1;
 
    @Override
-   @SuppressWarnings({ "unchecked", "rawtypes" })
    public <E, T extends Resource<E>> T create(final Class<T> type, final E underlyingResource)
    {
       T result = null;
@@ -59,26 +58,21 @@ public class ResourceFactoryImpl implements ResourceFactory
       return result;
    }
 
-   @SuppressWarnings("rawtypes")
    private Iterable<ResourceGenerator> getGenerators()
    {
       if (getAddonRegistry().getVersion() != version)
       {
-         synchronized (generators)
+         version = getAddonRegistry().getVersion();
+         generators.clear();
+         for (ResourceGenerator generator : getAddonRegistry().getServices(ResourceGenerator.class))
          {
-            version = getAddonRegistry().getVersion();
-            generators.clear();
-            for (ResourceGenerator generator : getAddonRegistry().getServices(ResourceGenerator.class))
-            {
-               generators.add(generator);
-            }
+            generators.add(generator);
          }
       }
       return generators;
    }
 
    @Override
-   @SuppressWarnings("unchecked")
    public <E> Resource<E> create(E underlyingResource)
    {
       return create(Resource.class, underlyingResource);
