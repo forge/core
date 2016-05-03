@@ -27,6 +27,8 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
  */
 public interface PersistenceOperations
 {
+   public static final String ID_PROPERTY_NAME_CONFIGURATION_KEY = "javaee.jpa.id_property_name";
+   public static final String VERSION_PROPERTY_NAME_CONFIGURATION_KEY = "javaee.jpa.version_property_name";
    public static final String DEFAULT_UNIT_SUFFIX = "-persistence-unit";
    public static final String DEFAULT_UNIT_DESC = "Forge Persistence Unit";
 
@@ -107,15 +109,15 @@ public interface PersistenceOperations
    public JavaResource newEntity(DirectoryResource target, String entityName, String entityPackage,
             GenerationType idStrategy);
 
-    /**
-     * Given a {@link JavaClassSource} it decorates the source with code for an entity
-     *
-     * @param source source of the class to decorate
-     * @param idStrategy the ID strategy chosen for this entity
-     * @param tableName the table name chose for this entity
-     * @return the decorated java resource
-     */
-    public JavaClassSource newEntity(JavaClassSource source, GenerationType idStrategy, String tableName);
+   /**
+    * Given a {@link JavaClassSource} it decorates the source with code for an entity
+    *
+    * @param source source of the class to decorate
+    * @param idStrategy the ID strategy chosen for this entity
+    * @param tableName the table name chose for this entity
+    * @return the decorated java resource
+    */
+   public JavaClassSource newEntity(JavaClassSource source, GenerationType idStrategy, String tableName);
 
    /**
     * Creates a new {@link JavaResource} for an embeddable entity in the specified project. If a project is available,
@@ -142,18 +144,19 @@ public interface PersistenceOperations
    public JavaResource newEmbeddableEntity(Project project, String entityName, String entityPackage)
             throws FileNotFoundException;
 
-    /**
-     * Given a {@link JavaClassSource} it decorates the source with code for an embeddable entity
-     *
-     * @param source source of the class to decorate
-     * @return the decorated java resource
-     */
-    public JavaClassSource newEmbeddableEntity(JavaClassSource source);
+   /**
+    * Given a {@link JavaClassSource} it decorates the source with code for an embeddable entity
+    *
+    * @param source source of the class to decorate
+    * @return the decorated java resource
+    */
+   public JavaClassSource newEmbeddableEntity(JavaClassSource source);
 
-    /**
-     * Returns the list of all the JPA entities of the project
-     * @param project the current project
-     * @return the list of all the entities of the project
-     */
-    public List<JavaResource> getProjectEntities(Project project);
+   /**
+    * Returns the list of all the JPA entities of the project
+    * 
+    * @param project the current project
+    * @return the list of all the entities of the project
+    */
+   public List<JavaResource> getProjectEntities(Project project);
 }
