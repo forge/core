@@ -24,7 +24,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.jboss.forge.addon.configuration.Configuration;
 import org.jboss.forge.addon.facets.FacetFactory;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -52,9 +51,6 @@ public class PersistenceOperationsImpl implements PersistenceOperations
 {
    @Inject
    private FacetFactory facetFactory;
-
-   @Inject
-   private Configuration configuration;
 
    @Override
    @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -176,9 +172,16 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       return newEntity(target, entityName, entityPackage, idStrategy, null);
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public JavaClassSource newEntity(JavaClassSource javaClass, GenerationType idStrategy, String tableName)
+   {
+      return newEntity(javaClass, idStrategy, tableName, "id", "version");
+   }
+
+   @SuppressWarnings("unchecked")
+   @Override
+   public JavaClassSource newEntity(JavaClassSource javaClass, GenerationType idStrategy, String tableName,
+            String idPropertyName, String versionPropertyName)
    {
       javaClass.setPublic()
                .addAnnotation(Entity.class).getOrigin()
@@ -191,8 +194,7 @@ public class PersistenceOperationsImpl implements PersistenceOperations
          javaClass.addAnnotation(Table.class).setStringValue("name", tableName);
       }
 
-      String idField = configuration.getString(PersistenceOperations.ID_PROPERTY_NAME_CONFIGURATION_KEY, "id");
-      FieldSource<JavaClassSource> id = javaClass.addField("private Long " + idField + ";");
+      FieldSource<JavaClassSource> id = javaClass.addField("private Long " + idPropertyName + ";");
       id.addAnnotation(Id.class);
       id.addAnnotation(GeneratedValue.class)
                .setEnumValue("strategy", idStrategy);
@@ -201,9 +203,7 @@ public class PersistenceOperationsImpl implements PersistenceOperations
                .setLiteralValue("updatable", "false")
                .setLiteralValue("nullable", "false");
 
-      String versionField = configuration.getString(PersistenceOperations.VERSION_PROPERTY_NAME_CONFIGURATION_KEY,
-               "version");
-      FieldSource<JavaClassSource> version = javaClass.addField("private int " + versionField + ";");
+      FieldSource<JavaClassSource> version = javaClass.addField("private int " + versionPropertyName + ";");
       version.addAnnotation(Version.class);
       version.addAnnotation(Column.class).setStringValue("name", "version");
 

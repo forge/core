@@ -9,6 +9,8 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 import javax.inject.Inject;
 import javax.persistence.GenerationType;
 
+import org.jboss.forge.addon.configuration.Configuration;
+import org.jboss.forge.addon.configuration.facets.ConfigurationFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
@@ -43,6 +45,9 @@ public class JPANewEntityCommand extends AbstractJPACommand<JavaClassSource>
 
    @Inject
    private PersistenceOperations persistenceOperations;
+
+   @Inject
+   private Configuration configuration;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -81,6 +86,13 @@ public class JPANewEntityCommand extends AbstractJPACommand<JavaClassSource>
       {
          idStrategyChosen = GenerationType.AUTO;
       }
-      return persistenceOperations.newEntity(source, idStrategyChosen, tableName.getValue());
+      ConfigurationFacet facet = project.getFacet(ConfigurationFacet.class);
+      Configuration config = facet.getConfiguration();
+      String idPropertyName = config.getString(PersistenceOperations.ID_PROPERTY_NAME_CONFIGURATION_KEY,
+               configuration.getString(PersistenceOperations.ID_PROPERTY_NAME_CONFIGURATION_KEY, "id"));
+      String versionPropertyName = config.getString(PersistenceOperations.VERSION_PROPERTY_NAME_CONFIGURATION_KEY,
+               configuration.getString(PersistenceOperations.VERSION_PROPERTY_NAME_CONFIGURATION_KEY, "version"));
+      return persistenceOperations.newEntity(source, idStrategyChosen, tableName.getValue(), idPropertyName,
+               versionPropertyName);
    }
 }
