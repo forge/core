@@ -99,7 +99,7 @@ public class JavaNewMethodCommandTest
       reloadTargetClass();
 
       Assert.assertNotNull(targetClass.getMethod(methodName));
-      Assert.assertTrue(targetClass.getMethod(methodName).isPrivate());
+      Assert.assertFalse(targetClass.getMethod(methodName).isPrivate());
       Assert.assertEquals(targetClass.getMethod(methodName).getReturnType().toString(), "String");
       Assert.assertEquals(targetClass.getMethod(methodName).getBody(),
                "throw new UnsupportedOperationException(\"Not supported yet.\");");
@@ -124,7 +124,7 @@ public class JavaNewMethodCommandTest
       reloadTargetClass();
 
       Assert.assertNotNull(targetClass.getMethod(methodName));
-      Assert.assertTrue(targetClass.getMethod(methodName).isPrivate());
+      Assert.assertFalse(targetClass.getMethod(methodName).isPrivate());
       Assert.assertEquals(targetClass.getMethod(methodName).getReturnType().toString(), "int");
       Assert.assertEquals(targetClass.getMethod(methodName).getBody(),
                "throw new UnsupportedOperationException(\"Not supported yet.\");");
@@ -151,7 +151,7 @@ public class JavaNewMethodCommandTest
       String[] paramTypes = { "int", "String", "int", "int" };
 
       Assert.assertNotNull(targetClass.getMethod(methodName, paramTypes));
-      Assert.assertTrue(targetClass.getMethod(methodName, paramTypes).isPrivate());
+      Assert.assertFalse(targetClass.getMethod(methodName, paramTypes).isPrivate());
       Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getReturnType().toString(), "String");
       Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getBody(),
                "throw new UnsupportedOperationException(\"Not supported yet.\");");
@@ -280,7 +280,7 @@ public class JavaNewMethodCommandTest
       String[] paramTypes = { "int", "String", "int", "int" };
 
       Assert.assertNotNull(targetClass.getMethod(methodName, paramTypes));
-      Assert.assertTrue(targetClass.getMethod(methodName, paramTypes).isPrivate());
+      Assert.assertFalse(targetClass.getMethod(methodName, paramTypes).isPrivate());
       Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getReturnType().toString(), "String");
       Assert.assertNotNull(targetClass.getMethod(methodName, paramTypes).getAnnotation("Override"));
       Assert.assertEquals(targetClass.getMethod(methodName, paramTypes).getBody(),
@@ -377,6 +377,7 @@ public class JavaNewMethodCommandTest
       String methodName = "methodName";
       setMethodName(commandController, methodName);
       setParameters(commandController, "int a,String s,int c,int d");
+      setAccessType(commandController, Visibility.PRIVATE);
 
       commandController.execute();
       reloadTargetClass();

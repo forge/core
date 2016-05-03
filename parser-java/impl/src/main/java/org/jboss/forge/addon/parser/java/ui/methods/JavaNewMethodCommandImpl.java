@@ -298,7 +298,7 @@ public class JavaNewMethodCommandImpl extends AbstractProjectCommand implements 
             return source.toString();
          }
       });
-      accessType.setDefaultValue(Visibility.PRIVATE);
+      accessType.setDefaultValue(Visibility.PUBLIC);
    }
 
    @Override
