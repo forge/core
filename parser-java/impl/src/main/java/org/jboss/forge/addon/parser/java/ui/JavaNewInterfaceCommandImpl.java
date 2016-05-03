@@ -9,13 +9,15 @@ package org.jboss.forge.addon.parser.java.ui;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.roaster.model.source.InterfaceCapableSource;
 import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class JavaNewInterfaceCommandImpl extends AbstractJavaSourceCommand<JavaInterfaceSource>implements
+public class JavaNewInterfaceCommandImpl extends AbstractJavaSourceCommand<JavaInterfaceSource> implements
          JavaNewInterfaceCommand
 {
    @Inject
@@ -37,5 +39,17 @@ public class JavaNewInterfaceCommandImpl extends AbstractJavaSourceCommand<JavaI
    protected String getType()
    {
       return "Interface";
+   }
+
+   /**
+    * Interfaces don't require overriding method declarations
+    */
+   @Override
+   protected void implementInterface(InterfaceCapableSource<?> source, Iterable<String> value, JavaSourceFacet facet)
+   {
+      for (String type : value)
+      {
+         source.addInterface(type);
+      }
    }
 }

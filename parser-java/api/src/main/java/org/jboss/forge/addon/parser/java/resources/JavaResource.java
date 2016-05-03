@@ -47,4 +47,20 @@ public interface JavaResource extends FileResource<JavaResource>
     */
    JavaResource setContents(InputStream data, Properties formatterProperties);
 
+   /**
+    * 
+    * Returns the fully qualified type name. Returns <code>null</code> if any error occurs
+    */
+   default String getFullyQualifiedTypeName()
+   {
+      try
+      {
+         return getJavaType().getQualifiedName();
+      }
+      catch (FileNotFoundException e)
+      {
+         return null;
+      }
+   }
+
 }

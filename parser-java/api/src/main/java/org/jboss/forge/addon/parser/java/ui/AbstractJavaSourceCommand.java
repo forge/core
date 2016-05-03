@@ -7,22 +7,25 @@
 
 package org.jboss.forge.addon.parser.java.ui;
 
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.LinkedHashSet;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.facets.constraints.FacetConstraintType;
 import org.jboss.forge.addon.facets.constraints.FacetConstraints;
+import org.jboss.forge.addon.parser.java.beans.ProjectOperations;
 import org.jboss.forge.addon.parser.java.converters.PackageRootConverter;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
-import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.resource.visit.VisitContext;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -30,21 +33,27 @@ import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.facets.HintsFacet;
 import org.jboss.forge.addon.ui.hints.InputType;
-import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.InputComponentFactory;
-import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
+import org.jboss.forge.addon.ui.util.Completers;
 import org.jboss.forge.addon.ui.util.Metadata;
-import org.jboss.forge.addon.ui.validate.UIValidator;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.roaster.Roaster;
+import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.JavaInterface;
+import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.SyntaxError;
+import org.jboss.forge.roaster.model.source.ExtendableSource;
+import org.jboss.forge.roaster.model.source.InterfaceCapableSource;
+import org.jboss.forge.roaster.model.source.JavaInterfaceSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
-import org.jboss.forge.roaster.model.util.Strings;
 import org.jboss.forge.roaster.model.util.Types;
 
 /**
@@ -59,6 +68,8 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
    private UIInput<String> targetPackage;
    private UIInput<String> named;
    private UIInput<Boolean> overwrite;
+   private UIInput<String> extendsType;
+   private UIInputMany<String> implementsType;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
@@ -74,34 +85,30 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
 
       overwrite = factory.createInput("overwrite", Boolean.class).setLabel("Overwrite")
                .setDescription("The overwrite flag that is used if the class already exists.").setDefaultValue(false);
+
+      extendsType = factory.createInput("extends", String.class).setLabel("Extends")
+               .setDescription("The type used in the extends keyword")
+               .setEnabled(supportsExtends());
+      extendsType.getFacet(HintsFacet.class).setInputType(InputType.JAVA_CLASS_PICKER);
+
+      // When dealing with interfaces, implements == extends
+      boolean isInterface = getSourceType() == JavaInterfaceSource.class;
+      implementsType = factory.createInputMany(isInterface ? "extends" : "implements", String.class)
+               .setLabel(isInterface ? "Extended Interfaces" : "Interfaces")
+               .setEnabled(supportsImplements());
+      implementsType.getFacet(HintsFacet.class).setInputType(InputType.JAVA_CLASS_PICKER);
+
       Project project = getSelectedProject(builder);
       final JavaSourceFacet javaSourceFacet = project.getFacet(JavaSourceFacet.class);
       // Setup named
-      named.addValidator(new UIValidator()
-      {
-         @Override
-         public void validate(UIValidationContext context)
-         {
-            if (!Types.isSimpleName(named.getValue()))
-               context.addValidationError(named, "Invalid java type name.");
-         }
+      named.addValidator((context) -> {
+         if (!Types.isSimpleName(named.getValue()))
+            context.addValidationError(named, "Invalid java type name.");
       });
 
-      overwrite.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call()
-         {
-            if (named.getValue() == null)
-            {
-               return false;
-            }
-            return classExists(javaSourceFacet);
-         }
-      });
+      overwrite.setEnabled(() -> named.hasValue() && classExists(javaSourceFacet));
 
       // Setup targetPackage
-
       if (project.hasFacet(JavaSourceFacet.class))
       {
          final Set<String> packageNames = new TreeSet<>();
@@ -115,27 +122,31 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
                packageNames.add(packageName);
             }
          });
-         targetPackage.setCompleter(new UICompleter<String>()
-         {
-
-            @Override
-            public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input,
-                     String value)
-            {
-               Set<String> result = new LinkedHashSet<>();
-               for (String packageName : packageNames)
-               {
-                  if (Strings.isNullOrEmpty(value) || packageName.startsWith(value))
-                  {
-                     result.add(packageName);
-                  }
-               }
-               return result;
-            }
-         });
+         targetPackage.setCompleter(Completers.fromValues(packageNames));
       }
       targetPackage.setDefaultValue(calculateDefaultPackage(builder.getUIContext()));
-      builder.add(targetPackage).add(named).add(overwrite);
+      builder.add(targetPackage).add(named);
+
+      if (extendsType.isEnabled())
+      {
+         List<String> extendsList = getExtendsValueChoices(project).stream()
+                  .map(JavaResource::getFullyQualifiedTypeName)
+                  .filter(Objects::nonNull)
+                  .collect(Collectors.toList());
+         extendsType.setCompleter(Completers.fromValues(extendsList));
+         builder.add(extendsType);
+      }
+
+      if (implementsType.isEnabled())
+      {
+         List<String> implementsList = getImplementsValueChoices(project).stream()
+                  .map(JavaResource::getFullyQualifiedTypeName)
+                  .filter(Objects::nonNull)
+                  .collect(Collectors.toList());
+         implementsType.setCompleter(Completers.fromValues(implementsList));
+         builder.add(implementsType);
+      }
+      builder.add(overwrite);
    }
 
    @Override
@@ -156,20 +167,64 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
     */
    protected abstract Class<SOURCETYPE> getSourceType();
 
+   /**
+    * @return the possible value choices for the extends input
+    */
+   protected Collection<JavaResource> getExtendsValueChoices(Project project)
+   {
+      AddonRegistry addonRegistry = Furnace.instance(getClass().getClassLoader()).getAddonRegistry();
+      ProjectOperations projectOperations = addonRegistry.getServices(ProjectOperations.class).get();
+      return projectOperations.getProjectClasses(project);
+   }
+
+   /**
+    * @return the possible value choices for the implements input
+    */
+   protected Collection<JavaResource> getImplementsValueChoices(Project project)
+   {
+      AddonRegistry addonRegistry = Furnace.instance(getClass().getClassLoader()).getAddonRegistry();
+      ProjectOperations projectOperations = addonRegistry.getServices(ProjectOperations.class).get();
+      return projectOperations.getProjectInterfaces(project);
+   }
+
+   /**
+    * @return if this new type supports the usage of extends keyword
+    */
+   protected boolean supportsExtends()
+   {
+      Class<SOURCETYPE> sourceType = getSourceType();
+      return ExtendableSource.class.isAssignableFrom(sourceType);
+   }
+
+   protected boolean supportsImplements()
+   {
+      Class<SOURCETYPE> sourceType = getSourceType();
+      return InterfaceCapableSource.class.isAssignableFrom(sourceType);
+   }
+
    private boolean classExists(JavaSourceFacet javaSourceFacet)
    {
-      JavaSource<?> source = buildJavaSource(javaSourceFacet);
-      if (source == null)
+      if (!named.hasValue() && !named.hasDefaultValue())
       {
          return false;
       }
+      String packageName;
+      if (targetPackage.hasValue() || targetPackage.hasDefaultValue())
+      {
+         packageName = targetPackage.getValue();
+      }
+      else
+      {
+         packageName = javaSourceFacet.getBasePackage();
+      }
+      String source = packageName + "." + named.getValue();
       boolean classAlreadyExists;
       try
       {
          JavaResource parsedJavaResource = javaSourceFacet.getJavaResource(source);
          classAlreadyExists = parsedJavaResource != null && parsedJavaResource.exists();
       }
-      catch (ResourceException ex)
+      catch (Exception ex)
       {
          classAlreadyExists = false;
       }
@@ -177,7 +232,7 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
    }
 
    @SuppressWarnings("unchecked")
-   private SOURCETYPE buildJavaSource(JavaSourceFacet java)
+   private SOURCETYPE buildJavaSource(JavaSourceFacet javaFacet)
    {
       if (!named.hasValue() && !named.hasDefaultValue())
       {
@@ -192,9 +247,73 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
       }
       else
       {
-         source.setPackage(java.getBasePackage());
+         source.setPackage(javaFacet.getBasePackage());
+      }
+      if (source instanceof ExtendableSource && extendsType.isEnabled() && extendsType.hasValue())
+      {
+         ExtendableSource<?> extendableSource = (ExtendableSource<?>) source;
+         extendSuperType(extendableSource, extendsType.getValue(), javaFacet);
+      }
+      if (source instanceof InterfaceCapableSource && implementsType.isEnabled() && implementsType.hasValue())
+      {
+         InterfaceCapableSource<?> interfaceCapableSource = (InterfaceCapableSource<?>) source;
+         implementInterface(interfaceCapableSource, implementsType.getValue(), javaFacet);
       }
       return source;
+   }
+
+   protected void extendSuperType(ExtendableSource<?> source, String value, JavaSourceFacet facet)
+   {
+      JavaResource javaResource = facet.getJavaResource(value);
+      try
+      {
+         if (javaResource != null && javaResource.exists())
+         {
+            JavaType<?> type = javaResource.getJavaType();
+            if (type.isClass())
+            {
+               JavaClass<?> javaClass = (JavaClass<?>) type;
+               source.extendSuperType(javaClass);
+               return;
+            }
+         }
+         else
+         {
+            // TODO: It may be a compiled class
+         }
+      }
+      catch (FileNotFoundException e)
+      {
+      }
+      source.setSuperType(value);
+   }
+
+   protected void implementInterface(InterfaceCapableSource<?> source, Iterable<String> value, JavaSourceFacet facet)
+   {
+      for (String type : value)
+      {
+         JavaResource javaResource = facet.getJavaResource(type);
+         try
+         {
+            if (javaResource != null && javaResource.exists())
+            {
+               JavaType<?> javaType = javaResource.getJavaType();
+               if (javaType.isInterface())
+               {
+                  source.implementInterface((JavaInterface<?>) javaType);
+                  continue;
+               }
+            }
+            else
+            {
+               // TODO: It may be a compiled class
+            }
+         }
+         catch (FileNotFoundException e)
+         {
+         }
+         source.addInterface(type);
+      }
    }
 
    @Override
@@ -270,6 +389,16 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
    protected UIInput<Boolean> getOverwrite()
    {
       return overwrite;
+   }
+
+   protected UIInput<String> getExtendsType()
+   {
+      return extendsType;
+   }
+
+   protected UIInputMany<String> getImplementsType()
+   {
+      return implementsType;
    }
 
    protected String calculateDefaultPackage(UIContext context)
