@@ -9,6 +9,7 @@
 
    <groupId>org.jboss.forge.addon</groupId>
    <artifactId>testing-parent</artifactId>
+   <name>Forge - Testing Addon Parent</name>
    <packaging>pom</packaging>
    <modules>
       <module>addon</module>

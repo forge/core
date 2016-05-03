@@ -7,6 +7,7 @@
       <version>3.1.2-SNAPSHOT</version>
    </parent>
    <artifactId>testing-tests</artifactId>
+   <name>Forge - Testing Addon Tests</name>
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>

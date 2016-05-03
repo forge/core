@@ -7,6 +7,7 @@
     <version>3.1.2-SNAPSHOT</version>
   </parent>
   <artifactId>testing-impl</artifactId>
+  <name>Forge - Testing Addon Implementation</name>
   <dependencies>
     <dependency>
       <groupId>org.jboss.forge.addon</groupId>
