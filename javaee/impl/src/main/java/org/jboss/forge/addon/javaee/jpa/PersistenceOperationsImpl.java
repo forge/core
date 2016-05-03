@@ -172,34 +172,11 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       return newEntity(target, entityName, entityPackage, idStrategy, null);
    }
 
-   @Override
-   public JavaClassSource newEntity(JavaClassSource source, GenerationType idStrategy, String tableName)
-   {
-      return createJavaEntityClass(source.getName(), source.getPackage(), idStrategy, tableName);
-   }
-
-   private JavaClassSource createJavaEmbeddableClass(String entityName, String entityPackage)
-   {
-      JavaClassSource javaClass = Roaster.create(JavaClassSource.class)
-               .setName(entityName)
-               .setPublic()
-               .addAnnotation(Embeddable.class).getOrigin()
-               .addInterface(Serializable.class);
-      if (entityPackage != null && !entityPackage.isEmpty())
-      {
-         javaClass.setPackage(entityPackage);
-      }
-
-      return javaClass;
-   }
-
    @SuppressWarnings("unchecked")
-   private JavaClassSource createJavaEntityClass(String entityName, String entityPackage, GenerationType idStrategy,
-            String tableName)
+   @Override
+   public JavaClassSource newEntity(JavaClassSource javaClass, GenerationType idStrategy, String tableName)
    {
-      JavaClassSource javaClass = Roaster.create(JavaClassSource.class)
-               .setName(entityName)
-               .setPublic()
+      javaClass.setPublic()
                .addAnnotation(Entity.class).getOrigin()
                .addInterface(Serializable.class);
       // Add serialVersionUID = 1L initially. It can be re-generated with the Java: Generate SerialVersionUID command
@@ -208,10 +185,6 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       if (tableName != null && !tableName.isEmpty())
       {
          javaClass.addAnnotation(Table.class).setStringValue("name", tableName);
-      }
-      if (entityPackage != null && !entityPackage.isEmpty())
-      {
-         javaClass.setPackage(entityPackage);
       }
       FieldSource<JavaClassSource> id = javaClass.addField("private Long id;");
       id.addAnnotation(Id.class);
@@ -231,6 +204,32 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       Refactory.createToStringFromFields(javaClass, id);
       Refactory.createHashCodeAndEquals(javaClass, id);
       return javaClass;
+   }
+
+   private JavaClassSource createJavaEmbeddableClass(String entityName, String entityPackage)
+   {
+      JavaClassSource javaClass = Roaster.create(JavaClassSource.class)
+               .setName(entityName)
+               .setPublic()
+               .addAnnotation(Embeddable.class).getOrigin()
+               .addInterface(Serializable.class);
+      if (entityPackage != null && !entityPackage.isEmpty())
+      {
+         javaClass.setPackage(entityPackage);
+      }
+
+      return javaClass;
+   }
+
+   private JavaClassSource createJavaEntityClass(String entityName, String entityPackage, GenerationType idStrategy,
+            String tableName)
+   {
+      JavaClassSource javaClass = Roaster.create(JavaClassSource.class).setName(entityName);
+      if (entityPackage != null && !entityPackage.isEmpty())
+      {
+         javaClass.setPackage(entityPackage);
+      }
+      return newEntity(javaClass, idStrategy, tableName);
    }
 
    @Override
