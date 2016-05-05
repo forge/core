@@ -37,6 +37,7 @@ import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.After;
 import org.junit.Assert;
@@ -96,13 +97,15 @@ public class ServletNewServletCommandTest
          assertEquals("Servlet: New Servlet", metadata.getName());
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("Servlet", metadata.getCategory().getSubCategory().getName());
-         assertEquals(5, controller.getInputs().size());
+         assertEquals(7, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
          assertTrue(controller.hasInput("methods"));
          assertTrue(controller.hasInput("urlPatterns"));
+         assertTrue(controller.hasInput("extends"));
+         assertTrue(controller.hasInput("implements"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_SERVLET_PACKAGE));
       }
    }
@@ -192,7 +195,7 @@ public class ServletNewServletCommandTest
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
       assertEquals(0, javaResource.getJavaType().getSyntaxErrors().size());
       assertTrue(javaResource.getJavaType().hasAnnotation(WebServlet.class));
-      JavaClass javaClass = javaResource.getJavaType();
+      JavaClassSource javaClass = javaResource.getJavaType();
       assertEquals(2, javaClass.getMethods().size());
    }
 }

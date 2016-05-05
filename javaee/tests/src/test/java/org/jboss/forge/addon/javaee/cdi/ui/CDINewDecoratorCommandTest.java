@@ -106,7 +106,7 @@ public class CDINewDecoratorCommandTest
          assertEquals("CDI: New Decorator", metadata.getName());
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("CDI", metadata.getCategory().getSubCategory().getName());
-         assertEquals(5, controller.getInputs().size());
+         assertEquals(7, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));

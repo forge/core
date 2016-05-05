@@ -97,11 +97,13 @@ public class ServletNewFilterCommandTest
          assertEquals("Servlet: New Filter", metadata.getName());
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("Servlet", metadata.getCategory().getSubCategory().getName());
-         assertEquals(3, controller.getInputs().size());
+         assertEquals(5, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
+         assertTrue(controller.hasInput("extends"));
+         assertTrue(controller.hasInput("implements"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_SERVLET_PACKAGE));
       }
    }

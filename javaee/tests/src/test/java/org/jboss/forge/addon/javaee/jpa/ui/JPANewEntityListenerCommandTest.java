@@ -108,11 +108,13 @@ public class JPANewEntityListenerCommandTest
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("JPA", metadata.getCategory().getSubCategory().getName());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
-         assertEquals(4, controller.getInputs().size());
+         assertEquals(6, controller.getInputs().size());
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
          assertTrue(controller.hasInput("lifecycles"));
+         assertTrue(controller.hasInput("extends"));
+         assertTrue(controller.hasInput("implements"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_ENTITY_PACKAGE));
       }
    }

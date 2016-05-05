@@ -105,11 +105,13 @@ public class FacesNewValidatorCommandTest
          assertEquals("Faces: New Validator", metadata.getName());
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("JSF", metadata.getCategory().getSubCategory().getName());
-         assertEquals(3, controller.getInputs().size());
+         assertEquals(5, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
+         assertTrue(controller.hasInput("extends"));
+         assertTrue(controller.hasInput("implements"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_FACES_VALIDATOR_PACKAGE));
       }
    }

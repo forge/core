@@ -109,12 +109,14 @@ public class WebSocketNewServerEndpointCommandTest
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("WebSocket", metadata.getCategory().getSubCategory().getName());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
-         assertEquals(5, controller.getInputs().size());
+         assertEquals(7, controller.getInputs().size());
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("overwrite"));
          assertTrue(controller.hasInput("methods"));
          assertTrue(controller.hasInput("uri"));
+         assertTrue(controller.hasInput("extends"));
+         assertTrue(controller.hasInput("implements"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_WEBSOCKET_PACKAGE));
       }
    }
