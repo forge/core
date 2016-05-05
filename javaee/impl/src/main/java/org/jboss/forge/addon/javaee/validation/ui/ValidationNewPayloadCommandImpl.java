@@ -36,7 +36,19 @@ public class ValidationNewPayloadCommandImpl extends AbstractValidationCommand<J
    {
       return JavaClassSource.class;
    }
+   
+   @Override
+   protected boolean supportsExtends()
+   {
+      return false;
+   }
 
+   @Override
+   protected boolean supportsImplements()
+   {
+      return false;
+   }
+   
    @Override
    public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source)
             throws Exception
