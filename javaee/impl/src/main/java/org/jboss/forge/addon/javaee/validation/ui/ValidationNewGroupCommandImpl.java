@@ -34,7 +34,18 @@ public class ValidationNewGroupCommandImpl extends AbstractValidationCommand<Jav
    {
       return "Constraint Group";
    }
+   
+   @Override
+   protected boolean supportsExtends()
+   {
+      return false;
+   }
 
+   @Override
+   protected boolean supportsImplements()
+   {
+      return false;
+   }
    @Override
    protected Class<JavaInterfaceSource> getSourceType()
    {
