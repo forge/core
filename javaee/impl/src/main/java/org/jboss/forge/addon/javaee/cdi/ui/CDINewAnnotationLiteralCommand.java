@@ -125,6 +125,18 @@ public class CDINewAnnotationLiteralCommand extends AbstractCDICommand<JavaClass
    }
 
    @Override
+   protected boolean supportsExtends()
+   {
+      return false;
+   }
+
+   @Override
+   protected boolean supportsImplements()
+   {
+      return false;
+   }
+
+   @Override
    public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource annotationLiteral)
             throws Exception
    {
