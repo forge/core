@@ -7,6 +7,8 @@
 
 package org.jboss.forge.addon.maven.resources;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,6 +26,7 @@ import org.jboss.forge.addon.maven.util.MavenJDOMWriter;
 import org.jboss.forge.addon.parser.xml.resources.AbstractXMLResource;
 import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.resource.ResourceFactory;
+import org.jboss.forge.furnace.util.Streams;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
@@ -115,16 +118,25 @@ public class MavenModelResourceImpl extends AbstractXMLResource implements Maven
       {
          throw new RuntimeException("Could not read POM file: " + getFullyQualifiedName(), e);
       }
-      MavenJDOMWriter writer = new MavenJDOMWriter();
-      try (OutputStream resourceOutputStream = getResourceOutputStream();
-               OutputStreamWriter os = new OutputStreamWriter(resourceOutputStream))
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      try (OutputStreamWriter os = new OutputStreamWriter(baos))
       {
+         MavenJDOMWriter writer = new MavenJDOMWriter();
          writer.write(pom, document, "UTF-8", os);
       }
       catch (IOException e)
       {
          throw new RuntimeException("Could not write POM file: " + getFullyQualifiedName(), e);
       }
+      try (OutputStream resourceOutputStream = getResourceOutputStream())
+      {
+         Streams.write(new ByteArrayInputStream(baos.toByteArray()), resourceOutputStream);
+      }
+      catch (IOException e)
+      {
+         throw new RuntimeException("Error while writing to resource stream: " + getFullyQualifiedName(), e);
+      }
+
       return this;
    }
 

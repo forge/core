@@ -7,6 +7,9 @@
 
 package org.jboss.forge.addon.maven.util;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
@@ -40,6 +43,23 @@ public class MavenJDOMWriterTest
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       writer.write(model, document, "UTF-8", new OutputStreamWriter(baos));
       Assert.assertEquals(pom.replace("myartifactid", "mytest").trim(), baos.toString().trim());
+   }
+
+   @Test
+   public void testConcurrentModificationShouldNotHappen() throws Exception
+   {
+      Path path = Paths.get("src/test/resources/FORGE-2646-pom.xml");
+      String pom = new String(Files.readAllBytes(path));
+      Assert.assertThat(pom, containsString("wildfly-swarm-plugin"));
+      Model model = new MavenXpp3Reader().read(new StringReader(pom));
+      model.getBuild().getPlugins().remove(0);
+      SAXBuilder saxBuilder = new SAXBuilder();
+      Document document = saxBuilder.build(new StringReader(pom));
+      MavenJDOMWriter writer = new MavenJDOMWriter();
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      writer.write(model, document, "UTF-8", new OutputStreamWriter(baos));
+      Assert.assertThat(baos.toString(), not(containsString("wildfly-swarm-plugin")));
+
    }
 
 }
