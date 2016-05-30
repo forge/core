@@ -35,6 +35,7 @@ import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
+import org.jboss.forge.addon.ui.input.events.ValueChangeEvent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
@@ -79,7 +80,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
                })
                .setValueChoices(() -> catalogValueChoices);
 
-      databaseCatalog.addValueChangeListener((event) -> updateValueChoices(context));
+      databaseCatalog.addValueChangeListener((event) -> updateValueChoices(context, event));
 
       databaseSchema = factory.createSelectOne("databaseSchema", String.class)
                .setLabel("Database Schema")
@@ -90,13 +91,13 @@ public class DatabaseTableSelectionStep implements UIWizardStep
                })
                .setValueChoices(() -> schemaValueChoices);
 
-      databaseSchema.addValueChangeListener((event) -> updateValueChoices(context));
+      databaseSchema.addValueChangeListener((event) -> updateValueChoices(context, event));
 
       databaseTables = factory.createSelectMany("databaseTables", String.class)
                .setLabel("Database Tables")
                .setDescription("The database tables for which to generate entities. Use '*' to select all tables")
                .setValueChoices(() -> tableValueChoices);
-      updateValueChoices(context);
+      updateValueChoices(context, null);
       builder.add(databaseCatalog).add(databaseSchema).add(databaseTables);
    }
 
@@ -275,7 +276,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
       return (GenerateEntitiesCommandDescriptor) attributeMap.get(GenerateEntitiesCommandDescriptor.class);
    }
 
-   private void updateValueChoices(UIContext context)
+   private void updateValueChoices(UIContext context, ValueChangeEvent event)
    {
       List<DatabaseTable> tables = getTables(context);
       // Update Catalogs
@@ -284,18 +285,22 @@ public class DatabaseTableSelectionStep implements UIWizardStep
                .map((item) -> item.getCatalog())
                .filter(Objects::nonNull)
                .collect(Collectors.toCollection(TreeSet::new));
+      final String catalog = (event != null && event.getSource() == databaseCatalog) ? (String) event.getNewValue()
+               : databaseCatalog.getValue();
       // Update schemas
       schemaValueChoices = tables
                .stream()
-               .filter((item) -> Objects.equals(item.getCatalog(), databaseCatalog.getValue()))
+               .filter((item) -> Objects.equals(item.getCatalog(), catalog))
                .map((item) -> item.getSchema())
                .filter(Objects::nonNull)
                .collect(Collectors.toCollection(TreeSet::new));
+      final String schema = (event != null && event.getSource() == databaseSchema) ? (String) event.getNewValue()
+               : databaseSchema.getValue();
       // Update tables
       tableValueChoices = tables
                .stream()
-               .filter(item -> Objects.equals(item.getCatalog(), databaseCatalog.getValue()))
-               .filter(item -> Objects.equals(item.getSchema(), databaseSchema.getValue()))
+               .filter(item -> Objects.equals(item.getCatalog(), catalog))
+               .filter(item -> Objects.equals(item.getSchema(), schema))
                .map((item) -> item.getName())
                .filter(Objects::nonNull)
                .collect(Collectors.toCollection(TreeSet::new));
