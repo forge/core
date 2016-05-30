@@ -122,10 +122,13 @@ public class DatabaseTableSelectionStep implements UIWizardStep
             context.addValidationError(databaseTables, exception.getMessage());
          }
       }
-      List<String> list = Lists.toList(databaseTables.getValue());
-      if (list == null || list.isEmpty())
+      else
       {
-         context.addValidationError(databaseTables, "At least one database table must be specified");
+         List<String> list = Lists.toList(databaseTables.getValue());
+         if (list == null || list.isEmpty())
+         {
+            context.addValidationError(databaseTables, "At least one database table must be specified");
+         }
       }
    }
 
@@ -259,7 +262,10 @@ public class DatabaseTableSelectionStep implements UIWizardStep
          attributeMap.put(DatabaseTable.class.getName(), tables);
          attributeMap.put("DatabaseTableProperties", descriptor.getConnectionProperties());
       }
-      allTables.addAll(tables);
+      if (tables != null)
+      {
+         allTables.addAll(tables);
+      }
       return allTables;
    }
 
