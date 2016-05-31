@@ -54,7 +54,7 @@ public class ConfigurationImpl implements Configuration
          }
       }
 
-      throw new RuntimeException("Configuration '" + configElement + "' not found");
+      return null;
    }
 
    @Override
