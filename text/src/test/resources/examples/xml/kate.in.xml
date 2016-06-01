@@ -1,12 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-    Copyright 2016 Red Hat, Inc. and/or its affiliates.
-
-    Licensed under the Eclipse Public License version 1.0, available at
-    http://www.eclipse.org/legal/epl-v10.html
-
--->
 <!DOCTYPE language SYSTEM "language.dtd">
 <language name="Eiffel" version="1.02" kateversion="2.1" section="Sources" extensions="*.e" mimetype="text/x-eiffel-src">
         <highlighting>

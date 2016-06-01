@@ -1,11 +1,3 @@
-<!--
-
-    Copyright 2016 Red Hat, Inc. and/or its affiliates.
-
-    Licensed under the Eclipse Public License version 1.0, available at
-    http://www.eclipse.org/legal/epl-v10.html
-
--->
 <Window x:Class="HelloCoderay.Window" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Window" Height="300" Width="300">
   <Grid>
     <Label Content="Hello, Coderay!" Height="28" HorizontalAlignment="Left" Margin="38,54,0,0" Name="label1" VerticalAlignment="Top" />
