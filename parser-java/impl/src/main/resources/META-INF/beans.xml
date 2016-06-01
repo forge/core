@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
 
     Copyright 2016 Red Hat, Inc. and/or its affiliates.
@@ -6,3 +7,4 @@
     http://www.eclipse.org/legal/epl-v10.html
 
 -->
+<beans xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/beans_1_0.xsd"/>
