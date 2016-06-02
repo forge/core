@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>environment-parent</artifactId>
-      <version>3.2.1-SNAPSHOT</version>
+      <version>3.2.1.Final</version>
    </parent>
    <artifactId>environment-tests</artifactId>
    <name>Forge - Environment Addon Tests</name>
