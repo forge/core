@@ -19,6 +19,7 @@
    <packaging>pom</packaging>
 
    <properties>
+      <angularjs.addon.version>2.1.6.Final</angularjs.addon.version>
    </properties>
 
    <build>
@@ -38,6 +39,7 @@
                      <addonRepository>${project.build.directory}/addons</addonRepository>
                      <addonIds>
                         <addonId>org.jboss.forge.addon:core,${project.version}</addonId>
+                        <addonId>org.jboss.forge.addon:angularjs,${angularjs.addon.version}</addonId>
                      </addonIds>
                   </configuration>
                </execution>
