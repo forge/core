@@ -103,7 +103,18 @@ public class DatabaseTableSelectionStep implements UIWizardStep
                .setLabel("Database Tables")
                .setDescription("The database tables for which to generate entities. Use '*' to select all tables")
                .setValueChoices(() -> tableValueChoices);
-      updateValueChoices(context, null);
+      Database database = updateValueChoices(context, null);
+      if (database != null)
+      {
+         if (database.isCatalogSet())
+         {
+            databaseCatalog.setValue(database.getCatalog());
+         }
+         if (database.isSchemaSet())
+         {
+            databaseSchema.setValue(database.getSchema());
+         }
+      }
       builder.add(databaseCatalog).add(databaseSchema).add(databaseTables);
    }
 
@@ -248,32 +259,25 @@ public class DatabaseTableSelectionStep implements UIWizardStep
       return result;
    }
 
-   @SuppressWarnings("unchecked")
-   private synchronized List<DatabaseTable> getTables(UIContext context)
+   private synchronized Database getDatabase(UIContext context)
    {
-      List<DatabaseTable> allTables = new ArrayList<>();
       Map<Object, Object> attributeMap = context.getAttributeMap();
-      List<DatabaseTable> tables = (List<DatabaseTable>) attributeMap
-               .get(DatabaseTable.class.getName());
-      if (tables == null || connectionInfoHasChanged(context))
+      Database database = (Database) attributeMap.get(Database.class.getName());
+      if (database == null || connectionInfoHasChanged(context))
       {
          GenerateEntitiesCommandDescriptor descriptor = getDescriptor(context);
          try
          {
-            tables = JDBCUtils.getTables(descriptor);
+            database = JDBCUtils.getDatabaseInfo(descriptor);
          }
          catch (Exception e)
          {
             exception = e;
          }
-         attributeMap.put(DatabaseTable.class.getName(), tables);
+         attributeMap.put(Database.class.getName(), database);
          attributeMap.put("DatabaseTableProperties", descriptor.getConnectionProperties());
       }
-      if (tables != null)
-      {
-         allTables.addAll(tables);
-      }
-      return allTables;
+      return database;
    }
 
    private GenerateEntitiesCommandDescriptor getDescriptor(UIContext context)
@@ -282,9 +286,14 @@ public class DatabaseTableSelectionStep implements UIWizardStep
       return (GenerateEntitiesCommandDescriptor) attributeMap.get(GenerateEntitiesCommandDescriptor.class);
    }
 
-   private void updateValueChoices(UIContext context, ValueChangeEvent event)
+   private Database updateValueChoices(UIContext context, ValueChangeEvent event)
    {
-      List<DatabaseTable> tables = getTables(context);
+      Database database = getDatabase(context);
+      List<DatabaseTable> tables = new ArrayList<>();
+      if (database != null)
+      {
+         tables.addAll(database.getTables());
+      }
       // Update Catalogs
       catalogValueChoices = tables
                .stream()
@@ -310,5 +319,6 @@ public class DatabaseTableSelectionStep implements UIWizardStep
                .map((item) -> item.getName())
                .filter(Objects::nonNull)
                .collect(Collectors.toCollection(TreeSet::new));
+      return database;
    }
 }
