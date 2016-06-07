@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>maven-parent</artifactId>
-      <version>3.2.2.Final</version>
+      <version>3.2.3-SNAPSHOT</version>
    </parent>
    <artifactId>maven-api</artifactId>
    <name>Forge - Maven API</name>

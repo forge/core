@@ -9,7 +9,7 @@
 
    <groupId>org.jboss.forge</groupId>
    <artifactId>forge-parent</artifactId>
-   <version>3.2.2.Final</version>
+   <version>3.2.3-SNAPSHOT</version>
    <packaging>pom</packaging>
 
    <name>Forge - Parent</name>
@@ -471,7 +471,7 @@
       <connection>${forge.scm.connection}</connection>
       <developerConnection>${forge.developer.connection}</developerConnection>
       <url>${forge.scm.url}</url>
-      <tag>3.2.2.Final</tag>
+      <tag>HEAD</tag>
    </scm>
 
    <distributionManagement>
