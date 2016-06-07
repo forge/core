@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>shell-parent</artifactId>
-      <version>3.2.2-SNAPSHOT</version>
+      <version>3.2.2.Final</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
    <artifactId>shell-spi</artifactId>
