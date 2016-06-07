@@ -14,7 +14,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.persistence.Id;
 
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
 import org.jboss.forge.addon.javaee.ejb.ui.EJBSetupWizardImpl;
@@ -106,14 +105,7 @@ public class DaoFromEntityCommand extends AbstractJavaEECommand implements Prere
          }
       }
       targets.setValueChoices(supportedEntities);
-      targets.setItemLabelConverter(new Converter<JavaClassSource, String>()
-      {
-         @Override
-         public String convert(JavaClassSource source)
-         {
-            return source == null ? null : source.getQualifiedName();
-         }
-      });
+      targets.setItemLabelConverter(JavaClassSource::getQualifiedName);
       List<String> persistenceUnits = new ArrayList<>();
       List<PersistenceUnitCommon> allUnits = persistenceFacet.getConfig().getAllPersistenceUnit();
       for (PersistenceUnitCommon persistenceUnit : allUnits)
@@ -131,25 +123,11 @@ public class DaoFromEntityCommand extends AbstractJavaEECommand implements Prere
       generator.setDefaultValue(defaultResourceGenerator);
       if (context.getProvider().isGUI())
       {
-         generator.setItemLabelConverter(new Converter<DaoResourceGenerator, String>()
-         {
-            @Override
-            public String convert(DaoResourceGenerator source)
-            {
-               return source == null ? null : source.getDescription();
-            }
-         });
+         generator.setItemLabelConverter(DaoResourceGenerator::getDescription);
       }
       else
       {
-         generator.setItemLabelConverter(new Converter<DaoResourceGenerator, String>()
-         {
-            @Override
-            public String convert(DaoResourceGenerator source)
-            {
-               return source == null ? null : source.getName();
-            }
-         });
+         generator.setItemLabelConverter(DaoResourceGenerator::getName);
       }
       builder.add(targets)
                .add(generator)
