@@ -54,8 +54,7 @@ public class EJBOperations
             final String ejbName,
             final String targetPackage,
             final EJBType ejbType,
-            final boolean serializable
-            ) throws FileNotFoundException
+            final boolean serializable) throws FileNotFoundException
    {
       final JavaSourceFacet java = project.getFacet(JavaSourceFacet.class);
       JavaClassSource javaClass = createJavaClass(ejbName, targetPackage, ejbType, serializable);
@@ -79,8 +78,7 @@ public class EJBOperations
             final String ejbName,
             final String ejbPackage,
             final EJBType ejbType,
-            final boolean serializable
-            )
+            final boolean serializable)
    {
       JavaClassSource javaClass = createJavaClass(ejbName, ejbPackage, ejbType, serializable);
       JavaResource javaResource = getJavaResource(target, javaClass.getName());
@@ -125,8 +123,7 @@ public class EJBOperations
 
       ejb.addImport(ActivationConfigProperty.class);
       ejb.addImport(Message.class);
-      ejb.addInterface(MessageListener.class);
-      ejb.addMethod("public void onMessage(Message message) {}");
+      ejb.implementInterface(MessageListener.class);
 
       AnnotationSource<JavaClassSource> annotation = ejb.getAnnotation(EJBType.MESSAGEDRIVEN.getAnnotation());
       if (annotation == null)
