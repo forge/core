@@ -42,12 +42,48 @@ public class EJBOperationsTest
       Assert.assertThat(mdb.getInterfaces(), hasItem("javax.jms.MessageListener"));
       AnnotationSource<JavaClassSource> annotation = mdb.getAnnotation(MessageDriven.class);
       AnnotationSource<JavaClassSource> configs[] = annotation.getAnnotationArrayValue("activationConfig");
-
+      Assert.assertThat(configs.length, equalTo(2));
       Assert.assertThat(configs[0].getStringValue("propertyName"), equalTo("destinationType"));
       Assert.assertThat(configs[0].getStringValue("propertyValue"), equalTo("javax.jms.Queue"));
 
       Assert.assertThat(configs[1].getStringValue("propertyName"), equalTo("destination"));
       Assert.assertThat(configs[1].getStringValue("propertyValue"), equalTo("queue/foo"));
+   }
+
+   @Test
+   public void testAddActivationConfig()
+   {
+      JavaClassSource mdb = Roaster.create(JavaClassSource.class).setName("FooMDB");
+      ejbOp.setupMessageDrivenBean(mdb, JMSDestinationType.QUEUE, "queue/foo");
+      ejbOp.addActivationConfigProperty(mdb, "address", "bar");
+      Assert.assertThat(mdb.hasAnnotation(MessageDriven.class), is(true));
+      Assert.assertThat(mdb.getInterfaces(), hasItem("javax.jms.MessageListener"));
+      AnnotationSource<JavaClassSource> annotation = mdb.getAnnotation(MessageDriven.class);
+      AnnotationSource<JavaClassSource> configs[] = annotation.getAnnotationArrayValue("activationConfig");
+      Assert.assertThat(configs.length, equalTo(3));
+      Assert.assertThat(configs[0].getStringValue("propertyName"), equalTo("destinationType"));
+      Assert.assertThat(configs[0].getStringValue("propertyValue"), equalTo("javax.jms.Queue"));
+
+      Assert.assertThat(configs[1].getStringValue("propertyName"), equalTo("destination"));
+      Assert.assertThat(configs[1].getStringValue("propertyValue"), equalTo("queue/foo"));
+
+      Assert.assertThat(configs[2].getStringValue("propertyName"), equalTo("address"));
+      Assert.assertThat(configs[2].getStringValue("propertyValue"), equalTo("bar"));
+   }
+
+   @Test
+   public void testRemoveActivationConfigProperty()
+   {
+      JavaClassSource mdb = Roaster.create(JavaClassSource.class).setName("FooMDB");
+      ejbOp.setupMessageDrivenBean(mdb, JMSDestinationType.QUEUE, "queue/foo");
+      ejbOp.removeActivationConfigProperty(mdb, "destinationType");
+      Assert.assertThat(mdb.hasAnnotation(MessageDriven.class), is(true));
+      Assert.assertThat(mdb.getInterfaces(), hasItem("javax.jms.MessageListener"));
+      AnnotationSource<JavaClassSource> annotation = mdb.getAnnotation(MessageDriven.class);
+      AnnotationSource<JavaClassSource> configs[] = annotation.getAnnotationArrayValue("activationConfig");
+      Assert.assertThat(configs.length, equalTo(1));
+      Assert.assertThat(configs[0].getStringValue("propertyName"), equalTo("destination"));
+      Assert.assertThat(configs[0].getStringValue("propertyValue"), equalTo("queue/foo"));
    }
 
 }

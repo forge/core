@@ -15,7 +15,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.jboss.forge.addon.convert.Converter;
 import org.jboss.forge.addon.javaee.ejb.EJBFacet;
 import org.jboss.forge.addon.javaee.ejb.EJBOperations;
 import org.jboss.forge.addon.javaee.ui.AbstractJavaEECommand;
@@ -84,14 +83,7 @@ public class EJBSetMethodTransactionAttributeCommand extends AbstractJavaEEComma
 
    private void setupMethods(UIContext uiContext)
    {
-      method.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
-            return targetEjb.hasValue();
-         }
-      });
+      method.setEnabled(() -> targetEjb.hasValue());
       method.setValueChoices(new Callable<Iterable<JavaMethodResource>>()
       {
          @Override
@@ -115,14 +107,7 @@ public class EJBSetMethodTransactionAttributeCommand extends AbstractJavaEEComma
          }
       });
 
-      method.setItemLabelConverter(new Converter<JavaMethodResource, String>()
-      {
-         @Override
-         public String convert(JavaMethodResource source)
-         {
-            return source.getName();
-         }
-      });
+      method.setItemLabelConverter(JavaMethodResource::getName);
    }
 
    private void setupEJBs(UIContext context)
