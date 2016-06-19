@@ -18,6 +18,7 @@ public enum HibernateDialect {
 	DB2_AS400("DB2 AS/400", "org.hibernate.dialect.DB2400Dialect"),
 	DB2_OS390("DB2 OS390", "org.hibernate.dialect.DB2390Dialect"),
 	POSTGRESQL("PostgreSQL", "org.hibernate.dialect.PostgreSQLDialect"),
+	POSTGRESQL82("PostgreSQL82","org.hibernate.dialect.PostgreSQL82Dialect"),
 	MICROSOFT_SQL_SERVER_2000("Microsoft SQL Server 2000", "org.hibernate.dialect.SQLServerDialect"),
 	MICROSOFT_SQL_SERVER_2005("Microsoft SQL Server 2005", "org.hibernate.dialect.SQLServer2005Dialect"),
 	MICROSOFT_SQL_SERVER_2008("Microsoft SQL Server 2008", "org.hibernate.dialect.SQLServer2008Dialect"),
