@@ -25,7 +25,7 @@ public class GitIgnoreEditCommandImpl extends AbstractGitCommand implements GitI
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), this.getClass()).name("GITIGNORE: Edit")
+      return Metadata.from(super.getMetadata(context), this.getClass()).name("GitIgnore: Edit")
                .description("Open .gitignore and edit it");
    }
 

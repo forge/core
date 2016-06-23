@@ -26,7 +26,7 @@ public class GitIgnoreRemovePatternCommandImpl extends AbstractGitCommand implem
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), this.getClass()).name("GIT: Remove pattern")
+      return Metadata.from(super.getMetadata(context), this.getClass()).name("Git: Remove pattern")
                .description("Remove pattern from .gitignore");
    }
 

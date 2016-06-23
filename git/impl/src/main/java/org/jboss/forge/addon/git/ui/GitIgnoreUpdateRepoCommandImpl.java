@@ -26,7 +26,7 @@ public class GitIgnoreUpdateRepoCommandImpl extends AbstractGitCommand implement
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), this.getClass()).name("GITIGNORE: Update templates")
+      return Metadata.from(super.getMetadata(context), this.getClass()).name("GitIgnore: Update templates")
                .description("Update the local .gitignore template repository");
    }
 

@@ -33,7 +33,7 @@ public class GitCloneCommandImpl extends AbstractGitCommand implements GitCloneC
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), this.getClass()).name("GIT: Clone")
+      return Metadata.from(super.getMetadata(context), this.getClass()).name("Git: Clone")
                .description("Clone a GIT repository");
    }
 

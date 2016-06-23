@@ -24,7 +24,7 @@ public class GitIgnoreAddPatternCommandImpl extends AbstractGitCommand implement
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), this.getClass()).name("GITIGNORE: Add pattern")
+      return Metadata.from(super.getMetadata(context), this.getClass()).name("GitIgnore: Add pattern")
                .description("Add pattern to .gitignore");
    }
 

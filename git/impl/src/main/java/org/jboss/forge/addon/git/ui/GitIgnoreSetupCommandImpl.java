@@ -27,6 +27,7 @@ import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 @FacetConstraint({ GitFacet.class })
 public class GitIgnoreSetupCommandImpl extends AbstractGitCommand implements GitIgnoreSetupCommand
 {
+   @SuppressWarnings("rawtypes")
    private UIInput<FileResource> templateRepoDir;
    private UIInput<String> repository;
 
@@ -38,7 +39,7 @@ public class GitIgnoreSetupCommandImpl extends AbstractGitCommand implements Git
    {
       return Metadata
                .from(super.getMetadata(context), this.getClass())
-               .name("GITIGNORE: Setup")
+               .name("GitIgnore: Setup")
                .description(
                         "Create .gitignore files based on template files from https://github.com/github/gitignore.git.");
    }

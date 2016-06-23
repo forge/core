@@ -22,7 +22,7 @@ public class GitSetupCommandImpl extends AbstractGitCommand implements GitSetupC
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), this.getClass()).name("GIT: Setup")
+      return Metadata.from(super.getMetadata(context), this.getClass()).name("Git: Setup")
                .description("Prepares the project for functioning in GIT context");
    }
 

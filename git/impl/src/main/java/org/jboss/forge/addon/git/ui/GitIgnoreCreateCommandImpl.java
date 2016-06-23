@@ -45,7 +45,7 @@ public class GitIgnoreCreateCommandImpl extends AbstractGitCommand implements Gi
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), this.getClass()).name("GITIGNORE: Create")
+      return Metadata.from(super.getMetadata(context), this.getClass()).name("GitIgnore: Create")
                .description("Create .gitignore from templates");
    }
 
@@ -84,7 +84,7 @@ public class GitIgnoreCreateCommandImpl extends AbstractGitCommand implements Gi
       @Override
       public Iterable<String> getCompletionProposals(UIContext context, InputComponent<?, String> input, String value)
       {
-         List<String> result = new LinkedList<String>();
+         List<String> result = new LinkedList<>();
 
          String[] values = value.split(" ");
 

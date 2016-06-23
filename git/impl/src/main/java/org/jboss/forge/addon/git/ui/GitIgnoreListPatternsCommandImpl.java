@@ -20,7 +20,7 @@ public class GitIgnoreListPatternsCommandImpl extends AbstractGitCommand impleme
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), this.getClass()).name("GITIGNORE: List patterns")
+      return Metadata.from(super.getMetadata(context), this.getClass()).name("GitIgnore: List patterns")
                .description("List available .gitignore patterns");
    }
 

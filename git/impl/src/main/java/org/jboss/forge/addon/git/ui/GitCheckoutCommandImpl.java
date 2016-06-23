@@ -33,7 +33,7 @@ public class GitCheckoutCommandImpl extends AbstractGitCommand implements GitChe
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), this.getClass()).name("GIT: Checkout")
+      return Metadata.from(super.getMetadata(context), this.getClass()).name("Git: Checkout")
                .description("Checkout a branch from GIT repository or create a new one");
    }
 

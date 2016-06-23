@@ -24,7 +24,7 @@ public class GitIgnoreListTemplatesCommandImpl extends AbstractGitCommand implem
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.from(super.getMetadata(context), this.getClass()).name("GITIGNORE: List templates")
+      return Metadata.from(super.getMetadata(context), this.getClass()).name("GitIgnore: List templates")
                .description("List all available .gitignore templates");
    }
 
