@@ -52,24 +52,15 @@ public class JavaGenerateSerialVersionUIDCommand extends AbstractProjectCommand
    private UISelectMany<String> targetClasses;
    private UIInput<Boolean> useDefaultValue;
 
-   private ConverterFactory converterFactory;
-   private ProjectFactory projectFactory;
-   private ProjectOperations projectOperations;
-
-   public JavaGenerateSerialVersionUIDCommand()
-   {
-      Furnace furnace = Furnace.instance(getClass().getClassLoader());
-      AddonRegistry addonRegistry = furnace.getAddonRegistry();
-      this.converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
-      this.projectFactory = addonRegistry.getServices(ProjectFactory.class).get();
-      this.projectOperations = addonRegistry.getServices(ProjectOperations.class).get();
-   }
-
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
       Project project = getSelectedProject(builder);
       InputComponentFactory inputFactory = builder.getInputComponentFactory();
+      Furnace furnace = Furnace.instance(getClass().getClassLoader());
+      AddonRegistry addonRegistry = furnace.getAddonRegistry();
+      ConverterFactory converterFactory = addonRegistry.getServices(ConverterFactory.class).get();
+      ProjectOperations projectOperations = addonRegistry.getServices(ProjectOperations.class).get();
 
       List<JavaResource> projectClasses = projectOperations.getProjectClasses(project);
 
@@ -169,7 +160,9 @@ public class JavaGenerateSerialVersionUIDCommand extends AbstractProjectCommand
    @Override
    protected ProjectFactory getProjectFactory()
    {
-      return projectFactory;
+      Furnace furnace = Furnace.instance(getClass().getClassLoader());
+      AddonRegistry addonRegistry = furnace.getAddonRegistry();
+      return addonRegistry.getServices(ProjectFactory.class).get();
    }
 
 }

@@ -46,17 +46,6 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
 
    private UIInput<String> profilename;
 
-   private Configuration userConfig;
-
-   private ResourceFactory resourceFactory;
-
-   public JavaFormatSourcesCommand()
-   {
-      Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
-      this.userConfig = furnace.getAddonRegistry().getServices(Configuration.class).get();
-      this.resourceFactory = furnace.getAddonRegistry().getServices(ResourceFactory.class).get();
-   }
-
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
@@ -81,6 +70,9 @@ public class JavaFormatSourcesCommand extends AbstractUICommand
       profilename = inputFactory.createInput("profilename", 'n', String.class);
       profilename.setDescription("The eclipse code format profile name");
 
+      Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
+      Configuration userConfig = furnace.getAddonRegistry().getServices(Configuration.class).get();
+      ResourceFactory resourceFactory = furnace.getAddonRegistry().getServices(ResourceFactory.class).get();
       String profileName = userConfig.getString(JavaResource.FORMATTER_PROFILE_NAME_KEY);
       if (!Strings.isNullOrEmpty(profileName))
       {

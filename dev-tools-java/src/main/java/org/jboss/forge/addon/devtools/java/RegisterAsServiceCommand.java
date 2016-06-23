@@ -48,14 +48,6 @@ public class RegisterAsServiceCommand extends AbstractProjectCommand
    private UIInput<JavaResource> type;
    private UIInput<String> serviceType;
 
-   private final ProjectFactory projectFactory;
-
-   public RegisterAsServiceCommand()
-   {
-      Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
-      this.projectFactory = furnace.getAddonRegistry().getServices(ProjectFactory.class).get();
-   }
-
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
@@ -161,7 +153,8 @@ public class RegisterAsServiceCommand extends AbstractProjectCommand
    @Override
    protected ProjectFactory getProjectFactory()
    {
-      return projectFactory;
+      Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
+      return furnace.getAddonRegistry().getServices(ProjectFactory.class).get();
    }
 
 }

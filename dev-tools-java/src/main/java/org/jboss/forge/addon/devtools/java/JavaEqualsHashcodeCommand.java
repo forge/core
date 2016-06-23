@@ -53,17 +53,6 @@ public class JavaEqualsHashcodeCommand extends AbstractProjectCommand
 
    private UISelectMany<String> fields;
 
-   private ProjectFactory projectFactory;
-
-   private ProjectOperations projectOperations;
-
-   public JavaEqualsHashcodeCommand()
-   {
-      Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
-      this.projectFactory = furnace.getAddonRegistry().getServices(ProjectFactory.class).get();
-      this.projectOperations = furnace.getAddonRegistry().getServices(ProjectOperations.class).get();
-   }
-
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
@@ -88,6 +77,8 @@ public class JavaEqualsHashcodeCommand extends AbstractProjectCommand
       {
          targetClass.setValue((JavaResource) initialSelection.get());
       }
+      Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
+      ProjectOperations projectOperations = furnace.getAddonRegistry().getServices(ProjectOperations.class).get();
       targetClass.setValueChoices(projectOperations.getProjectClasses(project));
 
       fields = inputFactory.createSelectMany("fields", String.class);
@@ -114,14 +105,7 @@ public class JavaEqualsHashcodeCommand extends AbstractProjectCommand
             return strings;
          }
       });
-      fields.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call()
-         {
-            return (targetClass.getValue() != null);
-         }
-      });
+      fields.setEnabled(() -> targetClass.hasValue());
       builder.add(targetClass).add(fields);
    }
 
@@ -184,6 +168,7 @@ public class JavaEqualsHashcodeCommand extends AbstractProjectCommand
    @Override
    protected ProjectFactory getProjectFactory()
    {
-      return projectFactory;
+      Furnace furnace = SimpleContainer.getFurnace(this.getClass().getClassLoader());
+      return furnace.getAddonRegistry().getServices(ProjectFactory.class).get();
    }
 }
