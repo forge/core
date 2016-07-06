@@ -109,10 +109,9 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
                         + "' does not exist");
             }
          }
-      }).addValueChangeListener(
-               new CompositeValueChangeListener(
-                        new ConnectionStaleValueChangeListener(),
-                        new DriverNamesStaleValueChangeListener()));
+      });
+      driverLocation.addValueChangeListener(new ConnectionStaleValueChangeListener());
+      driverLocation.addValueChangeListener(new DriverNamesStaleValueChangeListener());
 
       driverClass.setValueChoices(new LocateDriverClassNamesCallable())
                .setItemLabelConverter((source) -> source.getName())

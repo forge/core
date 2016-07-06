@@ -7,7 +7,6 @@
 package org.jboss.forge.addon.database.tools.connections.ui;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import org.jboss.forge.addon.database.tools.connections.AbstractConnectionProfileDetailsPage;
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
@@ -55,7 +54,7 @@ public class CreateConnectionProfileCommandImpl extends AbstractConnectionProfil
       ConnectionProfileManagerProvider provider = SimpleContainer
                .getServices(getClass().getClassLoader(), ConnectionProfileManagerProvider.class).get();
       ConnectionProfileManager manager = provider.getConnectionProfileManager();
-      Map<String, ConnectionProfile> connectionProfiles = manager.loadConnectionProfiles();
+      manager.loadConnectionProfiles();
       ConnectionProfile connectionProfile = new ConnectionProfile();
       connectionProfile.setName(name.getValue());
       connectionProfile.setDialect(hibernateDialect.getValue().getClassName());
