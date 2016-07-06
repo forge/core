@@ -114,7 +114,7 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
       driverLocation.addValueChangeListener(new DriverNamesStaleValueChangeListener());
 
       driverClass.setValueChoices(new LocateDriverClassNamesCallable())
-               .setItemLabelConverter((source) -> source.getName())
+               .setItemLabelConverter(Class::getName)
                .setDefaultValue(new Callable<Class>()
                {
                   @Override
