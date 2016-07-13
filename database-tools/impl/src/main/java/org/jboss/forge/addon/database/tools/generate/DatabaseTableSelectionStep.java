@@ -16,6 +16,8 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.hibernate.cfg.JDBCMetaDataConfiguration;
@@ -63,6 +65,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    private Set<String> tableValueChoices;
 
    private Throwable exception;
+   private static final Logger logger = Logger.getLogger(DatabaseTableSelectionStep.class.getName());
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -137,6 +140,12 @@ public class DatabaseTableSelectionStep implements UIWizardStep
          }
          else
          {
+            String message = exception.getMessage();
+            if (message == null)
+            {
+               message = String.format("%s during validation. Check logs for more information",
+                        exception.getClass().getName());
+            }
             context.addValidationError(databaseTables, exception.getMessage());
          }
       }
@@ -272,6 +281,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
          }
          catch (Exception e)
          {
+            logger.log(Level.SEVERE, "Error while fetching the DB info", exception);
             exception = e;
          }
          attributeMap.put(Database.class.getName(), database);

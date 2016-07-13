@@ -12,6 +12,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
@@ -54,6 +55,11 @@ public final class JDBCUtils
             p.setProperty("password", password);
             try (Connection con = driver.connect(url, p))
             {
+               // Some drivers (erroneously) return null
+               if (con == null)
+               {
+                  throw new SQLException(String.format("Cannot connect to %s with driver %s", url, driverName));
+               }
                String connectionSchema = null;
                try
                {
