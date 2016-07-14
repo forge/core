@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>parser-xml-parent</artifactId>
-      <version>3.2.3-SNAPSHOT</version>
+      <version>3.2.3.Final</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
    <artifactId>parser-xml</artifactId>
