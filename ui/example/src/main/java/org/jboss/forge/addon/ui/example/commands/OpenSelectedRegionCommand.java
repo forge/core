@@ -8,7 +8,6 @@
 package org.jboss.forge.addon.ui.example.commands;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -18,6 +17,7 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIRegion;
+import org.jboss.forge.addon.ui.context.UIRegionBuilder;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
@@ -73,54 +73,14 @@ public class OpenSelectedRegionCommand implements UICommand
    public Result execute(UIExecutionContext context) throws Exception
    {
       UIContext uiContext = context.getUIContext();
-      UISelection<FileResource<?>> selection = Selections.from(MockRegion::new, Arrays.asList(resource.getValue()));
+      UISelection<FileResource<?>> selection = Selections.from(
+               (r) -> UIRegionBuilder.create(r)
+                        .startPosition(startPosition.getValue())
+                        .endPosition(endPosition.getValue())
+                        .startLine(startLineNumber.getValue())
+                        .endLine(endLineNumber.getValue()),
+               Arrays.asList(resource.getValue()));
       uiContext.setSelection(selection);
       return Results.success();
-   }
-
-   public class MockRegion implements UIRegion<FileResource<?>>
-   {
-      private FileResource<?> resource;
-
-      public MockRegion(FileResource<?> resource)
-      {
-         this.resource = resource;
-      }
-
-      @Override
-      public int getStartPosition()
-      {
-         return startPosition.getValue();
-      }
-
-      @Override
-      public int getEndPosition()
-      {
-         return endPosition.getValue();
-      }
-
-      @Override
-      public int getStartLine()
-      {
-         return startLineNumber.getValue();
-      }
-
-      @Override
-      public int getEndLine()
-      {
-         return endLineNumber.getValue();
-      }
-
-      @Override
-      public Optional<String> getText()
-      {
-         return null;
-      }
-
-      @Override
-      public FileResource<?> getResource()
-      {
-         return resource;
-      }
    }
 }
