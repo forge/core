@@ -142,7 +142,7 @@ public class RunCommand extends AbstractShellCommand
                if (resource.exists())
                {
                   ScriptContext scriptContext = ScriptContextBuilder.create().currentResource(currentResource)
-                           .stdout(output.out()).stderr(output.err()).build();
+                           .stdout(output.out()).stderr(output.err()).timeout(timeout.getValue()).build();
                   result = (Result) scriptEngine.eval(resource.getContents(), scriptContext);
                   selectedResource = (Resource<?>) scriptContext
                            .getAttribute(ScriptContextBuilder.CURRENT_RESOURCE_ATTRIBUTE);

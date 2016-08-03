@@ -53,8 +53,15 @@ public class ScriptContextBuilder
       return this;
    }
 
+   public ScriptContextBuilder timeout(Integer value)
+   {
+      context.setAttribute(TIMEOUT_ATTRIBUTE, value, ScriptContext.ENGINE_SCOPE);
+      return this;
+   }
+
    public ScriptContext build()
    {
       return context;
    }
+
 }
