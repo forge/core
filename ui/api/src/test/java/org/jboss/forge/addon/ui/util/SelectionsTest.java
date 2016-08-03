@@ -9,9 +9,8 @@ package org.jboss.forge.addon.ui.util;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-import org.jboss.forge.addon.ui.context.UIRegion;
+import org.jboss.forge.addon.ui.context.UIRegionBuilder;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,59 +21,12 @@ import org.junit.Test;
  */
 public class SelectionsTest
 {
-
    @Test
    public void testRegionIsPresent()
    {
       List<String> list = Arrays.asList("A", "B", "C");
-      UISelection<String> selection = Selections.from(MockUIRegion::new, list);
+      UISelection<String> selection = Selections.from(r -> UIRegionBuilder.create(r).text(r), list);
       Assert.assertTrue(selection.getRegion().isPresent());
       Assert.assertEquals("A", selection.getRegion().get().getText().get());
-   }
-
-   private class MockUIRegion implements UIRegion<String>
-   {
-      private String resource;
-
-      public MockUIRegion(String resource)
-      {
-         this.resource = resource;
-      }
-
-      @Override
-      public int getStartPosition()
-      {
-         return 0;
-      }
-
-      @Override
-      public int getEndPosition()
-      {
-         return 0;
-      }
-
-      @Override
-      public int getStartLine()
-      {
-         return 0;
-      }
-
-      @Override
-      public int getEndLine()
-      {
-         return 0;
-      }
-
-      @Override
-      public Optional<String> getText()
-      {
-         return Optional.of(resource);
-      }
-
-      @Override
-      public String getResource()
-      {
-         return resource;
-      }
    }
 }

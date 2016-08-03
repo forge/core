@@ -10,7 +10,8 @@ package org.jboss.forge.addon.ui.context;
 import java.util.Optional;
 
 /**
- *
+ * Builder implementation of {@link UIRegion}
+ * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public class UIRegionBuilder<SELECTIONTYPE> implements UIRegion<SELECTIONTYPE>
