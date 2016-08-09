@@ -21,7 +21,7 @@ import static org.jboss.forge.addon.scaffold.faces.metawidget.inspector.ForgeIns
 import static org.metawidget.inspector.InspectionResultConstants.LARGE;
 import static org.metawidget.inspector.InspectionResultConstants.LOOKUP;
 import static org.metawidget.inspector.InspectionResultConstants.TRUE;
-import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_CONVERTER_ID;
+import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_CONVERTER;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_LOOKUP;
 
 import java.util.List;
@@ -52,8 +52,7 @@ import org.w3c.dom.Element;
  *
  * @author Richard Kennard
  */
-public class ForgeInspector
-         extends BaseObjectInspector
+public class ForgeInspector extends BaseObjectInspector
 {
    public static final int TEXT_AREA_GENERATION_LENGTH = 800;
 
@@ -124,7 +123,7 @@ public class ForgeInspector
                                     .getType())) + "Bean.all"));
 
          attributes
-                  .put(FACES_CONVERTER_ID,
+                  .put(FACES_CONVERTER,
                            StaticFacesUtils.wrapExpression(StringUtils.decapitalize(ClassUtils.getSimpleName(property
                                     .getType())) + "Bean.converter"));
 

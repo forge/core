@@ -18,7 +18,7 @@ import static org.metawidget.inspector.InspectionResultConstants.PARAMETERIZED_T
 import static org.metawidget.inspector.InspectionResultConstants.REQUIRED;
 import static org.metawidget.inspector.InspectionResultConstants.TRUE;
 import static org.metawidget.inspector.InspectionResultConstants.TYPE;
-import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_CONVERTER_ID;
+import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_CONVERTER;
 import static org.metawidget.inspector.faces.StaticFacesInspectionResultConstants.FACES_LOOKUP;
 
 import java.util.Collection;
@@ -71,8 +71,7 @@ import org.w3c.dom.NodeList;
  * @author Richard Kennard
  */
 
-public class EntityWidgetBuilder
-         extends HtmlWidgetBuilder
+public class EntityWidgetBuilder extends HtmlWidgetBuilder
 {
    //
    // Private statics
@@ -116,7 +115,8 @@ public class EntityWidgetBuilder
    //
 
    @Override
-   public StaticXmlWidget buildWidget(String elementName, Map<String, String> attributes, StaticXmlMetawidget metawidget)
+   public StaticXmlWidget buildWidget(String elementName, Map<String, String> attributes,
+            StaticXmlMetawidget metawidget)
    {
       // Suppress nested INVERSE ONE_TO_ONE, to avoid recursion
 
@@ -137,7 +137,7 @@ public class EntityWidgetBuilder
             // Cleaner to stop using a Converter for a read-only FACES_LOOKUP, than to make every Converter consider
             // whether it's really a UIInput (and should therefore use .toString instead of .getId())
 
-            attributes.remove(FACES_CONVERTER_ID);
+            attributes.remove(FACES_CONVERTER);
 
             // (unless parent is *already* a link, such as inside a table row)
 
@@ -578,7 +578,7 @@ public class EntityWidgetBuilder
          {
             outcome = "/" + outcome;
          }
-         
+
          link.putAttribute("outcome", outcome + "/" + controllerName + "/view");
 
          // ...pointing to the id

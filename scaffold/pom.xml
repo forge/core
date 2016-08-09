@@ -11,7 +11,7 @@
    <name>Forge - Scaffold Parent</name>
    <packaging>pom</packaging>
    <properties>
-      <version.metawidget>2.4</version.metawidget>
+      <version.metawidget>4.2</version.metawidget>
    </properties>
    <modules>
       <module>addon</module>
