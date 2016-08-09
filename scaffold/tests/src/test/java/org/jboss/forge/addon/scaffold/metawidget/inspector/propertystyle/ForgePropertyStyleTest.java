@@ -216,6 +216,7 @@ public class ForgePropertyStyleTest
       assertEquals(4, properties.size());
    }
 
+   @Test
    public void testConfig()
    {
       ForgePropertyStyleConfig config1 = new ForgePropertyStyleConfig();
