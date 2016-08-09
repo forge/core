@@ -200,6 +200,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       return resources;
    }
 
+   @SuppressWarnings("rawtypes")
    @Override
    public boolean isSetup(ScaffoldSetupContext setupContext)
    {
@@ -271,7 +272,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
    public List<Resource<?>> generateFrom(ScaffoldGenerationContext generationContext)
    {
       setProject(generationContext.getProject());
-      List<Resource<?>> generatedResources = new ArrayList<Resource<?>>();
+      List<Resource<?>> generatedResources = new ArrayList<>();
       Collection<?> resources = generationContext.getResources();
       for (Object resource : resources)
       {
@@ -354,9 +355,10 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       return builder.build();
    }
 
+   @SuppressWarnings("rawtypes")
    protected List<Resource<?>> generateIndex(String targetDir, final Resource<?> template)
    {
-      List<Resource<?>> result = new ArrayList<Resource<?>>();
+      List<Resource<?>> result = new ArrayList<>();
       WebResourcesFacet web = this.project.getFacet(WebResourcesFacet.class);
 
       ServletFacet servlet = this.project.getFacet(ServletFacet.class);
@@ -435,7 +437,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
    protected List<Resource<?>> generateTemplates(String targetDir)
    {
-      List<Resource<?>> result = new ArrayList<Resource<?>>();
+      List<Resource<?>> result = new ArrayList<>();
 
       try
       {
@@ -518,7 +520,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       TemplateStrategy templateStrategy = getTemplateStrategy();
 
       HashMap<Object, Object> context;
-      context = new HashMap<Object, Object>();
+      context = new HashMap<>();
       context.put("template", template);
       context.put("templatePath",
                templateStrategy.getReferencePath(template != null ? template : templateStrategy.getDefaultTemplate()));
@@ -717,7 +719,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       this.rmEntityMetawidget.setConfig(SCAFFOLD_META_WIDGET_REMOVE_ENTITY);
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    private List<Resource<?>> generateFromEntity(String targetDir, final Resource<?> template,
             final JavaClassSource entity)
    {
@@ -725,7 +727,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
       // Track the list of resources generated
 
-      List<Resource<?>> result = new ArrayList<Resource<?>>();
+      List<Resource<?>> result = new ArrayList<>();
       try
       {
          JavaSourceFacet java = this.project.getFacet(JavaSourceFacet.class);

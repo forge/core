@@ -40,6 +40,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.util.Refactory;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 
+@SuppressWarnings("rawtypes")
 public class ScaffoldableEntitySelectionWizard extends AbstractProjectCommand implements UIWizardStep
 {
    private UIInput<FileResource> pageTemplate;
@@ -48,7 +49,7 @@ public class ScaffoldableEntitySelectionWizard extends AbstractProjectCommand im
    private UIInput<Boolean> generateEqualsAndHashCode;
 
    @Override
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings("unchecked")
    public void initializeUI(final UIBuilder builder) throws Exception
    {
       InputComponentFactory factory = builder.getInputComponentFactory();
