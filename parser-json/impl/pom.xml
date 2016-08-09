@@ -25,9 +25,5 @@
          <artifactId>javaee-spi</artifactId>
          <classifier>forge-addon</classifier>
       </dependency>
-      <dependency>
-         <groupId>org.glassfish</groupId>
-         <artifactId>javax.json</artifactId>
-      </dependency>
    </dependencies>
 </project>
