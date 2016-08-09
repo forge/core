@@ -19,7 +19,7 @@
    <packaging>pom</packaging>
 
    <properties>
-      <angularjs.addon.version>2.1.6.Final</angularjs.addon.version>
+      <angularjs.addon.version>2.1.7.Final</angularjs.addon.version>
    </properties>
 
    <build>
