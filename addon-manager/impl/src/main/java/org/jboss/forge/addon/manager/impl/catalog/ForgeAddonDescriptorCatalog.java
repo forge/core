@@ -35,7 +35,7 @@ public class ForgeAddonDescriptorCatalog implements AddonDescriptorCatalog
          List<AddonDescriptor> found = new ArrayList<>();
          try
          {
-            URL url = new URL("http://forge.jboss.org/api/addons");
+            URL url = new URL("http://forge.jboss.org/api/addons?source=cmd");
             try (InputStream in = url.openStream();
                      JsonReader reader = Json.createReader(in))
             {
