@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>ui-parent</artifactId>
-      <version>3.2.4-SNAPSHOT</version>
+      <version>3.3.0.Final</version>
    </parent>
    <artifactId>ui-tests</artifactId>
    <name>Forge - UI Addon Tests</name>

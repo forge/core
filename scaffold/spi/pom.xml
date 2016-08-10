@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.jboss.forge.addon</groupId>
 		<artifactId>scaffold-parent</artifactId>
-		<version>3.2.4-SNAPSHOT</version>
+		<version>3.3.0.Final</version>
 	</parent>
 	<artifactId>scaffold-spi</artifactId>
 	<name>Forge - Scaffold SPI</name>
