@@ -14,6 +14,14 @@ public interface AddonCommandConstants
    String ADDON_INSTALL_COMMAND_NAME_NO_GUI = "addon-install";
    String ADDON_INSTALL_COMMAND_DESCRIPTION = "Installs a Forge addon.";
 
+   String ADDON_INSTALL_FROM_CATALOG_COMMAND_NAME = "Install an Addon from the catalog";
+   String ADDON_INSTALL_FROM_CATALOG_COMMAND_NAME_NO_GUI = "addon-install-from-catalog";
+   String ADDON_INSTALL_FROM_CATALOG_COMMAND_DESCRIPTION = "Installs a Forge addon from the available catalog";
+
+   String ADDON_SEARCH_COMMAND_NAME = "Search an Addon";
+   String ADDON_SEARCH_COMMAND_NAME_NO_GUI = "addon-search";
+   String ADDON_SEARCH_COMMAND_DESCRIPTION = "Search a Forge addon from the available catalog";
+
    String ADDON_UPDATE_COMMAND_NAME = "Update an Addon";
    String ADDON_UPDATE_COMMAND_NAME_NO_GUI = "addon-update";
    String ADDON_UPDATE_COMMAND_DESCRIPTION = "Updates a Forge addon. It may update or install addons that the specified addon depends on.";
