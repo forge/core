@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.javaee.rest.ui;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -89,5 +90,6 @@ public class CrossOriginResourceSharingFilterCommandTest
       Method<?, ?> method = filterClass
                .getMethod("filter", ContainerRequestContext.class, ContainerResponseContext.class);
       Assert.assertNotNull(method);
+      Assert.assertThat(method.getBody(), containsString("Access-Control-Expose-Headers"));
    }
 }

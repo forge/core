@@ -136,6 +136,11 @@ public class CrossOriginResourceSharingFilterCommand extends AbstractRestNewComm
       }
       body.append(OperatingSystemUtils.getLineSeparator());
       {
+         body.append("response.getHeaders().putSingle(\"Access-Control-Expose-Headers\",\"").append("Location")
+                  .append("\");");
+      }
+      body.append(OperatingSystemUtils.getLineSeparator());
+      {
          body.append("response.getHeaders().putSingle(\"Access-Control-Allow-Methods\",\"");
          List<String> list = Lists.toList(accessControlAllowMethods.getValue());
          body.append(Strings.join(list.toArray(), ", "));
