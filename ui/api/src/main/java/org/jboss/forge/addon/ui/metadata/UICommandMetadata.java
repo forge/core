@@ -39,6 +39,12 @@ public interface UICommandMetadata
    String getDescription();
 
    /**
+    * Returns the long description of the corresponding {@Link UICommand}.
+    * This description will be used to document the command within by the Forge Shell using man
+    */
+   String getLongDescription();
+
+   /**
     * Returns the {@link UICategory} of the corresponding {@link UICommand}.
     */
    UICategory getCategory();

@@ -203,8 +203,15 @@ public class ForgeManProvider implements ManProvider
    {
       StringBuilder result = new StringBuilder();
 
-      if (cmd.getMetadata(context).getDescription() != null)
-         result.append(cmd.getMetadata(context).getDescription());
+      if (cmd.getMetadata(context).getLongDescription() != null)
+      {
+         result.append(cmd.getMetadata(context).getLongDescription());
+      }
+      else
+      {
+         if (cmd.getMetadata(context).getDescription() != null)
+            result.append(cmd.getMetadata(context).getDescription());
+      }
       if (UIWizard.class.isAssignableFrom(cmd.getMetadata(context).getType()))
          result.append(" (*multi-step wizard* - some options may not be auto-documented in this man page.)");
 
