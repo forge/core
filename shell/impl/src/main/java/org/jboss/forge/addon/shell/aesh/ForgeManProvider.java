@@ -31,6 +31,7 @@ import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.ManyValued;
 import org.jboss.forge.addon.ui.input.SelectComponent;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.util.InputComponents;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
@@ -136,10 +137,9 @@ public class ForgeManProvider implements ManProvider
          result = result.replaceAll("%description%", cmd.getMetadata(context).getCategory().toString());
 
          result = result.replaceAll("%synopsis%", buildSynopsis(cmd, context, inputs));
-         result = result.replaceAll("%options%", buildOptions(cmd, context, inputs));
+         result = result.replaceAll("%options%", buildOptions(cmd, context, inputs).trim());
          result = result.replaceAll("%addon%", getSourceAddonName(cmd, context));
          result = result.replaceAll("%year%", String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
-
          return new ByteArrayInputStream(result.getBytes());
       }
       catch (Exception e)
@@ -203,11 +203,19 @@ public class ForgeManProvider implements ManProvider
    {
       StringBuilder result = new StringBuilder();
 
-      if (cmd.getMetadata(context).getDescription() != null)
-         result.append(cmd.getMetadata(context).getDescription());
-      if (UIWizard.class.isAssignableFrom(cmd.getMetadata(context).getType()))
+      UICommandMetadata metadata = cmd.getMetadata(context);
+      if (metadata.getLongDescription() != null)
+      {
+         result.append(metadata.getLongDescription().trim());
+      }
+      else if (metadata.getDescription() != null)
+      {
+         result.append(metadata.getDescription().trim());
+      }
+      if (UIWizard.class.isAssignableFrom(metadata.getType()))
+      {
          result.append(" (*multi-step wizard* - some options may not be auto-documented in this man page.)");
-
+      }
       result.append(OperatingSystemUtils.getLineSeparator()).append(OperatingSystemUtils.getLineSeparator());
 
       Collections.sort(inputs, SHORTNAME_COMPARATOR);
@@ -254,7 +262,7 @@ public class ForgeManProvider implements ManProvider
                   if (choice != null)
                   {
                      Object itemLabel = itemLabelConverter.convert(choice);
-                     result.append("\"" + itemLabel + "\" ");
+                     result.append("\"").append(itemLabel).append("\" ");
                   }
                }
                result.append("] ");
@@ -274,7 +282,7 @@ public class ForgeManProvider implements ManProvider
                               Object itemLabel = value.toString();
                               if (itemLabelConverter != null)
                                  itemLabel = itemLabelConverter.convert(value);
-                              result.append("\"" + itemLabel + "\" ");
+                              result.append("\"").append(itemLabel).append("\" ");
                            }
                         }
                      }
@@ -286,7 +294,7 @@ public class ForgeManProvider implements ManProvider
                            Object itemLabel = value.toString();
                            if (itemLabelConverter != null)
                               itemLabel = itemLabelConverter.convert(value);
-                           result.append("\"" + itemLabel + "\" ");
+                           result.append("\"").append(itemLabel).append("\" ");
                         }
                      }
                   }
@@ -304,9 +312,14 @@ public class ForgeManProvider implements ManProvider
       if (arguments != null)
       {
          result.append("[");
-         result.append(arguments.getLabel() == null ? "L " + arguments.getValueType().getSimpleName()
-                  + "; ... arguments"
-                  : arguments.getLabel());
+         if (arguments.getLabel() == null)
+         {
+            result.append("L ").append(arguments.getValueType().getSimpleName()).append("; ... arguments");
+         }
+         else
+         {
+            result.append(arguments.getLabel());
+         }
          result.append("] ");
       }
 

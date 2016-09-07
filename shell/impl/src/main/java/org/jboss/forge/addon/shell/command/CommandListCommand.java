@@ -31,6 +31,7 @@ import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
  * Lists all the available commands
@@ -42,11 +43,19 @@ public class CommandListCommand extends AbstractShellCommand
 {
    @Inject
    private CommandFactory commandFactory;
+   private static final String CMD_LIST_HELP_DESCRIPTION = "List all available commands. Each line starts with the category to which a command belongs followed by the name and the command description."
+           + OperatingSystemUtils.getLineSeparator()
+           + "When a command is not available within the context of the shell where it is executed, then the name of the command is displayed in red otherwise in green."
+           + OperatingSystemUtils.getLineSeparator()
+           + "By example, it is not possible to add a module or fraction using the command 'wildfly-swarm-add-fraction' if the Wildfly Swarm project doesn't exist !";
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(getClass()).name("command-list").description("List all available commands.");
+      return Metadata.forCommand(getClass())
+                     .name("command-list")
+                     .description("List all available commands.")
+                     .longDescription(CMD_LIST_HELP_DESCRIPTION);
    }
 
    @Override
