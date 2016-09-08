@@ -29,6 +29,7 @@ public class Metadata implements UICommandMetadata
 
    private String name;
    private String description;
+   private String longDescription;
    private UICategory category;
    private URL docLocation;
    private boolean deprecated;
@@ -81,6 +82,15 @@ public class Metadata implements UICommandMetadata
    public Metadata description(String description)
    {
       this.description = description;
+      return this;
+   }
+
+   /**
+    * Set the long description for the corresponding {@link UICommand}.
+    */
+   public Metadata longDescription(String description)
+   {
+      this.longDescription = description;
       return this;
    }
 
@@ -146,6 +156,8 @@ public class Metadata implements UICommandMetadata
    {
       return description;
    }
+
+   @Override public String getLongDescription() { return longDescription; }
 
    @Override
    public UICategory getCategory()
