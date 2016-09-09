@@ -29,13 +29,13 @@ import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 @FacetConstraint(DependencyFacet.class)
 public class AddDependenciesCommandImpl extends AbstractProjectCommand implements AddDependenciesCommand
 {
-   private UIInputMany<Dependency> arguments;
+   private UIInputMany<String> arguments;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
       InputComponentFactory factory = builder.getInputComponentFactory();
-      arguments = factory.createInputMany("arguments", 'd', Dependency.class).setLabel("Coordinates").setRequired(true)
+      arguments = factory.createInputMany("arguments", 'd', String.class).setLabel("Coordinates").setRequired(true)
                .setDescription(
                         "The coordinates of the arguments to be added [groupId :artifactId {:version :scope :packaging}]");
       builder.add(arguments);
@@ -61,25 +61,26 @@ public class AddDependenciesCommandImpl extends AbstractProjectCommand implement
          int count = 0;
          DependencyInstaller installer = SimpleContainer
                   .getServices(getClass().getClassLoader(), DependencyInstaller.class).get();
-         for (Dependency gav : arguments.getValue())
+         for (String gav : arguments.getValue())
          {
-            Dependency existingDep = deps.getEffectiveManagedDependency(DependencyBuilder.create(gav).setVersion(null));
+            DependencyBuilder dep = DependencyBuilder.create(gav);
+            Dependency existingDep = deps.getEffectiveManagedDependency(DependencyBuilder.create(dep).setVersion(null));
             if (existingDep != null)
             {
                if (context.getPrompt().promptBoolean(String.format(
                         "Dependency [%s:%s] is currently managed. "
                                  + "Reference the existing managed dependency [%s:%s:%s]?",
-                        gav.getCoordinate().getArtifactId(),
-                        gav.getCoordinate().getGroupId(),
+                        dep.getCoordinate().getArtifactId(),
+                        dep.getCoordinate().getGroupId(),
                         existingDep.getCoordinate().getGroupId(),
                         existingDep.getCoordinate().getArtifactId(),
                         existingDep.getCoordinate().getVersion())))
                {
-                  gav = DependencyBuilder.create(existingDep).setScopeType(gav.getScopeType());
+                  dep = DependencyBuilder.create(existingDep).setScopeType(dep.getScopeType());
                }
             }
 
-            installer.install(project, gav);
+            installer.install(project, dep);
             count++;
          }
 
