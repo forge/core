@@ -226,12 +226,12 @@ Your complete POM should now look something like this:
 
    <groupId>com.example</groupId>
    <artifactId>example</artifactId>
-   <version>0.0.1-SNAPSHOT</version>
+   <version>1.0.0-SNAPSHOT</version>
 
    <name>My First Addon</name>
    
    <properties>
-        <version.forge>3.0.0.Alpha1</version.forge>
+        <version.forge>3.3.1.Final</version.forge>
    </properties>
    
    <dependencyManagement>
