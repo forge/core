@@ -15,11 +15,11 @@
    <name>Forge - JavaEE Parent</name>
 
    <modules>
-   	  <module>spi</module>
+      <module>spi</module>
       <module>addon</module>
       <module>api</module>
       <module>impl</module>
-      <module>faces</module>
+      <module>scaffold-faces</module>
       <module>tests</module>
    </modules>
 
