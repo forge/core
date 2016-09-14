@@ -84,7 +84,7 @@ public class ForgeInspector extends BaseObjectInspector
       return typeUnderInspection;
    }
 
-   public void setTypeUnderInspection(String typeUnderInspection)
+   private void setTypeUnderInspection(String typeUnderInspection)
    {
       this.typeUnderInspection = typeUnderInspection;
    }
