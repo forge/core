@@ -19,6 +19,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.shell.test.ShellTest;
 import org.jboss.forge.addon.ui.result.CompositeResult;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -48,7 +49,8 @@ public class FacesScaffoldTest
    {
       projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
       shellTest = SimpleContainer.getServices(getClass().getClassLoader(), ShellTest.class).get();
-      project = projectFactory.createTempProject(Arrays.<Class<? extends ProjectFacet>> asList(JavaSourceFacet.class));
+      project = projectFactory.createTempProject(
+               Arrays.<Class<? extends ProjectFacet>>asList(JavaSourceFacet.class, WebResourcesFacet.class));
       shellTest.getShell().setCurrentResource(project.getRoot());
    }
 
@@ -97,13 +99,19 @@ public class FacesScaffoldTest
    @Test
    public void shouldScaffoldEntity() throws Exception
    {
-      shellTest.execute("javaee-setup --java-ee-version 7", 10, TimeUnit.SECONDS);
-      shellTest.execute("jpa-setup", 10, TimeUnit.SECONDS);
-      shellTest.execute("jpa-new-entity --named Customer", 10, TimeUnit.SECONDS);
-      shellTest.execute("jpa-new-field --named firstName", 10, TimeUnit.SECONDS);
+      Assert.assertThat(shellTest.execute("javaee-setup --java-ee-version 7", 10, TimeUnit.SECONDS),
+               not(instanceOf(Failed.class)));
+      Assert.assertThat(shellTest.execute("jpa-setup", 10, TimeUnit.SECONDS), not(instanceOf(Failed.class)));
+      Assert.assertThat(shellTest.execute("jpa-new-entity --named Customer", 10, TimeUnit.SECONDS),
+               not(instanceOf(Failed.class)));
+      Assert.assertThat(shellTest.execute("jpa-new-field --named firstName", 10, TimeUnit.SECONDS),
+               not(instanceOf(Failed.class)));
+      Result result = shellTest.execute("scaffold-setup --provider Faces", 10, TimeUnit.SECONDS);
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
+
       Project project = projectFactory.findProject(shellTest.getShell().getCurrentResource());
       String entityPackageName = project.getFacet(JavaSourceFacet.class).getBasePackage() + ".model";
-      Result result = shellTest.execute(
+      result = shellTest.execute(
                "scaffold-generate --provider Faces --targets " + entityPackageName + ".Customer", 10, TimeUnit.SECONDS);
       Assert.assertThat(result, not(instanceOf(Failed.class)));
    }

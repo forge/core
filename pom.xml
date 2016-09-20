@@ -63,7 +63,7 @@
       <forge.release.codename>Three</forge.release.codename>
       <forge.release.version>${project.version}</forge.release.version>
 
-      <version.furnace>2.23.8.Final</version.furnace>
+      <version.furnace>2.24.0.Final</version.furnace>
       <version.junit>4.12</version.junit>
       <version.jboss-logmanager>1.4.1.Final</version.jboss-logmanager>
    </properties>
@@ -228,7 +228,7 @@
          <plugin>
             <groupId>org.jboss.jandex</groupId>
             <artifactId>jandex-maven-plugin</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.5</version>
             <executions>
                <execution>
                   <id>make-index</id>
@@ -338,14 +338,6 @@
                      </configuration>
                   </execution>
                </executions>
-            </plugin>
-
-            <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-surefire-plugin</artifactId>
-               <configuration>
-                  <argLine>-Xms256m -Xmx512m</argLine>
-               </configuration>
             </plugin>
 
             <plugin>
