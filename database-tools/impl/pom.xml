@@ -77,6 +77,10 @@
                <artifactId>geronimo-jta_1.1_spec</artifactId>
                <groupId>org.apache.geronimo.specs</groupId>
             </exclusion>
+            <exclusion>
+               <groupId>javax.enterprise</groupId>
+               <artifactId>cdi-api</artifactId>
+            </exclusion>
          </exclusions>
       </dependency>
       <dependency>

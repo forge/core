@@ -23,7 +23,7 @@
    </modules>
 
    <properties>
-      <hibernate.tools.version>5.1.0.Alpha2</hibernate.tools.version>
+      <hibernate.tools.version>5.2.0.Beta1</hibernate.tools.version>
       <h2database.version>1.3.167</h2database.version>
    </properties>
 
