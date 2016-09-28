@@ -6,16 +6,8 @@
  */
 package org.jboss.forge.addon.database.tools.generate;
 
-import java.io.File;
-
 import org.jboss.forge.addon.database.tools.connections.AbstractConnectionProfileDetailsPage;
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManager;
-import org.jboss.forge.addon.database.tools.connections.ConnectionProfileManagerProvider;
-import org.jboss.forge.addon.database.tools.jpa.HibernateDialect;
 import org.jboss.forge.addon.database.tools.util.HibernateToolsHelper;
-import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -27,7 +19,6 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
-import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 
 public class ConnectionProfileDetailsStep extends AbstractConnectionProfileDetailsPage implements UIWizardStep
 {
@@ -46,26 +37,6 @@ public class ConnectionProfileDetailsStep extends AbstractConnectionProfileDetai
       super.initializeUI(builder);
       descriptor = (GenerateEntitiesCommandDescriptor) builder.getUIContext().getAttributeMap()
                .get(GenerateEntitiesCommandDescriptor.class);
-      ConnectionProfileManagerProvider provider = SimpleContainer
-               .getServices(getClass().getClassLoader(), ConnectionProfileManagerProvider.class).get();
-      ConnectionProfileManager manager = provider.getConnectionProfileManager();
-      ConnectionProfile cp = manager.loadConnectionProfiles().get(descriptor.getConnectionProfileName());
-      if (cp != null)
-      {
-         jdbcUrl.setValue(cp.getUrl());
-         userName.setValue(cp.getUser());
-         userPassword.setValue(cp.getPassword());
-         hibernateDialect.setValue(HibernateDialect.fromClassName(cp.getDialect()));
-         ResourceFactory factory = SimpleContainer.getServices(getClass().getClassLoader(), ResourceFactory.class)
-                  .get();
-         driverLocation.setValue((FileResource<?>) factory.create(new File(cp.getPath())));
-
-         for (Class<?> driver : driverClass.getValueChoices())
-         {
-            if (cp.getDriver().equals(driver.getName()))
-               driverClass.setValue(driver);
-         }
-      }
    }
 
    @Override
