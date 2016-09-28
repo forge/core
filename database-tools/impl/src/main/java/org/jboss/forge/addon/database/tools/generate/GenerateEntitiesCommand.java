@@ -132,8 +132,6 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
-      UIContext uiContext = context.getUIContext();
-      uiContext.getAttributeMap().put(GenerateEntitiesCommandDescriptor.class, descriptor);
       descriptor.setTargetPackage(targetPackage.getValue());
       descriptor.setConnectionProfileName(connectionProfile.getValue());
       descriptor.setSelectedProject(getSelectedProject(context));
