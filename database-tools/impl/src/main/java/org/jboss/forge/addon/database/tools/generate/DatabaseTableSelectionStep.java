@@ -56,6 +56,8 @@ import org.jboss.forge.furnace.util.Lists;
  */
 public class DatabaseTableSelectionStep implements UIWizardStep
 {
+
+   private static final String LAST_USED_CONNECTION_PROPERTIES = "ConnectionProperties";
    private UISelectOne<String> databaseCatalog;
    private UISelectOne<String> databaseSchema;
    private UISelectMany<String> databaseTables;
@@ -125,8 +127,8 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    {
       Map<Object, Object> attributeMap = context.getAttributeMap();
       GenerateEntitiesCommandDescriptor descriptor = getDescriptor(context);
-      Properties currentConnectionProperties = (Properties) attributeMap.get("DatabaseTableProperties");
-      return !Objects.equals(descriptor.getConnectionProperties(), currentConnectionProperties);
+      Properties lastUsedConnectionProperties = (Properties) attributeMap.get(LAST_USED_CONNECTION_PROPERTIES);
+      return !Objects.equals(descriptor.getConnectionProperties(), lastUsedConnectionProperties);
    }
 
    @Override
@@ -146,7 +148,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
                message = String.format("%s during validation. Check logs for more information",
                         exception.getClass().getName());
             }
-            context.addValidationError(databaseTables, exception.getMessage());
+            context.addValidationError(databaseTables, message);
          }
       }
       else
@@ -278,14 +280,17 @@ public class DatabaseTableSelectionStep implements UIWizardStep
          try
          {
             database = JDBCUtils.getDatabaseInfo(descriptor);
+            exception = null;
+            attributeMap.put(Database.class.getName(), database);
+            attributeMap.put(LAST_USED_CONNECTION_PROPERTIES, descriptor.getConnectionProperties());
          }
          catch (Exception e)
          {
+            attributeMap.remove(Database.class.getName());
+            attributeMap.remove(LAST_USED_CONNECTION_PROPERTIES);
             logger.log(Level.SEVERE, "Error while fetching the DB info", exception);
             exception = e;
          }
-         attributeMap.put(Database.class.getName(), database);
-         attributeMap.put("DatabaseTableProperties", descriptor.getConnectionProperties());
       }
       return database;
    }
