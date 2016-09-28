@@ -55,7 +55,7 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
    private UIInput<Boolean> verifyConnection;
 
    private boolean connectionStale;
-   private List<Class> driverClasses = null;
+   private List<Class> driverClasses;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
@@ -185,6 +185,14 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
          }
       }).addValueChangeListener(new ConnectionStaleValueChangeListener());
 
+      initializeBuilder(builder);
+   }
+
+   /**
+    * @param builder
+    */
+   protected void initializeBuilder(UIBuilder builder)
+   {
       builder.add(jdbcUrl)
                .add(userName)
                .add(userPassword)
@@ -222,7 +230,6 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
       {
          if (driverClasses == null)
          {
-            driverClasses = new ArrayList<>();
             FileResource<?> resource = driverLocation.getValue();
             if (resource == null)
             {
@@ -231,6 +238,7 @@ public abstract class AbstractConnectionProfileDetailsPage implements UICommand
             File file = resource.getUnderlyingResourceObject();
             if (resource != null && resource.exists())
             {
+               driverClasses = new ArrayList<>();
                try (JarFile jarFile = new JarFile(file);)
                {
                   URL[] urls = new URL[] { file.toURI().toURL() };

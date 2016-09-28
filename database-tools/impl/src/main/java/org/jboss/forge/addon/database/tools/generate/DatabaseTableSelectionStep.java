@@ -56,8 +56,8 @@ import org.jboss.forge.furnace.util.Lists;
  */
 public class DatabaseTableSelectionStep implements UIWizardStep
 {
+   private static final String LAST_USED_CONNECTION_PROPERTIES = "LastUsedConnectionProperties";
 
-   private static final String LAST_USED_CONNECTION_PROPERTIES = "ConnectionProperties";
    private UISelectOne<String> databaseCatalog;
    private UISelectOne<String> databaseSchema;
    private UISelectMany<String> databaseTables;
@@ -67,7 +67,15 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    private Set<String> tableValueChoices;
 
    private Throwable exception;
+
+   private final GenerateEntitiesCommandDescriptor descriptor;
+
    private static final Logger logger = Logger.getLogger(DatabaseTableSelectionStep.class.getName());
+
+   public DatabaseTableSelectionStep(GenerateEntitiesCommandDescriptor descriptor)
+   {
+      this.descriptor = descriptor;
+   }
 
    @Override
    public UICommandMetadata getMetadata(UIContext context)
@@ -80,34 +88,37 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    public void initializeUI(UIBuilder builder) throws Exception
    {
       UIContext context = builder.getUIContext();
-      InputComponentFactory factory = builder.getInputComponentFactory();
+      if (databaseCatalog == null)
+      {
+         InputComponentFactory factory = builder.getInputComponentFactory();
 
-      databaseCatalog = factory.createSelectOne("databaseCatalog", String.class)
-               .setLabel("Database Catalog")
-               .setDescription("The database catalog for which to generate entities.")
-               .setDefaultValue(() -> {
-                  Iterator<String> it = databaseCatalog.getValueChoices().iterator();
-                  return it.hasNext() ? it.next() : null;
-               })
-               .setValueChoices(() -> catalogValueChoices);
+         databaseCatalog = factory.createSelectOne("databaseCatalog", String.class)
+                  .setLabel("Database Catalog")
+                  .setDescription("The database catalog for which to generate entities.")
+                  .setDefaultValue(() -> {
+                     Iterator<String> it = databaseCatalog.getValueChoices().iterator();
+                     return it.hasNext() ? it.next() : null;
+                  })
+                  .setValueChoices(() -> catalogValueChoices);
 
-      databaseCatalog.addValueChangeListener((event) -> updateValueChoices(context, event));
+         databaseCatalog.addValueChangeListener((event) -> updateValueChoices(context, event));
 
-      databaseSchema = factory.createSelectOne("databaseSchema", String.class)
-               .setLabel("Database Schema")
-               .setDescription("The database schema for which to generate entities.")
-               .setDefaultValue(() -> {
-                  Iterator<String> it = databaseSchema.getValueChoices().iterator();
-                  return it.hasNext() ? it.next() : null;
-               })
-               .setValueChoices(() -> schemaValueChoices);
+         databaseSchema = factory.createSelectOne("databaseSchema", String.class)
+                  .setLabel("Database Schema")
+                  .setDescription("The database schema for which to generate entities.")
+                  .setDefaultValue(() -> {
+                     Iterator<String> it = databaseSchema.getValueChoices().iterator();
+                     return it.hasNext() ? it.next() : null;
+                  })
+                  .setValueChoices(() -> schemaValueChoices);
 
-      databaseSchema.addValueChangeListener((event) -> updateValueChoices(context, event));
+         databaseSchema.addValueChangeListener((event) -> updateValueChoices(context, event));
 
-      databaseTables = factory.createSelectMany("databaseTables", String.class)
-               .setLabel("Database Tables")
-               .setDescription("The database tables for which to generate entities. Use '*' to select all tables")
-               .setValueChoices(() -> tableValueChoices);
+         databaseTables = factory.createSelectMany("databaseTables", String.class)
+                  .setLabel("Database Tables")
+                  .setDescription("The database tables for which to generate entities. Use '*' to select all tables")
+                  .setValueChoices(() -> tableValueChoices);
+      }
       Database database = updateValueChoices(context, null);
       if (database != null)
       {
@@ -126,14 +137,15 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    private boolean connectionInfoHasChanged(UIContext context)
    {
       Map<Object, Object> attributeMap = context.getAttributeMap();
-      GenerateEntitiesCommandDescriptor descriptor = getDescriptor(context);
-      Properties lastUsedConnectionProperties = (Properties) attributeMap.get(LAST_USED_CONNECTION_PROPERTIES);
-      return !Objects.equals(descriptor.getConnectionProperties(), lastUsedConnectionProperties);
+      Properties currentConnectionProperties = (Properties) attributeMap.get(LAST_USED_CONNECTION_PROPERTIES);
+      return !Objects.equals(descriptor.getConnectionProperties(), currentConnectionProperties);
    }
 
    @Override
    public void validate(UIValidationContext context)
    {
+      UIContext uiContext = context.getUIContext();
+      updateValueChoices(uiContext, null);
       if (exception != null)
       {
          if (exception instanceof UnknownHostException)
@@ -148,7 +160,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
                message = String.format("%s during validation. Check logs for more information",
                         exception.getClass().getName());
             }
-            context.addValidationError(databaseTables, message);
+            context.addValidationError(databaseTables, exception.getMessage());
          }
       }
       else
@@ -164,7 +176,6 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      GenerateEntitiesCommandDescriptor descriptor = getDescriptor(context.getUIContext());
       Collection<String> entities = exportSelectedEntities(descriptor);
       return Results.success(entities.size() + " entities were generated in " + descriptor.getTargetPackage());
    }
@@ -227,43 +238,37 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    private boolean isSelected(Collection<String> selection, POJOClass element)
    {
       boolean result = false;
-      if (element.isComponent())
+      if (element instanceof ComponentPOJOClass)
       {
-         if (element instanceof ComponentPOJOClass)
+         ComponentPOJOClass cpc = (ComponentPOJOClass) element;
+         Iterator<?> iterator = cpc.getAllPropertiesIterator();
+         result = true;
+         while (iterator.hasNext())
          {
-            ComponentPOJOClass cpc = (ComponentPOJOClass) element;
-            Iterator<?> iterator = cpc.getAllPropertiesIterator();
-            result = true;
-            while (iterator.hasNext())
+            Object object = iterator.next();
+            if (object instanceof Property)
             {
-               Object object = iterator.next();
-               if (object instanceof Property)
+               Property property = (Property) object;
+               String tableName = property.getValue().getTable().getName();
+               if (!selection.contains(tableName))
                {
-                  Property property = (Property) object;
-                  String tableName = property.getValue().getTable().getName();
-                  if (!selection.contains(tableName))
-                  {
-                     result = false;
-                     break;
-                  }
+                  result = false;
+                  break;
                }
             }
          }
       }
-      else
+      else if (element instanceof EntityPOJOClass)
       {
-         if (element instanceof EntityPOJOClass)
+         EntityPOJOClass epc = (EntityPOJOClass) element;
+         Object object = epc.getDecoratedObject();
+         if (object instanceof PersistentClass)
          {
-            EntityPOJOClass epc = (EntityPOJOClass) element;
-            Object object = epc.getDecoratedObject();
-            if (object instanceof PersistentClass)
+            PersistentClass pc = (PersistentClass) object;
+            Table table = pc.getTable();
+            if (selection.contains(table.getName()))
             {
-               PersistentClass pc = (PersistentClass) object;
-               Table table = pc.getTable();
-               if (selection.contains(table.getName()))
-               {
-                  result = true;
-               }
+               result = true;
             }
          }
       }
@@ -276,7 +281,6 @@ public class DatabaseTableSelectionStep implements UIWizardStep
       Database database = (Database) attributeMap.get(Database.class.getName());
       if (database == null || connectionInfoHasChanged(context))
       {
-         GenerateEntitiesCommandDescriptor descriptor = getDescriptor(context);
          try
          {
             database = JDBCUtils.getDatabaseInfo(descriptor);
@@ -286,19 +290,13 @@ public class DatabaseTableSelectionStep implements UIWizardStep
          }
          catch (Exception e)
          {
-            attributeMap.remove(Database.class.getName());
-            attributeMap.remove(LAST_USED_CONNECTION_PROPERTIES);
+            attributeMap.remove(Database.class.getName(), database);
+            attributeMap.remove(LAST_USED_CONNECTION_PROPERTIES, descriptor.getConnectionProperties());
             logger.log(Level.SEVERE, "Error while fetching the DB info", exception);
             exception = e;
          }
       }
       return database;
-   }
-
-   private GenerateEntitiesCommandDescriptor getDescriptor(UIContext context)
-   {
-      Map<Object, Object> attributeMap = context.getAttributeMap();
-      return (GenerateEntitiesCommandDescriptor) attributeMap.get(GenerateEntitiesCommandDescriptor.class);
    }
 
    private Database updateValueChoices(UIContext context, ValueChangeEvent event)

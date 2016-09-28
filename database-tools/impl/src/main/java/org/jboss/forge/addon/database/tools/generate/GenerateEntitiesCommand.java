@@ -43,6 +43,7 @@ import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.result.NavigationResult;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
@@ -59,6 +60,9 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
    private static String COMMAND_DESCRIPTION = "Command to generate Java EE entities from database tables.";
 
    private GenerateEntitiesCommandDescriptor descriptor = new GenerateEntitiesCommandDescriptor();
+
+   private ConnectionProfileDetailsStep connectionProfileDetailsStep = new ConnectionProfileDetailsStep(descriptor);
+   private DatabaseTableSelectionStep dbTableSelectionStep = new DatabaseTableSelectionStep(descriptor);
 
    private UIInput<String> targetPackage;
    private UISelectOne<String> connectionProfile;
@@ -88,7 +92,7 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
                .getServices(getClass().getClassLoader(), ConnectionProfileManagerProvider.class).get();
       ConnectionProfileManager manager = managerProvider.getConnectionProfileManager();
       profiles = manager.loadConnectionProfiles();
-      ArrayList<String> profileNames = new ArrayList<String>();
+      ArrayList<String> profileNames = new ArrayList<>();
       profileNames.add("");
       profileNames.addAll(profiles.keySet());
       connectionProfile.setValueChoices(profileNames);
@@ -128,16 +132,18 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
    @Override
    public NavigationResult next(UINavigationContext context) throws Exception
    {
-      context.getUIContext().getAttributeMap().put(GenerateEntitiesCommandDescriptor.class, descriptor);
+      UIContext uiContext = context.getUIContext();
+      uiContext.getAttributeMap().put(GenerateEntitiesCommandDescriptor.class, descriptor);
       descriptor.setTargetPackage(targetPackage.getValue());
       descriptor.setConnectionProfileName(connectionProfile.getValue());
       descriptor.setSelectedProject(getSelectedProject(context));
+      NavigationResultBuilder navigationResultBuilder = NavigationResultBuilder.create();
       if (Strings.isNullOrEmpty(descriptor.getConnectionProfileName()))
       {
          descriptor.setDriverClass(null);
          descriptor.setUrls(null);
          descriptor.setConnectionProperties(null);
-         return Results.navigateTo(ConnectionProfileDetailsStep.class);
+         navigationResultBuilder.add(connectionProfileDetailsStep);
       }
       else
       {
@@ -148,8 +154,9 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
          }
          descriptor.setDriverClass(profile.getDriver());
          descriptor.setConnectionProperties(createConnectionProperties(profile));
-         return Results.navigateTo(DatabaseTableSelectionStep.class);
       }
+      navigationResultBuilder.add(dbTableSelectionStep);
+      return navigationResultBuilder.build();
    }
 
    private Properties createConnectionProperties(ConnectionProfile profile)
