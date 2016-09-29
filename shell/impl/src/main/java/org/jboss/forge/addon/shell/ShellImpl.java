@@ -121,6 +121,16 @@ public class ShellImpl implements Shell, UIRuntime
       this.output = new ShellUIOutputImpl(console);
       setCurrentResource(initialResource);
       this.console.start();
+      loadSystemEnvioriment(this.console);
+   }
+
+   private void loadSystemEnvioriment(AeshConsole console)
+   {
+      Map<String, String> env = System.getenv();
+      for (String envName : env.keySet())
+      {
+         console.getExportManager().addVariable("export " + envName + "=" +  env.get(envName));
+      }
    }
 
    private void updatePrompt()
