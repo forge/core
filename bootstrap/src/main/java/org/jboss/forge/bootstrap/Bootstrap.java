@@ -101,7 +101,7 @@ public class Bootstrap
       String installAddon = null;
       String removeAddon = null;
       furnace = ServiceLoader.load(Furnace.class).iterator().next();
-
+      boolean showHelp = false;
       furnace.setArgs(args);
 
       if (args.length > 0)
@@ -109,13 +109,16 @@ public class Bootstrap
          List<String> listArgs = Arrays.asList(args);
          if (listArgs.contains("--help") || listArgs.contains("-h"))
          {
-            System.out.println(help());
+            showHelp = true;
             exitAfter = true;
-            return;
          }
          for (int i = 0; i < args.length; i++)
          {
-            if ("--install".equals(args[i]) || "-i".equals(args[i]))
+            if ("--help".equals(args[i]) || "-h".equals(args[i]))
+            {
+               exitAfter = true;
+            }
+            else if ("--install".equals(args[i]) || "-i".equals(args[i]))
             {
                installAddon = args[++i];
             }
@@ -169,6 +172,11 @@ public class Bootstrap
       {
          furnace.addRepository(AddonRepositoryMode.MUTABLE, new File(OperatingSystemUtils.getUserForgeDir(), "addons"));
       }
+      if (showHelp)
+      {
+         System.out.println(help());
+         return;
+      }
       if (listInstalled)
       {
          list();
@@ -204,7 +212,12 @@ public class Bootstrap
       sb.append("\t add the given directory for use as a custom addon repository \n");
 
       sb.append("-e, --evaluate [cmd]\n");
-      sb.append("\t evaluate the given string as commands (requires shell addon. Install via: `forge -i shell`) \n");
+      sb.append("\t evaluate the given string as commands ")
+               .append(!containsAddon("org.jboss.forge.addon:script")
+                        ? "(requires the script addon. Install via: `forge -i script`)" : "")
+               .append("\n")
+               .append("\t make sure to use double quotes if your command has arguments (eg. ./forge -e \"run script.fsh\")")
+               .append("\n");
 
       sb.append("-m, --immutableAddonDir [dir]\n");
       sb.append("\t add the given directory for use as a custom immutable addon repository (read only) \n");
@@ -221,6 +234,16 @@ public class Bootstrap
       sb.append("-v, --version\n");
       sb.append("\t output version information and exit \n");
       return sb.toString();
+   }
+
+   private boolean containsAddon(String name)
+   {
+      boolean result = false;
+      for (AddonRepository repo : furnace.getRepositories())
+      {
+         result |= repo.listAll().stream().anyMatch(id -> name.equals(id.getName()));
+      }
+      return result;
    }
 
    private boolean containsMutableRepository(List<AddonRepository> repositories)
