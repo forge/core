@@ -139,7 +139,7 @@ public class CDINewAnnotationLiteralCommandTest
       Assert.assertTrue(javaResource.exists());
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClassSource.class)));
       JavaClassSource javaClass = javaResource.getJavaType();
-      Assert.assertThat(javaClass.getSuperType(), equalTo(AnnotationLiteral.class.getName()));
+      Assert.assertThat(javaClass.getSuperType(), equalTo(AnnotationLiteral.class.getName() + "<Default>"));
       Assert.assertTrue(javaClass.hasInterface(Default.class));
    }
 }
