@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>templates-parent</artifactId>
-      <version>3.3.2.Final</version>
+      <version>3.3.3-SNAPSHOT</version>
    </parent>
    <artifactId>templates-impl</artifactId>
    <name>Forge - Templates Addon Impl</name>
