@@ -27,3 +27,5 @@
 *.xls binary
 *.xlsx binary
 
+# Custom files treated as binary
+*.rb binary
