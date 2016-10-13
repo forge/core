@@ -46,7 +46,7 @@ public class OptionCompleterFactory
       String inputType = component.getFacet(HintsFacet.class).getInputType();
       OptionCompleter<CompleterInvocation> strategy = null;
       // FIXME This should use the Resource API to allow completion of virtual resources.
-      if (InputType.FILE_PICKER.equals(inputType) && (cwd != null && cwd.isDirectory()))
+      if ((InputType.FILE_PICKER.equals(inputType) || InputType.FILE_OR_DIRECTORY_PICKER.equals(inputType)) && (cwd != null && cwd.isDirectory()))
       {
          strategy = new FileOptionCompleter(new AllResourceFilter());
       }
