@@ -88,7 +88,13 @@ public class Commands
     */
    private static String shellifyName(String name)
    {
-      return COLONS.matcher(WHITESPACES.matcher(name.trim()).replaceAll("-")).replaceAll("");
+      String newName = WHITESPACES.matcher(name.trim()).replaceAll("-");
+      // /FORGE-2690: Special case when command name ends with -
+      if (newName.endsWith("-"))
+      {
+         newName = newName.substring(0, newName.length() - 1);
+      }
+      return COLONS.matcher(newName).replaceAll("");
    }
 
    /**

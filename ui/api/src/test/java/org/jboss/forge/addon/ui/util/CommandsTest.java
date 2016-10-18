@@ -25,4 +25,12 @@ public class CommandsTest
       Assert.assertEquals("JAVA_EE_7", Commands.shellifyOptionValue("Java EE 7"));
    }
 
+   @Test
+   public void testShellifyCommandName()
+   {
+      Assert.assertEquals("i-o-jms-activemq", Commands.shellifyCommandName("I/O: JMS (ActiveMQ)"));
+      Assert.assertEquals("add-remove-something", Commands.shellifyCommandName("Add/Remove (Something)"));
+      Assert.assertEquals("enable-async-i-o-jdk8", Commands.shellifyCommandName("Enable Async I/O (JDK8)"));
+   }
+
 }
