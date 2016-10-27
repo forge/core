@@ -9,15 +9,15 @@ package org.jboss.forge.addon.maven.projects.facets;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
+import org.apache.maven.model.Model;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.maven.plugins.Configuration;
-import org.jboss.forge.addon.maven.plugins.ConfigurationElementBuilder;
 import org.jboss.forge.addon.maven.plugins.MavenPlugin;
-import org.jboss.forge.addon.maven.plugins.MavenPluginBuilder;
 import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.Project;
@@ -33,7 +33,6 @@ import org.jboss.forge.addon.resource.visit.ResourceVisitor;
 @FacetConstraint({ MavenFacet.class, PackagingFacet.class })
 public class MavenWebResourcesFacet extends AbstractFacet<Project> implements WebResourcesFacet
 {
-
    @Override
    public DirectoryResource getWebRootDirectory()
    {
@@ -89,38 +88,11 @@ public class MavenWebResourcesFacet extends AbstractFacet<Project> implements We
          {
             folder.mkdirs();
          }
-
-         MavenPluginFacet plugins = getFaceted().getFacet(MavenPluginFacet.class);
-         Coordinate mvnWarPluginDep = CoordinateBuilder.create().setGroupId("org.apache.maven.plugins")
-                  .setArtifactId("maven-war-plugin")
-                  .setVersion("2.6");
-
-         MavenPlugin plugin;
-         if (!plugins.hasPlugin(mvnWarPluginDep))
-         {
-            plugin = MavenPluginBuilder.create().setCoordinate(mvnWarPluginDep);
-            plugins.addPlugin(plugin);
-         }
-         else
-         {
-            plugin = plugins.getPlugin(mvnWarPluginDep);
-         }
-
-         if (!plugin.getConfig().hasConfigurationElement("failOnMissingWebXml"))
-         {
-            plugin.getConfig().addConfigurationElement(
-                     ConfigurationElementBuilder.create().setName("failOnMissingWebXml").setText("false"));
-         }
-         else
-         {
-            ConfigurationElementBuilder configElement = ConfigurationElementBuilder.createFromExisting(plugin
-                     .getConfig().getConfigurationElement("failOnMissingWebXml"));
-            plugin.getConfig().removeConfigurationElement("failOnMissingWebXml");
-            plugin.getConfig().addConfigurationElement(configElement);
-         }
-
-         plugins.removePlugin(mvnWarPluginDep);
-         plugins.addPlugin(plugin);
+         MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
+         Model pom = maven.getModel();
+         Properties properties = pom.getProperties();
+         properties.setProperty("failOnMissingWebXml", "false");
+         maven.setModel(pom);
       }
       return true;
    }
