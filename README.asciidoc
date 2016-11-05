@@ -15,9 +15,11 @@ What's new and noteworthy?
 - *Unix-like option names*: The shell option names are now more unix-like: Eg: `--targetPackage` is now `--target-package`.
 
 == Download Forge 3:
-Forge 3 is packaged inside an Eclipse plugin and also as a standalone ZIP file. They are independent of each other.
+JBoss Forge is packaged inside your favorite IDE plugin and also as a standalone ZIP file. They are independent of each other.
 
-- Eclipse Update Site - http://download.jboss.org/jbosstools/mars/snapshots/updates/
+- Eclipse - http://tools.jboss.org/
+- IntelliJ IDEA - http://plugins.jetbrains.com/plugin/7515
+- NetBeans - http://plugins.netbeans.org/plugin/57296/
 - Command line tools
 
 === Get Started with the Command line tools:
