@@ -1,6 +1,4 @@
-== JBoss Forge 3
-
-image::https://avatars2.githubusercontent.com/u/711249?s=200[]
+image::http://design.jboss.org/jbossforge/logo/final/jbossforge_logo_600px.png[]
 
 The fastest way to build applications, share your software, and enjoy doing it.
 
