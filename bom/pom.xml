@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss</groupId>
@@ -58,6 +59,7 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <version.furnace>2.24.2.Final</version.furnace>
       <version.slf4j.addon>1.7.13</version.slf4j.addon>
+      <version.shrinkwrap.addon>1.2.6</version.shrinkwrap.addon>
    </properties>
 
    <dependencyManagement>
@@ -417,6 +419,12 @@
             <classifier>forge-addon</classifier>
             <version>${version.slf4j.addon}</version>
          </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>shrinkwrap</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${version.shrinkwrap.addon}</version>
+         </dependency>
       </dependencies>
    </dependencyManagement>
 
@@ -444,7 +452,7 @@
             <version>1.6.3</version>
             <extensions>true</extensions>
             <configuration>
-               <autoReleaseAfterClose>true</autoReleaseAfterClose>            
+               <autoReleaseAfterClose>true</autoReleaseAfterClose>
                <serverId>ossrh</serverId>
                <nexusUrl>https://oss.sonatype.org/</nexusUrl>
             </configuration>
