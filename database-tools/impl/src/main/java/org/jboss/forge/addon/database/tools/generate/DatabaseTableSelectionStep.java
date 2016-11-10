@@ -62,9 +62,9 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    private UISelectOne<String> databaseSchema;
    private UISelectMany<String> databaseTables;
 
-   private Set<String> catalogValueChoices;
-   private Set<String> schemaValueChoices;
-   private Set<String> tableValueChoices;
+   private volatile Set<String> catalogValueChoices;
+   private volatile Set<String> schemaValueChoices;
+   private volatile Set<String> tableValueChoices;
 
    private Throwable exception;
 
@@ -310,7 +310,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
       // Update Catalogs
       catalogValueChoices = tables
                .stream()
-               .map((item) -> item.getCatalog())
+               .map(DatabaseTable::getCatalog)
                .filter(Objects::nonNull)
                .collect(Collectors.toCollection(TreeSet::new));
       final String catalog = (event != null && event.getSource() == databaseCatalog) ? (String) event.getNewValue()
@@ -319,7 +319,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
       schemaValueChoices = tables
                .stream()
                .filter((item) -> Objects.equals(item.getCatalog(), catalog))
-               .map((item) -> item.getSchema())
+               .map(DatabaseTable::getSchema)
                .filter(Objects::nonNull)
                .collect(Collectors.toCollection(TreeSet::new));
       final String schema = (event != null && event.getSource() == databaseSchema) ? (String) event.getNewValue()
@@ -329,7 +329,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
                .stream()
                .filter(item -> Objects.equals(item.getCatalog(), catalog))
                .filter(item -> Objects.equals(item.getSchema(), schema))
-               .map((item) -> item.getName())
+               .map(DatabaseTable::getName)
                .filter(Objects::nonNull)
                .collect(Collectors.toCollection(TreeSet::new));
       return database;

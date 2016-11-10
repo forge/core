@@ -69,20 +69,25 @@ public final class JDBCUtils
                {
                   logger.log(Level.SEVERE, "Error while fetching schema from generator. Will be ignored", e);
                }
-               database = new Database(con.getCatalog(), connectionSchema);
+               String connectionCatalog = con.getCatalog();
+               database = new Database(connectionCatalog, connectionSchema);
                DatabaseMetaData metaData = con.getMetaData();
-               try (ResultSet rs = metaData.getTables(null, null, "%%", null))
+               try (ResultSet rs = metaData.getTables(null, null, "%%", new String[] { "TABLE" }))
                {
                   while (rs.next())
                   {
                      String catalog = rs.getString("TABLE_CAT");
-                     String schema = rs.getString("TABLE_SCHEM");
-                     String name = rs.getString("TABLE_NAME");
-                     String type = rs.getString("TABLE_TYPE");
-                     if ("TABLE".equals(type))
+                     if (catalog == null)
                      {
-                        database.addTable(catalog, schema, name);
+                        catalog = connectionCatalog;
                      }
+                     String schema = rs.getString("TABLE_SCHEM");
+                     if (schema == null)
+                     {
+                        schema = connectionSchema;
+                     }
+                     String name = rs.getString("TABLE_NAME");
+                     database.addTable(catalog, schema, name);
                   }
                }
             }
