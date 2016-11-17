@@ -7,12 +7,15 @@
 package org.jboss.forge.addon.testing.facet;
 
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.addon.facets.constraints.FacetConstraint;
+import org.jboss.forge.addon.projects.facets.DependencyFacet;
 
 /**
  * Describes the TestNG testing framework.
  *
  * @author Ivan St. Ivanov
  */
+@FacetConstraint(DependencyFacet.class)
 public class TestNGTestingFacet extends AbstractTestingFacet implements TestingFacet
 {
 
