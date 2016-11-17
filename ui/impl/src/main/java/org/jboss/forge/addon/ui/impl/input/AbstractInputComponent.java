@@ -7,7 +7,6 @@
 package org.jboss.forge.addon.ui.impl.input;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -26,6 +25,7 @@ import org.jboss.forge.addon.ui.validate.UIValidator;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Callables;
+import org.jboss.forge.furnace.util.Sets;
 import org.jboss.forge.furnace.util.Strings;
 
 /**
@@ -43,8 +43,8 @@ public abstract class AbstractInputComponent<IMPLTYPE extends InputComponent<IMP
    private final String name;
    private final char shortName;
    private final Class<VALUETYPE> type;
-   private final Set<UIValidator> validators = new LinkedHashSet<>();
-   private final Set<ValueChangeListener> valueChangeListeners = new LinkedHashSet<>();
+   private final Set<UIValidator> validators = Sets.getConcurrentSet();
+   private final Set<ValueChangeListener> valueChangeListeners = Sets.getConcurrentSet();
 
    private String label;
    private Callable<String> description;
