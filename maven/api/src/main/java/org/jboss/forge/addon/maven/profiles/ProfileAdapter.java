@@ -39,4 +39,23 @@ public class ProfileAdapter extends org.apache.maven.model.Profile
 
       setProperties(profile.getProperties());
    }
+
+   public ProfileAdapter(final org.apache.maven.settings.Profile profile)
+   {
+      setId(profile.getId());
+      Activation activation = new Activation();
+
+      setActivation(activation);
+
+      for (org.apache.maven.settings.Repository repository : profile.getRepositories())
+      {
+         Repository mavenRepository = new Repository();
+         mavenRepository.setId(repository.getId());
+         mavenRepository.setUrl(repository.getUrl());
+         getRepositories().add(mavenRepository);
+      }
+
+      setProperties(profile.getProperties());
+   }
+
 }

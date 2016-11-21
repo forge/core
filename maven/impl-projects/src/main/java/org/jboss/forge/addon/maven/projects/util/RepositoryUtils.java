@@ -15,7 +15,7 @@ import org.apache.maven.settings.Repository;
 import org.apache.maven.settings.RepositoryPolicy;
 import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
-import org.jboss.forge.addon.maven.projects.P2ArtifactRepositoryLayout;
+import org.jboss.forge.addon.maven.impl.P2ArtifactRepositoryLayout;
 
 /**
  * Repository Utils

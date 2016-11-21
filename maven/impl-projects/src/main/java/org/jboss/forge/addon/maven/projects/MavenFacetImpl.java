@@ -29,6 +29,8 @@ import org.apache.maven.cli.CliRequest;
 import org.apache.maven.cli.MavenCli;
 import org.apache.maven.cli.logging.impl.UnsupportedSlf4jBindingConfiguration;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.building.ModelBuildingException;
+import org.apache.maven.model.building.ModelBuildingResult;
 import org.apache.maven.model.building.ModelProblem;
 import org.apache.maven.model.building.ModelProblem.Severity;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
@@ -40,6 +42,9 @@ import org.jboss.forge.addon.maven.projects.util.NativeSystemCall;
 import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
+import org.jboss.forge.addon.projects.building.BuildMessage;
+import org.jboss.forge.addon.projects.building.BuildResult;
+import org.jboss.forge.addon.projects.building.BuildResultBuilder;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
@@ -123,12 +128,52 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       }
    }
 
-   /*
+   /**
     * POM manipulation methods
     */
    public synchronized ProjectBuildingResult getProjectBuildingResult() throws ProjectBuildingException
    {
       return BUILD_MANAGER.getProjectBuildingResult(getModelResource());
+   }
+
+   @Override
+   public Model getEffectiveModel()
+   {
+      try
+      {
+         return BUILD_MANAGER.getModelBuildingResult(getModelResource()).getEffectiveModel();
+      }
+      catch (ModelBuildingException e)
+      {
+         throw new RuntimeException("Error while building effective model", e);
+      }
+   }
+
+   private synchronized ModelBuildingResult getModelBuildingResult() throws ModelBuildingException
+   {
+      return BUILD_MANAGER.getModelBuildingResult(getModelResource());
+   }
+
+   @Override
+   public BuildResult getEffectiveModelBuildResult()
+   {
+      BuildResultBuilder resultBuilder = BuildResultBuilder.create();
+      MavenFacetImpl mvn = getFaceted().getFacet(MavenFacetImpl.class);
+      resultBuilder.status(mvn.isModelValid());
+      try
+      {
+         ModelBuildingResult result = mvn.getModelBuildingResult();
+         if (!result.getProblems().isEmpty())
+         {
+            String errorMessage = new ModelBuildingException(result).getMessage();
+            resultBuilder.addMessage(BuildMessage.Severity.ERROR, errorMessage);
+         }
+      }
+      catch (ModelBuildingException e)
+      {
+         resultBuilder.addMessage(BuildMessage.Severity.ERROR, e.getMessage());
+      }
+      return resultBuilder.build();
    }
 
    @Override
@@ -138,7 +183,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
 
       try
       {
-         Properties properties = getProjectBuildingResult().getProject().getProperties();
+         Properties properties = getEffectiveModel().getProperties();
          for (Entry<Object, Object> o : properties.entrySet())
          {
             result.put((String) o.getKey(), (String) o.getValue());
@@ -163,7 +208,7 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
       {
          if (input != null)
          {
-            Properties properties = getProjectBuildingResult().getProject().getProperties();
+            Properties properties = getEffectiveModel().getProperties();
 
             for (Entry<Object, Object> e : properties.entrySet())
             {
@@ -353,21 +398,21 @@ public class MavenFacetImpl extends AbstractFacet<Project> implements ProjectFac
    @Override
    public boolean isModelValid()
    {
+      boolean valid = true;
       try
       {
-         boolean valid = true;
-         List<ModelProblem> problems = getProjectBuildingResult().getProblems();
+         List<ModelProblem> problems = getModelBuildingResult().getProblems();
          for (ModelProblem problem : problems)
          {
             // It is valid only if all messages are just warnings
             valid &= Severity.WARNING.equals(problem.getSeverity());
          }
-         return valid;
       }
-      catch (ProjectBuildingException e)
+      catch (ModelBuildingException mbe)
       {
-         return false;
+         valid = false;
       }
+      return valid;
    }
 
    /**

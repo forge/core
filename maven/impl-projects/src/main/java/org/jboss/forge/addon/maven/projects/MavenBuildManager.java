@@ -11,11 +11,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.stream.Collectors;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequestPopulator;
+import org.apache.maven.model.building.DefaultModelBuilderFactory;
+import org.apache.maven.model.building.DefaultModelBuildingRequest;
+import org.apache.maven.model.building.ModelBuilder;
+import org.apache.maven.model.building.ModelBuildingException;
+import org.apache.maven.model.building.ModelBuildingResult;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -29,15 +35,21 @@ import org.apache.maven.settings.Settings;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.util.repository.DefaultMirrorSelector;
 import org.eclipse.aether.util.repository.DefaultProxySelector;
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.maven.environment.Network;
+import org.jboss.forge.addon.maven.impl.DefaultModelCache;
+import org.jboss.forge.addon.maven.impl.FileResourceModelSource;
+import org.jboss.forge.addon.maven.impl.MavenModelResolver;
+import org.jboss.forge.addon.maven.profiles.ProfileAdapter;
 import org.jboss.forge.addon.maven.projects.util.RepositoryUtils;
 import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
+import org.jboss.forge.furnace.manager.maven.util.MavenRepositories;
 import org.jboss.forge.furnace.util.Assert;
 
 /**
@@ -47,17 +59,51 @@ import org.jboss.forge.furnace.util.Assert;
  */
 public class MavenBuildManager
 {
-   // TODO: Replace this with a Cache implementation
-   private Map<MavenModelResource, ProjectBuildingResult> cache = new WeakHashMap<>();
-   private MavenContainer container = new MavenContainer();
-   private Environment environment;
+   // TODO: Replace this with a decent cache implementation
+   private Map<String, ProjectBuildingResult> cacheProject = new WeakHashMap<>();
+   private ProjectBuilder projectBuilder;
    private PlexusContainer plexus;
 
-   private ProjectBuilder builder;
+   private Map<String, ModelBuildingResult> cacheModel = new WeakHashMap<>();
 
+   private ModelBuilder modelBuilder;
+
+   private MavenContainer container = new MavenContainer();
+   private Environment environment;
+
+   public ModelBuildingResult getModelBuildingResult(MavenModelResource pomResource) throws ModelBuildingException
+   {
+      ModelBuildingResult result = cacheModel.get(pomResource.getFullyQualifiedName());
+      if (result == null)
+      {
+         ModelBuilder builder = getModelBuilder();
+         DefaultModelBuildingRequest request = getModelBuildingRequest();
+         boolean inTransaction = !pomResource.getUnderlyingResourceObject().exists();
+         // FORGE-1287
+         if (inTransaction)
+         {
+            // If under a transaction, don't start monitoring
+            request.setModelSource(new FileResourceModelSource(pomResource));
+         }
+         else
+         {
+            request.setPomFile(pomResource.getUnderlyingResourceObject());
+            monitorResource(pomResource);
+         }
+         result = builder.build(request);
+         cacheModel.put(pomResource.getFullyQualifiedName(), result);
+      }
+      return result;
+   }
+
+   /***
+    * @param pomResource
+    * @return
+    * @throws ProjectBuildingException
+    */
    ProjectBuildingResult getProjectBuildingResult(MavenModelResource pomResource) throws ProjectBuildingException
    {
-      ProjectBuildingResult result = cache.get(pomResource);
+      ProjectBuildingResult result = cacheProject.get(pomResource.getFullyQualifiedName());
       if (result == null)
       {
          try
@@ -69,12 +115,12 @@ public class MavenBuildManager
             // FORGE-1287
             if (inTransaction)
             {
-               result = getBuilder().build(new FileResourceModelSource(pomResource), request);
+               result = getProjectBuilder().build(new FileResourceModelSource(pomResource), request);
                // If under a transaction, don't start monitoring
             }
             else
             {
-               result = getBuilder().build(pomResource.getUnderlyingResourceObject(), request);
+               result = getProjectBuilder().build(pomResource.getUnderlyingResourceObject(), request);
                monitorResource(pomResource);
             }
          }
@@ -88,7 +134,7 @@ public class MavenBuildManager
          finally
          {
             if (result != null)
-               cache.put(pomResource, result);
+               cacheProject.put(pomResource.getFullyQualifiedName(), result);
          }
       }
       return result;
@@ -98,17 +144,41 @@ public class MavenBuildManager
    {
       final ResourceMonitor monitor = pomResource.monitor();
       monitor.addResourceListener((event) -> {
-         cache.remove(pomResource);
+         evictFromCache(pomResource);
          monitor.cancel();
       });
    }
 
+   /**
+    * @deprecated Use {@link #getModelBuildingRequest(MavenModelResource)}
+    */
+   @Deprecated
    ProjectBuildingRequest getProjectBuildingRequest()
    {
       return getProjectBuildingRequest(Network.isOffline(getEnvironment()));
    }
 
-   ProjectBuildingRequest getProjectBuildingRequest(final boolean offline)
+   private DefaultModelBuildingRequest getModelBuildingRequest()
+   {
+      Settings settings = container.getSettings();
+      RepositorySystem system = container.getRepositorySystem();
+      DefaultRepositorySystemSession session = container.setupRepoSession(system, settings);
+      List<RemoteRepository> remoteRepositories = MavenRepositories.getRemoteRepositories(container, settings);
+      MavenModelResolver resolver = new MavenModelResolver(system, session, remoteRepositories);
+      DefaultModelBuildingRequest request = new DefaultModelBuildingRequest()
+               .setSystemProperties(System.getProperties())
+               .setModelResolver(resolver)
+               .setLocationTracking(true)
+               .setModelCache(DefaultModelCache.newInstance(session))
+               .setProfiles(settings.getProfiles().stream()
+                        .map(ProfileAdapter::new)
+                        .collect(Collectors.toList()))
+               .setActiveProfileIds(settings.getActiveProfiles());
+      return request;
+   }
+
+   @SuppressWarnings("deprecation")
+   private ProjectBuildingRequest getProjectBuildingRequest(final boolean offline)
    {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
       try
@@ -195,11 +265,22 @@ public class MavenBuildManager
       }
    }
 
-   private ProjectBuilder getBuilder()
+   private ModelBuilder getModelBuilder()
    {
-      if (builder == null)
-         builder = getPlexus().lookup(ProjectBuilder.class);
-      return builder;
+      if (modelBuilder == null)
+      {
+         modelBuilder = new DefaultModelBuilderFactory().newInstance();
+      }
+      return modelBuilder;
+   }
+
+   private ProjectBuilder getProjectBuilder()
+   {
+      if (projectBuilder == null)
+      {
+         projectBuilder = getPlexus().lookup(ProjectBuilder.class);
+      }
+      return projectBuilder;
    }
 
    File getLocalRepositoryDirectory()
@@ -209,7 +290,9 @@ public class MavenBuildManager
 
    void evictFromCache(MavenModelResource pom)
    {
-      cache.remove(pom);
+      String key = pom.getFullyQualifiedName();
+      cacheProject.remove(key);
+      cacheModel.remove(key);
    }
 
    /**
