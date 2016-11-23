@@ -15,6 +15,7 @@ import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
+import org.jboss.forge.addon.projects.building.BuildResult;
 import org.jboss.forge.addon.resource.DirectoryResource;
 
 /**
@@ -33,6 +34,18 @@ public interface MavenFacet extends ProvidedProjectFacet
     * Get the current Maven {@link Model} for this {@link Project}.
     */
    Model getModel();
+
+   /**
+    * Get the effective Maven {@link Model} for this {@link Project}.
+    */
+   Model getEffectiveModel();
+
+   /**
+    * Returns the {@link BuildResult} of the effective {@link Model} for this project.
+    * <p/>
+    * It is not affected by the builds executed in {@link #executeBuild(String...)}
+    */
+   BuildResult getEffectiveModelBuildResult();
 
    /**
     * Set the current Maven {@link Model} for this {@link Project}.

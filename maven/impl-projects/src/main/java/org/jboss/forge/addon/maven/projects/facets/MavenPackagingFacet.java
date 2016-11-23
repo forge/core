@@ -7,12 +7,9 @@
 package org.jboss.forge.addon.maven.projects.facets;
 
 import java.io.File;
-import java.util.Collections;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.ProjectBuildingResult;
 import org.jboss.forge.addon.environment.Environment;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
@@ -20,9 +17,7 @@ import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.maven.projects.MavenFacetImpl;
 import org.jboss.forge.addon.maven.projects.MavenProjectBuilder;
 import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.projects.building.BuildMessage.Severity;
 import org.jboss.forge.addon.projects.building.BuildResult;
-import org.jboss.forge.addon.projects.building.BuildResultBuilder;
 import org.jboss.forge.addon.projects.building.ProjectBuilder;
 import org.jboss.forge.addon.projects.events.PackagingChanged;
 import org.jboss.forge.addon.projects.facets.PackagingFacet;
@@ -36,7 +31,7 @@ import org.jboss.forge.furnace.util.Strings;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @FacetConstraint(MavenFacet.class)
-public class MavenPackagingFacet extends AbstractFacet<Project>implements PackagingFacet
+public class MavenPackagingFacet extends AbstractFacet<Project> implements PackagingFacet
 {
    @Override
    public void setPackagingType(final String type)
@@ -86,11 +81,11 @@ public class MavenPackagingFacet extends AbstractFacet<Project>implements Packag
    @Override
    public Resource<?> getFinalArtifact()
    {
-      MavenFacetImpl mvn = getFaceted().getFacet(MavenFacetImpl.class);
+      MavenFacet mvn = getFaceted().getFacet(MavenFacet.class);
 
       try
       {
-         Build build = mvn.getProjectBuildingResult().getProject().getBuild();
+         Build build = mvn.getEffectiveModel().getBuild();
          String directory = build.getDirectory();
          String finalName = build.getFinalName();
 
@@ -167,22 +162,7 @@ public class MavenPackagingFacet extends AbstractFacet<Project>implements Packag
    @Override
    public BuildResult getBuildResult()
    {
-      BuildResultBuilder resultBuilder = BuildResultBuilder.create();
       MavenFacetImpl mvn = getFaceted().getFacet(MavenFacetImpl.class);
-      resultBuilder.status(mvn.isModelValid());
-      try
-      {
-         ProjectBuildingResult result = mvn.getProjectBuildingResult();
-         if (!result.getProblems().isEmpty())
-         {
-            String errorMessage = new ProjectBuildingException(Collections.singletonList(result)).getMessage();
-            resultBuilder.addMessage(Severity.ERROR, errorMessage);
-         }
-      }
-      catch (ProjectBuildingException e)
-      {
-         resultBuilder.addMessage(Severity.ERROR, e.getMessage());
-      }
-      return resultBuilder.build();
+      return mvn.getEffectiveModelBuildResult();
    }
 }

@@ -42,7 +42,7 @@ import org.jboss.forge.furnace.util.Strings;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @FacetConstraint(MavenFacet.class)
-public class MavenDependencyFacet extends AbstractFacet<Project>implements DependencyFacet
+public class MavenDependencyFacet extends AbstractFacet<Project> implements DependencyFacet
 {
    private static final Logger log = Logger.getLogger(MavenDependencyFacet.class.getName());
 
@@ -190,7 +190,6 @@ public class MavenDependencyFacet extends AbstractFacet<Project>implements Depen
          {
             result.add(resolveProperties(dependency));
          }
-
       }
       catch (Exception e)
       {
@@ -251,10 +250,9 @@ public class MavenDependencyFacet extends AbstractFacet<Project>implements Depen
       MavenFacet maven = getFaceted().getFacet(MavenFacet.class);
       try
       {
-         DependencyManagement depMan = ((MavenFacetImpl) maven).getProjectBuildingResult().getProject()
-                  .getDependencyManagement();
+         DependencyManagement depMan = maven.getEffectiveModel().getDependencyManagement();
          List<Dependency> managedDependencies = (depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
-                  .getDependencies()) : new ArrayList<Dependency>());
+                  .getDependencies()) : new ArrayList<>());
 
          for (Dependency managedDependency : managedDependencies)
          {
@@ -280,7 +278,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project>implements Depen
       DependencyManagement depMan = pom.getDependencyManagement();
 
       List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
-               .getDependencies()) : new ArrayList<Dependency>();
+               .getDependencies()) : new ArrayList<>();
 
       for (Dependency manDep : managedDependencies)
       {
@@ -345,7 +343,7 @@ public class MavenDependencyFacet extends AbstractFacet<Project>implements Depen
       DependencyManagement depMan = pom.getDependencyManagement();
 
       List<Dependency> managedDependencies = depMan != null ? MavenDependencyAdapter.fromMavenList(depMan
-               .getDependencies()) : new ArrayList<Dependency>();
+               .getDependencies()) : new ArrayList<>();
 
       for (Dependency managedDependency : managedDependencies)
       {
