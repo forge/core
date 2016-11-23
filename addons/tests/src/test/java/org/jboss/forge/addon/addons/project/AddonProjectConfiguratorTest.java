@@ -74,8 +74,8 @@ public class AddonProjectConfiguratorTest
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
       metadataFacet.setProjectGroupName("com.acme.testproject");
 
-      Version forgeVersion = furnace.getVersion();
-      configurator.setupComplexAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
+      Version furnaceVersion = furnace.getVersion();
+      configurator.setupComplexAddonProject(project, Collections.<AddonId>emptyList());
       Assert.assertTrue(project.hasFacet(AddonParentFacet.class));
       Assert.assertTrue(project.hasFacet(JavaCompilerFacet.class));
       Assert.assertFalse(project.hasFacet(JavaSourceFacet.class));
@@ -314,8 +314,9 @@ public class AddonProjectConfiguratorTest
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
       Assert.assertTrue(testsProject.getFacet(DependencyFacet.class).hasEffectiveManagedDependency(
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY));
-      Assert.assertEquals(forgeVersion.toString(), testsProject.getFacet(DependencyFacet.class).getEffectiveDependency(
-               DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY).getCoordinate().getVersion());
+      Assert.assertEquals(furnaceVersion.toString(),
+               testsProject.getFacet(DependencyFacet.class).getEffectiveDependency(
+                        DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY).getCoordinate().getVersion());
       Assert.assertFalse(testsProject.getFacet(DependencyFacet.class).hasDirectDependency(
                DependencyBuilder.create("javax.annotation:jsr250-api:1.0")));
 
@@ -334,8 +335,8 @@ public class AddonProjectConfiguratorTest
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
       metadataFacet.setProjectGroupName("com.acme.testproject");
 
-      Version forgeVersion = furnace.getVersion();
-      configurator.setupSimpleAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
+      Version furnaceVersion = furnace.getVersion();
+      configurator.setupSimpleAddonProject(project, Collections.<AddonId>emptyList());
 
       Assert.assertTrue(project.hasFacet(ForgeBOMFacet.class));
       Assert.assertTrue(project.hasFacet(DefaultFurnaceContainerFacet.class));
@@ -377,7 +378,7 @@ public class AddonProjectConfiguratorTest
                DefaultFurnaceContainerFacet.FURNACE_CONTAINER_DEPENDENCY).getCoordinate().getVersion());
       Assert.assertTrue(project.getFacet(DependencyFacet.class).hasEffectiveDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
-      Assert.assertEquals(forgeVersion.toString(), project.getFacet(DependencyFacet.class).getEffectiveDependency(
+      Assert.assertEquals(furnaceVersion.toString(), project.getFacet(DependencyFacet.class).getEffectiveDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY).getCoordinate().getVersion());
       Assert.assertFalse(project.getFacet(DependencyFacet.class).hasDirectDependency(
                DefaultFurnaceContainerAPIFacet.FURNACE_CONTAINER_API_DEPENDENCY));
@@ -400,8 +401,7 @@ public class AddonProjectConfiguratorTest
       metadataFacet.setProjectVersion("1.0.0-SNAPSHOT");
       metadataFacet.setProjectGroupName("com.acme.testproject");
 
-      Version forgeVersion = furnace.getVersion();
-      configurator.setupComplexAddonProject(project, forgeVersion, Collections.<AddonId> emptyList());
+      configurator.setupComplexAddonProject(project, Collections.<AddonId>emptyList());
 
       Resource<?> projectRoot = project.getRoot();
 

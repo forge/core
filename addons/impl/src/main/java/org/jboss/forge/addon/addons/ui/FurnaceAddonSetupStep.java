@@ -33,8 +33,6 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.repositories.AddonRepository;
-import org.jboss.forge.furnace.versions.Version;
-import org.jboss.forge.furnace.versions.Versions;
 
 /**
  * Called when the Next button is pressed and the {@link FurnaceAddonProjectType} is selected in NewProjectWizard
@@ -127,14 +125,13 @@ public class FurnaceAddonSetupStep extends AbstractUICommand implements UIWizard
          }
       }
       dependencyAddons.add(furnaceContainer.getValue());
-      Version forgeVersion = Versions.getImplementationVersionFor(getClass());
       if (splitProjects.getValue())
       {
-         addonProjectFactory.setupComplexAddonProject(project, forgeVersion, dependencyAddons);
+         addonProjectFactory.setupComplexAddonProject(project, dependencyAddons);
       }
       else
       {
-         addonProjectFactory.setupSimpleAddonProject(project, forgeVersion, dependencyAddons);
+         addonProjectFactory.setupSimpleAddonProject(project, dependencyAddons);
       }
 
       return Results.success();

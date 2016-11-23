@@ -43,7 +43,6 @@ import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.Streams;
-import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaPackageInfoSource;
 
@@ -59,15 +58,13 @@ public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
    private static final String FORGE_ADDON_CLASSIFIER = "forge-addon";
 
    @Override
-   public void setupSimpleAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
+   public void setupSimpleAddonProject(Project project, Iterable<AddonId> dependencyAddons)
             throws FileNotFoundException, FacetNotFoundException
    {
       FacetFactory facetFactory = getFacetFactory();
       generateReadme(project);
       facetFactory.install(project, FurnaceVersionFacet.class);
       facetFactory.install(project, ForgeVersionFacet.class);
-      project.getFacet(ForgeVersionFacet.class).setVersion(forgeVersion.toString());
-
       facetFactory.install(project, ForgeBOMFacet.class);
       facetFactory.install(project, FurnacePluginFacet.class);
       facetFactory.install(project, AddonClassifierFacet.class);
@@ -91,7 +88,7 @@ public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
     * @throws FileNotFoundException
     */
    @Override
-   public void setupComplexAddonProject(Project project, Version forgeVersion, Iterable<AddonId> dependencyAddons)
+   public void setupComplexAddonProject(Project project, Iterable<AddonId> dependencyAddons)
             throws FileNotFoundException, FacetNotFoundException
    {
       FacetFactory facetFactory = getFacetFactory();
@@ -105,7 +102,6 @@ public class AddonProjectConfiguratorImpl implements AddonProjectConfigurator
 
       facetFactory.install(project, AddonParentFacet.class);
       facetFactory.install(project, ForgeBOMFacet.class);
-      project.getFacet(ForgeVersionFacet.class).setVersion(forgeVersion.toString());
 
       Project addonProject = createSubmoduleProject(project, "addon", projectName, AddonAddonFacet.class);
       Project apiProject = createSubmoduleProject(project, "api", projectName + "-api", AddonAPIFacet.class,
