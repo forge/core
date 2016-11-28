@@ -77,7 +77,8 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
             }
             catch (IOException e)
             {
-               throw new ConfigurationException("Error while create user configuration", e);
+               throw new ConfigurationException(
+                        "Error while creating user configuration file: " + userConfigurationFile, e);
             }
          }
          userConfiguration = getConfiguration(userConfigurationFile);
