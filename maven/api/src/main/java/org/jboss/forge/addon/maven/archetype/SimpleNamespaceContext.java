@@ -4,7 +4,7 @@
  * Licensed under the Eclipse Public License version 1.0, available at
  * http://www.eclipse.org/legal/epl-v10.html
  */
-package org.jboss.forge.addon.maven.projects.archetype;
+package org.jboss.forge.addon.maven.archetype;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,10 +17,10 @@ import javax.xml.namespace.NamespaceContext;
  * 
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  */
-public class SimpleNamespaceContext implements NamespaceContext
+class SimpleNamespaceContext implements NamespaceContext
 {
-   private Map<String, String> prefix2Ns = new HashMap<String, String>();
-   private Map<String, String> ns2Prefix = new HashMap<String, String>();
+   private Map<String, String> prefix2Ns = new HashMap<>();
+   private Map<String, String> ns2Prefix = new HashMap<>();
 
    public SimpleNamespaceContext()
    {

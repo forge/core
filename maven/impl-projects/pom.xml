@@ -7,9 +7,6 @@
    </parent>
    <artifactId>maven-impl-projects</artifactId>
    <name>Forge - Maven Projects Impl</name>
-   <properties>
-      <fabric8.archetypes.version>2.2.95</fabric8.archetypes.version>
-   </properties>
    <dependencies>
       <dependency>
          <groupId>org.jboss.forge.furnace.container</groupId>
@@ -95,69 +92,6 @@
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
-
-      <!-- testing -->
-      <dependency>
-         <groupId>org.assertj</groupId>
-         <artifactId>assertj-core</artifactId>
-         <version>1.7.1</version>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>io.fabric8.archetypes</groupId>
-         <artifactId>golang-example-archetype</artifactId>
-         <version>${fabric8.archetypes.version}</version>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>io.fabric8.archetypes</groupId>
-         <artifactId>cdi-camel-archetype</artifactId>
-         <version>${fabric8.archetypes.version}</version>
-         <scope>test</scope>
-      </dependency>
    </dependencies>
-
-   <build>
-      <plugins>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-               <execution>
-                  <id>copy</id>
-                  <phase>test-compile</phase>
-                  <goals>
-                     <goal>copy</goal>
-                  </goals>
-                  <configuration>
-                     <artifactItems>
-                        <artifactItem>
-                           <groupId>io.fabric8.archetypes</groupId>
-                           <artifactId>cdi-camel-archetype</artifactId>
-                           <version>${fabric8.archetypes.version}</version>
-                           <type>jar</type>
-                           <overWrite>false</overWrite>
-                           <outputDirectory>${project.build.directory}/test-archetypes</outputDirectory>
-                           <destFileName>cdi-camel-archetype.jar</destFileName>
-                        </artifactItem>
-                        <artifactItem>
-                           <groupId>io.fabric8.archetypes</groupId>
-                           <artifactId>golang-example-archetype</artifactId>
-                           <version>${fabric8.archetypes.version}</version>
-                           <type>jar</type>
-                           <overWrite>false</overWrite>
-                           <outputDirectory>${project.build.directory}/test-archetypes</outputDirectory>
-                           <destFileName>golang-example-archetype.jar</destFileName>
-                        </artifactItem>
-                     </artifactItems>
-                     <!-- <outputDirectory>${project.build.directory}/wars</outputDirectory> -->
-                     <overWriteReleases>false</overWriteReleases>
-                     <overWriteSnapshots>true</overWriteSnapshots>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
-      </plugins>
-   </build>
 </project>
 
