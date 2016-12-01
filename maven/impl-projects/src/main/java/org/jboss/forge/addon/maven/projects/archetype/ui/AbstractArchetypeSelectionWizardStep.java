@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.maven.projects.archetype.ui;
 
+import java.io.File;
+
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.DependencyRepository;
 import org.jboss.forge.addon.dependencies.DependencyResolver;
@@ -25,8 +27,6 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
-
-import java.io.File;
 
 /**
  * Base class for a wizard step which on execution creates an archetype

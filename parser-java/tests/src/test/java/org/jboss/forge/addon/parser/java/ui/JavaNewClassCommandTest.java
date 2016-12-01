@@ -148,9 +148,4 @@ public class JavaNewClassCommandTest
    {
       commandController.setValueFor("extends", type);
    }
-
-   private void setImplements(String type)
-   {
-      commandController.setValueFor("implements", type);
-   }
 }

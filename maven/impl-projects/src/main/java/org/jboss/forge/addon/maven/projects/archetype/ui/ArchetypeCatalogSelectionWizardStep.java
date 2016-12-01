@@ -20,7 +20,7 @@ import org.jboss.forge.addon.dependencies.DependencyResolver;
 import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.maven.archetype.ArchetypeCatalogFactory;
 import org.jboss.forge.addon.maven.archetype.ArchetypeCatalogFactoryRegistry;
-import org.jboss.forge.addon.maven.projects.archetype.ArchetypeHelper;
+import org.jboss.forge.addon.maven.archetype.ArchetypeHelper;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.MetadataFacet;

@@ -214,7 +214,7 @@ public class RestNewEndpointCommandTest
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
       assertEquals(0, javaResource.getJavaType().getSyntaxErrors().size());
       assertTrue(javaResource.getJavaType().hasAnnotation(Path.class));
-      JavaClass javaClass = javaResource.getJavaType();
+      JavaClass<?> javaClass = javaResource.getJavaType();
       assertEquals(2, javaClass.getMethods().size());
    }
 }

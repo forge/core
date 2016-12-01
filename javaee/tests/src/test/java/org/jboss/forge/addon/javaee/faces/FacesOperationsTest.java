@@ -6,6 +6,9 @@
  */
 package org.jboss.forge.addon.javaee.faces;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import javax.faces.validator.FacesValidator;
@@ -21,16 +24,12 @@ import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.facets.ResourcesFacet;
-import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -41,9 +40,6 @@ public class FacesOperationsTest
 {
    @Inject
    private ProjectFactory projectFactory;
-
-   @Inject
-   private ResourceFactory resourceFactory;
 
    @Inject
    private FacetFactory facetFactory;

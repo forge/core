@@ -33,7 +33,6 @@ import org.jboss.forge.furnace.util.Lists;
 /**
  * @author <a href="danielsoro@gmail.com">Daniel Cunha (soro)</a>
  */
-@SuppressWarnings("rawtypes")
 public class MoveCommand extends AbstractShellCommand
 {
 

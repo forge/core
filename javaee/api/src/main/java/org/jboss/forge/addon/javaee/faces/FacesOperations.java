@@ -12,8 +12,6 @@ import javax.faces.validator.Validator;
 
 import org.jboss.forge.addon.javaee.cdi.ui.BeanScope;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
-import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
@@ -41,12 +39,12 @@ public interface FacesOperations
     */
    JavaClassSource newConverter(JavaClassSource source);
 
-    /**
-     * Creates a new JSF Validator
-     *
-     * @param source the current source to decorate
-     * @return the decorated {@link JavaResource}
-     */
+   /**
+    * Creates a new JSF Validator
+    *
+    * @param source the current source to decorate
+    * @return the decorated {@link JavaResource}
+    */
    JavaClassSource newValidator(JavaClassSource source, String validatorName, String validatorPackage);
 
    /**

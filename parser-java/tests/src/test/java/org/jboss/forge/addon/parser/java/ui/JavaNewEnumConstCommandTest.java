@@ -91,7 +91,7 @@ public class JavaNewEnumConstCommandTest
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaEnum.class)));
 
-      CommandController controller = testHarness.createCommandController(JavaNewEnumConstantCommand.class,
+      CommandController controller = testHarness.createCommandController(JavaAddEnumConstantCommand.class,
                javaResource);
       controller.initialize();
       controller.setValueFor("arguments", Arrays.asList("VISA", "AMERICAN_EXPRESS", "MASTERCARD"));

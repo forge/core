@@ -238,7 +238,7 @@ public class GitUtilsTest
       gitUtils.getLogForCurrentBranch(repo);
 
       gitUtils.switchBranch(repo, branchNames[0]);
-      Ref branch2Ref = repo.getRepository().getRef(branchNames[1]);
+      Ref branch2Ref = repo.getRepository().findRef(branchNames[1]);
       gitUtils.cherryPick(repo, branch2Ref);
 
       // assert file2 exists
@@ -289,7 +289,7 @@ public class GitUtilsTest
       gitUtils.getLogForCurrentBranch(repo);
 
       gitUtils.switchBranch(repo, branchNames[0]);
-      Ref branch2Ref = repo.getRepository().getRef(branchNames[1]);
+      Ref branch2Ref = repo.getRepository().findRef(branchNames[1]);
       gitUtils.cherryPickNoMerge(repo, branch2Ref);
 
       // assert file2 exists
@@ -390,7 +390,7 @@ public class GitUtilsTest
 
       commits = gitUtils.getLogForCurrentBranch(repo);
       Assert.assertEquals("Wrong number of commits in log", 2, commits.size());
-      cherryPickResult = gitUtils.cherryPickNoMerge(repo, repo.getRepository().getRef(branchNames[0]));
+      cherryPickResult = gitUtils.cherryPickNoMerge(repo, repo.getRepository().findRef(branchNames[0]));
       Assert.assertEquals("Wrong cherrypick status", CherryPickResult.CherryPickStatus.OK,
                cherryPickResult.getStatus());
       gitUtils.resetHard(repo, "HEAD^1");
@@ -399,7 +399,7 @@ public class GitUtilsTest
       Assert.assertEquals("Wrong number of commits in log", 1, commits.size());
       try
       {
-         gitUtils.cherryPickNoMerge(repo, repo.getRepository().getRef(branchNames[0]));
+         gitUtils.cherryPickNoMerge(repo, repo.getRepository().findRef(branchNames[0]));
          Assert.fail("Expected exception: " + CantMergeCommitException.class);
       }
       catch (CantMergeCommitException cmce)
