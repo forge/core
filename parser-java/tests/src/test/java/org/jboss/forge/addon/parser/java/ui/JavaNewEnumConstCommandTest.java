@@ -77,6 +77,7 @@ public class JavaNewEnumConstCommandTest
    @Inject
    private FacetFactory facetFactory;
 
+   @SuppressWarnings("deprecation")
    @Test
    public void testCreateEnum() throws Exception
    {
@@ -91,7 +92,7 @@ public class JavaNewEnumConstCommandTest
       Assert.assertNotNull(javaResource);
       Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaEnum.class)));
 
-      CommandController controller = testHarness.createCommandController(JavaAddEnumConstantCommand.class,
+      CommandController controller = testHarness.createCommandController(JavaNewEnumConstantCommand.class,
                javaResource);
       controller.initialize();
       controller.setValueFor("arguments", Arrays.asList("VISA", "AMERICAN_EXPRESS", "MASTERCARD"));
