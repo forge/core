@@ -6,6 +6,13 @@
  */
 package org.jboss.forge.addon.javaee.jpa;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.jboss.forge.addon.dependencies.Coordinate;
+import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
+
 /**
  * Relational database instance types.
  * 
@@ -14,18 +21,19 @@ package org.jboss.forge.addon.javaee.jpa;
  */
 public enum DatabaseType
 {
-   MYSQL,
+   // @formatter:off
+   MYSQL("mysql","mysql-connector-java"),
    ORACLE,
-   DERBY,
+   DERBY("org.apache.derby","derby"),
    DB2,
-   POSTGRES,
+   POSTGRES("postgresql","postgresql"),
    DEFAULT,
    DB2_AS400,
    DB2_OS390,
-   MYSQL5_INNODB,
-   MYSQL_INNODB,
-   MYSQL5_ISAM,
-   MYSQL_ISAM,
+   MYSQL5_INNODB("mysql","mysql-connector-java"),
+   MYSQL_INNODB("mysql","mysql-connector-java"),
+   MYSQL5_ISAM("mysql","mysql-connector-java"),
+   MYSQL_ISAM("mysql","mysql-connector-java"),
    ORACLE_9I,
    ORACLE_10G,
    SYBASE,
@@ -33,16 +41,47 @@ public enum DatabaseType
    SQL_SERVER,
    SAP_DB,
    INFORMIX,
-   HSQLDB,
-   H2,
+   HSQLDB("org.hsqldb","hsqldb"),
+   H2("com.h2database","h2"),
    INGRES,
    PROGRESS,
-   MCKOI,
+   MCKOI("com.mckoi","mckoisqldb"),
    INTERBASE,
    POINTBASE,
    FRONTBASE,
-   FIREBIRD,
-   HSQLDB_IN_MEMORY,
-   ORACLE_11G,
-   ACCESS
+   FIREBIRD("org.firebirdsql.jdbc","jaybird-jdk18"),
+   HSQLDB_IN_MEMORY, 
+   ORACLE_11G, 
+   ACCESS;
+   // @formatter:on
+
+   private final Coordinate driverCoordinate;
+
+   private DatabaseType()
+   {
+      this.driverCoordinate = null;
+   }
+
+   private DatabaseType(String groupId, String artifactId)
+   {
+      this.driverCoordinate = CoordinateBuilder.create().setGroupId(groupId).setArtifactId(artifactId);
+   }
+
+   public Coordinate getDriverCoordinate()
+   {
+      return driverCoordinate;
+   }
+
+   public boolean isDriverCoordinateSet()
+   {
+      return this.driverCoordinate != null;
+   }
+
+   public static List<DatabaseType> getTypesWithDriverSet()
+   {
+      return Arrays.asList(DatabaseType.values())
+               .stream()
+               .filter(DatabaseType::isDriverCoordinateSet)
+               .collect(Collectors.toList());
+   }
 }
