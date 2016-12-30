@@ -1,4 +1,4 @@
-org.jboss.forge.addon.database.tools.ui.AddDriverDependencyCommand
+org.jboss.forge.addon.database.tools.ui.JDBCAddDependencyCommand
 org.jboss.forge.addon.database.tools.connections.ConnectionProfileManagerImpl
 org.jboss.forge.addon.database.tools.connections.ui.CreateConnectionProfileCommandImpl
 org.jboss.forge.addon.database.tools.connections.ui.RemoveConnectionProfileCommandImpl

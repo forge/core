@@ -41,7 +41,7 @@ import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
-public class AddDriverDependencyCommand extends AbstractProjectCommand
+public class JDBCAddDependencyCommand extends AbstractProjectCommand
 {
    private UISelectOne<DatabaseType> dbType;
    private UIInput<String> version;
@@ -52,9 +52,9 @@ public class AddDriverDependencyCommand extends AbstractProjectCommand
    @Override
    public Metadata getMetadata(UIContext context)
    {
-      return Metadata.forCommand(getClass()).name("Driver: Add Dependency")
+      return Metadata.forCommand(getClass()).name("JDBC: Add Dependency")
                .description("Adds a dependency in the current project to the specified driver")
-               .category(Categories.create("Database", "Drivers"));
+               .category(Categories.create("Database", "JDBC"));
    }
 
    @Override
