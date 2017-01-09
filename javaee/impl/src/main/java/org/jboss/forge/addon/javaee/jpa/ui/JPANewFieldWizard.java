@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UINavigationContext;
+import org.jboss.forge.addon.ui.context.UIRegionBuilder;
 import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.hints.InputType;
@@ -59,9 +61,9 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.forge.addon.ui.util.Selections;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
 import org.jboss.forge.furnace.util.Strings;
-import org.jboss.forge.roaster.model.Field;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
@@ -260,62 +262,13 @@ public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard
          }
       });
 
-      lob.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
-            return relationshipType.getValue() == RelationshipType.BASIC && !transientField.getValue();
-         }
-      });
-      type.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
-            return !lob.getValue() && !transientField.getValue();
-         }
-      });
-      columnName.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
-            return !transientField.getValue();
-         }
-      });
-      notNullable.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
-            return !transientField.getValue();
-         }
-      });
-      notInsertable.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
-            return !transientField.getValue();
-         }
-      });
-      notUpdatable.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
-            return !transientField.getValue();
-         }
-      });
-      length.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
-            return !lob.getValue() && !transientField.getValue();
-         }
-      });
+      lob.setEnabled(() -> relationshipType.getValue() == RelationshipType.BASIC && !transientField.getValue());
+      type.setEnabled(() -> !lob.getValue() && !transientField.getValue());
+      columnName.setEnabled(() -> !transientField.getValue());
+      notNullable.setEnabled(() -> !transientField.getValue());
+      notInsertable.setEnabled(() -> !transientField.getValue());
+      notUpdatable.setEnabled(() -> !transientField.getValue());
+      length.setEnabled(() -> !lob.getValue() && !transientField.getValue());
       temporalType.setEnabled(new Callable<Boolean>()
       {
          @Override
@@ -510,8 +463,8 @@ public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard
     * @throws FileNotFoundException
     */
    private void setCurrentWorkingResource(UIExecutionContext context, JavaResource javaResource,
-            Field<JavaClassSource> field)
-                     throws FileNotFoundException
+            FieldSource<JavaClassSource> field)
+            throws FileNotFoundException
    {
       Project selectedProject = getSelectedProject(context);
       if (selectedProject != null)
@@ -519,7 +472,17 @@ public class JPANewFieldWizard extends AbstractJavaEECommand implements UIWizard
          JavaSourceFacet facet = selectedProject.getFacet(JavaSourceFacet.class);
          facet.saveJavaSource(field.getOrigin());
       }
-      context.getUIContext().setSelection(javaResource);
+      // For some reason the field start/end position is not set. Investigate.
+      JavaClassSource source = javaResource.getJavaType();
+      final FieldSource<JavaClassSource> fieldWithPosition = source.getField(field.getName());
+      UISelection<JavaResource> selection = Selections
+               .from(resource -> UIRegionBuilder.create(resource)
+                        .startLine(fieldWithPosition.getLineNumber())
+                        .endLine(fieldWithPosition.getLineNumber())
+                        .startPosition(fieldWithPosition.getStartPosition())
+                        .endPosition(fieldWithPosition.getEndPosition()),
+                        Collections.singleton(javaResource));
+      context.getUIContext().setSelection(selection);
    }
 
    @Override
