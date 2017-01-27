@@ -48,7 +48,7 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 
 User-scoped Configuration ::
 The Configuration object associated to a user is the default option when injected or retrieved from the `AddonRegistry`. 
-It stores properties in a XML format in `<USER_HOME>/.forge/config.xml`.
+It stores properties in `<USER_HOME>/.forge/config.properties`.
 +
 [source,java]
 ----
@@ -84,7 +84,7 @@ Configuration configuration = imported.get();
 
 Project-scoped Configuration:: 
    Project-scoped configuration is provided by accessing the `ConfigurationFacet` installed by default in any project. 
-   It stores the properties in an XML format in a file named `.forge_settings` inside the project. It is important to note, however, that this file is only created if a configuration property is explicitly set for the first time.
+   It stores the properties in a file named `.forge_settings` inside the project. It is important to note, however, that this file is only created if a configuration property is explicitly set for the first time.
 +
 [source,java]
 ----
