@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.projects.ui;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -158,7 +159,10 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
          }
       }
       targetLocation.setDefaultValue(defaultValue)
-               .setValueConverter(val -> defaultValue.getChildDirectory(val));
+               .setValueConverter(name -> {
+                  Path newPath = defaultValue.getUnderlyingResourceObject().toPath().resolve(name);
+                  return resourceFactory.create(DirectoryResource.class, newPath.toFile());
+               });
    }
 
    private void configureUseTargetLocationRootInput(InputComponentFactory factory, final UIContext context)
