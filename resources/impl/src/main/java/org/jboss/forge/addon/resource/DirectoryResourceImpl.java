@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResource>implements DirectoryResource
+public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResource> implements DirectoryResource
 {
    private volatile List<Resource<?>> listCache;
 
@@ -64,7 +65,8 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
    @Override
    public Resource<?> getChild(final String name)
    {
-      return getResourceFactory().create(new File(getUnderlyingResourceObject().getAbsolutePath(), name));
+      Path newPath = getUnderlyingResourceObject().toPath().resolve(name);
+      return getResourceFactory().create(newPath.toFile());
    }
 
    /**
@@ -86,8 +88,8 @@ public class DirectoryResourceImpl extends AbstractFileResource<DirectoryResourc
 
       if (!(result instanceof DirectoryResourceImpl))
       {
-         result = new DirectoryResourceImpl(getResourceFactory(), new File(getUnderlyingResourceObject()
-                  .getAbsoluteFile(), name));
+         Path newPath = getUnderlyingResourceObject().toPath().resolve(name);
+         result = new DirectoryResourceImpl(getResourceFactory(), newPath.toFile());
       }
       return (DirectoryResourceImpl) result;
    }

@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.jboss.forge.addon.facets.FacetFactory;
@@ -61,12 +62,14 @@ import org.jboss.forge.furnace.util.Sets;
 public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
 {
    private static final Logger log = Logger.getLogger(NewProjectWizardImpl.class.getName());
+   private static final Pattern VALID_PACKAGE_PATTERN = Pattern.compile("(?i)(~\\.)?([a-z0-9_]+\\.?)+[a-z0-9_]");
 
    private UIInput<String> named;
    private UIInput<String> topLevelPackage;
    private UIInput<String> version;
    private UIInput<String> finalName;
    private UIInput<DirectoryResource> targetLocation;
+   private UIInput<Boolean> useTargetLocationRoot;
    private UIInput<Boolean> overwrite;
    private UISelectOne<ProjectType> type;
    private UISelectOne<ProjectProvider> buildSystem;
@@ -95,11 +98,12 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
       configureVersionInput(factory);
       configureFinalName(factory);
       configureTargetLocationInput(factory, uiContext);
+      configureUseTargetLocationRootInput(factory, uiContext);
       configureOverwriteInput(factory);
       configureBuildSystemInput(factory, uiContext);
       configureProjectTypeInput(factory, uiContext);
       configureStack(factory, uiContext);
-      builder.add(named).add(topLevelPackage).add(version).add(finalName).add(targetLocation)
+      builder.add(named).add(topLevelPackage).add(version).add(finalName).add(targetLocation).add(useTargetLocationRoot)
                .add(overwrite).add(type)
                .add(buildSystem).add(stack);
    }
@@ -132,24 +136,36 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
 
    private void configureTargetLocationInput(InputComponentFactory factory, final UIContext uiContext)
    {
+      final ResourceFactory resourceFactory = SimpleContainer
+               .getServices(getClass().getClassLoader(), ResourceFactory.class).get();
       targetLocation = factory.createInput("targetLocation", DirectoryResource.class).setLabel("Project location");
+      final DirectoryResource defaultValue;
       UISelection<Resource<?>> currentSelection = uiContext.getInitialSelection();
-      if (!currentSelection.isEmpty())
+      if (currentSelection.isEmpty())
+      {
+         defaultValue = resourceFactory.create(DirectoryResource.class, OperatingSystemUtils.getUserHomeDir());
+      }
+      else
       {
          Resource<?> resource = currentSelection.get();
          if (resource instanceof DirectoryResource)
          {
-            targetLocation.setDefaultValue((DirectoryResource) resource);
+            defaultValue = (DirectoryResource) resource;
+         }
+         else
+         {
+            defaultValue = resourceFactory.create(DirectoryResource.class, OperatingSystemUtils.getUserHomeDir());
          }
       }
+      targetLocation.setDefaultValue(defaultValue)
+               .setValueConverter(val -> defaultValue.getChildDirectory(val));
+   }
 
-      if (!targetLocation.hasDefaultValue())
-      {
-         ResourceFactory resourceFactory = SimpleContainer
-                  .getServices(getClass().getClassLoader(), ResourceFactory.class).get();
-         targetLocation.setDefaultValue(resourceFactory.create(DirectoryResource.class,
-                  OperatingSystemUtils.getUserHomeDir()));
-      }
+   private void configureUseTargetLocationRootInput(InputComponentFactory factory, final UIContext context)
+   {
+      useTargetLocationRoot = factory.createInput("useTargetLocationRoot", Boolean.class)
+               .setLabel("Use Target Location Root?")
+               .setDescription("If specified, it won't create a subdirectory inside the specified Project location");
    }
 
    private void configureOverwriteInput(InputComponentFactory factory)
@@ -160,10 +176,9 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
          @Override
          public Boolean call() throws Exception
          {
-            String projectName = named.getValue();
-            return targetLocation.getValue() != null && projectName != null
-                     && targetLocation.getValue().getChild(projectName).exists()
-                     && !targetLocation.getValue().getChild(projectName).listResources().isEmpty();
+            DirectoryResource targetDirectory = getTargetDirectory();
+            // Enable Overwrite flag if target exists and it is not empty
+            return targetDirectory.exists() && !targetDirectory.listResources().isEmpty();
          }
       });
    }
@@ -350,27 +365,23 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
    public void validate(UIValidationContext context)
    {
       String packg = topLevelPackage.getValue();
-      if (packg != null && !packg.matches("(?i)(~\\.)?([a-z0-9_]+\\.?)+[a-z0-9_]"))
+      if (packg != null && !VALID_PACKAGE_PATTERN.matcher(packg).matches())
       {
          context.addValidationError(topLevelPackage, "Top level package must be a valid package name.");
       }
 
-      if (overwrite.isEnabled() && overwrite.getValue() == false)
+      if (overwrite.isEnabled() && !overwrite.getValue())
       {
-         String errorMessage = String.format("Project location '%s' is not empty.",
-                  targetLocation.getValue().getChild(named.getValue()));
+         String errorMessage = String.format("Project location '%s' is not empty.", getTargetDirectory());
          context.addValidationError(targetLocation, errorMessage);
       }
-
    }
 
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
       Result result = Results.success("Project named '" + named.getValue() + "' has been created.");
-      DirectoryResource directory = targetLocation.getValue();
-      DirectoryResource targetDir = directory.getChildDirectory(named.getValue());
-
+      DirectoryResource targetDir = getTargetDirectory();
       if (targetDir.mkdirs() || overwrite.getValue())
       {
          ProjectType value = type.getValue();
@@ -442,6 +453,21 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
          result = Results.fail("Could not create target location: " + targetDir);
 
       return result;
+   }
+
+   private DirectoryResource getTargetDirectory()
+   {
+      DirectoryResource directory = targetLocation.getValue();
+      DirectoryResource targetDir;
+      if (useTargetLocationRoot.getValue() || named.getValue() == null)
+      {
+         targetDir = directory;
+      }
+      else
+      {
+         targetDir = directory.getChildDirectory(named.getValue());
+      }
+      return targetDir;
    }
 
    public UIInput<String> getNamed()
