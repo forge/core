@@ -40,8 +40,7 @@ public class GreetingListener implements ContainerLifecycleListener
          out.print(Versions.getImplementationVersionFor(getClass()));
          out.print(" ] - JBoss, by Red Hat, Inc. [ http://forge.jboss.org ]");
          out.println();
-         out.println("Hit '<TAB>' for a list of available commands.");
-         out.println("and 'man [cmd]' for help on a specific command.");
+         out.println("Hit '<TAB>' for a list of available commands and 'man [cmd]' for help on a specific command.");
          out.println();
          out.println("To quit the shell, type 'exit'.");
          logger.info(sw.toString());
