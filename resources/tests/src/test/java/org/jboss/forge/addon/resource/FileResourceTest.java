@@ -181,6 +181,7 @@ public class FileResourceTest
       Assert.assertTrue(folderResource.exists());
    }
 
+   @SuppressWarnings("unchecked")
    @Test(expected = ResourceException.class)
    public void testMoveDirectoryResourceToFile() throws IOException
    {

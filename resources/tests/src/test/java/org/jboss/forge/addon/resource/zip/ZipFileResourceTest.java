@@ -87,7 +87,7 @@ public class ZipFileResourceTest
    public void testZipResourceAddFile() throws Exception
    {
       ZipFileResource resource = createTempZipFileResource();
-      FileResource internalResource = resourceFactory.create(FileResource.class, File.createTempFile("tmp", ".txt"));
+      FileResource<?> internalResource = resourceFactory.create(FileResource.class, File.createTempFile("tmp", ".txt"));
       internalResource.deleteOnExit();
       internalResource.setContents("Hello World");
       resource.add(internalResource);
@@ -101,7 +101,7 @@ public class ZipFileResourceTest
    public void testZipResourceAddResource() throws Exception
    {
       ZipFileResource resource = createTempZipFileResource();
-      FileResource internalResource = resourceFactory.create(FileResource.class, File.createTempFile("tmp", ".txt"));
+      FileResource<?> internalResource = resourceFactory.create(FileResource.class, File.createTempFile("tmp", ".txt"));
       internalResource.deleteOnExit();
       internalResource.setContents("Hello World");
       resource.add("myfile.txt", internalResource);
@@ -115,7 +115,7 @@ public class ZipFileResourceTest
    public void testZipResourceExtract() throws Exception
    {
       ZipFileResource resource = createTempZipFileResource();
-      FileResource internalResource = resourceFactory.create(FileResource.class, File.createTempFile("tmp", ".txt"));
+      FileResource<?> internalResource = resourceFactory.create(FileResource.class, File.createTempFile("tmp", ".txt"));
       internalResource.deleteOnExit();
       internalResource.setContents("Hello World");
       resource.add(internalResource);
