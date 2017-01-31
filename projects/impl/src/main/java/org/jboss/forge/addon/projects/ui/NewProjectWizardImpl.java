@@ -182,7 +182,7 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
          {
             DirectoryResource targetDirectory = getTargetDirectory();
             // Enable Overwrite flag if target exists and it is not empty
-            return targetDirectory.exists() && !targetDirectory.listResources().isEmpty();
+            return named.hasValue() && targetDirectory.exists() && !targetDirectory.listResources().isEmpty();
          }
       });
    }
