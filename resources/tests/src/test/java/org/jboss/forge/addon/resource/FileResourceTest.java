@@ -6,11 +6,15 @@
  */
 package org.jboss.forge.addon.resource;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.jboss.arquillian.junit.Arquillian;
@@ -189,7 +193,7 @@ public class FileResourceTest
       folder.mkdir();
 
       DirectoryResource folderResource = resourceFactory.create(DirectoryResource.class, folder);
-      FileResource fileResource = resourceFactory.create(FileResource.class, file);
+      FileResource<?> fileResource = resourceFactory.create(FileResource.class, file);
       folderResource.moveTo(fileResource);
    }
 
@@ -273,4 +277,33 @@ public class FileResourceTest
       resource.setReadable(false);
       Assert.assertFalse(resource.isReadable());
    }
+
+   @Test
+   public void testResolve() throws Exception
+   {
+      Path testPath = Files.createTempDirectory("test");
+      File test = testPath.toFile();
+      File foo = new File(test, "foo");
+      Assert.assertTrue(foo.mkdir());
+      DirectoryResource testDir = resourceFactory.create(test).reify(DirectoryResource.class);
+      Resource<File> resolvedFoo = testDir.resolve("foo");
+      Assert.assertThat(resolvedFoo.getFullyQualifiedName(), equalTo(foo.getAbsolutePath()));
+      Files.delete(foo.toPath());
+      Files.deleteIfExists(testPath);
+   }
+
+   @Test
+   public void testResolveAsDirectory() throws Exception
+   {
+      Path testPath = Files.createTempDirectory("test");
+      File test = testPath.toFile();
+      File foo = new File(test, "foo");
+      Assert.assertFalse("Foo directory should not exist", foo.exists());
+      DirectoryResource testDir = resourceFactory.create(test).reify(DirectoryResource.class);
+      DirectoryResource resolvedFoo = testDir.resolveAsDirectory("foo");
+      Assert.assertThat(resolvedFoo.getFullyQualifiedName(), equalTo(foo.getAbsolutePath()));
+      Assert.assertThat(resolvedFoo.exists(), is(false));
+      Files.deleteIfExists(testPath);
+   }
+
 }

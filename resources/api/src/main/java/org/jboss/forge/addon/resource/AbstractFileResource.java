@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.furnace.util.Assert;
@@ -396,6 +398,34 @@ public abstract class AbstractFileResource<T extends FileResource<T>> extends Ab
       catch (IOException ioe)
       {
          throw new ResourceException("Error while creating OutputStream for Resource " + this, ioe);
+      }
+   }
+
+   @Override
+   public Resource<File> resolve(String path)
+   {
+      try
+      {
+         Path newPath = getUnderlyingResourceObject().toPath().resolve(path);
+         return getResourceFactory().create(newPath.toFile());
+      }
+      catch (InvalidPathException e)
+      {
+         return null;
+      }
+   }
+
+   @Override
+   public <TYPE extends Resource<File>> TYPE resolve(final Class<TYPE> type, final String path)
+   {
+      try
+      {
+         Path newPath = getUnderlyingResourceObject().toPath().resolve(path);
+         return getResourceFactory().create(type, newPath.toFile());
+      }
+      catch (InvalidPathException e)
+      {
+         return null;
       }
    }
 }

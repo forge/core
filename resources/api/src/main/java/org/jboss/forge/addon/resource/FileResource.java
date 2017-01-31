@@ -7,6 +7,7 @@
 package org.jboss.forge.addon.resource;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 
@@ -164,5 +165,50 @@ public interface FileResource<T extends FileResource<T>> extends Resource<File>,
     * Sets a file as executable
     */
    void setExecutable(boolean executable, boolean owner);
+
+   /**
+    * Resolve a given resource based on its path
+    *
+    * @param type
+    * @param path
+    * @return <code>null</code> if no resource could be resolved for the given object.
+    */
+   Resource<File> resolve(final String path);
+
+   /**
+    * Resolve a given resource based on its path
+    *
+    * @param type
+    * @param path
+    * @return <code>null</code> if no resource could be resolved for the given object.
+    */
+   <TYPE extends Resource<File>> TYPE resolve(final Class<TYPE> type, final String path);
+
+   /**
+    * Resolve a {@link FileResource} from a given name.
+    *
+    * Implementations usually call {@link Path#resolve(Path)}
+    *
+    * @param class
+    * @param name
+    */
+   @SuppressWarnings("unchecked")
+   default FileResource<?> resolveAsFile(String name) throws ResourceException
+   {
+      return resolve(FileResource.class, name);
+   }
+
+   /**
+    * Resolve a {@link DirectoryResource} from a given name.
+    *
+    * Implementations usually call {@link Path#resolve(Path)}
+    *
+    * @param class
+    * @param name
+    */
+   default DirectoryResource resolveAsDirectory(String name) throws ResourceException
+   {
+      return resolve(DirectoryResource.class, name);
+   }
 
 }
