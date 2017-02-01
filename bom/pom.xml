@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
       <groupId>org.jboss</groupId>
@@ -59,6 +60,7 @@
       <version.furnace>2.24.3.Final</version.furnace>
       <version.slf4j.addon>1.7.13</version.slf4j.addon>
       <version.shrinkwrap.addon>1.2.6</version.shrinkwrap.addon>
+      <version.assertj.addon>3.6.2</version.assertj.addon>
    </properties>
 
    <dependencyManagement>
@@ -423,6 +425,12 @@
             <artifactId>shrinkwrap</artifactId>
             <classifier>forge-addon</classifier>
             <version>${version.shrinkwrap.addon}</version>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>assertj</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${version.assertj.addon}</version>
          </dependency>
       </dependencies>
    </dependencyManagement>

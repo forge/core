@@ -6,9 +6,10 @@
  */
 package org.jboss.forge.addon.text;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,8 +28,8 @@ public class InflectorServiceTest
    @Test
    public void testInflectorInjection() throws Exception
    {
-      Assert.assertNotNull(inflector);
-      Assert.assertEquals("Forge", inflector.capitalize("forGE"));
+      assertThat(inflector).isNotNull();
+      assertThat(inflector.capitalize("forGE")).isEqualTo("Forge");
    }
 
 }
