@@ -128,6 +128,13 @@ public interface Resource<T> extends Faceted<ResourceFacet>
    <R extends Resource<?>> R reify(final Class<R> type);
 
    /**
+    * Ask this {@link Resource} if it is actually a resource of the given type; if it is, return a new reference to the
+    * resource as the given type, otherwise return <code>null</code>.
+    */
+   default <R extends Resource<?>> R as(final Class<R> type) {
+      return reify(type);
+   }
+   /**
     * Return the {@link ResourceFactory} with which this {@link Resource} was created. If no factory was used, return
     * <code>null</code>.
     */
