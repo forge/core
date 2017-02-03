@@ -8,7 +8,7 @@
    </parent>
    <groupId>org.jboss.forge</groupId>
    <artifactId>forge-bom</artifactId>
-   <version>3.5.0.Final</version>
+   <version>3.5.1-SNAPSHOT</version>
    <packaging>pom</packaging>
    <name>Forge - BOM</name>
    <description>The Forge "Bill of Materials"</description>
@@ -438,7 +438,7 @@
       <connection>scm:git:git://github.com/forge/core.git</connection>
       <developerConnection>scm:git:git@github.com:forge/core.git</developerConnection>
       <url>http://github.com/forge/core</url>
-      <tag>3.5.0.Final</tag>
+      <tag>HEAD</tag>
    </scm>
 
    <build>
