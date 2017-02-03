@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>projects-parent</artifactId>
-      <version>3.4.1-SNAPSHOT</version>
+      <version>3.5.0.Final</version>
    </parent>
    <artifactId>projects-api</artifactId>
    <name>Forge - Projects API</name>
