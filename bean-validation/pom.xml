@@ -19,7 +19,7 @@
    </modules>
 
    <properties>
-      <version.hibernate.validator>5.3.4.Final</version.hibernate.validator>
+      <version.hibernate.validator>5.4.0.Final</version.hibernate.validator>
    </properties>
 
    <dependencyManagement>
