@@ -7,6 +7,8 @@
 package org.jboss.forge.addon.projects.ui;
 
 import java.io.PrintStream;
+import java.util.Map;
+import java.util.Objects;
 
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFactory;
@@ -30,14 +32,18 @@ import org.jboss.forge.furnace.services.Imported;
  */
 public class ProjectBuildStatusListener extends AbstractCommandExecutionListener
 {
+   private static final String PROJECT_BUILDSTATUS_SKIP_FLAG = "PROJECT_BUILDSTATUS_SKIP";
+
    @Override
    public void postCommandExecuted(UICommand command, UIExecutionContext context, Result result)
    {
+      Map<Object, Object> attributeMap = context.getUIContext().getAttributeMap();
+      String skipProjectBuild = Objects.toString(attributeMap.get(PROJECT_BUILDSTATUS_SKIP_FLAG), null);
       Imported<ProjectFactory> services = SimpleContainer
                .getServices(getClass().getClassLoader(), ProjectFactory.class);
-      if (services.isUnsatisfied())
+      if (Boolean.parseBoolean(skipProjectBuild) || services.isUnsatisfied())
       {
-         // ProjectFactory is not available, ignore
+         // ProjectFactory is not available or PROJECT_BUILDSTATUS_SKIP_FLAG provided, ignore
          return;
       }
       ProjectFactory projectFactory = services.get();
