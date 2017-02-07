@@ -8,6 +8,7 @@ package org.jboss.forge.addon.ui;
 
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.input.UIPrompt;
+import org.jboss.forge.addon.ui.progress.DefaultUIProgressMonitor;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
 
 /**
@@ -20,7 +21,10 @@ public interface UIRuntime
    /**
     * Creates a new {@link UIProgressMonitor}
     */
-   UIProgressMonitor createProgressMonitor(UIContext context);
+   default UIProgressMonitor createProgressMonitor(UIContext context)
+   {
+      return new DefaultUIProgressMonitor();
+   }
 
    /**
     * Create a new {@link UIPrompt}
