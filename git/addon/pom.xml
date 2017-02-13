@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>git-parent</artifactId>
-      <version>3.5.1.Final</version>
+      <version>3.5.2-SNAPSHOT</version>
    </parent>
 
    <name>Forge - Git Addon</name>
