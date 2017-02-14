@@ -231,7 +231,7 @@ Your complete POM should now look something like this:
    <name>My First Addon</name>
    
    <properties>
-        <version.forge>3.3.1.Final</version.forge>
+        <version.forge>3.5.1.Final</version.forge>
    </properties>
    
    <dependencyManagement>
@@ -357,7 +357,7 @@ Forge has a modular architecture that enables you to re-use functionality from o
 There is a simple rule that will make this an easy decision:
 
 ____
-"`compile` if everyone knows, `provided` if I know, `runtime` if nobody knows."
+"``compile`` if everyone knows, `provided` if I know, `runtime` if nobody knows."
 ____
 
 To explain, if you never publicly expose types (classes, interfaces, etc...) from another addon in the outward-facing APIs of your addon, then you should include
