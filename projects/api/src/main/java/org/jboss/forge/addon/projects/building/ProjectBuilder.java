@@ -28,6 +28,15 @@ public interface ProjectBuilder
    ProjectBuilder runTests(boolean test);
 
    /**
+    * Profiles to be enabled for this build (ignored if not applicable to the project build system)
+    */
+   default ProjectBuilder profiles(String... profiles)
+   {
+      // Default implementation is a NOOP
+      return this;
+   }
+
+   /**
     * Execute the build, returning the final product as a {@link Resource}.
     */
    Resource<?> build() throws BuildException;

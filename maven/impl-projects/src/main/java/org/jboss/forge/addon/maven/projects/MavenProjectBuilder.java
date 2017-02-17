@@ -30,6 +30,7 @@ public class MavenProjectBuilder implements ProjectBuilder
 
    private boolean runTests = true;
    private boolean quiet;
+   private final List<String> profiles = new ArrayList<>();
    private final List<String> args = new ArrayList<>();
 
    public MavenProjectBuilder(final Environment environment, final Project project)
@@ -56,6 +57,14 @@ public class MavenProjectBuilder implements ProjectBuilder
    public ProjectBuilder quiet(boolean quiet)
    {
       this.quiet = quiet;
+      return this;
+   }
+
+   @Override
+   public ProjectBuilder profiles(String... profiles)
+   {
+      this.profiles.clear();
+      this.profiles.addAll(Arrays.asList(profiles));
       return this;
    }
 
@@ -93,6 +102,10 @@ public class MavenProjectBuilder implements ProjectBuilder
       if (quiet)
       {
          selected.add("-q");
+      }
+      if (profiles.size() > 0)
+      {
+         selected.add("-P" + String.join(",", profiles));
       }
       boolean success = project.getFacet(MavenFacet.class).executeMavenEmbedded(selected, out, err);
 

@@ -27,6 +27,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
+import org.jboss.forge.furnace.util.Lists;
 
 /**
  * Executes Build commands
@@ -39,7 +40,7 @@ public class BuildCommand extends AbstractProjectCommand
    private UIInputMany<String> arguments;
    private UIInput<Boolean> notest;
    private UIInput<Boolean> quiet;
-   private UIInput<String> profile;
+   private UIInputMany<String> profile;
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
@@ -48,7 +49,7 @@ public class BuildCommand extends AbstractProjectCommand
       arguments = factory.createInputMany("arguments", String.class);
       notest = factory.createInput("notest", Boolean.class).setLabel("No Test");
       quiet = factory.createInput("quiet", 'q', Boolean.class).setLabel("Quiet").setDescription("Quiet output");
-      profile = factory.createInput("profile", String.class);
+      profile = factory.createInputMany("profile", String.class);
       builder.add(arguments).add(profile).add(notest).add(quiet);
    }
 
@@ -69,7 +70,7 @@ public class BuildCommand extends AbstractProjectCommand
 
       if (arguments.getValue() != null && arguments.getValue().iterator().hasNext())
       {
-         List<String> args = new ArrayList<String>();
+         List<String> args = new ArrayList<>();
          for (String val : arguments.getValue())
          {
             args.add(val);
@@ -84,7 +85,8 @@ public class BuildCommand extends AbstractProjectCommand
 
       if (profile.hasValue())
       {
-         builder.addArguments("-P" + profile.getValue());
+         List<String> list = Lists.toList(profile.getValue());
+         builder.profiles(list.toArray(new String[list.size()]));
       }
 
       builder.quiet(quiet.getValue());
