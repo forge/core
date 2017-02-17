@@ -10,10 +10,11 @@ package org.jboss.forge.addon.ui.wizard;
  * Marker interface for wizard steps.
  *
  * Classes that implement this interface are not considered starting entry points, hence MUST not be shown in the
- * available addon list
+ * available command list
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
- *
+ * 
+ * @see UIWizard
  */
 public interface UIWizardStep extends UIWizard
 {
