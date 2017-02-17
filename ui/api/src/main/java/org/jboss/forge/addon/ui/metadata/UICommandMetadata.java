@@ -7,8 +7,10 @@
 package org.jboss.forge.addon.ui.metadata;
 
 import java.net.URL;
+import java.util.List;
 
 import org.jboss.forge.addon.ui.command.UICommand;
+import org.jboss.forge.addon.ui.wizard.UIWizard;
 
 /**
  * Describes a {@link UICommand} implementation
@@ -39,8 +41,8 @@ public interface UICommandMetadata
    String getDescription();
 
    /**
-    * Returns the long description of the corresponding {@Link UICommand}.
-    * This description will be used to document the command within by the Forge Shell using man
+    * Returns the long description of the corresponding {@Link UICommand}. This description will be used to document the
+    * command within by the Forge Shell using man
     */
    String getLongDescription();
 
@@ -65,5 +67,13 @@ public interface UICommandMetadata
     * <code>true</code>.
     */
    String getDeprecatedMessage();
+
+   /**
+    * Returns a deterministic list of wizard step names that could be used to pre-render the possible steps in a
+    * graphical environment. The default implementation returns the {@link UICommandMetadata#getName()} only.
+    * 
+    * @return a {@link List} of {@link String} describing the wizard flow for this {@link UIWizard} type
+    */
+   List<String> getWizardFlowNames();
 
 }
