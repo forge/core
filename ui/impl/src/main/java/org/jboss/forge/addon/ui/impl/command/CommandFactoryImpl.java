@@ -163,7 +163,7 @@ public class CommandFactoryImpl implements CommandFactory
       {
          version = registry.getVersion();
          cache.clear();
-         getCommands((command) -> cache.add(command));
+         getCommands(cache::add);
       }
       return cache;
    }
@@ -171,7 +171,7 @@ public class CommandFactoryImpl implements CommandFactory
    private Iterable<UICommand> getCommandsFromSource()
    {
       final Set<UICommand> result = Sets.getConcurrentSet();
-      getCommands((command) -> result.add(command));
+      getCommands(result::add);
       return result;
    }
 
