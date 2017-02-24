@@ -101,7 +101,7 @@ public class ServletNewServletCommand extends AbstractServletNewCommand<JavaClas
          doGet.addParameter(HttpServletRequest.class, "request");
          doGet.addParameter(HttpServletResponse.class, "response");
          doGet.addThrows(ServletException.class).addThrows(IOException.class);
-         doGet.setBody("response.getWriter().println(\"Method " + method.getMethodName() + "\" invoked);")
+         doGet.setBody("response.getWriter().println(\"Method " + method.getMethodName() + " invoked\");")
                   .addAnnotation(
                            Override.class);
       }
