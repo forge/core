@@ -14,7 +14,7 @@ import org.jboss.forge.addon.resource.Resource;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class ResourceDeleted extends ResourceEvent
+public class ResourceDeleted extends AbstractResourceEvent
 {
    public ResourceDeleted(final Resource<?> resource)
    {

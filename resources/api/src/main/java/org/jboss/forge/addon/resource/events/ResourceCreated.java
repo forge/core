@@ -14,7 +14,7 @@ import org.jboss.forge.addon.resource.Resource;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * 
  */
-public class ResourceCreated extends ResourceEvent
+public class ResourceCreated extends AbstractResourceEvent
 {
    public ResourceCreated(final Resource<?> resource)
    {
