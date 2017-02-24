@@ -5,6 +5,8 @@ org.jboss.forge.addon.manager.impl.ui.AddonInstallCommand
 org.jboss.forge.addon.manager.impl.ui.AddonListCommand
 org.jboss.forge.addon.manager.impl.ui.AddonRemoveCommand
 org.jboss.forge.addon.manager.impl.ui.AddonUpdateCommand
+org.jboss.forge.addon.manager.impl.ui.AddonWatchStartCommand
+org.jboss.forge.addon.manager.impl.ui.AddonWatchStopCommand
 org.jboss.forge.addon.manager.impl.ui.catalog.AddonInstallFromCatalogCommand
 org.jboss.forge.addon.manager.impl.ui.catalog.AddonSearchCommand
 org.jboss.forge.addon.manager.impl.ui.update.ForgeUpdateAbortCommand
