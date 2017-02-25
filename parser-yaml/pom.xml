@@ -11,7 +11,7 @@
    <artifactId>parser-yaml</artifactId>
    <name>Forge - YAML Parser Addon</name>
    <properties>
-      <snakeyaml.version>1.17</snakeyaml.version>
+      <snakeyaml.version>1.18</snakeyaml.version>
    </properties>
    <dependencies>
       <dependency>
