@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.ui.controller;
 
+import java.util.List;
+
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.wizard.UIWizard;
@@ -53,4 +55,10 @@ public interface WizardCommandController extends CommandController
     *            navigation is not possible
     */
    WizardCommandController previous() throws Exception;
+
+   /**
+    * Return the wizard steps {@link UICommandMetadata} returned from
+    * {@link UIWizard#getMetadata(org.jboss.forge.addon.ui.context.UIContext)}
+    */
+   List<UICommandMetadata> getWizardStepsMetadata();
 }
