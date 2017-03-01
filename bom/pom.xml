@@ -392,6 +392,12 @@
          </dependency>
          <dependency>
             <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>ui-example</artifactId>
+            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
+         </dependency>
+         <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui-test-harness</artifactId>
             <version>${project.version}</version>
             <classifier>forge-addon</classifier>
