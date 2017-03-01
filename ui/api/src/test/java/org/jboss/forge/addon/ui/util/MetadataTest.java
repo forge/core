@@ -6,6 +6,11 @@
  */
 package org.jboss.forge.addon.ui.util;
 
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
+
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.junit.Assert;
 import org.junit.Test;
@@ -47,5 +52,20 @@ public class MetadataTest
       Assert.assertNull(metadata.getCategory().getSubCategory());
       Assert.assertEquals("A Description", metadata.getDescription());
       Assert.assertNull(metadata.getDocLocation());
+   }
+
+   @Test
+   public void testMetadataBuilderWizardFlowNames()
+   {
+      UICommandMetadata metadata = new MockCommand().getMetadata(null);
+      Assert.assertEquals(MockCommand.class.getName(), metadata.getWizardFlowNames().get(0));
+   }
+
+   @Test
+   public void testMetadataBuilderOverrideWizardFlowNames()
+   {
+      UICommandMetadata metadata = Metadata.forCommand(MockCommand.class)
+               .wizardFlowNames(Arrays.asList("Main", "Step 1", "Step 2"));
+      assertThat(metadata.getWizardFlowNames(), hasItems("Main", "Step 1", "Step 2"));
    }
 }

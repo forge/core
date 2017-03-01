@@ -7,6 +7,8 @@
 package org.jboss.forge.addon.ui.util;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.metadata.UICategory;
@@ -34,6 +36,7 @@ public class Metadata implements UICommandMetadata
    private URL docLocation;
    private boolean deprecated;
    private String deprecatedMessage;
+   private List<String> wizardFlowNames;
 
    private final Class<?> type;
 
@@ -130,6 +133,15 @@ public class Metadata implements UICommandMetadata
       return this;
    }
 
+   /**
+    * Pre-set the existing wizard flow names for GUI environments
+    */
+   public Metadata wizardFlowNames(List<String> wizardFlowNames)
+   {
+      this.wizardFlowNames = wizardFlowNames;
+      return this;
+   }
+
    private URL getDocLocationFor(Class<?> type)
    {
       URL url = null;
@@ -157,7 +169,11 @@ public class Metadata implements UICommandMetadata
       return description;
    }
 
-   @Override public String getLongDescription() { return longDescription; }
+   @Override
+   public String getLongDescription()
+   {
+      return longDescription;
+   }
 
    @Override
    public UICategory getCategory()
@@ -175,7 +191,8 @@ public class Metadata implements UICommandMetadata
    public String toString()
    {
       return "Metadata [name=" + name + ", description=" + description + ", category=" + category + ", docLocation="
-               + docLocation + ", deprecated=" + deprecated + ", deprecatedMessage=" + deprecatedMessage + "]";
+               + docLocation + ", deprecated=" + deprecated + ", deprecatedMessage=" + deprecatedMessage
+               + ", wizardFlowNames=" + getWizardFlowNames() + "]";
    }
 
    @Override
@@ -188,6 +205,12 @@ public class Metadata implements UICommandMetadata
    public String getDeprecatedMessage()
    {
       return deprecatedMessage;
+   }
+
+   @Override
+   public List<String> getWizardFlowNames()
+   {
+      return this.wizardFlowNames == null ? Collections.singletonList(getName()) : wizardFlowNames;
    }
 
    @Override
