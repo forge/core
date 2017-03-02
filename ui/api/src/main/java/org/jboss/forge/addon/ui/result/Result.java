@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.ui.result;
 
+import java.util.Optional;
+
 import org.jboss.forge.addon.ui.command.UICommand;
 
 /**
@@ -18,5 +20,10 @@ public interface Result
    /**
     * Get the output message from the executed {@link UICommand}.
     */
-   public String getMessage();
+   String getMessage();
+
+   /**
+    * Any Java type instance for a response entity that is supported by the runtime can be passed.
+    */
+   Optional<Object> getEntity();
 }

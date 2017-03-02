@@ -6,11 +6,12 @@
  */
 package org.jboss.forge.addon.ui.result;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.result.navigation.NavigationResultBuilder;
+import org.jboss.forge.furnace.util.Lists;
 
 /**
  * Utilities for creating {@link Result} instances.
@@ -36,9 +37,17 @@ public final class Results
    }
 
    /**
+    * Create a successful {@link Result} with a message and an optional entity.
+    */
+   public static final Result success(String message, Object entity)
+   {
+      return new SuccessfulResult(message, entity);
+   }
+
+   /**
     * Create a failed {@link Result}.
     */
-   public static final Result fail()
+   public static final Failed fail()
    {
       return fail(null);
    }
@@ -46,7 +55,7 @@ public final class Results
    /**
     * Create a failed {@link Result} with a message.
     */
-   public static final Result fail(String message)
+   public static final Failed fail(String message)
    {
       return new FailedResult(message);
    }
@@ -54,9 +63,17 @@ public final class Results
    /**
     * Create a failed {@link Result} with a message and {@link Throwable} root cause.
     */
-   public static final Result fail(String message, Throwable e)
+   public static final Failed fail(String message, Throwable e)
    {
       return new FailedResult(message, e);
+   }
+
+   /**
+    * Create a failed {@link Result} with a message and {@link Throwable} root cause.
+    */
+   public static final Failed fail(String message, Throwable e, Object entity)
+   {
+      return new FailedResult(message, e, entity);
    }
 
    /**
@@ -120,45 +137,43 @@ public final class Results
     */
    public static CompositeResult aggregate(Iterable<Result> results)
    {
-      List<Result> resultList = toList(results);
+      List<Result> resultList = Lists.toList(results);
       return CompositeResultImpl.from(resultList);
    }
 
-   // TODO: Move to an utils method
-   private static <T> List<T> toList(Iterable<T> iterable)
+   public static CompositeResult aggregate(Iterable<Result> results, Object entity)
    {
-      if (iterable == null)
-      {
-         return null;
-      }
-      else if (iterable instanceof List)
-      {
-         return (List<T>) iterable;
-      }
-      else
-      {
-         List<T> list = new ArrayList<>();
-         for (T obj : iterable)
-         {
-            list.add(obj);
-         }
-         return list;
-      }
+      List<Result> resultList = Lists.toList(results);
+      return CompositeResultImpl.from(resultList, entity);
    }
 
    private static class SuccessfulResult implements Result
    {
       private final String message;
+      private final Object entity;
 
       SuccessfulResult(String message)
       {
          this.message = message;
+         this.entity = null;
+      }
+
+      SuccessfulResult(String message, Object entity)
+      {
+         this.message = message;
+         this.entity = entity;
       }
 
       @Override
       public String getMessage()
       {
          return message;
+      }
+
+      @Override
+      public Optional<Object> getEntity()
+      {
+         return Optional.ofNullable(entity);
       }
 
       @Override
@@ -171,17 +186,28 @@ public final class Results
    private static class FailedResult implements Result, Failed
    {
       private final String message;
-      private Throwable e;
+      private final Object entity;
+      private final Throwable e;
 
       FailedResult(String message)
       {
          this.message = message;
+         this.e = null;
+         this.entity = null;
       }
 
-      public FailedResult(String message, Throwable e)
+      FailedResult(String message, Throwable e)
       {
          this.message = message;
          this.e = e;
+         this.entity = null;
+      }
+
+      FailedResult(String message, Throwable e, Object entity)
+      {
+         this.message = message;
+         this.e = e;
+         this.entity = entity;
       }
 
       @Override
@@ -194,6 +220,12 @@ public final class Results
       public Throwable getException()
       {
          return e;
+      }
+
+      @Override
+      public Optional<Object> getEntity()
+      {
+         return Optional.ofNullable(entity);
       }
 
       @Override

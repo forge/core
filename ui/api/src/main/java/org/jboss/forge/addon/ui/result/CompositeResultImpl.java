@@ -7,6 +7,7 @@
 package org.jboss.forge.addon.ui.result;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.jboss.forge.furnace.util.Assert;
 
@@ -17,11 +18,13 @@ import org.jboss.forge.furnace.util.Assert;
 abstract class CompositeResultImpl implements CompositeResult
 {
    private final List<Result> results;
+   private final Object entity;
 
-   public CompositeResultImpl(List<Result> results)
+   CompositeResultImpl(List<Result> results, Object entity)
    {
       Assert.notNull(results, "Result list cannot be null");
       this.results = results;
+      this.entity = entity;
    }
 
    @Override
@@ -31,13 +34,19 @@ abstract class CompositeResultImpl implements CompositeResult
    }
 
    @Override
+   public Optional<Object> getEntity()
+   {
+      return Optional.ofNullable(entity);
+   }
+
+   @Override
    public String getMessage()
    {
       throw new UnsupportedOperationException(
                "getMessage() should not be called in a CompositeResult. Call getResults() instead.");
    }
 
-   public static CompositeResult from(List<Result> results)
+   public static CompositeResult from(List<Result> results, Object entity)
    {
       boolean failed = false;
       Throwable throwable = null;
@@ -52,17 +61,22 @@ abstract class CompositeResultImpl implements CompositeResult
       }
 
       if (failed)
-         return new CompositeResultFailed(results, throwable);
-      return new CompositeResultSuccess(results);
+         return new CompositeResultFailed(results, throwable, entity);
+      return new CompositeResultSuccess(results, entity);
+   }
+
+   public static CompositeResult from(List<Result> results)
+   {
+      return from(results, null);
    }
 
    private static class CompositeResultFailed extends CompositeResultImpl implements Result, Failed
    {
       private final Throwable exception;
 
-      public CompositeResultFailed(List<Result> results, Throwable e)
+      public CompositeResultFailed(List<Result> results, Throwable e, Object entity)
       {
-         super(results);
+         super(results, entity);
          this.exception = e;
       }
 
@@ -75,9 +89,9 @@ abstract class CompositeResultImpl implements CompositeResult
 
    private static class CompositeResultSuccess extends CompositeResultImpl implements Result
    {
-      public CompositeResultSuccess(List<Result> results)
+      public CompositeResultSuccess(List<Result> results, Object entity)
       {
-         super(results);
+         super(results, entity);
       }
    }
 }
