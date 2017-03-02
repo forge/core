@@ -478,6 +478,29 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
       return this;
    }
 
+   @Override
+   public List<UICommandMetadata> getWizardStepsMetadata()
+   {
+      List<UICommandMetadata> stepsMetadata = new ArrayList<>();
+      refreshFlow();
+      if (flow.size() == 1)
+      {
+         stepsMetadata.add(flow.get(0).controller.getMetadata());
+      }
+      else
+      {
+         for (WizardStepEntry entry : flow)
+         {
+            // Entries without inputs are not shown
+            if (!entry.controller.getInputs().isEmpty())
+            {
+               stepsMetadata.add(entry.controller.getMetadata());
+            }
+         }
+      }
+      return stepsMetadata;
+   }
+
    protected int getFlowPointer()
    {
       return flowPointer;

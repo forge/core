@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.ui.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -14,7 +15,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.ui.example.wizards.ChangesInputOneWizard;
 import org.jboss.forge.addon.ui.example.wizards.ExampleStepOne;
@@ -29,11 +29,6 @@ import org.jboss.forge.addon.ui.result.CompositeResult;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDeployment;
-import org.jboss.forge.arquillian.AddonDeployments;
-import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,26 +40,6 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class WizardCommandControllerTest
 {
-   @Deployment
-   @AddonDeployments({
-            @AddonDeployment(name = "org.jboss.forge.addon:ui-test-harness"),
-            @AddonDeployment(name = "org.jboss.forge.addon:ui-example"),
-            @AddonDeployment(name = "org.jboss.forge.addon:ui"),
-            @AddonDeployment(name = "org.jboss.forge.furnace.container:cdi") })
-   public static AddonArchive getDeployment()
-   {
-      AddonArchive archive = ShrinkWrap
-               .create(AddonArchive.class)
-               .addBeansXML()
-               .addAsAddonDependencies(
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui-example"),
-                        AddonDependencyEntry.create("org.jboss.forge.addon:ui"),
-                        AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));
-
-      return archive;
-   }
-
    @Inject
    UITestHarness testHarness;
 
@@ -260,4 +235,26 @@ public class WizardCommandControllerTest
          Assert.assertEquals("Goodbye, Gastaldi", nestedResult.getResults().get(1).getMessage());
       }
    }
+
+   @Test
+   public void testStepsMetadata() throws Exception
+   {
+      try (WizardCommandController controller = testHarness.createWizardController(ExampleFlow.class))
+      {
+         controller.initialize();
+         assertThat(controller.getWizardStepsMetadata()).hasSize(1);
+         controller.setValueFor("name", "Forge");
+         controller.setValueFor("number", 42);
+         controller.next().initialize();
+         assertThat(controller.getWizardStepsMetadata()).hasSize(2);
+         controller.setValueFor("flowOneInput", "Value");
+         controller.next().initialize();
+         assertThat(controller.getWizardStepsMetadata()).hasSize(3);
+         controller.setValueFor("flowOneOneInput", "Value Two");
+         controller.next().initialize();
+         assertThat(controller.getWizardStepsMetadata()).hasSize(4);
+         controller.setValueFor("flowTwoInput", "Value Three");
+      }
+   }
+
 }

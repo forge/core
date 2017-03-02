@@ -140,6 +140,12 @@ public class NoUIWizardControllerDecorator implements WizardCommandController
    }
 
    @Override
+   public List<UICommandMetadata> getWizardStepsMetadata()
+   {
+      return controller.getWizardStepsMetadata();
+   }
+
+   @Override
    public boolean isInitialized()
    {
       return controller.isInitialized();
