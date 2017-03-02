@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.util.Strings;
 
 /**
  * 
@@ -42,8 +43,19 @@ abstract class CompositeResultImpl implements CompositeResult
    @Override
    public String getMessage()
    {
-      throw new UnsupportedOperationException(
-               "getMessage() should not be called in a CompositeResult. Call getResults() instead.");
+      StringBuilder sb = new StringBuilder();
+      for (Result result : results)
+      {
+         if (!Strings.isNullOrEmpty(result.getMessage()))
+         {
+            if (sb.length() > 0)
+            {
+               sb.append(System.lineSeparator());
+            }
+            sb.append(result instanceof Failed ? "***ERROR*** " : "***SUCCESS*** ").append(result.getMessage());
+         }
+      }
+      return sb.toString();
    }
 
    public static CompositeResult from(List<Result> results, Object entity)
