@@ -116,4 +116,10 @@ public interface ProjectFactory
     * Register a listener for {@link Project} events.
     */
    ListenerRegistration<ProjectListener> addProjectListener(ProjectListener listener);
+
+   /**
+    * Fire {@link org.jboss.forge.addon.projects.ProjectListener#projectCreated(Project)} for all listeners bound to the
+    * {@link ProjectFactory}
+    */
+   void fireProjectCreated(Project project);
 }

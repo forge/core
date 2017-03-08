@@ -401,7 +401,8 @@ public class ProjectFactoryImpl extends AbstractEventListener implements Project
       }
    }
 
-   private void fireProjectCreated(Project project)
+   @Override
+   public void fireProjectCreated(Project project)
    {
       for (ProjectListener listener : getBuiltInListeners())
       {
