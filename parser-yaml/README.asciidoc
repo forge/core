@@ -39,7 +39,7 @@ Allows easy manipulation of YAML data
 ----
 @Inject private ResourceFactory factory;
 YAMLResource resource = factory.createResource(new File("data.yaml")).reify(YAMLResource.class);
-Map<String,Object> model = resource.getModel();
+Map<String,Object> model = resource.getModel().get();
 // Manipulate model
 ...
 // save it
