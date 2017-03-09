@@ -45,6 +45,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.projects.facets.WebResourcesFacet;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -731,6 +732,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
       try
       {
          JavaSourceFacet java = this.project.getFacet(JavaSourceFacet.class);
+         ResourcesFacet resources = this.project.getFacet(ResourcesFacet.class);
          WebResourcesFacet web = this.project.getFacet(WebResourcesFacet.class);
          JPAFacet<PersistenceCommonDescriptor> jpa = this.project.getFacet(JPAFacet.class);
 
@@ -825,7 +827,7 @@ public class FacesScaffoldProvider implements ScaffoldProvider
 
          context.put("viewPackage", viewBean.getPackage());
          result.add(ScaffoldUtil.createOrOverwrite(
-                  web.getWebResource("WEB-INF/classes/META-INF/forge.taglib.xml"),
+                  resources.getResource("META-INF/forge.taglib.xml"),
                   FreemarkerTemplateProcessor.processTemplate(context, this.taglibTemplate)));
 
          createInitializers(entity);
