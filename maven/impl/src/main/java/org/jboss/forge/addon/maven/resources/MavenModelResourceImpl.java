@@ -162,7 +162,7 @@ public class MavenModelResourceImpl extends AbstractXMLResource implements Maven
          }
          catch (Exception e)
          {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Could not parse POM file: " + getFullyQualifiedName(), e);
          }
          finally
          {
