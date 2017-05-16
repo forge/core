@@ -73,7 +73,7 @@ Stacks:: Starting from Forge 3.0.0.Beta2, projects can now be created targetting
 |Class |Functionality
 
 |Stack
-|A Stack references multiple _ProjectFacet_ classes. Commands can use this information to 
+|A Stack references multiple _ProjectFacet_ classes. 
 
 |StackFacet
 |A Stack is associated with a project through a StackFacet. Implementations can decide how to install it (by looking up the project dependencies, by reading a configuration file, etc) and *must* provide a Stack.
