@@ -6,13 +6,9 @@
  */
 package org.jboss.forge.addon.javaee.rest.ui;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 import static org.jboss.forge.addon.javaee.JavaEEPackageConstants.DEFAULT_REST_PACKAGE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;

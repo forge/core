@@ -30,7 +30,8 @@ import org.jboss.forge.roaster.model.source.MethodSource;
  *
  * @author <a href="mailto:antonio.goncalves@gmail.com">Antonio Goncalves</a>
  */
-public class RestNewEndpointCommand extends AbstractRestNewCommand<JavaClassSource>
+public class RestNewEndpointCommandImpl extends AbstractRestNewCommand<JavaClassSource>
+         implements RestNewEndpointCommand
 {
    @Inject
    @WithAttributes(label = "Methods", description = "REST methods to be defined", defaultValue = "GET")
@@ -120,5 +121,17 @@ public class RestNewEndpointCommand extends AbstractRestNewCommand<JavaClassSour
       }
 
       return source;
+   }
+
+   @Override
+   public UISelectMany<RestMethod> getMethods()
+   {
+      return methods;
+   }
+
+   @Override
+   public UIInput<String> getPath()
+   {
+      return path;
    }
 }
