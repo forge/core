@@ -8,11 +8,7 @@ package org.jboss.forge.addon.parser.java.ui;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
@@ -63,12 +59,38 @@ import org.jboss.forge.roaster.model.util.Types;
          @FacetConstraint(value = JavaSourceFacet.class, type = FacetConstraintType.REQUIRED)
 })
 public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>> extends AbstractProjectCommand
+         implements JavaSourceDecorator<SOURCETYPE>
 {
    private UIInput<String> targetPackage;
    private UIInput<String> named;
    private UIInput<Boolean> overwrite;
    private UIInput<String> extendsType;
    private UIInputMany<String> implementsType;
+
+   private JavaSourceDecorator<SOURCETYPE> delegate = this;
+
+   /**
+    * Specifies which {@link JavaSourceDecorator} should be used to customize the generated Java code.
+    * <p>
+    * Note that, since this class implements {@link JavaSourceDecorator} itself, this class is its own delegate by
+    * default, calling {@link #decorateSource(UIExecutionContext, Project, JavaSource)}.
+    * 
+    * @param delegate the {@link JavaSourceDecorator} to be used to customize the generated Java code
+    */
+   public void setJavaSourceDecorator(JavaSourceDecorator<SOURCETYPE> delegate)
+   {
+      this.delegate = delegate;
+   }
+
+   /**
+    * Retrieves the {@link JavaSourceDecorator} associated with this class.
+    * 
+    * @return the {@link JavaSourceDecorator} associated with this class.
+    */
+   public JavaSourceDecorator<SOURCETYPE> getJavaSourceDecorator()
+   {
+      return delegate;
+   }
 
    @Override
    public void initializeUI(UIBuilder builder) throws Exception
@@ -350,7 +372,7 @@ public abstract class AbstractJavaSourceCommand<SOURCETYPE extends JavaSource<?>
       }
       else
       {
-         SOURCETYPE decorated = decorateSource(context, project, source);
+         SOURCETYPE decorated = delegate.decorateSource(context, project, source);
          if (decorated != null)
             source = decorated;
          javaResource = javaSourceFacet.saveJavaSource(source);
