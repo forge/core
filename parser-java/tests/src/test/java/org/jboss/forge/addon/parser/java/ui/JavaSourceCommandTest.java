@@ -6,9 +6,7 @@
  */
 package org.jboss.forge.addon.parser.java.ui;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 
 import java.io.Serializable;
 
@@ -31,11 +29,8 @@ import org.jboss.forge.arquillian.AddonDeployment;
 import org.jboss.forge.arquillian.AddonDeployments;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.roaster.model.JavaAnnotation;
-import org.jboss.forge.roaster.model.JavaClass;
-import org.jboss.forge.roaster.model.JavaEnum;
-import org.jboss.forge.roaster.model.JavaInterface;
-import org.jboss.forge.roaster.model.JavaType;
+import org.jboss.forge.roaster.model.*;
+import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.Assert;
 import org.junit.Test;
@@ -282,6 +277,46 @@ public class JavaSourceCommandTest
          controller.setValueFor("overwrite", "true");
          Assert.assertTrue(controller.isValid());
          Assert.assertThat(controller.execute(), is(not(instanceOf(Failed.class))));
+      }
+   }
+
+   @Test
+   public void testJavaSourceDecorator() throws Exception
+   {
+      Project project = projectFactory.createTempProject();
+      facetFactory.install(project, JavaSourceFacet.class);
+
+      try (CommandController controller = getInitializedController(JavaNewClassCommand.class, project.getRoot()))
+      {
+         Assert.assertTrue(controller.isValid());
+         Assert.assertTrue(controller.canExecute());
+         Result result = controller.execute();
+         Assert.assertThat(result, is(not(instanceOf(Failed.class))));
+
+         JavaSourceFacet facet = project.getFacet(JavaSourceFacet.class);
+         JavaResource javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
+         Assert.assertNotNull(javaResource);
+         Assert.assertThat(javaResource.getJavaType(), is(instanceOf(JavaClass.class)));
+
+         final String initialContent = javaResource.getContents();
+         final UICommand command = controller.getCommand();
+         Assert.assertTrue(command instanceof AbstractJavaSourceCommand);
+         final AbstractJavaSourceCommand<JavaClassSource> javaSourceCommand = (AbstractJavaSourceCommand) command;
+
+         // set a delegate
+         final String propertyName = "name";
+         javaSourceCommand.setJavaSourceDecorator((context, project1, source) -> {
+            source.addProperty(String.class, propertyName);
+            return source;
+         });
+
+         // execute the command again and check the new source content
+         controller.setValueFor("overwrite", "true");
+         controller.execute();
+         javaResource = facet.getJavaResource("org.jboss.forge.test.CreditCardType");
+         final String newContent = javaResource.getContents();
+         Assert.assertFalse(initialContent.equals(newContent));
+         Assert.assertTrue(newContent.contains(propertyName));
       }
    }
 
