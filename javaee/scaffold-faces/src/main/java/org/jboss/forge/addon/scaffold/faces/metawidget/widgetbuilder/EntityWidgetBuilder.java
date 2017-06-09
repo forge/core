@@ -614,10 +614,9 @@ public class EntityWidgetBuilder extends HtmlWidgetBuilder
          if (columnAttributes.containsKey(FACES_LOOKUP) && columnAttributes.containsKey(REVERSE_PRIMARY_KEY))
          {
             StaticHtmlMetawidget output = (StaticHtmlMetawidget) link.getChildren().get(1);
-            String displayExpression = "forgeview:display(" + dataTable.getAttribute("var")
+            String displayExpression = dataTable.getAttribute("var")
                      + StringUtils.SEPARATOR_DOT_CHAR
-                     + StringUtils.decapitalize(columnAttributes.get(NAME)) + ")";
-            ((BaseStaticXmlWidget) link).putAdditionalNamespaceURI("forgeview", "http://jboss.org/forge/view");
+                     + StringUtils.decapitalize(columnAttributes.get(NAME));
             output.setValue(StaticFacesUtils.wrapExpression(displayExpression));
          }
          if (tableAttributes.get(PARAMETERIZED_TYPE_PATH) != null)
