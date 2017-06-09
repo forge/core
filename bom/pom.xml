@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-parent</artifactId>
-      <version>22</version>
+      <version>23</version>
       <relativePath />
    </parent>
    <groupId>org.jboss.forge</groupId>
@@ -461,7 +461,7 @@
          <plugin>
             <groupId>org.sonatype.plugins</groupId>
             <artifactId>nexus-staging-maven-plugin</artifactId>
-            <version>1.6.3</version>
+            <version>1.6.8</version>
             <extensions>true</extensions>
             <configuration>
                <autoReleaseAfterClose>true</autoReleaseAfterClose>
