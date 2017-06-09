@@ -29,7 +29,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @FacetConstraint(JavaSourceFacet.class)
-public class JPANewEntityCommand extends AbstractJPACommand<JavaClassSource>
+public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource> implements JPANewEntityCommand
 {
    @Inject
    @WithAttributes(label = "ID Column Generation Strategy", defaultValue = "AUTO")
