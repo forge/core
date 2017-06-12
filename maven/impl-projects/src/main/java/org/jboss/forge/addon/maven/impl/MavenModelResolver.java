@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.building.FileModelSource;
@@ -180,6 +181,12 @@ public class MavenModelResolver implements ModelResolver
       }
 
       return resolveModel(parent.getGroupId(), parent.getArtifactId(), parent.getVersion());
+   }
+
+   @Override
+   public ModelSource resolveModel(Dependency dep) throws UnresolvableModelException
+   {
+      return resolveModel(dep.getGroupId(), dep.getArtifactId(), dep.getVersion());
    }
 
    @Override

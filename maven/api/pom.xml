@@ -58,6 +58,10 @@
                <groupId>org.jboss.forge</groupId>
                <artifactId>xml-parser</artifactId>
             </exclusion>
+            <exclusion>
+               <groupId>org.slf4j</groupId>
+               <artifactId>slf4j-api</artifactId>
+            </exclusion>
          </exclusions>
       </dependency>
       <dependency>
