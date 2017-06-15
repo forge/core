@@ -381,7 +381,8 @@ public class NewProjectWizardImpl implements UIWizard, NewProjectWizard
    {
       Result result = Results.success("Project named '" + named.getValue() + "' has been created.");
       DirectoryResource targetDir = getTargetDirectory();
-      if (targetDir.mkdirs() || overwrite.getValue())
+      boolean overwriteDir = overwrite.getValue() || useTargetLocationRoot.getValue();
+      if (targetDir.mkdirs() || overwriteDir)
       {
          ProjectType value = type.getValue();
          ProjectFactory projectFactory = SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class)

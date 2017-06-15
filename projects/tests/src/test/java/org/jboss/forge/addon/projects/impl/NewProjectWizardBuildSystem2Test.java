@@ -21,6 +21,8 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.ProjectProvider;
 import org.jboss.forge.addon.projects.mock.MockBuildSystem;
 import org.jboss.forge.addon.projects.mock.MockBuildSystem2;
+import org.jboss.forge.addon.projects.mock.MockMetadataFacet;
+import org.jboss.forge.addon.projects.mock.MockProject;
 import org.jboss.forge.addon.projects.mock.MockProjectType;
 import org.jboss.forge.addon.projects.mock.MockProjectType2;
 import org.jboss.forge.addon.projects.mock.MockProjectType3;
@@ -62,9 +64,11 @@ public class NewProjectWizardBuildSystem2Test
                .addClass(MockProjectType3.class)
                .addClass(MockBuildSystem.class)
                .addClass(MockBuildSystem2.class)
+               .addClass(MockProject.class)
+               .addClass(MockMetadataFacet.class)
                .addAsServiceProvider(Service.class, NewProjectWizardBuildSystem2Test.class,
                         MockProjectTypeUnsatisfied.class, MockProjectType.class, MockProjectType2.class,
-                        MockProjectType3.class, MockBuildSystem.class, MockBuildSystem2.class);
+                        MockProjectType3.class, MockBuildSystem.class, MockBuildSystem2.class, MockMetadataFacet.class);
 
       return archive;
    }

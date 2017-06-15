@@ -35,7 +35,9 @@ public class MockBuildSystem2 extends AbstractProjectProvider
    @Override
    public Project createProject(Resource<?> target)
    {
-      return null;
+      MockProject mockProject = new MockProject(target);
+      mockProject.install(new MockMetadataFacet(mockProject, this));
+      return mockProject;
    }
 
    @Override

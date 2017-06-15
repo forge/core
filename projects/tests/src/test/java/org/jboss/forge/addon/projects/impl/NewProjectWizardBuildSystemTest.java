@@ -18,6 +18,8 @@ import java.io.File;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.projects.mock.MockBuildSystem;
+import org.jboss.forge.addon.projects.mock.MockMetadataFacet;
+import org.jboss.forge.addon.projects.mock.MockProject;
 import org.jboss.forge.addon.projects.mock.MockProjectTypeNoRequiredFacets;
 import org.jboss.forge.addon.projects.mock.MockProjectTypeNullRequiredFacets;
 import org.jboss.forge.addon.projects.ui.NewProjectWizard;
@@ -52,9 +54,11 @@ public class NewProjectWizardBuildSystemTest
                .addClass(MockProjectTypeNoRequiredFacets.class)
                .addClass(MockProjectTypeNullRequiredFacets.class)
                .addClass(MockBuildSystem.class)
+               .addClass(MockProject.class)
+               .addClass(MockMetadataFacet.class)
                .addAsServiceProvider(Service.class, NewProjectWizardBuildSystemTest.class,
                         MockProjectTypeNoRequiredFacets.class,
-                        MockProjectTypeNullRequiredFacets.class, MockBuildSystem.class);
+                        MockProjectTypeNullRequiredFacets.class, MockBuildSystem.class, MockMetadataFacet.class);
 
       return archive;
    }
