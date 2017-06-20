@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>configuration-parent</artifactId>
-      <version>3.7.1-SNAPSHOT</version>
+      <version>3.7.1.Final</version>
    </parent>
    <artifactId>configuration-tests</artifactId>
    <name>Forge - Configuration Tests</name>
