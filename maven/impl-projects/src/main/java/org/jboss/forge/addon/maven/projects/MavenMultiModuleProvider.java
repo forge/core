@@ -9,6 +9,7 @@ package org.jboss.forge.addon.maven.projects;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Logger;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -44,10 +45,17 @@ public class MavenMultiModuleProvider implements ProjectAssociationProvider
                      .substring(parent.getRoot().getFullyQualifiedName().length());
             if (moduleDir.startsWith(File.separator))
                moduleDir = moduleDir.substring(1);
-
-            parentPom.addModule(moduleDir);
-            parentMavenFacet.setModel(parentPom);
-
+            // If the module is already there, don't add
+            if (parentPom.getModules().contains(moduleDir))
+            {
+               Logger.getLogger(getClass().getName())
+                        .warning("Module '" + moduleDir + "' is already declared in the parent pom.xml");
+            }
+            else
+            {
+               parentPom.addModule(moduleDir);
+               parentMavenFacet.setModel(parentPom);
+            }
             MavenFacet projectMavenFacet = project.getFacet(MavenFacet.class);
             Model pom = projectMavenFacet.getModel();
 

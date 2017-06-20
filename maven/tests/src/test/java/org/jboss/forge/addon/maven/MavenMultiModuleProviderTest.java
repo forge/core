@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.maven;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.List;
 
 import org.apache.maven.model.Model;
@@ -40,6 +42,7 @@ public class MavenMultiModuleProviderTest
             @AddonDependency(name = "org.jboss.forge.addon:resources"),
             @AddonDependency(name = "org.jboss.forge.addon:projects"),
             @AddonDependency(name = "org.jboss.forge.addon:maven"),
+            @AddonDependency(name = "org.jboss.forge.addon:assertj"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:simple")
    })
    public static AddonArchive getDeployment()
@@ -124,6 +127,29 @@ public class MavenMultiModuleProviderTest
       Assert.assertEquals(parentProject.getFacet(MetadataFacet.class).getProjectVersion(), version);
       Model subModel = subProject.getFacet(MavenFacet.class).getModel();
       Assert.assertEquals(parentModel.getGroupId(), subModel.getParent().getGroupId());
+   }
 
+   @Test
+   public void testCreateNestedProjectWithExistingModuleInPom() throws Exception
+   {
+      Project parentProject = projectFactory.createTempProject(buildSystem);
+      Assert.assertNotNull(parentProject);
+
+      parentProject.getFacet(PackagingFacet.class).setPackagingType("pom");
+
+      MetadataFacet metadata = parentProject.getFacet(MetadataFacet.class);
+      metadata.setProjectName("parent");
+      metadata.setProjectGroupName("com.project.parent");
+
+      MavenFacet mavenFacet = parentProject.getFacet(MavenFacet.class);
+      Model parentModel = mavenFacet.getModel();
+      parentModel.addModule("sub");
+      mavenFacet.setModel(parentModel);
+
+      DirectoryResource subProjectDir = parentProject.getRoot().reify(DirectoryResource.class).getChildDirectory("sub");
+      projectFactory.createProject(subProjectDir, buildSystem);
+
+      List<String> modules = mavenFacet.getModel().getModules();
+      assertThat(modules).containsOnly("sub");
    }
 }
