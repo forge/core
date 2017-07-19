@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -25,6 +26,7 @@ import org.jboss.forge.addon.ui.example.wizards.subflow.ExampleFlow;
 import org.jboss.forge.addon.ui.example.wizards.subflow.FlowOneOneStep;
 import org.jboss.forge.addon.ui.example.wizards.subflow.FlowOneStep;
 import org.jboss.forge.addon.ui.example.wizards.subflow.FlowTwoStep;
+import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.result.CompositeResult;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
@@ -242,18 +244,10 @@ public class WizardCommandControllerTest
       try (WizardCommandController controller = testHarness.createWizardController(ExampleFlow.class))
       {
          controller.initialize();
-         assertThat(controller.getWizardStepsMetadata()).hasSize(1);
-         controller.setValueFor("name", "Forge");
-         controller.setValueFor("number", 42);
-         controller.next().initialize();
-         assertThat(controller.getWizardStepsMetadata()).hasSize(2);
-         controller.setValueFor("flowOneInput", "Value");
-         controller.next().initialize();
-         assertThat(controller.getWizardStepsMetadata()).hasSize(3);
-         controller.setValueFor("flowOneOneInput", "Value Two");
-         controller.next().initialize();
-         assertThat(controller.getWizardStepsMetadata()).hasSize(4);
-         controller.setValueFor("flowTwoInput", "Value Three");
+         List<UICommandMetadata> wizardStepsMetadata = controller.getWizardStepsMetadata();
+         assertThat(wizardStepsMetadata).hasSize(4);
+         assertThat(wizardStepsMetadata.stream().map(UICommandMetadata::getName).collect(Collectors.toList()))
+                  .containsExactly("flow", "flow-one", "flow-one-one", "flow-two");
       }
    }
 
