@@ -8,6 +8,7 @@ package org.jboss.forge.addon.ui.impl.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -24,8 +25,10 @@ import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UISelection;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
+import org.jboss.forge.addon.ui.impl.context.DelegatingUIContext;
 import org.jboss.forge.addon.ui.impl.context.UIBuilderImpl;
 import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.impl.context.UINavigationContextImpl;
@@ -486,11 +489,33 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    public List<UICommandMetadata> getWizardStepsMetadata()
    {
       List<UICommandMetadata> stepsMetadata = new ArrayList<>();
-      addCommandMetadata(initialCommand, stepsMetadata);
+      // Do not change anything in the original UIContext
+      final Map<Object, Object> attributeMap = new HashMap<>(context.getAttributeMap());
+      UIContext safeContext = new DelegatingUIContext(context, context.getProvider())
+      {
+         @Override
+         public Map<Object, Object> getAttributeMap()
+         {
+            return attributeMap;
+         }
+
+         @Override
+         public <SELECTIONTYPE> void setSelection(UISelection<SELECTIONTYPE> selection)
+         {
+            // Do nothing
+         }
+
+         @Override
+         public <SELECTIONTYPE> void setSelection(SELECTIONTYPE resource)
+         {
+            // Do nothing
+         }
+      };
+      addCommandMetadata(initialCommand, safeContext, stepsMetadata);
       return stepsMetadata;
    }
 
-   private void addCommandMetadata(UICommand command, List<UICommandMetadata> stepsMetadata)
+   private void addCommandMetadata(UICommand command, UIContext context, List<UICommandMetadata> stepsMetadata)
    {
       UIBuilderImpl builder = new UIBuilderImpl(context, inputComponentFactory);
       try
@@ -512,7 +537,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
          for (NavigationResultEntry nextEntry : nextEntries)
          {
             UICommand nextCommand = nextEntry.getCommand(addonRegistry, context);
-            addCommandMetadata(nextCommand, stepsMetadata);
+            addCommandMetadata(nextCommand, context, stepsMetadata);
          }
       }
    }
