@@ -23,6 +23,7 @@ import org.jboss.forge.addon.ui.example.wizards.ExampleStepTwo;
 import org.jboss.forge.addon.ui.example.wizards.ExampleWizard;
 import org.jboss.forge.addon.ui.example.wizards.aggregate.AggregateWizard;
 import org.jboss.forge.addon.ui.example.wizards.no_ui.NoUIWizard;
+import org.jboss.forge.addon.ui.example.wizards.no_ui.NoUIWizardStep;
 import org.jboss.forge.addon.ui.example.wizards.no_ui.WithInputWizard;
 import org.jboss.forge.addon.ui.example.wizards.subflow.ExampleFlow;
 import org.jboss.forge.addon.ui.example.wizards.subflow.FlowOneOneStep;
@@ -263,6 +264,16 @@ public class WizardCommandControllerTest
          assertThat(wizardStepsMetadata).hasSize(1);
          assertThat(wizardStepsMetadata.stream().map(UICommandMetadata::getName).collect(Collectors.toList()))
                   .containsExactly(WithInputWizard.class.getName());
+      }
+   }
+
+   @Test
+   public void testStepsMetadataCommandWithNoInputs() throws Exception
+   {
+      try (WizardCommandController controller = testHarness.createWizardController(NoUIWizardStep.class))
+      {
+         controller.initialize();
+         assertThat(controller.getWizardStepsMetadata()).isEmpty();
       }
    }
 

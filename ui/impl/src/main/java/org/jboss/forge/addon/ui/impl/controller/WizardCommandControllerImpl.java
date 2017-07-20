@@ -72,11 +72,13 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    private int flowPointer = 0;
 
    private final CommandControllerFactoryImpl controllerFactory;
+   private final InputComponentFactory inputComponentFactory;
 
    public WizardCommandControllerImpl(UIContext context, AddonRegistry addonRegistry, UIRuntime runtime,
             UIWizard initialCommand, CommandControllerFactoryImpl controllerFactory)
    {
       super(addonRegistry, runtime, initialCommand, context);
+      this.inputComponentFactory = addonRegistry.getServices(InputComponentFactory.class).get();
       this.controllerFactory = controllerFactory;
       flow.add(createEntry(initialCommand, false));
    }
@@ -483,14 +485,12 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public List<UICommandMetadata> getWizardStepsMetadata()
    {
-      InputComponentFactory inputComponentFactory = addonRegistry.getServices(InputComponentFactory.class).get();
       List<UICommandMetadata> stepsMetadata = new ArrayList<>();
-      addCommandMetadata(initialCommand, inputComponentFactory, stepsMetadata);
+      addCommandMetadata(initialCommand, stepsMetadata);
       return stepsMetadata;
    }
 
-   private void addCommandMetadata(UICommand command, InputComponentFactory inputComponentFactory,
-            List<UICommandMetadata> stepsMetadata)
+   private void addCommandMetadata(UICommand command, List<UICommandMetadata> stepsMetadata)
    {
       UIBuilderImpl builder = new UIBuilderImpl(context, inputComponentFactory);
       try
@@ -512,7 +512,7 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
          for (NavigationResultEntry nextEntry : nextEntries)
          {
             UICommand nextCommand = nextEntry.getCommand(addonRegistry, context);
-            addCommandMetadata(nextCommand, inputComponentFactory, stepsMetadata);
+            addCommandMetadata(nextCommand, stepsMetadata);
          }
       }
    }
