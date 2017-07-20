@@ -22,6 +22,8 @@ import org.jboss.forge.addon.ui.example.wizards.ExampleStepOne;
 import org.jboss.forge.addon.ui.example.wizards.ExampleStepTwo;
 import org.jboss.forge.addon.ui.example.wizards.ExampleWizard;
 import org.jboss.forge.addon.ui.example.wizards.aggregate.AggregateWizard;
+import org.jboss.forge.addon.ui.example.wizards.no_ui.NoUIWizard;
+import org.jboss.forge.addon.ui.example.wizards.no_ui.WithInputWizard;
 import org.jboss.forge.addon.ui.example.wizards.subflow.ExampleFlow;
 import org.jboss.forge.addon.ui.example.wizards.subflow.FlowOneOneStep;
 import org.jboss.forge.addon.ui.example.wizards.subflow.FlowOneStep;
@@ -248,6 +250,19 @@ public class WizardCommandControllerTest
          assertThat(wizardStepsMetadata).hasSize(4);
          assertThat(wizardStepsMetadata.stream().map(UICommandMetadata::getName).collect(Collectors.toList()))
                   .containsExactly("flow", "flow-one", "flow-one-one", "flow-two");
+      }
+   }
+
+   @Test
+   public void testStepsMetadataWithEmptySteps() throws Exception
+   {
+      try (WizardCommandController controller = testHarness.createWizardController(NoUIWizard.class))
+      {
+         controller.initialize();
+         List<UICommandMetadata> wizardStepsMetadata = controller.getWizardStepsMetadata();
+         assertThat(wizardStepsMetadata).hasSize(1);
+         assertThat(wizardStepsMetadata.stream().map(UICommandMetadata::getName).collect(Collectors.toList()))
+                  .containsExactly(WithInputWizard.class.getName());
       }
    }
 

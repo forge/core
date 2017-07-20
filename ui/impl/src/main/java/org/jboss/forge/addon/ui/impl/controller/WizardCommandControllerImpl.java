@@ -26,9 +26,11 @@ import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.controller.WizardCommandController;
+import org.jboss.forge.addon.ui.impl.context.UIBuilderImpl;
 import org.jboss.forge.addon.ui.impl.context.UIExecutionContextImpl;
 import org.jboss.forge.addon.ui.impl.context.UINavigationContextImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
+import org.jboss.forge.addon.ui.input.InputComponentFactory;
 import org.jboss.forge.addon.ui.input.UIPrompt;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.output.UIMessage;
@@ -481,21 +483,36 @@ class WizardCommandControllerImpl extends AbstractCommandController implements W
    @Override
    public List<UICommandMetadata> getWizardStepsMetadata()
    {
+      InputComponentFactory inputComponentFactory = addonRegistry.getServices(InputComponentFactory.class).get();
       List<UICommandMetadata> stepsMetadata = new ArrayList<>();
-      addCommandMetadata(stepsMetadata, initialCommand);
+      addCommandMetadata(initialCommand, inputComponentFactory, stepsMetadata);
       return stepsMetadata;
    }
 
-   private void addCommandMetadata(List<UICommandMetadata> stepsMetadata, UICommand command)
+   private void addCommandMetadata(UICommand command, InputComponentFactory inputComponentFactory,
+            List<UICommandMetadata> stepsMetadata)
    {
-      UIContext context = getContext();
-      stepsMetadata.add(command.getMetadata(context));
+      UIBuilderImpl builder = new UIBuilderImpl(context, inputComponentFactory);
+      try
+      {
+         command.initializeUI(builder);
+      }
+      catch (Exception e)
+      {
+         logger.log(Level.SEVERE, "Error while initializing " + command, e);
+      }
+      // Empty inputs are not rendered
+      if (builder.getInputs().size() > 0)
+      {
+         stepsMetadata.add(command.getMetadata(context));
+      }
       NavigationResultEntry[] nextEntries = getNextFrom(command);
       if (nextEntries != null)
       {
          for (NavigationResultEntry nextEntry : nextEntries)
          {
-            addCommandMetadata(stepsMetadata, nextEntry.getCommand(addonRegistry, context));
+            UICommand nextCommand = nextEntry.getCommand(addonRegistry, context);
+            addCommandMetadata(nextCommand, inputComponentFactory, stepsMetadata);
          }
       }
    }
