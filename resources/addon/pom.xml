@@ -18,7 +18,6 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>resources-impl</artifactId>
          <scope>runtime</scope>
-         <optional>true</optional>
       </dependency>
 
       <!-- Addon Dependencies -->
