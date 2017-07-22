@@ -23,7 +23,6 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>testing-impl</artifactId>
          <scope>runtime</scope>
-         <optional>true</optional>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
