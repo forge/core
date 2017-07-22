@@ -18,13 +18,11 @@
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>maven-impl</artifactId>
          <scope>runtime</scope>
-         <optional>true</optional>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>maven-impl-projects</artifactId>
          <scope>runtime</scope>
-         <optional>true</optional>
       </dependency>
 
       <!-- Addons -->
