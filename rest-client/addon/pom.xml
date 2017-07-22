@@ -31,6 +31,8 @@
          <groupId>org.jboss.resteasy</groupId>
          <artifactId>resteasy-client</artifactId>
          <version>3.0.8.Final</version>
+         <scope>runtime</scope>
+         <optional>true</optional>
          <exclusions>
             <exclusion>
                <groupId>javax.activation</groupId>
