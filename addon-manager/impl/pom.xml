@@ -17,7 +17,6 @@
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
-
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>addon-manager-api</artifactId>
@@ -25,17 +24,16 @@
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>git-api</artifactId>
+         <artifactId>git</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
-
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>addon-manager-spi</artifactId>
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
-
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>javaee-spi</artifactId>
@@ -54,7 +52,6 @@
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
-      
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>text</artifactId>
@@ -76,25 +73,28 @@
             </exclusion>
          </exclusions>
       </dependency>
-
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>dependencies-api</artifactId>
+         <artifactId>dependencies</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>ui-api</artifactId>
+         <artifactId>ui</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>resources-api</artifactId>
+         <artifactId>resources</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>projects-api</artifactId>
+         <artifactId>projects</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
    </dependencies>
