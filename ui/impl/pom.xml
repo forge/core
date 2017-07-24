@@ -15,19 +15,17 @@
          <artifactId>cdi</artifactId>
          <classifier>forge-addon</classifier>
          <scope>provided</scope>
-      </dependency>
-      
+      </dependency>    
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui-api</artifactId>
       </dependency>
-
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
-         <artifactId>convert-api</artifactId>
+         <artifactId>convert</artifactId>
+         <classifier>forge-addon</classifier>
          <scope>provided</scope>
       </dependency>
-
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>ui-spi</artifactId>
