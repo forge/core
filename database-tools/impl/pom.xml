@@ -15,7 +15,6 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>database-tools-api</artifactId>
-         <scope>provided</scope>
       </dependency>
       <dependency>
          <groupId>org.hibernate</groupId>
