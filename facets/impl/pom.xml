@@ -26,7 +26,6 @@
       <dependency>
          <groupId>org.jboss.forge.addon</groupId>
          <artifactId>facets-api</artifactId>
-         <scope>provided</scope>
       </dependency>
    </dependencies>
 </project>
