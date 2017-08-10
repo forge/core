@@ -32,13 +32,14 @@ To use this addon, you must add it as a dependency in the *pom.xml* of your `for
 </dependency>
 ----
 == Features
-YAMLResource for YAML files::
+YamlResource for YAML files::
 Allows easy manipulation of YAML data
 +
 [source,java]
 ----
 @Inject private ResourceFactory factory;
-YAMLResource resource = factory.createResource(new File("data.yaml")).reify(YAMLResource.class);
+File file = new File("data.yaml"); // File must exist
+YamlResource resource = factory.create(file).reify(YamlResource.class);
 Map<String,Object> model = resource.getModel().get();
 // Manipulate model
 ...
