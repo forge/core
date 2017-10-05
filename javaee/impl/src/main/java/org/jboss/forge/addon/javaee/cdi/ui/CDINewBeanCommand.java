@@ -13,6 +13,7 @@ import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
@@ -106,6 +107,10 @@ public class CDINewBeanCommand extends AbstractCDICommand<JavaClassSource>
             source.addField().setPrivate().setStatic(true).setFinal(true).setName("serialVersionUID").setType("long")
                      .setLiteralInitializer("1L");
          }
+      }
+      else if (BeanScope.DEPENDENT == scopedValue && project.hasFacet(CDIFacet_1_1.class))
+      {
+         source.addAnnotation(scopedValue.getAnnotation());
       }
       if (withNamed.getValue())
       {
