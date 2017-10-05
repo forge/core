@@ -17,6 +17,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -28,16 +29,13 @@ import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
  * Creates a new CDI Decorator
  *
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
+ * @author Martin Kouba
  */
-public class CDINewDecoratorCommand extends AbstractCDICommand<JavaClassSource>
+public class CDINewDecoratorCommand extends AbstractEnablementCDICommand
 {
    @Inject
    @WithAttributes(label = "Interface to delegate", required = true)
    private UIInput<String> delegate;
-
-   @Inject
-   @WithAttributes(label = "Enabled", description = "Adds to beans.xml")
-   private UIInput<Boolean> enabled;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -54,46 +52,50 @@ public class CDINewDecoratorCommand extends AbstractCDICommand<JavaClassSource>
    }
 
    @Override
-   protected Class<JavaClassSource> getSourceType()
-   {
-      return JavaClassSource.class;
-   }
-
-   @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
       super.initializeUI(builder);
-      builder.add(delegate).add(enabled);
+      builder.add(delegate);
+      initializeEnablementUI(builder);
    }
 
    @Override
    public JavaClassSource decorateSource(UIExecutionContext context, Project project,
             JavaClassSource decorator) throws Exception
    {
+      super.decorateSource(context, project, decorator);
       decorator.setAbstract(true).addInterface(delegate.getValue()).addAnnotation(Decorator.class);
       // Fields
       FieldSource<?> field = decorator.addField().setPrivate().setName("delegate").setType(delegate.getValue());
       field.addAnnotation(Inject.class);
       field.addAnnotation(Delegate.class);
-      if (enabled.getValue())
-      {
-         CDIFacet<?> facet = project.getFacet(CDIFacet.class);
-         // TODO: Create a parent BeansDescriptor
-         if (facet instanceof CDIFacet_1_0)
-         {
-            CDIFacet_1_0 cdiFacet_1_0 = (CDIFacet_1_0) facet;
-            BeansDescriptor bd = cdiFacet_1_0.getConfig();
-            bd.getOrCreateDecorators().clazz(decorator.getQualifiedName());
-            cdiFacet_1_0.saveConfig(bd);
-         }
-         else if (facet instanceof CDIFacet_1_1)
-         {
-            CDIFacet_1_1 cdiFacet_1_1 = (CDIFacet_1_1) facet;
-            org.jboss.shrinkwrap.descriptor.api.beans11.BeansDescriptor bd = cdiFacet_1_1.getConfig();
-            bd.getOrCreateDecorators().clazz(decorator.getQualifiedName());
-            cdiFacet_1_1.saveConfig(bd);
-         }
-      }
       return decorator;
+   }
+
+   @Override
+   public void validate(UIValidationContext validator)
+   {
+      super.validate(validator);
+      checkEnablementConflict(validator,
+               "Decorator enabled for both the application and the bean archive (beans.xml) will only be invoked in the @Priority part of the chain");
+   }
+
+   @Override
+   protected void enable(CDIFacet<?> facet, JavaClassSource source)
+   {
+      if (facet instanceof CDIFacet_1_0)
+      {
+         CDIFacet_1_0 cdiFacet_1_0 = (CDIFacet_1_0) facet;
+         BeansDescriptor bd = cdiFacet_1_0.getConfig();
+         bd.getOrCreateDecorators().clazz(source.getQualifiedName());
+         cdiFacet_1_0.saveConfig(bd);
+      }
+      else if (facet instanceof CDIFacet_1_1)
+      {
+         CDIFacet_1_1 cdiFacet_1_1 = (CDIFacet_1_1) facet;
+         org.jboss.shrinkwrap.descriptor.api.beans11.BeansDescriptor bd = cdiFacet_1_1.getConfig();
+         bd.getOrCreateDecorators().clazz(source.getQualifiedName());
+         cdiFacet_1_1.saveConfig(bd);
+      }
    }
 }

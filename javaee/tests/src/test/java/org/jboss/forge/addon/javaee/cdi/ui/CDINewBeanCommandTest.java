@@ -110,7 +110,7 @@ public class CDINewBeanCommandTest
          assertEquals("CDI: New Bean", metadata.getName());
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("CDI", metadata.getCategory().getSubCategory().getName());
-         assertEquals(10, controller.getInputs().size());
+         assertEquals(11, controller.getInputs().size());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
@@ -122,6 +122,7 @@ public class CDINewBeanCommandTest
          assertTrue(controller.hasInput("withNamed"));
          assertTrue(controller.hasInput("extends"));
          assertTrue(controller.hasInput("implements"));
+         assertTrue(controller.hasInput("enabled"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_CDI_PACKAGE));
       }
    }

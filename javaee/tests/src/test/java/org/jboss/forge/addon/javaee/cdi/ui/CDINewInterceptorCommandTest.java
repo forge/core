@@ -115,6 +115,7 @@ public class CDINewInterceptorCommandTest
          assertTrue(controller.hasInput("enabled"));
          assertTrue(controller.hasInput("extends"));
          assertTrue(controller.hasInput("implements"));
+         assertFalse(controller.hasInput("priority"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_CDI_PACKAGE));
       }
    }

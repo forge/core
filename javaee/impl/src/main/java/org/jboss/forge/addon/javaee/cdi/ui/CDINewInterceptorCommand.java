@@ -19,6 +19,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.context.UIValidationContext;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.Metadata;
@@ -29,16 +30,13 @@ import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
  * Creates a new CDI Interceptor
  *
  * @author <a href="antonio.goncalves@gmail.com">Antonio Goncalves</a>
+ * @author Martin Kouba
  */
-public class CDINewInterceptorCommand extends AbstractCDICommand<JavaClassSource>
+public class CDINewInterceptorCommand extends AbstractEnablementCDICommand
 {
    @Inject
    @WithAttributes(label = "Interceptor Binding", required = true)
    private UIInput<String> interceptorBinding;
-
-   @Inject
-   @WithAttributes(label = "Enabled", description = "Adds to beans.xml")
-   private UIInput<Boolean> enabled;
 
    @Override
    public Metadata getMetadata(UIContext context)
@@ -53,7 +51,8 @@ public class CDINewInterceptorCommand extends AbstractCDICommand<JavaClassSource
    {
       super.initializeUI(builder);
       interceptorBinding.setValueConverter(new PackageRootConverter(getProjectFactory(), builder));
-      builder.add(interceptorBinding).add(enabled);
+      builder.add(interceptorBinding);
+      initializeEnablementUI(builder);
    }
 
    @Override
@@ -63,15 +62,10 @@ public class CDINewInterceptorCommand extends AbstractCDICommand<JavaClassSource
    }
 
    @Override
-   protected Class<JavaClassSource> getSourceType()
-   {
-      return JavaClassSource.class;
-   }
-
-   @Override
    public JavaClassSource decorateSource(UIExecutionContext context, Project project,
             JavaClassSource interceptor) throws Exception
    {
+      super.decorateSource(context, project, interceptor);
       interceptor.addImport(interceptorBinding.getValue());
       interceptor.addAnnotation(interceptorBinding.getValue());
       interceptor.addAnnotation(Interceptor.class);
@@ -84,25 +78,34 @@ public class CDINewInterceptorCommand extends AbstractCDICommand<JavaClassSource
                                  "        } finally {\n" +
                                  "        }")
                .addAnnotation(AroundInvoke.class);
-      if (enabled.getValue())
-      {
-         CDIFacet<?> facet = project.getFacet(CDIFacet.class);
-         // TODO: Create a parent BeansDescriptor
-         if (facet instanceof CDIFacet_1_0)
-         {
-            CDIFacet_1_0 cdiFacet_1_0 = (CDIFacet_1_0) facet;
-            BeansDescriptor bd = cdiFacet_1_0.getConfig();
-            bd.getOrCreateInterceptors().clazz(interceptor.getQualifiedName());
-            cdiFacet_1_0.saveConfig(bd);
-         }
-         else if (facet instanceof CDIFacet_1_1)
-         {
-            CDIFacet_1_1 cdiFacet_1_1 = (CDIFacet_1_1) facet;
-            org.jboss.shrinkwrap.descriptor.api.beans11.BeansDescriptor bd = cdiFacet_1_1.getConfig();
-            bd.getOrCreateInterceptors().clazz(interceptor.getQualifiedName());
-            cdiFacet_1_1.saveConfig(bd);
-         }
-      }
       return interceptor;
    }
+
+   @Override
+   public void validate(UIValidationContext validator)
+   {
+      super.validate(validator);
+      checkEnablementConflict(validator,
+               "Interceptor enabled for both the application and the bean archive (beans.xml) will only be invoked in the @Priority part of the chain");
+   }
+
+   @Override
+   protected void enable(CDIFacet<?> facet, JavaClassSource source)
+   {
+      if (facet instanceof CDIFacet_1_0)
+      {
+         CDIFacet_1_0 cdiFacet_1_0 = (CDIFacet_1_0) facet;
+         BeansDescriptor bd = cdiFacet_1_0.getConfig();
+         bd.getOrCreateInterceptors().clazz(source.getQualifiedName());
+         cdiFacet_1_0.saveConfig(bd);
+      }
+      else if (facet instanceof CDIFacet_1_1)
+      {
+         CDIFacet_1_1 cdiFacet_1_1 = (CDIFacet_1_1) facet;
+         org.jboss.shrinkwrap.descriptor.api.beans11.BeansDescriptor bd = cdiFacet_1_1.getConfig();
+         bd.getOrCreateInterceptors().clazz(source.getQualifiedName());
+         cdiFacet_1_1.saveConfig(bd);
+      }
+   }
+
 }
