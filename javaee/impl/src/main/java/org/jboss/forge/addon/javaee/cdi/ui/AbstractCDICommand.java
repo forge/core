@@ -74,4 +74,5 @@ public abstract class AbstractCDICommand<T extends JavaSource<?>> extends Abstra
    {
       return projectFactory;
    }
+
 }

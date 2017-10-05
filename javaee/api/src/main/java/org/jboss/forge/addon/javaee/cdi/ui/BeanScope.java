@@ -11,7 +11,7 @@ package org.jboss.forge.addon.javaee.cdi.ui;
  */
 public enum BeanScope
 {
-   DEPENDENT("", false),
+   DEPENDENT("javax.enterprise.context.Dependent", false),
    APPLICATION("javax.enterprise.context.ApplicationScoped", true),
    SESSION("javax.enterprise.context.SessionScoped", true),
    CONVERSATION("javax.enterprise.context.ConversationScoped", true),
