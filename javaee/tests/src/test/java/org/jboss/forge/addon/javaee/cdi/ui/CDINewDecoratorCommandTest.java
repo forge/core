@@ -112,6 +112,7 @@ public class CDINewDecoratorCommandTest
          assertTrue(controller.hasInput("overwrite"));
          assertTrue(controller.hasInput("delegate"));
          assertTrue(controller.hasInput("enabled"));
+         assertFalse(controller.hasInput("priority"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_CDI_PACKAGE));
       }
    }

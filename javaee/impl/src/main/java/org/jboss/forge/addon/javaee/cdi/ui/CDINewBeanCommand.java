@@ -13,6 +13,8 @@ import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.forge.addon.javaee.cdi.CDIFacet;
+import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_0;
 import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -24,6 +26,7 @@ import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
+import org.jboss.shrinkwrap.descriptor.api.beans10.BeansDescriptor;
 
 /**
  * Creates a new CDI Bean with a specific scope
@@ -31,7 +34,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class CDINewBeanCommand extends AbstractCDICommand<JavaClassSource>
+public class CDINewBeanCommand extends AbstractEnablementCDICommand
 {
    @Inject
    @WithAttributes(label = "Scope", defaultValue = "DEPENDENT")
@@ -68,12 +71,6 @@ public class CDINewBeanCommand extends AbstractCDICommand<JavaClassSource>
    }
 
    @Override
-   protected Class<JavaClassSource> getSourceType()
-   {
-      return JavaClassSource.class;
-   }
-
-   @Override
    public void initializeUI(UIBuilder builder) throws Exception
    {
       super.initializeUI(builder);
@@ -87,12 +84,20 @@ public class CDINewBeanCommand extends AbstractCDICommand<JavaClassSource>
       };
       customScopeAnnotation.setEnabled(customScopeSelected).setRequired(customScopeSelected);
       builder.add(scoped).add(customScopeAnnotation).add(qualifier).add(alternative).add(withNamed);
+      initializeEnablementUI(builder);
+   }
+
+   @Override
+   protected Callable<Boolean> hasEnablement()
+   {
+      return () -> alternative.getValue();
    }
 
    @Override
    public JavaClassSource decorateSource(UIExecutionContext context, Project project, JavaClassSource source)
             throws Exception
    {
+      super.decorateSource(context, project, source);
       BeanScope scopedValue = scoped.getValue();
       if (BeanScope.CUSTOM == scopedValue)
       {
@@ -126,4 +131,24 @@ public class CDINewBeanCommand extends AbstractCDICommand<JavaClassSource>
       }
       return source;
    }
+
+   @Override
+   protected void enable(CDIFacet<?> facet, JavaClassSource source)
+   {
+      if (facet instanceof CDIFacet_1_0)
+      {
+         CDIFacet_1_0 cdiFacet_1_0 = (CDIFacet_1_0) facet;
+         BeansDescriptor bd = cdiFacet_1_0.getConfig();
+         bd.getOrCreateAlternatives().clazz(source.getQualifiedName());
+         cdiFacet_1_0.saveConfig(bd);
+      }
+      else if (facet instanceof CDIFacet_1_1)
+      {
+         CDIFacet_1_1 cdiFacet_1_1 = (CDIFacet_1_1) facet;
+         org.jboss.shrinkwrap.descriptor.api.beans11.BeansDescriptor bd = cdiFacet_1_1.getConfig();
+         bd.getOrCreateAlternatives().clazz(source.getQualifiedName());
+         cdiFacet_1_1.saveConfig(bd);
+      }
+   }
+
 }
