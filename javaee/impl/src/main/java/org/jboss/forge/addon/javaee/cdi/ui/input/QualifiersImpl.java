@@ -29,13 +29,13 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 
 /**
  * Implementation of {@link Qualifiers}
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 public class QualifiersImpl extends AbstractUIInputManyDecorator<String>implements Qualifiers
 {
    @Inject
-   @WithAttributes(label = "Qualifiers", description = "The qualifiers added to the injection point", type = InputType.JAVA_CLASS_PICKER)
+   @WithAttributes(label = "Qualifiers", type = InputType.JAVA_CLASS_PICKER)
    private UIInputMany<String> qualifiers;
 
    @Inject
