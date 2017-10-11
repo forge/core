@@ -11,8 +11,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.AfterBeanDiscovery;
+import javax.enterprise.inject.spi.AfterDeploymentValidation;
+import javax.enterprise.inject.spi.AfterTypeDiscovery;
+import javax.enterprise.inject.spi.BeforeBeanDiscovery;
+import javax.enterprise.inject.spi.BeforeShutdown;
+import javax.enterprise.inject.spi.Extension;
+import javax.enterprise.inject.spi.ProcessAnnotatedType;
+import javax.enterprise.inject.spi.ProcessBean;
+import javax.enterprise.inject.spi.ProcessBeanAttributes;
+import javax.enterprise.inject.spi.ProcessInjectionPoint;
+import javax.enterprise.inject.spi.ProcessInjectionTarget;
+import javax.enterprise.inject.spi.ProcessObserverMethod;
+import javax.enterprise.inject.spi.ProcessProducer;
+import javax.enterprise.inject.spi.WithAnnotations;
 import javax.inject.Inject;
 
+import org.jboss.forge.addon.javaee.cdi.CDIFacet_1_1;
 import org.jboss.forge.addon.javaee.cdi.CDIOperations;
 import org.jboss.forge.addon.javaee.cdi.ui.input.Qualifiers;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
@@ -24,11 +39,13 @@ import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.UICompleter;
 import org.jboss.forge.addon.ui.input.UIInput;
+import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.util.Strings;
+import org.jboss.forge.roaster.model.JavaClass;
 import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
@@ -37,12 +54,18 @@ import org.jboss.forge.roaster.model.source.ParameterSource;
 /**
  *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ * @author Martin Kouba
  */
 public class CDIAddObserverMethodCommand extends AbstractMethodCDICommand
 {
+
    @Inject
    @WithAttributes(label = "Event Type", description = "The event type of the created method", type = InputType.JAVA_CLASS_PICKER, required = true)
    private UIInput<String> eventType;
+
+   @Inject
+   @WithAttributes(label = "Container Lifecyle Event Type", description = "The event type of the created method", type = InputType.DROPDOWN, required = true)
+   private UISelectOne<String> containerLifecyleEventType;
 
    @Inject
    private Qualifiers qualifiers;
@@ -54,11 +77,65 @@ public class CDIAddObserverMethodCommand extends AbstractMethodCDICommand
    public void initializeUI(UIBuilder builder) throws Exception
    {
       super.initializeUI(builder);
-      setupType();
-      builder.add(eventType).add(qualifiers);
+      eventType.setEnabled(() -> !isTargetClassExtension());
+      containerLifecyleEventType.setEnabled(() -> isTargetClassExtension());
+      qualifiers.setEnabled(() -> !isTargetClassExtension());
+      setupEventType();
+      setupContainerLifecycleEventTypes(builder);
+      builder.add(eventType).add(containerLifecyleEventType).add(qualifiers);
    }
 
-   private void setupType()
+   @Override
+   public Metadata getMetadata(UIContext context)
+   {
+      return Metadata.from(super.getMetadata(context), getClass()).name("CDI: Add Observer Method")
+               .description("Adds a new observer method to a bean");
+   }
+
+   @Override
+   public Result execute(UIExecutionContext context) throws Exception
+   {
+      JavaResource javaResource = targetClass.getValue();
+      JavaClassSource javaClass = javaResource.getJavaType();
+      String eventParamType = getEventType();
+      ParameterSource<JavaClassSource> parameter = javaClass.addMethod().setVisibility(accessType.getValue())
+               .setReturnTypeVoid()
+               .setName(named.getValue())
+               .setBody("")
+               .addParameter(eventParamType, "event");
+      parameter.addAnnotation(Observes.class);
+      if (getSelectedProject(context).hasFacet(CDIFacet_1_1.class)
+               && eventParamType.equals(ProcessAnnotatedType.class.getName() + "<?>"))
+      {
+         parameter.addAnnotation(WithAnnotations.class).setClassArrayValue();
+      }
+      for (String qualifier : qualifiers.getValue())
+      {
+         parameter.addAnnotation(qualifier);
+      }
+      javaResource.setContents(javaClass);
+      return Results.success();
+   }
+
+   @Override
+   protected Visibility getDefaultVisibility()
+   {
+      return Visibility.PACKAGE_PRIVATE;
+   }
+
+   @Override
+   protected String[] getParamTypes()
+   {
+
+      return new String[] { getEventType() };
+   }
+
+   private String getEventType()
+   {
+      return eventType.isEnabled() ? eventType.getValue() : containerLifecyleEventType.getValue();
+   }
+
+   private void setupEventType()
    {
       eventType.setCompleter(new UICompleter<String>()
       {
@@ -91,35 +168,63 @@ public class CDIAddObserverMethodCommand extends AbstractMethodCDICommand
       });
    }
 
-   @Override
-   public Metadata getMetadata(UIContext context)
+   private void setupContainerLifecycleEventTypes(UIBuilder builder)
    {
-      return Metadata.from(super.getMetadata(context), getClass()).name("CDI: Add Observer Method")
-               .description("Adds a new observer method to a bean");
-   }
-
-   @Override
-   public Result execute(UIExecutionContext context) throws Exception
-   {
-      JavaResource javaResource = targetClass.getValue();
-      JavaClassSource javaClass = javaResource.getJavaType();
-      ParameterSource<JavaClassSource> parameter = javaClass.addMethod().setPublic().setReturnTypeVoid()
-               .setName(named.getValue())
-               .setBody("")
-               .addParameter(eventType.getValue(), "event");
-      parameter.addAnnotation(Observes.class);
-      for (String qualifier : qualifiers.getValue())
+      List<String> values = new ArrayList<>();
+      values.add(BeforeBeanDiscovery.class.getSimpleName());
+      if (getSelectedProject(builder).hasFacet(CDIFacet_1_1.class))
       {
-         parameter.addAnnotation(qualifier);
+         values.add(AfterTypeDiscovery.class.getSimpleName());
       }
-      javaResource.setContents(javaClass);
-      return Results.success();
+      values.add(AfterBeanDiscovery.class.getSimpleName());
+      values.add(AfterDeploymentValidation.class.getSimpleName());
+      values.add(BeforeShutdown.class.getSimpleName());
+      values.add(ProcessAnnotatedType.class.getSimpleName());
+      values.add(ProcessInjectionPoint.class.getSimpleName());
+      values.add(ProcessInjectionTarget.class.getSimpleName());
+      if (getSelectedProject(builder).hasFacet(CDIFacet_1_1.class))
+      {
+         values.add(ProcessBeanAttributes.class.getSimpleName());
+      }
+      values.add(ProcessBean.class.getSimpleName());
+      values.add(ProcessProducer.class.getSimpleName());
+      values.add(ProcessObserverMethod.class.getSimpleName());
+      containerLifecyleEventType.setValueChoices(values)
+               .setValueConverter(this::convertContainerLifecycleEventType);
    }
 
-
-   @Override
-   protected Visibility getDefaultVisibility()
+   private String convertContainerLifecycleEventType(String value)
    {
-      return Visibility.PRIVATE;
+      if (value.equals(ProcessAnnotatedType.class.getSimpleName())
+               || value.equals(ProcessInjectionTarget.class.getSimpleName())
+               || value.equals(ProcessBeanAttributes.class.getSimpleName())
+               || value.equals(ProcessBean.class.getSimpleName()))
+      {
+         value += "<?>";
+      }
+      else if (value.equals(ProcessInjectionPoint.class.getSimpleName())
+               || value.equals(ProcessProducer.class.getSimpleName())
+               || value.equals(ProcessObserverMethod.class.getSimpleName()))
+      {
+         value += "<?,?>";
+      }
+      return BeforeBeanDiscovery.class.getPackage().getName() + "." + value;
    }
+
+   private boolean isTargetClassExtension()
+   {
+      try
+      {
+         if (targetClass.hasValue() && targetClass.getValue().getJavaType().isClass())
+         {
+            JavaClass<?> javaClass = targetClass.getValue().getJavaType();
+            return javaClass.hasInterface(Extension.class);
+         }
+      }
+      catch (FileNotFoundException ignored)
+      {
+      }
+      return false;
+   }
+
 }

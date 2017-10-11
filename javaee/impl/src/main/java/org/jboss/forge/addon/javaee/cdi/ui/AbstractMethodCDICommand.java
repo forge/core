@@ -80,7 +80,7 @@ public abstract class AbstractMethodCDICommand extends AbstractJavaEECommand imp
          try
          {
             javaClass = javaResource.getJavaType();
-            if (javaClass.hasMethodSignature(named.getValue()))
+            if (javaClass.hasMethodSignature(named.getValue(), getParamTypes()))
             {
                validator.addValidationError(named, "Method signature already exists");
             }
@@ -124,8 +124,13 @@ public abstract class AbstractMethodCDICommand extends AbstractJavaEECommand imp
       return true;
    }
 
-   protected Visibility getDefaultVisibility() {
+   protected Visibility getDefaultVisibility()
+   {
       return Visibility.PUBLIC;
+   }
+
+   protected String[] getParamTypes() {
+      return new String[] {};
    }
 
    private void setupAccessType()
