@@ -186,7 +186,13 @@ public class CDIAddProducerMethodCommand extends AbstractMethodCDICommand
    @Override
    protected Visibility getDefaultVisibility()
    {
-      return Visibility.PRIVATE;
+      return Visibility.PACKAGE_PRIVATE;
+   }
+
+   @Override
+   protected String[] getParamTypes()
+   {
+      return injectionPoint.getValue() ? new String[] { InjectionPoint.class.getName() } : super.getParamTypes();
    }
 
    private String getDisposerMethodName()
