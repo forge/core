@@ -3,7 +3,7 @@
    <parent>
       <artifactId>templates-parent</artifactId>
       <groupId>org.jboss.forge.addon</groupId>
-      <version>3.8.0.Final</version>
+      <version>3.8.1-SNAPSHOT</version>
    </parent>
    <modelVersion>4.0.0</modelVersion>
    <properties>
