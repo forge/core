@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>parser-json-parent</artifactId>
-      <version>3.8.1-SNAPSHOT</version>
+      <version>3.7.3-SNAPSHOT</version>
    </parent>
    <artifactId>parser-json-tests</artifactId>
    <name>Forge - Json Parser Addon Tests</name>
