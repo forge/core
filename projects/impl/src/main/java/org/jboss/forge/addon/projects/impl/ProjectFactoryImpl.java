@@ -24,6 +24,7 @@ import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.ProjectFactory;
 import org.jboss.forge.addon.projects.ProjectListener;
 import org.jboss.forge.addon.projects.ProjectProvider;
+import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.projects.ProvidedProjectFacet;
 import org.jboss.forge.addon.projects.spi.ProjectCache;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -375,6 +376,10 @@ public class ProjectFactoryImpl extends AbstractEventListener implements Project
 
    private void cacheProject(final Project project)
    {
+      if (Projects.isCacheDisabled())
+      {
+         return;
+      }
       final Imported<ProjectCache> caches = getCaches();
       for (ProjectCache cache : caches)
       {

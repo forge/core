@@ -46,6 +46,7 @@ import org.jboss.forge.addon.maven.impl.MavenModelResolver;
 import org.jboss.forge.addon.maven.profiles.ProfileAdapter;
 import org.jboss.forge.addon.maven.projects.util.RepositoryUtils;
 import org.jboss.forge.addon.maven.resources.MavenModelResource;
+import org.jboss.forge.addon.projects.Projects;
 import org.jboss.forge.addon.resource.monitor.ResourceMonitor;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.manager.maven.MavenContainer;
@@ -91,7 +92,10 @@ public class MavenBuildManager
             monitorResource(pomResource);
          }
          result = builder.build(request);
-         cacheModel.put(pomResource.getFullyQualifiedName(), result);
+         if (!Projects.isCacheDisabled())
+         {
+            cacheModel.put(pomResource.getFullyQualifiedName(), result);
+         }
       }
       return result;
    }
@@ -133,7 +137,7 @@ public class MavenBuildManager
          }
          finally
          {
-            if (result != null)
+            if (result != null && !Projects.isCacheDisabled())
                cacheProject.put(pomResource.getFullyQualifiedName(), result);
          }
       }
@@ -142,6 +146,10 @@ public class MavenBuildManager
 
    private void monitorResource(final MavenModelResource pomResource)
    {
+      if (Projects.isCacheDisabled())
+      {
+         return;
+      }
       final ResourceMonitor monitor = pomResource.monitor();
       monitor.addResourceListener((event) -> {
          evictFromCache(pomResource);

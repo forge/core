@@ -18,6 +18,8 @@ import org.jboss.forge.furnace.util.Assert;
  */
 public final class Projects
 {
+   private static boolean cacheDisabledFlag = Boolean.getBoolean("org.jboss.forge.project.disable_cache");
+
    /**
     * @return the project if {@link UIContext#getSelection()()} returns a path containing a project, null otherwise
     */
@@ -53,6 +55,31 @@ public final class Projects
          return projectFactory.containsProject((Resource<?>) selection.get());
       }
       return false;
+   }
 
+   /**
+    * Enables the project cache
+    */
+   public static void enableCache()
+   {
+      cacheDisabledFlag = false;
+   }
+
+   /**
+    * Disables the project cache
+    */
+   public static void disableCache()
+   {
+      cacheDisabledFlag = true;
+   }
+
+   /**
+    * Is the project cache disabled in this JVM?
+    * 
+    * @return <code>true</code> if cache is disabled
+    */
+   public static boolean isCacheDisabled()
+   {
+      return cacheDisabledFlag;
    }
 }
