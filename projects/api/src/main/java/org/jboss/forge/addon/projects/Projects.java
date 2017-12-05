@@ -18,7 +18,7 @@ import org.jboss.forge.furnace.util.Assert;
  */
 public final class Projects
 {
-   private static boolean cacheDisabledFlag = Boolean.getBoolean("org.jboss.forge.project.disable_cache");
+   private static boolean cacheDisabledFlag = Boolean.getBoolean("PROJECT_CACHE_DISABLED");
 
    /**
     * @return the project if {@link UIContext#getSelection()()} returns a path containing a project, null otherwise
