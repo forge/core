@@ -25,7 +25,7 @@ import org.jboss.forge.addon.ui.command.UICommand;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.impl.annotation.AnnotationCommandAdapter;
 import org.jboss.forge.addon.ui.impl.extension.AnnotatedCommandExtension;
-import org.jboss.forge.addon.ui.impl.input.InputComponentProducer;
+import org.jboss.forge.addon.ui.impl.input.InputComponentFactoryImpl;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.addons.AddonRegistry;
 import org.jboss.forge.furnace.event.PreShutdown;
@@ -44,7 +44,7 @@ public class AnnotatedCommandProvider implements CommandProvider
    private AddonRegistry registry;
 
    @Inject
-   private InputComponentProducer factory;
+   private InputComponentFactoryImpl factory;
 
    @Inject
    private AnnotatedCommandExtension extension;

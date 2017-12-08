@@ -19,7 +19,7 @@ import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
 import org.jboss.forge.addon.ui.context.UIValidationContext;
-import org.jboss.forge.addon.ui.impl.input.InputComponentProducer;
+import org.jboss.forge.addon.ui.impl.input.InputComponentFactoryImpl;
 import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.input.SelectComponent;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
@@ -39,12 +39,12 @@ import org.jboss.forge.furnace.util.Predicate;
 public class AnnotationCommandAdapter implements UICommand
 {
    private final List<InputComponent<?, ?>> inputs = new ArrayList<>();
-   private final InputComponentProducer factory;
+   private final InputComponentFactoryImpl factory;
    private final Method method;
    private final Object instance;
    private final List<Predicate<UIContext>> enabledPredicates;
 
-   public AnnotationCommandAdapter(Method method, Object instance, InputComponentProducer factory,
+   public AnnotationCommandAdapter(Method method, Object instance, InputComponentFactoryImpl factory,
             List<Predicate<UIContext>> enabledPredicates)
    {
       this.method = method;
