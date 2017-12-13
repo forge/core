@@ -26,14 +26,14 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
  */
 public abstract class AbstractUIContext implements UIContext
 {
-   private final Map<Object, Object> map;
+   private final Map<Object, Object> map = createAttributeMap();
    private UISelection<?> selection;
    private final Set<CommandExecutionListener> listeners = new LinkedHashSet<>();
 
-   public AbstractUIContext()
+   protected Map<Object, Object> createAttributeMap()
    {
       // Initializing with System properties by default
-      map = new HashMap<>(System.getProperties());
+      return new HashMap<>(System.getProperties());
    }
 
    @Override
