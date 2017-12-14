@@ -54,7 +54,7 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
       }
       else
       {
-         return doCreateSingleController(context, runtime, command);
+         return cached(doCreateSingleController(context, runtime, command));
       }
    }
 
@@ -113,6 +113,11 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
             final UICommand command)
    {
       return new SingleCommandControllerImpl(addonRegistry, runtime, command, context);
+   }
+
+   CommandController cached(CommandController controller)
+   {
+      return new CacheCommandControllerDecorator(controller);
    }
 
 }
