@@ -101,7 +101,7 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
       return command;
    }
 
-   WizardCommandController doCreateWizardController(final UIContext context, final UIRuntime runtime,
+   protected WizardCommandController doCreateWizardController(final UIContext context, final UIRuntime runtime,
             final UIWizard wizard)
    {
       WizardCommandControllerImpl controller = new WizardCommandControllerImpl(context, addonRegistry, runtime,
@@ -109,7 +109,7 @@ public class CommandControllerFactoryImpl implements CommandControllerFactory
       return new NoUIWizardControllerDecorator(controller);
    }
 
-   SingleCommandController doCreateSingleController(final UIContext context, final UIRuntime runtime,
+   protected SingleCommandController doCreateSingleController(final UIContext context, final UIRuntime runtime,
             final UICommand command)
    {
       return new SingleCommandControllerImpl(addonRegistry, runtime, command, context);
