@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,6 +25,7 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.parser.java.beans.FieldOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
@@ -50,6 +52,9 @@ public class PersistenceOperationsImpl implements PersistenceOperations
 {
    @Inject
    private FacetFactory facetFactory;
+
+   @Inject
+   private FieldOperations beanOperations;
 
    @Override
    @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -182,6 +187,33 @@ public class PersistenceOperationsImpl implements PersistenceOperations
    public JavaClassSource newEntity(JavaClassSource javaClass, GenerationType idStrategy, String tableName,
             String idPropertyName, String versionPropertyName)
    {
+      FieldSource<JavaClassSource> id = javaClass.addField("private Long " + idPropertyName + ";");
+      id.addAnnotation(Id.class);
+      id.addAnnotation(GeneratedValue.class)
+               .setEnumValue("strategy", idStrategy);
+      id.addAnnotation(Column.class)
+               .setStringValue("name", "id")
+               .setLiteralValue("updatable", "false")
+               .setLiteralValue("nullable", "false");
+
+       return newEntity(javaClass, tableName, id, versionPropertyName);
+   }
+
+   @Override
+   public JavaClassSource newEntityEmbeddedId(JavaClassSource javaClass, String tableName, String idPropertyName,
+           String idPropertyType, String versionPropertyName)
+   {
+       // XXX what if the given class ist not @Embeddable?
+       FieldSource<JavaClassSource> id = beanOperations.addFieldTo(javaClass, idPropertyType, idPropertyName);
+       id.addAnnotation(EmbeddedId.class);
+
+       return newEntity(javaClass,tableName, id, versionPropertyName);
+   }
+
+   @SuppressWarnings("unchecked")
+   private JavaClassSource newEntity(JavaClassSource javaClass, String tableName, FieldSource<JavaClassSource> id,
+           String versionPropertyName)
+   {
       javaClass.setPublic()
                .addAnnotation(Entity.class).getOrigin()
                .addInterface(Serializable.class);
@@ -192,15 +224,6 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       {
          javaClass.addAnnotation(Table.class).setStringValue("name", tableName);
       }
-
-      FieldSource<JavaClassSource> id = javaClass.addField("private Long " + idPropertyName + ";");
-      id.addAnnotation(Id.class);
-      id.addAnnotation(GeneratedValue.class)
-               .setEnumValue("strategy", idStrategy);
-      id.addAnnotation(Column.class)
-               .setStringValue("name", "id")
-               .setLiteralValue("updatable", "false")
-               .setLiteralValue("nullable", "false");
 
       FieldSource<JavaClassSource> version = javaClass.addField("private int " + versionPropertyName + ";");
       version.addAnnotation(Version.class);

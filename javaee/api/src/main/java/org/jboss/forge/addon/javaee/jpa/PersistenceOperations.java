@@ -132,6 +132,19 @@ public interface PersistenceOperations
             String idPropertyName, String versionPropertyName);
 
    /**
+    * Given a {@link JavaClassSource} it decorates the source with code for an entity
+    *
+    * @param source source of the class to decorate
+    * @param tableName the table name chose for this entity
+    * @param idPropertyName the ID property name to be used
+    * @param idPropertyType the ID property type to be used
+    * @param versionPropertyName the version property name to be used
+    * @return the decorated java resource
+    */
+   public JavaClassSource newEntityEmbeddedId(JavaClassSource source, String tableName, String idPropertyName,
+           String idPropertyType, String versionPropertyName);
+
+   /**
     * Creates a new {@link JavaResource} for an embeddable entity in the specified project. If a project is available,
     * use {@link PersistenceOperations#newEmbeddableEntity(Project, String, String)}
     * 
