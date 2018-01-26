@@ -22,6 +22,7 @@ import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
+import org.jboss.forge.addon.ui.hints.InputType;
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.WithAttributes;
@@ -51,8 +52,8 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
    private UISelectOne<EntityIdType> idType;
 
    @Inject
-   @WithAttributes(label = "Entity ID Type", description = "The Type for the entity ID.")
-   private UISelectOne<String> idClass;
+   @WithAttributes(label = "Entity ID Class", description = "The Class for the entity ID.", type = InputType.JAVA_CLASS_PICKER)
+   private UIInput<String> idClass;
 
    @Inject
    private PersistenceOperations persistenceOperations;
@@ -89,7 +90,7 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
 
           @Override
           public Boolean call(){
-              return idType.getValue() != null;
+              return idType.getValue() == EntityIdType.EMBEDDED_ID;
           }
 
       });
@@ -106,13 +107,31 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
       {
          idStrategyChosen = GenerationType.AUTO;
       }
+
+      EntityIdType idTypeChosen = idType.getValue();
+      if(idTypeChosen == null){
+          idTypeChosen = EntityIdType.LONG_PROPERTY;
+      }
+
       ConfigurationFacet facet = project.getFacet(ConfigurationFacet.class);
       Configuration config = facet.getConfiguration();
       String idPropertyName = config.getString(PersistenceOperations.ID_PROPERTY_NAME_CONFIGURATION_KEY,
                configuration.getString(PersistenceOperations.ID_PROPERTY_NAME_CONFIGURATION_KEY, "id"));
       String versionPropertyName = config.getString(PersistenceOperations.VERSION_PROPERTY_NAME_CONFIGURATION_KEY,
                configuration.getString(PersistenceOperations.VERSION_PROPERTY_NAME_CONFIGURATION_KEY, "version"));
-      return persistenceOperations.newEntity(source, idStrategyChosen, tableName.getValue(), idPropertyName,
-               versionPropertyName);
+
+      switch(idTypeChosen){
+          case LONG_PROPERTY:
+              return persistenceOperations.newEntity(source, idStrategyChosen, tableName.getValue(), idPropertyName,
+                      versionPropertyName);
+          case EMBEDDED_ID:
+              // XXX what if idClass value is empty?
+              return persistenceOperations.newEntityEmbeddedId(source, tableName.getValue(), idPropertyName,
+                      idClass.getValue(), versionPropertyName);
+          case ID_CLASS:
+              throw new UnsupportedOperationException("@IdClass-ID Strategy not implemented yet.");
+          default:
+              throw new IllegalArgumentException("Unknow Enum value " + idTypeChosen + "!");
+      }
    }
 }
