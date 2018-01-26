@@ -187,7 +187,7 @@ public class PersistenceOperationsImpl implements PersistenceOperations
    public JavaClassSource newEntity(JavaClassSource javaClass, GenerationType idStrategy, String tableName,
             String idPropertyName, String versionPropertyName)
    {
-      FieldSource<JavaClassSource> id = javaClass.addField("private Long " + idPropertyName + ";");
+      FieldSource<JavaClassSource> id = beanOperations.addFieldTo(javaClass, "Long", idPropertyName);
       id.addAnnotation(Id.class);
       id.addAnnotation(GeneratedValue.class)
                .setEnumValue("strategy", idStrategy);
@@ -229,7 +229,6 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       version.addAnnotation(Version.class);
       version.addAnnotation(Column.class).setStringValue("name", "version");
 
-      Refactory.createGetterAndSetter(javaClass, id);
       Refactory.createGetterAndSetter(javaClass, version);
       Refactory.createToStringFromFields(javaClass, id);
       Refactory.createHashCodeAndEquals(javaClass, id);
