@@ -6,6 +6,8 @@
  */
 package org.jboss.forge.addon.javaee.jpa.ui;
 
+import java.util.concurrent.Callable;
+
 import javax.inject.Inject;
 import javax.persistence.GenerationType;
 
@@ -13,6 +15,7 @@ import org.jboss.forge.addon.configuration.Configuration;
 import org.jboss.forge.addon.configuration.facets.ConfigurationFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
+import org.jboss.forge.addon.javaee.jpa.ui.EntityIdType;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
@@ -42,6 +45,14 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
    @Inject
    @WithAttributes(label = "Table Name")
    private UIInput<String> tableName;
+
+   @Inject
+   @WithAttributes(label = "Entity ID Strategy")
+   private UISelectOne<EntityIdType> idType;
+
+   @Inject
+   @WithAttributes(label = "Entity ID Type", description = "The Type for the entity ID.")
+   private UISelectOne<String> idClass;
 
    @Inject
    private PersistenceOperations persistenceOperations;
@@ -74,7 +85,16 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
    {
       super.initializeUI(builder);
       idStrategy.setDefaultValue(GenerationType.AUTO);
-      builder.add(idStrategy).add(tableName);
+      idClass.setRequired(new Callable<Boolean>(){
+
+          @Override
+          public Boolean call(){
+              return idType.getValue() != null;
+          }
+
+      });
+      builder.add(idStrategy).add(tableName)
+          .add(idType).add(idClass);
    }
 
    @Override
