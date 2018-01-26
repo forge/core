@@ -48,7 +48,7 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
    private UIInput<String> tableName;
 
    @Inject
-   @WithAttributes(label = "Entity ID Strategy")
+   @WithAttributes(label = "Entity ID Strategy", defaultValue = "LONG_PROPERTY")
    private UISelectOne<EntityIdType> idType;
 
    @Inject
@@ -86,6 +86,7 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
    {
       super.initializeUI(builder);
       idStrategy.setDefaultValue(GenerationType.AUTO);
+      idType.setDefaultValue(EntityIdType.LONG_PROPERTY);
       idClass.setRequired(new Callable<Boolean>(){
 
           @Override
