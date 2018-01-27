@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.persistence.Table;
+import javax.persistence.EmbeddedId;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -32,6 +33,7 @@ import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.Property;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.After;
 import org.junit.Assert;
@@ -129,5 +131,33 @@ public class JPANewEntityCommandTest
       JavaClass<?> customerEntity = allEntities.get(0);
       Assert.assertTrue(customerEntity.hasAnnotation(Table.class));
       Assert.assertEquals("CUSTOMER_TABLE", customerEntity.getAnnotation(Table.class).getStringValue("name"));
+   }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void checkCommandShellEmbeddedId() throws Exception
+   {
+      shellTest.getShell().setCurrentResource(project.getRoot());
+
+      Result result = shellTest
+               .execute("jpa-new-entity --named Customer --target-package space.criztovyl --id-type EMBEDDED_ID --id-class space.criztovyl.CustomerId",
+                        10, TimeUnit.SECONDS);
+
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
+      Assert.assertTrue(project.hasFacet(JPAFacet.class));
+
+      List<JavaClass<?>> allEntities = project.getFacet(JPAFacet.class).getAllEntities();
+      Assert.assertEquals(1, allEntities.size());
+
+      JavaClass<?> customerEntity = allEntities.get(0);
+
+      Property<?> embeddedId = customerEntity.getProperty("id");
+      Assert.assertNotNull(embeddedId);
+      Assert.assertTrue(embeddedId.hasAnnotation(EmbeddedId.class));
+      Assert.assertEquals(embeddedId.getType().getName(), "CustomerId");
+
+      // Other tests would fail otherwise due to missing CustomerId class.
+      shellTest.execute("cd ..", 5, TimeUnit.SECONDS);
+      shellTest.execute("rm Customer.java", 5, TimeUnit.SECONDS);
    }
 }
