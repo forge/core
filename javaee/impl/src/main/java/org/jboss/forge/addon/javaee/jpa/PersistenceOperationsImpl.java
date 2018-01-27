@@ -20,6 +20,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -38,6 +39,7 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
+import org.jboss.forge.roaster.model.source.PropertySource;
 import org.jboss.forge.roaster.model.util.Refactory;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
@@ -211,15 +213,38 @@ public class PersistenceOperationsImpl implements PersistenceOperations
    }
 
    @Override
-   public JavaClassSource newEntityIdClass(JavaClassSource javaClass, String tableName, String idPropertyType,
+   public JavaClassSource newEntityIdClass(JavaClassSource javaClass, String tableName, JavaClassSource idPropertyClass,
            String versionPropertyName)
    {
-       throw new UnsupportedOperationException("@IdClass-ID Strategy not implemented yet.");
+
+       ArrayList<FieldSource<JavaClassSource>> props = new ArrayList<>();
+
+       for(PropertySource<JavaClassSource> idProp : idPropertyClass.getProperties()){
+           FieldSource<JavaClassSource> prop = beanOperations.addFieldTo(javaClass,
+                   idProp.getField().getType().getQualifiedName(), idProp.getField().getName());
+           prop.addAnnotation(Id.class);
+           props.add(prop);
+       }
+
+       javaClass.addAnnotation(IdClass.class)
+           // TODO use simple name if it is unambiguous
+           .setLiteralValue(javaClass.addImport(idPropertyClass.getEnclosingType()).getQualifiedName() + ".class");
+
+       Refactory.createHashCodeAndEquals(javaClass, props.toArray(new FieldSource<?>[0]));
+
+       return makeClassEntity(javaClass, tableName, versionPropertyName);
    }
 
    @SuppressWarnings("unchecked")
    private JavaClassSource newEntity(JavaClassSource javaClass, String tableName, FieldSource<JavaClassSource> id,
            String versionPropertyName)
+   {
+       Refactory.createHashCodeAndEquals(javaClass, id);
+       return makeClassEntity(javaClass, tableName, versionPropertyName);
+   }
+
+   @SuppressWarnings("unchecked")
+   private JavaClassSource makeClassEntity(JavaClassSource javaClass, String tableName, String versionPropertyName)
    {
       javaClass.setPublic()
                .addAnnotation(Entity.class).getOrigin()
@@ -235,8 +260,6 @@ public class PersistenceOperationsImpl implements PersistenceOperations
       FieldSource<JavaClassSource> version = beanOperations.addFieldTo(javaClass, "int", versionPropertyName);
       version.addAnnotation(Version.class);
       version.addAnnotation(Column.class).setStringValue("name", "version");
-
-      Refactory.createHashCodeAndEquals(javaClass, id);
 
       return javaClass;
    }
