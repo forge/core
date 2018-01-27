@@ -225,13 +225,12 @@ public class PersistenceOperationsImpl implements PersistenceOperations
          javaClass.addAnnotation(Table.class).setStringValue("name", tableName);
       }
 
-      FieldSource<JavaClassSource> version = javaClass.addField("private int " + versionPropertyName + ";");
+      FieldSource<JavaClassSource> version = beanOperations.addFieldTo(javaClass, "int", versionPropertyName);
       version.addAnnotation(Version.class);
       version.addAnnotation(Column.class).setStringValue("name", "version");
 
-      Refactory.createGetterAndSetter(javaClass, version);
-      Refactory.createToStringFromFields(javaClass, id);
       Refactory.createHashCodeAndEquals(javaClass, id);
+
       return javaClass;
    }
 
