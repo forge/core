@@ -99,7 +99,7 @@ public class JPANewEntityCommandTest
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("JPA", metadata.getCategory().getSubCategory().getName());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
-         assertEquals(7, controller.getInputs().size());
+         assertEquals(9, controller.getInputs().size());
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("idStrategy"));
@@ -107,6 +107,8 @@ public class JPANewEntityCommandTest
          assertTrue(controller.hasInput("overwrite"));
          assertTrue(controller.hasInput("extends"));
          assertTrue(controller.hasInput("implements"));
+         assertTrue(controller.hasInput("idClass"));
+         assertTrue(controller.hasInput("idType"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_ENTITY_PACKAGE));
       }
    }
