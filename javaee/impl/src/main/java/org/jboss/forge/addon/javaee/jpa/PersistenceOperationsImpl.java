@@ -210,6 +210,13 @@ public class PersistenceOperationsImpl implements PersistenceOperations
        return newEntity(javaClass,tableName, id, versionPropertyName);
    }
 
+   @Override
+   public JavaClassSource newEntityIdClass(JavaClassSource javaClass, String tableName, String idPropertyType,
+           String versionPropertyName)
+   {
+       throw new UnsupportedOperationException("@IdClass-ID Strategy not implemented yet.");
+   }
+
    @SuppressWarnings("unchecked")
    private JavaClassSource newEntity(JavaClassSource javaClass, String tableName, FieldSource<JavaClassSource> id,
            String versionPropertyName)

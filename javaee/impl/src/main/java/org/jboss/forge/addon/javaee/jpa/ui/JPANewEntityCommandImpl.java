@@ -130,7 +130,8 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
               return persistenceOperations.newEntityEmbeddedId(source, tableName.getValue(), idPropertyName,
                       idClass.getValue(), versionPropertyName);
           case ID_CLASS:
-              throw new UnsupportedOperationException("@IdClass-ID Strategy not implemented yet.");
+              return persistenceOperations.newEntityIdClass(source, tableName.getValue(), idClass.getValue(),
+                      versionPropertyName);
           default:
               throw new IllegalArgumentException("Unknow Enum value " + idTypeChosen + "!");
       }
