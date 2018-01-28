@@ -16,7 +16,9 @@ import org.jboss.forge.addon.configuration.facets.ConfigurationFacet;
 import org.jboss.forge.addon.facets.constraints.FacetConstraint;
 import org.jboss.forge.addon.javaee.jpa.EntityIdType;
 import org.jboss.forge.addon.javaee.jpa.PersistenceOperations;
+import org.jboss.forge.addon.parser.java.converters.PackageRootConverter;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
@@ -95,6 +97,7 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
           }
 
       });
+      idClass.setValueConverter(new PackageRootConverter(getProjectFactory(), builder));
       builder.add(idStrategy).add(tableName)
           .add(idType).add(idClass);
    }
@@ -121,6 +124,15 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
       String versionPropertyName = config.getString(PersistenceOperations.VERSION_PROPERTY_NAME_CONFIGURATION_KEY,
                configuration.getString(PersistenceOperations.VERSION_PROPERTY_NAME_CONFIGURATION_KEY, "version"));
 
+      JavaResource jr = project.getFacet(JavaSourceFacet.class).getJavaResource(idClass.getValue());
+
+      if(!(jr.getJavaType() instanceof JavaClassSource)){
+          throw new IllegalArgumentException("The found JavaResource for the ID class is not a JavaClassResource, " +
+                  "which is required. Found resource: " + jr.getClass().getCanonicalName());
+      }
+
+      JavaClassSource jcs = (JavaClassSource) jr.getJavaType();
+
       switch(idTypeChosen){
           case LONG_PROPERTY:
               return persistenceOperations.newEntity(source, idStrategyChosen, tableName.getValue(), idPropertyName,
@@ -130,7 +142,7 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
               return persistenceOperations.newEntityEmbeddedId(source, tableName.getValue(), idPropertyName,
                       idClass.getValue(), versionPropertyName);
           case ID_CLASS:
-              return persistenceOperations.newEntityIdClass(source, tableName.getValue(), idClass.getValue(),
+              return persistenceOperations.newEntityIdClass(source, tableName.getValue(), jcs /* idClass */,
                       versionPropertyName);
           default:
               throw new IllegalArgumentException("Unknow Enum value " + idTypeChosen + "!");
