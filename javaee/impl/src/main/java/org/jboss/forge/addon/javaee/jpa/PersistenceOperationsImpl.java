@@ -48,6 +48,7 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
  * This class contains JPA specific operations
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:ch.schulz@joinout.de">Christoph "criztovyl" Schulz</a>
  * 
  */
 public class PersistenceOperationsImpl implements PersistenceOperations

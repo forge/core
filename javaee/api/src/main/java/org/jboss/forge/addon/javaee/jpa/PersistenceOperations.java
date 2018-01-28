@@ -23,6 +23,7 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
  * Defines JPA specific operations
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ch.schulz@joinout.de">Christoph "criztovyl" Schulz</a>
  */
 public interface PersistenceOperations
 {

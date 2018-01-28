@@ -48,6 +48,7 @@ import org.junit.runner.RunWith;
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:ch.schulz@joinout.de">Christoph "criztovyl" Schulz</a>
  */
 @RunWith(Arquillian.class)
 public class JPANewEntityCommandTest

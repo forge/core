@@ -35,6 +35,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:ch.schulz@joinout.de">Christoph "criztovyl" Schulz</a>
  */
 @FacetConstraint(JavaSourceFacet.class)
 public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource> implements JPANewEntityCommand
