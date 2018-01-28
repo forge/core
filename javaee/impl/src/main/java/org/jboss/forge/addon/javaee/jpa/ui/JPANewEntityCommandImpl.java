@@ -141,7 +141,7 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
               return persistenceOperations.newEntityIdClass(source, tableName.getValue(), jcs /* idClass */,
                       versionPropertyName);
           default:
-              throw new IllegalArgumentException("Unknow Enum value " + idTypeChosen + "!");
+              throw new IllegalArgumentException("Unknown Enum value " + idTypeChosen + "!");
       }
    }
 }
