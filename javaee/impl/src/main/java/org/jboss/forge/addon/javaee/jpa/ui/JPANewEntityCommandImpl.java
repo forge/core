@@ -89,14 +89,7 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
       super.initializeUI(builder);
       idStrategy.setDefaultValue(GenerationType.AUTO);
       idType.setDefaultValue(EntityIdType.LONG_PROPERTY);
-      idClass.setRequired(new Callable<Boolean>(){
-
-          @Override
-          public Boolean call(){
-              return idType.getValue() == EntityIdType.EMBEDDED_ID;
-          }
-
-      });
+      idClass.setRequired(() -> idType.getValue().isClassRequired());
       idClass.setValueConverter(new PackageRootConverter(getProjectFactory(), builder));
       builder.add(idStrategy).add(tableName)
           .add(idType).add(idClass);

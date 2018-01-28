@@ -24,5 +24,12 @@ public enum EntityIdType {
      * Use an {@link javax.persistence.EmbeddedId}.
      */
     EMBEDDED_ID;
+
+    /**
+     * @return Whether an additional class is required to implement this ID type.
+     */
+    public boolean isClassRequired(){
+        return this != LONG_PROPERTY;
+    }
 }
 
