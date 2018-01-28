@@ -6,6 +6,7 @@
  */
 package org.jboss.forge.addon.javaee.jpa.ui;
 
+import java.io.FileNotFoundException;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -118,6 +119,25 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
       String versionPropertyName = config.getString(PersistenceOperations.VERSION_PROPERTY_NAME_CONFIGURATION_KEY,
                configuration.getString(PersistenceOperations.VERSION_PROPERTY_NAME_CONFIGURATION_KEY, "version"));
 
+      switch(idTypeChosen){
+          case LONG_PROPERTY:
+              return persistenceOperations.newEntity(source, idStrategyChosen, tableName.getValue(), idPropertyName,
+                      versionPropertyName);
+          case EMBEDDED_ID:
+              if(!getIdClass(project, idClass.getValue()).hasAnnotation(Embeddable.class)){
+                  throw new IllegalArgumentException("The provided ID class for @EmbeddedId is missing the @Embeddable annotation!");
+              }
+              return persistenceOperations.newEntityEmbeddedId(source, tableName.getValue(), idPropertyName,
+                      idClass.getValue(), versionPropertyName);
+          case ID_CLASS:
+              return persistenceOperations.newEntityIdClass(source, tableName.getValue(), getIdClass(project, idClass.getValue()),
+                      versionPropertyName);
+          default:
+              throw new IllegalArgumentException("Unknown Enum value " + idTypeChosen + "!");
+      }
+   }
+
+   public JavaClassSource getIdClass(Project project, String idClassName) throws FileNotFoundException, IllegalArgumentException {
       JavaResource jr = project.getFacet(JavaSourceFacet.class).getJavaResource(idClass.getValue());
 
       if(!(jr.getJavaType() instanceof JavaClassSource)){
@@ -125,23 +145,7 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
                   "which is required. Found resource: " + jr.getClass().getCanonicalName());
       }
 
-      JavaClassSource jcs = (JavaClassSource) jr.getJavaType();
+      return (JavaClassSource) jr.getJavaType();
 
-      switch(idTypeChosen){
-          case LONG_PROPERTY:
-              return persistenceOperations.newEntity(source, idStrategyChosen, tableName.getValue(), idPropertyName,
-                      versionPropertyName);
-          case EMBEDDED_ID:
-              if(!jcs.hasAnnotation(Embeddable.class)){
-                  throw new IllegalArgumentException("The provided ID class for @EmbeddedId is missing the @Embeddable annotation!");
-              }
-              return persistenceOperations.newEntityEmbeddedId(source, tableName.getValue(), idPropertyName,
-                      idClass.getValue(), versionPropertyName);
-          case ID_CLASS:
-              return persistenceOperations.newEntityIdClass(source, tableName.getValue(), jcs /* idClass */,
-                      versionPropertyName);
-          default:
-              throw new IllegalArgumentException("Unknown Enum value " + idTypeChosen + "!");
-      }
    }
 }
