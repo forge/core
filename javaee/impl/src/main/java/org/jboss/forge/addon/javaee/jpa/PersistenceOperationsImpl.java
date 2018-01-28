@@ -205,7 +205,6 @@ public class PersistenceOperationsImpl implements PersistenceOperations
    public JavaClassSource newEntityEmbeddedId(JavaClassSource javaClass, String tableName, String idPropertyName,
            String idPropertyType, String versionPropertyName)
    {
-       // XXX what if the given class is not @Embeddable?
        FieldSource<JavaClassSource> id = beanOperations.addFieldTo(javaClass, idPropertyType, idPropertyName);
        id.addAnnotation(EmbeddedId.class);
 

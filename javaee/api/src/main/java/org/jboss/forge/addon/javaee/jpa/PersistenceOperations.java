@@ -132,8 +132,10 @@ public interface PersistenceOperations
             String idPropertyName, String versionPropertyName);
 
    /**
-    * Given a {@link JavaClassSource} it decorates the source with code for an entity
+    * Given a {@link JavaClassSource} it decorates the source with code for an entity.
     *
+    * <em>Please not that this method does not check whether the give ID type is valid</em>, i.e.
+    * has the {@link javax.persistence.Embeddable} annotation, <em>please check beforehand!</em>
     * @param source source of the class to decorate
     * @param tableName the table name chose for this entity
     * @param idPropertyName the ID property name to be used

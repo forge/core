@@ -9,6 +9,7 @@ package org.jboss.forge.addon.javaee.jpa.ui;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
+import javax.persistence.Embeddable;
 import javax.persistence.GenerationType;
 
 import org.jboss.forge.addon.configuration.Configuration;
@@ -131,7 +132,9 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
               return persistenceOperations.newEntity(source, idStrategyChosen, tableName.getValue(), idPropertyName,
                       versionPropertyName);
           case EMBEDDED_ID:
-              // XXX what if idClass value is empty?
+              if(!jcs.hasAnnotation(Embeddable.class)){
+                  throw new IllegalArgumentException("The provided ID class for @EmbeddedId is missing the @Embeddable annotation!");
+              }
               return persistenceOperations.newEntityEmbeddedId(source, tableName.getValue(), idPropertyName,
                       idClass.getValue(), versionPropertyName);
           case ID_CLASS:
