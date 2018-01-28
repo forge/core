@@ -139,6 +139,8 @@ public class JPANewEntityCommandTest
    {
       shellTest.getShell().setCurrentResource(project.getRoot());
 
+      shellTest.execute("jpa-new-embeddable --named CustomerId --target-package space.criztovyl", 5, TimeUnit.SECONDS);
+
       Result result = shellTest
                .execute("jpa-new-entity --named Customer --target-package space.criztovyl --id-type EMBEDDED_ID --id-class space.criztovyl.CustomerId",
                         10, TimeUnit.SECONDS);
