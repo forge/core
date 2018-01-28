@@ -17,6 +17,8 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.persistence.Table;
 import javax.persistence.EmbeddedId;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -161,5 +163,38 @@ public class JPANewEntityCommandTest
       // Other tests would fail otherwise due to missing CustomerId class.
       shellTest.execute("cd ..", 5, TimeUnit.SECONDS);
       shellTest.execute("rm Customer.java", 5, TimeUnit.SECONDS);
+   }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void checkCommandShellIdClass() throws Exception
+   {
+      shellTest.getShell().setCurrentResource(project.getRoot());
+
+      shellTest.execute("java-new-class --named CustomerId --target-package space.criztovyl", 5, TimeUnit.SECONDS);
+      shellTest.execute("java-new-field --named name", 5, TimeUnit.SECONDS);
+      shellTest.execute("java-new-field --named dayOfBirth", 5, TimeUnit.SECONDS);
+
+      Result result = shellTest
+               .execute("jpa-new-entity --named Customer --target-package space.criztovyl --id-type ID_CLASS --id-class space.criztovyl.CustomerId",
+                        10, TimeUnit.SECONDS);
+
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
+      Assert.assertTrue(project.hasFacet(JPAFacet.class));
+
+      List<JavaClass<?>> allEntities = project.getFacet(JPAFacet.class).getAllEntities();
+      Assert.assertEquals(1, allEntities.size());
+
+      JavaClass<?> customerEntity = allEntities.get(0);
+      Assert.assertTrue(customerEntity.hasAnnotation(IdClass.class));
+      Assert.assertEquals("space.criztovyl.CustomerId", customerEntity.getAnnotation(IdClass.class).getLiteralValue());
+
+      Property<?> nameId = customerEntity.getProperty("name");
+      Assert.assertNotNull(nameId);
+      Assert.assertTrue(nameId.hasAnnotation(Id.class));
+
+      Property<?> dayOfBirthId = customerEntity.getProperty("dayOfBirth");
+      Assert.assertNotNull(dayOfBirthId);
+      Assert.assertTrue(dayOfBirthId.hasAnnotation(Id.class));
    }
 }
