@@ -11,25 +11,26 @@ package org.jboss.forge.addon.javaee.jpa;
  *
  * @author <a href="mailto:ch.schulz@joinout.de">Christoph "criztovyl" Schulz</a>
  */
-public enum EntityIdType {
-    /**
-     * Uses a {@link Long}.
-     */
-    LONG_PROPERTY,
-    /**
-     * Use an {@link javax.persistence.IdClass}.
-     */
-    ID_CLASS,
-    /**
-     * Use an {@link javax.persistence.EmbeddedId}.
-     */
-    EMBEDDED_ID;
+public enum EntityIdType
+{
+   /**
+    * Uses a {@link Long}.
+    */
+   LONG_PROPERTY,
+   /**
+    * Use an {@link javax.persistence.IdClass}.
+    */
+   ID_CLASS,
+   /**
+    * Use an {@link javax.persistence.EmbeddedId}.
+    */
+   EMBEDDED_ID;
 
-    /**
-     * @return Whether an additional class is required to implement this ID type.
-     */
-    public boolean isClassRequired(){
-        return this != LONG_PROPERTY;
-    }
+   /**
+    * @return Whether an additional class is required to implement this ID type.
+    */
+   public boolean isClassRequired()
+   {
+      return this != LONG_PROPERTY;
+   }
 }
-

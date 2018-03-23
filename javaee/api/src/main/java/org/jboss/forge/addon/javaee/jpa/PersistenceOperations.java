@@ -135,8 +135,9 @@ public interface PersistenceOperations
    /**
     * Given a {@link JavaClassSource} it decorates the source with code for an entity.
     *
-    * <em>Please not that this method does not check whether the give ID type is valid</em>, i.e.
-    * has the {@link javax.persistence.Embeddable} annotation, <em>please check beforehand!</em>
+    * <em>Please not that this method does not check whether the give ID type is valid</em>, i.e. has the
+    * {@link javax.persistence.Embeddable} annotation, <em>please check beforehand!</em>
+    * 
     * @param source source of the class to decorate
     * @param tableName the table name chose for this entity
     * @param idPropertyName the ID property name to be used
@@ -145,7 +146,7 @@ public interface PersistenceOperations
     * @return the decorated java resource
     */
    public JavaClassSource newEntityEmbeddedId(JavaClassSource source, String tableName, String idPropertyName,
-           String idPropertyType, String versionPropertyName);
+            String idPropertyType, String versionPropertyName);
 
    /**
     * Given a {@link JavaClassSource} it decorates the source with code for an entity
@@ -157,7 +158,7 @@ public interface PersistenceOperations
     * @return the decorated java resource
     */
    public JavaClassSource newEntityIdClass(JavaClassSource source, String tableName, JavaClassSource idPropertyClass,
-           String versionPropertyName);
+            String versionPropertyName);
 
    /**
     * Creates a new {@link JavaResource} for an embeddable entity in the specified project. If a project is available,

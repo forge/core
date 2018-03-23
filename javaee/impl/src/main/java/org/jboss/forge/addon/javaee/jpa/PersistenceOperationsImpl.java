@@ -199,17 +199,17 @@ public class PersistenceOperationsImpl implements PersistenceOperations
                .setLiteralValue("updatable", "false")
                .setLiteralValue("nullable", "false");
 
-       return newEntity(javaClass, tableName, id, versionPropertyName);
+      return newEntity(javaClass, tableName, id, versionPropertyName);
    }
 
    @Override
    public JavaClassSource newEntityEmbeddedId(JavaClassSource javaClass, String tableName, String idPropertyName,
-           String idPropertyType, String versionPropertyName)
+            String idPropertyType, String versionPropertyName)
    {
-       FieldSource<JavaClassSource> id = beanOperations.addFieldTo(javaClass, idPropertyType, idPropertyName);
-       id.addAnnotation(EmbeddedId.class);
+      FieldSource<JavaClassSource> id = beanOperations.addFieldTo(javaClass, idPropertyType, idPropertyName);
+      id.addAnnotation(EmbeddedId.class);
 
-       return newEntity(javaClass,tableName, id, versionPropertyName);
+      return newEntity(javaClass, tableName, id, versionPropertyName);
    }
 
    @Override
@@ -237,10 +237,10 @@ public class PersistenceOperationsImpl implements PersistenceOperations
 
    @SuppressWarnings("unchecked")
    private JavaClassSource newEntity(JavaClassSource javaClass, String tableName, FieldSource<JavaClassSource> id,
-           String versionPropertyName)
+            String versionPropertyName)
    {
-       Refactory.createHashCodeAndEquals(javaClass, id);
-       return makeClassEntity(javaClass, tableName, versionPropertyName);
+      Refactory.createHashCodeAndEquals(javaClass, id);
+      return makeClassEntity(javaClass, tableName, versionPropertyName);
    }
 
    @SuppressWarnings("unchecked")
