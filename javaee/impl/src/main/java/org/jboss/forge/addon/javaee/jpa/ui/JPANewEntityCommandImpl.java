@@ -23,6 +23,7 @@ import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.resource.ResourceException;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -135,9 +136,16 @@ public class JPANewEntityCommandImpl extends AbstractJPACommand<JavaClassSource>
          return persistenceOperations.newEntityEmbeddedId(source, tableName.getValue(), idPropertyName,
                   idClass.getValue(), versionPropertyName);
       case ID_CLASS:
-         return persistenceOperations.newEntityIdClass(source, tableName.getValue(),
-                  getIdClass(project, idClass.getValue()),
-                  versionPropertyName);
+         try
+         {
+            return persistenceOperations.newEntityIdClass(source, tableName.getValue(),
+                     getIdClass(project, idClass.getValue()),
+                     versionPropertyName);
+         }
+         catch (ResourceException e)
+         {
+            throw new IllegalArgumentException("The provided ID class for @IdClass does not exist!", e);
+         }
       default:
          throw new IllegalArgumentException("Unknown Enum value " + idTypeChosen + "!");
       }
