@@ -14,16 +14,19 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.parser.java.beans.FieldOperations;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
 import org.jboss.forge.addon.parser.java.resources.JavaResource;
 import org.jboss.forge.addon.parser.java.resources.JavaResourceVisitor;
@@ -36,6 +39,7 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
+import org.jboss.forge.roaster.model.source.PropertySource;
 import org.jboss.forge.roaster.model.util.Refactory;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceCommonDescriptor;
 import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
@@ -44,12 +48,16 @@ import org.jboss.shrinkwrap.descriptor.api.persistence.PersistenceUnitCommon;
  * This class contains JPA specific operations
  * 
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:ch.schulz@joinout.de">Christoph "criztovyl" Schulz</a>
  * 
  */
 public class PersistenceOperationsImpl implements PersistenceOperations
 {
    @Inject
    private FacetFactory facetFactory;
+
+   @Inject
+   private FieldOperations beanOperations;
 
    @Override
    @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -182,6 +190,62 @@ public class PersistenceOperationsImpl implements PersistenceOperations
    public JavaClassSource newEntity(JavaClassSource javaClass, GenerationType idStrategy, String tableName,
             String idPropertyName, String versionPropertyName)
    {
+      FieldSource<JavaClassSource> id = beanOperations.addFieldTo(javaClass, "Long", idPropertyName);
+      id.addAnnotation(Id.class);
+      id.addAnnotation(GeneratedValue.class)
+               .setEnumValue("strategy", idStrategy);
+      id.addAnnotation(Column.class)
+               .setStringValue("name", "id")
+               .setLiteralValue("updatable", "false")
+               .setLiteralValue("nullable", "false");
+
+      return newEntity(javaClass, tableName, id, versionPropertyName);
+   }
+
+   @Override
+   public JavaClassSource newEntityEmbeddedId(JavaClassSource javaClass, String tableName, String idPropertyName,
+            String idPropertyType, String versionPropertyName)
+   {
+      FieldSource<JavaClassSource> id = beanOperations.addFieldTo(javaClass, idPropertyType, idPropertyName);
+      id.addAnnotation(EmbeddedId.class);
+
+      return newEntity(javaClass, tableName, id, versionPropertyName);
+   }
+
+   @Override
+   public JavaClassSource newEntityIdClass(JavaClassSource javaClass, String tableName, JavaClassSource idPropertyClass,
+           String versionPropertyName)
+   {
+
+       ArrayList<FieldSource<JavaClassSource>> props = new ArrayList<>();
+
+       for(PropertySource<JavaClassSource> idProp : idPropertyClass.getProperties()){
+           FieldSource<JavaClassSource> prop = beanOperations.addFieldTo(javaClass,
+                   idProp.getField().getType().getQualifiedName(), idProp.getField().getName());
+           prop.addAnnotation(Id.class);
+           props.add(prop);
+       }
+
+       javaClass.addAnnotation(IdClass.class)
+           // TODO use simple name if it is unambiguous
+           .setLiteralValue(javaClass.addImport(idPropertyClass.getEnclosingType()).getQualifiedName() + ".class");
+
+       Refactory.createHashCodeAndEquals(javaClass, props.toArray(new FieldSource<?>[0]));
+
+       return makeClassEntity(javaClass, tableName, versionPropertyName);
+   }
+
+   @SuppressWarnings("unchecked")
+   private JavaClassSource newEntity(JavaClassSource javaClass, String tableName, FieldSource<JavaClassSource> id,
+            String versionPropertyName)
+   {
+      Refactory.createHashCodeAndEquals(javaClass, id);
+      return makeClassEntity(javaClass, tableName, versionPropertyName);
+   }
+
+   @SuppressWarnings("unchecked")
+   private JavaClassSource makeClassEntity(JavaClassSource javaClass, String tableName, String versionPropertyName)
+   {
       javaClass.setPublic()
                .addAnnotation(Entity.class).getOrigin()
                .addInterface(Serializable.class);
@@ -193,23 +257,10 @@ public class PersistenceOperationsImpl implements PersistenceOperations
          javaClass.addAnnotation(Table.class).setStringValue("name", tableName);
       }
 
-      FieldSource<JavaClassSource> id = javaClass.addField("private Long " + idPropertyName + ";");
-      id.addAnnotation(Id.class);
-      id.addAnnotation(GeneratedValue.class)
-               .setEnumValue("strategy", idStrategy);
-      id.addAnnotation(Column.class)
-               .setStringValue("name", "id")
-               .setLiteralValue("updatable", "false")
-               .setLiteralValue("nullable", "false");
-
-      FieldSource<JavaClassSource> version = javaClass.addField("private int " + versionPropertyName + ";");
+      FieldSource<JavaClassSource> version = beanOperations.addFieldTo(javaClass, "int", versionPropertyName);
       version.addAnnotation(Version.class);
       version.addAnnotation(Column.class).setStringValue("name", "version");
 
-      Refactory.createGetterAndSetter(javaClass, id);
-      Refactory.createGetterAndSetter(javaClass, version);
-      Refactory.createToStringFromFields(javaClass, id);
-      Refactory.createHashCodeAndEquals(javaClass, id);
       return javaClass;
    }
 

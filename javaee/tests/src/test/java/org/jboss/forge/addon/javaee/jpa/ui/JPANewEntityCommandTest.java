@@ -16,6 +16,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.persistence.Table;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -32,6 +35,7 @@ import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.roaster.model.JavaClass;
+import org.jboss.forge.roaster.model.Property;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.junit.After;
 import org.junit.Assert;
@@ -44,6 +48,7 @@ import org.junit.runner.RunWith;
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="ggastald@redhat.com">George Gastaldi</a>
+ * @author <a href="mailto:ch.schulz@joinout.de">Christoph "criztovyl" Schulz</a>
  */
 @RunWith(Arquillian.class)
 public class JPANewEntityCommandTest
@@ -99,7 +104,7 @@ public class JPANewEntityCommandTest
          assertEquals("Java EE", metadata.getCategory().getName());
          assertEquals("JPA", metadata.getCategory().getSubCategory().getName());
          assertFalse("Project is created, shouldn't have targetLocation", controller.hasInput("targetLocation"));
-         assertEquals(7, controller.getInputs().size());
+         assertEquals(9, controller.getInputs().size());
          assertTrue(controller.hasInput("named"));
          assertTrue(controller.hasInput("targetPackage"));
          assertTrue(controller.hasInput("idStrategy"));
@@ -107,6 +112,8 @@ public class JPANewEntityCommandTest
          assertTrue(controller.hasInput("overwrite"));
          assertTrue(controller.hasInput("extends"));
          assertTrue(controller.hasInput("implements"));
+         assertTrue(controller.hasInput("idClass"));
+         assertTrue(controller.hasInput("idType"));
          assertTrue(controller.getValueFor("targetPackage").toString().endsWith(DEFAULT_ENTITY_PACKAGE));
       }
    }
@@ -127,5 +134,68 @@ public class JPANewEntityCommandTest
       JavaClass<?> customerEntity = allEntities.get(0);
       Assert.assertTrue(customerEntity.hasAnnotation(Table.class));
       Assert.assertEquals("CUSTOMER_TABLE", customerEntity.getAnnotation(Table.class).getStringValue("name"));
+   }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void checkCommandShellEmbeddedId() throws Exception
+   {
+      shellTest.getShell().setCurrentResource(project.getRoot());
+
+      shellTest.execute("jpa-new-embeddable --named CustomerId --target-package space.criztovyl", 5, TimeUnit.SECONDS);
+
+      Result result = shellTest
+               .execute("jpa-new-entity --named Customer --target-package space.criztovyl --id-type EMBEDDED_ID --id-class space.criztovyl.CustomerId",
+                        10, TimeUnit.SECONDS);
+
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
+      Assert.assertTrue(project.hasFacet(JPAFacet.class));
+
+      List<JavaClass<?>> allEntities = project.getFacet(JPAFacet.class).getAllEntities();
+      Assert.assertEquals(1, allEntities.size());
+
+      JavaClass<?> customerEntity = allEntities.get(0);
+
+      Property<?> embeddedId = customerEntity.getProperty("id");
+      Assert.assertNotNull(embeddedId);
+      Assert.assertTrue(embeddedId.hasAnnotation(EmbeddedId.class));
+      Assert.assertEquals(embeddedId.getType().getName(), "CustomerId");
+
+      // Other tests would fail otherwise due to missing CustomerId class.
+      shellTest.execute("cd ..", 5, TimeUnit.SECONDS);
+      shellTest.execute("rm Customer.java", 5, TimeUnit.SECONDS);
+   }
+
+   @SuppressWarnings("unchecked")
+   @Test
+   public void checkCommandShellIdClass() throws Exception
+   {
+      shellTest.getShell().setCurrentResource(project.getRoot());
+
+      shellTest.execute("java-new-class --named CustomerId --target-package space.criztovyl", 5, TimeUnit.SECONDS);
+      shellTest.execute("java-new-field --named name", 5, TimeUnit.SECONDS);
+      shellTest.execute("java-new-field --named dayOfBirth", 5, TimeUnit.SECONDS);
+
+      Result result = shellTest
+               .execute("jpa-new-entity --named Customer --target-package space.criztovyl --id-type ID_CLASS --id-class space.criztovyl.CustomerId",
+                        10, TimeUnit.SECONDS);
+
+      Assert.assertThat(result, not(instanceOf(Failed.class)));
+      Assert.assertTrue(project.hasFacet(JPAFacet.class));
+
+      List<JavaClass<?>> allEntities = project.getFacet(JPAFacet.class).getAllEntities();
+      Assert.assertEquals(1, allEntities.size());
+
+      JavaClass<?> customerEntity = allEntities.get(0);
+      Assert.assertTrue(customerEntity.hasAnnotation(IdClass.class));
+      Assert.assertEquals("space.criztovyl.CustomerId", customerEntity.getAnnotation(IdClass.class).getLiteralValue());
+
+      Property<?> nameId = customerEntity.getProperty("name");
+      Assert.assertNotNull(nameId);
+      Assert.assertTrue(nameId.hasAnnotation(Id.class));
+
+      Property<?> dayOfBirthId = customerEntity.getProperty("dayOfBirth");
+      Assert.assertNotNull(dayOfBirthId);
+      Assert.assertTrue(dayOfBirthId.hasAnnotation(Id.class));
    }
 }
