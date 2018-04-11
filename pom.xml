@@ -65,7 +65,7 @@
 
       <version.furnace>2.27.0.Final</version.furnace>
       <version.junit>4.12</version.junit>
-      <version.jboss-logmanager>2.0.4.Final</version.jboss-logmanager>
+      <version.jboss-logmanager>2.1.0.Final</version.jboss-logmanager>
    </properties>
 
    <profiles>
