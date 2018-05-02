@@ -6,11 +6,6 @@
  */
 package org.jboss.forge.addon.resource.monitor;
 
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
-import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
-
 import java.io.IOException;
 import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.FileSystems;
@@ -32,7 +27,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
 /**
  * Uses {@link WatchService} to watch files
@@ -112,10 +110,6 @@ class FileWatcher implements Runnable
    private void register(Path path, ResourceMonitorImpl monitorImpl) throws IOException
    {
       WatchKey key = path.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
-      if (OperatingSystemUtils.isWindows())
-      {
-         JDK_8029516.patch(key);
-      }
       keys.put(key, monitorImpl);
    }
 
