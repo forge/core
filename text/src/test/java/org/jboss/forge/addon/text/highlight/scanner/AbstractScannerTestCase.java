@@ -7,7 +7,6 @@
 package org.jboss.forge.addon.text.highlight.scanner;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
@@ -18,7 +17,8 @@ import org.jboss.forge.addon.text.highlight.Scanner;
 import org.jboss.forge.addon.text.highlight.Syntax;
 import org.jboss.forge.addon.text.highlight.encoder.AssertEncoder;
 import org.jboss.forge.furnace.util.Streams;
-import org.junit.Assert;
+
+import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractScannerTestCase
 {
@@ -27,7 +27,8 @@ public abstract class AbstractScannerTestCase
 
    static final String ASSERT_ENCODER = "TEST";
 
-   static {
+   static
+   {
       Syntax.builtIns();
       Encoder.Factory.registrer(ASSERT_ENCODER, AssertEncoder.class);
    }
@@ -35,7 +36,7 @@ public abstract class AbstractScannerTestCase
    public static String OUTPUT = "examples/";
    public static Pattern MATCH_DATA = Pattern.compile("(.*)\\..*\\..*");
 
-   protected String fetch(String type, String example) throws Exception
+   protected String fetch(String type, String example)
    {
       InputStream is = getClass().getClassLoader().getResourceAsStream(OUTPUT + type + "/" + example);
       return Streams.toString(is, DEFAULT_CHARSET);
@@ -80,9 +81,9 @@ public abstract class AbstractScannerTestCase
             System.out.println("> " + s);
             System.out.println("< " + t);
             System.out.println("---------------------------");
-            Assert.assertEquals("verify line: " + (i + 1), t, s);
          }
+         assertEquals("verify line " + (i + 1) + " for " + type + "/" + exampleName, t, s);
       }
-      Assert.assertEquals(expectedContent, result);
+      assertEquals(expectedContent, result);
    }
 }
