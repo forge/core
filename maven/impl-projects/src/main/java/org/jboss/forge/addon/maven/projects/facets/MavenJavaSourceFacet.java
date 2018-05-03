@@ -34,6 +34,7 @@ import org.jboss.forge.roaster.model.source.JavaSource;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @FacetConstraint(MavenFacet.class)
+@FacetConstraint(MavenJavaCompilerFacet.class)
 public class MavenJavaSourceFacet extends AbstractFacet<Project>implements JavaSourceFacet
 {
    @Override
