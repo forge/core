@@ -64,7 +64,7 @@ public class MavenJavaTargetFacetTest
    }
 
    @Test
-   public void testFacetInstallationBuildsProject() throws Exception
+   public void testFacetInstallationBuildsProject()
    {
       Project project = projectFactory.createTempProject(Arrays.asList(JavaSourceFacet.class));
       JavaSourceFacet sourceFacet = project.getFacet(JavaSourceFacet.class);
