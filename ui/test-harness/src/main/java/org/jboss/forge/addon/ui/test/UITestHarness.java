@@ -47,7 +47,7 @@ public class UITestHarness
    private CommandControllerFactory factory;
 
    private UIProviderImpl providerImpl;
-   
+
    private boolean isGui = true;
 
    private final Map<String, String> promptResults = new HashMap<>();
@@ -83,7 +83,7 @@ public class UITestHarness
    public CommandController createCommandController(Class<? extends UICommand> commandClass,
             Resource<?>... initialSelection) throws Exception
    {
-      return factory.createSingleController(
+      return factory.createController(
                getUIContextInstance(initialSelection),
                getUIRuntimeInstance(),
                addonRegistry.getServices(commandClass).get());
@@ -142,7 +142,7 @@ public class UITestHarness
       }
       return providerImpl;
    }
-   
+
    private UIContextImpl getUIContextInstance(Resource<?>... initialSelection)
    {
       Imported<UIContextListener> listeners = addonRegistry.getServices(UIContextListener.class);
