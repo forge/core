@@ -10,7 +10,6 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.jboss.forge.addon.database.tools.connections.ConnectionProfile;
-import org.jboss.forge.addon.projects.Project;
 
 /**
  * @author <a href="lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -19,7 +18,6 @@ public class GenerateEntitiesCommandDescriptor
 {
    private String targetPackage = "";
    private String connectionProfileName = "";
-   private Project selectedProject;
    private ConnectionProfile connectionProfile;
    private URL[] urls;
    private String driverClass;
@@ -43,16 +41,6 @@ public class GenerateEntitiesCommandDescriptor
    public void setConnectionProfileName(String connectionProfileName)
    {
       this.connectionProfileName = connectionProfileName;
-   }
-
-   public Project getSelectedProject()
-   {
-      return selectedProject;
-   }
-
-   public void setSelectedProject(Project selectedProject)
-   {
-      this.selectedProject = selectedProject;
    }
 
    public ConnectionProfile getConnectionProfile()

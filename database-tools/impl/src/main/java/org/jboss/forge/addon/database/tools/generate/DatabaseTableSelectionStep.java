@@ -20,22 +20,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.hibernate.cfg.JDBCMetaDataConfiguration;
-import org.hibernate.cfg.reveng.DefaultReverseEngineeringStrategy;
-import org.hibernate.cfg.reveng.ReverseEngineeringSettings;
-import org.hibernate.cfg.reveng.ReverseEngineeringStrategy;
-import org.hibernate.cfg.reveng.SchemaSelection;
-import org.hibernate.mapping.PersistentClass;
-import org.hibernate.mapping.Property;
-import org.hibernate.mapping.Table;
-import org.hibernate.tool.hbm2x.ArtifactCollector;
-import org.hibernate.tool.hbm2x.POJOExporter;
-import org.hibernate.tool.hbm2x.pojo.ComponentPOJOClass;
-import org.hibernate.tool.hbm2x.pojo.EntityPOJOClass;
-import org.hibernate.tool.hbm2x.pojo.POJOClass;
-import org.jboss.forge.addon.database.tools.util.HibernateToolsHelper;
 import org.jboss.forge.addon.database.tools.util.JDBCUtils;
 import org.jboss.forge.addon.parser.java.facets.JavaSourceFacet;
+import org.jboss.forge.addon.projects.ProjectFactory;
+import org.jboss.forge.addon.projects.ui.AbstractProjectCommand;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -49,12 +37,13 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.addon.ui.wizard.UIWizardStep;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.util.Lists;
 
 /**
  * In this step, the user can choose the database tables
  */
-public class DatabaseTableSelectionStep implements UIWizardStep
+public class DatabaseTableSelectionStep extends AbstractProjectCommand implements UIWizardStep
 {
    private static final String LAST_USED_CONNECTION_PROPERTIES = "LastUsedConnectionProperties";
 
@@ -160,7 +149,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
                message = String.format("%s during validation. Check logs for more information",
                         exception.getClass().getName());
             }
-            context.addValidationError(databaseTables, exception.getMessage());
+            context.addValidationError(databaseTables, message);
          }
       }
       else
@@ -176,103 +165,15 @@ public class DatabaseTableSelectionStep implements UIWizardStep
    @Override
    public Result execute(UIExecutionContext context) throws Exception
    {
-      Collection<String> entities = exportSelectedEntities(descriptor);
-      return Results.success(entities.size() + " entities were generated in " + descriptor.getTargetPackage());
-   }
-
-   private Collection<String> exportSelectedEntities(GenerateEntitiesCommandDescriptor descriptor) throws Exception
-   {
+      JavaSourceFacet java = getSelectedProject(context).getFacet(JavaSourceFacet.class);
       String catalog = databaseCatalog.getValue();
       String schema = databaseSchema.getValue();
-      Collection<String> selectedTableNames = Lists.toList(databaseTables.getValue());
-      JavaSourceFacet java = descriptor.getSelectedProject().getFacet(JavaSourceFacet.class);
-      JDBCMetaDataConfiguration jmdc = new JDBCMetaDataConfiguration();
-      jmdc.setProperties(descriptor.getConnectionProperties());
-      jmdc.setReverseEngineeringStrategy(
-               createReverseEngineeringStrategy(descriptor, catalog, schema, selectedTableNames));
-      HibernateToolsHelper.buildMappings(descriptor.getUrls(), descriptor.getDriverClass(), jmdc);
-      POJOExporter pj = new POJOExporter(jmdc, java.getSourceDirectory().getUnderlyingResourceObject())
-      {
-         @Override
-         protected void exportPOJO(Map<String, Object> additionalContext, POJOClass element)
-         {
-            if (isSelected(selectedTableNames, element))
-            {
-               super.exportPOJO(additionalContext, element);
-            }
-         }
-      };
-      Properties pojoProperties = new Properties();
-      pojoProperties.setProperty("jdk5", "true");
-      pojoProperties.setProperty("ejb3", "true");
-      pj.setProperties(pojoProperties);
-      pj.setArtifactCollector(new ArtifactCollector());
-      pj.start();
-      return selectedTableNames;
-   }
-
-   private ReverseEngineeringStrategy createReverseEngineeringStrategy(GenerateEntitiesCommandDescriptor descriptor,
-            String catalog, String schema, Collection<String> selectedTableNames)
-   {
-      ReverseEngineeringStrategy strategy = new DefaultReverseEngineeringStrategy()
-      {
-         @Override
-         public List<org.hibernate.cfg.reveng.SchemaSelection> getSchemaSelections()
-         {
-            return selectedTableNames
-                     .stream()
-                     .map((table) -> new SchemaSelection(catalog, schema, table))
-                     .collect(Collectors.toList());
-         }
-      };
-
-      ReverseEngineeringSettings revengsettings = new ReverseEngineeringSettings(strategy)
-               .setDefaultPackageName(descriptor.getTargetPackage())
-               .setDetectManyToMany(true)
-               .setDetectOneToOne(true)
-               .setDetectOptimisticLock(true);
-      strategy.setSettings(revengsettings);
-      return strategy;
-   }
-
-   private boolean isSelected(Collection<String> selection, POJOClass element)
-   {
-      boolean result = false;
-      if (element instanceof ComponentPOJOClass)
-      {
-         ComponentPOJOClass cpc = (ComponentPOJOClass) element;
-         Iterator<?> iterator = cpc.getAllPropertiesIterator();
-         result = true;
-         while (iterator.hasNext())
-         {
-            Object object = iterator.next();
-            if (object instanceof Property)
-            {
-               Property property = (Property) object;
-               String tableName = property.getValue().getTable().getName();
-               if (!selection.contains(tableName))
-               {
-                  result = false;
-                  break;
-               }
-            }
-         }
-      }
-      else if (element instanceof EntityPOJOClass)
-      {
-         EntityPOJOClass epc = (EntityPOJOClass) element;
-         Object object = epc.getDecoratedObject();
-         if (object instanceof PersistentClass)
-         {
-            PersistentClass pc = (PersistentClass) object;
-            Table table = pc.getTable();
-            if (selection.contains(table.getName()))
-            {
-               result = true;
-            }
-         }
-      }
-      return result;
+      Collection<String> tables = Lists.toList(databaseTables.getValue());
+      EntityGenerator entityGenerator = new EntityGenerator();
+      Collection<String> entities = entityGenerator
+               .exportSelectedEntities(java.getSourceDirectory().getUnderlyingResourceObject(),
+                        descriptor, catalog, schema, tables);
+      return Results.success(entities.size() + " entities were generated in " + descriptor.getTargetPackage());
    }
 
    private synchronized Database getDatabase(UIContext context)
@@ -318,7 +219,7 @@ public class DatabaseTableSelectionStep implements UIWizardStep
       // Update schemas
       schemaValueChoices = tables
                .stream()
-               .filter((item) -> Objects.equals(item.getCatalog(), catalog))
+               .filter(item -> Objects.equals(item.getCatalog(), catalog))
                .map(DatabaseTable::getSchema)
                .filter(Objects::nonNull)
                .collect(Collectors.toCollection(TreeSet::new));
@@ -333,5 +234,17 @@ public class DatabaseTableSelectionStep implements UIWizardStep
                .filter(Objects::nonNull)
                .collect(Collectors.toCollection(TreeSet::new));
       return database;
+   }
+
+   @Override
+   protected boolean isProjectRequired()
+   {
+      return true;
+   }
+
+   @Override
+   protected ProjectFactory getProjectFactory()
+   {
+      return SimpleContainer.getServices(getClass().getClassLoader(), ProjectFactory.class).get();
    }
 }
