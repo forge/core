@@ -11,7 +11,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Callable;
 
 import javax.persistence.Entity;
 
@@ -98,16 +97,11 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
       connectionProfile.setValueChoices(profileNames);
       connectionProfile.setValue("");
       // Enable password input only if profile does not store saved passwords
-      connectionProfilePassword.setEnabled(new Callable<Boolean>()
-      {
-         @Override
-         public Boolean call() throws Exception
-         {
-            String connectionProfileName = connectionProfile.getValue();
-            if (Strings.isNullOrEmpty(connectionProfileName))
-               return false;
-            return !profiles.get(connectionProfileName).isSavePassword();
-         }
+      connectionProfilePassword.setEnabled(() -> {
+         String connectionProfileName = connectionProfile.getValue();
+         if (Strings.isNullOrEmpty(connectionProfileName))
+            return false;
+         return !profiles.get(connectionProfileName).isSavePassword();
       });
       builder.add(targetPackage).add(connectionProfile).add(connectionProfilePassword);
    }
@@ -130,11 +124,10 @@ public class GenerateEntitiesCommand extends AbstractProjectCommand implements
    }
 
    @Override
-   public NavigationResult next(UINavigationContext context) throws Exception
+   public NavigationResult next(UINavigationContext context)
    {
       descriptor.setTargetPackage(targetPackage.getValue());
       descriptor.setConnectionProfileName(connectionProfile.getValue());
-      descriptor.setSelectedProject(getSelectedProject(context));
       NavigationResultBuilder navigationResultBuilder = NavigationResultBuilder.create();
       if (Strings.isNullOrEmpty(descriptor.getConnectionProfileName()))
       {
