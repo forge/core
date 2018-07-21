@@ -51,7 +51,7 @@ echo.
 goto error
 
 :OkJHome
-if exist "%JAVA_HOME%\bin\java.exe" goto chkJVersion
+if exist "%JAVA_HOME%\bin\java.exe" goto chkJVersionInReleaseFile
 
 echo.
 echo ERROR: JAVA_HOME is set to an invalid directory.
@@ -61,12 +61,33 @@ echo location of your Java installation
 echo.
 goto error
 
+:chkJVersionInReleaseFile
+if not exist "%JAVA_HOME%\release" goto chkJVersion
+
+for /f "delims== tokens=2" %%g in ('findstr "JAVA_VERSION=" "%JAVA_HOME%\release"') do (
+   set JAVAVER=%%g
+)
+set JAVAVER=%JAVAVER:"=%
+for /f "delims=. tokens=1" %%v in ("%JAVAVER%") do (
+   set JAVAVER_MAJOR=%%v
+)
+if %JAVAVER_MAJOR% gtr 1 goto chkFHome
+for /f "delims=. tokens=2" %%v in ("%JAVAVER%") do (
+   set JAVAVER_MINOR=%%v
+)
+if %JAVAVER_MINOR% geq 7 goto chkFHome
+
 :chkJVersion
 set PATH="%JAVA_HOME%\bin";%PATH%
 
 for /f "tokens=3" %%g in ('java -version 2^>^&1 ^| findstr /i "version"') do (
    set JAVAVER=%%g
 )
+set JAVAVER=%JAVAVER:"=%
+for /f "delims=. tokens=1" %%v in ("%JAVAVER%") do (
+   set JAVAVER_MAJOR=%%v
+)
+if %JAVAVER_MAJOR% gtr 1 goto chkFHome
 for /f "delims=. tokens=1-3" %%v in ("%JAVAVER%") do (
    set JAVAVER_MINOR=%%w
 )
