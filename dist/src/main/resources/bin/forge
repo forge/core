@@ -148,12 +148,26 @@ if [ ! -x "$JAVACMD" ] ; then
   exit 1
 fi
 
-JAVAVER=`"$JAVACMD" -version 2>&1`
+# Get java version from the release file, if it exists,
+# to by pass "java -version" execution time.
+if [ -r "$JAVA_HOME/release" ] ; then
+  while read line
+  do
+    case $line in JAVA_VERSION=*)
+      JAVAVER=$line
+      break
+    esac
+  done <"$JAVA_HOME/release"
+fi
+
+JAVAVER=${JAVAVER-`"$JAVACMD" -version 2>&1`}
+JAVAVER="${JAVAVER#*\"}" # Strip everything up to the first "
+JAVAVER="${JAVAVER%%\"*}"; # Strip everything after the first "
+
 case $JAVAVER in
-*1.[7-9]*) ;;
-*1.[1-6]*)
-	echo " Error: a Java 1.7 or higher JRE is required to run Forge; found [$JAVACMD -version == $JAVAVER]."
-	exit 1
+1.[1-6]*)
+  echo " Error: a Java 1.7 or higher JRE is required to run Forge. $JAVACMD is version $JAVAVER"
+  exit 1
  ;;
 esac
 
