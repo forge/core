@@ -38,8 +38,8 @@ import org.jboss.forge.addon.ui.command.CommandExecutionListener;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonRegistry;
-import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.forge.furnace.util.Assert;
@@ -47,23 +47,20 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 
 /**
  * {@link ScriptEngine} implementation for JBoss Forge
- * 
+ *
  * @author <a href="mailto:ggastald@redhat.com">George Gastaldi</a>
  */
 class ForgeScriptEngine extends AbstractScriptEngine
 {
-   public static final String OUTPUT_PRINTSTREAM_ATTRIBUTE = "output";
-   public static final String ERROR_PRINTSTREAM_ATTRIBUTE = "output";
-
    private final ForgeScriptEngineFactory factory;
    private final ShellFactory shellFactory;
    private final ResourceFactory resourceFactory;
 
-   public ForgeScriptEngine(ForgeScriptEngineFactory factory)
+   ForgeScriptEngine(ForgeScriptEngineFactory factory)
    {
       this.factory = factory;
 
-      AddonRegistry addonRegistry = SimpleContainer.getFurnace(getClass().getClassLoader()).getAddonRegistry();
+      AddonRegistry addonRegistry = Furnace.instance(getClass().getClassLoader()).getAddonRegistry();
       this.shellFactory = addonRegistry.getServices(ShellFactory.class).get();
       this.resourceFactory = addonRegistry.getServices(ResourceFactory.class).get();
    }
