@@ -1,2 +1,3 @@
+org.jboss.forge.addon.script.ScriptOperations
 org.jboss.forge.addon.script.impl.ForgeScriptEngineFactory
 org.jboss.forge.addon.script.resource.impl.ScriptFileResourceGenerator
