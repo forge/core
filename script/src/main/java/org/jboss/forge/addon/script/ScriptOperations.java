@@ -26,12 +26,14 @@ public class ScriptOperations
    {
    }
 
-   public Result executeScript(File currentDir, String script, PrintStream stdout, PrintStream stderr) throws ScriptException
+   public Result executeScript(File currentDir, String script, Integer timeout, PrintStream stdout, PrintStream stderr)
+            throws ScriptException
    {
       ScriptEngine scriptEngine = getEngineFactory().getScriptEngine();
       DirectoryResource resource = getResourceFactory().create(DirectoryResource.class, currentDir);
       ScriptContext context = ScriptContextBuilder.create()
                .currentResource(resource)
+               .timeout(timeout)
                .stdout(stdout)
                .stderr(stderr)
                .build();
