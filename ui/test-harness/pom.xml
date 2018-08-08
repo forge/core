@@ -3,7 +3,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>ui-parent</artifactId>
-      <version>3.9.1.Final</version>
+      <version>3.9.2-SNAPSHOT</version>
    </parent>
 
    <artifactId>ui-test-harness</artifactId>
