@@ -26,7 +26,7 @@ public class ScriptOperations
    {
    }
 
-   public Result executeScript(File currentDir, String script, Integer timeout, PrintStream stdout, PrintStream stderr)
+   public Result evaluate(File currentDir, String script, Integer timeout, PrintStream stdout, PrintStream stderr)
             throws ScriptException
    {
       ScriptEngine scriptEngine = getEngineFactory().getScriptEngine();

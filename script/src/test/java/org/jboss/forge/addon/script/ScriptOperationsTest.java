@@ -41,9 +41,9 @@ public class ScriptOperationsTest
    }
 
    @Test
-   public void testLookupScriptEngineFactoryThroughScriptEngineManager() throws Exception
+   public void testScriptOperationsEvaluateShouldSucceed() throws Exception
    {
-      Result result = scriptOperations.executeScript(OperatingSystemUtils.getUserHomeDir(), "pwd", 500, null, null);
+      Result result = scriptOperations.evaluate(OperatingSystemUtils.getUserHomeDir(), "pwd", 500, null, null);
       Assert.assertThat(result, not(instanceOf(Failed.class)));
    }
 }
