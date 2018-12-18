@@ -4,7 +4,7 @@
    <parent>
       <groupId>org.jboss.forge.addon</groupId>
       <artifactId>javaee-parent</artifactId>
-      <version>3.9.2-SNAPSHOT</version>
+      <version>3.9.2.Final</version>
    </parent>
    <artifactId>javaee-tests</artifactId>
    <name>Forge - JavaEE Tests</name>
