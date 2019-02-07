@@ -22,14 +22,14 @@ import org.jboss.forge.furnace.versions.Versions;
 @FacetConstraint(MetadataFacet.class)
 public class ForgeVersionFacet extends AbstractFacet<Project> implements ProjectFacet
 {
-   public static final String VERSION_PROPERTY = "${version.forge}";
-
    private static final String VERSION_PROPERTY_NAME = "version.forge";
+
+   public static final String VERSION_PROPERTY = "${" + VERSION_PROPERTY_NAME + "}";
 
    @Override
    public boolean install()
    {
-      Version forgeVersion = Versions.getImplementationVersionFor(getClass());
+      Version forgeVersion = Versions.getImplementationVersionFor(ForgeVersionFacet.class);
       getFaceted().getFacet(MetadataFacet.class).setDirectProperty(VERSION_PROPERTY_NAME,
                forgeVersion.toString());
       return isInstalled();
