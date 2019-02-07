@@ -72,6 +72,14 @@ public interface MavenFacet extends ProvidedProjectFacet
    boolean executeMaven(List<String> parameters);
 
    /**
+    * Execute embedded Maven with the given arguments. Redirects the output and error output to the provided
+    * {@link PrintStream}s
+    *
+    * @return <code>true</code> on success or <code>false</code> on failure.
+    */
+   boolean executeMaven(List<String> parameters,final PrintStream out, final PrintStream err);
+
+   /**
     * Execute Maven with the given arguments.
     * 
     * @return <code>true</code> on success or <code>false</code> on failure.
